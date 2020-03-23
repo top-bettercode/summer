@@ -33,8 +33,9 @@ public @interface EnableJpaExtRepositories {
 
   /**
    * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation
-   * declarations e.g.: {@code @EnableJpaRepositories("org.my.pkg")} instead of {@code
-   * @EnableJpaExtRepositories(basePackages="org.my.pkg")}.
+   * declarations e.g.: {@code @EnableJpaRepositories("org.my.pkg")} instead of {@code @EnableJpaExtRepositories(basePackages="org.my.pkg")}.
+   *
+   * @return value
    */
   String[] value() default {};
 
@@ -42,6 +43,8 @@ public @interface EnableJpaExtRepositories {
    * Base packages to scan for annotated components. {@link #value()} is an alias for (and mutually
    * exclusive with) this attribute. Use {@link #basePackageClasses()} for a type-safe alternative
    * to String-based package names.
+   *
+   * @return basePackages
    */
   String[] basePackages() default {};
 
@@ -50,6 +53,7 @@ public @interface EnableJpaExtRepositories {
    * annotated components. The package of each class specified will be scanned. Consider creating a
    * special no-op marker class or interface in each package that serves no purpose other than being
    * referenced by this attribute.
+   * @return basePackageClasses
    */
   Class<?>[] basePackageClasses() default {};
 
@@ -57,11 +61,13 @@ public @interface EnableJpaExtRepositories {
    * Specifies which types are eligible for component scanning. Further narrows the set of candidate
    * components from everything in {@link #basePackages()} to everything in the base packages that
    * matches the given filter or filters.
+   * @return includeFilters
    */
   Filter[] includeFilters() default {};
 
   /**
    * Specifies which types are not eligible for component scanning.
+   * @return excludeFilters
    */
   Filter[] excludeFilters() default {};
 
@@ -70,7 +76,7 @@ public @interface EnableJpaExtRepositories {
    * {@literal Impl}. So for a repository named {@code PersonRepository} the corresponding
    * implementation class will be looked up scanning for {@code PersonRepositoryImpl}.
    *
-   * @return
+   * @return repositoryImplementationPostfix
    */
   String repositoryImplementationPostfix() default "Impl";
 
@@ -78,7 +84,7 @@ public @interface EnableJpaExtRepositories {
    * Configures the location of where to find the Spring Data named queries properties file. Will
    * default to {@code META-INF/jpa-named-queries.properties}.
    *
-   * @return
+   * @return namedQueriesLocation
    */
   String namedQueriesLocation() default "";
 
@@ -86,7 +92,7 @@ public @interface EnableJpaExtRepositories {
    * Returns the key of the {@link QueryLookupStrategy} to be used for lookup queries for query
    * methods. Defaults to {@link Key#CREATE_IF_NOT_FOUND}.
    *
-   * @return
+   * @return queryLookupStrategy
    */
   Key queryLookupStrategy() default Key.CREATE_IF_NOT_FOUND;
 
@@ -94,7 +100,7 @@ public @interface EnableJpaExtRepositories {
    * Returns the {@link FactoryBean} class to be used for each repository instance. Defaults to
    * {@link JpaExtRepositoryFactoryBean}.
    *
-   * @return
+   * @return repositoryFactoryBeanClass
    */
   Class<?> repositoryFactoryBeanClass() default JpaExtRepositoryFactoryBean.class;
 
@@ -102,7 +108,7 @@ public @interface EnableJpaExtRepositories {
    * Configure the repository base class to be used to create repository proxies for this particular
    * configuration.
    *
-   * @return
+   * @return repositoryBaseClass
    * @since 1.9
    */
   Class<?> repositoryBaseClass() default DefaultRepositoryBaseClass.class;
@@ -113,7 +119,7 @@ public @interface EnableJpaExtRepositories {
    * Configures the name of the {@link EntityManagerFactory} bean definition to be used to create
    * repositories discovered through this annotation. Defaults to {@code entityManagerFactory}.
    *
-   * @return
+   * @return entityManagerFactoryRef
    */
   String entityManagerFactoryRef() default "entityManagerFactory";
 
@@ -122,13 +128,14 @@ public @interface EnableJpaExtRepositories {
    * create repositories discovered through this annotation. Defaults to {@code
    * transactionManager}.
    *
-   * @return
+   * @return transactionManagerRef
    */
   String transactionManagerRef() default "transactionManager";
 
   /**
    * Configures whether nested repository-interfaces (e.g. defined as inner classes) should be
    * discovered by the repositories infrastructure.
+   * @return considerNestedRepositories
    */
   boolean considerNestedRepositories() default false;
 
@@ -153,7 +160,7 @@ public @interface EnableJpaExtRepositories {
    * BootstrapMode#LAZY}, but triggers repository initialization when the application context
    * finishes its bootstrap.
    *
-   * @return
+   * @return bootstrapMode
    * @since 2.1
    */
   BootstrapMode bootstrapMode() default BootstrapMode.DEFAULT;

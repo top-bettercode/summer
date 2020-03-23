@@ -71,7 +71,7 @@ public class BaseController extends Response {
       }
       String body = objectWriter.writeValueAsString(object);
       HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+      httpHeaders.setContentType(MediaType.APPLICATION_JSON);
       httpHeaders.setETag("\"".concat(Sha1DigestUtil.shaHex(body)).concat("\""));
       return ResponseEntity.ok().headers(cacheControl(httpHeaders)).body(body);
     } catch (JsonProcessingException e) {
