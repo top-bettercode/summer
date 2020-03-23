@@ -20,16 +20,17 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
   private static final String GENERIC_NAME_PREFIX = "param";
 
   @Override
-  protected Object doExecute(AbstractJpaQuery abstractJpaQuery, Object[] objects) {
-    return doMybatisExecute((MybatisQuery) abstractJpaQuery, objects);
+  protected Object doExecute(AbstractJpaQuery query, JpaParametersParameterAccessor accessor) {
+    return doMybatisExecute((MybatisQuery) query, accessor);
   }
 
-  protected abstract Object doMybatisExecute(MybatisQuery mybatisQuery, Object[] objects);
+  protected abstract Object doMybatisExecute(MybatisQuery mybatisQuery,JpaParametersParameterAccessor accessor);
 
   static class CollectionExecution extends MybatisQueryExecution {
 
     @Override
-    protected Object doMybatisExecute(MybatisQuery query, Object[] values) {
+    protected Object doMybatisExecute(MybatisQuery query, JpaParametersParameterAccessor accessor) {
+      Object[] values = accessor.getValues();
       String statement = query.getQueryMethod().getStatement();
       if (null == values || values.length == 0) {
         return query.getSqlSessionTemplate().selectList(statement);
@@ -58,7 +59,8 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
   static class PagedExecution extends MybatisQueryExecution {
 
     @Override
-    protected Object doMybatisExecute(MybatisQuery query, Object[] values) {
+    protected Object doMybatisExecute(MybatisQuery query, JpaParametersParameterAccessor accessor) {
+      Object[] values = accessor.getValues();
       String statement = query.getQueryMethod().getStatement();
 
       JpaParameters parameters = query.getQueryMethod().getParameters();
@@ -98,8 +100,8 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Object doMybatisExecute(MybatisQuery query, Object[] values) {
-      PageImpl<Object> page = (PageImpl<Object>) super.doMybatisExecute(query, values);
+    protected Object doMybatisExecute(MybatisQuery query,JpaParametersParameterAccessor accessor) {
+      PageImpl<Object> page = (PageImpl<Object>) super.doMybatisExecute(query, accessor);
 
       Pageable pageable = page.getPageable();
       return new SliceImpl<>(page.getContent(), pageable,
@@ -113,7 +115,7 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
     private static final String NO_SURROUNDING_TRANSACTION = "You're trying to execute a streaming query method without a surrounding transaction that keeps the connection open so that the Stream can actually be consumed. Make sure the code consuming the stream uses @Transactional or any other way of declaring a (read-only) transaction.";
 
     @Override
-    protected Object doMybatisExecute(MybatisQuery query, Object[] values) {
+    protected Object doMybatisExecute(MybatisQuery query,JpaParametersParameterAccessor accessor) {
 
       if (!SurroundingTransactionDetectorMethodInterceptor.INSTANCE
           .isSurroundingTransactionActive()) {
@@ -128,7 +130,8 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
   static class SingleEntityExecution extends MybatisQueryExecution {
 
     @Override
-    protected Object doMybatisExecute(MybatisQuery query, Object[] values) {
+    protected Object doMybatisExecute(MybatisQuery query,JpaParametersParameterAccessor accessor) {
+      Object[] values = accessor.getValues();
       if (null == values || values.length == 0) {
         return query.getSqlSessionTemplate().selectOne(query.getQueryMethod().getStatement());
       }
@@ -143,7 +146,8 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
   static class ModifyingExecution extends MybatisQueryExecution {
 
     @Override
-    protected Object doMybatisExecute(MybatisQuery query, Object[] values) {
+    protected Object doMybatisExecute(MybatisQuery query, JpaParametersParameterAccessor accessor) {
+      Object[] values = accessor.getValues();
       return query.getSqlSessionTemplate()
           .update(query.getQueryMethod().getStatement(),
               getMybatisParameters(query.getQueryMethod().getParameters(), values));

@@ -1,12 +1,8 @@
-apply {
-    plugin("cn.bestwu.publish")
-}
-
 dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
 
-    compile("cn.bestwu:common-lang")
+    compile(project(":util:common-lang"))
     compile("javax.mail:mail")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.dhatim:fastexcel")

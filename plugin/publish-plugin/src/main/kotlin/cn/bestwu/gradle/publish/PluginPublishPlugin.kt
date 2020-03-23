@@ -35,7 +35,6 @@ class PluginPublishPlugin : AbstractPlugin() {
             project.tasks.create("dokkaJavadoc", DokkaTask::class.java) {
                 it.outputFormat = "javadoc"
                 it.outputDirectory = "${project.buildDir}/dokkaJavadoc"
-                it.noStdlibLink = true
             }
         }
         project.afterEvaluate { _ ->
@@ -118,7 +117,7 @@ class PluginPublishPlugin : AbstractPlugin() {
      * 配置GradlePlugin
      */
     private fun configureGradlePlugins(project: Project, projectUrl: String?, projectVcsUrl: String?) {
-        val gradlePlugin = project.findProperty("gradlePlugin.plugins") as? String
+        val gradlePlugin = project.findProperty("gradlePlugin.plugins.${project.name}") as? String?:project.findProperty("gradlePlugin.plugins") as? String
         gradlePlugin?.split(",")?.forEach { plugin ->
             val pluginId = project.findProperty("gradlePlugin.plugins.$plugin.id") as String
 

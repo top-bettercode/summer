@@ -43,48 +43,53 @@ allprojects {
         maven("http://oss.jfrog.org/oss-snapshot-local")
     }
     ext {
-        this["plantumlVersion"] = "1.2018.13"
+        this["plantumlVersion"] = "1.2020.4"
     }
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         dependencies {
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
+            dependency("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
+            dependency("com.gradle.publish:plugin-publish-plugin:0.10.0")
+            dependency("org.jetbrains.dokka:dokka-gradle-plugin:0.10.1")
+
+            dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.15.1")
 
             dependency("org.dom4j:dom4j:2.1.1")
             dependency("org.atteo:evo-inflector:1.2.2")
-            dependency("org.mybatis.generator:mybatis-generator-core:1.3.7")
-            dependency("com.h2database:h2:1.4.197")
             dependency("net.sourceforge.plantuml:plantuml:${ext["plantumlVersion"]}")
 
-            dependency("org.jsoup:jsoup:1.11.3")
-            dependency("cn.bestwu:common-lang:1.1.7-SNAPSHOT")
-            dependency("cn.bestwu:api-sign:1.2.4")
+            dependency("org.jsoup:jsoup:1.13.1")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
-            dependency("cn.bestwu:generator:0.0.57-SNAPSHOT")
-            dependency("cn.bestwu:starter-logging:2.0.12-SNAPSHOT")
-            dependency("mysql:mysql-connector-java:5.1.47")
+            dependency("mysql:mysql-connector-java:8.0.19")
+
             dependency("org.asciidoctor:asciidoctorj:2.2.0")
-            dependency("org.asciidoctor:asciidoctorj-diagram:2.0.0")
-            dependency("org.asciidoctor:asciidoctorj-pdf:1.5.0-beta.8")
+            dependency("org.asciidoctor:asciidoctorj-diagram:2.0.1")
+            dependency("org.asciidoctor:asciidoctorj-pdf:1.5.3")
 
-            dependency("cn.bestwu:common-lang:1.1.7-SNAPSHOT")
-            dependency("cn.bestwu:starter-logging:2.0.12-SNAPSHOT")
 
-            dependency("javax.mail:mail:1.4")
+            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5")
+            dependency("net.logstash.logback:logstash-logback-encoder:6.3")
+            dependency("javax.mail:mail:1.4.7")
+            dependency("com.github.axet:kaptcha:0.0.9")
+
+            dependency("org.dhatim:fastexcel:0.10.11")
+            dependency("org.dhatim:fastexcel-reader:0.10.11")
+
+            dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.5.RELEASE")
+            dependency("org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE")
+
+            dependency("org.mybatis:mybatis:3.5.4")
+            dependency("org.mybatis:mybatis-spring:2.0.4")
+            dependency("org.mybatis.generator:mybatis-generator-core:1.4.0")
             dependency("com.baomidou:mybatis-plus:2.3.3") {
                 exclude("com.baomidou:mybatis-plus-generate")
             }
             dependency("com.baomidou:mybatisplus-spring-boot-starter:1.0.5") {
                 exclude("org.springframework.boot:spring-boot-configuration-processor")
             }
-            dependency("com.github.axet:kaptcha:0.0.9")
-            dependency("org.dhatim:fastexcel:0.10.11")
-            dependency("org.dhatim:fastexcel-reader:0.10.11")
-            dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.6.RELEASE")
-            dependency("org.springframework.security.oauth:spring-security-oauth2:2.3.6.RELEASE")
 
-            dependency("org.mybatis:mybatis:3.5.1")
-            dependency("org.mybatis:mybatis-spring:2.0.1")
-            dependency("com.github.pagehelper:pagehelper-spring-boot-starter:1.2.10")
+            dependency("com.github.pagehelper:pagehelper-spring-boot-starter:1.2.13")
+
         }
     }
 

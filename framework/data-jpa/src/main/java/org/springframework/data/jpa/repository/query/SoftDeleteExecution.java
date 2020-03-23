@@ -21,15 +21,10 @@ public class SoftDeleteExecution extends JpaQueryExecution {
     this.softDeleteSupport = softDeleteSupport;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.springframework.data.jpa.repository.query.JpaQueryExecution#doExecute(org.springframework.data.jpa.repository.query.AbstractJpaQuery, java.lang.Object[])
-   */
   @Override
-  protected Object doExecute(AbstractJpaQuery jpaQuery, Object[] values) {
-
-    Query query = jpaQuery.createQuery(values);
-    List<?> resultList = query.getResultList();
+  protected Object doExecute(AbstractJpaQuery query, JpaParametersParameterAccessor accessor) {
+    Query jpaQuery = query.createQuery(accessor);
+    List<?> resultList = jpaQuery.getResultList();
 
     if (softDeleteSupport.support()) {
       for (Object o : resultList) {
@@ -42,6 +37,6 @@ public class SoftDeleteExecution extends JpaQueryExecution {
       }
     }
 
-    return jpaQuery.getQueryMethod().isCollectionQuery() ? resultList : resultList.size();
+    return query.getQueryMethod().isCollectionQuery() ? resultList : resultList.size();
   }
 }
