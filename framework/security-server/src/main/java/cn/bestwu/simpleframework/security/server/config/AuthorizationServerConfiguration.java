@@ -1,7 +1,7 @@
 package cn.bestwu.simpleframework.security.server.config;
 
-import cn.bestwu.simpleframework.security.server.AuthorizationServerHttpSecurityConfigurerAdapter;
 import cn.bestwu.simpleframework.security.ClientAuthorize;
+import cn.bestwu.simpleframework.security.server.AuthorizationServerHttpSecurityConfigurerAdapter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
-import org.springframework.hateoas.core.AnnotationMappingDiscoverer;
+import org.springframework.hateoas.server.core.AnnotationMappingDiscoverer;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;

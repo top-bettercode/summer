@@ -4,7 +4,6 @@ import cn.bestwu.simpleframework.data.jpa.config.JpaExtProperties;
 import cn.bestwu.simpleframework.data.jpa.support.DefaultSoftDeleteSupport;
 import cn.bestwu.simpleframework.data.jpa.support.SoftDeleteSupport;
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.ExistsExecution;
 import org.springframework.data.jpa.repository.query.ParameterMetadataProvider.ParameterMetadata;
-import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.ResultProcessor;
 import org.springframework.data.repository.query.ReturnedType;
 import org.springframework.data.repository.query.parser.PartTree;
@@ -57,32 +55,13 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     try {
 
       this.tree = new PartTree(method.getName(), domainClass);
-      this.countQuery = new CountQueryPreparer(persistenceProvider, recreationRequired);
-      this.query = tree.isCountProjection() ? countQuery : new QueryPreparer(persistenceProvider, recreationRequired);
+      this.countQuery = new CountQueryPreparer(recreationRequired);
+      this.query = tree.isCountProjection() ? countQuery : new QueryPreparer(recreationRequired);
 
     } catch (Exception o_O) {
       throw new IllegalArgumentException(
           String.format("Failed to create query for method %s! %s", method, o_O.getMessage()), o_O);
     }
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see org.springframework.data.jpa.repository.query.AbstractJpaQuery#doCreateQuery(java.lang.Object[])
-   */
-  @Override
-  public Query doCreateQuery(Object[] values) {
-    return query.createQuery(values);
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see org.springframework.data.jpa.repository.query.AbstractJpaQuery#doCreateCountQuery(java.lang.Object[])
-   */
-  @Override
-  @SuppressWarnings("unchecked")
-  public TypedQuery<Long> doCreateCountQuery(Object[] values) {
-    return (TypedQuery<Long>) countQuery.createQuery(values);
   }
 
   /*
@@ -101,6 +80,25 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     return super.getExecution();
   }
 
+  /*
+   * (non-Javadoc)
+   * @see org.springframework.data.jpa.repository.query.AbstractJpaQuery#doCreateQuery(JpaParametersParameterAccessor)
+   */
+  @Override
+  public Query doCreateQuery(JpaParametersParameterAccessor accessor) {
+    return query.createQuery(accessor);
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see org.springframework.data.jpa.repository.query.AbstractJpaQuery#doCreateCountQuery(JpaParametersParameterAccessor)
+   */
+  @Override
+  @SuppressWarnings("unchecked")
+  public TypedQuery<Long> doCreateCountQuery(JpaParametersParameterAccessor accessor) {
+    return (TypedQuery<Long>) countQuery.createQuery(accessor);
+  }
+
   /**
    * Query preparer to create {@link CriteriaQuery} instances and potentially cache them.
    *
@@ -111,38 +109,32 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
 
     private final @Nullable CriteriaQuery<?> cachedCriteriaQuery;
     private final @Nullable ParameterBinder cachedParameterBinder;
-    private final @Nullable List<ParameterMetadata<?>> expressions;
-    private final PersistenceProvider persistenceProvider;
+    private final QueryParameterSetter.QueryMetadataCache metadataCache = new QueryParameterSetter.QueryMetadataCache();
 
-    QueryPreparer(PersistenceProvider persistenceProvider, boolean recreateQueries) {
+    QueryPreparer(boolean recreateQueries) {
 
-      this.persistenceProvider = persistenceProvider;
-
-      JpaQueryCreator creator = createCreator(persistenceProvider, Optional.empty());
+      JpaQueryCreator creator = createCreator(null);
 
       if (recreateQueries) {
         this.cachedCriteriaQuery = null;
-        this.expressions = null;
         this.cachedParameterBinder = null;
       } else {
         this.cachedCriteriaQuery = creator.createQuery();
-        this.expressions = creator.getParameterExpressions();
-        this.cachedParameterBinder = getBinder(expressions);
+        this.cachedParameterBinder = getBinder(creator.getParameterExpressions());
       }
     }
 
     /**
      * Creates a new {@link Query} for the given parameter values.
      */
-    public Query createQuery(Object[] values) {
+    public Query createQuery(JpaParametersParameterAccessor accessor) {
 
       CriteriaQuery<?> criteriaQuery = cachedCriteriaQuery;
       ParameterBinder parameterBinder = cachedParameterBinder;
-      ParametersParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
 
       if (cachedCriteriaQuery == null || accessor.hasBindableNullValue()) {
-        JpaQueryCreator creator = createCreator(persistenceProvider, Optional.of(accessor));
-        criteriaQuery = creator.createQuery(getDynamicSort(values));
+        JpaQueryCreator creator = createCreator(accessor);
+        criteriaQuery = creator.createQuery(getDynamicSort(accessor));
         List<ParameterMetadata<?>> expressions = creator.getParameterExpressions();
         parameterBinder = getBinder(expressions);
       }
@@ -151,13 +143,16 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
         throw new IllegalStateException("ParameterBinder is null!");
       }
 
-      return restrictMaxResultsIfNecessary(invokeBinding(parameterBinder, createQuery(criteriaQuery), values));
+      TypedQuery<?> query = createQuery(criteriaQuery);
+
+      return restrictMaxResultsIfNecessary(invokeBinding(parameterBinder, query, accessor, this.metadataCache));
     }
 
     /**
      * Restricts the max results of the given {@link Query} if the current {@code tree} marks this {@code query} as
      * limited.
      */
+    @SuppressWarnings("ConstantConditions")
     private Query restrictMaxResultsIfNecessary(Query query) {
 
       if (tree.isLimiting()) {
@@ -202,39 +197,46 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
       return getEntityManager().createQuery(criteriaQuery);
     }
 
-    protected JpaQueryCreator createCreator(PersistenceProvider persistenceProvider,
-        Optional<ParametersParameterAccessor> accessor) {
+    protected JpaQueryCreator createCreator(@Nullable JpaParametersParameterAccessor accessor) {
 
       EntityManager entityManager = getEntityManager();
+
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-
-      ParameterMetadataProvider provider = accessor
-          .map(it -> new ParameterMetadataProvider(builder, it, persistenceProvider, escape))//
-          .orElseGet(() -> new ParameterMetadataProvider(builder, parameters, persistenceProvider, escape));
-
       ResultProcessor processor = getQueryMethod().getResultProcessor();
-      ReturnedType returnedType = accessor.map(processor::withDynamicProjection)//
-          .orElse(processor).getReturnedType();
 
-      return new JpaExtQueryCreator(tree, returnedType, builder, provider, softDeleteSupport);
+      ParameterMetadataProvider provider;
+      ReturnedType returnedType;
+
+      if (accessor != null) {
+        provider = new ParameterMetadataProvider(builder, accessor, escape);
+        returnedType = processor.withDynamicProjection(accessor).getReturnedType();
+      } else {
+        provider = new ParameterMetadataProvider(builder, parameters, escape);
+        returnedType = processor.getReturnedType();
+      }
+
+      return new JpaQueryCreator(tree, returnedType, builder, provider);
     }
 
     /**
      * Invokes parameter binding on the given {@link TypedQuery}.
      */
-    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, Object[] values) {
+    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, JpaParametersParameterAccessor accessor,
+        QueryParameterSetter.QueryMetadataCache metadataCache) {
 
-      return binder.bindAndPrepare(query, values);
+      QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata("query", query);
+
+      return binder.bindAndPrepare(query, metadata, accessor);
     }
 
     private ParameterBinder getBinder(List<ParameterMetadata<?>> expressions) {
       return ParameterBinderFactory.createCriteriaBinder(parameters, expressions);
     }
 
-    private Sort getDynamicSort(Object[] values) {
+    private Sort getDynamicSort(JpaParametersParameterAccessor accessor) {
 
       return parameters.potentiallySortsDynamically() //
-          ? new ParametersParameterAccessor(parameters, values).getSort() //
+          ? accessor.getSort() //
           : Sort.unsorted();
     }
   }
@@ -247,38 +249,37 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
    */
   private class CountQueryPreparer extends QueryPreparer {
 
-    CountQueryPreparer(PersistenceProvider persistenceProvider, boolean recreateQueries) {
-      super(persistenceProvider, recreateQueries);
+    CountQueryPreparer(boolean recreateQueries) {
+      super(recreateQueries);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.jpa.repository.query.PartTreeJpaQuery.QueryPreparer#createCreator(org.springframework.data.repository.query.ParametersParameterAccessor, org.springframework.data.jpa.provider.PersistenceProvider)
-     */
     @Override
-    protected JpaQueryCreator createCreator(PersistenceProvider persistenceProvider,
-        Optional<ParametersParameterAccessor> accessor) {
+    protected JpaQueryCreator createCreator(@Nullable JpaParametersParameterAccessor accessor) {
 
       EntityManager entityManager = getEntityManager();
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
-      ParameterMetadataProvider provider = accessor
-          .map(it -> new ParameterMetadataProvider(builder, it, persistenceProvider, escape))//
-          .orElseGet(() -> new ParameterMetadataProvider(builder, parameters, persistenceProvider, escape));
+      ParameterMetadataProvider provider;
 
-      return new JpaExtCountQueryCreator(tree,
-          getQueryMethod().getResultProcessor().getReturnedType(), builder, provider,
-          softDeleteSupport);
+      if (accessor != null) {
+        provider = new ParameterMetadataProvider(builder, accessor, escape);
+      } else {
+        provider = new ParameterMetadataProvider(builder, parameters, escape);
+      }
+
+      return new JpaCountQueryCreator(tree, getQueryMethod().getResultProcessor().getReturnedType(), builder, provider);
     }
 
     /**
      * Customizes binding by skipping the pagination.
-     *
-     * @see QueryPreparer#invokeBinding(ParameterBinder, TypedQuery, Object[])
      */
     @Override
-    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, Object[] values) {
-      return binder.bind(query, values);
+    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, JpaParametersParameterAccessor accessor,
+        QueryParameterSetter.QueryMetadataCache metadataCache) {
+
+      QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata("countquery", query);
+
+      return binder.bind(query, metadata, accessor);
     }
   }
 

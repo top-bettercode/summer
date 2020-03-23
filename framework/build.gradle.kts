@@ -5,13 +5,13 @@ subprojects {
     }
     if(name.contains("logging")){
         apply {
-            plugin("cn.bestwu.kotlin-publish")
             plugin("org.jetbrains.kotlin.jvm")
             plugin("org.jetbrains.kotlin.plugin.spring")
+            plugin("cn.bestwu.summer.kotlin-publish")
         }
     }else{
         apply {
-            plugin("cn.bestwu.publish")
+            plugin("cn.bestwu.summer.publish")
         }
     }
 

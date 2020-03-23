@@ -1,7 +1,7 @@
 subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
-        plugin("cn.bestwu.plugin-publish")
+        plugin("cn.bestwu.summer.plugin-publish")
         plugin("com.jfrog.artifactory")
         plugin("org.springframework.boot")
     }
@@ -14,9 +14,6 @@ subprojects {
     tasks {
         "jar"(Jar::class) {
             enabled = true
-        }
-        "dokkaJavadoc"(org.jetbrains.dokka.gradle.DokkaTask::class) {
-            noStdlibLink = true
         }
         "compileJava" {
             dependsOn("processResources")

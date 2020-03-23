@@ -114,14 +114,14 @@ public class MybatisTest {
     Map<String, String> params = new HashMap<>();
     params.put("firstname", "Carter");
     Page<User> users = repository
-        .findByMybatis2(PageRequest.of(0, 1, new Sort(Direction.ASC, "lastname")), params);
+        .findByMybatis2(PageRequest.of(0, 1, Sort.by(Direction.ASC, "lastname")), params);
     System.err.println(users);
     Assert.assertEquals(2, users.getTotalElements());
     List<User> userList = users.getContent();
     Assert.assertEquals(1, userList.size());
     Assert.assertEquals("Beauford1", userList.get(0).getLastname());
     Assert.assertEquals("Beauford2", repository
-        .findByMybatis2(PageRequest.of(0, 1, new Sort(Direction.DESC, "lastname")), params)
+        .findByMybatis2(PageRequest.of(0, 1, Sort.by(Direction.DESC, "lastname")), params)
         .getContent().get(0).getLastname());
     List<User> users2 = repository.findByMybatis2(params);
     System.err.println(users2);
@@ -141,13 +141,13 @@ public class MybatisTest {
   public void findByMybatis2212() {
     User user = new User("Carter", null);
     Page<User> users = repository
-        .findByMybatis22(user, PageRequest.of(0, 1, new Sort(Direction.ASC, "lastname")));
+        .findByMybatis22(user, PageRequest.of(0, 1, Sort.by(Direction.ASC, "lastname")));
     System.err.println(users);
     Assert.assertEquals(2, users.getTotalElements());
     Assert.assertEquals(1, users.getContent().size());
     Assert.assertEquals("Beauford1", users.getContent().get(0).getLastname());
     users = repository
-        .findByMybatis22(user, PageRequest.of(0, 1, new Sort(Direction.DESC, "lastname")));
+        .findByMybatis22(user, PageRequest.of(0, 1, Sort.by(Direction.DESC, "lastname")));
     System.err.println(users);
     Assert.assertEquals(2, users.getTotalElements());
     Assert.assertEquals(1, users.getContent().size());
@@ -164,7 +164,7 @@ public class MybatisTest {
         "当包含org.springframework.data.domain.Pageable参数时返回类型必须为org.springframework.data.domain.Page");
     User user = new User("Carter", null);
     repository
-        .findByMybatis222(user, PageRequest.of(0, 1, new Sort(Direction.ASC, "lastname")));
+        .findByMybatis222(user, PageRequest.of(0, 1, Sort.by(Direction.ASC, "lastname")));
   }
 
   @Test
@@ -179,11 +179,11 @@ public class MybatisTest {
 
   @Test
   public void findByMybatis3() {
-    List<User> users = repository.findByMybatis3("Carter", new Sort(Direction.ASC, "lastname"));
+    List<User> users = repository.findByMybatis3("Carter", Sort.by(Direction.ASC, "lastname"));
     System.err.println(users);
     Assert.assertEquals(2, users.size());
     Assert.assertEquals("Beauford1", users.get(0).getLastname());
-    users = repository.findByMybatis3("Carter", new Sort(Direction.DESC, "lastname"));
+    users = repository.findByMybatis3("Carter", Sort.by(Direction.DESC, "lastname"));
     System.err.println(users);
     Assert.assertEquals(2, users.size());
     Assert.assertEquals("Beauford2", users.get(0).getLastname());
@@ -192,19 +192,19 @@ public class MybatisTest {
   @Test
   public void findByMybatis30() {
     Page<User> users = repository
-        .findByFirstname("Carter", PageRequest.of(0, 1, new Sort(Direction.ASC, "lastname")));
+        .findByFirstname("Carter", PageRequest.of(0, 1, Sort.by(Direction.ASC, "lastname")));
     System.err.println(users);
     Assert.assertEquals(2, users.getTotalElements());
     Assert.assertEquals(1, users.getContent().size());
     Assert.assertEquals("Beauford1", users.getContent().get(0).getLastname());
     users = repository
-        .findByFirstname("Carter", PageRequest.of(0, 1, new Sort(Direction.DESC, "lastname")));
+        .findByFirstname("Carter", PageRequest.of(0, 1, Sort.by(Direction.DESC, "lastname")));
     System.err.println(users);
     Assert.assertEquals(2, users.getTotalElements());
     Assert.assertEquals(1, users.getContent().size());
     Assert.assertEquals("Beauford2", users.getContent().get(0).getLastname());
     users = repository
-        .findByFirstname("Carter", PageRequest.of(1, 1, new Sort(Direction.DESC, "lastname")));
+        .findByFirstname("Carter", PageRequest.of(1, 1, Sort.by(Direction.DESC, "lastname")));
     System.err.println(users);
     Assert.assertEquals(2, users.getTotalElements());
     Assert.assertEquals(1, users.getContent().size());
@@ -214,19 +214,19 @@ public class MybatisTest {
   @Test
   public void findByMybatis31() {
     Page<User> users = repository
-        .findByMybatis3("Carter", PageRequest.of(0, 1, new Sort(Direction.ASC, "lastname")));
+        .findByMybatis3("Carter", PageRequest.of(0, 1, Sort.by(Direction.ASC, "lastname")));
     System.err.println(users);
     Assert.assertEquals(2, users.getTotalElements());
     Assert.assertEquals(1, users.getContent().size());
     Assert.assertEquals("Beauford1", users.getContent().get(0).getLastname());
     users = repository
-        .findByMybatis3("Carter", PageRequest.of(0, 1, new Sort(Direction.DESC, "lastname")));
+        .findByMybatis3("Carter", PageRequest.of(0, 1, Sort.by(Direction.DESC, "lastname")));
     System.err.println(users);
     Assert.assertEquals(2, users.getTotalElements());
     Assert.assertEquals(1, users.getContent().size());
     Assert.assertEquals("Beauford2", users.getContent().get(0).getLastname());
     users = repository
-        .findByMybatis3("Carter", PageRequest.of(1, 1, new Sort(Direction.DESC, "lastname")));
+        .findByMybatis3("Carter", PageRequest.of(1, 1, Sort.by(Direction.DESC, "lastname")));
     System.err.println(users);
     Assert.assertEquals(2, users.getTotalElements());
     Assert.assertEquals(1, users.getContent().size());

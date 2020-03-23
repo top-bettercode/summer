@@ -44,14 +44,15 @@ public class MybatisQuery extends AbstractJpaQuery {
 	}
 
 	@Override
-	protected Query doCreateQuery(Object[] objects) {
+	protected Query doCreateQuery(JpaParametersParameterAccessor accessor) {
 		return null;
 	}
 
 	@Override
-	protected Query doCreateCountQuery(Object[] objects) {
+	protected Query doCreateCountQuery(JpaParametersParameterAccessor accessor) {
 		return null;
 	}
+
 
 	public SqlSessionTemplate getSqlSessionTemplate() {
 		return sqlSessionTemplate;

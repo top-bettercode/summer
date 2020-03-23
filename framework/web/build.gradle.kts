@@ -1,5 +1,5 @@
 dependencies {
-    compile("cn.bestwu:starter-logging")
+    compile(project(":framework:starter-logging"))
 
     //web
     compile("org.springframework.boot:spring-boot-starter-web")
