@@ -47,6 +47,7 @@ allprojects {
 
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         dependencies {
+            dependency("org.jsoup:jsoup:1.11.3")
             dependency("cn.bestwu:common-lang:1.1.7-SNAPSHOT")
             dependency("cn.bestwu:api-sign:1.2.4")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
