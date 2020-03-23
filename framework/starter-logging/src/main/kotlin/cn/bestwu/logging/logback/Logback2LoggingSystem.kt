@@ -1,0 +1,531 @@
+package cn.bestwu.logging.logback
+
+import ch.qos.logback.classic.AsyncAppender
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.classic.boolex.OnMarkerEvaluator
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder
+import ch.qos.logback.classic.filter.LevelFilter
+import ch.qos.logback.classic.net.SMTPAppender
+import ch.qos.logback.classic.net.SSLSocketAppender
+import ch.qos.logback.classic.net.SocketAppender
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.Appender
+import ch.qos.logback.core.boolex.EventEvaluatorBase
+import ch.qos.logback.core.filter.AbstractMatcherFilter
+import ch.qos.logback.core.rolling.RollingFileAppender
+import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy
+import ch.qos.logback.core.rolling.StartAndSizeAndTimeBasedRollingPolicy
+import ch.qos.logback.core.spi.ContextAware
+import ch.qos.logback.core.spi.FilterReply
+import ch.qos.logback.core.spi.LifeCycle
+import ch.qos.logback.core.util.FileSize
+import ch.qos.logback.core.util.OptionHelper
+import cn.bestwu.logging.*
+import cn.bestwu.logging.bearychat.BearychatAppender
+import cn.bestwu.logging.slack.SlackAppender
+import net.logstash.logback.appender.LogstashTcpSocketAppender
+import org.slf4j.ILoggerFactory
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.slf4j.impl.StaticLoggerBinder
+import org.springframework.boot.context.properties.bind.Bindable
+import org.springframework.boot.context.properties.bind.Binder
+import org.springframework.boot.logging.LogFile
+import org.springframework.boot.logging.LoggingInitializationContext
+import org.springframework.boot.logging.LoggingSystem
+import org.springframework.boot.logging.logback.LogbackLoggingSystem
+import org.springframework.core.env.Environment
+import org.springframework.util.Assert
+
+/**
+ * 自定义 LogbackLoggingSystem
+ * @author Peter Wu
+ * @since 0.0.1
+ */
+open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSystem(classLoader) {
+
+    private val log: Logger = LoggerFactory.getLogger(Logback2LoggingSystem::class.java)
+    private val loggerContext: LoggerContext
+        get() {
+            val factory = StaticLoggerBinder.getSingleton().loggerFactory
+            Assert.isInstanceOf(LoggerContext::class.java, factory,
+                    String.format(
+                            "LoggerFactory is not a Logback LoggerContext but Logback is on "
+                                    + "the classpath. Either remove Logback or the competing "
+                                    + "implementation (%s loaded from %s). If you are using "
+                                    + "WebLogic you will need to add 'org.slf4j' to "
+                                    + "prefer-application-packages in WEB-INF/weblogic.xml",
+                            factory.javaClass, getLocation(factory)))
+            return factory as LoggerContext
+        }
+
+    override fun loadDefaults(initializationContext: LoggingInitializationContext, logFile: LogFile?) {
+        super.loadDefaults(initializationContext, null)
+        val context = loggerContext
+        val environment = initializationContext.environment
+        val warnSubject = warnSubject(environment)
+        //smtp log
+        if (existProperty(environment, "logging.smtp.host")) {
+            val smtpProperties = Binder.get(environment).bind("logging.smtp", SmtpProperties::class.java).get()
+            synchronized(context.configurationLock) {
+
+                val levelMailAppender = mailAppender(context, smtpProperties, warnSubject)
+                val mailMarker = smtpProperties.marker
+                val markerMailAppender = if (!mailMarker.isNullOrBlank())
+                    mailAppender(context, smtpProperties, warnSubject, mailMarker)
+                else
+                    null
+                val loggerNames = smtpProperties.logger
+                loggerNames
+                        .map { loggerName -> context.getLogger(loggerName.trim()) }
+                        .forEach {
+                            it.addAppender(levelMailAppender)
+                            if (markerMailAppender != null)
+                                it.addAppender(markerMailAppender)
+                        }
+            }
+        }
+
+        //slack log
+        if (existProperty(environment, "logging.slack.auth-token") && existProperty(environment, "logging.slack.channel")) {
+            val slackProperties = Binder.get(environment).bind("logging.slack", SlackProperties::class.java).get()
+            try {
+                val loggerNames = slackProperties.logger
+                loggerNames.map { loggerName -> context.getLogger(loggerName.trim()) }
+                        .forEach {
+                            val slackAppender = SlackAppender(slackProperties, warnSubject)
+                            slackAppender.context = context
+                            slackAppender.start()
+                            it.addAppender(slackAppender)
+                        }
+            } catch (e: Exception) {
+                log.error("配置SlackAppender失败", e)
+            }
+        }
+        //bearychat log
+        if (existProperty(environment, "logging.bearychat.webhook-url") && existProperty(environment, "logging.bearychat.channel")) {
+            val bearychatProperties = Binder.get(environment).bind("logging.bearychat", BearychatProperties::class.java).get()
+            try {
+                val loggerNames = bearychatProperties.logger
+                loggerNames.map { loggerName -> context.getLogger(loggerName.trim()) }
+                        .forEach {
+                            val slackAppender = BearychatAppender(bearychatProperties, warnSubject)
+                            slackAppender.context = context
+                            slackAppender.start()
+                            it.addAppender(slackAppender)
+                        }
+            } catch (e: Exception) {
+                log.error("配置BearychatAppender失败", e)
+            }
+        }
+
+        //socket log
+        if (existProperty(environment, "logging.socket.remote-host")) {
+            val socketProperties = Binder.get(environment).bind("logging.socket", SocketLoggingProperties::class.java).get()
+            val socketAppender = if (socketProperties.ssl == null) socketAppender(context, socketProperties) else sslSocketAppender(context, socketProperties)
+            socketAppender.start()
+            val asyncAppender = AsyncAppender()
+            asyncAppender.context = context
+            asyncAppender.addAppender(socketAppender)
+            asyncAppender.start()
+            context.getLogger("root").addAppender(asyncAppender)
+        }
+
+        //logstashTcpSocketAppender
+        if (existProperty(environment, "logging.logstash.destinations[0]")) {
+            val socketProperties = Binder.get(environment).bind("logging.logstash", LogstashTcpSocketProperties::class.java).get()
+            val socketAppender = logstashTcpSocketAppender(context, socketProperties)
+            socketAppender.start()
+            context.getLogger("root").addAppender(socketAppender)
+        }
+
+        //file log
+        if (existProperty(environment, "logging.files.path")) {
+            val filesProperties = Binder.get(environment).bind("logging.files", FilesProperties::class.java).get()
+            val fileLogPattern = environment.getProperty("logging.pattern.file", FILE_LOG_PATTERN)
+
+            val spilts = bind(environment, "logging.spilt")
+            val markers = bind(environment, "logging.spilt-marker")
+            val levels = Binder.get(environment).bind("logging.spilt-level", Bindable.setOf(String::class.java)).orElseGet { setOf() }
+
+            val rootName = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase()
+            val rootLevel = spilts[rootName]
+            spilts.remove(rootName)
+
+            if (filesProperties.isLogAll || logFile != null) {
+                setAllFileAppender(context, fileLogPattern, filesProperties, rootLevel, logFile)
+            }
+
+            setRootFileAppender(context, fileLogPattern, filesProperties, rootLevel, spilts.keys, markers.keys, levels)
+
+            for ((key, value) in markers) {
+                setMarkerFileAppender(context, fileLogPattern, filesProperties, key, value)
+            }
+
+            for ((key, value) in spilts) {
+                setSpiltFileAppender(context, fileLogPattern, filesProperties, key, value)
+            }
+
+            for (level in levels) {
+                setLevelFileAppender(context, fileLogPattern, filesProperties, level)
+            }
+        }
+    }
+
+
+    private fun bind(environment: Environment, key: String): MutableMap<String, String> {
+        val bindable = Bindable
+                .mapOf(String::class.java, String::class.java)
+        val binder = Binder.get(environment)
+        return binder.bind(key, bindable).orElseGet { mutableMapOf() }
+    }
+
+    private fun setAllFileAppender(context: LoggerContext, fileLogPattern: String, filesProperties: FilesProperties,
+                                   rootLevel: String?, logFile: LogFile?) {
+        val appender = RollingFileAppender<ILoggingEvent>()
+        val encoder = PatternLayoutEncoder()
+        encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
+        appender.encoder = encoder
+        start(context, encoder)
+
+        val logFilePath = logFile?.toString() ?: filesProperties.path + "/all.log"
+        appender.file = logFilePath
+        setRollingPolicy(appender, context, filesProperties, logFilePath)
+        start(context, appender)
+        synchronized(context.configurationLock) {
+            val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+            if (rootLevel != null) {
+                logger.level = Level.toLevel(rootLevel)
+            }
+            val asyncAppender = AsyncAppender()
+            asyncAppender.context = context
+            asyncAppender.addAppender(appender)
+            asyncAppender.start()
+            logger.addAppender(asyncAppender)
+        }
+    }
+
+    private fun setRootFileAppender(context: LoggerContext, fileLogPattern: String, filesProperties: FilesProperties,
+                                    rootLevel: String?, spilts: Set<String>, markers: Set<String>, levels: Set<String>) {
+
+        val appender = RollingFileAppender<ILoggingEvent>()
+        val encoder = PatternLayoutEncoder()
+        encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
+        appender.encoder = encoder
+        start(context, encoder)
+
+        val name = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase()
+        val logFile = (filesProperties.path + "/" + name)
+        appender.file = "$logFile.log"
+        setRollingPolicy(appender, context, filesProperties, logFile)
+
+        val filter = object : AbstractMatcherFilter<ILoggingEvent>() {
+
+            override fun decide(event: ILoggingEvent): FilterReply {
+                if (!isStarted) {
+                    return FilterReply.NEUTRAL
+                }
+                val loggerName = event.loggerName
+                for (it in spilts) {
+                    if (loggerName.startsWith(it)) {
+                        return onMismatch
+                    }
+                }
+
+                val eventMarker = event.marker
+                if (eventMarker != null) {
+                    for (marker in markers) {
+                        if (eventMarker.contains(marker)) {
+                            return onMismatch
+                        }
+                    }
+                }
+
+                for (level in levels) {
+                    if (event.level == Level.valueOf(level)) {
+                        return onMismatch
+                    }
+                }
+
+                return onMatch
+            }
+        }
+        filter.onMatch = FilterReply.ACCEPT
+        filter.onMismatch = FilterReply.DENY
+        start(context, filter)
+        appender.addFilter(filter)
+
+        start(context, appender)
+
+        synchronized(context.configurationLock) {
+            val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+            if (rootLevel != null) {
+                logger.level = Level.toLevel(rootLevel)
+            }
+            val asyncAppender = AsyncAppender()
+            asyncAppender.context = context
+            asyncAppender.addAppender(appender)
+            asyncAppender.start()
+            logger.addAppender(asyncAppender)
+        }
+    }
+
+    private fun setLevelFileAppender(context: LoggerContext, fileLogPattern: String, filesProperties: FilesProperties, level: String) {
+
+        val appender = RollingFileAppender<ILoggingEvent>()
+        val encoder = PatternLayoutEncoder()
+        encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
+        appender.encoder = encoder
+        start(context, encoder)
+
+        val logFile = filesProperties.path + "/level/" + level
+        appender.file = "$logFile.log"
+        setRollingPolicy(appender, context, filesProperties, logFile)
+
+        val filter = LevelFilter()
+        filter.setLevel(Level.toLevel(level))
+        filter.onMatch = FilterReply.ACCEPT
+        filter.onMismatch = FilterReply.DENY
+        start(context, filter)
+        appender.addFilter(filter)
+
+        start(context, appender)
+
+        synchronized(context.configurationLock) {
+            val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+            val asyncAppender = AsyncAppender()
+            asyncAppender.context = context
+            asyncAppender.addAppender(appender)
+            asyncAppender.start()
+            logger.addAppender(asyncAppender)
+        }
+    }
+
+    private fun setMarkerFileAppender(context: LoggerContext, fileLogPattern: String, filesProperties: FilesProperties, marker: String, level: String) {
+
+        val appender = RollingFileAppender<ILoggingEvent>()
+        val encoder = PatternLayoutEncoder()
+        encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
+        appender.encoder = encoder
+        start(context, encoder)
+
+        val logFile = filesProperties.path + "/" + marker + "/" + marker
+        appender.file = "$logFile.log"
+        setRollingPolicy(appender, context, filesProperties, logFile)
+
+        val filter = object : AbstractMatcherFilter<ILoggingEvent>() {
+
+            override fun decide(event: ILoggingEvent): FilterReply {
+                if (!isStarted) {
+                    return FilterReply.NEUTRAL
+                }
+                val eventMarker = event.marker ?: return onMismatch
+
+                return if (eventMarker.contains(marker)) {
+                    onMatch
+                } else {
+                    onMismatch
+                }
+            }
+        }
+        filter.onMatch = FilterReply.ACCEPT
+        filter.onMismatch = FilterReply.DENY
+        start(context, filter)
+        appender.addFilter(filter)
+
+        start(context, appender)
+
+        synchronized(context.configurationLock) {
+            val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+            logger.level = Level.toLevel(level)
+            val asyncAppender = AsyncAppender()
+            asyncAppender.context = context
+            asyncAppender.addAppender(appender)
+            asyncAppender.start()
+            logger.addAppender(asyncAppender)
+        }
+    }
+
+    private fun setSpiltFileAppender(context: LoggerContext, fileLogPattern: String, filesProperties: FilesProperties, name: String,
+                                     level: String) {
+        val appender = RollingFileAppender<ILoggingEvent>()
+        val encoder = PatternLayoutEncoder()
+        encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
+        appender.encoder = encoder
+        start(context, encoder)
+
+        val logFile = filesProperties.path + "/" + name + "/" + name
+        appender.file = "$logFile.log"
+        setRollingPolicy(appender, context, filesProperties, logFile)
+
+        start(context, appender)
+
+        synchronized(context.configurationLock) {
+            val logger = context.getLogger(name)
+            logger.level = Level.toLevel(level)
+            val asyncAppender = AsyncAppender()
+            asyncAppender.context = context
+            asyncAppender.addAppender(appender)
+            asyncAppender.start()
+            logger.addAppender(asyncAppender)
+        }
+    }
+
+    private fun setRollingPolicy(appender: RollingFileAppender<ILoggingEvent>,
+                                 context: LoggerContext, filesProperties: FilesProperties, logFile: String) {
+        if (filesProperties.isRolloverOnStart)
+            appender.rollingPolicy = StartAndSizeAndTimeBasedRollingPolicy<ILoggingEvent>().apply {
+                fileNamePattern = "$logFile-%d{yyyy-MM-dd}-%i.gz"
+                maxFileSize = FileSize.valueOf(filesProperties.maxFileSize)
+                maxHistory = filesProperties.maxHistory
+                setParent(appender)
+                start(context, this)
+            }
+        else appender.rollingPolicy = SizeAndTimeBasedRollingPolicy<ILoggingEvent>().apply {
+            fileNamePattern = "$logFile-%d{yyyy-MM-dd}-%i.gz"
+            setMaxFileSize(FileSize.valueOf(filesProperties.maxFileSize))
+            maxHistory = filesProperties.maxHistory
+            setParent(appender)
+            start(context, this)
+        }
+    }
+
+
+    /**
+     * 发送邮件
+     */
+    private fun mailAppender(context: LoggerContext,
+                             smtpProperties: SmtpProperties, warnSubject: String, mailMarker: String? = null): Appender<ILoggingEvent> {
+        val appender = SMTPAppender()
+        with(appender) {
+            this.context = context
+            name = "mail"
+
+            setSMTPHost(smtpProperties.host)
+            localhost = smtpProperties.localhost
+            jndiLocation = smtpProperties.jndiLocation
+            setSMTPPort(smtpProperties.port)
+            username = smtpProperties.username
+            password = smtpProperties.password
+            from = smtpProperties.from
+            addTo(smtpProperties.to)
+            isAsynchronousSending = smtpProperties.isAsynchronousSending
+            isIncludeCallerData = smtpProperties.isIncludeCallerData
+            isSTARTTLS = smtpProperties.isStarttls
+            isSSL = smtpProperties.isSsl
+            isSessionViaJNDI = smtpProperties.isSessionViaJNDI
+            charsetEncoding = smtpProperties.charsetEncoding
+            subject = warnSubject
+
+            val htmlLayout = PrettyMessageHTMLLayout()
+            start(context, htmlLayout)
+            layout = htmlLayout
+
+            if (mailMarker.isNullOrBlank()) {
+                val level = smtpProperties.filter
+                if (!level.equals("ERROR", true)) {
+                    val filter = object : EventEvaluatorBase<ILoggingEvent>() {
+                        override fun evaluate(event: ILoggingEvent): Boolean {
+                            return event.level.isGreaterOrEqual(Level.valueOf(level))
+                        }
+                    }
+                    start(context, filter)
+                    setEvaluator(filter)
+                }
+            } else {//marker 过滤
+                val filter = OnMarkerEvaluator()
+                filter.addMarker(mailMarker)
+                start(context, filter)
+                setEvaluator(filter)
+            }
+
+            start()
+        }
+        return appender
+    }
+
+    /**
+     * 发送Socket
+     */
+    private fun socketAppender(context: LoggerContext, socketProperties: SocketLoggingProperties): Appender<ILoggingEvent> {
+        val appender = SocketAppender()
+        with(appender) {
+            this.context = context
+            name = "socket"
+            setIncludeCallerData(socketProperties.isIncludeCallerData)
+            port = socketProperties.port
+            reconnectionDelay = ch.qos.logback.core.util.Duration(socketProperties.reconnectionDelay.toMillis())
+            queueSize = socketProperties.queueSize
+            eventDelayLimit = ch.qos.logback.core.util.Duration(socketProperties.eventDelayLimit.toMillis())
+            remoteHost = socketProperties.remoteHost
+            start()
+        }
+        return appender
+    }
+
+    /**
+     * 发送SSLSocket
+     */
+    private fun sslSocketAppender(context: LoggerContext, socketProperties: SocketLoggingProperties): Appender<ILoggingEvent> {
+        val appender = SSLSocketAppender()
+        with(appender) {
+            this.context = context
+            name = "socket"
+            setIncludeCallerData(socketProperties.isIncludeCallerData)
+            port = socketProperties.port
+            reconnectionDelay = ch.qos.logback.core.util.Duration(socketProperties.reconnectionDelay.toMillis())
+            queueSize = socketProperties.queueSize
+            eventDelayLimit = ch.qos.logback.core.util.Duration(socketProperties.eventDelayLimit.toMillis())
+            remoteHost = socketProperties.remoteHost
+            ssl = socketProperties.ssl
+            start()
+        }
+        return appender
+    }
+
+    /**
+     * LogstashTcpSocketAppender
+     */
+    private fun logstashTcpSocketAppender(context: LoggerContext, socketProperties: LogstashTcpSocketProperties): Appender<ILoggingEvent> {
+        val appender = LogstashTcpSocketAppender()
+        with(appender) {
+            this.context = context
+            name = "logstashTcpSocket"
+            isIncludeCallerData = socketProperties.isIncludeCallerData
+            reconnectionDelay = socketProperties.reconnectionDelay
+            queueSize = socketProperties.ringBufferSize
+            socketProperties.destinations.forEach { addDestination(it) }
+            writeBufferSize = socketProperties.writeBufferSize
+            encoder = socketProperties.encoderClass.newInstance()
+            keepAliveDuration = socketProperties.keepAliveDuration
+            start()
+        }
+        return appender
+    }
+
+    private fun start(context: LoggerContext, lifeCycle: LifeCycle) {
+        if (lifeCycle is ContextAware) {
+            (lifeCycle as ContextAware).context = context
+        }
+        lifeCycle.start()
+    }
+
+    private fun getLocation(factory: ILoggerFactory): Any {
+        try {
+            val protectionDomain = factory.javaClass.protectionDomain
+            val codeSource = protectionDomain.codeSource
+            if (codeSource != null) {
+                return codeSource.location
+            }
+        } catch (ex: SecurityException) {
+            // Unable to determine location
+        }
+
+        return "unknown location"
+    }
+
+    companion object {
+        const val FILE_LOG_PATTERN = "%d{yyyy-MM-dd HH:mm:ss.SSS} " + "\${LOG_LEVEL_PATTERN:-%5p} \${PID:- } --- [%t] %-40.40logger{39} : %m%n\${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+    }
+}

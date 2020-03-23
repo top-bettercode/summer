@@ -1,0 +1,6 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cn.bestwu.logging.RequestLoggingConfiguration
+# Application Listeners
+org.springframework.context.ApplicationListener=\
+cn.bestwu.logging.BeforeLoggingApplicationListener
