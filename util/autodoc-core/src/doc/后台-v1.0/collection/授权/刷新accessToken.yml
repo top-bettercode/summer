@@ -1,0 +1,162 @@
+description: ""
+request:
+  uri: "/oauth/token"
+  restUri: "/oauth/token"
+  uriVariables: {}
+  uriVariablesExt: []
+  method: "POST"
+  headers:
+    Authorization:
+     - "Basic TDNLS1RPbHVMcnNTTHJlaHFHUWs0bURVMHF4cmdUUjY6MjNTREtPRXBzMG1LdzhURm5XVHpvZU9DZzZ6S2k4NmNNYUdmUk5XemR6bzVPUnJaUkF2bEVSM3hmbkpHWW4xOQ=="
+    Content-Type:
+     - "application/x-www-form-urlencoded"
+    Accept:
+     - "application/json;charset=UTF-8"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/x-www-form-urlencoded"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Authorization"
+    type: "String"
+    description: "授权码"
+    defaultVal: ""
+    value: "Basic TDNLS1RPbHVMcnNTTHJlaHFHUWs0bURVMHF4cmdUUjY6MjNTREtPRXBzMG1LdzhURm5XVHpvZU9DZzZ6S2k4NmNNYUdmUk5XemR6bzVPUnJaUkF2bEVSM3hmbkpHWW4xOQ=="
+    expanded: true
+    canCover: true
+    required: false
+  cookies: []
+  parameters:
+    grant_type:
+     - "refresh_token"
+    scope:
+     - "trust"
+    refresh_token:
+     - "58a31470-ad9e-4991-96f2-0340250397d9"
+  parametersExt:
+   -
+    name: "refresh_token"
+    type: "String"
+    description: "刷新令牌"
+    defaultVal: ""
+    value: "58a31470-ad9e-4991-96f2-0340250397d9"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "grant_type"
+    type: "String"
+    description: "授权方式"
+    defaultVal: ""
+    value: "refresh_token"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "scope"
+    type: "String(200)"
+    description: "权限范围"
+    defaultVal: ""
+    value: "trust"
+    expanded: true
+    canCover: true
+    required: false
+  parts: []
+  partsExt: []
+  contentAsString: ""
+  contentExt: []
+response:
+  headers:
+    Content-Type:
+     - "application/json;charset=UTF-8"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+  contentAsString: "{\"access_token\":\"63c478ca-0560-4733-9beb-2c5ab13f3a37\",\"\
+    token_type\":\"bearer\",\"refresh_token\":\"58a31470-ad9e-4991-96f2-0340250397d9\"\
+    ,\"expires_in\":43199,\"scope\":\"trust\"}"
+  contentExt:
+   -
+    name: "token_type"
+    type: "String"
+    description: "令牌类型"
+    defaultVal: ""
+    value: "bearer"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "refresh_token"
+    type: "String"
+    description: "刷新令牌"
+    defaultVal: ""
+    value: "58a31470-ad9e-4991-96f2-0340250397d9"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "access_token"
+    type: "String"
+    description: "存取令牌"
+    defaultVal: ""
+    value: "63c478ca-0560-4733-9beb-2c5ab13f3a37"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "expires_in"
+    type: "Integer"
+    description: "存取令牌多少时间后过期"
+    defaultVal: ""
+    value: "43199"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "scope"
+    type: "String(200)"
+    description: "权限范围"
+    defaultVal: ""
+    value: "trust"
+    expanded: true
+    canCover: true
+    required: false
+  stackTrace: ""
+  statusCode: 200
+protocol: ""
+prerequest: []
+testExec:
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

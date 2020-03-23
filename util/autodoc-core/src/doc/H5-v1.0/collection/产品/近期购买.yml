@@ -1,0 +1,318 @@
+description: ""
+request:
+  uri: "/materialProducts/recency"
+  restUri: "/materialProducts/recency"
+  uriVariables: {}
+  uriVariablesExt: []
+  method: "GET"
+  headers:
+    Accept:
+     - "application/json;version=2.0"
+    user-agent:
+     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    sign:
+     - "81ba2cbf2fe787737fb97dee7f497c5d"
+    Content-Type:
+     - "application/x-www-form-urlencoded"
+    accessToken:
+     - "9e13eaf6-dedd-4205-9c31-14b4ab05b1ef"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/x-www-form-urlencoded"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    defaultVal: ""
+    value: "9e13eaf6-dedd-4205-9c31-14b4ab05b1ef"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    defaultVal: ""
+    value: "application/json;version=2.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_签名算法>>"
+    defaultVal: ""
+    value: "81ba2cbf2fe787737fb97dee7f497c5d"
+    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    defaultVal: ""
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    expanded: true
+    canCover: true
+    required: false
+  cookies: []
+  parameters:
+    page:
+     - "1"
+    size:
+     - "20"
+  parametersExt:
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    defaultVal: ""
+    value: "20"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+  parts: []
+  partsExt: []
+  contentAsString: ""
+  contentExt: []
+response:
+  headers:
+    Content-Type:
+     - "application/json;charset=UTF-8"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+  contentAsString: "{\"total\":245,\"size\":20,\"pages\":13,\"page\":1,\"list\":[{\"\
+    materialId\":\"000000000020101947\",\"name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\"\
+    :\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+    ,\"price\":660.0,\"policies\":null},{\"materialId\":\"000000000020103072\",\"\
+    name\":\"57%嘉施利黑晶灵19-19-19腐植酸低氯黑色50KG\",\"category\":\"高浓度腐植酸型\",\"picUrl\":\"\
+    http://10.13.8.193/hollycrm-yuntu/upload/prod/20103072a.png?reqid=10000\",\"price\"\
+    :2540.0,\"policies\":null},{\"materialId\":\"000000000020100081\",\"name\":\"\
+    30%洋洋15-06-09高氯枸磷白色50KG\",\"category\":\"常规中浓度\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100081a.png?reqid=10000\"\
+    ,\"price\":1210.0,\"policies\":null},{\"materialId\":\"000000000020100021\",\"\
+    name\":\"25%洋洋13-05-07高氯枸磷白色25KG\",\"category\":\"常规低浓度\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100021a.png?reqid=10000\"\
+    ,\"price\":950.0,\"policies\":null},{\"materialId\":\"000000000020100021\",\"\
+    name\":\"25%洋洋13-05-07高氯枸磷白色25KG\",\"category\":\"常规低浓度\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100021a.png?reqid=10000\"\
+    ,\"price\":1000.0,\"policies\":null},{\"materialId\":\"000000000020102803\",\"\
+    name\":\"45%土博士17-09-19镁膜硫基红黄白40KG\",\"category\":\"镁膜肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20102803a.png?reqid=10000\"\
+    ,\"price\":2970.0,\"policies\":null},{\"materialId\":\"000000000020103072\",\"\
+    name\":\"57%嘉施利黑晶灵19-19-19腐植酸低氯黑色50KG\",\"category\":\"高浓度腐植酸型\",\"picUrl\":\"\
+    http://10.13.8.193/hollycrm-yuntu/upload/prod/20103072a.png?reqid=10000\",\"price\"\
+    :2800.0,\"policies\":null},{\"materialId\":\"000000000020102803\",\"name\":\"\
+    45%土博士17-09-19镁膜硫基红黄白40KG\",\"category\":\"镁膜肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20102803a.png?reqid=10000\"\
+    ,\"price\":2970.0,\"policies\":null},{\"materialId\":\"000000000020103072\",\"\
+    name\":\"57%嘉施利黑晶灵19-19-19腐植酸低氯黑色50KG\",\"category\":\"高浓度腐植酸型\",\"picUrl\":\"\
+    http://10.13.8.193/hollycrm-yuntu/upload/prod/20103072a.png?reqid=10000\",\"price\"\
+    :2800.0,\"policies\":null},{\"materialId\":\"000000000020101659\",\"name\":\"\
+    54%桂湖18-18-18黄腐酸钾低氯黑色25KG\",\"category\":\"黄腐酸钾\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101659a.png?reqid=10000\"\
+    ,\"price\":2670.0,\"policies\":null},{\"materialId\":\"000000000020102446\",\"\
+    name\":\"54%嘉施利18-18-18黄腐酸钾低氯葵花黑色50KG\",\"category\":\"黄腐酸钾\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20102446a.png?reqid=10000\"\
+    ,\"price\":2680.0,\"policies\":null},{\"materialId\":\"000000000020101947\",\"\
+    name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+    ,\"price\":670.0,\"policies\":null},{\"materialId\":\"000000000020101947\",\"\
+    name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+    ,\"price\":670.0,\"policies\":null},{\"materialId\":\"000000000020101947\",\"\
+    name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+    ,\"price\":670.0,\"policies\":null},{\"materialId\":\"000000000020101947\",\"\
+    name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+    ,\"price\":670.0,\"policies\":null},{\"materialId\":\"000000000020101004\",\"\
+    name\":\"51%嘉施利根动力17-17-17全水溶硝硫基白色25KG\",\"category\":\"硝基水溶滴灌型\",\"picUrl\":\"\
+    http://10.13.8.193/hollycrm-yuntu/upload/prod/20101004a.png?reqid=10000\",\"price\"\
+    :3780.0,\"policies\":null},{\"materialId\":\"000000000020102446\",\"name\":\"\
+    54%嘉施利18-18-18黄腐酸钾低氯葵花黑色50KG\",\"category\":\"黄腐酸钾\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20102446a.png?reqid=10000\"\
+    ,\"price\":2680.0,\"policies\":null},{\"materialId\":\"000000000020102358\",\"\
+    name\":\"30%土博士30-00-00高塔脲铵氮肥白色40KG\",\"category\":\"脲铵氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20102358a.png?reqid=10000\"\
+    ,\"price\":1500.0,\"policies\":null},{\"materialId\":\"000000000020102354\",\"\
+    name\":\"45%洋洋12-18-15喷浆硫基白色50KG\",\"category\":\"喷浆硫酸钾\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20102354a.png?reqid=10000\"\
+    ,\"price\":2090.0,\"policies\":null},{\"materialId\":\"000000000020101947\",\"\
+    name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+    ,\"price\":820.0,\"policies\":null}]}"
+  contentExt:
+   -
+    name: "list.name"
+    type: "String"
+    description: "产品名称"
+    defaultVal: ""
+    value: "25%洋洋25-00-00复合氮肥白色50KG"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.policies"
+    type: "Array<String>"
+    description: "优惠政策"
+    defaultVal: ""
+    value: ""
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    defaultVal: ""
+    value: "[{\"materialId\":\"000000000020101947\",\"name\":\"25%洋洋25-00-00复合氮肥白色\
+      50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+      ,\"price\":660.0,\"policies\":null},{\"materialId\":\"000000000020103072\",\"\
+      name\":\"57%嘉施利黑晶灵19-19-19腐植酸低氯黑色50KG\",\"category\":\"高浓度腐植酸型\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20103072a.png?reqid=10000\"\
+      ,\"price\":2540.0,\"policies\":null},{\"materialId\":\"000000000020100081\"\
+      ,\"name\":\"30%洋洋15-06-09高氯枸磷白色50KG\",\"category\":\"常规中浓度\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100081a.png?reqid=10000\"\
+      ,\"price\":1210.0,\"policies\":null},{\"materialId\":\"000000000020100021\"\
+      ,\"name\":\"25%洋洋13-05-07高氯枸磷白色25KG\",\"category\":\"常规低浓度\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100021a.png?reqid=10000\"\
+      ,\"price\":950.0,\"policies\":null},{\"materialId\":\"000000000020100021\",\"\
+      name\":\"25%洋洋13-05-07高氯枸磷白色25KG\",\"category\":\"常规低浓度\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100021a.png?reqid=10000\"\
+      ,\"price\":1000.0,\"policies\":null},{\"materialId\":\"000000000020102803\"\
+      ,\"name\":\"45%土博士17-09-19镁膜硫基红黄白40KG\",\"category\":\"镁膜肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20102803a.png?reqid=10000\"\
+      ,\"price\":2970.0,\"policies\":null},{\"materialId\":\"000000000020103072\"\
+      ,\"name\":\"57%嘉施利黑晶灵19-19-19腐植酸低氯黑色50KG\",\"category\":\"高浓度腐植酸型\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20103072a.png?reqid=10000\"\
+      ,\"price\":2800.0,\"policies\":null},{\"materialId\":\"000000000020102803\"\
+      ,\"name\":\"45%土博士17-09-19镁膜硫基红黄白40KG\",\"category\":\"镁膜肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20102803a.png?reqid=10000\"\
+      ,\"price\":2970.0,\"policies\":null},{\"materialId\":\"000000000020103072\"\
+      ,\"name\":\"57%嘉施利黑晶灵19-19-19腐植酸低氯黑色50KG\",\"category\":\"高浓度腐植酸型\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20103072a.png?reqid=10000\"\
+      ,\"price\":2800.0,\"policies\":null},{\"materialId\":\"000000000020101659\"\
+      ,\"name\":\"54%桂湖18-18-18黄腐酸钾低氯黑色25KG\",\"category\":\"黄腐酸钾\",\"picUrl\":\"\
+      http://10.13.8.193/hollycrm-yuntu/upload/prod/20101659a.png?reqid=10000\",\"\
+      price\":2670.0,\"policies\":null},{\"materialId\":\"000000000020102446\",\"\
+      name\":\"54%嘉施利18-18-18黄腐酸钾低氯葵花黑色50KG\",\"category\":\"黄腐酸钾\",\"picUrl\":\"\
+      http://10.13.8.193/hollycrm-yuntu/upload/prod/20102446a.png?reqid=10000\",\"\
+      price\":2680.0,\"policies\":null},{\"materialId\":\"000000000020101947\",\"\
+      name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+      ,\"price\":670.0,\"policies\":null},{\"materialId\":\"000000000020101947\",\"\
+      name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+      ,\"price\":670.0,\"policies\":null},{\"materialId\":\"000000000020101947\",\"\
+      name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+      ,\"price\":670.0,\"policies\":null},{\"materialId\":\"000000000020101947\",\"\
+      name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+      ,\"price\":670.0,\"policies\":null},{\"materialId\":\"000000000020101004\",\"\
+      name\":\"51%嘉施利根动力17-17-17全水溶硝硫基白色25KG\",\"category\":\"硝基水溶滴灌型\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101004a.png?reqid=10000\"\
+      ,\"price\":3780.0,\"policies\":null},{\"materialId\":\"000000000020102446\"\
+      ,\"name\":\"54%嘉施利18-18-18黄腐酸钾低氯葵花黑色50KG\",\"category\":\"黄腐酸钾\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20102446a.png?reqid=10000\"\
+      ,\"price\":2680.0,\"policies\":null},{\"materialId\":\"000000000020102358\"\
+      ,\"name\":\"30%土博士30-00-00高塔脲铵氮肥白色40KG\",\"category\":\"脲铵氮肥\",\"picUrl\":\"\
+      http://10.13.8.193/hollycrm-yuntu/upload/prod/20102358a.png?reqid=10000\",\"\
+      price\":1500.0,\"policies\":null},{\"materialId\":\"000000000020102354\",\"\
+      name\":\"45%洋洋12-18-15喷浆硫基白色50KG\",\"category\":\"喷浆硫酸钾\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20102354a.png?reqid=10000\"\
+      ,\"price\":2090.0,\"policies\":null},{\"materialId\":\"000000000020101947\"\
+      ,\"name\":\"25%洋洋25-00-00复合氮肥白色50KG\",\"category\":\"复合氮肥\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000\"\
+      ,\"price\":820.0,\"policies\":null}]"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.price"
+    type: "BigDecimal"
+    description: "单价"
+    defaultVal: ""
+    value: "660.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.category"
+    type: "String"
+    description: "品类"
+    defaultVal: ""
+    value: "复合氮肥"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.picUrl"
+    type: "String"
+    description: "图片url"
+    defaultVal: ""
+    value: "http://10.13.8.193/hollycrm-yuntu/upload/prod/20101947a.png?reqid=10000"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    defaultVal: ""
+    value: "20"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    defaultVal: ""
+    value: "245"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    defaultVal: ""
+    value: "13"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.materialId"
+    type: "String"
+    description: "物料ID"
+    defaultVal: ""
+    value: "000000000020101947"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+  stackTrace: ""
+  statusCode: 200
+protocol: ""
+prerequest: []
+testExec:
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

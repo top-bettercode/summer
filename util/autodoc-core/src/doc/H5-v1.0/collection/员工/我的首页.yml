@@ -1,0 +1,141 @@
+description: ""
+request:
+  uri: "/employees/self"
+  restUri: "/employees/self"
+  uriVariables: {}
+  uriVariablesExt: []
+  method: "GET"
+  headers:
+    Accept:
+     - "application/json;version=2.0"
+    user-agent:
+     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    sign:
+     - "6c5467aaaf8b8c5876b8016771744b64"
+    Content-Type:
+     - "application/x-www-form-urlencoded"
+    accessToken:
+     - "d187f527-47e7-4b51-a90b-595b21f5f38a"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/x-www-form-urlencoded"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    defaultVal: ""
+    value: "d187f527-47e7-4b51-a90b-595b21f5f38a"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    defaultVal: ""
+    value: "application/json;version=2.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_签名算法>>"
+    defaultVal: ""
+    value: "6c5467aaaf8b8c5876b8016771744b64"
+    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    defaultVal: ""
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    expanded: true
+    canCover: true
+    required: false
+  cookies: []
+  parameters: {}
+  parametersExt: []
+  parts: []
+  partsExt: []
+  contentAsString: ""
+  contentExt: []
+response:
+  headers:
+    Content-Type:
+     - "application/json;charset=UTF-8"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+  contentAsString: "{\"empName\":\"杜亚\",\"custNum\":2870,\"newCustNum\":1,\"newOrderNum\"\
+    :7}"
+  contentExt:
+   -
+    name: "empName"
+    type: "String"
+    description: "姓名"
+    defaultVal: ""
+    value: "杜亚"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "custNum"
+    type: "Long"
+    description: "客户数"
+    defaultVal: ""
+    value: "2870"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "newCustNum"
+    type: "Long"
+    description: "新增客户数"
+    defaultVal: ""
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "newOrderNum"
+    type: "Long"
+    description: "新增订单数"
+    defaultVal: ""
+    value: "7"
+    expanded: true
+    canCover: true
+    required: false
+  stackTrace: ""
+  statusCode: 200
+protocol: ""
+prerequest: []
+testExec:
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

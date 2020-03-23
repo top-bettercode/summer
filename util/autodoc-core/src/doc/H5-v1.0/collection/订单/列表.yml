@@ -1,0 +1,510 @@
+description: ""
+request:
+  uri: "/ordOrders"
+  restUri: "/ordOrders"
+  uriVariables: {}
+  uriVariablesExt: []
+  method: "GET"
+  headers:
+    Accept:
+     - "application/json;version=2.0"
+    user-agent:
+     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    sign:
+     - "63502f8f9d2b86ea821c027b8a5bf97f"
+    Content-Type:
+     - "application/x-www-form-urlencoded"
+    accessToken:
+     - "4f6cfc2f-c262-4379-843b-850ac44af97b"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/x-www-form-urlencoded"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    defaultVal: ""
+    value: "4f6cfc2f-c262-4379-843b-850ac44af97b"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    defaultVal: ""
+    value: "application/json;version=2.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_签名算法>>"
+    defaultVal: ""
+    value: "63502f8f9d2b86ea821c027b8a5bf97f"
+    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    defaultVal: ""
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    expanded: true
+    canCover: true
+    required: false
+  cookies: []
+  parameters:
+    status:
+     - "01"
+    auditStatus:
+     - "WAIT_AUDIT"
+    newOrder:
+     - "false"
+    page:
+     - "1"
+    size:
+     - "20"
+  parametersExt:
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    defaultVal: ""
+    value: "20"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "newOrder"
+    type: "Boolean"
+    description: "是否新增订单"
+    defaultVal: "false"
+    value: "false"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "auditStatus"
+    type: "String"
+    description: "订单审核状态"
+    defaultVal: ""
+    value: "WAIT_AUDIT"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "status"
+    type: "String"
+    description: "订单状态"
+    defaultVal: ""
+    value: "01"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+  parts: []
+  partsExt: []
+  contentAsString: ""
+  contentExt: []
+response:
+  headers:
+    Content-Type:
+     - "application/json;charset=UTF-8"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+  contentAsString: "{\"total\":35,\"size\":20,\"pages\":2,\"page\":1,\"list\":[{\"\
+    orderId\":\"ORD001625180409\",\"sapCode\":null,\"payAmout\":7470.0,\"actualAmout\"\
+    :7470.0,\"qty\":2.0,\"status\":\"01\",\"auditStatus\":\"WAIT_AUDIT\",\"createTime\"\
+    :1523262472000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\":0.0,\"materials\":[{\"\
+    materialId\":\"000000000020102691\",\"picUrl\":null}],\"materialNum\":1},{\"orderId\"\
+    :\"ORD001584180321\",\"sapCode\":null,\"payAmout\":273.5,\"actualAmout\":273.5,\"\
+    qty\":0.1,\"status\":\"01\",\"auditStatus\":\"WAIT_AUDIT\",\"createTime\":1521614149000,\"\
+    custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\":0.0,\"materials\":[{\"materialId\":\"\
+    000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD001583180321\",\"sapCode\":null,\"payAmout\"\
+    :273.5,\"actualAmout\":273.5,\"qty\":0.1,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1521604392000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD001582180321\",\"sapCode\":null,\"payAmout\"\
+    :2188.0,\"actualAmout\":2188.0,\"qty\":0.8,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1521603822000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD001581180320\",\"sapCode\":null,\"payAmout\"\
+    :5470.0,\"actualAmout\":2735.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1521534089000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD001571180315\",\"sapCode\":null,\"payAmout\"\
+    :3635.0,\"actualAmout\":3735.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1521106863000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD001561180309\",\"sapCode\":null,\"payAmout\"\
+    :3000.0,\"actualAmout\":3000.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1520560692000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD00155D180308\",\"sapCode\":null,\"payAmout\"\
+    :2000.0,\"actualAmout\":2000.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1520475716000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD00155C180308\",\"sapCode\":null,\"payAmout\"\
+    :3000.0,\"actualAmout\":3000.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1520474790000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD00154D180305\",\"sapCode\":null,\"payAmout\"\
+    :518.64,\"actualAmout\":518.64,\"qty\":0.24,\"status\":\"01\",\"auditStatus\"\
+    :\"WAIT_AUDIT\",\"createTime\":1520217843000,\"custName\":\"百色市右江区禾苗农资销售部\",\"\
+    sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+    :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"}],\"\
+    materialNum\":1},{\"orderId\":\"ORD00154B180302\",\"sapCode\":null,\"payAmout\"\
+    :2211.0,\"actualAmout\":2211.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1519977221000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD001547180223\",\"sapCode\":null,\"payAmout\"\
+    :2161.0,\"actualAmout\":2161.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1519375689000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD001509180202\",\"sapCode\":null,\"payAmout\"\
+    :0.0,\"actualAmout\":0.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"WAIT_AUDIT\"\
+    ,\"createTime\":1517561831000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\":0.0,\"\
+    materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD0014F2180129\",\"sapCode\":null,\"payAmout\"\
+    :1014.0,\"actualAmout\":1014.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1517211870000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020103197\",\"picUrl\":null}],\"\
+    materialNum\":1},{\"orderId\":\"ORD0014D7180126\",\"sapCode\":null,\"payAmout\"\
+    :7472.0,\"actualAmout\":7472.0,\"qty\":4.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1516951710000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    },{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+    }],\"materialNum\":2},{\"orderId\":\"ORD00143E180117\",\"sapCode\":null,\"payAmout\"\
+    :100.0,\"actualAmout\":100.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1516157251000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020101131\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101131a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD001426180116\",\"sapCode\":null,\"payAmout\"\
+    :1938.0,\"actualAmout\":1938.0,\"qty\":1.2,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1516089019000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020100106\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100106a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD00137E180104\",\"sapCode\":null,\"payAmout\"\
+    :3760.0,\"actualAmout\":3860.0,\"qty\":2.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1515053685000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020100364\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100364a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD00137D180104\",\"sapCode\":null,\"payAmout\"\
+    :3760.0,\"actualAmout\":3860.0,\"qty\":2.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1515052485000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020100364\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100364a.png?reqid=10000\"\
+    }],\"materialNum\":1},{\"orderId\":\"ORD00137C180104\",\"sapCode\":null,\"payAmout\"\
+    :3750.0,\"actualAmout\":3850.0,\"qty\":2.0,\"status\":\"01\",\"auditStatus\":\"\
+    WAIT_AUDIT\",\"createTime\":1515052269000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\"\
+    :0.0,\"materials\":[{\"materialId\":\"000000000020100364\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100364a.png?reqid=10000\"\
+    }],\"materialNum\":1}]}"
+  contentExt:
+   -
+    name: "list.createTime"
+    type: "Long"
+    description: ""
+    defaultVal: ""
+    value: "1523262472000"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.sapCode"
+    type: "String"
+    description: "SAP编号"
+    defaultVal: ""
+    value: ""
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.orderId"
+    type: "String"
+    description: "主键"
+    defaultVal: ""
+    value: "ORD001625180409"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    defaultVal: ""
+    value: "[{\"orderId\":\"ORD001625180409\",\"sapCode\":null,\"payAmout\":7470.0,\"\
+      actualAmout\":7470.0,\"qty\":2.0,\"status\":\"01\",\"auditStatus\":\"WAIT_AUDIT\"\
+      ,\"createTime\":1523262472000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\":0.0,\"\
+      materials\":[{\"materialId\":\"000000000020102691\",\"picUrl\":null}],\"materialNum\"\
+      :1},{\"orderId\":\"ORD001584180321\",\"sapCode\":null,\"payAmout\":273.5,\"\
+      actualAmout\":273.5,\"qty\":0.1,\"status\":\"01\",\"auditStatus\":\"WAIT_AUDIT\"\
+      ,\"createTime\":1521614149000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\":0.0,\"\
+      materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD001583180321\",\"sapCode\":null,\"payAmout\"\
+      :273.5,\"actualAmout\":273.5,\"qty\":0.1,\"status\":\"01\",\"auditStatus\":\"\
+      WAIT_AUDIT\",\"createTime\":1521604392000,\"custName\":\"百色市右江区禾苗农资销售部\",\"\
+      sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD001582180321\",\"sapCode\":null,\"payAmout\"\
+      :2188.0,\"actualAmout\":2188.0,\"qty\":0.8,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1521603822000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD001581180320\",\"sapCode\":null,\"payAmout\"\
+      :5470.0,\"actualAmout\":2735.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1521534089000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD001571180315\",\"sapCode\":null,\"payAmout\"\
+      :3635.0,\"actualAmout\":3735.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1521106863000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD001561180309\",\"sapCode\":null,\"payAmout\"\
+      :3000.0,\"actualAmout\":3000.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1520560692000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD00155D180308\",\"sapCode\":null,\"payAmout\"\
+      :2000.0,\"actualAmout\":2000.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1520475716000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD00155C180308\",\"sapCode\":null,\"payAmout\"\
+      :3000.0,\"actualAmout\":3000.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1520474790000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD00154D180305\",\"sapCode\":null,\"payAmout\"\
+      :518.64,\"actualAmout\":518.64,\"qty\":0.24,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1520217843000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD00154B180302\",\"sapCode\":null,\"payAmout\"\
+      :2211.0,\"actualAmout\":2211.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1519977221000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD001547180223\",\"sapCode\":null,\"payAmout\"\
+      :2161.0,\"actualAmout\":2161.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1519375689000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD001509180202\",\"sapCode\":null,\"payAmout\"\
+      :0.0,\"actualAmout\":0.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"WAIT_AUDIT\"\
+      ,\"createTime\":1517561831000,\"custName\":\"百色市右江区禾苗农资销售部\",\"sendQty\":0.0,\"\
+      materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD0014F2180129\",\"sapCode\":null,\"payAmout\"\
+      :1014.0,\"actualAmout\":1014.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1517211870000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020103197\",\"picUrl\"\
+      :null}],\"materialNum\":1},{\"orderId\":\"ORD0014D7180126\",\"sapCode\":null,\"\
+      payAmout\":7472.0,\"actualAmout\":7472.0,\"qty\":4.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1516951710000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101743\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101743\",\"picUrl\":\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101743a.png?reqid=10000\"\
+      }],\"materialNum\":2},{\"orderId\":\"ORD00143E180117\",\"sapCode\":null,\"payAmout\"\
+      :100.0,\"actualAmout\":100.0,\"qty\":1.0,\"status\":\"01\",\"auditStatus\":\"\
+      WAIT_AUDIT\",\"createTime\":1516157251000,\"custName\":\"百色市右江区禾苗农资销售部\",\"\
+      sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020101131\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20101131a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD001426180116\",\"sapCode\":null,\"payAmout\"\
+      :1938.0,\"actualAmout\":1938.0,\"qty\":1.2,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1516089019000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020100106\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100106a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD00137E180104\",\"sapCode\":null,\"payAmout\"\
+      :3760.0,\"actualAmout\":3860.0,\"qty\":2.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1515053685000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020100364\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100364a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD00137D180104\",\"sapCode\":null,\"payAmout\"\
+      :3760.0,\"actualAmout\":3860.0,\"qty\":2.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1515052485000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020100364\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100364a.png?reqid=10000\"\
+      }],\"materialNum\":1},{\"orderId\":\"ORD00137C180104\",\"sapCode\":null,\"payAmout\"\
+      :3750.0,\"actualAmout\":3850.0,\"qty\":2.0,\"status\":\"01\",\"auditStatus\"\
+      :\"WAIT_AUDIT\",\"createTime\":1515052269000,\"custName\":\"百色市右江区禾苗农资销售部\"\
+      ,\"sendQty\":0.0,\"materials\":[{\"materialId\":\"000000000020100364\",\"picUrl\"\
+      :\"http://10.13.8.193/hollycrm-yuntu/upload/prod/20100364a.png?reqid=10000\"\
+      }],\"materialNum\":1}]"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.sendQty"
+    type: "BigDecimal"
+    description: "发货数量"
+    defaultVal: ""
+    value: "0.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.materials"
+    type: "List<OrdOrderMaterial>"
+    description: "商品信息"
+    defaultVal: ""
+    value: "[{\"materialId\":\"000000000020102691\",\"picUrl\":null}]"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.materialNum"
+    type: "Long"
+    description: "商品数量"
+    defaultVal: ""
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.materials.picUrl"
+    type: "String"
+    description: "图片"
+    defaultVal: ""
+    value: ""
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.actualAmout"
+    type: "BigDecimal"
+    description: "实际金额"
+    defaultVal: ""
+    value: "7470.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.custName"
+    type: "String"
+    description: "客户名称"
+    defaultVal: ""
+    value: "百色市右江区禾苗农资销售部"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    defaultVal: ""
+    value: "20"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.qty"
+    type: "BigDecimal"
+    description: "总数"
+    defaultVal: ""
+    value: "2.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    defaultVal: ""
+    value: "35"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    defaultVal: ""
+    value: "2"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.payAmout"
+    type: "BigDecimal"
+    description: "支付金额"
+    defaultVal: ""
+    value: "7470.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.materials.materialId"
+    type: "String"
+    description: "物料ID"
+    defaultVal: ""
+    value: "000000000020102691"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.auditStatus"
+    type: "String"
+    description: "订单审核状态"
+    defaultVal: ""
+    value: "WAIT_AUDIT"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.status"
+    type: "String"
+    description: "订单状态"
+    defaultVal: ""
+    value: "01"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+  stackTrace: ""
+  statusCode: 200
+protocol: ""
+prerequest: []
+testExec:
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""
