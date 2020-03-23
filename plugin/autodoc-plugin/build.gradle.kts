@@ -1,9 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 dependencies {
-    compile(gradleApi())
     compile(project(":util:autodoc-core"))
-    testCompile(kotlin("test-junit"))
 }
 
 tasks {

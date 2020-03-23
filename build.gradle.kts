@@ -47,6 +47,8 @@ allprojects {
     }
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         dependencies {
+            dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
+
             dependency("org.dom4j:dom4j:2.1.1")
             dependency("org.atteo:evo-inflector:1.2.2")
             dependency("org.mybatis.generator:mybatis-generator-core:1.3.7")
