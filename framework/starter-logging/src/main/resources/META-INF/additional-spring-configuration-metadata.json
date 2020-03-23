@@ -1,0 +1,168 @@
+{
+  "groups": [
+    {
+      "name": "logging",
+      "type": "cn.bestwu.logging.logback.Logback2LoggingSystem"
+    }
+  ],
+  "properties": [
+    {
+      "name": "logging.warn-subject",
+      "type": "java.lang.String",
+      "defaultValue": "${spring.application.name}  ${spring.profiles.active} system exception;",
+      "sourceType": "cn.bestwu.logging.UtilKt"
+    },
+    {
+      "name": "logging.spilt",
+      "type": "java.util.Map<java.lang.String,java.lang.String>",
+      "description": "Log levels severity mapping. Use 'root' for the root logger.Stored in different files, respectively.",
+      "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem"
+    },
+    {
+      "name": "logging.spilt-marker",
+      "type": "java.util.Map<java.lang.String,java.lang.String>",
+      "description": "Log levels severity mapping.Delimited files based on markup.",
+      "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem"
+    },
+    {
+      "name": "logging.spilt-level",
+      "type": "java.lang.String[]",
+      "description": "Log levels.Stored in different files, respectively.",
+      "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem"
+    },
+    {
+      "name": "logging.show.enabled",
+      "sourceType": "cn.bestwu.logging.RequestLoggingConfiguration",
+      "defaultValue": true,
+      "type": "java.lang.Boolean"
+    },
+    {
+      "name": "logging.user.username",
+      "sourceType": "cn.bestwu.logging.RequestLoggingConfiguration",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "logging.user.password",
+      "sourceType": "cn.bestwu.logging.RequestLoggingConfiguration",
+      "type": "java.lang.String"
+    }
+  ],
+  "hints": [
+    {
+      "name": "logging.spilt.keys",
+      "values": [
+        {
+          "value": "root",
+          "description": "Root logger used to assign the default logging level."
+        }
+      ],
+      "providers": [
+        {
+          "name": "logger-name"
+        }
+      ]
+    },
+    {
+      "name": "logging.spilt.values",
+      "values": [
+        {
+          "value": "trace"
+        },
+        {
+          "value": "debug"
+        },
+        {
+          "value": "info"
+        },
+        {
+          "value": "warn"
+        },
+        {
+          "value": "error"
+        },
+        {
+          "value": "fatal"
+        },
+        {
+          "value": "off"
+        }
+      ],
+      "providers": [
+        {
+          "name": "any"
+        }
+      ]
+    },
+    {
+      "name": "logging.spilt-level",
+      "values": [
+        {
+          "value": "trace"
+        },
+        {
+          "value": "debug"
+        },
+        {
+          "value": "info"
+        },
+        {
+          "value": "warn"
+        },
+        {
+          "value": "error"
+        },
+        {
+          "value": "fatal"
+        },
+        {
+          "value": "off"
+        }
+      ],
+      "providers": [
+        {
+          "name": "any"
+        }
+      ]
+    },
+    {
+      "name": "logging.spilt-marker.keys",
+      "providers": [
+        {
+          "name": "any"
+        }
+      ]
+    },
+    {
+      "name": "logging.spilt-marker.values",
+      "values": [
+        {
+          "value": "trace"
+        },
+        {
+          "value": "debug"
+        },
+        {
+          "value": "info"
+        },
+        {
+          "value": "warn"
+        },
+        {
+          "value": "error"
+        },
+        {
+          "value": "fatal"
+        },
+        {
+          "value": "off"
+        }
+      ],
+      "providers": [
+        {
+          "name": "any"
+        }
+      ]
+    }
+  ]
+}
+

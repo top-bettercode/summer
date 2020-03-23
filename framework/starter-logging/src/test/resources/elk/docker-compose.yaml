@@ -1,0 +1,35 @@
+version: '2'
+services:
+  elasticsearch:
+    image: elasticsearch:6.5.1
+    hostname: elasticsearch
+    container_name: elasticsearch
+#    restart: always
+    environment:
+      discovery.type: single-node
+#    volumes:
+#       - ./data:/usr/share/elasticsearch/data
+  kibana:
+    image: kibana:6.5.1
+    hostname: kibana
+    container_name: kibana
+#    restart: always
+    links:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200/
+    ports:
+      - 5601:5601
+
+  logstash:
+    image: logstash:6.5.1
+    hostname: logstash
+    container_name: logstash
+#    restart: always
+    links:
+      - elasticsearch
+    volumes:
+      - ./logstash:/opt/logstash/conf
+    command: logstash -f /opt/logstash/conf/
+    ports:
+      - 4560:4560
