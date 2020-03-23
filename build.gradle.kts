@@ -42,9 +42,17 @@ allprojects {
         gradlePluginPortal()
         maven("http://oss.jfrog.org/oss-snapshot-local")
     }
-
+    ext {
+        this["plantumlVersion"] = "1.2018.13"
+    }
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         dependencies {
+            dependency("org.dom4j:dom4j:2.1.1")
+            dependency("org.atteo:evo-inflector:1.2.2")
+            dependency("org.mybatis.generator:mybatis-generator-core:1.3.7")
+            dependency("com.h2database:h2:1.4.197")
+            dependency("net.sourceforge.plantuml:plantuml:${ext["plantumlVersion"]}")
+
             dependency("org.jsoup:jsoup:1.11.3")
             dependency("cn.bestwu:common-lang:1.1.7-SNAPSHOT")
             dependency("cn.bestwu:api-sign:1.2.4")

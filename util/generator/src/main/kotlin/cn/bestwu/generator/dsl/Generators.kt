@@ -1,0 +1,154 @@
+package cn.bestwu.generator.dsl
+
+import cn.bestwu.generator.DataType
+import cn.bestwu.generator.GeneratorExtension
+import cn.bestwu.generator.dom.java.JavaTypeResolver
+import cn.bestwu.generator.powerdesigner.PdmReader
+import cn.bestwu.generator.puml.PumlConverter
+
+/**
+ * 模板脚本
+ * @author Peter Wu
+
+ */
+object Generators {
+
+    /**
+     * @param extension 配置
+     */
+    fun call(extension: GeneratorExtension) {
+        JavaTypeResolver.softDeleteColumnName = extension.softDeleteColumnName
+        JavaTypeResolver.softDeleteAsBoolean = extension.softDeleteAsBoolean
+        if (extension.generators.isEmpty()) {
+            return
+        }
+        when (extension.dataType) {
+            DataType.DATABASE -> database(extension)
+            DataType.PUML -> puml(extension)
+            DataType.PDM -> pdm(extension)
+        }
+    }
+
+    fun tableNames(extension: GeneratorExtension): List<String> {
+        JavaTypeResolver.softDeleteColumnName = extension.softDeleteColumnName
+        JavaTypeResolver.softDeleteAsBoolean = extension.softDeleteAsBoolean
+        return when (extension.dataType) {
+            DataType.DATABASE -> extension.use {
+                tableNames()
+            }
+            DataType.PUML -> {
+                extension.pumlSrcSources.map { PumlConverter.toTables(it) }.flatten().map { it.tableName }.toList()
+            }
+            DataType.PDM -> {
+                PdmReader.read(extension.file(extension.pdmSrc)).map { it.tableName }.toList()
+            }
+        }
+    }
+
+    fun pdm(extension: GeneratorExtension) {
+        val generators = extension.generators
+        if (generators.isEmpty()) {
+            return
+        }
+        generators.forEach { generator ->
+            generator.setUp(extension)
+        }
+
+        val tables = PdmReader.read(extension.file(extension.pdmSrc))
+        if (extension.tableNames.isEmpty()) {
+            extension.tableNames = tables.map { it.tableName }.toTypedArray()
+        }
+
+        extension.tableNames.forEach { tableName ->
+            val table = tables.find { it.tableName == tableName }
+                    ?: throw RuntimeException("未在(${extension.tableNames})中找到${tableName}表")
+            generators.forEach { generator ->
+                generator.call(extension, table)
+            }
+        }
+        generators.forEach { generator ->
+            generator.tearDown(extension)
+        }
+    }
+
+    fun database(extension: GeneratorExtension) {
+        val generators = extension.generators
+        if (generators.isEmpty()) {
+            return
+        }
+        generators.forEach { generator ->
+            generator.setUp(extension)
+        }
+
+        extension.use {
+            if (extension.tableNames.isEmpty()) {
+                extension.use {
+                    extension.tableNames = tableNames().toTypedArray()
+                }
+            }
+            extension.tableNames.forEach {
+                val table = table(it)
+                if (table != null) {
+                    generators.forEach { generator ->
+                        generator.call(extension, table)
+                    }
+                }
+            }
+        }
+        generators.forEach { generator ->
+            generator.tearDown(extension)
+        }
+    }
+
+    fun puml(extension: GeneratorExtension) {
+        val generators = extension.generators
+        if (generators.isEmpty()) {
+            return
+        }
+        generators.forEach { generator ->
+            generator.setUp(extension)
+        }
+
+        val emptyTableNames = extension.tableNames.isEmpty()
+        if (emptyTableNames) {
+            extension.pumlAllSources.forEach { file ->
+                val tables = PumlConverter.toTables(file)
+                tables.forEach { table ->
+                    println("查询：${table.tableName} 表数据结构")
+                    generators.forEach { generator ->
+                        generator.module = file.nameWithoutExtension
+                        generator.call(extension, table)
+                    }
+                }
+            }
+
+        } else {
+            extension.tableNames.forEach { tableName ->
+                println("查询：$tableName 表数据结构")
+                var found = false
+                val allTableNames = mutableSetOf<String>()
+                extension.pumlAllSources.forEach inner@{ file ->
+                    val tables = PumlConverter.toTables(file)
+                    val table = tables.find { it.tableName == tableName }
+                    if (table != null) {
+                        found = true
+                        generators.forEach { generator ->
+                            generator.module = file.nameWithoutExtension
+                            generator.call(extension, table)
+                        }
+                        return@inner
+                    } else {
+                        allTableNames.addAll(tables.map { it.tableName })
+                    }
+                }
+                if (!found)
+                    throw RuntimeException("未在($allTableNames)中找到${tableName}表")
+            }
+        }
+
+        generators.forEach { generator ->
+            generator.tearDown(extension)
+        }
+    }
+
+}
