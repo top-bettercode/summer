@@ -138,6 +138,9 @@ abstract class Generator {
     protected open val projectName: String
         get() = extension.projectName
 
+    protected open val applicationName: String
+        get() = extension.applicationName
+
     protected val settings: Map<String, Any?>
         get() = extension.settings
 
