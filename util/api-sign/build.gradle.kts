@@ -1,6 +1,4 @@
-import com.eriwen.gradle.js.tasks.GzipJsTask
 import com.eriwen.gradle.js.tasks.MinifyJsTask
-import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaTask
 
