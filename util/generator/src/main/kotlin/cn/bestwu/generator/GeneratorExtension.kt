@@ -106,6 +106,7 @@ open class GeneratorExtension(
          */
         var moduleName: String = "",
 
+        var applicationName: String = "",
         var projectName: String = "",
         /**
          * 表前缀

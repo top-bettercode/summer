@@ -1,3 +1,5 @@
+import java.net.URI
+
 configurations {
     filter { arrayOf("compile", "testCompile").contains(it.name) }.forEach { it.exclude("org.codehaus.jackson") }
     all {
