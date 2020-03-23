@@ -21,10 +21,10 @@ public class BusinessException extends RuntimeException {
 
   static {
     try {
-      bundle = ResourceBundle.getBundle("errorCode");
+      bundle = ResourceBundle.getBundle("error-code");
     } catch (MissingResourceException e) {
       try {
-        bundle = ResourceBundle.getBundle("properties.errorCode");
+        bundle = ResourceBundle.getBundle("properties.error-code");
       } catch (MissingResourceException ignored) {
       }
     }
