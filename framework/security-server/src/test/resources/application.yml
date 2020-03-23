@@ -1,0 +1,94 @@
+logging:
+  level:
+    root: info
+    org.springframework.boot.web.servlet.support.ErrorPageFilter: off
+    io.lettuce: warn
+    org.thymeleaf: warn
+    cn.bestwu.lang: warn
+    cn.bestwu.simpleframework.support.packagescan: warn
+    javax.management: warn
+    org.quartz: warn
+    io.netty: warn
+    com.alibaba: warn
+    com.zaxxer.hikari: info
+    springfox: warn
+    com.baomidou: warn
+    org.springframework: warn
+    org.apache: warn
+    org.hibernate: warn
+    org.mybatis: warn
+    com.netflix: warn
+    org.jboss: warn
+    com.sun: warn
+    javax.xml: warn
+    net.sf: warn
+    javax.activation: warn
+  spilt-marker:
+    request: info
+  file: build/logs/all.log
+  files:
+    path: build/logs
+  spilt-level:
+  - error
+  - warn
+  request:
+    include-path: /oauth/*
+    include-request-body: true
+    include-response-body: true
+security:
+  oauth2:
+    client:
+      client-id:
+      client-secret:
+      scope: trust
+      auto-approve-scopes: true
+      authorized-grant-types: password,refresh_token
+    authorization:
+      check-token-access: isAuthenticated()
+  cors:
+    enable: true
+#  keyStore:
+#    alias: wintech
+#    password: hg4O6jkj
+#    resource-path: wintech.jks
+  url-filter:
+    ignored: /
+  http:
+    session-creation-policy: stateless
+server:
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,application/javascript,application/json
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+  servlet:
+    context-path: /
+    session:
+      timeout: PT10M
+spring:
+  profiles:
+    active: alpha
+  mvc:
+    dispatchOptionsRequest: true
+  messages:
+    cache-duration: PT10S
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: true
+      WRITE_BIGDECIMAL_AS_PLAIN: true
+      WRITE_ENUMS_USING_INDEX: true
+      FAIL_ON_EMPTY_BEANS: false
+      WRITE_NULL_MAP_VALUES: false
+    default-property-inclusion: non_null
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 200MB
+      enabled: true
+  security:
+    filter:
+      dispatcher-types: REQUEST
