@@ -1,0 +1,145 @@
+description: "修改密码后将更新accessToken"
+request:
+  uri: "/users/password"
+  restUri: "/users/password"
+  uriVariables: {}
+  uriVariablesExt: []
+  method: "PUT"
+  headers:
+    Accept:
+     - "application/json;version=2.0"
+    user-agent:
+     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    sign:
+     - "f9e7bd6dca3306cde3ba6f48e1b07578"
+    Content-Type:
+     - "application/x-www-form-urlencoded"
+    accessToken:
+     - "d8c59a4b-8754-4ecb-bbb7-a3e74756c43d"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/x-www-form-urlencoded"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    defaultVal: ""
+    value: "d8c59a4b-8754-4ecb-bbb7-a3e74756c43d"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    defaultVal: ""
+    value: "application/json;version=2.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_签名算法>>"
+    defaultVal: ""
+    value: "f9e7bd6dca3306cde3ba6f48e1b07578"
+    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    defaultVal: ""
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    expanded: true
+    canCover: true
+    required: false
+  cookies: []
+  parameters:
+    oldPassword:
+     - "81dc9bdb52d04dc20036dbd8313ed055"
+    newPassword:
+     - "NDMyMQ=="
+  parametersExt:
+   -
+    name: "oldPassword"
+    type: "String"
+    description: "原密码"
+    defaultVal: ""
+    value: "81dc9bdb52d04dc20036dbd8313ed055"
+    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "newPassword"
+    type: "String"
+    description: "新密码"
+    defaultVal: ""
+    value: "NDMyMQ=="
+    expanded: true
+    canCover: true
+    required: true
+  parts: []
+  partsExt: []
+  contentAsString: ""
+  contentExt: []
+response:
+  headers:
+    Content-Type:
+     - "application/json;charset=UTF-8"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+  contentAsString: "{\"accessToken\":\"96020640-a908-4366-87b7-006d02d26c8d\",\"sourceChannel\"\
+    :\"CUST\"}"
+  contentExt:
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    defaultVal: ""
+    value: "96020640-a908-4366-87b7-006d02d26c8d"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "sourceChannel"
+    type: "String"
+    description: "标识用户来源通道"
+    defaultVal: ""
+    value: "CUST"
+    expanded: true
+    canCover: true
+    required: false
+  stackTrace: ""
+  statusCode: 200
+protocol: ""
+prerequest: []
+testExec:
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

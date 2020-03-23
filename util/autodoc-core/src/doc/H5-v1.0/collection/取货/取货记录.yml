@@ -1,0 +1,416 @@
+description: ""
+request:
+  uri: "/pickups"
+  restUri: "/pickups"
+  uriVariables: {}
+  uriVariablesExt: []
+  method: "GET"
+  headers:
+    Accept:
+     - "application/json;version=2.0"
+    user-agent:
+     - "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    sign:
+     - "81ba2cbf2fe787737fb97dee7f497c5d"
+    Content-Type:
+     - "application/x-www-form-urlencoded"
+    accessToken:
+     - "82949780-1c3d-48db-8af1-509b061087e4"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/x-www-form-urlencoded"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    defaultVal: ""
+    value: "82949780-1c3d-48db-8af1-509b061087e4"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    defaultVal: ""
+    value: "application/json;version=2.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_签名算法>>"
+    defaultVal: ""
+    value: "81ba2cbf2fe787737fb97dee7f497c5d"
+    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    defaultVal: ""
+    value: "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    expanded: true
+    canCover: true
+    required: false
+  cookies: []
+  parameters:
+    page:
+     - "1"
+    size:
+     - "20"
+  parametersExt:
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    defaultVal: ""
+    value: "20"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+  parts: []
+  partsExt: []
+  contentAsString: ""
+  contentExt: []
+response:
+  headers:
+    Content-Type:
+     - "application/json;charset=UTF-8"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+  contentAsString: "{\"total\":14,\"size\":20,\"pages\":1,\"page\":1,\"list\":[{\"\
+    pickupId\":\"999946542882643970\",\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"\
+    0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\":\"周\
+    兵红\",\"salesmanTel\":\"15072645253\",\"status\":-1,\"note\":\"sefsdfsfs1中文 \"\
+    ,\"createdTime\":1527240808491,\"invoiceTime\":1527470656665,\"sysUserId\":\"\
+    1\",\"username\":\"admin\",\"reason\":\"fsdfsdfsdfsdf\"},{\"pickupId\":\"996558943765807106\"\
+    ,\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\"\
+    ,\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\"\
+    ,\"status\":-1,\"note\":\"sefsdfsfs1中文 \",\"createdTime\":1526433142018,\"invoiceTime\"\
+    :1527471517720,\"sysUserId\":\"1\",\"username\":\"admin\",\"reason\":\"dfsdf\"\
+    },{\"pickupId\":\"996557927301406721\",\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\"\
+    :\"0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\"\
+    :\"周兵红\",\"salesmanTel\":\"15072645253\",\"status\":-1,\"note\":\"sefsdfsfs1中文\
+    \ \",\"createdTime\":1526432899672,\"invoiceTime\":1527471661726,\"sysUserId\"\
+    :\"1\",\"username\":\"admin\",\"reason\":\"dfsdfs\"},{\"pickupId\":\"996557058828820482\"\
+    ,\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\"\
+    ,\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\"\
+    ,\"status\":1,\"note\":\"sefsdfsfs1中文\",\"createdTime\":1526432692577,\"invoiceTime\"\
+    :1527471773417,\"sysUserId\":\"1\",\"username\":\"admin\",\"reason\":null},{\"\
+    pickupId\":\"996557039090417665\",\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"\
+    0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\":\"周\
+    兵红\",\"salesmanTel\":\"15072645253\",\"status\":0,\"note\":\"sefsdfsfs1中文 \",\"\
+    createdTime\":1526432687848,\"invoiceTime\":null,\"sysUserId\":null,\"username\"\
+    :null,\"reason\":null},{\"pickupId\":\"996554371919921154\",\"custName\":\"百色市\
+    右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\"\
+    ,\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\",\"status\":1,\"note\":\"\
+    sefsdfsfs1中文 \",\"createdTime\":1526432051938,\"invoiceTime\":1527471778976,\"\
+    sysUserId\":\"1\",\"username\":\"admin\",\"reason\":null},{\"pickupId\":\"996309903912353793\"\
+    ,\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\"\
+    ,\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\"\
+    ,\"status\":0,\"note\":\"sefsdfsfs1中文 \",\"createdTime\":1526373766236,\"invoiceTime\"\
+    :null,\"sysUserId\":null,\"username\":null,\"reason\":null},{\"pickupId\":\"994418043199574018\"\
+    ,\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\"\
+    ,\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\"\
+    ,\"status\":0,\"note\":\"sefsdfsfs 中文\",\"createdTime\":1525922711449,\"invoiceTime\"\
+    :null,\"sysUserId\":null,\"username\":null,\"reason\":null},{\"pickupId\":\"994417188668858370\"\
+    ,\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\"\
+    ,\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\"\
+    ,\"status\":0,\"note\":\"sefsdfsfs 中文\",\"createdTime\":1525922507809,\"invoiceTime\"\
+    :null,\"sysUserId\":null,\"username\":null,\"reason\":null},{\"pickupId\":\"994416604247121921\"\
+    ,\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\"\
+    ,\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\"\
+    ,\"status\":0,\"note\":\"sefsdfsfs1\",\"createdTime\":1525922368341,\"invoiceTime\"\
+    :null,\"sysUserId\":null,\"username\":null,\"reason\":null},{\"pickupId\":\"989443150646992897\"\
+    ,\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\"\
+    ,\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\"\
+    ,\"status\":0,\"note\":\"sefsdfsfs1\",\"createdTime\":1524736604697,\"invoiceTime\"\
+    :1525686242857,\"sysUserId\":\"1\",\"username\":\"admin\",\"reason\":null},{\"\
+    pickupId\":\"3\",\"custName\":\"成都公司\",\"sapNo\":\"0001500100\",\"contacts\":\"\
+    李美女3\",\"custTel\":\"13678998714\",\"salesman\":\"王五\",\"salesmanTel\":\"18651835629\"\
+    ,\"status\":0,\"note\":\"122\",\"createdTime\":1520478772906,\"invoiceTime\":1525686242857,\"\
+    sysUserId\":\"1\",\"username\":\"admin\",\"reason\":null},{\"pickupId\":\"2\"\
+    ,\"custName\":\"辽宁公司\",\"sapNo\":\"0001500100\",\"contacts\":\"李美女2\",\"custTel\"\
+    :\"13678998713\",\"salesman\":\"李四\",\"salesmanTel\":\"18651835627\",\"status\"\
+    :0,\"note\":\"1212\",\"createdTime\":1520478772900,\"invoiceTime\":1525686242857,\"\
+    sysUserId\":\"1\",\"username\":\"admin\",\"reason\":null},{\"pickupId\":\"1\"\
+    ,\"custName\":\"吉林公司\",\"sapNo\":\"0001500100\",\"contacts\":\"李美女\",\"custTel\"\
+    :\"13678998712\",\"salesman\":\"张三\",\"salesmanTel\":\"18651835626\",\"status\"\
+    :0,\"note\":\"1212\",\"createdTime\":1520478772843,\"invoiceTime\":1525686242857,\"\
+    sysUserId\":\"1\",\"username\":\"admin\",\"reason\":null}]}"
+  contentExt:
+   -
+    name: "list.sapNo"
+    type: "String"
+    description: "SAP编号"
+    defaultVal: ""
+    value: "0001500100"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.pickupId"
+    type: "String"
+    description: "主键"
+    defaultVal: ""
+    value: "999946542882643970"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    defaultVal: ""
+    value: "[{\"pickupId\":\"999946542882643970\",\"custName\":\"百色市右江区禾苗农资销售部\",\"\
+      sapNo\":\"0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\"\
+      :\"周兵红\",\"salesmanTel\":\"15072645253\",\"status\":-1,\"note\":\"sefsdfsfs1中\
+      文 \",\"createdTime\":1527240808491,\"invoiceTime\":1527470656665,\"sysUserId\"\
+      :\"1\",\"username\":\"admin\",\"reason\":\"fsdfsdfsdfsdf\"},{\"pickupId\":\"\
+      996558943765807106\",\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\"\
+      ,\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\"\
+      :\"15072645253\",\"status\":-1,\"note\":\"sefsdfsfs1中文 \",\"createdTime\":1526433142018,\"\
+      invoiceTime\":1527471517720,\"sysUserId\":\"1\",\"username\":\"admin\",\"reason\"\
+      :\"dfsdf\"},{\"pickupId\":\"996557927301406721\",\"custName\":\"百色市右江区禾苗农资销售\
+      部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\"\
+      ,\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\",\"status\":-1,\"note\"\
+      :\"sefsdfsfs1中文 \",\"createdTime\":1526432899672,\"invoiceTime\":1527471661726,\"\
+      sysUserId\":\"1\",\"username\":\"admin\",\"reason\":\"dfsdfs\"},{\"pickupId\"\
+      :\"996557058828820482\",\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\"\
+      ,\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\"\
+      :\"15072645253\",\"status\":1,\"note\":\"sefsdfsfs1中文\",\"createdTime\":1526432692577,\"\
+      invoiceTime\":1527471773417,\"sysUserId\":\"1\",\"username\":\"admin\",\"reason\"\
+      :null},{\"pickupId\":\"996557039090417665\",\"custName\":\"百色市右江区禾苗农资销售部\",\"\
+      sapNo\":\"0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\"\
+      :\"周兵红\",\"salesmanTel\":\"15072645253\",\"status\":0,\"note\":\"sefsdfsfs1中\
+      文 \",\"createdTime\":1526432687848,\"invoiceTime\":null,\"sysUserId\":null,\"\
+      username\":null,\"reason\":null},{\"pickupId\":\"996554371919921154\",\"custName\"\
+      :\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\",\"custTel\"\
+      :\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\",\"status\"\
+      :1,\"note\":\"sefsdfsfs1中文 \",\"createdTime\":1526432051938,\"invoiceTime\"\
+      :1527471778976,\"sysUserId\":\"1\",\"username\":\"admin\",\"reason\":null},{\"\
+      pickupId\":\"996309903912353793\",\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"\
+      0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\":\"\
+      周兵红\",\"salesmanTel\":\"15072645253\",\"status\":0,\"note\":\"sefsdfsfs1中文 \"\
+      ,\"createdTime\":1526373766236,\"invoiceTime\":null,\"sysUserId\":null,\"username\"\
+      :null,\"reason\":null},{\"pickupId\":\"994418043199574018\",\"custName\":\"百\
+      色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"\
+      13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\",\"status\"\
+      :0,\"note\":\"sefsdfsfs 中文\",\"createdTime\":1525922711449,\"invoiceTime\":null,\"\
+      sysUserId\":null,\"username\":null,\"reason\":null},{\"pickupId\":\"994417188668858370\"\
+      ,\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\"\
+      ,\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\"\
+      ,\"status\":0,\"note\":\"sefsdfsfs 中文\",\"createdTime\":1525922507809,\"invoiceTime\"\
+      :null,\"sysUserId\":null,\"username\":null,\"reason\":null},{\"pickupId\":\"\
+      994416604247121921\",\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"0001500100\"\
+      ,\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\":\"周兵红\",\"salesmanTel\"\
+      :\"15072645253\",\"status\":0,\"note\":\"sefsdfsfs1\",\"createdTime\":1525922368341,\"\
+      invoiceTime\":null,\"sysUserId\":null,\"username\":null,\"reason\":null},{\"\
+      pickupId\":\"989443150646992897\",\"custName\":\"百色市右江区禾苗农资销售部\",\"sapNo\":\"\
+      0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\",\"salesman\":\"\
+      周兵红\",\"salesmanTel\":\"15072645253\",\"status\":0,\"note\":\"sefsdfsfs1\",\"\
+      createdTime\":1524736604697,\"invoiceTime\":1525686242857,\"sysUserId\":\"1\"\
+      ,\"username\":\"admin\",\"reason\":null},{\"pickupId\":\"3\",\"custName\":\"\
+      成都公司\",\"sapNo\":\"0001500100\",\"contacts\":\"李美女3\",\"custTel\":\"13678998714\"\
+      ,\"salesman\":\"王五\",\"salesmanTel\":\"18651835629\",\"status\":0,\"note\":\"\
+      122\",\"createdTime\":1520478772906,\"invoiceTime\":1525686242857,\"sysUserId\"\
+      :\"1\",\"username\":\"admin\",\"reason\":null},{\"pickupId\":\"2\",\"custName\"\
+      :\"辽宁公司\",\"sapNo\":\"0001500100\",\"contacts\":\"李美女2\",\"custTel\":\"13678998713\"\
+      ,\"salesman\":\"李四\",\"salesmanTel\":\"18651835627\",\"status\":0,\"note\":\"\
+      1212\",\"createdTime\":1520478772900,\"invoiceTime\":1525686242857,\"sysUserId\"\
+      :\"1\",\"username\":\"admin\",\"reason\":null},{\"pickupId\":\"1\",\"custName\"\
+      :\"吉林公司\",\"sapNo\":\"0001500100\",\"contacts\":\"李美女\",\"custTel\":\"13678998712\"\
+      ,\"salesman\":\"张三\",\"salesmanTel\":\"18651835626\",\"status\":0,\"note\":\"\
+      1212\",\"createdTime\":1520478772843,\"invoiceTime\":1525686242857,\"sysUserId\"\
+      :\"1\",\"username\":\"admin\",\"reason\":null}]"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.note"
+    type: "String"
+    description: "取货备注"
+    defaultVal: ""
+    value: "sefsdfsfs1中文 "
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.custName"
+    type: "String"
+    description: "客户名称"
+    defaultVal: ""
+    value: "百色市右江区禾苗农资销售部"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.custTel"
+    type: "String"
+    description: "客户手机号"
+    defaultVal: ""
+    value: "13607766618"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.contacts"
+    type: "String"
+    description: "客户联系人"
+    defaultVal: ""
+    value: "卢守艳"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.invoiceTime"
+    type: "Long"
+    description: "开票时间"
+    defaultVal: ""
+    value: "1527470656665"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    defaultVal: ""
+    value: "20"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    defaultVal: ""
+    value: "14"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    defaultVal: ""
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.salesman"
+    type: "String"
+    description: "所属业务员"
+    defaultVal: ""
+    value: "周兵红"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.salesmanTel"
+    type: "String"
+    description: "所属业务员手机号"
+    defaultVal: ""
+    value: "15072645253"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.status"
+    type: "Integer"
+    description: "状态"
+    defaultVal: "0"
+    value: "-1"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.createdTime"
+    type: "Long"
+    description: "申请时间"
+    defaultVal: ""
+    value: "1527240808491"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.sysUserId"
+    type: "String"
+    description: "系统内务人员ID"
+    defaultVal: ""
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.username"
+    type: "String"
+    description: "系统内务人员名称"
+    defaultVal: ""
+    value: "admin"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "list.reason"
+    type: "String"
+    description: "驳回原因"
+    defaultVal: ""
+    value: "fsdfsdfsdfsdf"
+    expanded: true
+    canCover: true
+    required: false
+  stackTrace: ""
+  statusCode: 200
+protocol: ""
+prerequest: []
+testExec:
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

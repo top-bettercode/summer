@@ -5,10 +5,6 @@ subprojects {
         plugin("org.springframework.boot")
     }
 
-    tasks {
-        "bootJar" { enabled = false }
-    }
-
     dependencies {
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
         compileOnly("org.springframework.boot:spring-boot-configuration-processor")
@@ -24,5 +20,6 @@ subprojects {
         "jar"(Jar::class) {
             enabled = true
         }
+        "bootJar" { enabled = false }
     }
 }

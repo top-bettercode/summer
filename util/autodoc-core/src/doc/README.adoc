@@ -1,0 +1,172 @@
+[preface]
+== 系统概述
+
+.接口定义规范
+
+|===
+|请求方法 | URI | 说明 | 响应的HTTP状态码
+
+|GET/POST
+|/{model}/list
+|资源列表
+|200
+
+|GET/POST
+|/{model}/info
+|单个资源
+|200
+
+|GET/POST
+|/{model}/create
+|新建资源
+|200
+
+|GET/POST
+|/{model}/update
+|更新资源
+|200
+
+|GET/POST
+|{model}/delete
+|删除资源
+|200
+
+|===
+
+客户端与服务器的通讯通过HTTP内容协商。所以，HTTP请求头应遵守以下规范：
+
+[%hardbreaks]
+TIP: Accept的格式为:application/json.
+服务器接受的有效的Accept格式,(\*/* 、 application/* 、 application/json), 例子： \*/*、application/*、application/json.
+错误的Accept服务器将响应406 HTTP Status Code.
+
+.响应说明
+
+返回的时间，默认格式为毫秒数(从1970年1月1日（UTC/GMT的午夜）开始所经过的毫秒数)
+
+* HTTP状态码为200时：
+
+** 响应单个资源
+
++
+例子：
+
++
+[source,json]
+----
+{
+  "create_time": 1442309074,
+  "id": "1",
+  "modify_time": 1442309074,
+  "username": "peter"
+}
+----
+
+** 响应列表资源
++
+请求参数支持：page、size
+
+*** page: 页码索引，从1开始，默认1
+*** size: 每页数量，默认20
+
++
+例子：
+
++
+[source,json]
+----
+{
+      "size": 20,
+      "total": 1,
+      "pages": 1,
+      "list": [{
+        "id": 3,
+        "goodsNo": "718000872243",
+        "consigneeName": "\u8d75\u56fd\u67f1",
+        "consigneeTel": "18224060100",
+        "consigneeAddress": "\u4e3d\u666f\u56ed3\u671f",
+        "status": 2,
+        "finished": false
+      }],
+      "page": 1
+}
+----
+
+*** list: 资源列表
+*** page: 页码，从1开始
+*** size: 每页数量
+*** total: 总数量
+*** pages: 总页数
+
+
+* HTTP状态码>=400时
+
++
+例子：
+
++
+[source,json]
+----
+{
+  "status": "422",
+  "message": "Validation Failed",
+  "errors": {
+    "first_name": "First name cannot have fancy characters",
+    "password": "Password cannot be blank"
+  }
+}
+----
+
+*** status：错误码。当不是业务相关错误时，值与HTTP状态码保持一致，否则为<<_业务相关错误码>>
+*** message：错误信息
+*** errors：详细错误信息，errors 内key为错误的字段/错误信息名称，value为错误信息
+
+.出错处理
+
+当客户端收到的 HTTP 状态码大于等于400时，客户端应按以下方式处理。
+
+* 当 HTTP 状态码为400时,表示业务异常，根据响应体中的 status 字段值按<<_业务相关错误码>>处理。
+
+* 当 HTTP 状态码为401时,跳转到登录界面，让用户登录,可提示用户您还未登录。
+
+* 当 HTTP 状态码为其他时，取 message 字段内容提示用户即可。
+
+.HTTP状态码说明
+
+|===
+|HTTP状态码 | 说明
+
+|200
+| 请求成功
+
+|201
+| 资源成功创建
+
+|204
+| 请求成功，返回空内容
+
+|400
+| 错误的请求
+
+|401
+| 未授权
+
+|403
+| 无权访问
+
+|404
+| 未找到资源
+
+|405
+| 不支持的请求方法
+
+|406
+| 不接受的客户端请求
+
+|422
+| 请求数据验证失败，参数不正确
+
+|500
+| 服务器通用错误码
+
+|===

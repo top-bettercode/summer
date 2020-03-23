@@ -13,8 +13,6 @@ apply {
     plugin("org.jetbrains.kotlin.plugin.spring")
 
     plugin("cn.bestwu.kotlin-publish")
-    plugin("com.jfrog.artifactory")
-    plugin("org.springframework.boot")
 }
 
 dependencies {
@@ -31,8 +29,8 @@ dependencies {
 
 tasks {
     "minifyJs"(MinifyJsTask::class) {
-        source("src/main/client/sign.js")
-        setDest("src/main/resources/META-INF/_t/sign.min.js")
+        source(project.file("src/main/client/sign.js"))
+        setDest(project.file("src/main/resources/META-INF/_t/sign.min.js"))
         closure {
             warningLevel = "QUIET"
             compilationLevel = "ADVANCED_OPTIMIZATION"
@@ -48,9 +46,7 @@ tasks {
     "dokkaJavadoc"(DokkaTask::class) {
         noStdlibLink = true
     }
-    "compileJava" {
-        dependsOn("processResources")
-    }
-    "bootJar" { enabled = false }
+
+
 }
 

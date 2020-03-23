@@ -1,0 +1,145 @@
+description: "客户端测试账号：13600984817：1234，业务端测试账号：13551152141：1234"
+request:
+  uri: "/users/accessToken"
+  restUri: "/users/accessToken"
+  uriVariables: {}
+  uriVariablesExt: []
+  method: "POST"
+  headers:
+    Accept:
+     - "application/json;version=2.0"
+    user-agent:
+     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    sign:
+     - "aa84bf7555c025658697b42a7072530b"
+    Content-Type:
+     - "application/x-www-form-urlencoded"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/x-www-form-urlencoded"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    defaultVal: ""
+    value: "application/json;version=2.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_签名算法>>"
+    defaultVal: ""
+    value: "aa84bf7555c025658697b42a7072530b"
+    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    defaultVal: ""
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    expanded: true
+    canCover: true
+    required: false
+  cookies: []
+  parameters:
+    mobile:
+     - "13980981304"
+    password:
+     - "168e969d48e2fe1c7a1f84f41f2cc2cd"
+    did:
+     - "uw0E6QYB1CVV9QQamWUqe2HNi0udjdKS"
+  parametersExt:
+   -
+    name: "password"
+    type: "String"
+    description: "密码"
+    defaultVal: ""
+    value: "168e969d48e2fe1c7a1f84f41f2cc2cd"
+    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "mobile"
+    type: "String"
+    description: "用户电话"
+    defaultVal: ""
+    value: "13980981304"
+    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "did"
+    type: "String"
+    description: "设备编号"
+    defaultVal: ""
+    value: "uw0E6QYB1CVV9QQamWUqe2HNi0udjdKS"
+    expanded: true
+    canCover: true
+    required: false
+  parts: []
+  partsExt: []
+  contentAsString: ""
+  contentExt: []
+response:
+  headers:
+    Content-Type:
+     - "application/json;charset=UTF-8"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+  contentAsString: "{\"accessToken\":\"8f59369f-f4b1-4fdb-b0e5-0fd35d727306\",\"sourceChannel\"\
+    :\"USER\"}"
+  contentExt:
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    defaultVal: ""
+    value: "8f59369f-f4b1-4fdb-b0e5-0fd35d727306"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "sourceChannel"
+    type: "String"
+    description: "标识用户来源通道"
+    defaultVal: ""
+    value: "USER"
+    expanded: true
+    canCover: true
+    required: false
+  stackTrace: ""
+  statusCode: 200
+protocol: ""
+prerequest: []
+testExec:
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

@@ -3,9 +3,6 @@ plugins {
     idea
     kotlin("jvm") version "1.3.10"
     kotlin("plugin.spring") version "1.3.10"
-    id("org.springframework.boot") version "2.1.6.RELEASE"
-    id("io.spring.dependency-management") version "1.0.8.RELEASE"
-
 }
 
 allprojects {
@@ -33,14 +30,33 @@ allprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    configurations {
+        filter { arrayOf("compile", "testCompile").contains(it.name) }.forEach { it.exclude("org.codehaus.jackson") }
+        all {
+            resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)
+        }
+    }
+
     repositories {
         mavenLocal()
+        maven("https://maven.aliyun.com/repository/public")
         jcenter()
+        gradlePluginPortal()
         maven("http://oss.jfrog.org/oss-snapshot-local")
     }
 
-    dependencyManagement {
+    extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         dependencies {
+            dependency("cn.bestwu:common-lang:1.1.7-SNAPSHOT")
+            dependency("cn.bestwu:api-sign:1.2.4")
+            dependency("com.github.stuxuhai:jpinyin:1.1.8")
+            dependency("cn.bestwu:generator:0.0.57-SNAPSHOT")
+            dependency("cn.bestwu:starter-logging:2.0.12-SNAPSHOT")
+            dependency("mysql:mysql-connector-java:5.1.47")
+            dependency("org.asciidoctor:asciidoctorj:2.2.0")
+            dependency("org.asciidoctor:asciidoctorj-diagram:2.0.0")
+            dependency("org.asciidoctor:asciidoctorj-pdf:1.5.0-beta.8")
+
             dependency("cn.bestwu:common-lang:1.1.7-SNAPSHOT")
             dependency("cn.bestwu:starter-logging:2.0.12-SNAPSHOT")
 

@@ -1,0 +1,173 @@
+description: ""
+request:
+  uri: "/ordOrders/ORD000259171116/deliveryInfo"
+  restUri: "/ordOrders/{orderId}/deliveryInfo"
+  uriVariables:
+    orderId: "ORD000259171116"
+  uriVariablesExt:
+   -
+    name: "orderId"
+    type: "String"
+    description: "主键"
+    defaultVal: ""
+    value: "ORD000259171116"
+    expanded: true
+    canCover: true
+    required: false
+  method: "GET"
+  headers:
+    Accept:
+     - "application/json;version=2.0"
+    user-agent:
+     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    sign:
+     - "6c5467aaaf8b8c5876b8016771744b64"
+    Content-Type:
+     - "application/x-www-form-urlencoded"
+    accessToken:
+     - "22342b8f-b789-4981-94ee-dc781014d99d"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/x-www-form-urlencoded"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    defaultVal: ""
+    value: "22342b8f-b789-4981-94ee-dc781014d99d"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    defaultVal: ""
+    value: "application/json;version=2.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<_签名算法>>"
+    defaultVal: ""
+    value: "6c5467aaaf8b8c5876b8016771744b64"
+    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    defaultVal: ""
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    expanded: true
+    canCover: true
+    required: false
+  cookies: []
+  parameters: {}
+  parametersExt: []
+  parts: []
+  partsExt: []
+  contentAsString: ""
+  contentExt: []
+response:
+  headers:
+    Content-Type:
+     - "application/json;charset=UTF-8"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+  contentAsString: "{\"qty\":20.0,\"sendQty\":20.0,\"deliveryInfos\":[{\"postTime\"\
+    :1510910934000,\"qty\":10.0,\"deliveryStatus\":\"已发货\"},{\"postTime\":1510910934000,\"\
+    qty\":7.0,\"deliveryStatus\":\"已发货\"},{\"postTime\":1510910934000,\"qty\":3.0,\"\
+    deliveryStatus\":\"已发货\"}]}"
+  contentExt:
+   -
+    name: "sendQty"
+    type: "BigDecimal"
+    description: "发货数量"
+    defaultVal: ""
+    value: "20.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "deliveryInfos.postTime"
+    type: "Long"
+    description: "发货时间"
+    defaultVal: ""
+    value: "1510910934000"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "deliveryInfos.qty"
+    type: "BigDecimal"
+    description: "总数"
+    defaultVal: ""
+    value: "10.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "qty"
+    type: "BigDecimal"
+    description: "总数"
+    defaultVal: ""
+    value: "20.0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "deliveryInfos"
+    type: "List<DeliveryInfo>"
+    description: "物流信息"
+    defaultVal: ""
+    value: "[{\"postTime\":1510910934000,\"qty\":10.0,\"deliveryStatus\":\"已发货\"},{\"\
+      postTime\":1510910934000,\"qty\":7.0,\"deliveryStatus\":\"已发货\"},{\"postTime\"\
+      :1510910934000,\"qty\":3.0,\"deliveryStatus\":\"已发货\"}]"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "deliveryInfos.deliveryStatus"
+    type: "String"
+    description: "物流状态信息"
+    defaultVal: ""
+    value: "已发货"
+    expanded: true
+    canCover: true
+    required: false
+  stackTrace: ""
+  statusCode: 200
+protocol: ""
+prerequest: []
+testExec:
+ - "pm.test('验证响应状态码是200', function () {"
+ - "  pm.response.to.have.status(200);"
+ - "});"
+ - ""
+ - "pm.test('验证响应时间小于1000ms', function () {"
+ - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+ - "});"
+ - ""
+ - "pm.test('验证返回json格式', function () {"
+ - "  pm.response.to.be.json;"
+ - "});"
+ - ""

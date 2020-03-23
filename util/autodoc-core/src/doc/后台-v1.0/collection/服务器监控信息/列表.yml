@@ -1,0 +1,346 @@
+description: ""
+request:
+  uri: "http://localhost/itemInfoes/list"
+  restUri: "/script/itemInfoes/list"
+  uriVariables: {}
+  uriVariablesExt: []
+  method: "GET"
+  headers:
+    Accept:
+     - "application/json;charset=UTF-8"
+    Content-Type:
+     - "application/x-www-form-urlencoded"
+    Authorization:
+     - ""
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/x-www-form-urlencoded"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "Authorization"
+    type: "String"
+    description: "授权码"
+    defaultVal: ""
+    value: ""
+    expanded: true
+    canCover: true
+    required: true
+  cookies: []
+  parameters: {}
+  parametersExt: []
+  parts: []
+  partsExt: []
+  contentAsString: ""
+  contentExt: []
+response:
+  headers:
+    Content-Type:
+     - "application/json;charset=UTF-8"
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    defaultVal: ""
+    value: "application/json;charset=UTF-8"
+    expanded: true
+    canCover: true
+    required: false
+  contentAsString: "{\"status\":\"200\",\"message\":\"\",\"trace\":null,\"errors\"\
+    :null,\"data\":[{\"itemInfoId\":1570,\"groupId\":1,\"hostId\":214,\"zabbixHostid\"\
+    :\"10291\",\"hostName\":\"10.0.1.131-windows-salt-test\",\"hostIp\":\"10.0.1.131\"\
+    ,\"items\":[{\"itemInfoItemId\":6273,\"itemInfoId\":1570,\"warnType\":0,\"groupId\"\
+    :1,\"hostId\":214,\"itemName\":\"CPU\",\"itemPer\":\"7.8746\",\"itemUsed\":null,\"\
+    itemTotal\":null,\"lastModifiedDate\":null,\"highlight\":false},{\"itemInfoItemId\"\
+    :6275,\"itemInfoId\":1570,\"warnType\":1,\"groupId\":1,\"hostId\":214,\"itemName\"\
+    :\"内存\",\"itemPer\":\"34\",\"itemUsed\":\"11571507200\",\"itemTotal\":\"33806921728\"\
+    ,\"lastModifiedDate\":null,\"highlight\":false},{\"itemInfoItemId\":6277,\"itemInfoId\"\
+    :1570,\"warnType\":2,\"groupId\":1,\"hostId\":214,\"itemName\":\"/boot\",\"itemPer\"\
+    :\"8\",\"itemUsed\":\"40982528\",\"itemTotal\":\"507744256\",\"lastModifiedDate\"\
+    :null,\"highlight\":false},{\"itemInfoItemId\":6278,\"itemInfoId\":1570,\"warnType\"\
+    :2,\"groupId\":1,\"hostId\":214,\"itemName\":\"/\",\"itemPer\":\"55\",\"itemUsed\"\
+    :\"114107580416\",\"itemTotal\":\"206629191680\",\"lastModifiedDate\":null,\"\
+    highlight\":false}]},{\"itemInfoId\":1571,\"groupId\":1,\"hostId\":215,\"zabbixHostid\"\
+    :\"10292\",\"hostName\":\"10.0.1.131-windows-salt-test\",\"hostIp\":\"10.0.1.131\"\
+    ,\"items\":[{\"itemInfoItemId\":6274,\"itemInfoId\":1571,\"warnType\":0,\"groupId\"\
+    :1,\"hostId\":215,\"itemName\":\"CPU\",\"itemPer\":\"0.5165\",\"itemUsed\":null,\"\
+    itemTotal\":null,\"lastModifiedDate\":null,\"highlight\":false},{\"itemInfoItemId\"\
+    :6276,\"itemInfoId\":1571,\"warnType\":1,\"groupId\":1,\"hostId\":215,\"itemName\"\
+    :\"内存\",\"itemPer\":\"12\",\"itemUsed\":\"1050017792\",\"itemTotal\":\"8589463552\"\
+    ,\"lastModifiedDate\":null,\"highlight\":false},{\"itemInfoItemId\":6279,\"itemInfoId\"\
+    :1571,\"warnType\":2,\"groupId\":1,\"hostId\":215,\"itemName\":\"D:\",\"itemPer\"\
+    :\"6\",\"itemUsed\":\"15238029312\",\"itemTotal\":\"268067401728\",\"lastModifiedDate\"\
+    :null,\"highlight\":false},{\"itemInfoItemId\":6280,\"itemInfoId\":1571,\"warnType\"\
+    :2,\"groupId\":1,\"hostId\":215,\"itemName\":\"C:\",\"itemPer\":\"48\",\"itemUsed\"\
+    :\"25674211328\",\"itemTotal\":\"53686038528\",\"lastModifiedDate\":null,\"highlight\"\
+    :false}]},{\"itemInfoId\":null,\"groupId\":1,\"hostId\":216,\"zabbixHostid\":\"\
+    10282\",\"hostName\":\"10.0.1.131-windows-salt-test\",\"hostIp\":\"10.0.1.131\"\
+    ,\"items\":[]}]}"
+  contentExt:
+   -
+    name: "data"
+    type: "Array"
+    description: ""
+    defaultVal: ""
+    value: "[{\"itemInfoId\":1570,\"groupId\":1,\"hostId\":214,\"zabbixHostid\":\"\
+      10291\",\"hostName\":\"10.0.1.131-windows-salt-test\",\"hostIp\":\"10.0.1.131\"\
+      ,\"items\":[{\"itemInfoItemId\":6273,\"itemInfoId\":1570,\"warnType\":0,\"groupId\"\
+      :1,\"hostId\":214,\"itemName\":\"CPU\",\"itemPer\":\"7.8746\",\"itemUsed\":null,\"\
+      itemTotal\":null,\"lastModifiedDate\":null,\"highlight\":false},{\"itemInfoItemId\"\
+      :6275,\"itemInfoId\":1570,\"warnType\":1,\"groupId\":1,\"hostId\":214,\"itemName\"\
+      :\"内存\",\"itemPer\":\"34\",\"itemUsed\":\"11571507200\",\"itemTotal\":\"33806921728\"\
+      ,\"lastModifiedDate\":null,\"highlight\":false},{\"itemInfoItemId\":6277,\"\
+      itemInfoId\":1570,\"warnType\":2,\"groupId\":1,\"hostId\":214,\"itemName\":\"\
+      /boot\",\"itemPer\":\"8\",\"itemUsed\":\"40982528\",\"itemTotal\":\"507744256\"\
+      ,\"lastModifiedDate\":null,\"highlight\":false},{\"itemInfoItemId\":6278,\"\
+      itemInfoId\":1570,\"warnType\":2,\"groupId\":1,\"hostId\":214,\"itemName\":\"\
+      /\",\"itemPer\":\"55\",\"itemUsed\":\"114107580416\",\"itemTotal\":\"206629191680\"\
+      ,\"lastModifiedDate\":null,\"highlight\":false}]},{\"itemInfoId\":1571,\"groupId\"\
+      :1,\"hostId\":215,\"zabbixHostid\":\"10292\",\"hostName\":\"10.0.1.131-windows-salt-test\"\
+      ,\"hostIp\":\"10.0.1.131\",\"items\":[{\"itemInfoItemId\":6274,\"itemInfoId\"\
+      :1571,\"warnType\":0,\"groupId\":1,\"hostId\":215,\"itemName\":\"CPU\",\"itemPer\"\
+      :\"0.5165\",\"itemUsed\":null,\"itemTotal\":null,\"lastModifiedDate\":null,\"\
+      highlight\":false},{\"itemInfoItemId\":6276,\"itemInfoId\":1571,\"warnType\"\
+      :1,\"groupId\":1,\"hostId\":215,\"itemName\":\"内存\",\"itemPer\":\"12\",\"itemUsed\"\
+      :\"1050017792\",\"itemTotal\":\"8589463552\",\"lastModifiedDate\":null,\"highlight\"\
+      :false},{\"itemInfoItemId\":6279,\"itemInfoId\":1571,\"warnType\":2,\"groupId\"\
+      :1,\"hostId\":215,\"itemName\":\"D:\",\"itemPer\":\"6\",\"itemUsed\":\"15238029312\"\
+      ,\"itemTotal\":\"268067401728\",\"lastModifiedDate\":null,\"highlight\":false},{\"\
+      itemInfoItemId\":6280,\"itemInfoId\":1571,\"warnType\":2,\"groupId\":1,\"hostId\"\
+      :215,\"itemName\":\"C:\",\"itemPer\":\"48\",\"itemUsed\":\"25674211328\",\"\
+      itemTotal\":\"53686038528\",\"lastModifiedDate\":null,\"highlight\":false}]},{\"\
+      itemInfoId\":null,\"groupId\":1,\"hostId\":216,\"zabbixHostid\":\"10282\",\"\
+      hostName\":\"10.0.1.131-windows-salt-test\",\"hostIp\":\"10.0.1.131\",\"items\"\
+      :[]}]"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items"
+    type: "Array"
+    description: ""
+    defaultVal: ""
+    value: "[{\"itemInfoItemId\":6273,\"itemInfoId\":1570,\"warnType\":0,\"groupId\"\
+      :1,\"hostId\":214,\"itemName\":\"CPU\",\"itemPer\":\"7.8746\",\"itemUsed\":null,\"\
+      itemTotal\":null,\"lastModifiedDate\":null,\"highlight\":false},{\"itemInfoItemId\"\
+      :6275,\"itemInfoId\":1570,\"warnType\":1,\"groupId\":1,\"hostId\":214,\"itemName\"\
+      :\"内存\",\"itemPer\":\"34\",\"itemUsed\":\"11571507200\",\"itemTotal\":\"33806921728\"\
+      ,\"lastModifiedDate\":null,\"highlight\":false},{\"itemInfoItemId\":6277,\"\
+      itemInfoId\":1570,\"warnType\":2,\"groupId\":1,\"hostId\":214,\"itemName\":\"\
+      /boot\",\"itemPer\":\"8\",\"itemUsed\":\"40982528\",\"itemTotal\":\"507744256\"\
+      ,\"lastModifiedDate\":null,\"highlight\":false},{\"itemInfoItemId\":6278,\"\
+      itemInfoId\":1570,\"warnType\":2,\"groupId\":1,\"hostId\":214,\"itemName\":\"\
+      /\",\"itemPer\":\"55\",\"itemUsed\":\"114107580416\",\"itemTotal\":\"206629191680\"\
+      ,\"lastModifiedDate\":null,\"highlight\":false}]"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.groupId"
+    type: "Integer"
+    description: ""
+    defaultVal: ""
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.highlight"
+    type: "Boolean"
+    description: ""
+    defaultVal: ""
+    value: "false"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.hostId"
+    type: "Integer"
+    description: ""
+    defaultVal: ""
+    value: "214"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.itemInfoId"
+    type: "Integer"
+    description: ""
+    defaultVal: ""
+    value: "1570"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.itemInfoItemId"
+    type: "Integer"
+    description: ""
+    defaultVal: ""
+    value: "6273"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.itemName"
+    type: "String"
+    description: ""
+    defaultVal: ""
+    value: "CPU"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.itemPer"
+    type: "String"
+    description: ""
+    defaultVal: ""
+    value: "7.8746"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.itemTotal"
+    type: "String"
+    description: ""
+    defaultVal: ""
+    value: "33806921728"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.itemUsed"
+    type: "String"
+    description: ""
+    defaultVal: ""
+    value: "11571507200"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.lastModifiedDate"
+    type: "String"
+    description: ""
+    defaultVal: ""
+    value: ""
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.items.warnType"
+    type: "Integer"
+    description: ""
+    defaultVal: ""
+    value: "0"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "errors"
+    type: "String"
+    description: ""
+    defaultVal: ""
+    value: ""
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "status"
+    type: "String"
+    description: ""
+    defaultVal: ""
+    value: "200"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "trace"
+    type: "String"
+    description: ""
+    defaultVal: ""
+    value: ""
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.hostName"
+    type: "String"
+    description: "host"
+    defaultVal: ""
+    value: "10.0.1.131-windows-salt-test"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.zabbixHostid"
+    type: "String(200)"
+    description: "zabbix 主机ID"
+    defaultVal: ""
+    value: "10291"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.groupId"
+    type: "Long(20)"
+    description: "所属群组"
+    defaultVal: ""
+    value: "1"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.hostIp"
+    type: "String(200)"
+    description: "服务器IP"
+    defaultVal: ""
+    value: "10.0.1.131"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.hostId"
+    type: "Long(20)"
+    description: "服务器主机ID"
+    defaultVal: ""
+    value: "214"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "data.itemInfoId"
+    type: "Long(20)"
+    description: "服务器监控信息ID"
+    defaultVal: ""
+    value: "1570"
+    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "message"
+    type: "string"
+    description: "消息"
+    defaultVal: ""
+    value: ""
+    expanded: true
+    canCover: true
+    required: false
+  stackTrace: ""
+  statusCode: 200
+protocol: ""
+prerequest: []
+testExec: []
