@@ -1,0 +1,31 @@
+logging:
+  level:
+    root: debug
+    org.springframework.boot.web.servlet.support.ErrorPageFilter: off
+    io.lettuce: warn
+    org.thymeleaf: warn
+    cn.bestwu.lang: warn
+    cn.bestwu.simpleframework.support.packagescan: warn
+    javax.management: warn
+    org.quartz: warn
+    io.netty: warn
+    com.alibaba: warn
+    com.zaxxer.hikari: info
+    springfox: warn
+    com.baomidou: warn
+    org.springframework: warn
+    org.apache: warn
+    org.hibernate: warn
+    org.mybatis: warn
+    com.netflix: warn
+    org.jboss: warn
+    com.sun: warn
+    javax.xml: warn
+    net.sf: warn
+    javax.activation: warn
+  request:
+    include-response-body: true
+    include-request-body: true
+api:
+  sign:
+    enabled: true
