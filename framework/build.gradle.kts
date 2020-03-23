@@ -1,8 +1,18 @@
 subprojects {
     apply {
-        plugin("cn.bestwu.publish")
         plugin("com.jfrog.artifactory")
         plugin("org.springframework.boot")
+    }
+    if(name.contains("logging")){
+        apply {
+            plugin("cn.bestwu.kotlin-publish")
+            plugin("org.jetbrains.kotlin.jvm")
+            plugin("org.jetbrains.kotlin.plugin.spring")
+        }
+    }else{
+        apply {
+            plugin("cn.bestwu.publish")
+        }
     }
 
     dependencies {
@@ -14,7 +24,6 @@ subprojects {
 
     tasks {
         "compileJava"(JavaCompile::class) {
-            options.compilerArgs.add("-Xlint:unchecked")
             dependsOn("processResources")
         }
         "jar"(Jar::class) {

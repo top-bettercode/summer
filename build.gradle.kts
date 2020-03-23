@@ -1,8 +1,6 @@
 plugins {
     java
     idea
-    kotlin("jvm") version "1.3.10"
-    kotlin("plugin.spring") version "1.3.10"
 }
 
 allprojects {
