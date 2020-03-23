@@ -6,6 +6,7 @@ import cn.bestwu.autodoc.core.model.Field
 import cn.bestwu.lang.util.RandomUtil
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.json.JsonReadFeature
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -40,7 +41,7 @@ object Util {
         objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS)
         objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        objectMapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS)
+        objectMapper.enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature())
     }
 }
 
