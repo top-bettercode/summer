@@ -33,6 +33,7 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
 import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -204,19 +205,36 @@ public class SecurityResourceServerConfiguration {
         if (frameOptionsDisable) {
           http.headers().frameOptions().disable();
         }
-        http
-            .sessionManagement().sessionCreationPolicy(sessionCreationPolicy)
-            .and()
-            .authorizeRequests()
-            .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
-              public <O extends FilterSecurityInterceptor> O postProcess(
-                  O fsi) {
-                fsi.setSecurityMetadataSource(securityMetadataSource);
-                fsi.setAccessDecisionManager(accessDecisionManager);
-                return fsi;
-              }
-            })
-        ;
+
+        if (ClassUtils.isPresent(
+            "cn.bestwu.simpleframework.security.server.config.Oauth2SecurityConfiguration",
+            SecurityResourceServerConfiguration.class.getClassLoader())) {
+          http
+              .sessionManagement().sessionCreationPolicy(sessionCreationPolicy)
+              .and()
+              .authorizeRequests()
+              .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+                public <O extends FilterSecurityInterceptor> O postProcess(
+                    O fsi) {
+                  fsi.setSecurityMetadataSource(securityMetadataSource);
+                  fsi.setAccessDecisionManager(accessDecisionManager);
+                  return fsi;
+                }
+              });
+        } else {
+          http
+              .sessionManagement().sessionCreationPolicy(sessionCreationPolicy)
+              .and()
+              .authorizeRequests()
+              .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+                public <O extends FilterSecurityInterceptor> O postProcess(
+                    O fsi) {
+                  fsi.setSecurityMetadataSource(securityMetadataSource);
+                  fsi.setAccessDecisionManager(accessDecisionManager);
+                  return fsi;
+                }
+              }).anyRequest().authenticated();
+        }
       }
     }
   }
