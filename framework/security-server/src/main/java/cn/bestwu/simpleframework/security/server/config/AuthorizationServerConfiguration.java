@@ -107,7 +107,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerSecurit
       String[] antPatterns = cachedAntMatchers.get(method).toArray(new String[0]);
 
       http
-          .requestMatchers().requestMatchers()
+          .requestMatchers()
           .antMatchers(method, antPatterns).and()
           .authorizeRequests()
           .antMatchers(method, antPatterns).fullyAuthenticated();

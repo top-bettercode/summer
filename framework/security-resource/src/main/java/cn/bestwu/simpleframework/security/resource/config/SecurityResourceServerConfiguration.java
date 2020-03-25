@@ -216,7 +216,6 @@ public class SecurityResourceServerConfiguration {
                 return fsi;
               }
             })
-            .anyRequest().authenticated()
         ;
       }
     }
