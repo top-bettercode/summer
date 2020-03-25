@@ -17,7 +17,7 @@ public class BearychatProperties {
   private String logUrl;
   private String channel;
   private Integer sendDelaySeconds = 5;
-  private Integer cyclicBufferSize = 1;
+  private Integer cyclicBufferSize = 20;
 
   public boolean isSendFile() {
     return sendFile;
