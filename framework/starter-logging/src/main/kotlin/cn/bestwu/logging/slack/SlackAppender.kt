@@ -30,7 +30,6 @@ open class SlackAppender(private val properties: SlackProperties, private val ti
             } else {
                 slackClient.postMessage(properties.channel, "$title\n$msg")
             }
-
         } catch (e: Exception) {
             log.error(MarkerFactory.getMarker(RequestLoggingFilter.NO_ALARM_LOG_MARKER), "slack 发送信息失败", e)
             false
