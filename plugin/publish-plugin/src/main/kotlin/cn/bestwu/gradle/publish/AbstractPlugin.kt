@@ -18,6 +18,7 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
 import org.gradle.plugins.signing.SigningExtension
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
 import org.jfrog.gradle.plugin.artifactory.dsl.DoubleDelegateWrapper
 import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
@@ -65,6 +66,22 @@ fun <T : Any> Any.closureOf(action: T.() -> Unit): Closure<Any?> =
  * 抽象类
  */
 abstract class AbstractPlugin : Plugin<Project> {
+
+    /**
+     * 配置dokkaDoc
+     */
+    protected fun dokkaTask(project: Project) {
+        project.tasks.create("dokkaJavadoc", DokkaTask::class.java) {
+            it.outputFormat = "javadoc"
+            it.outputDirectory = "${project.buildDir}/dokkaJavadoc"
+            it.configuration.apply {
+                noAndroidSdkLink = true
+                noJdkLink = true
+                noStdlibLink = true
+            }
+        }
+    }
+
     /**
      * 公用配置
      */

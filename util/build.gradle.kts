@@ -5,13 +5,13 @@ subprojects {
     }
     if (arrayOf("excel").contains(name)) {
         apply {
-            plugin("cn.bestwu.summer.publish")
+            plugin("summer.publish")
         }
     } else {
         apply {
             plugin("org.jetbrains.kotlin.jvm")
             plugin("org.jetbrains.kotlin.plugin.spring")
-            plugin("cn.bestwu.summer.kotlin-publish")
+            plugin("summer.kotlin-publish")
         }
     }
     tasks {
