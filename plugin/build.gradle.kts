@@ -1,7 +1,7 @@
 subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
-        plugin("cn.bestwu.summer.plugin-publish")
+        plugin("summer.plugin-publish")
         plugin("com.jfrog.artifactory")
         plugin("org.springframework.boot")
     }

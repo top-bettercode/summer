@@ -6,8 +6,6 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
-import org.jetbrains.dokka.gradle.DokkaTask
-
 
 /**
  *
@@ -32,10 +30,7 @@ class PluginPublishPlugin : AbstractPlugin() {
             if (!project.plugins.hasPlugin("org.jetbrains.dokka"))
                 project.plugins.apply("org.jetbrains.dokka")
 
-            project.tasks.create("dokkaJavadoc", DokkaTask::class.java) {
-                it.outputFormat = "javadoc"
-                it.outputDirectory = "${project.buildDir}/dokkaJavadoc"
-            }
+            dokkaTask(project)
         }
         project.afterEvaluate { _ ->
 
@@ -117,7 +112,8 @@ class PluginPublishPlugin : AbstractPlugin() {
      * 配置GradlePlugin
      */
     private fun configureGradlePlugins(project: Project, projectUrl: String?, projectVcsUrl: String?) {
-        val gradlePlugin = project.findProperty("gradlePlugin.plugins.${project.name}") as? String?:project.findProperty("gradlePlugin.plugins") as? String
+        val gradlePlugin = project.findProperty("gradlePlugin.plugins.${project.name}") as? String
+                ?: project.findProperty("gradlePlugin.plugins") as? String
         gradlePlugin?.split(",")?.forEach { plugin ->
             val pluginId = project.findProperty("gradlePlugin.plugins.$plugin.id") as String
 
