@@ -130,15 +130,21 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val send
         val timeStamp = event.timeStamp
         if (sendDelaySeconds > 0) {
             if (cache.containsKey(initialComment)) {
-                cache[initialComment] = Message(timeStamp, message, cache[initialComment]!!.count + 1)
+                val msg = cache[initialComment]
+                if (msg != null) {
+                    msg.count()
+                    msg.timeStamp(timeStamp)
+                    msg.msg(message)
+                }
             } else {
                 cache[initialComment] = Message(timeStamp, message)
                 Thread.sleep(sendDelaySeconds * 1000L)
                 synchronized(cache) {
-                    cache.forEach { (t, u) ->
-                        send(u.timeStamp, (if (u.count > 1) "$t ×${u.count}" else t), u.msg)
+                    val msg = cache[initialComment]
+                    if (msg != null) {
+                        send(msg.timeStamp, (if (msg.count > 1) "$initialComment ×${msg.count}" else initialComment), msg.msg)
+                        cache.remove(initialComment)
                     }
-                    cache.clear()
                 }
             }
         } else {
@@ -165,7 +171,23 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val send
 
     abstract fun sendMessage(timeStamp: Long, initialComment: String, message: List<String>): Boolean
 
-    data class Message(val timeStamp: Long, val msg: List<String>, val count: Int = 1)
+    data class Message(var timeStamp: Long, var msg: List<String>, var count: Int = 1) {
+        @Synchronized
+        fun count() {
+            count += 1
+        }
+
+        @Synchronized
+        fun timeStamp(timeStamp: Long) {
+            this.timeStamp = timeStamp
+        }
+
+        @Synchronized
+        fun msg(msg: List<String>) {
+            this.msg = msg
+        }
+
+    }
 
     internal inner class SenderRunnable(private val cyclicBuffer: CyclicBuffer<ILoggingEvent>, private val e: ILoggingEvent) : Runnable {
 
