@@ -139,12 +139,10 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val send
             } else {
                 cache[initialComment] = Message(timeStamp, message)
                 Thread.sleep(sendDelaySeconds * 1000L)
-                synchronized(cache) {
-                    val msg = cache[initialComment]
-                    if (msg != null) {
-                        send(msg.timeStamp, (if (msg.count > 1) "$initialComment ×${msg.count}" else initialComment), msg.msg)
-                        cache.remove(initialComment)
-                    }
+                val msg = cache[initialComment]
+                if (msg != null) {
+                    send(msg.timeStamp, (if (msg.count > 1) "$initialComment ×${msg.count}" else initialComment), msg.msg)
+                    cache.remove(initialComment)
                 }
             }
         } else {

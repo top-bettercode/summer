@@ -38,10 +38,10 @@ class TestController {
 
     @RequestMapping("/errorMail/{path}")
     fun error(request: String?): Any {
-//        log.error("日志错误", RuntimeException("abc"))
-//        log.error("日志错误", RuntimeException("abc"))
-//        log.error("日志错误", RuntimeException("abc"))
-//        log.error("日志错误", RuntimeException("abc"))
+        log.error("日志错误", RuntimeException("abc"))
+        log.error("日志错误", RuntimeException("abc"))
+        log.error("日志错误", RuntimeException("abc"))
+        log.error("日志错误", RuntimeException("abc"))
         log.error("日志错误", RuntimeException("abc"))
         log.warn(MarkerFactory.getMarker(RequestLoggingFilter.ALARM_LOG_MARKER), "警告")
 //        Thread.sleep(3*1000)
