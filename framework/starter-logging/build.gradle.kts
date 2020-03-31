@@ -15,6 +15,9 @@ dependencies {
     compileOnly("net.logstash.logback:logstash-logback-encoder")
     testCompile("net.logstash.logback:logstash-logback-encoder")
 
+    compile("org.springframework.boot:spring-boot-starter-websocket")
+    testCompile("org.springframework.boot:spring-boot-starter-websocket")
+
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile(kotlin("test-junit"))
 }

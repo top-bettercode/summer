@@ -98,7 +98,7 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                 val headers = HttpHeaders()
                 (setOf("Accept", "Content-Type") + Autodoc.headers + requiredHeaders).forEach {
                     val defaultValue = when (it) {
-                        "Accept" -> listOf(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        "Accept" -> listOf(MediaType.APPLICATION_JSON_VALUE)
                         "Content-Type" -> listOf(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                         else -> listOf("")
                     }

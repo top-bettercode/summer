@@ -24,7 +24,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         sbuf.append("</p><p></p>")
         sbuf.append(LINE_SEPARATOR)
         sbuf.append(LINE_SEPARATOR)
-        sbuf.append("<table cellspacing=\"0\">")
+        sbuf.append("<table id=\"loggingText\" cellspacing=\"0\">")
         sbuf.append(LINE_SEPARATOR)
 
         buildHeaderRowForTable(sbuf)
@@ -101,10 +101,9 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         else
             buf.append(computeConverterName(c))
         buf.append("\"><pre>")
-        buf.appendln("Date   : ${dateFormat.format(Date(event.timeStamp))}")
-        buf.appendln("Level  : ${event.level}")
-        buf.appendln("Logger : ${event.loggerName}")
-        buf.appendln("----")
+        buf.append("${dateFormat.format(Date(event.timeStamp))} ")
+        buf.append("${event.level} ")
+        buf.append("${event.loggerName} ")
         buf.append(Transform.escapeTags(c.convert(event)))
         buf.append("</pre></td>")
         buf.append(LINE_SEPARATOR)
