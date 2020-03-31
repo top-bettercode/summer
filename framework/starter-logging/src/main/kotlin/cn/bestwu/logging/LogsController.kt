@@ -2,10 +2,14 @@ package cn.bestwu.logging
 
 import cn.bestwu.lang.util.LocalDateTimeHelper
 import cn.bestwu.logging.annotation.NoRequestLogging
+import cn.bestwu.logging.logback.Logback2LoggingSystem
+import cn.bestwu.logging.logback.PrettyMessageHTMLLayout
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
+import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
+import org.springframework.util.ClassUtils
 import org.springframework.util.StreamUtils
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -24,7 +28,11 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 @RequestMapping(value = ["/logs"], name = "日志")
 class LogsController(@Value("\${logging.files.path}")
-                     private val loggingFilesPath: String) {
+                     private val loggingFilesPath: String, environment: Environment) {
+
+    private val useWebSocket: Boolean = ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && "true" == environment.getProperty("logging.websocket.enable")
+
+    private val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
 
     @NoRequestLogging
     @GetMapping(name = "日志")
@@ -54,6 +62,70 @@ class LogsController(@Value("\${logging.files.path}")
         val logFile = File(loggingFilesPath, "$path/$file")
         showLogFile(response, logFile)
     }
+
+
+    @NoRequestLogging
+    @GetMapping(value = ["/real-time"], name = "实时日志")
+    @Throws(IOException::class)
+    fun websocketLog(request: HttpServletRequest, response: HttpServletResponse) {
+        if (useWebSocket) {
+            System.err.println(request.requestURI)
+            System.err.println(request.requestURL)
+            response.contentType = "text/html;charset=utf-8"
+            response.setHeader("Pragma", "No-cache")
+            response.setHeader("Cache-Control", "no-cache")
+            response.setDateHeader("Expires", 0)
+
+            response.writer.use { writer ->
+                writer.println(prettyMessageHTMLLayout.fileHeader)
+                writer.println(prettyMessageHTMLLayout.presentationHeader)
+                writer.println("""
+<script type="text/javascript">
+  //websocket对象
+  let websocket = null;
+  //判断当前浏览器是否支持WebSocket
+  if (typeof (WebSocket) == "undefined") {
+    console.log("您的浏览器不支持WebSocket");
+  } else {
+    console.info("连接...")
+    websocket = new WebSocket("ws://${request.requestURI}:${request.serverPort}/websocket/logging");
+    //连接发生错误的回调方法
+    websocket.onerror = function () {
+      console.error("WebSocket连接发生错误");
+    };
+
+    //连接成功建立的回调方法
+    websocket.onopen = function () {
+      console.log("WebSocket连接成功")
+    };
+
+    //接收到消息的回调方法
+    websocket.onmessage = function (event) {
+      if (event.data) {
+        let node = document.querySelector('#loggingText');
+        node.insertAdjacentHTML("beforeEnd", event.data);
+        document.documentElement.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+          inline: "nearest"
+        });
+      }
+    }
+
+    //连接关闭的回调方法
+    websocket.onclose = function () {
+      console.log("WebSocket连接关闭")
+    };
+  }
+</script>
+                """.trimIndent())
+                writer.println(prettyMessageHTMLLayout.fileFooter)
+            }
+        } else {
+            response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
+        }
+    }
+
 
     private fun showLogFile(response: HttpServletResponse, logFile: File) {
         if (logFile.exists()) {
@@ -96,6 +168,8 @@ class LogsController(@Value("\${logging.files.path}")
                 writer.print("<h1>Index of /</h1><hr><pre>")
                 if (!root)
                     writer.println("<a href=\"$upPath\">../</a>")
+                if (useWebSocket)
+                    writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${LocalDateTimeHelper.now().format()}       -")
                 file.listFiles()?.forEach { it ->
                     if (it.isDirectory) {
                         writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${LocalDateTimeHelper.of(it.lastModified()).format()}       -")

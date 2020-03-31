@@ -24,6 +24,7 @@ import ch.qos.logback.core.util.OptionHelper
 import cn.bestwu.logging.*
 import cn.bestwu.logging.bearychat.BearychatAppender
 import cn.bestwu.logging.slack.SlackAppender
+import cn.bestwu.logging.websocket.WebSocketAppender
 import net.logstash.logback.appender.LogstashTcpSocketAppender
 import org.slf4j.ILoggerFactory
 import org.slf4j.Logger
@@ -37,6 +38,7 @@ import org.springframework.boot.logging.LoggingSystem
 import org.springframework.boot.logging.logback.LogbackLoggingSystem
 import org.springframework.core.env.Environment
 import org.springframework.util.Assert
+import org.springframework.util.ClassUtils
 
 /**
  * 自定义 LogbackLoggingSystem
@@ -120,6 +122,25 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 log.error("配置BearychatAppender失败", e)
             }
         }
+        val rootLevel = environment.getProperty("logging.level.root")
+        //websocket log
+        if (ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && "true" == environment.getProperty("logging.websocket.enable")) {
+            try {
+                val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+                if (rootLevel != null) {
+                    logger.level = Level.toLevel(rootLevel)
+                }
+                val appender = WebSocketAppender()
+                start(context, appender)
+                val asyncAppender = AsyncAppender()
+                asyncAppender.context = context
+                asyncAppender.addAppender(appender)
+                asyncAppender.start()
+                logger.addAppender(asyncAppender)
+            } catch (e: Exception) {
+                log.error("配置Websocket失败", e)
+            }
+        }
 
         //socket log
         if (existProperty(environment, "logging.socket.remote-host")) {
@@ -151,7 +172,6 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             val levels = Binder.get(environment).bind("logging.spilt-level", Bindable.setOf(String::class.java)).orElseGet { setOf() }
 
             val rootName = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase()
-            val rootLevel = spilts[rootName]
             spilts.remove(rootName)
 
             if (filesProperties.isLogAll || logFile != null) {

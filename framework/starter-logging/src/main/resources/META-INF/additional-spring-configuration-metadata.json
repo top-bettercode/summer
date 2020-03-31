@@ -45,6 +45,12 @@
       "name": "logging.user.password",
       "sourceType": "cn.bestwu.logging.RequestLoggingConfiguration",
       "type": "java.lang.String"
+    },
+    {
+      "name": "logging.websocket.enable",
+      "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem",
+      "defaultValue": "false",
+      "type": "java.lang.Boolean"
     }
   ],
   "hints": [
