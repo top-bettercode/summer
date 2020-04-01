@@ -2,6 +2,8 @@ package cn.bestwu.logging.bearychat
 
 import cn.bestwu.lang.util.RandomUtil
 import cn.bestwu.logging.dateFileFormat
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.web.client.RestTemplate
 import java.io.File
@@ -13,6 +15,7 @@ import java.util.*
  */
 class BearychatClient(private val webhookUrl: String, private val logUrl: String?) {
 
+    private val log: Logger = LoggerFactory.getLogger(BearychatClient::class.java)
     private val restTemplate: RestTemplate = RestTemplate()
 
     init {
@@ -56,6 +59,10 @@ ${message.joinToString("")}
         }
         if (!hasFilesPath && logUrl != null) {
             params["attachments"] = arrayOf(mapOf("title" to "详细日志地址", "url" to "$logUrl/logs/all.log"))
+        }
+
+        if (log.isDebugEnabled) {
+            log.debug("bearychat params:{}", params)
         }
 
         val result = restTemplate.postForObject(webhookUrl, params, Result::class.java)
