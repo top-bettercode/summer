@@ -95,7 +95,7 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
             val handler = requestToUse.getAttribute(HandlerMethodHandlerInterceptor.HANDLER_METHOD) as? HandlerMethod
             val requestAttributes = ServletRequestAttributes(requestToUse)
             val error = getError(requestAttributes)
-            if (handler != null || include(properties.includePath, uri) || error != null) {
+            if (handler != null || include(properties.includePath, uri) || includeError(error)) {
                 val config: RequestLoggingConfig = requestToUse.getAttribute(HandlerMethodHandlerInterceptor.REQUEST_LOGGING) as? RequestLoggingConfig
                         ?: RequestLoggingConfig(properties.isIncludeRequestBody, properties.isIncludeResponseBody, properties.isIncludeTrace, properties.encryptHeaders, properties.encryptParameters, properties.isFormat, properties.logFormat, false)
                 val operationResponse = ResponseConverter.convert(responseToUse)
@@ -148,6 +148,10 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
                 }
             }
         }
+    }
+
+    private fun includeError(error: Throwable?): Boolean {
+        return error != null && error !is ClientAbortException
     }
 
     private fun include(paths: Array<String>, servletPath: String): Boolean {
