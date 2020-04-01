@@ -2,9 +2,13 @@ package cn.bestwu.logging.bearychat
 
 import cn.bestwu.lang.util.RandomUtil
 import cn.bestwu.logging.dateFileFormat
+import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.client.SimpleClientHttpRequestFactory
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.web.client.RestTemplate
 import java.io.File
 import java.util.*
@@ -25,6 +29,13 @@ class BearychatClient(private val webhookUrl: String, private val logUrl: String
         //Read timeout
         clientHttpRequestFactory.setReadTimeout(10000)
         restTemplate.requestFactory = clientHttpRequestFactory
+
+        val messageConverter = MappingJackson2HttpMessageConverter()
+        messageConverter.objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
+        val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
+        messageConverters.add(AllEncompassingFormHttpMessageConverter())
+        messageConverters.add(messageConverter)
+        restTemplate.messageConverters = messageConverters
     }
 
     /**

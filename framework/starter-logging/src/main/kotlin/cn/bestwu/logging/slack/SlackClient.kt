@@ -1,10 +1,15 @@
 package cn.bestwu.logging.slack
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.client.SimpleClientHttpRequestFactory
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
+import java.util.*
 
 /**
  *
@@ -23,6 +28,13 @@ class SlackClient(private val authToken: String) {
         //Read timeout
         clientHttpRequestFactory.setReadTimeout(10000)
         restTemplate.requestFactory = clientHttpRequestFactory
+
+        val messageConverter = MappingJackson2HttpMessageConverter()
+        messageConverter.objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
+        val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
+        messageConverters.add(AllEncompassingFormHttpMessageConverter())
+        messageConverters.add(messageConverter)
+        restTemplate.messageConverters = messageConverters
     }
 
     fun channelsList(): List<Channel>? {
