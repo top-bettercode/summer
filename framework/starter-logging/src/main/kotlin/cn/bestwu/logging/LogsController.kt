@@ -16,13 +16,16 @@ import org.springframework.stereotype.Controller
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.StreamUtils
+import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
+import java.math.BigDecimal
 import java.net.URLEncoder
+import java.time.format.DateTimeFormatter
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -217,13 +220,14 @@ class LogsController(@Value("\${logging.files.path}")
                         var msg = ""
                         var level: String? = null
                         logFile.readLines().forEach {
+                            val m = it.substringAfter("  ", "")
                             val llevel = when {
-                                it.contains(Level.TRACE.levelStr) -> Level.TRACE.levelStr
-                                it.contains(Level.DEBUG.levelStr) -> Level.DEBUG.levelStr
-                                it.contains(Level.INFO.levelStr) -> Level.INFO.levelStr
-                                it.contains(Level.WARN.levelStr) -> Level.WARN.levelStr
-                                it.contains(Level.ERROR.levelStr) -> Level.ERROR.levelStr
-                                it.contains(Level.OFF.levelStr) -> Level.OFF.levelStr
+                                m.startsWith(Level.TRACE.levelStr) -> Level.TRACE.levelStr
+                                m.startsWith(Level.DEBUG.levelStr) -> Level.DEBUG.levelStr
+                                m.startsWith(Level.INFO.levelStr) -> Level.INFO.levelStr
+                                m.startsWith(Level.WARN.levelStr) -> Level.WARN.levelStr
+                                m.startsWith(Level.ERROR.levelStr) -> Level.ERROR.levelStr
+                                m.startsWith(Level.OFF.levelStr) -> Level.OFF.levelStr
                                 else -> null
                             }
                             if (llevel != null) {
@@ -270,13 +274,15 @@ class LogsController(@Value("\${logging.files.path}")
                 writer.print("<h1>Index of /</h1><hr><pre>")
                 if (!root)
                     writer.println("<a href=\"$upPath\">../</a>")
-                if (useWebSocket)
-                    writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${LocalDateTimeHelper.now().format()}       -")
+                val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                if (useWebSocket) {
+                    writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${LocalDateTimeHelper.now().format(dateTimeFormatter)}       -")
+                }
                 file.listFiles()?.forEach { it ->
                     if (it.isDirectory) {
-                        writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${LocalDateTimeHelper.of(it.lastModified()).format()}       -")
+                        writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${LocalDateTimeHelper.of(it.lastModified()).format(dateTimeFormatter)}       -")
                     } else {
-                        writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}\">${it.name}</a>                                        ${LocalDateTimeHelper.of(it.lastModified()).format()}       ${prettyValue(it.length())}")
+                        writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}\">${it.name}</a>                                        ${LocalDateTimeHelper.of(it.lastModified()).format(dateTimeFormatter)}       ${prettyValue(it.length())}")
                     }
                 }
                 writer.println("</pre><hr></body>\n</html>")
@@ -286,7 +292,7 @@ class LogsController(@Value("\${logging.files.path}")
         }
     }
 
-    private val units = arrayOf("B", "K", "M", "G")
+    private val UNITS: Array<String> = arrayOf<String>("B", "K", "M", "G", "T", "P", "E")
 
     /**
      * 返回易读的值
@@ -295,12 +301,25 @@ class LogsController(@Value("\${logging.files.path}")
      * @return 易读的值
      */
     fun prettyValue(value: Long): String {
-        var prettyValue = value
+        var newValue = value.toDouble()
         var index = 0
-        while (prettyValue / 1024 > 0) {
-            prettyValue /= 1024
+        var lastValue = 0.0
+        while (newValue / 1024 >= 1 && index < UNITS.size - 1) {
+            lastValue = newValue
+            newValue /= 1024
             index++
         }
-        return prettyValue.toString() + units[index]
+        var newScale = index - 2
+        newScale = Math.max(newScale, 0)
+        val result = (if (lastValue == 0.0) newValue else BigDecimal(lastValue).divide(BigDecimal(1024), BigDecimal.ROUND_UP)
+                .setScale(newScale, BigDecimal.ROUND_UP)).toString()
+        return trimTrailing(result) + UNITS[index]
     }
+
+    private fun trimTrailing(value: String): String {
+        return if (value.contains(".")) StringUtils
+                .trimTrailingCharacter(StringUtils.trimTrailingCharacter(
+                        value, '0'), '.') else value
+    }
+
 }
