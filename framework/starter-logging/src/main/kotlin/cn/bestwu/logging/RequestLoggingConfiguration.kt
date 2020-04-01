@@ -24,7 +24,7 @@ import javax.websocket.server.ServerContainer
  */
 @ConditionalOnProperty(prefix = "logging.request", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 @Configuration
-@EnableConfigurationProperties(RequestLoggingProperties::class)
+@EnableConfigurationProperties(RequestLoggingProperties::class, WebsocketProperties::class)
 class RequestLoggingConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     @Configuration
@@ -45,8 +45,8 @@ class RequestLoggingConfiguration {
 
     @ConditionalOnProperty(prefix = "logging.show", name = ["enabled"], havingValue = "true", matchIfMissing = true)
     @Bean
-    fun logsController(@Value("\${logging.files.path}") loggingFilesPath: String, environment: Environment): LogsController {
-        return LogsController(loggingFilesPath, environment)
+    fun logsController(@Value("\${logging.files.path}") loggingFilesPath: String, environment: Environment, websocketProperties: WebsocketProperties): LogsController {
+        return LogsController(loggingFilesPath, environment, websocketProperties)
     }
 
     @Bean

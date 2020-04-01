@@ -1,8 +1,8 @@
 package cn.bestwu.logging.websocket
 
+import cn.bestwu.logging.WebsocketProperties
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.context.ApplicationContext
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import javax.websocket.*
@@ -12,9 +12,16 @@ import javax.websocket.server.ServerEndpoint
 class WebSocketController {
     private val log = LoggerFactory.getLogger(WebSocketController::class.java)
 
+
     @OnOpen
     fun onOpen(session: Session) {
-        sessions[session.id] = session
+        val token = session.requestParameterMap["token"]
+        if (token.isNullOrEmpty() || websocketProperties.token != token.joinToString()) {
+            log.warn("token:{}!={}", token?.joinToString(), websocketProperties.token)
+            session.close(CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT, "非法连接"))
+        } else {
+            sessions[session.id] = session
+        }
     }
 
     /**
@@ -41,6 +48,10 @@ class WebSocketController {
     }
 
     companion object {
+        var applicationContext: ApplicationContext? = null
+        private val websocketProperties: WebsocketProperties
+            get() = applicationContext!!.getBean(WebsocketProperties::class.java)
+
         private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
 
         @Throws(IOException::class)
