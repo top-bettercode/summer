@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 @RequestMapping(value = ["/logs"], name = "日志")
 class LogsController(@Value("\${logging.files.path}")
-                     private val loggingFilesPath: String, environment: Environment) {
+                     private val loggingFilesPath: String, environment: Environment, private val websocketProperties: WebsocketProperties) {
 
     private val useWebSocket: Boolean = ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && "true" == environment.getProperty("logging.websocket.enabled")
     private val loggerContext: LoggerContext
@@ -153,7 +153,7 @@ class LogsController(@Value("\${logging.files.path}")
     console.log("您的浏览器不支持WebSocket");
   } else {
     console.info("连接...")
-    websocket = new WebSocket("$wsUrl");
+    websocket = new WebSocket("$wsUrl?token=${websocketProperties.token}");
     //连接发生错误的回调方法
     websocket.onerror = function () {
       console.error("WebSocket连接发生错误");
