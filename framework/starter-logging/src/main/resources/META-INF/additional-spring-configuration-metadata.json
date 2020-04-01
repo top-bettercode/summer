@@ -47,7 +47,7 @@
       "type": "java.lang.String"
     },
     {
-      "name": "logging.websocket.enable",
+      "name": "logging.websocket.enabled",
       "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem",
       "defaultValue": "false",
       "type": "java.lang.Boolean"

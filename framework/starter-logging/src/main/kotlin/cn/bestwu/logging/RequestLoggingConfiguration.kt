@@ -3,9 +3,7 @@ package cn.bestwu.logging
 import cn.bestwu.logging.websocket.WebSocketController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.condition.*
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.support.ErrorPageFilter
 import org.springframework.context.annotation.Bean
@@ -16,6 +14,7 @@ import org.springframework.core.env.Environment
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.socket.server.standard.ServerEndpointExporter
+import javax.websocket.server.ServerContainer
 
 /**
  * 自动增加请求日志过滤器
@@ -37,20 +36,6 @@ class RequestLoggingConfiguration {
             registry.addInterceptor(HandlerMethodHandlerInterceptor(properties))
         }
     }
-
-    @ConditionalOnClass(org.springframework.web.socket.server.standard.ServerEndpointExporter::class)
-    @Bean
-    fun serverEndpointExporter(): ServerEndpointExporter {
-        return ServerEndpointExporter()
-    }
-
-
-    @ConditionalOnClass(org.springframework.web.socket.server.standard.ServerEndpointExporter::class)
-    @Bean
-    fun webSocketController(): WebSocketController {
-        return WebSocketController()
-    }
-
 
     @Bean
     fun requestLoggingFilter(properties: RequestLoggingProperties, handlers: List<RequestLoggingHandler>?): RequestLoggingFilter {
