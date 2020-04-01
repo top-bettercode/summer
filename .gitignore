@@ -1,18 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### wu template
 .gradle
-/build/
-.gradletasknamecache
+build/
 
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-target
 
 ### IntelliJ IDEA ###
 .idea
@@ -22,10 +12,3 @@ target
 out
 classes
 
-### NetBeans ###
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
