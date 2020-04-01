@@ -272,12 +272,15 @@ class LogsController(@Value("\${logging.files.path}")
 <head><title>Index of /</title></head>
 <body>""")
                 writer.print("<h1>Index of /</h1><hr><pre>")
+
+                val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
                 if (!root)
                     writer.println("<a href=\"$upPath\">../</a>")
-                val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                if (useWebSocket) {
+                else if (useWebSocket) {
                     writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${LocalDateTimeHelper.now().format(dateTimeFormatter)}       -")
                 }
+
                 file.listFiles()?.forEach { it ->
                     if (it.isDirectory) {
                         writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${LocalDateTimeHelper.of(it.lastModified()).format(dateTimeFormatter)}       -")
