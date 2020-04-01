@@ -242,6 +242,10 @@ class LogsController(@Value("\${logging.files.path}")
                                 msg += it
                             }
                         }
+                        if (!msg.isBlank()) {
+                            writer.println(prettyMessageHTMLLayout.doLayout(msg, level
+                                    ?: Level.INFO.levelStr))
+                        }
                         writer.println(prettyMessageHTMLLayout.presentationFooter)
                         writer.println(prettyMessageHTMLLayout.fileFooter)
                     }
