@@ -217,7 +217,7 @@ class LogsController(@Value("\${logging.files.path}")
                         writer.println(prettyMessageHTMLLayout.fileHeader)
                         writer.println(prettyMessageHTMLLayout.presentationHeader)
 
-                        var msg = ""
+                        var msg = StringBuilder("")
                         var level: String? = null
                         logFile.readLines().forEach {
                             val m = it.substringAfter("  ", "")
@@ -232,18 +232,18 @@ class LogsController(@Value("\${logging.files.path}")
                             }
                             if (llevel != null) {
                                 if (!msg.isBlank()) {
-                                    writer.println(prettyMessageHTMLLayout.doLayout(msg, level
+                                    writer.println(prettyMessageHTMLLayout.doLayout(msg.toString(), level
                                             ?: Level.INFO.levelStr))
                                 }
-                                msg = it
+                                msg = java.lang.StringBuilder(it)
                                 level = llevel
                             } else {
-                                msg += CoreConstants.LINE_SEPARATOR
-                                msg += it
+                                msg.append(CoreConstants.LINE_SEPARATOR)
+                                msg.append(it)
                             }
                         }
                         if (!msg.isBlank()) {
-                            writer.println(prettyMessageHTMLLayout.doLayout(msg, level
+                            writer.println(prettyMessageHTMLLayout.doLayout(msg.toString(), level
                                     ?: Level.INFO.levelStr))
                         }
                         writer.println(prettyMessageHTMLLayout.presentationFooter)
