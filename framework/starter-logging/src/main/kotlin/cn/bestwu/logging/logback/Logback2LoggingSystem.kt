@@ -124,7 +124,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         }
         val rootLevel = environment.getProperty("logging.level.root")
         //websocket log
-        if (ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && "true" == environment.getProperty("logging.websocket.enable")) {
+        if (ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && "true" == environment.getProperty("logging.websocket.enabled")) {
             try {
                 val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
                 if (rootLevel != null) {
@@ -532,21 +532,22 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         lifeCycle.start()
     }
 
-    private fun getLocation(factory: ILoggerFactory): Any {
-        try {
-            val protectionDomain = factory.javaClass.protectionDomain
-            val codeSource = protectionDomain.codeSource
-            if (codeSource != null) {
-                return codeSource.location
-            }
-        } catch (ex: SecurityException) {
-            // Unable to determine location
-        }
-
-        return "unknown location"
-    }
 
     companion object {
         const val FILE_LOG_PATTERN = "%d{yyyy-MM-dd HH:mm:ss.SSS} " + "\${LOG_LEVEL_PATTERN:-%5p} \${PID:- } --- [%t] %-40.40logger{39} : %m%n\${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+
+        fun getLocation(factory: ILoggerFactory): Any {
+            try {
+                val protectionDomain = factory.javaClass.protectionDomain
+                val codeSource = protectionDomain.codeSource
+                if (codeSource != null) {
+                    return codeSource.location
+                }
+            } catch (ex: SecurityException) {
+                // Unable to determine location
+            }
+
+            return "unknown location"
+        }
     }
 }
