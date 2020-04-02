@@ -65,20 +65,20 @@ public class MuipartFileToAttachmentConverter implements Converter<MultipartFile
           fileType = multipartProperties.getDefaultFileType();
         }
       }
-      String filePath = "/" + fileType + "/";
+      String filePath = File.separator + fileType + File.separator;
       filePath += LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
       String originalFilename = source.getOriginalFilename();
       boolean hasExtension = StringUtils.hasText(originalFilename);
       String extension = hasExtension ? FilenameUtil.getExtension(originalFilename) : "";
       String path;
       if (multipartProperties.isKeepOriginalFilename()) {
-        filePath += "/" + UUID.randomUUID().toString() + "/";
+        filePath += File.separator + UUID.randomUUID().toString() + File.separator;
         String nameWithoutExtension = StringUtils
             .trimAllWhitespace(FilenameUtil.getNameWithoutExtension(originalFilename));
         path = filePath + URLEncoder.encode(nameWithoutExtension, "UTF-8");
         filePath += nameWithoutExtension;
       } else {
-        filePath += "/" + UUID.randomUUID().toString();
+        filePath += File.separator + UUID.randomUUID().toString();
         path = filePath;
       }
       if (hasExtension) {

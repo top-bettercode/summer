@@ -2,6 +2,7 @@ package cn.bestwu.generator.dsl
 
 import cn.bestwu.generator.dom.java.JavaType
 import cn.bestwu.generator.dom.java.element.*
+import java.io.File
 import java.io.PrintWriter
 
 /**
@@ -31,7 +32,7 @@ abstract class JavaGenerator : Generator() {
         }
 
     override val dir: String
-        get() = super.dir + "/" + packageName.replace('.', '/')
+        get() = super.dir + File.separator + packageName.replace('.', File.separatorChar)
 
     protected open val type: JavaType
         get() = JavaType("$packageName.$name")

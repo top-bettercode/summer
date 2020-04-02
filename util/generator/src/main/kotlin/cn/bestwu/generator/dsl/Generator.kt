@@ -126,7 +126,7 @@ abstract class Generator {
 
     protected open val destFile: File
         get() {
-            return File(path, if (this is JavaGenerator) "${name.replace(".", "/")}.java" else name)
+            return File(path, if (this is JavaGenerator) "${name.replace(".", File.separator)}.java" else name)
         }
 
     open var module: String = ""
@@ -250,7 +250,7 @@ abstract class Generator {
         this.table = table
         return if (extension.delete) {
             if (destFile.delete()) {
-                println("删除：${destFile.absolutePath.substringAfter(basePath.absolutePath + "/")}")
+                println("删除：${destFile.absolutePath.substringAfter(basePath.absolutePath + File.separator)}")
             }
             null
         } else {
@@ -297,6 +297,6 @@ abstract class Generator {
         destFile.printWriter().use {
             output(it)
         }
-        println("$msg：${destFile.absolutePath.substringAfter(basePath.absolutePath + "/")}")
+        println("$msg：${destFile.absolutePath.substringAfter(basePath.absolutePath + File.separator)}")
     }
 }

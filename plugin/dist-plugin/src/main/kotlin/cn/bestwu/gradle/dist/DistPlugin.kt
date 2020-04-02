@@ -472,12 +472,12 @@ fi
             }
             deleteFileList.printWriter().use { pw ->
                 olds.forEach {
-                    val subPath = it.absolutePath.substringAfter(oldDir.absolutePath + "/")
+                    val subPath = it.absolutePath.substringAfter(oldDir.absolutePath + File.separator)
                     val newFile = File(newDir, subPath)
                     if (!newFile.exists()) {
                         pw.println(subPath)
                         if (isWindows) {
-                            up.println("del /F ${subPath.replace("/", "\\")}")
+                            up.println("del /F $subPath")
                         } else {
                             up.println("rm -fv $subPath")
                         }
@@ -499,7 +499,7 @@ fi
         updateFile.setReadable(true, false)
         updateFile.setWritable(true, false)
         news.forEach {
-            val subPath = it.absolutePath.substringAfter(newDir.absolutePath + "/")
+            val subPath = it.absolutePath.substringAfter(newDir.absolutePath + File.separator)
             val oldFile = File(oldDir, subPath)
             if (!oldFile.exists() || it.sha1() != oldFile.sha1()) {
                 val newFile = File(updateDir, subPath)

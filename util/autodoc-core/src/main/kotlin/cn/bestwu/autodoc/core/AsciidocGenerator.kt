@@ -107,7 +107,7 @@ object AsciidocGenerator : AbstractbGenerator() {
     fun asciidoc(autodoc: AutodocExtension, pdf: Boolean = false) {
         val rootDoc = autodoc.rootSource
         val sourcePath = (rootDoc?.absoluteFile?.parentFile?.absolutePath
-                ?: autodoc.source.absolutePath) + "/"
+                ?: autodoc.source.absolutePath) + File.separator
         val commonAdocs = autodoc.commonAdocs()
         autodoc.listModules { module, pyname ->
             val adocFile = autodoc.adocFile(module.name)
