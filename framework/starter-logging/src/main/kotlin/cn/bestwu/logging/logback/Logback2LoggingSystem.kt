@@ -39,6 +39,7 @@ import org.springframework.boot.logging.logback.LogbackLoggingSystem
 import org.springframework.core.env.Environment
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
+import java.io.File
 
 /**
  * 自定义 LogbackLoggingSystem
@@ -237,7 +238,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         start(context, encoder)
 
         val name = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase()
-        val logFile = (filesProperties.path + "/" + name)
+        val logFile = (filesProperties.path + File.separator + name)
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
 
@@ -331,7 +332,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val logFile = filesProperties.path + "/" + marker + "/" + marker
+        val logFile = filesProperties.path + File.separator + marker + File.separator + marker
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
 
@@ -376,7 +377,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val logFile = filesProperties.path + "/" + name + "/" + name
+        val logFile = filesProperties.path + File.separator + name + File.separator + name
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
 

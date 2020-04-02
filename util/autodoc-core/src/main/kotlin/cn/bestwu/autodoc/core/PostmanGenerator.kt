@@ -9,6 +9,7 @@ import cn.bestwu.logging.operation.Parameters
 import cn.bestwu.logging.operation.QueryStringParser
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import java.io.File
 
 /**
  *
@@ -19,7 +20,7 @@ object PostmanGenerator : AbstractbGenerator() {
     fun postman(autodoc: AutodocExtension) {
         val rootDoc = autodoc.rootSource
         val sourcePath = (rootDoc?.absoluteFile?.parentFile?.absolutePath
-                ?: autodoc.source.absolutePath) + "/"
+                ?: autodoc.source.absolutePath) + File.separator
         autodoc.listModules { module,pyname ->
             val postmanFile = autodoc.postmanFile(pyname)
             postmanFile.delete()

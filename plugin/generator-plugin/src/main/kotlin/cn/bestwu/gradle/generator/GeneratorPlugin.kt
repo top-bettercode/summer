@@ -111,11 +111,11 @@ class GeneratorPlugin : Plugin<Project> {
             task.group = "gen"
             task.doLast { _ ->
                 project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.srcDirs.forEach { file ->
-                    val srcPath = file.absolutePath + "/"
+                    val srcPath = file.absolutePath + File.separator
                     file.walkTopDown().filter { it.isDirectory }.forEach { file1 ->
                         val packageInfo = File(file1, "package-info.java")
                         if (!packageInfo.exists() && file1.listFiles()?.any { it.isFile } == true) {
-                            packageInfo.writeText("""package ${file1.absolutePath.replace(srcPath, "").replace("/", ".")};""")
+                            packageInfo.writeText("""package ${file1.absolutePath.replace(srcPath, "").replace(File.separator, ".")};""")
                         }
                     }
                 }
