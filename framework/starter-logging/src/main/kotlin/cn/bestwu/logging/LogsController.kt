@@ -221,7 +221,7 @@ class LogsController(@Value("\${logging.files.path}")
                         var msg = StringBuilder("")
                         var level: String? = null
                         logFile.readLines().forEach {
-                            val m = it.substringAfter("  ", "")
+                            val m = it.substringAfter(" ", "").substringAfter(" ", "").trimStart()
                             val llevel = when {
                                 m.startsWith(Level.TRACE.levelStr) -> Level.TRACE.levelStr
                                 m.startsWith(Level.DEBUG.levelStr) -> Level.DEBUG.levelStr
