@@ -57,15 +57,14 @@ ${message.joinToString("")}
 ````````````````````````````````````````````````````````````````````````
         """.trimIndent()
         } else {
+            params["text"] = initialComment
             if (message.isNotEmpty()) {
                 val fileName = getFileName(filesPath!!)
                 File(filesPath, fileName).writeText(message.joinToString(""))
 
-                params["text"] = initialComment
                 params["attachments"] = arrayOf(mapOf("title" to title, "url" to "$logUrl/logs/${fileName}"))
             } else {
-                params["text"] = initialComment
-                params["attachments"] = arrayOf(mapOf("title" to title))
+                params["attachments"] = arrayOf(mapOf("title" to title, "url" to "$logUrl/logs/all.log"))
             }
         }
         if (!hasFilesPath && logUrl != null) {
