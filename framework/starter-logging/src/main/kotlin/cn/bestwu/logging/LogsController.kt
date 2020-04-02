@@ -100,7 +100,8 @@ class LogsController(@Value("\${logging.files.path}")
             response.writer.use { writer ->
                 writer.println(prettyMessageHTMLLayout.fileHeader)
                 writer.println(prettyMessageHTMLLayout.presentationHeader)
-                writer.println("""</table>
+                writer.println(prettyMessageHTMLLayout.presentationFooter)
+                writer.println("""
 <script type="text/javascript">
     function getScrollTop() {
     var scrollTop = 0, bodyScrollTop = 0, documentScrollTop = 0;
@@ -247,6 +248,18 @@ class LogsController(@Value("\${logging.files.path}")
                                     ?: Level.INFO.levelStr))
                         }
                         writer.println(prettyMessageHTMLLayout.presentationFooter)
+                        writer.println("""
+<script type="text/javascript">
+
+document.documentElement.scrollIntoView({
+            behavior: "smooth",
+            block: "end",
+            inline: "nearest"
+          });
+          
+</script>
+                """.trimIndent())
+
                         writer.println(prettyMessageHTMLLayout.fileFooter)
                     }
                 } else {
