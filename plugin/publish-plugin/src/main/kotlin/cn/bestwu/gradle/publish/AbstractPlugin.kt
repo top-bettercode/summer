@@ -312,7 +312,7 @@ abstract class AbstractPlugin : Plugin<Project> {
         project.pluginManager.apply(JavaPlugin::class.java)
         project.tasks.create("sourcesJar", Jar::class.java) {
             it.dependsOn("classes")
-            it.classifier = "sources"
+            it.archiveClassifier.set("sources")
             it.from(project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName("main").allSource)
         }
         project.tasks.withType(Javadoc::class.java) {

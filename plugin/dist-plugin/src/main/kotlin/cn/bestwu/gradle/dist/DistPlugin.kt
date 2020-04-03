@@ -166,10 +166,10 @@ class DistPlugin : Plugin<Project> {
                     it.group = createTask.group
                     it.from(createTask.outputDirectory)
                     if (dist.includeJre)
-                        it.archiveName = "${project.name}-windows-${if (dist.x64) "x64" else "x86"}.zip"
+                        it.archiveFileName.set("${project.name}-windows-${if (dist.x64) "x64" else "x86"}.zip")
                     else
-                        it.archiveName = "${project.name}-windows.zip"
-                    it.destinationDir = createTask.outputDirectory.parentFile
+                        it.archiveFileName.set("${project.name}-windows.zip")
+                    it.destinationDirectory.set(createTask.outputDirectory.parentFile)
                 }
 
                 project.tasks.create("windowsServiceUpdate") {
@@ -189,8 +189,8 @@ class DistPlugin : Plugin<Project> {
                     it.group = createTask.group
                     val updateDir = File(createTask.outputDirectory.parentFile, "update")
                     it.from(updateDir)
-                    it.archiveName = "${project.name}-${project.version}-windows-update.zip"
-                    it.destinationDir = createTask.outputDirectory.parentFile
+                    it.archiveFileName.set("${project.name}-${project.version}-windows-update.zip")
+                    it.destinationDirectory.set(createTask.outputDirectory.parentFile)
                 }
             }
             if (windowsServiceEnable || dist.unwrapResources) {
@@ -232,7 +232,7 @@ class DistPlugin : Plugin<Project> {
                         val dest = project.file("" + project.buildDir + "/install")
                         val updateDir = File(dest, "update")
                         require(dist.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                        compareUpdate(project, updateDir, project.file(dist.distOldPath), File(dest, distribution.baseName), false)
+                        compareUpdate(project, updateDir, project.file(dist.distOldPath), File(dest, distribution.distributionBaseName.get()), false)
                     }
                 }
 
@@ -243,8 +243,8 @@ class DistPlugin : Plugin<Project> {
                     val dest = project.file("" + project.buildDir + "/install")
                     val updateDir = File(dest, "update")
                     it.from(updateDir)
-                    it.archiveName = "${project.name}_${project.version}_dist_update.zip"
-                    it.destinationDir = dest
+                    it.archiveFileName.set("${project.name}_${project.version}_dist_update.zip")
+                    it.destinationDirectory.set(dest)
                 }
             }
             val application = project.convention.findPlugin(ApplicationPluginConvention::class.java)

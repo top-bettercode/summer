@@ -1,14 +1,15 @@
+plugins { `java-library` }
 dependencies {
-    compile(project(":framework:starter-logging"))
+    api(project(":framework:starter-logging"))
 
     //web
-    compile("org.springframework.boot:spring-boot-starter-web")
+    api("org.springframework.boot:spring-boot-starter-web")
 
     compileOnly("com.github.axet:kaptcha")
     compileOnly("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     compileOnly("org.springframework.boot:spring-boot-starter-jdbc")
 
-    testCompile("com.github.axet:kaptcha")
+    testImplementation("com.github.axet:kaptcha")
 }
 
 

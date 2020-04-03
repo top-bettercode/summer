@@ -1,13 +1,17 @@
+plugins {
+    `java-library`
+}
+
 dependencies {
-    compile(kotlin("stdlib"))
+    api(kotlin("stdlib"))
 
-    compile(project(":framework:starter-logging"))
-    compile("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
-    compile("org.asciidoctor:asciidoctorj")
-    compile("org.asciidoctor:asciidoctorj-diagram")
-    compile("org.asciidoctor:asciidoctorj-pdf")
-    compile("com.github.stuxuhai:jpinyin")
+    api(project(":framework:starter-logging"))
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    api("org.asciidoctor:asciidoctorj")
+    api("org.asciidoctor:asciidoctorj-diagram")
+    api("org.asciidoctor:asciidoctorj-pdf")
+    api("com.github.stuxuhai:jpinyin")
 
-    testCompile(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit"))
 
 }

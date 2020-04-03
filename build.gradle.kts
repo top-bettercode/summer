@@ -1,7 +1,5 @@
-import java.net.URI
-
 plugins {
-    java
+    `java-library`
     idea
 }
 
@@ -31,7 +29,6 @@ allprojects {
     }
 
     configurations {
-        filter { arrayOf("compile", "testCompile").contains(it.name) }.forEach { it.exclude("org.codehaus.jackson") }
         all {
             resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)
         }
@@ -42,11 +39,9 @@ allprojects {
         maven("https://maven.aliyun.com/repository/public")
         jcenter()
         gradlePluginPortal()
-        maven("http://oss.jfrog.org/oss-snapshot-local")
+        maven("https://oss.jfrog.org/oss-snapshot-local")
     }
-    ext {
-        this["plantumlVersion"] = "1.2020.4"
-    }
+
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         dependencies {
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
@@ -58,7 +53,7 @@ allprojects {
 
             dependency("org.dom4j:dom4j:2.1.1")
             dependency("org.atteo:evo-inflector:1.2.2")
-            dependency("net.sourceforge.plantuml:plantuml:${ext["plantumlVersion"]}")
+            dependency("net.sourceforge.plantuml:plantuml:1.2020.4")
 
             dependency("org.jsoup:jsoup:1.13.1")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")

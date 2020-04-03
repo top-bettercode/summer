@@ -1,5 +1,5 @@
-
+plugins { `java-library` }
 dependencies {
-    compile("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin")
+    api("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin")
 
 }

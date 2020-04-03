@@ -1,7 +1,8 @@
 import org.apache.tools.ant.filters.ReplaceTokens
+plugins { `java-library` }
 
 dependencies {
-    compile(project(":util:autodoc-core"))
+    api(project(":util:autodoc-core"))
 }
 
 tasks {

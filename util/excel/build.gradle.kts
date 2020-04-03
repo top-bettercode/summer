@@ -1,16 +1,20 @@
+plugins {
+    `java-library`
+}
+
 dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
 
-    compile(project(":util:common-lang"))
-    compile("javax.mail:mail")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.dhatim:fastexcel")
+    api(project(":util:common-lang"))
+    api("javax.mail:mail")
+    api("org.springframework.boot:spring-boot-starter-web")
+    api("org.dhatim:fastexcel")
     compileOnly("org.dhatim:fastexcel-reader")
-    testCompile("org.dhatim:fastexcel-reader")
+    testImplementation("org.dhatim:fastexcel-reader")
     compileOnly(project(":framework:web"))
-    testCompile(project(":framework:web"))
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testImplementation(project(":framework:web"))
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 

@@ -1,4 +1,5 @@
+plugins { `java-library` }
 dependencies {
-    compile(project(":util:generator"))
-    compile("net.sourceforge.plantuml:plantuml:${ext["plantumlVersion"]}")
+    api(project(":util:generator"))
+    api("net.sourceforge.plantuml:plantuml")
 }

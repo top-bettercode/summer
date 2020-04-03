@@ -1,3 +1,4 @@
+plugins { `java-library` }
 subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
@@ -6,10 +7,10 @@ subprojects {
         plugin("org.springframework.boot")
     }
     dependencies{
-        compile(gradleApi())
-        compile(kotlin("stdlib"))
+        api(gradleApi())
+        api(kotlin("stdlib"))
 
-        testCompile(kotlin("test-junit"))
+        testImplementation(kotlin("test-junit"))
     }
     tasks {
         "jar"(Jar::class) {
