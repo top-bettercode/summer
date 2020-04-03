@@ -285,17 +285,21 @@ abstract class AbstractPlugin : Plugin<Project> {
         if (dependencyManagement != null) {
             val managementDependencies = dependencyManagement.getAt("dependencies")?.children()
             if (managementDependencies != null) {
-                root.getAt("dependencies")?.children()?.forEach {
-                    val node = it as Node
-                    if (node.getAt("version") == null) {
-                        managementDependencies.forEach { dep ->
-                            dep as Node
-                            if (dep.getAt("groupId")?.text() == node.getAt("groupId")?.text() && dep.getAt("artifactId")?.text() == node.getAt("artifactId")?.text())
-                                node.appendNode("version", dep.getAt("version")?.text())
-                        }
+                val dependencies = root.getAt("dependencies")?.children()
+                if (dependencies != null) {
+                    val iterator = managementDependencies.iterator()
+                    while (iterator.hasNext()) {
+                        val node = iterator.next() as Node
+                        if ("pom" != node.getAt("type")?.text() && !dependencies.any { dep ->
+                                    dep as Node
+                                    dep.getAt("groupId")?.text() == node.getAt("groupId")?.text() && dep.getAt("artifactId")?.text() == node.getAt("artifactId")?.text()
+                                })
+                            iterator.remove()
                     }
+                } else {
+                    root.remove(dependencyManagement)
                 }
-                root.remove(dependencyManagement)
+
             }
         }
     }
