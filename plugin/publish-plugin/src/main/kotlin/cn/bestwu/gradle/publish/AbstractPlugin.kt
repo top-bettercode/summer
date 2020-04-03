@@ -14,6 +14,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
@@ -123,6 +124,9 @@ abstract class AbstractPlugin : Plugin<Project> {
      */
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     private fun configurePublishing(project: Project, projectUrl: String?, projectVcsUrl: String?) {
+        project.tasks.withType(GenerateModuleMetadata::class.java) {
+            it.enabled = false
+        }
         project.extensions.configure(PublishingExtension::class.java) { p ->
 
             var mavenRepoName = project.findProperty("mavenRepo.name") as? String ?: "mavenDeployer"
