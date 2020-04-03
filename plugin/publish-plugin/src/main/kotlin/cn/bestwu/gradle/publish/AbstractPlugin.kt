@@ -201,8 +201,6 @@ abstract class AbstractPlugin : Plugin<Project> {
         return {
             val root = it.asNode()
 
-            //version
-            setDependencyVersion(root)
             /**
              * 配置pom.xml相关信息
              */
@@ -276,34 +274,6 @@ abstract class AbstractPlugin : Plugin<Project> {
         }
         project.tasks.getByName("bintrayUpload").dependsOn("publishToMavenLocal")
     }
-
-    /**
-     * 设置依赖的version
-     */
-    private fun setDependencyVersion(root: Node) {
-        val dependencyManagement = root.getAt("dependencyManagement")
-        if (dependencyManagement != null) {
-            val managementDependencies = dependencyManagement.getAt("dependencies")?.children()
-            if (managementDependencies != null) {
-                val dependencies = root.getAt("dependencies")?.children()
-                if (dependencies != null) {
-                    val iterator = managementDependencies.iterator()
-                    while (iterator.hasNext()) {
-                        val node = iterator.next() as Node
-                        if ("pom" != node.getAt("type")?.text() && !dependencies.any { dep ->
-                                    dep as Node
-                                    dep.getAt("groupId")?.text() == node.getAt("groupId")?.text() && dep.getAt("artifactId")?.text() == node.getAt("artifactId")?.text()
-                                })
-                            iterator.remove()
-                    }
-                } else {
-                    root.remove(dependencyManagement)
-                }
-
-            }
-        }
-    }
-
 
     /**
      * 前置配置
