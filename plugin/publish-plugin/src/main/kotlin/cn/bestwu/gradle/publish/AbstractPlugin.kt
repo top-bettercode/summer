@@ -197,13 +197,8 @@ abstract class AbstractPlugin : Plugin<Project> {
         return {
             val root = it.asNode()
 
-            //compile
-            setDependencyScope(root, project, "compile")
-            //provided
-            setDependencyScope(root, project, "provided")
-            //optional
-            setDependencyScope(root, project, "optional")
-
+            //version
+            setDependencyVersion(root)
             /**
              * 配置pom.xml相关信息
              */
@@ -279,23 +274,28 @@ abstract class AbstractPlugin : Plugin<Project> {
     }
 
     /**
-     * 设置依赖的scope
+     * 设置依赖的version
      */
-    private fun setDependencyScope(root: Node, project: Project, scope: String) {
-        root.getAt("dependencies")?.children()?.filter {
-            val node = it as Node
-            node.getAt("scope")?.text() == "runtime" && project.configurations.findByName(scope)?.dependencies?.any { dep ->
-                dep.group == node.getAt("groupId")?.text() && dep.name == node.getAt("artifactId")?.text()
-            } ?: false
-        }?.forEach {
-            val node = it as Node
-            if (scope == "optional") {
-                node.getAt("scope")?.setValue("compile")
-                node.appendNode("optional", "true")
-            } else
-                node.getAt("scope")?.setValue(scope)
+    private fun setDependencyVersion(root: Node) {
+        val dependencyManagement = root.getAt("dependencyManagement")
+        if (dependencyManagement != null) {
+            val managementDependencies = dependencyManagement.getAt("dependencies")?.children()
+            if (managementDependencies != null) {
+                root.getAt("dependencies")?.children()?.forEach {
+                    val node = it as Node
+                    if (node.getAt("version") == null) {
+                        managementDependencies.forEach { dep ->
+                            dep as Node
+                            if (dep.getAt("groupId")?.text() == node.getAt("groupId")?.text() && dep.getAt("artifactId")?.text() == node.getAt("artifactId")?.text())
+                                node.appendNode("version", dep.getAt("version")?.text())
+                        }
+                    }
+                }
+                root.remove(dependencyManagement)
+            }
         }
     }
+
 
     /**
      * 前置配置
