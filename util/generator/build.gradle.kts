@@ -1,14 +1,18 @@
+plugins {
+    `java-library`
+}
+
 dependencies {
-    compile(kotlin("stdlib"))
-    compile("org.atteo:evo-inflector")
-    compile("org.dom4j:dom4j")
-    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    api(kotlin("stdlib"))
+    api("org.atteo:evo-inflector")
+    api("org.dom4j:dom4j")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
-    testCompile("org.mybatis.generator:mybatis-generator-core")
+    testImplementation("org.mybatis.generator:mybatis-generator-core")
 
-    testCompile(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit"))
 
-    testCompile("com.h2database:h2")
-    testCompile("mysql:mysql-connector-java")
+    testImplementation("com.h2database:h2")
+    testImplementation("mysql:mysql-connector-java")
 
 }

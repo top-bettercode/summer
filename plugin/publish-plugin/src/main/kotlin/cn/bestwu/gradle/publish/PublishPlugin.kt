@@ -20,7 +20,7 @@ class PublishPlugin : AbstractPlugin() {
 
         project.afterEvaluate { _ ->
             project.tasks.create("javadocJar", Jar::class.java) {
-                it.classifier = "javadoc"
+                it.archiveClassifier.set("javadoc")
                 it.from(project.tasks.getByName("javadoc").outputs)
             }
             configPublish(project)

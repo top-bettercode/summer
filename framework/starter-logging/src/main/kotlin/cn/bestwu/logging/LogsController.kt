@@ -28,6 +28,7 @@ import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import kotlin.math.max
 
 /**
  * 日志
@@ -330,9 +331,9 @@ document.documentElement.scrollIntoView({
             index++
         }
         var newScale = index - 2
-        newScale = Math.max(newScale, 0)
-        val result = (if (lastValue == 0.0) newValue else BigDecimal(lastValue).divide(BigDecimal(1024), BigDecimal.ROUND_UP)
-                .setScale(newScale, BigDecimal.ROUND_UP)).toString()
+        newScale = max(newScale, 0)
+        val result = if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(BigDecimal(1024), BigDecimal.ROUND_UP)
+                .setScale(newScale, BigDecimal.ROUND_UP).toString()
         return trimTrailing(result) + UNITS[index]
     }
 

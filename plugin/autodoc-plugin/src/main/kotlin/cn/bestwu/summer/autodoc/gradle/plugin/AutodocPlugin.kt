@@ -106,7 +106,7 @@ class AutodocPlugin : Plugin<Project> {
         }
 
         val version = pluginBundle.getString("autodoc.version.default")
-        project.dependencies.add("testCompile", "cn.bestwu.summer:autodoc-gen:$version")
+        project.dependencies.add("testImplementation", "cn.bestwu.summer:autodoc-gen:$version")
 
     }
 

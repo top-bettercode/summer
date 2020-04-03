@@ -1,19 +1,18 @@
-import org.gradle.kotlin.dsl.*
-
-//plugins {
+plugins {
+    `java-library`
 //    id("com.eriwen.gradle.js") version "2.14.1"
-//}
+}
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile(kotlin("reflect"))
+    api("org.springframework.boot:spring-boot-starter-web")
+    api(kotlin("reflect"))
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
 
-    testCompile(kotlin("test-junit"))
-    testCompile(project(":framework:starter-logging"))
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testImplementation(kotlin("test-junit"))
+    testImplementation(project(":framework:starter-logging"))
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks {

@@ -92,16 +92,16 @@ class PluginPublishPlugin : AbstractPlugin() {
         when {
             project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") -> {
                 project.tasks.create("javadocJar", Jar::class.java) {
-                    it.classifier = "javadoc"
+                    it.archiveClassifier.set("javadoc")
                     it.from(project.tasks.getByName("dokkaJavadoc").outputs)
                 }
             }
             project.plugins.hasPlugin("groovy") -> project.tasks.create("javadocJar", Jar::class.java) {
-                it.classifier = "javadoc"
+                it.archiveClassifier.set("javadoc")
                 it.from(project.tasks.getByName("groovydoc").outputs)
             }
             else -> project.tasks.create("javadocJar", Jar::class.java) {
-                it.classifier = "javadoc"
+                it.archiveClassifier.set("javadoc")
                 it.from(project.tasks.getByName("javadoc").outputs)
             }
         }

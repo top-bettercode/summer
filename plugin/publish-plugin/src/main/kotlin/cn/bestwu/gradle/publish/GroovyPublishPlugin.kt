@@ -23,7 +23,7 @@ class GroovyPublishPlugin : AbstractPlugin() {
                 it.source(project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName("main").allSource)
             }
             project.tasks.create("javadocJar", Jar::class.java) {
-                it.classifier = "javadoc"
+                it.archiveClassifier.set("javadoc")
                 it.from(project.tasks.getByName("groovydoc").outputs)
             }
             configPublish(project)

@@ -1,10 +1,14 @@
+plugins {
+    `java-library`
+}
+
 dependencies {
-    compile(kotlin("stdlib"))
-    compile("com.fasterxml.jackson.core:jackson-databind")
+    api(kotlin("stdlib"))
+    api("com.fasterxml.jackson.core:jackson-databind")
     compileOnly("org.jsoup:jsoup")
     compileOnly("org.springframework.boot:spring-boot-starter-web")
 
-    testCompile("org.jsoup:jsoup")
-    testCompile("junit:junit")
+    testImplementation("org.jsoup:jsoup")
+    testImplementation("junit:junit")
 }
 
