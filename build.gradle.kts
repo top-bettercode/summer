@@ -37,6 +37,7 @@ allprojects {
     repositories {
         mavenLocal()
         maven("https://maven.aliyun.com/repository/public")
+        maven("https://maven.aliyun.com/repository/gradle-plugin")
         jcenter()
         gradlePluginPortal()
         maven("https://oss.jfrog.org/oss-snapshot-local")
