@@ -215,6 +215,8 @@ fun Set<Field>.findPossibleField(name: String, type: String, hasDesc: Boolean = 
                 field.name = name
             } else {
                 field = this.findFuzzyField(newName, type, hasDesc)
+                if (field != null)
+                    field.name = name
             }
         } else
             field = this.findFuzzyField(name, type, hasDesc)
