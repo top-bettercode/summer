@@ -213,12 +213,10 @@ fun Set<Field>.findPossibleField(name: String, type: String, hasDesc: Boolean = 
             field = this.findField(newName, type, hasDesc)
             if (field != null) {
                 field.name = name
-            } else if (newName.endsWith("Name") || newName.endsWith("Url") || newName.endsWith("Urls") || newName.endsWith("Path")) {
+            } else {
                 field = this.findFuzzyField(newName, type, hasDesc)
-                if (field != null)
-                    field.name = name
             }
-        } else if ((name.endsWith("Name") || name.endsWith("Url") || name.endsWith("Urls") || name.endsWith("Path")))
+        } else
             field = this.findFuzzyField(name, type, hasDesc)
     }
     return field
@@ -237,6 +235,8 @@ private fun Set<Field>.findFuzzyField(name: String, type: String, hasDesc: Boole
     val field = this.findField(newName, type, hasDesc)
     if (field != null) {
         field.name = name
+        field.type = "String"
+        field.defaultVal = ""
         field.description = field.description.split(Regex("[（(,:，：]"))[0]
     }
     return field
