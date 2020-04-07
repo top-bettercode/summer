@@ -67,22 +67,26 @@ public class ExcelFieldDescription {
    * @return field value
    */
   public Object read(Object o) {
+    Object fieldValue = excelField.defaultValue();
     try {
       if (propertyNames != null) {
-        return convert(invokeGetter(o));
+        fieldValue = invokeGetter(o);
       } else if (accessibleObject instanceof Field) {
-        return convert(ReflectionUtils
-            .invokeMethod(
-                BeanUtils.getPropertyDescriptor(o.getClass(), ((Field) accessibleObject).getName())
-                    .getReadMethod(), o));
+        fieldValue = (ReflectionUtils.invokeMethod(
+            BeanUtils.getPropertyDescriptor(o.getClass(), ((Field) accessibleObject).getName())
+                .getReadMethod(), o));
       } else if (accessibleObject instanceof Method) {
-        String methodName = ((Method) accessibleObject).getName();
-        return convert(ReflectionUtils.invokeMethod(o.getClass().getMethod(methodName), o));
+        fieldValue = (ReflectionUtils
+            .invokeMethod(o.getClass().getMethod(((Method) accessibleObject).getName()), o));
+      }
+      if (fieldValue == null || fieldValue instanceof String && !StringUtils
+          .hasText(String.valueOf(fieldValue))) {
+        fieldValue = excelField.defaultValue();
       }
     } catch (NoSuchMethodException e) {
       log.warn("read value fail.", e);
     }
-    return "";
+    return convert(fieldValue);
   }
 
 
@@ -109,6 +113,10 @@ public class ExcelFieldDescription {
       Validator validator,
       Class<?>... validateGroups) {
     try {
+      if (!StringUtils.hasText(cellValue)) {
+        cellValue = excelField.defaultInValue();
+      }
+
       if (cellValueConverter != null) {
         setField(o,
             (StringUtils.hasText(cellValue) ? cellValueConverter.fromCell(cellValue, this, o)
@@ -189,6 +197,9 @@ public class ExcelFieldDescription {
     String propertyName = null;
     if (accessibleObject instanceof Field) {
       propertyName = ((Field) accessibleObject).getName();
+      if (val == null && ((Field) accessibleObject).getType().equals(String.class)) {
+        val = "";
+      }
       ReflectionUtils.invokeMethod(
           BeanUtils.getPropertyDescriptor(o.getClass(), propertyName)
               .getWriteMethod(), o, val);
@@ -198,6 +209,9 @@ public class ExcelFieldDescription {
         propertyName = mthodName.substring(3);
         mthodName = "set" + propertyName;
         propertyName = StringUtils.uncapitalize(propertyName);
+      }
+      if (val == null && ((Method) accessibleObject).getReturnType().equals(String.class)) {
+        val = "";
       }
       ReflectionUtils.invokeMethod(o.getClass().getMethod(mthodName, fieldType), o, val);
     }

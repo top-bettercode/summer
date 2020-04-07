@@ -23,6 +23,18 @@ public @interface ExcelField {
   String title();
 
   /**
+   * @return 默认值
+   */
+  String defaultValue() default "";
+
+
+  /**
+   * @return 默认输入值
+   */
+  String defaultInValue() default "";
+
+
+  /**
    * @return 导出字段批注
    */
   String comment() default "";
