@@ -5,7 +5,6 @@ import cn.bestwu.autodoc.core.model.DocCollections
 import cn.bestwu.autodoc.core.model.Field
 import cn.bestwu.lang.util.RandomUtil
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.json.JsonReadFeature
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -175,21 +174,22 @@ fun Set<Field>.knewFixFields(needFixFields: Set<Field>) {
     }
 }
 
-fun Set<Field>.fixField(it: Field, hasDesc: Boolean = false, coverType: Boolean = true) {
-    val findField = this.findPossibleField(it.name, it.value.type, hasDesc)
-    if (findField != null && (it.description.isBlank() || !findField.canCover)) {
-        it.canCover = findField.canCover
-        it.defaultVal = findField.defaultVal
+fun Set<Field>.fixField(field: Field, hasDesc: Boolean = false, coverType: Boolean = true, userDefault: Boolean = true) {
+    val findField = this.findPossibleField(field.name, field.value.type, hasDesc)
+    if (findField != null && (field.description.isBlank() || !findField.canCover)) {
+        field.canCover = findField.canCover
+        if (userDefault)
+            field.defaultVal = findField.defaultVal
         if (coverType || !findField.canCover)
-            it.type = findField.type
+            field.type = findField.type
         if (findField.description.isNotBlank())
-            it.description = findField.description
+            field.description = findField.description
 
-        var tempVal = it.value
+        var tempVal = field.value
         if (tempVal.isBlank()) {
-            tempVal = if (findField.value.isBlank()) it.defaultVal else findField.value
+            tempVal = if (findField.value.isBlank()) field.defaultVal else findField.value
         }
-        it.value = tempVal.convert(false)?.toJsonString(false) ?: ""
+        field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
     }
 }
 
