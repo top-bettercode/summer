@@ -69,7 +69,7 @@ object InitField {
 
     private fun Set<Field>.fix(needFixFields: Set<Field>) {
         needFixFields.forEach {
-            this.fixField(it)
+            this.fixField(field = it, userDefault = false)
         }
         needFixFields.knewFixFields(needFixFields)
     }
