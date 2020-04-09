@@ -117,7 +117,7 @@ TIP: Accept的格式为:application/json.
 }
 ----
 
-*** status：错误码。当不是业务相关错误时，值与HTTP状态码保持一致，否则为<<_业务相关错误码>>
+*** status：错误码。当不是业务相关错误时，值与HTTP状态码保持一致，否则为<<yewuxiangguancuowuma>>
 *** message：错误信息
 *** errors：详细错误信息，errors 内key为错误的字段/错误信息名称，value为错误信息
 
@@ -125,7 +125,7 @@ TIP: Accept的格式为:application/json.
 
 当客户端收到的 HTTP 状态码大于等于400时，客户端应按以下方式处理。
 
-* 当 HTTP 状态码为400时,表示业务异常，根据响应体中的 status 字段值按<<_业务相关错误码>>处理。
+* 当 HTTP 状态码为400时,表示业务异常，根据响应体中的 status 字段值按<<yewuxiangguancuowuma>>处理。
 
 * 当 HTTP 状态码为401时,跳转到登录界面，让用户登录,可提示用户您还未登录。
 

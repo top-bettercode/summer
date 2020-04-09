@@ -207,7 +207,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                                     out.print("|${str(it.name)}")
                                     out.print("|${str(it.type)}")
                                     out.print(" 3+|${str(it.description, true)}")
-                                    out.print("|${str(subValue(it.value))}")
+                                    out.print("|${str(it.value)}")
                                     out.println()
                                 }
                             }
@@ -220,7 +220,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                                     out.print("|${str(it.type)}")
                                     out.print("|${str(it.requiredDescription)}")
                                     out.print(" 2+|${str(it.description, true)}")
-                                    out.print("|${str(subValue(it.value))}")
+                                    out.print("|${str(it.value)}")
                                     out.println()
                                     headers[it.name] = it.value
                                 }
@@ -260,7 +260,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                                     out.print("|${str(field.type)}")
                                     out.print(" 3+|${str(field.description, true)}")
 
-                                    out.print("|${str(if (field.expanded && field.value.toMap() != null) "" else subValue(field.value))}")
+                                    out.print("|${str(if (field.expanded && field.value.toMap() != null) "" else field.value)}")
                                     out.println()
                                 }
                             }
@@ -291,7 +291,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         out.print("|${str(it.requiredDescription)}")
         out.print("|${str(it.description, true)}")
         out.print("|${str(it.defaultVal)}")
-        out.print("|${str(if (it.expanded && it.value.toMap() != null) "" else subValue(it.value))}")
+        out.print("|${str(if (it.expanded && it.value.toMap() != null) "" else it.value)}")
         out.println()
     }
 
@@ -301,10 +301,6 @@ object AsciidocGenerator : AbstractbGenerator() {
         else
             "++${str?.replace("|", "\\|") ?: ""}++"
     }
-
-    private fun subValue(value: String) =
-            StringUtil.subStringWithEllipsis(value, 20)
-
 
     private fun fillBlank(depth: Int): String {
         return if (depth == 0) {
