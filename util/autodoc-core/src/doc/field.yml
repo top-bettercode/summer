@@ -112,7 +112,7 @@
   canCover: true
 - name: "sign"
   type: "String"
-  description: "接口签名 <<_签名算法>>"
+  description: "接口签名 <<qianmingsuanfa>>"
   defaultVal: ""
   value: ""
   nullable: false
