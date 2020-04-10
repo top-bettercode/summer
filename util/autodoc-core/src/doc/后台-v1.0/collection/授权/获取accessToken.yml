@@ -45,7 +45,7 @@ request:
    -
     name: "sign"
     type: "String"
-    description: "接口签名 <<_签名算法>>"
+    description: "接口签名 <<jiekouqianmingsuanfa>>"
     defaultVal: ""
     value: "f88424e5f0bc825d93f0245130b4f80c"
     expanded: true
