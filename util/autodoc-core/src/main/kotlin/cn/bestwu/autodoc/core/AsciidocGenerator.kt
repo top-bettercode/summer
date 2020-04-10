@@ -102,6 +102,38 @@ object AsciidocGenerator : AbstractbGenerator() {
         return pw.toString()
     }
 
+    fun setDefaultDesc(autodoc: AutodocExtension) {
+        autodoc.listModules { module, pyname ->
+            module.collections.forEach { collection ->
+                collection.operations.forEach { operation ->
+                    val request = operation.request as DocOperationRequest
+                    val response = operation.response as DocOperationResponse
+
+                    request.uriVariablesExt.setDefaultFieldDesc()
+                    request.headersExt.setDefaultFieldDesc()
+                    request.parametersExt.setDefaultFieldDesc()
+                    request.partsExt.setDefaultFieldDesc()
+                    request.contentExt.setDefaultFieldDesc()
+
+                    response.headersExt.setDefaultFieldDesc()
+                    response.contentExt.setDefaultFieldDesc()
+
+                    operation.save()
+                }
+            }
+        }
+    }
+
+    private fun Set<Field>.setDefaultFieldDesc() {
+        this.forEach {
+            if (it.description.isBlank()) {
+                it.description = it.name
+            }
+            it.children.setDefaultFieldDesc()
+        }
+    }
+
+
     fun asciidoc(autodoc: AutodocExtension, pdf: Boolean = false) {
         val rootDoc = autodoc.rootSource
         val sourcePath = (rootDoc?.absoluteFile?.parentFile?.absolutePath

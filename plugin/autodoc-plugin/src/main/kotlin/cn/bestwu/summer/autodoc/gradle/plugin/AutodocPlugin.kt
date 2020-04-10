@@ -95,6 +95,14 @@ class AutodocPlugin : Plugin<Project> {
                 PostmanGenerator.postman(project.extensions.findByType(AutodocExtension::class.java)!!)
             }
         }
+        project.tasks.create("setDefaultDesc") { task ->
+            task.group = group
+            task.doLast {
+                val extension = project.extensions.findByType(AutodocExtension::class.java)!!
+                extension.properties = project.properties
+                AsciidocGenerator.setDefaultDesc(extension)
+            }
+        }
         project.tasks.getByName("jar") {
             it.dependsOn("htmldoc", "postman")
         }
