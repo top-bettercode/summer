@@ -1,203 +1,129 @@
-description: ""
 request:
-  uri: "/custAccountInfos/other"
-  restUri: "/custAccountInfos/other"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "6c5467aaaf8b8c5876b8016771744b64"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "2beb03d4-c19c-4486-8a90-f2cd1ff0b8b0"
+  parametersExt:
+   -
+    name: "custId"
+    type: "String"
+    description: "客户ID"
+    canCover: true
+    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "2beb03d4-c19c-4486-8a90-f2cd1ff0b8b0"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "6c5467aaaf8b8c5876b8016771744b64"
-    expanded: true
     canCover: true
     required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    custId:
-     - ""
-  parametersExt:
-   -
-    name: "custId"
-    type: "String"
-    description: "客户ID"
-    defaultVal: ""
-    value: ""
-    expanded: true
-    canCover: true
-    required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"size\":2,\"total\":2,\"pages\":1,\"list\":[{\"childrenAccountType\"\
-    :\"02\",\"amount\":8002,\"accountInfos\":[{\"accountId\":\"ACCT001148\",\"accountBalance\"\
-    :5002,\"serviceType\":\"01\"},{\"accountId\":\"ACCT001152\",\"accountBalance\"\
-    :3000,\"serviceType\":\"02\"}]},{\"childrenAccountType\":\"03\",\"amount\":8003,\"\
-    accountInfos\":[{\"accountId\":\"ACCT001149\",\"accountBalance\":3003,\"serviceType\"\
-    :\"01\"},{\"accountId\":\"ACCT001153\",\"accountBalance\":5000,\"serviceType\"\
-    :\"02\"}]}],\"page\":1}"
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "2beb03d4-c19c-4486-8a90-f2cd1ff0b8b0"
+    canCover: true
+    required: false
+  restUri: "/custAccountInfos/other"
+  method: "GET"
+response:
   contentExt:
-   -
-    name: "list.childrenAccountType"
-    type: "String"
-    description: "01"
-    defaultVal: ""
-    value: "02"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.accountInfos.serviceType"
-    type: "String"
-    description: "业务类型"
-    defaultVal: ""
-    value: "01"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list"
-    type: "Array"
-    description: "内容"
-    defaultVal: ""
-    value: "[{\"childrenAccountType\":\"02\",\"amount\":8002,\"accountInfos\":[{\"\
-      accountId\":\"ACCT001148\",\"accountBalance\":5002,\"serviceType\":\"01\"},{\"\
-      accountId\":\"ACCT001152\",\"accountBalance\":3000,\"serviceType\":\"02\"}]},{\"\
-      childrenAccountType\":\"03\",\"amount\":8003,\"accountInfos\":[{\"accountId\"\
-      :\"ACCT001149\",\"accountBalance\":3003,\"serviceType\":\"01\"},{\"accountId\"\
-      :\"ACCT001153\",\"accountBalance\":5000,\"serviceType\":\"02\"}]}]"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "size"
     type: "Integer"
     description: "当前页的数量"
-    defaultVal: ""
     value: "2"
-    expanded: true
     canCover: true
     required: false
    -
     name: "total"
     type: "Long"
     description: "总记录数"
-    defaultVal: ""
     value: "2"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.amount"
-    type: "BigDecimal"
-    description: "总金额"
-    defaultVal: ""
-    value: "8002"
-    expanded: true
     canCover: true
     required: false
    -
     name: "pages"
     type: "Long"
     description: "总页数"
-    defaultVal: ""
     value: "1"
-    expanded: true
     canCover: true
     required: false
    -
-    name: "list.accountInfos.accountId"
-    type: "String"
-    description: "账户ID"
-    defaultVal: ""
-    value: "ACCT001148"
-    expanded: true
+    name: "list"
+    type: "Array"
+    description: "内容"
+    value: "[{\"childrenAccountType\":\"02\",\"amount\":8002,\"accountInfos\":[{\"\
+      accountId\":\"ACCT001148\",\"accountBalance\":5002,\"serviceType\":\"01\"},{\"\
+      accountId\":\"ACCT001152\",\"accountBalance\":3000,\"serviceType\":\"02\"}]},{\"\
+      childrenAccountType\":\"03\",\"amount\":8003,\"accountInfos\":[{\"accountId\"\
+      :\"ACCT001149\",\"accountBalance\":3003,\"serviceType\":\"01\"},{\"accountId\"\
+      :\"ACCT001153\",\"accountBalance\":5000,\"serviceType\":\"02\"}]}]"
     canCover: true
-    required: false
-   -
-    name: "list.accountInfos.accountBalance"
-    type: "BigDecimal"
-    description: "账户余额"
-    defaultVal: ""
-    value: "5002"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.accountInfos"
-    type: "List<AccountInfo>"
-    description: "账户信息"
-    defaultVal: ""
-    value: "[{\"accountId\":\"ACCT001148\",\"accountBalance\":5002,\"serviceType\"\
-      :\"01\"},{\"accountId\":\"ACCT001152\",\"accountBalance\":3000,\"serviceType\"\
-      :\"02\"}]"
-    expanded: true
-    canCover: true
+    children:
+     -
+      name: "childrenAccountType"
+      type: "String"
+      description: "01"
+      value: "02"
+      canCover: true
+      required: false
+     -
+      name: "amount"
+      type: "BigDecimal"
+      description: "总金额"
+      value: "8002"
+      canCover: true
+      required: false
+     -
+      name: "accountInfos"
+      type: "List<AccountInfo>"
+      description: "账户信息"
+      value: "[{\"accountId\":\"ACCT001148\",\"accountBalance\":5002,\"serviceType\"\
+        :\"01\"},{\"accountId\":\"ACCT001152\",\"accountBalance\":3000,\"serviceType\"\
+        :\"02\"}]"
+      canCover: true
+      children:
+       -
+        name: "accountId"
+        type: "String"
+        description: "账户ID"
+        value: "ACCT001148"
+        canCover: true
+        required: false
+       -
+        name: "accountBalance"
+        type: "BigDecimal"
+        description: "账户余额"
+        value: "5002"
+        canCover: true
+        required: false
+       -
+        name: "serviceType"
+        type: "String"
+        description: "业务类型"
+        value: "01"
+        canCover: true
+        required: false
+      required: false
     required: false
    -
     name: "page"
@@ -205,13 +131,25 @@ response:
     description: "页码"
     defaultVal: "1"
     value: "1"
-    expanded: true
     canCover: true
     required: false
-  stackTrace: ""
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"size\":2,\"total\":2,\"pages\":1,\"list\":[{\"childrenAccountType\"\
+    :\"02\",\"amount\":8002,\"accountInfos\":[{\"accountId\":\"ACCT001148\",\"accountBalance\"\
+    :5002,\"serviceType\":\"01\"},{\"accountId\":\"ACCT001152\",\"accountBalance\"\
+    :3000,\"serviceType\":\"02\"}]},{\"childrenAccountType\":\"03\",\"amount\":8003,\"\
+    accountInfos\":[{\"accountId\":\"ACCT001149\",\"accountBalance\":3003,\"serviceType\"\
+    :\"01\"},{\"accountId\":\"ACCT001153\",\"accountBalance\":5000,\"serviceType\"\
+    :\"02\"}]}],\"page\":1}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

@@ -1,209 +1,148 @@
-description: ""
 request:
-  uri: "/custAccountInfos/availableAcceptance"
-  restUri: "/custAccountInfos/availableAcceptance"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "6c5467aaaf8b8c5876b8016771744b64"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "8b9d51c4-7616-4311-bb9d-b8b17417906f"
+  parametersExt:
+   -
+    name: "custId"
+    type: "String"
+    description: "客户ID"
+    canCover: true
+    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "8b9d51c4-7616-4311-bb9d-b8b17417906f"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "6c5467aaaf8b8c5876b8016771744b64"
-    expanded: true
     canCover: true
     required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    custId:
-     - ""
-  parametersExt:
-   -
-    name: "custId"
-    type: "String"
-    description: "客户ID"
-    defaultVal: ""
-    value: ""
-    expanded: true
-    canCover: true
-    required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"amount\":485160.03,\"accountInfos\":[{\"serviceType\":\"01\"\
-    ,\"availableBalance\":0.0,\"records\":[{\"priceBatch\":\"20170401\",\"childrenAccountType\"\
-    :\"05\",\"amt\":642524.2,\"status\":0,\"opTime\":1510756613000},{\"priceBatch\"\
-    :\"20170401\",\"childrenAccountType\":\"05\",\"amt\":157324.0,\"status\":1,\"\
-    opTime\":1510756613000},{\"priceBatch\":\"20170401\",\"childrenAccountType\":\"\
-    05\",\"amt\":0.0,\"status\":2,\"opTime\":1510756613000}]}]}"
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "8b9d51c4-7616-4311-bb9d-b8b17417906f"
+    canCover: true
+    required: false
+  restUri: "/custAccountInfos/availableAcceptance"
+  method: "GET"
+response:
   contentExt:
-   -
-    name: "accountInfos.records.childrenAccountType"
-    type: "String"
-    description: "01"
-    defaultVal: ""
-    value: "05"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accountInfos.serviceType"
-    type: "String"
-    description: "业务类型"
-    defaultVal: ""
-    value: "01"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accountInfos.records.priceBatch"
-    type: "String"
-    description: "价格批次"
-    defaultVal: ""
-    value: "20170401"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accountInfos.availableBalance"
-    type: "BigDecimal"
-    description: "可用金额"
-    defaultVal: ""
-    value: "0.0"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "amount"
     type: "BigDecimal"
     description: "总金额"
-    defaultVal: ""
     value: "485160.03"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accountInfos.records.opTime"
-    type: "Long"
-    description: "操作"
-    defaultVal: ""
-    value: "1510756613000"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accountInfos.records.status"
-    type: "Integer"
-    description: "状态"
-    defaultVal: ""
-    value: "0"
-    expanded: true
     canCover: true
     required: false
    -
     name: "accountInfos"
     type: "List<AccountInfo>"
     description: "账户信息"
-    defaultVal: ""
     value: "[{\"serviceType\":\"01\",\"availableBalance\":0.0,\"records\":[{\"priceBatch\"\
       :\"20170401\",\"childrenAccountType\":\"05\",\"amt\":642524.2,\"status\":0,\"\
       opTime\":1510756613000},{\"priceBatch\":\"20170401\",\"childrenAccountType\"\
       :\"05\",\"amt\":157324.0,\"status\":1,\"opTime\":1510756613000},{\"priceBatch\"\
       :\"20170401\",\"childrenAccountType\":\"05\",\"amt\":0.0,\"status\":2,\"opTime\"\
       :1510756613000}]}]"
-    expanded: true
     canCover: true
+    children:
+     -
+      name: "serviceType"
+      type: "String"
+      description: "业务类型"
+      value: "01"
+      canCover: true
+      required: false
+     -
+      name: "availableBalance"
+      type: "BigDecimal"
+      description: "可用金额"
+      value: "0.0"
+      canCover: true
+      required: false
+     -
+      name: "records"
+      type: "String"
+      description: "资金使用记录"
+      value: "[{\"priceBatch\":\"20170401\",\"childrenAccountType\":\"05\",\"amt\"\
+        :642524.2,\"status\":0,\"opTime\":1510756613000},{\"priceBatch\":\"20170401\"\
+        ,\"childrenAccountType\":\"05\",\"amt\":157324.0,\"status\":1,\"opTime\":1510756613000},{\"\
+        priceBatch\":\"20170401\",\"childrenAccountType\":\"05\",\"amt\":0.0,\"status\"\
+        :2,\"opTime\":1510756613000}]"
+      canCover: true
+      children:
+       -
+        name: "priceBatch"
+        type: "String"
+        description: "价格批次"
+        value: "20170401"
+        canCover: true
+        required: false
+       -
+        name: "childrenAccountType"
+        type: "String"
+        description: "01"
+        value: "05"
+        canCover: true
+        required: false
+       -
+        name: "amt"
+        type: "BigDecimal"
+        description: "金额"
+        value: "642524.2"
+        canCover: true
+        required: false
+       -
+        name: "status"
+        type: "Integer"
+        description: "状态"
+        value: "0"
+        canCover: true
+        required: false
+       -
+        name: "opTime"
+        type: "Long"
+        description: "操作"
+        value: "1510756613000"
+        canCover: true
+        required: false
+      required: false
     required: false
+  headersExt:
    -
-    name: "accountInfos.records"
+    name: "Content-Type"
     type: "String"
-    description: "资金使用记录"
-    defaultVal: ""
-    value: "[{\"priceBatch\":\"20170401\",\"childrenAccountType\":\"05\",\"amt\":642524.2,\"\
-      status\":0,\"opTime\":1510756613000},{\"priceBatch\":\"20170401\",\"childrenAccountType\"\
-      :\"05\",\"amt\":157324.0,\"status\":1,\"opTime\":1510756613000},{\"priceBatch\"\
-      :\"20170401\",\"childrenAccountType\":\"05\",\"amt\":0.0,\"status\":2,\"opTime\"\
-      :1510756613000}]"
-    expanded: true
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
     canCover: true
     required: false
-   -
-    name: "accountInfos.records.amt"
-    type: "BigDecimal"
-    description: "金额"
-    defaultVal: ""
-    value: "642524.2"
-    expanded: true
-    canCover: true
-    required: false
-  stackTrace: ""
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"amount\":485160.03,\"accountInfos\":[{\"serviceType\":\"01\"\
+    ,\"availableBalance\":0.0,\"records\":[{\"priceBatch\":\"20170401\",\"childrenAccountType\"\
+    :\"05\",\"amt\":642524.2,\"status\":0,\"opTime\":1510756613000},{\"priceBatch\"\
+    :\"20170401\",\"childrenAccountType\":\"05\",\"amt\":157324.0,\"status\":1,\"\
+    opTime\":1510756613000},{\"priceBatch\":\"20170401\",\"childrenAccountType\":\"\
+    05\",\"amt\":0.0,\"status\":2,\"opTime\":1510756613000}]}]}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

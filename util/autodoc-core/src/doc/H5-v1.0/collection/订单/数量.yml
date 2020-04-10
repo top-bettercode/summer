@@ -1,116 +1,50 @@
-description: ""
 request:
-  uri: "/ordOrders/count"
-  restUri: "/ordOrders/count"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "6c5467aaaf8b8c5876b8016771744b64"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "b7af896b-be48-4d9d-b6fd-2ab6b41e93a7"
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "b7af896b-be48-4d9d-b6fd-2ab6b41e93a7"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "6c5467aaaf8b8c5876b8016771744b64"
-    expanded: true
     canCover: true
     required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters: {}
-  parametersExt: []
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"all\":246,\"waitAudit\":36,\"waitSend\":45,\"completed\":106,\"\
-    closed\":45}"
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "b7af896b-be48-4d9d-b6fd-2ab6b41e93a7"
+    canCover: true
+    required: false
+  restUri: "/ordOrders/count"
+  method: "GET"
+response:
   contentExt:
    -
-    name: "closed"
+    name: "all"
     type: "Integer"
-    description: "已关闭"
+    description: "总数"
     defaultVal: "0"
-    value: "45"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "completed"
-    type: "Integer"
-    description: "已完成"
-    defaultVal: "0"
-    value: "106"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "waitSend"
-    type: "Integer"
-    description: "待发货"
-    defaultVal: "0"
-    value: "45"
-    expanded: true
+    value: "246"
     canCover: true
     required: false
    -
@@ -119,22 +53,44 @@ response:
     description: "待审核"
     defaultVal: "0"
     value: "36"
-    expanded: true
     canCover: true
     required: false
    -
-    name: "all"
+    name: "waitSend"
     type: "Integer"
-    description: "总数"
+    description: "待发货"
     defaultVal: "0"
-    value: "246"
-    expanded: true
+    value: "45"
     canCover: true
     required: false
-  stackTrace: ""
+   -
+    name: "completed"
+    type: "Integer"
+    description: "已完成"
+    defaultVal: "0"
+    value: "106"
+    canCover: true
+    required: false
+   -
+    name: "closed"
+    type: "Integer"
+    description: "已关闭"
+    defaultVal: "0"
+    value: "45"
+    canCover: true
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"all\":246,\"waitAudit\":36,\"waitSend\":45,\"completed\":106,\"\
+    closed\":45}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

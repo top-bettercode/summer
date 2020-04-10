@@ -1,150 +1,97 @@
-description: ""
 request:
-  uri: "/appGestureCiphers/self"
-  restUri: "/appGestureCiphers/self"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "6c5467aaaf8b8c5876b8016771744b64"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "b02cd37284c3546f6506b836374999db"
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "b02cd37284c3546f6506b836374999db"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "6c5467aaaf8b8c5876b8016771744b64"
-    expanded: true
     canCover: true
     required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters: {}
-  parametersExt: []
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"id\":\"976640892846764034\",\"custNo\":\"CUST00005D\",\"code\"\
-    :\"e10adc3949ba59abbe56e057f20f883e\",\"state\":\"open\",\"createTime\":1521684308000,\"\
-    lastUpdateTime\":1521684308000}"
-  contentExt:
    -
-    name: "createTime"
-    type: "Long"
-    description: ""
-    defaultVal: ""
-    value: "1521684308000"
-    expanded: true
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "b02cd37284c3546f6506b836374999db"
     canCover: true
     required: false
+  restUri: "/appGestureCiphers/self"
+  method: "GET"
+response:
+  contentExt:
    -
     name: "id"
     type: "String"
-    description: ""
-    defaultVal: ""
     value: "976640892846764034"
-    expanded: true
     canCover: true
     required: false
    -
     name: "custNo"
     type: "String"
     description: "客户编号"
-    defaultVal: ""
     value: "CUST00005D"
-    expanded: true
     canCover: true
     required: false
    -
     name: "code"
     type: "String"
     description: "密文"
-    defaultVal: ""
     value: "e10adc3949ba59abbe56e057f20f883e"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "lastUpdateTime"
-    type: "String"
-    description: "最后更新时间"
-    defaultVal: ""
-    value: "1521684308000"
-    expanded: true
     canCover: true
     required: false
    -
     name: "state"
     type: "String"
     description: "状态"
-    defaultVal: ""
     value: "open"
-    expanded: true
     canCover: true
     required: false
-  stackTrace: ""
+   -
+    name: "createTime"
+    type: "Long"
+    value: "1521684308000"
+    canCover: true
+    required: false
+   -
+    name: "lastUpdateTime"
+    type: "String"
+    description: "最后更新时间"
+    value: "1521684308000"
+    canCover: true
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"id\":\"976640892846764034\",\"custNo\":\"CUST00005D\",\"code\"\
+    :\"e10adc3949ba59abbe56e057f20f883e\",\"state\":\"open\",\"createTime\":1521684308000,\"\
+    lastUpdateTime\":1521684308000}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

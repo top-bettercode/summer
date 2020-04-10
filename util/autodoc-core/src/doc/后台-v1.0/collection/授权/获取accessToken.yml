@@ -1,275 +1,182 @@
-description: ""
 request:
-  uri: "/oauth/token"
-  restUri: "/oauth/token"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "POST"
-  headers:
-    Authorization:
-     - "Basic TDNLS1RPbHVMcnNTTHJlaHFHUWs0bURVMHF4cmdUUjY6MjNTREtPRXBzMG1LdzhURm5XVHpvZU9DZzZ6S2k4NmNNYUdmUk5XemR6bzVPUnJaUkF2bEVSM3hmbkpHWW4xOQ=="
-    sign:
-     - "f88424e5f0bc825d93f0245130b4f80c"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    Accept:
-     - "application/json;charset=UTF-8"
-  headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "Authorization"
-    type: "String"
-    description: "授权码"
-    defaultVal: ""
-    value: "Basic TDNLS1RPbHVMcnNTTHJlaHFHUWs0bURVMHF4cmdUUjY6MjNTREtPRXBzMG1LdzhURm5XVHpvZU9DZzZ6S2k4NmNNYUdmUk5XemR6bzVPUnJaUkF2bEVSM3hmbkpHWW4xOQ=="
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
-    value: "f88424e5f0bc825d93f0245130b4f80c"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    grant_type:
-     - "[{\"lecturer\":\"李老师\",\"requestTime\":5,\"usedTime\":2,\"usedDateStart\"\
-      :1529648917312,\"usedDateEnd\":1529648917312,\"trainingPlace\":\"中国\"},{\"lecturer\"\
-      :\"李老师\",\"requestTime\":5,\"usedTime\":2,\"usedDateStart\":1529648917312,\"\
-      usedDateEnd\":1529648917312,\"trainingPlace\":\"中国\"}]"
-    scope:
-     - "trust"
-    username:
-     - "admin"
-    password:
-     - "e10adc3949ba59abbe56e057f20f883e"
   parametersExt:
-   -
-    name: "grant_type.lecturer"
-    type: "String"
-    description: ""
-    defaultVal: ""
-    value: "李老师"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "grant_type.requestTime"
-    type: "Integer"
-    description: ""
-    defaultVal: ""
-    value: "5"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "grant_type.trainingPlace"
-    type: "String"
-    description: ""
-    defaultVal: ""
-    value: "中国"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "grant_type.usedDateEnd"
-    type: "Long"
-    description: ""
-    defaultVal: ""
-    value: "1529648917312"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "grant_type.usedDateStart"
-    type: "Long"
-    description: ""
-    defaultVal: ""
-    value: "1529648917312"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "grant_type.usedTime"
-    type: "Integer"
-    description: ""
-    defaultVal: ""
-    value: "2"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "password"
-    type: "String"
-    description: "密码"
-    defaultVal: ""
-    value: "e10adc3949ba59abbe56e057f20f883e"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "grant_type"
     type: "String"
     description: "授权方式"
-    defaultVal: ""
     value: "[{\"lecturer\":\"李老师\",\"requestTime\":5,\"usedTime\":2,\"usedDateStart\"\
       :1529648917312,\"usedDateEnd\":1529648917312,\"trainingPlace\":\"中国\"},{\"lecturer\"\
       :\"李老师\",\"requestTime\":5,\"usedTime\":2,\"usedDateStart\":1529648917312,\"\
       usedDateEnd\":1529648917312,\"trainingPlace\":\"中国\"}]"
-    expanded: true
     canCover: true
+    children:
+     -
+      name: "lecturer"
+      type: "String"
+      value: "李老师"
+      canCover: true
+      required: false
+     -
+      name: "requestTime"
+      type: "Integer"
+      value: "5"
+      canCover: true
+      required: false
+     -
+      name: "usedTime"
+      type: "Integer"
+      value: "2"
+      canCover: true
+      required: false
+     -
+      name: "usedDateStart"
+      type: "Long"
+      value: "1529648917312"
+      canCover: true
+      required: false
+     -
+      name: "usedDateEnd"
+      type: "Long"
+      value: "1529648917312"
+      canCover: true
+      required: false
+     -
+      name: "trainingPlace"
+      type: "String"
+      value: "中国"
+      canCover: true
+      required: false
     required: false
    -
     name: "scope"
     type: "String(200)"
     description: "权限范围"
-    defaultVal: ""
     value: "trust"
-    expanded: true
     canCover: true
     required: false
    -
     name: "username"
     type: "String"
     description: "账户名"
-    defaultVal: ""
     value: "admin"
-    expanded: true
     canCover: true
     required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
+   -
+    name: "password"
+    type: "String"
+    description: "密码"
+    value: "e10adc3949ba59abbe56e057f20f883e"
+    canCover: true
+    required: false
+  headersExt:
+   -
+    name: "Authorization"
+    type: "String"
+    description: "授权码"
+    value: "Basic TDNLS1RPbHVMcnNTTHJlaHFHUWs0bURVMHF4cmdUUjY6MjNTREtPRXBzMG1LdzhURm5XVHpvZU9DZzZ6S2k4NmNNYUdmUk5XemR6bzVPUnJaUkF2bEVSM3hmbkpHWW4xOQ=="
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<jiekouqianmingsuanfa>>"
+    value: "f88424e5f0bc825d93f0245130b4f80c"
+    canCover: true
+    required: false
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
+  restUri: "/oauth/token"
+  method: "POST"
 response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
+  contentExt:
+   -
+    name: "_links"
+    type: "Object"
+    value: "{\"cities\":{\"href\":\"http://localhost/api/cities{?page,size,sort}\"\
+      ,\"templated\":true},\"hotels\":{\"href\":\"http://localhost/api/hotels{?page,size,sort}\"\
+      ,\"templated\":true},\"profile\":{\"href\":\"http://localhost/api/profile\"\
+      }}"
+    canCover: true
+    children:
+     -
+      name: "cities"
+      type: "Object"
+      value: "{\"href\":\"http://localhost/api/cities{?page,size,sort}\",\"templated\"\
+        :true}"
+      canCover: true
+      children:
+       -
+        name: "href"
+        type: "String"
+        value: "http://localhost/api/cities{?page,size,sort}"
+        canCover: true
+        required: false
+       -
+        name: "templated"
+        type: "Boolean"
+        value: "true"
+        canCover: true
+        required: false
+      required: false
+     -
+      name: "hotels"
+      type: "Object"
+      value: "{\"href\":\"http://localhost/api/hotels{?page,size,sort}\",\"templated\"\
+        :true}"
+      canCover: true
+      children:
+       -
+        name: "href"
+        type: "String"
+        value: "http://localhost/api/hotels{?page,size,sort}"
+        canCover: true
+        required: false
+       -
+        name: "templated"
+        type: "Boolean"
+        value: "true"
+        canCover: true
+        required: false
+      required: false
+     -
+      name: "profile"
+      type: "Object"
+      value: "{\"href\":\"http://localhost/api/profile\"}"
+      canCover: true
+      children:
+       -
+        name: "href"
+        type: "String"
+        value: "http://localhost/api/profile"
+        canCover: true
+        required: false
+      required: false
+    required: false
   headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
     value: "application/json;charset=UTF-8"
-    expanded: true
     canCover: true
     required: false
+  statusCode: 200
   contentAsString: "{\"_links\":{\"cities\":{\"href\":\"http://localhost/api/cities{?page,size,sort}\"\
     ,\"templated\":true},\"hotels\":{\"href\":\"http://localhost/api/hotels{?page,size,sort}\"\
     ,\"templated\":true},\"profile\":{\"href\":\"http://localhost/api/profile\"}}}"
-  contentExt:
-   -
-    name: "_links"
-    type: "Object"
-    description: ""
-    defaultVal: ""
-    value: "{\"cities\":{\"href\":\"http://localhost/api/cities{?page,size,sort}\"\
-      ,\"templated\":true},\"hotels\":{\"href\":\"http://localhost/api/hotels{?page,size,sort}\"\
-      ,\"templated\":true},\"profile\":{\"href\":\"http://localhost/api/profile\"\
-      }}"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "_links.cities"
-    type: "Object"
-    description: ""
-    defaultVal: ""
-    value: "{\"href\":\"http://localhost/api/cities{?page,size,sort}\",\"templated\"\
-      :true}"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "_links.cities.href"
-    type: "String"
-    description: ""
-    defaultVal: ""
-    value: "http://localhost/api/cities{?page,size,sort}"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "_links.cities.templated"
-    type: "Boolean"
-    description: ""
-    defaultVal: ""
-    value: "true"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "_links.hotels"
-    type: "Object"
-    description: ""
-    defaultVal: ""
-    value: "{\"href\":\"http://localhost/api/hotels{?page,size,sort}\",\"templated\"\
-      :true}"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "_links.hotels.href"
-    type: "String"
-    description: ""
-    defaultVal: ""
-    value: "http://localhost/api/hotels{?page,size,sort}"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "_links.hotels.templated"
-    type: "Boolean"
-    description: ""
-    defaultVal: ""
-    value: "true"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "_links.profile"
-    type: "Object"
-    description: ""
-    defaultVal: ""
-    value: "{\"href\":\"http://localhost/api/profile\"}"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "_links.profile.href"
-    type: "String"
-    description: ""
-    defaultVal: ""
-    value: "http://localhost/api/profile"
-    expanded: true
-    canCover: true
-    required: false
-  stackTrace: ""
-  statusCode: 200
-protocol: ""
-prerequest: []
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

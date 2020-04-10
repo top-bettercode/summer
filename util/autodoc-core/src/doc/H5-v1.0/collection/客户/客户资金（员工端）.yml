@@ -1,92 +1,9 @@
-description: ""
 request:
-  uri: "/custInfos/custAccounts"
-  restUri: "/custInfos/custAccounts"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "81ba2cbf2fe787737fb97dee7f497c5d"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "d187f527-47e7-4b51-a90b-595b21f5f38a"
-  headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "d187f527-47e7-4b51-a90b-595b21f5f38a"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    defaultVal: ""
-    value: "application/json;version=2.0"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
-    value: "81ba2cbf2fe787737fb97dee7f497c5d"
-    expanded: true
-    canCover: true
-    required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    keyword:
-     - ""
-    page:
-     - "1"
-    size:
-     - "20"
   parametersExt:
    -
     name: "keyword"
     type: "string"
     description: "关键字"
-    defaultVal: ""
-    value: ""
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    defaultVal: ""
-    value: "20"
-    expanded: true
     canCover: true
     required: false
    -
@@ -95,76 +12,88 @@ request:
     description: "页码"
     defaultVal: "1"
     value: "1"
-    expanded: true
     canCover: true
     required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
   headersExt:
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<jiekouqianmingsuanfa>>"
+    value: "81ba2cbf2fe787737fb97dee7f497c5d"
+    canCover: true
+    required: true
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"total\":2871,\"size\":20,\"pages\":144,\"page\":1,\"list\"\
-    :[{\"custId\":\"CUST01740\",\"custName\":\"西昌市马道大丰收农资经营部\",\"accountAvailable\"\
-    :0.0,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01741\"\
-    ,\"custName\":\"姚安县鑫农现代农业发展有限公司\",\"accountAvailable\":0.0,\"marginAvailable\"\
-    :0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01742\",\"custName\":\"禄丰金农农资经\
-    营有限公司\",\"accountAvailable\":1226.36,\"marginAvailable\":0.0,\"rebateAvailable\"\
-    :0.0},{\"custId\":\"CUST01743\",\"custName\":\"德昌县旭日农资经营部\",\"accountAvailable\"\
-    :46.27,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01744\"\
-    ,\"custName\":\"四川凉山州段继宏\",\"accountAvailable\":25.33,\"marginAvailable\":0.0,\"\
-    rebateAvailable\":0.0},{\"custId\":\"CUST01745\",\"custName\":\"会理县华兰农资经营部\",\"\
-    accountAvailable\":142524.17,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"\
-    custId\":\"CUST01746\",\"custName\":\"会东县可大富农资有限公司\",\"accountAvailable\":1941.56,\"\
-    marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01747\",\"custName\"\
-    :\"米易县农得利农资经营部\",\"accountAvailable\":1119.0,\"marginAvailable\":0.0,\"rebateAvailable\"\
-    :0.0},{\"custId\":\"CUST01748\",\"custName\":\"西昌市东方农资有限责任公司\",\"accountAvailable\"\
-    :3.31,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01749\"\
-    ,\"custName\":\"西昌市双丰农资有限公司\",\"accountAvailable\":4525.6,\"marginAvailable\"\
-    :0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01750\",\"custName\":\"米易县博大种植\
-    专业合作社\",\"accountAvailable\":3490.0,\"marginAvailable\":0.0,\"rebateAvailable\"\
-    :0.0},{\"custId\":\"CUST01751\",\"custName\":\"会理县鹿厂镇绿旺物资经营部\",\"accountAvailable\"\
-    :10126.11,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01752\"\
-    ,\"custName\":\"楚雄景恒农资经营有限公司\",\"accountAvailable\":242.52,\"marginAvailable\"\
-    :0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01753\",\"custName\":\"耿马孟定新茂农\
-    资有限责任公司\",\"accountAvailable\":0.86,\"marginAvailable\":0.0,\"rebateAvailable\"\
-    :0.0},{\"custId\":\"CUST01754\",\"custName\":\"楚雄科丰植保服务有限公司元谋服务点\",\"accountAvailable\"\
-    :19337.23,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01755\"\
-    ,\"custName\":\"德昌县四季青农业有限公司\",\"accountAvailable\":0.0,\"marginAvailable\":0.0,\"\
-    rebateAvailable\":0.0},{\"custId\":\"CUST01756\",\"custName\":\"宾川兴农农资经营部\",\"\
-    accountAvailable\":822140.69,\"marginAvailable\":318888.22,\"rebateAvailable\"\
-    :0.0},{\"custId\":\"CUST01757\",\"custName\":\"攀枝花市盛柯农资有限责任公司\",\"accountAvailable\"\
-    :13735.15,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01758\"\
-    ,\"custName\":\"弥渡加文农资经营部\",\"accountAvailable\":265.0,\"marginAvailable\":0.0,\"\
-    rebateAvailable\":0.0},{\"custId\":\"CUST01759\",\"custName\":\"云南淏丰农业科技开发有限公司\
-    \",\"accountAvailable\":9394.78,\"marginAvailable\":0.0,\"rebateAvailable\":0.0}]}"
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "d187f527-47e7-4b51-a90b-595b21f5f38a"
+    canCover: true
+    required: false
+  restUri: "/custInfos/custAccounts"
+  method: "GET"
+response:
   contentExt:
    -
-    name: "list.marginAvailable"
-    type: "BigDecimal"
-    description: "保证金/定金"
-    defaultVal: ""
-    value: "0.0"
-    expanded: true
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "2871"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "144"
+    canCover: true
+    required: false
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
     canCover: true
     required: false
    -
     name: "list"
     type: "Array"
     description: "内容"
-    defaultVal: ""
     value: "[{\"custId\":\"CUST01740\",\"custName\":\"西昌市马道大丰收农资经营部\",\"accountAvailable\"\
       :0.0,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01741\"\
       ,\"custName\":\"姚安县鑫农现代农业发展有限公司\",\"accountAvailable\":0.0,\"marginAvailable\"\
@@ -199,85 +128,88 @@ response:
       :265.0,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01759\"\
       ,\"custName\":\"云南淏丰农业科技开发有限公司\",\"accountAvailable\":9394.78,\"marginAvailable\"\
       :0.0,\"rebateAvailable\":0.0}]"
-    expanded: true
     canCover: true
+    children:
+     -
+      name: "custId"
+      type: "String"
+      description: "客户ID"
+      value: "CUST01740"
+      canCover: true
+      required: false
+     -
+      name: "custName"
+      type: "String"
+      description: "客户名称"
+      value: "西昌市马道大丰收农资经营部"
+      canCover: true
+      required: false
+     -
+      name: "accountAvailable"
+      type: "BigDecimal"
+      description: "账户可用总余额"
+      value: "0.0"
+      canCover: true
+      required: false
+     -
+      name: "marginAvailable"
+      type: "BigDecimal"
+      description: "保证金/定金"
+      value: "0.0"
+      canCover: true
+      required: false
+     -
+      name: "rebateAvailable"
+      type: "BigDecimal"
+      description: "可用返利"
+      value: "0.0"
+      canCover: true
+      required: false
     required: false
+  headersExt:
    -
-    name: "list.rebateAvailable"
-    type: "BigDecimal"
-    description: "可用返利"
-    defaultVal: ""
-    value: "0.0"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.custId"
+    name: "Content-Type"
     type: "String"
-    description: "客户ID"
-    defaultVal: ""
-    value: "CUST01740"
-    expanded: true
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
     canCover: true
     required: false
-   -
-    name: "list.custName"
-    type: "String"
-    description: "客户名称"
-    defaultVal: ""
-    value: "西昌市马道大丰收农资经营部"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    defaultVal: ""
-    value: "20"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    defaultVal: ""
-    value: "2871"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "pages"
-    type: "Long"
-    description: "总页数"
-    defaultVal: ""
-    value: "144"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.accountAvailable"
-    type: "BigDecimal"
-    description: "账户可用总余额"
-    defaultVal: ""
-    value: "0.0"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-  stackTrace: ""
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"total\":2871,\"size\":20,\"pages\":144,\"page\":1,\"list\"\
+    :[{\"custId\":\"CUST01740\",\"custName\":\"西昌市马道大丰收农资经营部\",\"accountAvailable\"\
+    :0.0,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01741\"\
+    ,\"custName\":\"姚安县鑫农现代农业发展有限公司\",\"accountAvailable\":0.0,\"marginAvailable\"\
+    :0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01742\",\"custName\":\"禄丰金农农资经\
+    营有限公司\",\"accountAvailable\":1226.36,\"marginAvailable\":0.0,\"rebateAvailable\"\
+    :0.0},{\"custId\":\"CUST01743\",\"custName\":\"德昌县旭日农资经营部\",\"accountAvailable\"\
+    :46.27,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01744\"\
+    ,\"custName\":\"四川凉山州段继宏\",\"accountAvailable\":25.33,\"marginAvailable\":0.0,\"\
+    rebateAvailable\":0.0},{\"custId\":\"CUST01745\",\"custName\":\"会理县华兰农资经营部\",\"\
+    accountAvailable\":142524.17,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"\
+    custId\":\"CUST01746\",\"custName\":\"会东县可大富农资有限公司\",\"accountAvailable\":1941.56,\"\
+    marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01747\",\"custName\"\
+    :\"米易县农得利农资经营部\",\"accountAvailable\":1119.0,\"marginAvailable\":0.0,\"rebateAvailable\"\
+    :0.0},{\"custId\":\"CUST01748\",\"custName\":\"西昌市东方农资有限责任公司\",\"accountAvailable\"\
+    :3.31,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01749\"\
+    ,\"custName\":\"西昌市双丰农资有限公司\",\"accountAvailable\":4525.6,\"marginAvailable\"\
+    :0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01750\",\"custName\":\"米易县博大种植\
+    专业合作社\",\"accountAvailable\":3490.0,\"marginAvailable\":0.0,\"rebateAvailable\"\
+    :0.0},{\"custId\":\"CUST01751\",\"custName\":\"会理县鹿厂镇绿旺物资经营部\",\"accountAvailable\"\
+    :10126.11,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01752\"\
+    ,\"custName\":\"楚雄景恒农资经营有限公司\",\"accountAvailable\":242.52,\"marginAvailable\"\
+    :0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01753\",\"custName\":\"耿马孟定新茂农\
+    资有限责任公司\",\"accountAvailable\":0.86,\"marginAvailable\":0.0,\"rebateAvailable\"\
+    :0.0},{\"custId\":\"CUST01754\",\"custName\":\"楚雄科丰植保服务有限公司元谋服务点\",\"accountAvailable\"\
+    :19337.23,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01755\"\
+    ,\"custName\":\"德昌县四季青农业有限公司\",\"accountAvailable\":0.0,\"marginAvailable\":0.0,\"\
+    rebateAvailable\":0.0},{\"custId\":\"CUST01756\",\"custName\":\"宾川兴农农资经营部\",\"\
+    accountAvailable\":822140.69,\"marginAvailable\":318888.22,\"rebateAvailable\"\
+    :0.0},{\"custId\":\"CUST01757\",\"custName\":\"攀枝花市盛柯农资有限责任公司\",\"accountAvailable\"\
+    :13735.15,\"marginAvailable\":0.0,\"rebateAvailable\":0.0},{\"custId\":\"CUST01758\"\
+    ,\"custName\":\"弥渡加文农资经营部\",\"accountAvailable\":265.0,\"marginAvailable\":0.0,\"\
+    rebateAvailable\":0.0},{\"custId\":\"CUST01759\",\"custName\":\"云南淏丰农业科技开发有限公司\
+    \",\"accountAvailable\":9394.78,\"marginAvailable\":0.0,\"rebateAvailable\":0.0}]}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

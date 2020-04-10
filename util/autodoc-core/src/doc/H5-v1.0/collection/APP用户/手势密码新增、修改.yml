@@ -1,172 +1,112 @@
-description: ""
 request:
-  uri: "/appGestureCiphers"
-  restUri: "/appGestureCiphers"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "POST"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "721219aad2264e8a10fe36f55dc9c1be"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "b02cd37284c3546f6506b836374999db"
+  parametersExt:
+   -
+    name: "code"
+    type: "String"
+    description: "密文"
+    value: "e10adc3949ba59abbe56e057f20f883e"
+    canCover: true
+    required: false
+   -
+    name: "state"
+    type: "String"
+    description: "状态"
+    value: "open"
+    canCover: true
+    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "b02cd37284c3546f6506b836374999db"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "721219aad2264e8a10fe36f55dc9c1be"
-    expanded: true
     canCover: true
     required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    code:
-     - "e10adc3949ba59abbe56e057f20f883e"
-    state:
-     - "open"
-  parametersExt:
-   -
-    name: "code"
-    type: "String"
-    description: "密文"
-    defaultVal: ""
-    value: "e10adc3949ba59abbe56e057f20f883e"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "state"
-    type: "String"
-    description: "状态"
-    defaultVal: ""
-    value: "open"
-    expanded: true
-    canCover: true
-    required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"id\":\"976640892846764034\",\"custNo\":\"CUST00005D\",\"code\"\
-    :\"e10adc3949ba59abbe56e057f20f883e\",\"state\":\"open\",\"createTime\":1521684308622,\"\
-    lastUpdateTime\":1521684308622}"
-  contentExt:
    -
-    name: "createTime"
-    type: "Long"
-    description: ""
-    defaultVal: ""
-    value: "1521684308622"
-    expanded: true
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "b02cd37284c3546f6506b836374999db"
     canCover: true
     required: false
+  restUri: "/appGestureCiphers"
+  method: "POST"
+response:
+  contentExt:
    -
     name: "id"
     type: "String"
-    description: ""
-    defaultVal: ""
     value: "976640892846764034"
-    expanded: true
     canCover: true
     required: false
    -
     name: "custNo"
     type: "String"
     description: "客户编号"
-    defaultVal: ""
     value: "CUST00005D"
-    expanded: true
     canCover: true
     required: false
    -
     name: "code"
     type: "String"
     description: "密文"
-    defaultVal: ""
     value: "e10adc3949ba59abbe56e057f20f883e"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "lastUpdateTime"
-    type: "String"
-    description: "最后更新时间"
-    defaultVal: ""
-    value: "1521684308622"
-    expanded: true
     canCover: true
     required: false
    -
     name: "state"
     type: "String"
     description: "状态"
-    defaultVal: ""
     value: "open"
-    expanded: true
     canCover: true
     required: false
-  stackTrace: ""
+   -
+    name: "createTime"
+    type: "Long"
+    value: "1521684308622"
+    canCover: true
+    required: false
+   -
+    name: "lastUpdateTime"
+    type: "String"
+    description: "最后更新时间"
+    value: "1521684308622"
+    canCover: true
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"id\":\"976640892846764034\",\"custNo\":\"CUST00005D\",\"code\"\
+    :\"e10adc3949ba59abbe56e057f20f883e\",\"state\":\"open\",\"createTime\":1521684308622,\"\
+    lastUpdateTime\":1521684308622}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

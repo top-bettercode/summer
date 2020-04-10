@@ -1,92 +1,87 @@
 description: "测试账号：13582238115"
 request:
-  uri: "/appMessages"
-  restUri: "/appMessages"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "9e0cf202f5b7ed9832e5a81aeeb5262d"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "8bb5f893-36b8-412f-b8d2-6ad238ef48f3"
-  headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "8bb5f893-36b8-412f-b8d2-6ad238ef48f3"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    defaultVal: ""
-    value: "application/json;version=2.0"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
-    value: "9e0cf202f5b7ed9832e5a81aeeb5262d"
-    expanded: true
-    canCover: true
-    required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    page:
-     - "1"
-    size:
-     - "20"
-    type:
-     - "ORDER"
   parametersExt:
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
    -
     name: "size"
     type: "Integer"
     description: "当前页的数量"
-    defaultVal: ""
     value: "20"
-    expanded: true
     canCover: true
     required: false
    -
     name: "type"
     type: "String"
     description: "消息类型"
-    defaultVal: ""
     value: "ORDER"
-    expanded: true
+    canCover: true
+    required: false
+  headersExt:
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<jiekouqianmingsuanfa>>"
+    value: "9e0cf202f5b7ed9832e5a81aeeb5262d"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "8bb5f893-36b8-412f-b8d2-6ad238ef48f3"
+    canCover: true
+    required: false
+  restUri: "/appMessages"
+  method: "GET"
+response:
+  contentExt:
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "6"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "1"
     canCover: true
     required: false
    -
@@ -95,61 +90,12 @@ request:
     description: "页码"
     defaultVal: "1"
     value: "1"
-    expanded: true
-    canCover: true
-    required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
-    canCover: true
-    required: false
-  contentAsString: "{\"total\":6,\"size\":20,\"pages\":1,\"page\":1,\"list\":[{\"\
-    messageNo\":\"18\",\"messageType\":\"ORDER_CLOSED\",\"createTime\":1522200814000,\"\
-    message\":\"你的订单已关闭\",\"linkedId\":\"ORD0003BE171117\",\"extra\":{\"qty\":10,\"\
-    payAmount\":28250},\"custNo\":\"CUST00918\",\"readed\":\"N\"},{\"messageNo\":\"\
-    17\",\"messageType\":\"ORDER_CREATED\",\"createTime\":1522200775000,\"message\"\
-    :\"你的订单创建成功，已提交专员审核\",\"linkedId\":\"ORD000759171123\",\"extra\":{\"qty\":1.63,\"\
-    payAmount\":3007.35},\"custNo\":\"CUST00918\",\"readed\":\"N\"},{\"messageNo\"\
-    :\"13\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\":1522200716000,\"message\"\
-    :\"你的订单已发货0.710 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\",\"extra\":{\"qty\"\
-    :32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\":\"N\"},{\"messageNo\"\
-    :\"14\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\":1522200716000,\"message\"\
-    :\"你的订单已发货13.300 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\",\"extra\":{\"qty\"\
-    :32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\":\"N\"},{\"messageNo\"\
-    :\"15\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\":1522200716000,\"message\"\
-    :\"你的订单已发货2.990 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\",\"extra\":{\"qty\"\
-    :32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\":\"N\"},{\"messageNo\"\
-    :\"16\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\":1522200716000,\"message\"\
-    :\"你的订单已发货15.000 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\",\"extra\":{\"qty\"\
-    :32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\":\"N\"}]}"
-  contentExt:
-   -
-    name: "list.createTime"
-    type: "Long"
-    description: ""
-    defaultVal: ""
-    value: "1522200814000"
-    expanded: true
     canCover: true
     required: false
    -
     name: "list"
     type: "Array"
     description: "内容"
-    defaultVal: ""
     value: "[{\"messageNo\":\"18\",\"messageType\":\"ORDER_CLOSED\",\"createTime\"\
       :1522200814000,\"message\":\"你的订单已关闭\",\"linkedId\":\"ORD0003BE171117\",\"extra\"\
       :{\"qty\":10,\"payAmount\":28250},\"custNo\":\"CUST00918\",\"readed\":\"N\"\
@@ -169,130 +115,109 @@ response:
       message\":\"你的订单已发货15.000 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\",\"extra\"\
       :{\"qty\":32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\":\"N\"\
       }]"
-    expanded: true
     canCover: true
+    children:
+     -
+      name: "messageNo"
+      type: "String"
+      description: "消息编号"
+      value: "18"
+      canCover: true
+      required: false
+     -
+      name: "messageType"
+      type: "String"
+      description: "消息类型"
+      value: "ORDER_CLOSED"
+      canCover: true
+      required: false
+     -
+      name: "createTime"
+      type: "Long"
+      value: "1522200814000"
+      canCover: true
+      required: false
+     -
+      name: "message"
+      type: "string"
+      description: "消息"
+      value: "你的订单已关闭"
+      canCover: true
+      required: false
+     -
+      name: "linkedId"
+      type: "String"
+      description: "相关ID"
+      value: "ORD0003BE171117"
+      canCover: true
+      required: false
+     -
+      name: "extra"
+      type: "String"
+      description: "扩展信息"
+      value: "{\"qty\":10,\"payAmount\":28250}"
+      canCover: true
+      children:
+       -
+        name: "qty"
+        type: "BigDecimal"
+        description: "总数"
+        value: "10"
+        canCover: true
+        required: false
+       -
+        name: "payAmount"
+        type: "BigDecimal"
+        description: "结算总价"
+        value: "28250"
+        canCover: true
+        required: false
+      required: false
+     -
+      name: "custNo"
+      type: "String"
+      description: "客户编码"
+      value: "CUST00918"
+      canCover: true
+      required: false
+     -
+      name: "readed"
+      type: "String"
+      description: "是否已读"
+      defaultVal: "N'"
+      value: "N"
+      canCover: true
+      required: false
     required: false
+  headersExt:
    -
-    name: "list.custNo"
+    name: "Content-Type"
     type: "String"
-    description: "客户编码"
-    defaultVal: ""
-    value: "CUST00918"
-    expanded: true
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
     canCover: true
     required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    defaultVal: ""
-    value: "20"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.extra.qty"
-    type: "BigDecimal"
-    description: "总数"
-    defaultVal: ""
-    value: "10"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    defaultVal: ""
-    value: "6"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "pages"
-    type: "Long"
-    description: "总页数"
-    defaultVal: ""
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.extra"
-    type: "String"
-    description: "扩展信息"
-    defaultVal: ""
-    value: "{\"qty\":10,\"payAmount\":28250}"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.readed"
-    type: "String"
-    description: "是否已读"
-    defaultVal: "N'"
-    value: "N"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.message"
-    type: "string"
-    description: "消息"
-    defaultVal: ""
-    value: "你的订单已关闭"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.messageType"
-    type: "String"
-    description: "消息类型"
-    defaultVal: ""
-    value: "ORDER_CLOSED"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.messageNo"
-    type: "String"
-    description: "消息编号"
-    defaultVal: ""
-    value: "18"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.linkedId"
-    type: "String"
-    description: "相关ID"
-    defaultVal: ""
-    value: "ORD0003BE171117"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.extra.payAmount"
-    type: "BigDecimal"
-    description: "结算总价"
-    defaultVal: ""
-    value: "28250"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-  stackTrace: ""
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"total\":6,\"size\":20,\"pages\":1,\"page\":1,\"list\":[{\"\
+    messageNo\":\"18\",\"messageType\":\"ORDER_CLOSED\",\"createTime\":1522200814000,\"\
+    message\":\"你的订单已关闭\",\"linkedId\":\"ORD0003BE171117\",\"extra\":{\"qty\":10,\"\
+    payAmount\":28250},\"custNo\":\"CUST00918\",\"readed\":\"N\"},{\"messageNo\":\"\
+    17\",\"messageType\":\"ORDER_CREATED\",\"createTime\":1522200775000,\"message\"\
+    :\"你的订单创建成功，已提交专员审核\",\"linkedId\":\"ORD000759171123\",\"extra\":{\"qty\":1.63,\"\
+    payAmount\":3007.35},\"custNo\":\"CUST00918\",\"readed\":\"N\"},{\"messageNo\"\
+    :\"13\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\":1522200716000,\"message\"\
+    :\"你的订单已发货0.710 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\",\"extra\":{\"qty\"\
+    :32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\":\"N\"},{\"messageNo\"\
+    :\"14\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\":1522200716000,\"message\"\
+    :\"你的订单已发货13.300 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\",\"extra\":{\"qty\"\
+    :32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\":\"N\"},{\"messageNo\"\
+    :\"15\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\":1522200716000,\"message\"\
+    :\"你的订单已发货2.990 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\",\"extra\":{\"qty\"\
+    :32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\":\"N\"},{\"messageNo\"\
+    :\"16\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\":1522200716000,\"message\"\
+    :\"你的订单已发货15.000 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\",\"extra\":{\"qty\"\
+    :32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\":\"N\"}]}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

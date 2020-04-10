@@ -1,94 +1,55 @@
 description: "测试账号：13582238115"
 request:
-  uri: "/appMessages/readed"
-  restUri: "/appMessages/readed"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "POST"
-  headers:
-    sign:
-     - "d2deb045364733ab5be07448712c7f17"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    Accept:
-     - "application/json;charset=UTF-8"
-    accessToken:
-     - "14ff6775-09d4-44f5-89a9-469556c68a77"
+  parametersExt:
+   -
+    name: "type"
+    type: "String"
+    description: "消息类型"
+    value: "ORDER"
+    canCover: true
+    required: false
   headersExt:
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<jiekouqianmingsuanfa>>"
+    value: "d2deb045364733ab5be07448712c7f17"
+    canCover: true
+    required: true
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
     value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "14ff6775-09d4-44f5-89a9-469556c68a77"
-    expanded: true
     canCover: true
     required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;charset=UTF-8"
-    expanded: true
     canCover: true
     required: false
    -
-    name: "sign"
+    name: "accessToken"
     type: "String"
-    description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
-    value: "d2deb045364733ab5be07448712c7f17"
-    expanded: true
-    canCover: true
-    required: true
-  cookies: []
-  parameters:
-    type:
-     - "ORDER"
-  parametersExt:
-   -
-    name: "type"
-    type: "String"
-    description: "消息类型"
-    defaultVal: ""
-    value: "ORDER"
-    expanded: true
+    description: "存取令牌"
+    value: "14ff6775-09d4-44f5-89a9-469556c68a77"
     canCover: true
     required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
+  restUri: "/appMessages/readed"
+  method: "POST"
 response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
   headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
     value: "application/json;charset=UTF-8"
-    expanded: true
     canCover: true
     required: false
-  contentAsString: ""
-  contentExt: []
-  stackTrace: ""
   statusCode: 200
-protocol: ""
-prerequest: []
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"
