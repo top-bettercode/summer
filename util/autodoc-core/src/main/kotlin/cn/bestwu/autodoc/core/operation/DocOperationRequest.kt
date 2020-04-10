@@ -14,7 +14,7 @@ import java.util.*
  * @author Peter Wu
  */
 @JsonPropertyOrder("parametersExt", "contentExt", "uriVariablesExt", "partsExt", "headersExt", "restUri", "method", "cookies", "contentAsString")
-@JsonIgnoreProperties("uri", "uriVariables", "headers", "parameters", "parts", "createdDate", "remoteUser")
+@JsonIgnoreProperties(value = ["uri", "uriVariables", "headers", "parameters", "parts", "createdDate", "remoteUser"],allowSetters = true)
 class DocOperationRequest(operationRequest: OperationRequest = OperationRequest(),
                           /**
                            * URI variables说明

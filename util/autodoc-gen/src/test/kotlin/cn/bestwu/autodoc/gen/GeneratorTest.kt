@@ -62,7 +62,8 @@ class GeneratorTest {
 
     @Test
     fun convert2() {
-        File("/data/repositories/bestwu/wintruelife/acceptance-api").walkTopDown().filter { it.isDirectory && it.name == "doc" }.forEach { doc ->
+        val file1 = File("/data/repositories/bestwu/wintruelife/opsbot")
+        file1.walkTopDown().filter { it.isDirectory && it.name == "doc" }.forEach { doc ->
             doc.listFiles()?.filter { it.isDirectory }?.forEach {
 
                 val file = File(it, "collections.yml")
@@ -86,6 +87,10 @@ class GeneratorTest {
                             response.contentExt = response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)
                                     ?: linkedSetOf()
 
+                            val genProperties = GenProperties()
+                            genProperties.rootSource=File(file1,"doc")
+                            genProperties.source=doc
+                            InitField.extFieldExt(genProperties, it)
                             it.save()
                         }
                     }
