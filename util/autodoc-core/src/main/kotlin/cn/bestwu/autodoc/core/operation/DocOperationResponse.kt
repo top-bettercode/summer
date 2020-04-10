@@ -10,15 +10,15 @@ import java.util.*
  *
  * @author Peter Wu
  */
-@JsonPropertyOrder("contentExt", "headersExt", "status", "headers", "contentAsString", "stackTrace")
-@JsonIgnoreProperties("createdDate")
+@JsonPropertyOrder("contentExt", "headersExt", "statusCode", "contentAsString", "stackTrace")
+@JsonIgnoreProperties("headers", "createdDate")
 class DocOperationResponse(operationResponse: OperationResponse = OperationResponse(),
                            /**
                             * 请求头说明
                             */
-                           var headersExt: SortedSet<Field> = TreeSet(),
+                           var headersExt: LinkedHashSet<Field> = LinkedHashSet(),
                            /**
                             * 响应体说明
                             */
-                           var contentExt: SortedSet<Field> = TreeSet()
+                           var contentExt: LinkedHashSet<Field> = LinkedHashSet()
 ) : OperationResponse(statusCode = operationResponse.statusCode, headers = operationResponse.headers, content = operationResponse.content, createdDate = operationResponse.createdDate, stackTrace = operationResponse.stackTrace)

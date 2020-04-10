@@ -8,7 +8,7 @@ import java.util.*
 /**
  * The response that was received as part of performing an operation on a RESTful service.
  */
-@JsonPropertyOrder("status", "headers", "contentAsString", "createdDate", "stackTrace")
+@JsonPropertyOrder("statusCode", "headers", "contentAsString", "createdDate", "stackTrace")
 open class OperationResponse(
 
         /**

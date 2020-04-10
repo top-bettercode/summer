@@ -4,7 +4,7 @@ import cn.bestwu.autodoc.core.operation.DocOperation
 
 interface ICollection {
 
-    var name: String
+    val name: String
 
     val operations: List<DocOperation>
 

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 
 data class CombineCollection(private val rootCollection: DocCollection, var projectCollection: DocCollection?) : ICollection {
 
-    override var name: String = rootCollection.name
+    override val name: String = rootCollection.name
 
     override val operations: List<DocOperation>
         @JsonIgnore
