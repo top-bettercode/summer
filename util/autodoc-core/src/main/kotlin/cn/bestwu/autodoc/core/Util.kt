@@ -33,11 +33,13 @@ object Util {
         yamlMapper.enable(YAMLGenerator.Feature.INDENT_ARRAYS)
         yamlMapper.enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
         yamlMapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+        yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+
+        objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS)
     }
 
     private fun init(objectMapper: ObjectMapper) {
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
         objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         objectMapper.enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature())
