@@ -1,6 +1,5 @@
 package cn.bestwu.autodoc.gen
 
-import cn.bestwu.api.sign.ApiSignAlgorithm
 import cn.bestwu.api.sign.ApiSignProperties
 import cn.bestwu.autodoc.core.*
 import cn.bestwu.autodoc.core.model.DocModule
@@ -124,26 +123,24 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                 //field
                 val extension = GeneratorExtension(datasource = genProperties.datasource, dataType = genProperties.dataType, tablePrefix = genProperties.tablePrefix)
 
-                request.uriVariablesExt = request.uriVariables.toFields(request.uriVariablesExt).toSortedSet()
-                request.headersExt = request.headers.singleValueMap.toFields(request.headersExt).toSortedSet()
+                request.uriVariablesExt = request.uriVariables.toFields(request.uriVariablesExt)
+                request.headersExt = request.headers.singleValueMap.toFields(request.headersExt)
                 request.headersExt.forEach {
                     it.required = requiredHeaders.contains(it.name)
                 }
-                request.parametersExt = request.parameters.singleValueMap.toFields(request.parametersExt, expand = true).toSortedSet()
+                request.parametersExt = request.parameters.singleValueMap.toFields(request.parametersExt, expand = true)
                 request.parametersExt.forEach {
                     it.required = requiredParameters.contains(it.name)
                 }
-                request.partsExt = request.parts.toFields(request.partsExt).toSortedSet()
-                request.contentExt = request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)?.toSortedSet()
-                        ?: sortedSetOf()
+                request.partsExt = request.parts.toFields(request.partsExt)
+                request.contentExt = request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
+                        ?: linkedSetOf()
 
                 val response = docOperation.response as DocOperationResponse
-                response.headersExt = response.headers.singleValueMap.toFields(response.headersExt).toSortedSet()
-                response.contentExt = response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)?.toSortedSet()
-                        ?: sortedSetOf()
+                response.headersExt = response.headers.singleValueMap.toFields(response.headersExt)
+                response.contentExt = response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)?: linkedSetOf()
 
-
-                genProperties.extFieldExt(docOperation)
+                InitField.extFieldExt(genProperties, docOperation)
                 InitField.init(docOperation, extension, genProperties.allTables, wrap)
 
                 docOperation.save()

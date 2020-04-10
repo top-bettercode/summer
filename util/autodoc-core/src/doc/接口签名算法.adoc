@@ -1,10 +1,10 @@
-== 签名算法
+== 接口签名算法
 
 签名由拼接的参数加上clientSecret值进行MD5加密组成.
  
 [source,properties]
 ----
-clientSecret = hg4O6jkj5dzje1uAdp108wEAPbh18dMd
+clientSecret = @api.sign.client-secret@
 ----
 
 * 筛选

@@ -12,6 +12,7 @@ import cn.bestwu.generator.powerdesigner.PdmReader
 import cn.bestwu.generator.puml.PumlConverter
 import cn.bestwu.logging.operation.OperationRequestPart
 import org.atteo.evo.inflector.English
+import java.io.File
 
 /**
  *
@@ -51,29 +52,19 @@ object InitField {
             }
         }
 
-        request.uriVariablesExt = request.uriVariablesExt.sorted().toSortedSet()
         request.uriVariablesExt.filter { it.description.isBlank() }.forEach { System.err.println("[request.uriVariablesExt]未找到字段[${it.name}]的描述") }
-        request.headersExt = request.headersExt.sorted().toSortedSet()
         request.headersExt.filter { it.description.isBlank() }.forEach { System.err.println("[request.headersExt]未找到字段[${it.name}]的描述") }
-        request.parametersExt = request.parametersExt.sorted().toSortedSet()
         request.parametersExt.filter { it.description.isBlank() }.forEach { System.err.println("[request.parametersExt]未找到字段[${it.name}]的描述") }
-        request.partsExt = request.partsExt.sorted().toSortedSet()
         request.partsExt.filter { it.description.isBlank() }.forEach { System.err.println("[request.partsExt]未找到字段[${it.name}]的描述") }
-        request.contentExt = request.contentExt.sorted().toSortedSet()
         request.contentExt.filter { it.description.isBlank() }.forEach { System.err.println("[request.contentExt]未找到字段[${it.name}]的描述") }
-        response.headersExt = response.headersExt.sorted().toSortedSet()
         response.headersExt.filter { it.description.isBlank() }.forEach { System.err.println("[response.headersExt]未找到字段[${it.name}]的描述") }
-        response.contentExt = response.contentExt.sorted().toSortedSet()
         response.contentExt.filter { it.description.isBlank() }.forEach { System.err.println("[response.contentExt]未找到字段[${it.name}]的描述") }
     }
 
     private fun Set<Field>.fix(needFixFields: Set<Field>) {
-        needFixFields.forEach {
-            this.fixField(field = it, userDefault = false)
-        }
-        needFixFields.knewFixFields(needFixFields)
+        fixFieldTree(needFixFields, hasDesc = false, userDefault = false)
+        needFixFields.fixFieldTree(needFixFields)
     }
-
 
     private fun GeneratorExtension.fixFields(allTables: Boolean, fn: (Set<Field>) -> Boolean) {
         val tableNames = linkedSetOf<String>()
@@ -128,33 +119,73 @@ object InitField {
             if (column.javaType.shortNameWithoutTypeArguments == "Date")//前端统一传毫秒数
                 type = "Long"
             Field(column.javaName, type, column.remarks, column.columnDef
-                    ?: "", "", column.nullable)
+                    ?: "", "", required = column.nullable)
         }
         fields.addAll(fields.map { Field(English.plural(it.name), "Array", it.description) })
         fields.add(Field(entityName(extension), "Object", remarks))
         fields.add(Field(pathName(extension), "Array", remarks))
         return fields
     }
-}
 
-fun Map<String, Any?>.toFields(fields: Set<Field>, expand: Boolean = false, prefix: String = ""): List<Field> {
-    val results = mutableListOf<Field>()
-    this.forEach { (k, v) ->
-        val key = prefix + k
-        val field = fields.field(key, v)
-        results.add(field)
-        if (expand && field.expanded) {
-            val expandValue = field.value.toMap()
-            if (expandValue != null) {
-                results.addAll(expandValue.toFields(fields, expand, "$key."))
+    fun extFieldExt(genProperties: GenProperties, operation: DocOperation) {
+        operation.apply {
+            request.apply {
+                this as DocOperationRequest
+                commonFields(genProperties, "request.uriVariables").fixFieldTree(uriVariablesExt)
+                commonFields(genProperties, "request.headers").fixFieldTree(headersExt)
+                commonFields(genProperties, "request.parameters").fixFieldTree(parametersExt)
+                commonFields(genProperties, "request.parts").fixFieldTree(partsExt)
+                commonFields(genProperties, "request.content").fixFieldTree(contentExt)
+            }
+            response.apply {
+                this as DocOperationResponse
+                commonFields(genProperties, "response.headers").fixFieldTree(headersExt)
+                commonFields(genProperties, "response.content").fixFieldTree(contentExt)
             }
         }
     }
-    return results
+
+
+    private fun commonFields(genProperties: GenProperties, name: String): Set<Field> {
+        genProperties.apply {
+            val commonFields = commonFields(name, source)
+            commonFields.addAll(commonFields(name, rootSource))
+            return commonFields
+        }
+    }
+
+    private fun commonFields(name: String, source: File?): LinkedHashSet<Field> {
+        return if (source != null) {
+            var file = File(source, "${name}.yml")
+            if (!file.exists()) {
+                file = File(source, "field.yml")
+            }
+            if (file.exists()) {
+                file.parseList(Field::class.java)
+            } else {
+                linkedSetOf()
+            }
+        } else {
+            linkedSetOf()
+        }
+    }
 }
 
-fun Collection<OperationRequestPart>.toFields(fields: Set<Field>): List<Field> {
-    return this.map { fields.field(it.name, it.contentAsString) }
+fun Map<String, Any?>.toFields(fields: Set<Field>, expand: Boolean = false): LinkedHashSet<Field> {
+    return this.mapTo(LinkedHashSet(), { (k, v) ->
+        val field = fields.field(k, v)
+        if (expand) {
+            val expandValue = field.value.toMap()
+            if (expandValue != null) {
+                field.children = expandValue.toFields(fields, expand)
+            }
+        }
+        field
+    })
+}
+
+fun Collection<OperationRequestPart>.toFields(fields: Set<Field>): LinkedHashSet<Field> {
+    return this.mapTo(LinkedHashSet(), { fields.field(it.name, it.contentAsString).apply { partType = if (it.submittedFileName == null) "text" else "file" } })
 }
 
 private fun Set<Field>.field(name: String, value: Any?): Field {
@@ -167,6 +198,69 @@ private fun Set<Field>.field(name: String, value: Any?): Field {
     }
     field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
     return field
+}
+
+private fun Set<Field>.fixFieldTree(needFixFields: Set<Field>, hasDesc: Boolean = true, userDefault: Boolean = true) {
+    needFixFields.forEach { field ->
+        val findField = fixField(field = field, hasDesc = hasDesc, userDefault = userDefault)
+        findField?.children?.fixFieldTree(field.children)
+        fixFieldTree(field.children)
+    }
+}
+
+private fun Set<Field>.fixField(field: Field, hasDesc: Boolean = false, coverType: Boolean = true, userDefault: Boolean = true): Field? {
+    val findField = this.findPossibleField(field.name, field.value.type, hasDesc)
+    if (findField != null && (field.description.isBlank() || !findField.canCover)) {
+        field.canCover = findField.canCover
+        if (userDefault)
+            field.defaultVal = findField.defaultVal
+        if (coverType || !findField.canCover)
+            field.type = findField.type
+        if (findField.description.isNotBlank())
+            field.description = findField.description
+
+        var tempVal = field.value
+        if (tempVal.isBlank()) {
+            tempVal = if (findField.value.isBlank()) field.defaultVal else findField.value
+        }
+        field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
+    }
+    return findField
+}
+
+private fun Set<Field>.findPossibleField(name: String, type: String, hasDesc: Boolean = false): Field? {
+    return this.findField(name, type, hasDesc) ?: this.findFuzzyField(name, type, hasDesc)
+}
+
+private fun Set<Field>.findFuzzyField(name: String, type: String, hasDesc: Boolean = false): Field? {
+    val newName = when {
+        name.endsWith("Name") -> name.substringBeforeLast("Name")
+        name.endsWith("Url") -> name.substringBeforeLast("Url")
+        name.endsWith("Urls") -> name.substringBeforeLast("Urls")
+        name.endsWith("Path") -> name.substringBeforeLast("Path")
+        else -> {
+            return null
+        }
+    }
+    val field = this.findField(newName, type, hasDesc)
+    if (field != null) {
+        field.name = name
+        field.type = "String"
+        field.defaultVal = ""
+        field.description = field.description.split(Regex("[（(,:，：]"))[0]
+    }
+    return field
+}
+
+private fun Set<Field>.findField(name: String, type: String, hasDesc: Boolean = false): Field? {
+    val set = (if (hasDesc) this.filter { it.description.isNotBlank() } else this)
+    val field = (set.find { it.name == name && it.type.substringBefore("(") == type }?.copy()
+            ?: (set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }?.copy()
+                    ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(") == type }?.copy())
+            ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(").equals(type, true) }?.copy())
+            ?: set.find { it.name == name }?.copy()
+            ?: set.find { it.name.equals(name, true) }?.copy()
+    return field?.apply { this.name = name }
 }
 
 

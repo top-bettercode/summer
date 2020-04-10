@@ -32,7 +32,6 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
                 linkedSetOf()
             }
             rootCollections.forEach {
-                it.dir = File(rootModuleDic, "collection/${it.name}")
                 collections.add(CombineCollection(it, null))
             }
         } else {
@@ -45,7 +44,6 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
             linkedSetOf()
         }
         projectCollections.forEach { collection ->
-            collection.dir = File(projectModuleDic, "collection/${collection.name}")
             val exist = collections.find { it.name == collection.name }
             if (exist == null) {
                 collections.add(collection)
@@ -74,8 +72,7 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
     fun collections(collectionName: String, name: String): DocCollection {
         var collectionTree = projectCollections.find { it.name == collectionName }
         if (collectionTree == null) {
-            collectionTree = DocCollection(collectionName)
-            collectionTree.dir = File(projectModuleDic, "collection/$collectionName")
+            collectionTree = DocCollection(collectionName,dir=File(projectModuleDic, "collection/$collectionName"))
             projectCollections.add(collectionTree)
         }
         collectionTree.items.add(name)

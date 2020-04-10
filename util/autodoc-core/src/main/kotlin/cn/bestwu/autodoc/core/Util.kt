@@ -37,7 +37,7 @@ object Util {
 
     private fun init(objectMapper: ObjectMapper) {
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-        objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS)
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
         objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         objectMapper.enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature())
@@ -154,7 +154,7 @@ private fun isEmpty(value: Any?) =
 
 internal fun File.readCollections(): LinkedHashSet<DocCollection> {
     return if (exists() && length() > 0) Util.yamlMapper.readValue(this.inputStream(), DocCollections::class.java).mapTo(linkedSetOf()) { (k, v) ->
-        DocCollection(k, LinkedHashSet(v))
+        DocCollection(k, LinkedHashSet(v),File(this.parentFile,"collection/${k}"))
     } else linkedSetOf()
 }
 
@@ -165,31 +165,6 @@ internal fun File.writeCollections(collections: LinkedHashSet<DocCollection>) {
         collection.items.forEach {
             this.appendText("  - \"$it\"\n")
         }
-    }
-}
-
-fun Set<Field>.knewFixFields(needFixFields: Set<Field>) {
-    needFixFields.forEach {
-        fixField(it, true)
-    }
-}
-
-fun Set<Field>.fixField(field: Field, hasDesc: Boolean = false, coverType: Boolean = true, userDefault: Boolean = true) {
-    val findField = this.findPossibleField(field.name, field.value.type, hasDesc)
-    if (findField != null && (field.description.isBlank() || !findField.canCover)) {
-        field.canCover = findField.canCover
-        if (userDefault)
-            field.defaultVal = findField.defaultVal
-        if (coverType || !findField.canCover)
-            field.type = findField.type
-        if (findField.description.isNotBlank())
-            field.description = findField.description
-
-        var tempVal = field.value
-        if (tempVal.isBlank()) {
-            tempVal = if (findField.value.isBlank()) field.defaultVal else findField.value
-        }
-        field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
     }
 }
 
@@ -205,52 +180,4 @@ fun MutableMap<String, Int>.pyname(name: String): String {
     return pyname
 }
 
-fun Set<Field>.findPossibleField(name: String, type: String, hasDesc: Boolean = false): Field? {
-    var field = this.findField(name, type, hasDesc)
-    if (field == null) {
-        if (name.contains(".")) {
-            val newName = name.substring(name.lastIndexOf(".") + 1)
-            field = this.findField(newName, type, hasDesc)
-            if (field != null) {
-                field.name = name
-            } else {
-                field = this.findFuzzyField(newName, type, hasDesc)
-                if (field != null)
-                    field.name = name
-            }
-        } else
-            field = this.findFuzzyField(name, type, hasDesc)
-    }
-    return field
-}
 
-private fun Set<Field>.findFuzzyField(name: String, type: String, hasDesc: Boolean = false): Field? {
-    val newName = when {
-        name.endsWith("Name") -> name.substringBeforeLast("Name")
-        name.endsWith("Url") -> name.substringBeforeLast("Url")
-        name.endsWith("Urls") -> name.substringBeforeLast("Urls")
-        name.endsWith("Path") -> name.substringBeforeLast("Path")
-        else -> {
-            return null
-        }
-    }
-    val field = this.findField(newName, type, hasDesc)
-    if (field != null) {
-        field.name = name
-        field.type = "String"
-        field.defaultVal = ""
-        field.description = field.description.split(Regex("[（(,:，：]"))[0]
-    }
-    return field
-}
-
-private fun Set<Field>.findField(name: String, type: String, hasDesc: Boolean = false): Field? {
-    val set = if (hasDesc) this.filter { it.description.isNotBlank() } else this
-    val field = (set.find { it.name == name && it.type.substringBefore("(") == type }?.copy()
-            ?: (set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }?.copy()
-                    ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(") == type }?.copy())
-            ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(").equals(type, true) }?.copy())
-            ?: set.find { it.name == name }?.copy()
-            ?: set.find { it.name.equals(name, true) }?.copy()
-    return field?.apply { this.name = name }
-}
