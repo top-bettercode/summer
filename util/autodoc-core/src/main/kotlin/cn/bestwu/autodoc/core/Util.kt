@@ -156,7 +156,7 @@ private fun isEmpty(value: Any?) =
 
 internal fun File.readCollections(): LinkedHashSet<DocCollection> {
     return if (exists() && length() > 0) Util.yamlMapper.readValue(this.inputStream(), DocCollections::class.java).mapTo(linkedSetOf()) { (k, v) ->
-        DocCollection(k, LinkedHashSet(v),File(this.parentFile,"collection/${k}"))
+        DocCollection(k, LinkedHashSet(v), File(this.parentFile, "collection/${k}"))
     } else linkedSetOf()
 }
 
@@ -182,4 +182,19 @@ fun MutableMap<String, Int>.pyname(name: String): String {
     return pyname
 }
 
+fun Set<Field>.noneBlank(): Boolean {
+    return all { it.description.isNotBlank() && it.children.noneBlank() }
+}
+
+
+fun Set<Field>.checkBlank(desc: String, prefix: String = ""): Set<Field> {
+    forEach {
+        val blank = it.description.isBlank()
+        if (blank) {
+            System.err.println("[${desc}]未找到字段[${prefix + it.name}]的描述")
+        }
+        it.children.checkBlank(desc, "${prefix + it.name}.")
+    }
+    return this
+}
 

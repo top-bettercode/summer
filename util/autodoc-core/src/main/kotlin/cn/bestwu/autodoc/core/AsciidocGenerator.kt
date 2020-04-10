@@ -10,7 +10,6 @@ import org.asciidoctor.Asciidoctor
 import org.asciidoctor.Options
 import org.asciidoctor.SafeMode
 import java.io.File
-import java.io.PrintWriter
 
 
 /**
@@ -198,7 +197,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                             out.println(".1+.^|地址 6+|link:{apiHost}${str(HttpOperation.getRestRequestPath(request))}[{apiHost}++$restUri++]")
 
                             if (uriVariablesExt.isNotEmpty()) {
-                                val uriFields = uriVariablesExt.check(operationPath)
+                                val uriFields = uriVariablesExt.checkBlank("$operationPath:request.uriVariablesExt")
                                 out.println(".${uriFields.size + 1}+.^|URL")
                                 out.println("h|名称 h|类型 3+h|描述 h|示例")
                                 uriFields.forEach {
@@ -210,7 +209,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                                 }
                             }
                             if (headersExt.isNotEmpty()) {
-                                val headerFields = headersExt.check(operationPath)
+                                val headerFields = headersExt.checkBlank("$operationPath:request.headersExt")
                                 out.println(".${headerFields.size + 1}+.^|请求头")
                                 out.println("h|名称 h|类型 h|必填 2+h|描述 h|示例")
                                 headerFields.forEach {
@@ -223,9 +222,9 @@ object AsciidocGenerator : AbstractbGenerator() {
                                 }
                             }
 
-                            val parameterFields = parametersExt.check(operationPath)
-                            val partsFields = partsExt.check(operationPath)
-                            val contentFields = contentExt.check(operationPath)
+                            val parameterFields = parametersExt.checkBlank("$operationPath:request.parametersExt")
+                            val partsFields = partsExt.checkBlank("$operationPath:request.partsExt")
+                            val contentFields = contentExt.checkBlank("$operationPath:request.contentExt")
                             val parameterBuilder = StringBuilder()
                             val size = writeParameters(parameterBuilder, parameterFields, partsFields, contentFields)
 
@@ -239,7 +238,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                         }
                         val response = operation.response as DocOperationResponse
                         response.apply {
-                            val contentFields = contentExt.check(operationPath)
+                            val contentFields = contentExt.checkBlank("$operationPath:response.contentExt")
                             val responseBuilder = StringBuilder()
                             val size = writeResponse(responseBuilder, contentFields)
                             out.println(".${size + 1}+.^|响应")

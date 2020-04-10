@@ -48,17 +48,17 @@ object InitField {
                 fields.fix(resHeadNeedFix)
                 fields.fix(resContentNeedFix)
 
-                uriNeedFix.none { it.description.isBlank() } && reqHeadNeedFix.none { it.description.isBlank() } && paramNeedFix.none { it.description.isBlank() } && partNeedFix.none { it.description.isBlank() } && reqContentNeedFix.none { it.description.isBlank() } && resHeadNeedFix.none { it.description.isBlank() } && resContentNeedFix.none { it.description.isBlank() }
+                uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()
             }
         }
 
-        request.uriVariablesExt.filter { it.description.isBlank() }.forEach { System.err.println("[request.uriVariablesExt]未找到字段[${it.name}]的描述") }
-        request.headersExt.filter { it.description.isBlank() }.forEach { System.err.println("[request.headersExt]未找到字段[${it.name}]的描述") }
-        request.parametersExt.filter { it.description.isBlank() }.forEach { System.err.println("[request.parametersExt]未找到字段[${it.name}]的描述") }
-        request.partsExt.filter { it.description.isBlank() }.forEach { System.err.println("[request.partsExt]未找到字段[${it.name}]的描述") }
-        request.contentExt.filter { it.description.isBlank() }.forEach { System.err.println("[request.contentExt]未找到字段[${it.name}]的描述") }
-        response.headersExt.filter { it.description.isBlank() }.forEach { System.err.println("[response.headersExt]未找到字段[${it.name}]的描述") }
-        response.contentExt.filter { it.description.isBlank() }.forEach { System.err.println("[response.contentExt]未找到字段[${it.name}]的描述") }
+        request.uriVariablesExt.checkBlank("request.uriVariablesExt")
+        request.headersExt.checkBlank("request.headersExt")
+        request.parametersExt.checkBlank("request.parametersExt")
+        request.partsExt.checkBlank("request.partsExt")
+        request.contentExt.checkBlank("request.contentExt")
+        response.headersExt.checkBlank("response.headersExt")
+        response.contentExt.checkBlank("response.contentExt")
     }
 
     private fun Set<Field>.fix(needFixFields: Set<Field>) {
