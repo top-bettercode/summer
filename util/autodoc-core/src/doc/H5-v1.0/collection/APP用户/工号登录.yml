@@ -1,135 +1,85 @@
 description: "客户端测试账号：CUST000014：1234，业务端测试账号：106340：1234"
 request:
-  uri: "/v2/users/accessToken"
-  restUri: "/v2/users/accessToken"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "POST"
-  headers:
-    Accept:
-     - "application/json;version=2.1"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "1c9a6bf1c049ec453840906b510609bf"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-  headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    defaultVal: ""
-    value: "application/json;version=2.1"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
-    value: "1c9a6bf1c049ec453840906b510609bf"
-    expanded: true
-    canCover: true
-    required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    agentNumber:
-     - "CUST000014"
-    password2:
-     - "81dc9bdb52d04dc20036dbd8313ed055"
-    did:
-     - "uw0E6QYB1CVV9QQamWUqe2HNi0udjdKS"
   parametersExt:
-   -
-    name: "password2"
-    type: "String"
-    description: ""
-    defaultVal: ""
-    value: "81dc9bdb52d04dc20036dbd8313ed055"
-    expanded: true
-    canCover: true
-    required: true
    -
     name: "agentNumber"
     type: "String"
     description: "用户工号"
-    defaultVal: ""
     value: "CUST000014"
-    expanded: true
+    canCover: true
+    required: true
+   -
+    name: "password2"
+    type: "String"
+    value: "81dc9bdb52d04dc20036dbd8313ed055"
     canCover: true
     required: true
    -
     name: "did"
     type: "String"
     description: "设备编号"
-    defaultVal: ""
     value: "uw0E6QYB1CVV9QQamWUqe2HNi0udjdKS"
-    expanded: true
     canCover: true
     required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
   headersExt:
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.1"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<jiekouqianmingsuanfa>>"
+    value: "1c9a6bf1c049ec453840906b510609bf"
+    canCover: true
+    required: true
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"accessToken\":\"5ace5631-f5f7-46be-9f75-0244ad90837f\",\"sourceChannel\"\
-    :\"CUST\"}"
+  restUri: "/v2/users/accessToken"
+  method: "POST"
+response:
   contentExt:
    -
     name: "accessToken"
     type: "String"
     description: "存取令牌"
-    defaultVal: ""
     value: "5ace5631-f5f7-46be-9f75-0244ad90837f"
-    expanded: true
     canCover: true
     required: false
    -
     name: "sourceChannel"
     type: "String"
     description: "标识用户来源通道"
-    defaultVal: ""
     value: "CUST"
-    expanded: true
     canCover: true
     required: false
-  stackTrace: ""
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"accessToken\":\"5ace5631-f5f7-46be-9f75-0244ad90837f\",\"sourceChannel\"\
+    :\"CUST\"}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

@@ -1,103 +1,10 @@
-description: ""
 request:
-  uri: "/fundTranDetailFlows"
-  restUri: "/fundTranDetailFlows"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "ce34f57c406cc8770ad0ce317571ada0"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "b02cd37284c3546f6506b836374999db"
-  headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "b02cd37284c3546f6506b836374999db"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    defaultVal: ""
-    value: "application/json;version=2.0"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
-    value: "ce34f57c406cc8770ad0ce317571ada0"
-    expanded: true
-    canCover: true
-    required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    fundType:
-     - "01"
-    page:
-     - "1"
-    size:
-     - "20"
-    custId:
-     - ""
   parametersExt:
-   -
-    name: "custId"
-    type: "String"
-    description: "客户ID"
-    defaultVal: ""
-    value: ""
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    defaultVal: ""
-    value: "20"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "fundType"
     type: "String"
     description: "资金来源"
-    defaultVal: ""
     value: "01"
-    expanded: true
     canCover: true
     required: false
    -
@@ -106,74 +13,86 @@ request:
     description: "页码"
     defaultVal: "1"
     value: "1"
-    expanded: true
     canCover: true
     required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "custId"
+    type: "String"
+    description: "客户ID"
+    canCover: true
+    required: false
   headersExt:
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<jiekouqianmingsuanfa>>"
+    value: "ce34f57c406cc8770ad0ce317571ada0"
+    canCover: true
+    required: true
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"size\":20,\"total\":12387,\"pages\":620,\"list\":[{\"flowNo\"\
-    :\"FUND00126B\",\"serviceType\":\"01\",\"fundType\":\"04\",\"inputDate\":1509630706000,\"\
-    addAmt\":2651183.16,\"plusAmt\":0},{\"flowNo\":\"FUND00126C\",\"serviceType\"\
-    :\"01\",\"fundType\":\"01\",\"inputDate\":1509630718000,\"addAmt\":25450,\"plusAmt\"\
-    :0},{\"flowNo\":\"FUND00126D\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
-    :1509630732000,\"addAmt\":1190,\"plusAmt\":0},{\"flowNo\":\"FUND001276\",\"serviceType\"\
-    :\"01\",\"fundType\":\"01\",\"inputDate\":1509631176000,\"addAmt\":363390,\"plusAmt\"\
-    :0},{\"flowNo\":\"FUND001277\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
-    :1509631177000,\"addAmt\":599.32,\"plusAmt\":0},{\"flowNo\":\"FUND001278\",\"\
-    serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509631184000,\"addAmt\"\
-    :50000,\"plusAmt\":0},{\"flowNo\":\"FUND00127B\",\"serviceType\":\"01\",\"fundType\"\
-    :\"01\",\"inputDate\":1509631202000,\"addAmt\":26794.64,\"plusAmt\":0},{\"flowNo\"\
-    :\"FUND00129C\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509631235000,\"\
-    addAmt\":1913.69,\"plusAmt\":0},{\"flowNo\":\"FUND00129E\",\"serviceType\":\"\
-    01\",\"fundType\":\"01\",\"inputDate\":1509631253000,\"addAmt\":1700.65,\"plusAmt\"\
-    :0},{\"flowNo\":\"FUND0013B5\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
-    :1509632324000,\"addAmt\":6100,\"plusAmt\":0},{\"flowNo\":\"FUND0013E0\",\"serviceType\"\
-    :\"01\",\"fundType\":\"01\",\"inputDate\":1509632423000,\"addAmt\":29.58,\"plusAmt\"\
-    :0},{\"flowNo\":\"FUND0013E8\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
-    :1509632440000,\"addAmt\":8244.58,\"plusAmt\":0},{\"flowNo\":\"FUND0013EF\",\"\
-    serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509632461000,\"addAmt\"\
-    :57.5,\"plusAmt\":0},{\"flowNo\":\"FUND0013F2\",\"serviceType\":\"01\",\"fundType\"\
-    :\"01\",\"inputDate\":1509632478000,\"addAmt\":10000,\"plusAmt\":0},{\"flowNo\"\
-    :\"FUND0013FB\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509632507000,\"\
-    addAmt\":13487.5,\"plusAmt\":0},{\"flowNo\":\"FUND00149F\",\"serviceType\":\"\
-    01\",\"fundType\":\"03\",\"inputDate\":1509635147000,\"addAmt\":2400,\"plusAmt\"\
-    :0},{\"flowNo\":\"FUND00150B\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
-    :1509636365000,\"addAmt\":8715.42,\"plusAmt\":0},{\"flowNo\":\"FUND0016B5\",\"\
-    serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509931216000,\"plusAmt\"\
-    :0},{\"flowNo\":\"FUND0016B9\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
-    :1509931216000,\"plusAmt\":0},{\"flowNo\":\"FUND0016BD\",\"serviceType\":\"01\"\
-    ,\"fundType\":\"01\",\"inputDate\":1509931231000,\"plusAmt\":0}],\"page\":1}"
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "b02cd37284c3546f6506b836374999db"
+    canCover: true
+    required: false
+  restUri: "/fundTranDetailFlows"
+  method: "GET"
+response:
   contentExt:
    -
-    name: "list.serviceType"
-    type: "String"
-    description: "业务类型"
-    defaultVal: ""
-    value: "01"
-    expanded: true
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "12387"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "620"
     canCover: true
     required: false
    -
     name: "list"
     type: "Array"
     description: "内容"
-    defaultVal: ""
     value: "[{\"flowNo\":\"FUND00126B\",\"serviceType\":\"01\",\"fundType\":\"04\"\
       ,\"inputDate\":1509630706000,\"addAmt\":2651183.16,\"plusAmt\":0},{\"flowNo\"\
       :\"FUND00126C\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509630718000,\"\
@@ -207,80 +126,50 @@ response:
       :\"01\",\"inputDate\":1509931216000,\"plusAmt\":0},{\"flowNo\":\"FUND0016BD\"\
       ,\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509931231000,\"plusAmt\"\
       :0}]"
-    expanded: true
     canCover: true
-    required: false
-   -
-    name: "list.plusAmt"
-    type: "BigDecimal"
-    description: "减少金额"
-    defaultVal: ""
-    value: "0"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.addAmt"
-    type: "BigDecimal"
-    description: "增加金额"
-    defaultVal: ""
-    value: "2651183.16"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.inputDate"
-    type: "Long"
-    description: "导入日期"
-    defaultVal: ""
-    value: "1509630706000"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    defaultVal: ""
-    value: "20"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    defaultVal: ""
-    value: "12387"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "pages"
-    type: "Long"
-    description: "总页数"
-    defaultVal: ""
-    value: "620"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.flowNo"
-    type: "String"
-    description: "流水号"
-    defaultVal: ""
-    value: "FUND00126B"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.fundType"
-    type: "String"
-    description: "资金来源"
-    defaultVal: ""
-    value: "04"
-    expanded: true
-    canCover: true
+    children:
+     -
+      name: "flowNo"
+      type: "String"
+      description: "流水号"
+      value: "FUND00126B"
+      canCover: true
+      required: false
+     -
+      name: "serviceType"
+      type: "String"
+      description: "业务类型"
+      value: "01"
+      canCover: true
+      required: false
+     -
+      name: "fundType"
+      type: "String"
+      description: "资金来源"
+      value: "04"
+      canCover: true
+      required: false
+     -
+      name: "inputDate"
+      type: "Long"
+      description: "导入日期"
+      value: "1509630706000"
+      canCover: true
+      required: false
+     -
+      name: "addAmt"
+      type: "BigDecimal"
+      description: "增加金额"
+      value: "2651183.16"
+      canCover: true
+      required: false
+     -
+      name: "plusAmt"
+      type: "BigDecimal"
+      description: "减少金额"
+      value: "0"
+      canCover: true
+      required: false
     required: false
    -
     name: "page"
@@ -288,13 +177,50 @@ response:
     description: "页码"
     defaultVal: "1"
     value: "1"
-    expanded: true
     canCover: true
     required: false
-  stackTrace: ""
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"size\":20,\"total\":12387,\"pages\":620,\"list\":[{\"flowNo\"\
+    :\"FUND00126B\",\"serviceType\":\"01\",\"fundType\":\"04\",\"inputDate\":1509630706000,\"\
+    addAmt\":2651183.16,\"plusAmt\":0},{\"flowNo\":\"FUND00126C\",\"serviceType\"\
+    :\"01\",\"fundType\":\"01\",\"inputDate\":1509630718000,\"addAmt\":25450,\"plusAmt\"\
+    :0},{\"flowNo\":\"FUND00126D\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
+    :1509630732000,\"addAmt\":1190,\"plusAmt\":0},{\"flowNo\":\"FUND001276\",\"serviceType\"\
+    :\"01\",\"fundType\":\"01\",\"inputDate\":1509631176000,\"addAmt\":363390,\"plusAmt\"\
+    :0},{\"flowNo\":\"FUND001277\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
+    :1509631177000,\"addAmt\":599.32,\"plusAmt\":0},{\"flowNo\":\"FUND001278\",\"\
+    serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509631184000,\"addAmt\"\
+    :50000,\"plusAmt\":0},{\"flowNo\":\"FUND00127B\",\"serviceType\":\"01\",\"fundType\"\
+    :\"01\",\"inputDate\":1509631202000,\"addAmt\":26794.64,\"plusAmt\":0},{\"flowNo\"\
+    :\"FUND00129C\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509631235000,\"\
+    addAmt\":1913.69,\"plusAmt\":0},{\"flowNo\":\"FUND00129E\",\"serviceType\":\"\
+    01\",\"fundType\":\"01\",\"inputDate\":1509631253000,\"addAmt\":1700.65,\"plusAmt\"\
+    :0},{\"flowNo\":\"FUND0013B5\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
+    :1509632324000,\"addAmt\":6100,\"plusAmt\":0},{\"flowNo\":\"FUND0013E0\",\"serviceType\"\
+    :\"01\",\"fundType\":\"01\",\"inputDate\":1509632423000,\"addAmt\":29.58,\"plusAmt\"\
+    :0},{\"flowNo\":\"FUND0013E8\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
+    :1509632440000,\"addAmt\":8244.58,\"plusAmt\":0},{\"flowNo\":\"FUND0013EF\",\"\
+    serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509632461000,\"addAmt\"\
+    :57.5,\"plusAmt\":0},{\"flowNo\":\"FUND0013F2\",\"serviceType\":\"01\",\"fundType\"\
+    :\"01\",\"inputDate\":1509632478000,\"addAmt\":10000,\"plusAmt\":0},{\"flowNo\"\
+    :\"FUND0013FB\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509632507000,\"\
+    addAmt\":13487.5,\"plusAmt\":0},{\"flowNo\":\"FUND00149F\",\"serviceType\":\"\
+    01\",\"fundType\":\"03\",\"inputDate\":1509635147000,\"addAmt\":2400,\"plusAmt\"\
+    :0},{\"flowNo\":\"FUND00150B\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
+    :1509636365000,\"addAmt\":8715.42,\"plusAmt\":0},{\"flowNo\":\"FUND0016B5\",\"\
+    serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509931216000,\"plusAmt\"\
+    :0},{\"flowNo\":\"FUND0016B9\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\"\
+    :1509931216000,\"plusAmt\":0},{\"flowNo\":\"FUND0016BD\",\"serviceType\":\"01\"\
+    ,\"fundType\":\"01\",\"inputDate\":1509931231000,\"plusAmt\":0}],\"page\":1}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

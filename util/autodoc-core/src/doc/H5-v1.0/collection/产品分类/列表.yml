@@ -1,161 +1,110 @@
 description: "不传levels返回首页分类（根据返回数据levels分别展示品系/品牌，返回数据为有序数组，先品系后品牌）；levels=1时返回所有\
   品牌；levels=2时返回所有品系；"
 request:
-  uri: "/materialClasss"
-  restUri: "/materialClasss"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "dea58c947e4ed3d2aea8cac4c01f67d7"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "b02cd37284c3546f6506b836374999db"
+  parametersExt:
+   -
+    name: "levels"
+    type: "String"
+    description: "级别"
+    value: "1"
+    canCover: true
+    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "b02cd37284c3546f6506b836374999db"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "dea58c947e4ed3d2aea8cac4c01f67d7"
-    expanded: true
     canCover: true
     required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    levels:
-     - "1"
-  parametersExt:
-   -
-    name: "levels"
-    type: "String"
-    description: "级别"
-    defaultVal: ""
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"list\":[{\"id\":\"3314\",\"levelName\":\"五禾丰\",\"levels\":\"\
-    1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3314.png?reqid=10000\"\
-    },{\"id\":\"3317\",\"levelName\":\"桂湖\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3317.png?reqid=10000\"\
-    },{\"id\":\"3318\",\"levelName\":\"嘉施利\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3318.png?reqid=10000\"\
-    },{\"id\":\"5454\",\"levelName\":\"常规中浓度\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-    }]}"
-  contentExt:
    -
-    name: "list.id"
+    name: "accessToken"
     type: "String"
-    description: ""
-    defaultVal: ""
-    value: "3314"
-    expanded: true
+    description: "存取令牌"
+    value: "b02cd37284c3546f6506b836374999db"
     canCover: true
     required: false
+  restUri: "/materialClasss"
+  method: "GET"
+response:
+  contentExt:
    -
     name: "list"
     type: "Array"
     description: "内容"
-    defaultVal: ""
     value: "[{\"id\":\"3314\",\"levelName\":\"五禾丰\",\"levels\":\"1\",\"picUrl\":\"\
       http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3314.png?reqid=10000\"\
       },{\"id\":\"3317\",\"levelName\":\"桂湖\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3317.png?reqid=10000\"\
       },{\"id\":\"3318\",\"levelName\":\"嘉施利\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3318.png?reqid=10000\"\
       },{\"id\":\"5454\",\"levelName\":\"常规中浓度\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
       }]"
-    expanded: true
     canCover: true
+    children:
+     -
+      name: "id"
+      type: "String"
+      value: "3314"
+      canCover: true
+      required: false
+     -
+      name: "levelName"
+      type: "String"
+      description: "名称"
+      value: "五禾丰"
+      canCover: true
+      required: false
+     -
+      name: "levels"
+      type: "String"
+      description: "级别"
+      value: "1"
+      canCover: true
+      required: false
+     -
+      name: "picUrl"
+      type: "String"
+      description: "图片url"
+      value: "http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3314.png?reqid=10000"
+      canCover: true
+      required: false
     required: false
+  headersExt:
    -
-    name: "list.levelName"
+    name: "Content-Type"
     type: "String"
-    description: "名称"
-    defaultVal: ""
-    value: "五禾丰"
-    expanded: true
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
     canCover: true
     required: false
-   -
-    name: "list.picUrl"
-    type: "String"
-    description: "图片url"
-    defaultVal: ""
-    value: "http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3314.png?reqid=10000"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.levels"
-    type: "String"
-    description: "级别"
-    defaultVal: ""
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-  stackTrace: ""
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"list\":[{\"id\":\"3314\",\"levelName\":\"五禾丰\",\"levels\":\"\
+    1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3314.png?reqid=10000\"\
+    },{\"id\":\"3317\",\"levelName\":\"桂湖\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3317.png?reqid=10000\"\
+    },{\"id\":\"3318\",\"levelName\":\"嘉施利\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3318.png?reqid=10000\"\
+    },{\"id\":\"5454\",\"levelName\":\"常规中浓度\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+    }]}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

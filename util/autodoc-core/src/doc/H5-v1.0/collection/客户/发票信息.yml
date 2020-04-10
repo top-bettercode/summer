@@ -1,178 +1,119 @@
-description: ""
 request:
-  uri: "/custInfos/invoice"
-  restUri: "/custInfos/invoice"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "6c5467aaaf8b8c5876b8016771744b64"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "92ece879-5d72-429e-a366-7863e06067e2"
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "92ece879-5d72-429e-a366-7863e06067e2"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "6c5467aaaf8b8c5876b8016771744b64"
-    expanded: true
     canCover: true
     required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters: {}
-  parametersExt: []
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"invoiceId\":\"INVO00286\",\"isInvoice\":\"开普票\",\"invoiceCompany\"\
-    :\"百色市右江区禾苗农资销售部\",\"invoiceType\":null,\"taxpayerIdentificationNum\":\"92451002L47564754H\"\
-    ,\"invoiceCompanyAddress\":\"广西百色市右江区南大建材综合市场A1栋14-16号\",\"invoiceConpanyPhone\"\
-    :null,\"bank\":\"广西百色右江农村合作银行营业部\",\"account\":\"600612010107880401\"}"
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "92ece879-5d72-429e-a366-7863e06067e2"
+    canCover: true
+    required: false
+  restUri: "/custInfos/invoice"
+  method: "GET"
+response:
   contentExt:
-   -
-    name: "invoiceCompanyAddress"
-    type: "String"
-    description: "公司地址"
-    defaultVal: ""
-    value: "广西百色市右江区南大建材综合市场A1栋14-16号"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "bank"
-    type: "String"
-    description: "开户行"
-    defaultVal: ""
-    value: "广西百色右江农村合作银行营业部"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "invoiceId"
     type: "String"
     description: "开票信息ID"
-    defaultVal: ""
     value: "INVO00286"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "invoiceConpanyPhone"
-    type: "String"
-    description: "开票公司电话"
-    defaultVal: ""
-    value: ""
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "invoiceCompany"
-    type: "String"
-    description: "开票抬头"
-    defaultVal: ""
-    value: "百色市右江区禾苗农资销售部"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "invoiceType"
-    type: "String"
-    description: "开票类型"
-    defaultVal: ""
-    value: ""
-    expanded: true
     canCover: true
     required: false
    -
     name: "isInvoice"
     type: "String"
     description: "是否开票"
-    defaultVal: ""
     value: "开普票"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "invoiceCompany"
+    type: "String"
+    description: "开票抬头"
+    value: "百色市右江区禾苗农资销售部"
+    canCover: true
+    required: false
+   -
+    name: "invoiceType"
+    type: "String"
+    description: "开票类型"
     canCover: true
     required: false
    -
     name: "taxpayerIdentificationNum"
     type: "String"
     description: "纳税人身份识别码"
-    defaultVal: ""
     value: "92451002L47564754H"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "invoiceCompanyAddress"
+    type: "String"
+    description: "公司地址"
+    value: "广西百色市右江区南大建材综合市场A1栋14-16号"
+    canCover: true
+    required: false
+   -
+    name: "invoiceConpanyPhone"
+    type: "String"
+    description: "开票公司电话"
+    canCover: true
+    required: false
+   -
+    name: "bank"
+    type: "String"
+    description: "开户行"
+    value: "广西百色右江农村合作银行营业部"
     canCover: true
     required: false
    -
     name: "account"
     type: "String"
     description: "银行账号"
-    defaultVal: ""
     value: "600612010107880401"
-    expanded: true
     canCover: true
     required: false
-  stackTrace: ""
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"invoiceId\":\"INVO00286\",\"isInvoice\":\"开普票\",\"invoiceCompany\"\
+    :\"百色市右江区禾苗农资销售部\",\"invoiceType\":null,\"taxpayerIdentificationNum\":\"92451002L47564754H\"\
+    ,\"invoiceCompanyAddress\":\"广西百色市右江区南大建材综合市场A1栋14-16号\",\"invoiceConpanyPhone\"\
+    :null,\"bank\":\"广西百色右江农村合作银行营业部\",\"account\":\"600612010107880401\"}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

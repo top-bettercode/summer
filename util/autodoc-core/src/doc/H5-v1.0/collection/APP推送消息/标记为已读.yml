@@ -1,137 +1,113 @@
-description: ""
 request:
-  uri: "/appMessages/13"
-  restUri: "/appMessages/{messageNo}"
-  uriVariables:
-    messageNo: "13"
   uriVariablesExt:
    -
     name: "messageNo"
     type: "String"
     description: "消息编号"
-    defaultVal: ""
     value: "13"
-    expanded: true
     canCover: true
     required: false
-  method: "PUT"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "6c5467aaaf8b8c5876b8016771744b64"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "0d13ca1b-181d-4476-b910-b2babf0fcdec"
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "0d13ca1b-181d-4476-b910-b2babf0fcdec"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "6c5467aaaf8b8c5876b8016771744b64"
-    expanded: true
     canCover: true
     required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters: {}
-  parametersExt: []
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"messageNo\":\"13\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\"\
-    :1522200716000,\"message\":\"你的订单已发货0.710 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\"\
-    ,\"extra\":{\"qty\":32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\"\
-    :\"Y\"}"
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "0d13ca1b-181d-4476-b910-b2babf0fcdec"
+    canCover: true
+    required: false
+  restUri: "/appMessages/{messageNo}"
+  method: "PUT"
+response:
   contentExt:
+   -
+    name: "messageNo"
+    type: "String"
+    description: "消息编号"
+    value: "13"
+    canCover: true
+    required: false
+   -
+    name: "messageType"
+    type: "String"
+    description: "消息类型"
+    value: "ORDER_HAS_SEND"
+    canCover: true
+    required: false
    -
     name: "createTime"
     type: "Long"
-    description: ""
-    defaultVal: ""
     value: "1522200716000"
-    expanded: true
     canCover: true
     required: false
    -
-    name: "custNo"
+    name: "message"
+    type: "string"
+    description: "消息"
+    value: "你的订单已发货0.710 吨，请做好收货准备"
+    canCover: true
+    required: false
+   -
+    name: "linkedId"
     type: "String"
-    description: "客户编码"
-    defaultVal: ""
-    value: "CUST00918"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "extra.qty"
-    type: "BigDecimal"
-    description: "总数"
-    defaultVal: ""
-    value: "32"
-    expanded: true
+    description: "相关ID"
+    value: "ORD000379171117"
     canCover: true
     required: false
    -
     name: "extra"
     type: "String"
     description: "扩展信息"
-    defaultVal: ""
     value: "{\"qty\":32,\"payAmount\":66080}"
-    expanded: true
+    canCover: true
+    children:
+     -
+      name: "qty"
+      type: "BigDecimal"
+      description: "总数"
+      value: "32"
+      canCover: true
+      required: false
+     -
+      name: "payAmount"
+      type: "BigDecimal"
+      description: "结算总价"
+      value: "66080"
+      canCover: true
+      required: false
+    required: false
+   -
+    name: "custNo"
+    type: "String"
+    description: "客户编码"
+    value: "CUST00918"
     canCover: true
     required: false
    -
@@ -140,58 +116,22 @@ response:
     description: "是否已读"
     defaultVal: "N'"
     value: "Y"
-    expanded: true
     canCover: true
     required: false
+  headersExt:
    -
-    name: "message"
-    type: "string"
-    description: "消息"
-    defaultVal: ""
-    value: "你的订单已发货0.710 吨，请做好收货准备"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "messageType"
+    name: "Content-Type"
     type: "String"
-    description: "消息类型"
-    defaultVal: ""
-    value: "ORDER_HAS_SEND"
-    expanded: true
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
     canCover: true
     required: false
-   -
-    name: "messageNo"
-    type: "String"
-    description: "消息编号"
-    defaultVal: ""
-    value: "13"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "linkedId"
-    type: "String"
-    description: "相关ID"
-    defaultVal: ""
-    value: "ORD000379171117"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "extra.payAmount"
-    type: "BigDecimal"
-    description: "结算总价"
-    defaultVal: ""
-    value: "66080"
-    expanded: true
-    canCover: true
-    required: false
-  stackTrace: ""
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"messageNo\":\"13\",\"messageType\":\"ORDER_HAS_SEND\",\"createTime\"\
+    :1522200716000,\"message\":\"你的订单已发货0.710 吨，请做好收货准备\",\"linkedId\":\"ORD000379171117\"\
+    ,\"extra\":{\"qty\":32,\"payAmount\":66080},\"custNo\":\"CUST00918\",\"readed\"\
+    :\"Y\"}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

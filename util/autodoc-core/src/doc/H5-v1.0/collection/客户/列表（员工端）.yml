@@ -1,94 +1,18 @@
-description: ""
 request:
-  uri: "/custInfos"
-  restUri: "/custInfos"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "cc54606f7208369215576f07705cee5c"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "b7af896b-be48-4d9d-b6fd-2ab6b41e93a7"
-  headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "b7af896b-be48-4d9d-b6fd-2ab6b41e93a7"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    defaultVal: ""
-    value: "application/json;version=2.0"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
-    value: "cc54606f7208369215576f07705cee5c"
-    expanded: true
-    canCover: true
-    required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    page:
-     - "1"
-    size:
-     - "20"
-    newCust:
-     - "false"
-    keyword:
-     - ""
   parametersExt:
    -
-    name: "keyword"
-    type: "string"
-    description: "关键字"
-    defaultVal: ""
-    value: ""
-    expanded: true
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
     canCover: true
     required: false
    -
     name: "size"
     type: "Integer"
     description: "当前页的数量"
-    defaultVal: ""
     value: "20"
-    expanded: true
     canCover: true
     required: false
    -
@@ -97,7 +21,73 @@ request:
     description: "是否新增客户"
     defaultVal: "false"
     value: "false"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "keyword"
+    type: "string"
+    description: "关键字"
+    canCover: true
+    required: false
+  headersExt:
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<jiekouqianmingsuanfa>>"
+    value: "cc54606f7208369215576f07705cee5c"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "b7af896b-be48-4d9d-b6fd-2ab6b41e93a7"
+    canCover: true
+    required: false
+  restUri: "/custInfos"
+  method: "GET"
+response:
+  contentExt:
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "19"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "1"
     canCover: true
     required: false
    -
@@ -106,91 +96,12 @@ request:
     description: "页码"
     defaultVal: "1"
     value: "1"
-    expanded: true
-    canCover: true
-    required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
-    canCover: true
-    required: false
-  contentAsString: "{\"total\":19,\"size\":20,\"pages\":1,\"page\":1,\"list\":[{\"\
-    custId\":\"CUST000083\",\"custName\":\"成都云图测试中心\",\"phone\":\"13363548888\",\"\
-    reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"FREEZE\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST000082\",\"custName\":\"成都云图测试账号1\",\"phone\":\"13810828700\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"FREEZE\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST00006A\",\"custName\":\"信息部陈宗伟测试原材料\",\"phone\":null,\"\
-    reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST000065\",\"custName\":\"彭信荣测试专用\",\"phone\":null,\"reviewStatus\"\
-    :\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\":[]},{\"\
-    custId\":\"CUST01689\",\"custName\":\"昆明芭利尔化肥科技有限公司\",\"phone\":\"13888156423\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST00688\",\"custName\":\"湖北天门赵海涛\",\"phone\":\"13997952524\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST02088\",\"custName\":\"天门市盛农植保经营部\",\"phone\":null,\"reviewStatus\"\
-    :\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\":[]},{\"\
-    custId\":\"CUST00630\",\"custName\":\"湖北天门文运辉\",\"phone\":\"13986948726\",\"reviewStatus\"\
-    :\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\":[]},{\"\
-    custId\":\"CUST00627\",\"custName\":\"湖北天门万遂义\",\"phone\":\"13607222055\",\"reviewStatus\"\
-    :\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\":[]},{\"\
-    custId\":\"CUST00656\",\"custName\":\"天门市裕丰农资经营部\",\"phone\":\"13972939359\",\"\
-    reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST00626\",\"custName\":\"天门市皂市车站生资门市部\",\"phone\":\"13098347313\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST00689\",\"custName\":\"湖北天门周艳萍\",\"phone\":\"13972624686\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST00675\",\"custName\":\"湖北天门廖生云\",\"phone\":\"13972188735\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST00625\",\"custName\":\"天门市农家乐农资经营部\",\"phone\":\"13507222446\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST00687\",\"custName\":\"湖北天门文元华\",\"phone\":\"13545998676\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST00629\",\"custName\":\"湖北天门王庆辉\",\"phone\":\"13872995955\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST00286\",\"custName\":\"百色市右江区禾苗农资销售部\",\"phone\":\"13607766618\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[\"凯利丰\"]},{\"custId\":\"CUST00631\",\"custName\":\"湖北天门吴道学\",\"phone\":\"13671293980\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]},{\"custId\":\"CUST00670\",\"custName\":\"湖北天门何浩明\",\"phone\":\"18672885888\"\
-    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
-    :[]}]}"
-  contentExt:
-   -
-    name: "list.sapNo"
-    type: "String"
-    description: "SAP Number"
-    defaultVal: ""
-    value: ""
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.brandNames"
-    type: "List<String>"
-    description: "代理的品牌"
-    defaultVal: ""
-    value: "[\"凯利丰\"]"
-    expanded: true
     canCover: true
     required: false
    -
     name: "list"
     type: "Array"
     description: "内容"
-    defaultVal: ""
     value: "[{\"custId\":\"CUST000083\",\"custName\":\"成都云图测试中心\",\"phone\":\"13363548888\"\
       ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"FREEZE\",\"sapNo\":null,\"\
       brandNames\":[]},{\"custId\":\"CUST000082\",\"custName\":\"成都云图测试账号1\",\"phone\"\
@@ -232,94 +143,107 @@ response:
       ,\"sapNo\":null,\"brandNames\":[]},{\"custId\":\"CUST00670\",\"custName\":\"\
       湖北天门何浩明\",\"phone\":\"18672885888\",\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\"\
       :\"NORMAL\",\"sapNo\":null,\"brandNames\":[]}]"
-    expanded: true
     canCover: true
+    children:
+     -
+      name: "custId"
+      type: "String"
+      description: "客户ID"
+      value: "CUST000083"
+      canCover: true
+      required: false
+     -
+      name: "custName"
+      type: "String"
+      description: "客户名称"
+      value: "成都云图测试中心"
+      canCover: true
+      required: false
+     -
+      name: "phone"
+      type: "String"
+      description: "手机"
+      value: "13363548888"
+      canCover: true
+      required: false
+     -
+      name: "reviewStatus"
+      type: "String"
+      description: "审核状态"
+      value: "HAS_AUDIT"
+      canCover: true
+      required: false
+     -
+      name: "custStatus"
+      type: "String"
+      description: "客户状态"
+      value: "FREEZE"
+      canCover: true
+      required: false
+     -
+      name: "sapNo"
+      type: "String"
+      description: "SAP Number"
+      canCover: true
+      required: false
+     -
+      name: "brandNames"
+      type: "List<String>"
+      description: "代理的品牌"
+      value: "[\"凯利丰\"]"
+      canCover: true
+      required: false
     required: false
+  headersExt:
    -
-    name: "list.reviewStatus"
+    name: "Content-Type"
     type: "String"
-    description: "审核状态"
-    defaultVal: ""
-    value: "HAS_AUDIT"
-    expanded: true
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
     canCover: true
     required: false
-   -
-    name: "list.custId"
-    type: "String"
-    description: "客户ID"
-    defaultVal: ""
-    value: "CUST000083"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.custName"
-    type: "String"
-    description: "客户名称"
-    defaultVal: ""
-    value: "成都云图测试中心"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.custStatus"
-    type: "String"
-    description: "客户状态"
-    defaultVal: ""
-    value: "FREEZE"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    defaultVal: ""
-    value: "20"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    defaultVal: ""
-    value: "19"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "pages"
-    type: "Long"
-    description: "总页数"
-    defaultVal: ""
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.phone"
-    type: "String"
-    description: "手机"
-    defaultVal: ""
-    value: "13363548888"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-  stackTrace: ""
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"total\":19,\"size\":20,\"pages\":1,\"page\":1,\"list\":[{\"\
+    custId\":\"CUST000083\",\"custName\":\"成都云图测试中心\",\"phone\":\"13363548888\",\"\
+    reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"FREEZE\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST000082\",\"custName\":\"成都云图测试账号1\",\"phone\":\"13810828700\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"FREEZE\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST00006A\",\"custName\":\"信息部陈宗伟测试原材料\",\"phone\":null,\"\
+    reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST000065\",\"custName\":\"彭信荣测试专用\",\"phone\":null,\"reviewStatus\"\
+    :\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\":[]},{\"\
+    custId\":\"CUST01689\",\"custName\":\"昆明芭利尔化肥科技有限公司\",\"phone\":\"13888156423\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST00688\",\"custName\":\"湖北天门赵海涛\",\"phone\":\"13997952524\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST02088\",\"custName\":\"天门市盛农植保经营部\",\"phone\":null,\"reviewStatus\"\
+    :\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\":[]},{\"\
+    custId\":\"CUST00630\",\"custName\":\"湖北天门文运辉\",\"phone\":\"13986948726\",\"reviewStatus\"\
+    :\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\":[]},{\"\
+    custId\":\"CUST00627\",\"custName\":\"湖北天门万遂义\",\"phone\":\"13607222055\",\"reviewStatus\"\
+    :\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\":[]},{\"\
+    custId\":\"CUST00656\",\"custName\":\"天门市裕丰农资经营部\",\"phone\":\"13972939359\",\"\
+    reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST00626\",\"custName\":\"天门市皂市车站生资门市部\",\"phone\":\"13098347313\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST00689\",\"custName\":\"湖北天门周艳萍\",\"phone\":\"13972624686\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST00675\",\"custName\":\"湖北天门廖生云\",\"phone\":\"13972188735\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST00625\",\"custName\":\"天门市农家乐农资经营部\",\"phone\":\"13507222446\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST00687\",\"custName\":\"湖北天门文元华\",\"phone\":\"13545998676\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST00629\",\"custName\":\"湖北天门王庆辉\",\"phone\":\"13872995955\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST00286\",\"custName\":\"百色市右江区禾苗农资销售部\",\"phone\":\"13607766618\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[\"凯利丰\"]},{\"custId\":\"CUST00631\",\"custName\":\"湖北天门吴道学\",\"phone\":\"13671293980\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]},{\"custId\":\"CUST00670\",\"custName\":\"湖北天门何浩明\",\"phone\":\"18672885888\"\
+    ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"NORMAL\",\"sapNo\":null,\"brandNames\"\
+    :[]}]}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

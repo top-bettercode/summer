@@ -1,115 +1,101 @@
 description: "暂不支持分页，返回全部记录.现金历史记录：childrenAccountType：01，承兑历史记录：childrenAccountType：\
   04,05"
 request:
-  uri: "/custAccountInfos/records"
-  restUri: "/custAccountInfos/records"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "35a106f8bd95bc17a3d2f554a8edfeb6"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "90662087-8ee2-4f2c-93ff-d154965318fa"
-  headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "90662087-8ee2-4f2c-93ff-d154965318fa"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    defaultVal: ""
-    value: "application/json;version=2.0"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
-    value: "35a106f8bd95bc17a3d2f554a8edfeb6"
-    expanded: true
-    canCover: true
-    required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    page:
-     - "1"
-    size:
-     - "20"
-    custId:
-     - ""
-    serviceType:
-     - "01"
-    childrenAccountType:
-     - "01"
   parametersExt:
    -
-    name: "childrenAccountType"
-    type: "String"
-    description: "01"
-    defaultVal: ""
-    value: "01"
-    expanded: true
-    canCover: true
-    required: true
-   -
-    name: "serviceType"
-    type: "String"
-    description: "业务类型"
-    defaultVal: ""
-    value: "01"
-    expanded: true
-    canCover: true
-    required: true
-   -
-    name: "custId"
-    type: "String"
-    description: "客户ID"
-    defaultVal: ""
-    value: ""
-    expanded: true
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
     canCover: true
     required: false
    -
     name: "size"
     type: "Integer"
     description: "当前页的数量"
-    defaultVal: ""
     value: "20"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "custId"
+    type: "String"
+    description: "客户ID"
+    canCover: true
+    required: false
+   -
+    name: "serviceType"
+    type: "String"
+    description: "业务类型"
+    value: "01"
+    canCover: true
+    required: true
+   -
+    name: "childrenAccountType"
+    type: "String"
+    description: "01"
+    value: "01"
+    canCover: true
+    required: true
+  headersExt:
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json;version=2.0"
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+    canCover: true
+    required: false
+   -
+    name: "sign"
+    type: "String"
+    description: "接口签名 <<jiekouqianmingsuanfa>>"
+    value: "35a106f8bd95bc17a3d2f554a8edfeb6"
+    canCover: true
+    required: true
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "90662087-8ee2-4f2c-93ff-d154965318fa"
+    canCover: true
+    required: false
+  restUri: "/custAccountInfos/records"
+  method: "GET"
+response:
+  contentExt:
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "6"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "6"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "1"
     canCover: true
     required: false
    -
@@ -118,27 +104,68 @@ request:
     description: "页码"
     defaultVal: "1"
     value: "1"
-    expanded: true
     canCover: true
     required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    value: "[{\"priceBatch\":\"20180101\",\"childrenAccountType\":\"01\",\"amt\":29.58,\"\
+      status\":0,\"opTime\":1510756782000},{\"priceBatch\":\"20180101\",\"childrenAccountType\"\
+      :\"01\",\"amt\":0.0,\"status\":1,\"opTime\":1510756782000},{\"priceBatch\":\"\
+      20180101\",\"childrenAccountType\":\"01\",\"amt\":0.0,\"status\":2,\"opTime\"\
+      :1510756782000},{\"priceBatch\":\"20170303\",\"childrenAccountType\":\"01\"\
+      ,\"amt\":0.0,\"status\":0,\"opTime\":1510756316000},{\"priceBatch\":\"20170303\"\
+      ,\"childrenAccountType\":\"01\",\"amt\":0.0,\"status\":1,\"opTime\":1510756316000},{\"\
+      priceBatch\":\"20170303\",\"childrenAccountType\":\"01\",\"amt\":0.0,\"status\"\
+      :2,\"opTime\":1510756316000}]"
+    canCover: true
+    children:
+     -
+      name: "priceBatch"
+      type: "String"
+      description: "价格批次"
+      value: "20180101"
+      canCover: true
+      required: false
+     -
+      name: "childrenAccountType"
+      type: "String"
+      description: "01"
+      value: "01"
+      canCover: true
+      required: false
+     -
+      name: "amt"
+      type: "BigDecimal"
+      description: "金额"
+      value: "29.58"
+      canCover: true
+      required: false
+     -
+      name: "status"
+      type: "Integer"
+      description: "状态"
+      value: "0"
+      canCover: true
+      required: false
+     -
+      name: "opTime"
+      type: "Long"
+      description: "操作"
+      value: "1510756782000"
+      canCover: true
+      required: false
+    required: false
   headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
     value: "application/json;charset=UTF-8"
-    expanded: true
     canCover: true
     required: false
+  statusCode: 200
   contentAsString: "{\"total\":6,\"size\":6,\"pages\":1,\"page\":1,\"list\":[{\"priceBatch\"\
     :\"20180101\",\"childrenAccountType\":\"01\",\"amt\":29.58,\"status\":0,\"opTime\"\
     :1510756782000},{\"priceBatch\":\"20180101\",\"childrenAccountType\":\"01\",\"\
@@ -149,109 +176,7 @@ response:
     :\"01\",\"amt\":0.0,\"status\":1,\"opTime\":1510756316000},{\"priceBatch\":\"\
     20170303\",\"childrenAccountType\":\"01\",\"amt\":0.0,\"status\":2,\"opTime\"\
     :1510756316000}]}"
-  contentExt:
-   -
-    name: "list.childrenAccountType"
-    type: "String"
-    description: "01"
-    defaultVal: ""
-    value: "01"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.priceBatch"
-    type: "String"
-    description: "价格批次"
-    defaultVal: ""
-    value: "20180101"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list"
-    type: "Array"
-    description: "内容"
-    defaultVal: ""
-    value: "[{\"priceBatch\":\"20180101\",\"childrenAccountType\":\"01\",\"amt\":29.58,\"\
-      status\":0,\"opTime\":1510756782000},{\"priceBatch\":\"20180101\",\"childrenAccountType\"\
-      :\"01\",\"amt\":0.0,\"status\":1,\"opTime\":1510756782000},{\"priceBatch\":\"\
-      20180101\",\"childrenAccountType\":\"01\",\"amt\":0.0,\"status\":2,\"opTime\"\
-      :1510756782000},{\"priceBatch\":\"20170303\",\"childrenAccountType\":\"01\"\
-      ,\"amt\":0.0,\"status\":0,\"opTime\":1510756316000},{\"priceBatch\":\"20170303\"\
-      ,\"childrenAccountType\":\"01\",\"amt\":0.0,\"status\":1,\"opTime\":1510756316000},{\"\
-      priceBatch\":\"20170303\",\"childrenAccountType\":\"01\",\"amt\":0.0,\"status\"\
-      :2,\"opTime\":1510756316000}]"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    defaultVal: ""
-    value: "6"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    defaultVal: ""
-    value: "6"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "pages"
-    type: "Long"
-    description: "总页数"
-    defaultVal: ""
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.opTime"
-    type: "Long"
-    description: "操作"
-    defaultVal: ""
-    value: "1510756782000"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.status"
-    type: "Integer"
-    description: "状态"
-    defaultVal: ""
-    value: "0"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.amt"
-    type: "BigDecimal"
-    description: "金额"
-    defaultVal: ""
-    value: "29.58"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-  stackTrace: ""
-  statusCode: 200
-protocol: ""
-prerequest: []
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

@@ -1,184 +1,99 @@
-description: ""
 request:
-  uri: "/pickups"
-  restUri: "/pickups"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "POST"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "352dca1a6cb7777d34cb553dcedb360e"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "6acb3777-7597-4d2b-adc2-4dcf9ff28c4c"
+  parametersExt:
+   -
+    name: "note"
+    type: "String"
+    description: "取货备注"
+    value: "sefsdfsfs1中文 "
+    canCover: true
+    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "6acb3777-7597-4d2b-adc2-4dcf9ff28c4c"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "352dca1a6cb7777d34cb553dcedb360e"
-    expanded: true
     canCover: true
     required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    note:
-     - "sefsdfsfs1中文 "
-  parametersExt:
-   -
-    name: "note"
-    type: "String"
-    description: "取货备注"
-    defaultVal: ""
-    value: "sefsdfsfs1中文 "
-    expanded: true
-    canCover: true
-    required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"pickupId\":\"994417494452150274\",\"custName\":\"百色市右江区禾苗农资\
-    销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\"\
-    ,\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\",\"status\":0,\"note\":\"\
-    sefsdfsfs1中文 \",\"createdTime\":1525922580702,\"invoiceTime\":null,\"sysUserId\"\
-    :null,\"username\":null}"
-  contentExt:
    -
-    name: "sapNo"
+    name: "accessToken"
     type: "String"
-    description: "SAP编号"
-    defaultVal: ""
-    value: "0001500100"
-    expanded: true
+    description: "存取令牌"
+    value: "6acb3777-7597-4d2b-adc2-4dcf9ff28c4c"
     canCover: true
     required: false
+  restUri: "/pickups"
+  method: "POST"
+response:
+  contentExt:
    -
     name: "pickupId"
     type: "String"
     description: "主键"
-    defaultVal: ""
     value: "994417494452150274"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "note"
-    type: "String"
-    description: "取货备注"
-    defaultVal: ""
-    value: "sefsdfsfs1中文 "
-    expanded: true
     canCover: true
     required: false
    -
     name: "custName"
     type: "String"
     description: "客户名称"
-    defaultVal: ""
     value: "百色市右江区禾苗农资销售部"
-    expanded: true
     canCover: true
     required: false
    -
-    name: "custTel"
+    name: "sapNo"
     type: "String"
-    description: "客户手机号"
-    defaultVal: ""
-    value: "13607766618"
-    expanded: true
+    description: "SAP编号"
+    value: "0001500100"
     canCover: true
     required: false
    -
     name: "contacts"
     type: "String"
     description: "客户联系人"
-    defaultVal: ""
     value: "卢守艳"
-    expanded: true
     canCover: true
     required: false
    -
-    name: "invoiceTime"
-    type: "Long"
-    description: "开票时间"
-    defaultVal: ""
-    value: ""
-    expanded: true
+    name: "custTel"
+    type: "String"
+    description: "客户手机号"
+    value: "13607766618"
     canCover: true
     required: false
    -
     name: "salesman"
     type: "String"
     description: "所属业务员"
-    defaultVal: ""
     value: "周兵红"
-    expanded: true
     canCover: true
     required: false
    -
     name: "salesmanTel"
     type: "String"
     description: "所属业务员手机号"
-    defaultVal: ""
     value: "15072645253"
-    expanded: true
     canCover: true
     required: false
    -
@@ -187,40 +102,55 @@ response:
     description: "状态"
     defaultVal: "0"
     value: "0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "note"
+    type: "String"
+    description: "取货备注"
+    value: "sefsdfsfs1中文 "
     canCover: true
     required: false
    -
     name: "createdTime"
     type: "Long"
     description: "申请时间"
-    defaultVal: ""
     value: "1525922580702"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "invoiceTime"
+    type: "Long"
+    description: "开票时间"
     canCover: true
     required: false
    -
     name: "sysUserId"
     type: "String"
     description: "系统内务人员ID"
-    defaultVal: ""
-    value: ""
-    expanded: true
     canCover: true
     required: false
    -
     name: "username"
     type: "String"
     description: "系统内务人员名称"
-    defaultVal: ""
-    value: ""
-    expanded: true
     canCover: true
     required: false
-  stackTrace: ""
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"pickupId\":\"994417494452150274\",\"custName\":\"百色市右江区禾苗农资\
+    销售部\",\"sapNo\":\"0001500100\",\"contacts\":\"卢守艳\",\"custTel\":\"13607766618\"\
+    ,\"salesman\":\"周兵红\",\"salesmanTel\":\"15072645253\",\"status\":0,\"note\":\"\
+    sefsdfsfs1中文 \",\"createdTime\":1525922580702,\"invoiceTime\":null,\"sysUserId\"\
+    :null,\"username\":null}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

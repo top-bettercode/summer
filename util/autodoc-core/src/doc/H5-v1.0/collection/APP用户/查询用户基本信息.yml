@@ -1,145 +1,64 @@
-description: ""
 request:
-  uri: "/users/infos"
-  restUri: "/users/infos"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "534d560ed7ba10262b4bf704fcb83a9e"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-  headersExt:
+  parametersExt:
    -
-    name: "Content-Type"
+    name: "mobile"
     type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
+    description: "用户电话"
+    value: "13540630899"
     canCover: true
-    required: false
+    required: true
+  headersExt:
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "534d560ed7ba10262b4bf704fcb83a9e"
-    expanded: true
     canCover: true
     required: true
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
-    canCover: true
-    required: false
-  cookies: []
-  parameters:
-    mobile:
-     - "13540630899"
-  parametersExt:
-   -
-    name: "mobile"
-    type: "String"
-    description: "用户电话"
-    defaultVal: ""
-    value: "13540630899"
-    expanded: true
-    canCover: true
-    required: true
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
-  headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
-    value: "application/json;charset=UTF-8"
-    expanded: true
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  contentAsString: "{\"total\":2,\"size\":2,\"pages\":1,\"page\":1,\"list\":[{\"agentNumber\"\
-    :\"CUST01622\",\"name\":\"四川成都胡仁明\"},{\"agentNumber\":\"CUST01620\",\"name\":\"\
-    双流丰业农资有限公司\"}]}"
+  restUri: "/users/infos"
+  method: "GET"
+response:
   contentExt:
    -
-    name: "list"
-    type: "Array"
-    description: "内容"
-    defaultVal: ""
-    value: "[{\"agentNumber\":\"CUST01622\",\"name\":\"四川成都胡仁明\"},{\"agentNumber\"\
-      :\"CUST01620\",\"name\":\"双流丰业农资有限公司\"}]"
-    expanded: true
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "2"
     canCover: true
     required: false
    -
     name: "size"
     type: "Integer"
     description: "当前页的数量"
-    defaultVal: ""
     value: "2"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    defaultVal: ""
-    value: "2"
-    expanded: true
     canCover: true
     required: false
    -
     name: "pages"
     type: "Long"
     description: "总页数"
-    defaultVal: ""
     value: "1"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.name"
-    type: "String"
-    description: "用户姓名"
-    defaultVal: ""
-    value: "四川成都胡仁明"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.agentNumber"
-    type: "String"
-    description: "用户工号"
-    defaultVal: ""
-    value: "CUST01622"
-    expanded: true
     canCover: true
     required: false
    -
@@ -148,13 +67,44 @@ response:
     description: "页码"
     defaultVal: "1"
     value: "1"
-    expanded: true
     canCover: true
     required: false
-  stackTrace: ""
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    value: "[{\"agentNumber\":\"CUST01622\",\"name\":\"四川成都胡仁明\"},{\"agentNumber\"\
+      :\"CUST01620\",\"name\":\"双流丰业农资有限公司\"}]"
+    canCover: true
+    children:
+     -
+      name: "agentNumber"
+      type: "String"
+      description: "用户工号"
+      value: "CUST01622"
+      canCover: true
+      required: false
+     -
+      name: "name"
+      type: "String"
+      description: "用户姓名"
+      value: "四川成都胡仁明"
+      canCover: true
+      required: false
+    required: false
+  headersExt:
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/json;charset=UTF-8"
+    canCover: true
+    required: false
   statusCode: 200
-protocol: ""
-prerequest: []
+  contentAsString: "{\"total\":2,\"size\":2,\"pages\":1,\"page\":1,\"list\":[{\"agentNumber\"\
+    :\"CUST01622\",\"name\":\"四川成都胡仁明\"},{\"agentNumber\":\"CUST01620\",\"name\":\"\
+    双流丰业农资有限公司\"}]}"
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

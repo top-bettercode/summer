@@ -1,94 +1,53 @@
-description: ""
 request:
-  uri: "/appMessages"
-  restUri: "/appMessages"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "DELETE"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "6c5467aaaf8b8c5876b8016771744b64"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "a0286cdb-93d1-41e9-963f-af03c246caa8"
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "a0286cdb-93d1-41e9-963f-af03c246caa8"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "6c5467aaaf8b8c5876b8016771744b64"
-    expanded: true
     canCover: true
     required: true
    -
-    name: "user-agent"
+    name: "Content-Type"
     type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  cookies: []
-  parameters: {}
-  parametersExt: []
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "a0286cdb-93d1-41e9-963f-af03c246caa8"
+    canCover: true
+    required: false
+  restUri: "/appMessages"
+  method: "DELETE"
 response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
   headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
     value: "application/json;charset=UTF-8"
-    expanded: true
     canCover: true
     required: false
-  contentAsString: ""
-  contentExt: []
-  stackTrace: ""
   statusCode: 200
-protocol: ""
-prerequest: []
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"

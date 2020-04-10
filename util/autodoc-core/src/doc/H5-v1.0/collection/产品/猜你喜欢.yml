@@ -1,82 +1,190 @@
-description: ""
 request:
-  uri: "/materialProducts/like"
-  restUri: "/materialProducts/like"
-  uriVariables: {}
-  uriVariablesExt: []
-  method: "GET"
-  headers:
-    Accept:
-     - "application/json;version=2.0"
-    user-agent:
-     - "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    sign:
-     - "81ba2cbf2fe787737fb97dee7f497c5d"
-    Content-Type:
-     - "application/x-www-form-urlencoded"
-    accessToken:
-     - "b02cd37284c3546f6506b836374999db"
+  parametersExt:
+   -
+    name: "page"
+    type: "Integer"
+    description: "页码"
+    defaultVal: "1"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "size"
+    type: "Integer"
+    description: "当前页的数量"
+    value: "20"
+    canCover: true
+    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    defaultVal: ""
-    value: "application/x-www-form-urlencoded"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    defaultVal: ""
-    value: "b02cd37284c3546f6506b836374999db"
-    expanded: true
-    canCover: true
-    required: false
    -
     name: "Accept"
     type: "String"
     description: "客户端接收格式"
-    defaultVal: ""
     value: "application/json;version=2.0"
-    expanded: true
+    canCover: true
+    required: false
+   -
+    name: "user-agent"
+    type: "String"
+    description: "用户代理"
+    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
     canCover: true
     required: false
    -
     name: "sign"
     type: "String"
     description: "接口签名 <<jiekouqianmingsuanfa>>"
-    defaultVal: ""
     value: "81ba2cbf2fe787737fb97dee7f497c5d"
-    expanded: true
     canCover: true
     required: true
    -
-    name: "user-agent"
+    name: "Content-Type"
     type: "String"
-    description: "用户代理"
-    defaultVal: ""
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    expanded: true
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
     canCover: true
     required: false
-  cookies: []
-  parameters:
-    page:
-     - "1"
-    size:
-     - "20"
-  parametersExt:
+   -
+    name: "accessToken"
+    type: "String"
+    description: "存取令牌"
+    value: "b02cd37284c3546f6506b836374999db"
+    canCover: true
+    required: false
+  restUri: "/materialProducts/like"
+  method: "GET"
+response:
+  contentExt:
    -
     name: "size"
     type: "Integer"
     description: "当前页的数量"
-    defaultVal: ""
     value: "20"
-    expanded: true
     canCover: true
+    required: false
+   -
+    name: "total"
+    type: "Long"
+    description: "总记录数"
+    value: "20"
+    canCover: true
+    required: false
+   -
+    name: "pages"
+    type: "Long"
+    description: "总页数"
+    value: "1"
+    canCover: true
+    required: false
+   -
+    name: "list"
+    type: "Array"
+    description: "内容"
+    value: "[{\"materialId\":\"000000000020101004\",\"name\":\"51%嘉施利根动力17-17-17全水\
+      溶硝硫基白色25KG\",\"category\":\"硝基水溶滴灌型\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨\
+      享受坎级奖励\"],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101012\",\"name\":\"40%撒威20-10-10中氯硝酸磷钾蓝色25KG\"\
+      ,\"category\":\"常规高浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
+      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101102\",\"name\":\"40%土博士22-08-10中氯邮政专用蓝色25KG\"\
+      ,\"category\":\"常规高浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
+      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101106\",\"name\":\"40%土博士24-11-05中氯邮政专用蓝色40KG\"\
+      ,\"category\":\"常规高浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
+      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101740\",\"name\":\"NL NPK 22-9-9 9.5KG\",\"\
+      category\":\"高塔硝氯基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"price\"\
+      :1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101735\",\"name\":\"T-58%土博士14-06-38+TE大量元素水\
+      溶硝硫基邮政专用粉状蓝色5KG\",\"category\":\"多聚大量元素水溶肥\",\"policies\":[\"每吨立减1000元\",\"年\
+      购买达1000吨享受坎级奖励\"],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101734\",\"name\":\"40%桂湖26-06-08高塔中氯白色35KG\"\
+      ,\"category\":\"高塔尿氯基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
+      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101730\",\"name\":\"15%土博士15-00-00硝钙邮政专用白色25KG\"\
+      ,\"category\":\"硝酸铵钙\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"price\"\
+      :1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101729\",\"name\":\"T-34%土博士30-04-00高塔硝基邮政专用\
+      黄色40KG\",\"category\":\"硝铵磷\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"\
+      ],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101685\",\"name\":\"40%桂湖24-09-07高塔硝氯基低氯红色40KG\"\
+      ,\"category\":\"高塔硝氯基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
+      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101683\",\"name\":\"T-40%嘉施利26-08-06缓释硝氯基红黄灰\
+      40KG\",\"category\":\"缓释肥\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"\
+      ],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101682\",\"name\":\"T-40%桂湖26-07-07缓释硝氯基红黄灰\
+      40KG\",\"category\":\"缓释肥\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"\
+      ],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101677\",\"name\":\"45%嘉施利25-14-06高塔中氯玉米白色40KG\"\
+      ,\"category\":\"高塔尿氯基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
+      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101671\",\"name\":\"40%凯利丰18-10-12高氯桉树蓝色25KG\"\
+      ,\"category\":\"常规高浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
+      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101666\",\"name\":\"50%嘉施利18-06-26高塔硫基白色50KG\"\
+      ,\"category\":\"高塔尿硫基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
+      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101665\",\"name\":\"50%桂湖18-06-26高塔硫基白色50KG\"\
+      ,\"category\":\"高塔尿硫基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
+      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101664\",\"name\":\"T-48%奥利拉19-05-24高塔硫基白色50KG\"\
+      ,\"category\":\"高塔尿硫基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
+      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101661\",\"name\":\"30%桂湖15-06-09高氯枸磷湖北专用白色\
+      50KG\",\"category\":\"常规中浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"\
+      ],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101660\",\"name\":\"30%桂湖15-06-09高氯枸磷湖北专用白色\
+      40KG\",\"category\":\"常规中浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"\
+      ],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      },{\"materialId\":\"000000000020101659\",\"name\":\"54%桂湖18-18-18黄腐酸钾低氯黑色25KG\"\
+      ,\"category\":\"黄腐酸钾\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"price\"\
+      :1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      }]"
+    canCover: true
+    children:
+     -
+      name: "materialId"
+      type: "String"
+      description: "物料ID"
+      value: "000000000020101004"
+      canCover: true
+      required: false
+     -
+      name: "name"
+      type: "String"
+      description: "产品名称"
+      value: "51%嘉施利根动力17-17-17全水溶硝硫基白色25KG"
+      canCover: true
+      required: false
+     -
+      name: "category"
+      type: "String"
+      description: "品类"
+      value: "硝基水溶滴灌型"
+      canCover: true
+      required: false
+     -
+      name: "policies"
+      type: "Array<String>"
+      description: "优惠政策"
+      value: "[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"]"
+      canCover: true
+      required: false
+     -
+      name: "price"
+      type: "BigDecimal"
+      description: "单价"
+      value: "1900.01"
+      canCover: true
+      required: false
+     -
+      name: "picUrl"
+      type: "String"
+      description: "图片url"
+      value: "http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000"
+      canCover: true
+      required: false
     required: false
    -
     name: "page"
@@ -84,27 +192,17 @@ request:
     description: "页码"
     defaultVal: "1"
     value: "1"
-    expanded: true
     canCover: true
     required: false
-  parts: []
-  partsExt: []
-  contentAsString: ""
-  contentExt: []
-response:
-  headers:
-    Content-Type:
-     - "application/json;charset=UTF-8"
   headersExt:
    -
     name: "Content-Type"
     type: "String"
     description: "内容类型"
-    defaultVal: ""
     value: "application/json;charset=UTF-8"
-    expanded: true
     canCover: true
     required: false
+  statusCode: 200
   contentAsString: "{\"size\":20,\"total\":20,\"pages\":1,\"list\":[{\"materialId\"\
     :\"000000000020101004\",\"name\":\"51%嘉施利根动力17-17-17全水溶硝硫基白色25KG\",\"category\"\
     :\"硝基水溶滴灌型\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"price\":1900.01,\"\
@@ -167,170 +265,7 @@ response:
     ,\"category\":\"黄腐酸钾\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"price\"\
     :1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
     }],\"page\":1}"
-  contentExt:
-   -
-    name: "list.name"
-    type: "String"
-    description: "产品名称"
-    defaultVal: ""
-    value: "51%嘉施利根动力17-17-17全水溶硝硫基白色25KG"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.policies"
-    type: "Array<String>"
-    description: "优惠政策"
-    defaultVal: ""
-    value: "[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"]"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list"
-    type: "Array"
-    description: "内容"
-    defaultVal: ""
-    value: "[{\"materialId\":\"000000000020101004\",\"name\":\"51%嘉施利根动力17-17-17全水\
-      溶硝硫基白色25KG\",\"category\":\"硝基水溶滴灌型\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨\
-      享受坎级奖励\"],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101012\",\"name\":\"40%撒威20-10-10中氯硝酸磷钾蓝色25KG\"\
-      ,\"category\":\"常规高浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
-      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101102\",\"name\":\"40%土博士22-08-10中氯邮政专用蓝色25KG\"\
-      ,\"category\":\"常规高浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
-      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101106\",\"name\":\"40%土博士24-11-05中氯邮政专用蓝色40KG\"\
-      ,\"category\":\"常规高浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
-      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101740\",\"name\":\"NL NPK 22-9-9 9.5KG\",\"\
-      category\":\"高塔硝氯基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"price\"\
-      :1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101735\",\"name\":\"T-58%土博士14-06-38+TE大量元素水\
-      溶硝硫基邮政专用粉状蓝色5KG\",\"category\":\"多聚大量元素水溶肥\",\"policies\":[\"每吨立减1000元\",\"年\
-      购买达1000吨享受坎级奖励\"],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101734\",\"name\":\"40%桂湖26-06-08高塔中氯白色35KG\"\
-      ,\"category\":\"高塔尿氯基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
-      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101730\",\"name\":\"15%土博士15-00-00硝钙邮政专用白色25KG\"\
-      ,\"category\":\"硝酸铵钙\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"price\"\
-      :1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101729\",\"name\":\"T-34%土博士30-04-00高塔硝基邮政专用\
-      黄色40KG\",\"category\":\"硝铵磷\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"\
-      ],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101685\",\"name\":\"40%桂湖24-09-07高塔硝氯基低氯红色40KG\"\
-      ,\"category\":\"高塔硝氯基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
-      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101683\",\"name\":\"T-40%嘉施利26-08-06缓释硝氯基红黄灰\
-      40KG\",\"category\":\"缓释肥\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"\
-      ],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101682\",\"name\":\"T-40%桂湖26-07-07缓释硝氯基红黄灰\
-      40KG\",\"category\":\"缓释肥\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"\
-      ],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101677\",\"name\":\"45%嘉施利25-14-06高塔中氯玉米白色40KG\"\
-      ,\"category\":\"高塔尿氯基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
-      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101671\",\"name\":\"40%凯利丰18-10-12高氯桉树蓝色25KG\"\
-      ,\"category\":\"常规高浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
-      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101666\",\"name\":\"50%嘉施利18-06-26高塔硫基白色50KG\"\
-      ,\"category\":\"高塔尿硫基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
-      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101665\",\"name\":\"50%桂湖18-06-26高塔硫基白色50KG\"\
-      ,\"category\":\"高塔尿硫基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
-      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101664\",\"name\":\"T-48%奥利拉19-05-24高塔硫基白色50KG\"\
-      ,\"category\":\"高塔尿硫基\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"\
-      price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101661\",\"name\":\"30%桂湖15-06-09高氯枸磷湖北专用白色\
-      50KG\",\"category\":\"常规中浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"\
-      ],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101660\",\"name\":\"30%桂湖15-06-09高氯枸磷湖北专用白色\
-      40KG\",\"category\":\"常规中浓度\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"\
-      ],\"price\":1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      },{\"materialId\":\"000000000020101659\",\"name\":\"54%桂湖18-18-18黄腐酸钾低氯黑色25KG\"\
-      ,\"category\":\"黄腐酸钾\",\"policies\":[\"每吨立减1000元\",\"年购买达1000吨享受坎级奖励\"],\"price\"\
-      :1900.01,\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      }]"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.price"
-    type: "BigDecimal"
-    description: "单价"
-    defaultVal: ""
-    value: "1900.01"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.category"
-    type: "String"
-    description: "品类"
-    defaultVal: ""
-    value: "硝基水溶滴灌型"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.picUrl"
-    type: "String"
-    description: "图片url"
-    defaultVal: ""
-    value: "http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    defaultVal: ""
-    value: "20"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    defaultVal: ""
-    value: "20"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "pages"
-    type: "Long"
-    description: "总页数"
-    defaultVal: ""
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "list.materialId"
-    type: "String"
-    description: "物料ID"
-    defaultVal: ""
-    value: "000000000020101004"
-    expanded: true
-    canCover: true
-    required: false
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    expanded: true
-    canCover: true
-    required: false
-  stackTrace: ""
-  statusCode: 200
-protocol: ""
-prerequest: []
+protocol: "HTTP/1.1"
 testExec:
  - "pm.test('验证响应状态码是200', function () {"
  - "  pm.response.to.have.status(200);"
