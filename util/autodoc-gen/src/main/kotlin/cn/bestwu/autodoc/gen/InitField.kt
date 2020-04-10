@@ -254,6 +254,12 @@ private fun Set<Field>.findFuzzyField(name: String, type: String, hasDesc: Boole
 
 private fun Set<Field>.findField(name: String, type: String, hasDesc: Boolean = false): Field? {
     val set = (if (hasDesc) this.filter { it.description.isNotBlank() } else this)
+    set.forEach {
+        it.copy().apply {
+            it.name = it.name.substringAfterLast(".")
+        }
+    }
+
     val field = (set.find { it.name == name && it.type.substringBefore("(") == type }?.copy()
             ?: (set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }?.copy()
                     ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(") == type }?.copy())

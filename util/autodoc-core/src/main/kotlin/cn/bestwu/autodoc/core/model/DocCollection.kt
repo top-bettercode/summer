@@ -36,23 +36,23 @@ data class DocCollection(override val name: String = "", var items: LinkedHashSe
             if (docOperation.protocol.isBlank()) {
                 docOperation.protocol = "HTTP/1.1"
             }
-            docOperation.request.apply {
-                this as DocOperationRequest
-                uriVariables = uriVariablesExt.associate { Pair(it.name, it.value) }
-                var uriString = restUri
-                uriVariables.forEach { (t, u) -> uriString = uriString.replace("{${t}}", u) }
-
-                uri = URI(uriString)
-
-                headers = headersExt.associateTo(HttpHeaders(), { field -> Pair(field.name, field.value.split(",").map { it.trim() }) })
-                parameters = parametersExt.associateTo(Parameters(), { field -> Pair(field.name, field.value.split(",").map { it.trim() }) })
-                parts = partsExt.map { field -> OperationRequestPart(field.name, field.partType, headers, field.value.toByteArray()) }
-            }
-
-            docOperation.response.apply {
-                this as DocOperationResponse
-                headers = headersExt.associateTo(HttpHeaders(), { field -> Pair(field.name, field.value.split(",").map { it.trim() }) })
-            }
+//            docOperation.request.apply {
+//                this as DocOperationRequest
+//                uriVariables = uriVariablesExt.associate { Pair(it.name, it.value) }
+//                var uriString = restUri
+//                uriVariables.forEach { (t, u) -> uriString = uriString.replace("{${t}}", u) }
+//
+//                uri = URI(uriString)
+//
+//                headers = headersExt.associateTo(HttpHeaders(), { field -> Pair(field.name, field.value.split(",").map { it.trim() }) })
+//                parameters = parametersExt.associateTo(Parameters(), { field -> Pair(field.name, field.value.split(",").map { it.trim() }) })
+//                parts = partsExt.map { field -> OperationRequestPart(field.name, field.partType, headers, field.value.toByteArray()) }
+//            }
+//
+//            docOperation.response.apply {
+//                this as DocOperationResponse
+//                headers = headersExt.associateTo(HttpHeaders(), { field -> Pair(field.name, field.value.split(",").map { it.trim() }) })
+//            }
 
             docOperation
         } else {

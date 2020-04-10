@@ -62,7 +62,7 @@ class GeneratorTest {
 
     @Test
     fun convert2() {
-        val file1 = File("/data/repositories/bestwu/wintruelife/opsbot")
+        val file1 = File("/data/repositories/bestwu/default/summer/util/autodoc-core")
         file1.walkTopDown().filter { it.isDirectory && it.name == "doc" }.forEach { doc ->
             doc.listFiles()?.filter { it.isDirectory }?.forEach {
 
