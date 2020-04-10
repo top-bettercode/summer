@@ -16,8 +16,9 @@ class GeneratorTest {
 
     @Test
     fun convert() {
-        File("/data/repositories/bestwu/wintruelife/acceptance-api").walkTopDown().filter { it.isDirectory && it.name == "doc" }.forEach { doc ->
-            val commonFields = File(doc, "field.yml").parseList(Field::class.java)
+        val file1 = File("/data/repositories/bestwu/wintruelife/auction-api")
+        file1.walkTopDown().filter { it.isDirectory && it.name == "doc" }.forEach { doc ->
+            val commonFields = linkedSetOf<Field>()
             doc.listFiles()?.filter { it.isDirectory }?.forEach {
                 File(it, "collection").listFiles()?.filter { it.isDirectory }?.forEach {
                     val file = File(it, "field.yml")
@@ -50,7 +51,10 @@ class GeneratorTest {
 
                         response.contentExt = response.contentAsString.toMap()?.toFields(coFields, expand = true)
                                 ?: linkedSetOf()
-
+                        val genProperties = GenProperties()
+                        genProperties.rootSource = File(file1, "doc")
+                        genProperties.source = doc
+                        InitField.extFieldExt(genProperties, newVal)
                         newVal.operationFile = it
                         newVal.save()
                     }
@@ -62,7 +66,7 @@ class GeneratorTest {
 
     @Test
     fun convert2() {
-        val file1 = File("/data/repositories/bestwu/default/summer/util/autodoc-core")
+        val file1 = File("/data/repositories/bestwu/wintruelife/auction-api")
         file1.walkTopDown().filter { it.isDirectory && it.name == "doc" }.forEach { doc ->
             doc.listFiles()?.filter { it.isDirectory }?.forEach {
 

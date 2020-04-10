@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import java.io.File
 import java.util.*
+import kotlin.collections.LinkedHashSet
 
 /**
  *
@@ -21,7 +22,7 @@ class OldDocOperation(operation: Operation = Operation(),
                       var description: String = "",
                       var prerequest: List<String> = listOf(),
                       var testExec: List<String> = listOf(),
-                      var fields: SortedSet<Field> = TreeSet()
+                      var fields: LinkedHashSet<Field> = LinkedHashSet()
 ) : Operation(operation.collectionName, operation.name, operation.protocol, if (operation.request::class == OperationRequest::class) OldDocOperationRequest(operation.request) else operation.request, operation.response) {
 
     @JsonIgnore
