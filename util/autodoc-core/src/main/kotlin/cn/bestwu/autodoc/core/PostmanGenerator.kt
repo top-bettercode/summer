@@ -60,7 +60,7 @@ object PostmanGenerator : AbstractbGenerator() {
 
         httpHeaders.removeIf { it.name == HttpHeaders.HOST || it.name == HttpHeaders.CONTENT_LENGTH }
 
-        return Request(method = request.method.name, header = request.headersExt.check(operationPath).map {
+        return Request(method = request.method.name, header = request.headersExt.checkBlank("$operationPath:request.headersExt").map {
             HeaderItem(it.name, it.name, it.value, it.postmanDescription)
         }, url = extractUrl(request, operationPath), body = extractBody(request, operationPath))
     }
@@ -70,7 +70,7 @@ object PostmanGenerator : AbstractbGenerator() {
         httpHeaders.removeIf { it.name == HttpHeaders.HOST || it.name == HttpHeaders.CONTENT_LENGTH }
 
         val contentType = response.headers.contentType
-        return Response(name, request, response.statusCode, HttpStatus.valueOf(response.statusCode).reasonPhrase, httpHeaders.check(operationPath).map {
+        return Response(name, request, response.statusCode, HttpStatus.valueOf(response.statusCode).reasonPhrase, httpHeaders.checkBlank("$operationPath:response.headersExt").map {
             HeaderItem(it.name, it.name, it.value)
         }, response.prettyContentAsString, postmanPreviewlanguage = when {
             MediaType.APPLICATION_JSON
@@ -85,12 +85,12 @@ object PostmanGenerator : AbstractbGenerator() {
         when {
             request.contentExt.isNotEmpty() -> return Body("raw", raw = request.prettyContentAsString)
             request.partsExt.isNotEmpty() -> {
-                return Body("formdata", formdata = request.partsExt.check(operationPath).map {
+                return Body("formdata", formdata = request.partsExt.checkBlank("$operationPath:request.partsExt").map {
                     Formdatum(it.name, it.value, it.partType, it.postmanDescription)
                 })
             }
             HttpOperation.isPutOrPost(request) -> {
-                val param = request.parametersExt.check(operationPath)
+                val param = request.parametersExt.checkBlank("$operationPath:request.parametersExt")
                 param.filter { it.name == "refresh_token" }.forEach {
                     it.value = "{{refresh_token}}"
                 }
@@ -111,7 +111,7 @@ object PostmanGenerator : AbstractbGenerator() {
             path = uri.split("/").filter { it.isNotBlank() }
             raw = "{{apiHost}}${HttpOperation.getRestRequestPath(request)}"
 
-            query = request.parametersExt.check(operationPath).map {
+            query = request.parametersExt.checkBlank("$operationPath:request.parametersExt").map {
                 Query(it.name, it.value, it.postmanDescription)
             }
         }
