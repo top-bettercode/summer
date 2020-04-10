@@ -88,8 +88,8 @@ class GeneratorTest {
                                     ?: linkedSetOf()
 
                             val genProperties = GenProperties()
-                            genProperties.rootSource=File(file1,"doc")
-                            genProperties.source=doc
+                            genProperties.rootSource = File(file1, "doc")
+                            genProperties.source = doc
                             InitField.extFieldExt(genProperties, it)
                             it.save()
                         }
