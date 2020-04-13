@@ -26,7 +26,8 @@ class ProfilePlugin : Plugin<Project> {
                     ?: false
             it.excludeOther = (project.findProperty("profile.exclude-other") as? String)?.toBoolean()
                     ?: true
-            it.source = (project.findProperty("profile.source") as? String) ?: "config"
+            it.configDir = (project.findProperty("profile.config-dir") as? String) ?: "config"
+            it.configFile = (project.findProperty("profile.config-file") as? String) ?: ""
             it.activeFileSuffix = (project.findProperty("profile.active-file-suffix") as? String)
                     ?: ""
             it.beginToken = (project.findProperty("profile.begin-token") as? String) ?: "@"
@@ -34,8 +35,8 @@ class ProfilePlugin : Plugin<Project> {
             it.matchFiles = ((project.findProperty("profile.match-files") as? String)
                     ?: "**/*.yml,**/*.yaml,**/*.properties,**/*.xml,**/*.conf").split(",").toSet()
         }
-        val props = project.profileProperties
         project.afterEvaluate { _ ->
+            val props = project.profileProperties
             val hashtable = Hashtable<String, String>()
             props.forEach { t, u ->
                 val k = t.toString()
