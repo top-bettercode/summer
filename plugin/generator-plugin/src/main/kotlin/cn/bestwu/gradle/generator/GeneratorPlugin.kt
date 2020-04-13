@@ -53,9 +53,8 @@ class GeneratorPlugin : Plugin<Project> {
             extension.rootPath = project.rootProject.file("./")
             extension.basePath = project.file("./")
             extension.dir = findProperty(project, "dir") ?: "src/main/java"
-            extension.basePackageName = findProperty(project, "basePackageName")
-                    ?: project.findProperty("app.basePackageName") as? String ?: ""
-            extension.packageName = findProperty(project, "packageName") ?: ""
+            extension.basePackageName = findProperty(project, "basePackageName") ?: project.findProperty("app.basePackageName") as? String ?: ""
+            extension.packageName = findProperty(project, "packageName") ?: project.findProperty("app.packageName") as? String ?: ""
             extension.userModule = (findProperty(project, "userModule"))?.toBoolean() ?: true
             extension.module = findProperty(project, "module") ?: ""
             extension.moduleName = findProperty(project, "moduleName") ?: ""
