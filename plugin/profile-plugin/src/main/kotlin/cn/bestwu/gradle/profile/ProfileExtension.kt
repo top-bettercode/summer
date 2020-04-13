@@ -7,6 +7,7 @@ import profilesDefaultActive
 import projectMark
 import simpleProfilesActiveName
 import java.io.File
+import java.net.URL
 import java.util.*
 
 
@@ -25,15 +26,24 @@ internal val Project.profileProperties: Properties
         }
 
         val profile = extensions.getByType(ProfileExtension::class.java)
-        val activeFileName = "${profile.source}/$profilesActive${profile.activeFileSuffix}.properties"
         configProject { project ->
-            val projectFile = project.file("${profile.source}/$projectMark.properties")
+            val projectFile = project.file("${profile.configDir}/$projectMark.properties")
             if (projectFile.exists()) {
                 props.load(projectFile.inputStream())
             }
-            val activeFile = project.file(activeFileName)
+            val activeFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
             if (activeFile.exists()) {
                 props.load(activeFile.inputStream())
+            }
+        }
+        if (profile.configFile.isNotBlank()) {
+            val uri = uri(profile.configFile)
+            if (uri.scheme.isNullOrEmpty()) {
+                val configFile = File(uri)
+                if (configFile.exists())
+                    props.load(configFile.inputStream())
+            } else {
+                props.load(uri.toURL().openStream())
             }
         }
 
@@ -55,9 +65,9 @@ internal val Project.profileFiles: Array<File>
         val profile = extensions.getByType(ProfileExtension::class.java)
         val array = mutableListOf<File>()
         array.add(rootProject.file("gradle.properties"))
-        val activeFileName = "${profile.source}/$profilesActive${profile.activeFileSuffix}.properties"
+        val activeFileName = "${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties"
         configProject { project ->
-            val projectFile = project.file("${profile.source}/$projectMark.properties")
+            val projectFile = project.file("${profile.configDir}/$projectMark.properties")
             if (projectFile.exists()) {
                 array.add(projectFile)
             }
@@ -75,7 +85,7 @@ internal val Project.profiles: Set<String>
         val profile = extensions.getByType(ProfileExtension::class.java)
         val set = mutableSetOf<String>()
         configProject { project ->
-            val configFile = project.file(profile.source)
+            val configFile = project.file(profile.configDir)
             if (configFile.exists()) {
                 set.addAll(configFile.listFiles()?.filter { it.isFile }?.map { if (profile.activeFileSuffix.isNotBlank()) it.nameWithoutExtension.substringBeforeLast(profile.activeFileSuffix) else it.nameWithoutExtension }
                         ?: emptySet())
@@ -121,7 +131,8 @@ private fun findActive(profiles: Set<String>, active: String): String {
  */
 open class ProfileExtension(
         var matchFiles: Set<String> = setOf("**/*.yml", "**/*.yaml", "**/*.properties", "**/*.xml", "**/*.conf"),
-        var source: String = "config",
+        var configDir: String = "config",
+        var configFile: String = "",
         var activeFileSuffix: String = "",
         var beginToken: String = "@",
         var endToken: String = "@",
