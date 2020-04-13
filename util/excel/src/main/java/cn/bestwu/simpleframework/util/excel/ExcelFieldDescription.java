@@ -1,6 +1,7 @@
 package cn.bestwu.simpleframework.util.excel;
 
 import cn.bestwu.lang.util.LocalDateTimeHelper;
+import cn.bestwu.simpleframework.util.excel.converter.MillisConverter;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -40,10 +41,10 @@ public class ExcelFieldDescription {
     this.fieldType = fieldType;
     this.accessibleObject = accessibleObject;
     this.excelField = excelField;
-    if (fieldType.equals(Date.class)) {
+    Class<? extends CellValueConverter> converter = excelField.converter();
+    if (fieldType.equals(Date.class) || converter == MillisConverter.class) {
       dateTimeFormatter = DateTimeFormatter.ofPattern(getCellFormat());
     }
-    Class<? extends CellValueConverter> converter = excelField.converter();
     if (converter != CellValueConverter.class) {
       try {
         cellValueConverter = (CellValueConverter) converter.getMethod("newInstance").invoke(null);
