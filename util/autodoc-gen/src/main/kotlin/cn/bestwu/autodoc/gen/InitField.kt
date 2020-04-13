@@ -26,18 +26,13 @@ object InitField {
         val request = operation.request as DocOperationRequest
         val response = operation.response as DocOperationResponse
 
-        val uriNeedFix = request.uriVariablesExt.filter { it.description.isBlank() }.toSet()
-        val reqHeadNeedFix = request.headersExt.filter { it.description.isBlank() }.toSet()
-        val paramNeedFix = request.parametersExt.filter { it.description.isBlank() || it.canCover }.toSet()
-        val partNeedFix = request.partsExt.filter { it.description.isBlank() }.toSet()
-        val reqContentNeedFix = request.contentExt.filter { it.description.isBlank() || it.canCover }.toSet()
-        val resHeadNeedFix = response.headersExt.filter { it.description.isBlank() }.toSet()
-        val resContentNeedFix = response.contentExt.filter {
-            val cover = it.description.isBlank() || it.canCover
-            if (wrap)
-                cover && !contentWrapFields.contains(it.name)
-            else cover
-        }.toSet()
+        val uriNeedFix = request.uriVariablesExt.blankField()
+        val reqHeadNeedFix = request.headersExt.blankField()
+        val paramNeedFix = request.parametersExt.blankField()
+        val partNeedFix = request.partsExt.blankField()
+        val reqContentNeedFix = request.contentExt.blankField()
+        val resHeadNeedFix = response.headersExt.blankField()
+        val resContentNeedFix = response.contentExt.blankField()
         if (uriNeedFix.isNotEmpty() || reqHeadNeedFix.isNotEmpty() || paramNeedFix.isNotEmpty() || partNeedFix.isNotEmpty() || reqContentNeedFix.isNotEmpty() || resHeadNeedFix.isNotEmpty() || resContentNeedFix.isNotEmpty()) {
             extension.fixFields(allTables) { fields ->
                 fields.fix(uriNeedFix)
@@ -46,7 +41,7 @@ object InitField {
                 fields.fix(partNeedFix)
                 fields.fix(reqContentNeedFix)
                 fields.fix(resHeadNeedFix)
-                fields.fix(resContentNeedFix)
+                fields.fix(resContentNeedFix, wrap)
 
                 uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()
             }
@@ -61,8 +56,8 @@ object InitField {
         response.contentExt.checkBlank("response.contentExt")
     }
 
-    private fun Set<Field>.fix(needFixFields: Set<Field>) {
-        fixFieldTree(needFixFields, hasDesc = false, userDefault = false)
+    private fun Set<Field>.fix(needFixFields: Set<Field>, wrap: Boolean = false) {
+        fixFieldTree(needFixFields, hasDesc = false, userDefault = false, wrap = wrap)
         needFixFields.fixFieldTree(needFixFields)
     }
 
@@ -169,6 +164,34 @@ object InitField {
             linkedSetOf()
         }
     }
+
+    private fun Set<Field>.fixFieldTree(needFixFields: Set<Field>, hasDesc: Boolean = true, userDefault: Boolean = true, wrap: Boolean = false) {
+        needFixFields.forEach { field ->
+            val findField = fixField(field = field, hasDesc = hasDesc, userDefault = userDefault, wrap = wrap)
+            findField?.children?.fixFieldTree(field.children)
+            fixFieldTree(field.children)
+        }
+    }
+
+    private fun Set<Field>.fixField(field: Field, hasDesc: Boolean = false, coverType: Boolean = true, userDefault: Boolean = true, wrap: Boolean = false): Field? {
+        val findField = this.findPossibleField(field.name, field.value.type, hasDesc)
+        if (findField != null && field.canCover && (field.description.isBlank() || !findField.canCover) && (!wrap || !contentWrapFields.contains(field.name))) {
+            field.canCover = findField.canCover
+            if (userDefault)
+                field.defaultVal = findField.defaultVal
+            if (coverType || !findField.canCover)
+                field.type = findField.type
+            if (findField.description.isNotBlank())
+                field.description = findField.description
+
+            var tempVal = field.value
+            if (tempVal.isBlank()) {
+                tempVal = if (findField.value.isBlank()) field.defaultVal else findField.value
+            }
+            field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
+        }
+        return findField
+    }
 }
 
 fun Map<String, Any?>.toFields(fields: Set<Field>, expand: Boolean = false): LinkedHashSet<Field> {
@@ -188,6 +211,10 @@ fun Collection<OperationRequestPart>.toFields(fields: Set<Field>): LinkedHashSet
     return this.mapTo(LinkedHashSet(), { fields.field(it.name, it.contentAsString).apply { partType = if (it.submittedFileName == null) "text" else "file" } })
 }
 
+private fun Set<Field>.blankField(): Set<Field> {
+    return filter { it.description.isBlank() || it.children.anyblank() }.toSet()
+}
+
 private fun Set<Field>.field(name: String, value: Any?): Field {
     val type = (value?.type ?: "String")
     val field = findPossibleField(name, type) ?: Field(name = name, type = type)
@@ -200,33 +227,6 @@ private fun Set<Field>.field(name: String, value: Any?): Field {
     return field
 }
 
-private fun Set<Field>.fixFieldTree(needFixFields: Set<Field>, hasDesc: Boolean = true, userDefault: Boolean = true) {
-    needFixFields.forEach { field ->
-        val findField = fixField(field = field, hasDesc = hasDesc, userDefault = userDefault)
-        findField?.children?.fixFieldTree(field.children)
-        fixFieldTree(field.children)
-    }
-}
-
-private fun Set<Field>.fixField(field: Field, hasDesc: Boolean = false, coverType: Boolean = true, userDefault: Boolean = true): Field? {
-    val findField = this.findPossibleField(field.name, field.value.type, hasDesc)
-    if (findField != null && (field.description.isBlank() || !findField.canCover)) {
-        field.canCover = findField.canCover
-        if (userDefault)
-            field.defaultVal = findField.defaultVal
-        if (coverType || !findField.canCover)
-            field.type = findField.type
-        if (findField.description.isNotBlank())
-            field.description = findField.description
-
-        var tempVal = field.value
-        if (tempVal.isBlank()) {
-            tempVal = if (findField.value.isBlank()) field.defaultVal else findField.value
-        }
-        field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
-    }
-    return findField
-}
 
 private fun Set<Field>.findPossibleField(name: String, type: String, hasDesc: Boolean = false): Field? {
     return this.findField(name, type, hasDesc) ?: this.findFuzzyField(name, type, hasDesc)
