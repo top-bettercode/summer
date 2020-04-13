@@ -191,6 +191,9 @@ fun Set<Field>.noneBlank(): Boolean {
     return all { it.description.isNotBlank() && it.children.noneBlank() }
 }
 
+fun Set<Field>.anyblank(): Boolean {
+    return any { it.description.isBlank() || it.children.anyblank() }
+}
 
 fun Set<Field>.checkBlank(desc: String, prefix: String = ""): Set<Field> {
     forEach {
