@@ -35,8 +35,8 @@ class ProfilePlugin : Plugin<Project> {
             it.matchFiles = ((project.findProperty("profile.match-files") as? String)
                     ?: "**/*.yml,**/*.yaml,**/*.properties,**/*.xml,**/*.conf").split(",").toSet()
         }
+        val props = project.profileProperties
         project.afterEvaluate { _ ->
-            val props = project.profileProperties
             val hashtable = Hashtable<String, String>()
             props.forEach { t, u ->
                 val k = t.toString()
