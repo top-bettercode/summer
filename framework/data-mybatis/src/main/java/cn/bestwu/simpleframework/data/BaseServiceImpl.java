@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
  * @author Peter Wu
  */
 public class BaseServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> implements
-    IBaseService<T> {
+    IBaseService<M, T> {
 
   @Autowired
   private Repositories repositories;
@@ -37,6 +37,11 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, 
         .getRepositoryMetadataFor(currentModelClass());
     this.cachedFieldsMap = repositoryMetadata == null ? new HashMap<>() : repositoryMetadata
         .getCachedFieldsMap();
+  }
+
+  @Override
+  public M getRepository() {
+    return baseMapper;
   }
 
   @Override
@@ -112,7 +117,7 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, 
   }
 
 
-  public static  <T> Page<T> page(List<T> list) {
+  public static <T> Page<T> page(List<T> list) {
     Page<T> page = new Page<>();
     page.setRecords(list);
     if (list instanceof PaginationList) {

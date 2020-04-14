@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.data;
 
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.service.IService;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Peter Wu
  */
-public interface IBaseService<T> extends IService<T> {
+public interface IBaseService<M extends BaseMapper<T>, T> extends IService<T> {
+
+  M getRepository();
 
   boolean deleteByPropertyMap(Map<String, Object> propertyMap);
 
