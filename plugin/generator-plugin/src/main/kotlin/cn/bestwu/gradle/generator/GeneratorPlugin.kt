@@ -45,6 +45,7 @@ class GeneratorPlugin : Plugin<Project> {
                     ?: true
             extension.delete = (findProperty(project, "delete"))?.toBoolean() ?: false
             extension.debug = (findProperty(project, "debug"))?.toBoolean() ?: false
+            extension.projectPackage = (findProperty(project, "project-package"))?.toBoolean() ?: false
             extension.deleteTablesWhenUpdate = (findProperty(project, "deleteTablesWhenUpdate"))?.toBoolean()
                     ?: false
             extension.replaceAll = (findProperty(project, "replaceAll"))?.toBoolean() ?: false
@@ -53,7 +54,6 @@ class GeneratorPlugin : Plugin<Project> {
             extension.rootPath = project.rootProject.file("./")
             extension.basePath = project.file("./")
             extension.dir = findProperty(project, "dir") ?: "src/main/java"
-            extension.basePackageName = findProperty(project, "basePackageName") ?: project.findProperty("app.basePackageName") as? String ?: ""
             extension.packageName = findProperty(project, "packageName") ?: project.findProperty("app.packageName") as? String ?: ""
             extension.userModule = (findProperty(project, "userModule"))?.toBoolean() ?: true
             extension.module = findProperty(project, "module") ?: ""

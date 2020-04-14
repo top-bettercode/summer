@@ -32,8 +32,10 @@ open class GeneratorExtension(
          */
         var singleDatasource: Boolean = true,
         var debug: Boolean = false,
-
-
+        /**
+         * 包名是否自动加项目名区分
+         */
+        var projectPackage: Boolean = false,
         /**
          * 生成文件基础路径,项目路径
          */
@@ -81,10 +83,6 @@ open class GeneratorExtension(
          * 生成代码包名
          */
         var packageName: String = "",
-        /**
-         * 基础代码包名
-         */
-        var basePackageName: String = "",
         /**
          * 使用子模块
          */

@@ -104,9 +104,6 @@ abstract class Generator {
     protected val isOracleDatasource
         get() = extension.datasource.isOracle
 
-    protected val basePackageName: String
-        get() = extension.basePackageName
-
     open var cover: Boolean = false
     protected open val test: Boolean = false
 
@@ -168,8 +165,14 @@ abstract class Generator {
     protected open val className
         get() = table.className(extension)
 
+    protected open val projectClassName
+        get() = className + projectName.substring(0, if (projectName.length > 5) 5 else projectName.length).capitalize()
+
     protected val entityName
         get() = table.entityName(extension)
+
+    protected val projectEntityName
+        get() = projectClassName.decapitalize()
 
     /**
      * 表名
@@ -201,6 +204,7 @@ abstract class Generator {
                 comment
             }
         }
+
     /**
      * 主键
      */
@@ -219,6 +223,7 @@ abstract class Generator {
                 primaryKeys
             }
         }
+
     /**
      * 主键
      */
@@ -230,6 +235,7 @@ abstract class Generator {
                 throw GeneratorException("$tableName:没有单主键，$primaryKeyNames")
             }
         }
+
     /**
      * 字段
      */

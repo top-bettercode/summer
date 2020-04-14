@@ -103,7 +103,7 @@ object AsciidocGenerator : AbstractbGenerator() {
     }
 
     fun setDefaultDesc(autodoc: AutodocExtension) {
-        autodoc.listModules { module, pyname ->
+        autodoc.listModules { module, _ ->
             module.collections.forEach { collection ->
                 collection.operations.forEach { operation ->
                     val request = operation.request as DocOperationRequest
