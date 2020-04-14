@@ -16,19 +16,23 @@ abstract class JavaGenerator : Generator() {
 
     open var packageName: String = ""
         get() {
-            var packageName = if (field.isBlank()) noModulePackageName else field
-            if (settings["no-modules"] == null)
-                packageName = "$packageName.modules"
-            return if (extension.userModule && module.isNotBlank()) {
-                "$packageName.$module"
+            return if (field.isBlank()) {
+                var packageName = if (field.isBlank()) basePackageName else field
+                if (settings["no-modules"] == null)
+                    packageName = "$packageName.modules"
+                if (extension.userModule && module.isNotBlank()) {
+                    "$packageName.$module"
+                } else {
+                    packageName
+                }
             } else {
-                packageName
+                field
             }
         }
 
-    open var noModulePackageName: String = ""
+    open var basePackageName: String = ""
         get() {
-            return if (field.isBlank()) (if (extension.packageName.isBlank()) "$basePackageName.$projectName" else extension.packageName) else field
+            return if (field.isBlank()) (if (extension.projectPackage) "$packageName.$projectName" else extension.packageName) else field
         }
 
     override val dir: String
