@@ -99,6 +99,11 @@ public class ErrorAttributes extends DefaultErrorAttributes {
           if (defaultMessage.contains("required type")) {
             defaultMessage = getText(webRequest, fieldError.getCode());
           }
+          if (defaultMessage.contains("java.lang.IllegalArgumentException: ")) {
+            defaultMessage = defaultMessage
+                .substring(defaultMessage.lastIndexOf("java.lang.IllegalArgumentException: ") + 36);
+            defaultMessage = getText(webRequest, defaultMessage);
+          }
           String field = fieldError.getField();
           String msg;
           if (field.contains(".")) {
@@ -240,7 +245,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
    * 增加StackTrace
    *
    * @param respEntity respEntity
-   * @param error error
+   * @param error      error
    */
   private void addStackTrace(RespEntity respEntity, Throwable error) {
     StringWriter stackTrace = new StringWriter();
@@ -273,8 +278,8 @@ public class ErrorAttributes extends DefaultErrorAttributes {
    * 得到国际化信息 未找到时返回代码 code
    *
    * @param webRequest webRequest
-   * @param code 模板
-   * @param args 参数
+   * @param code       模板
+   * @param args       参数
    * @return 信息
    */
   private String getText(WebRequest webRequest, Object code, Object... args) {
