@@ -29,6 +29,7 @@ object HttpOperation {
         stringBuilder.appendln("DURATION MILLIS : ${output.duration}")
         stringBuilder.appendln(separatorLine)
         stringBuilder.append(toString(output.request, output.protocol, format))
+        stringBuilder.appendln()
         stringBuilder.append(toString(output.response, output.protocol, format))
         val stackTrace = output.response.stackTrace
         if (stackTrace.isNotBlank()) {
