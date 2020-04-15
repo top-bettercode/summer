@@ -99,9 +99,9 @@ public class ErrorAttributes extends DefaultErrorAttributes {
           if (defaultMessage.contains("required type")) {
             defaultMessage = getText(webRequest, fieldError.getCode());
           }
-          if (defaultMessage.contains("java.lang.IllegalArgumentException: ")) {
-            defaultMessage = defaultMessage
-                .substring(defaultMessage.lastIndexOf("java.lang.IllegalArgumentException: ") + 36);
+          String regrex = "^.*threw exception; nested exception is .*: (.*)$";
+          if (defaultMessage.matches(regrex)) {
+            defaultMessage = defaultMessage.replaceAll(regrex, "$1");
             defaultMessage = getText(webRequest, defaultMessage);
           }
           String field = fieldError.getField();
