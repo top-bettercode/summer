@@ -26,6 +26,22 @@ data class Field(
         var partType: String = "",
         var children: LinkedHashSet<Field> = LinkedHashSet()) {
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Field) return false
+
+        if (name != other.name) return false
+        if (type != other.type) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + type.hashCode()
+        return result
+    }
+
     /**
      * 是否必填
      */
