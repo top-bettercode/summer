@@ -4,6 +4,8 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Sort;
 public class BaseServiceImpl<T, ID, M extends BaseRepository<T, ID>> implements
     IBaseService<T, ID, M> {
 
+  protected final Logger log = LoggerFactory.getLogger(getClass());
   protected final M repository;
 
   public BaseServiceImpl(M repository) {
