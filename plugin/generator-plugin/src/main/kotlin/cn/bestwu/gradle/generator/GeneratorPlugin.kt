@@ -45,7 +45,8 @@ class GeneratorPlugin : Plugin<Project> {
                     ?: true
             extension.delete = (findProperty(project, "delete"))?.toBoolean() ?: false
             extension.debug = (findProperty(project, "debug"))?.toBoolean() ?: false
-            extension.projectPackage = (findProperty(project, "project-package"))?.toBoolean() ?: false
+            extension.projectPackage = (findProperty(project, "project-package"))?.toBoolean()
+                    ?: false
             extension.deleteTablesWhenUpdate = (findProperty(project, "deleteTablesWhenUpdate"))?.toBoolean()
                     ?: false
             extension.replaceAll = (findProperty(project, "replaceAll"))?.toBoolean() ?: false
@@ -54,7 +55,8 @@ class GeneratorPlugin : Plugin<Project> {
             extension.rootPath = project.rootProject.file("./")
             extension.basePath = project.file("./")
             extension.dir = findProperty(project, "dir") ?: "src/main/java"
-            extension.packageName = findProperty(project, "packageName") ?: project.findProperty("app.packageName") as? String ?: ""
+            extension.packageName = findProperty(project, "packageName")
+                    ?: project.findProperty("app.packageName") as? String ?: ""
             extension.userModule = (findProperty(project, "userModule"))?.toBoolean() ?: true
             extension.module = findProperty(project, "module") ?: ""
             extension.moduleName = findProperty(project, "moduleName") ?: ""
@@ -120,6 +122,84 @@ class GeneratorPlugin : Plugin<Project> {
                 }
             }
         }
+
+//        project.tasks.create("packageUpdate") { task ->
+//            task.group = "gen"
+//            task.doLast { _ ->
+//                val extension = project.extensions.getByType(GeneratorExtension::class.java)
+//                val projectName = extension.projectName
+//                val pname = projectName.substring(0, if (projectName.length > 5) 5 else projectName.length).capitalize()
+//                project.file("src/main/java/${extension.packageName}.modules".replace(".", "/")).walkTopDown().filter { it.isFile }.forEach {
+//                    println("deal with $it")
+//                    when {
+//                        it.name.endsWith("Controller.java") -> {
+//                            var text = it.readText().replaceFirst("Controller extends", "${pname}Controller extends")
+//                            text = text.replace("Controller(", "${pname}Controller(")
+//                            text = text.replace("Service", "${pname}Service")
+//                            text = text.replace("Repository", "${pname}Repository")
+//                            text = text.replace("get${pname}Repository", "getRepository")
+//                            text = text.replace("Form", "${pname}Form")
+//                            text = text.replace("MixIn", "${pname}MixIn")
+//                            it.writeText(text)
+//                            it.renameTo(File(it.absolutePath.replace("Controller", "${pname}Controller")))
+//                        }
+//                        it.name.endsWith("Form.java") -> {
+//                            val text = it.readText().replace("Form", "${pname}Form")
+//                            it.writeText(text)
+//                            it.renameTo(File(it.absolutePath.replace("Form", "${pname}Form")))
+//                        }
+//                        it.name.endsWith("MixIn.java") -> {
+//                            val text = it.readText().replaceFirst("MixIn extends", "${pname}MixIn extends")
+//                            it.writeText(text)
+//                            it.renameTo(File(it.absolutePath.replace("MixIn", "${pname}MixIn")))
+//                        }
+//                        it.name.endsWith("Repository.java") -> {
+//                            val text = it.readText().replaceFirst("Repository extends", "${pname}Repository extends")
+//                            it.writeText(text)
+//                            it.renameTo(File(it.absolutePath.replace("Repository", "${pname}Repository")))
+//                        }
+//                        it.name.endsWith("Service.java") -> {
+//                            var text = it.readText().replaceFirst("Service extends", "${pname}Service extends")
+//                            text = text.replace("Repository", "${pname}Repository")
+//                            it.writeText(text)
+//                            it.renameTo(File(it.absolutePath.replace("Service", "${pname}Service")))
+//                        }
+//                        it.name.endsWith("ServiceImpl.java") -> {
+//                            var text = it.readText().replaceFirst("ServiceImpl extends", "${pname}ServiceImpl extends")
+//                            text = text.replace("Service {", "${pname}Service {")
+//                            text = text.replace("ServiceImpl(", "${pname}ServiceImpl(")
+//                            text = text.replace("Repository", "${pname}Repository")
+//                            it.writeText(text)
+//                            it.renameTo(File(it.absolutePath.replace("Service", "${pname}Service")))
+//                        }
+//                    }
+//                }
+//                project.file("src/main/resources/${extension.packageName}.modules".replace(".", "/")).walkTopDown().filter { it.isFile }.forEach {
+//                    if (it.name.endsWith("Repository.xml")) {
+//                        val text = it.readText().replaceFirst("Repository", "${pname}Repository")
+//                        it.writeText(text)
+//                        it.renameTo(File(it.absolutePath.replace("Repository", "${pname}Repository")))
+//                    }
+//                }
+//
+//                project.file("src/test/java/${extension.packageName}.modules".replace(".", "/")).walkTopDown().filter { it.isFile }.forEach {
+//                    println("deal with $it")
+//                    when {
+//                        it.name.endsWith("ControllerTest.java") -> {
+//                            var text = it.readText().replaceFirst("ControllerTest extends", "${pname}ControllerTest extends")
+//                            text = text.replace("ControllerTest(", "${pname}ControllerTest(")
+//                            text = text.replace("Service", "${pname}Service")
+//                            text = text.replace("Repository", "${pname}Repository")
+//                            text = text.replace("get${pname}Repository", "getRepository")
+//                            text = text.replace("Form", "${pname}Form")
+//                            text = text.replace("MixIn", "${pname}MixIn")
+//                            it.writeText(text)
+//                            it.renameTo(File(it.absolutePath.replace("Controller", "${pname}Controller")))
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         project.afterEvaluate {
             val extension = project.extensions.getByType(GeneratorExtension::class.java)
