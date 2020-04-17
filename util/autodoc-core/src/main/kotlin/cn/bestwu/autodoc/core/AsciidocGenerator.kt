@@ -95,7 +95,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         autodoc.listModuleNames { name, pyname ->
             if (name != currentName) {
                 pw.appendln()
-                pw.appendln("[[${pynames.pyname(name)}]]")
+                pw.appendln("[[_${pynames.pyname(name)}]]")
                 pw.appendln("== link:$pyname.html[$name]")
             }
         }
@@ -178,7 +178,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                     var pre = ""
                     autodoc.readme.readLines().forEach {
                         if (it.startsWith("==") && !pre.startsWith("[["))
-                            out.println("[[${pynames.pyname(it.substringAfter(" "))}]]")
+                            out.println("[[_${pynames.pyname(it.substringAfter(" "))}]]")
                         out.println(it)
                         pre = it
                     }
@@ -193,7 +193,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                             line = line.replace("@${entry.key}@", entry.value.toString())
                         }
                         if (line.startsWith("==") && !pre.startsWith("[["))
-                            out.println("[[${pynames.pyname(line.substringAfter(" "))}]]")
+                            out.println("[[_${pynames.pyname(line.substringAfter(" "))}]]")
                         out.println(line)
                         pre = line
                     }
@@ -205,7 +205,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                     val collectionName = collection.name
 
                     out.println()
-                    out.println("[[${pynames.pyname(collectionName)}]]")
+                    out.println("[[_${pynames.pyname(collectionName)}]]")
                     out.println("== $collectionName")
                     out.println()
 
@@ -213,7 +213,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                         out.println()
                         val operationPath = operation.operationFile.absolutePath.substringAfter(sourcePath)
                         val operationName = operation.name
-                        out.println("[[${pynames.pyname("$collectionName-$operationName")}]]")
+                        out.println("[[_${pynames.pyname("$collectionName-$operationName")}]]")
                         out.println("=== $operationName")
                         out.println()
                         out.println("[width=\"100%\",cols=\"1,4,1,1,2,1,2\", stripes=\"even\"]")
