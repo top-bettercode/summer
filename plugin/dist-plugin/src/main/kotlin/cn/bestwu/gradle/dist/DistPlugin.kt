@@ -11,6 +11,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.PROCESS_RESOURCES_TASK_NAME
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Zip
+import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 import java.io.File
@@ -258,6 +259,11 @@ class DistPlugin : Plugin<Project> {
                 } else ""
                 application.applicationDefaultJvmArgs += dist.jvmArgs.filter { it.isNotBlank() && encoding != it }
                 application.applicationDefaultJvmArgs = application.applicationDefaultJvmArgs.distinct()
+
+                project.tasks.getByName("test") { task ->
+                    task as Test
+                    task.jvmArgs = application.applicationDefaultJvmArgs.toList()
+                }
                 project.tasks.getByName("startScripts") { task ->
                     task as CreateStartScripts
                     task.inputs.file(project.rootProject.file("gradle.properties"))
