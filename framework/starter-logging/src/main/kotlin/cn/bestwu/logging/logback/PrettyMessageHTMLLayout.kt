@@ -37,26 +37,10 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
     }
 
     private fun buildHeaderRowForTable(sbuf: StringBuilder) {
-        var c: Converter<*>? = head
-        var name: String?
         sbuf.append("<tr class=\"header\">")
         sbuf.append(LINE_SEPARATOR)
-        while (c != null) {
-            name = computeConverterName(c)
-            if (name == null) {
-                c = c.next
-                continue
-            }
-            if (c is MessageConverter) {
-                sbuf.append("<td class=\"")
-                sbuf.append(computeConverterName(c))
-                sbuf.append("\">")
-                sbuf.append(computeConverterName(c))
-                sbuf.append("</td>")
-                sbuf.append(LINE_SEPARATOR)
-            }
-            c = c.next
-        }
+        sbuf.append("<td class=\"Message\">Message</td>")
+        sbuf.append(LINE_SEPARATOR)
         sbuf.append("</tr>")
         sbuf.append(LINE_SEPARATOR)
     }
@@ -103,7 +87,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         when {
             event.level == Level.WARN -> buf.append("Warn")
             event.level.isGreaterOrEqual(Level.ERROR) -> buf.append("Exception")
-            else -> buf.append(computeConverterName(c))
+            else -> buf.append("Message")
         }
         buf.append("\"><pre>")
         buf.append("${dateFormat.format(Date(event.timeStamp))} ")
@@ -135,24 +119,31 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         }
         buf.append(LINE_SEPARATOR)
 
-        var c: Converter<ILoggingEvent>? = head
-        while (c != null) {
-            if (c is MessageConverter) {
-                buf.append("<td class=\"")
-                when {
-                    Level.valueOf(level) == Level.WARN -> buf.append("Warn")
-                    Level.valueOf(level).isGreaterOrEqual(Level.ERROR) -> buf.append("Exception")
-                    else -> buf.append(computeConverterName(c))
-                }
-                buf.append("\"><pre>")
-                buf.append(Transform.escapeTags(msg))
-                buf.append("</pre></td>")
-                buf.append(LINE_SEPARATOR)
-            }
-            c = c.next
+        buf.append("<td class=\"")
+        when {
+            Level.valueOf(level) == Level.WARN -> buf.append("Warn")
+            Level.valueOf(level).isGreaterOrEqual(Level.ERROR) -> buf.append("Exception")
+            else -> buf.append("Message")
         }
+        buf.append("\"><pre>")
+        buf.append(Transform.escapeTags(msg))
+        buf.append("</pre></td>")
+        buf.append(LINE_SEPARATOR)
         buf.append("</tr>")
         buf.append(LINE_SEPARATOR)
         return buf.toString()
     }
+
+    override fun startNewTableIfLimitReached(sbuf: java.lang.StringBuilder) {
+        if (counter >= 10000L) {
+            counter = 0L
+            sbuf.append("</table>")
+            sbuf.append(LINE_SEPARATOR)
+            sbuf.append("<p></p>")
+            sbuf.append("<table cellspacing=\"0\" cellpadding=\"0\">")
+            sbuf.append(LINE_SEPARATOR)
+            buildHeaderRowForTable(sbuf)
+        }
+    }
+
 }
