@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class FilesProperties {
 
   private String path;
-  private String maxFileSize = "100MB";
+  private String maxFileSize = "10MB";
   private Integer maxHistory = 100;
   /**
    * 是否启动时滚动日志
