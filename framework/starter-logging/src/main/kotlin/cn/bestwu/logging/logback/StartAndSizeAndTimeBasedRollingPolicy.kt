@@ -25,7 +25,7 @@ class StartAndSizeAndTimeBasedRollingPolicy<E> : TimeBasedRollingPolicy<E>() {
         // most work is done by the parent
         super.start()
         sizeAndTimeBasedFNATP.nextCheck = 0L
-        isTriggeringEvent(null, null)
+        isTriggeringEvent(null, null)//启动时开启新日志
         try {
             rollover()
         } catch (e: RolloverFailure) { //Do nothing
