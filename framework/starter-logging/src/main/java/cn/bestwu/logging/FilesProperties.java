@@ -12,7 +12,7 @@ public class FilesProperties {
 
   private String path;
   private String maxFileSize = "10MB";
-  private Integer maxHistory = 100;
+  private Integer maxHistory = 30;
   /**
    * 是否启动时滚动日志
    */
