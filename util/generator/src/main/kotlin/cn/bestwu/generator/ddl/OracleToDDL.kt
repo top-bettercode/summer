@@ -48,11 +48,14 @@ object OracleToDDL : ToDDL() {
                             oldColumns.remove(oldPrimaryKey)
                             columns.remove(primaryKey)
                         }
+
+                        updateIndexes(oldTable, table, out)
+
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames
                         if (dropColumnNames.isNotEmpty()) {
-                            out.println("ALTER TABLE $quote$tableName$quote DROP ${dropColumnNames.joinToString(",") { "$quote$it$quote" }};")
+                            out.println("ALTER TABLE $quote$tableName$quote DROP (${dropColumnNames.joinToString(",") { "$quote$it$quote" }});")
                         }
                         dropFk(oldColumns, dropColumnNames, out, tableName)
                         val newColumnNames = columnNames - oldColumnNames
@@ -74,8 +77,6 @@ object OracleToDDL : ToDDL() {
                                 }
                             }
                         }
-
-                        updateIndexes(oldTable, table, out)
 
                         out.println()
                     }
