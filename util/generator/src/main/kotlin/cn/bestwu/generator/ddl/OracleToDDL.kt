@@ -39,14 +39,7 @@ object OracleToDDL : ToDDL() {
                         val primaryKey = primaryKeys[0]
                         if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1 && oldPrimaryKey != primaryKey) {
                             if (primaryKey.columnName != oldPrimaryKey.columnName)
-                                out.println("ALTER TABLE $quote$tableName$quote RENAME COLUMN $quote${oldPrimaryKey.columnName}$quote TO $quote${primaryKey.columnName}$quote;")
-                            val updateColumnDef = updateColumnDef(primaryKey, oldPrimaryKey, quote)
-                            if (updateColumnDef.isNotBlank())
-                                out.println("ALTER TABLE $quote$tableName$quote MODIFY $updateColumnDef;")
-                            if (primaryKey.remarks != oldPrimaryKey.remarks)
-                                out.println("COMMENT ON COLUMN $quote$tableName$quote.$quote${primaryKey.columnName}$quote IS '${primaryKey.remarks}';")
-                            oldColumns.remove(oldPrimaryKey)
-                            columns.remove(primaryKey)
+                                out.println("ALTER TABLE $quote$tableName$quote DROP PRIMARY KEY;")
                         }
 
                         updateIndexes(oldTable, table, out)
@@ -76,6 +69,10 @@ object OracleToDDL : ToDDL() {
                                     updateFk(column, oldColumn, out, tableName)
                                 }
                             }
+                        }
+                        if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1 && oldPrimaryKey != primaryKey) {
+                            if (primaryKey.columnName != oldPrimaryKey.columnName)
+                                out.println("ALTER TABLE $quote$tableName$quote ADD PRIMARY KEY(\"$quote${primaryKey.columnName}$quote\" )")
                         }
 
                         out.println()
