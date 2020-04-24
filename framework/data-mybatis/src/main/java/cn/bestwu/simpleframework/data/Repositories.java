@@ -39,8 +39,8 @@ public class Repositories implements Iterable<Class<?>> {
     for (Class<?> queryDslType : allSubClasses) {
       Class<?> modelClass = (Class) ((ParameterizedType) queryDslType.getGenericSuperclass())
           .getActualTypeArguments()[1];
-      if (log.isDebugEnabled()) {
-        log.debug("Detected queryDsl:{}=>{}", modelClass, queryDslType);
+      if (log.isTraceEnabled()) {
+        log.trace("Detected queryDsl:{}=>{}", modelClass, queryDslType);
       }
       queryDsls.put(modelClass, queryDslType);
     }

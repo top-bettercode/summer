@@ -133,8 +133,8 @@ public class FrameworkMvcConfiguration {
       try {
         ParameterizedType object = (ParameterizedType) aClass.getGenericInterfaces()[0];
         Class targetType = (Class) object.getActualTypeArguments()[0];
-        if (log.isDebugEnabled()) {
-          log.debug("Detected MixInAnnotation:{}=>{}", targetType, aClass);
+        if (log.isTraceEnabled()) {
+          log.trace("Detected MixInAnnotation:{}=>{}", targetType, aClass);
         }
         module.setMixInAnnotation(targetType, aClass);
       } catch (Exception e) {
