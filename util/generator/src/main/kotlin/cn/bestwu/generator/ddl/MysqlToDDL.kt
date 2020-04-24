@@ -40,6 +40,9 @@ object MysqlToDDL : ToDDL() {
                             oldColumns.remove(oldPrimaryKey)
                             columns.remove(primaryKey)
                         }
+
+                        updateIndexes(oldTable, table, out)
+
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames
@@ -61,7 +64,6 @@ object MysqlToDDL : ToDDL() {
                                 }
                             }
                         }
-                        updateIndexes(oldTable, table, out)
 
                         out.println()
                     }
