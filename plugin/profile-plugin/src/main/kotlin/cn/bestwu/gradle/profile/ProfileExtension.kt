@@ -65,13 +65,12 @@ internal val Project.profileFiles: Array<File>
         val profile = extensions.getByType(ProfileExtension::class.java)
         val array = mutableListOf<File>()
         array.add(rootProject.file("gradle.properties"))
-        val activeFileName = "${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties"
         configProject { project ->
             val projectFile = project.file("${profile.configDir}/$projectMark.properties")
             if (projectFile.exists()) {
                 array.add(projectFile)
             }
-            val activeFile = project.file(activeFileName)
+            val activeFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
             if (activeFile.exists()) {
                 array.add(activeFile)
             }
