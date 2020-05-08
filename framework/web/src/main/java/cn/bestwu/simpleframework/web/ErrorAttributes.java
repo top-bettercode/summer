@@ -106,15 +106,22 @@ public class ErrorAttributes extends DefaultErrorAttributes {
             defaultMessage = getText(webRequest, defaultMessage);
           }
           String field = fieldError.getField();
-          String msg;
-          if (field.contains(".")) {
-            msg = getText(webRequest, field.substring(field.lastIndexOf('.') + 1)) + ": "
-                + defaultMessage;
-          } else {
-            msg = getText(webRequest, field) + ": " + defaultMessage;
+          String msg = null;
+          if (fieldError.contains(ConstraintViolation.class)) {
+            ConstraintViolation<?> violation = fieldError.unwrap(ConstraintViolation.class);
+            if (violation.getConstraintDescriptor().getPayload().contains(NoPropertyPath.class)) {
+              msg = violation.getMessage();
+            }
+          }
+          if (msg == null) {
+            if (field.contains(".")) {
+              msg = getText(webRequest, field.substring(field.lastIndexOf('.') + 1)) + ": "
+                  + defaultMessage;
+            } else {
+              msg = getText(webRequest, field) + ": " + defaultMessage;
+            }
           }
           errors.put(field, msg);
-
         }
         message = errors.values().iterator().next();
 
