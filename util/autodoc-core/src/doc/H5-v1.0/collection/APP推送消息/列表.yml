@@ -41,7 +41,7 @@ request:
    -
     name: "sign"
     type: "String"
-    description: "接口签名 <<jiekouqianmingsuanfa>>"
+    description: "接口签名 <<_jiekouqianmingsuanfa>>"
     value: "9e0cf202f5b7ed9832e5a81aeeb5262d"
     canCover: true
     required: true
