@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.web;
 
+import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
@@ -43,8 +44,15 @@ public class DataErrorHandler implements IErrorHandler {
         Set<ConstraintViolation<?>> constraintViolations = er.getConstraintViolations();
         for (ConstraintViolation<?> constraintViolation : constraintViolations) {
           String property = ErrorAttributes.getProperty(constraintViolation);
-          errors.put(property,
-              getText(messageSource, request, property) + ":" + constraintViolation.getMessage());
+          String msg;
+          if (constraintViolation.getConstraintDescriptor().getPayload()
+              .contains(NoPropertyPath.class)) {
+            msg = constraintViolation.getMessage();
+          } else {
+            msg =
+                getText(messageSource, request, property) + ": " + constraintViolation.getMessage();
+          }
+          errors.put(property, msg);
         }
         message = errors.values().iterator().next();
 

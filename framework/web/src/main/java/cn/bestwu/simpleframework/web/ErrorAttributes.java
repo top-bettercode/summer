@@ -2,6 +2,7 @@ package cn.bestwu.simpleframework.web;
 
 import cn.bestwu.simpleframework.exception.BusinessException;
 import cn.bestwu.simpleframework.exception.ResourceNotFoundException;
+import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -107,10 +108,10 @@ public class ErrorAttributes extends DefaultErrorAttributes {
           String field = fieldError.getField();
           String msg;
           if (field.contains(".")) {
-            msg = getText(webRequest, field.substring(field.lastIndexOf('.') + 1)) + ":"
+            msg = getText(webRequest, field.substring(field.lastIndexOf('.') + 1)) + ": "
                 + defaultMessage;
           } else {
-            msg = getText(webRequest, field) + ":" + defaultMessage;
+            msg = getText(webRequest, field) + ": " + defaultMessage;
           }
           errors.put(field, msg);
 
@@ -145,8 +146,14 @@ public class ErrorAttributes extends DefaultErrorAttributes {
         Set<ConstraintViolation<?>> constraintViolations = er.getConstraintViolations();
         for (ConstraintViolation<?> constraintViolation : constraintViolations) {
           String property = getProperty(constraintViolation);
-          errors.put(property,
-              getText(webRequest, property) + ":" + constraintViolation.getMessage());
+          String msg;
+          if (constraintViolation.getConstraintDescriptor().getPayload()
+              .contains(NoPropertyPath.class)) {
+            msg = constraintViolation.getMessage();
+          } else {
+            msg = getText(webRequest, property) + ": " + constraintViolation.getMessage();
+          }
+          errors.put(property, msg);
         }
         message = errors.values().iterator().next();
 
