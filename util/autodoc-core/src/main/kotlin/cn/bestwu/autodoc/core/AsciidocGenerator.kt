@@ -224,9 +224,9 @@ object AsciidocGenerator : AbstractbGenerator() {
 
                         val request = operation.request as DocOperationRequest
                         request.apply {
-                            out.println(".1+.^|方法 6+|${method}")
+                            out.println(".1+.^|方法 6+.^|${method}")
 
-                            out.println(".1+.^|地址 6+|link:{apiHost}${str(HttpOperation.getRestRequestPath(request))}[{apiHost}++$restUri++]")
+                            out.println(".1+.^|地址 6+.^|link:{apiHost}${str(HttpOperation.getRestRequestPath(request))}[{apiHost}++$restUri++]")
 
                             if (uriVariablesExt.isNotEmpty()) {
                                 val uriFields = uriVariablesExt.checkBlank("$operationPath:request.uriVariablesExt")
