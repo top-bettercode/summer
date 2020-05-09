@@ -34,10 +34,8 @@ import kotlin.math.max
  * 日志
  */
 @ConditionalOnWebApplication
-@Controller
 @RequestMapping(value = ["/logs"], name = "日志")
-class LogsController(@Value("\${logging.files.path}")
-                     private val loggingFilesPath: String, environment: Environment, private val websocketProperties: WebsocketProperties) {
+class LogsController(private val loggingFilesPath: String, environment: Environment, private val websocketProperties: WebsocketProperties) {
 
     private val useWebSocket: Boolean = ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && "true" == environment.getProperty("logging.websocket.enabled")
     private val loggerContext: LoggerContext

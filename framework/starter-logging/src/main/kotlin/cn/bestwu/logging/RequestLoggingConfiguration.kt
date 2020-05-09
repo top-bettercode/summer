@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.*
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.support.ErrorPageFilter
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.*
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
+import org.springframework.core.type.AnnotatedTypeMetadata
+import org.springframework.util.StringUtils
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.socket.server.standard.ServerEndpointExporter
@@ -44,9 +45,17 @@ class RequestLoggingConfiguration {
 
 
     @ConditionalOnProperty(prefix = "logging.show", name = ["enabled"], havingValue = "true", matchIfMissing = true)
+    @Conditional(LogsControllerCondition::class)
     @Bean
     fun logsController(@Value("\${logging.files.path}") loggingFilesPath: String, environment: Environment, websocketProperties: WebsocketProperties): LogsController {
         return LogsController(loggingFilesPath, environment, websocketProperties)
+    }
+
+    internal class LogsControllerCondition : Condition {
+
+        override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
+            return StringUtils.hasText(context.environment.getProperty("logging.files.path"))
+        }
     }
 
     @Bean
