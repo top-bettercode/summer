@@ -24,3 +24,6 @@ spring:
 api:
   sign:
     client-secret: 123
+server:
+  servlet:
+    context-path: /npk

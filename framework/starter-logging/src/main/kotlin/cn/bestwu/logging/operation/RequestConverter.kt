@@ -50,12 +50,13 @@ object RequestConverter {
         val parts = extractParts(request)
         val cookies = extractCookies(request, headers)
         val uri = URI.create(getRequestUri(request))
-        val restUri = (request.getAttribute(HandlerMethodHandlerInterceptor.BEST_MATCHING_PATTERN_ATTRIBUTE) as?  String)
-                ?: uri.path
+        val restUri = (request.getAttribute(HandlerMethodHandlerInterceptor.BEST_MATCHING_PATTERN_ATTRIBUTE) as? String)
+                ?: request.requestURI.substringAfter(request.contextPath)
+
         @Suppress("UNCHECKED_CAST")
         val uriTemplateVariables = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as? Map<String, String>
                 ?: mapOf()
-        val remoteUser = (request.getAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME) as?  String)
+        val remoteUser = (request.getAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME) as? String)
                 ?: request.remoteUser ?: "anonymousUser"
 
         val content = (request as? TraceHttpServletRequestWrapper)?.contentAsByteArray
@@ -193,7 +194,8 @@ object RequestConverter {
         if (isNonStandardPort(request)) {
             printer.printf(":%d", request.serverPort)
         }
-        printer.print(request.requestURI.substringAfter(request.contextPath))
+
+        printer.print(request.requestURI)
         return uriWriter.toString()
     }
 

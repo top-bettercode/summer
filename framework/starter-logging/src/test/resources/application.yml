@@ -42,4 +42,7 @@ logging:
 #    remote-host: 127.0.0.1
 #  logstash:
 #    destinations:
+server:
+  servlet:
+    context-path: /npk
 #      - 10.13.3.119:4560
