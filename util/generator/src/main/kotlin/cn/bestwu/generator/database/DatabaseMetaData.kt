@@ -2,9 +2,9 @@ package cn.bestwu.generator.database
 
 import cn.bestwu.generator.DatabaseDriver
 import cn.bestwu.generator.JDBCConnectionConfiguration
-import cn.bestwu.generator.database.domain.Column
-import cn.bestwu.generator.database.domain.Indexed
-import cn.bestwu.generator.database.domain.Table
+import cn.bestwu.generator.database.entity.Column
+import cn.bestwu.generator.database.entity.Indexed
+import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.puml.PumlConverter
 import java.sql.DriverManager
 import java.sql.ResultSet

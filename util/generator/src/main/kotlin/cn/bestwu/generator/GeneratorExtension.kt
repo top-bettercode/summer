@@ -1,7 +1,7 @@
 package cn.bestwu.generator
 
 import cn.bestwu.generator.database.DatabaseMetaData
-import cn.bestwu.generator.database.domain.Table
+import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.dom.java.element.JavaElement
 import cn.bestwu.generator.dsl.Generator
 import kotlinx.coroutines.GlobalScope

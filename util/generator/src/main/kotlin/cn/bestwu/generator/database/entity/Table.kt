@@ -1,4 +1,4 @@
-package cn.bestwu.generator.database.domain
+package cn.bestwu.generator.database.entity
 
 import cn.bestwu.generator.GeneratorExtension
 import org.atteo.evo.inflector.English

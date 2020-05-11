@@ -3,9 +3,9 @@ package cn.bestwu.generator.puml
 import cn.bestwu.generator.DataType
 import cn.bestwu.generator.DatabaseDriver
 import cn.bestwu.generator.GeneratorExtension
-import cn.bestwu.generator.database.domain.Column
-import cn.bestwu.generator.database.domain.Indexed
-import cn.bestwu.generator.database.domain.Table
+import cn.bestwu.generator.database.entity.Column
+import cn.bestwu.generator.database.entity.Indexed
+import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.ddl.MysqlToDDL
 import cn.bestwu.generator.ddl.OracleToDDL
 import cn.bestwu.generator.dom.java.JavaTypeResolver

@@ -2,9 +2,9 @@ package cn.bestwu.generator.dsl
 
 import cn.bestwu.generator.GeneratorException
 import cn.bestwu.generator.GeneratorExtension
-import cn.bestwu.generator.database.domain.Column
-import cn.bestwu.generator.database.domain.Indexed
-import cn.bestwu.generator.database.domain.Table
+import cn.bestwu.generator.database.entity.Column
+import cn.bestwu.generator.database.entity.Indexed
+import cn.bestwu.generator.database.entity.Table
 import java.io.File
 import java.io.PrintWriter
 

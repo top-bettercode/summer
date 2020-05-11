@@ -1,7 +1,7 @@
 package cn.bestwu.generator.dsl.def
 
 import cn.bestwu.generator.DataType
-import cn.bestwu.generator.database.domain.Column
+import cn.bestwu.generator.database.entity.Column
 import cn.bestwu.generator.dsl.Generator
 import java.io.File
 

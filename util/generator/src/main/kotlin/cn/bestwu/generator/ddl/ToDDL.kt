@@ -1,7 +1,7 @@
 package cn.bestwu.generator.ddl
 
-import cn.bestwu.generator.database.domain.Column
-import cn.bestwu.generator.database.domain.Table
+import cn.bestwu.generator.database.entity.Column
+import cn.bestwu.generator.database.entity.Table
 import java.io.File
 import java.io.PrintWriter
 

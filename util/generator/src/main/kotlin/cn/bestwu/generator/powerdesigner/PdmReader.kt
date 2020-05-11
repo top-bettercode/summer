@@ -1,9 +1,9 @@
 package cn.bestwu.generator.powerdesigner
 
 import cn.bestwu.generator.DataType
-import cn.bestwu.generator.database.domain.Column
-import cn.bestwu.generator.database.domain.Indexed
-import cn.bestwu.generator.database.domain.Table
+import cn.bestwu.generator.database.entity.Column
+import cn.bestwu.generator.database.entity.Indexed
+import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.dom.java.JavaTypeResolver
 import org.dom4j.Element
 import org.dom4j.Namespace

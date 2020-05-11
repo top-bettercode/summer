@@ -40,7 +40,7 @@ abstract class JavaGenerator : Generator() {
 
     protected open val type: JavaType
         get() = JavaType("$packageName.$name")
-    protected open val domainJavaType: JavaType
+    protected open val entityType: JavaType
         get() = JavaType("$packageName.${entityName.toLowerCase()}.$className")
 
     override fun output(printWriter: PrintWriter) {

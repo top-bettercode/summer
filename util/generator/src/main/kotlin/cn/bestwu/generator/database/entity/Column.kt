@@ -1,4 +1,4 @@
-package cn.bestwu.generator.database.domain
+package cn.bestwu.generator.database.entity
 
 import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.dom.java.JavaType
