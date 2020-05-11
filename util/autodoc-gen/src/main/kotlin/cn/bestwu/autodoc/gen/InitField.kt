@@ -7,7 +7,7 @@ import cn.bestwu.autodoc.core.operation.DocOperationRequest
 import cn.bestwu.autodoc.core.operation.DocOperationResponse
 import cn.bestwu.generator.DataType
 import cn.bestwu.generator.GeneratorExtension
-import cn.bestwu.generator.database.domain.Table
+import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.powerdesigner.PdmReader
 import cn.bestwu.generator.puml.PumlConverter
 import cn.bestwu.logging.operation.OperationRequestPart

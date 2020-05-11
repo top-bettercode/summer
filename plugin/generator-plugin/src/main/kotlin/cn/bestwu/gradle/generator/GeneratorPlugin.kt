@@ -4,7 +4,7 @@ import cn.bestwu.generator.DataType
 import cn.bestwu.generator.DatabaseDriver
 import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.JDBCConnectionConfiguration
-import cn.bestwu.generator.database.domain.Table
+import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.dsl.Generator
 import cn.bestwu.generator.dsl.Generators
 import cn.bestwu.generator.dsl.def.PlantUML

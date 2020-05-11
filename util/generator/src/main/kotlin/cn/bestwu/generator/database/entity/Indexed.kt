@@ -1,4 +1,4 @@
-package cn.bestwu.generator.database.domain
+package cn.bestwu.generator.database.entity
 
 data class Indexed(
         val name: String,

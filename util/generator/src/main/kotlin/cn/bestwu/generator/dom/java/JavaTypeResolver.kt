@@ -1,6 +1,6 @@
 package cn.bestwu.generator.dom.java
 
-import cn.bestwu.generator.database.domain.Column
+import cn.bestwu.generator.database.entity.Column
 import java.sql.Types
 import java.util.*
 

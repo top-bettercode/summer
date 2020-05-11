@@ -1,6 +1,6 @@
 package cn.bestwu.generator.dsl.def
 
-import cn.bestwu.generator.database.domain.Table
+import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.dom.java.JavaType
 import cn.bestwu.generator.dom.java.StringOperator
 import cn.bestwu.generator.dom.java.element.JavaElement.Companion.indent
@@ -66,7 +66,7 @@ open class CrudDao : JavaGenerator() {
                     import("org.apache.ibatis.annotations.Insert")
                     import("org.apache.ibatis.annotations.SelectKey")
                 }
-                parameter(domainJavaType, "entity")
+                parameter(entityType, "entity")
             }
 
             method("update", JavaType.intPrimitiveInstance) {
@@ -93,7 +93,7 @@ open class CrudDao : JavaGenerator() {
                     +sb.toString()
                     import("org.apache.ibatis.annotations.Update")
                 }
-                parameter(domainJavaType, "entity")
+                parameter(entityType, "entity")
             }
 
             method("delete", JavaType.intPrimitiveInstance) {
@@ -112,14 +112,14 @@ open class CrudDao : JavaGenerator() {
                 }
                 parameter(primaryKey.javaType, primaryKey.javaName)
             }
-            method("findAll", JavaType.listInstance.typeArgument(domainJavaType)) {
+            method("findAll", JavaType.listInstance.typeArgument(entityType)) {
                 annotation {
                     +"@Select(\"SELECT * FROM $tableName\")"
                     if (withResults)
                         anotatedResults(this)
                 }
             }
-            method("findOne", domainJavaType) {
+            method("findOne", entityType) {
                 annotation {
                     +"@Select(\"SELECT * FROM $tableName WHERE ${primaryKey.columnName} = #{${primaryKey.javaName}}\")"
                     if (withResults)
