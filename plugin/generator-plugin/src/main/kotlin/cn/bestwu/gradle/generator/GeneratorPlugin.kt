@@ -108,24 +108,6 @@ class GeneratorPlugin : Plugin<Project> {
             }
         }
 
-        project.tasks.create("packageInfo") { task ->
-            task.group = "gen"
-            task.doLast { _ ->
-                project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.srcDirs.forEach { file ->
-                    val srcPath = file.absolutePath + File.separator
-                    file.walkTopDown().filter { it.isDirectory }.forEach { file1 ->
-                        val packageInfo = File(file1, "package-info.java")
-                        val listFiles = file1.listFiles()
-                        if (!packageInfo.exists() && listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
-                            println("[${project.path}]生成：${packageInfo.absolutePath.substringAfter(project.file("./").absolutePath)}")
-                            packageInfo.writeText("""package ${file1.absolutePath.replace(srcPath, "").replace(File.separator, ".")};""")
-                        }
-                    }
-                }
-            }
-        }
-
-
         project.afterEvaluate {
             val extension = project.extensions.getByType(GeneratorExtension::class.java)
             if (extension.singleDatasource) {
