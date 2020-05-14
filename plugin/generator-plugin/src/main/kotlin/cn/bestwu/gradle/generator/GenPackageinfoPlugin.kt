@@ -68,33 +68,36 @@ package $packageinfo""".trimIndent())
             task.group = "gen"
             task.doLast { _ ->
                 val regex = Regex(".*/\\*\\*(.*)\\*/.*", RegexOption.DOT_MATCHES_ALL)
-                val pregex = Regex("package (.*);?")
+                val pregex = Regex("package ([^;]*);?")
                 val dest = project.file("doc/项目目录及包目录说明.adoc")
                 if (!dest.parentFile.exists()) {
                     dest.parentFile.mkdirs()
                 }
                 dest.printWriter().use { pw ->
+                    val projects = project.allprojects.filter { p -> p.file("src/main").walkTopDown().filter { it.isFile }.count() > 0 }
                     pw.println("= 项目目录及包目录说明")
                     pw.println()
                     pw.println("== 项目目录说明")
                     pw.println()
                     pw.println("|===")
                     pw.println("| 项目目录 | 描述")
-                    project.file("./").walkTopDown().filter { it.isFile && ("README.md" == it.name) }.forEach {
+                    project.file("./").walkTopDown().filter { it.isFile && ("README.md" == it.name) }.sortedBy { it.parentFile.absolutePath.substringAfter(project.file("./").absolutePath + "/") }.forEach {
                         pw.println("| ${it.parentFile.absolutePath.substringAfter(project.file("./").absolutePath + "/")} | ${it.readText().trim()}")
                     }
                     pw.println("|===")
+                    pw.println()
 
                     pw.println("== 包目录说明")
                     pw.println()
-                    project.allprojects { p ->
+
+                    projects.forEach { p ->
                         val files = p.file("./").walkTopDown().filter { it.isFile && ("package-info.kt" == it.name || "package-info.java" == it.name) }
                         if (files.any()) {
                             val projectPath = if (p == project.rootProject) {
                                 "主项目"
                             } else {
                                 val pfile = p.file("README.md")
-                                "${if (pfile.exists()) pfile.readText().trim().substringBefore("\n") else p.path}子项目"
+                                "${if (pfile.exists()) "${pfile.readText().trim().substringBefore("\n")}(${p.path})" else p.path}子项目"
                             }
                             pw.println("=== ${projectPath}包目录说明")
                             pw.println()
@@ -104,6 +107,7 @@ package $packageinfo""".trimIndent())
                                 pw.println("| ${file.readLines().find { it.matches(pregex) }!!.replace(pregex, "$1")} | ${file.readText().replace(regex, "$1").replace("*", "").trim()}")
                             }
                             pw.println("|===")
+                            pw.println()
                         }
                     }
                 }
