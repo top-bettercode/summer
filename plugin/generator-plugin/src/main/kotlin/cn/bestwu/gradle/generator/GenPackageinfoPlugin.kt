@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import java.io.File
-import java.util.regex.Pattern
 
 /**
  *
@@ -23,22 +22,42 @@ class GenPackageinfoPlugin : Plugin<Project> {
                     p.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.srcDirs.forEach { file ->
                         val srcPath = file.absolutePath + File.separator
                         file.walkTopDown().filter { it.isDirectory }.forEach { file1 ->
-                            val packageInfo = File(file1, "package-info.java")
+                            val packageInfoFile = File(file1, "package-info.java")
+                            if (packageInfoFile.exists() && (packageInfoFile.readLines().size == 1 || packageInfoFile.readText().replace("""/**
+ * 
+ */
+""", "").startsWith("package"))) {
+                                packageInfoFile.delete()
+                            }
                             val listFiles = file1.listFiles()
-                            if (!packageInfo.exists() && listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
-                                println("[${p.path}]生成：${packageInfo.absolutePath.substringAfter(p.file("./").absolutePath)}")
-                                packageInfo.writeText("""package ${file1.absolutePath.replace(srcPath, "").replace(File.separator, ".")};""")
+                            if (!packageInfoFile.exists() && listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
+                                println("[${p.path}]生成：${packageInfoFile.absolutePath.substringAfter(p.file("./").absolutePath)}")
+                                val packageinfo = file1.absolutePath.replace(srcPath, "").replace(File.separator, ".")
+                                packageInfoFile.writeText("""/**
+ * ${defaultComment(packageinfo)}
+ */
+package ${packageinfo};""")
                             }
                         }
                     }
                     val file = p.file("src/main/kotlin")
                     val srcPath = file.absolutePath + File.separator
                     file.walkTopDown().filter { it.isDirectory }.forEach { file1 ->
-                        val packageInfo = File(file1, "package-info.kt")
+                        val packageInfoFile = File(file1, "package-info.kt")
+                        if (packageInfoFile.exists() && (packageInfoFile.readLines().size == 1 || packageInfoFile.readText().replace("""/**
+ * 
+ */
+""", "").startsWith("package"))) {
+                            packageInfoFile.delete()
+                        }
                         val listFiles = file1.listFiles()
-                        if (!packageInfo.exists() && listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
-                            println("[${p.path}]生成：${packageInfo.absolutePath.substringAfter(p.file("./").absolutePath)}")
-                            packageInfo.writeText("""package ${file1.absolutePath.replace(srcPath, "").replace(File.separator, ".")}""")
+                        if (!packageInfoFile.exists() && listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
+                            println("[${p.path}]生成：${packageInfoFile.absolutePath.substringAfter(p.file("./").absolutePath)}")
+                            val packageinfo = file1.absolutePath.replace(srcPath, "").replace(File.separator, ".")
+                            packageInfoFile.writeText("""/**
+ * ${defaultComment(packageinfo)}
+ */
+package $packageinfo""".trimIndent())
                         }
                     }
                 }
@@ -82,14 +101,37 @@ class GenPackageinfoPlugin : Plugin<Project> {
                             pw.println("|===")
                             pw.println("| 包目录 | 描述")
                             files.forEach { file ->
-                                val text = file.readText()
-                                pw.println("| ${file.readLines().find { it.matches(pregex) }!!.replace(pregex, "$1")} | ${text.replace(regex, "$1").trim().trimStart('*').trim()}")
+                                pw.println("| ${file.readLines().find { it.matches(pregex) }!!.replace(pregex, "$1")} | ${file.readText().replace(regex, "$1").replace("*", "").trim()}")
                             }
                             pw.println("|===")
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun defaultComment(packageinfo: String): String {
+        val lastPackageinfo = packageinfo.substringAfterLast(".")
+        return when {
+            "dic" == lastPackageinfo -> "码表"
+            packageinfo.endsWith("dic.enumerated") -> "码表枚举"
+            packageinfo.endsWith("dic.item") -> "码表常量"
+            "controller" == lastPackageinfo -> "Controller控制层"
+            "entity" == lastPackageinfo -> "数据实体类"
+            "domain" == lastPackageinfo -> "数据实体类"
+            "feign" == lastPackageinfo -> "feign RPC请求包"
+            "form" == lastPackageinfo -> "请求表单包"
+            "info" == lastPackageinfo -> "实体属性信息包"
+            "repository" == lastPackageinfo -> "存储库操作层"
+            "mixin" == lastPackageinfo -> "JSON序列化映射包"
+            "response" == lastPackageinfo -> "数据响应包"
+            "service" == lastPackageinfo -> "服务层"
+            packageinfo.endsWith("service.impl") -> "服务实现包"
+            "impl" == lastPackageinfo -> "实现包"
+            "support" == lastPackageinfo -> "工具包"
+            "web" == lastPackageinfo -> "WEB 配置包"
+            else -> ""
         }
     }
 }
