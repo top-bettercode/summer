@@ -76,6 +76,15 @@ package $packageinfo""".trimIndent())
                 dest.printWriter().use { pw ->
                     val projects = project.allprojects.filter { p -> p.file("src/main").walkTopDown().filter { it.isFile }.count() > 0 }
                     pw.println("= 项目目录及包目录说明")
+                    pw.println(""":doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toc-title: 目录
+:sectanchors:
+:table-caption!:
+:sectnums:
+:sectlinks:""")
                     pw.println()
                     pw.println("== 项目目录说明")
                     pw.println()
