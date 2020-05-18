@@ -28,7 +28,10 @@ INDEX
     }
 
     override fun doCall() {
-        destFile.appendText("""class ${if (catalog.isNullOrBlank()) "" else "$catalog."}$tableName ${table.desc} {
+        if (tableName.length > 32) {
+            println("数据库对象的命名最好不要超过 32 个字符")
+        }
+        destFile.appendText("""class ${if (catalog.isNullOrBlank()) "" else "$catalog."}${tableName.toLowerCase()} ${table.desc} {
     $remarks
     ==
 """)
@@ -36,7 +39,10 @@ INDEX
         table.pumlColumns.forEach {
             if (it is Column) {
                 val isPrimary = it.isPrimary
-                destFile.appendText("    ${it.columnName} : ${it.typeDesc}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- ${it.remarks}\n")
+                if (it.columnName.length > 32) {
+                    println("数据库对象的命名最好不要超过 32 个字符")
+                }
+                destFile.appendText("    ${it.columnName.toLowerCase()} : ${it.typeDesc}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- ${it.remarks}\n")
                 if (it.isForeignKey) {
                     fklines.add("${it.pktableName} \"1\" -- \"0..*\" $tableName")
                 }
