@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import javax.mail.internet.MimeUtility;
@@ -174,16 +175,15 @@ public class ExcelExport extends AbstractExcelUtil {
    * @param list list
    * @return list 数据列表
    */
-  public <E> ExcelExport setDataList(List<E> list) {
+  public <E> ExcelExport setDataList(Iterable<E> list) {
     Assert.notNull(sheet, "表格未初始化");
     createHeader(null);
-    int size = list.size();
-    for (int i = 0; i < size; i++) {
-      E e = list.get(i);
-      boolean fill = i % 2 != 0;
+    Iterator<E> iterator = list.iterator();
+    while (iterator.hasNext()) {
+      E e = iterator.next();
+      boolean fill = r % 2 == 0;
       for (ExcelFieldDescription fieldDescription : excelFieldDescriptions) {
         ExcelField excelField = fieldDescription.getExcelField();
-        Object val = fieldDescription.read(e);
         StyleSetter style = sheet.style(r, c)
             .horizontalAlignment(excelField.align().name().toLowerCase())
             .verticalAlignment(Alignment.CENTER.name().toLowerCase())
@@ -194,12 +194,14 @@ public class ExcelExport extends AbstractExcelUtil {
           style.fillColor("F8F8F7");
         }
         style.set();
+
+        Object val = fieldDescription.read(e);
         sheet.value(r, c, val);
         if (excelField.width() == -1) {
           columnWidths
               .put(c, val.getClass().equals(Date.class) ? fieldDescription.getCellFormat() : val);
 
-          if (i == size - 1) {
+          if (!iterator.hasNext()) {
             sheet.width(c, columnWidths.width(c));
           }
         } else {
