@@ -22,7 +22,7 @@ abstract class ToDDL : IToDDL {
         if (it.typeDesc.isBlank()) {
             throw Exception("${it.tableSchem ?: ""}:${it.columnName}:字段类型不能为空")
         }
-        return "$quote${it.columnName}$quote ${it.typeDesc}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}"
+        return "$quote${it.columnName}$quote ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}"
     }
 
     protected open fun updateColumnDef(it: Column, old: Column, quote: String): String {
