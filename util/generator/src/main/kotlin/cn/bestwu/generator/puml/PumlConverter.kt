@@ -83,14 +83,15 @@ object PumlConverter {
                         var extra = columnDef.substringAfter(type)
                         val (columnSize, decimalDigits) = parseType(type)
                         var defaultVal: String? = null
-                        if (columnDef.contains("DEFAULT")) {
+                        val unsigned = columnDef.contains("UNSIGNED", true)
+                        if (columnDef.contains("DEFAULT", true)) {
                             defaultVal = columnDef.substringAfter("DEFAULT").trim().substringBefore(" ").trim('\'').trim()
                             extra = extra.replace(Regex(" DEFAULT +'?$defaultVal'?"), "")
                         }
                         var fk = false
                         var refTable: String? = null
                         var refColumn: String? = null
-                        if (columnDef.contains("FK")) {//FK > docs.id
+                        if (columnDef.contains("FK", true)) {//FK > docs.id
                             val ref = columnDef.substringAfter("FK >").trim().substringBefore(" ").trim()
                             extra = extra.replace(Regex(" FK > +$ref"), "")
                             val refs = ref.split(".")
@@ -99,21 +100,22 @@ object PumlConverter {
                             refColumn = refs[1]
                         }
                         val typeName = type.substringBefore("(")
-                        val unique = columnDef.contains("UNIQUE")
-                        val indexed = columnDef.contains("INDEX")
-                        val autoIncrement = columnDef.contains("AUTO_INCREMENT")
+                        val unique = columnDef.contains("UNIQUE", true)
+                        val indexed = columnDef.contains("INDEX", true)
+                        val autoIncrement = columnDef.contains("AUTO_INCREMENT", true)
+                        extra = extra.replace(" UNSIGNED", "", true)
                         extra = extra.replace(" UNIQUE", "", true)
                         extra = extra.replace(" INDEX", "", true)
                         extra = extra.replace(" AUTO_INCREMENT", "", true)
                         extra = extra.replace(" NOT NULL", "", true)
                         extra = extra.replace(" NULL", "", true)
                         extra = extra.replace(" PK", "", true).trim()
-                        val column = Column(tableCat = null, columnName = columnName, remarks = lineDef.last().trim(), typeName = typeName, dataType = JavaTypeResolver.calculateDataType(typeName), columnSize = columnSize, decimalDigits = decimalDigits, nullable = !columnDef.contains("NOT NULL"), unique = unique, indexed = indexed, columnDef = defaultVal, extra = extra, tableSchem = null, isForeignKey = fk, pktableName = refTable, pkcolumnName = refColumn, autoIncrement = autoIncrement)
+                        val column = Column(tableCat = null, columnName = columnName, remarks = lineDef.last().trim(), typeName = typeName, dataType = JavaTypeResolver.calculateDataType(typeName), columnSize = columnSize, decimalDigits = decimalDigits, nullable = !columnDef.contains("NOT NULL", true), unique = unique, indexed = indexed, columnDef = defaultVal, extra = extra, tableSchem = null, isForeignKey = fk, pktableName = refTable, pkcolumnName = refColumn, autoIncrement = autoIncrement, unsigned = unsigned)
                         if (unique)
                             indexes.add(Indexed("UK_${tableName.replace("_", "").takeLast(7)}_${columnName.replace(tableName, "").replace("_", "").replace(",", "").takeLast(7)}", true, mutableListOf(columnName)))
                         if (indexed)
                             indexes.add(Indexed("IDX_${tableName.replace("_", "").takeLast(7)}_${columnName.replace(tableName, "").replace("_", "").replace(",", "").takeLast(7)}", false, mutableListOf(columnName)))
-                        if (columnDef.contains("PK")) {
+                        if (columnDef.contains("PK", true)) {
                             primaryKeyNames.add(column.columnName)
                         }
                         pumlColumns.add(column)

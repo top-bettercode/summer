@@ -50,6 +50,7 @@ data class Column(
         var unique: Boolean = false,
         var indexed: Boolean = false,
         var isPrimary: Boolean = false,
+        var unsigned: Boolean = false,
         var isForeignKey: Boolean = false,
         var pktableName: String? = null,
         var pkcolumnName: String? = null,
@@ -165,6 +166,7 @@ data class Column(
         if (pktableName != other.pktableName) return false
         if (pkcolumnName != other.pkcolumnName) return false
         if (generatedColumn != other.generatedColumn) return false
+        if (unsigned != other.unsigned) return false
         if (autoIncrement != other.autoIncrement) return false
 
         return true
@@ -181,6 +183,7 @@ data class Column(
         result = 31 * result + (pktableName?.hashCode() ?: 0)
         result = 31 * result + (pkcolumnName?.hashCode() ?: 0)
         result = 31 * result + generatedColumn.hashCode()
+        result = 31 * result + unsigned.hashCode()
         result = 31 * result + autoIncrement.hashCode()
         return result
     }

@@ -123,6 +123,8 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
                 prepareStatement.executeQuery().use {
                     val find = columns.find { it.columnName == getString(1) }
                     if (find != null) {
+                        if (debug)
+                            debug("column", this.metaData)
                         try {
                             find.extra = getString(6)
                             if (find.extra.contains("AUTO_INCREMENT", true)) {
@@ -133,7 +135,7 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
                         }
                         val type = getString(2)
                         val (columnSize, decimalDigits) = PumlConverter.parseType(type)
-                        find.typeName = type.substringBefore('(')
+                        find.typeName = type.substringBefore('(').toUpperCase()
                         find.columnSize = columnSize
                         find.decimalDigits = decimalDigits
                     }
@@ -203,7 +205,7 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
                 ?: ""
         val tableCat = getString("TABLE_CAT")
         val tableSchem = getString("TABLE_SCHEM")
-        val column = Column(tableCat = tableCat, tableSchem = tableSchem, columnName = columnName, typeName = typeName, dataType = dataType, decimalDigits = decimalDigits, columnSize = columnSize, remarks = remarks, nullable = nullable, columnDef = columnDef)
+        val column = Column(tableCat = tableCat, tableSchem = tableSchem, columnName = columnName, typeName = typeName, dataType = dataType, decimalDigits = decimalDigits, columnSize = columnSize, remarks = remarks, nullable = nullable, columnDef = columnDef, unsigned = typeName.contains("UNSIGNED", true))
         if (supportsIsAutoIncrement) {
             column.autoIncrement = "YES" == getString("IS_AUTOINCREMENT")
         }
