@@ -32,7 +32,7 @@ abstract class JavaGenerator : Generator() {
 
     open var basePackageName: String = ""
         get() {
-            return if (field.isBlank()) (if (extension.projectPackage) "$packageName.$projectName" else extension.packageName) else field
+            return if (field.isBlank()) (if (extension.projectPackage) "${extension.packageName}.$projectName" else extension.packageName) else field
         }
 
     override val dir: String
