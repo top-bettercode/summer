@@ -137,6 +137,7 @@ package $packageinfo""".trimIndent())
             "form" == lastPackageinfo -> "请求表单包"
             "info" == lastPackageinfo -> "实体属性信息包"
             "repository" == lastPackageinfo -> "存储库操作层"
+            packageinfo.endsWith("response.excel") -> "Excel导出映射包"
             "mixin" == lastPackageinfo -> "JSON序列化映射包"
             "response" == lastPackageinfo -> "数据响应包"
             "service" == lastPackageinfo -> "服务层"
