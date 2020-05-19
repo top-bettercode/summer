@@ -84,10 +84,11 @@ public class ExcelFieldDescription {
           .hasText(String.valueOf(fieldValue))) {
         fieldValue = excelField.defaultValue();
       }
+      return convert(fieldValue);
     } catch (NoSuchMethodException e) {
       log.warn("read value fail.", e);
+      return null;
     }
-    return convert(fieldValue);
   }
 
 
