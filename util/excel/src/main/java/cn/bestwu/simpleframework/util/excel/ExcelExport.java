@@ -51,7 +51,16 @@ public class ExcelExport extends AbstractExcelUtil {
    */
   private boolean includeComment = false;
 
-  private ColumnWidths columnWidths = new ColumnWidths();
+  /**
+   * 是否导出序号
+   */
+  private boolean serialNumber = false;
+  /**
+   * 序号名称
+   */
+  private String serialNumberName = "序号";
+
+  private final ColumnWidths columnWidths = new ColumnWidths();
 
   /**
    * 构造函数
@@ -88,25 +97,40 @@ public class ExcelExport extends AbstractExcelUtil {
     return this;
   }
 
-  public void setR(int r) {
+  public ExcelExport setSerialNumber(boolean serialNumber) {
+    this.serialNumber = serialNumber;
+    return this;
+  }
+
+  public ExcelExport setSerialNumberName(String serialNumberName) {
+    this.serialNumberName = serialNumberName;
+    return this;
+  }
+
+  public ExcelExport setR(int r) {
     this.r = r;
+    return this;
   }
 
-  public void setC(int c) {
+  public ExcelExport setC(int c) {
     this.c = c;
+    return this;
   }
 
-  public void setRAndC(Integer r, Integer c) {
+  public ExcelExport setRAndC(Integer r, Integer c) {
     this.r = r;
     this.c = c;
+    return this;
   }
 
-  public void includeComment() {
+  public ExcelExport includeComment() {
     this.includeComment = true;
+    return this;
   }
 
-  public void excludeComment() {
+  public ExcelExport excludeComment() {
     this.includeComment = false;
+    return this;
   }
 
   public Workbook getWorkbook() {
@@ -137,6 +161,19 @@ public class ExcelExport extends AbstractExcelUtil {
       excelFieldDescriptions.forEach(action);
     } else {
       String alignment = Alignment.CENTER.name().toLowerCase();
+      if (serialNumber) {
+        sheet.value(r, c, serialNumberName);
+        columnWidths.put(c, serialNumberName);
+        sheet.style(r, c)
+            .horizontalAlignment(alignment)
+            .verticalAlignment(alignment)
+            .bold()
+            .fillColor("808080")
+            .fontColor("FFFFFF")
+            .borderStyle("thin").borderColor("000000")
+            .set();
+        c++;
+      }
       for (ExcelFieldDescription excelFieldDescription : excelFieldDescriptions) {
         String t = excelFieldDescription.title();
         sheet.value(r, c, t);
@@ -182,6 +219,23 @@ public class ExcelExport extends AbstractExcelUtil {
     while (iterator.hasNext()) {
       E e = iterator.next();
       boolean fill = r % 2 == 0;
+      if (serialNumber) {
+        sheet.value(r, c, r);
+        columnWidths.put(c, r);
+        StyleSetter style = sheet.style(r, c)
+            .horizontalAlignment(Alignment.CENTER.name().toLowerCase())
+            .verticalAlignment(Alignment.CENTER.name().toLowerCase())
+            .wrapText(wrapText)
+            .borderStyle("thin").borderColor("000000");
+        if (fill) {
+          style.fillColor("F8F8F7");
+        }
+        style.set();
+        if (!iterator.hasNext()) {
+          sheet.width(c, columnWidths.width(c));
+        }
+        c++;
+      }
       for (ExcelFieldDescription fieldDescription : excelFieldDescriptions) {
         ExcelField excelField = fieldDescription.getExcelField();
         StyleSetter style = sheet.style(r, c)
