@@ -25,7 +25,7 @@ public class ExcelExport extends AbstractExcelUtil {
   /**
    * 注解列表（ExcelFieldDescription）
    */
-  private List<ExcelFieldDescription> excelFieldDescriptions;
+  private final List<ExcelFieldDescription> fieldDescriptions;
   /**
    * 工作薄对象
    */
@@ -81,7 +81,7 @@ public class ExcelExport extends AbstractExcelUtil {
    */
   public ExcelExport(OutputStream os, String sheetname, Class<?> cls) {
     this.workbook = new Workbook(os, "", "1.0");
-    initialize(cls);
+    fieldDescriptions = getExcelFieldDescriptions(cls, ExcelFieldType.EXPORT);
     if (StringUtils.hasText(sheetname)) {
       initSheet(sheetname);
     }
@@ -146,19 +146,10 @@ public class ExcelExport extends AbstractExcelUtil {
     return this;
   }
 
-  /**
-   * @param cls 实体对象，通过annotation.ExportField获取标题
-   * @return this
-   */
-  private ExcelExport initialize(Class<?> cls) {
-    excelFieldDescriptions = getExcelFieldDescriptions(cls, ExcelFieldType.EXPORT);
-    return this;
-  }
-
   public void createHeader(Consumer<? super ExcelFieldDescription> action) {
     // Create header
     if (action != null) {
-      excelFieldDescriptions.forEach(action);
+      fieldDescriptions.forEach(action);
     } else {
       String alignment = Alignment.CENTER.name().toLowerCase();
       if (serialNumber) {
@@ -174,7 +165,7 @@ public class ExcelExport extends AbstractExcelUtil {
             .set();
         c++;
       }
-      for (ExcelFieldDescription excelFieldDescription : excelFieldDescriptions) {
+      for (ExcelFieldDescription excelFieldDescription : fieldDescriptions) {
         String t = excelFieldDescription.title();
         sheet.value(r, c, t);
         double width = excelFieldDescription.getExcelField().width();
@@ -236,7 +227,7 @@ public class ExcelExport extends AbstractExcelUtil {
         }
         c++;
       }
-      for (ExcelFieldDescription fieldDescription : excelFieldDescriptions) {
+      for (ExcelFieldDescription fieldDescription : fieldDescriptions) {
         ExcelField excelField = fieldDescription.getExcelField();
         StyleSetter style = sheet.style(r, c)
             .horizontalAlignment(excelField.align().name().toLowerCase())
@@ -272,9 +263,17 @@ public class ExcelExport extends AbstractExcelUtil {
 
   public ExcelExport template() throws IOException {
     includeComment = true;
-    ExcelExport excelExport = setDataList(Collections.emptyList());
-    excelExport.finish();
-    return excelExport;
+    setDataList(Collections.emptyList());
+    for (ExcelFieldDescription fieldDescription : fieldDescriptions) {
+      ExcelField excelField = fieldDescription.getExcelField();
+      if (excelField.width() == -1) {
+        sheet.width(c, columnWidths.width(c));
+      } else {
+        sheet.width(c, excelField.width());
+      }
+    }
+    finish();
+    return this;
   }
 
   /**
@@ -287,7 +286,6 @@ public class ExcelExport extends AbstractExcelUtil {
     workbook.finish();
     return this;
   }
-
 
   public ExcelExport template(HttpServletRequest request, HttpServletResponse response,
       String fileName) throws IOException {
