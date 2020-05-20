@@ -43,7 +43,8 @@ public class ColumnWidths {
   }
 
   public Double width(Integer column, Integer max) {
-    return BigDecimal.valueOf(Math.min(max, colWidths.get(column)))
+    Double w = colWidths.get(column);
+    return BigDecimal.valueOf(Math.min(max, w == null ? 0 : w))
         .setScale(2, BigDecimal.ROUND_HALF_UP)
         .doubleValue();
   }

@@ -25,7 +25,7 @@ public class ExcelErrorHandler implements IErrorHandler {
   private HttpServletRequest request;
 
   @Override
-  public void handlerException(Throwable error, RespEntity respEntity,
+  public void handlerException(Throwable error, RespEntity<?> respEntity,
       Map<String, String> errors) {
     String message = null;
     if (error instanceof ExcelImportException) {

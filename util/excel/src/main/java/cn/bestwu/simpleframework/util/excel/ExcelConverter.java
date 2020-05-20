@@ -1,5 +1,7 @@
 package cn.bestwu.simpleframework.util.excel;
 
+import java.io.Serializable;
+
 /**
  * 转换器
  *
@@ -7,7 +9,7 @@ package cn.bestwu.simpleframework.util.excel;
  * @param <T> 目标
  */
 @FunctionalInterface
-public interface Converter<F, T> {
+public interface ExcelConverter<F, T> extends Serializable {
 
   T convert(F from);
 }
