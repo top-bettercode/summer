@@ -70,7 +70,7 @@ public class ExcelTest {
   @Test
   public void testImport() throws Exception {
     testExport();
-    List<DataBean3> list = new ExcelImport(new File("build/export.xlsx"))
+    List<DataBean3> list = new ExcelImport(new File("build/export.xlsx"),DataBean3.class)
         .getDataList(DataBean3.class);
     System.out.println(StringUtil.valueOf(list, true));
 //    Assert.assertEquals(3L, list.size());
