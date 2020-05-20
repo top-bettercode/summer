@@ -14,7 +14,7 @@ import org.springframework.security.web.firewall.RequestRejectedException;
 public class SecurityOAuth2ErrorHandler implements IErrorHandler {
 
   @Override
-  public void handlerException(Throwable error, RespEntity respEntity,
+  public void handlerException(Throwable error, RespEntity<?> respEntity,
       Map<String, String> errors) {
     if (error instanceof OAuth2Exception) {
       respEntity.setHttpStatusCode(((OAuth2Exception) error).getHttpErrorCode());

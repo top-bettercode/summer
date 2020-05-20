@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * 导入Excel文件
  */
-public class ExcelImport extends AbstractExcelUtil {
+public class ExcelImport {
 
   private static final Logger log = LoggerFactory.getLogger(ExcelImport.class);
   private static final Validator validator = Validation.buildDefaultValidatorFactory()
@@ -32,7 +32,6 @@ public class ExcelImport extends AbstractExcelUtil {
    * 工作表对象
    */
   private final ReadableWorkbook workbook;
-  private final List<ExcelFieldDescription> fieldDescriptions;
   /**
    * 验证 groups
    */
@@ -42,49 +41,44 @@ public class ExcelImport extends AbstractExcelUtil {
    * 构造函数
    *
    * @param fileName 导入文件
-   * @param cls      execl字段映射类
    * @throws IOException IOException
    */
-  public ExcelImport(String fileName, Class<?> cls)
+  public ExcelImport(String fileName)
       throws IOException {
-    this(new File(fileName), cls);
+    this(new File(fileName));
   }
 
   /**
    * 构造函数
    *
    * @param file 导入文件对象
-   * @param cls  execl字段映射类
    * @throws IOException IOException
    */
-  public ExcelImport(File file, Class<?> cls)
+  public ExcelImport(File file)
       throws IOException {
-    this(new FileInputStream(file), cls);
+    this(new FileInputStream(file));
   }
 
   /**
    * 构造函数
    *
    * @param multipartFile 导入文件对象
-   * @param cls           execl字段映射类
    * @throws IOException IOException
    */
-  public ExcelImport(MultipartFile multipartFile, Class<?> cls)
+  public ExcelImport(MultipartFile multipartFile)
       throws IOException {
-    this(multipartFile.getInputStream(), cls);
+    this(multipartFile.getInputStream());
   }
 
   /**
    * 构造函数
    *
-   * @param is  is
-   * @param cls execl字段映射类
+   * @param is is
    * @throws IOException IOException
    */
-  public ExcelImport(InputStream is, Class<?> cls)
+  public ExcelImport(InputStream is)
       throws IOException {
     workbook = new ReadableWorkbook(is);
-    fieldDescriptions = getExcelFieldDescriptions(cls, ExcelFieldType.IMPORT);
     log.debug("Initialize success.");
   }
 
@@ -95,9 +89,9 @@ public class ExcelImport extends AbstractExcelUtil {
   /**
    * 获取导入数据列表
    *
-   * @param cls 导入对象类型
    * @param <F> F
    * @param <E> E
+   * @param excelFields excelFields
    * @return List
    * @throws IOException            IOException
    * @throws IllegalAccessException IllegalAccessException
@@ -105,37 +99,38 @@ public class ExcelImport extends AbstractExcelUtil {
    * @throws InstantiationException InstantiationException
    */
   @SuppressWarnings("unchecked")
-  public <F, E> List<E> getDataList(Class<F> cls)
+  public <F, E> List<E> getDataList(ExcelField<F, ?>[] excelFields)
       throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
-    return getDataList(cls, (o) -> (E) o);
+    return getDataList(excelFields, (o) -> (E) o);
   }
 
 
   /**
    * 获取导入数据列表
    *
-   * @param cls       导入对象类型
    * @param converter F 转换为E
    * @param <F>       F
    * @param <E>       E
+   * @param excelFields excelFields
    * @return List
    * @throws IOException            IOException
    * @throws IllegalAccessException IllegalAccessException
    * @throws ExcelImportException   ExcelImportException
    * @throws InstantiationException InstantiationException
    */
-  public <F, E> List<E> getDataList(Class<F> cls, Converter<F, E> converter)
+  public <F, E> List<E> getDataList(ExcelField<F, ?>[] excelFields,
+      ExcelConverter<F, E> converter)
       throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
-    return getDataList(0, 0, cls, converter);
+    return getDataList(0, 0, excelFields, converter);
   }
 
 
   /**
    * 获取导入数据列表
    *
-   * @param cls        导入对象类型
    * @param headerNum  标题行号，数据行号=标题行号+1
    * @param sheetIndex 工作表编号
+   * @param excelFields excelFields
    * @param converter  F 转换为E
    * @param <F>        F
    * @param <E>        E
@@ -145,8 +140,9 @@ public class ExcelImport extends AbstractExcelUtil {
    * @throws ExcelImportException   ExcelImportException
    * @throws InstantiationException InstantiationException
    */
-  public <F, E> List<E> getDataList(int sheetIndex, int headerNum, Class<F> cls,
-      Converter<F, E> converter)
+  public <F, E> List<E> getDataList(int sheetIndex, int headerNum,
+      ExcelField<F, ?>[] excelFields,
+      ExcelConverter<F, E> converter)
       throws IOException, IllegalAccessException, ExcelImportException, InstantiationException {
     Sheet sheet = workbook.getSheet(sheetIndex).orElse(null);
     if (sheet == null) {
@@ -156,7 +152,7 @@ public class ExcelImport extends AbstractExcelUtil {
     for (Row row : sheet.openStream().filter(r -> r.getRowNum() - 1 > headerNum)
         .collect(Collectors.toList())) {
       if (row != null) {
-        E e = readRow(fieldDescriptions, cls, row, converter);
+        E e = readRow(excelFields, row, converter);
         if (e != null) {
           dataList.add(e);
         }
@@ -165,23 +161,25 @@ public class ExcelImport extends AbstractExcelUtil {
     return dataList;
   }
 
-  public <F, E> E readRow(List<ExcelFieldDescription> fieldDescriptions, Class<F> cls, Row row,
-      Converter<F, E> converter)
+  public <F, E> E readRow(ExcelField<F, ?>[] excelFields, Row row, ExcelConverter<F, E> converter)
       throws InstantiationException, IllegalAccessException, ExcelImportException {
     boolean notAllBlank = false;
     int column = 0;
+    Class<F> cls = excelFields[0].entityType;
     F o = cls.newInstance();
     List<CellError> rowErrors = new ArrayList<>();
     int rowNum = row.getRowNum() + 1;
-    for (ExcelFieldDescription fieldDescription : fieldDescriptions) {
+
+    for (ExcelField<F, ?> excelField : excelFields) {
+
       Object val = getCellValue(row, column++);
       if (val != null) {
         String valStr = String.valueOf(val).trim();
         notAllBlank = notAllBlank || StringUtils.hasText(valStr);
         try {
-          fieldDescription.write(o, valStr, validator, validateGroups);
+          excelField.setProperty(o, valStr, validator, validateGroups);
         } catch (Exception ex) {
-          rowErrors.add(new CellError(rowNum, column - 1, fieldDescription.title(), valStr, ex));
+          rowErrors.add(new CellError(rowNum, column - 1, excelField.title(), valStr, ex));
         }
       }
     }

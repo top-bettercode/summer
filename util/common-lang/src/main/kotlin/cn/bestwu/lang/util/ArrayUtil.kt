@@ -36,7 +36,7 @@ object ArrayUtil {
     </T> */
     @SafeVarargs
     @JvmStatic
-    fun <T> toArray(vararg items: T?): Array<out T?> {
+    fun <T> of(vararg items: T?): Array<out T?> {
         return items
     }
 

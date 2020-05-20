@@ -6,8 +6,6 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
-import java.util.function.Consumer;
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,12 +18,8 @@ import org.springframework.util.StringUtils;
 /**
  * 导出Excel文件（导出“XLSX”格式，支持大数据量导出 ）
  */
-public class ExcelExport extends AbstractExcelUtil {
+public class ExcelExport {
 
-  /**
-   * 注解列表（ExcelFieldDescription）
-   */
-  private final List<ExcelFieldDescription> fieldDescriptions;
   /**
    * 工作薄对象
    */
@@ -65,11 +59,10 @@ public class ExcelExport extends AbstractExcelUtil {
   /**
    * 构造函数
    *
-   * @param os  Output stream eventually holding the serialized workbook.
-   * @param cls 实体对象，通过annotation.ExportField获取标题
+   * @param os Output stream eventually holding the serialized workbook.
    */
-  public ExcelExport(OutputStream os, Class<?> cls) {
-    this(os, null, cls);
+  public ExcelExport(OutputStream os) {
+    this(os, null);
   }
 
   /**
@@ -77,11 +70,9 @@ public class ExcelExport extends AbstractExcelUtil {
    *
    * @param os        Output stream eventually holding the serialized workbook.
    * @param sheetname sheetname
-   * @param cls       实体对象，通过annotation.ExportField获取标题
    */
-  public ExcelExport(OutputStream os, String sheetname, Class<?> cls) {
+  public ExcelExport(OutputStream os, String sheetname) {
     this.workbook = new Workbook(os, "", "1.0");
-    fieldDescriptions = getExcelFieldDescriptions(cls, ExcelFieldType.EXPORT);
     if (StringUtils.hasText(sheetname)) {
       initSheet(sheetname);
     }
@@ -146,11 +137,9 @@ public class ExcelExport extends AbstractExcelUtil {
     return this;
   }
 
-  public void createHeader(Consumer<? super ExcelFieldDescription> action) {
+  public <T> void createHeader(ExcelField<T, ?>[] excelFields) {
     // Create header
-    if (action != null) {
-      fieldDescriptions.forEach(action);
-    } else {
+    {
       String alignment = Alignment.CENTER.name().toLowerCase();
       if (serialNumber) {
         sheet.value(r, c, serialNumberName);
@@ -165,12 +154,13 @@ public class ExcelExport extends AbstractExcelUtil {
             .set();
         c++;
       }
-      for (ExcelFieldDescription excelFieldDescription : fieldDescriptions) {
-        String t = excelFieldDescription.title();
+      for (ExcelField<T, ?> excelField : excelFields) {
+        String t = excelField.title();
         sheet.value(r, c, t);
-        double width = excelFieldDescription.getExcelField().width();
+        double width = excelField.width();
         if (width == -1) {
           columnWidths.put(c, t);
+          sheet.width(c, columnWidths.width(c));
         } else {
           sheet.width(c, width);
         }
@@ -183,7 +173,7 @@ public class ExcelExport extends AbstractExcelUtil {
             .borderStyle("thin").borderColor("000000")
             .set();
         if (includeComment) {
-          String commentStr = excelFieldDescription.comment();
+          String commentStr = excelField.comment();
           if (StringUtils.hasText(commentStr)) {
             sheet.comment(r, c, commentStr);
           }
@@ -197,18 +187,17 @@ public class ExcelExport extends AbstractExcelUtil {
 
 
   /**
-   * 添加数据（通过annotation.ExportField添加数据）
-   *
-   * @param <E>  E
-   * @param list list
+   * @param <T>         E
+   * @param list        list
+   * @param excelFields 表格字段
    * @return list 数据列表
    */
-  public <E> ExcelExport setDataList(Iterable<E> list) {
+  public <T> ExcelExport setDataList(Iterable<T> list, ExcelField<T, ?>[] excelFields) {
     Assert.notNull(sheet, "表格未初始化");
-    createHeader(null);
-    Iterator<E> iterator = list.iterator();
+    createHeader(excelFields);
+    Iterator<T> iterator = list.iterator();
     while (iterator.hasNext()) {
-      E e = iterator.next();
+      T e = iterator.next();
       boolean fill = r % 2 == 0;
       if (serialNumber) {
         sheet.value(r, c, r);
@@ -227,24 +216,23 @@ public class ExcelExport extends AbstractExcelUtil {
         }
         c++;
       }
-      for (ExcelFieldDescription fieldDescription : fieldDescriptions) {
-        ExcelField excelField = fieldDescription.getExcelField();
+      for (ExcelField<T, ?> excelField : excelFields) {
         StyleSetter style = sheet.style(r, c)
             .horizontalAlignment(excelField.align().name().toLowerCase())
             .verticalAlignment(Alignment.CENTER.name().toLowerCase())
             .wrapText(wrapText)
-            .format(fieldDescription.getCellFormat())
+            .format(excelField.getCellFormat())
             .borderStyle("thin").borderColor("000000");
         if (fill) {
           style.fillColor("F8F8F7");
         }
         style.set();
 
-        Object val = fieldDescription.read(e);
+        Object val = excelField.cellValue(e);
         sheet.value(r, c, val);
         if (excelField.width() == -1) {
           columnWidths
-              .put(c, val.getClass().equals(Date.class) ? fieldDescription.getCellFormat() : val);
+              .put(c, val.getClass().equals(Date.class) ? excelField.getCellFormat() : val);
 
           if (!iterator.hasNext()) {
             sheet.width(c, columnWidths.width(c));
@@ -260,18 +248,9 @@ public class ExcelExport extends AbstractExcelUtil {
     return this;
   }
 
-
-  public ExcelExport template() throws IOException {
+  public <T> ExcelExport template(ExcelField<T, ?>[] excelFields) throws IOException {
     includeComment = true;
-    setDataList(Collections.emptyList());
-    for (ExcelFieldDescription fieldDescription : fieldDescriptions) {
-      ExcelField excelField = fieldDescription.getExcelField();
-      if (excelField.width() == -1) {
-        sheet.width(c, columnWidths.width(c));
-      } else {
-        sheet.width(c, excelField.width());
-      }
-    }
+    setDataList(Collections.emptyList(), excelFields);
     finish();
     return this;
   }
@@ -287,10 +266,11 @@ public class ExcelExport extends AbstractExcelUtil {
     return this;
   }
 
-  public ExcelExport template(HttpServletRequest request, HttpServletResponse response,
+  public <T> ExcelExport template(ExcelField<T, ?>[] excelFields,HttpServletRequest request,
+      HttpServletResponse response,
       String fileName) throws IOException {
     write(request, response, fileName);
-    return template();
+    return template(excelFields);
   }
 
   /**

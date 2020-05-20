@@ -16,7 +16,7 @@ public interface IErrorHandler {
    * @param respEntity 响应容器
    * @param errors 错误
    */
-  void handlerException(Throwable error, RespEntity respEntity,
+  void handlerException(Throwable error, RespEntity<?> respEntity,
       Map<String, String> errors);
 
   /**
