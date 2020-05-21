@@ -59,7 +59,7 @@ public class Response {
    * @return 200 ResponseEntity
    */
   protected ResponseEntity<?> message(String message) {
-    return ok(new RespEntity<>(HttpStatus.OK.toString(), message));
+    return ok(new RespEntity<>(String.valueOf(HttpStatus.OK.value()), message));
   }
 
   /**
