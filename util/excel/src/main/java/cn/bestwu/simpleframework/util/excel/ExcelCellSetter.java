@@ -11,5 +11,5 @@ import java.io.Serializable;
 @FunctionalInterface
 public interface ExcelCellSetter<T, P> extends Serializable {
 
-  void set(T entity, P property);
+  void set(T entity, P property) throws NoSuchMethodException;
 }
