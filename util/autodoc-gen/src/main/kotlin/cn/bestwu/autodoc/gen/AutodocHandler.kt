@@ -128,14 +128,17 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                 request.headersExt.forEach {
                     it.required = requiredHeaders.contains(it.name)
                 }
-                request.parametersExt = request.parameters.singleValueMap.toFields(request.parametersExt, expand = true)
-                request.parametersExt.forEach {
-                    it.required = requiredParameters.contains(it.name)
-                }
-                request.partsExt = request.parts.filter { p -> request.parametersExt.none { p.name == it.name } }.toFields(request.partsExt)
+
+                request.partsExt = request.parts.toFields(request.partsExt)
                 request.partsExt.forEach {
                     it.required = requiredParameters.contains(it.name)
                 }
+
+                request.parametersExt = request.parameters.singleValueMap.filter { p -> request.partsExt.none { p.key == it.name } }.toFields(request.parametersExt, expand = true)
+                request.parametersExt.forEach {
+                    it.required = requiredParameters.contains(it.name)
+                }
+
                 request.contentExt = request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
                         ?: linkedSetOf()
 
