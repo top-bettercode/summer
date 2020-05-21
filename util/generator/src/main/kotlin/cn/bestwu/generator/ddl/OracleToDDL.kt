@@ -42,7 +42,6 @@ object OracleToDDL : ToDDL() {
                                 out.println("ALTER TABLE $quote$tableName$quote DROP PRIMARY KEY;")
                         }
 
-                        updateIndexes(oldTable, table, out)
 
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
@@ -74,6 +73,8 @@ object OracleToDDL : ToDDL() {
                             if (primaryKey.columnName != oldPrimaryKey.columnName)
                                 out.println("ALTER TABLE $quote$tableName$quote ADD PRIMARY KEY(\"$quote${primaryKey.columnName}$quote\" )")
                         }
+
+                        updateIndexes(oldTable, table, out)
 
                         out.println()
                     }
