@@ -35,10 +35,10 @@ public class ExcelTest {
     });
   }
 
-  private ExcelField<DataBean, ?>[] excelFields = ArrayUtil.of(
-      ExcelField.export(DataBean::getA).title("编码"),
-      ExcelField.export(DataBean::getName).title("名称"),
-      ExcelField.export(DataBean::getDesc).title("描述")
+  private final ExcelField<DataBean, ?>[] excelFields = ArrayUtil.of(
+      ExcelField.of("编码", DataBean::getA),
+      ExcelField.of("名称", DataBean::getName),
+      ExcelField.of("描述", DataBean::getDesc)
 //      new ExcelField<DataBean, String>().propertySetter(DataBean::setCode).title("编码"),
   );
 
@@ -64,7 +64,6 @@ public class ExcelTest {
     List<DataBean> list = new ExcelImport(new File("build/export.xlsx"))
         .getDataList(excelFields);
     System.out.println(StringUtil.valueOf(list, true));
-//    Assert.assertEquals(3L, list.size());
   }
 
   @Test
@@ -132,9 +131,8 @@ public class ExcelTest {
       return a;
     }
 
-    public DataBean setA(Long a) {
+    public void setA(Long a) {
       this.a = a;
-      return this;
     }
 
     public Integer getB() {

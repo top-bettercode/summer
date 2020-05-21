@@ -228,7 +228,7 @@ public class ExcelExport {
         }
         style.set();
 
-        Object val = excelField.cellValue(e);
+        Object val = excelField.toCellValue(e);
         sheet.value(r, c, val);
         if (excelField.width() == -1) {
           columnWidths
