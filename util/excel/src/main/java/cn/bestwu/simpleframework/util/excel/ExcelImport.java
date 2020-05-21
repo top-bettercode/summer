@@ -171,7 +171,6 @@ public class ExcelImport {
     int rowNum = row.getRowNum() + 1;
 
     for (ExcelField<F, ?> excelField : excelFields) {
-
       Object val = getCellValue(row, column++);
       if (val != null) {
         String valStr = String.valueOf(val).trim();

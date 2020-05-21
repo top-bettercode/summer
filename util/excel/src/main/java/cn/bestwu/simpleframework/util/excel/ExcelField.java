@@ -57,25 +57,24 @@ public class ExcelField<T, P> {
   private double width = -1;
 
   /**
-   * 实体转单元格值
+   * 获取实体属性
    */
-  private ExcelConverter<T, P> fieldConverter;
+  private ExcelConverter<T, P> propertyGetter;
+
+  /**
+   * 设置实体属性
+   */
+  private ExcelCellSetter<T, P> propertySetter;
 
   /**
    * 单元格值转属性字段值
    */
   private ExcelConverter<String, Object> propertyConverter;
 
-
   /**
    * 属性字段值转单元格值
    */
   private ExcelConverter<P, Object> cellConverter;
-
-  /**
-   * 单元格值设置实体属性
-   */
-  private ExcelCellSetter<T, P> propertySetter;
 
   /**
    * 实体类型
@@ -95,8 +94,8 @@ public class ExcelField<T, P> {
   protected DateTimeFormatter dateTimeFormatter;
 
   //--------------------------------------------
-  public static <T, P> ExcelField<T, P> of(String title, ExcelConverter<T, P> fieldConverter) {
-    return new ExcelField<>(title, fieldConverter);
+  public static <T, P> ExcelField<T, P> of(String title, ExcelConverter<T, P> propertyGetter) {
+    return new ExcelField<>(title, propertyGetter);
   }
   //--------------------------------------------
 
@@ -161,7 +160,7 @@ public class ExcelField<T, P> {
   //--------------------------------------------
 
   public ExcelField<T, P> getter(ExcelConverter<T, P> cellConverter) {
-    this.fieldConverter = cellConverter;
+    this.propertyGetter = cellConverter;
     return this;
   }
 
@@ -182,13 +181,13 @@ public class ExcelField<T, P> {
 
   //--------------------------------------------
   @SuppressWarnings("unchecked")
-  private ExcelField(String title, ExcelConverter<T, P> fieldConverter) {
+  private ExcelField(String title, ExcelConverter<T, P> propertyGetter) {
     this.title = title;
-    this.fieldConverter = fieldConverter;
+    this.propertyGetter = propertyGetter;
     try {
-      Method writeReplace = fieldConverter.getClass().getDeclaredMethod("writeReplace");
+      Method writeReplace = propertyGetter.getClass().getDeclaredMethod("writeReplace");
       writeReplace.setAccessible(true);
-      SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(fieldConverter);
+      SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(propertyGetter);
       String implMethodName = serializedLambda.getImplMethodName();
       propertyName = resolvePropertyName(implMethodName);
       entityType = (Class<T>) ClassUtils
@@ -250,7 +249,7 @@ public class ExcelField<T, P> {
    * @return 单元格值
    */
   public Object toCellValue(T obj) {
-    P property = fieldConverter.convert(obj);
+    P property = propertyGetter.convert(obj);
     if (property == null) {
       property = defaultValue;
     }
