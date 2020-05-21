@@ -132,13 +132,17 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                 request.parametersExt.forEach {
                     it.required = requiredParameters.contains(it.name)
                 }
-                request.partsExt = request.parts.toFields(request.partsExt)
+                request.partsExt = request.parts.filter { p -> request.parametersExt.none { p.name == it.name } }.toFields(request.partsExt)
+                request.partsExt.forEach {
+                    it.required = requiredParameters.contains(it.name)
+                }
                 request.contentExt = request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
                         ?: linkedSetOf()
 
                 val response = docOperation.response as DocOperationResponse
                 response.headersExt = response.headers.singleValueMap.toFields(response.headersExt)
-                response.contentExt = response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)?: linkedSetOf()
+                response.contentExt = response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)
+                        ?: linkedSetOf()
 
                 InitField.extFieldExt(genProperties, docOperation)
                 InitField.init(docOperation, extension, genProperties.allTables, wrap)
