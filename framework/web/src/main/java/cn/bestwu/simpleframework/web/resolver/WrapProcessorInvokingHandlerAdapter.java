@@ -8,16 +8,16 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
-public class WrappProcessorInvokingHandlerAdapter extends RequestMappingHandlerAdapter {
+public class WrapProcessorInvokingHandlerAdapter extends RequestMappingHandlerAdapter {
 
   private static final Method RETURN_VALUE_HANDLER_METHOD = ReflectionUtils
-      .findMethod(WrappProcessorInvokingHandlerAdapter.class, "getReturnValueHandlers");
+      .findMethod(WrapProcessorInvokingHandlerAdapter.class, "getReturnValueHandlers");
 
   private final Boolean okEnable;
   private final Boolean wrapEnable;
 
 
-  public WrappProcessorInvokingHandlerAdapter(Boolean okEnable, Boolean wrapEnable) {
+  public WrapProcessorInvokingHandlerAdapter(Boolean okEnable, Boolean wrapEnable) {
     this.okEnable = okEnable;
     this.wrapEnable = wrapEnable;
   }
@@ -33,7 +33,7 @@ public class WrappProcessorInvokingHandlerAdapter extends RequestMappingHandlerA
 
     // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
     List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
-    newHandlers.add(new WrappHandlerMethodReturnValueHandler(oldHandlers, okEnable, wrapEnable));
+    newHandlers.add(new WrapHandlerMethodReturnValueHandler(oldHandlers, okEnable, wrapEnable));
 
     // Configure the new handler to be used
     this.setReturnValueHandlers(newHandlers);
