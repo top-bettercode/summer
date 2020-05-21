@@ -51,7 +51,7 @@ public class ExcelTest {
     }
     long s = System.currentTimeMillis();
     new ExcelExport(new FileOutputStream("build/export.xlsx"), "表格")
-        .setDataList(list, excelFields).finish();
+        .setData(list, excelFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
     Runtime.getRuntime().exec("xdg-open " + System.getProperty("user.dir") + "/build/export.xlsx");
@@ -62,7 +62,7 @@ public class ExcelTest {
   public void testImport() throws Exception {
     testExport();
     List<DataBean> list = new ExcelImport(new File("build/export.xlsx"))
-        .getDataList(excelFields);
+        .getData(excelFields);
     System.out.println(StringUtil.valueOf(list, true));
   }
 
