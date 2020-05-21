@@ -16,14 +16,14 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 /**
  * @author Peter Wu
  */
-public class WrappHandlerMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
+public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
 
 
   private final HandlerMethodReturnValueHandler delegate;
   private final Boolean okEnable;
   private final Boolean wrapEnable;
 
-  public WrappHandlerMethodReturnValueHandler(
+  public WrapHandlerMethodReturnValueHandler(
       HandlerMethodReturnValueHandler delegate, Boolean okEnable, Boolean wrapEnable) {
     this.delegate = delegate;
     this.okEnable = okEnable;
@@ -64,11 +64,14 @@ public class WrappHandlerMethodReturnValueHandler implements HandlerMethodReturn
   public boolean supportsRewrapType(MethodParameter returnType) {
     Class<?> typeContainingClass = returnType.getContainingClass();
     Class<?> parameterType = returnType.getParameterType();
-    return !void.class.equals(parameterType) && (
-        (AnnotatedElementUtils.hasAnnotation(typeContainingClass, ResponseBody.class) ||
-            returnType.hasMethodAnnotation(ResponseBody.class)) || (
-            HttpEntity.class.isAssignableFrom(parameterType) &&
-                !RequestEntity.class.isAssignableFrom(parameterType)));
+    return !void.class.equals(parameterType) && !AnnotatedElementUtils
+        .hasAnnotation(parameterType, NoWrap.class) && !AnnotatedElementUtils
+        .hasAnnotation(typeContainingClass, NoWrap.class) &&
+        !returnType.hasMethodAnnotation(NoWrap.class) && (
+        AnnotatedElementUtils.hasAnnotation(typeContainingClass, ResponseBody.class) ||
+            returnType.hasMethodAnnotation(ResponseBody.class)
+            || HttpEntity.class.isAssignableFrom(parameterType) &&
+            !RequestEntity.class.isAssignableFrom(parameterType));
   }
 
   private Object rewrapResult(Object originalValue) {

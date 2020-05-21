@@ -13,7 +13,7 @@ import cn.bestwu.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
 import cn.bestwu.simpleframework.web.kaptcha.KaptchaProperties;
 import cn.bestwu.simpleframework.web.resolver.StringToEnumConverterFactory;
-import cn.bestwu.simpleframework.web.resolver.WrappProcessorInvokingHandlerAdapter;
+import cn.bestwu.simpleframework.web.resolver.WrapProcessorInvokingHandlerAdapter;
 import cn.bestwu.simpleframework.web.serializer.BigDecimalSerializer;
 import cn.bestwu.simpleframework.web.serializer.MixIn;
 import com.fasterxml.jackson.databind.Module;
@@ -290,7 +290,7 @@ public class FrameworkMvcConfiguration {
     return new WebMvcRegistrations() {
       @Override
       public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
-        return new WrappProcessorInvokingHandlerAdapter(okEnable, wrapEnable);
+        return new WrapProcessorInvokingHandlerAdapter(okEnable, wrapEnable);
       }
 
     };
