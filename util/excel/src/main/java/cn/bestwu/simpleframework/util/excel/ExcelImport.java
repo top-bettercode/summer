@@ -99,9 +99,9 @@ public class ExcelImport {
    * @throws InstantiationException InstantiationException
    */
   @SuppressWarnings("unchecked")
-  public <F, E> List<E> getDataList(ExcelField<F, ?>[] excelFields)
+  public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields)
       throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
-    return getDataList(excelFields, (o) -> (E) o);
+    return getData(excelFields, (o) -> (E) o);
   }
 
 
@@ -118,10 +118,10 @@ public class ExcelImport {
    * @throws ExcelImportException   ExcelImportException
    * @throws InstantiationException InstantiationException
    */
-  public <F, E> List<E> getDataList(ExcelField<F, ?>[] excelFields,
+  public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields,
       ExcelConverter<F, E> converter)
       throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
-    return getDataList(0, 0, excelFields, converter);
+    return getData(0, 0, excelFields, converter);
   }
 
 
@@ -140,7 +140,7 @@ public class ExcelImport {
    * @throws ExcelImportException   ExcelImportException
    * @throws InstantiationException InstantiationException
    */
-  public <F, E> List<E> getDataList(int sheetIndex, int headerNum,
+  public <F, E> List<E> getData(int sheetIndex, int headerNum,
       ExcelField<F, ?>[] excelFields,
       ExcelConverter<F, E> converter)
       throws IOException, IllegalAccessException, ExcelImportException, InstantiationException {

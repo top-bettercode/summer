@@ -88,12 +88,12 @@ public class ExcelExport {
     return this;
   }
 
-  public ExcelExport setSerialNumber(boolean serialNumber) {
+  public ExcelExport serialNumber(boolean serialNumber) {
     this.serialNumber = serialNumber;
     return this;
   }
 
-  public ExcelExport setSerialNumberName(String serialNumberName) {
+  public ExcelExport serialNumberName(String serialNumberName) {
     this.serialNumberName = serialNumberName;
     return this;
   }
@@ -192,7 +192,7 @@ public class ExcelExport {
    * @param excelFields 表格字段
    * @return list 数据列表
    */
-  public <T> ExcelExport setDataList(Iterable<T> list, ExcelField<T, ?>[] excelFields) {
+  public <T> ExcelExport setData(Iterable<T> list, ExcelField<T, ?>[] excelFields) {
     Assert.notNull(sheet, "表格未初始化");
     createHeader(excelFields);
     Iterator<T> iterator = list.iterator();
@@ -250,7 +250,7 @@ public class ExcelExport {
 
   public <T> ExcelExport template(ExcelField<T, ?>[] excelFields) throws IOException {
     includeComment = true;
-    setDataList(Collections.emptyList(), excelFields);
+    setData(Collections.emptyList(), excelFields);
     finish();
     return this;
   }
