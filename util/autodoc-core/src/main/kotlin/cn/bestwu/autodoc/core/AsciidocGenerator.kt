@@ -343,7 +343,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         out.append("|${str(field.requiredDescription)}")
         out.append("|${str(field.description, true)}")
         out.append("|${str(field.defaultVal)}")
-        out.append("|${str(if (field.children.isNotEmpty()) "" else field.value)}")
+        out.append("|${str(field.value)}")
         out.appendln()
         var size = 1
         field.children.forEach {
