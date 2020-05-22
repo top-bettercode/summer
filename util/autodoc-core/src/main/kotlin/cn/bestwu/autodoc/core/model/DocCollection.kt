@@ -44,14 +44,14 @@ data class DocCollection(override val name: String = "", var items: LinkedHashSe
 
                 uri = URI(uriString)
 
-                headers = headersExt.associateTo(HttpHeaders(), { field -> Pair(field.name, field.value.split(",").map { it.trim() }) })
-                parameters = parametersExt.associateTo(Parameters(), { field -> Pair(field.name, field.value.split(",").map { it.trim() }) })
+                headers = headersExt.associateTo(HttpHeaders(), { field -> Pair(field.name, listOf(field.value)) })
+                parameters = parametersExt.associateTo(Parameters(), { field -> Pair(field.name, listOf(field.value)) })
                 parts = partsExt.map { field -> OperationRequestPart(field.name, field.partType, headers, field.value.toByteArray()) }
             }
 
             docOperation.response.apply {
                 this as DocOperationResponse
-                headers = headersExt.associateTo(HttpHeaders(), { field -> Pair(field.name, field.value.split(",").map { it.trim() }) })
+                headers = headersExt.associateTo(HttpHeaders(), { field -> Pair(field.name, listOf(field.value)) })
             }
 
             docOperation
