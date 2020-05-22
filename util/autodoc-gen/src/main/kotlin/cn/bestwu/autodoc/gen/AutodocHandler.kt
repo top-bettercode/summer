@@ -108,9 +108,6 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
 
                 val requiredParameters = RequiredParameters.calculate(handler)
                 requiredParameters.addAll(Autodoc.requiredParameters)
-                requiredParameters.forEach {
-                    request.parameters[it] = request.parameters[it] ?: listOf()
-                }
 
                 val signName = signProperties.parameterName
                 if (requiredHeaders.contains(signName)) {
@@ -129,18 +126,21 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                     it.required = requiredHeaders.contains(it.name)
                 }
 
+                request.parametersExt = request.parameters.singleValueMap.toFields(request.parametersExt, expand = true)
+                request.parametersExt.forEach {
+                    it.required = requiredParameters.contains(it.name)
+                }
+
                 request.partsExt = request.parts.toFields(request.partsExt)
                 request.partsExt.forEach {
                     it.required = requiredParameters.contains(it.name)
                 }
 
-                request.parametersExt = request.parameters.singleValueMap.filter { p -> request.partsExt.none { p.key == it.name } }.toFields(request.parametersExt, expand = true)
-                request.parametersExt.forEach {
-                    it.required = requiredParameters.contains(it.name)
-                }
-
                 request.contentExt = request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
                         ?: linkedSetOf()
+                request.contentExt.forEach {
+                    it.required = requiredParameters.contains(it.name)
+                }
 
                 val response = docOperation.response as DocOperationResponse
                 response.headersExt = response.headers.singleValueMap.toFields(response.headersExt)
@@ -178,9 +178,9 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                 name = operation.name
                 protocol = operation.protocol
                 val existReq = request as DocOperationRequest
-                request = DocOperationRequest(operation.request, existReq.uriVariablesExt, existReq.headersExt, existReq.parametersExt, existReq.partsExt, existReq.contentExt)
+                request = DocOperationRequest(operationRequest = operation.request, uriVariablesExt = existReq.uriVariablesExt, headersExt = existReq.headersExt, parametersExt = existReq.parametersExt, partsExt = existReq.partsExt, contentExt = existReq.contentExt)
                 val existRes = response as DocOperationResponse
-                response = DocOperationResponse(operation.response, existRes.headersExt, existRes.contentExt)
+                response = DocOperationResponse(operationResponse = operation.response, headersExt = existRes.headersExt, contentExt = existRes.contentExt)
             }
             exist
         } else {
