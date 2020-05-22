@@ -1,0 +1,157 @@
+request:
+  parametersExt:
+   -
+    name: "platformName"
+    type: "String(200)"
+    description: "平台名称"
+    value: "名称"
+    canCover: true
+    required: false
+   -
+    name: "platformNo"
+    type: "String(50)"
+    description: "平台编号"
+    value: "编号"
+    canCover: true
+    required: false
+   -
+    name: "sipAddress"
+    type: "String(40)"
+    description: "信令地址"
+    value: "地址"
+    canCover: true
+    required: false
+  headersExt:
+   -
+    name: "Accept"
+    type: "String"
+    description: "客户端接收格式"
+    value: "application/json"
+    canCover: true
+    required: false
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/x-www-form-urlencoded"
+    canCover: true
+    required: false
+   -
+    name: "Authorization"
+    type: "String"
+    description: "授权码"
+    value: "bearer xxxx-xxxx-xxxx-xxxx-xxxx"
+    canCover: true
+    required: true
+  restUri: "/user/devicePlatforms/export"
+  method: "GET"
+response:
+  headersExt:
+   -
+    name: "Content-Disposition"
+    type: "String"
+    description: "Content-Disposition"
+    value: "attachment;filename==?UTF8?B?6K6+5aSH5bmz5Y+w?=.xlsx;filename*=UTF-8''%E8%AE%BE%E5%A4%87%E5%B9%B3%E5%8F%B0.xlsx"
+    canCover: true
+    required: false
+   -
+    name: "Content-Type"
+    type: "String"
+    description: "内容类型"
+    value: "application/vnd.ms-excel; charset=utf-8"
+    canCover: true
+    required: false
+   -
+    name: "Pragma"
+    type: "String"
+    description: "Pragma"
+    value: "No-cache"
+    canCover: true
+    required: false
+   -
+    name: "Cache-Control"
+    type: "String"
+    description: "Cache-Control"
+    value: "no-cache"
+    canCover: true
+    required: false
+   -
+    name: "Expires"
+    type: "String"
+    description: "Expires"
+    value: "Thu, 01 Jan 1970 00:00:00 GMT"
+    canCover: true
+    required: false
+  statusCode: 200
+  contentAsString: "PK\x03\x04-\0\b\0\b\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x18\0\0\0\
+    xl/worksheets/sheet1.xml��[o�0\x18�����\x01�Ԩ\x02��i�]L��u�v��U��v�����\x10�\x15\
+    ���Ć�{엏C���w��\x19't���\v �CI+249|�}���OEv�썷\x18\v ��\x15b|�}^��Gܣ#\x1e䙚�\x1e\t\
+    9e��G�Q����\x0f� �{D\x06h\f��\x7f\x1c��I�����x\x10F�p���,o��a�UD�S�\a\f�9���~�\
+    �e�\x10|�1P)Δ����*��B}�=�\x1d�d��5�t�\x17�}äi��>���J�q�\vz�.\e\x04=z��7R�6���\
+    O!(/\\���9$�\x05Cp�\\��Tը�xr\x19K8Y�ٲ��%�,�]�x��wY�ɒ�eI'K�\x19�oZ�\e{D\x02\x15\
+    \x19�7�T��\x12j �\x18�u�d����E��WU:\x11\a�ح�g�\b���%�5��\x12�8�D2\x13��5�\v�p�\
+    .\tu����\x0f��6¹�\x1d�\x10�H�p��\x0e�t�;]���p�.I\x16%��\x0e�H7¹�\x1d�\x10\x0f\e\
+    �\\�\x1dn��\f\x17��b�s�\rs0�V�\\�\x0eg��ι\x0e;���q8�5�߈\x1a�\x03��\f\x1c�����\
+    |\x13{\x0f��5�\x0235�����1O:\\\vMA�̛X�\x05\x1d�Z���\x1f��\x1fPK\a\b/V�2�\x01\0\
+    \0\0\0\0\0�\x06\0\0\0\0\0\0PK\x03\x04-\0\b\0\b\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\x13\0\0\0[Content_Types].xml���N\x021\x10�_���\x16�0ưp��RI�\a��,��S:\x05��\
+    ]\x0e�\x04Q\x12��v�����v4Y{�V���P�\x18p\x06AGcü�\x1f���3,*\x18�b��o\0�d<�m\x12\
+    \ #m�����\a)Q��\x15�� P��٫B�<�I酚��\x1d\f�@(U�<�x�\x04�Z�\x9e�t�͑�!g��ƎUs���Z\x15\
+    ��U0G�jG\x10��{��\to��˓���;`�{��dk�MU.��S�\\;���`�K�!�8�t\"jl\x1a��D��$\x11�2(�\
+    -@�N�����-G�8�z���\x0f�W̋�\x18\x17�fw��ʆ\x7f��f��2�r����\x1c��昐\x1et��\x03�_l�\
+    �\x12\x19A.���\x0fD��\x1cxtc�>�\x01s�-��=�\x06PK\a\b�\x06\x10\v@\x01\0\0\0\0\0\
+    \0\x1d\x04\0\0\0\0\0\0PK\x03\x04-\0\b\0\b\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x10\
+    \0\0\0docProps/app.xmlU��\n�0\x10\x05\x7f���n� \"iJA<{P�%ݶ�f\x13�U��.���a\x1e�\
+    ����)�@��T�*�l\x18\x1cM��^N�^�F�S���a.dO�Q3s<\0d;��s%�Č!��\x05�\x04a\x1c��c�w�\
+    İ��\x1d��H\x03\x0ee�\x1e*��\x18\x17g{�\x04��\x04n�8#m/�a\r�*�\x04PK\a\b;�r��\0\
+    \0\0\0\0\0\0�\0\0\0\0\0\0\0PK\x03\x04-\0\b\0\b\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\x11\0\0\0docProps/core.xmlm�MK�0\x10��Jɽ������{P�� ��x\v��-6\x1f$�]��i]���\x1c\
+    2��<L��\x1c̐�c���\r+\v�2����v\r{�m�5�\"I���,6�:�ik�r\x01��\x18�ǘ%��B��퉼\0�j�F�\
+    \"\x116�/.\x18I�\r\x1dx�^e�Pq~\x01\x06IjI\x12&a�\x17#;*�Z��-\f�@+�\x01\rZ�P\x16\
+    %�����\x7f\a�d!\x0f�_�q\x1c�q5si�\x12�no�����N_W����\x16*�$�Y\x12\b���\"�����\
+    z�em�+���*w�R�*Uq�~��D19��.�S���s��\x13PK\a\b�M\v��\0\0\0\0\0\0\0�\x01\0\0\0\0\
+    \0\0PK\x03\x04-\0\b\0\b\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\v\0\0\0_rels/.rels��\
+    �N�0\f@\x7f%�}u7$�в]\x10�n\b�\x0f0��Fm�(\t��=ဠ�\x18=Ʊ��-��4�w�ɉװ�jP�X�;\r/���\x0e\
+    T��-��YÙ\x13\x1c\x0f�g\x1e)��Ի�Ta����9�#&��D������\x12'��\x19;\fd\x06�\x18wu}�\
+    �7\x03�Lu�\x1a��ހj΁װ�m��\a1o\x13�|�\x05��[��\x10K}̢̮\x1a�\x1dg\rV�S\t'�\x10��\x06\
+    �l�[o���8q&K��H��>_\x19ׄ���_�2��f\x1e�C��*2|���\x06\x0e�PK\a\b�\"B��\0\0\0\0\0\
+    \0\0J\x02\0\0\0\0\0\0PK\x03\x04-\0\b\0\b\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x0f\
+    \0\0\0xl/workbook.xml���n� \x10E\x7f\x05M��\x12p�6�c�MU)�.��1\f1�\x01\v���\x1d\
+    Y鲫��9st�����!\x1a�8\x14K\x06\x04��ʸ#����b\r����pj�?�L�ȡKi�(��C+��\x0f��E�`E�5\x1c\
+    i\x1c\x02\n\x15;�d{���;��8�\e��\x1f���H���lѥ�$`/R�\x1a;3Dx,�\nD��ņ�rТ�\b���ˏ�\
+    k|�c%B&s��h9���\x7f�i��\t�\x1c��n��mη\r[M��r�R�-�P\x19�!�U\td���ZL�YH�\t�/PK\a\
+    \b���\0\0\0\0\0\0\0v\x01\0\0\0\0\0\0PK\x03\x04-\0\b\0\b\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\x1a\0\0\0xl/_rels/workbook.xml.rels��Mk�0\f@���}q��\x18�n/c����\0c+qh\"\
+    \x19K�迟���@\a;�$��{\x0f��~Γy�\"#���i� \x05�#\r\x0e^�O7�`D=E?1�\x03b�n��8y�?$�\
+    YLE�8H���Z\t\tg/\rg����^�\f6�p�\x03�U���r΀%�좃��\x1d��/\x03�\x03I�`|�Rˤ��:f����\
+    ~\f���mF�\vv����\x1c�:���ׯ�������\x7fp9HB�Sy\x1dݵK~\x04�\x18����\vPK\a\b�\x03\
+    ;��\0\0\0\0\0\0\03\x02\0\0\0\0\0\0PK\x03\x04-\0\b\0\b\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\x14\0\0\0xl/sharedStrings.xml���N� \x14E\x7f�`�΁Z\x1c�C���_�\x1f���)Iy�\
+    B����v\x16\x13Ӆ�n.���/�����\v��\x02ִ�qJ\0��:<�����$&���\x03BM�!ңV1&�ob�i����Xl:�\
+    &��\0�\x13\eFoR���a\x04��\x0e ��=r�g�8��\t\x13�<5Ϙ�}N�\x1eH�'8�����<Ae\x0f��V\x1e\
+    \x14KZ�9��ey�����������K[���l�i�:m��B1�\x02@�\\���b��o^\x1a��\v�&\x0f�,\x1c�۾\
+    ,\x7f��\x01PK\a\b\n���\0\0\0\0\0\0\0�\x01\0\0\0\0\0\0PK\x03\x04-\0\b\0\b\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\r\0\0\0xl/styles.xml�V]o�0\x14�+��WC�f�\x04�j$�=�\
+    ���\x01K�@�[���]�\x14�\x04k��-H��>��\\��Jv3H����\\�\x1c�W\tFLU������\x01�\x14�\
+    ug��;�\x1c\x02��9��\x7f\x10b��Ij�t�\x14�4�H��Ӵ�����z�\x14d�${\")W��ԣ,���ҏ��x7�\
+    Pl~��d\x7f�Q�;���\x16�U��5,�02�Pd�V�'�\x01��\x19=Q\x01tH80*-�A�=�Bx�lT��;R�O�\a\
+    �\x10\x7fO��Zex��\n�7˅��~�f!Pd=u�\x19U�\a\x1a�\x0f�\x1erUZ�(\x13po�[C����r�Ղ��\
+    E{�3:$�\r\"\v�\x7fI�\ax�oJ�\x06V�M\r�t��1Td�5\x0e膷�o��\x1ftNK�Ԝ�ZQ�'xa,�(��\x1c\
+    �.��գ@<p��\"|@\x06+\x17�\x01���\"|���6v`�*&ĽW��L떂��,J(�\x05��.,�؍2���/բ�B��O�\
+    hh&�-v:�wKv:�\x11�{q�\vC1C��VI�\x1c��� �K��\03��w�W��Ooh�=le��\x1e�k��]�[��]��\
+    ��\x0f���\x1f\x1f�b}?��E�\x03B���\\�\t\b\x12\x1f�f��P�\x01PK\a\b�1'k�\x01\0\0\0\
+    \0\0\0\\\b\0\0\0\0\0\0PK\x01\x02-\0\x14\0\b\0\b\0\0\0\0\0/V�2�\x01\0\0�\x06\0\0\
+    \x18\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0xl/worksheets/sheet1.xmlPK\x01\x02-\0\x14\
+    \0\b\0\b\0\0\0\0\0�\x06\x10\v@\x01\0\0\x1d\x04\0\0\x13\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0I\x02\0\0[Content_Types].xmlPK\x01\x02-\0\x14\0\b\0\b\0\0\0\0\0;�r��\0\0\0�\0\
+    \0\0\x10\0\0\0\0\0\0\0\0\0\0\0\0\0�\x03\0\0docProps/app.xmlPK\x01\x02-\0\x14\0\
+    \b\0\b\0\0\0\0\0�M\v��\0\0\0�\x01\0\0\x11\0\0\0\0\0\0\0\0\0\0\0\0\0�\x04\0\0docProps/core.xmlPK\x01\
+    \x02-\0\x14\0\b\0\b\0\0\0\0\0�\"B��\0\0\0J\x02\0\0\v\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    �\x05\0\0_rels/.relsPK\x01\x02-\0\x14\0\b\0\b\0\0\0\0\0���\0\0\0v\x01\0\0\x0f\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\x14\a\0\0xl/workbook.xmlPK\x01\x02-\0\x14\0\b\0\b\0\0\
+    \0\0\0�\x03;��\0\0\03\x02\0\0\x1a\0\0\0\0\0\0\0\0\0\0\0\0\0@\b\0\0xl/_rels/workbook.xml.relsPK\x01\
+    \x02-\0\x14\0\b\0\b\0\0\0\0\0\n���\0\0\0�\x01\0\0\x14\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    d\t\0\0xl/sharedStrings.xmlPK\x01\x02-\0\x14\0\b\0\b\0\0\0\0\0�1'k�\x01\0\0\\\b\
+    \0\0\r\0\0\0\0\0\0\0\0\0\0\0\0\0�\n\0\0xl/styles.xmlPK\x05\x06\0\0\0\0\t\0\t\0\
+    ?\x02\0\0�\f\0\0\0\0"
+protocol: "HTTP/1.1"
