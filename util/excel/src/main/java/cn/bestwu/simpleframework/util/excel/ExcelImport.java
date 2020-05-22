@@ -89,8 +89,8 @@ public class ExcelImport {
   /**
    * 获取导入数据列表
    *
-   * @param <F> F
-   * @param <E> E
+   * @param <F>         F
+   * @param <E>         E
    * @param excelFields excelFields
    * @return List
    * @throws IOException            IOException
@@ -101,6 +101,7 @@ public class ExcelImport {
   @SuppressWarnings("unchecked")
   public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields)
       throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
+    Class<F> cls = excelFields[0].entityType;
     return getData(excelFields, (o) -> (E) o);
   }
 
@@ -108,9 +109,9 @@ public class ExcelImport {
   /**
    * 获取导入数据列表
    *
-   * @param converter F 转换为E
-   * @param <F>       F
-   * @param <E>       E
+   * @param converter   F 转换为E
+   * @param <F>         F
+   * @param <E>         E
    * @param excelFields excelFields
    * @return List
    * @throws IOException            IOException
@@ -118,29 +119,70 @@ public class ExcelImport {
    * @throws ExcelImportException   ExcelImportException
    * @throws InstantiationException InstantiationException
    */
-  public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields,
-      ExcelConverter<F, E> converter)
+  public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields, ExcelConverter<F, E> converter)
       throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
-    return getData(0, 0, excelFields, converter);
+    Class<F> cls = excelFields[0].entityType;
+    return getData(0, 0, cls, excelFields, converter);
+  }
+
+  /**
+   * 获取导入数据列表
+   *
+   * @param <F>         F
+   * @param <E>         E
+   * @param excelFields excelFields
+   * @param cls         实体类型
+   * @return List
+   * @throws IOException            IOException
+   * @throws IllegalAccessException IllegalAccessException
+   * @throws ExcelImportException   ExcelImportException
+   * @throws InstantiationException InstantiationException
+   */
+  @SuppressWarnings("unchecked")
+  public <F, E> List<E> getData(Class<F> cls, ExcelField<F, ?>[] excelFields)
+      throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
+    return getData(cls, excelFields, (o) -> (E) o);
   }
 
 
   /**
    * 获取导入数据列表
    *
-   * @param headerNum  标题行号，数据行号=标题行号+1
-   * @param sheetIndex 工作表编号
+   * @param converter   F 转换为E
+   * @param <F>         F
+   * @param <E>         E
    * @param excelFields excelFields
-   * @param converter  F 转换为E
-   * @param <F>        F
-   * @param <E>        E
+   * @param cls         实体类型
    * @return List
    * @throws IOException            IOException
    * @throws IllegalAccessException IllegalAccessException
    * @throws ExcelImportException   ExcelImportException
    * @throws InstantiationException InstantiationException
    */
-  public <F, E> List<E> getData(int sheetIndex, int headerNum,
+  public <F, E> List<E> getData(Class<F> cls, ExcelField<F, ?>[] excelFields,
+      ExcelConverter<F, E> converter)
+      throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
+    return getData(0, 0, cls, excelFields, converter);
+  }
+
+
+  /**
+   * 获取导入数据列表
+   *
+   * @param headerNum   标题行号，数据行号=标题行号+1
+   * @param sheetIndex  工作表编号
+   * @param cls         实体类型
+   * @param excelFields excelFields
+   * @param converter   F 转换为E
+   * @param <F>         F
+   * @param <E>         E
+   * @return List
+   * @throws IOException            IOException
+   * @throws IllegalAccessException IllegalAccessException
+   * @throws ExcelImportException   ExcelImportException
+   * @throws InstantiationException InstantiationException
+   */
+  public <F, E> List<E> getData(int sheetIndex, int headerNum, Class<F> cls,
       ExcelField<F, ?>[] excelFields,
       ExcelConverter<F, E> converter)
       throws IOException, IllegalAccessException, ExcelImportException, InstantiationException {
@@ -152,7 +194,7 @@ public class ExcelImport {
     for (Row row : sheet.openStream().filter(r -> r.getRowNum() - 1 > headerNum)
         .collect(Collectors.toList())) {
       if (row != null) {
-        E e = readRow(excelFields, row, converter);
+        E e = readRow(cls, excelFields, row, converter);
         if (e != null) {
           dataList.add(e);
         }
@@ -161,11 +203,11 @@ public class ExcelImport {
     return dataList;
   }
 
-  public <F, E> E readRow(ExcelField<F, ?>[] excelFields, Row row, ExcelConverter<F, E> converter)
+  public <F, E> E readRow(Class<F> cls, ExcelField<F, ?>[] excelFields, Row row,
+      ExcelConverter<F, E> converter)
       throws InstantiationException, IllegalAccessException, ExcelImportException {
     boolean notAllBlank = false;
     int column = 0;
-    Class<F> cls = excelFields[0].entityType;
     F o = cls.newInstance();
     List<CellError> rowErrors = new ArrayList<>();
     int rowNum = row.getRowNum() + 1;
