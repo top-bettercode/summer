@@ -70,8 +70,7 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   <S extends T> Optional<S> findOne(Example<S> example);
 
-  <S extends T> Page<S> findAll(Example<S> example,
-      Pageable pageable);
+  <S extends T> Page<S> findAll(Example<S> example, Pageable pageable);
 
   <S extends T> long count(Example<S> example);
 
@@ -81,16 +80,15 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   Iterable<T> findAll(Predicate predicate);
 
-  Iterable<T> findAll(Predicate predicate,
-      Sort sort);
+  Iterable<T> findAll(Predicate predicate, Sort sort);
 
-  Iterable<T> findAll(Predicate predicate,
-      OrderSpecifier<?>... orderSpecifiers);
+  Iterable<T> findAll(Predicate predicate, OrderSpecifier<?>... orderSpecifiers);
 
   Iterable<T> findAll(OrderSpecifier<?>... orderSpecifiers);
 
-  Page<T> findAll(Predicate predicate,
-      Pageable pageable);
+  Page<T> findAll(Predicate predicate, Pageable pageable);
+
+  Page<T> findAll(Predicate predicate, Pageable pageable, OrderSpecifier<?>... defaultOrderSpecifiers);
 
   long count(Predicate predicate);
 

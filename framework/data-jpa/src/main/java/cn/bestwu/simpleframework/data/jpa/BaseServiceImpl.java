@@ -8,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QSort;
 
 /**
  * @author Peter Wu
@@ -130,8 +132,7 @@ public class BaseServiceImpl<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
-  public <S extends T> Page<S> findAll(Example<S> example,
-      Pageable pageable) {
+  public <S extends T> Page<S> findAll(Example<S> example, Pageable pageable) {
     return repository.findAll(example, pageable);
   }
 
@@ -156,14 +157,12 @@ public class BaseServiceImpl<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
-  public Iterable<T> findAll(Predicate predicate,
-      Sort sort) {
+  public Iterable<T> findAll(Predicate predicate, Sort sort) {
     return repository.findAll(predicate, sort);
   }
 
   @Override
-  public Iterable<T> findAll(Predicate predicate,
-      OrderSpecifier<?>... orderSpecifiers) {
+  public Iterable<T> findAll(Predicate predicate, OrderSpecifier<?>... orderSpecifiers) {
     return repository.findAll(predicate, orderSpecifiers);
   }
 
@@ -173,9 +172,16 @@ public class BaseServiceImpl<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
-  public Page<T> findAll(Predicate predicate,
-      Pageable pageable) {
+  public Page<T> findAll(Predicate predicate, Pageable pageable) {
     return repository.findAll(predicate, pageable);
+  }
+
+  @Override
+  public Page<T> findAll(Predicate predicate, Pageable pageable,
+      OrderSpecifier<?>... defaultOrderSpecifiers) {
+    return repository
+        .findAll(predicate, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+            pageable.getSortOr(QSort.by(defaultOrderSpecifiers))));
   }
 
   @Override
