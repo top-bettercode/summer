@@ -1,8 +1,8 @@
 package cn.bestwu.simpleframework.data.jpa;
 
+import cn.bestwu.simpleframework.web.BaseController;
 import cn.bestwu.simpleframework.web.PagedResources;
 import cn.bestwu.simpleframework.web.PagedResources.PageMetadata;
-import cn.bestwu.simpleframework.web.BaseController;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
@@ -49,4 +49,5 @@ public class PageController extends BaseController {
             object.getTotalElements(), object
             .getTotalPages())));
   }
+
 }
