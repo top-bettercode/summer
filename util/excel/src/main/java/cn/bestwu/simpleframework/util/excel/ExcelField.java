@@ -22,7 +22,10 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * Excel 字段定义
+ * Excel字段描述
+ *
+ * @param <P> 属性类型
+ * @param <T> 实体类型
  */
 public class ExcelField<T, P> {
 
@@ -44,7 +47,7 @@ public class ExcelField<T, P> {
   /**
    * 格式
    */
-  private String pattern = "";
+  private String pattern;
 
   /**
    * 导出字段对齐方式
@@ -94,6 +97,64 @@ public class ExcelField<T, P> {
   protected DateTimeFormatter dateTimeFormatter;
 
   //--------------------------------------------
+
+  /**
+   * 只支持导入的初始化方法
+   *
+   * @param <P>            属性类型
+   * @param <T>            实体类型
+   * @param title          标题
+   * @param propertyType   属性字段类型
+   * @param propertySetter 属性设置方法
+   * @return Excel字段描述
+   */
+  public static <T, P> ExcelField<T, P> of(String title, Class<P> propertyType,
+      ExcelCellSetter<T, P> propertySetter) {
+    return new ExcelField<>(title, propertyType, propertySetter);
+  }
+
+  /**
+   * 只支持导出的初始化方法
+   *
+   * @param <P>            属性类型
+   * @param <T>            实体类型
+   * @param title          标题
+   * @param propertyType   属性字段类型
+   * @param propertyGetter 属性获取方法
+   * @return Excel字段描述
+   */
+  public static <T, P> ExcelField<T, P> of(String title, Class<P> propertyType,
+      ExcelConverter<T, P> propertyGetter) {
+    return new ExcelField<>(title, propertyType, propertyGetter);
+  }
+
+
+  /**
+   * 支持导入及导出的初始化方法
+   *
+   * @param <P>            属性类型
+   * @param <T>            实体类型
+   * @param title          标题
+   * @param propertyType   属性字段类型
+   * @param propertyGetter 属性获取方法
+   * @param propertySetter 属性设置方法
+   * @return Excel字段描述
+   */
+  public static <T, P> ExcelField<T, P> of(String title, Class<P> propertyType,
+      ExcelConverter<T, P> propertyGetter, ExcelCellSetter<T, P> propertySetter) {
+    return new ExcelField<>(title, propertyType, propertyGetter).setter(propertySetter);
+  }
+
+
+  /**
+   * 支持导入及导出的初始化方法
+   *
+   * @param <P>            属性类型
+   * @param <T>            实体类型
+   * @param title          标题
+   * @param propertyGetter 属性获取方法
+   * @return Excel字段描述
+   */
   public static <T, P> ExcelField<T, P> of(String title, ExcelConverter<T, P> propertyGetter) {
     return new ExcelField<>(title, propertyGetter);
   }
@@ -159,8 +220,8 @@ public class ExcelField<T, P> {
 
   //--------------------------------------------
 
-  public ExcelField<T, P> getter(ExcelConverter<T, P> cellConverter) {
-    this.propertyGetter = cellConverter;
+  public ExcelField<T, P> getter(ExcelConverter<T, P> propertyGetter) {
+    this.propertyGetter = propertyGetter;
     return this;
   }
 
@@ -201,10 +262,43 @@ public class ExcelField<T, P> {
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
       throw new ExcelException("属性解析错误", e);
     }
-    if (dateTimeFormatter == null && propertyType == Date.class) {
-      dateTimeFormatter = DateTimeFormatter.ofPattern(getCellFormat());
-    }
 
+    init();
+  }
+
+  /**
+   * 只支持导出的初始化方法
+   *
+   * @param title          标题
+   * @param propertyType   属性字段类型
+   * @param propertyGetter 属性获取方法
+   */
+  private ExcelField(String title, Class<P> propertyType, ExcelConverter<T, P> propertyGetter) {
+    this.title = title;
+    this.propertyType = propertyType;
+    this.propertyGetter = propertyGetter;
+
+    init();
+  }
+
+
+  /**
+   * 只支持导入的初始化方法
+   *
+   * @param title          标题
+   * @param propertyType   属性字段类型
+   * @param propertySetter 属性设置方法
+   */
+  private ExcelField(String title, Class<P> propertyType, ExcelCellSetter<T, P> propertySetter) {
+    this.title = title;
+    this.propertyType = propertyType;
+    this.propertySetter = propertySetter;
+
+    init();
+  }
+
+
+  private void init() {
     propertyConverter = (cellValue) -> {
       if (propertyType == String.class) {
         return cellValue;
@@ -240,6 +334,28 @@ public class ExcelField<T, P> {
         return property;
       }
     };
+
+    if (this.pattern == null) {
+      if (propertyType.equals(Integer.class)) {
+        this.pattern = "0";
+      } else if (propertyType.equals(Long.class)) {
+        this.pattern = "0";
+      } else if (propertyType.equals(BigDecimal.class)) {
+        this.pattern = "0.00";
+      } else if (propertyType.equals(Double.class)) {
+        this.pattern = "0.00";
+      } else if (propertyType.equals(Float.class)) {
+        this.pattern = "0.00";
+      } else if (propertyType.equals(Date.class)) {
+        this.pattern = "yyyy-MM-dd HH:mm";
+      } else {
+        this.pattern = "@";
+      }
+    }
+
+    if (dateTimeFormatter == null && propertyType == Date.class) {
+      dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+    }
   }
 
   //--------------------------------------------
@@ -273,10 +389,12 @@ public class ExcelField<T, P> {
         property = (P) propertyConverter.convert(cellValue);
       }
       propertySetter.set(obj, property);
-      Set<ConstraintViolation<Object>> constraintViolations = validator
-          .validateProperty(obj, propertyName, validateGroups);
-      if (!constraintViolations.isEmpty()) {
-        throw new ConstraintViolationException(constraintViolations);
+      if (propertyName != null) {
+        Set<ConstraintViolation<Object>> constraintViolations = validator
+            .validateProperty(obj, propertyName, validateGroups);
+        if (!constraintViolations.isEmpty()) {
+          throw new ConstraintViolationException(constraintViolations);
+        }
       }
     } catch (Exception e) {
       String message = e.getMessage();
@@ -286,31 +404,6 @@ public class ExcelField<T, P> {
   }
 
   //--------------------------------------------
-
-  /**
-   * @return 单元格格式
-   */
-  public String getCellFormat() {
-    String cellFormatString = pattern;
-    if (!StringUtils.hasText(cellFormatString)) {
-      if (propertyType.equals(Integer.class)) {
-        return "0";
-      } else if (propertyType.equals(Long.class)) {
-        return "0";
-      } else if (propertyType.equals(BigDecimal.class)) {
-        return "0.00";
-      } else if (propertyType.equals(Double.class)) {
-        return "0.00";
-      } else if (propertyType.equals(Float.class)) {
-        return "0.00";
-      } else if (propertyType.equals(Date.class)) {
-        return "yyyy-MM-dd HH:mm";
-      }
-      return "@";
-    } else {
-      return cellFormatString;
-    }
-  }
 
   private String resolvePropertyName(String getMethodName) {
     if (getMethodName.startsWith("get")) {
@@ -355,6 +448,10 @@ public class ExcelField<T, P> {
 
   public String comment() {
     return comment;
+  }
+
+  public String pattern() {
+    return pattern;
   }
 
   public Alignment align() {

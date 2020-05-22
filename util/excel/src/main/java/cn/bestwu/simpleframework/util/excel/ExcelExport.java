@@ -221,7 +221,7 @@ public class ExcelExport {
             .horizontalAlignment(excelField.align().name().toLowerCase())
             .verticalAlignment(Alignment.CENTER.name().toLowerCase())
             .wrapText(wrapText)
-            .format(excelField.getCellFormat())
+            .format(excelField.pattern())
             .borderStyle("thin").borderColor("000000");
         if (fill) {
           style.fillColor("F8F8F7");
@@ -232,7 +232,7 @@ public class ExcelExport {
         sheet.value(r, c, val);
         if (excelField.width() == -1) {
           columnWidths
-              .put(c, val.getClass().equals(Date.class) ? excelField.getCellFormat() : val);
+              .put(c, val.getClass().equals(Date.class) ? excelField.pattern() : val);
 
           if (!iterator.hasNext()) {
             sheet.width(c, columnWidths.width(c));
