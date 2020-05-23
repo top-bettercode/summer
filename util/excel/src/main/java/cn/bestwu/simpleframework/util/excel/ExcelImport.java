@@ -223,8 +223,8 @@ public class ExcelImport {
       notAllBlank = notAllBlank || StringUtils.hasText(valStr);
       try {
         excelField.setProperty(o, valStr, validator, validateGroups);
-      } catch (Exception ex) {
-        rowErrors.add(new CellError(rowNum, column - 1, excelField.title(), valStr, ex));
+      } catch (Exception e) {
+        rowErrors.add(new CellError(rowNum, column - 1, excelField.title(), valStr, e));
       }
     }
     if (notAllBlank) {
