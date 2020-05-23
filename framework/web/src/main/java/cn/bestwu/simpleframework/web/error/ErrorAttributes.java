@@ -1,7 +1,8 @@
-package cn.bestwu.simpleframework.web;
+package cn.bestwu.simpleframework.web.error;
 
 import cn.bestwu.simpleframework.exception.BusinessException;
 import cn.bestwu.simpleframework.exception.ResourceNotFoundException;
+import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
 import java.io.PrintWriter;
 import java.io.StringWriter;

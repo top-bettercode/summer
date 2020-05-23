@@ -1,6 +1,6 @@
 package cn.bestwu.simpleframework.security.exception;
 
-import cn.bestwu.simpleframework.web.IErrorHandler;
+import cn.bestwu.simpleframework.web.error.IErrorHandler;
 import cn.bestwu.simpleframework.web.RespEntity;
 import java.util.Map;
 import org.springframework.http.HttpStatus;

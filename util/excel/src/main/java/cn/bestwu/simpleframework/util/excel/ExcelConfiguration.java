@@ -1,6 +1,6 @@
 package cn.bestwu.simpleframework.util.excel;
 
-import cn.bestwu.simpleframework.web.IErrorHandler;
+import cn.bestwu.simpleframework.web.error.IErrorHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;

@@ -1,6 +1,6 @@
 package cn.bestwu.simpleframework.security.exception;
 
-import cn.bestwu.simpleframework.web.ErrorAttributes;
+import cn.bestwu.simpleframework.web.error.ErrorAttributes;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;

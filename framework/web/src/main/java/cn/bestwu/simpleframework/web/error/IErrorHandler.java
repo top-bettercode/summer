@@ -1,5 +1,6 @@
-package cn.bestwu.simpleframework.web;
+package cn.bestwu.simpleframework.web.error;
 
+import cn.bestwu.simpleframework.web.RespEntity;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;

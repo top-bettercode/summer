@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.web;
+package cn.bestwu.simpleframework.web.error;
 
 import java.io.IOException;
 import java.util.Collections;
