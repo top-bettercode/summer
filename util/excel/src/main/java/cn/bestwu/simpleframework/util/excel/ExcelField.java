@@ -392,18 +392,17 @@ public class ExcelField<T, P> {
         property = (P) propertyConverter.convert(cellValue);
       }
       propertySetter.set(obj, property);
-      if (propertyName != null) {
-        Set<ConstraintViolation<Object>> constraintViolations = validator
-            .validateProperty(obj, propertyName, validateGroups);
-        if (!constraintViolations.isEmpty()) {
-          throw new ConstraintViolationException(
-              constraintViolations.iterator().next().getMessage(), constraintViolations);
-        }
-      }
     } catch (Exception e) {
       String message = e.getMessage();
       throw new IllegalArgumentException(StringUtils.hasText(message) ? message : "typeMismatch",
           e);
+    }
+    if (propertyName != null) {
+      Set<ConstraintViolation<Object>> constraintViolations = validator
+          .validateProperty(obj, propertyName, validateGroups);
+      if (!constraintViolations.isEmpty()) {
+        throw new ConstraintViolationException(constraintViolations);
+      }
     }
   }
 
