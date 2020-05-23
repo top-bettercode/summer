@@ -50,9 +50,12 @@ public class ExcelField<T, P> {
   private String pattern;
 
   /**
-   * 导出字段对齐方式
+   * 导出字段水平对齐方式
+   *
+   * Define horizontal alignment.
+   * <a href="https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx">here</a>.
    */
-  private Alignment align = Alignment.CENTER;
+  private Alignment align = Alignment.center;
 
   /**
    * 列宽度，-1表示自动计算

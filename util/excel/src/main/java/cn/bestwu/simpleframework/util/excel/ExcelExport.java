@@ -140,7 +140,7 @@ public class ExcelExport {
   public <T> void createHeader(ExcelField<T, ?>[] excelFields) {
     // Create header
     {
-      String alignment = Alignment.CENTER.name().toLowerCase();
+      String alignment = Alignment.center.name();
       if (serialNumber) {
         sheet.value(r, c, serialNumberName);
         columnWidths.put(c, serialNumberName);
@@ -203,8 +203,8 @@ public class ExcelExport {
         sheet.value(r, c, r);
         columnWidths.put(c, r);
         StyleSetter style = sheet.style(r, c)
-            .horizontalAlignment(Alignment.CENTER.name().toLowerCase())
-            .verticalAlignment(Alignment.CENTER.name().toLowerCase())
+            .horizontalAlignment(Alignment.center.name())
+            .verticalAlignment(Alignment.center.name())
             .wrapText(wrapText)
             .borderStyle("thin").borderColor("000000");
         if (fill) {
@@ -218,8 +218,8 @@ public class ExcelExport {
       }
       for (ExcelField<T, ?> excelField : excelFields) {
         StyleSetter style = sheet.style(r, c)
-            .horizontalAlignment(excelField.align().name().toLowerCase())
-            .verticalAlignment(Alignment.CENTER.name().toLowerCase())
+            .horizontalAlignment(excelField.align().name())
+            .verticalAlignment(Alignment.center.name())
             .wrapText(wrapText)
             .format(excelField.pattern())
             .borderStyle("thin").borderColor("000000");
@@ -266,7 +266,7 @@ public class ExcelExport {
     return this;
   }
 
-  public <T> ExcelExport template(ExcelField<T, ?>[] excelFields,HttpServletRequest request,
+  public <T> ExcelExport template(ExcelField<T, ?>[] excelFields, HttpServletRequest request,
       HttpServletResponse response,
       String fileName) throws IOException {
     write(request, response, fileName);
