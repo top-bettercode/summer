@@ -1,5 +1,6 @@
-package cn.bestwu.simpleframework.web;
+package cn.bestwu.simpleframework.web.error;
 
+import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
 import java.util.Map;
 import java.util.Set;

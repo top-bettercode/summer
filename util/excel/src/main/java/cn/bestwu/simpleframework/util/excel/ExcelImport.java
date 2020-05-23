@@ -219,14 +219,12 @@ public class ExcelImport {
 
     for (ExcelField<F, ?> excelField : excelFields) {
       Object val = getCellValue(row, column++);
-      if (val != null) {
-        String valStr = String.valueOf(val).trim();
-        notAllBlank = notAllBlank || StringUtils.hasText(valStr);
-        try {
-          excelField.setProperty(o, valStr, validator, validateGroups);
-        } catch (Exception ex) {
-          rowErrors.add(new CellError(rowNum, column - 1, excelField.title(), valStr, ex));
-        }
+      String valStr = val != null ? String.valueOf(val).trim() : null;
+      notAllBlank = notAllBlank || StringUtils.hasText(valStr);
+      try {
+        excelField.setProperty(o, valStr, validator, validateGroups);
+      } catch (Exception ex) {
+        rowErrors.add(new CellError(rowNum, column - 1, excelField.title(), valStr, ex));
       }
     }
     if (notAllBlank) {

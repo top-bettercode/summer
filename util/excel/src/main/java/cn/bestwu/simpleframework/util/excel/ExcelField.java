@@ -51,7 +51,7 @@ public class ExcelField<T, P> {
 
   /**
    * 导出字段水平对齐方式
-   *
+   * <p>
    * Define horizontal alignment.
    * <a href="https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx">here</a>.
    */
@@ -396,7 +396,8 @@ public class ExcelField<T, P> {
         Set<ConstraintViolation<Object>> constraintViolations = validator
             .validateProperty(obj, propertyName, validateGroups);
         if (!constraintViolations.isEmpty()) {
-          throw new ConstraintViolationException(constraintViolations);
+          throw new ConstraintViolationException(
+              constraintViolations.iterator().next().getMessage(), constraintViolations);
         }
       }
     } catch (Exception e) {

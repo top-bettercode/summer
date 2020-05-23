@@ -2,12 +2,12 @@ package cn.bestwu.simpleframework.config;
 
 import cn.bestwu.logging.annotation.NoRequestLogging;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
-import cn.bestwu.simpleframework.web.CustomErrorController;
-import cn.bestwu.simpleframework.web.DataErrorHandler;
+import cn.bestwu.simpleframework.web.error.CustomErrorController;
+import cn.bestwu.simpleframework.web.error.DataErrorHandler;
 import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
-import cn.bestwu.simpleframework.web.ErrorAttributes;
+import cn.bestwu.simpleframework.web.error.ErrorAttributes;
 import cn.bestwu.simpleframework.web.ICaptchaService;
-import cn.bestwu.simpleframework.web.IErrorHandler;
+import cn.bestwu.simpleframework.web.error.IErrorHandler;
 import cn.bestwu.simpleframework.web.filter.ApiVersionFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
