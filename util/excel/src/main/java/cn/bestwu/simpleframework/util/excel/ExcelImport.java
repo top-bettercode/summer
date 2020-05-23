@@ -36,6 +36,10 @@ public class ExcelImport {
    * 验证 groups
    */
   private Class<?>[] validateGroups = new Class[]{Default.class};
+  /**
+   * 当前行号
+   */
+  private int rowNum;
 
   /**
    * 构造函数
@@ -86,6 +90,10 @@ public class ExcelImport {
     return workbook;
   }
 
+  public int getRowNum() {
+    return rowNum;
+  }
+
   /**
    * 获取导入数据列表
    *
@@ -98,11 +106,9 @@ public class ExcelImport {
    * @throws ExcelImportException   ExcelImportException
    * @throws InstantiationException InstantiationException
    */
-  @SuppressWarnings("unchecked")
   public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields)
       throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
-    Class<F> cls = excelFields[0].entityType;
-    return getData(excelFields, (o) -> (E) o);
+    return getData(excelFields[0].entityType, excelFields);
   }
 
 
@@ -121,8 +127,7 @@ public class ExcelImport {
    */
   public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields, ExcelConverter<F, E> converter)
       throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
-    Class<F> cls = excelFields[0].entityType;
-    return getData(0, 0, cls, excelFields, converter);
+    return getData(0, 0, excelFields[0].entityType, excelFields, converter);
   }
 
   /**
@@ -210,7 +215,7 @@ public class ExcelImport {
     int column = 0;
     F o = cls.newInstance();
     List<CellError> rowErrors = new ArrayList<>();
-    int rowNum = row.getRowNum() + 1;
+    rowNum = row.getRowNum();
 
     for (ExcelField<F, ?> excelField : excelFields) {
       Object val = getCellValue(row, column++);
