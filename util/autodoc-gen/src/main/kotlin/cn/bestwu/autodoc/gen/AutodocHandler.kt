@@ -3,6 +3,7 @@ package cn.bestwu.autodoc.gen
 import cn.bestwu.api.sign.ApiSignProperties
 import cn.bestwu.autodoc.core.*
 import cn.bestwu.autodoc.core.model.DocModule
+import cn.bestwu.autodoc.core.model.Field
 import cn.bestwu.autodoc.core.operation.DocOperation
 import cn.bestwu.autodoc.core.operation.DocOperationRequest
 import cn.bestwu.autodoc.core.operation.DocOperationResponse
@@ -128,18 +129,18 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
 
                 request.parametersExt = request.parameters.singleValueMap.toFields(request.parametersExt, expand = true)
                 request.parametersExt.forEach {
-                    it.required = requiredParameters.contains(it.name)
+                    setRequired(it, requiredParameters)
                 }
 
                 request.partsExt = request.parts.toFields(request.partsExt)
                 request.partsExt.forEach {
-                    it.required = requiredParameters.contains(it.name)
+                    setRequired(it, requiredParameters)
                 }
 
                 request.contentExt = request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
                         ?: linkedSetOf()
                 request.contentExt.forEach {
-                    it.required = requiredParameters.contains(it.name)
+                    setRequired(it, requiredParameters)
                 }
 
                 val response = docOperation.response as DocOperationResponse
@@ -161,6 +162,15 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                 Autodoc.enable = true
                 Autodoc.description = ""
                 Autodoc.schema = null
+            }
+        }
+    }
+
+    private fun setRequired(field: Field, requiredParameters: MutableSet<String>, prefix: String = "") {
+        field.required = requiredParameters.contains(prefix + field.name)
+        if (!field.children.isNullOrEmpty()) {
+            field.children.forEach {
+                setRequired(it, requiredParameters, "${prefix + field.name}.")
             }
         }
     }
