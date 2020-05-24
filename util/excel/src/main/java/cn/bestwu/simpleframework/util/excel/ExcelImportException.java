@@ -27,6 +27,7 @@ public class ExcelImportException extends Exception {
 
   public static class CellError {
 
+    private String message = "excel.cell.typeMismatch";
     private Integer row;
     private Integer column;
     private String title;
@@ -34,10 +35,10 @@ public class ExcelImportException extends Exception {
     private Exception exception;
 
     /**
-     * @param row 行号
-     * @param column 列号
-     * @param title 表格列名
-     * @param value 表格单元格值
+     * @param row       行号
+     * @param column    列号
+     * @param title     表格列名
+     * @param value     表格单元格值
      * @param exception 异常
      */
     public CellError(Integer row, Integer column, String title, String value,
@@ -47,6 +48,24 @@ public class ExcelImportException extends Exception {
       this.title = title;
       this.value = value;
       this.exception = exception;
+    }
+
+    public String getMessage() {
+      return message;
+    }
+
+    public CellError setMessage(String message) {
+      this.message = message;
+      return this;
+    }
+
+    public String getColumnName() {
+      int i = column;
+      StringBuilder chars = new StringBuilder();
+      do {
+        chars.append((char) ('A' + i % 26));
+      } while ((i = ((i / 26) - 1)) >= 0);
+      return chars.reverse().toString();
     }
 
     public Integer getRow() {

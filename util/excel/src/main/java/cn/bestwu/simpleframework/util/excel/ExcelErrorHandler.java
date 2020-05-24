@@ -33,8 +33,8 @@ public class ExcelErrorHandler implements IErrorHandler {
       List<CellError> cellErrors = ((ExcelImportException) error).getErrors();
 
       for (CellError cellError : cellErrors) {
-        String key =
-            "第" + cellError.getRow() + "行第" + ((char) ('A' + cellError.getColumn())) + "列";
+        String key = getText(messageSource, request, cellError.getMessage(), cellError.getRow(),
+            cellError.getColumnName());
         String title = cellError.getTitle();
         Exception value = cellError.getException();
         if (value instanceof ConstraintViolationException) {
