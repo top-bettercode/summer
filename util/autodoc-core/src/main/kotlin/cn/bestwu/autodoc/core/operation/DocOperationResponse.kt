@@ -21,4 +21,4 @@ class DocOperationResponse(operationResponse: OperationResponse = OperationRespo
                             * 响应体说明
                             */
                            var contentExt: LinkedHashSet<Field> = LinkedHashSet()
-) : OperationResponse(statusCode = operationResponse.statusCode, headers = operationResponse.headers, content = operationResponse.content, createdDate = operationResponse.createdDate, stackTrace = operationResponse.stackTrace)
+) : OperationResponse(statusCode = operationResponse.statusCode, headers = operationResponse.headers, content = operationResponse.content, dateTime = operationResponse.dateTime, stackTrace = operationResponse.stackTrace)

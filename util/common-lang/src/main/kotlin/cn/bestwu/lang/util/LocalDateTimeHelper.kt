@@ -1,9 +1,6 @@
 package cn.bestwu.lang.util
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 import java.util.*
@@ -178,9 +175,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
 
         @JvmStatic
         fun of(millis: Long): LocalDateTimeHelper {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = millis
-            return of(calendar)
+            return of(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDateTime())
         }
 
         @JvmStatic
@@ -197,6 +192,12 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
         fun toDate(localDate: LocalDate): Date {
             return Date.from(localDate.atStartOfDay(DEFAULT_ZONE_OFFSET).toInstant())
         }
+
+        @JvmStatic
+        fun toDate(localDateTime: LocalDateTime): Date {
+            return Date.from(localDateTime.toInstant(DEFAULT_ZONE_OFFSET))
+        }
+
     }
 
 }

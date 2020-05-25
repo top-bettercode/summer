@@ -24,6 +24,7 @@ import org.springframework.web.util.WebUtils
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.time.LocalDateTime
 import java.util.*
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
@@ -46,7 +47,7 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
         const val IS_OPERATION_MARKER = "is_operation"
 
         val REQUEST_LOGGING_USERNAME = RequestLoggingFilter::class.java.name + ".username"
-        val REQUEST_CREATED_DATE = RequestLoggingFilter::class.java.name + ".createdDate"
+        val REQUEST_DATE_TIME = RequestLoggingFilter::class.java.name + ".dateTime"
     }
 
     private val log = LoggerFactory.getLogger(RequestLoggingFilter::class.java)
@@ -69,7 +70,7 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
                 return
             }
         }
-        request.setAttribute(REQUEST_CREATED_DATE, Date())
+        request.setAttribute(REQUEST_DATE_TIME, LocalDateTime.now())
 
         val requestToUse: HttpServletRequest = if (properties.isIncludeRequestBody) {
             TraceHttpServletRequestWrapper(request)

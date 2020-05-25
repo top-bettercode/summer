@@ -25,7 +25,7 @@ class OldDocOperationRequest(operationRequest: OperationRequest = OperationReque
     forEach {
         it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)
     }
-}, operationRequest.content, operationRequest.createdDate) {
+}, operationRequest.content, operationRequest.dateTime) {
 
     val docParameters: Map<String, Any?>
         @JsonIgnore

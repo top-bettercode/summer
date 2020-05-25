@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import java.net.URI
+import java.time.LocalDateTime
 import java.util.*
 
 /**
@@ -79,6 +80,6 @@ open class OperationRequest(
         /**
          * 请求时间
          */
-        var createdDate: Date = Date()
+        var dateTime: LocalDateTime = LocalDateTime.now()
 ) : AbstractOperationMessage(headers, content)
 

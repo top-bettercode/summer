@@ -3,6 +3,7 @@ package cn.bestwu.logging.operation
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import java.time.LocalDateTime
 import java.util.*
 
 /**
@@ -34,7 +35,7 @@ open class OperationResponse(
         /**
          * 响应时间
          */
-        var createdDate: Date = Date(),
+        var dateTime: LocalDateTime = LocalDateTime.now(),
         /**
          * 异常追踪桟
          */

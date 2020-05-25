@@ -1,10 +1,7 @@
 package cn.bestwu.simpleframework.web.validator;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.slf4j.Logger;
@@ -41,7 +38,7 @@ public class IDCardInfo {
   // 性别
   private String gender;
   // 出生日期
-  private long birthday;
+  private LocalDate birthday;
 
   private boolean legal;
 
@@ -75,19 +72,11 @@ public class IDCardInfo {
       }
 
       // 获取出生日期
-      String birthday = idcard.substring(6, 14);
-      Date birthdate;
-      try {
-        birthdate = new SimpleDateFormat("yyyyMMdd").parse(birthday);
-        this.birthday = birthdate.getTime();
-        GregorianCalendar currentDay = new GregorianCalendar();
-        currentDay.setTime(birthdate);
-        this.year = currentDay.get(Calendar.YEAR);
-        this.month = currentDay.get(Calendar.MONTH) + 1;
-        this.day = currentDay.get(Calendar.DAY_OF_MONTH);
-      } catch (ParseException e) {
-        // skip
-      }
+      this.birthday = LocalDate
+          .parse(idcard.substring(6, 14), DateTimeFormatter.ofPattern("yyMMdd"));
+      this.year = birthday.getYear();
+      this.month = birthday.getMonthValue();
+      this.day = birthday.getDayOfMonth();
     }
   }
 
@@ -147,12 +136,13 @@ public class IDCardInfo {
     this.gender = gender;
   }
 
-  public long getBirthday() {
+  public LocalDate getBirthday() {
     return birthday;
   }
 
-  public void setBirthday(long birthday) {
+  public IDCardInfo setBirthday(LocalDate birthday) {
     this.birthday = birthday;
+    return this;
   }
 
   public boolean isLegal() {

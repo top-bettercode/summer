@@ -1,9 +1,7 @@
 package cn.bestwu.simpleframework.web.validator;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class IDCardUtil {
 
@@ -29,7 +27,8 @@ public class IDCardUtil {
    * 5.第15、16位数字表示：所在地的派出所的代码； 6.第17位数字表示性别：奇数表示男性，偶数表示女性； 7.第18位数字是校检码：也有的说是个人信息码，一般是随计算机的随机产生，用来检验身份证的正确性。校检码可以是0~9的数字，有时也用x表示。
    * </p>
    * <p>
-   * 第十八位数字(校验码)的计算方法为： 1.将前面的身份证号码17位数分别乘以不同的系数。从第一位到第十七位的系数分别为：7 9 10 5 8 4 2 1 6 3 7 9 10 5 8 4 2
+   * 第十八位数字(校验码)的计算方法为： 1.将前面的身份证号码17位数分别乘以不同的系数。从第一位到第十七位的系数分别为：7 9 10 5 8 4 2 1 6 3 7 9 10 5 8 4
+   * 2
    * </p>
    * <p>
    * 2.将这17位数字和系数相乘的结果相加。
@@ -105,13 +104,8 @@ public class IDCardUtil {
       try {
         // 获取出生年月日
         String birthday = idcard.substring(6, 12);
-        Date birthdate;
-        birthdate = new SimpleDateFormat("yyMMdd").parse(birthday);
-        Calendar cday = Calendar.getInstance();
-        cday.setTime(birthdate);
-        String year = String.valueOf(cday.get(Calendar.YEAR));
-
-        idcard17 = idcard.substring(0, 6) + year + idcard.substring(8);
+        idcard17 = idcard.substring(0, 6) + LocalDate
+            .parse(birthday, DateTimeFormatter.ofPattern("yyMMdd")).getYear() + idcard.substring(8);
 
         char c[] = idcard17.toCharArray();
         String checkCode;
@@ -133,7 +127,7 @@ public class IDCardUtil {
         // 将前17位与第18位校验码拼接
         idcard17 += checkCode;
         return idcard17;
-      } catch (NumberFormatException | ParseException e) {
+      } catch (NumberFormatException e) {
         return null;
       }
     } else { // 身份证包含数字
