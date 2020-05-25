@@ -14,18 +14,21 @@ import ch.qos.logback.core.sift.DefaultDiscriminator
 import ch.qos.logback.core.spi.CyclicBufferTracker
 import ch.qos.logback.core.util.OptionHelper
 import cn.bestwu.logging.RequestLoggingFilter
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import org.springframework.web.util.WebUtils
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.TimeUnit
 
 
-abstract class AlarmAppender(private val cyclicBufferSize: Int, private val sendDelaySeconds: Int, private val ignoredWarnLogger: Array<String>) : AppenderBase<ILoggingEvent>() {
+abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cacheSeconds: Long, private val ignoredWarnLogger: Array<String>) : AppenderBase<ILoggingEvent>() {
 
     companion object {
         const val MAX_DELAY_BETWEEN_STATUS_MESSAGES = 1228800 * CoreConstants.MILLIS_IN_ONE_SECOND
     }
 
+    private lateinit var cacheMap: ConcurrentMap<String, Int>
     private var eventEvaluator: EventEvaluator<ILoggingEvent>? = null
-    private val cache: MutableMap<String, Message> = ConcurrentHashMap()
     private val discriminator = DefaultDiscriminator<ILoggingEvent>()
     private var cbTracker: CyclicBufferTracker<ILoggingEvent>? = null
     private val encoder: PatternLayoutEncoder = PatternLayoutEncoder()
@@ -37,6 +40,9 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val send
     var asynchronousSending = true
 
     override fun start() {
+        val cache: Cache<String, Int> = CacheBuilder.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS).maximumSize(10).build()
+        cacheMap = cache.asMap()
+
         val alarmEvaluator = object : EventEvaluatorBase<ILoggingEvent>() {
             override fun evaluate(event: ILoggingEvent): Boolean {
                 val loggerName = event.loggerName
@@ -79,7 +85,7 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val send
 
         try {
             if (eventEvaluator!!.evaluate(event)) {
-                val cbClone = CyclicBuffer<ILoggingEvent>(cb)
+                val cbClone = CyclicBuffer(cb)
                 cb.clear()
                 if (asynchronousSending) {
                     context.scheduledExecutorService.execute(SenderRunnable(cbClone, event))
@@ -128,22 +134,10 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val send
         }
 
         val timeStamp = event.timeStamp
-        if (sendDelaySeconds > 0) {
-            if (cache.containsKey(initialComment)) {
-                val msg = cache[initialComment]
-                if (msg != null) {
-                    msg.count()
-                    msg.timeStamp(timeStamp)
-                    msg.msg(message)
-                }
-            } else {
-                cache[initialComment] = Message(timeStamp, message)
-                Thread.sleep(sendDelaySeconds * 1000L)
-                val msg = cache[initialComment]
-                if (msg != null) {
-                    send(msg.timeStamp, (if (msg.count > 1) "$initialComment ×${msg.count}" else initialComment), msg.msg)
-                    cache.remove(initialComment)
-                }
+        if (cacheSeconds > 0) {
+            if (!cacheMap.containsKey(initialComment)) {
+                cacheMap[initialComment] = 1
+                send(timeStamp, initialComment, message)
             }
         } else {
             send(timeStamp, initialComment, message)
@@ -161,7 +155,7 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val send
             sendErrorCount = 0
         } else {
             sendErrorCount++
-            if (sendErrorCount > 5) {
+            if (sendErrorCount > 15) {
                 stop()
             }
         }
@@ -169,26 +163,7 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val send
 
     abstract fun sendMessage(timeStamp: Long, initialComment: String, message: List<String>): Boolean
 
-    data class Message(var timeStamp: Long, var msg: List<String>, var count: Int = 1) {
-        @Synchronized
-        fun count() {
-            count += 1
-        }
-
-        @Synchronized
-        fun timeStamp(timeStamp: Long) {
-            this.timeStamp = timeStamp
-        }
-
-        @Synchronized
-        fun msg(msg: List<String>) {
-            this.msg = msg
-        }
-
-    }
-
     internal inner class SenderRunnable(private val cyclicBuffer: CyclicBuffer<ILoggingEvent>, private val e: ILoggingEvent) : Runnable {
-
         override fun run() {
             sendBuffer(cyclicBuffer, e)
         }

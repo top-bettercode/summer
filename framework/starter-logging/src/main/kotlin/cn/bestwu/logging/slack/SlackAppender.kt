@@ -8,7 +8,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 
-open class SlackAppender(private val properties: SlackProperties, private val title: String) : AlarmAppender(properties.cyclicBufferSize, properties.sendDelaySeconds, properties.ignoredWarnLogger) {
+open class SlackAppender(private val properties: SlackProperties, private val title: String) : AlarmAppender(properties.cyclicBufferSize, properties.cacheSeconds, properties.ignoredWarnLogger) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
     private val slackClient: SlackClient = SlackClient(properties.authToken)

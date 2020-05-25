@@ -15,7 +15,7 @@ public class SlackProperties {
   private String[] ignoredWarnLogger = {};
   private String authToken;
   private String channel;
-  private Integer sendDelaySeconds = 5;
+  private Long cacheSeconds = 10L;
   private Integer cyclicBufferSize = 20;
 
   public boolean isSendFile() {
@@ -58,12 +58,13 @@ public class SlackProperties {
     this.channel = channel;
   }
 
-  public Integer getSendDelaySeconds() {
-    return sendDelaySeconds;
+  public Long getCacheSeconds() {
+    return cacheSeconds;
   }
 
-  public void setSendDelaySeconds(Integer sendDelaySeconds) {
-    this.sendDelaySeconds = sendDelaySeconds;
+  public SlackProperties setCacheSeconds(Long cacheSeconds) {
+    this.cacheSeconds = cacheSeconds;
+    return this;
   }
 
   public Integer getCyclicBufferSize() {
