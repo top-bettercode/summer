@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter
  *
  * @author Peter Wu
  */
-internal val dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSSZ"
+private const val dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS"
 private const val dateFormatFilePattern = "yyyy-MM-dd+HH:mm:ss.SSS"
 private val dateFormatter = DateTimeFormatter.ofPattern(dateFormatPattern)
 private val dateFileFormatter = DateTimeFormatter.ofPattern(dateFormatFilePattern)

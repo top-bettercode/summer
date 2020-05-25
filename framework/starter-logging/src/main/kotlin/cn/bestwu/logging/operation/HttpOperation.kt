@@ -1,6 +1,5 @@
 package cn.bestwu.logging.operation
 
-import cn.bestwu.logging.dateFormatPattern
 import cn.bestwu.logging.format
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -9,7 +8,6 @@ import org.springframework.http.MediaType
 import org.springframework.util.StringUtils
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.time.format.DateTimeFormatter
 
 /**
  *

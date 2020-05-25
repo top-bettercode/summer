@@ -2,14 +2,12 @@ package cn.bestwu.logging.operation
 
 import cn.bestwu.logging.LogFormat
 import cn.bestwu.logging.RequestLoggingConfig
-import cn.bestwu.logging.dateFormatPattern
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import org.springframework.http.HttpHeaders
 import java.text.SimpleDateFormat
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
 
 /**
  * Describes an operation performed on a RESTful service.
@@ -138,7 +136,7 @@ open class Operation(
         var INDENT_OUTPUT_OBJECT_MAPPER = ObjectMapper()
 
         init {
-            val simpleDateFormat = SimpleDateFormat(dateFormatPattern)
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ")
             OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             OBJECT_MAPPER.dateFormat = simpleDateFormat
             INDENT_OUTPUT_OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
