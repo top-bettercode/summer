@@ -11,7 +11,7 @@ import org.slf4j.MarkerFactory
 import java.io.File
 
 
-open class BearychatAppender(private val properties: BearychatProperties, private val title: String, private val filesPath: String?) : AlarmAppender(properties.cyclicBufferSize, properties.sendDelaySeconds, properties.ignoredWarnLogger) {
+open class BearychatAppender(private val properties: BearychatProperties, private val title: String, private val filesPath: String?) : AlarmAppender(properties.cyclicBufferSize, properties.cacheSeconds, properties.ignoredWarnLogger) {
 
 
     private val log: Logger = LoggerFactory.getLogger(BearychatAppender::class.java)
