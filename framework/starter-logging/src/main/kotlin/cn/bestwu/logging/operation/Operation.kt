@@ -121,7 +121,7 @@ open class Operation(
      * 请求耗时，单位毫秒
      */
     val duration: Long
-        get() = response.dateTime.until(request.dateTime, ChronoUnit.MILLIS)
+        get() = request.dateTime.until(response.dateTime, ChronoUnit.MILLIS)
 
     companion object {
         const val encryptedString = "******"
