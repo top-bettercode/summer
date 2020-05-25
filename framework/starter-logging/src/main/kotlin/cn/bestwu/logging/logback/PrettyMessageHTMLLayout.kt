@@ -7,7 +7,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.CoreConstants.LINE_SEPARATOR
 import ch.qos.logback.core.helpers.Transform
 import ch.qos.logback.core.pattern.Converter
-import cn.bestwu.logging.dateFormat
+import cn.bestwu.lang.util.LocalDateTimeHelper
+import cn.bestwu.logging.format
 import java.util.*
 
 /**
@@ -90,7 +91,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
             else -> buf.append("Message")
         }
         buf.append("\"><pre>")
-        buf.append("${dateFormat.format(Date(event.timeStamp))} ")
+        buf.append("${format(event.timeStamp)} ")
         buf.append("${event.level} ")
         buf.append("[${event.threadName}] ")
         buf.append("${event.loggerName} :")

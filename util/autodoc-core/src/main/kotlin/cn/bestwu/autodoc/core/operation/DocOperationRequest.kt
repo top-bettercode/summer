@@ -1,10 +1,7 @@
 package cn.bestwu.autodoc.core.operation
 
 import cn.bestwu.autodoc.core.model.Field
-import cn.bestwu.autodoc.core.singleValueMap
-import cn.bestwu.autodoc.core.toMap
 import cn.bestwu.logging.operation.OperationRequest
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import java.util.*
@@ -40,7 +37,7 @@ class DocOperationRequest(operationRequest: OperationRequest = OperationRequest(
     forEach {
         it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)
     }
-}, operationRequest.content, operationRequest.createdDate) {
+}, operationRequest.content, operationRequest.dateTime) {
 
 
 }

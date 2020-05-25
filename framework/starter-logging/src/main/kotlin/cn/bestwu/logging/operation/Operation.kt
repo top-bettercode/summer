@@ -2,11 +2,14 @@ package cn.bestwu.logging.operation
 
 import cn.bestwu.logging.LogFormat
 import cn.bestwu.logging.RequestLoggingConfig
-import cn.bestwu.logging.dateFormat
+import cn.bestwu.logging.dateFormatPattern
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import org.springframework.http.HttpHeaders
+import java.text.SimpleDateFormat
+import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalUnit
 
 /**
  * Describes an operation performed on a RESTful service.
@@ -120,23 +123,27 @@ open class Operation(
      * 请求耗时，单位毫秒
      */
     val duration: Long
-        get() = response.createdDate.time - request.createdDate.time
+        get() = response.dateTime.until(request.dateTime, ChronoUnit.MILLIS)
 
     companion object {
         const val encryptedString = "******"
+
         @JvmField
         val LINE_SEPARATOR = System.getProperty("line.separator")!!
+
         @JvmStatic
         var OBJECT_MAPPER = ObjectMapper()
+
         @JvmStatic
         var INDENT_OUTPUT_OBJECT_MAPPER = ObjectMapper()
 
         init {
+            val simpleDateFormat = SimpleDateFormat(dateFormatPattern)
             OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            OBJECT_MAPPER.dateFormat = dateFormat
+            OBJECT_MAPPER.dateFormat = simpleDateFormat
             INDENT_OUTPUT_OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             INDENT_OUTPUT_OBJECT_MAPPER.enable(SerializationFeature.INDENT_OUTPUT)
-            INDENT_OUTPUT_OBJECT_MAPPER.dateFormat = dateFormat
+            INDENT_OUTPUT_OBJECT_MAPPER.dateFormat = simpleDateFormat
         }
 
         /**

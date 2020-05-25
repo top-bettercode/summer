@@ -1,6 +1,7 @@
 package cn.bestwu.logging.operation
 
-import cn.bestwu.logging.dateFormat
+import cn.bestwu.logging.dateFormatPattern
+import cn.bestwu.logging.format
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -8,6 +9,7 @@ import org.springframework.http.MediaType
 import org.springframework.util.StringUtils
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.time.format.DateTimeFormatter
 
 /**
  *
@@ -24,8 +26,8 @@ object HttpOperation {
         if (output.collectionName.isNotBlank() || output.name.isNotBlank()) {
             stringBuilder.appendln("${output.collectionName}/${output.name}")
         }
-        stringBuilder.appendln("REQUEST    TIME : ${dateFormat.format(output.request.createdDate)}")
-        stringBuilder.appendln("RESPONSE   TIME : ${dateFormat.format(output.response.createdDate)}")
+        stringBuilder.appendln("REQUEST    TIME : ${format(output.request.dateTime)}")
+        stringBuilder.appendln("RESPONSE   TIME : ${format(output.response.dateTime)}")
         stringBuilder.appendln("DURATION MILLIS : ${output.duration}")
         stringBuilder.appendln(separatorLine)
         stringBuilder.append(toString(output.request, output.protocol, format))

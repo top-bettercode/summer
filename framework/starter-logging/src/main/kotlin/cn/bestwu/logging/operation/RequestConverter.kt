@@ -16,6 +16,7 @@ import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.net.URI
+import java.time.LocalDateTime
 import java.util.*
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
@@ -44,7 +45,7 @@ object RequestConverter {
      * @throws ConversionException if the conversion fails
      */
     fun convert(request: HttpServletRequest): OperationRequest {
-        val createdDate = request.getAttribute(RequestLoggingFilter.REQUEST_CREATED_DATE) as Date
+        val dateTime = request.getAttribute(RequestLoggingFilter.REQUEST_DATE_TIME) as LocalDateTime
         val headers = extractHeaders(request)
         val parameters = extractParameters(request)
         val parts = extractParts(request)
@@ -61,7 +62,7 @@ object RequestConverter {
 
         val content = (request as? TraceHttpServletRequestWrapper)?.contentAsByteArray
                 ?: byteArrayOf()
-        return OperationRequest(uri, restUri, uriTemplateVariables, HttpMethod.valueOf(request.method), headers, cookies, remoteUser, parameters, parts, content, createdDate)
+        return OperationRequest(uri, restUri, uriTemplateVariables, HttpMethod.valueOf(request.method), headers, cookies, remoteUser, parameters, parts, content, dateTime)
     }
 
     private fun extractCookies(request: HttpServletRequest,
