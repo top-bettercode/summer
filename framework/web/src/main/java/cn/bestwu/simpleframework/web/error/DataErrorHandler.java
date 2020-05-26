@@ -60,6 +60,7 @@ public class DataErrorHandler implements IErrorHandler {
           .getMessage();
       String duplicateRegex = "^Duplicate entry '(.*?)'.*";
       String dataTooLongRegex = "^Data truncation: Data too long for column '(.*?)'.*";
+      String outOfRangeRegex = "^Data truncation: Out of range value for column '(.*?)'.*";
       String constraintSubfix = "Cannot delete or update a parent row";
       if (specificCauseMessage.matches(duplicateRegex)) {
         String columnName = getText(messageSource, request,
@@ -72,6 +73,13 @@ public class DataErrorHandler implements IErrorHandler {
         String columnName = getText(messageSource, request,
             specificCauseMessage.replaceAll(dataTooLongRegex, "$1"));
         message = getText(messageSource, request, "data.too.long", columnName);
+        if (!StringUtils.hasText(message)) {
+          message = "data.valid.failed";
+        }
+      } else if (specificCauseMessage.matches(outOfRangeRegex)) {
+        String columnName = getText(messageSource, request,
+            specificCauseMessage.replaceAll(outOfRangeRegex, "$1"));
+        message = getText(messageSource, request, "data Out of range", columnName);
         if (!StringUtils.hasText(message)) {
           message = "data.valid.failed";
         }
