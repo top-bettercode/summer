@@ -89,12 +89,13 @@ open class Operation(
         val format = config.format
         request.headers = headers
         request.parameters = parameters
-        request.content = if (config.includeRequestBody || originRequestContent.isEmpty()) {
+        val error = response.statusCode >= 400
+        request.content = if (config.includeRequestBody || originRequestContent.isEmpty() || error) {
             (if (format) request.prettyContent else originRequestContent)
         } else "unrecorded".toByteArray()
 
 
-        response.content = if (config.includeResponseBody || originResponseContent.isEmpty()) {
+        response.content = if (config.includeResponseBody || originResponseContent.isEmpty() || error) {
             (if (format) response.prettyContent else originResponseContent)
         } else "unrecorded".toByteArray()
 
