@@ -1,8 +1,8 @@
 package cn.bestwu.simpleframework.util.excel;
 
 import cn.bestwu.simpleframework.util.excel.ExcelImportException.CellError;
-import cn.bestwu.simpleframework.web.error.IErrorHandler;
 import cn.bestwu.simpleframework.web.RespEntity;
+import cn.bestwu.simpleframework.web.error.IErrorHandler;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,7 +11,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
 /**
@@ -29,7 +28,6 @@ public class ExcelErrorHandler implements IErrorHandler {
       Map<String, String> errors) {
     String message = null;
     if (error instanceof ExcelImportException) {
-      respEntity.setHttpStatusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
       List<CellError> cellErrors = ((ExcelImportException) error).getErrors();
 
       for (CellError cellError : cellErrors) {

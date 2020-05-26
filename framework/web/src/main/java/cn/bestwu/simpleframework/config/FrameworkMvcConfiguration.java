@@ -2,11 +2,11 @@ package cn.bestwu.simpleframework.config;
 
 import cn.bestwu.logging.annotation.NoRequestLogging;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
+import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
+import cn.bestwu.simpleframework.web.ICaptchaService;
 import cn.bestwu.simpleframework.web.error.CustomErrorController;
 import cn.bestwu.simpleframework.web.error.DataErrorHandler;
-import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
 import cn.bestwu.simpleframework.web.error.ErrorAttributes;
-import cn.bestwu.simpleframework.web.ICaptchaService;
 import cn.bestwu.simpleframework.web.error.IErrorHandler;
 import cn.bestwu.simpleframework.web.filter.ApiVersionFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
@@ -53,6 +53,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
@@ -176,8 +177,8 @@ public class FrameworkMvcConfiguration {
   @ConditionalOnMissingBean(ErrorAttributes.class)
   @Bean
   public ErrorAttributes errorAttributes(
-      @Autowired(required = false) List<IErrorHandler> errorHandlers) {
-    return new ErrorAttributes(errorHandlers);
+      @Autowired(required = false) List<IErrorHandler> errorHandlers, MessageSource messageSource) {
+    return new ErrorAttributes(errorHandlers, messageSource);
   }
 
   @ConditionalOnMissingBean(ErrorController.class)
