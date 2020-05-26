@@ -10,55 +10,11 @@ import java.io.File
 import java.net.URL
 import java.util.*
 
-
 internal fun Project.configProject(run: (project: Project) -> Unit) {
     run(rootProject)
     if (rootProject != this)
         run(this)
 }
-
-internal val Project.profileProperties: Properties
-    get() {
-        val props = Properties()
-        val gradleProperties = rootProject.file("gradle.properties")
-        if (gradleProperties.exists()) {
-            props.load(gradleProperties.inputStream())
-        }
-
-        val profile = extensions.getByType(ProfileExtension::class.java)
-        configProject { project ->
-            val projectFile = project.file("${profile.configDir}/$projectMark.properties")
-            if (projectFile.exists()) {
-                props.load(projectFile.inputStream())
-            }
-            val activeFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
-            if (activeFile.exists()) {
-                props.load(activeFile.inputStream())
-            }
-        }
-        if (profile.configFile.isNotBlank()) {
-            val uri = uri(profile.configFile)
-            if (uri.scheme.isNullOrEmpty()) {
-                val configFile = File(uri)
-                if (configFile.exists())
-                    props.load(configFile.inputStream())
-            } else {
-                props.load(uri.toURL().openStream())
-            }
-        }
-
-        props.putAll(System.getProperties())
-        props[profilesActiveName] = profilesActive
-        configProject { project ->
-            props.forEach { t, u ->
-                val k = t as String
-                if (project.hasProperty(k)) {
-                    project.setProperty(k, u)
-                }
-            }
-        }
-        return props
-    }
 
 internal val Project.profileFiles: Array<File>
     get() {
