@@ -27,9 +27,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.RequestAttributes;
@@ -96,39 +98,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
         httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
         BindException er = (BindException) error;
         List<FieldError> fieldErrors = er.getFieldErrors();
-        for (FieldError fieldError : fieldErrors) {
-          String defaultMessage = fieldError.getDefaultMessage();
-          if (defaultMessage.contains("required type")) {
-            defaultMessage = getText(webRequest, fieldError.getCode());
-          }
-          String regrex = "^.*threw exception; nested exception is .*: (.*)$";
-          if (defaultMessage.matches(regrex)) {
-            defaultMessage = defaultMessage.replaceAll(regrex, "$1");
-            defaultMessage = getText(webRequest, defaultMessage);
-          }
-          String field = fieldError.getField();
-          String msg = null;
-          if (fieldError.contains(ConstraintViolation.class)) {
-            ConstraintViolation<?> violation = fieldError.unwrap(ConstraintViolation.class);
-            if (violation.getConstraintDescriptor().getPayload().contains(NoPropertyPath.class)) {
-              msg = violation.getMessage();
-            }
-          }
-          if (msg == null) {
-            if (field.contains(".")) {
-              msg = getText(webRequest, field.substring(field.lastIndexOf('.') + 1)) + ": "
-                  + defaultMessage;
-            } else {
-              msg = getText(webRequest, field) + ": " + defaultMessage;
-            }
-          }
-          errors.put(field, msg);
-        }
-        message = errors.values().iterator().next();
-
-        if (!StringUtils.hasText(message)) {
-          message = "data.valid.failed";
-        }
+        message = handleFieldError(webRequest, errors, fieldErrors);
       } else if (error instanceof IllegalArgumentException) {
         httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
         if (!StringUtils.hasText(message)) {
@@ -139,6 +109,11 @@ public class ErrorAttributes extends DefaultErrorAttributes {
         message = "typeMismatch";
       } else if (error instanceof MissingServletRequestParameterException) {
         httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
+      } else if (error instanceof MethodArgumentNotValidException) {
+        httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
+        BindingResult bindingResult = ((MethodArgumentNotValidException) error).getBindingResult();
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        message = handleFieldError(webRequest, errors, fieldErrors);
       } else if (error instanceof ConversionFailedException) {
         httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
         message = getText(webRequest, "typeMismatch",
@@ -229,6 +204,46 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     }
 
     return respEntity.toMap();
+  }
+
+  @NotNull
+  private String handleFieldError(WebRequest webRequest, Map<String, String> errors,
+      List<FieldError> fieldErrors) {
+    String message;
+    for (FieldError fieldError : fieldErrors) {
+      String defaultMessage = fieldError.getDefaultMessage();
+      if (defaultMessage.contains("required type")) {
+        defaultMessage = getText(webRequest, fieldError.getCode());
+      }
+      String regrex = "^.*threw exception; nested exception is .*: (.*)$";
+      if (defaultMessage.matches(regrex)) {
+        defaultMessage = defaultMessage.replaceAll(regrex, "$1");
+        defaultMessage = getText(webRequest, defaultMessage);
+      }
+      String field = fieldError.getField();
+      String msg = null;
+      if (fieldError.contains(ConstraintViolation.class)) {
+        ConstraintViolation<?> violation = fieldError.unwrap(ConstraintViolation.class);
+        if (violation.getConstraintDescriptor().getPayload().contains(NoPropertyPath.class)) {
+          msg = violation.getMessage();
+        }
+      }
+      if (msg == null) {
+        if (field.contains(".")) {
+          msg = getText(webRequest, field.substring(field.lastIndexOf('.') + 1)) + ": "
+              + defaultMessage;
+        } else {
+          msg = getText(webRequest, field) + ": " + defaultMessage;
+        }
+      }
+      errors.put(field, msg);
+    }
+    message = errors.values().iterator().next();
+
+    if (!StringUtils.hasText(message)) {
+      message = "data.valid.failed";
+    }
+    return message;
   }
 
   @NotNull
