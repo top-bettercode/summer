@@ -3,6 +3,7 @@ package cn.bestwu.logging.operation
 import cn.bestwu.logging.HandlerMethodHandlerInterceptor
 import cn.bestwu.logging.RequestLoggingFilter
 import cn.bestwu.logging.trace.TraceHttpServletRequestWrapper
+import cn.bestwu.logging.trace.TracePart
 import org.springframework.core.convert.ConversionException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -61,7 +62,11 @@ object RequestConverter {
                 ?: request.remoteUser ?: "anonymousUser"
 
         val content = (request as? TraceHttpServletRequestWrapper)?.contentAsByteArray
-                ?: byteArrayOf()
+                ?: try {
+            FileCopyUtils.copyToByteArray(request.inputStream)
+        } catch (e: Exception) {
+            "Request inputStream has been read.Can't record the original data.".toByteArray()
+        }
         return OperationRequest(uri, restUri, uriTemplateVariables, HttpMethod.valueOf(request.method), headers, cookies, remoteUser, parameters, parts, content, dateTime)
     }
 
@@ -109,7 +114,7 @@ object RequestConverter {
             partHeaders.contentType = MediaType.parseMediaType(part.contentType)
         }
 
-        val content = try {
+        val content = (part as? TracePart)?.contentAsByteArray ?: try {
             FileCopyUtils.copyToByteArray(part.inputStream)
         } catch (e: Exception) {
             "Request part has been read.Can't record the original data.".toByteArray()

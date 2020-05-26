@@ -55,6 +55,7 @@ open class Operation(
     fun toString(config: RequestLoggingConfig): String {
         val originHeaders = request.headers
         val originParameters = request.parameters
+        val originParts = request.parts
         val originRequestContent = request.content
         val originStackTrace = response.stackTrace
         val originResponseContent = response.content
@@ -89,7 +90,15 @@ open class Operation(
         val format = config.format
         request.headers = headers
         request.parameters = parameters
+
         val error = response.statusCode >= 400
+
+        request.parts = originParts.map {
+            if (config.includeRequestBody || originRequestContent.isEmpty() || error) {
+                it
+            } else OperationRequestPart(it.name, it.submittedFileName, it.headers, "unrecorded".toByteArray())
+        }
+
         request.content = if (config.includeRequestBody || originRequestContent.isEmpty() || error) {
             (if (format) request.prettyContent else originRequestContent)
         } else "unrecorded".toByteArray()

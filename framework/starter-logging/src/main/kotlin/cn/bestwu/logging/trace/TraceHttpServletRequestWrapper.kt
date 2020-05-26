@@ -9,6 +9,7 @@ import java.io.TraceBufferedReader
 import javax.servlet.ServletInputStream
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
+import javax.servlet.http.Part
 
 /**
  * @author Peter Wu
@@ -23,15 +24,21 @@ class TraceHttpServletRequestWrapper
  * @throws IllegalArgumentException if the request is null
  */
 constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request) {
-    private val log: Logger = LoggerFactory.getLogger(TraceHttpServletRequestWrapper::class.java)
     private val byteArrayOutputStream = ByteArrayOutputStream()
+    private val parts: MutableCollection<Part>?
+
+    init {
+        parts = if (request.contentType?.toLowerCase()?.startsWith("multipart/") == true)
+            super.getParts().map { TracePart(it) }.toMutableList()
+        else
+            null
+    }
 
     val contentAsByteArray: ByteArray
         get() = if (isFinished()) byteArrayOutputStream.toByteArray() else try {
             StreamUtils.copyToByteArray(request.inputStream)
         } catch (e: Exception) {
-            log.error(e.message)
-            byteArrayOf()
+            "Request inputStream has been read.Can't record the original data.".toByteArray()
         }
 
     private fun isFinished(): Boolean {
@@ -40,6 +47,14 @@ constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request
         } catch (e: AbstractMethodError) {
             byteArrayOutputStream.size() != 0
         }
+    }
+
+    override fun getPart(name: String?): Part? {
+        return parts?.find { it.name == name } ?: super.getPart(name)
+    }
+
+    override fun getParts(): MutableCollection<Part> {
+        return parts ?: super.getParts()
     }
 
     override fun getInputStream(): ServletInputStream {
