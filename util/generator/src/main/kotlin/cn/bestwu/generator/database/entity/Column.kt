@@ -80,7 +80,7 @@ data class Column(
         }
 
     val containsSize: Boolean
-        get() = columnSize > 0 && !arrayOf(java.lang.Object::class.java.name, "byte[]", java.lang.Boolean::class.java.name, java.util.Date::class.java.name, "java.time.OffsetTime", "java.time.OffsetDateTime", "java.time.LocalDate", "java.time.LocalTime", "java.time.LocalDateTime").contains(javaType.fullyQualifiedName) && !arrayOf("TINYTEXT", "MEDIUMTEXT", "TEXT", "CLOB", "NCLOB").contains(typeName.toUpperCase())
+        get() = columnSize > 0 && !arrayOf(java.lang.Object::class.java.name, "byte[]", java.util.Date::class.java.name, "java.time.OffsetTime", "java.time.OffsetDateTime", "java.time.LocalDate", "java.time.LocalTime", "java.time.LocalDateTime").contains(javaType.fullyQualifiedName) && !arrayOf("TINYTEXT", "MEDIUMTEXT", "TEXT", "CLOB", "NCLOB").contains(typeName.toUpperCase())
 
     val randomValue: Any
         get() = when {
