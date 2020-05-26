@@ -40,13 +40,13 @@ class BearychatClient(private val webhookUrl: String, private val logUrl: String
     /**
      * @param channel channel id or channel name
      */
-    fun postMessage(channel: String, title: String, initialComment: String, message: List<String>, filesPath: String?): Boolean {
+    fun postMessage(channel: String, title: String, initialComment: String, message: List<String>, logsPath: String?): Boolean {
         val params = mutableMapOf<String, Any>()
         params["markdown"] = true
         params["channel"] = channel
         params["notification"] = initialComment
 
-        val hasFilesPath = !filesPath.isNullOrBlank()
+        val hasFilesPath = !logsPath.isNullOrBlank()
         if (!hasFilesPath || logUrl == null) {
             params["text"] = """$initialComment
             
@@ -58,8 +58,8 @@ ${message.joinToString("")}
         } else {
             params["text"] = initialComment
             if (message.isNotEmpty()) {
-                val fileName = getFileName(filesPath!!)
-                File(filesPath, fileName).writeText(message.joinToString(""))
+                val fileName = getFileName(logsPath!!)
+                File(logsPath, fileName).writeText(message.joinToString(""))
 
                 params["attachments"] = arrayOf(mapOf("title" to title, "url" to "$logUrl/logs/${fileName}"))
             } else {

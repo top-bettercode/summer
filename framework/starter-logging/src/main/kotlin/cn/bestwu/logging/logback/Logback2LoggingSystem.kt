@@ -110,11 +110,11 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         if (existProperty(environment, "logging.bearychat.webhook-url") && existProperty(environment, "logging.bearychat.channel")) {
             val bearychatProperties = Binder.get(environment).bind("logging.bearychat", BearychatProperties::class.java).get()
             try {
-                val filesPath = environment.getProperty("logging.files.path")
+                val logsPath = environment.getProperty("logging.files.path")
                 val loggerNames = bearychatProperties.logger
                 loggerNames.map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
-                            val slackAppender = BearychatAppender(bearychatProperties, warnSubject, filesPath)
+                            val slackAppender = BearychatAppender(bearychatProperties, warnSubject, logsPath)
                             slackAppender.context = context
                             slackAppender.start()
                             it.addAppender(slackAppender)
