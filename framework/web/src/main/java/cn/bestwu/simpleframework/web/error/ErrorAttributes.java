@@ -1,7 +1,6 @@
 package cn.bestwu.simpleframework.web.error;
 
 import cn.bestwu.simpleframework.exception.BusinessException;
-import cn.bestwu.simpleframework.exception.ResourceNotFoundException;
 import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
 import java.io.PrintWriter;
@@ -10,13 +9,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.context.MessageSource;
 import org.springframework.core.Ordered;
@@ -30,14 +32,10 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -48,12 +46,30 @@ import org.springframework.web.util.WebUtils;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ErrorAttributes extends DefaultErrorAttributes {
 
-  @Autowired
-  private MessageSource messageSource;
-  private List<IErrorHandler> errorHandlers;
+  private static final Logger log = LoggerFactory.getLogger(ErrorAttributes.class);
 
-  public ErrorAttributes(List<IErrorHandler> errorHandlers) {
+  private final MessageSource messageSource;
+  private final List<IErrorHandler> errorHandlers;
+  private static ResourceBundle defaultExceptionResource;
+  private static ResourceBundle exceptionResource;
+
+  static {
+    try {
+      defaultExceptionResource = ResourceBundle.getBundle("default-exception-handle");
+    } catch (MissingResourceException e) {
+      log.error("初始化默认异常处理错误", e);
+    }
+    try {
+      exceptionResource = ResourceBundle.getBundle("exception-handle");
+    } catch (MissingResourceException e) {
+      log.error("初始化异常处理错误", e);
+    }
+  }
+
+  public ErrorAttributes(List<IErrorHandler> errorHandlers,
+      MessageSource messageSource) {
     this.errorHandlers = errorHandlers;
+    this.messageSource = messageSource;
   }
 
   @Override
@@ -67,64 +83,33 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     Map<String, String> errors = new HashMap<>();
 
     if (error != null) {
-      message = error.getMessage();
       if (errorHandlers != null) {
         for (IErrorHandler errorHandler : errorHandlers) {
           errorHandler.handlerException(error, respEntity, errors);
         }
       }
 
-      httpStatusCode = respEntity.getHttpStatusCode();
       statusCode = respEntity.getStatus();
-      if (StringUtils.hasText(respEntity.getMessage())) {
-        message = respEntity.getMessage();
-      }
+      httpStatusCode = respEntity.getHttpStatusCode();
+      message = respEntity.getMessage();
 
       if (includeStackTrace) {
         addStackTrace(respEntity, error);
       }
 
-      if (error instanceof ResourceNotFoundException) {
-        httpStatusCode = HttpStatus.NOT_FOUND.value();
-        if (!StringUtils.hasText(message)) {
-          message = "resource.not.found";
-        }
-      } else if (error instanceof HttpRequestMethodNotSupportedException) {
-        httpStatusCode = HttpStatus.METHOD_NOT_ALLOWED.value();
-        if (!StringUtils.hasText(message)) {
-          message = "method.not.allowed";
-        }
-      } else if (error instanceof BindException) {//参数错误
-        httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
+      if (error instanceof BindException) {//参数错误
         BindException er = (BindException) error;
         List<FieldError> fieldErrors = er.getFieldErrors();
         message = handleFieldError(webRequest, errors, fieldErrors);
-      } else if (error instanceof IllegalArgumentException) {
-        httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
-        if (!StringUtils.hasText(message)) {
-          message = "data.valid.failed";
-        }
-      } else if (error instanceof MethodArgumentTypeMismatchException) {
-        httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
-        message = "typeMismatch";
-      } else if (error instanceof MissingServletRequestParameterException) {
-        httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
       } else if (error instanceof MethodArgumentNotValidException) {
-        httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
         BindingResult bindingResult = ((MethodArgumentNotValidException) error).getBindingResult();
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         message = handleFieldError(webRequest, errors, fieldErrors);
       } else if (error instanceof ConversionFailedException) {
-        httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
         message = getText(webRequest, "typeMismatch",
             ((ConversionFailedException) error).getValue(),
             ((ConversionFailedException) error).getTargetType());
-        if (!StringUtils.hasText(message)) {
-          message = "data.valid.failed";
-        }
       } else if (error instanceof ConstraintViolationException) {//数据验证
-        httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
-
         ConstraintViolationException er = (ConstraintViolationException) error;
         Set<ConstraintViolation<?>> constraintViolations = er.getConstraintViolations();
         for (ConstraintViolation<?> constraintViolation : constraintViolations) {
@@ -139,29 +124,16 @@ public class ErrorAttributes extends DefaultErrorAttributes {
           errors.put(property, msg);
         }
         message = errors.values().iterator().next();
-
-        if (!StringUtils.hasText(message)) {
-          message = "data.valid.failed";
-        }
       } else if (error instanceof HttpMediaTypeNotAcceptableException) {
-        httpStatusCode = HttpStatus.NOT_ACCEPTABLE.value();
         message =
             "MediaType not Acceptable!Must ACCEPT:" + ((HttpMediaTypeNotAcceptableException) error)
                 .getSupportedMediaTypes();
-      } else if (error instanceof IllegalStateException) {
-        httpStatusCode = HttpStatus.CONFLICT.value();
-      } else if (error instanceof MultipartException) {
-        httpStatusCode = HttpStatus.UNPROCESSABLE_ENTITY.value();
-        message = "upload.fail";
-      } else if (error instanceof NullPointerException) {
-        message = "NullPointerException";
       } else if (error instanceof HttpMessageNotWritableException) {
-        if (message.contains("Session is closed")) {
+        message = error.getMessage();
+        if (message != null && message.contains("Session is closed")) {
           httpStatusCode = HttpStatus.REQUEST_TIMEOUT.value();
           message = "request.timeout";
         }
-      } else if (error instanceof IllegalAccessException) {
-        httpStatusCode = HttpStatus.FORBIDDEN.value();
       } else if (error instanceof BusinessException) {
         statusCode = ((BusinessException) error).getCode();
         respEntity.setErrors(((BusinessException) error).getData());
@@ -170,12 +142,24 @@ public class ErrorAttributes extends DefaultErrorAttributes {
       message = getMessage(webRequest);
     }
 
+    if (!StringUtils.hasText(message) && error != null) {
+      message = handleMessage(error.getClass());
+      if (StringUtils.hasText(error.getMessage())) {
+        message = error.getMessage();
+      }
+    }
+
     if (httpStatusCode == null) {
       if (error != null) {
+        Class<? extends Throwable> errorClass = error.getClass();
+        httpStatusCode = handleHttpStatusCode(errorClass);
+
         ResponseStatus responseStatus = AnnotatedElementUtils
-            .findMergedAnnotation(error.getClass(), ResponseStatus.class);
+            .findMergedAnnotation(errorClass, ResponseStatus.class);
         if (responseStatus != null) {
-          httpStatusCode = responseStatus.code().value();
+          if (httpStatusCode == null) {
+            httpStatusCode = responseStatus.code().value();
+          }
           String reason = responseStatus.reason();
           if (!StringUtils.hasText(message) && StringUtils.hasText(reason)) {
             message = reason;
@@ -207,6 +191,29 @@ public class ErrorAttributes extends DefaultErrorAttributes {
 
     return respEntity.toMap();
   }
+
+  private Integer handleHttpStatusCode(Class<? extends Throwable> throwableClass) {
+    String key = throwableClass.getName() + ".code";
+    if (exceptionResource != null && exceptionResource.containsKey(key)) {
+      return Integer.parseInt(exceptionResource.getString(key));
+    } else if (defaultExceptionResource != null && defaultExceptionResource.containsKey(key)) {
+      return Integer.parseInt(defaultExceptionResource.getString(key));
+    } else {
+      return null;
+    }
+  }
+
+  private String handleMessage(Class<? extends Throwable> throwableClass) {
+    String key = throwableClass.getName() + ".message";
+    if (exceptionResource != null && exceptionResource.containsKey(key)) {
+      return exceptionResource.getString(key);
+    } else if (defaultExceptionResource != null && defaultExceptionResource.containsKey(key)) {
+      return defaultExceptionResource.getString(key);
+    } else {
+      return null;
+    }
+  }
+
 
   @NotNull
   private String handleFieldError(WebRequest webRequest, Map<String, String> errors,
@@ -279,7 +286,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
    * @param respEntity respEntity
    * @param error      error
    */
-  private void addStackTrace(RespEntity respEntity, Throwable error) {
+  private void addStackTrace(RespEntity<Object> respEntity, Throwable error) {
     StringWriter stackTrace = new StringWriter();
     error.printStackTrace(new PrintWriter(stackTrace));
     stackTrace.flush();
