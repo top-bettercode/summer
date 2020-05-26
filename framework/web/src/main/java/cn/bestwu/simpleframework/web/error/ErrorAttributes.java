@@ -160,6 +160,8 @@ public class ErrorAttributes extends DefaultErrorAttributes {
           httpStatusCode = HttpStatus.REQUEST_TIMEOUT.value();
           message = "request.timeout";
         }
+      } else if (error instanceof IllegalAccessException) {
+        httpStatusCode = HttpStatus.FORBIDDEN.value();
       } else if (error instanceof BusinessException) {
         statusCode = ((BusinessException) error).getCode();
         respEntity.setErrors(((BusinessException) error).getData());
