@@ -61,8 +61,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     }
     try {
       exceptionResource = ResourceBundle.getBundle("exception-handle");
-    } catch (MissingResourceException e) {
-      log.error("初始化异常处理错误", e);
+    } catch (MissingResourceException ignored) {
     }
   }
 
