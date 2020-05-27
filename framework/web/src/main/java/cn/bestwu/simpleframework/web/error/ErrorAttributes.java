@@ -143,7 +143,9 @@ public class ErrorAttributes extends DefaultErrorAttributes {
 
     if (!StringUtils.hasText(message) && error != null) {
       message = handleMessage(error.getClass());
-      if (StringUtils.hasText(error.getMessage())) {
+      if (StringUtils.hasText(error.getMessage()) && (!StringUtils.hasText(message) || !error
+          .getMessage()
+          .contains("Exception"))) {
         message = error.getMessage();
       }
     }
