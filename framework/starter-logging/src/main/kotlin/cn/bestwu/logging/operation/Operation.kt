@@ -94,17 +94,17 @@ open class Operation(
         val error = response.statusCode >= 400
 
         request.parts = originParts.map {
-            if (config.includeRequestBody || originRequestContent.isEmpty() || error) {
+            if (config.includeRequestBody || error || it.submittedFileName.isNullOrBlank()) {
                 it
             } else OperationRequestPart(it.name, it.submittedFileName, it.headers, "unrecorded".toByteArray())
         }
 
-        request.content = if (config.includeRequestBody || originRequestContent.isEmpty() || error) {
+        request.content = if (config.includeRequestBody || error || originRequestContent.isEmpty()) {
             (if (format) request.prettyContent else originRequestContent)
         } else "unrecorded".toByteArray()
 
 
-        response.content = if (config.includeResponseBody || originResponseContent.isEmpty() || error) {
+        response.content = if (config.includeResponseBody || error || originResponseContent.isEmpty()) {
             (if (format) response.prettyContent else originResponseContent)
         } else "unrecorded".toByteArray()
 

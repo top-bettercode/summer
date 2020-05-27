@@ -60,6 +60,7 @@ class TestController {
         return "ok"
     }
 
+    @RequestLogging(includeRequestBody = false)
     @RequestMapping("/multipart")
     fun multipart(file: MultipartFile): Any {
         println("------------------:${file.originalFilename}---------------------")
