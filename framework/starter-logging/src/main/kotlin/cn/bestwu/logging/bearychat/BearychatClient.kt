@@ -1,5 +1,7 @@
 package cn.bestwu.logging.bearychat
 
+import cn.bestwu.logging.formatFile
+import cn.bestwu.logging.formatFileNow
 import cn.bestwu.logging.formatNow
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
@@ -79,7 +81,7 @@ ${message.joinToString("")}
     }
 
     private fun getFileName(filesPath: String, index: Int = 0): String {
-        val fileName = "alarm/${formatNow()}.${index}.log"
+        val fileName = "alarm/${formatFileNow()}.${index}.log"
         return if (File(filesPath, fileName).exists()) {
             getFileName(filesPath, index + 1)
         } else {
