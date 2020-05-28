@@ -11,11 +11,6 @@ data class RequestLoggingConfig(val includeRequestBody: Boolean,
                                  */
                                 val format: Boolean,
                                 /**
-                                 * 日志输出格式
-                                 */
-
-                                val logFormat: LogFormat,
-                                /**
                                  * 忽略超时
                                  */
                                 val ignoredTimeout: Boolean) {
@@ -29,7 +24,6 @@ data class RequestLoggingConfig(val includeRequestBody: Boolean,
         if (!encryptHeaders.contentEquals(other.encryptHeaders)) return false
         if (!encryptParameters.contentEquals(other.encryptParameters)) return false
         if (format != other.format) return false
-        if (logFormat != other.logFormat) return false
         if (ignoredTimeout != other.ignoredTimeout) return false
 
         return true
@@ -42,7 +36,6 @@ data class RequestLoggingConfig(val includeRequestBody: Boolean,
         result = 31 * result + encryptHeaders.contentHashCode()
         result = 31 * result + encryptParameters.contentHashCode()
         result = 31 * result + format.hashCode()
-        result = 31 * result + logFormat.hashCode()
         result = 31 * result + ignoredTimeout.hashCode()
         return result
     }

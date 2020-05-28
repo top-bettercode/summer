@@ -98,7 +98,7 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
             val error = getError(requestAttributes)
             if (handler != null || include(properties.includePath, uri) || includeError(error)) {
                 val config: RequestLoggingConfig = requestToUse.getAttribute(HandlerMethodHandlerInterceptor.REQUEST_LOGGING) as? RequestLoggingConfig
-                        ?: RequestLoggingConfig(properties.isIncludeRequestBody, properties.isIncludeResponseBody, properties.isIncludeTrace, properties.encryptHeaders, properties.encryptParameters, properties.isFormat, properties.logFormat, false)
+                        ?: RequestLoggingConfig(includeRequestBody = properties.isIncludeRequestBody, includeResponseBody = properties.isIncludeResponseBody, includeTrace = properties.isIncludeTrace, encryptHeaders = properties.encryptHeaders, encryptParameters = properties.encryptParameters, format = properties.isFormat, ignoredTimeout = false)
                 val operationResponse = ResponseConverter.convert(responseToUse)
                 if (error != null) {
                     if (config.includeTrace) {
@@ -129,7 +129,7 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
                 }
                 val marker = MarkerFactory.getMarker(REQUEST_LOG_MARKER)
                 if (existProperty(environment, "logging.logstash.destinations[0]")) {
-                    marker.add(Markers.appendRaw(OPERATION_MARKER, operation.toString(config.copy(format = false, logFormat = LogFormat.JSON))).and(Markers.append("title", warnSubject(environment))))
+                    marker.add(Markers.appendRaw(OPERATION_MARKER, operation.toString(config.copy(format = false))).and(Markers.append("title", warnSubject(environment))))
                     marker.add(Markers.append(IS_OPERATION_MARKER, true))
                 }
                 if (error == null || error is ClientAbortException) {

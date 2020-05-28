@@ -43,10 +43,6 @@ public class RequestLoggingProperties {
    */
   private String[] ignoredTimeoutPath = {};
   /**
-   * 日志输出格式
-   */
-  private LogFormat logFormat = LogFormat.HTTP;
-  /**
    * 需要记录日志的 Controller类名前缀.如果为空记录所有 Controller类.
    */
   private String[] handlerTypePrefix = new String[0];
@@ -136,14 +132,6 @@ public class RequestLoggingProperties {
 
   public void setForceRecord(boolean forceRecord) {
     this.forceRecord = forceRecord;
-  }
-
-  public LogFormat getLogFormat() {
-    return logFormat;
-  }
-
-  public void setLogFormat(LogFormat logFormat) {
-    this.logFormat = logFormat;
   }
 
   public String[] getHandlerTypePrefix() {
