@@ -21,7 +21,7 @@ public class CodeMap extends LinkedHashMap<Serializable, String> implements ICod
   @Override
   public Serializable codeOf(String name) {
     for (Entry<Serializable, String> entry : entrySet()) {
-      if (name.equals(entry.getValue())) {
+      if (name.equalsIgnoreCase(entry.getValue())) {
         return entry.getKey();
       }
     }
