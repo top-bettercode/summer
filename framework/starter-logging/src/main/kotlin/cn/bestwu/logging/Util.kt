@@ -30,6 +30,10 @@ internal fun formatFile(timeStamp: Long): String {
     return LocalDateTimeHelper.of(timeStamp).format(dateFileFormatter)
 }
 
+internal fun formatFileNow(): String {
+    return LocalDateTime.now().format(dateFileFormatter)
+}
+
 internal fun warnSubject(environment: Environment): String = environment.getProperty("logging.warn-subject", "${environment.getProperty("spring.application.name", "")} ${environment.getProperty("spring.profiles.active", "")} system exception")
 
 internal fun existProperty(environment: Environment, key: String) =
