@@ -47,9 +47,9 @@ class HandlerMethodHandlerInterceptor(private val properties: RequestLoggingProp
             if (encryptParameters == null || encryptParameters.isEmpty()) {
                 encryptParameters = properties.encryptParameters
             }
-            val requestLogging = RequestLoggingConfig(properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false, properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false, properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false, encryptHeaders
-                    ?: arrayOf(), encryptParameters
-                    ?: arrayOf(), properties.isFormat, properties.logFormat, requestLoggingAnno?.ignoredTimeout == true)
+            val requestLogging = RequestLoggingConfig(includeRequestBody = properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false, includeResponseBody = properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false, includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false, encryptHeaders = encryptHeaders
+                    ?: arrayOf(), encryptParameters = encryptParameters
+                    ?: arrayOf(), format = properties.isFormat, ignoredTimeout = requestLoggingAnno?.ignoredTimeout == true)
 
             request.setAttribute(REQUEST_LOGGING, requestLogging)
         }

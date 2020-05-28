@@ -11,7 +11,7 @@ import java.util.*
  * @author Peter Wu
  */
 @JsonPropertyOrder("contentExt", "headersExt", "statusCode", "contentAsString", "stackTrace")
-@JsonIgnoreProperties(value = ["headers", "createdDate"],allowSetters = true)
+@JsonIgnoreProperties(value = ["headers", "dateTime"],allowSetters = true)
 class DocOperationResponse(operationResponse: OperationResponse = OperationResponse(),
                            /**
                             * 请求头说明

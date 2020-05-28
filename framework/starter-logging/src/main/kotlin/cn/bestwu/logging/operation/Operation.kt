@@ -1,12 +1,8 @@
 package cn.bestwu.logging.operation
 
-import cn.bestwu.logging.LogFormat
 import cn.bestwu.logging.RequestLoggingConfig
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import org.springframework.http.HttpHeaders
-import java.text.SimpleDateFormat
 import java.time.temporal.ChronoUnit
 
 /**
@@ -110,14 +106,8 @@ open class Operation(
 
         response.stackTrace = if (config.includeTrace || originStackTrace.isBlank()) originStackTrace else "unrecorded"
 
-        val log = when (config.logFormat) {
-            LogFormat.HTTP -> {
-                HttpOperation.toString(this, format)
-            }
-            LogFormat.JSON -> {
-                (if (format) LINE_SEPARATOR else "") + valueOf(this, format)
-            }
-        }
+        val log = HttpOperation.toString(this, format)
+
         request.headers = originHeaders
         request.parameters = originParameters
         request.content = originRequestContent
@@ -139,39 +129,5 @@ open class Operation(
         @JvmField
         val LINE_SEPARATOR = System.getProperty("line.separator")!!
 
-        @JvmStatic
-        var OBJECT_MAPPER = ObjectMapper()
-
-        @JvmStatic
-        var INDENT_OUTPUT_OBJECT_MAPPER = ObjectMapper()
-
-        init {
-            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ")
-            OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            OBJECT_MAPPER.dateFormat = simpleDateFormat
-            INDENT_OUTPUT_OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            INDENT_OUTPUT_OBJECT_MAPPER.enable(SerializationFeature.INDENT_OUTPUT)
-            INDENT_OUTPUT_OBJECT_MAPPER.dateFormat = simpleDateFormat
-        }
-
-        /**
-         * 转换为字符串
-         *
-         * @param object 对象
-         * @param format 是否格式化输出
-         * @return 字符串
-         */
-        @JvmOverloads
-        @JvmStatic
-        fun valueOf(`object`: Any?, format: Boolean = false): String {
-            if (`object` is CharSequence) {
-                return `object`.toString()
-            }
-            return if (format) {
-                INDENT_OUTPUT_OBJECT_MAPPER.writeValueAsString(`object`)
-            } else {
-                OBJECT_MAPPER.writeValueAsString(`object`)
-            }
-        }
     }
 }
