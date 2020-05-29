@@ -151,6 +151,9 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
     }
 
     private fun send(timeStamp: Long, initialComment: String, message: List<String>) {
+        if (sendErrorCount > 0)
+            Thread.sleep(2 * 1000)
+
         if (sendMessage(timeStamp, initialComment, message)) {
             sendErrorCount = 0
         } else {
