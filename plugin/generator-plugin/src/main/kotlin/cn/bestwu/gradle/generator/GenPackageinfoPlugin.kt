@@ -143,6 +143,8 @@ package $packageinfo""".trimIndent())
             packageinfo.endsWith("service.impl") -> "服务实现包"
             "impl" == lastPackageinfo -> "实现包"
             "support" == lastPackageinfo -> "工具包"
+            "util" == lastPackageinfo -> "工具包"
+            "utils" == lastPackageinfo -> "工具包"
             "web" == lastPackageinfo -> "WEB 配置包"
             else -> ""
         }
