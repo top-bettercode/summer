@@ -167,9 +167,9 @@ class DistPlugin : Plugin<Project> {
                     it.group = createTask.group
                     it.from(createTask.outputDirectory)
                     if (dist.includeJre)
-                        it.archiveFileName.set("${project.name}-windows-${if (dist.x64) "x64" else "x86"}.zip")
+                        it.archiveFileName.set("${project.name}-${project.version}-windows-${if (dist.x64) "x64" else "x86"}.zip")
                     else
-                        it.archiveFileName.set("${project.name}-windows.zip")
+                        it.archiveFileName.set("${project.name}-${project.version}-windows.zip")
                     it.destinationDirectory.set(createTask.outputDirectory.parentFile)
                 }
 
@@ -244,7 +244,7 @@ class DistPlugin : Plugin<Project> {
                     val dest = project.file("" + project.buildDir + "/install")
                     val updateDir = File(dest, "update")
                     it.from(updateDir)
-                    it.archiveFileName.set("${project.name}_${project.version}_dist_update.zip")
+                    it.archiveFileName.set("${project.name}-${project.version}-dist_update.zip")
                     it.destinationDirectory.set(dest)
                 }
             }
