@@ -45,6 +45,11 @@ public class ExcelField<T, P> {
   private P defaultValue;
 
   /**
+   * 默认空值
+   */
+  private String nullValue = "";
+
+  /**
    * 格式
    */
   private String pattern;
@@ -243,6 +248,11 @@ public class ExcelField<T, P> {
     return this;
   }
 
+  public ExcelField<T, P> none(String nullValue) {
+    this.nullValue = nullValue;
+    return this;
+  }
+
   //--------------------------------------------
   @SuppressWarnings("unchecked")
   private ExcelField(String title, ExcelConverter<T, P> propertyGetter) {
@@ -330,7 +340,7 @@ public class ExcelField<T, P> {
 
     this.cellConverter = (property) -> {
       if (property == null) {
-        return "";
+        return nullValue;
       } else if (propertyType.equals(BigDecimal.class)) {
         return ((BigDecimal) property).toPlainString();
       } else {
