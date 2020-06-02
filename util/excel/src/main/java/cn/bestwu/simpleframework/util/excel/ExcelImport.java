@@ -254,21 +254,24 @@ public class ExcelImport {
    * @return 单元格值
    */
   public static Object getCellValue(Row row, int column) {
-    Cell cell = row.getCell(column);
-    if (cell != null) {
-      switch (cell.getType()) {
-        case STRING:
-          return row.getCellAsString(column).orElse(null);
-        case NUMBER:
-          return row.getCellAsNumber(column).orElse(null);
-        case BOOLEAN:
-          return row.getCellAsBoolean(column).orElse(null);
-        case EMPTY:
-          return null;
-        case FORMULA:
-        case ERROR:
-          return row.getCellText(column);
+    try {
+      Cell cell = row.getCell(column);
+      if (cell != null) {
+        switch (cell.getType()) {
+          case STRING:
+            return row.getCellAsString(column).orElse(null);
+          case NUMBER:
+            return row.getCellAsNumber(column).orElse(null);
+          case BOOLEAN:
+            return row.getCellAsBoolean(column).orElse(null);
+          case EMPTY:
+            return null;
+          case FORMULA:
+          case ERROR:
+            return row.getCellText(column);
+        }
       }
+    } catch (IndexOutOfBoundsException ignored) {
     }
     return null;
   }
