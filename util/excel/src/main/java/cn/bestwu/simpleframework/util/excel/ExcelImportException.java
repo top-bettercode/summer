@@ -11,13 +11,10 @@ public class ExcelImportException extends Exception {
 
   private final List<CellError> errors;
 
-  public ExcelImportException(List<CellError> errors) {
-    this(null, errors);
-  }
 
   public ExcelImportException(String message,
-      List<CellError> errors) {
-    super(message);
+      List<CellError> errors, Throwable e) {
+    super(message, e);
     this.errors = errors;
   }
 

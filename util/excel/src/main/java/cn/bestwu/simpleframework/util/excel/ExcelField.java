@@ -219,10 +219,20 @@ public class ExcelField<T, P> {
     if (cellValue.contains(",")) {
       String[] split = cellValue.split(",");
       return StringUtils.arrayToCommaDelimitedString(
-          Arrays.stream(split).map(s -> CodeSerializer.getCode(codeType, s.trim()))
+          Arrays.stream(split).map(s -> {
+            Serializable code = CodeSerializer.getCode(codeType, s.trim());
+            if (code == null) {
+              throw new IllegalArgumentException("无" + s + "对应的类型");
+            }
+            return code;
+          })
               .toArray());
     } else {
-      return CodeSerializer.getCode(codeType, cellValue);
+      Serializable code = CodeSerializer.getCode(codeType, cellValue);
+      if (code == null) {
+        throw new IllegalArgumentException("无" + cellValue + "对应的类型");
+      }
+      return code;
     }
   }
 
@@ -404,7 +414,9 @@ public class ExcelField<T, P> {
       propertySetter.set(obj, property);
     } catch (Exception e) {
       String message = e.getMessage();
-      throw new IllegalArgumentException(StringUtils.hasText(message) ? message : "typeMismatch",
+      throw new IllegalArgumentException(
+          !StringUtils.hasText(message) || (e instanceof NumberFormatException) ? "typeMismatch"
+              : message,
           e);
     }
     if (propertyName != null) {

@@ -229,7 +229,8 @@ public class ExcelImport {
     }
     if (notAllBlank) {
       if (!rowErrors.isEmpty()) {
-        throw new ExcelImportException(rowErrors.get(0).getException().getMessage(), rowErrors);
+        Exception exception = rowErrors.get(0).getException();
+        throw new ExcelImportException(exception.getMessage(), rowErrors, exception);
       }
       return converter.convert(o);
     } else {
