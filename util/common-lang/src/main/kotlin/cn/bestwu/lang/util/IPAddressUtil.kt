@@ -4,9 +4,7 @@ import org.springframework.util.StringUtils
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.LineNumberReader
-import java.net.Inet4Address
-import java.net.NetworkInterface
-import java.net.SocketException
+import java.net.*
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -15,6 +13,34 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 object IPAddressUtil {
+
+    @JvmStatic
+    fun isIPv4(ip: String): Boolean {
+        return try {
+            InetAddress.getByName(ip) is Inet4Address
+        } catch (e: UnknownHostException) {
+            return false
+        }
+    }
+
+    @JvmStatic
+    fun isIPv6(ip: String): Boolean {
+        return try {
+            InetAddress.getByName(ip) is Inet6Address
+        } catch (e: UnknownHostException) {
+            return false
+        }
+    }
+
+    @JvmStatic
+    fun isIP(ip: String): Boolean {
+        return try {
+            InetAddress.getByName(ip)
+            true
+        } catch (e: UnknownHostException) {
+            return false
+        }
+    }
 
     /**
      * 获取本机IP
