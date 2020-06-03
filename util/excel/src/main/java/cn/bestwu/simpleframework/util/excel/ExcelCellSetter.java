@@ -9,5 +9,5 @@ package cn.bestwu.simpleframework.util.excel;
 @FunctionalInterface
 public interface ExcelCellSetter<T, P> {
 
-  void set(T entity, P property) throws NoSuchMethodException;
+  void set(T entity, P property);
 }
