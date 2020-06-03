@@ -15,7 +15,7 @@ public class SlackProperties {
   private String[] ignoredWarnLogger = {};
   private String authToken;
   private String channel;
-  private Long cacheSeconds = 10 * 60L;
+  private Long cacheSeconds = 5 * 60L;
   private Integer cyclicBufferSize = 20;
 
   public boolean isSendFile() {
