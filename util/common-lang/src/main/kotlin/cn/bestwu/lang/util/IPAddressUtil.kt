@@ -14,34 +14,6 @@ import javax.servlet.http.HttpServletRequest
  */
 object IPAddressUtil {
 
-    @JvmStatic
-    fun isIPv4(ip: String): Boolean {
-        return try {
-            InetAddress.getByName(ip) is Inet4Address
-        } catch (e: UnknownHostException) {
-            return false
-        }
-    }
-
-    @JvmStatic
-    fun isIPv6(ip: String): Boolean {
-        return try {
-            InetAddress.getByName(ip) is Inet6Address
-        } catch (e: UnknownHostException) {
-            return false
-        }
-    }
-
-    @JvmStatic
-    fun isIP(ip: String): Boolean {
-        return try {
-            InetAddress.getByName(ip)
-            true
-        } catch (e: UnknownHostException) {
-            return false
-        }
-    }
-
     /**
      * 获取本机IP
      * @return ip

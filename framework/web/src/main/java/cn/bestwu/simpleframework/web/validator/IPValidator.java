@@ -1,6 +1,6 @@
 package cn.bestwu.simpleframework.web.validator;
 
-import cn.bestwu.lang.util.IPAddressUtil;
+import com.google.common.net.InetAddresses;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -23,7 +23,7 @@ public class IPValidator implements ConstraintValidator<IP, String> {
     if (charSequence == null || charSequence.length() == 0) {
       return true;
     }
-    return IPAddressUtil.isIP(charSequence);
+    return InetAddresses.isInetAddress(charSequence);
   }
 }
 
