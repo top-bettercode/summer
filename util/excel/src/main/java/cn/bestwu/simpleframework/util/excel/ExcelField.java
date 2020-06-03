@@ -222,7 +222,7 @@ public class ExcelField<T, P> {
           Arrays.stream(split).map(s -> {
             Serializable code = CodeSerializer.getCode(codeType, s.trim());
             if (code == null) {
-              throw new IllegalArgumentException("无" + s + "对应的类型");
+              throw new IllegalArgumentException("无\"" + s + "\"对应的类型");
             }
             return code;
           })
@@ -230,7 +230,7 @@ public class ExcelField<T, P> {
     } else {
       Serializable code = CodeSerializer.getCode(codeType, cellValue);
       if (code == null) {
-        throw new IllegalArgumentException("无" + cellValue + "对应的类型");
+        throw new IllegalArgumentException("无\"" + cellValue + "\"对应的类型");
       }
       return code;
     }
@@ -323,29 +323,33 @@ public class ExcelField<T, P> {
 
   private void init() {
     propertyConverter = (cellValue) -> {
-      if (propertyType == String.class) {
-        return cellValue;
-      } else if (propertyType == Integer.class) {
-        return Double.valueOf(cellValue).intValue();
-      } else if (propertyType == Long.class) {
-        return Double.valueOf(cellValue).longValue();
-      } else if (propertyType == BigDecimal.class) {
-        return new BigDecimal(cellValue);
-      } else if (propertyType == Double.class) {
-        return Double.valueOf(cellValue);
-      } else if (propertyType == Float.class) {
-        return Float.valueOf(cellValue);
-      } else if (propertyType == Date.class) {
-        Date date;
-        try {
-          date = DateUtil.getJavaDate(Double.parseDouble(cellValue));
-        } catch (NumberFormatException e) {
-          date = LocalDateTimeHelper.parse(cellValue, dateTimeFormatter).toDate();
+      try {
+        if (propertyType == String.class) {
+          return cellValue;
+        } else if (propertyType == Integer.class) {
+          return Double.valueOf(cellValue).intValue();
+        } else if (propertyType == Long.class) {
+          return Double.valueOf(cellValue).longValue();
+        } else if (propertyType == BigDecimal.class) {
+          return new BigDecimal(cellValue);
+        } else if (propertyType == Double.class) {
+          return Double.valueOf(cellValue);
+        } else if (propertyType == Float.class) {
+          return Float.valueOf(cellValue);
+        } else if (propertyType == Date.class) {
+          Date date;
+          try {
+            date = DateUtil.getJavaDate(Double.parseDouble(cellValue));
+          } catch (NumberFormatException e) {
+            date = LocalDateTimeHelper.parse(cellValue, dateTimeFormatter).toDate();
+          }
+          return date;
         }
-        return date;
-      } else {
-        throw new IllegalArgumentException("类型不正确,期待的数据类型:" + propertyType.getName());
+      } catch (NumberFormatException e) {
+        throw new IllegalArgumentException("类型不正确,期待输入数字类型");
       }
+
+      throw new IllegalArgumentException("不支持的数据类型:" + propertyType.getName());
     };
 
     this.cellConverter = (property) -> {
@@ -404,21 +408,13 @@ public class ExcelField<T, P> {
   @SuppressWarnings("unchecked")
   public void setProperty(T obj, String cellValue, Validator validator,
       Class<?>[] validateGroups) {
-    try {
-      P property;
-      if (!StringUtils.hasText(cellValue)) {
-        property = defaultValue;
-      } else {
-        property = (P) propertyConverter.convert(cellValue);
-      }
-      propertySetter.set(obj, property);
-    } catch (Exception e) {
-      String message = e.getMessage();
-      throw new IllegalArgumentException(
-          !StringUtils.hasText(message) || (e instanceof NumberFormatException) ? "typeMismatch"
-              : message,
-          e);
+    P property;
+    if (!StringUtils.hasText(cellValue)) {
+      property = defaultValue;
+    } else {
+      property = (P) propertyConverter.convert(cellValue);
     }
+    propertySetter.set(obj, property);
     if (propertyName != null) {
       Set<ConstraintViolation<Object>> constraintViolations = validator
           .validateProperty(obj, propertyName, validateGroups);
