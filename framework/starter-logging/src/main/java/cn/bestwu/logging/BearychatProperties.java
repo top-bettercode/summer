@@ -16,7 +16,7 @@ public class BearychatProperties {
   private String webhookUrl;
   private String logUrl;
   private String channel;
-  private Long cacheSeconds = 10L;
+  private Long cacheSeconds = 10 * 60L;
   private Integer cyclicBufferSize = 20;
 
   public boolean isSendFile() {
