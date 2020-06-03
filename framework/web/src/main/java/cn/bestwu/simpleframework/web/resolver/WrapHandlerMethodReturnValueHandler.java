@@ -78,7 +78,7 @@ public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnV
     if (originalValue == null) {
       return new RespEntity<>(null);
     } else if (originalValue instanceof Throwable) {
-      return new RespEntity(String.valueOf(HttpStatus.BAD_REQUEST.value()),
+      return new RespEntity<>(String.valueOf(HttpStatus.BAD_REQUEST.value()),
           ((Throwable) originalValue).getMessage());
     } else if (!(originalValue instanceof RespEntity || originalValue instanceof RespEntityMap)) {
       return new RespEntity<>(originalValue);

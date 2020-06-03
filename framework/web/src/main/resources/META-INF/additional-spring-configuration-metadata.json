@@ -26,13 +26,13 @@
     {
       "name": "app.web.wrap.enable",
       "type": "java.lang.Boolean",
-      "defaultValue": false,
+      "defaultValue": true,
       "description": "响应结果是否包一层{\"data\":52,\"message\":\"\",\"status\":\"200\"}样式的格式."
     },
     {
       "name": "app.web.ok.enable",
       "type": "java.lang.Boolean",
-      "defaultValue": false,
+      "defaultValue": true,
       "description": "响应状态码统一为200."
     },
     {

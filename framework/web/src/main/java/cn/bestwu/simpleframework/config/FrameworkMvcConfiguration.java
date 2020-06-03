@@ -90,13 +90,13 @@ public class FrameworkMvcConfiguration {
   @Value("${app.jackson.mix-in-annotation.base-packages:}")
   private String[] basePackages;
 
-  @Value("${app.web.ok.enable:false}")
+  @Value("${app.web.ok.enable:true}")
   private Boolean okEnable;
 
   @Bean(name = "error")
   @ConditionalOnMissingBean(name = "error")
   public View error(ObjectMapper objectMapper,
-      @Value("${app.web.ok.enable:false}") Boolean okEnable) {
+      @Value("${app.web.ok.enable:true}") Boolean okEnable) {
     return new View() {
       @Override
       public String getContentType() {
@@ -286,8 +286,8 @@ public class FrameworkMvcConfiguration {
   @Conditional(CustomRequestMappingConditio.class)
   @Bean
   public WebMvcRegistrations webMvcRegistrations(
-      @Value("${app.web.ok.enable:false}") Boolean okEnable,
-      @Value("${app.web.wrap.enable:false}") Boolean wrapEnable) {
+      @Value("${app.web.ok.enable:true}") Boolean okEnable,
+      @Value("${app.web.wrap.enable:true}") Boolean wrapEnable) {
     return new WebMvcRegistrations() {
       @Override
       public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
