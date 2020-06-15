@@ -13,8 +13,12 @@ const val profilesActiveName: String = "profiles.active"
 val Project.profileProperties: Properties
     get() {
         val props = Properties()
-        rootProject.properties.filter { it.value != null }.forEach { (t, any) ->
-            props[t] = any
+        val gradleProperties = rootProject.file("gradle.properties")
+        if (gradleProperties.exists()) {
+            props.load(gradleProperties.inputStream())
+            props.keys.forEach { t ->
+                props[t] = rootProject.properties[t]
+            }
         }
 
         val profile = extensions.getByType(ProfileExtension::class.java)
@@ -44,9 +48,8 @@ val Project.profileProperties: Properties
         configProject { project ->
             props.forEach { t, u ->
                 val k = t as String
-                try {
+                if (project.hasProperty(k)) {
                     project.setProperty(k, u)
-                } catch (e: Exception) {
                 }
             }
         }
