@@ -211,7 +211,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val logFilePath = logFile?.toString() ?: filesProperties.path + "/all.log"
+        val logFilePath = logFile?.toString() ?: filesProperties.path + File.separator + "all.log"
         appender.file = logFilePath
         setRollingPolicy(appender, context, filesProperties, logFilePath)
         start(context, appender)
@@ -301,7 +301,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val logFile = filesProperties.path + "/level/" + level
+        val logFile = filesProperties.path + File.separator + "level" + File.separator + level
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
 
@@ -332,7 +332,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val logFile = filesProperties.path + File.separator + marker + File.separator + marker
+        val logFile = filesProperties.path + File.separator + "marker" + File.separator + marker
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
 
@@ -377,7 +377,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val logFile = filesProperties.path + File.separator + name + File.separator + name
+        val logFile = filesProperties.path + File.separator + "spilt" + File.separator + name
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
 
