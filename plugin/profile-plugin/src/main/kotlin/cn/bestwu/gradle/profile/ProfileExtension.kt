@@ -4,11 +4,9 @@ import org.gradle.api.Project
 import profilesActive
 import profilesActiveName
 import profilesDefaultActive
-import projectMark
+import defaultConfigName
 import simpleProfilesActiveName
 import java.io.File
-import java.net.URL
-import java.util.*
 
 internal fun Project.configProject(run: (project: Project) -> Unit) {
     run(rootProject)
@@ -22,9 +20,9 @@ internal val Project.profileFiles: Array<File>
         val array = mutableListOf<File>()
         array.add(rootProject.file("gradle.properties"))
         configProject { project ->
-            val projectFile = project.file("${profile.configDir}/$projectMark.properties")
-            if (projectFile.exists()) {
-                array.add(projectFile)
+            val defaultConfigFile = project.file("${profile.configDir}/$defaultConfigName.properties")
+            if (defaultConfigFile.exists()) {
+                array.add(defaultConfigFile)
             }
             val activeFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
             if (activeFile.exists()) {
@@ -47,7 +45,7 @@ internal val Project.profiles: Set<String>
             }
         }
         set.add(profilesDefaultActive)
-        set.remove(projectMark)
+        set.remove(defaultConfigName)
         return set
     }
 

@@ -7,7 +7,7 @@ import java.util.*
 
 const val profilesDefaultActive: String = "local"
 const val simpleProfilesActiveName: String = "P"
-const val projectMark: String = "project"
+const val defaultConfigName: String = "default"
 const val profilesActiveName: String = "profiles.active"
 
 val Project.profileProperties: Properties
@@ -23,9 +23,9 @@ val Project.profileProperties: Properties
 
         val profile = extensions.getByType(ProfileExtension::class.java)
         configProject { project ->
-            val projectFile = project.file("${profile.configDir}/$projectMark.properties")
-            if (projectFile.exists()) {
-                props.load(projectFile.inputStream())
+            val defaultConfigFile = project.file("${profile.configDir}/$defaultConfigName.properties")
+            if (defaultConfigFile.exists()) {
+                props.load(defaultConfigFile.inputStream())
             }
             val activeFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
             if (activeFile.exists()) {
