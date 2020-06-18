@@ -28,9 +28,9 @@ object OracleToDDL : ToDDL() {
                 } else {
                     val oldTable = oldTables.find { it.tableName == tableName }!!
                     if (oldTable != table) {
-                        out.println("$commentPrefix $tableName")
+                        val lines = mutableListOf<String>()
                         if (oldTable.remarks.trimEnd('表') != table.remarks)
-                            out.println("COMMENT ON TABLE $quote$tableName$quote IS '${table.remarks}';")
+                            lines.add("COMMENT ON TABLE $quote$tableName$quote IS '${table.remarks}';")
                         val oldColumns = oldTable.columns
                         val columns = table.columns
                         val oldPrimaryKeys = oldTable.primaryKeys
@@ -39,7 +39,7 @@ object OracleToDDL : ToDDL() {
                         val primaryKey = primaryKeys[0]
                         if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1 && oldPrimaryKey != primaryKey) {
                             if (primaryKey.columnName != oldPrimaryKey.columnName)
-                                out.println("ALTER TABLE $quote$tableName$quote DROP PRIMARY KEY;")
+                                lines.add("ALTER TABLE $quote$tableName$quote DROP PRIMARY KEY;")
                         }
 
 
@@ -47,36 +47,39 @@ object OracleToDDL : ToDDL() {
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames
                         if (dropColumnNames.isNotEmpty()) {
-                            out.println("ALTER TABLE $quote$tableName$quote DROP (${dropColumnNames.joinToString(",") { "$quote$it$quote" }});")
+                            lines.add("ALTER TABLE $quote$tableName$quote DROP (${dropColumnNames.joinToString(",") { "$quote$it$quote" }});")
                         }
-                        dropFk(oldColumns, dropColumnNames, out, tableName)
+                        dropFk(oldColumns, dropColumnNames, lines, tableName)
                         val newColumnNames = columnNames - oldColumnNames
                         columns.forEach { column ->
                             val columnName = column.columnName
                             if (newColumnNames.contains(columnName)) {
-                                out.println("ALTER TABLE $quote$tableName$quote ADD ${columnDef(column, quote)};")
-                                out.println("COMMENT ON COLUMN $quote$tableName$quote.$quote$columnName$quote IS '${column.remarks}';")
-                                addFk(column, out, tableName, columnName)
+                                lines.add("ALTER TABLE $quote$tableName$quote ADD ${columnDef(column, quote)};")
+                                lines.add("COMMENT ON COLUMN $quote$tableName$quote.$quote$columnName$quote IS '${column.remarks}';")
+                                addFk(column, lines, tableName, columnName)
                             } else {
                                 val oldColumn = oldColumns.find { it.columnName == columnName }!!
                                 if (column != oldColumn) {
                                     val updateColumnDef = updateColumnDef(column, oldColumn, quote)
                                     if (updateColumnDef.isNotBlank())
-                                        out.println("ALTER TABLE $quote$tableName$quote MODIFY $updateColumnDef;")
+                                        lines.add("ALTER TABLE $quote$tableName$quote MODIFY $updateColumnDef;")
                                     if (oldColumn.remarks != column.remarks)
-                                        out.println("COMMENT ON COLUMN $quote$tableName$quote.$quote$columnName$quote IS '${column.remarks}';")
-                                    updateFk(column, oldColumn, out, tableName)
+                                        lines.add("COMMENT ON COLUMN $quote$tableName$quote.$quote$columnName$quote IS '${column.remarks}';")
+                                    updateFk(column, oldColumn, lines, tableName)
                                 }
                             }
                         }
                         if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1 && oldPrimaryKey != primaryKey) {
                             if (primaryKey.columnName != oldPrimaryKey.columnName)
-                                out.println("ALTER TABLE $quote$tableName$quote ADD PRIMARY KEY(\"$quote${primaryKey.columnName}$quote\" )")
+                                lines.add("ALTER TABLE $quote$tableName$quote ADD PRIMARY KEY(\"$quote${primaryKey.columnName}$quote\" )")
                         }
 
-                        updateIndexes(oldTable, table, out)
-
-                        out.println()
+                        updateIndexes(oldTable, table, lines)
+                        if (lines.isNotEmpty()) {
+                            out.println("$commentPrefix $tableName")
+                            lines.forEach { out.println(it) }
+                            out.println()
+                        }
                     }
                 }
             }
@@ -97,21 +100,21 @@ object OracleToDDL : ToDDL() {
             "$quote${it.columnName}$quote $def"
     }
 
-    override fun updateIndexes(oldTable: Table, table: Table, out: PrintWriter) {
+    override fun updateIndexes(oldTable: Table, table: Table, lines: MutableList<String>) {
         val tableName = table.tableName
         val delIndexes = oldTable.indexes - table.indexes
         if (delIndexes.isNotEmpty()) {
             delIndexes.forEach {
-                out.println("DROP INDEX $quote${it.name}$quote;")
+                lines.add("DROP INDEX $quote${it.name}$quote;")
             }
         }
         val newIndexes = table.indexes - oldTable.indexes
         if (newIndexes.isNotEmpty()) {
             newIndexes.forEach { indexed ->
                 if (indexed.unique) {
-                    out.println("CREATE UNIQUE INDEX $quote${indexed.name}$quote ON $quote$tableName$quote (${indexed.columnName.joinToString(",") { "$quote$it$quote" }});")
+                    lines.add("CREATE UNIQUE INDEX $quote${indexed.name}$quote ON $quote$tableName$quote (${indexed.columnName.joinToString(",") { "$quote$it$quote" }});")
                 } else {
-                    out.println("CREATE INDEX $quote${indexed.name}$quote ON $quote$tableName$quote (${indexed.columnName.joinToString(",") { "$quote$it$quote" }});")
+                    lines.add("CREATE INDEX $quote${indexed.name}$quote ON $quote$tableName$quote (${indexed.columnName.joinToString(",") { "$quote$it$quote" }});")
                 }
             }
         }

@@ -25,9 +25,9 @@ object MysqlToDDL : ToDDL() {
                 } else {
                     val oldTable = oldTables.find { it.tableName == tableName }!!
                     if (oldTable != table) {
-                        out.println("$commentPrefix $tableName")
+                        val lines = mutableListOf<String>()
                         if (oldTable.remarks.trimEnd('表') != table.remarks)
-                            out.println("ALTER TABLE $quote$tableName$quote COMMENT '${table.remarks}';")
+                            lines.add("ALTER TABLE $quote$tableName$quote COMMENT '${table.remarks}';")
 
                         val oldColumns = oldTable.columns
                         val columns = table.columns
@@ -36,7 +36,7 @@ object MysqlToDDL : ToDDL() {
                         val oldPrimaryKey = oldPrimaryKeys[0]
                         val primaryKey = primaryKeys[0]
                         if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1 && oldPrimaryKey != primaryKey) {
-                            out.println("ALTER TABLE $quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${columnDef(primaryKey, quote)} COMMENT '${primaryKey.remarks}';")
+                            lines.add("ALTER TABLE $quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${columnDef(primaryKey, quote)} COMMENT '${primaryKey.remarks}';")
                             oldColumns.remove(oldPrimaryKey)
                             columns.remove(primaryKey)
                         }
@@ -45,25 +45,29 @@ object MysqlToDDL : ToDDL() {
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames
                         dropColumnNames.forEach {
-                            out.println("ALTER TABLE $quote$tableName$quote DROP COLUMN $quote$it$quote;")
+                            lines.add("ALTER TABLE $quote$tableName$quote DROP COLUMN $quote$it$quote;")
                         }
-                        dropFk(oldColumns, dropColumnNames, out, tableName)
+                        dropFk(oldColumns, dropColumnNames, lines, tableName)
                         val newColumnNames = columnNames - oldColumnNames
                         columns.forEach { column ->
                             val columnName = column.columnName
                             if (newColumnNames.contains(columnName)) {
-                                out.println("ALTER TABLE $quote$tableName$quote ADD COLUMN ${columnDef(column, quote)} COMMENT '${column.remarks}';")
-                                addFk(column, out, tableName, columnName)
+                                lines.add("ALTER TABLE $quote$tableName$quote ADD COLUMN ${columnDef(column, quote)} COMMENT '${column.remarks}';")
+                                addFk(column, lines, tableName, columnName)
                             } else {
                                 val oldColumn = oldColumns.find { it.columnName == columnName }!!
                                 if (column != oldColumn) {
-                                    out.println("ALTER TABLE $quote$tableName$quote MODIFY ${columnDef(column, quote)} COMMENT '${column.remarks}';")
-                                    updateFk(column, oldColumn, out, tableName)
+                                    lines.add("ALTER TABLE $quote$tableName$quote MODIFY ${columnDef(column, quote)} COMMENT '${column.remarks}';")
+                                    updateFk(column, oldColumn, lines, tableName)
                                 }
                             }
                         }
-                        updateIndexes(oldTable, table, out)
-                        out.println()
+                        updateIndexes(oldTable, table, lines)
+                        if (lines.isNotEmpty()) {
+                            out.println("$commentPrefix $tableName")
+                            lines.forEach { out.println(it) }
+                            out.println()
+                        }
                     }
                 }
             }
