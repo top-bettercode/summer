@@ -63,46 +63,46 @@ abstract class ToDDL : IToDDL {
         }
     }
 
-    protected open fun updateIndexes(oldTable: Table, table: Table, out: PrintWriter) {
+    protected open fun updateIndexes(oldTable: Table, table: Table,  lines: MutableList<String>) {
         val tableName = table.tableName
         val delIndexes = oldTable.indexes - table.indexes
         if (delIndexes.isNotEmpty()) {
             delIndexes.forEach {
-                out.println("DROP INDEX $quote${it.name}$quote ON $quote$tableName$quote;")
+                lines.add("DROP INDEX $quote${it.name}$quote ON $quote$tableName$quote;")
             }
         }
         val newIndexes = table.indexes - oldTable.indexes
         if (newIndexes.isNotEmpty()) {
             newIndexes.forEach { indexed ->
                 if (indexed.unique) {
-                    out.println("CREATE UNIQUE INDEX $quote${indexed.name}$quote ON $quote$tableName$quote (${indexed.columnName.joinToString(",") { "$quote$it$quote" }});")
+                    lines.add("CREATE UNIQUE INDEX $quote${indexed.name}$quote ON $quote$tableName$quote (${indexed.columnName.joinToString(",") { "$quote$it$quote" }});")
                 } else {
-                    out.println("CREATE INDEX $quote${indexed.name}$quote ON $quote$tableName$quote (${indexed.columnName.joinToString(",") { "$quote$it$quote" }});")
+                    lines.add("CREATE INDEX $quote${indexed.name}$quote ON $quote$tableName$quote (${indexed.columnName.joinToString(",") { "$quote$it$quote" }});")
                 }
             }
         }
     }
 
-    protected fun updateFk(column: Column, oldColumn: Column, out: PrintWriter, tableName: String) {
+    protected fun updateFk(column: Column, oldColumn: Column,  lines: MutableList<String>, tableName: String) {
         if (useForeignKey && (column.isForeignKey != oldColumn.isForeignKey || column.pktableName != oldColumn.pktableName || column.pkcolumnName != oldColumn.pkcolumnName)) {
             if (oldColumn.isForeignKey) {
-                out.println(dropFkStatement(tableName, oldColumn.columnName))
+                lines.add(dropFkStatement(tableName, oldColumn.columnName))
             }
             if (column.isForeignKey) {
-                out.println("ALTER TABLE $quote$tableName$quote ADD CONSTRAINT ${foreignKeyName(tableName, column.columnName)} FOREIGN KEY ($quote${column.columnName}$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote);")
+                lines.add("ALTER TABLE $quote$tableName$quote ADD CONSTRAINT ${foreignKeyName(tableName, column.columnName)} FOREIGN KEY ($quote${column.columnName}$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote);")
             }
         }
     }
 
-    protected fun addFk(column: Column, out: PrintWriter, tableName: String, columnName: String) {
+    protected fun addFk(column: Column,  lines: MutableList<String>, tableName: String, columnName: String) {
         if (useForeignKey && column.isForeignKey)
-            out.println("ALTER TABLE $quote$tableName$quote ADD CONSTRAINT ${foreignKeyName(tableName, column.columnName)} FOREIGN KEY ($quote$columnName$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote);")
+            lines.add("ALTER TABLE $quote$tableName$quote ADD CONSTRAINT ${foreignKeyName(tableName, column.columnName)} FOREIGN KEY ($quote$columnName$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote);")
     }
 
-    protected fun dropFk(oldColumns: MutableList<Column>, dropColumnNames: List<String>, out: PrintWriter, tableName: String) {
+    protected fun dropFk(oldColumns: MutableList<Column>, dropColumnNames: List<String>, lines: MutableList<String>, tableName: String) {
         if (useForeignKey)
             oldColumns.filter { it.isForeignKey && dropColumnNames.contains(it.columnName) }.forEach { column ->
-                out.println(dropFkStatement(tableName, column.columnName))
+                lines.add(dropFkStatement(tableName, column.columnName))
             }
     }
 
