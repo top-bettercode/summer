@@ -36,7 +36,7 @@ public class ExcelTest {
   }
 
   private final ExcelField<DataBean, ?>[] excelFields = ArrayUtil.of(
-//      ExcelField.of("编码", DataBean::getA),
+      ExcelField.of("编码", DataBean::getA),
       ExcelField.of("名称", from -> new String[]{"abc", "1"}),
       ExcelField.of("描述", from -> from.getDesc())
 //      new ExcelField<DataBean, String>().propertySetter(DataBean::setCode).title("编码"),
