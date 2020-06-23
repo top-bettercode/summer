@@ -3,14 +3,17 @@ package cn.bestwu.simpleframework.util.excel;
 import cn.bestwu.lang.util.BooleanUtil;
 import cn.bestwu.lang.util.LocalDateTimeHelper;
 import cn.bestwu.lang.util.MoneyUtil;
+import cn.bestwu.lang.util.StringUtil;
 import cn.bestwu.simpleframework.web.serializer.CodeSerializer;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -155,7 +158,7 @@ public class ExcelField<T, P> {
 
 
   /**
-   * 支持导入及导出的初始化方法
+   * 支持导出(如果 propertyGetter 符合 ClassName::getProperty Lambda 签名，则可自动识别setter，支持导入)的初始化方法
    *
    * @param <P>            属性类型
    * @param <T>            实体类型
@@ -273,15 +276,28 @@ public class ExcelField<T, P> {
       writeReplace.setAccessible(true);
       SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(propertyGetter);
       String implMethodName = serializedLambda.getImplMethodName();
-      propertyName = resolvePropertyName(implMethodName);
+
       entityType = (Class<T>) ClassUtils
           .forName(serializedLambda.getImplClass().replace("/", "."), null);
-      propertyType = entityType.getMethod(implMethodName).getReturnType();
-      Method writeMethod = entityType
-          .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
 
-      this.propertySetter = (obj, property) -> ReflectionUtils
-          .invokeMethod(writeMethod, obj, property);
+      if (!implMethodName.contains("$new")) {
+        propertyType = entityType.getMethod(implMethodName).getReturnType();
+
+        propertyName = resolvePropertyName(implMethodName);
+        Method writeMethod = entityType
+            .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
+
+        this.propertySetter = (obj, property) -> ReflectionUtils
+            .invokeMethod(writeMethod, obj, property);
+      } else {
+        String implMethodSignature = serializedLambda.getImplMethodSignature();
+        String returnTypeName = implMethodSignature.replaceAll("^.*\\)(.*);?$", "$1")
+            .replace("/", ".");
+        if (!returnTypeName.startsWith("[")) {
+          returnTypeName = returnTypeName.substring(1);
+        }
+        propertyType = ClassUtils.forName(returnTypeName, ExcelField.class.getClassLoader());
+      }
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
       throw new ExcelException("属性解析错误", e);
     }
@@ -355,10 +371,25 @@ public class ExcelField<T, P> {
     this.cellConverter = (property) -> {
       if (property == null) {
         return nullValue;
+      } else if (propertyType.equals(String.class) || ClassUtils.isPrimitiveOrWrapper(propertyType)
+          || propertyType.equals(Date.class)) {
+        return property;
       } else if (propertyType.equals(BigDecimal.class)) {
         return ((BigDecimal) property).toPlainString();
+      } else if (propertyType.isArray()) {
+        int length = Array.getLength(property);
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+          if (i > 0) {
+            buffer.append(",");
+          }
+          buffer.append(Array.get(property, i));
+        }
+        return buffer.toString();
+      } else if (Collection.class.isAssignableFrom(propertyType)) {
+        return StringUtils.collectionToCommaDelimitedString((Collection<?>) property);
       } else {
-        return property;
+        return StringUtil.valueOf(property);
       }
     };
 
