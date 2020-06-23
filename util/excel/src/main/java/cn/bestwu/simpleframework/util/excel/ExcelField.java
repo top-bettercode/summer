@@ -20,6 +20,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -31,6 +33,8 @@ import org.springframework.util.StringUtils;
  * @param <T> 实体类型
  */
 public class ExcelField<T, P> {
+
+  private final Logger log = LoggerFactory.getLogger(ExcelField.class);
 
   /**
    * 导出字段标题
@@ -277,32 +281,53 @@ public class ExcelField<T, P> {
       SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(propertyGetter);
       String implMethodName = serializedLambda.getImplMethodName();
 
-      entityType = (Class<T>) ClassUtils
-          .forName(serializedLambda.getImplClass().replace("/", "."), null);
-
       if (!implMethodName.contains("$new")) {
-        propertyType = entityType.getMethod(implMethodName).getReturnType();
+        entityType = (Class<T>) ClassUtils
+            .forName(serializedLambda.getImplClass().replace("/", "."), null);
 
-        propertyName = resolvePropertyName(implMethodName);
-        Method writeMethod = entityType
-            .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
+        try {
+          propertyType = entityType.getMethod(implMethodName).getReturnType();
+          try {
+            propertyName = resolvePropertyName(implMethodName);
+            Method writeMethod = entityType
+                .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
 
-        this.propertySetter = (obj, property) -> ReflectionUtils
-            .invokeMethod(writeMethod, obj, property);
-      } else {
-        String implMethodSignature = serializedLambda.getImplMethodSignature();
-        String returnTypeName = implMethodSignature.replaceAll("^.*\\)(.*?);?$", "$1")
-            .replace("/", ".").replace("[L", "[");
-        if (!returnTypeName.startsWith("[")) {
-          returnTypeName = returnTypeName.substring(1);
+            this.propertySetter = (obj, property) -> ReflectionUtils
+                .invokeMethod(writeMethod, obj, property);
+          } catch (NoSuchMethodException e) {
+            log.info("自动识别属性setter方法失败");
+            propertyName = null;
+            propertySetter = null;
+            entityType = null;
+          }
+        } catch (NoSuchMethodException e) {
+          initPropertyType(serializedLambda);
+          entityType = null;
         }
-        propertyType = ClassUtils.forName(returnTypeName, ExcelField.class.getClassLoader());
+      } else {
+        initPropertyType(serializedLambda);
       }
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
       throw new ExcelException(title + "属性解析错误", e);
     }
 
     init();
+  }
+
+  /**
+   * 识别lambda方法返回类型
+   *
+   * @param serializedLambda SerializedLambda
+   * @throws ClassNotFoundException ClassNotFoundException
+   */
+  private void initPropertyType(SerializedLambda serializedLambda) throws ClassNotFoundException {
+    String implMethodSignature = serializedLambda.getImplMethodSignature();
+    String returnTypeName = implMethodSignature.replaceAll("^.*\\)(.*?);?$", "$1")
+        .replace("/", ".").replace("[L", "[");
+    if (!returnTypeName.startsWith("[")) {
+      returnTypeName = returnTypeName.substring(1);
+    }
+    propertyType = ClassUtils.forName(returnTypeName, ExcelField.class.getClassLoader());
   }
 
   /**
@@ -368,7 +393,7 @@ public class ExcelField<T, P> {
       throw new IllegalArgumentException("不支持的数据类型:" + propertyType.getName());
     };
 
-    this.cellConverter = (property) -> {
+    cellConverter = (property) -> {
       if (property == null) {
         return nullValue;
       } else if (propertyType.equals(String.class) || ClassUtils.isPrimitiveOrWrapper(propertyType)
