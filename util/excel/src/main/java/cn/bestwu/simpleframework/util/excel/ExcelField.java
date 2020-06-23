@@ -291,15 +291,15 @@ public class ExcelField<T, P> {
             .invokeMethod(writeMethod, obj, property);
       } else {
         String implMethodSignature = serializedLambda.getImplMethodSignature();
-        String returnTypeName = implMethodSignature.replaceAll("^.*\\)(.*);?$", "$1")
-            .replace("/", ".");
+        String returnTypeName = implMethodSignature.replaceAll("^.*\\)(.*?);?$", "$1")
+            .replace("/", ".").replace("[L", "[");
         if (!returnTypeName.startsWith("[")) {
           returnTypeName = returnTypeName.substring(1);
         }
         propertyType = ClassUtils.forName(returnTypeName, ExcelField.class.getClassLoader());
       }
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
-      throw new ExcelException("属性解析错误", e);
+      throw new ExcelException(title + "属性解析错误", e);
     }
 
     init();
