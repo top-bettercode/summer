@@ -120,12 +120,10 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
         val message = mutableListOf<String>()
         val len = cbClone.length()
         var initialComment = ""
-        val alarm = event.marker?.contains(RequestLoggingFilter.ALARM_LOG_MARKER) == true
 
         for (i in 0 until len) {
             val e = cbClone.get()
-            if (!alarm)
-                message.add(String(encoder.encode(e)))
+            message.add(String(encoder.encode(e)))
             if (i == len - 1) {
                 val tp = e.throwableProxy
                 initialComment = e.mdcPropertyMap[WebUtils.ERROR_MESSAGE_ATTRIBUTE]
