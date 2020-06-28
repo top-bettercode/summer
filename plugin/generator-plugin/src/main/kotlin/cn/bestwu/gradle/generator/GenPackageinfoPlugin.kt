@@ -146,6 +146,7 @@ package $packageinfo""".trimIndent())
             "util" == lastPackageinfo -> "工具包"
             "utils" == lastPackageinfo -> "工具包"
             "web" == lastPackageinfo -> "WEB 配置包"
+            "modules" == lastPackageinfo -> "功能模块"
             else -> ""
         }
     }
