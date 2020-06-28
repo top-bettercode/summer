@@ -106,15 +106,16 @@ abstract class Generator {
 
     open var cover: Boolean = false
     protected open val test: Boolean = false
+    protected open val resources: Boolean = false
 
     protected open val dir: String
-        get() = if (test) extension.dir.replace("src/main/", "src/test/") else extension.dir
+        get() {
+            val dir = if (test) extension.dir.replace("src/main/", "src/test/") else extension.dir
+            return if (resources) dir.replace("java", "resources") else dir
+        }
 
     protected val basePath: File
         get() = extension.basePath
-
-    protected open val path: File
-        get() = File(basePath, dir)
 
     /**
      * 文件名称
@@ -123,7 +124,7 @@ abstract class Generator {
 
     protected open val destFile: File
         get() {
-            return File(path, if (this is JavaGenerator) "${name.replace(".", File.separator)}.java" else name)
+            return File(File(basePath, dir), if (this is JavaGenerator) "${name.replace(".", File.separator)}.java" else name)
         }
 
     open var module: String = ""
