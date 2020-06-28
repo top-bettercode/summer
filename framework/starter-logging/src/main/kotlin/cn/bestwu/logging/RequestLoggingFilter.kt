@@ -123,9 +123,10 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
 
                 val msg = operation.toString(config)
                 if (!config.ignoredTimeout && properties.timeoutAlarmSeconds > 0 && handler != null && operation.duration > properties.timeoutAlarmSeconds * 1000 && !include(properties.ignoredTimeoutPath, uri)) {
-                    val timeoutLog = "${operation.collectionName}/${operation.name}(${operation.request.uri}) 请求超时：${operation.duration}毫秒"
+                    val timeoutLog = "${operation.collectionName}/${operation.name}(${operation.request.uri}) 请求超时"
+                    val timeout = "：${operation.duration}毫秒"
                     MDC.put(WebUtils.ERROR_MESSAGE_ATTRIBUTE, timeoutLog)
-                    log.warn(MarkerFactory.getMarker(ALARM_LOG_MARKER), "$timeoutLog\n$msg")
+                    log.warn(MarkerFactory.getMarker(ALARM_LOG_MARKER), "$timeoutLog${timeout}\n$msg")
                 }
                 val marker = MarkerFactory.getMarker(REQUEST_LOG_MARKER)
                 if (existProperty(environment, "logging.logstash.destinations[0]")) {
