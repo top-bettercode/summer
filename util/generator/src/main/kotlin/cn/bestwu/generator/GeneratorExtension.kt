@@ -36,6 +36,7 @@ open class GeneratorExtension(
          * 包名是否自动加项目名区分
          */
         var projectPackage: Boolean = false,
+
         /**
          * 生成文件基础路径,项目路径
          */
@@ -44,6 +45,7 @@ open class GeneratorExtension(
          * 基础路径下相对路径
          */
         var dir: String = "",
+
         /**
          * 数据源类型，默认数据库
          */
@@ -105,6 +107,7 @@ open class GeneratorExtension(
         var moduleName: String = "",
 
         var applicationName: String = "",
+
         var projectName: String = "",
         /**
          * 表前缀
