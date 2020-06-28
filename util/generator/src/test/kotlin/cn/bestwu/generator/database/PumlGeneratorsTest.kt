@@ -3,7 +3,6 @@ package cn.bestwu.generator.database
 import cn.bestwu.generator.DataType
 import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.dsl.Generators
-import cn.bestwu.generator.dsl.def.Domain
 import cn.bestwu.generator.puml.PumlConverterTest
 import org.junit.Test
 import java.io.File
@@ -18,7 +17,6 @@ class PumlGeneratorsTest {
     @Test
     fun gen() {
         extension.generators = arrayOf(
-                Domain()
         )
         extension.pumlSrc = PumlConverterTest::class.java.getResource("/database.puml").file
         Generators.call(extension)

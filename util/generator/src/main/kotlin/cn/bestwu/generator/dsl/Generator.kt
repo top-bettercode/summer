@@ -13,7 +13,7 @@ import java.io.PrintWriter
  */
 abstract class Generator {
     companion object {
-        const val DEFAULT_NAME = "generated.txt"
+        const val DEFAULT_NAME = "generated"
 
         fun toBoolean(obj: Any?): Boolean {
             when (obj) {
@@ -124,7 +124,7 @@ abstract class Generator {
 
     protected open val destFile: File
         get() {
-            return File(File(basePath, dir), if (this is JavaGenerator) "${name.replace(".", File.separator)}.java" else name)
+            return File(File(basePath, dir), if (this is JavaGenerator && !resources) "${name.replace(".", File.separator)}.java" else name)
         }
 
     open var module: String = ""
