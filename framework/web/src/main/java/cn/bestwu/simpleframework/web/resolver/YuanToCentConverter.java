@@ -10,8 +10,8 @@ import org.springframework.util.StringUtils;
 public class YuanToCentConverter implements ConditionalGenericConverter {
 
   @Override
-  public boolean matches(TypeDescriptor typeDescriptor, TypeDescriptor typeDescriptor1) {
-    return typeDescriptor1.hasAnnotation(YuanToCent.class);
+  public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+    return targetType.hasAnnotation(YuanToCent.class);
   }
 
   @Override

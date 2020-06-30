@@ -28,7 +28,7 @@ public class WebTest {
   @Test
   public void test() {
     ResponseEntity<String> entity = restTemplate
-        .getForEntity("/test?price=1.2", String.class);
+        .getForEntity("/test?price=1.2&cent=2.2", String.class);
     Assert.assertEquals(HttpStatus.OK, entity.getStatusCode());
   }
 
