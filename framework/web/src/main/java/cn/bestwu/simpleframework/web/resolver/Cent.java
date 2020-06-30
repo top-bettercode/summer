@@ -1,7 +1,7 @@
-package cn.bestwu.simpleframework.web.serializer.annotation;
+package cn.bestwu.simpleframework.web.resolver;
 
-import cn.bestwu.simpleframework.web.serializer.YuanDeserializer;
-import cn.bestwu.simpleframework.web.serializer.YuanSerializer;
+import cn.bestwu.simpleframework.web.serializer.CentDeserializer;
+import cn.bestwu.simpleframework.web.serializer.CentSerializer;
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -11,13 +11,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 长整形 分 序列化为字符元格式 及反序列化
+ *
  * @author Peter Wu
  */
-@Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @JacksonAnnotationsInside
-@JsonSerialize(using = YuanSerializer.class)
-@JsonDeserialize(using = YuanDeserializer.class)
-public @interface JsonYuan {
+@JsonSerialize(using = CentSerializer.class)
+@JsonDeserialize(using = CentDeserializer.class)
+public @interface Cent {
 
 }

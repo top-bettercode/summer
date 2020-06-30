@@ -4,8 +4,8 @@ package cn.bestwu.simpleframework.test;
 import cn.bestwu.lang.util.StringUtil;
 import cn.bestwu.simpleframework.web.BaseController;
 import cn.bestwu.simpleframework.web.DataDicBean;
-import cn.bestwu.simpleframework.web.resolver.YuanToCent;
-import cn.bestwu.simpleframework.web.resolver.YuanToCentConverter;
+import cn.bestwu.simpleframework.web.resolver.Cent;
+import cn.bestwu.simpleframework.web.resolver.CentConverter;
 import cn.bestwu.simpleframework.web.serializer.ICodeService;
 import java.io.Serializable;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController extends BaseController {
 
   @RequestMapping(value = "/test")
-  public Object test(DataDicBean form,@YuanToCent Long cent) {
+  public Object test(DataDicBean form,@Cent Long cent) {
     System.err.println(cent);
     System.err.println(StringUtil.valueOf(form, true));
     DataDicBean dataDicBean = new DataDicBean();
@@ -41,8 +41,8 @@ public class TestController extends BaseController {
   protected static class CodeConfiguration {
 
     @Bean
-    public YuanToCentConverter yuanToCentConverter() {
-      return new YuanToCentConverter();
+    public CentConverter yuanToCentConverter() {
+      return new CentConverter();
     }
 
     @Bean

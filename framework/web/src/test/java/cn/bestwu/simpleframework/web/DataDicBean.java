@@ -1,6 +1,6 @@
 package cn.bestwu.simpleframework.web;
 
-import cn.bestwu.simpleframework.web.resolver.YuanToCent;
+import cn.bestwu.simpleframework.web.resolver.Cent;
 import java.util.List;
 
 public class DataDicBean {
@@ -8,7 +8,7 @@ public class DataDicBean {
   private String name;
   private String code;
   private Integer intCode;
-  @YuanToCent
+  @Cent
   private Long price;
   private String path;
   private String path1;
