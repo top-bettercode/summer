@@ -193,11 +193,23 @@ public class ExcelExport {
    * @return list 数据列表
    */
   public <T> ExcelExport setData(Iterable<T> list, ExcelField<T, ?>[] excelFields) {
+    return setData(list, excelFields, (o) -> o);
+  }
+
+  /**
+   * @param <T>         E
+   * @param list        list
+   * @param excelFields 表格字段
+   * @param converter   转换器
+   * @return list 数据列表
+   */
+  public <T> ExcelExport setData(Iterable<T> list, ExcelField<T, ?>[] excelFields,
+      ExcelConverter<T, T> converter) {
     Assert.notNull(sheet, "表格未初始化");
     createHeader(excelFields);
     Iterator<T> iterator = list.iterator();
     while (iterator.hasNext()) {
-      T e = iterator.next();
+      T e = converter.convert(iterator.next());
       boolean fill = r % 2 == 0;
       if (serialNumber) {
         sheet.value(r, c, r);
