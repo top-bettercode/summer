@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * @author Peter Wu
  */
-public class YuanDeserializer extends JsonDeserializer<Long> {
+public class CentDeserializer extends JsonDeserializer<Long> {
 
   @Override
   public Long deserialize(JsonParser p, DeserializationContext ctxt)

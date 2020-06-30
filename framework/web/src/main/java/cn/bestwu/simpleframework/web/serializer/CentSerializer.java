@@ -9,18 +9,18 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 @JacksonStdImpl
-public class YuanSerializer extends NumberSerializer {
+public class CentSerializer extends NumberSerializer {
 
   private static final long serialVersionUID = 1759139980737771L;
 
   private static int newScale = 2;
 
-  public YuanSerializer() {
+  public CentSerializer() {
     super(Long.class);
   }
 
   public static void setNewScale(int newScale) {
-    YuanSerializer.newScale = newScale;
+    CentSerializer.newScale = newScale;
   }
 
   @Override
