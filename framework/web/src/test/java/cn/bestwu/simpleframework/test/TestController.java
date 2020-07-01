@@ -24,6 +24,7 @@ public class TestController extends BaseController {
   @RequestMapping(value = "/test")
   public Object test(DataDicBean form,@Cent Long cent) {
     System.err.println(cent);
+    System.err.println(form.getPrice());
     System.err.println(StringUtil.valueOf(form, true));
     DataDicBean dataDicBean = new DataDicBean();
     dataDicBean.setCode("code");
