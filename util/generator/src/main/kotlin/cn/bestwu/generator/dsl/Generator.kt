@@ -114,7 +114,7 @@ abstract class Generator {
             return if (resources) dir.replace("java", "resources") else dir
         }
 
-    private val basePath: File
+    protected val basePath: File
         get() = extension.basePath
 
     /**

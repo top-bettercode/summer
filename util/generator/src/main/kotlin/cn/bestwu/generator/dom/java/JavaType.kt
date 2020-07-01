@@ -25,7 +25,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
     var isPrimitive: Boolean = false
         private set
 
-    private var isArray: Boolean = false
+    var isArray: Boolean = false
         private set
 
     /**
