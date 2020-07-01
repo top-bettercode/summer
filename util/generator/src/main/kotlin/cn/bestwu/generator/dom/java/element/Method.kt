@@ -51,13 +51,13 @@ class Method : JavaElement() {
      *
      * the new synchronized
      */
-    private var isSynchronized: Boolean = false
+    var isSynchronized: Boolean = false
 
     /** The is native.  */
-    private var isNative: Boolean = false
-    private var isAbstract: Boolean = false
+    var isNative: Boolean = false
+    var isAbstract: Boolean = false
 
-    private var isDefault: Boolean = false
+    var isDefault: Boolean = false
 
     fun parameter(closure: Parameter.() -> Unit) {
         val parameter = Parameter()

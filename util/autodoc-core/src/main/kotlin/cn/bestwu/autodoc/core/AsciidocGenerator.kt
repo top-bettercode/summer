@@ -42,7 +42,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         }
     }
 
-    private fun html(inFile: File, outFile: File) {
+    fun html(inFile: File, outFile: File) {
         if (inFile.exists()) {
             val options = Options()
             options.setToFile(outFile.absolutePath)
@@ -68,7 +68,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         }
     }
 
-    private fun pdf(inFile: File, outFile: File) {
+    fun pdf(inFile: File, outFile: File) {
         if (inFile.exists()) {
             val options = Options()
             options.setToFile(outFile.absolutePath)
@@ -187,7 +187,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                 ((commonAdocs + autodoc.commonAdocs(module)).sortedWith(Comparator { o1, o2 -> if (o1.name == "README.adoc") -1 else o1.name.compareTo(o2.name) })).forEach {
                     out.println()
                     var pre = ""
-                    it.readLines().forEach {l->
+                    it.readLines().forEach { l ->
                         var line = l
                         properties.forEach { entry ->
                             line = line.replace("@${entry.key}@", entry.value.toString())
