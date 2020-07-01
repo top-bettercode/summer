@@ -12,7 +12,7 @@ public class BasePath<E extends EntityPathWrapper<E, T>, T> implements Serializa
 
   private static final long serialVersionUID = 1621419386323928785L;
   private final E wrapper;
-  private String column;
+  private final String column;
 
   public BasePath(E wrapper, String column) {
     this.wrapper = wrapper;

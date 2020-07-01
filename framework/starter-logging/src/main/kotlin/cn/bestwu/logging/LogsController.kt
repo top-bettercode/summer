@@ -8,11 +8,9 @@ import cn.bestwu.logging.annotation.NoRequestLogging
 import cn.bestwu.logging.logback.Logback2LoggingSystem
 import cn.bestwu.logging.logback.PrettyMessageHTMLLayout
 import org.slf4j.impl.StaticLoggerBinder
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
-import org.springframework.stereotype.Controller
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.StreamUtils
@@ -311,7 +309,7 @@ document.documentElement.scrollIntoView({
         }
     }
 
-    private val UNITS: Array<String> = arrayOf<String>("B", "K", "M", "G", "T", "P", "E")
+    private val units: Array<String> = arrayOf("B", "K", "M", "G", "T", "P", "E")
 
     /**
      * 返回易读的值
@@ -319,11 +317,11 @@ document.documentElement.scrollIntoView({
      * @param value 值，单位B
      * @return 易读的值
      */
-    fun prettyValue(value: Long): String {
+    private fun prettyValue(value: Long): String {
         var newValue = value.toDouble()
         var index = 0
         var lastValue = 0.0
-        while (newValue / 1024 >= 1 && index < UNITS.size - 1) {
+        while (newValue / 1024 >= 1 && index < units.size - 1) {
             lastValue = newValue
             newValue /= 1024
             index++
@@ -332,7 +330,7 @@ document.documentElement.scrollIntoView({
         newScale = max(newScale, 0)
         val result = if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(BigDecimal(1024), BigDecimal.ROUND_UP)
                 .setScale(newScale, BigDecimal.ROUND_UP).toString()
-        return trimTrailing(result) + UNITS[index]
+        return trimTrailing(result) + units[index]
     }
 
     private fun trimTrailing(value: String): String {

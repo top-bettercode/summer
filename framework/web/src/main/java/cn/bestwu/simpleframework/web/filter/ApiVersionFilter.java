@@ -21,11 +21,11 @@ public class ApiVersionFilter extends OncePerRequestFilter implements Ordered {
   public static final int DEFAULT_ORDER = -9900;
   private int order = DEFAULT_ORDER;
 
-  private String appVersionName;
-  private String appVersion;
+  private final String appVersionName;
+  private final String appVersion;
 
-  private String appVersionNoName;
-  private String appVersionNo;
+  private final String appVersionNoName;
+  private final String appVersionNo;
 
 
   public ApiVersionFilter(String appVersionName, String appVersion,

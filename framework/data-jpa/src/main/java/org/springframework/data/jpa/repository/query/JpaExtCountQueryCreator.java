@@ -26,7 +26,7 @@ public class JpaExtCountQueryCreator extends JpaCountQueryCreator {
   }
 
   @Override
-  protected CriteriaQuery<? extends Object> complete(Predicate predicate, Sort sort,
+  protected CriteriaQuery<?> complete(Predicate predicate, Sort sort,
       CriteriaQuery<?> query, CriteriaBuilder builder, Root<?> root) {
     if (softDeleteSupport.support()) {
       Path<Boolean> deletedPath = root.get(softDeleteSupport.getPropertyName());

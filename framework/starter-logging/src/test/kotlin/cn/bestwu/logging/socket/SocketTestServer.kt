@@ -25,7 +25,7 @@ object SocketTestServer {
                     val `is` = BufferedReader(InputStreamReader(socket.getInputStream()))
                     val os = PrintWriter(socket.getOutputStream())
                     `is`.lines().forEach {
-                        System.out.println("Client:$it")
+                        println("Client:$it")
                     }
                     os.println("HTTP/1.1 200 OK\n"
                             + "Date: Sat, 31 Dec 2005 23:59:59 GMT\n"

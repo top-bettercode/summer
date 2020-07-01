@@ -11,7 +11,7 @@ import cn.bestwu.generator.dom.java.JavaType
 class Method : JavaElement() {
 
     /** The body lines.  */
-    val bodyLines: MutableList<String> = mutableListOf()
+    private val bodyLines: MutableList<String> = mutableListOf()
     var interfaceMethod: Boolean = false
     /** The constructor.  */
     /**
@@ -51,13 +51,13 @@ class Method : JavaElement() {
      *
      * the new synchronized
      */
-    var isSynchronized: Boolean = false
+    private var isSynchronized: Boolean = false
 
     /** The is native.  */
-    var isNative: Boolean = false
-    var isAbstract: Boolean = false
+    private var isNative: Boolean = false
+    private var isAbstract: Boolean = false
 
-    var isDefault: Boolean = false
+    private var isDefault: Boolean = false
 
     fun parameter(closure: Parameter.() -> Unit) {
         val parameter = Parameter()
@@ -172,7 +172,7 @@ class Method : JavaElement() {
             }
         }
 
-        if (!typeParameters.isEmpty()) {
+        if (typeParameters.isNotEmpty()) {
             sb.append("<")
             var comma = false
             for (typeParameter in typeParameters) {

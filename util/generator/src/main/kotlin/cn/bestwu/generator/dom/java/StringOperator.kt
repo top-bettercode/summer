@@ -2,7 +2,7 @@ package cn.bestwu.generator.dom.java
 
 import cn.bestwu.generator.dom.java.element.JavaElement.Companion.indent
 
-class StringOperator(val collections: MutableCollection<String>) {
+class StringOperator(private val collections: MutableCollection<String>) {
 
     operator fun String.unaryPlus() {
         collections.add(this)
@@ -20,7 +20,7 @@ class StringOperator(val collections: MutableCollection<String>) {
     }
 }
 
-class StringOperator1(val collections: MutableCollection<String>) {
+class StringOperator1(private val collections: MutableCollection<String>) {
 
     operator fun String.unaryPlus() {
         collections.add(this)

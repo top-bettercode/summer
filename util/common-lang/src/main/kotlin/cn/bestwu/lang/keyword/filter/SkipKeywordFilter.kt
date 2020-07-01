@@ -43,7 +43,7 @@ class SkipKeywordFilter(
                 val end = i == words.size - 1
                 var containLast = false
                 if (!skipChar) {
-                    val charNode = last.get(word)
+                    val charNode = last[word]
                     if (charNode != null) {
                         last = charNode
                         length++
@@ -63,13 +63,12 @@ class SkipKeywordFilter(
                     ignoredWords.clear()
                 } else if (containLast && matchShort && lastEnd) {
                     result.append(strategy
-                            .replaceWith(Arrays.copyOfRange(words, lastIndex, lastIndex + length)))
+                            .replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
                     ignoredWords.clear()
                     last = root
                 } else if (!containLast || end) {
                     if (lastEnd) {
-                        result.append(strategy.replaceWith(Arrays.copyOfRange(words, lastIndex,
-                                lastIndex + length)))
+                        result.append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
                         if (!containLast) {
                             i--
                         }
@@ -95,8 +94,7 @@ class SkipKeywordFilter(
                                     count++
                                 }
                                 failLength += count
-                                result.append(strategy.replaceWith(Arrays.copyOfRange(words,
-                                        lastIndex, lastIndex + failLength)))
+                                result.append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + failLength)))
                             }
                         }
                     }

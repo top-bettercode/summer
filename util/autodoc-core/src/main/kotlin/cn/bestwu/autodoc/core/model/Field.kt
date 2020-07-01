@@ -3,8 +3,6 @@ package cn.bestwu.autodoc.core.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import java.util.*
-import kotlin.collections.LinkedHashSet
 
 /**
  *

@@ -29,6 +29,7 @@ import org.springframework.util.MultiValueMap;
  * @since 1.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@SuppressWarnings("deprecation")
 @SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
     "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)
 public class SecurityTest {
@@ -42,7 +43,7 @@ public class SecurityTest {
   IResourceService securityService;
 
   String username = "root";
-  String password = DigestUtils.md5DigestAsHex("123456".getBytes());
+  final String password = DigestUtils.md5DigestAsHex("123456".getBytes());
 
   @Before
   public void setUp() {

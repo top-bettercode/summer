@@ -22,10 +22,10 @@ import org.springframework.util.StringUtils;
 public class HideSerializer extends StdScalarSerializer<String> implements ContextualSerializer {
 
   private static final long serialVersionUID = 1L;
-  private int beginKeep;
+  private final int beginKeep;
 
-  private int endKeep;
-  private boolean alwaysHide;
+  private final int endKeep;
+  private final boolean alwaysHide;
 
   public HideSerializer() {
     this(0, 0, true);

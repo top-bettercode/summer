@@ -19,7 +19,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -36,14 +35,13 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Peter Wu
  */
-@Controller
 @ConditionalOnWebApplication
 @ConditionalOnMissingBean(ErrorController.class)
 @RequestMapping("${server.error.path:${error.path:/error}}")
 public class CustomErrorController extends BasicErrorController {
 
-  private Logger log = LoggerFactory.getLogger(CustomErrorController.class);
-  private CorsProcessor processor = new DefaultCorsProcessor();
+  private final Logger log = LoggerFactory.getLogger(CustomErrorController.class);
+  private final CorsProcessor processor = new DefaultCorsProcessor();
   private final CorsConfigurationSource configSource;
   private final Boolean okEnable;
   @Autowired(required = false)

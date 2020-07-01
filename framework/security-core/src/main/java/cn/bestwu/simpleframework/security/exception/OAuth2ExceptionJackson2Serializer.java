@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
  *
  * @author Peter Wu
  */
+@SuppressWarnings("deprecation")
 public class OAuth2ExceptionJackson2Serializer extends StdSerializer<OAuth2Exception> {
 
   private static final long serialVersionUID = 5223328500862406031L;

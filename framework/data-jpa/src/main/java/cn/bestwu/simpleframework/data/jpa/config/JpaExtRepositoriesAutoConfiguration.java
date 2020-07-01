@@ -51,12 +51,12 @@ public class JpaExtRepositoriesAutoConfiguration {
       super(ConfigurationPhase.REGISTER_BEAN);
     }
 
-    @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = "bootstrap-mode", havingValue = "deferred", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = "bootstrap-mode", havingValue = "deferred")
     static class DeferredBootstrapMode {
 
     }
 
-    @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = "bootstrap-mode", havingValue = "lazy", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = "bootstrap-mode", havingValue = "lazy")
     static class LazyBootstrapMode {
 
     }

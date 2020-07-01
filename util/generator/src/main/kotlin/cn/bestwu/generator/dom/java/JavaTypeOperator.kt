@@ -1,6 +1,6 @@
 package cn.bestwu.generator.dom.java
 
-class JavaTypeOperator(val collections: MutableCollection<JavaType>) {
+class JavaTypeOperator(private val collections: MutableCollection<JavaType>) {
 
 
     operator fun String.unaryPlus() {

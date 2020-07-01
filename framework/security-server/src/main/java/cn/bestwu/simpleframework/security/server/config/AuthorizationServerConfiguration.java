@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author Peter Wu
  */
+@SuppressWarnings("deprecation")
 @ConditionalOnClass(OAuth2Exception.class)
 @Order(-1)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)

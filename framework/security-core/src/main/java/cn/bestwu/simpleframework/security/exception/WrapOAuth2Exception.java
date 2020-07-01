@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 /**
  * @author Peter Wu
  */
+@SuppressWarnings("deprecation")
 @com.fasterxml.jackson.databind.annotation.JsonSerialize(using = OAuth2ExceptionJackson2Serializer.class)
 public class WrapOAuth2Exception extends OAuth2Exception {
 

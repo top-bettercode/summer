@@ -141,19 +141,19 @@ public final class HTMLFilter {
   public HTMLFilter() {
     vAllowed = new HashMap<>();
 
-    final ArrayList<String> a_atts = new ArrayList<String>();
+    final ArrayList<String> a_atts = new ArrayList<>();
     a_atts.add("href");
     a_atts.add("target");
     vAllowed.put("a", a_atts);
 
-    final ArrayList<String> img_atts = new ArrayList<String>();
+    final ArrayList<String> img_atts = new ArrayList<>();
     img_atts.add("src");
     img_atts.add("width");
     img_atts.add("height");
     img_atts.add("alt");
     vAllowed.put("img", img_atts);
 
-    final ArrayList<String> no_atts = new ArrayList<String>();
+    final ArrayList<String> no_atts = new ArrayList<>();
     vAllowed.put("b", no_atts);
     vAllowed.put("strong", no_atts);
     vAllowed.put("i", no_atts);
@@ -404,8 +404,8 @@ public final class HTMLFilter {
 
         final Matcher m2 = P_QUOTED_ATTRIBUTES.matcher(body);
         final Matcher m3 = P_UNQUOTED_ATTRIBUTES.matcher(body);
-        final List<String> paramNames = new ArrayList<String>();
-        final List<String> paramValues = new ArrayList<String>();
+        final List<String> paramNames = new ArrayList<>();
+        final List<String> paramValues = new ArrayList<>();
         while (m2.find()) {
           paramNames.add(m2.group(1)); //([a-z0-9]+)
           paramValues.add(m2.group(3)); //(.*?)
@@ -471,9 +471,9 @@ public final class HTMLFilter {
       final String protocol = m.group(1);
       if (!inArray(protocol, vAllowedProtocols)) {
         // bad protocol, turn into local anchor link instead
-        s = "#" + s.substring(protocol.length() + 1, s.length());
+        s = "#" + s.substring(protocol.length() + 1);
         if (s.startsWith("#//")) {
-          s = "#" + s.substring(3, s.length());
+          s = "#" + s.substring(3);
         }
       }
     }

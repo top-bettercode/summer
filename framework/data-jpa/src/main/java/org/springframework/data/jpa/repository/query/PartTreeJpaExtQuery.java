@@ -30,16 +30,18 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
   private final QueryPreparer countQuery;
   private final EntityManager em;
   private final EscapeCharacter escape;
-  private SoftDeleteSupport softDeleteSupport;
+  private final SoftDeleteSupport softDeleteSupport;
 
   /**
    * Creates a new {@link PartTreeJpaQuery}.
-   * @param method must not be {@literal null}.
-   * @param em must not be {@literal null}.
+   *
+   * @param method              must not be {@literal null}.
+   * @param em                  must not be {@literal null}.
    * @param persistenceProvider must not be {@literal null}.
-   * @param escape
+   * @param escape              escape
    */
-  PartTreeJpaExtQuery(JpaQueryMethod method, EntityManager em, PersistenceProvider persistenceProvider, EscapeCharacter escape,
+  PartTreeJpaExtQuery(JpaQueryMethod method, EntityManager em,
+      PersistenceProvider persistenceProvider, EscapeCharacter escape,
       JpaExtProperties jpaExtProperties) {
 
     super(method, em);
@@ -50,7 +52,8 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     this.softDeleteSupport = new DefaultSoftDeleteSupport(jpaExtProperties, domainClass);
     this.parameters = method.getParameters();
 
-    boolean recreationRequired = parameters.hasDynamicProjection() || parameters.potentiallySortsDynamically();
+    boolean recreationRequired =
+        parameters.hasDynamicProjection() || parameters.potentiallySortsDynamically();
 
     try {
 
@@ -107,8 +110,10 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
    */
   private class QueryPreparer {
 
-    private final @Nullable CriteriaQuery<?> cachedCriteriaQuery;
-    private final @Nullable ParameterBinder cachedParameterBinder;
+    private final @Nullable
+    CriteriaQuery<?> cachedCriteriaQuery;
+    private final @Nullable
+    ParameterBinder cachedParameterBinder;
     private final QueryParameterSetter.QueryMetadataCache metadataCache = new QueryParameterSetter.QueryMetadataCache();
 
     QueryPreparer(boolean recreateQueries) {
@@ -145,12 +150,13 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
 
       TypedQuery<?> query = createQuery(criteriaQuery);
 
-      return restrictMaxResultsIfNecessary(invokeBinding(parameterBinder, query, accessor, this.metadataCache));
+      return restrictMaxResultsIfNecessary(
+          invokeBinding(parameterBinder, query, accessor, this.metadataCache));
     }
 
     /**
-     * Restricts the max results of the given {@link Query} if the current {@code tree} marks this {@code query} as
-     * limited.
+     * Restricts the max results of the given {@link Query} if the current {@code tree} marks this
+     * {@code query} as limited.
      */
     @SuppressWarnings("ConstantConditions")
     private Query restrictMaxResultsIfNecessary(Query query) {
@@ -165,7 +171,8 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
            * - AND the requested page size was bigger than the derived result limitation via the First/Top keyword.
            */
           if (query.getMaxResults() > tree.getMaxResults() && query.getFirstResult() > 0) {
-            query.setFirstResult(query.getFirstResult() - (query.getMaxResults() - tree.getMaxResults()));
+            query.setFirstResult(
+                query.getFirstResult() - (query.getMaxResults() - tree.getMaxResults()));
           }
         }
 
@@ -180,9 +187,10 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     }
 
     /**
-     * Checks whether we are working with a cached {@link CriteriaQuery} and synchronizes the creation of a
-     * {@link TypedQuery} instance from it. This is due to non-thread-safety in the {@link CriteriaQuery} implementation
-     * of some persistence providers (i.e. Hibernate in this case), see DATAJPA-396.
+     * Checks whether we are working with a cached {@link CriteriaQuery} and synchronizes the
+     * creation of a {@link TypedQuery} instance from it. This is due to non-thread-safety in the
+     * {@link CriteriaQuery} implementation of some persistence providers (i.e. Hibernate in this
+     * case), see DATAJPA-396.
      *
      * @param criteriaQuery must not be {@literal null}.
      */
@@ -221,7 +229,8 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     /**
      * Invokes parameter binding on the given {@link TypedQuery}.
      */
-    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, JpaParametersParameterAccessor accessor,
+    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query,
+        JpaParametersParameterAccessor accessor,
         QueryParameterSetter.QueryMetadataCache metadataCache) {
 
       QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata("query", query);
@@ -267,14 +276,16 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
         provider = new ParameterMetadataProvider(builder, parameters, escape);
       }
 
-      return new JpaCountQueryCreator(tree, getQueryMethod().getResultProcessor().getReturnedType(), builder, provider);
+      return new JpaCountQueryCreator(tree, getQueryMethod().getResultProcessor().getReturnedType(),
+          builder, provider);
     }
 
     /**
      * Customizes binding by skipping the pagination.
      */
     @Override
-    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, JpaParametersParameterAccessor accessor,
+    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query,
+        JpaParametersParameterAccessor accessor,
         QueryParameterSetter.QueryMetadataCache metadataCache) {
 
       QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata("countquery", query);

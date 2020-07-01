@@ -94,7 +94,7 @@ public class PageInfoInterceptor extends PaginationInterceptor implements Interc
       super.setDialectType(dialectClazz);
     }
     if (StringUtils.isNotEmpty(localPage)) {
-      this.localPage = Boolean.valueOf(localPage);
+      this.localPage = Boolean.parseBoolean(localPage);
       super.setLocalPage(this.localPage);
     }
   }

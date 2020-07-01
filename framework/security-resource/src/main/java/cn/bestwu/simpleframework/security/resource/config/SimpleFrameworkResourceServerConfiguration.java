@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
+@SuppressWarnings("deprecation")
 @ConditionalOnClass(ResourceServerConfigurerAdapter.class)
 @Configuration
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)

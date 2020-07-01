@@ -90,7 +90,7 @@ abstract class JavaElement {
     abstract fun getFormattedContent(indentLevel: Int, compilationUnit: CompilationUnit): String
 
     companion object {
-        val lineSeparator = System.getProperty("line.separator") ?: "\n"
+        private val lineSeparator = System.getProperty("line.separator") ?: "\n"
         var defaultIndent: String = "  "
         var indent: String = defaultIndent
 

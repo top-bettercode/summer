@@ -32,7 +32,7 @@ object RandomUtil {
     @JvmStatic
     fun nextString(count: Int, chars: String?): String {
         return if (chars == null) {
-            next(count, 0, 0, false, false, null, RANDOM)
+            next(count, 0, 0, letters = false, numbers = false, chars = null, random = RANDOM)
         } else nextString(count, chars.toCharArray())
     }
 
@@ -46,7 +46,7 @@ object RandomUtil {
     @JvmStatic
     fun nextString(count: Int, chars: CharArray?): String {
         return if (chars == null) {
-            next(count, 0, 0, false, false, null, RANDOM)
+            next(count, 0, 0, letters = false, numbers = false, chars = null, random = RANDOM)
         } else next(count, 0, chars.size, false, false, chars, RANDOM)
     }
 
@@ -88,11 +88,10 @@ object RandomUtil {
         val gap = e - s
 
         while (c-- != 0) {
-            val ch: Char
-            if (chars == null) {
-                ch = (random.nextInt(gap) + s).toChar()
+            val ch: Char = if (chars == null) {
+                (random.nextInt(gap) + s).toChar()
             } else {
-                ch = chars[random.nextInt(gap) + s]
+                chars[random.nextInt(gap) + s]
             }
             if (letters && Character.isLetter(ch)
                     || numbers && Character.isDigit(ch)

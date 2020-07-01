@@ -131,7 +131,7 @@ public class PagHandlerMethodArgumentResolver implements HandlerMethodArgumentRe
 
     try {
       int parsed = Integer.parseInt(parameter) - (oneIndexedParameters && shiftIndex ? 1 : 0);
-      return parsed < 1 ? 1 : parsed > upper ? upper : parsed;
+      return parsed < 1 ? 1 : Math.min(parsed, upper);
     } catch (NumberFormatException e) {
       return 1;
     }

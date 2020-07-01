@@ -35,6 +35,7 @@ class WebSocketController {
     /**
      * 发生错误时调用
      */
+    @Suppress("UNUSED_PARAMETER")
     @OnError
     fun onError(session: Session?, error: Throwable) {
         log.error(error.message, error)
@@ -43,6 +44,7 @@ class WebSocketController {
     /**
      * 服务器接收到客户端消息时调用的方法
      */
+    @Suppress("UNUSED_PARAMETER")
     @OnMessage
     fun onMessage(message: String?, session: Session?) {
     }

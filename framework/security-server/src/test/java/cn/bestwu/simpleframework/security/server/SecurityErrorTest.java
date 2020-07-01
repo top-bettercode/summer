@@ -23,6 +23,7 @@ import org.springframework.util.MultiValueMap;
  * @since 1.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@SuppressWarnings("deprecation")
 @SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
     "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)
 public class SecurityErrorTest {
@@ -32,7 +33,7 @@ public class SecurityErrorTest {
   @Autowired
   TestRestTemplate restTemplate;
   TestRestTemplate clientRestTemplate;
-  String username = "root";
+  final String username = "root";
 
   @Before
   public void setUp() {

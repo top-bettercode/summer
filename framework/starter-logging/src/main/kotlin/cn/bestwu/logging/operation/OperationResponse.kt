@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
-import java.util.*
 
 /**
  * The response that was received as part of performing an operation on a RESTful service.

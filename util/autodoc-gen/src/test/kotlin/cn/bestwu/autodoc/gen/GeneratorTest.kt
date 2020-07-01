@@ -19,12 +19,12 @@ class GeneratorTest {
         File("/data/repositories/bestwu/wintruelife/acceptance-api").walkTopDown().filter { it.isDirectory && it.name == "doc" }.forEach { doc ->
             val commonFields = File(doc, "field.yml").parseList(Field::class.java)
             doc.listFiles()?.filter { it.isDirectory }?.forEach {
-                File(it, "collection").listFiles()?.filter { it.isDirectory }?.forEach {
-                    val file = File(it, "field.yml")
+                File(it, "collection").listFiles()?.filter { f -> f.isDirectory }?.forEach { path ->
+                    val file = File(path, "field.yml")
                     val coFields = (file.parseList(Field::class.java) + commonFields).toMutableSet()
                     file.delete()
-                    it.listFiles()?.filter { it.name != "field.yml" }?.forEach {
-                        val exist = Util.yamlMapper.readValue(it, OldDocOperation::class.java)
+                    path.listFiles()?.filter { f -> f.name != "field.yml" }?.forEach { f ->
+                        val exist = Util.yamlMapper.readValue(f, OldDocOperation::class.java)
                         coFields += exist.fields
                         val newVal = DocOperation(exist, exist.description, exist.prerequest, exist.testExec)
                         val request = newVal.request as DocOperationRequest
@@ -32,13 +32,13 @@ class GeneratorTest {
                         request.uriVariablesExt = request.uriVariables.toFields(coFields)
 
                         request.headersExt = request.headers.singleValueMap.toFields(coFields)
-                        request.headersExt.forEach {
-                            it.required = (exist.request as OldDocOperationRequest).requiredHeaders.contains(it.name)
+                        request.headersExt.forEach { ff ->
+                            ff.required = (exist.request as OldDocOperationRequest).requiredHeaders.contains(ff.name)
                         }
 
                         request.parametersExt = request.parameters.singleValueMap.toFields(coFields, expand = true)
-                        request.parametersExt.forEach {
-                            it.required = (exist.request as OldDocOperationRequest).requiredParameters.contains(it.name)
+                        request.parametersExt.forEach { p ->
+                            p.required = (exist.request as OldDocOperationRequest).requiredParameters.contains(p.name)
                         }
 
                         request.partsExt = request.parts.toFields(coFields)
@@ -51,7 +51,7 @@ class GeneratorTest {
                         response.contentExt = response.contentAsString.toMap()?.toFields(coFields, expand = true)
                                 ?: linkedSetOf()
 
-                        newVal.operationFile = it
+                        newVal.operationFile = f
                         newVal.save()
                     }
                 }
@@ -70,10 +70,10 @@ class GeneratorTest {
                 if (file.exists()) {
                     Util.yamlMapper.readValue(file.inputStream(), DocCollections::class.java).mapTo(linkedSetOf()) { (k, v) ->
                         DocCollection(k, LinkedHashSet(v), File(file.parentFile, "collection/${k}"))
-                    }.forEach {
-                        it.operations.forEach {
-                            val request = it.request as DocOperationRequest
-                            val response = it.response as DocOperationResponse
+                    }.forEach { dd ->
+                        dd.operations.forEach { d ->
+                            val request = d.request as DocOperationRequest
+                            val response = d.response as DocOperationResponse
 
                             request.uriVariablesExt = request.uriVariables.toFields(request.uriVariablesExt)
                             request.headersExt = request.headers.singleValueMap.toFields(request.headersExt)
@@ -90,8 +90,8 @@ class GeneratorTest {
                             val genProperties = GenProperties()
                             genProperties.rootSource = File(file1, "doc")
                             genProperties.source = doc
-                            InitField.extFieldExt(genProperties, it)
-                            it.save()
+                            InitField.extFieldExt(genProperties, d)
+                            d.save()
                         }
                     }
                 }

@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 /**
  * @author Peter Wu
  */
+@SuppressWarnings("deprecation")
 public class AccessTokenService {
 
   private final ClientDetails clientDetails;

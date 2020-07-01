@@ -19,7 +19,7 @@ public class DataWebTest {
   TestRestTemplate restTemplate;
 
   @Test
-  public void test() throws Exception {
+  public void test() {
     ResponseEntity<String> entity = restTemplate
         .getForEntity("/test", String.class);
     Assert.assertEquals(HttpStatus.OK, entity.getStatusCode());

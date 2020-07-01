@@ -16,7 +16,7 @@ abstract class AbstractOperationMessage(
 
     val prettyContent: ByteArray
         @JsonIgnore
-        get() = PrettyPrintingContentModifier.modifyContent(content, headers.contentType)
+        get() = PrettyPrintingContentModifier.modifyContent(content)
 
     val prettyContentAsString: String
         @JsonIgnore
@@ -52,14 +52,14 @@ abstract class AbstractOperationMessage(
         if (other !is AbstractOperationMessage) return false
 
         if (headers != other.headers) return false
-        if (!Arrays.equals(content, other.content)) return false
+        if (!content.contentEquals(other.content)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = headers.hashCode()
-        result = 31 * result + Arrays.hashCode(content)
+        result = 31 * result + content.contentHashCode()
         return result
     }
 

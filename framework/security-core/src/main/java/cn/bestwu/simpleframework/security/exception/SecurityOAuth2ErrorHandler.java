@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 /**
  * @author Peter Wu
  */
+@SuppressWarnings("deprecation")
 public class SecurityOAuth2ErrorHandler implements IErrorHandler {
 
   @Override

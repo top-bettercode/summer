@@ -25,6 +25,7 @@ import org.springframework.util.MultiValueMap;
  * @author Peter Wu
  * @since 1.0.0
  */
+@SuppressWarnings("deprecation")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
     "logging.level.root=debug", "app.web.ok.enable=true"}, webEnvironment = RANDOM_PORT)
@@ -35,7 +36,7 @@ public class SecurityError200Test {
   @Autowired
   TestRestTemplate restTemplate;
   TestRestTemplate clientRestTemplate;
-  String username = "root";
+  final String username = "root";
 
   @Before
   public void setUp() {

@@ -25,7 +25,7 @@ public class RawValuePlusSerializerTest {
   }
 
 
-  class BeanWithRaw {
+  static class BeanWithRaw {
 
     private String name;
     @JsonRawValuePlus

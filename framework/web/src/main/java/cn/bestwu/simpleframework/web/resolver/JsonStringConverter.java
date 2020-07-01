@@ -20,8 +20,8 @@ import org.springframework.util.StringUtils;
  */
 public class JsonStringConverter implements ConditionalGenericConverter {
 
-  private Logger log = LoggerFactory.getLogger(JsonStringConverter.class);
-  private ObjectMapper objectMapper;
+  private final Logger log = LoggerFactory.getLogger(JsonStringConverter.class);
+  private final ObjectMapper objectMapper;
 
   public JsonStringConverter(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;

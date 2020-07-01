@@ -11,8 +11,7 @@ public class TempTest {
   @Test
   public void name() {
     for (int c = 0; c < 200; c++) {
-      int i = c;
-      String x = getString(i);
+      String x = getString(c);
       System.err.println(x);
     }
   }

@@ -2,8 +2,6 @@ package cn.bestwu.logging.trace
 
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import javax.servlet.ReadListener
-import javax.servlet.ServletInputStream
 
 class TraceInputStream(private val delegate: InputStream, private val byteArrayOutputStream: ByteArrayOutputStream) : InputStream() {
 

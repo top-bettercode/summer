@@ -1,8 +1,6 @@
 package cn.bestwu.logging.bearychat
 
-import cn.bestwu.logging.formatFile
 import cn.bestwu.logging.formatFileNow
-import cn.bestwu.logging.formatNow
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -29,8 +29,8 @@ public class SimpleJpaExtRepositoryTest {
 
   @Autowired
   UserRepository repository;
-  List<User> batch = new ArrayList<>();
-  List<Integer> batchIds = new ArrayList<>();
+  final List<User> batch = new ArrayList<>();
+  final List<Integer> batchIds = new ArrayList<>();
   Integer daveId;
   Integer carterId;
 

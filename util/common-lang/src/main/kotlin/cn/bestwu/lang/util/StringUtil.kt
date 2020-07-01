@@ -116,7 +116,7 @@ object StringUtil {
             return null
         }
         val l = str.length
-        return if (length in 4..(l - 1)) {
+        return if (length in 4 until l) {
             "${str.substring(0, length - 3)}..."
         } else {
             subString(str, length)
@@ -297,9 +297,9 @@ object StringUtil {
         var current = '\u0000'
         var indent = 0
         var isInQuotationMarks = false
-        for (i in 0 until jsonStr.length) {
+        for (element in jsonStr) {
             last = current
-            current = jsonStr[i]
+            current = element
             when (current) {
                 '"' -> {
                     if (last != '\\') {

@@ -47,12 +47,12 @@ open class SimpleKeywordFilter(
                 result.append(word)
             } else if (containLast && matchShort && lastEnd) {
                 result
-                        .append(strategy.replaceWith(Arrays.copyOfRange(words, lastIndex, lastIndex + length)))
+                        .append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
                 last = root
             } else if (!containLast || end) {
                 if (lastEnd) {
                     result.append(strategy
-                            .replaceWith(Arrays.copyOfRange(words, lastIndex, lastIndex + length)))
+                            .replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
                     if (!containLast) {
                         i--
                     }
@@ -69,8 +69,7 @@ open class SimpleKeywordFilter(
                         } else {
                             val failLength = failNode!!.length
                             i = lastIndex + failLength - 1
-                            result.append(strategy.replaceWith(Arrays.copyOfRange(words,
-                                    lastIndex, lastIndex + failLength)))
+                            result.append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + failLength)))
                         }
                     }
                 }

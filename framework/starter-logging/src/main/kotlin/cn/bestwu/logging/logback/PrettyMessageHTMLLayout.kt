@@ -7,7 +7,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.CoreConstants.LINE_SEPARATOR
 import ch.qos.logback.core.helpers.Transform
 import ch.qos.logback.core.pattern.Converter
-import cn.bestwu.lang.util.LocalDateTimeHelper
 import cn.bestwu.logging.format
 import java.util.*
 

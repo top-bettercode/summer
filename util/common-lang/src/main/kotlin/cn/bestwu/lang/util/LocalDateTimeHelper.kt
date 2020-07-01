@@ -16,7 +16,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
      * @return LocalDateHelper
      */
     val firstDayOfMonth: LocalDateTimeHelper
-        get() = LocalDateTimeHelper.of(localDateTime.with(TemporalAdjusters.firstDayOfMonth()))
+        get() = of(localDateTime.with(TemporalAdjusters.firstDayOfMonth()))
                 .zoneOffset(zoneOffset)
 
     /**
@@ -25,7 +25,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
      * @return LocalDateHelper
      */
     val firstDayOfNextMonth: LocalDateTimeHelper
-        get() = LocalDateTimeHelper.of(localDateTime.with(TemporalAdjusters.firstDayOfNextMonth()))
+        get() = of(localDateTime.with(TemporalAdjusters.firstDayOfNextMonth()))
                 .zoneOffset(zoneOffset)
 
     /**
@@ -34,7 +34,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
      * @return LocalDateHelper
      */
     val lastDayOfMonth: LocalDateTimeHelper
-        get() = LocalDateTimeHelper.of(localDateTime.with(TemporalAdjusters.lastDayOfMonth()))
+        get() = of(localDateTime.with(TemporalAdjusters.lastDayOfMonth()))
                 .zoneOffset(zoneOffset)
 
     /**
@@ -43,8 +43,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
      * @return LocalDateHelper
      */
     val firstDayOfQuarter: LocalDateTimeHelper
-        get() = LocalDateTimeHelper
-                .of(localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().value)
+        get() = of(localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().value)
                         .with(TemporalAdjusters.firstDayOfMonth())).zoneOffset(zoneOffset)
 
     /**
@@ -53,8 +52,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
      * @return LocalDateHelper
      */
     val firstDayOfNextQuarter: LocalDateTimeHelper
-        get() = LocalDateTimeHelper
-                .of(localDateTime
+        get() = of(localDateTime
                         .withMonth(localDateTime.month.firstMonthOfQuarter().plus(3).value)
                         .with(TemporalAdjusters.firstDayOfMonth())).zoneOffset(zoneOffset)
 
@@ -64,8 +62,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
      * @return LocalDateHelper
      */
     val lastDayOfQuarter: LocalDateTimeHelper
-        get() = LocalDateTimeHelper
-                .of(localDateTime
+        get() = of(localDateTime
                         .withMonth(localDateTime.month.firstMonthOfQuarter().plus(2).value)
                         .with(TemporalAdjusters.lastDayOfMonth())).zoneOffset(zoneOffset)
 
@@ -75,7 +72,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
      * @return LocalDateHelper
      */
     val firstDayOfYear: LocalDateTimeHelper
-        get() = LocalDateTimeHelper.of(localDateTime.with(TemporalAdjusters.firstDayOfYear()))
+        get() = of(localDateTime.with(TemporalAdjusters.firstDayOfYear()))
                 .zoneOffset(zoneOffset)
 
     /**
@@ -84,7 +81,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
      * @return LocalDateHelper
      */
     val firstDayOfNextYear: LocalDateTimeHelper
-        get() = LocalDateTimeHelper.of(localDateTime.with(TemporalAdjusters.firstDayOfNextYear()))
+        get() = of(localDateTime.with(TemporalAdjusters.firstDayOfNextYear()))
                 .zoneOffset(zoneOffset)
 
     /**
@@ -93,7 +90,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
      * @return LocalDateHelper
      */
     val lastDayOfYear: LocalDateTimeHelper
-        get() = LocalDateTimeHelper.of(localDateTime.with(TemporalAdjusters.lastDayOfYear()))
+        get() = of(localDateTime.with(TemporalAdjusters.lastDayOfYear()))
                 .zoneOffset(zoneOffset)
 
     //--------------------------------------------
@@ -105,7 +102,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
         return Date.from(toInstant())
     }
 
-    fun toInstant(): Instant {
+    private fun toInstant(): Instant {
         return toLocalDateTime().toInstant(zoneOffset)
     }
 
@@ -125,14 +122,14 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
         return localDateTime.format(dateTimeFormatter)
     }
 
-    fun zoneOffset(zoneOffset: ZoneOffset?): LocalDateTimeHelper {
+    private fun zoneOffset(zoneOffset: ZoneOffset?): LocalDateTimeHelper {
         this.zoneOffset = zoneOffset
         return this
     }
 
     companion object {
 
-        val DEFAULT_ZONE_OFFSET = ZoneOffset.of("+8")
+        private val DEFAULT_ZONE_OFFSET = ZoneOffset.of("+8")!!
 
         @JvmStatic
         fun now(): LocalDateTimeHelper {

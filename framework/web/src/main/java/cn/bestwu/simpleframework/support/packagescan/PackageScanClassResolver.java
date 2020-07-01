@@ -32,9 +32,8 @@ public class PackageScanClassResolver {
   private Set<PackageScanFilter> scanFilters;
   private final Map<String, Set<Class>> allClassesByPackage = new HashMap<>();
   private final Set<String> loadedPackages = new HashSet<>();
-  private ResourcePatternResolver resourcePatternResolver;
-  private MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(
-      resourcePatternResolver);
+  private final ResourcePatternResolver resourcePatternResolver;
+  private final MetadataReaderFactory metadataReaderFactory;
 
   public PackageScanClassResolver() {
     this(ClassUtils.getDefaultClassLoader());
@@ -42,6 +41,7 @@ public class PackageScanClassResolver {
 
   public PackageScanClassResolver(ClassLoader classLoader) {
     resourcePatternResolver = new PathMatchingResourcePatternResolver(classLoader);
+    metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
   }
 
   @NotNull

@@ -23,6 +23,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 /**
  * @author Peter Wu
  */
+@SuppressWarnings("deprecation")
 public class CustomWebResponseExceptionTranslator implements
     WebResponseExceptionTranslator<OAuth2Exception> {
 

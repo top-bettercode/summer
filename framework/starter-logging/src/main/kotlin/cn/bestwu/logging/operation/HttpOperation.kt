@@ -60,7 +60,7 @@ object HttpOperation {
         return stringBuilder.toString()
     }
 
-    fun getPath(request: OperationRequest, forceParametersInUri: Boolean = false): String {
+    private fun getPath(request: OperationRequest, forceParametersInUri: Boolean = false): String {
         return getPath(request, forceParametersInUri, request.uri.rawPath)
     }
 
@@ -89,7 +89,7 @@ object HttpOperation {
         return rpath
     }
 
-    fun includeParametersInUri(request: OperationRequest): Boolean {
+    private fun includeParametersInUri(request: OperationRequest): Boolean {
         return request.method === HttpMethod.GET || request.method === HttpMethod.DELETE || request.content.isNotEmpty() && !MediaType.APPLICATION_FORM_URLENCODED
                 .isCompatibleWith(request.headers.contentType)
     }

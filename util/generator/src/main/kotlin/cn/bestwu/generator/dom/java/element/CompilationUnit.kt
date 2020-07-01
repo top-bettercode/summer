@@ -54,11 +54,11 @@ interface CompilationUnit {
     }
 
     fun import(vararg fullTypeSpecification: String) {
-        importedTypes.addAll(fullTypeSpecification.map { JavaType(it) }.filter { it.isExplicitlyImported && !it.packageName.equals(type.packageName) })
+        importedTypes.addAll(fullTypeSpecification.map { JavaType(it) }.filter { it.isExplicitlyImported && it.packageName != type.packageName })
     }
 
     fun import(vararg importedType: JavaType) {
-        importedTypes.addAll(importedType.filter { it.isExplicitlyImported && !it.packageName.equals(type.packageName) })
+        importedTypes.addAll(importedType.filter { it.isExplicitlyImported && it.packageName != type.packageName })
     }
 
     fun staticImport(vararg staticImport: String) {

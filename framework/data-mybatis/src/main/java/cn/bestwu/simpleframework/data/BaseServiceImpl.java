@@ -85,7 +85,7 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, 
       if (tableInfo == null) {
         tableInfo = TableInfoHelper.getTableInfo(cls.getSuperclass());
       }
-      return insertOrUpdate((T) entity, cls, tableInfo);
+      return insertOrUpdate(entity, cls, tableInfo);
     }
     return false;
   }

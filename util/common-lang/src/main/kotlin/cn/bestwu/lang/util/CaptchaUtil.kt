@@ -10,6 +10,7 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 import javax.imageio.ImageIO
+import kotlin.math.sin
 
 /**
  * 验证码工具类
@@ -205,7 +206,7 @@ object CaptchaUtil {
         val phase = random.nextInt(2)
 
         for (i in 0 until h1) {
-            val d = (period shr 1).toDouble() * Math.sin(
+            val d = (period shr 1).toDouble() * sin(
                     i.toDouble() / period.toDouble() + 6.2831853071795862 * phase.toDouble() / frames.toDouble())
             g.copyArea(0, i, w1, 1, d.toInt(), 0)
             g.color = color
@@ -230,7 +231,7 @@ object CaptchaUtil {
         val frames = 20
         val phase = 7
         for (i in 0 until w1) {
-            val d = (period shr 1).toDouble() * Math.sin(
+            val d = (period shr 1).toDouble() * sin(
                     i.toDouble() / period.toDouble() + 6.2831853071795862 * phase.toDouble() / frames.toDouble())
             g.copyArea(i, 0, 1, h1, 0, d.toInt())
             g.color = color

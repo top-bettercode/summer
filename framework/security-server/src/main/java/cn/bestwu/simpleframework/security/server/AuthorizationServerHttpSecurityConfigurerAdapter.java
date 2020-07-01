@@ -9,5 +9,5 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
  */
 public interface AuthorizationServerHttpSecurityConfigurerAdapter {
 
-	void configure(HttpSecurity http) throws Exception;
+	void configure(HttpSecurity http);
 }

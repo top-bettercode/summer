@@ -7,6 +7,7 @@ import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 import javax.imageio.ImageIO
+import kotlin.math.ceil
 
 /**
  * 图像Builder
@@ -18,7 +19,7 @@ constructor(inputStream: Any) {
     /**
      * @return 格式名
      */
-    var formatName: String
+    private var formatName: String
         private set
     /**
      * @return 宽度
@@ -28,7 +29,7 @@ constructor(inputStream: Any) {
     /**
      * @return 高度
      */
-    var height: Int = 0
+    private var height: Int = 0
         private set
     /**
      * @return 格式
@@ -114,10 +115,10 @@ constructor(inputStream: Any) {
      * @param scale 缩放比例
      * @return ImageBuilder
      */
-    fun scale(scale: Double): ImageBuilder {
+    private fun scale(scale: Double): ImageBuilder {
         if (scale != 1.0) {
-            width = Math.ceil(this.width * scale).toInt()
-            height = Math.ceil(this.height * scale).toInt()
+            width = ceil(this.width * scale).toInt()
+            height = ceil(this.height * scale).toInt()
             val image = bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH)
             val bufImg = BufferedImage(image.getWidth(null), image.getHeight(null), type)
             val g = bufImg.createGraphics()
@@ -153,15 +154,15 @@ constructor(inputStream: Any) {
         var x = 0
         var y = 0
         when (origin) {
-            ImageBuilder.Origin.LEFT_BOTTOM -> y = this.height - h
-            ImageBuilder.Origin.LEFT_TOP -> {
+            Origin.LEFT_BOTTOM -> y = this.height - h
+            Origin.LEFT_TOP -> {
             }
-            ImageBuilder.Origin.RIGHT_BOTTOM -> {
+            Origin.RIGHT_BOTTOM -> {
                 x = this.width - w
                 y = this.height - h
             }
-            ImageBuilder.Origin.RIGHT_TOP -> x = this.width - w
-            ImageBuilder.Origin.CENTER -> {
+            Origin.RIGHT_TOP -> x = this.width - w
+            Origin.CENTER -> {
                 x = (this.width - w) / 2
                 y = (this.height - h) / 2
             }
@@ -178,7 +179,7 @@ constructor(inputStream: Any) {
      * @param height 高度
      * @return ImageBuilder
      */
-    fun sourceRegion(x: Int, y: Int, width: Int, height: Int): ImageBuilder {
+    private fun sourceRegion(x: Int, y: Int, width: Int, height: Int): ImageBuilder {
         if (width < this.width) {
             this.width = width
         }

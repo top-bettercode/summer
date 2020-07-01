@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.provider.error.WebResponseExceptionTr
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 
+@SuppressWarnings("deprecation")
 @ConditionalOnClass(OAuth2Exception.class)
 @Configuration
 @ConditionalOnWebApplication

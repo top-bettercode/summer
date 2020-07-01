@@ -105,7 +105,7 @@ object PdmReader {
             val cPrecision = columnEle.element(QName("Precision", aNamespace))?.textTrim?.toInt()
                     ?: 0
             val cComment = columnEle.element(QName("Comment", aNamespace))?.textTrim
-            var cDefaultValue = columnEle.element(QName("DefaultValue", aNamespace))?.textTrim?.trim('\'')?.trim()
+            val cDefaultValue = columnEle.element(QName("DefaultValue", aNamespace))?.textTrim?.trim('\'')?.trim()
             val nullable = columnEle.element(QName("Column.Mandatory", aNamespace))?.textTrim
             val identity = columnEle.element(QName("Identity", aNamespace))?.textTrim == "1"
 

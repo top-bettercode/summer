@@ -87,15 +87,11 @@ object JavaReservedWords {
     }
 
     fun containsWord(word: String?): Boolean {
-        val rc: Boolean
-
-        if (word == null) {
-            rc = false
+        return if (word == null) {
+            false
         } else {
-            rc = RESERVED_WORDS!!.contains(word)
+            RESERVED_WORDS!!.contains(word)
         }
-
-        return rc
     }
 }
 /**

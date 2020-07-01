@@ -15,7 +15,7 @@ class TestController {
 
     @RequestMapping("/test")
     fun test(httpServletRequest: HttpServletRequest): String {
-        httpServletRequest.parameterMap.forEach { t, u ->
+        httpServletRequest.parameterMap.forEach { (t, u) ->
             System.err.println("$t:${u.joinToString()}")
         }
         return "success"

@@ -32,7 +32,7 @@ open class InnerClass(type: JavaType) : InnerUnit(type) {
      *
      * the new abstract
      */
-    var isAbstract: Boolean = false
+    private var isAbstract: Boolean = false
 
     /** The initialization blocks.  */
     private val initializationBlocks: MutableList<InitializationBlock> = mutableListOf()
