@@ -23,7 +23,7 @@ object PumlConverter {
         return toTableOrAnys(puml, call).asSequence().filter { it is Table }.map { it as Table }.toList()
     }
 
-    fun toTableOrAnys(puml: File, call: (Table) -> Unit = {}): List<Any> {
+    private fun toTableOrAnys(puml: File, call: (Table) -> Unit = {}): List<Any> {
         val tables = mutableListOf<Any>()
         var remarks = ""
         var primaryKeyNames = mutableListOf<String>()

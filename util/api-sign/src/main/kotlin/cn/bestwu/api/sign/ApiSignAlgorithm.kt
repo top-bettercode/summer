@@ -148,7 +148,7 @@ class ApiSignAlgorithm(private val properties: ApiSignProperties) {
     /**
      * @return 签名后的参数
      */
-    fun signParams(request: HttpServletRequest): String {
+    private fun signParams(request: HttpServletRequest): String {
         val requestParams = request.parameterMap
         val keys = ArrayList(requestParams.keys)
         keys.sort()

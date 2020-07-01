@@ -6,7 +6,6 @@ import org.mybatis.generator.config.*
 import org.mybatis.generator.internal.DefaultShellCallback
 import java.io.File
 import java.util.*
-import javax.security.auth.login.Configuration
 
 /**
  * MybatisGenerator
@@ -17,24 +16,24 @@ class Mybatis : Generator() {
     private val context: Context = Context(ModelType.FLAT)
     private val config = Configuration()
 
-    val warnings = ArrayList<String>()
-    val callback = DefaultShellCallback(true)
-    val commentGeneratorConfiguration = CommentGeneratorConfiguration().apply {
+    private val warnings = ArrayList<String>()
+    private val callback = DefaultShellCallback(true)
+    private val commentGeneratorConfiguration = CommentGeneratorConfiguration().apply {
         addProperty("suppressDate", "true")
         addProperty("suppressAllComments", "true")
     }
-    val javaTypeResolverConfiguration = JavaTypeResolverConfiguration().apply {
+    private val javaTypeResolverConfiguration = JavaTypeResolverConfiguration().apply {
         addProperty("forceBigDecimals", "false")
     }
-    val jdbcConnectionConfiguration = JDBCConnectionConfiguration().apply {
+    private val jdbcConnectionConfiguration = JDBCConnectionConfiguration().apply {
         addProperty("remarksReporting", "true") //oracle 读取表注释
         addProperty("useInformationSchema", "true")//mysql 读取表注释
         addProperty("characterEncoding", "utf8")//mysql 读取表注释
     }
-    val javaModelGeneratorConfiguration = JavaModelGeneratorConfiguration()
-    val javaClientGeneratorConfiguration = JavaClientGeneratorConfiguration()
-    val sqlMapGeneratorConfiguration = SqlMapGeneratorConfiguration()
-    val tableConfiguration = TableConfiguration(context).apply {
+    private val javaModelGeneratorConfiguration = JavaModelGeneratorConfiguration()
+    private val javaClientGeneratorConfiguration = JavaClientGeneratorConfiguration()
+    private val sqlMapGeneratorConfiguration = SqlMapGeneratorConfiguration()
+    private val tableConfiguration = TableConfiguration(context).apply {
         isCountByExampleStatementEnabled = true
         isDeleteByPrimaryKeyStatementEnabled = true
         isDeleteByExampleStatementEnabled = true

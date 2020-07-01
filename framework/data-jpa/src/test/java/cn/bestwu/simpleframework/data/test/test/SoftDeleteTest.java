@@ -29,13 +29,13 @@ public class SoftDeleteTest {
   HardUserRepository hardUserRepository;
   @Autowired
   DataSource dataSource;
-  List<User> batch = new ArrayList<>();
-  List<Integer> batchIds = new ArrayList<>();
+  final List<User> batch = new ArrayList<>();
+  final List<Integer> batchIds = new ArrayList<>();
   Integer daveId;
   Integer carterId;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
 //    RunScript.execute(dataSource.getConnection(),
 //        new FileReader(new ClassPathResource("import.sql").getFile()));
 
@@ -63,7 +63,7 @@ public class SoftDeleteTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     repository.deleteAll();
     repository.cleanRecycleBin();
     hardUserRepository.deleteAll();

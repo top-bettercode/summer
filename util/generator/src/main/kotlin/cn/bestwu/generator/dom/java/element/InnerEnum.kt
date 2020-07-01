@@ -176,7 +176,7 @@ open class InnerEnum(type: JavaType) : InnerUnit(type) {
      * @param enumConstant
      * the enum constant
      */
-    fun enumConstant(vararg enumConstant: EnumField) {
+    private fun enumConstant(vararg enumConstant: EnumField) {
         enumConstants.addAll(enumConstant)
     }
 

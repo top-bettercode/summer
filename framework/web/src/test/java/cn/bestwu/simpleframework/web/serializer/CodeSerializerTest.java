@@ -16,7 +16,7 @@ import org.junit.Test;
 public class CodeSerializerTest {
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     CodeSerializer.setCodeService(new ICodeService() {
       @Override
       public String getName(String codeType, Serializable code) {
@@ -71,7 +71,7 @@ public class CodeSerializerTest {
     String getCode();
   }
 
-  class DataDicBean3 extends DataDicBean2 {
+  static class DataDicBean3 extends DataDicBean2 {
 
     @JsonCode("abc")
     @Override
@@ -80,7 +80,7 @@ public class CodeSerializerTest {
     }
   }
 
-  class DataDicBean2 extends DataDicBean {
+  static class DataDicBean2 extends DataDicBean {
 
     @Override
     public Integer getIntCode() {

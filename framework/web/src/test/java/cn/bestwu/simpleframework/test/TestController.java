@@ -8,6 +8,7 @@ import cn.bestwu.simpleframework.web.resolver.Cent;
 import cn.bestwu.simpleframework.web.resolver.CentConverter;
 import cn.bestwu.simpleframework.web.serializer.ICodeService;
 import java.io.Serializable;
+import java.util.Date;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController extends BaseController {
 
   @RequestMapping(value = "/test")
-  public Object test(DataDicBean form,@Cent Long cent) {
+  public Object test(DataDicBean form,@Cent Long cent, Date a) {
+    System.err.println(a);
     System.err.println(cent);
     System.err.println(form.getPrice());
     System.err.println(StringUtil.valueOf(form, true));

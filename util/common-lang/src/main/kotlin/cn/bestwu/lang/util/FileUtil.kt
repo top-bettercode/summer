@@ -75,7 +75,7 @@ object FileUtil {
 
     @JvmStatic
     fun listFiles(directory: File, filter: FileFilter, recursive: Boolean): Collection<File> {
-        val files = java.util.LinkedList<File>()
+        val files = LinkedList<File>()
         innerListFiles(files, directory, filter, false, recursive)
         return files
     }

@@ -18,7 +18,7 @@ class TypeParameter @JvmOverloads constructor(
         val sb = StringBuilder()
 
         sb.append(name)
-        if (!extendsTypes.isEmpty()) {
+        if (extendsTypes.isNotEmpty()) {
 
             sb.append(" extends ")
             var addAnd = false

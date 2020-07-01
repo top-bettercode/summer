@@ -3,7 +3,6 @@ package cn.bestwu.generator.dsl
 import cn.bestwu.generator.database.entity.Column
 import cn.bestwu.generator.dom.java.JavaType
 import cn.bestwu.generator.dom.java.element.*
-import java.io.File
 import java.io.PrintWriter
 
 /**
@@ -11,7 +10,7 @@ import java.io.PrintWriter
  * @author Peter Wu
  */
 abstract class JavaGenerator : Generator() {
-    protected val compilationUnits: MutableList<CompilationUnit> = mutableListOf()
+    private val compilationUnits: MutableList<CompilationUnit> = mutableListOf()
 
     protected abstract fun content()
 

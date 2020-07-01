@@ -1,7 +1,5 @@
 package cn.bestwu.logging.trace
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.util.StreamUtils
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
@@ -25,14 +23,10 @@ class TraceHttpServletRequestWrapper
  */
 constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request) {
     private val byteArrayOutputStream = ByteArrayOutputStream()
-    private val parts: MutableCollection<Part>?
-
-    init {
-        parts = if (request.contentType?.toLowerCase()?.startsWith("multipart/") == true)
-            super.getParts().map { TracePart(it) }.toMutableList()
-        else
-            null
-    }
+    private val parts: MutableCollection<Part>? = if (request.contentType?.toLowerCase()?.startsWith("multipart/") == true)
+        super.getParts().map { TracePart(it) }.toMutableList()
+    else
+        null
 
     val contentAsByteArray: ByteArray
         get() = if (isFinished()) byteArrayOutputStream.toByteArray() else try {

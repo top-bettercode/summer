@@ -10,7 +10,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  */
 public class PackageScanClassResolverTest {
 
-  PackageScanClassResolver packageScanClassResolver = new PackageScanClassResolver();
+  final PackageScanClassResolver packageScanClassResolver = new PackageScanClassResolver();
 
   @Test
   public void findClass() {

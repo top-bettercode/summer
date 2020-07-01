@@ -62,12 +62,12 @@ public class IDCardUtil {
     String idcard17 = idcard.substring(0, 17);
     // 获取第18位
     String idcard18Code = idcard.substring(17, 18);
-    char c[];
+    char[] c;
     String checkCode;
     // 是否都为数字
     if (isDigital(idcard17)) {
       c = idcard17.toCharArray();
-      int bit[];
+      int[] bit;
 
       bit = converCharToInt(c);
 
@@ -107,10 +107,10 @@ public class IDCardUtil {
         idcard17 = idcard.substring(0, 6) + LocalDate
             .parse(birthday, DateTimeFormatter.ofPattern("yyMMdd")).getYear() + idcard.substring(8);
 
-        char c[] = idcard17.toCharArray();
+        char[] c = idcard17.toCharArray();
         String checkCode;
 
-        int bit[];
+        int[] bit;
 
         // 将字符数组转为整型数组
         bit = converCharToInt(c);

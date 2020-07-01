@@ -8,7 +8,7 @@ import java.io.File
  * @author Peter Wu
  */
 class AsciidocGeneratorTest {
-    lateinit var autodoc: AutodocExtension
+    private lateinit var autodoc: AutodocExtension
 
     @Before
     fun setUp() {

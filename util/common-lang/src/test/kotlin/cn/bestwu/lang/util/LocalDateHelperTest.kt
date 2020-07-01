@@ -9,7 +9,7 @@ import java.time.LocalDate
  */
 class LocalDateHelperTest {
 
-    internal val localDate = LocalDateTimeHelper.of(2018, 3, 5)
+    private val localDate = LocalDateTimeHelper.of(2018, 3, 5)
 
     @Test
     fun toDate() {

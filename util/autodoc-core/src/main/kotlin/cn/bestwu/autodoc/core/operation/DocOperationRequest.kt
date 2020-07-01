@@ -37,7 +37,4 @@ class DocOperationRequest(operationRequest: OperationRequest = OperationRequest(
     forEach {
         it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)
     }
-}, operationRequest.content, operationRequest.dateTime) {
-
-
-}
+}, operationRequest.content, operationRequest.dateTime)

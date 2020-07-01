@@ -32,7 +32,7 @@ public class RepositoryMetadata {
 
   //  	private Method findAllMethod;
   private Method wrapperBinderMethod;
-  private Method findOneMethod;
+  private final Method findOneMethod;
   //	private Method saveMethod;
   //	private Method deleteMethod;
   //--------------------------------------------

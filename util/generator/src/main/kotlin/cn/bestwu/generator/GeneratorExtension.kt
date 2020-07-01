@@ -195,7 +195,7 @@ open class GeneratorExtension(
     val sqlDDLOutput: String
         get() = "$sqlOutput/ddl"
 
-    val sqlUpdateOutput: String
+    private val sqlUpdateOutput: String
         get() = sqlOutput
 
     private fun findUpPath(file: File): File? {

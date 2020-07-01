@@ -16,7 +16,7 @@ import org.springframework.mock.env.MockEnvironment;
  */
 public class UrlSerializerTest {
 
-  ObjectMapper objectMapper = new ObjectMapper();
+  final ObjectMapper objectMapper = new ObjectMapper();
 
   @Before
   public void setUp() {

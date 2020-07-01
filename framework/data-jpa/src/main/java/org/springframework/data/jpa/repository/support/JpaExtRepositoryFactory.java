@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
  */
 public class JpaExtRepositoryFactory extends RepositoryFactorySupport {
 
-  private JpaExtProperties jpaExtProperties;
+  private final JpaExtProperties jpaExtProperties;
   private final EntityManager entityManager;
   private final SqlSessionTemplate sqlSessionTemplate;
   private final QueryExtractor extractor;
@@ -178,7 +178,7 @@ public class JpaExtRepositoryFactory extends RepositoryFactorySupport {
   private static class EclipseLinkProjectionQueryCreationListener implements
       QueryCreationListener<AbstractJpaQuery> {
 
-    private Logger log = LoggerFactory.getLogger(EclipseLinkProjectionQueryCreationListener.class);
+    private final Logger log = LoggerFactory.getLogger(EclipseLinkProjectionQueryCreationListener.class);
     private static final String ECLIPSELINK_PROJECTIONS = "Usage of Spring Data projections detected on persistence provider EclipseLink. Make sure the following query methods declare result columns in exactly the order the accessors are declared in the projecting interface or the order of parameters for DTOs:";
 
     private final JpaMetamodel metamodel;

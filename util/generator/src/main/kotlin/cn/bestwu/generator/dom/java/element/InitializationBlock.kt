@@ -4,7 +4,7 @@ import cn.bestwu.generator.dom.java.StringOperator
 import cn.bestwu.generator.dom.java.element.JavaElement.Companion.indent
 import cn.bestwu.generator.dom.java.element.JavaElement.Companion.newLine
 
-class InitializationBlock @JvmOverloads constructor(var isStatic: Boolean = false) {
+class InitializationBlock @JvmOverloads constructor(private var isStatic: Boolean = false) {
     private val bodyLines: MutableList<String> = mutableListOf()
     private val javaDocLines: MutableList<String> = mutableListOf()
 

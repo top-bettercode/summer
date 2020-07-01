@@ -32,7 +32,7 @@ public class MuipartFileToAttachmentConverter implements Converter<MultipartFile
 
   public static final String FILE_TYPE_PARAM_TYPE = "fileType";
   public static final String REQUEST_FILES = "REQUEST_FILES";
-  private Logger log = LoggerFactory.getLogger(MuipartFileToAttachmentConverter.class);
+  private final Logger log = LoggerFactory.getLogger(MuipartFileToAttachmentConverter.class);
 
   private final MultipartProperties multipartProperties;
 

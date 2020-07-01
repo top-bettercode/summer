@@ -32,18 +32,18 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
   private static final long serialVersionUID = 1L;
 
   private static String defaultFormatExpression = "${app.multipart.file-url-format}";
-  private static JsonUrlMapper defaultMapper = new JsonUrlMapper() {
+  private static final JsonUrlMapper defaultMapper = new JsonUrlMapper() {
   };
   private static Environment environment;
-  private static Map<String, String> formatCache = new HashMap<>();
-  private static Map<Class<? extends JsonUrlMapper>, JsonUrlMapper> mapperCache = new HashMap<>();
+  private static final Map<String, String> formatCache = new HashMap<>();
+  private static final Map<Class<? extends JsonUrlMapper>, JsonUrlMapper> mapperCache = new HashMap<>();
   private static String defaultFormat;
 
-  private String formatExpression;
+  private final String formatExpression;
   private String urlFieldName;
-  private boolean useExtensionField;
-  private String separator;
-  private Class<? extends JsonUrlMapper> mapperType;
+  private final boolean useExtensionField;
+  private final String separator;
+  private final Class<? extends JsonUrlMapper> mapperType;
 
   public UrlSerializer() {
     this(null, "", true, ",", null);

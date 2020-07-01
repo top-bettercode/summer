@@ -60,9 +60,9 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
   /**
    * 获取 Model
    *
-   * @param parameter parameter
-   * @param mavContainer mavContainer
-   * @param webRequest webRequest
+   * @param parameter     parameter
+   * @param mavContainer  mavContainer
+   * @param webRequest    webRequest
    * @param binderFactory binderFactory
    * @return Object
    * @throws Exception Exception
@@ -83,12 +83,11 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
   }
 
   /**
-   * @param binder binder
+   * @param binder          binder
    * @param idParameterName id参数名
-   * @param webRequest webRequest
-   * @param binderFactory binderFactory
+   * @param webRequest      webRequest
+   * @param binderFactory   binderFactory
    * @return 实体ID
-   * @throws Exception Exception
    */
   private String getId(WebDataBinder binder, String idParameterName, NativeWebRequest webRequest,
       WebDataBinderFactory binderFactory) {
@@ -114,8 +113,8 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
   }
 
   /**
-   * @param parameter parameter
-   * @param webRequest webRequest
+   * @param parameter     parameter
+   * @param webRequest    webRequest
    * @param binderFactory binderFactory
    * @return Object 待更新实体
    * @throws Exception Exception
@@ -161,10 +160,10 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
   /**
    * 从request 读取参数更新到实体
    *
-   * @param parameter parameter
-   * @param modelObject modelObject
-   * @param mavContainer mavContainer
-   * @param webRequest webRequest
+   * @param parameter     parameter
+   * @param modelObject   modelObject
+   * @param mavContainer  mavContainer
+   * @param webRequest    webRequest
    * @param binderFactory binderFactory
    * @return Object
    * @throws Exception Exception
@@ -195,7 +194,7 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
   /**
    * 如果有必要验证参数
    *
-   * @param binder binder
+   * @param binder      binder
    * @param methodParam methodParam
    */
   protected void validateIfApplicable(WebDataBinder binder, MethodParameter methodParam) {
@@ -216,7 +215,7 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
   /**
    * 绑定请求参数
    *
-   * @param binder binder
+   * @param binder  binder
    * @param request request
    */
   protected void bindRequestParameters(WebDataBinder binder, NativeWebRequest request) {
@@ -229,9 +228,9 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
    * 从spring 源码 修改来的
    *
    * @param attributeName attributeName
-   * @param modelClass modelClass
+   * @param modelClass    modelClass
    * @param binderFactory binderFactory
-   * @param request request
+   * @param request       request
    * @return Object
    * @throws Exception Exception
    */
@@ -254,7 +253,7 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
    * 从spring 源码 修改来的
    *
    * @param attributeName attributeName
-   * @param request request
+   * @param request       request
    * @return return
    */
   protected String getRequestValueForAttribute(String attributeName, NativeWebRequest request) {
@@ -268,11 +267,11 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
   /**
    * 从spring 源码 修改来的
    *
-   * @param sourceValue sourceValue
+   * @param sourceValue   sourceValue
    * @param attributeName attributeName
-   * @param modelClass modelClass
+   * @param modelClass    modelClass
    * @param binderFactory binderFactory
-   * @param request request
+   * @param request       request
    * @return Object
    * @throws Exception Exception
    */

@@ -1,11 +1,6 @@
 package cn.bestwu.autodoc.core
 
 import cn.bestwu.autodoc.core.model.DocModule
-import cn.bestwu.autodoc.core.model.Field
-import cn.bestwu.autodoc.core.operation.DocOperation
-import cn.bestwu.autodoc.core.operation.DocOperationRequest
-import cn.bestwu.autodoc.core.operation.DocOperationResponse
-import cn.bestwu.lang.util.RandomUtil
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
 import java.io.File

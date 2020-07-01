@@ -38,7 +38,7 @@ public class MybatisTest {
   Integer carterId;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     User dave = new User("Dave", "Matthews");
     repository.save(dave);
     User dave1 = new User("Dave", "Matthews");
@@ -52,7 +52,7 @@ public class MybatisTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     repository.deleteAll();
     repository.cleanRecycleBin();
   }

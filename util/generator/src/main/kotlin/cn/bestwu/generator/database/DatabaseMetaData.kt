@@ -15,7 +15,7 @@ import java.sql.ResultSetMetaData
  *
  * @author Peter Wu
  */
-fun ResultSet.use(rs: ResultSet.() -> Unit) {
+fun ResultSet.each(rs: ResultSet.() -> Unit) {
     try {
         while (next()) {
             rs(this)
@@ -57,7 +57,7 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
      */
     fun tableNames(): List<String> {
         val tableNames = mutableListOf<String>()
-        metaData.getTables(datasource.catalog, datasource.schema, null, null).use { tableNames.add(getString("TABLE_NAME")) }
+        metaData.getTables(datasource.catalog, datasource.schema, null, null).each { tableNames.add(getString("TABLE_NAME")) }
         return tableNames
     }
 
@@ -104,7 +104,7 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
                 primaryKeyNames = mutableListOf()
                 indexes = mutableListOf()
             }
-            metaData.getTables(catalog, curentSchema, curentTableName, null).use {
+            metaData.getTables(catalog, curentSchema, curentTableName, null).each {
                 table = Table(productName = databaseProductName, catalog = catalog, schema = curentSchema, tableName = getString("TABLE_NAME"), tableType = getString("TABLE_TYPE"), remarks = getString("REMARKS")?.trim()
                         ?: "", primaryKeyNames = primaryKeyNames, indexes = indexes, pumlColumns = columns.toMutableList())
             }
@@ -120,7 +120,7 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
         if (arrayOf(DatabaseDriver.MYSQL, DatabaseDriver.MARIADB, DatabaseDriver.H2).contains(databaseDriver)) {
             try {
                 val prepareStatement = metaData.connection.prepareStatement("SHOW COLUMNS FROM $tableName")
-                prepareStatement.executeQuery().use {
+                prepareStatement.executeQuery().each {
                     val find = columns.find { it.columnName == getString(1) }
                     if (find != null) {
                         if (debug)
@@ -155,12 +155,12 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
         val columns = mutableListOf<Column>()
         tableName.current { curentSchema, curentTableName ->
             if (columnNames.isEmpty()) {
-                metaData.getColumns(catalog, curentSchema, curentTableName, null).use {
+                metaData.getColumns(catalog, curentSchema, curentTableName, null).each {
                     fillColumn(columns)
                 }
             } else {
                 columnNames.forEach {
-                    metaData.getColumns(catalog, curentSchema, curentTableName, it).use {
+                    metaData.getColumns(catalog, curentSchema, curentTableName, it).each {
                         fillColumn(columns)
                     }
                 }
@@ -170,7 +170,7 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
     }
 
     private fun fixImportedKeys(curentSchema: String?, curentTableName: String, columns: MutableList<Column>) {
-        metaData.getImportedKeys(catalog, curentSchema, curentTableName).use {
+        metaData.getImportedKeys(catalog, curentSchema, curentTableName).each {
             val find = columns.find { it.columnName == getString("FKCOLUMN_NAME") }!!
             find.isForeignKey = true
             find.pktableName = getString("PKTABLE_NAME")
@@ -232,7 +232,7 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
     private fun primaryKeyNames(tableName: String): MutableList<String> {
         val primaryKeys = mutableListOf<String>()
         tableName.current { curentSchema, curentTableName ->
-            metaData.getPrimaryKeys(catalog, curentSchema, curentTableName).use {
+            metaData.getPrimaryKeys(catalog, curentSchema, curentTableName).each {
                 primaryKeys.add(getString("COLUMN_NAME"))
             }
         }
@@ -243,7 +243,7 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
     private fun indexes(tableName: String): MutableList<Indexed> {
         val indexes = mutableListOf<Indexed>()
         tableName.current { curentSchema, curentTableName ->
-            metaData.getIndexInfo(catalog, curentSchema, curentTableName, false, false).use {
+            metaData.getIndexInfo(catalog, curentSchema, curentTableName, false, false).each {
                 val indexName = getString("INDEX_NAME")
                 if (!indexName.isNullOrBlank() && !"PRIMARY".equals(indexName, true)) {
                     var indexed = indexes.find { it.name == indexName }

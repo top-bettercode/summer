@@ -7,8 +7,8 @@ class Field : JavaElement() {
     lateinit var type: JavaType
     lateinit var name: String
     var initializationString: String? = null
-    var isTransient: Boolean = false
-    var isVolatile: Boolean = false
+    private var isTransient: Boolean = false
+    private var isVolatile: Boolean = false
 
     override fun getFormattedContent(indentLevel: Int, compilationUnit: CompilationUnit): String {
         val sb = StringBuilder()

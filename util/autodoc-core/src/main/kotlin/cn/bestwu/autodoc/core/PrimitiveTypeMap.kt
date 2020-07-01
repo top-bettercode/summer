@@ -11,13 +11,13 @@ internal object PrimitiveTypeMap {
 
     init {
         map["boolean"] = java.lang.Boolean.TYPE.name
-        map["char"] = java.lang.Character.TYPE.name
+        map["char"] = Character.TYPE.name
         map["byte"] = java.lang.Byte.TYPE.name
         map["short"] = java.lang.Short.TYPE.name
-        map["int"] = java.lang.Integer.TYPE.name
+        map["int"] = Integer.TYPE.name
         map["long"] = java.lang.Long.TYPE.name
         map["float"] = java.lang.Float.TYPE.name
         map["double"] = java.lang.Double.TYPE.name
-        map["void"] = java.lang.Void.TYPE.name
+        map["void"] = Void.TYPE.name
     }
 }

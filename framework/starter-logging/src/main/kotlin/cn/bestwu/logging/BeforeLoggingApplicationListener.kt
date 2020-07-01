@@ -35,9 +35,8 @@ class BeforeLoggingApplicationListener : GenericApplicationListener {
 
     private fun isAssignableFrom(type: Class<*>?, vararg supportedTypes: Class<*>): Boolean {
         if (type != null) {
-            supportedTypes
-                    .filter { it.isAssignableFrom(type) }
-                    .forEach { return true }
+            return !supportedTypes
+                    .filter { it.isAssignableFrom(type) }.isNullOrEmpty()
         }
         return false
     }

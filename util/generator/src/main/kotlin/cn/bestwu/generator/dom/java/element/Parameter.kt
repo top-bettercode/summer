@@ -8,7 +8,7 @@ import cn.bestwu.generator.dom.java.StringOperator
 class Parameter() {
     lateinit var type: JavaType
     lateinit var name: String
-    var isVarargs: Boolean = false
+    private var isVarargs: Boolean = false
     val annotations: Annotations = Annotations()
 
     constructor(name: String, type: JavaType) : this() {

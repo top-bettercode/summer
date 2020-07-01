@@ -4,6 +4,4 @@ package cn.bestwu.autodoc.core
  *
  * @author Peter Wu
  */
-abstract class AbstractbGenerator {
-
-}
+abstract class AbstractbGenerator

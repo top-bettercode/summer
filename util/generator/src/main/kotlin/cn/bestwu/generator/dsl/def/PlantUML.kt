@@ -10,7 +10,7 @@ import java.io.File
  * @author Peter Wu
  * @since 0.0.41
  */
-class PlantUML(val myModuleName: String?, val output: String) : Generator() {
+class PlantUML(private val myModuleName: String?, private val output: String) : Generator() {
 
     override val destFile: File
         get() = File(output)

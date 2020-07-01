@@ -34,10 +34,10 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
     private val encoder: PatternLayoutEncoder = PatternLayoutEncoder()
     private var sendErrorCount = 0
 
-    var lastTrackerStatusPrint: Long = 0
-    var delayBetweenStatusMessages = 300 * CoreConstants.MILLIS_IN_ONE_SECOND
-    var errorCount = 0
-    var asynchronousSending = true
+    private var lastTrackerStatusPrint: Long = 0
+    private var delayBetweenStatusMessages = 300 * CoreConstants.MILLIS_IN_ONE_SECOND
+    private var errorCount = 0
+    private var asynchronousSending = true
 
     override fun start() {
         val cache: Cache<String, Int> = CacheBuilder.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS).maximumSize(10).build()

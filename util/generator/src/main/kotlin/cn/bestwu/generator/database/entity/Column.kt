@@ -131,7 +131,7 @@ data class Column(
             else -> 1
         }
 
-    val initializationString
+    private val initializationString
         get() = if (!columnDef.isNullOrBlank()) {
             when {
                 columnDef == "CURRENT_TIMESTAMP" -> "new Date()"

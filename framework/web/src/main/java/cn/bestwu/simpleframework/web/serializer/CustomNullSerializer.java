@@ -25,7 +25,7 @@ public class CustomNullSerializer extends StdSerializer<Object> {
   private static final long serialVersionUID = 1L;
   private final Class<?> type;
   private final String defaultValue;
-  private boolean defaultEmpty;
+  private final boolean defaultEmpty;
   private final boolean isArray;
   private final BeanPropertyWriter writer;
   private static final ConversionService CONVERSION_SERVICE = new DefaultConversionService();

@@ -21,7 +21,7 @@ import org.junit.Test;
 public class ExcelTest {
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     CodeSerializer.setCodeService(new ICodeService() {
       @Override
       public String getName(String codeType, Serializable code) {
@@ -38,7 +38,7 @@ public class ExcelTest {
   private final ExcelField<DataBean, ?>[] excelFields = ArrayUtil.of(
       ExcelField.of("编码", DataBean::getA),
       ExcelField.of("名称", from -> new String[]{"abc", "1"}),
-      ExcelField.of("描述", from -> from.getDesc())
+      ExcelField.of("描述", DataBean::getDesc)
 //      new ExcelField<DataBean, String>().propertySetter(DataBean::setCode).title("编码"),
   );
 

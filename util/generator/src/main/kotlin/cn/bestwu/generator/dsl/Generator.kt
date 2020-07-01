@@ -114,7 +114,7 @@ abstract class Generator {
             return if (resources) dir.replace("java", "resources") else dir
         }
 
-    protected val basePath: File
+    private val basePath: File
         get() = extension.basePath
 
     /**
@@ -209,7 +209,7 @@ abstract class Generator {
     /**
      * 主键
      */
-    protected val primaryKeys: List<Column>
+    private val primaryKeys: List<Column>
         get() {
             val primaryKeys = table.primaryKeys
             return if (primaryKeys.isEmpty()) {
@@ -246,7 +246,7 @@ abstract class Generator {
     protected val indexes: List<Indexed>
         get() = table.indexes
 
-    protected val primaryKeyNames: List<String>
+    private val primaryKeyNames: List<String>
         get() = table.primaryKeyNames
 
     protected val pathName: String

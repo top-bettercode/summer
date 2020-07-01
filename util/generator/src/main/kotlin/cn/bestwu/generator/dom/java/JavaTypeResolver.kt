@@ -9,9 +9,9 @@ import java.util.*
  */
 object JavaTypeResolver {
 
-    var forceBigDecimals: Boolean = false
-    var forceIntegers: Boolean = true
-    var useJSR310Types: Boolean = false
+    private var forceBigDecimals: Boolean = false
+    private var forceIntegers: Boolean = true
+    private var useJSR310Types: Boolean = false
     var softDeleteAsBoolean: Boolean = false
     var softDeleteColumnName: String? = null
 
@@ -147,10 +147,10 @@ object JavaTypeResolver {
 
         when (calculateDataType(column)) {
             Types.BIT -> answer = calculateBitReplacement(column, defaultType)
-            Types.DATE -> answer = calculateDateType(column, defaultType)
+            Types.DATE -> answer = calculateDateType(defaultType)
             Types.DECIMAL, Types.NUMERIC -> answer = calculateBigDecimalReplacement(column, defaultType)
-            Types.TIME -> answer = calculateTimeType(column, defaultType)
-            Types.TIMESTAMP -> answer = calculateTimestampType(column, defaultType)
+            Types.TIME -> answer = calculateTimeType(defaultType)
+            Types.TIMESTAMP -> answer = calculateTimestampType(defaultType)
             else -> {
             }
         }
@@ -162,7 +162,7 @@ object JavaTypeResolver {
             calculateDataType(column.typeName) ?: column.dataType
             ?: throw IllegalStateException("无法计算${column.typeName}对应的dataType类型，请在jdbcTypeName.properties中添加映射")
 
-    private fun calculateDateType(column: Column, defaultType: JavaType): JavaType {
+    private fun calculateDateType(defaultType: JavaType): JavaType {
         return if (useJSR310Types) {
             JavaType("java.time.LocalDate")
         } else {
@@ -170,7 +170,7 @@ object JavaTypeResolver {
         }
     }
 
-    private fun calculateTimeType(column: Column, defaultType: JavaType): JavaType {
+    private fun calculateTimeType(defaultType: JavaType): JavaType {
         return if (useJSR310Types) {
             JavaType("java.time.LocalTime")
         } else {
@@ -178,7 +178,7 @@ object JavaTypeResolver {
         }
     }
 
-    private fun calculateTimestampType(column: Column, defaultType: JavaType): JavaType {
+    private fun calculateTimestampType(defaultType: JavaType): JavaType {
         return if (useJSR310Types) {
             JavaType("java.time.LocalDateTime")
         } else {

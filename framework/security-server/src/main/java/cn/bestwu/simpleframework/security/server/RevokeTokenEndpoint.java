@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@SuppressWarnings("deprecation")
 @ConditionalOnWebApplication
 @FrameworkEndpoint
 public class RevokeTokenEndpoint {
 
   private final ConsumerTokenServices consumerTokenServices;
   private final IRevokeTokenService revokeTokenService;
-  private ResourceServerTokenServices resourceServerTokenServices;
+  private final ResourceServerTokenServices resourceServerTokenServices;
 
   public RevokeTokenEndpoint(
       @Qualifier("consumerTokenServices") ConsumerTokenServices consumerTokenServices,

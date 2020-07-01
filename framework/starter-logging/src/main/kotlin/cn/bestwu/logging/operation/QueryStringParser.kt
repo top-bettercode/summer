@@ -25,7 +25,7 @@ object QueryStringParser {
         } else Parameters()
     }
 
-    fun parse(query: String): Parameters {
+    private fun parse(query: String): Parameters {
         val parameters = Parameters()
         Scanner(query).use { scanner ->
             scanner.useDelimiter("&")

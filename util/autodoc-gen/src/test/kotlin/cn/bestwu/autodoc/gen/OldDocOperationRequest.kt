@@ -1,4 +1,4 @@
-package cn.bestwu.autodoc.core.operation
+package cn.bestwu.autodoc.gen
 
 import cn.bestwu.autodoc.core.singleValueMap
 import cn.bestwu.autodoc.core.toMap

@@ -25,7 +25,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
     var isPrimitive: Boolean = false
         private set
 
-    var isArray: Boolean = false
+    private var isArray: Boolean = false
         private set
 
     /**
@@ -33,7 +33,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
      *
      * @return Returns the wrapperClass.
      */
-    var primitiveTypeWrapper: PrimitiveTypeWrapper? = null
+    private var primitiveTypeWrapper: PrimitiveTypeWrapper? = null
         private set
 
     val typeArguments: MutableList<JavaType>
@@ -86,7 +86,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
             return sb.toString()
         }
 
-    fun isAssignableFrom(className: String): Boolean {
+    private fun isAssignableFrom(className: String): Boolean {
         return try {
             val supperClass = Class.forName(fullyQualifiedNameWithoutTypeParameters)
             val clazz = Class.forName(className)
@@ -237,16 +237,20 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
         if (spec.startsWith("?")) {
             wildcardType = true
             spec = spec.substring(1).trim { it <= ' ' }
-            if (spec.startsWith("extends ")) {
-                boundedWildcard = true
-                extendsBoundedWildcard = true
-                spec = spec.substring(8)  // "extends ".columnSize()
-            } else if (spec.startsWith("super ")) {
-                boundedWildcard = true
-                extendsBoundedWildcard = false
-                spec = spec.substring(6)  // "super ".columnSize()
-            } else {
-                boundedWildcard = false
+            when {
+                spec.startsWith("extends ") -> {
+                    boundedWildcard = true
+                    extendsBoundedWildcard = true
+                    spec = spec.substring(8)  // "extends ".columnSize()
+                }
+                spec.startsWith("super ") -> {
+                    boundedWildcard = true
+                    extendsBoundedWildcard = false
+                    spec = spec.substring(6)  // "super ".columnSize()
+                }
+                else -> {
+                    boundedWildcard = false
+                }
             }
             parse(spec)
         } else {
@@ -287,33 +291,43 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
             isExplicitlyImported = false
             packageName = ""
 
-            if ("byte" == fullyQualifiedNameWithoutTypeParameters) {
-                isPrimitive = true
-                primitiveTypeWrapper = PrimitiveTypeWrapper.byteInstance
-            } else if ("short" == fullyQualifiedNameWithoutTypeParameters) {
-                isPrimitive = true
-                primitiveTypeWrapper = PrimitiveTypeWrapper.shortInstance
-            } else if ("int" == fullyQualifiedNameWithoutTypeParameters) {
-                isPrimitive = true
-                primitiveTypeWrapper = PrimitiveTypeWrapper.integerInstance
-            } else if ("long" == fullyQualifiedNameWithoutTypeParameters) {
-                isPrimitive = true
-                primitiveTypeWrapper = PrimitiveTypeWrapper.longInstance
-            } else if ("char" == fullyQualifiedNameWithoutTypeParameters) {
-                isPrimitive = true
-                primitiveTypeWrapper = PrimitiveTypeWrapper.characterInstance
-            } else if ("float" == fullyQualifiedNameWithoutTypeParameters) {
-                isPrimitive = true
-                primitiveTypeWrapper = PrimitiveTypeWrapper.floatInstance
-            } else if ("double" == fullyQualifiedNameWithoutTypeParameters) {
-                isPrimitive = true
-                primitiveTypeWrapper = PrimitiveTypeWrapper.doubleInstance
-            } else if ("boolean" == fullyQualifiedNameWithoutTypeParameters) {
-                isPrimitive = true
-                primitiveTypeWrapper = PrimitiveTypeWrapper.booleanInstance
-            } else {
-                isPrimitive = false
-                primitiveTypeWrapper = null
+            when (fullyQualifiedNameWithoutTypeParameters) {
+                "byte" -> {
+                    isPrimitive = true
+                    primitiveTypeWrapper = PrimitiveTypeWrapper.byteInstance
+                }
+                "short" -> {
+                    isPrimitive = true
+                    primitiveTypeWrapper = PrimitiveTypeWrapper.shortInstance
+                }
+                "int" -> {
+                    isPrimitive = true
+                    primitiveTypeWrapper = PrimitiveTypeWrapper.integerInstance
+                }
+                "long" -> {
+                    isPrimitive = true
+                    primitiveTypeWrapper = PrimitiveTypeWrapper.longInstance
+                }
+                "char" -> {
+                    isPrimitive = true
+                    primitiveTypeWrapper = PrimitiveTypeWrapper.characterInstance
+                }
+                "float" -> {
+                    isPrimitive = true
+                    primitiveTypeWrapper = PrimitiveTypeWrapper.floatInstance
+                }
+                "double" -> {
+                    isPrimitive = true
+                    primitiveTypeWrapper = PrimitiveTypeWrapper.doubleInstance
+                }
+                "boolean" -> {
+                    isPrimitive = true
+                    primitiveTypeWrapper = PrimitiveTypeWrapper.booleanInstance
+                }
+                else -> {
+                    isPrimitive = false
+                    primitiveTypeWrapper = null
+                }
             }
         }
     }

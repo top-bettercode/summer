@@ -26,7 +26,7 @@ public class DynamicSaveTest {
   DataSource dataSource;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
 //    RunScript.execute(dataSource.getConnection(),
 //        new FileReader(new ClassPathResource("data.sql").getFile()));
   }

@@ -34,8 +34,6 @@ import org.springframework.util.StringUtils;
  */
 public class ExcelField<T, P> {
 
-  private final Logger log = LoggerFactory.getLogger(ExcelField.class);
-
   /**
    * 导出字段标题
    */
@@ -295,6 +293,7 @@ public class ExcelField<T, P> {
             this.propertySetter = (obj, property) -> ReflectionUtils
                 .invokeMethod(writeMethod, obj, property);
           } catch (NoSuchMethodException e) {
+            Logger log = LoggerFactory.getLogger(ExcelField.class);
             log.info("自动识别属性setter方法失败");
             propertyName = null;
             propertySetter = null;

@@ -29,10 +29,10 @@ object EscapeUtil {
                 if (j.toInt() < 16) {
                     tmp.append("0")
                 }
-                tmp.append(Integer.toString(j.toInt(), 16))
+                tmp.append(j.toInt().toString(16))
             } else {
                 tmp.append("%u")
-                tmp.append(Integer.toString(j.toInt(), 16).toUpperCase())
+                tmp.append(j.toInt().toString(16).toUpperCase())
             }
             i++
         }
@@ -67,12 +67,12 @@ object EscapeUtil {
                     lastPos = pos + 3
                 }
             } else {
-                if (pos == -1) {
+                lastPos = if (pos == -1) {
                     tmp.append(src.substring(lastPos))
-                    lastPos = src.length
+                    src.length
                 } else {
                     tmp.append(src.substring(lastPos, pos))
-                    lastPos = pos
+                    pos
                 }
             }
         }

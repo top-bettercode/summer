@@ -11,7 +11,7 @@ import org.junit.Test;
  */
 public class HideSerializerTest {
 
-  class User {
+  static class User {
 
     @JsonHide(beginKeep = 2, endKeep = 2)
     String tel;
@@ -35,7 +35,7 @@ public class HideSerializerTest {
     }
   }
 
-  ObjectMapper objectMapper = new ObjectMapper();
+  final ObjectMapper objectMapper = new ObjectMapper();
 
   @Test
   public void test() throws JsonProcessingException {

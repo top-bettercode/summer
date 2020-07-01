@@ -29,8 +29,8 @@ class ToolTest {
             i++
         }
         map.values.map {
-            it.map {
-                print(it)
+            it.map { i ->
+                print(i)
                 print(" ")
             }
             println()

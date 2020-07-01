@@ -20,7 +20,7 @@ interface Create : Default
 @SpringBootApplication
 @RestController
 @RequestMapping(name = "客户端TOKEN")
-open class ClientTokenController {
+class ClientTokenController {
 
     @GetMapping(value = ["/clientTokens"], name = "列表")
     fun index(): Any {

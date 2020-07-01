@@ -168,7 +168,7 @@ enum class DatabaseDriver(private val productName: String?,
             "select count(*) from systables") {
 
         override val urlPrefixes: Collection<String>
-            get() = Arrays.asList("informix-sqli", "informix-direct")
+            get() = listOf("informix-sqli", "informix-direct")
 
     };
 

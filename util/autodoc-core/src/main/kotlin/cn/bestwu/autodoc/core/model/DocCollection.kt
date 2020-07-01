@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.springframework.http.HttpHeaders
-import org.springframework.web.servlet.mvc.method.annotation.HttpHeadersReturnValueHandler
 import java.io.File
 import java.net.URI
 
@@ -24,7 +23,7 @@ data class DocCollection(override val name: String = "", var items: LinkedHashSe
                          val dir: File) : ICollection {
 
 
-    fun operationFile(operationName: String): File = File(dir, "$operationName.yml")
+    private fun operationFile(operationName: String): File = File(dir, "$operationName.yml")
 
     fun operation(operationName: String): DocOperation? {
         val operationFile = operationFile(operationName)

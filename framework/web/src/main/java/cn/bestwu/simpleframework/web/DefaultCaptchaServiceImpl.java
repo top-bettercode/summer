@@ -14,8 +14,8 @@ import org.springframework.util.Assert;
  */
 public class DefaultCaptchaServiceImpl implements ICaptchaService {
 
-  protected HttpSession httpSession;
-  private KaptchaProperties kaptchaProperties;
+  protected final HttpSession httpSession;
+  private final KaptchaProperties kaptchaProperties;
 
   public DefaultCaptchaServiceImpl(@Autowired(required = false) HttpSession httpSession,
       KaptchaProperties kaptchaProperties) {

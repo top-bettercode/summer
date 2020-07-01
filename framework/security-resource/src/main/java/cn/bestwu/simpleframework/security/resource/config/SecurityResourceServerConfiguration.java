@@ -24,7 +24,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @ConditionalOnWebApplication
 public class SecurityResourceServerConfiguration {
 
-  private Logger log = LoggerFactory.getLogger(SecurityResourceServerConfiguration.class);
+  private final Logger log = LoggerFactory.getLogger(SecurityResourceServerConfiguration.class);
 
   @Bean
   public URLFilterInvocationSecurityMetadataSource securityMetadataSource(

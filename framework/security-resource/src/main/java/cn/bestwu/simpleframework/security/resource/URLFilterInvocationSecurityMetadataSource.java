@@ -33,7 +33,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 public class URLFilterInvocationSecurityMetadataSource implements
     FilterInvocationSecurityMetadataSource {
 
-  private Map<AntPathRequestMatcher, Set<ConfigAttribute>> defaultConfigAttributes = new HashMap<>();
+  private final Map<AntPathRequestMatcher, Set<ConfigAttribute>> defaultConfigAttributes = new HashMap<>();
   private Map<AntPathRequestMatcher, Set<ConfigAttribute>> requestMatcherConfigAttributes;
   private final IResourceService securityService;
   private final String[] ignored;

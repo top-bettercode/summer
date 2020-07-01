@@ -67,9 +67,8 @@ fun <T> File.parseList(clazz: Class<T>): LinkedHashSet<T> {
         return try {
             val
                     collectionType = TypeFactory.defaultInstance().constructCollectionType(LinkedHashSet::class.java, clazz)
-            var set = Util.yamlMapper.readValue<LinkedHashSet<T>>(this, collectionType)
-            set = LinkedHashSet(set.filter { it != null })
-            set
+            val set = Util.yamlMapper.readValue<LinkedHashSet<T>>(this, collectionType).filter { it!=null }
+            LinkedHashSet(set)
         } catch (e: Exception) {
             println("$this>>${e.message}")
             linkedSetOf()

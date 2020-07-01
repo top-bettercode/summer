@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEn
 import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
+@SuppressWarnings("deprecation")
 @ConditionalOnClass(OAuth2Exception.class)
 @Configuration
 @ConditionalOnWebApplication

@@ -42,7 +42,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         }
     }
 
-    fun html(inFile: File, outFile: File) {
+    private fun html(inFile: File, outFile: File) {
         if (inFile.exists()) {
             val options = Options()
             options.setToFile(outFile.absolutePath)
@@ -68,7 +68,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         }
     }
 
-    fun pdf(inFile: File, outFile: File) {
+    private fun pdf(inFile: File, outFile: File) {
         if (inFile.exists()) {
             val options = Options()
             options.setToFile(outFile.absolutePath)
@@ -187,8 +187,8 @@ object AsciidocGenerator : AbstractbGenerator() {
                 ((commonAdocs + autodoc.commonAdocs(module)).sortedWith(Comparator { o1, o2 -> if (o1.name == "README.adoc") -1 else o1.name.compareTo(o2.name) })).forEach {
                     out.println()
                     var pre = ""
-                    it.readLines().forEach {
-                        var line = it
+                    it.readLines().forEach {l->
+                        var line = l
                         properties.forEach { entry ->
                             line = line.replace("@${entry.key}@", entry.value.toString())
                         }
@@ -286,7 +286,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                             out.println("[source,http,options=\"nowrap\"]")
                             out.println("----")
                             out.println(HttpOperation.toString(operation.request, operation.protocol, true).replace("|", "\\|"))
-                            response.content = PrettyPrintingContentModifier.modifyContent(response.content, response.headers.contentType)
+                            response.content = PrettyPrintingContentModifier.modifyContent(response.content)
                             out.println(HttpOperation.toString(response, operation.protocol, true).replace("|", "\\|"))
                             out.println("----")
                         }

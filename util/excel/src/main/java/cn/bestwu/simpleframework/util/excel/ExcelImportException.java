@@ -25,11 +25,11 @@ public class ExcelImportException extends Exception {
   public static class CellError {
 
     private String message = "excel.cell.typeMismatch";
-    private Integer row;
-    private Integer column;
-    private String title;
-    private String value;
-    private Exception exception;
+    private final Integer row;
+    private final Integer column;
+    private final String title;
+    private final String value;
+    private final Exception exception;
 
     /**
      * @param row       行号

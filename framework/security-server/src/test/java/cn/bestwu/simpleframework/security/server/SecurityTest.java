@@ -26,6 +26,7 @@ import org.springframework.util.MultiValueMap;
  * @author Peter Wu
  * @since 1.0.0
  */
+@SuppressWarnings("deprecation")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
     "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)
@@ -37,8 +38,8 @@ public class SecurityTest {
   TestRestTemplate restTemplate;
   TestRestTemplate clientRestTemplate;
 
-  String username = "root";
-  String password = DigestUtils.md5DigestAsHex("123456".getBytes());
+  final String username = "root";
+  final String password = DigestUtils.md5DigestAsHex("123456".getBytes());
 
   @Before
   public void setUp() {

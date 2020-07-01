@@ -2,7 +2,6 @@ package cn.bestwu.logging.operation
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import org.springframework.http.MediaType
 import org.xml.sax.ErrorHandler
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
@@ -26,7 +25,7 @@ import javax.xml.transform.stream.StreamResult
  */
 object PrettyPrintingContentModifier {
 
-    fun modifyContent(originalContent: ByteArray, contentType: MediaType?): ByteArray {
+    fun modifyContent(originalContent: ByteArray): ByteArray {
         if (originalContent.isNotEmpty()) {
             for (prettyPrinter in PRETTY_PRINTERS) {
                 try {
@@ -128,6 +127,6 @@ object PrettyPrintingContentModifier {
 
     private val PRETTY_PRINTERS = Collections
             .unmodifiableList(
-                    Arrays.asList(JsonPrettyPrinter(), XmlPrettyPrinter()))
+                    listOf(JsonPrettyPrinter(), XmlPrettyPrinter()))
 
 }

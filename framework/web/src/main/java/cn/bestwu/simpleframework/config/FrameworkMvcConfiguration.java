@@ -244,7 +244,7 @@ public class FrameworkMvcConfiguration {
     @Controller
     protected static class CaptchaController {
 
-      private Logger log = LoggerFactory.getLogger(CaptchaController.class);
+      private final Logger log = LoggerFactory.getLogger(CaptchaController.class);
       private final Producer producer;
       private final ICaptchaService captchaService;
 
@@ -306,6 +306,7 @@ public class FrameworkMvcConfiguration {
     }
   }
 
+  @SuppressWarnings("Convert2Lambda")
   @Configuration
   @ConditionalOnWebApplication
   protected static class WebMvcConfiguration implements WebMvcConfigurer {

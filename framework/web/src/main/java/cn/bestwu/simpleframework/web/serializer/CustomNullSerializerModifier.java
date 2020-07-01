@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CustomNullSerializerModifier extends BeanSerializerModifier {
 
-  private boolean defaultEmpty;
+  private final boolean defaultEmpty;
 
   public CustomNullSerializerModifier(boolean defaultEmpty) {
     this.defaultEmpty = defaultEmpty;
