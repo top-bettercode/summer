@@ -94,7 +94,7 @@ allprojects {
 
     tasks{
         "compileJava"(JavaCompile::class) {
-            options.compilerArgs.add("-Xlint:deprecation")
+//            options.compilerArgs.add("-Xlint:deprecation")
             options.encoding = "UTF-8"
         }
     }
