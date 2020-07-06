@@ -9,6 +9,7 @@ import java.util.Iterator;
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.dhatim.fastexcel.BorderSide;
 import org.dhatim.fastexcel.StyleSetter;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
@@ -88,6 +89,11 @@ public class ExcelExport {
     return this;
   }
 
+  public ExcelExport serialNumber() {
+    this.serialNumber = true;
+    return this;
+  }
+
   public ExcelExport serialNumber(boolean serialNumber) {
     this.serialNumber = serialNumber;
     return this;
@@ -155,6 +161,9 @@ public class ExcelExport {
         c++;
       }
       for (ExcelField<T, ?> excelField : excelFields) {
+        if (excelField.isMergeId()) {
+          continue;
+        }
         String t = excelField.title();
         sheet.value(r, c, t);
         double width = excelField.width();
@@ -205,11 +214,15 @@ public class ExcelExport {
    */
   public <T> ExcelExport setData(Iterable<T> list, ExcelField<T, ?>[] excelFields,
       ExcelConverter<T, T> converter) {
+    if (excelFields[0].isMergeId()) {
+      return setMergeData(list, excelFields, converter);
+    }
     Assert.notNull(sheet, "表格未初始化");
     createHeader(excelFields);
     Iterator<T> iterator = list.iterator();
     while (iterator.hasNext()) {
       T e = converter.convert(iterator.next());
+      boolean hasNext = iterator.hasNext();
       boolean fill = r % 2 == 0;
       if (serialNumber) {
         sheet.value(r, c, r);
@@ -223,7 +236,7 @@ public class ExcelExport {
           style.fillColor("F8F8F7");
         }
         style.set();
-        if (!iterator.hasNext()) {
+        if (!hasNext) {
           sheet.width(c, columnWidths.width(c));
         }
         c++;
@@ -235,23 +248,9 @@ public class ExcelExport {
             .wrapText(wrapText)
             .format(excelField.pattern())
             .borderStyle("thin").borderColor("000000");
-        if (fill) {
-          style.fillColor("F8F8F7");
-        }
-        style.set();
 
-        Object val = excelField.toCellValue(e);
-        sheet.value(r, c, val);
-        if (excelField.width() == -1) {
-          columnWidths
-              .put(c, val.getClass().equals(Date.class) ? excelField.pattern() : val);
-
-          if (!iterator.hasNext()) {
-            sheet.width(c, columnWidths.width(c));
-          }
-        } else {
-          sheet.width(c, excelField.width());
-        }
+        setCellValue(hasNext, fill, style, excelField.toCellValue(e), excelField.width(),
+            excelField.pattern());
         c++;
       }
       c = 0;
@@ -259,6 +258,164 @@ public class ExcelExport {
     }
     return this;
   }
+
+  private void setCellValue(boolean hasNext, boolean fill, StyleSetter style, Object cellValue,
+      double width, String pattern) {
+    if (fill) {
+      style.fillColor("F8F8F7");
+    }
+    style.set();
+
+    sheet.value(r, c, cellValue);
+    if (width == -1) {
+      columnWidths
+          .put(c, cellValue.getClass().equals(Date.class) ? pattern : cellValue);
+
+      if (!hasNext) {
+        sheet.width(c, columnWidths.width(c));
+      }
+    } else {
+      sheet.width(c, width);
+    }
+  }
+
+  /**
+   * 用于导出有合并行的Execel，第一个ExcelField为mergeId列，此列不导出，用于判断是否合并之前相同mergeId的行
+   *
+   * @param <T>         E
+   * @param list        list
+   * @param excelFields 表格字段
+   * @param converter   转换器
+   * @return list 数据列表
+   */
+  private <T> ExcelExport setMergeData(Iterable<T> list, ExcelField<T, ?>[] excelFields,
+      ExcelConverter<T, T> converter) {
+    Assert.notNull(sheet, "表格未初始化");
+    createHeader(excelFields);
+    Iterator<T> iterator = list.iterator();
+    Object mergeId = null;
+    boolean fill = true;
+    int top = r;
+    int no = 1;
+    ExcelField<T, ?> mergeField = excelFields[0];
+    int right = excelFields.length - 2;
+    if (serialNumber) {
+      right++;
+    }
+    while (iterator.hasNext()) {
+      T e = converter.convert(iterator.next());
+
+      boolean hasNext = iterator.hasNext();
+      Object mergeIdValue = mergeField.toCellValue(e);
+      boolean newItem = mergeId == null || !mergeId.equals(mergeIdValue);
+      if (newItem) {
+        fill = !fill;
+        mergeId = mergeIdValue;
+      }
+      int bottom = hasNext ? r - 1 : r;
+      boolean merge = (newItem || !hasNext) && bottom > top;
+      if (serialNumber) {
+        if (merge) {
+          sheet.range(top, c, bottom, c).merge();
+          sheet.range(top, c, bottom, c).style().horizontalAlignment("center")
+              .verticalAlignment("center").set();
+        }
+        if (newItem) {
+          sheet.value(r, c, no++);
+          columnWidths.put(c, no);
+          StyleSetter style = sheet.style(r, c)
+              .horizontalAlignment(Alignment.center.name())
+              .verticalAlignment(Alignment.center.name())
+              .wrapText(wrapText);
+          if (fill) {
+            style.fillColor("F8F8F7");
+          }
+          style.set();
+          if (!hasNext) {
+            sheet.width(c, columnWidths.width(c));
+          }
+        } else {
+          sheet.value(r, c);
+        }
+        c++;
+      }
+
+      for (int i = 1; i < excelFields.length; i++) {
+        ExcelField<T, ?> excelField = excelFields[i];
+        if (merge && excelField.isMerge()) {
+          sheet.range(top, c, bottom, c).merge();
+          sheet.width(c, columnWidths.width(c));
+          sheet.range(top, c, bottom, c).style().horizontalAlignment("center")
+              .verticalAlignment("center").set();
+        }
+        if (excelField.isMerge() && !newItem) {
+          sheet.value(r, c);
+        } else {
+          StyleSetter style = sheet.style(r, c)
+              .horizontalAlignment(excelField.align().name())
+              .verticalAlignment(Alignment.center.name())
+              .wrapText(wrapText)
+              .format(excelField.pattern());
+          setCellValue(hasNext, fill, style, excelField.toCellValue(e), excelField.width(),
+              excelField.pattern());
+        }
+        c++;
+      }
+      if (merge) {
+        sheet.range(top, 0, top, right).style()
+            .borderStyle(BorderSide.TOP, "thin")
+            .borderColor(BorderSide.TOP, "000000")
+            .set();
+        sheet.range(bottom, 0, bottom, right).style()
+            .borderStyle(BorderSide.BOTTOM, "thin")
+            .borderColor(BorderSide.BOTTOM, "000000")
+            .set();
+        sheet.range(top, 0, top, 0).style()
+            .borderStyle(BorderSide.TOP, "thin")
+            .borderColor(BorderSide.TOP, "000000")
+            .borderStyle(BorderSide.LEFT, "thin")
+            .borderColor(BorderSide.LEFT, "000000")
+            .set();
+        sheet.range(bottom, 0, bottom, 0).style()
+            .borderStyle(BorderSide.BOTTOM, "thin")
+            .borderColor(BorderSide.BOTTOM, "000000")
+            .borderStyle(BorderSide.LEFT, "thin")
+            .borderColor(BorderSide.LEFT, "000000")
+            .set();
+        sheet.range(top, right, top, right).style()
+            .borderStyle(BorderSide.TOP, "thin")
+            .borderColor(BorderSide.TOP, "000000")
+            .borderStyle(BorderSide.RIGHT, "thin")
+            .borderColor(BorderSide.RIGHT, "000000")
+            .set();
+        sheet.range(bottom, right, bottom, right).style()
+            .borderStyle(BorderSide.BOTTOM, "thin")
+            .borderColor(BorderSide.BOTTOM, "000000")
+            .borderStyle(BorderSide.RIGHT, "thin")
+            .borderColor(BorderSide.RIGHT, "000000")
+            .set();
+
+        top++;
+        bottom--;
+        if (bottom >= top) {
+          sheet.range(top, 0, bottom, 0).style()
+              .borderStyle(BorderSide.LEFT, "thin")
+              .borderColor(BorderSide.LEFT, "000000")
+              .set();
+          sheet.range(top, right, bottom, right).style()
+              .borderStyle(BorderSide.RIGHT, "thin")
+              .borderColor(BorderSide.RIGHT, "000000")
+              .set();
+        }
+
+        top = r;
+      }
+      c = 0;
+      r++;
+    }
+    return this;
+  }
+
 
   public <T> ExcelExport template(ExcelField<T, ?>[] excelFields) throws IOException {
     includeComment = true;

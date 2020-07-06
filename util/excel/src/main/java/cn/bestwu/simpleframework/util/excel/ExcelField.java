@@ -73,6 +73,15 @@ public class ExcelField<T, P> {
   private double width = -1;
 
   /**
+   * 是否需要合并
+   */
+  private boolean merge = false;
+  /**
+   * mergeId列，此列不导出，用于判断是否合并之前相同mergeId的行
+   */
+  private boolean mergeId = false;
+
+  /**
    * 获取实体属性
    */
   private ExcelConverter<T, P> propertyGetter;
@@ -171,6 +180,11 @@ public class ExcelField<T, P> {
   public static <T, P> ExcelField<T, P> of(String title, ExcelConverter<T, P> propertyGetter) {
     return new ExcelField<>(title, propertyGetter);
   }
+
+  public static <T, P> ExcelField<T, P> mergeId(ExcelConverter<T, P> propertyGetter) {
+    return new ExcelField<>("", propertyGetter).mergeId();
+  }
+
   //--------------------------------------------
 
   public ExcelField<T, P> yuan() {
@@ -442,44 +456,6 @@ public class ExcelField<T, P> {
 
   //--------------------------------------------
 
-  /**
-   * @param obj 实体对象
-   * @return 单元格值
-   */
-  public Object toCellValue(T obj) {
-    P property = propertyGetter.convert(obj);
-    if (property == null) {
-      property = defaultValue;
-    }
-    return cellConverter.convert(property);
-  }
-
-  /**
-   * @param obj            实体对象
-   * @param cellValue      单元格值
-   * @param validator      参数验证
-   * @param validateGroups 参数验证组
-   */
-  @SuppressWarnings("unchecked")
-  public void setProperty(T obj, String cellValue, Validator validator,
-      Class<?>[] validateGroups) {
-    P property;
-    if (!StringUtils.hasText(cellValue)) {
-      property = defaultValue;
-    } else {
-      property = (P) propertyConverter.convert(cellValue);
-    }
-    propertySetter.set(obj, property);
-    if (propertyName != null) {
-      Set<ConstraintViolation<Object>> constraintViolations = validator
-          .validateProperty(obj, propertyName, validateGroups);
-      if (!constraintViolations.isEmpty()) {
-        throw new ConstraintViolationException(constraintViolations);
-      }
-    }
-  }
-
-  //--------------------------------------------
 
   private String resolvePropertyName(String getMethodName) {
     if (getMethodName.startsWith("get")) {
@@ -516,26 +492,93 @@ public class ExcelField<T, P> {
     this.width = width;
     return this;
   }
+
+  /**
+   * 是否需要合并
+   *
+   * @return ExcelField
+   */
+  public ExcelField<T, P> merge() {
+    this.merge = true;
+    return this;
+  }
+
+  /**
+   * mergeId列，此列不导出，用于判断是否合并之前相同mergeId的行
+   *
+   * @return ExcelField
+   */
+  private ExcelField<T, P> mergeId() {
+    this.merge = true;
+    this.mergeId = true;
+    return this;
+  }
+
   //--------------------------------------------
 
-  public String title() {
+  /**
+   * @param obj 实体对象
+   * @return 单元格值
+   */
+  Object toCellValue(T obj) {
+    P property = propertyGetter.convert(obj);
+    if (property == null) {
+      property = defaultValue;
+    }
+    return cellConverter.convert(property);
+  }
+
+  /**
+   * @param obj            实体对象
+   * @param cellValue      单元格值
+   * @param validator      参数验证
+   * @param validateGroups 参数验证组
+   */
+  @SuppressWarnings("unchecked")
+  void setProperty(T obj, String cellValue, Validator validator,
+      Class<?>[] validateGroups) {
+    P property;
+    if (!StringUtils.hasText(cellValue)) {
+      property = defaultValue;
+    } else {
+      property = (P) propertyConverter.convert(cellValue);
+    }
+    propertySetter.set(obj, property);
+    if (propertyName != null) {
+      Set<ConstraintViolation<Object>> constraintViolations = validator
+          .validateProperty(obj, propertyName, validateGroups);
+      if (!constraintViolations.isEmpty()) {
+        throw new ConstraintViolationException(constraintViolations);
+      }
+    }
+  }
+
+  //--------------------------------------------
+  String title() {
     return title;
   }
 
-  public String comment() {
+  String comment() {
     return comment;
   }
 
-  public String pattern() {
+  String pattern() {
     return pattern;
   }
 
-  public Alignment align() {
+  Alignment align() {
     return align;
   }
 
-  public double width() {
+  double width() {
     return width;
   }
 
+  boolean isMerge() {
+    return merge;
+  }
+
+  boolean isMergeId() {
+    return mergeId;
+  }
 }
