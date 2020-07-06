@@ -57,6 +57,34 @@ public class ExcelTest {
     Runtime.getRuntime().exec("xdg-open " + System.getProperty("user.dir") + "/build/export.xlsx");
   }
 
+  private final ExcelField<DataBean, ?>[] excelMergeFields = ArrayUtil.of(
+      ExcelField.mergeId(DataBean::getIntCode),
+      ExcelField.of("编码", DataBean::getA),
+      ExcelField.of("编码B", DataBean::getB).merge(),
+      ExcelField.of("名称", from -> new String[]{"abc", "1"}),
+      ExcelField.of("描述", DataBean::getDesc),
+      ExcelField.of("描述C", DataBean::getDate).merge()
+//      new ExcelField<DataBean, String>().propertySetter(DataBean::setCode).title("编码"),
+  );
+
+  @Test
+  public void testMergeExport() throws IOException {
+    List<DataBean> list = new ArrayList<>();
+    for (int i = 0; i < 20; i++) {
+      DataBean bean = new DataBean(i + 1L, "name" + i, "中文中文中文中文中文中文中文中文" + i);
+      bean.setIntCode(i / 3);
+      bean.setB(i / 3 + 1);
+      bean.setC(i / 3 + 2);
+      list.add(bean);
+    }
+    long s = System.currentTimeMillis();
+    new ExcelExport(new FileOutputStream("build/export.xlsx"), "表格").serialNumber()
+        .setData(list, excelMergeFields).finish();
+    long e = System.currentTimeMillis();
+    System.err.println(e - s);
+    Runtime.getRuntime().exec("xdg-open " + System.getProperty("user.dir") + "/build/export.xlsx");
+  }
+
 
   @Test
   public void testImport() throws Exception {
