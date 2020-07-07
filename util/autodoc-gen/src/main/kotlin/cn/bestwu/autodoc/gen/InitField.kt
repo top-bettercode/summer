@@ -175,7 +175,7 @@ object InitField {
 
     private fun Set<Field>.fixField(field: Field, hasDesc: Boolean = false, coverType: Boolean = true, userDefault: Boolean = true, wrap: Boolean = false): Field? {
         val findField = this.findPossibleField(field.name, field.value.type, hasDesc)
-        if (findField != null && field.canCover && (field.description.isBlank() || !findField.canCover) && (!wrap || !contentWrapFields.contains(field.name))) {
+        if (findField != null && (field.canCover || field.description.isBlank() || !findField.canCover) && (!wrap || !contentWrapFields.contains(field.name))) {
             field.canCover = findField.canCover
             if (userDefault)
                 field.defaultVal = findField.defaultVal
@@ -212,7 +212,7 @@ fun Collection<OperationRequestPart>.toFields(fields: Set<Field>): LinkedHashSet
 }
 
 private fun Set<Field>.blankField(): Set<Field> {
-    return filter { it.description.isBlank() || it.children.anyblank() }.toSet()
+    return filter { it.description.isBlank() || it.canCover || it.children.anyblank() }.toSet()
 }
 
 private fun Set<Field>.field(name: String, value: Any?): Field {

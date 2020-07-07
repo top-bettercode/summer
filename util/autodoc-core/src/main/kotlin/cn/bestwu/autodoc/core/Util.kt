@@ -67,7 +67,7 @@ fun <T> File.parseList(clazz: Class<T>): LinkedHashSet<T> {
         return try {
             val
                     collectionType = TypeFactory.defaultInstance().constructCollectionType(LinkedHashSet::class.java, clazz)
-            val set = Util.yamlMapper.readValue<LinkedHashSet<T>>(this, collectionType).filter { it!=null }
+            val set = Util.yamlMapper.readValue<LinkedHashSet<T>>(this, collectionType).filter { it != null }
             LinkedHashSet(set)
         } catch (e: Exception) {
             println("$this>>${e.message}")
@@ -192,7 +192,7 @@ fun Set<Field>.noneBlank(): Boolean {
 }
 
 fun Set<Field>.anyblank(): Boolean {
-    return any { it.description.isBlank() || it.children.anyblank() }
+    return any { it.description.isBlank() || it.canCover || it.children.anyblank() }
 }
 
 fun Set<Field>.checkBlank(desc: String, prefix: String = ""): Set<Field> {
