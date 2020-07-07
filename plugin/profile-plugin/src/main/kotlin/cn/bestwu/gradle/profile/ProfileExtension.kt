@@ -18,6 +18,7 @@ internal val Project.profileFiles: Array<File>
     get() {
         val profile = extensions.getByType(ProfileExtension::class.java)
         val array = mutableListOf<File>()
+        array.add(File(gradle.gradleUserHomeDir, "gradle.properties"))
         array.add(rootProject.file("gradle.properties"))
         configProject { project ->
             val defaultConfigFile = project.file("${profile.configDir}/$defaultConfigName.properties")
