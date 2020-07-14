@@ -13,7 +13,6 @@
  */
 package cn.bestwu.simpleframework.data.jpa.config;
 
-import java.util.List;
 import javax.sql.DataSource;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
@@ -23,8 +22,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
-import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -40,7 +37,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -57,7 +53,7 @@ import org.springframework.util.StringUtils;
 public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   private static final Logger logger = LoggerFactory
-      .getLogger(org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration.class);
+      .getLogger(JpaMybatisAutoConfiguration.class);
 
   private final MybatisProperties properties;
 
@@ -69,19 +65,16 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   private final DatabaseIdProvider databaseIdProvider;
 
-  private final List<ConfigurationCustomizer> configurationCustomizers;
 
   public JpaMybatisAutoConfiguration(
       MybatisProperties properties, ObjectProvider<Interceptor[]> interceptorsProvider,
       ObjectProvider<TypeHandler[]> typeHandlersProvider,
-      ResourceLoader resourceLoader, ObjectProvider<DatabaseIdProvider> databaseIdProvider,
-      ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider) {
+      ResourceLoader resourceLoader, ObjectProvider<DatabaseIdProvider> databaseIdProvider) {
     this.properties = properties;
     this.interceptors = interceptorsProvider.getIfAvailable();
     this.typeHandlers = typeHandlersProvider.getIfAvailable();
     this.resourceLoader = resourceLoader;
     this.databaseIdProvider = databaseIdProvider.getIfAvailable();
-    this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
   }
 
   @Override
@@ -104,7 +97,7 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
   public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
     SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
     factory.setDataSource(dataSource);
-    factory.setVfs(SpringBootVFS.class);
+//    factory.setVfs(SpringBootVFS.class);
     if (StringUtils.hasText(this.properties.getConfigLocation())) {
       factory
           .setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
@@ -134,22 +127,6 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
     if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
       factory.setMapperLocations(this.properties.resolveMapperLocations());
     }
-//    Set<String> factoryPropertyNames = Stream
-//        .of(new BeanWrapperImpl(SqlSessionFactoryBean.class).getPropertyDescriptors()).map(
-//            PropertyDescriptor::getName)
-//        .collect(Collectors.toSet());
-//    Class<? extends LanguageDriver> defaultLanguageDriver = this.properties.getDefaultScriptingLanguageDriver();
-//    if (factoryPropertyNames.contains("scriptingLanguageDrivers") && !ObjectUtils.isEmpty(this.languageDrivers)) {
-    // Need to mybatis-spring 2.0.2+
-//      factory.setScriptingLanguageDrivers(this.languageDrivers);
-//      if (defaultLanguageDriver == null && this.languageDrivers.length == 1) {
-//        defaultLanguageDriver = this.languageDrivers[0].getClass();
-//      }
-//    }
-//    if (factoryPropertyNames.contains("defaultScriptingLanguageDriver")) {
-    // Need to mybatis-spring 2.0.2+
-//      factory.setDefaultScriptingLanguageDriver(defaultLanguageDriver);
-//    }
 
     return factory.getObject();
   }
@@ -158,11 +135,6 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
     Configuration configuration = this.properties.getConfiguration();
     if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
       configuration = new Configuration();
-    }
-    if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
-      for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
-        customizer.customize(configuration);
-      }
     }
     factory.setConfiguration(configuration);
   }

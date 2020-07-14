@@ -87,8 +87,7 @@ allprojects {
                 exclude("org.springframework.boot:spring-boot-configuration-processor")
             }
 
-            dependency("com.github.pagehelper:pagehelper-spring-boot-starter:1.2.13")
-
+            dependency("com.github.pagehelper:pagehelper:5.1.11")
         }
     }
 

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Peter Wu
  */
-@ImportAutoConfiguration(JpaMybatisAutoConfiguration.class)
+@ImportAutoConfiguration({JpaMybatisAutoConfiguration.class, PageHelperAutoConfiguration.class})
 @Configuration
 public class DataJpaConfiguration {
 

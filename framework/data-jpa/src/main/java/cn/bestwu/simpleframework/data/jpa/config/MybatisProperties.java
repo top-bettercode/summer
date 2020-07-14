@@ -34,7 +34,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
  * @author Eddú Meléndez
  * @author Kazuki Shimizu
  */
-@ConfigurationProperties(prefix = org.mybatis.spring.boot.autoconfigure.MybatisProperties.MYBATIS_PREFIX)
+@ConfigurationProperties(prefix = MybatisProperties.MYBATIS_PREFIX)
 public class MybatisProperties {
 
   public static final String MYBATIS_PREFIX = "mybatis";
