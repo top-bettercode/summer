@@ -7,7 +7,7 @@ dependencies {
     api("com.querydsl:querydsl-jpa")
     api("org.mybatis:mybatis")
     api("org.mybatis:mybatis-spring")
-    api("com.github.pagehelper:pagehelper-spring-boot-starter")
+    api("com.github.pagehelper:pagehelper")
 
     annotationProcessor("com.querydsl:querydsl-apt:4.2.1:jpa")
     testImplementation("com.h2database:h2")
