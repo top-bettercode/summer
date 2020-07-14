@@ -3,6 +3,8 @@ package cn.bestwu.autodoc.gen
 import cn.bestwu.api.sign.ApiSignProperties
 import cn.bestwu.logging.RequestLoggingConfiguration
 import cn.bestwu.logging.RequestLoggingProperties
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
@@ -21,21 +23,29 @@ import javax.annotation.PostConstruct
 @Configuration
 @ImportAutoConfiguration(RequestLoggingConfiguration::class)
 class AutodocConfiguration {
+    private val log: Logger = LoggerFactory.getLogger(AutodocConfiguration::class.java)
+
     @Autowired
     private lateinit var genProperties: GenProperties
+
     @Autowired
     private lateinit var requestLoggingProperties: RequestLoggingProperties
+
     @Autowired(required = false)
     private var dataSourceProperties: DataSourceProperties? = null
 
     @PostConstruct
     fun init() {
-        if (genProperties.datasource.url.isBlank() && dataSourceProperties != null) {
-            genProperties.datasource.url = dataSourceProperties!!.determineUrl() ?: ""
-            genProperties.datasource.username = dataSourceProperties!!.determineUsername() ?: ""
-            genProperties.datasource.password = dataSourceProperties!!.determinePassword() ?: ""
-            genProperties.datasource.driverClass = dataSourceProperties!!.determineDriverClassName()
-                    ?: ""
+        try {
+            if (genProperties.datasource.url.isBlank() && dataSourceProperties != null) {
+                genProperties.datasource.url = dataSourceProperties!!.determineUrl() ?: ""
+                genProperties.datasource.username = dataSourceProperties!!.determineUsername() ?: ""
+                genProperties.datasource.password = dataSourceProperties!!.determinePassword() ?: ""
+                genProperties.datasource.driverClass = dataSourceProperties!!.determineDriverClassName()
+                        ?: ""
+            }
+        } catch (e: Exception) {
+            log.warn("determine determine fail: {}", e.message)
         }
         requestLoggingProperties.isFormat = true
         requestLoggingProperties.isForceRecord = true
