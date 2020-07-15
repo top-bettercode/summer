@@ -1,7 +1,6 @@
 package cn.bestwu.simpleframework.data.test.test;
 
 import cn.bestwu.simpleframework.data.test.domain.User;
-import cn.bestwu.simpleframework.data.test.repository.UserDao;
 import cn.bestwu.simpleframework.data.test.repository.UserRepository;
 import com.github.pagehelper.PageHelper;
 import java.util.HashMap;
@@ -29,8 +28,6 @@ public class MybatisTest {
 
   @Autowired
   UserRepository repository;
-  @Autowired
-  UserDao userDao;
   @Autowired
   SqlSession sqlSession;
   Integer carterId;
@@ -246,8 +243,4 @@ public class MybatisTest {
     System.err.println(page.getTotal());
   }
 
-  @Test
-  public void findByMybatisByUserDao() {
-    System.err.println(userDao.findByMybatis());
-  }
 }

@@ -223,7 +223,7 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
         returnedType = processor.getReturnedType();
       }
 
-      return new JpaQueryCreator(tree, returnedType, builder, provider);
+      return new JpaExtQueryCreator(tree, returnedType, builder, provider, softDeleteSupport);
     }
 
     /**
@@ -276,8 +276,9 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
         provider = new ParameterMetadataProvider(builder, parameters, escape);
       }
 
-      return new JpaCountQueryCreator(tree, getQueryMethod().getResultProcessor().getReturnedType(),
-          builder, provider);
+      return new JpaExtCountQueryCreator(tree,
+          getQueryMethod().getResultProcessor().getReturnedType(), builder, provider,
+          softDeleteSupport);
     }
 
     /**
