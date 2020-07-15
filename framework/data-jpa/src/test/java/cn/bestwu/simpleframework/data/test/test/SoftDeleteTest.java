@@ -10,16 +10,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class SoftDeleteTest {
 
@@ -34,7 +33,7 @@ public class SoftDeleteTest {
   Integer daveId;
   Integer carterId;
 
-  @Before
+  @BeforeEach
   public void setUp() {
 //    RunScript.execute(dataSource.getConnection(),
 //        new FileReader(new ClassPathResource("import.sql").getFile()));
@@ -62,7 +61,7 @@ public class SoftDeleteTest {
     System.err.println(repository.findAll(QUser.user.firstname.contains("D")));
   }
 
-  @After
+  @AfterEach
   public void tearDown() {
     repository.deleteAll();
     repository.cleanRecycleBin();
@@ -77,7 +76,7 @@ public class SoftDeleteTest {
     hardUserRepository.delete(dave);
     Optional<HardUser> optionalUser = hardUserRepository.findByIdFromRecycleBin(dave.getId());
     optionalUser.ifPresent(System.out::println);
-    Assert.assertFalse(optionalUser.isPresent());
+    org.junit.jupiter.api.Assertions.assertFalse(optionalUser.isPresent());
   }
 
   @Test
@@ -86,15 +85,15 @@ public class SoftDeleteTest {
 
     List<User> users = repository.findByLastname("Matthews");
     System.err.println(users);
-    Assert.assertEquals(0, users.size());
+    org.junit.jupiter.api.Assertions.assertEquals(0, users.size());
 
     users = repository.findByLastname("Beauford");
     System.err.println(users);
-    Assert.assertEquals(2, users.size());
+    org.junit.jupiter.api.Assertions.assertEquals(2, users.size());
 
     List<User> recycleAll = repository.findAllFromRecycleBin();
     System.err.println(recycleAll);
-    Assert.assertEquals(2, recycleAll.size());
+    org.junit.jupiter.api.Assertions.assertEquals(2, recycleAll.size());
 
   }
 
@@ -104,15 +103,15 @@ public class SoftDeleteTest {
 
     List<User> users = repository.findByLastname("Matthews");
     System.err.println(users);
-    Assert.assertEquals(0, users.size());
+    org.junit.jupiter.api.Assertions.assertEquals(0, users.size());
 
     users = repository.findByLastname("Beauford");
     System.err.println(users);
-    Assert.assertEquals(2, users.size());
+    org.junit.jupiter.api.Assertions.assertEquals(2, users.size());
 
     List<User> recycleAll = repository.findAllFromRecycleBin();
     System.err.println(recycleAll);
-    Assert.assertEquals(2, recycleAll.size());
+    org.junit.jupiter.api.Assertions.assertEquals(2, recycleAll.size());
 
   }
 }

@@ -3,8 +3,8 @@ package cn.bestwu.generator.database
 import cn.bestwu.generator.GeneratorExtension
 import org.h2.jdbcx.JdbcDataSource
 import org.h2.tools.RunScript
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileReader
 
@@ -20,7 +20,7 @@ class MetaDataTest {
         extension.datasource.password = "sa"
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val jdbcDataSource = JdbcDataSource()
         jdbcDataSource.setURL("jdbc:h2:mem:test")

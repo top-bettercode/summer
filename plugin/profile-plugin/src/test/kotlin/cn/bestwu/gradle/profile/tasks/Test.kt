@@ -1,5 +1,6 @@
 package cn.bestwu.gradle.profile.tasks
 
+import org.junit.jupiter.api.Test
 import java.net.URL
 import java.util.*
 
@@ -8,7 +9,8 @@ import java.util.*
  * @author Peter Wu
  */
 class Test {
-    @org.junit.Test
+
+    @Test
     fun test() {
         val props = Properties()
         props.load(URL("file:///data/downloads/test.properties").openStream())

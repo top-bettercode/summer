@@ -6,15 +6,14 @@ import cn.bestwu.simpleframework.data.test.repository.StaticUserRepository;
 import cn.bestwu.simpleframework.data.test.repository.UserRepository;
 import java.util.Optional;
 import javax.sql.DataSource;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class DynamicSaveTest {
 
@@ -25,7 +24,7 @@ public class DynamicSaveTest {
   @Autowired
   DataSource dataSource;
 
-  @Before
+  @BeforeEach
   public void setUp() {
 //    RunScript.execute(dataSource.getConnection(),
 //        new FileReader(new ClassPathResource("data.sql").getFile()));
@@ -42,19 +41,19 @@ public class DynamicSaveTest {
     dave = repository.save(dave);
 
     Optional<User> optionalUser = repository.findById(dave.getId());
-    Assert.assertTrue(optionalUser.isPresent());
+    org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
     optionalUser.ifPresent(user -> {
           System.err.println(user);
-          Assert.assertEquals("wu", user.getFirstname());
+          org.junit.jupiter.api.Assertions.assertEquals("wu", user.getFirstname());
         }
     );
     dave.setLastname("MM");
     repository.dynamicSave(dave);
     optionalUser = repository.findById(dave.getId());
-    Assert.assertTrue(optionalUser.isPresent());
+    org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
     optionalUser.ifPresent(user -> {
           System.err.println(user);
-          Assert.assertEquals("wu", user.getFirstname());
+          org.junit.jupiter.api.Assertions.assertEquals("wu", user.getFirstname());
         }
     );
   }
@@ -65,10 +64,10 @@ public class DynamicSaveTest {
     dave = staticUserRepository.save(dave);
 
     Optional<StaticUser> optionalUser = staticUserRepository.findById(dave.getId());
-    Assert.assertTrue(optionalUser.isPresent());
+    org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
     optionalUser.ifPresent(user -> {
           System.err.println(user);
-          Assert.assertNull(user.getFirstname());
+          org.junit.jupiter.api.Assertions.assertNull(user.getFirstname());
         }
     );
   }

@@ -3,7 +3,7 @@ package cn.bestwu.generator.puml
 import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.ddl.MysqlToDDL
 import cn.bestwu.generator.ddl.OracleToDDL
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**

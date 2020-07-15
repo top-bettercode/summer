@@ -6,8 +6,8 @@ import cn.bestwu.generator.dsl.Generators
 import cn.bestwu.generator.dsl.def.PlantUML
 import org.h2.jdbcx.JdbcDataSource
 import org.h2.tools.RunScript
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileReader
 
@@ -26,7 +26,7 @@ class GeneratorsTest {
 //        extension.tableNames = arrayOf("OAUTH_CLIENT_DETAILS", "OAUTH_CLIENT_TOKEN")
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val jdbcDataSource = JdbcDataSource()
         jdbcDataSource.setURL("jdbc:h2:mem:test")

@@ -1,8 +1,7 @@
 package cn.bestwu.logging.slack
 
 import cn.bestwu.lang.util.StringUtil
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * @author Peter Wu
@@ -34,14 +33,14 @@ class SlackClientTest {
     @Test
     fun channelExist() {
         val channelExist = slackClient.channelExist("logging-test")
-        Assert.assertTrue(channelExist)
+        org.junit.jupiter.api.Assertions.assertTrue(channelExist)
         println(StringUtil.valueOf(channelExist, true))
     }
 
     @Test
     fun channelNotExist() {
         val channelExist = slackClient.channelExist("logging")
-        Assert.assertFalse(channelExist)
+        org.junit.jupiter.api.Assertions.assertFalse(channelExist)
         println(StringUtil.valueOf(channelExist, true))
     }
 

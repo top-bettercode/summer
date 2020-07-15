@@ -1,13 +1,12 @@
 package cn.bestwu.simpleframework.security.resource;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import cn.bestwu.simpleframework.security.impl.TestApplication;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -17,7 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -25,7 +24,7 @@ import org.springframework.util.MultiValueMap;
  * @author Peter Wu
  * @since 1.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SuppressWarnings("deprecation")
 @SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
     "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)
@@ -38,7 +37,7 @@ public class SecurityErrorTest {
   TestRestTemplate clientRestTemplate;
   final String username = "root";
 
-  @Before
+  @BeforeEach
   public void setUp() {
     clientRestTemplate = restTemplate.withBasicAuth(clientDetails.getClientId(),
         clientDetails.getClientSecret());
@@ -113,6 +112,6 @@ public class SecurityErrorTest {
             String.class);
     System.err.println(entity.getBody());
     Thread.sleep(5 * 1000);
-    Assert.assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
+    assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
   }
 }

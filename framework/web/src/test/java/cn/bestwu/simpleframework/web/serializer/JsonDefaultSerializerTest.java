@@ -1,12 +1,13 @@
 package cn.bestwu.simpleframework.web.serializer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import cn.bestwu.simpleframework.web.DataDicBean;
 import cn.bestwu.simpleframework.web.serializer.annotation.JsonDefault;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Peter Wu
@@ -22,14 +23,14 @@ public class JsonDefaultSerializerTest {
         .withSerializerModifier(new CustomNullSerializerModifier(true)));
 
     DataDicBean dicBean = new DataDicBean();
-    Assert.assertEquals("{\"price\":0,\"path\":\"/default.jpg\",\"path1\":\"\"}",
+    assertEquals("{\"price\":0,\"path\":\"/default.jpg\",\"path1\":\"\"}",
         objectMapper.writeValueAsString(dicBean));
     dicBean.setPrice(100L);
     dicBean.setPath("/a.jpg");
     dicBean.setPath1("/b.jpg");
-    Assert
-        .assertEquals("{\"price\":100,\"path\":\"/a.jpg\",\"path1\":\"/b.jpg\"}",
-            objectMapper.writeValueAsString(dicBean));
+
+    assertEquals("{\"price\":100,\"path\":\"/a.jpg\",\"path1\":\"/b.jpg\"}",
+        objectMapper.writeValueAsString(dicBean));
 
   }
 
@@ -42,15 +43,15 @@ public class JsonDefaultSerializerTest {
         .withSerializerModifier(new CustomNullSerializerModifier(true)));
 
     DataDicBean dicBean = new DataDicBean();
-    Assert.assertEquals(
+    assertEquals(
         "{\"price\":0,\"path\":\"/default.jpg\",\"path1\":\"\"}",
         objectMapper.writeValueAsString(dicBean));
     dicBean.setPrice(100L);
     dicBean.setPath("/a.jpg");
     dicBean.setPath1("/b.jpg");
-    Assert
-        .assertEquals("{\"price\":100,\"path\":\"/a.jpg\",\"path1\":\"/b.jpg\"}",
-            objectMapper.writeValueAsString(dicBean));
+
+    assertEquals("{\"price\":100,\"path\":\"/a.jpg\",\"path1\":\"/b.jpg\"}",
+        objectMapper.writeValueAsString(dicBean));
 
   }
 

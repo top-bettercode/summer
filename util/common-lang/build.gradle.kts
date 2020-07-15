@@ -9,6 +9,7 @@ dependencies {
     compileOnly("org.springframework.boot:spring-boot-starter-web")
 
     testImplementation("org.jsoup:jsoup")
-    testImplementation("junit:junit")
+    testImplementation(kotlin("test-junit5"))
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 

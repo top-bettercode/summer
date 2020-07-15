@@ -1,7 +1,7 @@
 package cn.bestwu.simpleframework.support.packagescan;
 
 import cn.bestwu.simpleframework.web.Response;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 

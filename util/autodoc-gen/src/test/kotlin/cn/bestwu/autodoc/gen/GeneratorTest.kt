@@ -5,7 +5,7 @@ import cn.bestwu.autodoc.core.model.DocCollection
 import cn.bestwu.autodoc.core.model.DocCollections
 import cn.bestwu.autodoc.core.model.Field
 import cn.bestwu.autodoc.core.operation.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**

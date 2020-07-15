@@ -43,6 +43,13 @@ allprojects {
         maven("https://oss.jfrog.org/oss-snapshot-local")
     }
 
+    configurations {
+        filter { arrayOf("implementation", "testImplementation").contains(it.name) }.forEach {
+            it.exclude("org.codehaus.jackson")
+            it.exclude("org.junit.vintage", "junit-vintage-engine")
+        }
+
+    }
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         dependencies {
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
@@ -92,6 +99,9 @@ allprojects {
     }
 
     tasks{
+        "test"(Test::class) {
+            useJUnitPlatform()
+        }
         "compileJava"(JavaCompile::class) {
 //            options.compilerArgs.add("-Xlint:deprecation")
             options.encoding = "UTF-8"

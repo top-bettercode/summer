@@ -10,7 +10,8 @@ dependencies {
 
     testImplementation("org.mybatis.generator:mybatis-generator-core")
 
-    testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit5"))
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 
     testImplementation("com.h2database:h2")
     testImplementation("mysql:mysql-connector-java")

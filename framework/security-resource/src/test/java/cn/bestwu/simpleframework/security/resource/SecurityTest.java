@@ -1,14 +1,13 @@
 package cn.bestwu.simpleframework.security.resource;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import cn.bestwu.simpleframework.security.impl.TestApplication;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -19,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -28,7 +27,7 @@ import org.springframework.util.MultiValueMap;
  * @author Peter Wu
  * @since 1.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SuppressWarnings("deprecation")
 @SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
     "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)
@@ -45,7 +44,7 @@ public class SecurityTest {
   String username = "root";
   final String password = DigestUtils.md5DigestAsHex("123456".getBytes());
 
-  @Before
+  @BeforeEach
   public void setUp() {
     clientRestTemplate = restTemplate.withBasicAuth(clientDetails.getClientId(),
         clientDetails.getClientSecret());
@@ -63,13 +62,13 @@ public class SecurityTest {
     ResponseEntity<DefaultOAuth2AccessToken> entity = clientRestTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params),
             DefaultOAuth2AccessToken.class);
-    Assert.assertEquals(HttpStatus.OK, entity.getStatusCode());
+    assertEquals(HttpStatus.OK, entity.getStatusCode());
     return entity.getBody();
   }
 
   @Test
   public void accessToken() {
-    Assert.assertNotNull(getAccessToken());
+    org.junit.jupiter.api.Assertions.assertNotNull(getAccessToken());
   }
 
   /**
@@ -83,7 +82,7 @@ public class SecurityTest {
     params.add("refresh_token", getAccessToken().getRefreshToken().getValue());
     ResponseEntity<String> entity2 = clientRestTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params), String.class);
-    Assert.assertEquals(HttpStatus.OK, entity2.getStatusCode());
+    assertEquals(HttpStatus.OK, entity2.getStatusCode());
 
   }
 
@@ -94,7 +93,7 @@ public class SecurityTest {
         .exchange("/oauth/token?access_token=" + accessToken,
             HttpMethod.DELETE, null,
             String.class);
-    Assert.assertEquals(HttpStatus.NO_CONTENT, entity2.getStatusCode());
+    assertEquals(HttpStatus.NO_CONTENT, entity2.getStatusCode());
   }
 
   @Test

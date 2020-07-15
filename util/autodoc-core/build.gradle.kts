@@ -12,6 +12,7 @@ dependencies {
     api("org.asciidoctor:asciidoctorj-pdf")
     api("com.github.stuxuhai:jpinyin")
 
-    testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit5"))
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 
 }

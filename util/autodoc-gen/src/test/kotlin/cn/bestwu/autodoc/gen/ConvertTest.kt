@@ -3,7 +3,7 @@ package cn.bestwu.autodoc.gen
 import cn.bestwu.api.sign.ApiSignProperties
 import cn.bestwu.autodoc.core.Util
 import cn.bestwu.autodoc.core.operation.DocOperation
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**

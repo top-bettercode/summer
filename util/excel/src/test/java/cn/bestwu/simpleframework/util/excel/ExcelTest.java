@@ -11,8 +11,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Peter Wu
@@ -20,7 +20,7 @@ import org.junit.Test;
  */
 public class ExcelTest {
 
-  @Before
+  @BeforeEach
   public void setUp() {
     CodeSerializer.setCodeService(new ICodeService() {
       @Override
