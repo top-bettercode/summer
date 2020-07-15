@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 public class CodeService implements ICodeService {
 
-  private DicCodeTypes dicCodeTypes = new DicCodeTypes(true);
+  private DicCodeTypes dicCodeTypes = new DicCodeTypes();
 
   public void setDicCodeTypes(DicCodeTypes dicCodeTypes) {
     this.dicCodeTypes = dicCodeTypes;
@@ -23,9 +23,6 @@ public class CodeService implements ICodeService {
 
   @Override
   public String getName(String codeType, Serializable code) {
-    if (code instanceof String) {
-      code = Integer.parseInt((String) code);
-    }
     DicCodeType dicCodeType = dicCodeTypes.get(codeType);
     return dicCodeType == null ? null : dicCodeType.getCodes().nameOf(code);
   }
