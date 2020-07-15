@@ -15,12 +15,6 @@ public class DefaultAuthority {
   public static final GrantedAuthority DEFAULT_GRANTED_AUTHORITY = new SimpleGrantedAuthority(
       DEFAULT_AUTHORITY_STRING);
 
-  public static Collection<? extends GrantedAuthority> addDefaultAuthority(
-      Collection<? extends GrantedAuthority> authorities) {
-    HashSet<GrantedAuthority> objects = new HashSet<>(authorities);
-    objects.add(DEFAULT_GRANTED_AUTHORITY);
-    return objects;
-  }
 
   public static Collection<? extends GrantedAuthority> addDefaultAuthority(
       GrantedAuthority... authorities) {
@@ -40,4 +34,13 @@ public class DefaultAuthority {
     return objects;
   }
 
+  public static Collection<? extends GrantedAuthority> addDefaultAuthority(
+      Collection<String> authorities) {
+    HashSet<GrantedAuthority> objects = new HashSet<>();
+    for (String authority : authorities) {
+      objects.add(new SimpleGrantedAuthority(authority));
+    }
+    objects.add(DEFAULT_GRANTED_AUTHORITY);
+    return objects;
+  }
 }
