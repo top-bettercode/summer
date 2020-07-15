@@ -36,18 +36,24 @@ public class MocTestErrorLoggingHandler implements RequestLoggingHandler {
     OperationResponse response = operation.getResponse();
     String stackTrace = response.getStackTrace();
     if (StringUtils.hasText(stackTrace)) {
-      response.setStackTrace("");
-      Map<String, Object> errorAttributes = this.errorAttributes
-          .getErrorAttributes(webRequest, false);
-      if (response.getContent().length == 0) {
-        try {
-          response.setContent(
-              StringUtil.getINDENT_OUTPUT_OBJECT_MAPPER().writeValueAsBytes(errorAttributes));
-        } catch (JsonProcessingException e) {
-          log.error(e.getMessage(), e);
+      try {
+        Map<String, Object> errorAttributes = this.errorAttributes
+            .getErrorAttributes(webRequest, false);
+        if (response.getContent().length == 0) {
+          try {
+            response.setContent(
+                StringUtil.getINDENT_OUTPUT_OBJECT_MAPPER().writeValueAsBytes(errorAttributes));
+          } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+          }
+        } else {
+          log.error("异常:{}", StringUtil.valueOf(errorAttributes, true));
         }
-      } else {
-        log.error("异常:{}", StringUtil.valueOf(errorAttributes, true));
+        response.setStackTrace("");
+      } catch (Exception e) {
+        if (!e.getMessage().contains("No thread-bound request found")) {
+          throw e;
+        }
       }
     }
   }
