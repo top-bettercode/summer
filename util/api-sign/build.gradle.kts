@@ -10,7 +10,7 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
 
-    testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit5"))
     testImplementation(project(":framework:starter-logging"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

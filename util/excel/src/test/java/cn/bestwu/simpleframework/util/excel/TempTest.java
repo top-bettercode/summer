@@ -1,7 +1,7 @@
 package cn.bestwu.simpleframework.util.excel;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Peter Wu

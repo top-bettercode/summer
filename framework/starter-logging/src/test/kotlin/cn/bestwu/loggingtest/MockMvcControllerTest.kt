@@ -1,6 +1,6 @@
 package cn.bestwu.loggingtest
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*

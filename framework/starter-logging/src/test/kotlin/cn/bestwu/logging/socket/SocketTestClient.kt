@@ -1,7 +1,6 @@
 package cn.bestwu.logging.socket
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
@@ -44,7 +43,7 @@ class SocketTestClient {
         val entity = restTemplate.getForEntity("http://127.0.0.1:4560", String::class.java)
 
         System.err.println(entity.body)
-        Assert.assertEquals(HttpStatus.OK, entity.statusCode)
+        org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
 
     }
 

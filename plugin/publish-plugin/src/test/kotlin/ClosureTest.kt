@@ -1,7 +1,7 @@
 
 import org.gradle.api.DefaultTask
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**

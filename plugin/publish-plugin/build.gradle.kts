@@ -8,5 +8,6 @@ dependencies {
     compileOnly("org.jfrog.buildinfo:build-info-extractor-gradle") {
         exclude(module = "groovy-all")
     }
-    testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit5"))
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }

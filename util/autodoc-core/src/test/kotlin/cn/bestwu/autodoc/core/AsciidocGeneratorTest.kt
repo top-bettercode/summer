@@ -1,7 +1,7 @@
 package cn.bestwu.autodoc.core
 
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**
@@ -10,7 +10,7 @@ import java.io.File
 class AsciidocGeneratorTest {
     private lateinit var autodoc: AutodocExtension
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val file = File("src/doc")
         autodoc = AutodocExtension(apiHost = "http://10.13.3.205:8080", source = file, output = File("build/doc"))

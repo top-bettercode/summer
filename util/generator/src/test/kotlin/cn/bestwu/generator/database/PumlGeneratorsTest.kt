@@ -4,7 +4,7 @@ import cn.bestwu.generator.DataType
 import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.dsl.Generators
 import cn.bestwu.generator.puml.PumlConverterTest
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**

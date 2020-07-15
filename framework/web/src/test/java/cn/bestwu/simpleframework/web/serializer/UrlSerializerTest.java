@@ -1,14 +1,15 @@
 package cn.bestwu.simpleframework.web.serializer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import cn.bestwu.simpleframework.web.DataDicBean;
 import cn.bestwu.simpleframework.web.serializer.annotation.JsonUrl;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
 
 /**
@@ -18,7 +19,7 @@ public class UrlSerializerTest {
 
   final ObjectMapper objectMapper = new ObjectMapper();
 
-  @Before
+  @BeforeEach
   public void setUp() {
     objectMapper.setDefaultPropertyInclusion(Include.NON_NULL);
     objectMapper.setSerializerFactory(objectMapper.getSerializerFactory()
@@ -37,15 +38,14 @@ public class UrlSerializerTest {
     String path = "/abc.jpg";
     dicBean.setPath(path);
     dicBean.setPath1(path);
-    Assert.assertEquals(
+    assertEquals(
         "{\"path\":\"/abc.jpg\",\"pathUrl\":\"http://127.0.0.1/abc.jpg\",\"path1\":\"/abc.jpg\",\"path1Url\":\"http://127.0.0.2/abc.jpg\"}",
         objectMapper.writeValueAsString(dicBean));
 
     dicBean.setPath("");
     dicBean.setPath("  ");
     dicBean.setPath1(null);
-    Assert
-        .assertEquals("{\"path\":\"\",\"pathUrl\":\"\"}", objectMapper.writeValueAsString(dicBean));
+    assertEquals("{\"path\":\"\",\"pathUrl\":\"\"}", objectMapper.writeValueAsString(dicBean));
   }
 
   @Test
@@ -55,14 +55,14 @@ public class UrlSerializerTest {
     String path = "/abc.jpg";
     dicBean.setPath(path);
     dicBean.setPath1(path);
-    Assert.assertEquals(
+    assertEquals(
         "{\"path\":\"http://127.0.0.1/abc.jpg\",\"path1\":\"http://127.0.0.2/abc.jpg\"}",
         objectMapper.writeValueAsString(dicBean));
 
     dicBean.setPath("");
     dicBean.setPath("  ");
     dicBean.setPath1(null);
-    Assert.assertEquals("{\"path\":\"\"}", objectMapper.writeValueAsString(dicBean));
+    assertEquals("{\"path\":\"\"}", objectMapper.writeValueAsString(dicBean));
   }
 
   @Test
@@ -73,7 +73,7 @@ public class UrlSerializerTest {
     dicBean.setPath(path);
     dicBean.setPath1(path);
     System.err.println(objectMapper.writeValueAsString(dicBean));
-    Assert.assertEquals(
+    assertEquals(
         "{\"path\":\"/abc.jpg,/124.jpg\",\"pathUrls\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/124.jpg\"],\"path1\":\"/abc.jpg,/124.jpg\",\"path1Urls\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/124.jpg\"]}",
         objectMapper.writeValueAsString(dicBean));
   }
@@ -85,7 +85,7 @@ public class UrlSerializerTest {
     String path = "/abc.jpg,/124.jpg";
     dicBean.setPath(path);
     dicBean.setPath1(path);
-    Assert.assertEquals(
+    assertEquals(
         "{\"path\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/124.jpg\"],\"path1\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/124.jpg\"]}",
         objectMapper.writeValueAsString(dicBean));
   }
@@ -100,12 +100,12 @@ public class UrlSerializerTest {
     paths.add("/def.jpg");
     paths.add(" ");
     dicBean.setPathArray(paths.toArray(new String[0]));
-    Assert.assertEquals(
+    assertEquals(
         "{\"pathArray\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"pathArrayUrls\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/def.jpg\"],\"pathArray1\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"pathArray1Urls\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/def.jpg\"]}",
         objectMapper.writeValueAsString(dicBean));
 
     dicBean.setPathArray(null);
-    Assert.assertEquals("{}", objectMapper.writeValueAsString(dicBean));
+    assertEquals("{}", objectMapper.writeValueAsString(dicBean));
 
   }
 
@@ -119,12 +119,12 @@ public class UrlSerializerTest {
     paths.add("/def.jpg");
     paths.add(" ");
     dicBean.setPathArray(paths.toArray(new String[0]));
-    Assert.assertEquals(
+    assertEquals(
         "{\"pathArray\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/def.jpg\"],\"pathArray1\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/def.jpg\"]}",
         objectMapper.writeValueAsString(dicBean));
 
     dicBean.setPathArray(null);
-    Assert.assertEquals("{}", objectMapper.writeValueAsString(dicBean));
+    assertEquals("{}", objectMapper.writeValueAsString(dicBean));
 
   }
 
@@ -137,12 +137,12 @@ public class UrlSerializerTest {
     dicBean.getPaths().add("/abc.jpg");
     dicBean.getPaths().add("/def.jpg");
     dicBean.getPaths().add(" ");
-    Assert.assertEquals(
+    assertEquals(
         "{\"paths\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"pathsUrls\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/def.jpg\"],\"paths1\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"paths1Urls\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/def.jpg\"]}",
         objectMapper.writeValueAsString(dicBean));
 
     dicBean.setPaths(null);
-    Assert.assertEquals("{}", objectMapper.writeValueAsString(dicBean));
+    assertEquals("{}", objectMapper.writeValueAsString(dicBean));
 
   }
 
@@ -155,12 +155,12 @@ public class UrlSerializerTest {
     dicBean.getPaths().add("/abc.jpg");
     dicBean.getPaths().add("/def.jpg");
     dicBean.getPaths().add(" ");
-    Assert.assertEquals(
+    assertEquals(
         "{\"paths\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/def.jpg\"],\"paths1\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/def.jpg\"]}",
         objectMapper.writeValueAsString(dicBean));
 
     dicBean.setPaths(null);
-    Assert.assertEquals("{}", objectMapper.writeValueAsString(dicBean));
+    assertEquals("{}", objectMapper.writeValueAsString(dicBean));
 
   }
 

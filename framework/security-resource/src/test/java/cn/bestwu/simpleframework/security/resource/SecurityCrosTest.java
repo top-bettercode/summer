@@ -3,24 +3,24 @@ package cn.bestwu.simpleframework.security.resource;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import cn.bestwu.lang.util.StringUtil;
-import cn.bestwu.simpleframework.security.server.AccessTokenService;
 import cn.bestwu.simpleframework.security.impl.TestApplication;
+import cn.bestwu.simpleframework.security.server.AccessTokenService;
 import java.util.Set;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * @author Peter Wu
  * @since 1.0.0
  */
 @SuppressWarnings("deprecation")
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestApplication.class, properties = {
     "api.sign.handler-type-prefix=",
     "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)

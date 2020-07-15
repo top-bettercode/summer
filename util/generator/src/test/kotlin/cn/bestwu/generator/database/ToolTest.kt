@@ -2,8 +2,7 @@ package cn.bestwu.generator.database
 
 import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.dom.java.Annotations
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -59,19 +58,19 @@ class ToolTest {
         val regex = Annotations.regex
         val groups = regex.find("@Test")?.groupValues
         System.err.println(groups)
-        Assert.assertEquals("@Test", groups?.get(1))
+        org.junit.jupiter.api.Assertions.assertEquals("@Test", groups?.get(1))
         val groups1 = regex.find("@Test()")?.groupValues
         System.err.println(groups1)
-        Assert.assertEquals("@Test", groups1?.get(1))
+        org.junit.jupiter.api.Assertions.assertEquals("@Test", groups1?.get(1))
         val groups2 = regex.find("@Test(\"\")")?.groupValues
         System.err.println(groups2)
-        Assert.assertEquals("@Test", groups2?.get(1))
+        org.junit.jupiter.api.Assertions.assertEquals("@Test", groups2?.get(1))
         val groups3 = regex.find("@Test(\"dd\")")?.groupValues
         System.err.println(groups3)
-        Assert.assertEquals("@Test", groups3?.get(1))
+        org.junit.jupiter.api.Assertions.assertEquals("@Test", groups3?.get(1))
         val groups4 = regex.find("@Test(value=\"dd\")")?.groupValues
         System.err.println(groups4)
-        Assert.assertEquals("@Test", groups4?.get(1))
+        org.junit.jupiter.api.Assertions.assertEquals("@Test", groups4?.get(1))
 
         val ss = "@Results({\n" +
                 " @Test()       @Result(column=\"id\", property=\"id\", jdbcType=JdbcType.BIGINT, id=true),\n" +
@@ -106,7 +105,7 @@ class ToolTest {
             val groupValues = regex.find(it)?.groupValues
             System.err.println(groupValues)
         }
-//        Assert.assertEquals("Test", groupValues?.get(1))
-//        Assert.assertEquals("(value=\"dd\")", groupValues?.get(2))
+//        org.junit.jupiter.api.Assertions.assertEquals("Test", groupValues?.get(1))
+//        org.junit.jupiter.api.Assertions.assertEquals("(value=\"dd\")", groupValues?.get(2))
     }
 }

@@ -1,8 +1,8 @@
 package cn.bestwu.generator.database
 
 import cn.bestwu.generator.GeneratorExtension
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**
@@ -17,8 +17,8 @@ class MysqlMetaDataTest {
         extension.datasource.password = "mysql"
     }
 
-    @Before
-    fun setUp() {
+    @BeforeEach
+  fun setUp() {
 //        val jdbcDataSource = JdbcDataSource()
 //        jdbcDataSource.setURL("jdbc:h2:mem:test")
 //        jdbcDataSource.user = "sa"

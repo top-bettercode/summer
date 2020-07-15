@@ -1,7 +1,7 @@
 package cn.bestwu.generator.powerdesigner
 
 import cn.bestwu.generator.ddl.MysqlToDDL
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**

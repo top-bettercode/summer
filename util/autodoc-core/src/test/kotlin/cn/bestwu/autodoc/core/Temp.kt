@@ -3,7 +3,7 @@ package cn.bestwu.autodoc.core
 import cn.bestwu.autodoc.core.model.Field
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.*
 
