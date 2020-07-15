@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.data.jpa.config;
 
+import cn.bestwu.simpleframework.data.jpa.support.JpaExtRepositoryFactoryBean;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -19,7 +20,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 
 /**
  * DataJpaConfiguration 配置
@@ -30,7 +30,7 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 @ConditionalOnBean(DataSource.class)
 @ConditionalOnClass(JpaRepository.class)
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnMissingBean({JpaRepositoryFactoryBean.class,
+@ConditionalOnMissingBean({JpaExtRepositoryFactoryBean.class,
     JpaExtRepositoryConfigExtension.class})
 @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Import(JpaExtRepositoriesAutoConfigureRegistrar.class)
