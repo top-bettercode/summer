@@ -12,22 +12,22 @@ public class DicCodeTypes extends HashMap<String, DicCodeType> implements ICodeT
 
   private static final long serialVersionUID = -2192651403471727025L;
 
-  public DicCodeTypes(boolean intCode) {
+  public DicCodeTypes() {
     try {
       ResourceBundle resourceBundle = ResourceBundle.getBundle("default-dic-code");
-      init(intCode, resourceBundle);
+      init(resourceBundle);
     } catch (MissingResourceException ignored) {
 
     }
     try {
       ResourceBundle resourceBundle = ResourceBundle.getBundle("dic-code");
-      init(intCode, resourceBundle);
+      init(resourceBundle);
     } catch (MissingResourceException ignored) {
 
     }
   }
 
-  private void init(boolean intCode, ResourceBundle resourceBundle) {
+  private void init(ResourceBundle resourceBundle) {
     Enumeration<String> keys = resourceBundle.getKeys();
     while (keys.hasMoreElements()) {
       String key = keys.nextElement();
@@ -38,9 +38,10 @@ public class DicCodeTypes extends HashMap<String, DicCodeType> implements ICodeT
         String code = split[1];
         DicCodeType dicCode = this.computeIfAbsent(codeType,
             k -> new DicCodeType(codeType, resourceBundle.getString(codeType)));
-        if (intCode) {
-          dicCode.getCodes().put(Integer.parseInt(code), resourceBundle.getString(key));
-        } else {
+        try {
+          int codeKey = Integer.parseInt(code);
+          dicCode.getCodes().put(codeKey, resourceBundle.getString(key));
+        } catch (NumberFormatException e) {
           dicCode.getCodes().put(code, resourceBundle.getString(key));
         }
       } else {
