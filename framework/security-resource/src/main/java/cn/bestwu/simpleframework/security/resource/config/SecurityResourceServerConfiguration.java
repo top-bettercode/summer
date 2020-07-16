@@ -45,6 +45,14 @@ public class SecurityResourceServerConfiguration {
           Collection<ConfigAttribute> configAttributes) {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
+        if (log.isDebugEnabled()) {
+          log.debug("权限检查，当前用户权限：{}，当前资源需要以下权限之一：{}",
+              StringUtils.collectionToCommaDelimitedString(authorities),
+              StringUtils.collectionToCommaDelimitedString(configAttributes.stream().map(
+                  (Function<ConfigAttribute, Object>) ConfigAttribute::getAttribute).collect(
+                  Collectors.toList())));
+        }
+
         for (ConfigAttribute configAttribute : configAttributes) {//需要的权限，有任意其中一个即可
           if (contains(authorities, configAttribute)) {
             return;
