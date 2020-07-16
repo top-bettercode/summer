@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.util.StringUtils;
 
 /**
@@ -26,13 +27,16 @@ public class AccessTokenService {
   private final ClientDetails clientDetails;
   private final UserDetailsService userDetailsService;
   private final AuthorizationServerTokenServices authorizationServerTokenServices;
+  private final TokenStore tokenStore;
 
   public AccessTokenService(ClientDetails clientDetails,
       UserDetailsService userDetailsService,
-      AuthorizationServerTokenServices authorizationServerTokenServices) {
+      AuthorizationServerTokenServices authorizationServerTokenServices,
+      TokenStore tokenStore) {
     this.clientDetails = clientDetails;
     this.userDetailsService = userDetailsService;
     this.authorizationServerTokenServices = authorizationServerTokenServices;
+    this.tokenStore = tokenStore;
   }
 
   public OAuth2AccessToken getAccessToken(UserDetails userDetails,
@@ -82,5 +86,13 @@ public class AccessTokenService {
   public OAuth2AccessToken getAccessToken(String username) {
     return getAccessToken(username, Collections.singleton("trust"));
   }
+
+  public void removeAccessToken(String userName) {
+    for (OAuth2AccessToken oAuth2AccessToken : tokenStore
+        .findTokensByClientIdAndUserName(clientDetails.getClientId(), userName)) {
+      tokenStore.removeAccessToken(oAuth2AccessToken);
+    }
+  }
+
 
 }

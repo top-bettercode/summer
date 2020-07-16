@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @SuppressWarnings("deprecation")
 @ConditionalOnClass(OAuth2Exception.class)
@@ -37,7 +38,8 @@ public class Oauth2SecurityConfiguration {
   }
 
   @Bean
-  public WebResponseExceptionTranslator<OAuth2Exception> webResponseExceptionTranslator(@Value("${app.web.ok.enable:false}") boolean okEnable) {
+  public WebResponseExceptionTranslator<OAuth2Exception> webResponseExceptionTranslator(
+      @Value("${app.web.ok.enable:false}") boolean okEnable) {
     CustomWebResponseExceptionTranslator exceptionTranslator = new CustomWebResponseExceptionTranslator(
         okEnable, messageSource);
     tokenEndpoint.setProviderExceptionHandler(exceptionTranslator);
@@ -56,9 +58,9 @@ public class Oauth2SecurityConfiguration {
   @Bean
   public AccessTokenService accessTokenService(ClientDetails clientDetails,
       UserDetailsService userDetailsService,
-      AuthorizationServerTokenServices authorizationServerTokenServices) {
+      AuthorizationServerTokenServices authorizationServerTokenServices, TokenStore tokenStore) {
     return new AccessTokenService(clientDetails, userDetailsService,
-        authorizationServerTokenServices);
+        authorizationServerTokenServices, tokenStore);
   }
 
 }
