@@ -140,6 +140,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                 ?: autodoc.source.absolutePath) + File.separator
         val commonAdocs = autodoc.commonAdocs()
         autodoc.listModules { module, pyname ->
+            module.clean()
             val adocFile = autodoc.adocFile(module.name)
             adocFile.delete()
             adocFile.parentFile.mkdirs()
