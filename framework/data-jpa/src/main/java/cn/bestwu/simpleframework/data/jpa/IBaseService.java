@@ -90,6 +90,8 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   Page<T> findAll(Predicate predicate, Pageable pageable, OrderSpecifier<?>... defaultOrderSpecifiers);
 
+  Page<T> findAll(Pageable pageable, OrderSpecifier<?>... defaultOrderSpecifiers);
+
   long count(Predicate predicate);
 
   boolean exists(Predicate predicate);

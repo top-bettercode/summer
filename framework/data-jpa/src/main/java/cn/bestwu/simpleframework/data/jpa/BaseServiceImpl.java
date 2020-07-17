@@ -185,6 +185,14 @@ public class BaseServiceImpl<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
+  public Page<T> findAll(Pageable pageable,
+      OrderSpecifier<?>... defaultOrderSpecifiers) {
+    return repository
+        .findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+            pageable.getSortOr(QSort.by(defaultOrderSpecifiers))));
+  }
+
+  @Override
   public long count(Predicate predicate) {
     return repository.count(predicate);
   }
