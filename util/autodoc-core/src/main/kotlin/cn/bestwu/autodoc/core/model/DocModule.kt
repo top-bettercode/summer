@@ -72,28 +72,33 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
     fun collections(collectionName: String, name: String): DocCollection {
         var collectionTree = projectCollections.find { it.name == collectionName }
         if (collectionTree == null) {
-            collectionTree = DocCollection(collectionName,dir=File(projectModuleDic, "collection/$collectionName"))
+            collectionTree = DocCollection(collectionName, dir = File(projectModuleDic, "collection/$collectionName"))
             projectCollections.add(collectionTree)
         }
         collectionTree.items.add(name)
         return collectionTree
     }
 
-    private fun clean() {
+    fun clean() {
         (rootCollections + projectCollections).forEach { collection ->
             val items = collection.items
-            collection.dir.listFiles()?.filterNot { items.contains(it.nameWithoutExtension) || it.name == "field.yml" }?.forEach { it.delete() }
+            collection.dir.listFiles()?.filterNot { items.contains(it.nameWithoutExtension) || it.name == "field.yml" }?.forEach {
+                it.delete()
+                println("delete $it")
+            }
         }
 
         if (this.rootModuleDic != null) {
             val rootCollectionNames = rootCollections.map { it.name }
             File(this.rootModuleDic, "collection").listFiles()?.filterNot { rootCollectionNames.contains(it.name) }?.forEach {
                 it.deleteRecursively()
+                println("delete $it")
             }
         }
         val subCollectionNames = projectCollections.map { it.name }
         File(projectModuleDic, "collection").listFiles()?.filterNot { subCollectionNames.contains(it.name) }?.forEach {
             it.deleteRecursively()
+            println("delete $it")
         }
     }
 
