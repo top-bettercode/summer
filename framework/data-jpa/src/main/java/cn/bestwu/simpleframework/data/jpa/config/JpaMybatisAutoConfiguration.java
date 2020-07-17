@@ -1,11 +1,11 @@
 /**
  * Copyright 2015-2019 the original author or authors.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -13,6 +13,7 @@
  */
 package cn.bestwu.simpleframework.data.jpa.config;
 
+import com.github.pagehelper.PageInterceptor;
 import javax.sql.DataSource;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
@@ -48,7 +49,7 @@ import org.springframework.util.StringUtils;
 @org.springframework.context.annotation.Configuration
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
 @ConditionalOnSingleCandidate(DataSource.class)
-@EnableConfigurationProperties(MybatisProperties.class)
+@EnableConfigurationProperties({MybatisProperties.class, PageHelperProperties.class})
 @AutoConfigureAfter({DataSourceAutoConfiguration.class})
 public class JpaMybatisAutoConfiguration implements InitializingBean {
 
@@ -94,7 +95,8 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   @Bean
   @ConditionalOnMissingBean
-  public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+  public SqlSessionFactory sqlSessionFactory(DataSource dataSource,
+      PageHelperProperties pageHelperProperties) throws Exception {
     SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
     factory.setDataSource(dataSource);
 //    factory.setVfs(SpringBootVFS.class);
@@ -102,13 +104,21 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
       factory
           .setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
     }
-    applyConfiguration(factory);
+    Configuration configuration = this.properties.getConfiguration();
+    if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
+      configuration = new Configuration();
+    }
+    PageInterceptor interceptor = new PageInterceptor();
+    interceptor.setProperties(pageHelperProperties.getProperties());
+    configuration.addInterceptor(interceptor);
+    factory.setConfiguration(configuration);
     if (this.properties.getConfigurationProperties() != null) {
       factory.setConfigurationProperties(this.properties.getConfigurationProperties());
     }
     if (!ObjectUtils.isEmpty(this.interceptors)) {
       factory.setPlugins(this.interceptors);
     }
+
     if (this.databaseIdProvider != null) {
       factory.setDatabaseIdProvider(this.databaseIdProvider);
     }
@@ -129,14 +139,6 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
     }
 
     return factory.getObject();
-  }
-
-  private void applyConfiguration(SqlSessionFactoryBean factory) {
-    Configuration configuration = this.properties.getConfiguration();
-    if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
-      configuration = new Configuration();
-    }
-    factory.setConfiguration(configuration);
   }
 
   @Bean("sqlSessionTemplate")

@@ -1,6 +1,5 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 cn.bestwu.simpleframework.data.jpa.config.JpaMybatisAutoConfiguration,\
-cn.bestwu.simpleframework.data.jpa.config.PageHelperAutoConfiguration,\
 cn.bestwu.simpleframework.data.jpa.config.DataJpaConfiguration,\
 cn.bestwu.simpleframework.data.jpa.config.JpaExtRepositoriesAutoConfiguration
