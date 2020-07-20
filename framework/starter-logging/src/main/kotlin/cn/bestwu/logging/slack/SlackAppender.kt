@@ -7,27 +7,29 @@ import cn.bestwu.logging.logback.AlarmAppender
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
+import java.io.File
 
-open class SlackAppender(private val properties: SlackProperties, private val title: String) : AlarmAppender(properties.cyclicBufferSize, properties.cacheSeconds, properties.ignoredWarnLogger) {
+open class SlackAppender(private val properties: SlackProperties, private val title: String, private val logsPath: String?, val logUrl: String?) : AlarmAppender(properties.cyclicBufferSize, properties.cacheSeconds, properties.ignoredWarnLogger) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
-    private val slackClient: SlackClient = SlackClient(properties.authToken)
+    private val slackClient: SlackClient = SlackClient(properties.authToken, logUrl)
 
     override fun start() {
         if (slackClient.channelExist(properties.channel)) {
             super.start()
+            if (!logsPath.isNullOrBlank()) {
+                val file = File(logsPath, "alarm")
+                if (!file.exists()) {
+                    file.mkdirs()
+                }
+            }
         }
     }
 
     override fun sendMessage(timeStamp: Long, initialComment: String, message: List<String>): Boolean {
         return try {
             val title = "$title ${format(timeStamp)}"
-            val msg = message.joinToString("")
-            if (properties.isSendFile) {
-                slackClient.filesUpload(properties.channel, msg.toByteArray(), "$title.log", "text", title, "$title\n$initialComment")
-            } else {
-                slackClient.postMessage(properties.channel, "$title\n$msg")
-            }
+            slackClient.postMessage(properties.channel, title, initialComment, message, logsPath)
         } catch (e: Exception) {
             log.error(MarkerFactory.getMarker(RequestLoggingFilter.NO_ALARM_LOG_MARKER), "slack 发送信息失败", e)
             false

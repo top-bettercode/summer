@@ -46,7 +46,7 @@ class TemplateControllerTest {
 
     @Test
     fun error() {
-        val entity = testRestTemplate.postForEntity("/errorMail/1", null, String::class.java)
+        val entity = testRestTemplate.postForEntity("/error/1", null, String::class.java)
         Thread.sleep(20 * 1000)
         org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, entity.statusCode)
     }

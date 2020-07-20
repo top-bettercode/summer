@@ -10,21 +10,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("logging.slack")
 public class SlackProperties {
 
-  private boolean sendFile = true;
   private String[] logger = {"root"};
   private String[] ignoredWarnLogger = {};
   private String authToken;
   private String channel;
   private Long cacheSeconds = 5 * 60L;
   private Integer cyclicBufferSize = 20;
-
-  public boolean isSendFile() {
-    return sendFile;
-  }
-
-  public void setSendFile(boolean sendFile) {
-    this.sendFile = sendFile;
-  }
 
   public String[] getLogger() {
     return logger;

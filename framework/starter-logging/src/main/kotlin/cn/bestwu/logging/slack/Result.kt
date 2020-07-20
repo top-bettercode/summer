@@ -6,10 +6,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
  * @author Peter Wu
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Result(
-        val ok: Boolean? = null,
-        val error: String? = null,
-        val ts: String? = null,
-        val channels: List<Channel>? = null,
+open class Result {
+    val ok: Boolean? = null
+    val error: String? = null
+    val ts: String? = null
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class ChannelResult(
         val channel: Channel? = null
-)
+) : Result()
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class ChannelsResult(
+        val channels: List<Channel>? = null
+) : Result()

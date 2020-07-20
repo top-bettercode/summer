@@ -7,6 +7,11 @@
   ],
   "properties": [
     {
+      "name": "logging.log-url",
+      "type": "java.lang.String",
+      "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem"
+    },
+    {
       "name": "logging.warn-subject",
       "type": "java.lang.String",
       "defaultValue": "${spring.application.name}  ${spring.profiles.active} system exception;",

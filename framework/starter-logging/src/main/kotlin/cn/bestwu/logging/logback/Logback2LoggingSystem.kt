@@ -90,14 +90,16 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             }
         }
 
+        val logUrl = environment.getProperty("logging.log-url")
         //slack log
         if (existProperty(environment, "logging.slack.auth-token") && existProperty(environment, "logging.slack.channel")) {
             val slackProperties = Binder.get(environment).bind("logging.slack", SlackProperties::class.java).get()
             try {
+                val logsPath = environment.getProperty("logging.files.path")
                 val loggerNames = slackProperties.logger
                 loggerNames.map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
-                            val slackAppender = SlackAppender(slackProperties, warnSubject)
+                            val slackAppender = SlackAppender(slackProperties, warnSubject, logsPath,logUrl)
                             slackAppender.context = context
                             slackAppender.start()
                             it.addAppender(slackAppender)
@@ -114,7 +116,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 val loggerNames = bearychatProperties.logger
                 loggerNames.map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
-                            val slackAppender = BearychatAppender(bearychatProperties, warnSubject, logsPath)
+                            val slackAppender = BearychatAppender(bearychatProperties, warnSubject, logsPath,logUrl)
                             slackAppender.context = context
                             slackAppender.start()
                             it.addAppender(slackAppender)

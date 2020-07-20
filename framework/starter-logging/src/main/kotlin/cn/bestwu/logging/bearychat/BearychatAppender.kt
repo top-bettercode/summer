@@ -10,11 +10,11 @@ import org.slf4j.MarkerFactory
 import java.io.File
 
 
-open class BearychatAppender(private val properties: BearychatProperties, private val title: String, private val logsPath: String?) : AlarmAppender(properties.cyclicBufferSize, properties.cacheSeconds, properties.ignoredWarnLogger) {
+open class BearychatAppender(private val properties: BearychatProperties, private val title: String, private val logsPath: String?, val logUrl: String?) : AlarmAppender(properties.cyclicBufferSize, properties.cacheSeconds, properties.ignoredWarnLogger) {
 
 
     private val log: Logger = LoggerFactory.getLogger(BearychatAppender::class.java)
-    private val client: BearychatClient = BearychatClient(properties.webhookUrl, properties.logUrl)
+    private val client: BearychatClient = BearychatClient(properties.webhookUrl, logUrl)
 
     init {
         if (!logsPath.isNullOrBlank()) {

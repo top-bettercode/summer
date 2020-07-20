@@ -1,5 +1,6 @@
 package cn.bestwu.logging.slack
 
+import cn.bestwu.logging.logback.AlarmAppender
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -9,13 +10,14 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
+import java.io.File
 import java.util.*
 
 /**
  *
  * @author Peter Wu
  */
-class SlackClient(private val authToken: String) {
+class SlackClient(private val authToken: String, private val logUrl: String?) {
 
     private val api = "https://slack.com/api/"
     private val log: Logger = LoggerFactory.getLogger(SlackClient::class.java)
@@ -38,7 +40,7 @@ class SlackClient(private val authToken: String) {
     }
 
     fun channelsList(): List<Channel>? {
-        val result = restTemplate.getForObject("${api}channels.list?token=$authToken", Result::class.java)
+        val result = restTemplate.getForObject("${api}conversations.list?token=$authToken&types=public_channel,private_channel&exclude_archived=true", ChannelsResult::class.java)
         if (result?.ok != true) {
             log.error("slack api request fail:{}", result?.error)
         }
@@ -57,26 +59,32 @@ class SlackClient(private val authToken: String) {
         return channelsList()?.find { it.name == channelName }?.id
     }
 
-    /**
-     * @param channel channel id
-     * @return Channel?
-     */
-    fun channelInfo(channel: String): Channel? {
-        val result = restTemplate.getForObject("${api}channels.info?token=$authToken&channel=$channel", Result::class.java)
-        if (result?.ok != true) {
-            log.error("slack api request fail:{}", result?.error)
-        }
-        return result?.channel
-    }
 
     /**
      * @param channel channel id or channel name
      */
-    fun postMessage(channel: String, message: String): Boolean {
+    fun postMessage(channel: String, title: String, initialComment: String, message: List<String>, logsPath: String?): Boolean {
         val params = LinkedMultiValueMap<String, Any>()
         params.add("token", authToken)
         params.add("channel", channel)
-        params.add("text", message)
+        val hasFilesPath = !logsPath.isNullOrBlank()
+        if (!hasFilesPath || logUrl == null) {
+            return filesUpload(channel, title, initialComment, message)
+        } else {
+            params["text"] = initialComment
+            if (message.isNotEmpty()) {
+                val fileName = AlarmAppender.getFileName(logsPath!!)
+                File(logsPath, fileName).writeText(message.joinToString(""))
+                params["attachments"] = arrayOf(mapOf("title" to title, "title_link" to "$logUrl/logs/${fileName}"))
+            } else {
+                params["attachments"] = arrayOf(mapOf("title" to title, "title_link" to "$logUrl/logs/all.log"))
+            }
+        }
+
+        if (log.isDebugEnabled) {
+            log.debug("bearychat params:{}", params)
+        }
+
         val result = restTemplate.postForObject("${api}chat.postMessage", params, Result::class.java)
         return result?.ok == true
     }
@@ -84,17 +92,17 @@ class SlackClient(private val authToken: String) {
     /**
      * @param channels Comma-separated list of channel names or IDs where the file will be shared.
      */
-    fun filesUpload(channels: String, data: ByteArray, fileName: String, filetype: String, title: String?, initialComment: String): Boolean {
+    fun filesUpload(channel: String, title: String, initialComment: String, message: List<String>): Boolean {
         val params = LinkedMultiValueMap<String, Any>()
         params.add("token", authToken)
-        params.add("channels", channels)
-        params.add("content", data)
-        params.add("filename", fileName)
-        params.add("filetype", filetype)
-        if (!title.isNullOrBlank()) {
+        params.add("channels", channel)
+        params.add("content", message.joinToString("").toByteArray())
+        params.add("filename", "$title.log")
+        params.add("filetype", "text")
+        if (!title.isBlank()) {
             params.add("title", title)
         }
-        params.add("initial_comment", initialComment)
+        params.add("initial_comment", "$title\n$initialComment")
         val result = restTemplate.postForObject("${api}files.upload", params, Result::class.java)
         if (result?.ok != true) {
             log.error("slack api request fail:{}", result?.error)
