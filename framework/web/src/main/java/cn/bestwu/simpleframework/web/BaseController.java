@@ -120,13 +120,6 @@ public class BaseController extends Response {
   }
 
   /**
-   * @return 客户端设备类型
-   */
-  protected String getDeviceInfo() {
-    return DeviceUtil.getDeviceInfo(request);
-  }
-
-  /**
    * @return 更新前的实体
    */
   protected Object getOldModel() {
