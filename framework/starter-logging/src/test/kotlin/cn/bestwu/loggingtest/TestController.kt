@@ -36,7 +36,7 @@ class TestController {
         return request ?: "null"
     }
 
-    @RequestMapping("/errorMail/{path}")
+    @RequestMapping("/error/{path}")
     fun error(request: String?): Any {
         log.error("日志错误", RuntimeException("abc"))
         log.error("日志错误", RuntimeException("abc"))

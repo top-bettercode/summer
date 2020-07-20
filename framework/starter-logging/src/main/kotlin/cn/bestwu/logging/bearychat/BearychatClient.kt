@@ -1,6 +1,7 @@
 package cn.bestwu.logging.bearychat
 
 import cn.bestwu.logging.formatFileNow
+import cn.bestwu.logging.logback.AlarmAppender
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -58,16 +59,13 @@ ${message.joinToString("")}
         } else {
             params["text"] = initialComment
             if (message.isNotEmpty()) {
-                val fileName = getFileName(logsPath!!)
+                val fileName = AlarmAppender.getFileName(logsPath!!)
                 File(logsPath, fileName).writeText(message.joinToString(""))
 
                 params["attachments"] = arrayOf(mapOf("title" to title, "url" to "$logUrl/logs/${fileName}"))
             } else {
                 params["attachments"] = arrayOf(mapOf("title" to title, "url" to "$logUrl/logs/all.log"))
             }
-        }
-        if (!hasFilesPath && logUrl != null) {
-            params["attachments"] = arrayOf(mapOf("title" to "详细日志地址", "url" to "$logUrl/logs/all.log"))
         }
 
         if (log.isDebugEnabled) {
@@ -78,12 +76,5 @@ ${message.joinToString("")}
         return result?.code == 0
     }
 
-    private fun getFileName(filesPath: String, index: Int = 0): String {
-        val fileName = "alarm/${formatFileNow()}.${index}.log"
-        return if (File(filesPath, fileName).exists()) {
-            getFileName(filesPath, index + 1)
-        } else {
-            fileName
-        }
-    }
+
 }

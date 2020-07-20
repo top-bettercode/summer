@@ -14,9 +14,11 @@ import ch.qos.logback.core.sift.DefaultDiscriminator
 import ch.qos.logback.core.spi.CyclicBufferTracker
 import ch.qos.logback.core.util.OptionHelper
 import cn.bestwu.logging.RequestLoggingFilter
+import cn.bestwu.logging.formatFileNow
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import org.springframework.web.util.WebUtils
+import java.io.File
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.TimeUnit
 
@@ -25,6 +27,15 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
 
     companion object {
         const val MAX_DELAY_BETWEEN_STATUS_MESSAGES = 1228800 * CoreConstants.MILLIS_IN_ONE_SECOND
+
+        fun getFileName(filesPath: String, index: Int = 0): String {
+            val fileName = "alarm/${formatFileNow()}.${index}.log"
+            return if (File(filesPath, fileName).exists()) {
+                getFileName(filesPath, index + 1)
+            } else {
+                fileName
+            }
+        }
     }
 
     private lateinit var cacheMap: ConcurrentMap<String, Int>

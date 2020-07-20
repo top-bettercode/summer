@@ -14,7 +14,6 @@ public class BearychatProperties {
   private String[] logger = {"root"};
   private String[] ignoredWarnLogger = {};
   private String webhookUrl;
-  private String logUrl;
   private String channel;
   private Long cacheSeconds = 5 * 60L;
   private Integer cyclicBufferSize = 20;
@@ -49,14 +48,6 @@ public class BearychatProperties {
 
   public void setWebhookUrl(String webhookUrl) {
     this.webhookUrl = webhookUrl;
-  }
-
-  public String getLogUrl() {
-    return logUrl;
-  }
-
-  public void setLogUrl(String logUrl) {
-    this.logUrl = logUrl;
   }
 
   public String getChannel() {
