@@ -58,7 +58,8 @@ public class Oauth2SecurityConfiguration {
   @Bean
   public AccessTokenService accessTokenService(ClientDetails clientDetails,
       UserDetailsService userDetailsService,
-      AuthorizationServerTokenServices authorizationServerTokenServices, TokenStore tokenStore) {
+      AuthorizationServerTokenServices authorizationServerTokenServices,
+      @Autowired(required = false) TokenStore tokenStore) {
     return new AccessTokenService(clientDetails, userDetailsService,
         authorizationServerTokenServices, tokenStore);
   }

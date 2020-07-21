@@ -88,9 +88,11 @@ public class AccessTokenService {
   }
 
   public void removeAccessToken(String userName) {
-    for (OAuth2AccessToken oAuth2AccessToken : tokenStore
-        .findTokensByClientIdAndUserName(clientDetails.getClientId(), userName)) {
-      tokenStore.removeAccessToken(oAuth2AccessToken);
+    if (tokenStore != null) {
+      for (OAuth2AccessToken oAuth2AccessToken : tokenStore
+          .findTokensByClientIdAndUserName(clientDetails.getClientId(), userName)) {
+        tokenStore.removeAccessToken(oAuth2AccessToken);
+      }
     }
   }
 
