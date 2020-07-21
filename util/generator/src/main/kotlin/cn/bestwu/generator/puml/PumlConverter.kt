@@ -192,19 +192,19 @@ object PumlConverter {
                             "NUMBER" -> {
                                 if (it.decimalDigits == 0) {
                                     when (it.columnSize) {
-                                        in 1..3 -> {
+                                        in 1..4 -> {
                                             it.typeName = "TINYINT"
                                         }
-                                        in 4..5 -> {
+                                        in 5..6 -> {
                                             it.typeName = "SMALLINT"
                                         }
-                                        in 6..7 -> {
+                                        in 7..9 -> {
                                             it.typeName = "MEDUIMINT"
                                         }
-                                        in 8..10 -> {
+                                        in 10..11 -> {
                                             it.typeName = "INT"
                                         }
-                                        in 11..20 -> {
+                                        in 12..20 -> {
                                             it.typeName = "BIGINT"
                                         }
                                         else -> it.typeName = "DECIMAL"
