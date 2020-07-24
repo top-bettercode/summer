@@ -51,9 +51,11 @@ public class Setting {
    */
   public void put(String key, Object value) {
     if (value == null) {
-      source.remove(key);
+      remove(key);
     } else {
-      source.put(key, value);
+      if (!value.equals(get(key))) {
+        source.put(key, value);
+      }
     }
   }
 
@@ -63,7 +65,9 @@ public class Setting {
    * @param key 配置项
    */
   public void remove(String key) {
-    source.remove(key);
+    if (get(key) != null) {
+      source.remove(key);
+    }
   }
 
   /**
