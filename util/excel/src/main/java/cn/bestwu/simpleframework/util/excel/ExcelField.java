@@ -457,13 +457,13 @@ public class ExcelField<T, P> {
   //--------------------------------------------
 
 
-  private String resolvePropertyName(String getMethodName) {
-    if (getMethodName.startsWith("get")) {
-      getMethodName = getMethodName.substring(3);
-    } else if (getMethodName.startsWith("is")) {
-      getMethodName = getMethodName.substring(2);
+  private String resolvePropertyName(String methodName) {
+    if (methodName.startsWith("get")) {
+      methodName = methodName.substring(3);
+    } else if (methodName.startsWith("is")) {
+      methodName = methodName.substring(2);
     }
-    return StringUtils.uncapitalize(getMethodName);
+    return StringUtils.uncapitalize(methodName);
   }
 
   //--------------------------------------------
