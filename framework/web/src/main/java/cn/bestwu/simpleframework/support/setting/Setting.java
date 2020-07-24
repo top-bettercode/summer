@@ -121,9 +121,12 @@ public class Setting {
   private Object get(String name, Object o, Method method, Object[] objects,
       MethodProxy methodProxy, String propertyName) throws Throwable {
     propertyName = StringUtils.uncapitalize(propertyName);
-    Object result = get(name + "." + propertyName);
+    String key = name + "." + propertyName;
+    Object result = get(key);
     if (result == null) {
-      return methodProxy.invokeSuper(o, objects);
+      result = methodProxy.invokeSuper(o, objects);
+      put(key, result);
+      return result;
     } else {
       return conversionService.convert(result, method.getReturnType());
     }
