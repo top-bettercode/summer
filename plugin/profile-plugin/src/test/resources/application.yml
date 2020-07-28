@@ -2,13 +2,4 @@ spring.profiles.active: beta
 server:
   session:
     timeout: 1800
----
-spring:
-  profiles: alpha
-server:
-  context-path: /ebs
----
-spring:
-  profiles: beta
-server:
-  context-path: /
+

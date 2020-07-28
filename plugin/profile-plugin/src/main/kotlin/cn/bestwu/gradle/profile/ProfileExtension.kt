@@ -21,6 +21,22 @@ internal val Project.profileFiles: Array<File>
         array.add(File(gradle.gradleUserHomeDir, "gradle.properties"))
         array.add(rootProject.file("gradle.properties"))
         configProject { project ->
+            val defaultConfigYmlFile = project.file("${profile.configDir}/$defaultConfigName.yml")
+            if (defaultConfigYmlFile.exists()) {
+                array.add(defaultConfigYmlFile)
+            }
+            val activeYmlFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
+            if (activeYmlFile.exists()) {
+                array.add(activeYmlFile)
+            }
+            val defaultConfigYamlFile = project.file("${profile.configDir}/$defaultConfigName.yaml")
+            if (defaultConfigYamlFile.exists()) {
+                array.add(defaultConfigYamlFile)
+            }
+            val activeYamlFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
+            if (activeYamlFile.exists()) {
+                array.add(activeYamlFile)
+            }
             val defaultConfigFile = project.file("${profile.configDir}/$defaultConfigName.properties")
             if (defaultConfigFile.exists()) {
                 array.add(defaultConfigFile)

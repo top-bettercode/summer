@@ -59,6 +59,7 @@ allprojects {
 
             dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.15.1")
 
+            dependency("org.yaml:snakeyaml:1.26")
             dependency("com.google.guava:guava:29.0-jre")
             dependency("org.dom4j:dom4j:2.1.1")
             dependency("org.atteo:evo-inflector:1.2.2")

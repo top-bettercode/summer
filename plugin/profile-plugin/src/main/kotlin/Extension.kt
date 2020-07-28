@@ -2,6 +2,7 @@ import cn.bestwu.gradle.profile.ProfileExtension
 import cn.bestwu.gradle.profile.configProject
 import cn.bestwu.gradle.profile.findActive
 import org.gradle.api.Project
+import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.util.*
 
@@ -23,6 +24,22 @@ val Project.profileProperties: Properties
 
         val profile = extensions.getByType(ProfileExtension::class.java)
         configProject { project ->
+            val defaultConfigYmlFile = project.file("${profile.configDir}/$defaultConfigName.yml")
+            if (defaultConfigYmlFile.exists()) {
+                props.putAll(parseYml(Yaml().loadAs(defaultConfigYmlFile.inputStream(), Map::class.java)))
+            }
+            val activeYmlFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
+            if (activeYmlFile.exists()) {
+                props.putAll(parseYml(Yaml().loadAs(activeYmlFile.inputStream(), Map::class.java)))
+            }
+            val defaultConfigYamlFile = project.file("${profile.configDir}/$defaultConfigName.yaml")
+            if (defaultConfigYamlFile.exists()) {
+                props.putAll(parseYml(Yaml().loadAs(defaultConfigYamlFile.inputStream(), Map::class.java)))
+            }
+            val activeYamlFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
+            if (activeYamlFile.exists()) {
+                props.putAll(parseYml(Yaml().loadAs(activeYamlFile.inputStream(), Map::class.java)))
+            }
             val defaultConfigFile = project.file("${profile.configDir}/$defaultConfigName.properties")
             if (defaultConfigFile.exists()) {
                 props.load(defaultConfigFile.inputStream())
@@ -55,6 +72,19 @@ val Project.profileProperties: Properties
         }
         return props
     }
+
+private fun parseYml(map: Map<*, *>, result: MutableMap<Any, Any> = mutableMapOf(), prefix: String = ""): MutableMap<Any, Any> {
+    map.forEach { (k, u) ->
+        if (u != null) {
+            if (u is Map<*, *>) {
+                parseYml(u, result, "$prefix$k.")
+            } else {
+                result["$prefix$k"] = u
+            }
+        }
+    }
+    return result
+}
 
 val Project.profilesActive: String
     get() {
