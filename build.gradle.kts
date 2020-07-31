@@ -69,8 +69,8 @@ allprojects {
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
             dependency("mysql:mysql-connector-java:8.0.19")
 
-            dependency("org.asciidoctor:asciidoctorj:2.2.0")
-            dependency("org.asciidoctor:asciidoctorj-diagram:2.0.1")
+            dependency("org.asciidoctor:asciidoctorj:2.4.0")
+            dependency("org.asciidoctor:asciidoctorj-diagram:2.0.2")
             dependency("org.asciidoctor:asciidoctorj-pdf:1.5.3")
 
 
