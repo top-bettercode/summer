@@ -35,7 +35,7 @@ import kotlin.math.max
 @RequestMapping(value = ["/logs"], name = "日志")
 class LogsController(private val loggingFilesPath: String, environment: Environment, private val websocketProperties: WebsocketProperties) {
 
-    private val useWebSocket: Boolean = ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && "true" == environment.getProperty("logging.websocket.enabled")
+    private val useWebSocket: Boolean = ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && ("true" == environment.getProperty("logging.websocket.enabled") || environment.getProperty("logging.websocket.enabled").isNullOrBlank())
     private val loggerContext: LoggerContext
         get() {
             val factory = StaticLoggerBinder.getSingleton().loggerFactory
