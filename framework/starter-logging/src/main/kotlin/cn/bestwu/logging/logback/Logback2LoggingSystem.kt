@@ -99,7 +99,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 val loggerNames = slackProperties.logger
                 loggerNames.map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
-                            val slackAppender = SlackAppender(slackProperties, warnSubject, logsPath,logUrl)
+                            val slackAppender = SlackAppender(slackProperties, warnSubject, logsPath, logUrl)
                             slackAppender.context = context
                             slackAppender.start()
                             it.addAppender(slackAppender)
@@ -116,7 +116,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 val loggerNames = bearychatProperties.logger
                 loggerNames.map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
-                            val slackAppender = BearychatAppender(bearychatProperties, warnSubject, logsPath,logUrl)
+                            val slackAppender = BearychatAppender(bearychatProperties, warnSubject, logsPath, logUrl)
                             slackAppender.context = context
                             slackAppender.start()
                             it.addAppender(slackAppender)
@@ -127,7 +127,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         }
         val rootLevel = environment.getProperty("logging.level.root")
         //websocket log
-        if (ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && "true" == environment.getProperty("logging.websocket.enabled")) {
+        if (ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && ("true" == environment.getProperty("logging.websocket.enabled") || environment.getProperty("logging.websocket.enabled").isNullOrBlank())) {
             try {
                 val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
                 if (rootLevel != null) {
