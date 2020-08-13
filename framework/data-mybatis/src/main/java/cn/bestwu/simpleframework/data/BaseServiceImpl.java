@@ -121,7 +121,7 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, 
     Page<T> page = new Page<>();
     page.setRecords(list);
     if (list instanceof PaginationList) {
-      Pagination pagination = ((PaginationList) list).getPagination();
+      Pagination pagination = ((PaginationList<?>) list).getPagination();
       page.setCurrent(pagination.getCurrent());
       page.setSize(pagination.getSize());
       page.setTotal(pagination.getTotal());
