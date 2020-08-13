@@ -192,7 +192,9 @@ public class ExcelField<T, P> {
         .property(MoneyUtil::toCent);
   }
 
-  public ExcelField<T, P> millis() {
+  public ExcelField<T, P> millis(String pattern) {
+    this.pattern = pattern;
+    this.dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
     return cell((property) -> LocalDateTimeHelper.of((Long) property).format(dateTimeFormatter))
         .property((cellValue) -> LocalDateTimeHelper
             .of(DateUtil.getJavaDate(Double.parseDouble(cellValue))).toMillis());
@@ -407,9 +409,7 @@ public class ExcelField<T, P> {
     };
 
     cellConverter = (property) -> {
-      if (property == null) {
-        return nullValue;
-      } else if (propertyType.equals(String.class) || ClassUtils.isPrimitiveOrWrapper(propertyType)
+      if (propertyType.equals(String.class) || ClassUtils.isPrimitiveOrWrapper(propertyType)
           || propertyType.equals(Date.class)) {
         return property;
       } else if (propertyType.equals(BigDecimal.class)) {
@@ -525,7 +525,11 @@ public class ExcelField<T, P> {
     if (property == null) {
       property = defaultValue;
     }
-    return cellConverter.convert(property);
+    if (property == null) {
+      return nullValue;
+    } else {
+      return cellConverter.convert(property);
+    }
   }
 
   /**
