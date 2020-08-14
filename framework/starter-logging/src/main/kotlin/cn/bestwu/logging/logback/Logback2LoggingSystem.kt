@@ -334,7 +334,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val logFile = filesProperties.path + File.separator + "marker" + File.separator + marker
+        val logFile = filesProperties.path + File.separator + marker + File.separator + marker
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
 
