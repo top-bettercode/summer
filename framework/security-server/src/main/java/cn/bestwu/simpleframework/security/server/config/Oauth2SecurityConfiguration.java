@@ -39,7 +39,7 @@ public class Oauth2SecurityConfiguration {
 
   @Bean
   public WebResponseExceptionTranslator<OAuth2Exception> webResponseExceptionTranslator(
-      @Value("${app.web.ok.enable:false}") boolean okEnable) {
+      @Value("${app.web.ok.enable:true}") boolean okEnable) {
     CustomWebResponseExceptionTranslator exceptionTranslator = new CustomWebResponseExceptionTranslator(
         okEnable, messageSource);
     tokenEndpoint.setProviderExceptionHandler(exceptionTranslator);

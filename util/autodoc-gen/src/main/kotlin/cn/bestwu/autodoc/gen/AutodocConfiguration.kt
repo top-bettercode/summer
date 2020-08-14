@@ -55,7 +55,7 @@ class AutodocConfiguration {
     }
 
     @Bean
-    fun autodocHandler(signProperties: ApiSignProperties, @Value("\${app.web.wrap.enable:false}") wrap: Boolean): AutodocHandler {
+    fun autodocHandler(signProperties: ApiSignProperties, @Value("\${app.web.wrap.enable:true}") wrap: Boolean): AutodocHandler {
         return AutodocHandler(genProperties, signProperties, wrap)
     }
 
