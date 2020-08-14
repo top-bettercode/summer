@@ -301,8 +301,10 @@ public class FrameworkMvcConfiguration {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-      return "true".equals(context.getEnvironment().getProperty("app.web.wrap.enable")) || "true"
-          .equals(context.getEnvironment().getProperty("app.web.ok.enable"));
+      String wrapEnable = context.getEnvironment().getProperty("app.web.wrap.enable");
+      String okEnable = context.getEnvironment().getProperty("app.web.ok.enable");
+      return wrapEnable == null || "true".equals(wrapEnable) || okEnable == null || "true"
+          .equals(okEnable);
     }
   }
 

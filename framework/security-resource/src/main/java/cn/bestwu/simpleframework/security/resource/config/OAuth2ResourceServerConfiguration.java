@@ -28,7 +28,7 @@ public class OAuth2ResourceServerConfiguration {
 
   public OAuth2ResourceServerConfiguration(
       RequestMappingHandlerAdapter requestMappingHandlerAdapter,
-      @Value("${app.web.ok.enable:false}") boolean okEnable,
+      @Value("${app.web.ok.enable:true}") boolean okEnable,
       @Autowired(required = false) WebResponseExceptionTranslator<OAuth2Exception> webResponseExceptionTranslator,
       MessageSource messageSource) {
     this.requestMappingHandlerAdapter = requestMappingHandlerAdapter;
