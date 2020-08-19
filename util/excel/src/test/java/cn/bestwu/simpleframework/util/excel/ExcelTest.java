@@ -36,10 +36,13 @@ public class ExcelTest {
   }
 
   private final ExcelField<DataBean, ?>[] excelFields = ArrayUtil.of(
-      ExcelField.of("编码", DataBean::getA),
-      ExcelField.of("名称", from -> new String[]{"abc", "1"}),
-      ExcelField.of("描述", DataBean::getDesc)
-//      new ExcelField<DataBean, String>().propertySetter(DataBean::setCode).title("编码"),
+      ExcelField.of("编码", DataBean::getIntCode),
+      ExcelField.of("编码", DataBean::getInteger),
+      ExcelField.of("编码", DataBean::getLongl).millis(),
+      ExcelField.of("编码", DataBean::getDoublel),
+      ExcelField.of("编码", DataBean::getFloatl),
+      ExcelField.of("编码", DataBean::getName),
+      ExcelField.of("编码", DataBean::getDate)
   );
 
   @Test
@@ -47,7 +50,8 @@ public class ExcelTest {
 
     List<DataBean> list = new ArrayList<>();
     for (int i = 0; i < 8; i++) {
-      list.add(new DataBean(i + 1L, "name" + i, "中文中文中文中文中文中文中文中文" + i));
+      DataBean bean = new DataBean();
+      list.add(bean);
     }
     long s = System.currentTimeMillis();
     new ExcelExport(new FileOutputStream("build/export.xlsx"), "表格")
@@ -59,10 +63,10 @@ public class ExcelTest {
 
   private final ExcelField<DataBean, ?>[] excelMergeFields = ArrayUtil.of(
       ExcelField.mergeId(DataBean::getIntCode),
-      ExcelField.of("编码", DataBean::getA),
-      ExcelField.of("编码B", DataBean::getB).merge(),
+      ExcelField.of("编码", DataBean::getIntCode),
+      ExcelField.of("编码B", DataBean::getInteger).merge(),
       ExcelField.of("名称", from -> new String[]{"abc", "1"}),
-      ExcelField.of("描述", DataBean::getDesc),
+      ExcelField.of("描述", DataBean::getName),
       ExcelField.of("描述C", DataBean::getDate).merge()
 //      new ExcelField<DataBean, String>().propertySetter(DataBean::setCode).title("编码"),
   );
@@ -71,10 +75,7 @@ public class ExcelTest {
   public void testMergeExport() throws IOException {
     List<DataBean> list = new ArrayList<>();
     for (int i = 0; i < 20; i++) {
-      DataBean bean = new DataBean(i + 1L, "name" + i, "中文中文中文中文中文中文中文中文" + i);
-      bean.setIntCode(i / 3);
-      bean.setB(i / 3 + 1);
-      bean.setC(i / 3 + 2);
+      DataBean bean = new DataBean();
       list.add(bean);
     }
     long s = System.currentTimeMillis();
@@ -105,23 +106,13 @@ public class ExcelTest {
   public static class DataBean {
 
     private Integer intCode = 1;
-    private String code = "";
-    private String name;
-    private String desc;
-    private String remark;
-    private Long a;
-    private Integer b;
-    private Integer c;
+    private Integer integer=2;
+    private Long longl=new Date().getTime();
+    private double doublel=4.4;
+    private float floatl=5.5f;
+    private String name="名称";
     private Date date = new Date();
 
-    public DataBean() {
-    }
-
-    public DataBean(Long a, String name, String desc) {
-      this.a = a;
-      this.name = name;
-      this.desc = desc;
-    }
 
     public Integer getIntCode() {
       return intCode;
@@ -131,12 +122,36 @@ public class ExcelTest {
       this.intCode = intCode;
     }
 
-    public String getCode() {
-      return code;
+    public Integer getInteger() {
+      return integer;
     }
 
-    public void setCode(String code) {
-      this.code = code;
+    public void setInteger(Integer integer) {
+      this.integer = integer;
+    }
+
+    public Long getLongl() {
+      return longl;
+    }
+
+    public void setLongl(Long longl) {
+      this.longl = longl;
+    }
+
+    public double getDoublel() {
+      return doublel;
+    }
+
+    public void setDoublel(double doublel) {
+      this.doublel = doublel;
+    }
+
+    public float getFloatl() {
+      return floatl;
+    }
+
+    public void setFloatl(float floatl) {
+      this.floatl = floatl;
     }
 
     public String getName() {
@@ -147,52 +162,12 @@ public class ExcelTest {
       this.name = name;
     }
 
-    public String getDesc() {
-      return desc;
-    }
-
-    public void setDesc(String desc) {
-      this.desc = desc;
-    }
-
-    public Long getA() {
-      return a;
-    }
-
-    public void setA(Long a) {
-      this.a = a;
-    }
-
-    public Integer getB() {
-      return b;
-    }
-
-    public void setB(Integer b) {
-      this.b = b;
-    }
-
-    public Integer getC() {
-      return c;
-    }
-
-    public void setC(Integer c) {
-      this.c = c;
-    }
-
     public Date getDate() {
       return date;
     }
 
     public void setDate(Date date) {
       this.date = date;
-    }
-
-    public String getRemark() {
-      return remark;
-    }
-
-    public void setRemark(String remark) {
-      this.remark = remark;
     }
   }
 }

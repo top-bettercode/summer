@@ -20,6 +20,17 @@ object MoneyUtil {
     }
 
     /**
+     * @param yuan 单位元
+     * @return 单位分
+     */
+    @JvmStatic
+    fun toCent(yuan: BigDecimal): Long {
+        return yuan.setScale(2, BigDecimal.ROUND_HALF_UP)
+                .multiply(BigDecimal(100)).toLong()
+    }
+
+
+    /**
      * @param cent 单位分
      * @return 单位元
      */
