@@ -11,6 +11,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,7 +21,8 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import org.apache.poi.ss.usermodel.DateUtil;
+import org.dhatim.fastexcel.reader.Cell;
+import org.dhatim.fastexcel.reader.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -33,6 +36,11 @@ import org.springframework.util.StringUtils;
  * @param <T> 实体类型
  */
 public class ExcelField<T, P> {
+
+  /**
+   * 默认时间格式
+   */
+  private static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm";
 
   /**
    * 导出字段标题
@@ -94,7 +102,7 @@ public class ExcelField<T, P> {
   /**
    * 单元格值转属性字段值
    */
-  private ExcelConverter<String, Object> propertyConverter;
+  private ExcelConverter<Object, Object> propertyConverter;
 
   /**
    * 属性字段值转单元格值
@@ -117,7 +125,6 @@ public class ExcelField<T, P> {
    * 日期格式
    */
   protected DateTimeFormatter dateTimeFormatter;
-
   //--------------------------------------------
 
   /**
@@ -188,23 +195,19 @@ public class ExcelField<T, P> {
   //--------------------------------------------
 
   public ExcelField<T, P> yuan() {
-    return cell((property) -> MoneyUtil.toYun((Long) property).toString())
-        .property(MoneyUtil::toCent);
+    return cell((property) -> MoneyUtil.toYun((Long) property).toPlainString())
+        .property(cent -> MoneyUtil.toCent((BigDecimal) cent));
+  }
+
+  public ExcelField<T, P> millis() {
+    return millis(DEFAULT_DATE_PATTERN);
   }
 
   public ExcelField<T, P> millis(String pattern) {
     this.pattern = pattern;
     this.dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
-    return cell((property) -> LocalDateTimeHelper.of((Long) property).format(dateTimeFormatter))
-        .property((cellValue) -> LocalDateTimeHelper
-            .of(DateUtil.getJavaDate(Double.parseDouble(cellValue))).toMillis());
+    return this;
   }
-
-
-  public ExcelField<T, P> bool() {
-    return cell((property) -> (Boolean) property ? "是" : "否").property(BooleanUtil::toBoolean);
-  }
-
 
   public ExcelField<T, P> code() {
     return code(propertyName);
@@ -212,7 +215,7 @@ public class ExcelField<T, P> {
 
   public ExcelField<T, P> code(String codeType) {
     return cell((property) -> CodeSerializer.getName(codeType, (Serializable) property)).property(
-        (cellValue) -> getCode(codeType, cellValue));
+        (cellValue) -> getCode(codeType, String.valueOf(cellValue)));
   }
 
 
@@ -222,7 +225,7 @@ public class ExcelField<T, P> {
 
   public ExcelField<T, P> stringCode(String codeType) {
     return cell((property) -> {
-      String code = (String) property;
+      String code = String.valueOf(property);
       if (code.contains(",")) {
         String[] split = code.split(",");
         return StringUtils.arrayToCommaDelimitedString(
@@ -231,7 +234,7 @@ public class ExcelField<T, P> {
       } else {
         return CodeSerializer.getName(codeType, code);
       }
-    }).property((cellValue) -> getCode(codeType, cellValue));
+    }).property((cellValue) -> getCode(codeType, String.valueOf(cellValue)));
   }
 
   //--------------------------------------------
@@ -269,7 +272,7 @@ public class ExcelField<T, P> {
     return this;
   }
 
-  public ExcelField<T, P> property(ExcelConverter<String, Object> propertyConverter) {
+  public ExcelField<T, P> property(ExcelConverter<Object, Object> propertyConverter) {
     this.propertyConverter = propertyConverter;
     return this;
   }
@@ -379,40 +382,66 @@ public class ExcelField<T, P> {
 
   private void init() {
     propertyConverter = (cellValue) -> {
-      try {
-        if (propertyType == String.class) {
-          return cellValue;
-        } else if (propertyType == Integer.class) {
-          return Double.valueOf(cellValue).intValue();
-        } else if (propertyType == Long.class) {
-          return Double.valueOf(cellValue).longValue();
-        } else if (propertyType == BigDecimal.class) {
-          return new BigDecimal(cellValue);
-        } else if (propertyType == Double.class) {
-          return Double.valueOf(cellValue);
-        } else if (propertyType == Float.class) {
-          return Float.valueOf(cellValue);
-        } else if (propertyType == Date.class) {
-          Date date;
-          try {
-            date = DateUtil.getJavaDate(Double.parseDouble(cellValue));
-          } catch (NumberFormatException e) {
-            date = LocalDateTimeHelper.parse(cellValue, dateTimeFormatter).toDate();
+      if (propertyType == String.class) {
+        return String.valueOf(cellValue);
+      } else if (propertyType == boolean.class || propertyType == Boolean.class) {
+        return cellValue instanceof Boolean ? cellValue
+            : BooleanUtil.toBoolean(String.valueOf(cellValue));
+      } else if (propertyType == Integer.class || propertyType == int.class) {
+        return ((BigDecimal) cellValue).intValue();
+      } else if (propertyType == Long.class || propertyType == long.class) {
+        if (dateTimeFormatter == null) {
+          return ((BigDecimal) cellValue).longValue();
+        } else {
+          if (cellValue instanceof LocalDateTime) {
+            return LocalDateTimeHelper.of((LocalDateTime) cellValue).toMillis();
+          } else {
+            return LocalDateTimeHelper.parse(String.valueOf(cellValue), dateTimeFormatter)
+                .toMillis();
           }
-          return date;
         }
-      } catch (NumberFormatException e) {
-        throw new IllegalArgumentException("类型不正确,期待输入数字类型");
+      } else if (propertyType == BigDecimal.class) {
+        return cellValue;
+      } else if (propertyType == Double.class || propertyType == double.class) {
+        return ((BigDecimal) cellValue).doubleValue();
+      } else if (propertyType == Float.class || propertyType == float.class) {
+        return ((BigDecimal) cellValue).floatValue();
+      } else if (propertyType == Date.class) {
+        if (cellValue instanceof LocalDateTime) {
+          return LocalDateTimeHelper.of((LocalDateTime) cellValue).toDate();
+        } else {
+          return LocalDateTimeHelper.parse(String.valueOf(cellValue), dateTimeFormatter).toDate();
+        }
+      } else if (propertyType == LocalDateTime.class) {
+        if (cellValue instanceof LocalDateTime) {
+          return cellValue;
+        } else {
+          return LocalDateTimeHelper.parse(String.valueOf(cellValue), dateTimeFormatter)
+              .toLocalDateTime();
+        }
+      } else if (propertyType == LocalDate.class) {
+        if (cellValue instanceof LocalDateTime) {
+          return LocalDateTimeHelper.of((LocalDateTime) cellValue).toLocalDate();
+        } else {
+          return LocalDateTimeHelper.parse(String.valueOf(cellValue), dateTimeFormatter)
+              .toLocalDate();
+        }
       }
 
       throw new IllegalArgumentException("不支持的数据类型:" + propertyType.getName());
     };
 
     cellConverter = (property) -> {
-      if (propertyType.equals(String.class) || ClassUtils.isPrimitiveOrWrapper(propertyType)
-          || propertyType.equals(Date.class)) {
+      if (propertyType == String.class || propertyType == Date.class) {
         return property;
-      } else if (propertyType.equals(BigDecimal.class)) {
+      } else if (propertyType == boolean.class || propertyType == Boolean.class) {
+        return (Boolean) property ? "是" : "否";
+      } else if (dateTimeFormatter != null && (propertyType == Long.class
+          || propertyType == long.class)) {
+        return LocalDateTimeHelper.of((Long) property).format(dateTimeFormatter);
+      } else if (ClassUtils.isPrimitiveOrWrapper(propertyType)) {
+        return property;
+      } else if (propertyType == BigDecimal.class) {
         return ((BigDecimal) property).toPlainString();
       } else if (propertyType.isArray()) {
         int length = Array.getLength(property);
@@ -432,18 +461,19 @@ public class ExcelField<T, P> {
     };
 
     if (this.pattern == null) {
-      if (propertyType.equals(Integer.class)) {
+      if (propertyType == Integer.class || propertyType == int.class) {
         this.pattern = "0";
-      } else if (propertyType.equals(Long.class)) {
+      } else if (propertyType == Long.class || propertyType == long.class) {
         this.pattern = "0";
       } else if (propertyType.equals(BigDecimal.class)) {
         this.pattern = "0.00";
-      } else if (propertyType.equals(Double.class)) {
+      } else if (propertyType == Double.class || propertyType == double.class) {
         this.pattern = "0.00";
-      } else if (propertyType.equals(Float.class)) {
+      } else if (propertyType == Float.class || propertyType == float.class) {
         this.pattern = "0.00";
-      } else if (propertyType.equals(Date.class)) {
-        this.pattern = "yyyy-MM-dd HH:mm";
+      } else if (propertyType == Date.class || propertyType == LocalDate.class
+          || propertyType == LocalDateTime.class) {
+        this.pattern = DEFAULT_DATE_PATTERN;
       } else {
         this.pattern = "@";
       }
@@ -516,6 +546,40 @@ public class ExcelField<T, P> {
 
   //--------------------------------------------
 
+
+  /**
+   * 获取单元格值
+   *
+   * @param row    获取的行
+   * @param column 获取单元格列号
+   * @return 单元格值
+   */
+  Object getCellValue(Row row, int column) {
+    try {
+      Cell cell = row.getCell(column);
+      if (cell != null) {
+        switch (cell.getType()) {
+          case STRING:
+            return row.getCellAsString(column).orElse(null);
+          case NUMBER:
+            if (dateTimeFormatter != null) {
+              return row.getCellAsDate(column).orElse(null);
+            } else {
+              return row.getCellAsNumber(column).orElse(null);
+            }
+          case BOOLEAN:
+            return row.getCellAsBoolean(column).orElse(null);
+          case FORMULA:
+          case EMPTY:
+          case ERROR:
+            return row.getCell(column).getValue();
+        }
+      }
+    } catch (IndexOutOfBoundsException ignored) {
+    }
+    return null;
+  }
+
   /**
    * @param obj 实体对象
    * @return 单元格值
@@ -532,22 +596,36 @@ public class ExcelField<T, P> {
     }
   }
 
+  boolean isEmptyCell(Object cellValue) {
+    return cellValue == null || (cellValue instanceof CharSequence && !StringUtils.hasText(
+        (CharSequence) cellValue));
+  }
+
+  /**
+   * @param cellValue 单元格值
+   * @return 属性
+   */
+  @SuppressWarnings("unchecked")
+  P toProperty(Object cellValue) {
+    P property;
+    if (isEmptyCell(cellValue)) {
+      property = defaultValue;
+    } else {
+      property = (P) propertyConverter.convert(cellValue);
+    }
+    return property;
+  }
+
+
   /**
    * @param obj            实体对象
    * @param cellValue      单元格值
    * @param validator      参数验证
    * @param validateGroups 参数验证组
    */
-  @SuppressWarnings("unchecked")
-  void setProperty(T obj, String cellValue, Validator validator,
+  void setProperty(T obj, Object cellValue, Validator validator,
       Class<?>[] validateGroups) {
-    P property;
-    if (!StringUtils.hasText(cellValue)) {
-      property = defaultValue;
-    } else {
-      property = (P) propertyConverter.convert(cellValue);
-    }
-    propertySetter.set(obj, property);
+    propertySetter.set(obj, toProperty(cellValue));
     if (propertyName != null) {
       Set<ConstraintViolation<Object>> constraintViolations = validator
           .validateProperty(obj, propertyName, validateGroups);

@@ -11,13 +11,11 @@ import java.util.stream.Collectors;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-import org.dhatim.fastexcel.reader.Cell;
 import org.dhatim.fastexcel.reader.ReadableWorkbook;
 import org.dhatim.fastexcel.reader.Row;
 import org.dhatim.fastexcel.reader.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -218,13 +216,13 @@ public class ExcelImport {
     rowNum = row.getRowNum();
 
     for (ExcelField<F, ?> excelField : excelFields) {
-      Object val = getCellValue(row, column++);
-      String valStr = val != null ? String.valueOf(val).trim() : null;
-      notAllBlank = notAllBlank || StringUtils.hasText(valStr);
+      Object cellValue = excelField.getCellValue(row, column++);
+      notAllBlank = notAllBlank || !excelField.isEmptyCell(cellValue);
       try {
-        excelField.setProperty(o, valStr, validator, validateGroups);
+        excelField.setProperty(o, cellValue, validator, validateGroups);
       } catch (Exception e) {
-        rowErrors.add(new CellError(rowNum, column - 1, excelField.title(), valStr, e));
+        rowErrors.add(new CellError(rowNum, column - 1, excelField.title(),
+            (cellValue == null ? null : String.valueOf(cellValue)), e));
       }
     }
     if (notAllBlank) {
@@ -247,33 +245,5 @@ public class ExcelImport {
     return this;
   }
 
-  /**
-   * 获取单元格值
-   *
-   * @param row    获取的行
-   * @param column 获取单元格列号
-   * @return 单元格值
-   */
-  public static Object getCellValue(Row row, int column) {
-    try {
-      Cell cell = row.getCell(column);
-      if (cell != null) {
-        switch (cell.getType()) {
-          case STRING:
-            return row.getCellAsString(column).orElse(null);
-          case NUMBER:
-            return row.getCellAsNumber(column).orElse(null);
-          case BOOLEAN:
-            return row.getCellAsBoolean(column).orElse(null);
-          case EMPTY:
-            return null;
-          case FORMULA:
-          case ERROR:
-            return row.getCellText(column);
-        }
-      }
-    } catch (IndexOutOfBoundsException ignored) {
-    }
-    return null;
-  }
+
 }
