@@ -36,8 +36,18 @@ object MoneyUtil {
      */
     @JvmStatic
     fun toYun(cent: Long): BigDecimal {
-        return toYun(BigDecimal(cent), 2)
+        return toYun(cent, 2)
     }
+
+    /**
+     * @param cent 单位分
+     * @return 单位元
+     */
+    @JvmStatic
+    fun toYun(cent: Long, scale: Int): BigDecimal {
+        return toYun(BigDecimal(cent), scale)
+    }
+
 
     /**
      * @param cent 单位分

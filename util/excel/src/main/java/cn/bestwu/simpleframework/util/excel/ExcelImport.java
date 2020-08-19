@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
+import org.dhatim.fastexcel.reader.Cell;
 import org.dhatim.fastexcel.reader.ReadableWorkbook;
 import org.dhatim.fastexcel.reader.Row;
 import org.dhatim.fastexcel.reader.Sheet;
@@ -90,6 +91,15 @@ public class ExcelImport {
 
   public int getRowNum() {
     return rowNum;
+  }
+
+  /**
+   * @param validateGroups 验证 groups
+   * @return ExcelImport this
+   */
+  public ExcelImport validateGroups(Class<?>... validateGroups) {
+    this.validateGroups = validateGroups;
+    return this;
   }
 
   /**
@@ -216,7 +226,7 @@ public class ExcelImport {
     rowNum = row.getRowNum();
 
     for (ExcelField<F, ?> excelField : excelFields) {
-      Object cellValue = excelField.getCellValue(row, column++);
+      Object cellValue = getCellValue(excelField, row, column++);
       notAllBlank = notAllBlank || !excelField.isEmptyCell(cellValue);
       try {
         excelField.setProperty(o, cellValue, validator, validateGroups);
@@ -236,14 +246,38 @@ public class ExcelImport {
     }
   }
 
-  /**
-   * @param validateGroups 验证 groups
-   * @return ExcelImport this
-   */
-  public ExcelImport validateGroups(Class<?>... validateGroups) {
-    this.validateGroups = validateGroups;
-    return this;
-  }
 
+  /**
+   * 获取单元格值
+   *
+   * @param row    获取的行
+   * @param column 获取单元格列号
+   * @return 单元格值
+   */
+  private Object getCellValue(ExcelField<?, ?> excelField, Row row, int column) {
+    try {
+      Cell cell = row.getCell(column);
+      if (cell != null) {
+        switch (cell.getType()) {
+          case STRING:
+            return row.getCellAsString(column).orElse(null);
+          case NUMBER:
+            if (excelField.isDateField()) {
+              return row.getCellAsDate(column).orElse(null);
+            } else {
+              return row.getCellAsNumber(column).orElse(null);
+            }
+          case BOOLEAN:
+            return row.getCellAsBoolean(column).orElse(null);
+          case FORMULA:
+          case EMPTY:
+          case ERROR:
+            return row.getCell(column).getValue();
+        }
+      }
+    } catch (IndexOutOfBoundsException ignored) {
+    }
+    return null;
+  }
 
 }

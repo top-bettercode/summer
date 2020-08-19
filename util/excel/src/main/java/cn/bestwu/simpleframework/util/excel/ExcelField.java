@@ -21,8 +21,6 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import org.dhatim.fastexcel.reader.Cell;
-import org.dhatim.fastexcel.reader.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -195,7 +193,11 @@ public class ExcelField<T, P> {
   //--------------------------------------------
 
   public ExcelField<T, P> yuan() {
-    return cell((property) -> MoneyUtil.toYun((Long) property).toPlainString())
+    return yuan(2);
+  }
+
+  public ExcelField<T, P> yuan(int scale) {
+    return cell((property) -> MoneyUtil.toYun((Long) property, scale).toPlainString())
         .property(cent -> MoneyUtil.toCent((BigDecimal) cent));
   }
 
@@ -381,6 +383,29 @@ public class ExcelField<T, P> {
 
 
   private void init() {
+    if (this.pattern == null) {
+      if (propertyType == Integer.class || propertyType == int.class) {
+        this.pattern = "0";
+      } else if (propertyType == Long.class || propertyType == long.class) {
+        this.pattern = "0";
+      } else if (propertyType.equals(BigDecimal.class)) {
+        this.pattern = "0.00";
+      } else if (propertyType == Double.class || propertyType == double.class) {
+        this.pattern = "0.00";
+      } else if (propertyType == Float.class || propertyType == float.class) {
+        this.pattern = "0.00";
+      } else if (propertyType == Date.class || propertyType == LocalDate.class
+          || propertyType == LocalDateTime.class) {
+        this.pattern = DEFAULT_DATE_PATTERN;
+      } else {
+        this.pattern = "@";
+      }
+    }
+
+    if (dateTimeFormatter == null && propertyType == Date.class) {
+      dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+    }
+
     propertyConverter = (cellValue) -> {
       if (propertyType == String.class) {
         return String.valueOf(cellValue);
@@ -390,15 +415,15 @@ public class ExcelField<T, P> {
       } else if (propertyType == Integer.class || propertyType == int.class) {
         return ((BigDecimal) cellValue).intValue();
       } else if (propertyType == Long.class || propertyType == long.class) {
-        if (dateTimeFormatter == null) {
-          return ((BigDecimal) cellValue).longValue();
-        } else {
+        if (isDateField()) {
           if (cellValue instanceof LocalDateTime) {
             return LocalDateTimeHelper.of((LocalDateTime) cellValue).toMillis();
           } else {
             return LocalDateTimeHelper.parse(String.valueOf(cellValue), dateTimeFormatter)
                 .toMillis();
           }
+        } else {
+          return ((BigDecimal) cellValue).longValue();
         }
       } else if (propertyType == BigDecimal.class) {
         return cellValue;
@@ -436,8 +461,7 @@ public class ExcelField<T, P> {
         return property;
       } else if (propertyType == boolean.class || propertyType == Boolean.class) {
         return (Boolean) property ? "是" : "否";
-      } else if (dateTimeFormatter != null && (propertyType == Long.class
-          || propertyType == long.class)) {
+      } else if (isDateField() && (propertyType == Long.class || propertyType == long.class)) {
         return LocalDateTimeHelper.of((Long) property).format(dateTimeFormatter);
       } else if (ClassUtils.isPrimitiveOrWrapper(propertyType)) {
         return property;
@@ -460,28 +484,7 @@ public class ExcelField<T, P> {
       }
     };
 
-    if (this.pattern == null) {
-      if (propertyType == Integer.class || propertyType == int.class) {
-        this.pattern = "0";
-      } else if (propertyType == Long.class || propertyType == long.class) {
-        this.pattern = "0";
-      } else if (propertyType.equals(BigDecimal.class)) {
-        this.pattern = "0.00";
-      } else if (propertyType == Double.class || propertyType == double.class) {
-        this.pattern = "0.00";
-      } else if (propertyType == Float.class || propertyType == float.class) {
-        this.pattern = "0.00";
-      } else if (propertyType == Date.class || propertyType == LocalDate.class
-          || propertyType == LocalDateTime.class) {
-        this.pattern = DEFAULT_DATE_PATTERN;
-      } else {
-        this.pattern = "@";
-      }
-    }
 
-    if (dateTimeFormatter == null && propertyType == Date.class) {
-      dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
-    }
   }
 
   //--------------------------------------------
@@ -546,40 +549,6 @@ public class ExcelField<T, P> {
 
   //--------------------------------------------
 
-
-  /**
-   * 获取单元格值
-   *
-   * @param row    获取的行
-   * @param column 获取单元格列号
-   * @return 单元格值
-   */
-  Object getCellValue(Row row, int column) {
-    try {
-      Cell cell = row.getCell(column);
-      if (cell != null) {
-        switch (cell.getType()) {
-          case STRING:
-            return row.getCellAsString(column).orElse(null);
-          case NUMBER:
-            if (dateTimeFormatter != null) {
-              return row.getCellAsDate(column).orElse(null);
-            } else {
-              return row.getCellAsNumber(column).orElse(null);
-            }
-          case BOOLEAN:
-            return row.getCellAsBoolean(column).orElse(null);
-          case FORMULA:
-          case EMPTY:
-          case ERROR:
-            return row.getCell(column).getValue();
-        }
-      }
-    } catch (IndexOutOfBoundsException ignored) {
-    }
-    return null;
-  }
-
   /**
    * @param obj 实体对象
    * @return 单元格值
@@ -594,11 +563,6 @@ public class ExcelField<T, P> {
     } else {
       return cellConverter.convert(property);
     }
-  }
-
-  boolean isEmptyCell(Object cellValue) {
-    return cellValue == null || (cellValue instanceof CharSequence && !StringUtils.hasText(
-        (CharSequence) cellValue));
   }
 
   /**
@@ -633,6 +597,15 @@ public class ExcelField<T, P> {
         throw new ConstraintViolationException(constraintViolations);
       }
     }
+  }
+
+  boolean isEmptyCell(Object cellValue) {
+    return cellValue == null || (cellValue instanceof CharSequence && !StringUtils.hasText(
+        (CharSequence) cellValue));
+  }
+
+  boolean isDateField() {
+    return dateTimeFormatter != null;
   }
 
   //--------------------------------------------
