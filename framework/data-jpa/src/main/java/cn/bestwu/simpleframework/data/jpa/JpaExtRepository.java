@@ -1,6 +1,7 @@
 package cn.bestwu.simpleframework.data.jpa;
 
 import cn.bestwu.simpleframework.data.jpa.query.RecycleQueryByExampleExecutor;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -12,6 +13,14 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>,
     RecycleQueryByExampleExecutor<T, ID> {
+
+  /**
+   * 根据ID查询数据，包括已逻辑删除的数据
+   *
+   * @param id ID
+   * @return 结果
+   */
+  Optional<T> findHardById(ID id);
 
   /**
    * 动态更新，只更新非Null字段
