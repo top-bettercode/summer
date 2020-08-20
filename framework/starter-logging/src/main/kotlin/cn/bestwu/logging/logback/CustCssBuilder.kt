@@ -26,7 +26,7 @@ class CustCssBuilder : CssBuilder {
         sbuf.append(CoreConstants.LINE_SEPARATOR)
         sbuf.append("TD.Logger { text-align: left; }")
         sbuf.append(CoreConstants.LINE_SEPARATOR)
-        sbuf.append("TR.header { background: #596ED5; color: #FFF; font-weight: bold; font-size: larger; }")
+        sbuf.append("TR.header { background: #555555; color: #FFF; font-weight: bold; font-size: larger; }")
         sbuf.append(CoreConstants.LINE_SEPARATOR)
         sbuf.append("TD.Warn { background: rgba(255,255,0,0.3); font-family: courier, monospace;}")
         sbuf.append(CoreConstants.LINE_SEPARATOR)
