@@ -286,6 +286,11 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
+  public Optional<T> findHardById(ID id) {
+    return super.findById(id);
+  }
+
+  @Override
   public T getOne(ID id) {
     T optional = super.getOne(id);
     if (softDeleteSupport.support()) {
