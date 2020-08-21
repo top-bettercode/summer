@@ -22,7 +22,7 @@ object InitField {
 
     private val contentWrapFields: Set<String> = setOf("status", "message", "data", "trace", "errors")
 
-    fun init(operation: DocOperation, extension: GeneratorExtension, allTables: Boolean, wrap: Boolean) {
+    fun init(operation: DocOperation, extension: GeneratorExtension, allTables: Boolean, wrap: Boolean, defaultValueHeaders: Map<String, String>, defaultValueParams: Map<String, String>) {
         val request = operation.request as DocOperationRequest
         val response = operation.response as DocOperationResponse
 
@@ -48,9 +48,24 @@ object InitField {
         }
 
         request.uriVariablesExt.checkBlank("request.uriVariablesExt")
-        request.headersExt.checkBlank("request.headersExt")
-        request.parametersExt.checkBlank("request.parametersExt")
-        request.partsExt.checkBlank("request.partsExt")
+        request.headersExt.checkBlank("request.headersExt").forEach {
+            val defaultValueHeader = defaultValueHeaders[it.name]
+            if (!defaultValueHeader.isNullOrBlank()) {
+                it.defaultVal = defaultValueHeader
+            }
+        }
+        request.parametersExt.checkBlank("request.parametersExt").forEach {
+            val defaultValueParam = defaultValueParams[it.name]
+            if (!defaultValueParam.isNullOrBlank()) {
+                it.defaultVal = defaultValueParam
+            }
+        }
+        request.partsExt.checkBlank("request.partsExt").forEach {
+            val defaultValueParam = defaultValueParams[it.name]
+            if (!defaultValueParam.isNullOrBlank()) {
+                it.defaultVal = defaultValueParam
+            }
+        }
         request.contentExt.checkBlank("request.contentExt")
         response.headersExt.checkBlank("response.headersExt")
         response.contentExt.checkBlank("response.contentExt")

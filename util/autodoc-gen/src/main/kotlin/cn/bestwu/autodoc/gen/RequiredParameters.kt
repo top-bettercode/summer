@@ -3,6 +3,7 @@ package cn.bestwu.autodoc.gen
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ValueConstants
 import org.springframework.web.method.HandlerMethod
 import javax.validation.Validation
 import javax.validation.constraints.NotBlank
@@ -18,23 +19,28 @@ import kotlin.reflect.KClass
 object RequiredParameters {
     private val validator = Validation.buildDefaultValidatorFactory().validator
 
-    fun calculateHeaders(handler: HandlerMethod?): MutableSet<String> {
-        val requiredHeaders = mutableSetOf<String>()
+    fun calculateHeaders(handler: HandlerMethod?): Map<String, String> {
+        val requiredHeaders = mutableMapOf<String, String>()
         handler?.methodParameters?.forEach {
-            if (it.hasParameterAnnotation(RequestHeader::class.java) && (it.hasParameterAnnotation(NotNull::class.java) || it.hasParameterAnnotation(NotBlank::class.java) || it.hasParameterAnnotation(NotEmpty::class.java) || it.getParameterAnnotation(RequestHeader::class.java)?.required == true)) {
+            val requestHeader = it.getParameterAnnotation(RequestHeader::class.java)
+            if (it.hasParameterAnnotation(RequestHeader::class.java) && (it.hasParameterAnnotation(NotNull::class.java) || it.hasParameterAnnotation(NotBlank::class.java) || it.hasParameterAnnotation(NotEmpty::class.java) || requestHeader?.required == true)) {
                 if (it.parameterName != null)
-                    requiredHeaders.add(it.parameterName!!)
+                    requiredHeaders[it.parameterName!!] = requestHeader?.defaultValue
+                            ?: ValueConstants.DEFAULT_NONE
             }
         }
         return requiredHeaders
     }
 
-    fun calculate(handler: HandlerMethod?): MutableSet<String> {
-        val requiredParameters = mutableSetOf<String>()
+    fun calculate(handler: HandlerMethod?): Map<String, String> {
+        val requiredParameters = mutableMapOf<String, String>()
         handler?.methodParameters?.forEach {
-            if (it.hasParameterAnnotation(NotNull::class.java) || it.hasParameterAnnotation(NotBlank::class.java) || it.hasParameterAnnotation(NotEmpty::class.java) || it.getParameterAnnotation(RequestParam::class.java)?.required == true) {
-                if (it.parameterName != null)
-                    requiredParameters.add(it.parameterName!!)
+            val requestParam = it.getParameterAnnotation(RequestParam::class.java)
+            if (it.hasParameterAnnotation(NotNull::class.java) || it.hasParameterAnnotation(NotBlank::class.java) || it.hasParameterAnnotation(NotEmpty::class.java) || requestParam?.required == true) {
+                if (it.parameterName != null) {
+                    requiredParameters[it.parameterName!!] = requestParam?.defaultValue
+                            ?: ValueConstants.DEFAULT_NONE
+                }
             }
             if (it.parameterType.classLoader != null) {
                 val validatedAnn = it.getParameterAnnotation(Validated::class.java)
@@ -49,13 +55,13 @@ object RequiredParameters {
     }
 
 
-    private fun addRequires(clazz: Class<*>, requires: MutableSet<String>, groups: Array<out KClass<out Any>>, prefix: String = "") {
+    private fun addRequires(clazz: Class<*>, requires: MutableMap<String, String>, groups: Array<out KClass<out Any>>, prefix: String = "") {
         val constraintsForClass = validator.getConstraintsForClass(clazz)
         constraintsForClass.constrainedProperties.forEach { pd ->
             pd.constraintDescriptors.forEach { cd ->
                 if (groups.any { cd.groups.contains(it.java) }) {
                     if (cd.annotation is NotNull || cd.annotation is NotBlank || cd.annotation is NotEmpty) {
-                        requires.add(prefix + pd.propertyName)
+                        requires[prefix + pd.propertyName] = ValueConstants.DEFAULT_NONE
                     }
                 }
             }
