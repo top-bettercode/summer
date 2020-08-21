@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.util.StreamUtils
+import org.springframework.web.bind.annotation.ValueConstants
 import org.springframework.web.method.HandlerMethod
 import java.io.File
 import java.net.URI
@@ -87,7 +88,9 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
 
                 val request = docOperation.request as DocOperationRequest
 
-                val requiredHeaders = RequiredParameters.calculateHeaders(handler)
+                val calculateHeaders = RequiredParameters.calculateHeaders(handler)
+                val defaultValueHeaders = calculateHeaders.filter { it.value != ValueConstants.DEFAULT_NONE }
+                val requiredHeaders = calculateHeaders.keys.toMutableSet()
                 requiredHeaders.addAll(Autodoc.requiredHeaders)
 
                 request.headers.remove(HttpHeaders.HOST)
@@ -107,7 +110,9 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                 headers.putAll(request.headers)
                 request.headers = headers
 
-                val requiredParameters = RequiredParameters.calculate(handler)
+                val calculateParams = RequiredParameters.calculate(handler)
+                val defaultValueParams = calculateParams.filter { it.value != ValueConstants.DEFAULT_NONE }
+                val requiredParameters = calculateParams.keys.toMutableSet()
                 requiredParameters.addAll(Autodoc.requiredParameters)
 
                 val signName = signProperties.parameterName
@@ -149,7 +154,7 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                         ?: linkedSetOf()
 
                 InitField.extFieldExt(genProperties, docOperation)
-                InitField.init(docOperation, extension, genProperties.allTables, wrap)
+                InitField.init(docOperation, extension, genProperties.allTables, wrap, defaultValueHeaders, defaultValueParams)
 
                 docOperation.save()
             } finally {
