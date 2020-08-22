@@ -16,14 +16,14 @@ public class CodeService implements ICodeService {
   }
 
   @Override
-  public Integer getCode(String codeType, String name) {
+  public Serializable getCode(String codeType, String name) {
     DicCodeType dicCodeType = dicCodeTypes.get(codeType);
-    return dicCodeType == null ? null : (Integer) dicCodeType.getCodes().codeOf(name);
+    return dicCodeType == null ? null : dicCodeType.getCodes().codeOf(name);
   }
 
   @Override
   public String getName(String codeType, Serializable code) {
     DicCodeType dicCodeType = dicCodeTypes.get(codeType);
-    return dicCodeType == null ? null : dicCodeType.getCodes().nameOf(code);
+    return dicCodeType == null ? String.valueOf(code) : dicCodeType.getCodes().nameOf(code);
   }
 }

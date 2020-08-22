@@ -15,7 +15,7 @@ public class CodeMap extends LinkedHashMap<Serializable, String> implements ICod
 
   @Override
   public String nameOf(Serializable code) {
-    return get(code);
+    return getOrDefault(code, String.valueOf(code));
   }
 
   @Override
