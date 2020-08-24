@@ -1,11 +1,16 @@
 package cn.bestwu.simpleframework.util.excel;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.UUID;
+import java.util.function.Consumer;
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +19,7 @@ import org.dhatim.fastexcel.StyleSetter;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 import org.springframework.util.Assert;
+import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -433,6 +439,36 @@ public class ExcelExport {
   public ExcelExport finish() throws IOException {
     workbook.finish();
     return this;
+  }
+
+  /**
+   * 缓存 excel 文件
+   *
+   * @param request  request
+   * @param response response
+   * @param fileName 输出文件名
+   * @param fileKey  文件唯一key
+   * @param consumer 处理生成excel至 outputStream
+   * @throws IOException IOException
+   */
+  public static void cacheExcelFile(HttpServletRequest request, HttpServletResponse response,
+      String fileName, String fileKey, Consumer<OutputStream> consumer) throws IOException {
+    write(request, response, fileName);
+    String tmpPath = System.getProperty("java.io.tmpdir");
+
+    File file = new File(tmpPath, "excel-export/" + fileName + "/" + fileKey + ".xlsx");
+    if (!file.exists()) {
+      File dir = file.getParentFile();
+      if (!dir.exists()) {
+        dir.mkdirs();
+      }
+      File tmpFile = new File(file + "-" + UUID.randomUUID().toString());
+      try (OutputStream outputStream = new FileOutputStream(tmpFile)) {
+        consumer.accept(outputStream);
+      }
+      tmpFile.renameTo(file);
+    }
+    StreamUtils.copy(new FileInputStream(file), response.getOutputStream());
   }
 
   public <T> ExcelExport template(ExcelField<T, ?>[] excelFields, HttpServletRequest request,
