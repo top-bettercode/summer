@@ -456,7 +456,8 @@ public class ExcelExport {
     write(request, response, fileName);
     String tmpPath = System.getProperty("java.io.tmpdir");
 
-    File file = new File(tmpPath, "excel-export/" + fileName + "/" + fileKey + ".xlsx");
+    File file = new File(tmpPath,
+        "excel-export" + File.separator + fileName + File.separator + fileKey + ".xlsx");
     if (!file.exists()) {
       File dir = file.getParentFile();
       if (!dir.exists()) {
