@@ -13,6 +13,8 @@ import cn.bestwu.generator.puml.PumlConverter
 import cn.bestwu.logging.operation.OperationRequestPart
 import org.atteo.evo.inflector.English
 import java.io.File
+import java.util.*
+import kotlin.collections.LinkedHashSet
 
 /**
  *
@@ -21,6 +23,12 @@ import java.io.File
 object InitField {
 
     private val contentWrapFields: Set<String> = setOf("status", "message", "data", "trace", "errors")
+    private val fieldDescBundle: ResourceBundle? = try {
+        ResourceBundle.getBundle("field-desc-replace")
+    } catch (e: MissingResourceException) {
+        null
+    }
+
 
     fun init(operation: DocOperation, extension: GeneratorExtension, allTables: Boolean, wrap: Boolean, defaultValueHeaders: Map<String, String>, defaultValueParams: Map<String, String>) {
         val request = operation.request as DocOperationRequest
@@ -48,27 +56,36 @@ object InitField {
         }
 
         request.uriVariablesExt.checkBlank("request.uriVariablesExt")
-        request.headersExt.checkBlank("request.headersExt").forEach {
-            val defaultValueHeader = defaultValueHeaders[it.name]
-            if (!defaultValueHeader.isNullOrBlank()) {
-                it.defaultVal = defaultValueHeader
-            }
-        }
-        request.parametersExt.checkBlank("request.parametersExt").forEach {
-            val defaultValueParam = defaultValueParams[it.name]
-            if (!defaultValueParam.isNullOrBlank()) {
-                it.defaultVal = defaultValueParam
-            }
-        }
-        request.partsExt.checkBlank("request.partsExt").forEach {
-            val defaultValueParam = defaultValueParams[it.name]
-            if (!defaultValueParam.isNullOrBlank()) {
-                it.defaultVal = defaultValueParam
-            }
-        }
+        request.headersExt.checkBlank("request.headersExt")
+        request.parametersExt.checkBlank("request.parametersExt")
+        request.partsExt.checkBlank("request.partsExt")
         request.contentExt.checkBlank("request.contentExt")
+
         response.headersExt.checkBlank("response.headersExt")
         response.contentExt.checkBlank("response.contentExt")
+
+        if (defaultValueHeaders.isNotEmpty()) {
+            request.headersExt.forEach {
+                val defaultValueHeader = defaultValueHeaders[it.name]
+                if (!defaultValueHeader.isNullOrBlank()) {
+                    it.defaultVal = defaultValueHeader
+                }
+            }
+        }
+        if (defaultValueParams.isNotEmpty()) {
+            request.parametersExt.forEach {
+                val defaultValueParam = defaultValueParams[it.name]
+                if (!defaultValueParam.isNullOrBlank()) {
+                    it.defaultVal = defaultValueParam
+                }
+            }
+            request.partsExt.forEach {
+                val defaultValueParam = defaultValueParams[it.name]
+                if (!defaultValueParam.isNullOrBlank()) {
+                    it.defaultVal = defaultValueParam
+                }
+            }
+        }
     }
 
     private fun Set<Field>.fix(needFixFields: Set<Field>, wrap: Boolean = false) {
@@ -124,7 +141,7 @@ object InitField {
     }
 
     private fun Table.fields(extension: GeneratorExtension): Set<Field> {
-        val fields = columns.asSequence().mapTo(mutableSetOf()) { column ->
+        val fields = columns.mapTo(mutableSetOf()) { column ->
             var type = if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits <= 0) "" else ",${column.decimalDigits}"})" else column.javaType.shortNameWithoutTypeArguments
             if (column.javaType.shortNameWithoutTypeArguments == "Date")//前端统一传毫秒数
                 type = "Long"
@@ -183,6 +200,11 @@ object InitField {
     private fun Set<Field>.fixFieldTree(needFixFields: Set<Field>, hasDesc: Boolean = true, userDefault: Boolean = true, wrap: Boolean = false) {
         needFixFields.forEach { field ->
             val findField = fixField(field = field, hasDesc = hasDesc, userDefault = userDefault, wrap = wrap)
+            if (fieldDescBundle != null) {
+                for (key in fieldDescBundle.keys) {
+                    field.description = field.description.replace(key, fieldDescBundle.getString(key))
+                }
+            }
             findField?.children?.fixFieldTree(field.children)
             fixFieldTree(field.children)
         }
