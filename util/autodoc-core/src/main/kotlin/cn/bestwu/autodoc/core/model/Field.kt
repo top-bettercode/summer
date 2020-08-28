@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 data class Field(
         var name: String = "",
         var type: String = "",
-        var description: String = "",
+        var description: String = " ",
         var defaultVal: String = "",
         var value: String = "",
         var required: Boolean = false,
