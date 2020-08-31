@@ -63,12 +63,13 @@ abstract class ToDDL : IToDDL {
         }
     }
 
-    protected open fun updateIndexes(oldTable: Table, table: Table,  lines: MutableList<String>) {
+    protected open fun updateIndexes(oldTable: Table, table: Table, lines: MutableList<String>, dropColumnNames: List<String>) {
         val tableName = table.tableName
         val delIndexes = oldTable.indexes - table.indexes
         if (delIndexes.isNotEmpty()) {
             delIndexes.forEach {
-                lines.add("DROP INDEX $quote${it.name}$quote ON $quote$tableName$quote;")
+                if (!dropColumnNames.containsAll(it.columnName))
+                    lines.add("DROP INDEX $quote${it.name}$quote ON $quote$tableName$quote;")
             }
         }
         val newIndexes = table.indexes - oldTable.indexes
@@ -83,7 +84,7 @@ abstract class ToDDL : IToDDL {
         }
     }
 
-    protected fun updateFk(column: Column, oldColumn: Column,  lines: MutableList<String>, tableName: String) {
+    protected fun updateFk(column: Column, oldColumn: Column, lines: MutableList<String>, tableName: String) {
         if (useForeignKey && (column.isForeignKey != oldColumn.isForeignKey || column.pktableName != oldColumn.pktableName || column.pkcolumnName != oldColumn.pkcolumnName)) {
             if (oldColumn.isForeignKey) {
                 lines.add(dropFkStatement(tableName, oldColumn.columnName))
@@ -94,7 +95,7 @@ abstract class ToDDL : IToDDL {
         }
     }
 
-    protected fun addFk(column: Column,  lines: MutableList<String>, tableName: String, columnName: String) {
+    protected fun addFk(column: Column, lines: MutableList<String>, tableName: String, columnName: String) {
         if (useForeignKey && column.isForeignKey)
             lines.add("ALTER TABLE $quote$tableName$quote ADD CONSTRAINT ${foreignKeyName(tableName, column.columnName)} FOREIGN KEY ($quote$columnName$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote);")
     }

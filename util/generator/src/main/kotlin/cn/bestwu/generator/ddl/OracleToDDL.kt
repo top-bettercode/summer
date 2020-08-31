@@ -74,7 +74,7 @@ object OracleToDDL : ToDDL() {
                                 lines.add("ALTER TABLE $quote$tableName$quote ADD PRIMARY KEY(\"$quote${primaryKey.columnName}$quote\" )")
                         }
 
-                        updateIndexes(oldTable, table, lines)
+                        updateIndexes(oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
                             out.println("$commentPrefix $tableName")
                             lines.forEach { out.println(it) }
@@ -100,12 +100,13 @@ object OracleToDDL : ToDDL() {
             "$quote${it.columnName}$quote $def"
     }
 
-    override fun updateIndexes(oldTable: Table, table: Table, lines: MutableList<String>) {
+    override fun updateIndexes(oldTable: Table, table: Table, lines: MutableList<String>, dropColumnNames: List<String>) {
         val tableName = table.tableName
         val delIndexes = oldTable.indexes - table.indexes
         if (delIndexes.isNotEmpty()) {
             delIndexes.forEach {
-                lines.add("DROP INDEX $quote${it.name}$quote;")
+                if (!dropColumnNames.containsAll(it.columnName))
+                    lines.add("DROP INDEX $quote${it.name}$quote;")
             }
         }
         val newIndexes = table.indexes - oldTable.indexes
