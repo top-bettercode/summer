@@ -62,7 +62,7 @@ object MysqlToDDL : ToDDL() {
                                 }
                             }
                         }
-                        updateIndexes(oldTable, table, lines)
+                        updateIndexes(oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
                             out.println("$commentPrefix $tableName")
                             lines.forEach { out.println(it) }
