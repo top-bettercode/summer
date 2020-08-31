@@ -501,6 +501,11 @@ public class ExcelField<T, P> {
 
   //--------------------------------------------
 
+  public ExcelField<T, P> propertyName(String propertyName) {
+    this.propertyName = propertyName;
+    return this;
+  }
+
   public ExcelField<T, P> comment(String comment) {
     this.comment = comment;
     return this;
