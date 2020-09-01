@@ -70,17 +70,15 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         val warnSubject = warnSubject(environment)
         //smtp log
         if (existProperty(environment, "logging.smtp.host")) {
-            val smtpProperties = Binder.get(environment).bind("logging.smtp", SmtpProperties::class.java).get()
             synchronized(context.configurationLock) {
-
+                val smtpProperties = Binder.get(environment).bind("logging.smtp", SmtpProperties::class.java).get()
                 val levelMailAppender = mailAppender(context, smtpProperties, warnSubject)
                 val mailMarker = smtpProperties.marker
                 val markerMailAppender = if (!mailMarker.isNullOrBlank())
                     mailAppender(context, smtpProperties, warnSubject, mailMarker)
                 else
                     null
-                val loggerNames = smtpProperties.logger
-                loggerNames
+                smtpProperties.logger
                         .map { loggerName -> context.getLogger(loggerName.trim()) }
                         .forEach {
                             it.addAppender(levelMailAppender)
@@ -93,76 +91,84 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         val logUrl = environment.getProperty("logging.log-url")
         //slack log
         if (existProperty(environment, "logging.slack.auth-token") && existProperty(environment, "logging.slack.channel")) {
-            val slackProperties = Binder.get(environment).bind("logging.slack", SlackProperties::class.java).get()
-            try {
-                val logsPath = environment.getProperty("logging.files.path")
-                val loggerNames = slackProperties.logger
-                loggerNames.map { loggerName -> context.getLogger(loggerName.trim()) }
-                        .forEach {
-                            val slackAppender = SlackAppender(slackProperties, warnSubject, logsPath, logUrl)
-                            slackAppender.context = context
-                            slackAppender.start()
-                            it.addAppender(slackAppender)
-                        }
-            } catch (e: Exception) {
-                log.error("配置SlackAppender失败", e)
+            synchronized(context.configurationLock) {
+                val slackProperties = Binder.get(environment).bind("logging.slack", SlackProperties::class.java).get()
+                try {
+                    val logsPath = environment.getProperty("logging.files.path")
+                    val slackAppender = SlackAppender(slackProperties, warnSubject, logsPath, logUrl)
+                    slackAppender.context = context
+                    slackAppender.start()
+                    slackProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
+                            .forEach {
+                                it.addAppender(slackAppender)
+                            }
+                } catch (e: Exception) {
+                    log.error("配置SlackAppender失败", e)
+                }
             }
         }
         //bearychat log
         if (existProperty(environment, "logging.bearychat.webhook-url") && existProperty(environment, "logging.bearychat.channel")) {
-            val bearychatProperties = Binder.get(environment).bind("logging.bearychat", BearychatProperties::class.java).get()
-            try {
-                val logsPath = environment.getProperty("logging.files.path")
-                val loggerNames = bearychatProperties.logger
-                loggerNames.map { loggerName -> context.getLogger(loggerName.trim()) }
-                        .forEach {
-                            val slackAppender = BearychatAppender(bearychatProperties, warnSubject, logsPath, logUrl)
-                            slackAppender.context = context
-                            slackAppender.start()
-                            it.addAppender(slackAppender)
-                        }
-            } catch (e: Exception) {
-                log.error("配置BearychatAppender失败", e)
+            synchronized(context.configurationLock) {
+                val bearychatProperties = Binder.get(environment).bind("logging.bearychat", BearychatProperties::class.java).get()
+                try {
+                    val logsPath = environment.getProperty("logging.files.path")
+                    val slackAppender = BearychatAppender(bearychatProperties, warnSubject, logsPath, logUrl)
+                    slackAppender.context = context
+                    slackAppender.start()
+                    bearychatProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
+                            .forEach {
+                                it.addAppender(slackAppender)
+                            }
+                } catch (e: Exception) {
+                    log.error("配置BearychatAppender失败", e)
+                }
             }
         }
         val rootLevel = environment.getProperty("logging.level.root")
         //websocket log
         if (ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && ("true" == environment.getProperty("logging.websocket.enabled") || environment.getProperty("logging.websocket.enabled").isNullOrBlank())) {
-            try {
-                val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
-                if (rootLevel != null) {
-                    logger.level = Level.toLevel(rootLevel)
+            synchronized(context.configurationLock) {
+                try {
+                    val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+                    if (rootLevel != null) {
+                        logger.level = Level.toLevel(rootLevel)
+                    }
+                    val appender = WebSocketAppender()
+                    start(context, appender)
+                    val asyncAppender = AsyncAppender()
+                    asyncAppender.context = context
+                    asyncAppender.addAppender(appender)
+                    asyncAppender.start()
+                    logger.addAppender(asyncAppender)
+                } catch (e: Exception) {
+                    log.error("配置Websocket失败", e)
                 }
-                val appender = WebSocketAppender()
-                start(context, appender)
-                val asyncAppender = AsyncAppender()
-                asyncAppender.context = context
-                asyncAppender.addAppender(appender)
-                asyncAppender.start()
-                logger.addAppender(asyncAppender)
-            } catch (e: Exception) {
-                log.error("配置Websocket失败", e)
             }
         }
 
         //socket log
         if (existProperty(environment, "logging.socket.remote-host")) {
-            val socketProperties = Binder.get(environment).bind("logging.socket", SocketLoggingProperties::class.java).get()
-            val socketAppender = if (socketProperties.ssl == null) socketAppender(context, socketProperties) else sslSocketAppender(context, socketProperties)
-            socketAppender.start()
-            val asyncAppender = AsyncAppender()
-            asyncAppender.context = context
-            asyncAppender.addAppender(socketAppender)
-            asyncAppender.start()
-            context.getLogger("root").addAppender(asyncAppender)
+            synchronized(context.configurationLock) {
+                val socketProperties = Binder.get(environment).bind("logging.socket", SocketLoggingProperties::class.java).get()
+                val socketAppender = if (socketProperties.ssl == null) socketAppender(context, socketProperties) else sslSocketAppender(context, socketProperties)
+                socketAppender.start()
+                val asyncAppender = AsyncAppender()
+                asyncAppender.context = context
+                asyncAppender.addAppender(socketAppender)
+                asyncAppender.start()
+                context.getLogger("root").addAppender(asyncAppender)
+            }
         }
 
         //logstashTcpSocketAppender
         if (existProperty(environment, "logging.logstash.destinations[0]")) {
-            val socketProperties = Binder.get(environment).bind("logging.logstash", LogstashTcpSocketProperties::class.java).get()
-            val socketAppender = logstashTcpSocketAppender(context, socketProperties)
-            socketAppender.start()
-            context.getLogger("root").addAppender(socketAppender)
+            synchronized(context.configurationLock) {
+                val socketProperties = Binder.get(environment).bind("logging.logstash", LogstashTcpSocketProperties::class.java).get()
+                val socketAppender = logstashTcpSocketAppender(context, socketProperties)
+                socketAppender.start()
+                context.getLogger("root").addAppender(socketAppender)
+            }
         }
 
         //file log
