@@ -64,32 +64,28 @@ public class ExcelExport {
   private final ColumnWidths columnWidths = new ColumnWidths();
 
   /**
-   * 构造函数
    *
    * @param os Output stream eventually holding the serialized workbook.
+   * @return ExcelExport
    */
-  public ExcelExport(OutputStream os) {
-    this(os, null);
+  public static ExcelExport of(OutputStream os) {
+    return new ExcelExport(os);
   }
 
   /**
    * 构造函数
    *
    * @param os        Output stream eventually holding the serialized workbook.
-   * @param sheetname sheetname
    */
-  public ExcelExport(OutputStream os, String sheetname) {
+  private ExcelExport(OutputStream os) {
     this.workbook = new Workbook(os, "", "1.0");
-    if (StringUtils.hasText(sheetname)) {
-      initSheet(sheetname);
-    }
   }
 
   /**
    * @param sheetname sheetname
    * @return this
    */
-  public ExcelExport initSheet(String sheetname) {
+  public ExcelExport sheet(String sheetname) {
     this.sheet = workbook.newWorksheet(sheetname);
     setRAndC(0, 0);
     return this;
@@ -106,6 +102,7 @@ public class ExcelExport {
   }
 
   public ExcelExport serialNumberName(String serialNumberName) {
+    this.serialNumber = true;
     this.serialNumberName = serialNumberName;
     return this;
   }
@@ -423,26 +420,41 @@ public class ExcelExport {
   }
 
 
-  public <T> ExcelExport template(ExcelField<T, ?>[] excelFields) throws IOException {
+  public <T> void template(ExcelField<T, ?>[] excelFields) throws IOException {
     includeComment = true;
     setData(Collections.emptyList(), excelFields);
     finish();
-    return this;
   }
 
   /**
    * 输出数据流
    *
-   * @return this
    * @throws IOException IOException
    */
-  public ExcelExport finish() throws IOException {
+  public void finish() throws IOException {
     workbook.finish();
-    return this;
   }
 
   /**
-   * 缓存 excel 文件
+   * 输出数据流
+   *
+   * @param request  request
+   * @param response response
+   * @param fileName 输出文件名
+   * @param consumer 处理生成excel
+   * @throws IOException IOException
+   */
+  public static void write(HttpServletRequest request, HttpServletResponse response,
+      String fileName, Consumer<ExcelExport> consumer) throws IOException {
+    setResponseHeader(request, response, fileName);
+    ExcelExport excelExport = ExcelExport.of(response.getOutputStream());
+    consumer.accept(excelExport);
+    excelExport.finish();
+  }
+
+
+  /**
+   * 文件缓存输出
    *
    * @param request  request
    * @param response response
@@ -451,9 +463,9 @@ public class ExcelExport {
    * @param consumer 处理生成excel至 outputStream
    * @throws IOException IOException
    */
-  public static void cacheExcelFile(HttpServletRequest request, HttpServletResponse response,
+  public static void writeCache(HttpServletRequest request, HttpServletResponse response,
       String fileName, String fileKey, Consumer<OutputStream> consumer) throws IOException {
-    write(request, response, fileName);
+    setResponseHeader(request, response, fileName);
     String tmpPath = System.getProperty("java.io.tmpdir");
 
     File file = new File(tmpPath,
@@ -472,29 +484,6 @@ public class ExcelExport {
     StreamUtils.copy(new FileInputStream(file), response.getOutputStream());
   }
 
-  public <T> ExcelExport template(ExcelField<T, ?>[] excelFields, HttpServletRequest request,
-      HttpServletResponse response,
-      String fileName) throws IOException {
-    write(request, response, fileName);
-    return template(excelFields);
-  }
-
-  /**
-   * 输出数据流
-   *
-   * @param request  request
-   * @param response response
-   * @param fileName 输出文件名
-   * @return this
-   * @throws IOException IOException
-   */
-  public ExcelExport finish(HttpServletRequest request, HttpServletResponse response,
-      String fileName) throws IOException {
-    write(request, response, fileName);
-    return finish();
-  }
-
-
   /**
    * 输出到客户端
    *
@@ -503,7 +492,7 @@ public class ExcelExport {
    * @param fileName 输出文件名
    * @throws IOException IOException
    */
-  public static void write(HttpServletRequest request, HttpServletResponse response,
+  private static void setResponseHeader(HttpServletRequest request, HttpServletResponse response,
       String fileName) throws IOException {
     response.reset();
     String agent = request.getHeader("USER-AGENT");
