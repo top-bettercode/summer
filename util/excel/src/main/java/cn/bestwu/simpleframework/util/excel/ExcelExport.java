@@ -86,7 +86,7 @@ public class ExcelExport {
    */
   public ExcelExport sheet(String sheetname) {
     this.sheet = workbook.newWorksheet(sheetname);
-    setRAndC(0, 0);
+    setRowAndColumn(0, 0);
     return this;
   }
 
@@ -106,19 +106,32 @@ public class ExcelExport {
     return this;
   }
 
-  public ExcelExport setR(int r) {
-    this.r = r;
+  /**
+   * @param row 行号，从0开始
+   * @return this ExcelExport
+   */
+  public ExcelExport setRow(int row) {
+    this.r = row;
     return this;
   }
 
-  public ExcelExport setC(int c) {
-    this.c = c;
+  /**
+   * @param column 列号，从0开始
+   * @return this ExcelExport
+   */
+  public ExcelExport setColumn(int column) {
+    this.c = column;
     return this;
   }
 
-  public ExcelExport setRAndC(Integer r, Integer c) {
-    this.r = r;
-    this.c = c;
+  /**
+   * @param row    行号，从0开始
+   * @param column 列号，从0开始
+   * @return this ExcelExport
+   */
+  public ExcelExport setRowAndColumn(Integer row, Integer column) {
+    this.r = row;
+    this.c = column;
     return this;
   }
 
