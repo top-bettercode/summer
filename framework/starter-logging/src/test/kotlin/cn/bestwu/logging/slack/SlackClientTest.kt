@@ -22,7 +22,7 @@ class SlackClientTest {
 
     @Test
     fun channelIdByName() {
-        println(StringUtil.valueOf(slackClient.channelIdByName("logging-test"), true))
+        println(StringUtil.valueOf(slackClient.channelIdByName("test"), true))
     }
 
     @Test
@@ -41,11 +41,11 @@ class SlackClientTest {
 
     @Test
     fun postMessage() {
-        println(StringUtil.valueOf(slackClient.postMessage("logging-test", "test", "test", listOf("123testtest"), null), true))
+        println(StringUtil.valueOf(slackClient.postMessage("test", "test", "test", listOf("123testtest"), null), true))
     }
 
     @Test
     fun filesUpload() {
-        println(StringUtil.valueOf(slackClient.filesUpload("logging-test", "test", "test", listOf("123testtest")), true))
+        println(StringUtil.valueOf(slackClient.filesUpload("test", "test", "test", listOf("123testtest")), true))
     }
 }

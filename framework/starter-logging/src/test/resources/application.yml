@@ -9,8 +9,30 @@ logging:
   #    asynchronousSending: false
   #    includeCallerData: true
   level:
-    root: info
+    root: debug
     org.springframework.boot.web.servlet.support.ErrorPageFilter: off
+    org.mybatis.spring.mapper.ClassPathMapperScanner: error
+    org.springframework.security.oauth2.provider.endpoint.TokenEndpoint: off
+    io.lettuce: warn
+    org.thymeleaf: warn
+    cn.bestwu: info
+    javax.management: warn
+    org.quartz: warn
+    io.netty: warn
+    com.alibaba: warn
+    com.zaxxer.hikari: info
+    springfox: warn
+    com.baomidou: warn
+    org.springframework: warn
+    org.apache: warn
+    org.hibernate: warn
+    org.mybatis: warn
+    com.netflix: warn
+    org.jboss: warn
+    com.sun: warn
+    javax.xml: warn
+    net.sf: warn
+    javax.activation: warn
   request:
     include-request-body: true
     include-response-body: true
