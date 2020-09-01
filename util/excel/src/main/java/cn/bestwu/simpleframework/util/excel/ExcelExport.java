@@ -64,7 +64,6 @@ public class ExcelExport {
   private final ColumnWidths columnWidths = new ColumnWidths();
 
   /**
-   *
    * @param os Output stream eventually holding the serialized workbook.
    * @return ExcelExport
    */
@@ -75,7 +74,7 @@ public class ExcelExport {
   /**
    * 构造函数
    *
-   * @param os        Output stream eventually holding the serialized workbook.
+   * @param os Output stream eventually holding the serialized workbook.
    */
   private ExcelExport(OutputStream os) {
     this.workbook = new Workbook(os, "", "1.0");
@@ -452,6 +451,28 @@ public class ExcelExport {
     excelExport.finish();
   }
 
+  /**
+   * 文件缓存输出
+   *
+   * @param request  request
+   * @param response response
+   * @param fileName 输出文件名
+   * @param fileKey  文件唯一key
+   * @param consumer 处理生成excel
+   * @throws IOException IOException
+   */
+  public static void writeCache(HttpServletRequest request, HttpServletResponse response,
+      String fileName, String fileKey, Consumer<ExcelExport> consumer) throws IOException {
+    writeCache1(request, response, fileName, fileKey, outputStream -> {
+      try {
+        ExcelExport excelExport = ExcelExport.of(outputStream);
+        consumer.accept(excelExport);
+        excelExport.finish();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
+  }
 
   /**
    * 文件缓存输出
@@ -463,7 +484,7 @@ public class ExcelExport {
    * @param consumer 处理生成excel至 outputStream
    * @throws IOException IOException
    */
-  public static void writeCache(HttpServletRequest request, HttpServletResponse response,
+  public static void writeCache1(HttpServletRequest request, HttpServletResponse response,
       String fileName, String fileKey, Consumer<OutputStream> consumer) throws IOException {
     setResponseHeader(request, response, fileName);
     String tmpPath = System.getProperty("java.io.tmpdir");
