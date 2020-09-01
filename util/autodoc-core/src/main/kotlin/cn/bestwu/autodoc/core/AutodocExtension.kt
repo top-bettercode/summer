@@ -24,7 +24,7 @@ open class AutodocExtension(
         var signParam: String = "sign",
         var wrapResponse: Boolean = true,
         var authVariables: Array<String> = arrayOf("token_type", "access_token", "refresh_token"),
-        var properties: Map<String, Any?> = emptyMap()) {
+        var properties: Map<Any, Any?> = emptyMap()) {
 
     var projectName: String = ""
         get() = if (field.isBlank()) "接口文档" else field
@@ -77,8 +77,8 @@ open class AutodocExtension(
     /**
      * 公共adoc文件
      */
-    fun commonAdocs(module: DocModule): List<File> {
-        return module.moduleFile {
+    fun commonAdocs(module: DocModule): Collection<File> {
+        return module.allModuleFiles {
             listAdoc(it, true)
         }
     }

@@ -53,11 +53,13 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
         }
     }
 
-    private fun allModuleFiles(action: (File) -> Unit) {
+    fun allModuleFiles(action: (File) -> Collection<File>): Collection<File> {
+        val result: MutableCollection<File> = mutableListOf()
         if (projectModuleDic?.exists() == true)
-            action(projectModuleDic)
+            result.addAll(action(projectModuleDic))
         if (this.rootModuleDic?.exists() == true)
-            action(this.rootModuleDic)
+            result.addAll(action(this.rootModuleDic))
+        return result
     }
 
     val name: String = moduleFile { it.name }
