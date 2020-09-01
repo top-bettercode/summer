@@ -23,6 +23,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -212,6 +213,7 @@ public class ExcelField<T, P> {
   }
 
   public ExcelField<T, P> code() {
+    Assert.hasText(propertyName, "属性名称未设置");
     return code(propertyName);
   }
 
@@ -222,6 +224,7 @@ public class ExcelField<T, P> {
 
 
   public ExcelField<T, P> stringCode() {
+    Assert.hasText(propertyName, "属性名称未设置");
     return stringCode(propertyName);
   }
 
