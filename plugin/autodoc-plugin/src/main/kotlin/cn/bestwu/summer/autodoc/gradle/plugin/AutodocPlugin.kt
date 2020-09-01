@@ -3,10 +3,12 @@ package cn.bestwu.summer.autodoc.gradle.plugin
 import cn.bestwu.autodoc.core.AsciidocGenerator
 import cn.bestwu.autodoc.core.AutodocExtension
 import cn.bestwu.autodoc.core.PostmanGenerator
+import cn.bestwu.gradle.profile.ProfilePlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.language.jvm.tasks.ProcessResources
+import profileProperties
 import java.io.File
 import java.util.*
 
@@ -22,6 +24,7 @@ class AutodocPlugin : Plugin<Project> {
 
     @Suppress("DEPRECATION")
     override fun apply(project: Project) {
+        project.plugins.apply(ProfilePlugin::class.java)
         project.extensions.create("autodoc", AutodocExtension::class.java)
 
         project.extensions.configure(AutodocExtension::class.java) { autodocExtension ->
@@ -70,7 +73,7 @@ class AutodocPlugin : Plugin<Project> {
             configInputOutput(task, group, autodoc, project)
             task.doLast {
                 val extension = project.extensions.findByType(AutodocExtension::class.java)!!
-                extension.properties = project.properties
+                extension.properties = project.profileProperties
                 AsciidocGenerator.asciidoc(extension)
             }
         }
@@ -99,7 +102,6 @@ class AutodocPlugin : Plugin<Project> {
             task.group = group
             task.doLast {
                 val extension = project.extensions.findByType(AutodocExtension::class.java)!!
-                extension.properties = project.properties
                 AsciidocGenerator.setDefaultDesc(extension)
             }
         }
