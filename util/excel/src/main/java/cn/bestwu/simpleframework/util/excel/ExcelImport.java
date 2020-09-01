@@ -41,36 +41,33 @@ public class ExcelImport {
   private int rowNum;
 
   /**
-   * 构造函数
-   *
    * @param fileName 导入文件
+   * @return ExcelImport
    * @throws IOException IOException
    */
-  public ExcelImport(String fileName)
+  public static ExcelImport of(String fileName)
       throws IOException {
-    this(new File(fileName));
+    return new ExcelImport(new FileInputStream(fileName));
   }
 
   /**
-   * 构造函数
-   *
    * @param file 导入文件对象
+   * @return ExcelImport
    * @throws IOException IOException
    */
-  public ExcelImport(File file)
+  public static ExcelImport of(File file)
       throws IOException {
-    this(new FileInputStream(file));
+    return new ExcelImport(new FileInputStream(file));
   }
 
   /**
-   * 构造函数
-   *
    * @param multipartFile 导入文件对象
+   * @return ExcelImport
    * @throws IOException IOException
    */
-  public ExcelImport(MultipartFile multipartFile)
+  public static ExcelImport of(MultipartFile multipartFile)
       throws IOException {
-    this(multipartFile.getInputStream());
+    return new ExcelImport(multipartFile.getInputStream());
   }
 
   /**
@@ -79,7 +76,7 @@ public class ExcelImport {
    * @param is is
    * @throws IOException IOException
    */
-  public ExcelImport(InputStream is)
+  private ExcelImport(InputStream is)
       throws IOException {
     workbook = new ReadableWorkbook(is);
     log.debug("Initialize success.");

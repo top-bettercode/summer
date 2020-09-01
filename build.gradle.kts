@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     group = "cn.bestwu.summer"
-    version = "0.0.3-SNAPSHOT"
+    version = "0.0.4-SNAPSHOT"
 
     apply {
         plugin("java")

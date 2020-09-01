@@ -4,7 +4,6 @@ import cn.bestwu.lang.util.ArrayUtil;
 import cn.bestwu.lang.util.StringUtil;
 import cn.bestwu.simpleframework.web.serializer.CodeSerializer;
 import cn.bestwu.simpleframework.web.serializer.ICodeService;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
@@ -36,13 +35,13 @@ public class ExcelTest {
   }
 
   private final ExcelField<DataBean, ?>[] excelFields = ArrayUtil.of(
-      ExcelField.of("编码", DataBean::getIntCode),
-      ExcelField.of("编码", DataBean::getInteger),
-      ExcelField.of("编码", DataBean::getLongl).millis(),
-      ExcelField.of("编码", DataBean::getDoublel),
-      ExcelField.of("编码", DataBean::getFloatl),
-      ExcelField.of("编码", DataBean::getName),
-      ExcelField.of("编码", DataBean::getDate)
+      ExcelField.of("编码1", DataBean::getIntCode),
+      ExcelField.of("编码2", DataBean::getInteger),
+      ExcelField.of("编码3", DataBean::getLongl).millis(),
+      ExcelField.of("编码4", DataBean::getDoublel),
+      ExcelField.of("编码5", DataBean::getFloatl),
+      ExcelField.of("编码6", DataBean::getName),
+      ExcelField.of("编码7", DataBean::getDate)
   );
 
   @Test
@@ -54,7 +53,7 @@ public class ExcelTest {
       list.add(bean);
     }
     long s = System.currentTimeMillis();
-    new ExcelExport(new FileOutputStream("build/export.xlsx"), "表格")
+    ExcelExport.of(new FileOutputStream("build/export.xlsx")).sheet("表格")
         .setData(list, excelFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
@@ -68,7 +67,6 @@ public class ExcelTest {
       ExcelField.of("名称", from -> new String[]{"abc", "1"}),
       ExcelField.of("描述", DataBean::getName),
       ExcelField.of("描述C", DataBean::getDate).merge()
-//      new ExcelField<DataBean, String>().propertySetter(DataBean::setCode).title("编码"),
   );
 
   @Test
@@ -79,7 +77,7 @@ public class ExcelTest {
       list.add(bean);
     }
     long s = System.currentTimeMillis();
-    new ExcelExport(new FileOutputStream("build/export.xlsx"), "表格").serialNumber()
+    ExcelExport.of(new FileOutputStream("build/export.xlsx")).sheet("表格").serialNumber()
         .setData(list, excelMergeFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
@@ -90,14 +88,14 @@ public class ExcelTest {
   @Test
   public void testImport() throws Exception {
     testExport();
-    List<DataBean> list = new ExcelImport(new File("build/export.xlsx"))
+    List<DataBean> list = ExcelImport.of("build/export.xlsx")
         .getData(excelFields);
     System.out.println(StringUtil.valueOf(list, true));
   }
 
   @Test
   public void testTemplate() throws IOException {
-    new ExcelExport(new FileOutputStream("build/template.xlsx"), "表格1").template(excelFields);
+    ExcelExport.of(new FileOutputStream("build/template.xlsx")).sheet("表格1").template(excelFields);
     Runtime.getRuntime()
         .exec("xdg-open " + System.getProperty("user.dir") + "/build/template.xlsx");
   }
@@ -106,11 +104,11 @@ public class ExcelTest {
   public static class DataBean {
 
     private Integer intCode = 1;
-    private Integer integer=2;
-    private Long longl=new Date().getTime();
-    private double doublel=4.4;
-    private float floatl=5.5f;
-    private String name="名称";
+    private Integer integer = 2;
+    private Long longl = new Date().getTime();
+    private double doublel = 4.4;
+    private float floatl = 5.5f;
+    private String name = "名称";
     private Date date = new Date();
 
 
