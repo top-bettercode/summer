@@ -1,9 +1,11 @@
 package cn.bestwu.simpleframework.config;
 
+import cn.bestwu.lang.property.PropertiesSource;
+import cn.bestwu.simpleframework.support.code.CodeService;
+import cn.bestwu.simpleframework.support.code.CodeTypes;
+import cn.bestwu.simpleframework.support.code.ICodeService;
 import cn.bestwu.simpleframework.web.serializer.CodeSerializer;
-import cn.bestwu.simpleframework.web.serializer.CodeService;
 import cn.bestwu.simpleframework.web.serializer.CustomNullSerializerModifier;
-import cn.bestwu.simpleframework.web.serializer.ICodeService;
 import cn.bestwu.simpleframework.web.serializer.UrlSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -57,7 +59,7 @@ public class SerializerConfiguration {
   @ConditionalOnMissingBean
   @Bean
   public ICodeService codeService() {
-    return new CodeService();
+    return new CodeService(new PropertiesSource("default-dic-code", "dic-code"));
   }
 
   @Configuration
@@ -66,6 +68,7 @@ public class SerializerConfiguration {
 
     public CodeSerializerConfiguration(ICodeService codeService) {
       CodeSerializer.setCodeService(codeService);
+      CodeTypes.setCodeService(codeService);
     }
   }
 

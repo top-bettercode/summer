@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.web.serializer;
 
+import cn.bestwu.simpleframework.support.code.ICodeService;
 import cn.bestwu.simpleframework.web.serializer.annotation.JsonCode;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonStreamContext;

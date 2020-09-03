@@ -1,9 +1,13 @@
-package cn.bestwu.simpleframework.web.serializer;
+package cn.bestwu.simpleframework.support.code;
 
 
 import java.io.Serializable;
 
 public interface ICodeService {
+
+  default String getName(String codeType) {
+    return codeType;
+  }
 
   default String getName(String codeType, Serializable code) {
     return (code == null) ? null : String.valueOf(code);
@@ -12,4 +16,6 @@ public interface ICodeService {
   default Serializable getCode(String codeType, String name) {
     return null;
   }
+
+  DicCodes getDicCodes(String codeType);
 }
