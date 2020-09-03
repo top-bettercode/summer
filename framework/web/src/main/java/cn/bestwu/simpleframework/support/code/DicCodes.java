@@ -1,11 +1,12 @@
 package cn.bestwu.simpleframework.support.code;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author Peter Wu
  */
-public class DicCodeType implements Serializable {
+public class DicCodes implements Serializable {
 
   private static final long serialVersionUID = 1975408514555403680L;
 
@@ -13,14 +14,14 @@ public class DicCodeType implements Serializable {
 
   private String name;
 
-  private ICodes codes;
+  private Map<Object, Object> codes;
 
   //--------------------------------------------
 
-  public DicCodeType(String type,String name) {
+  public DicCodes(String type, String name, Map<Object, Object> codes) {
     this.type = type;
     this.name = name;
-    this.codes = new CodeMap();
+    this.codes = codes;
   }
 
   //--------------------------------------------
@@ -41,11 +42,11 @@ public class DicCodeType implements Serializable {
     this.name = name;
   }
 
-  public ICodes getCodes() {
+  public Map<Object, Object> getCodes() {
     return codes;
   }
 
-  public void setCodes(ICodes codes) {
+  public void setCodes(Map<Object, Object> codes) {
     this.codes = codes;
   }
 }

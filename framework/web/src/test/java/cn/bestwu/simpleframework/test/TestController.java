@@ -2,11 +2,11 @@ package cn.bestwu.simpleframework.test;
 
 
 import cn.bestwu.lang.util.StringUtil;
+import cn.bestwu.simpleframework.support.code.ICodeService;
 import cn.bestwu.simpleframework.web.BaseController;
 import cn.bestwu.simpleframework.web.DataDicBean;
 import cn.bestwu.simpleframework.web.resolver.Cent;
 import cn.bestwu.simpleframework.web.resolver.CentConverter;
-import cn.bestwu.simpleframework.web.serializer.ICodeService;
 import java.io.Serializable;
 import java.util.Date;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -63,19 +63,6 @@ public class TestController extends BaseController {
       };
     }
 
-//    @Bean
-//    public ICodeService codeStringService() {
-//      return new ICodeService() {
-//        @Override
-//        public String getName(String codeType, Serializable code) {
-//          return "name";
-//        }
-//
-//        @Override
-//        public String getCode(String codeType, String name) {
-//          return "code";
-//        }
-//      };
-//    }
+
   }
 }
