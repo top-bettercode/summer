@@ -10,6 +10,7 @@ import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.powerdesigner.PdmReader
 import cn.bestwu.generator.puml.PumlConverter
+import cn.bestwu.lang.property.PropertiesSource
 import cn.bestwu.logging.operation.OperationRequestPart
 import org.atteo.evo.inflector.English
 import java.io.File
@@ -23,11 +24,7 @@ import kotlin.collections.LinkedHashSet
 object InitField {
 
     private val contentWrapFields: Set<String> = setOf("status", "message", "data", "trace", "errors")
-    private val fieldDescBundle: ResourceBundle? = try {
-        ResourceBundle.getBundle("field-desc-replace")
-    } catch (e: MissingResourceException) {
-        null
-    }
+    private val fieldDescBundle: PropertiesSource = PropertiesSource.of("field-desc-replace")
 
 
     fun init(operation: DocOperation, extension: GeneratorExtension, allTables: Boolean, wrap: Boolean, defaultValueHeaders: Map<String, String>, defaultValueParams: Map<String, String>) {
@@ -200,11 +197,10 @@ object InitField {
     private fun Set<Field>.fixFieldTree(needFixFields: Set<Field>, hasDesc: Boolean = true, userDefault: Boolean = true, wrap: Boolean = false) {
         needFixFields.forEach { field ->
             val findField = fixField(field = field, hasDesc = hasDesc, userDefault = userDefault, wrap = wrap)
-            if (fieldDescBundle != null) {
-                for (key in fieldDescBundle.keys) {
-                    field.description = field.description.replace(key, fieldDescBundle.getString(key))
-                }
+            fieldDescBundle.all().forEach { (k, v) ->
+                field.description = field.description.replace(k as String, v as String)
             }
+
             findField?.children?.fixFieldTree(field.children)
             fixFieldTree(field.children)
         }

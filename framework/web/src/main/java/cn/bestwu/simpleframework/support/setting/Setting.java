@@ -1,5 +1,7 @@
 package cn.bestwu.simpleframework.support.setting;
 
+import cn.bestwu.lang.property.MapPropertySource;
+import cn.bestwu.lang.property.PropertySource;
 import java.lang.reflect.Method;
 import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -39,8 +41,7 @@ public class Setting {
   }
 
   public Object getOrDefault(String key, Object defaultValue) {
-    Object value = get(key);
-    return value == null ? defaultValue : value;
+    return source.getOrDefault(key, defaultValue);
   }
 
   /**
@@ -50,13 +51,7 @@ public class Setting {
    * @param value 值
    */
   public void put(String key, Object value) {
-    if (value == null) {
-      remove(key);
-    } else {
-      if (!value.equals(get(key))) {
-        source.put(key, value);
-      }
-    }
+    source.put(key, value);
   }
 
   /**
@@ -65,9 +60,7 @@ public class Setting {
    * @param key 配置项
    */
   public void remove(String key) {
-    if (get(key) != null) {
-      source.remove(key);
-    }
+    source.remove(key);
   }
 
   /**

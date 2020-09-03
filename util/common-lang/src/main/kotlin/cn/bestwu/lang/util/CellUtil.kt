@@ -1,5 +1,6 @@
 package cn.bestwu.lang.util
 
+import cn.bestwu.lang.property.PropertiesSource
 import java.util.*
 
 
@@ -27,6 +28,7 @@ object CellUtil {
      * 新 198 148 144
      */
     private var CHINA_MOBILE_CELL_REGEX = "^(144\\d|148\\d|198\\d|134\\d|135\\d|136\\d|137\\d|138\\d|139\\d|150\\d|151\\d|152\\d|157\\d|158\\d|159\\d|182\\d|183\\d|184\\d|187\\d|178\\d|188\\d|147\\d|1705)\\d{7}$"
+
     /**
      * 中国联通号段
      * 2G号段（GSM网络）130、131、132、155、156
@@ -36,6 +38,7 @@ object CellUtil {
      * 新 166 146
      */
     private var CHINA_UNICOM_CELL_REGEX = "^(146\\d|166\\d|130\\d|131\\d|132\\d|155\\d|156\\d|175\\d|176\\d|185\\d|186\\d|1709)\\d{7}$"
+
     /**
      * 中国电信号段
      * 2G/3G号段（CDMA2000网络）133、153、180、181、189
@@ -44,6 +47,7 @@ object CellUtil {
      * 1740、1741电信和工信部的卫星通信号段
      */
     private var CHINA_TELECOM_CELL_REGEX = "^(141\\d|199\\d|133\\d|153\\d|173\\d|177\\d|180\\d|181\\d|189\\d|191\\d|1700|1740|1741)\\d{7}$"
+
     /**
      * 中国虚拟运营商号段
      */
@@ -52,11 +56,11 @@ object CellUtil {
 
     init {
         try {
-            val resourceBundle = ResourceBundle.getBundle("cell-regex")
-            CHINA_MOBILE_CELL_REGEX = resourceBundle.getString("china_mobile_cell.regexp")
-            CHINA_UNICOM_CELL_REGEX = resourceBundle.getString("china_unicom_cell.regexp")
-            CHINA_TELECOM_CELL_REGEX = resourceBundle.getString("china_telecom_cell.regexp")
-            CHINA_VNO_CELL_REGEX = resourceBundle.getString("china_vno_cell.regexp")
+            val cellRegexProperties = PropertiesSource.of("cell-regex")
+            CHINA_MOBILE_CELL_REGEX = cellRegexProperties.getOrDefault("china_mobile_cell.regexp", CHINA_MOBILE_CELL_REGEX)
+            CHINA_UNICOM_CELL_REGEX = cellRegexProperties.getOrDefault("china_unicom_cell.regexp", CHINA_UNICOM_CELL_REGEX)
+            CHINA_TELECOM_CELL_REGEX = cellRegexProperties.getOrDefault("china_telecom_cell.regexp", CHINA_TELECOM_CELL_REGEX)
+            CHINA_VNO_CELL_REGEX = cellRegexProperties.getOrDefault("china_vno_cell.regexp", CHINA_VNO_CELL_REGEX)
         } catch (ignored: MissingResourceException) {
         }
     }

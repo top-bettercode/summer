@@ -2,6 +2,7 @@ package cn.bestwu.simpleframework.util.excel;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -64,12 +65,21 @@ public class ExcelExport {
   private final ColumnWidths columnWidths = new ColumnWidths();
 
   /**
+   * @param filename filename eventually holding the serialized workbook .
+   * @return ExcelExport
+   */
+  public static ExcelExport of(String filename) throws FileNotFoundException {
+    return new ExcelExport(new FileOutputStream(filename));
+  }
+
+  /**
    * @param os Output stream eventually holding the serialized workbook.
    * @return ExcelExport
    */
   public static ExcelExport of(OutputStream os) {
     return new ExcelExport(os);
   }
+
 
   /**
    * 构造函数

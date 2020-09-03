@@ -1,26 +1,12 @@
 package cn.bestwu.simpleframework.web.validator;
 
+import cn.bestwu.lang.property.PropertiesSource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IDCardInfo {
 
-  private static final Logger logger = LoggerFactory.getLogger(IDCardInfo.class);
-
-  private static ResourceBundle areaCodeBundle;
-
-  static {
-    try {
-      areaCodeBundle = ResourceBundle.getBundle("areaCode");
-    } catch (MissingResourceException e) {
-      logger.error("加载配置文件出错", e);
-    }
-  }
-
+  private static final PropertiesSource areaCodeBundle = PropertiesSource.of("areaCode");
 
   private String idcard;
   // 省份
@@ -44,7 +30,7 @@ public class IDCardInfo {
 
 
   private String getString(String key, String defaultVal) {
-    return areaCodeBundle.containsKey(key) ? areaCodeBundle.getString(key) : defaultVal;
+    return areaCodeBundle.getOrDefault(key, defaultVal);
   }
 
   public IDCardInfo(String idcard) {
