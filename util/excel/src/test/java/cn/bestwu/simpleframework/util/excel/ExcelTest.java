@@ -4,7 +4,6 @@ import cn.bestwu.lang.util.ArrayUtil;
 import cn.bestwu.lang.util.StringUtil;
 import cn.bestwu.simpleframework.web.serializer.CodeSerializer;
 import cn.bestwu.simpleframework.web.serializer.ICodeService;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ public class ExcelTest {
       list.add(bean);
     }
     long s = System.currentTimeMillis();
-    ExcelExport.of(new FileOutputStream("build/export.xlsx")).sheet("表格")
+    ExcelExport.of("build/export.xlsx").sheet("表格")
         .setData(list, excelFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
@@ -77,7 +76,7 @@ public class ExcelTest {
       list.add(bean);
     }
     long s = System.currentTimeMillis();
-    ExcelExport.of(new FileOutputStream("build/export.xlsx")).sheet("表格").serialNumber()
+    ExcelExport.of("build/export.xlsx").sheet("表格").serialNumber()
         .setData(list, excelMergeFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
@@ -95,7 +94,7 @@ public class ExcelTest {
 
   @Test
   public void testTemplate() throws IOException {
-    ExcelExport.of(new FileOutputStream("build/template.xlsx")).sheet("表格1").template(excelFields);
+    ExcelExport.of("build/template.xlsx").sheet("表格1").template(excelFields);
     Runtime.getRuntime()
         .exec("xdg-open " + System.getProperty("user.dir") + "/build/template.xlsx");
   }

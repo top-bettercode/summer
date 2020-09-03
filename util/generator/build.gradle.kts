@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api(kotlin("stdlib"))
+    api(project(":util:common-lang"))
     api("org.atteo:evo-inflector")
     api("org.dom4j:dom4j")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core")

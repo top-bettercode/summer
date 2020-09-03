@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.web.error;
 
+import cn.bestwu.lang.property.PropertiesSource;
 import cn.bestwu.simpleframework.exception.BusinessException;
 import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
@@ -9,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -50,20 +49,8 @@ public class ErrorAttributes extends DefaultErrorAttributes {
 
   private final MessageSource messageSource;
   private final List<IErrorHandler> errorHandlers;
-  private static ResourceBundle defaultExceptionResource;
-  private static ResourceBundle exceptionResource;
-
-  static {
-    try {
-      defaultExceptionResource = ResourceBundle.getBundle("default-exception-handle");
-    } catch (MissingResourceException e) {
-      log.error("初始化默认异常处理错误", e);
-    }
-    try {
-      exceptionResource = ResourceBundle.getBundle("exception-handle");
-    } catch (MissingResourceException ignored) {
-    }
-  }
+  private static PropertiesSource propertiesSource = PropertiesSource
+      .of("default-exception-handle", "exception-handle");
 
   public ErrorAttributes(List<IErrorHandler> errorHandlers,
       MessageSource messageSource) {
@@ -195,10 +182,9 @@ public class ErrorAttributes extends DefaultErrorAttributes {
 
   private Integer handleHttpStatusCode(Class<? extends Throwable> throwableClass) {
     String key = throwableClass.getName() + ".code";
-    if (exceptionResource != null && exceptionResource.containsKey(key)) {
-      return Integer.parseInt(exceptionResource.getString(key));
-    } else if (defaultExceptionResource != null && defaultExceptionResource.containsKey(key)) {
-      return Integer.parseInt(defaultExceptionResource.getString(key));
+    String value = propertiesSource.getString(key);
+    if (StringUtils.hasText(value)) {
+      return Integer.parseInt(value);
     } else {
       return null;
     }
@@ -206,13 +192,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
 
   private String handleMessage(Class<? extends Throwable> throwableClass) {
     String key = throwableClass.getName() + ".message";
-    if (exceptionResource != null && exceptionResource.containsKey(key)) {
-      return exceptionResource.getString(key);
-    } else if (defaultExceptionResource != null && defaultExceptionResource.containsKey(key)) {
-      return defaultExceptionResource.getString(key);
-    } else {
-      return null;
-    }
+    return propertiesSource.getString(key);
   }
 
 

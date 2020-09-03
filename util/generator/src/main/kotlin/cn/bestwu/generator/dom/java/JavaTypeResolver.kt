@@ -1,6 +1,7 @@
 package cn.bestwu.generator.dom.java
 
 import cn.bestwu.generator.database.entity.Column
+import cn.bestwu.lang.property.PropertiesSource
 import java.sql.Types
 import java.util.*
 
@@ -17,12 +18,7 @@ object JavaTypeResolver {
 
     private val typeMap: MutableMap<Int, JdbcTypeInformation> = HashMap()
     private val typeNameMap: MutableMap<String, Int> = HashMap()
-    private val defaultTypeNameBundle: ResourceBundle = ResourceBundle.getBundle("defaultJdbcTypeName")
-    private val typeNameBundle: ResourceBundle = try {
-        ResourceBundle.getBundle("jdbcTypeName")
-    } catch (e: MissingResourceException) {
-        defaultTypeNameBundle
-    }
+    private val typeNameProperties: PropertiesSource = PropertiesSource.of("defaultJdbcTypeName", "jdbcTypeName")
 
     init {
 
@@ -106,11 +102,7 @@ object JavaTypeResolver {
 
     private fun calculateJdbcTypeName(typeName: String): String {
         val typeNameUpper = typeName.toUpperCase()
-        return when {
-            typeNameBundle.containsKey(typeNameUpper) -> typeNameBundle.getString(typeNameUpper)
-            defaultTypeNameBundle.containsKey(typeNameUpper) -> defaultTypeNameBundle.getString(typeNameUpper)
-            else -> typeNameUpper
-        }
+        return typeNameProperties.getOrDefault(typeNameUpper, typeNameUpper)
     }
 
     fun calculateDataType(jdbcTypeName: String): Int? {

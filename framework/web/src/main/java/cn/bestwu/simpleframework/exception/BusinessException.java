@@ -1,7 +1,6 @@
 package cn.bestwu.simpleframework.exception;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import cn.bestwu.lang.property.PropertiesSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -17,33 +16,23 @@ public class BusinessException extends RuntimeException {
    */
   private final String code;
   private final Object data;
-  private static ResourceBundle bundle;
-
-  static {
-    try {
-      bundle = ResourceBundle.getBundle("error-code");
-    } catch (MissingResourceException e) {
-      try {
-        bundle = ResourceBundle.getBundle("properties.error-code");
-      } catch (MissingResourceException ignored) {
-      }
-    }
-  }
+  private static final PropertiesSource propertiesSource = PropertiesSource
+      .of("error-code", "properties.error-code");
 
   public BusinessException(String code) {
-    super(bundle != null && bundle.containsKey(code) ? bundle.getString(code) : code);
+    super(propertiesSource.getOrDefault(code, code));
     this.code = code;
     this.data = null;
   }
 
   public BusinessException(String code, Throwable cause) {
-    super(bundle != null && bundle.containsKey(code) ? bundle.getString(code) : code, cause);
+    super(propertiesSource.getOrDefault(code, code), cause);
     this.code = code;
     this.data = null;
   }
 
   public BusinessException(String code, Object data) {
-    super(bundle != null && bundle.containsKey(code) ? bundle.getString(code) : code);
+    super(propertiesSource.getOrDefault(code, code));
     this.code = code;
     this.data = data;
   }
