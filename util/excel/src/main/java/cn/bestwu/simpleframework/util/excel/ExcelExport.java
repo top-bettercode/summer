@@ -67,6 +67,7 @@ public class ExcelExport {
   /**
    * @param filename filename eventually holding the serialized workbook .
    * @return ExcelExport
+   * @throws FileNotFoundException FileNotFoundException
    */
   public static ExcelExport of(String filename) throws FileNotFoundException {
     return new ExcelExport(new FileOutputStream(filename));
