@@ -38,7 +38,16 @@ public class ExcelImport {
   /**
    * 当前行号
    */
-  private int rowNum;
+  private int r = 0;
+  /**
+   * 当前单元格号
+   */
+  private int c = 0;
+  /**
+   * 工作表对象
+   */
+  private Sheet sheet;
+
 
   /**
    * @param fileName 导入文件
@@ -79,6 +88,7 @@ public class ExcelImport {
   private ExcelImport(InputStream is)
       throws IOException {
     workbook = new ReadableWorkbook(is);
+    sheet = workbook.getFirstSheet();
     log.debug("Initialize success.");
   }
 
@@ -86,9 +96,56 @@ public class ExcelImport {
     return workbook;
   }
 
-  public int getRowNum() {
-    return rowNum;
+
+  /**
+   * @param row 行号，从0开始
+   * @return this ExcelExport
+   */
+  public ExcelImport setRow(int row) {
+    this.r = row;
+    return this;
   }
+
+  /**
+   * @param column 列号，从0开始
+   * @return this ExcelExport
+   */
+  public ExcelImport setColumn(int column) {
+    this.c = column;
+    return this;
+  }
+
+  /**
+   * @param row    行号，从0开始
+   * @param column 列号，从0开始
+   * @return this ExcelExport
+   */
+  public ExcelImport setRowAndColumn(Integer row, Integer column) {
+    this.r = row;
+    this.c = column;
+    return this;
+  }
+
+  public int getRow() {
+    return r;
+  }
+
+  public int getColumn() {
+    return c;
+  }
+
+  public ExcelImport sheet(int sheetIndex) {
+    this.sheet = workbook.getSheet(sheetIndex)
+        .orElseThrow(() -> new ExcelException("未找到第" + (sheetIndex + 1) + "张表"));
+    return this;
+  }
+
+  public ExcelImport sheet(String sheetName) {
+    this.sheet = workbook.findSheet(sheetName)
+        .orElseThrow(() -> new ExcelException("未找到表：" + sheetName));
+    return this;
+  }
+
 
   /**
    * @param validateGroups 验证 groups
@@ -132,7 +189,7 @@ public class ExcelImport {
    */
   public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields, ExcelConverter<F, E> converter)
       throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
-    return getData(0, 0, excelFields[0].entityType, excelFields, converter);
+    return getData(excelFields[0].entityType, excelFields, converter);
   }
 
   /**
@@ -158,11 +215,11 @@ public class ExcelImport {
   /**
    * 获取导入数据列表
    *
+   * @param cls         实体类型
+   * @param excelFields excelFields
    * @param converter   F 转换为E
    * @param <F>         F
    * @param <E>         E
-   * @param excelFields excelFields
-   * @param cls         实体类型
    * @return List
    * @throws IOException            IOException
    * @throws IllegalAccessException IllegalAccessException
@@ -171,37 +228,12 @@ public class ExcelImport {
    */
   public <F, E> List<E> getData(Class<F> cls, ExcelField<F, ?>[] excelFields,
       ExcelConverter<F, E> converter)
-      throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
-    return getData(0, 0, cls, excelFields, converter);
-  }
-
-
-  /**
-   * 获取导入数据列表
-   *
-   * @param headerNum   标题行号，数据行号=标题行号+1
-   * @param sheetIndex  工作表编号
-   * @param cls         实体类型
-   * @param excelFields excelFields
-   * @param converter   F 转换为E
-   * @param <F>         F
-   * @param <E>         E
-   * @return List
-   * @throws IOException            IOException
-   * @throws IllegalAccessException IllegalAccessException
-   * @throws ExcelImportException   ExcelImportException
-   * @throws InstantiationException InstantiationException
-   */
-  public <F, E> List<E> getData(int sheetIndex, int headerNum, Class<F> cls,
-      ExcelField<F, ?>[] excelFields,
-      ExcelConverter<F, E> converter)
       throws IOException, IllegalAccessException, ExcelImportException, InstantiationException {
-    Sheet sheet = workbook.getSheet(sheetIndex).orElse(null);
     if (sheet == null) {
       throw new RuntimeException("文档中未找到相应工作表!");
     }
     List<E> dataList = new ArrayList<>();
-    for (Row row : sheet.openStream().filter(r -> r.getRowNum() - 1 > headerNum)
+    for (Row row : sheet.openStream().filter(row -> row.getRowNum() - 1 > r)
         .collect(Collectors.toList())) {
       if (row != null) {
         E e = readRow(cls, excelFields, row, converter);
@@ -217,10 +249,10 @@ public class ExcelImport {
       ExcelConverter<F, E> converter)
       throws InstantiationException, IllegalAccessException, ExcelImportException {
     boolean notAllBlank = false;
-    int column = 0;
+    int column = c;
     F o = cls.newInstance();
     List<CellError> rowErrors = new ArrayList<>();
-    rowNum = row.getRowNum();
+    r = row.getRowNum();
 
     for (ExcelField<F, ?> excelField : excelFields) {
       Object cellValue = getCellValue(excelField, row, column++);
@@ -228,7 +260,7 @@ public class ExcelImport {
       try {
         excelField.setProperty(o, cellValue, validator, validateGroups);
       } catch (Exception e) {
-        rowErrors.add(new CellError(rowNum, column - 1, excelField.title(),
+        rowErrors.add(new CellError(r, column - 1, excelField.title(),
             (cellValue == null ? null : String.valueOf(cellValue)), e));
       }
     }
