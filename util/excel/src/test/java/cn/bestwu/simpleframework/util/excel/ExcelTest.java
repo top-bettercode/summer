@@ -48,7 +48,7 @@ public class ExcelTest {
 
     List<DataBean> list = new ArrayList<>();
     for (int i = 0; i < 8; i++) {
-      DataBean bean = new DataBean();
+      DataBean bean = new DataBean(i);
       list.add(bean);
     }
     long s = System.currentTimeMillis();
@@ -72,7 +72,7 @@ public class ExcelTest {
   public void testMergeExport() throws IOException {
     List<DataBean> list = new ArrayList<>();
     for (int i = 0; i < 20; i++) {
-      DataBean bean = new DataBean();
+      DataBean bean = new DataBean(i);
       list.add(bean);
     }
     long s = System.currentTimeMillis();
@@ -110,6 +110,25 @@ public class ExcelTest {
     private String name = "名称";
     private Date date = new Date();
 
+    public DataBean() {
+      intCode = 1;
+      integer = 2;
+      longl = new Date().getTime();
+      doublel = 4.4;
+      floatl = 5.5f;
+      name = "名称";
+      date = new Date();
+    }
+
+    public DataBean(Integer index) {
+      intCode = 1 + index;
+      integer = 2 + index;
+      longl = new Date().getTime() + index * 10000;
+      doublel = 4.4 + index;
+      floatl = 5.5f + index;
+      name = "名称" + index;
+      date = new Date();
+    }
 
     public Integer getIntCode() {
       return intCode;
