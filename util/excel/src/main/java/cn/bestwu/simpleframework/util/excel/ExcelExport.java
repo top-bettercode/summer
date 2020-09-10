@@ -74,6 +74,16 @@ public class ExcelExport {
   }
 
   /**
+   * @param file filename eventually holding the serialized workbook .
+   * @return ExcelExport
+   * @throws FileNotFoundException FileNotFoundException
+   */
+  public static ExcelExport of(File file) throws FileNotFoundException {
+    return new ExcelExport(new FileOutputStream(file));
+  }
+
+
+  /**
    * @param os Output stream eventually holding the serialized workbook.
    * @return ExcelExport
    */
