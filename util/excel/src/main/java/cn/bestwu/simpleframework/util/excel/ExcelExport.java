@@ -79,6 +79,10 @@ public class ExcelExport {
    * @throws FileNotFoundException FileNotFoundException
    */
   public static ExcelExport of(File file) throws FileNotFoundException {
+    File parentFile = file.getParentFile();
+    if (!parentFile.exists()) {
+      parentFile.mkdirs();
+    }
     return new ExcelExport(new FileOutputStream(file));
   }
 
