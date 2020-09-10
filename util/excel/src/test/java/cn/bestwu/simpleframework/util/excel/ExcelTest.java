@@ -94,7 +94,7 @@ public class ExcelTest {
 
   @Test
   public void testTemplate() throws IOException {
-    ExcelExport.of("build/template.xlsx").sheet("表格1").template(excelFields);
+    ExcelExport.of("build/template.xlsx").sheet("表格1").template(excelFields).finish();
     Runtime.getRuntime()
         .exec("xdg-open " + System.getProperty("user.dir") + "/build/template.xlsx");
   }

@@ -443,10 +443,10 @@ public class ExcelExport {
   }
 
 
-  public <T> void template(ExcelField<T, ?>[] excelFields) throws IOException {
+  public <T> ExcelExport template(ExcelField<T, ?>[] excelFields) {
     includeComment = true;
     setData(Collections.emptyList(), excelFields);
-    finish();
+    return this;
   }
 
   /**
