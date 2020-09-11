@@ -324,7 +324,7 @@ APP_HOME="`pwd -P`"
 cd ${'$'}APP_HOME
 mkdir -p "${'$'}APP_HOME/logs"
 nohup "${'$'}APP_HOME/bin/${project.name}" 1>/dev/null 2>"${'$'}APP_HOME/logs/error.log" &
-ps -ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'
+ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'
 """)
 
                         //shutdown.sh
@@ -348,7 +348,7 @@ SAVED="`pwd`"
 cd "`dirname \"${'$'}PRG\"`/" >/dev/null
 APP_HOME="`pwd -P`"
 
-pid="`ps -ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'`"
+pid="`ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'`"
 if [ -n "${'$'}pid" ]
 then
     echo "${'$'}pid" |while read id
