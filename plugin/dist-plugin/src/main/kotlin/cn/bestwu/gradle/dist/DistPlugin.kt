@@ -323,13 +323,8 @@ APP_HOME="`pwd -P`"
 
 cd ${'$'}APP_HOME
 mkdir -p "${'$'}APP_HOME/logs"
-if [ "${'$'}1" = '-f' ]
-then
-    "${'$'}APP_HOME/bin/${project.name}"
-else
-    nohup "${'$'}APP_HOME/bin/${project.name}" 1>/dev/null 2>"${'$'}APP_HOME/logs/error.log" & echo ${'$'}! > "${'$'}APP_HOME/${project.name}.pid"
-    cat "${'$'}APP_HOME/${project.name}.pid"
-fi
+nohup "${'$'}APP_HOME/bin/${project.name}" 1>/dev/null 2>"${'$'}APP_HOME/logs/error.log" &
+ps -ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'
 """)
 
                         //shutdown.sh
@@ -353,11 +348,14 @@ SAVED="`pwd`"
 cd "`dirname \"${'$'}PRG\"`/" >/dev/null
 APP_HOME="`pwd -P`"
 
-pid="`cat ${'$'}APP_HOME/${project.name}.pid`"
-if [ "" != "${'$'}pid" ]
+pid="`ps -ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'`"
+if [ -n "${'$'}pid" ]
 then
-    kill -9 "${'$'}pid"
-    echo "${'$'}pid"
+    echo "${'$'}pid" |while read id
+    do
+    kill -9 ${'$'}id
+    echo "${'$'}id"
+    done
 fi
 """)
                         //${project.name}-install
@@ -425,7 +423,7 @@ After=network.target
 
 [Service]
 ${if (dist.runUser.isNotBlank()) "User=${dist.runUser}" else ""}
-ExecStart=${'$'}APP_HOME/startup.sh -f
+ExecStart=${'$'}APP_HOME/bin/${project.name}
 ExecReload=/bin/kill -HUP \${'$'}MAINPID
 KillMode=/bin/kill -s QUIT \${'$'}MAINPID
 Restart=always
