@@ -10,14 +10,14 @@ import com.querydsl.core.types.Path;
 
 
 /**
- * QBaseUser is a Querydsl query type for BaseUser
+ * QHardUser is a Querydsl query type for HardUser
  */
-@Generated("com.querydsl.codegen.SupertypeSerializer")
-public class QBaseUser extends EntityPathBase<BaseUser> {
+@Generated("com.querydsl.codegen.EntitySerializer")
+public class QHardUser extends EntityPathBase<HardUser> {
 
-    private static final long serialVersionUID = -888630333L;
+    private static final long serialVersionUID = 948744413L;
 
-    public static final QBaseUser baseUser = new QBaseUser("baseUser");
+    public static final QHardUser hardUser = new QHardUser("hardUser");
 
     public final BooleanPath deleted = createBoolean("deleted");
 
@@ -27,16 +27,16 @@ public class QBaseUser extends EntityPathBase<BaseUser> {
 
     public final StringPath lastname = createString("lastname");
 
-    public QBaseUser(String variable) {
-        super(BaseUser.class, forVariable(variable));
+    public QHardUser(String variable) {
+        super(HardUser.class, forVariable(variable));
     }
 
-    public QBaseUser(Path<? extends BaseUser> path) {
+    public QHardUser(Path<? extends HardUser> path) {
         super(path.getType(), path.getMetadata());
     }
 
-    public QBaseUser(PathMetadata metadata) {
-        super(BaseUser.class, metadata);
+    public QHardUser(PathMetadata metadata) {
+        super(HardUser.class, metadata);
     }
 
 }

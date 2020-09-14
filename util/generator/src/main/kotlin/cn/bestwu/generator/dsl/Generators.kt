@@ -62,7 +62,7 @@ object Generators {
         extension.tableNames.forEach { tableName ->
             val table = tables.find { it.tableName == tableName }
                     ?: throw RuntimeException("未在(${extension.tableNames})中找到${tableName}表")
-            generators.forEach { generator ->
+            generators.filter { if (table.primaryKeys.size > 1) true else !it.pKey }.forEach { generator ->
                 generator.call(extension, table)
             }
         }
@@ -89,7 +89,7 @@ object Generators {
             extension.tableNames.forEach {
                 val table = table(it)
                 if (table != null) {
-                    generators.forEach { generator ->
+                    generators.filter { if (table.primaryKeys.size > 1) true else !it.pKey }.forEach { generator ->
                         generator.call(extension, table)
                     }
                 }
@@ -115,7 +115,7 @@ object Generators {
                 val tables = PumlConverter.toTables(file)
                 tables.forEach { table ->
                     println("查询：${table.tableName} 表数据结构")
-                    generators.forEach { generator ->
+                    generators.filter { if (table.primaryKeys.size > 1) true else !it.pKey }.forEach { generator ->
                         generator.module = file.nameWithoutExtension
                         generator.call(extension, table)
                     }
@@ -132,7 +132,7 @@ object Generators {
                     val table = tables.find { it.tableName == tableName }
                     if (table != null) {
                         found = true
-                        generators.forEach { generator ->
+                        generators.filter { if (table.primaryKeys.size > 1) true else !it.pKey }.forEach { generator ->
                             generator.module = file.nameWithoutExtension
                             generator.call(extension, table)
                         }

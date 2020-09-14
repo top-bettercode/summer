@@ -14,31 +14,46 @@ abstract class JavaGenerator : Generator() {
 
     protected abstract fun content()
 
-    open var packageName: String = ""
+    open val packageName: String
         get() {
-            return if (field.isBlank()) {
-                var packageName = if (field.isBlank()) basePackageName else field
-                if (settings["no-modules"] == null)
-                    packageName = "$packageName.modules"
-                if (extension.userModule && module.isNotBlank()) {
-                    "$packageName.$module"
-                } else {
-                    packageName
-                }
-            } else {
-                field
-            }
+            return extension.javaPackageName
         }
 
-    open var basePackageName: String = ""
+    open val basePackageName: String
         get() {
-            return if (field.isBlank()) (if (extension.projectPackage) "${extension.packageName}.$projectName" else extension.packageName) else field
+            return extension.basePackageName
         }
 
     override val name: String
         get() = type.fullyQualifiedNameWithoutTypeParameters
 
     protected open val type: JavaType = JavaType(DEFAULT_NAME)
+
+    /**
+     * 主键
+     */
+    protected open val primaryKeyType: JavaType
+        get() {
+            return if (primaryKeys.size == 1) {
+                primaryKey.javaType
+            } else {
+                JavaType("$packageName.entity.${className}Key")
+            }
+        }
+
+
+    /**
+     * 主键
+     */
+    protected open val primaryKeyName: String
+        get() {
+            return if (primaryKeys.size == 1) {
+                primaryKey.javaName
+            } else {
+                "${entityName}Key"
+            }
+        }
+
 
     protected open fun getRemark(it: Column) =
             "${(if (it.remarks.isBlank()) "" else (if (it.isSoftDelete) it.remarks.split(Regex("[:：,， (（]"))[0] else it.remarks.replace("@", "\\@")))}${if (it.columnDef.isNullOrBlank() || it.isSoftDelete) "" else " 默认值：${it.columnDef}"}"
