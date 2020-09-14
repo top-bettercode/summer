@@ -106,6 +106,7 @@ abstract class Generator {
 
     open var cover: Boolean = false
     protected open val test: Boolean = false
+    open val pKey: Boolean = false
     protected open val resources: Boolean = false
 
     protected open val dir: String

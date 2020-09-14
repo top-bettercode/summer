@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QStaticUser extends EntityPathBase<StaticUser> {
 
-    private static final long serialVersionUID = 586359255L;
+    private static final long serialVersionUID = 1376255776L;
 
     public static final QStaticUser staticUser = new QStaticUser("staticUser");
 

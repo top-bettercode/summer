@@ -185,6 +185,27 @@ open class GeneratorExtension(
      */
     var jsonViewIgnoredFieldNames: Array<String> = arrayOf()
 
+    val javaPackageName: String = ""
+        get() {
+            return if (field.isBlank()) {
+                var packageName = if (field.isBlank()) basePackageName else field
+                if (settings["no-modules"] == null)
+                    packageName = "$packageName.modules"
+                if (userModule && module.isNotBlank()) {
+                    "$packageName.$module"
+                } else {
+                    packageName
+                }
+            } else {
+                field
+            }
+        }
+
+    val basePackageName: String = ""
+        get() {
+            return if (field.isBlank()) (if (projectPackage) "${packageName}.$projectName" else packageName) else field
+        }
+
     /**
      * ClassName
      */
