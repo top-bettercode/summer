@@ -239,6 +239,18 @@ abstract class Generator {
         }
 
     /**
+     * 是否组合主键
+     */
+    protected val compositePrimaryKey: Boolean
+        get() = primaryKeys.size > 1
+
+    /**
+     * 非主键字段
+     */
+    protected val otherColumns: List<Column>
+        get() = columns.filter { !it.isPrimary }
+
+    /**
      * 字段
      */
     protected val columns: List<Column>
