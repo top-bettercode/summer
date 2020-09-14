@@ -37,7 +37,7 @@ abstract class JavaGenerator : Generator() {
             return if (primaryKeys.size == 1) {
                 primaryKey.javaType
             } else {
-                JavaType("$packageName.entity.${className}Key")
+                JavaType("$packageName.entity.${className}.${className}Key")
             }
         }
 
