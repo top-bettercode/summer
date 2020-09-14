@@ -17,7 +17,7 @@ val testquerydslSourcesDir = file("src/testquerydsl/java")
 tasks {
     create("generateTestJPAQueryDSL", JavaCompile::class.java) {
         source = fileTree("src/test/java/cn/bestwu/simpleframework/data/test/domain")
-        classpath = configurations.runtimeClasspath.get() + configurations.runtime.get() + configurations.testCompile.get() + configurations.annotationProcessor.get()
+        classpath = configurations.runtimeClasspath.get() + configurations.annotationProcessor.get()
         options.compilerArgs.addAll(listOf("-proc:only", "-processor", "com.querydsl.apt.jpa.JPAAnnotationProcessor"))
         options.annotationProcessorPath = classpath
         options.encoding = "UTF-8"
