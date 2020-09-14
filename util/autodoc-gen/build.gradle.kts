@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api(project(":util:autodoc-core"))
+    api("org.springframework.boot:spring-boot-starter-test")
 
     //util
     api(project(":util:api-sign"))
