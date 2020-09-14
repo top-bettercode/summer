@@ -1,8 +1,10 @@
 package cn.bestwu.autodoc.gen
 
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.core.io.ClassPathResource
@@ -13,13 +15,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.io.FileReader
 import javax.sql.DataSource
 
+
 /**
  * 控制层测试
  *
  * @author Peter Wu
  */
-@ExtendWith(SpringExtension::class)
+@ExtendWith(value = [SpringExtension::class, AutodocSetting::class])
 @WebMvcTest(ClientTokenController::class)
+@DisplayName("token")
 class MockMvcControllerTest {
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -33,6 +37,8 @@ class MockMvcControllerTest {
         Autodoc.tableNames("OAUTH_CLIENT_TOKEN")
     }
 
+
+    @DisplayName("列表1")
     @Test
     @Throws(Exception::class)
     fun test0Index() {
