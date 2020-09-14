@@ -209,7 +209,7 @@ abstract class Generator {
     /**
      * 主键
      */
-    private val primaryKeys: List<Column>
+    protected val primaryKeys: List<Column>
         get() {
             val primaryKeys = table.primaryKeys
             return if (primaryKeys.isEmpty()) {
