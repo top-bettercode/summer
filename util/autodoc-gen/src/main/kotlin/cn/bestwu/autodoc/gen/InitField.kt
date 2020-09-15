@@ -149,7 +149,7 @@ object InitField {
         fields.add(Field(entityName(extension), "Object", remarks))
         fields.add(Field(pathName(extension), "Array", remarks))
         if (primaryKeys.size > 1) {
-            fields.add(Field(entityName(extension) + "Key", "Object", remarks + "主键"))
+            fields.add(Field(entityName(extension) + "Key", "String", remarks + "主键"))
         }
         return fields
     }
