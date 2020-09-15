@@ -17,8 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * JSON序列化url自动补全
@@ -82,7 +86,20 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
       } else {
         format = defaultFormat;
       }
-      return String.format(format, path);
+      String url = String.format(format, path);
+      if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+            .getRequestAttributes();
+        if (requestAttributes != null) {
+          HttpServletRequest request = requestAttributes.getRequest();
+          String scheme = request.getScheme();
+          String host = request.getHeader(HttpHeaders.HOST);
+          if (StringUtils.hasText(host)) {
+            url = String.format("%s://%s%s", scheme, host, url);
+          }
+        }
+      }
+      return url;
     } else {
       return path;
     }
@@ -127,7 +144,7 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
           }
           gen.writeStringField(urlFieldName, convert(path, formatExpression));
         } else {
-          gen.writeString(UrlSerializer.convert(path, formatExpression));
+          gen.writeString(convert(path, formatExpression));
         }
       } else {
         String path = (String) value;
