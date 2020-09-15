@@ -146,9 +146,17 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
         if (cacheSeconds > 0) {
             if (!cacheMap.containsKey(initialComment)) {
                 cacheMap[initialComment] = 1
+                val timeoutMsg = event.mdcPropertyMap[RequestLoggingFilter.TIMEOUT_MSG]
+                if (!timeoutMsg.isNullOrBlank()) {
+                    initialComment += timeoutMsg
+                }
                 send(timeStamp, initialComment, message)
             }
         } else {
+            val timeoutMsg = event.mdcPropertyMap[RequestLoggingFilter.TIMEOUT_MSG]
+            if (!timeoutMsg.isNullOrBlank()) {
+                initialComment += timeoutMsg
+            }
             send(timeStamp, initialComment, message)
         }
     }

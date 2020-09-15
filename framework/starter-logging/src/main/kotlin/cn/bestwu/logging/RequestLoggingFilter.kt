@@ -45,6 +45,7 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
         const val OPERATION_MARKER = "operation"
         const val IS_OPERATION_MARKER = "is_operation"
 
+        val TIMEOUT_MSG = RequestLoggingFilter::class.java.name + ".timeout_msg"
         val REQUEST_LOGGING_USERNAME = RequestLoggingFilter::class.java.name + ".username"
         val REQUEST_DATE_TIME = RequestLoggingFilter::class.java.name + ".dateTime"
     }
@@ -125,6 +126,7 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
                     val timeoutLog = "${operation.collectionName}/${operation.name}(${operation.request.uri}) 请求超时"
                     val timeout = "：${operation.duration}毫秒"
                     MDC.put(WebUtils.ERROR_MESSAGE_ATTRIBUTE, timeoutLog)
+                    MDC.put(TIMEOUT_MSG, timeout)
                     log.warn(MarkerFactory.getMarker(ALARM_LOG_MARKER), "$timeoutLog${timeout}\n$msg")
                 }
                 val marker = MarkerFactory.getMarker(REQUEST_LOG_MARKER)
@@ -137,8 +139,10 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
                 } else {
                     val httpStatusCode = getStatus(requestAttributes)
                     if (!properties.ignoredErrorStatusCode.contains(httpStatusCode)) {
-                        val message = "httpStatus:$httpStatusCode ${error.javaClass.name}:${getMessage(requestAttributes)
-                                ?: error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase}"
+                        val message = "httpStatus:$httpStatusCode ${error.javaClass.name}:${
+                            getMessage(requestAttributes)
+                                    ?: error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
+                        }"
                         MDC.put(WebUtils.ERROR_MESSAGE_ATTRIBUTE, message)
                         if (config.includeTrace)
                             log.error(marker, msg)
