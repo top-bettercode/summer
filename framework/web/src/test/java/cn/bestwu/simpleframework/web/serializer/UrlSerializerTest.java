@@ -26,9 +26,15 @@ public class UrlSerializerTest {
         .withSerializerModifier(new CustomNullSerializerModifier(true)));
 
     MockEnvironment mockEnvironment = new MockEnvironment();
-    mockEnvironment.setProperty("app.multipart.file-url-format", "http://127.0.0.1%s");
+    mockEnvironment.setProperty("app.multipart.file-url-format", "/path%s");
+//    mockEnvironment.setProperty("app.multipart.file-url-format", "http://127.0.0.1%s");
     mockEnvironment.setProperty("path1-url", "http://127.0.0.2%s");
     UrlSerializer.setEnvironment(mockEnvironment);
+  }
+
+  @Test
+  void convert() {
+    System.err.println(UrlSerializer.convert("/adb"));
   }
 
   @Test

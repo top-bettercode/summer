@@ -1,6 +1,7 @@
 package cn.bestwu.simpleframework.web;
 
 import cn.bestwu.simpleframework.web.resolver.Cent;
+import cn.bestwu.simpleframework.web.serializer.annotation.JsonUrl;
 import java.util.List;
 
 public class DataDicBean {
@@ -10,6 +11,7 @@ public class DataDicBean {
   private Integer intCode;
   @Cent
   private Long price;
+  @JsonUrl
   private String path;
   private String path1;
   private String desc;

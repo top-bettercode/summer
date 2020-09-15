@@ -13,4 +13,4 @@ logging:
     include-request-body: true
 app:
   multipart:
-    file-url-format: http://127.0.0.1%s
+    file-url-format: /path%s
