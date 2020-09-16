@@ -14,14 +14,25 @@ abstract class JavaGenerator : Generator() {
 
     protected abstract fun content()
 
-    open val packageName: String
+    open var packageName: String = ""
         get() {
-            return extension.javaPackageName
+            return if (field.isBlank()) {
+                var packageName = if (field.isBlank()) basePackageName else field
+                if (settings["no-modules"] == null)
+                    packageName = "$packageName.modules"
+                if (extension.userModule && module.isNotBlank()) {
+                    "$packageName.$module"
+                } else {
+                    packageName
+                }
+            } else {
+                field
+            }
         }
 
-    open val basePackageName: String
+    open var basePackageName: String = ""
         get() {
-            return extension.basePackageName
+            return if (field.isBlank()) (if (extension.projectPackage) "${extension.packageName}.$projectName" else extension.packageName) else field
         }
 
     override val name: String
