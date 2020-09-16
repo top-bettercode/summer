@@ -24,6 +24,8 @@ import org.dhatim.fastexcel.Worksheet;
 import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * 导出Excel文件（导出“XLSX”格式，支持大数据量导出 ）
@@ -446,6 +448,22 @@ public class ExcelExport {
   /**
    * 输出数据流
    *
+   * @param fileName 输出文件名
+   * @param consumer 处理生成excel
+   * @throws IOException IOException
+   */
+  public static void export(String fileName, Consumer<ExcelExport> consumer) throws IOException {
+    ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+        .getRequestAttributes();
+    Assert.notNull(requestAttributes, "requestAttributes获取失败");
+    HttpServletRequest request = requestAttributes.getRequest();
+    HttpServletResponse response = requestAttributes.getResponse();
+    export(request, response, fileName, consumer);
+  }
+
+  /**
+   * 输出数据流
+   *
    * @param request  request
    * @param response response
    * @param fileName 输出文件名
@@ -458,6 +476,24 @@ public class ExcelExport {
     ExcelExport excelExport = ExcelExport.of(response.getOutputStream());
     consumer.accept(excelExport);
     excelExport.finish();
+  }
+
+  /**
+   * 文件缓存输出
+   *
+   * @param fileName 输出文件名
+   * @param fileKey  文件唯一key
+   * @param consumer 处理生成excel
+   * @throws IOException IOException
+   */
+  public static void cache(String fileName, String fileKey, Consumer<ExcelExport> consumer)
+      throws IOException {
+    ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+        .getRequestAttributes();
+    Assert.notNull(requestAttributes, "requestAttributes获取失败");
+    HttpServletRequest request = requestAttributes.getRequest();
+    HttpServletResponse response = requestAttributes.getResponse();
+    cache(request, response, fileName, fileKey, consumer);
   }
 
   /**
@@ -481,6 +517,24 @@ public class ExcelExport {
         throw new RuntimeException(e);
       }
     });
+  }
+
+  /**
+   * 文件缓存输出
+   *
+   * @param fileName 输出文件名
+   * @param fileKey  文件唯一key
+   * @param consumer 处理生成excel至 outputStream
+   * @throws IOException IOException
+   */
+  public static void cacheOutput(String fileName, String fileKey, Consumer<OutputStream> consumer)
+      throws IOException {
+    ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+        .getRequestAttributes();
+    Assert.notNull(requestAttributes, "requestAttributes获取失败");
+    HttpServletRequest request = requestAttributes.getRequest();
+    HttpServletResponse response = requestAttributes.getResponse();
+    cacheOutput(request, response, fileName, fileKey, consumer);
   }
 
   /**
