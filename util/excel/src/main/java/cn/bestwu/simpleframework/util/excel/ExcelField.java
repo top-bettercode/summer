@@ -40,6 +40,10 @@ public class ExcelField<T, P> {
    * 默认时间格式
    */
   private static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm";
+  /**
+   * 默认格式
+   */
+  public static final String DEFAULT_PATTERN = "@";
 
   /**
    * 导出字段标题
@@ -401,7 +405,7 @@ public class ExcelField<T, P> {
           || propertyType == LocalDateTime.class) {
         this.pattern = DEFAULT_DATE_PATTERN;
       } else {
-        this.pattern = "@";
+        this.pattern = DEFAULT_PATTERN;
       }
     }
 
