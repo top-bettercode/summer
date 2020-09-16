@@ -7,9 +7,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import javax.mail.internet.MimeUtility;
@@ -63,6 +65,10 @@ public class ExcelExport {
   private String serialNumberName = "序号";
 
   private final ColumnWidths columnWidths = new ColumnWidths();
+
+  private final BorderSide[] defaultBorderSides = new BorderSide[]{BorderSide.TOP, BorderSide.LEFT,
+      BorderSide.BOTTOM,
+      BorderSide.RIGHT};
 
   /**
    * @param filename filename eventually holding the serialized workbook .
@@ -186,18 +192,11 @@ public class ExcelExport {
   public <T> void createHeader(ExcelField<T, ?>[] excelFields) {
     // Create header
     {
-      String alignment = Alignment.center.name();
       if (serialNumber) {
         sheet.value(r, c, serialNumberName);
         columnWidths.put(c, serialNumberName);
-        sheet.style(r, c)
-            .horizontalAlignment(alignment)
-            .verticalAlignment(alignment)
-            .bold()
-            .fillColor("808080")
-            .fontColor("FFFFFF")
-            .borderStyle("thin").borderColor("000000")
-            .set();
+        sheet.width(c, columnWidths.width(c));
+        setHeaderStyle();
         c++;
       }
       for (ExcelField<T, ?> excelField : excelFields) {
@@ -213,14 +212,7 @@ public class ExcelExport {
         } else {
           sheet.width(c, width);
         }
-        sheet.style(r, c)
-            .horizontalAlignment(alignment)
-            .verticalAlignment(alignment)
-            .bold()
-            .fillColor("808080")
-            .fontColor("FFFFFF")
-            .borderStyle("thin").borderColor("000000")
-            .set();
+        setHeaderStyle();
         if (includeComment) {
           String commentStr = excelField.comment();
           if (StringUtils.hasText(commentStr)) {
@@ -232,6 +224,17 @@ public class ExcelExport {
     }
     c = 0;
     r++;
+  }
+
+  private void setHeaderStyle() {
+    sheet.style(r, c)
+        .horizontalAlignment(Alignment.center.name())
+        .verticalAlignment(Alignment.center.name())
+        .bold()
+        .fillColor("808080")
+        .fontColor("FFFFFF")
+        .borderStyle("thin").borderColor("000000")
+        .set();
   }
 
 
@@ -260,57 +263,47 @@ public class ExcelExport {
     Assert.notNull(sheet, "表格未初始化");
     createHeader(excelFields);
     Iterator<T> iterator = list.iterator();
+    int firstColumn = c;
+
     while (iterator.hasNext()) {
       T e = converter.convert(iterator.next());
       boolean hasNext = iterator.hasNext();
       boolean fill = r % 2 == 0;
       if (serialNumber) {
-        sheet.value(r, c, r);
-        columnWidths.put(c, r);
-        StyleSetter style = sheet.style(r, c)
-            .horizontalAlignment(Alignment.center.name())
-            .verticalAlignment(Alignment.center.name())
-            .wrapText(wrapText)
-            .borderStyle("thin").borderColor("000000");
-        if (fill) {
-          style.fillColor("F8F8F7");
-        }
-        style.set();
-        if (!hasNext) {
-          sheet.width(c, columnWidths.width(c));
-        }
+        setCell(hasNext, fill, Alignment.center, -1, ExcelField.DEFAULT_PATTERN, r,
+            defaultBorderSides);
         c++;
       }
       for (ExcelField<T, ?> excelField : excelFields) {
-        StyleSetter style = sheet.style(r, c)
-            .horizontalAlignment(excelField.align().name())
-            .verticalAlignment(Alignment.center.name())
-            .wrapText(wrapText)
-            .format(excelField.pattern())
-            .borderStyle("thin").borderColor("000000");
-
-        setCellValue(hasNext, fill, style, excelField.toCellValue(e), excelField.width(),
-            excelField.pattern());
+        setCell(hasNext, fill, excelField.align(), excelField.width(), excelField.pattern(),
+            excelField.toCellValue(e), defaultBorderSides);
         c++;
       }
-      c = 0;
+      c = firstColumn;
       r++;
     }
     return this;
   }
 
-  private void setCellValue(boolean hasNext, boolean fill, StyleSetter style, Object cellValue,
-      double width, String pattern) {
+  private void setCell(boolean hasNext, boolean fill, Alignment align, double width,
+      String pattern,
+      Object cellValue, BorderSide... borderSide) {
+    StyleSetter style = sheet.style(r, c);
+    style.horizontalAlignment(align.name())
+        .verticalAlignment(Alignment.center.name())
+        .wrapText(wrapText)
+        .format(pattern);
+    for (BorderSide side : borderSide) {
+      style.borderStyle(side, "thin")
+          .borderColor(side, "000000");
+    }
     if (fill) {
       style.fillColor("F8F8F7");
     }
     style.set();
-
     sheet.value(r, c, cellValue);
     if (width == -1) {
-      columnWidths
-          .put(c, cellValue.getClass().equals(Date.class) ? pattern : cellValue);
-
+      columnWidths.put(c, cellValue.getClass().equals(Date.class) ? pattern : cellValue);
       if (!hasNext) {
         sheet.width(c, columnWidths.width(c));
       }
@@ -335,13 +328,13 @@ public class ExcelExport {
     Iterator<T> iterator = list.iterator();
     Object mergeId = null;
     boolean fill = true;
-    int top = r;
+    int firstRow = r;
+    int firstColumn = c;
+    int lastColumn = serialNumber ? excelFields.length - 1 : excelFields.length - 2;
+    int prevTop = r;
     int no = 1;
     ExcelField<T, ?> mergeField = excelFields[0];
-    int right = excelFields.length - 2;
-    if (serialNumber) {
-      right++;
-    }
+    int fieldsLength = excelFields.length;
     while (iterator.hasNext()) {
       T e = converter.convert(iterator.next());
 
@@ -352,108 +345,86 @@ public class ExcelExport {
         fill = !fill;
         mergeId = mergeIdValue;
       }
-      int bottom = hasNext ? r - 1 : r;
-      boolean merge = (newItem || !hasNext) && bottom > top;
+      int prevbottom = hasNext ? r - 1 : r;
+      boolean mergePrevItem = (newItem || !hasNext) && prevbottom > prevTop;
       if (serialNumber) {
-        if (merge) {
-          sheet.range(top, c, bottom, c).merge();
-          sheet.range(top, c, bottom, c).style().horizontalAlignment("center")
-              .verticalAlignment("center").set();
-        }
+        setCell(newItem, mergePrevItem, true, hasNext, fill, prevTop, prevbottom,
+            firstColumn, lastColumn, Alignment.center, -1, ExcelField.DEFAULT_PATTERN, no);
         if (newItem) {
-          sheet.value(r, c, no++);
-          columnWidths.put(c, no);
-          StyleSetter style = sheet.style(r, c)
-              .horizontalAlignment(Alignment.center.name())
-              .verticalAlignment(Alignment.center.name())
-              .wrapText(wrapText);
-          if (fill) {
-            style.fillColor("F8F8F7");
-          }
-          style.set();
-          if (!hasNext) {
-            sheet.width(c, columnWidths.width(c));
-          }
-        } else {
-          sheet.value(r, c);
+          no++;
         }
         c++;
       }
 
-      for (int i = 1; i < excelFields.length; i++) {
+      for (int i = 1; i < fieldsLength; i++) {
         ExcelField<T, ?> excelField = excelFields[i];
-        if (merge && excelField.isMerge()) {
-          sheet.range(top, c, bottom, c).merge();
-          sheet.width(c, columnWidths.width(c));
-          sheet.range(top, c, bottom, c).style().horizontalAlignment("center")
-              .verticalAlignment("center").set();
-        }
-        if (excelField.isMerge() && !newItem) {
-          sheet.value(r, c);
-        } else {
-          StyleSetter style = sheet.style(r, c)
-              .horizontalAlignment(excelField.align().name())
-              .verticalAlignment(Alignment.center.name())
-              .wrapText(wrapText)
-              .format(excelField.pattern());
-          setCellValue(hasNext, fill, style, excelField.toCellValue(e), excelField.width(),
-              excelField.pattern());
-        }
+        setCell(newItem, mergePrevItem, excelField.isMerge(), hasNext, fill, prevTop, prevbottom,
+            firstColumn, lastColumn, excelField.align(), excelField.width(),
+            excelField.pattern(), excelField.toCellValue(e));
         c++;
       }
-      if (merge) {
-        sheet.range(top, 0, top, right).style()
-            .borderStyle(BorderSide.TOP, "thin")
-            .borderColor(BorderSide.TOP, "000000")
-            .set();
-        sheet.range(bottom, 0, bottom, right).style()
-            .borderStyle(BorderSide.BOTTOM, "thin")
-            .borderColor(BorderSide.BOTTOM, "000000")
-            .set();
-        sheet.range(top, 0, top, 0).style()
-            .borderStyle(BorderSide.TOP, "thin")
-            .borderColor(BorderSide.TOP, "000000")
-            .borderStyle(BorderSide.LEFT, "thin")
-            .borderColor(BorderSide.LEFT, "000000")
-            .set();
-        sheet.range(bottom, 0, bottom, 0).style()
-            .borderStyle(BorderSide.BOTTOM, "thin")
-            .borderColor(BorderSide.BOTTOM, "000000")
-            .borderStyle(BorderSide.LEFT, "thin")
-            .borderColor(BorderSide.LEFT, "000000")
-            .set();
-        sheet.range(top, right, top, right).style()
-            .borderStyle(BorderSide.TOP, "thin")
-            .borderColor(BorderSide.TOP, "000000")
-            .borderStyle(BorderSide.RIGHT, "thin")
-            .borderColor(BorderSide.RIGHT, "000000")
-            .set();
-        sheet.range(bottom, right, bottom, right).style()
-            .borderStyle(BorderSide.BOTTOM, "thin")
-            .borderColor(BorderSide.BOTTOM, "000000")
-            .borderStyle(BorderSide.RIGHT, "thin")
-            .borderColor(BorderSide.RIGHT, "000000")
-            .set();
-
-        top++;
-        bottom--;
-        if (bottom >= top) {
-          sheet.range(top, 0, bottom, 0).style()
-              .borderStyle(BorderSide.LEFT, "thin")
-              .borderColor(BorderSide.LEFT, "000000")
-              .set();
-          sheet.range(top, right, bottom, right).style()
-              .borderStyle(BorderSide.RIGHT, "thin")
-              .borderColor(BorderSide.RIGHT, "000000")
-              .set();
-        }
-
-        top = r;
+      if (newItem) {
+        prevTop = r;
       }
-      c = 0;
+      c = firstColumn;
       r++;
     }
     return this;
+  }
+
+  private void setCell(boolean newItem, boolean mergePrevItem, boolean needMerge, boolean hasNext,
+      boolean fill, int prevTop, int prevbottom, int firstColumn, int lastColumn,
+      Alignment align,
+      double width,
+      String pattern,
+      Object cellValue) {
+    BorderSide[] borderSides;
+    if (fill) {
+      borderSides = defaultBorderSides;
+    } else {
+      List<BorderSide> borderSideList = new ArrayList<>();
+      if (firstColumn == c) {
+        borderSideList.add(BorderSide.LEFT);
+      }
+      if (lastColumn == c) {
+        borderSideList.add(BorderSide.RIGHT);
+      }
+      if (newItem) {
+        borderSideList.add(BorderSide.TOP);
+      }
+      if (!hasNext) {
+        borderSideList.add(BorderSide.BOTTOM);
+      }
+      borderSides = borderSideList.toArray(new BorderSide[0]);
+    }
+    if (!needMerge || newItem) {
+      setCell(hasNext, fill, align, width, pattern, cellValue, borderSides);
+    } else {
+      sheet.value(r, c);
+    }
+
+    if (mergePrevItem && needMerge) {
+      sheet.range(prevTop, c, prevbottom, c).merge();
+      sheet.width(c, columnWidths.width(c));
+      if (!hasNext) {
+        StyleSetter style = sheet.range(prevTop, c, prevbottom, c).style();
+        style.horizontalAlignment(align.name())
+            .verticalAlignment(Alignment.center.name())
+            .wrapText(wrapText)
+            .format(pattern);
+        style.borderStyle(BorderSide.TOP, "thin")
+            .borderColor(BorderSide.TOP, "000000")
+            .borderStyle(BorderSide.BOTTOM, "thin")
+            .borderColor(BorderSide.BOTTOM, "000000");
+        if (fill) {
+          style.borderStyle(BorderSide.LEFT, "thin")
+              .borderColor(BorderSide.LEFT, "000000")
+              .borderStyle(BorderSide.RIGHT, "thin")
+              .borderColor(BorderSide.RIGHT, "000000");
+        }
+        style.set();
+      }
+    }
   }
 
 
@@ -481,7 +452,7 @@ public class ExcelExport {
    * @param consumer 处理生成excel
    * @throws IOException IOException
    */
-  public static void write(HttpServletRequest request, HttpServletResponse response,
+  public static void export(HttpServletRequest request, HttpServletResponse response,
       String fileName, Consumer<ExcelExport> consumer) throws IOException {
     setResponseHeader(request, response, fileName);
     ExcelExport excelExport = ExcelExport.of(response.getOutputStream());
@@ -499,9 +470,9 @@ public class ExcelExport {
    * @param consumer 处理生成excel
    * @throws IOException IOException
    */
-  public static void writeCache(HttpServletRequest request, HttpServletResponse response,
+  public static void cache(HttpServletRequest request, HttpServletResponse response,
       String fileName, String fileKey, Consumer<ExcelExport> consumer) throws IOException {
-    writeCache1(request, response, fileName, fileKey, outputStream -> {
+    cacheOutput(request, response, fileName, fileKey, outputStream -> {
       try {
         ExcelExport excelExport = ExcelExport.of(outputStream);
         consumer.accept(excelExport);
@@ -522,7 +493,7 @@ public class ExcelExport {
    * @param consumer 处理生成excel至 outputStream
    * @throws IOException IOException
    */
-  public static void writeCache1(HttpServletRequest request, HttpServletResponse response,
+  public static void cacheOutput(HttpServletRequest request, HttpServletResponse response,
       String fileName, String fileKey, Consumer<OutputStream> consumer) throws IOException {
     setResponseHeader(request, response, fileName);
     String tmpPath = System.getProperty("java.io.tmpdir");

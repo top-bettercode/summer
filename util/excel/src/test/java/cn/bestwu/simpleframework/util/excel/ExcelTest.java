@@ -52,7 +52,7 @@ public class ExcelTest {
       list.add(bean);
     }
     long s = System.currentTimeMillis();
-    ExcelExport.of("build/export.xlsx").sheet("表格")
+    ExcelExport.of("build/export.xlsx").sheet("表格").serialNumber()
         .setData(list, excelFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
@@ -61,11 +61,11 @@ public class ExcelTest {
 
   private final ExcelField<DataBean, ?>[] excelMergeFields = ArrayUtil.of(
       ExcelField.mergeId(DataBean::getIntCode),
-      ExcelField.of("编码", DataBean::getIntCode),
+      ExcelField.of("编码", DataBean::getIntCode).merge(),
       ExcelField.of("编码B", DataBean::getInteger).merge(),
       ExcelField.of("名称", from -> new String[]{"abc", "1"}),
       ExcelField.of("描述", DataBean::getName),
-      ExcelField.of("描述C", DataBean::getDate).merge()
+      ExcelField.of("描述C", DataBean::getDate)
   );
 
   @Test
@@ -102,13 +102,13 @@ public class ExcelTest {
 
   public static class DataBean {
 
-    private Integer intCode = 1;
-    private Integer integer = 2;
-    private Long longl = new Date().getTime();
-    private double doublel = 4.4;
-    private float floatl = 5.5f;
-    private String name = "名称";
-    private Date date = new Date();
+    private Integer intCode;
+    private Integer integer;
+    private Long longl;
+    private double doublel;
+    private float floatl;
+    private String name;
+    private Date date;
 
     public DataBean() {
       intCode = 1;
@@ -121,8 +121,8 @@ public class ExcelTest {
     }
 
     public DataBean(Integer index) {
-      intCode = 1 + index;
-      integer = 2 + index;
+      intCode = 1 + index/3;
+      integer = 2 + index/3;
       longl = new Date().getTime() + index * 10000;
       doublel = 4.4 + index;
       floatl = 5.5f + index;
