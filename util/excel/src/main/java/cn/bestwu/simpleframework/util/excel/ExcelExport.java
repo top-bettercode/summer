@@ -234,15 +234,15 @@ public class ExcelExport {
     createHeader(excelFields);
     Iterator<T> iterator = list.iterator();
     int firstColumn = c;
-
+    int no = 0;
     while (iterator.hasNext()) {
       T e = converter.convert(iterator.next());
       boolean hasNext = iterator.hasNext();
-      boolean fill = r % 2 == 0;
+      boolean fill = no % 2 == 0;
       for (ExcelField<T, ?> excelField : excelFields) {
         Object cellValue;
         if (excelField.isIndex()) {
-          cellValue = r;
+          cellValue = ++no;
         } else {
           cellValue = excelField.toCellValue(e);
         }
