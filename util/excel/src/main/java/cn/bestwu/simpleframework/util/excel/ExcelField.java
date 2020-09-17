@@ -91,7 +91,10 @@ public class ExcelField<T, P> {
    * mergeId列，此列不导出，用于判断是否合并之前相同mergeId的行
    */
   private boolean mergeId = false;
-
+  /**
+   * 序号字段
+   */
+  private boolean index = false;
   /**
    * 获取实体属性
    */
@@ -193,6 +196,12 @@ public class ExcelField<T, P> {
 
   public static <T, P> ExcelField<T, P> mergeId(ExcelConverter<T, P> propertyGetter) {
     return new ExcelField<>("", propertyGetter).mergeId();
+  }
+
+  public static <T, P> ExcelField<T, P> index(String title) {
+    ExcelField<T, P> excelField = new ExcelField<>(title);
+    excelField.index();
+    return excelField;
   }
 
   //--------------------------------------------
@@ -388,8 +397,13 @@ public class ExcelField<T, P> {
     init();
   }
 
+  private ExcelField(String title) {
+    this.title = title;
+    this.pattern = DEFAULT_PATTERN;
+  }
 
   private void init() {
+    Assert.notNull(propertyType, "propertyType 不能为空");
     if (this.pattern == null) {
       if (propertyType == Integer.class || propertyType == int.class) {
         this.pattern = "0";
@@ -539,12 +553,22 @@ public class ExcelField<T, P> {
   }
 
   /**
-   * 是否需要合并
+   * 设为需要合并
    *
    * @return ExcelField
    */
   public ExcelField<T, P> merge() {
     this.merge = true;
+    return this;
+  }
+
+  /**
+   * 设为序列字段
+   *
+   * @return ExcelField
+   */
+  private ExcelField<T, P> index() {
+    this.index = true;
     return this;
   }
 
@@ -578,30 +602,21 @@ public class ExcelField<T, P> {
   }
 
   /**
-   * @param cellValue 单元格值
-   * @return 属性
+   * @param obj            实体对象
+   * @param cellValue      单元格值
+   * @param validator      参数验证
+   * @param validateGroups 参数验证组
    */
   @SuppressWarnings("unchecked")
-  P toProperty(Object cellValue) {
+  void setProperty(T obj, Object cellValue, Validator validator,
+      Class<?>[] validateGroups) {
     P property;
     if (isEmptyCell(cellValue)) {
       property = defaultValue;
     } else {
       property = (P) propertyConverter.convert(cellValue);
     }
-    return property;
-  }
-
-
-  /**
-   * @param obj            实体对象
-   * @param cellValue      单元格值
-   * @param validator      参数验证
-   * @param validateGroups 参数验证组
-   */
-  void setProperty(T obj, Object cellValue, Validator validator,
-      Class<?>[] validateGroups) {
-    propertySetter.set(obj, toProperty(cellValue));
+    propertySetter.set(obj, property);
     if (propertyName != null) {
       Set<ConstraintViolation<Object>> constraintViolations = validator
           .validateProperty(obj, propertyName, validateGroups);
@@ -647,5 +662,9 @@ public class ExcelField<T, P> {
 
   boolean isMergeId() {
     return mergeId;
+  }
+
+  boolean isIndex() {
+    return index;
   }
 }
