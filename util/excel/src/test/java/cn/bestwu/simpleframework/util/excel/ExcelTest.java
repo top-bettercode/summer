@@ -61,10 +61,9 @@ public class ExcelTest {
   }
 
   private final ExcelField<DataBean, ?>[] excelMergeFields = ArrayUtil.of(
-      ExcelField.mergeId(DataBean::getIntCode),
-      ExcelField.<DataBean, Integer>index("序号").merge(),
-      ExcelField.of("编码", DataBean::getIntCode).merge(),
-      ExcelField.of("编码B", DataBean::getInteger).merge(),
+      ExcelField.<DataBean, Integer>index("序号").mergeBy(DataBean::getIntCode),
+      ExcelField.of("编码", DataBean::getIntCode).mergeBy(DataBean::getIntCode),
+      ExcelField.of("编码B", DataBean::getInteger).mergeBy(DataBean::getInteger),
       ExcelField.of("名称", from -> new String[]{"abc", "1"}),
       ExcelField.of("描述", DataBean::getName),
       ExcelField.of("描述C", DataBean::getDate)
@@ -79,7 +78,7 @@ public class ExcelTest {
     }
     long s = System.currentTimeMillis();
     ExcelExport.of("build/export.xlsx").sheet("表格")
-        .setData(list, excelMergeFields).finish();
+        .setMergeData(list, excelMergeFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
     Runtime.getRuntime().exec("xdg-open " + System.getProperty("user.dir") + "/build/export.xlsx");
@@ -124,7 +123,7 @@ public class ExcelTest {
 
     public DataBean(Integer index) {
       intCode = 1 + index / 3;
-      integer = 2 + index / 3;
+      integer = 2 + index / 2;
       longl = new Date().getTime() + index * 10000;
       doublel = 4.4 + index;
       floatl = 5.5f + index;

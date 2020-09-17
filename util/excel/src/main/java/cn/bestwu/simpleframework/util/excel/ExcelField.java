@@ -5,6 +5,9 @@ import cn.bestwu.lang.util.LocalDateTimeHelper;
 import cn.bestwu.lang.util.MoneyUtil;
 import cn.bestwu.lang.util.StringUtil;
 import cn.bestwu.simpleframework.web.serializer.CodeSerializer;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Array;
@@ -35,15 +38,6 @@ import org.springframework.util.StringUtils;
  * @param <T> 实体类型
  */
 public class ExcelField<T, P> {
-
-  /**
-   * 默认时间格式
-   */
-  private static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm";
-  /**
-   * 默认格式
-   */
-  public static final String DEFAULT_PATTERN = "@";
 
   /**
    * 导出字段标题
@@ -88,13 +82,17 @@ public class ExcelField<T, P> {
    */
   private boolean merge = false;
   /**
-   * mergeId列，此列不导出，用于判断是否合并之前相同mergeId的行
+   * 判断是否合并之前相同mergeGetter值的行
    */
-  private boolean mergeId = false;
+  private ExcelConverter<T, P> mergeGetter;
+  /**
+   * 当前行索引
+   */
+  private int index = 0;
   /**
    * 序号字段
    */
-  private boolean index = false;
+  private boolean indexColumn = false;
   /**
    * 获取实体属性
    */
@@ -194,13 +192,9 @@ public class ExcelField<T, P> {
     return new ExcelField<>(title, propertyGetter);
   }
 
-  public static <T, P> ExcelField<T, P> mergeId(ExcelConverter<T, P> propertyGetter) {
-    return new ExcelField<>("", propertyGetter).mergeId();
-  }
-
   public static <T, P> ExcelField<T, P> index(String title) {
     ExcelField<T, P> excelField = new ExcelField<>(title);
-    excelField.index();
+    excelField.indexColumn();
     return excelField;
   }
 
@@ -216,7 +210,7 @@ public class ExcelField<T, P> {
   }
 
   public ExcelField<T, P> millis() {
-    return millis(DEFAULT_DATE_PATTERN);
+    return millis(ExcelCell.DEFAULT_DATE_PATTERN);
   }
 
   public ExcelField<T, P> millis(String pattern) {
@@ -399,7 +393,7 @@ public class ExcelField<T, P> {
 
   private ExcelField(String title) {
     this.title = title;
-    this.pattern = DEFAULT_PATTERN;
+    this.pattern = ExcelCell.DEFAULT_PATTERN;
   }
 
   private void init() {
@@ -417,9 +411,9 @@ public class ExcelField<T, P> {
         this.pattern = "0.00";
       } else if (propertyType == Date.class || propertyType == LocalDate.class
           || propertyType == LocalDateTime.class) {
-        this.pattern = DEFAULT_DATE_PATTERN;
+        this.pattern = ExcelCell.DEFAULT_DATE_PATTERN;
       } else {
-        this.pattern = DEFAULT_PATTERN;
+        this.pattern = ExcelCell.DEFAULT_PATTERN;
       }
     }
 
@@ -552,13 +546,20 @@ public class ExcelField<T, P> {
     return this;
   }
 
+  public ExcelField<T, P> index(int index) {
+    this.index = index;
+    return this;
+  }
+
+
   /**
    * 设为需要合并
    *
    * @return ExcelField
    */
-  public ExcelField<T, P> merge() {
+  public ExcelField<T, P> mergeBy(ExcelConverter<T, P> mergeGetter) {
     this.merge = true;
+    this.mergeGetter = mergeGetter;
     return this;
   }
 
@@ -567,23 +568,20 @@ public class ExcelField<T, P> {
    *
    * @return ExcelField
    */
-  private ExcelField<T, P> index() {
-    this.index = true;
-    return this;
-  }
-
-  /**
-   * mergeId列，此列不导出，用于判断是否合并之前相同mergeId的行
-   *
-   * @return ExcelField
-   */
-  private ExcelField<T, P> mergeId() {
-    this.merge = true;
-    this.mergeId = true;
+  private ExcelField<T, P> indexColumn() {
+    this.indexColumn = true;
     return this;
   }
 
   //--------------------------------------------
+
+  /**
+   * @param obj 实体对象
+   * @return 单元格值
+   */
+  Object mergeId(T obj) {
+    return mergeGetter.convert(obj);
+  }
 
   /**
    * @param obj 实体对象
@@ -660,11 +658,11 @@ public class ExcelField<T, P> {
     return merge;
   }
 
-  boolean isMergeId() {
-    return mergeId;
+  public int index() {
+    return index;
   }
 
-  boolean isIndex() {
-    return index;
+  boolean isIndexColumn() {
+    return indexColumn;
   }
 }
