@@ -57,15 +57,6 @@ public class ExcelExport {
    */
   private boolean includeComment = false;
 
-  /**
-   * 是否导出序号
-   */
-  private boolean serialNumber = false;
-  /**
-   * 序号名称
-   */
-  private String serialNumberName = "序号";
-
   private final ColumnWidths columnWidths = new ColumnWidths();
 
   private final BorderSide[] defaultBorderSides = new BorderSide[]{BorderSide.TOP, BorderSide.LEFT,
@@ -120,22 +111,6 @@ public class ExcelExport {
   public ExcelExport sheet(String sheetname) {
     this.sheet = workbook.newWorksheet(sheetname);
     setRowAndColumn(0, 0);
-    return this;
-  }
-
-  public ExcelExport serialNumber() {
-    this.serialNumber = true;
-    return this;
-  }
-
-  public ExcelExport serialNumber(boolean serialNumber) {
-    this.serialNumber = serialNumber;
-    return this;
-  }
-
-  public ExcelExport serialNumberName(String serialNumberName) {
-    this.serialNumber = true;
-    this.serialNumberName = serialNumberName;
     return this;
   }
 
@@ -194,13 +169,6 @@ public class ExcelExport {
   public <T> void createHeader(ExcelField<T, ?>[] excelFields) {
     // Create header
     {
-      if (serialNumber) {
-        sheet.value(r, c, serialNumberName);
-        columnWidths.put(c, serialNumberName);
-        sheet.width(c, columnWidths.width(c));
-        setHeaderStyle();
-        c++;
-      }
       for (ExcelField<T, ?> excelField : excelFields) {
         if (excelField.isMergeId()) {
           continue;
@@ -271,14 +239,15 @@ public class ExcelExport {
       T e = converter.convert(iterator.next());
       boolean hasNext = iterator.hasNext();
       boolean fill = r % 2 == 0;
-      if (serialNumber) {
-        setCell(hasNext, fill, Alignment.center, -1, ExcelField.DEFAULT_PATTERN, r,
-            defaultBorderSides);
-        c++;
-      }
       for (ExcelField<T, ?> excelField : excelFields) {
+        Object cellValue;
+        if (excelField.isIndex()) {
+          cellValue = r;
+        } else {
+          cellValue = excelField.toCellValue(e);
+        }
         setCell(hasNext, fill, excelField.align(), excelField.width(), excelField.pattern(),
-            excelField.toCellValue(e), defaultBorderSides);
+            cellValue, defaultBorderSides);
         c++;
       }
       c = firstColumn;
@@ -330,11 +299,10 @@ public class ExcelExport {
     Iterator<T> iterator = list.iterator();
     Object mergeId = null;
     boolean fill = true;
-    int firstRow = r;
     int firstColumn = c;
-    int lastColumn = serialNumber ? excelFields.length - 1 : excelFields.length - 2;
+    int lastColumn = excelFields.length - 2;
     int prevTop = r;
-    int no = 1;
+    int no = 0;
     ExcelField<T, ?> mergeField = excelFields[0];
     int fieldsLength = excelFields.length;
     while (iterator.hasNext()) {
@@ -349,20 +317,25 @@ public class ExcelExport {
       }
       int prevbottom = hasNext ? r - 1 : r;
       boolean mergePrevItem = (newItem || !hasNext) && prevbottom > prevTop;
-      if (serialNumber) {
-        setCell(newItem, mergePrevItem, true, hasNext, fill, prevTop, prevbottom,
-            firstColumn, lastColumn, Alignment.center, -1, ExcelField.DEFAULT_PATTERN, no);
-        if (newItem) {
-          no++;
-        }
-        c++;
-      }
 
       for (int i = 1; i < fieldsLength; i++) {
         ExcelField<T, ?> excelField = excelFields[i];
+        Object cellValue;
+        if (excelField.isIndex()) {
+          if (excelField.isMerge()) {
+            if (newItem) {
+              no++;
+            }
+          } else {
+            no++;
+          }
+          cellValue = no;
+        } else {
+          cellValue = excelField.toCellValue(e);
+        }
         setCell(newItem, mergePrevItem, excelField.isMerge(), hasNext, fill, prevTop, prevbottom,
             firstColumn, lastColumn, excelField.align(), excelField.width(),
-            excelField.pattern(), excelField.toCellValue(e));
+            excelField.pattern(), cellValue);
         c++;
       }
       if (newItem) {

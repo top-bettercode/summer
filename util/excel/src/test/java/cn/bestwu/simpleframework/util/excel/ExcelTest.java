@@ -2,8 +2,8 @@ package cn.bestwu.simpleframework.util.excel;
 
 import cn.bestwu.lang.util.ArrayUtil;
 import cn.bestwu.lang.util.StringUtil;
-import cn.bestwu.simpleframework.web.serializer.CodeSerializer;
 import cn.bestwu.simpleframework.support.code.ICodeService;
+import cn.bestwu.simpleframework.web.serializer.CodeSerializer;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ public class ExcelTest {
   }
 
   private final ExcelField<DataBean, ?>[] excelFields = ArrayUtil.of(
+      ExcelField.index("序号"),
       ExcelField.of("编码1", DataBean::getIntCode),
       ExcelField.of("编码2", DataBean::getInteger),
       ExcelField.of("编码3", DataBean::getLongl).millis(),
@@ -52,7 +53,7 @@ public class ExcelTest {
       list.add(bean);
     }
     long s = System.currentTimeMillis();
-    ExcelExport.of("build/export.xlsx").sheet("表格").serialNumber()
+    ExcelExport.of("build/export.xlsx").sheet("表格")
         .setData(list, excelFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
@@ -61,6 +62,7 @@ public class ExcelTest {
 
   private final ExcelField<DataBean, ?>[] excelMergeFields = ArrayUtil.of(
       ExcelField.mergeId(DataBean::getIntCode),
+      ExcelField.<DataBean, Integer>index("序号").merge(),
       ExcelField.of("编码", DataBean::getIntCode).merge(),
       ExcelField.of("编码B", DataBean::getInteger).merge(),
       ExcelField.of("名称", from -> new String[]{"abc", "1"}),
@@ -76,7 +78,7 @@ public class ExcelTest {
       list.add(bean);
     }
     long s = System.currentTimeMillis();
-    ExcelExport.of("build/export.xlsx").sheet("表格").serialNumber()
+    ExcelExport.of("build/export.xlsx").sheet("表格")
         .setData(list, excelMergeFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
@@ -121,8 +123,8 @@ public class ExcelTest {
     }
 
     public DataBean(Integer index) {
-      intCode = 1 + index/3;
-      integer = 2 + index/3;
+      intCode = 1 + index / 3;
+      integer = 2 + index / 3;
       longl = new Date().getTime() + index * 10000;
       doublel = 4.4 + index;
       floatl = 5.5f + index;
