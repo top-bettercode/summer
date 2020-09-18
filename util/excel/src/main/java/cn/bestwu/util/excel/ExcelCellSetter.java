@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.util.excel;
+package cn.bestwu.util.excel;
 
 /**
  * 单元格值设置实体属性

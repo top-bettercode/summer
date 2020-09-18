@@ -1,13 +1,10 @@
-package cn.bestwu.simpleframework.util.excel;
+package cn.bestwu.util.excel;
 
 import cn.bestwu.lang.util.BooleanUtil;
 import cn.bestwu.lang.util.LocalDateTimeHelper;
 import cn.bestwu.lang.util.MoneyUtil;
 import cn.bestwu.lang.util.StringUtil;
 import cn.bestwu.simpleframework.web.serializer.CodeSerializer;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Array;
@@ -49,15 +46,6 @@ public class ExcelField<T, P> {
    */
   private String comment = "";
 
-  /**
-   * 默认值
-   */
-  private P defaultValue;
-
-  /**
-   * 默认空值
-   */
-  private String nullValue = "";
 
   /**
    * 格式
@@ -77,6 +65,17 @@ public class ExcelField<T, P> {
    */
   private double width = -1;
 
+
+  /**
+   * 默认值
+   */
+  private P defaultValue;
+
+  /**
+   * 默认空值
+   */
+  private String nullValue = "";
+
   /**
    * 是否需要合并
    */
@@ -85,10 +84,6 @@ public class ExcelField<T, P> {
    * 判断是否合并之前相同mergeGetter值的行
    */
   private ExcelConverter<T, P> mergeGetter;
-  /**
-   * 当前行索引
-   */
-  private int index = 0;
   /**
    * 序号字段
    */
@@ -129,6 +124,7 @@ public class ExcelField<T, P> {
    * 日期格式
    */
   protected DateTimeFormatter dateTimeFormatter;
+
   //--------------------------------------------
 
   /**
@@ -225,26 +221,19 @@ public class ExcelField<T, P> {
   }
 
   public ExcelField<T, P> code(String codeType) {
-    return cell((property) -> CodeSerializer.getName(codeType, (Serializable) property)).property(
-        (cellValue) -> getCode(codeType, String.valueOf(cellValue)));
-  }
-
-
-  public ExcelField<T, P> stringCode() {
-    Assert.hasText(propertyName, "属性名称未设置");
-    return stringCode(propertyName);
-  }
-
-  public ExcelField<T, P> stringCode(String codeType) {
     return cell((property) -> {
-      String code = String.valueOf(property);
-      if (code.contains(",")) {
-        String[] split = code.split(",");
-        return StringUtils.arrayToCommaDelimitedString(
-            Arrays.stream(split).map(s -> CodeSerializer.getName(codeType, s.trim()))
-                .toArray());
+      if (property instanceof String) {
+        String code = String.valueOf(property);
+        if (code.contains(",")) {
+          String[] split = code.split(",");
+          return StringUtils.arrayToCommaDelimitedString(
+              Arrays.stream(split).map(s -> CodeSerializer.getName(codeType, s.trim()))
+                  .toArray());
+        } else {
+          return CodeSerializer.getName(codeType, code);
+        }
       } else {
-        return CodeSerializer.getName(codeType, code);
+        return CodeSerializer.getName(codeType, (Serializable) property);
       }
     }).property((cellValue) -> getCode(codeType, String.valueOf(cellValue)));
   }
@@ -546,12 +535,6 @@ public class ExcelField<T, P> {
     return this;
   }
 
-  public ExcelField<T, P> index(int index) {
-    this.index = index;
-    return this;
-  }
-
-
   /**
    * 设为需要合并
    *
@@ -656,10 +639,6 @@ public class ExcelField<T, P> {
 
   boolean isMerge() {
     return merge;
-  }
-
-  public int index() {
-    return index;
   }
 
   boolean isIndexColumn() {
