@@ -942,7 +942,6 @@ util:autodoc-gen:extractModuleInfo
 util:common-lang:extractModuleInfo
 util:excel:extractModuleInfo
 util:generator:extractModuleInfo
-framework:data-jpa:generateTestJPAQueryDSL
 ideaModule
 framework:ideaModule
 framework:data-jpa:ideaModule
@@ -2038,7 +2037,6 @@ extractModuleInfo
 extractModuleInfo
 extractModuleInfo
 extractModuleInfo
-generateTestJPAQueryDSL
 ideaModule
 ideaModule
 ideaModule
