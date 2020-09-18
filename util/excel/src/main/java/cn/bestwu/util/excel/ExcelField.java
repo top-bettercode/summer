@@ -83,7 +83,7 @@ public class ExcelField<T, P> {
   /**
    * 判断是否合并之前相同mergeGetter值的行
    */
-  private ExcelConverter<T, P> mergeGetter;
+  private ExcelConverter<T, ?> mergeGetter;
   /**
    * 序号字段
    */
@@ -541,7 +541,7 @@ public class ExcelField<T, P> {
    * @param mergeGetter 以此获取的值为合并依据，连续相同的值自动合并
    * @return ExcelField
    */
-  public ExcelField<T, P> mergeBy(ExcelConverter<T, P> mergeGetter) {
+  public ExcelField<T, P> mergeBy(ExcelConverter<T, ?> mergeGetter) {
     this.merge = true;
     this.mergeGetter = mergeGetter;
     return this;
