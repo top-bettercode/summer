@@ -297,7 +297,7 @@ public class ExcelExport {
 
     int index = 0;
     int mergeIndex = 0;
-
+    boolean mergeFirstColumn = excelFields[0].isMerge();
     Map<Integer, Object> lastMergeIds = new HashMap<>();
     Map<Integer, Integer> lastRangeTops = new HashMap<>();
     while (iterator.hasNext()) {
@@ -306,7 +306,12 @@ public class ExcelExport {
 
       int lastRowRangeTop = firstRow;
 
-      List<ExcelRangeCell> cells = new ArrayList<>();
+      List<ExcelRangeCell> cells;
+      if (mergeFirstColumn) {
+        cells = null;
+      } else {
+        cells = new ArrayList<>();
+      }
       for (ExcelField<T, ?> excelField : excelFields) {
         if (excelField.isMerge()) {
           Object mergeIdValue = excelField.mergeId(e);
@@ -328,22 +333,33 @@ public class ExcelExport {
             newRange = true;
           }
 
-          cells
-              .add(new ExcelRangeCell(r, c, index, firstRow, lastRow, excelField, e, newRange,
-                  Math.max(lastRangeTop, lastRowRangeTop)));
+          ExcelRangeCell rangeCell = new ExcelRangeCell(r, c, index, firstRow, lastRow, excelField,
+              e, newRange, Math.max(lastRangeTop, lastRowRangeTop));
+          if (mergeFirstColumn) {
+            setRangeCell(rangeCell);
+          } else {
+            cells.add(rangeCell);
+          }
           if (newRange) {
             lastRangeTops.put(mergeIndex, r);
           }
           mergeIndex++;
         } else {
-          cells.add(
-              new ExcelRangeCell(r, c, index, firstRow, lastRow, excelField, e, false, firstRow));
+          ExcelRangeCell rangeCell = new ExcelRangeCell(r, c, index, firstRow, lastRow, excelField,
+              e, false, firstRow);
+          if (mergeFirstColumn) {
+            setRangeCell(rangeCell);
+          } else {
+            cells.add(rangeCell);
+          }
         }
         c++;
       }
-      for (ExcelRangeCell cell : cells) {
-        cell.setIndex(index);
-        setRangeCell(cell);
+      if (!mergeFirstColumn) {
+        for (ExcelRangeCell cell : cells) {
+          cell.setIndex(index);
+          setRangeCell(cell);
+        }
       }
       mergeIndex = 0;
       c = firstColumn;
