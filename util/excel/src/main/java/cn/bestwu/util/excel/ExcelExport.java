@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.util.excel;
+package cn.bestwu.util.excel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,17 +7,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.dhatim.fastexcel.BorderSide;
 import org.dhatim.fastexcel.StyleSetter;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
@@ -224,15 +224,13 @@ public class ExcelExport {
     Assert.notNull(sheet, "表格未初始化");
     createHeader(excelFields);
     Iterator<T> iterator = list.iterator();
+    int firstRow = r;
     int firstColumn = c;
-    int index = 0;
     while (iterator.hasNext()) {
-      index++;
       T e = converter.convert(iterator.next());
       boolean lastRow = !iterator.hasNext();
       for (ExcelField<T, ?> excelField : excelFields) {
-        excelField.index(index);
-        setCell(new ExcelCell(r, c, lastRow, excelField, e));
+        setCell(new ExcelCell(r, c, firstRow, lastRow, excelField, e));
         c++;
       }
       c = firstColumn;
@@ -242,7 +240,9 @@ public class ExcelExport {
   }
 
   private void setCell(ExcelCell excelCell) {
-    StyleSetter style = sheet.style(r, c);
+    int column = excelCell.getColumn();
+    int row = excelCell.getRow();
+    StyleSetter style = sheet.style(row, column);
     String pattern = excelCell.getPattern();
     style.horizontalAlignment(excelCell.getAlign())
         .verticalAlignment(Alignment.center.name())
@@ -256,15 +256,15 @@ public class ExcelExport {
     }
     style.set();
     Object cellValue = excelCell.getCellValue();
-    sheet.value(r, c, cellValue);
+    sheet.value(row, column, cellValue);
     double width = excelCell.getWidth();
     if (width == -1) {
-      columnWidths.put(c, cellValue.getClass().equals(Date.class) ? pattern : cellValue);
+      columnWidths.put(column, excelCell.isDateField() ? pattern : cellValue);
       if (excelCell.isLastRow()) {
-        sheet.width(c, columnWidths.width(c));
+        sheet.width(column, columnWidths.width(column));
       }
     } else {
-      sheet.width(c, width);
+      sheet.width(column, width);
     }
   }
 
@@ -294,9 +294,7 @@ public class ExcelExport {
     Iterator<T> iterator = list.iterator();
     int firstRow = r;
     int firstColumn = c;
-    int lastColumn = c + excelFields.length - 1;
 
-    boolean fillColor = true;
     int index = 0;
     int mergeIndex = 0;
 
@@ -307,51 +305,45 @@ public class ExcelExport {
       boolean lastRow = !iterator.hasNext();
 
       int lastRowRangeTop = firstRow;
+
+      List<ExcelRangeCell> cells = new ArrayList<>();
       for (ExcelField<T, ?> excelField : excelFields) {
         if (excelField.isMerge()) {
           Object mergeIdValue = excelField.mergeId(e);
           Object lastMergeId = lastMergeIds.get(mergeIndex);
           boolean newRange = lastMergeId == null || !lastMergeId.equals(mergeIdValue);
           if (newRange) {
-            if (mergeIndex == 0) {
-              fillColor = !fillColor;
-            }
             lastMergeIds.put(mergeIndex, mergeIdValue);
           }
 
           int lastRangeTop = lastRangeTops.getOrDefault(mergeIndex, firstRow);
-          if (excelField.isIndexColumn()) {
-            if (excelField.isMerge()) {
-              if (newRange) {
-                index++;
-              }
-            } else {
+
+          if (mergeIndex == 0) {
+            if (newRange) {
               index++;
             }
-          }
-          if (mergeIndex == 0) {
             lastRowRangeTop = lastRangeTop;
           }
-          excelField.index(index);
           if (lastRangeTops.getOrDefault(0, firstRow) == r) {
             newRange = true;
           }
 
-          setRangeCell(new ExcelRangeCell(r, c, lastRow, fillColor, excelField, e, newRange,
-              Math.max(lastRangeTop, lastRowRangeTop), firstColumn, lastColumn));
+          cells
+              .add(new ExcelRangeCell(r, c, index, firstRow, lastRow, excelField, e, newRange,
+                  Math.max(lastRangeTop, lastRowRangeTop)));
           if (newRange) {
             lastRangeTops.put(mergeIndex, r);
           }
           mergeIndex++;
         } else {
-          if (excelField.isIndexColumn()) {
-            excelField.index(++index);
-          }
-          setRangeCell(new ExcelRangeCell(r, c, lastRow, fillColor, excelField, e, false, firstRow,
-              firstColumn, lastColumn));
+          cells.add(
+              new ExcelRangeCell(r, c, index, firstRow, lastRow, excelField, e, false, firstRow));
         }
-
         c++;
+      }
+      for (ExcelRangeCell cell : cells) {
+        cell.setIndex(index);
+        setRangeCell(cell);
       }
       mergeIndex = 0;
       c = firstColumn;
@@ -371,24 +363,26 @@ public class ExcelExport {
     if (excelCell.needRange()) {
       sheet.range(excelCell.getLastRangeTop(), column, excelCell.getLastRangeBottom(), column)
           .merge();
-      sheet.width(column, columnWidths.width(column));
       if (excelCell.isLastRow()) {
+        double width = excelCell.getWidth();
+        String pattern = excelCell.getPattern();
+        if (width == -1) {
+          sheet.width(column, columnWidths.width(column));
+        } else {
+          sheet.width(column, width);
+        }
         StyleSetter style = sheet
             .range(excelCell.getLastRangeTop(), column, excelCell.getLastRangeBottom(), column)
             .style();
         style.horizontalAlignment(excelCell.getAlign())
             .verticalAlignment(Alignment.center.name())
             .wrapText(wrapText)
-            .format(excelCell.getPattern());
-        style.borderStyle(BorderSide.TOP, "thin")
-            .borderColor(BorderSide.TOP, "000000")
-            .borderStyle(BorderSide.BOTTOM, "thin")
-            .borderColor(BorderSide.BOTTOM, "000000");
+            .format(pattern)
+            .borderStyle("thin")
+            .borderColor("000000");
+
         if (excelCell.isFillColor()) {
-          style.borderStyle(BorderSide.LEFT, "thin")
-              .borderColor(BorderSide.LEFT, "000000")
-              .borderStyle(BorderSide.RIGHT, "thin")
-              .borderColor(BorderSide.RIGHT, "000000");
+          style.fillColor("F8F8F7");
         }
         style.set();
       }

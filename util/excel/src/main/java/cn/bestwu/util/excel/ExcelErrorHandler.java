@@ -1,6 +1,6 @@
-package cn.bestwu.simpleframework.util.excel;
+package cn.bestwu.util.excel;
 
-import cn.bestwu.simpleframework.util.excel.ExcelImportException.CellError;
+import cn.bestwu.util.excel.ExcelImportException.CellError;
 import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.error.IErrorHandler;
 import java.util.List;

@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.util.excel;
+package cn.bestwu.util.excel;
 
 import cn.bestwu.lang.util.CharUtil;
 import java.math.BigDecimal;
