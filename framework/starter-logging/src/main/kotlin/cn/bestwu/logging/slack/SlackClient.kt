@@ -23,7 +23,12 @@ class SlackClient(private val authToken: String, private val logUrl: String?) {
     private val log: Logger = LoggerFactory.getLogger(SlackClient::class.java)
     private val restTemplate: RestTemplate = RestTemplate()
 
+    companion object {
+        var LOG_URL: String? = null
+    }
+
     init {
+        LOG_URL=logUrl
         val clientHttpRequestFactory = SimpleClientHttpRequestFactory()
         //Connect timeout
         clientHttpRequestFactory.setConnectTimeout(2000)
@@ -68,21 +73,21 @@ class SlackClient(private val authToken: String, private val logUrl: String?) {
         params.add("token", authToken)
         params.add("channel", channel)
         val hasFilesPath = !logsPath.isNullOrBlank()
-        if (!hasFilesPath || logUrl == null) {
+        if (!hasFilesPath || LOG_URL == null) {
             return filesUpload(channel, title, initialComment, message)
         } else {
             params["text"] = initialComment
             if (message.isNotEmpty()) {
                 val fileName = AlarmAppender.getFileName(logsPath!!)
                 File(logsPath, fileName).writeText(message.joinToString(""))
-                params["attachments"] = arrayOf(mapOf("title" to title, "title_link" to "$logUrl/logs/${fileName}"))
+                params["attachments"] = arrayOf(mapOf("title" to title, "title_link" to "$LOG_URL/logs/${fileName}"))
             } else {
-                params["attachments"] = arrayOf(mapOf("title" to title, "title_link" to "$logUrl/logs/all.log"))
+                params["attachments"] = arrayOf(mapOf("title" to title, "title_link" to "$LOG_URL/logs/all.log"))
             }
         }
 
         if (log.isDebugEnabled) {
-            log.debug("bearychat params:{}", params)
+            log.debug("slack params:{}", params)
         }
 
         val result = restTemplate.postForObject("${api}chat.postMessage", params, Result::class.java)
