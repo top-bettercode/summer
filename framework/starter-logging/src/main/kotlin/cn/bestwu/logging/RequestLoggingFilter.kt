@@ -3,6 +3,7 @@ package cn.bestwu.logging
 import cn.bestwu.logging.operation.Operation
 import cn.bestwu.logging.operation.RequestConverter
 import cn.bestwu.logging.operation.ResponseConverter
+import cn.bestwu.logging.slack.SlackClient
 import cn.bestwu.logging.trace.TraceHttpServletRequestWrapper
 import cn.bestwu.logging.trace.TraceHttpServletResponseWrapper
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -14,6 +15,7 @@ import org.slf4j.MDC
 import org.slf4j.MarkerFactory
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.core.Ordered
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.util.AntPathMatcher
 import org.springframework.web.context.request.RequestAttributes
@@ -61,6 +63,9 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse,
                                   filterChain: FilterChain) {
+        if (SlackClient.LOG_URL.isNullOrBlank()) {
+            SlackClient.LOG_URL= String.format("%s://%s", request.scheme, request.getHeader(HttpHeaders.HOST))
+        }
 //        ignored
         val uri = request.servletPath
         val antPathMatcher = AntPathMatcher()
