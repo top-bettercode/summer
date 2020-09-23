@@ -55,10 +55,6 @@ logging:
   slack:
     auth-token:
     channel: dev
-  bearychat:
-    channel: dev
-    webhook-url:
-#    send-delay-seconds: 5
 #  socket:
 #    queue-size: 1
 #    remote-host: 127.0.0.1

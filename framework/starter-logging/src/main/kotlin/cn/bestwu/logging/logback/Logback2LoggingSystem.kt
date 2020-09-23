@@ -22,7 +22,6 @@ import ch.qos.logback.core.spi.LifeCycle
 import ch.qos.logback.core.util.FileSize
 import ch.qos.logback.core.util.OptionHelper
 import cn.bestwu.logging.*
-import cn.bestwu.logging.bearychat.BearychatAppender
 import cn.bestwu.logging.slack.SlackAppender
 import cn.bestwu.logging.websocket.WebSocketAppender
 import net.logstash.logback.appender.LogstashTcpSocketAppender
@@ -107,24 +106,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 }
             }
         }
-        //bearychat log
-        if (existProperty(environment, "logging.bearychat.webhook-url") && existProperty(environment, "logging.bearychat.channel")) {
-            synchronized(context.configurationLock) {
-                val bearychatProperties = Binder.get(environment).bind("logging.bearychat", BearychatProperties::class.java).get()
-                try {
-                    val logsPath = environment.getProperty("logging.files.path")
-                    val slackAppender = BearychatAppender(bearychatProperties, warnSubject, logsPath, logUrl)
-                    slackAppender.context = context
-                    slackAppender.start()
-                    bearychatProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
-                            .forEach {
-                                it.addAppender(slackAppender)
-                            }
-                } catch (e: Exception) {
-                    log.error("配置BearychatAppender失败", e)
-                }
-            }
-        }
+
         val rootLevel = environment.getProperty("logging.level.root")
         //websocket log
         if (ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && ("true" == environment.getProperty("logging.websocket.enabled") || environment.getProperty("logging.websocket.enabled").isNullOrBlank())) {
