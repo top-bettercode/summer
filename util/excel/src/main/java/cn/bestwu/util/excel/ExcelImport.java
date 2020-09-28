@@ -38,7 +38,7 @@ public class ExcelImport {
   /**
    * 当前行号
    */
-  private int r = 0;
+  private int r = 1;
   /**
    * 当前单元格号
    */
@@ -211,7 +211,6 @@ public class ExcelImport {
     return getData(cls, excelFields, (o) -> (E) o);
   }
 
-
   /**
    * 获取导入数据列表
    *
@@ -233,7 +232,7 @@ public class ExcelImport {
       throw new RuntimeException("文档中未找到相应工作表!");
     }
     List<E> dataList = new ArrayList<>();
-    for (Row row : sheet.openStream().filter(row -> row.getRowNum() - 1 > r)
+    for (Row row : sheet.openStream().filter(row -> row.getRowNum() > r)
         .collect(Collectors.toList())) {
       if (row != null) {
         E e = readRow(cls, excelFields, row, converter);

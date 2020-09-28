@@ -88,9 +88,18 @@ public class ExcelTest {
   @Test
   public void testImport() throws Exception {
     testExport();
-    List<DataBean> list = ExcelImport.of("build/export.xlsx")
-        .getData(excelFields);
+    List<DataBean> list = ExcelImport.of("build/export.xlsx").setColumn(1)
+        .getData(ArrayUtil.of(
+            ExcelField.of(DataBean::setIntCode),
+            ExcelField.of(DataBean::setInteger),
+            ExcelField.of(DataBean::setLongl).millis(),
+            ExcelField.of(DataBean::setDoublel),
+            ExcelField.of(DataBean::setFloatl),
+            ExcelField.of(DataBean::setName),
+            ExcelField.of(DataBean::setDate)
+        ));
     System.out.println(StringUtil.valueOf(list, true));
+    System.err.println(list.size());
   }
 
   @Test
@@ -99,7 +108,6 @@ public class ExcelTest {
     Runtime.getRuntime()
         .exec("xdg-open " + System.getProperty("user.dir") + "/build/template.xlsx");
   }
-
 
   public static class DataBean {
 
