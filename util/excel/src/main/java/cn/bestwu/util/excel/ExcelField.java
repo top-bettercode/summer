@@ -17,7 +17,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Set;
+import javassist.bytecode.BadBytecode;
+import javassist.bytecode.SignatureAttribute;
+import javassist.bytecode.SignatureAttribute.MethodSignature;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -127,20 +132,52 @@ public class ExcelField<T, P> {
 
   //--------------------------------------------
 
+
+  public static <T, P> ExcelField<T, P> index(String title) {
+    ExcelField<T, P> excelField = new ExcelField<>(title);
+    excelField.indexColumn();
+    return excelField;
+  }
+
+  /**
+   * 支持导出(如果 propertyGetter 符合 ClassName::getProperty Lambda 签名，则可自动识别setter，支持导入)的初始化方法
+   *
+   * @param <P>            属性类型
+   * @param <T>            实体类型
+   * @param title          标题
+   * @param propertyGetter 属性获取方法
+   * @return Excel字段描述
+   */
+  public static <T, P> ExcelField<T, P> of(String title, ExcelConverter<T, P> propertyGetter) {
+    return new ExcelField<>(title, propertyGetter);
+  }
+
   /**
    * 只支持导入的初始化方法
    *
    * @param <P>            属性类型
    * @param <T>            实体类型
-   * @param title          标题
+   * @param propertySetter 属性设置方法
+   * @return Excel字段描述
+   */
+  public static <T, P> ExcelField<T, P> of(ExcelCellSetter<T, P> propertySetter) {
+    return new ExcelField<>(propertySetter);
+  }
+
+  /**
+   * 只支持导入的初始化方法
+   *
+   * @param <P>            属性类型
+   * @param <T>            实体类型
    * @param propertyType   属性字段类型
    * @param propertySetter 属性设置方法
    * @return Excel字段描述
    */
-  public static <T, P> ExcelField<T, P> of(String title, Class<P> propertyType,
+  public static <T, P> ExcelField<T, P> of(Class<P> propertyType,
       ExcelCellSetter<T, P> propertySetter) {
-    return new ExcelField<>(title, propertyType, propertySetter);
+    return new ExcelField<>(propertyType, propertySetter);
   }
+
 
   /**
    * 只支持导出的初始化方法
@@ -172,26 +209,6 @@ public class ExcelField<T, P> {
   public static <T, P> ExcelField<T, P> of(String title, Class<P> propertyType,
       ExcelConverter<T, P> propertyGetter, ExcelCellSetter<T, P> propertySetter) {
     return new ExcelField<>(title, propertyType, propertyGetter).setter(propertySetter);
-  }
-
-
-  /**
-   * 支持导出(如果 propertyGetter 符合 ClassName::getProperty Lambda 签名，则可自动识别setter，支持导入)的初始化方法
-   *
-   * @param <P>            属性类型
-   * @param <T>            实体类型
-   * @param title          标题
-   * @param propertyGetter 属性获取方法
-   * @return Excel字段描述
-   */
-  public static <T, P> ExcelField<T, P> of(String title, ExcelConverter<T, P> propertyGetter) {
-    return new ExcelField<>(title, propertyGetter);
-  }
-
-  public static <T, P> ExcelField<T, P> index(String title) {
-    ExcelField<T, P> excelField = new ExcelField<>(title);
-    excelField.indexColumn();
-    return excelField;
   }
 
   //--------------------------------------------
@@ -290,6 +307,43 @@ public class ExcelField<T, P> {
 
   //--------------------------------------------
   @SuppressWarnings("unchecked")
+  private ExcelField(ExcelCellSetter<T, P> propertySetter) {
+    this.title = "";
+    this.propertySetter = propertySetter;
+    try {
+      Method writeReplace = propertySetter.getClass().getDeclaredMethod("writeReplace");
+      writeReplace.setAccessible(true);
+      SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(propertySetter);
+      String implMethodName = serializedLambda.getImplMethodName();
+
+      MethodSignature methodSignature = SignatureAttribute
+          .toMethodSignature(serializedLambda.getInstantiatedMethodType());
+      entityType = (Class<T>) ClassUtils
+          .forName(methodSignature.getParameterTypes()[0].jvmTypeName(), null);
+      propertyType = ClassUtils.forName(methodSignature.getParameterTypes()[1].jvmTypeName(), null);
+      propertyName = resolveSetPropertyName(implMethodName);
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException | BadBytecode e) {
+      throw new ExcelException("属性解析错误", e);
+    }
+
+    init();
+  }
+
+  private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new IdentityHashMap<>(8);
+
+  static {
+    primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
+    primitiveWrapperTypeMap.put(Byte.class, byte.class);
+    primitiveWrapperTypeMap.put(Character.class, char.class);
+    primitiveWrapperTypeMap.put(Double.class, double.class);
+    primitiveWrapperTypeMap.put(Float.class, float.class);
+    primitiveWrapperTypeMap.put(Integer.class, int.class);
+    primitiveWrapperTypeMap.put(Long.class, long.class);
+    primitiveWrapperTypeMap.put(Short.class, short.class);
+    primitiveWrapperTypeMap.put(Void.class, void.class);
+  }
+
+  @SuppressWarnings("unchecked")
   private ExcelField(String title, ExcelConverter<T, P> propertyGetter) {
     this.title = title;
     this.propertyGetter = propertyGetter;
@@ -299,55 +353,45 @@ public class ExcelField<T, P> {
       SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(propertyGetter);
       String implMethodName = serializedLambda.getImplMethodName();
 
-      if (!implMethodName.contains("$new")) {
-        entityType = (Class<T>) ClassUtils
-            .forName(serializedLambda.getImplClass().replace("/", "."), null);
-
+      MethodSignature methodSignature = SignatureAttribute
+          .toMethodSignature(serializedLambda.getInstantiatedMethodType());
+      entityType = (Class<T>) ClassUtils
+          .forName(methodSignature.getParameterTypes()[0].jvmTypeName(), null);
+      propertyType = ClassUtils.forName(methodSignature.getReturnType().jvmTypeName(), null);
+      propertyName = resolvePropertyName(implMethodName);
+      try {
+        Method writeMethod;
         try {
-          propertyType = entityType.getMethod(implMethodName).getReturnType();
-          try {
-            propertyName = resolvePropertyName(implMethodName);
-            Method writeMethod = entityType
-                .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
-
-            this.propertySetter = (obj, property) -> ReflectionUtils
-                .invokeMethod(writeMethod, obj, property);
-          } catch (NoSuchMethodException e) {
-            Logger log = LoggerFactory.getLogger(ExcelField.class);
-            log.info("自动识别属性setter方法失败");
-            propertyName = null;
-            propertySetter = null;
-            entityType = null;
-          }
+          writeMethod = entityType
+              .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
         } catch (NoSuchMethodException e) {
-          initPropertyType(serializedLambda);
-          entityType = null;
+          if (ClassUtils.isPrimitiveWrapper(propertyType)) {
+            propertyType = primitiveWrapperTypeMap.get(propertyType);
+            writeMethod = entityType
+                .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
+          } else {
+            throw e;
+          }
         }
-      } else {
-        initPropertyType(serializedLambda);
+        if (writeMethod != null) {
+          Method fWriteMethod = writeMethod;
+          this.propertySetter = (obj, property) -> ReflectionUtils
+              .invokeMethod(fWriteMethod, obj, property);
+        }
+      } catch (NoSuchMethodException e) {
+        Logger log = LoggerFactory.getLogger(ExcelField.class);
+        log.info("自动识别属性setter方法失败");
+        propertyName = null;
+        propertySetter = null;
+        entityType = null;
       }
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException | BadBytecode e) {
       throw new ExcelException(title + "属性解析错误", e);
     }
 
     init();
   }
 
-  /**
-   * 识别lambda方法返回类型
-   *
-   * @param serializedLambda SerializedLambda
-   * @throws ClassNotFoundException ClassNotFoundException
-   */
-  private void initPropertyType(SerializedLambda serializedLambda) throws ClassNotFoundException {
-    String implMethodSignature = serializedLambda.getImplMethodSignature();
-    String returnTypeName = implMethodSignature.replaceAll("^.*\\)(.*?);?$", "$1")
-        .replace("/", ".").replace("[L", "[");
-    if (!returnTypeName.startsWith("[")) {
-      returnTypeName = returnTypeName.substring(1);
-    }
-    propertyType = ClassUtils.forName(returnTypeName, ExcelField.class.getClassLoader());
-  }
 
   /**
    * 只支持导出的初始化方法
@@ -368,12 +412,11 @@ public class ExcelField<T, P> {
   /**
    * 只支持导入的初始化方法
    *
-   * @param title          标题
    * @param propertyType   属性字段类型
    * @param propertySetter 属性设置方法
    */
-  private ExcelField(String title, Class<P> propertyType, ExcelCellSetter<T, P> propertySetter) {
-    this.title = title;
+  private ExcelField(Class<P> propertyType, ExcelCellSetter<T, P> propertySetter) {
+    this.title = "";
     this.propertyType = propertyType;
     this.propertySetter = propertySetter;
 
@@ -499,6 +542,13 @@ public class ExcelField<T, P> {
       methodName = methodName.substring(3);
     } else if (methodName.startsWith("is")) {
       methodName = methodName.substring(2);
+    }
+    return StringUtils.uncapitalize(methodName);
+  }
+
+  private String resolveSetPropertyName(String methodName) {
+    if (methodName.startsWith("set")) {
+      methodName = methodName.substring(3);
     }
     return StringUtils.uncapitalize(methodName);
   }
