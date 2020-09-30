@@ -89,6 +89,7 @@ public class ExcelImport {
       throws IOException {
     workbook = new ReadableWorkbook(is);
     sheet = workbook.getFirstSheet();
+    setRowAndColumn(1, 0);
     log.debug("Initialize success.");
   }
 
@@ -137,12 +138,14 @@ public class ExcelImport {
   public ExcelImport sheet(int sheetIndex) {
     this.sheet = workbook.getSheet(sheetIndex)
         .orElseThrow(() -> new ExcelException("未找到第" + (sheetIndex + 1) + "张表"));
+    setRowAndColumn(1, 0);
     return this;
   }
 
   public ExcelImport sheet(String sheetName) {
     this.sheet = workbook.findSheet(sheetName)
         .orElseThrow(() -> new ExcelException("未找到表：" + sheetName));
+    setRowAndColumn(1, 0);
     return this;
   }
 
