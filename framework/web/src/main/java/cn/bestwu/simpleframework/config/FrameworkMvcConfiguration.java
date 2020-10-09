@@ -61,6 +61,7 @@ import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.format.FormatterRegistry;
@@ -151,7 +152,7 @@ public class FrameworkMvcConfiguration {
     return new ApiVersionFilter(appVersionName, appVersion, appVersionNoName, appVersionNo);
   }
 
-//  @Profile("release")
+  @Profile("release")
   @Bean
   @ConditionalOnMissingBean(LogLoginPageGeneratingFilter.class)
   public LogLoginPageGeneratingFilter logLoginPageGeneratingFilter(
