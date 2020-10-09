@@ -40,16 +40,6 @@
       "sourceType": "cn.bestwu.logging.RequestLoggingConfiguration",
       "defaultValue": true,
       "type": "java.lang.Boolean"
-    },
-    {
-      "name": "logging.user.username",
-      "sourceType": "cn.bestwu.logging.RequestLoggingConfiguration",
-      "type": "java.lang.String"
-    },
-    {
-      "name": "logging.user.password",
-      "sourceType": "cn.bestwu.logging.RequestLoggingConfiguration",
-      "type": "java.lang.String"
     }
   ],
   "hints": [

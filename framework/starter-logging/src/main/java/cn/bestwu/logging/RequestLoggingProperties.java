@@ -1,6 +1,7 @@
 package cn.bestwu.logging;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.util.AntPathMatcher;
 
 /**
  * RequestLogging 配置
@@ -69,6 +70,16 @@ public class RequestLoggingProperties {
       422};
   //--------------------------------------------
 
+  private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+  public boolean matchIgnored(String uri) {
+    for (String pattern : ignored) {
+      if (antPathMatcher.match(pattern, uri)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   public boolean isEnabled() {
     return enabled;

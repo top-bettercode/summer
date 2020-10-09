@@ -64,17 +64,15 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse,
                                   filterChain: FilterChain) {
         if (SlackClient.LOG_URL.isNullOrBlank()) {
-            SlackClient.LOG_URL= String.format("%s://%s", request.scheme, request.getHeader(HttpHeaders.HOST))
+            SlackClient.LOG_URL = String.format("%s://%s", request.scheme, request.getHeader(HttpHeaders.HOST))
         }
 //        ignored
         val uri = request.servletPath
-        val antPathMatcher = AntPathMatcher()
-        for (pattern in properties.ignored) {
-            if (antPathMatcher.match(pattern, uri)) {
-                filterChain.doFilter(request, response)
-                return
-            }
+        if (properties.matchIgnored(uri)) {
+            filterChain.doFilter(request, response)
+            return
         }
+
         request.setAttribute(REQUEST_DATE_TIME, LocalDateTime.now())
 
         val requestToUse: HttpServletRequest = if (properties.isIncludeRequestBody) {
