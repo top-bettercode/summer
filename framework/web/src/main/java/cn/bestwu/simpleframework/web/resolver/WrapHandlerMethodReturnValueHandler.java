@@ -2,6 +2,7 @@ package cn.bestwu.simpleframework.web.resolver;
 
 import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.RespEntity.RespEntityMap;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpEntity;
@@ -40,11 +41,14 @@ public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnV
   public void handleReturnValue(Object returnValue, MethodParameter returnType,
       ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
 
-    if (okEnable && returnValue instanceof ResponseEntity) {
-      int statusCode = ((ResponseEntity<?>) returnValue).getStatusCode().value();
-      if (statusCode != 404 && statusCode != 405) {
-        returnValue = ResponseEntity.ok().headers(((ResponseEntity<?>) returnValue).getHeaders())
-            .body(((ResponseEntity<?>) returnValue).getBody());
+    if (okEnable) {
+      webRequest.getNativeResponse(HttpServletResponse.class).setStatus(HttpStatus.OK.value());
+      if (returnValue instanceof ResponseEntity) {
+        int statusCode = ((ResponseEntity<?>) returnValue).getStatusCode().value();
+        if (statusCode != 404 && statusCode != 405) {
+          returnValue = ResponseEntity.ok().headers(((ResponseEntity<?>) returnValue).getHeaders())
+              .body(((ResponseEntity<?>) returnValue).getBody());
+        }
       }
     }
     if (wrapEnable && supportsRewrapType(returnType)) {

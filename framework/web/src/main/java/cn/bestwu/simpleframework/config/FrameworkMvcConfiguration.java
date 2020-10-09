@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.config;
 
+import cn.bestwu.lang.util.RandomUtil;
 import cn.bestwu.logging.annotation.NoRequestLogging;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
 import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
@@ -9,6 +10,7 @@ import cn.bestwu.simpleframework.web.error.DataErrorHandler;
 import cn.bestwu.simpleframework.web.error.ErrorAttributes;
 import cn.bestwu.simpleframework.web.error.IErrorHandler;
 import cn.bestwu.simpleframework.web.filter.ApiVersionFilter;
+import cn.bestwu.simpleframework.web.filter.LogLoginPageGeneratingFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
 import cn.bestwu.simpleframework.web.kaptcha.KaptchaProperties;
@@ -62,7 +64,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -79,24 +81,15 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @Configuration
 @ConditionalOnWebApplication
+@EnableConfigurationProperties(LogDocAuthProperties.class)
 @AutoConfigureBefore({ErrorMvcAutoConfiguration.class, JacksonAutoConfiguration.class})
 public class FrameworkMvcConfiguration {
 
   private final Logger log = LoggerFactory.getLogger(FrameworkMvcConfiguration.class);
 
-  /**
-   * specifying the packages to scan for mixIn annotation.
-   */
-  @Value("${app.jackson.mix-in-annotation.base-packages:}")
-  private String[] basePackages;
-
-  @Value("${app.web.ok.enable:true}")
-  private Boolean okEnable;
-
   @Bean(name = "error")
   @ConditionalOnMissingBean(name = "error")
-  public View error(ObjectMapper objectMapper,
-      @Value("${app.web.ok.enable:true}") Boolean okEnable) {
+  public View error(ObjectMapper objectMapper) {
     return new View() {
       @Override
       public String getContentType() {
@@ -111,9 +104,7 @@ public class FrameworkMvcConfiguration {
           response.setContentType(getContentType());
         }
         String result = objectMapper.writeValueAsString(model);
-        if (okEnable) {
-          response.setStatus(HttpStatus.OK.value());
-        }
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().append(result);
       }
     };
@@ -121,7 +112,9 @@ public class FrameworkMvcConfiguration {
 
   @Bean
   public Module module(ApplicationContext applicationContext,
-      PackageScanClassResolver packageScanClassResolver) {
+      PackageScanClassResolver packageScanClassResolver,
+      @Value("${app.jackson.mix-in-annotation.base-packages:}")
+          String[] basePackages) {
     SimpleModule module = new SimpleModule();
     Set<String> packages = PackageScanClassResolver
         .detectPackagesToScan(applicationContext, basePackages);
@@ -158,6 +151,19 @@ public class FrameworkMvcConfiguration {
     return new ApiVersionFilter(appVersionName, appVersion, appVersionNoName, appVersionNo);
   }
 
+//  @Profile("release")
+  @Bean
+  @ConditionalOnMissingBean(LogLoginPageGeneratingFilter.class)
+  public LogLoginPageGeneratingFilter logLoginPageGeneratingFilter(
+      LogDocAuthProperties logDocAuthProperties) {
+    if (!StringUtils.hasText(logDocAuthProperties.getPassword())) {
+      logDocAuthProperties.setPassword(RandomUtil.nextString2(6));
+      log.info("默认日志访问用户名密码：{}:{}", logDocAuthProperties.getUsername(),
+          logDocAuthProperties.getPassword());
+    }
+    return new LogLoginPageGeneratingFilter(logDocAuthProperties);
+  }
+
   /*
    * 隐藏方法，网页支持
    */
@@ -185,7 +191,9 @@ public class FrameworkMvcConfiguration {
   @Bean
   public CustomErrorController customErrorController(ErrorAttributes errorAttributes,
       ServerProperties serverProperties,
-      @Autowired(required = false) @Qualifier("corsConfigurationSource") CorsConfigurationSource configSource) {
+      @Autowired(required = false) @Qualifier("corsConfigurationSource") CorsConfigurationSource configSource,
+      @Value("${app.web.ok.enable:true}")
+          Boolean okEnable) {
     return new CustomErrorController(errorAttributes, serverProperties.getError(), configSource,
         okEnable);
   }

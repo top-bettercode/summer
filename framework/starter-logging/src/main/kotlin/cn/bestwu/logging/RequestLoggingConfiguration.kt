@@ -2,10 +2,8 @@ package cn.bestwu.logging
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.boot.web.servlet.support.ErrorPageFilter
 import org.springframework.context.annotation.*
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
@@ -56,10 +54,4 @@ class RequestLoggingConfiguration {
         }
     }
 
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE + 1)
-    @ConditionalOnMissingBean(ErrorPageFilter::class)
-    fun errorPageFilter(): ErrorPageFilter {
-        return ErrorPageFilter()
-    }
 }
