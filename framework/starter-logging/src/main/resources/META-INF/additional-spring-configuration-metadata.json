@@ -46,12 +46,6 @@
       "sourceType": "cn.bestwu.logging.LogsController",
       "defaultValue": "/logs",
       "type": "java.lang.String"
-    },
-    {
-      "name": "logging.websocket.path",
-      "sourceType": "cn.bestwu.logging.websocket.WebSocketController",
-      "defaultValue": "/websocket/logging",
-      "type": "java.lang.String"
     }
   ],
   "hints": [
