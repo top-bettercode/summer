@@ -10,6 +10,7 @@ import cn.bestwu.logging.logback.PrettyMessageHTMLLayout
 import org.slf4j.impl.StaticLoggerBinder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.core.env.Environment
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
@@ -85,7 +86,7 @@ class LogsController(private val loggingFilesPath: String, environment: Environm
     @Throws(IOException::class)
     fun websocketLog(request: HttpServletRequest, response: HttpServletResponse) {
         if (useWebSocket) {
-            val wsUrl = request.requestURL.toString().replace("https://", "ws://").replace("http://", "ws://").substringBeforeLast("/logs/real-time") + "/websocket/logging"
+            val wsUrl = "ws://" + request.getHeader(HttpHeaders.HOST) + request.contextPath + "/websocket/logging"
             response.contentType = "text/html;charset=utf-8"
             response.setHeader("Pragma", "No-cache")
             response.setHeader("Cache-Control", "no-cache")

@@ -109,8 +109,7 @@ class LogLoginPageGeneratingFilter(
 
     fun sendRedirect(request: HttpServletRequest, response: HttpServletResponse,
                      url: String) {
-        var redirectUrl = calculateRedirectUrl(request.contextPath, url)
-        redirectUrl = response.encodeRedirectURL(redirectUrl)
+        val redirectUrl = calculateRedirectUrl(request.contextPath, url)
         if (logger.isDebugEnabled) {
             logger.debug("Redirecting to '$redirectUrl'")
         }
@@ -307,8 +306,8 @@ class LogLoginPageGeneratingFilter(
     init {
         loginPageUrl = DEFAULT_LOGIN_PAGE_URL
         authenticationUrl = DEFAULT_LOGIN_PAGE_URL
-        logoutSuccessUrl = DEFAULT_LOGIN_PAGE_URL + "?logout"
-        failureUrl = DEFAULT_LOGIN_PAGE_URL + "?" + ERROR_PARAMETER_NAME
+        logoutSuccessUrl = "$DEFAULT_LOGIN_PAGE_URL?logout"
+        failureUrl = "$DEFAULT_LOGIN_PAGE_URL?$ERROR_PARAMETER_NAME"
         usernameParameter = "username"
         pwdParameter = "password"
     }
