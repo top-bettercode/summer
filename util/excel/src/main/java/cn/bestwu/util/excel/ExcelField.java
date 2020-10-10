@@ -380,7 +380,9 @@ public class ExcelField<T, P> {
         }
       } catch (NoSuchMethodException e) {
         Logger log = LoggerFactory.getLogger(ExcelField.class);
-        log.info("自动识别属性setter方法失败");
+        if (log.isDebugEnabled()) {
+          log.debug("自动识别属性setter方法失败");
+        }
         propertyName = null;
         propertySetter = null;
         entityType = null;
