@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.config;
+package cn.bestwu.logging;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.AntPathMatcher;
@@ -12,7 +12,7 @@ import org.springframework.util.AntPathMatcher;
 public class LogDocAuthProperties {
 
   private String[] pattern = {"/logs/**", "/doc/**"};
-  private String username = "logAdmin";
+  private String username = "logadmin";
   private String password;
   private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 

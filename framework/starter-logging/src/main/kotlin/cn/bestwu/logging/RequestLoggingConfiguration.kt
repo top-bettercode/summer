@@ -1,7 +1,11 @@
 package cn.bestwu.logging
 
+import cn.bestwu.lang.util.RandomUtil.nextString2
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.*
@@ -23,6 +27,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 @EnableConfigurationProperties(RequestLoggingProperties::class, WebsocketProperties::class)
 class RequestLoggingConfiguration {
+
+    private val log: Logger = LoggerFactory.getLogger(RequestLoggingConfiguration::class.java)
+
     @Order(Ordered.HIGHEST_PRECEDENCE)
     @Configuration
     class CustomWebMvcConfigurer : WebMvcConfigurer {
@@ -39,6 +46,18 @@ class RequestLoggingConfiguration {
         return RequestLoggingFilter(properties, handlers ?: emptyList())
     }
 
+    @Profile("release")
+    @Bean
+    @ConditionalOnMissingBean(LogLoginPageGeneratingFilter::class)
+    fun logLoginPageGeneratingFilter(
+            logDocAuthProperties: LogDocAuthProperties): LogLoginPageGeneratingFilter {
+        if (!StringUtils.hasText(logDocAuthProperties.password)) {
+            logDocAuthProperties.password = nextString2(6)
+            log.info("默认日志访问用户名密码：{}:{}", logDocAuthProperties.username,
+                    logDocAuthProperties.password)
+        }
+        return LogLoginPageGeneratingFilter(logDocAuthProperties)
+    }
 
     @ConditionalOnProperty(prefix = "logging.show", name = ["enabled"], havingValue = "true", matchIfMissing = true)
     @Conditional(LogsControllerCondition::class)

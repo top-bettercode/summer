@@ -1,6 +1,6 @@
 package cn.bestwu.simpleframework.config;
 
-import cn.bestwu.lang.util.RandomUtil;
+import cn.bestwu.logging.LogDocAuthProperties;
 import cn.bestwu.logging.annotation.NoRequestLogging;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
 import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
@@ -10,7 +10,6 @@ import cn.bestwu.simpleframework.web.error.DataErrorHandler;
 import cn.bestwu.simpleframework.web.error.ErrorAttributes;
 import cn.bestwu.simpleframework.web.error.IErrorHandler;
 import cn.bestwu.simpleframework.web.filter.ApiVersionFilter;
-import cn.bestwu.simpleframework.web.filter.LogLoginPageGeneratingFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
 import cn.bestwu.simpleframework.web.kaptcha.KaptchaProperties;
@@ -61,7 +60,6 @@ import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.format.FormatterRegistry;
@@ -150,19 +148,6 @@ public class FrameworkMvcConfiguration {
       @Value("${app.version-no-name:apiVersionNo}") String appVersionNoName,
       @Value("${app.version-no:1}") String appVersionNo) {
     return new ApiVersionFilter(appVersionName, appVersion, appVersionNoName, appVersionNo);
-  }
-
-  @Profile("release")
-  @Bean
-  @ConditionalOnMissingBean(LogLoginPageGeneratingFilter.class)
-  public LogLoginPageGeneratingFilter logLoginPageGeneratingFilter(
-      LogDocAuthProperties logDocAuthProperties) {
-    if (!StringUtils.hasText(logDocAuthProperties.getPassword())) {
-      logDocAuthProperties.setPassword(RandomUtil.nextString2(6));
-      log.info("默认日志访问用户名密码：{}:{}", logDocAuthProperties.getUsername(),
-          logDocAuthProperties.getPassword());
-    }
-    return new LogLoginPageGeneratingFilter(logDocAuthProperties);
   }
 
   /*
