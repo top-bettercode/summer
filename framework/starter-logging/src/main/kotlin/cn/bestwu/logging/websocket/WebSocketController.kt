@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap
 import javax.websocket.*
 import javax.websocket.server.ServerEndpoint
 
-@ServerEndpoint("/websocket/logging")
+@ServerEndpoint("\${logging.websocket.path:/websocket/logging}")
 class WebSocketController {
     private val log = LoggerFactory.getLogger(WebSocketController::class.java)
 
