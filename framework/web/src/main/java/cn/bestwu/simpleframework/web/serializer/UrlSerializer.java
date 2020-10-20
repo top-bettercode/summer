@@ -86,6 +86,9 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
       } else {
         format = defaultFormat;
       }
+      if (!format.contains("%s")) {
+        format = format + "%s";
+      }
       String url = String.format(format, path);
       if (!url.startsWith("http://") && !url.startsWith("https://")) {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
