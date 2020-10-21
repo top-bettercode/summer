@@ -72,6 +72,9 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
   public static void setEnvironment(Environment environment) {
     UrlSerializer.environment = environment;
     defaultFormat = environment.resolvePlaceholders(defaultFormatExpression);
+    if (!defaultFormat.contains("%s")) {
+      defaultFormat = defaultFormat + "%s";
+    }
   }
 
   public static String convert(String path, String formatExpression) {
@@ -81,13 +84,13 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
         format = formatCache.get(formatExpression);
         if (format == null) {
           format = environment.resolvePlaceholders(formatExpression);
+          if (!format.contains("%s")) {
+            format = format + "%s";
+          }
           formatCache.put(formatExpression, format);
         }
       } else {
         format = defaultFormat;
-      }
-      if (!format.contains("%s")) {
-        format = format + "%s";
       }
       String url = String.format(format, path);
       if (!url.startsWith("http://") && !url.startsWith("https://")) {
