@@ -79,6 +79,9 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
 
   public static String convert(String path, String formatExpression) {
     if (StringUtils.hasText(path)) {
+      if (path.startsWith("http://") || path.startsWith("https://")) {
+        return path;
+      }
       String format;
       if (StringUtils.hasText(formatExpression)) {
         format = formatCache.get(formatExpression);
