@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class LogLoginPageGeneratingFilter(
-        private val logDocAuthProperties: LogDocAuthProperties) : GenericFilterBean() {
+        private val logDocAuthProperties: LogDocAuthProperties, private val logViewPath: String) : GenericFilterBean() {
     var loginPageUrl: String
     private var logoutSuccessUrl: String
     private var failureUrl: String
@@ -89,7 +89,8 @@ class LogLoginPageGeneratingFilter(
                             == logDocAuthProperties.password)) {
                 val session = request.getSession(true)
                 session.setAttribute(LOGGER_AUTH_KEY, true)
-                sendRedirect(request, response, session.getAttribute(TARGET_URL_KEY) as String)
+                val url = session.getAttribute(TARGET_URL_KEY) as? String ?: logViewPath
+                sendRedirect(request, response, url)
                 return
             }
             errorMsg = "用户名或密码错误"
