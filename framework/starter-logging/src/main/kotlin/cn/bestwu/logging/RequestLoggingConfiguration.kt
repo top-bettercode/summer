@@ -51,13 +51,13 @@ class RequestLoggingConfiguration {
     @Bean
     @ConditionalOnMissingBean(LogLoginPageGeneratingFilter::class)
     fun logLoginPageGeneratingFilter(
-            logDocAuthProperties: LogDocAuthProperties): LogLoginPageGeneratingFilter {
+            logDocAuthProperties: LogDocAuthProperties, @Value("\${logging.view.path:/logs}") logViewPath: String): LogLoginPageGeneratingFilter {
         if (!StringUtils.hasText(logDocAuthProperties.password)) {
             logDocAuthProperties.password = nextString2(6)
             log.info("默认日志访问用户名密码：{}:{}", logDocAuthProperties.username,
                     logDocAuthProperties.password)
         }
-        return LogLoginPageGeneratingFilter(logDocAuthProperties)
+        return LogLoginPageGeneratingFilter(logDocAuthProperties, logViewPath)
     }
 
     @ConditionalOnProperty(prefix = "logging.show", name = ["enabled"], havingValue = "true", matchIfMissing = true)
