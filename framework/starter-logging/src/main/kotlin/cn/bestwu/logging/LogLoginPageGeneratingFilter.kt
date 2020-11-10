@@ -111,7 +111,7 @@ open class LogLoginPageGeneratingFilter(
     }
 
     private fun HttpServletRequest.getCookie(name: String): String? {
-        return cookies.find { it.name == name }?.value
+        return cookies?.find { it.name == name }?.value
     }
 
     private fun HttpServletResponse.setCookie(name: String, value: String) {
