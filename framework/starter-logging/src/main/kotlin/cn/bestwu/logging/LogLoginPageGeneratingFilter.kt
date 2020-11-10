@@ -28,6 +28,7 @@ open class LogLoginPageGeneratingFilter(
     private var usernameParameter: String
     private var pwdParameter: String
     private var resolveHiddenInputs = Function<HttpServletRequest, Map<String?, String>> { emptyMap() }
+    private val authKey: String = DigestUtils.md5DigestAsHex("${logDocAuthProperties.username}:${logDocAuthProperties.password}".toByteArray())
 
     /**
      * Sets a Function used to resolve a Map of the hidden inputs where the key is the name of the
@@ -62,12 +63,13 @@ open class LogLoginPageGeneratingFilter(
         this.pwdParameter = passwordParameter
     }
 
+
     override fun doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain) {
         val request = req as HttpServletRequest
         val response = res as HttpServletResponse
         var uri = request.servletPath
         if (logDocAuthProperties.match(uri)) {
-            if (request.getCookie(LOGGER_AUTH_KEY) == DigestUtils.md5DigestAsHex("${logDocAuthProperties.username}:${logDocAuthProperties.password}".toByteArray())) {
+            if (request.getCookie(LOGGER_AUTH_KEY) == authKey) {
                 chain.doFilter(request, response)
             } else {
                 val queryString = request.queryString
@@ -88,7 +90,7 @@ open class LogLoginPageGeneratingFilter(
             if (username != null && password != null && (username.trim { it <= ' ' }
                             == logDocAuthProperties.username) && (password
                             == logDocAuthProperties.password)) {
-                response.setCookie(LOGGER_AUTH_KEY, DigestUtils.md5DigestAsHex("${logDocAuthProperties.username}:${logDocAuthProperties.password}".toByteArray()))
+                response.setCookie(LOGGER_AUTH_KEY, authKey)
                 val url = request.getCookie(TARGET_URL_KEY) ?: logViewPath
                 sendRedirect(request, response, url)
                 return
