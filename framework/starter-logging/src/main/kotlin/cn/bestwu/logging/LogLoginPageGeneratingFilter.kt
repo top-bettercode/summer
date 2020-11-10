@@ -1,6 +1,7 @@
 package cn.bestwu.logging
 
 import org.springframework.util.Assert
+import org.springframework.util.DigestUtils
 import org.springframework.web.filter.GenericFilterBean
 import org.springframework.web.util.HtmlUtils
 import java.nio.charset.StandardCharsets
@@ -14,10 +15,11 @@ import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
+import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class LogLoginPageGeneratingFilter(
+open class LogLoginPageGeneratingFilter(
         private val logDocAuthProperties: LogDocAuthProperties, private val logViewPath: String) : GenericFilterBean() {
     var loginPageUrl: String
     private var logoutSuccessUrl: String
@@ -65,15 +67,14 @@ class LogLoginPageGeneratingFilter(
         val response = res as HttpServletResponse
         var uri = request.servletPath
         if (logDocAuthProperties.match(uri)) {
-            val session = request.getSession(true)
-            if (session.getAttribute(LOGGER_AUTH_KEY) != null) {
+            if (request.getCookie(LOGGER_AUTH_KEY) == DigestUtils.md5DigestAsHex("${logDocAuthProperties.username}:${logDocAuthProperties.password}".toByteArray())) {
                 chain.doFilter(request, response)
             } else {
                 val queryString = request.queryString
                 if (queryString != null) {
                     uri += "?$queryString"
                 }
-                session.setAttribute(TARGET_URL_KEY, uri)
+                response.setCookie(TARGET_URL_KEY, uri)
                 sendRedirect(request, response, loginPageUrl)
             }
             return
@@ -87,9 +88,8 @@ class LogLoginPageGeneratingFilter(
             if (username != null && password != null && (username.trim { it <= ' ' }
                             == logDocAuthProperties.username) && (password
                             == logDocAuthProperties.password)) {
-                val session = request.getSession(true)
-                session.setAttribute(LOGGER_AUTH_KEY, true)
-                val url = session.getAttribute(TARGET_URL_KEY) as? String ?: logViewPath
+                response.setCookie(LOGGER_AUTH_KEY, DigestUtils.md5DigestAsHex("${logDocAuthProperties.username}:${logDocAuthProperties.password}".toByteArray()))
+                val url = request.getCookie(TARGET_URL_KEY) ?: logViewPath
                 sendRedirect(request, response, url)
                 return
             }
@@ -108,16 +108,27 @@ class LogLoginPageGeneratingFilter(
         chain.doFilter(request, response)
     }
 
-    fun sendRedirect(request: HttpServletRequest, response: HttpServletResponse,
-                     url: String) {
+    private fun HttpServletRequest.getCookie(name: String): String? {
+        return cookies.find { it.name == name }?.value
+    }
+
+    private fun HttpServletResponse.setCookie(name: String, value: String) {
+        val cookie = Cookie(name, value)
+        cookie.path = "/"
+        cookie.maxAge = -1
+        this.addCookie(cookie)
+    }
+
+    private fun sendRedirect(request: HttpServletRequest, response: HttpServletResponse,
+                             url: String) {
         val redirectUrl = calculateRedirectUrl(request.contextPath, url)
-        if (logger.isDebugEnabled) {
-            logger.debug("Redirecting to '$redirectUrl'")
+        if (logger.isTraceEnabled) {
+            logger.trace("Redirecting to '$redirectUrl'")
         }
         response.sendRedirect(redirectUrl)
     }
 
-    protected fun calculateRedirectUrl(contextPath: String, url: String): String {
+    private fun calculateRedirectUrl(contextPath: String, url: String): String {
         return if (!isAbsoluteUrl(url)) {
             contextPath + url
         } else url
@@ -283,8 +294,8 @@ class LogLoginPageGeneratingFilter(
     companion object {
         const val DEFAULT_LOGIN_PAGE_URL = "/login"
         const val ERROR_PARAMETER_NAME = "error"
-        val LOGGER_AUTH_KEY = LogLoginPageGeneratingFilter::class.java.name + ".auth"
-        val TARGET_URL_KEY = LogLoginPageGeneratingFilter::class.java.name + ".targetUrl"
+        val LOGGER_AUTH_KEY = "_key"
+        val TARGET_URL_KEY = "_targetUrl"
         fun isAbsoluteUrl(url: String?): Boolean {
             if (url == null) {
                 return false
