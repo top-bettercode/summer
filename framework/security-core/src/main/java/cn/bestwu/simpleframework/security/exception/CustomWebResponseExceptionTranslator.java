@@ -106,7 +106,8 @@ public class CustomWebResponseExceptionTranslator implements
         requestAttributes == null ? null : requestAttributes.getRequest();
     if (request != null) {
       message = getText(request, message);
-      ErrorAttributes.setErrorInfo(new ServletWebRequest(request), status, String.valueOf(status), message, e);
+      ErrorAttributes
+          .setErrorInfo(new ServletWebRequest(request), status, String.valueOf(status), message, e);
     }
 
     return new ResponseEntity<>(new WrapOAuth2Exception(message, e), headers, httpStatus);
@@ -120,25 +121,6 @@ public class CustomWebResponseExceptionTranslator implements
 
   public void setThrowableAnalyzer(ThrowableAnalyzer throwableAnalyzer) {
     this.throwableAnalyzer = throwableAnalyzer;
-  }
-
-  @SuppressWarnings("serial")
-  private static class IllegalUserOauth2Exception extends OAuth2Exception {
-
-    public IllegalUserOauth2Exception(String msg, Throwable t) {
-      super(msg, t);
-    }
-
-    @Override
-    public String getOAuth2ErrorCode() {
-      return HttpStatus.BAD_REQUEST.getReasonPhrase();
-    }
-
-    @Override
-    public int getHttpErrorCode() {
-      return 400;
-    }
-
   }
 
   @SuppressWarnings("serial")
