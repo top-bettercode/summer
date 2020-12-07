@@ -70,7 +70,7 @@ open class LogLoginPageGeneratingFilter(
         val request = req as HttpServletRequest
         val response = res as HttpServletResponse
         var uri = request.servletPath
-        if (logDocAuthProperties.match(uri)) {
+        if (logDocAuthProperties.match(uri) && loginPageUrl != uri) {
             if (request.getCookie(LOGGER_AUTH_KEY) == authKey) {
                 chain.doFilter(request, response)
             } else {
@@ -100,10 +100,7 @@ open class LogLoginPageGeneratingFilter(
             errorMsg = "用户名或密码错误"
             loginError = true
         }
-        if (matcheLoginPage && "GET" == request.method || loginError || isLogoutSuccess(
-                request
-            )
-        ) {
+        if (matcheLoginPage && "GET" == request.method || loginError || isLogoutSuccess(request)) {
             val loginPageHtml = generateLoginPageHtml(
                 request, loginError,
                 isLogoutSuccess(request), errorMsg
