@@ -20,7 +20,8 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 open class LogLoginPageGeneratingFilter(
-        private val logDocAuthProperties: LogDocAuthProperties, private val logViewPath: String) : GenericFilterBean() {
+    private val logDocAuthProperties: LogDocAuthProperties, private val logViewPath: String
+) : GenericFilterBean() {
     var loginPageUrl: String
     private var logoutSuccessUrl: String
     private var failureUrl: String
@@ -38,7 +39,8 @@ open class LogLoginPageGeneratingFilter(
      * @param resolveHiddenInputs the function to resolve the inputs
      */
     fun setResolveHiddenInputs(
-            resolveHiddenInputs: Function<HttpServletRequest, Map<String?, String>>) {
+        resolveHiddenInputs: Function<HttpServletRequest, Map<String?, String>>
+    ) {
         Assert.notNull(resolveHiddenInputs, "resolveHiddenInputs cannot be null")
         this.resolveHiddenInputs = resolveHiddenInputs
     }
@@ -88,8 +90,8 @@ open class LogLoginPageGeneratingFilter(
             val username = request.getParameter(usernameParameter)
             val password = request.getParameter(pwdParameter)
             if (username != null && password != null && (username.trim { it <= ' ' }
-                            == logDocAuthProperties.username) && (password
-                            == logDocAuthProperties.password)) {
+                        == logDocAuthProperties.username) && (password
+                        == logDocAuthProperties.password)) {
                 response.setCookie(LOGGER_AUTH_KEY, authKey)
                 val url = request.getCookie(TARGET_URL_KEY) ?: logViewPath
                 sendRedirect(request, response, url)
@@ -99,9 +101,13 @@ open class LogLoginPageGeneratingFilter(
             loginError = true
         }
         if (matcheLoginPage && "GET" == request.method || loginError || isLogoutSuccess(
-                        request)) {
-            val loginPageHtml = generateLoginPageHtml(request, loginError,
-                    isLogoutSuccess(request), errorMsg)
+                request
+            )
+        ) {
+            val loginPageHtml = generateLoginPageHtml(
+                request, loginError,
+                isLogoutSuccess(request), errorMsg
+            )
             response.contentType = "text/html;charset=UTF-8"
             response.setContentLength(loginPageHtml.toByteArray(StandardCharsets.UTF_8).size)
             response.writer.write(loginPageHtml)
@@ -121,8 +127,10 @@ open class LogLoginPageGeneratingFilter(
         this.addCookie(cookie)
     }
 
-    private fun sendRedirect(request: HttpServletRequest, response: HttpServletResponse,
-                             url: String) {
+    private fun sendRedirect(
+        request: HttpServletRequest, response: HttpServletResponse,
+        url: String
+    ) {
         val redirectUrl = calculateRedirectUrl(request.contextPath, url)
         if (logger.isTraceEnabled) {
             logger.trace("Redirecting to '$redirectUrl'")
@@ -136,10 +144,13 @@ open class LogLoginPageGeneratingFilter(
         } else url
     }
 
-    private fun generateLoginPageHtml(request: HttpServletRequest, loginError: Boolean,
-                                      logoutSuccess: Boolean, errorMsg: String): String {
+    private fun generateLoginPageHtml(
+        request: HttpServletRequest, loginError: Boolean,
+        logoutSuccess: Boolean, errorMsg: String
+    ): String {
         val sb = StringBuilder()
-        sb.append("""<!DOCTYPE html>
+        sb.append(
+            """<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -224,7 +235,8 @@ open class LogLoginPageGeneratingFilter(
     </style>  </head>
   <body>
      <div class="container">
-""")
+"""
+        )
         val contextPath = request.contextPath
         sb.append("      <form class=\"form-signin\" method=\"post\" action=\"")
                 .append(contextPath)
@@ -257,14 +269,16 @@ open class LogLoginPageGeneratingFilter(
         val sb = StringBuilder()
         for ((key, value) in resolveHiddenInputs.apply(request)) {
             sb.append("<input name=\"").append(key).append("\" type=\"hidden\" value=\"")
-                    .append(value).append("\" />\n")
+                .append(value).append("\" />\n")
         }
         return sb.toString()
     }
 
     private fun isLogoutSuccess(request: HttpServletRequest): Boolean {
-        return "GET" == request.method && matches(request,
-                logoutSuccessUrl)
+        return "GET" == request.method && matches(
+            request,
+            logoutSuccessUrl
+        )
     }
 
     private fun isLoginUrlRequest(request: HttpServletRequest): Boolean {
@@ -294,7 +308,7 @@ open class LogLoginPageGeneratingFilter(
     }
 
     companion object {
-        const val DEFAULT_LOGIN_PAGE_URL = "/login"
+        const val DEFAULT_LOGIN_PAGE_URL = "/logs/login"
         const val ERROR_PARAMETER_NAME = "error"
         val LOGGER_AUTH_KEY = "_key"
         val TARGET_URL_KEY = "_targetUrl"
@@ -302,14 +316,16 @@ open class LogLoginPageGeneratingFilter(
             if (url == null) {
                 return false
             }
-            val ABSOLUTE_URL = Pattern.compile("\\A[a-z0-9.+-]+://.*",
-                    Pattern.CASE_INSENSITIVE)
+            val ABSOLUTE_URL = Pattern.compile(
+                "\\A[a-z0-9.+-]+://.*",
+                Pattern.CASE_INSENSITIVE
+            )
             return ABSOLUTE_URL.matcher(url).matches()
         }
 
         private fun createError(isError: Boolean, message: String): String {
             return if (isError) "<div class=\"alert alert-danger\" role=\"alert\">" + HtmlUtils
-                    .htmlEscape(message) + "</div>" else ""
+                .htmlEscape(message) + "</div>" else ""
         }
 
         private fun createLogoutSuccess(isLogoutSuccess: Boolean): String {
