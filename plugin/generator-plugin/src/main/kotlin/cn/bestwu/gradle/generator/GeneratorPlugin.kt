@@ -63,7 +63,9 @@ class GeneratorPlugin : Plugin<Project> {
                 ?: project.rootProject.name
             extension.projectName = findProperty(project, "projectName") ?: project.name
             extension.primaryKeyName = findProperty(project, "primaryKeyName") ?: "id"
-            extension.tablePrefix = findProperty(project, "tablePrefix") ?: ""
+            extension.tablePrefixes =
+                (findProperty(project, "tablePrefix") ?: "").split(",").filter { it.isNotBlank() }
+                    .toTypedArray()
             extension.remarks = findProperty(project, "remarks") ?: ""
             extension.softDeleteColumnName = findProperty(project, "softDeleteColumnName")
                 ?: "deleted"

@@ -16,7 +16,7 @@ import java.io.FileReader
  * @author Peter Wu
  */
 class GeneratorsTest {
-    private val extension = GeneratorExtension(basePath = File("build/resources/test/"), dir = "gen/java", packageName = "com.bestwu.test", replaceAll = true, tablePrefix = "oauth_", pdmSrc = "kie.pdm")
+    private val extension = GeneratorExtension(basePath = File("build/resources/test/"), dir = "gen/java", packageName = "com.bestwu.test", replaceAll = true, tablePrefixes = arrayOf("oauth_"), pdmSrc = "kie.pdm")
 
     init {
         extension.datasource.url = "jdbc:h2:mem:test"

@@ -124,7 +124,7 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                 module.collections(docOperation.collectionName, docOperation.name)
 
                 //field
-                val extension = GeneratorExtension(datasource = genProperties.datasource, dataType = genProperties.dataType, tablePrefix = genProperties.tablePrefix)
+                val extension = GeneratorExtension(datasource = genProperties.datasource, dataType = genProperties.dataType, tablePrefixes = genProperties.tablePrefixes)
 
                 request.uriVariablesExt = request.uriVariables.toFields(request.uriVariablesExt)
                 request.headersExt = request.headers.singleValueMap.toFields(request.headersExt)
