@@ -8,6 +8,10 @@ public class IllegalUserOauth2Exception extends OAuth2Exception {
 
   private static final long serialVersionUID = -3550061022144911053L;
 
+  public IllegalUserOauth2Exception(String msg) {
+    super(msg);
+  }
+
   public IllegalUserOauth2Exception(String msg, Throwable t) {
     super(msg, t);
   }
