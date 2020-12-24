@@ -40,12 +40,13 @@ class GeneratorPlugin : Plugin<Project> {
                 it.driverClass = findDatasourceProperty(project, "driverClass") ?: ""
             })
             extension.singleDatasource = (findProperty(project, "singleDatasource"))?.toBoolean()
-                    ?: true
+                ?: true
             extension.delete = (findProperty(project, "delete"))?.toBoolean() ?: false
             extension.debug = (findProperty(project, "debug"))?.toBoolean() ?: false
             extension.projectPackage = (findProperty(project, "project-package"))?.toBoolean()
-                    ?: false
-            extension.deleteTablesWhenUpdate = (findProperty(project, "deleteTablesWhenUpdate"))?.toBoolean()
+                ?: false
+            extension.deleteTablesWhenUpdate =
+                (findProperty(project, "deleteTablesWhenUpdate"))?.toBoolean()
                     ?: false
             extension.replaceAll = (findProperty(project, "replaceAll"))?.toBoolean() ?: false
             extension.useForeignKey = (findProperty(project, "useForeignKey"))?.toBoolean() ?: false
@@ -54,28 +55,33 @@ class GeneratorPlugin : Plugin<Project> {
             extension.basePath = project.file("./")
             extension.dir = findProperty(project, "dir") ?: "src/main/java"
             extension.packageName = findProperty(project, "packageName")
-                    ?: project.findProperty("app.packageName") as? String ?: ""
+                ?: project.findProperty("app.packageName") as? String ?: ""
             extension.userModule = (findProperty(project, "userModule"))?.toBoolean() ?: true
             extension.module = findProperty(project, "module") ?: ""
             extension.moduleName = findProperty(project, "moduleName") ?: ""
             extension.applicationName = project.findProperty("application.name") as? String
-                    ?: project.rootProject.name
+                ?: project.rootProject.name
             extension.projectName = findProperty(project, "projectName") ?: project.name
             extension.primaryKeyName = findProperty(project, "primaryKeyName") ?: "id"
             extension.tablePrefix = findProperty(project, "tablePrefix") ?: ""
             extension.remarks = findProperty(project, "remarks") ?: ""
             extension.softDeleteColumnName = findProperty(project, "softDeleteColumnName")
-                    ?: "deleted"
-            extension.softDeleteAsBoolean = (findProperty(project, "softDeleteAsBoolean"))?.toBoolean()
+                ?: "deleted"
+            extension.softDeleteAsBoolean =
+                (findProperty(project, "softDeleteAsBoolean"))?.toBoolean()
                     ?: true
-            extension.dataType = DataType.valueOf((findProperty(project, "dataType")
-                    ?: DataType.DATABASE.name).toUpperCase())
-            extension.updateFromType = DataType.valueOf((findProperty(project, "updateFromType")
-                    ?: DataType.DATABASE.name).toUpperCase())
+            extension.dataType = DataType.valueOf(
+                (findProperty(project, "dataType")
+                    ?: DataType.DATABASE.name).toUpperCase()
+            )
+            extension.updateFromType = DataType.valueOf(
+                (findProperty(project, "updateFromType")
+                    ?: DataType.DATABASE.name).toUpperCase()
+            )
             //puml
             extension.pumlSrc = findProperty(project, "puml.src") ?: "puml/src"
             val pumlDatabaseDriver = findProperty(project, "puml.databaseDriver")
-                    ?: extension.datasource.databaseDriver.id
+                ?: extension.datasource.databaseDriver.id
             extension.pumlDatabaseDriver = DatabaseDriver.fromProductName(pumlDatabaseDriver)
             extension.pumlDatabase = findProperty(project, "puml.database") ?: "puml/database"
             extension.pumlDiagramFormat = findProperty(project, "puml.diagramFormat") ?: "PNG"
@@ -89,14 +95,19 @@ class GeneratorPlugin : Plugin<Project> {
             extension.settings = settings
 
             extension.tableNames = (findProperty(project, "tableNames")
-                    ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList().toTypedArray()
-            extension.jsonViewIgnoredFieldNames = (findProperty(project, "jsonViewIgnoredFieldNames")
-                    ?: "deleted,lastModifiedDate").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList().toTypedArray()
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
+                .toTypedArray()
+            extension.jsonViewIgnoredFieldNames =
+                (findProperty(project, "jsonViewIgnoredFieldNames")
+                    ?: "deleted,lastModifiedDate").split(",").asSequence()
+                    .filter { it.isNotBlank() }.map { it.trim() }.toList().toTypedArray()
             extension.pumlTableNames = (findProperty(project, "puml.tableNames")
-                    ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList().toTypedArray()
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
+                .toTypedArray()
 
             extension.generators = (findProperty(project, "generators")
-                    ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { Class.forName(it.trim()).newInstance() as Generator }.toList().toTypedArray()
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }
+                .map { Class.forName(it.trim()).newInstance() as Generator }.toList().toTypedArray()
         }
 
         project.tasks.create("generate") { task ->
@@ -149,7 +160,10 @@ class GeneratorPlugin : Plugin<Project> {
                     }
                 }
                 if (tables.isNotEmpty()) {
-                    val plantUML = PlantUML(tables[0].moduleName, extension.file(extension.pumlDatabase).absolutePath + "/database.puml")
+                    val plantUML = PlantUML(
+                        tables[0].moduleName,
+                        extension.file(extension.pumlDatabase).absolutePath + "/database.puml"
+                    )
                     plantUML.setUp()
                     pumlTableNames.forEach { tableName ->
                         val table = tables.find { it.tableName == tableName }
@@ -170,7 +184,10 @@ class GeneratorPlugin : Plugin<Project> {
         project.tasks.create("pumlToDiagram") { task ->
             task.group = "gen"
             val src = extension.file(extension.pumlSrc)
-            val out = File(extension.file(extension.pumlSrc).parent, extension.pumlDiagramFormat.toLowerCase())
+            val out = File(
+                extension.file(extension.pumlSrc).parent,
+                extension.pumlDiagramFormat.toLowerCase()
+            )
             if (src.exists())
                 task.inputs.dir(src)
             if (out.exists())
@@ -178,7 +195,13 @@ class GeneratorPlugin : Plugin<Project> {
             task.doLast { _ ->
                 extension.pumlSrcSources.forEach {
                     val sourceFileReader = SourceFileReader(it, out, "UTF-8")
-                    sourceFileReader.setFileFormatOption(FileFormatOption(FileFormat.valueOf(extension.pumlDiagramFormat)))
+                    sourceFileReader.setFileFormatOption(
+                        FileFormatOption(
+                            FileFormat.valueOf(
+                                extension.pumlDiagramFormat
+                            )
+                        )
+                    )
                     try {
                         sourceFileReader.generatedImages
                     } catch (e: Exception) {
@@ -215,15 +238,15 @@ class GeneratorPlugin : Plugin<Project> {
     }
 
     private fun findProperty(project: Project, key: String) =
-            (project.findProperty("generator.${project.name}.$key") as? String
-                    ?: project.findProperty("generator.$key") as? String)
+        (project.findProperty("generator.${project.name}.$key") as? String
+            ?: project.findProperty("generator.$key") as? String)
 
 
     private fun findDatasourceProperty(project: Project, key: String): String? {
         return project.findProperty("generator.${project.name}.datasource.$key") as? String
-                ?: project.findProperty("generator.datasource.$key") as? String
-                ?: project.findProperty("datasource.${project.name}.$key") as? String
-                ?: project.findProperty("datasource.$key") as? String
+            ?: project.findProperty("generator.datasource.$key") as? String
+            ?: project.findProperty("datasource.${project.name}.$key") as? String
+            ?: project.findProperty("datasource.$key") as? String
     }
 
 }
