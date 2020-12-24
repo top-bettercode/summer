@@ -12,50 +12,50 @@ import cn.bestwu.generator.dsl.Generator
  * @author Peter Wu
  */
 data class Column(
-        val tableCat: String?,
-        val tableSchem: String?,
-        /**
-         * 数据库字段名
-         */
-        val columnName: String,
-        /**
-         * 数据库字段类型
-         */
-        var typeName: String,
-        /**
-         * 字段类型
-         */
-        val dataType: Int?,
-        /**
-         * DECIMAL_DIGITS
-         */
-        var decimalDigits: Int,
-        /**
-         * COLUMN_SIZE
-         */
-        var columnSize: Int,
-        /**
-         * 注释说明
-         */
-        val remarks: String,
-        /**
-         * 是否可为空
-         */
-        var nullable: Boolean,
-        /**
-         * 默认值
-         */
-        var columnDef: String?,
-        var extra: String = "",
-        var unique: Boolean = false,
-        var indexed: Boolean = false,
-        var isPrimary: Boolean = false,
-        var unsigned: Boolean = false,
-        var isForeignKey: Boolean = false,
-        var pktableName: String? = null,
-        var pkcolumnName: String? = null,
-        var autoIncrement: Boolean = false,
-        var generatedColumn: Boolean = false
+    val tableCat: String?,
+    val tableSchem: String?,
+    /**
+     * 数据库字段名
+     */
+    val columnName: String,
+    /**
+     * 数据库字段类型
+     */
+    var typeName: String,
+    /**
+     * 字段类型
+     */
+    val dataType: Int?,
+    /**
+     * DECIMAL_DIGITS
+     */
+    var decimalDigits: Int,
+    /**
+     * COLUMN_SIZE
+     */
+    var columnSize: Int,
+    /**
+     * 注释说明
+     */
+    val remarks: String,
+    /**
+     * 是否可为空
+     */
+    var nullable: Boolean,
+    /**
+     * 默认值
+     */
+    var columnDef: String?,
+    var extra: String = "",
+    var unique: Boolean = false,
+    var indexed: Boolean = false,
+    var isPrimary: Boolean = false,
+    var unsigned: Boolean = false,
+    var isForeignKey: Boolean = false,
+    var pktableName: String? = null,
+    var pkcolumnName: String? = null,
+    var autoIncrement: Boolean = false,
+    var generatedColumn: Boolean = false
 ) {
     init {
         if ("null".equals(columnDef, true)) {
@@ -72,7 +72,10 @@ data class Column(
         get() = "$typeName${if (containsSize) "($columnSize${if (decimalDigits > 0) ",$decimalDigits" else ""})" else ""}"
     val defaultDesc: String
         get() {
-            val isString = typeName.startsWith("VARCHAR", true) || typeName.startsWith("TEXT", true) || typeName.startsWith("TINYTEXT", true) || typeName.startsWith("MEDIUMTEXT", true)
+            val isString = typeName.startsWith("VARCHAR", true) || typeName.startsWith(
+                "TEXT",
+                true
+            ) || typeName.startsWith("TINYTEXT", true) || typeName.startsWith("MEDIUMTEXT", true)
             return if (columnDef == null) "" else {
                 val qt = if (isString) "'" else ""
                 (" DEFAULT $qt$columnDef$qt")
@@ -80,7 +83,22 @@ data class Column(
         }
 
     val containsSize: Boolean
-        get() = columnSize > 0 && !arrayOf(java.lang.Object::class.java.name, "byte[]", java.util.Date::class.java.name, "java.time.OffsetTime", "java.time.OffsetDateTime", "java.time.LocalDate", "java.time.LocalTime", "java.time.LocalDateTime").contains(javaType.fullyQualifiedName) && !arrayOf("TINYTEXT", "MEDIUMTEXT", "TEXT", "CLOB", "NCLOB").contains(typeName.toUpperCase())
+        get() = columnSize > 0 && !arrayOf(
+            java.lang.Object::class.java.name,
+            "byte[]",
+            java.util.Date::class.java.name,
+            "java.time.OffsetTime",
+            "java.time.OffsetDateTime",
+            "java.time.LocalDate",
+            "java.time.LocalTime",
+            "java.time.LocalDateTime"
+        ).contains(javaType.fullyQualifiedName) && !arrayOf(
+            "TINYTEXT",
+            "MEDIUMTEXT",
+            "TEXT",
+            "CLOB",
+            "NCLOB"
+        ).contains(typeName.toUpperCase())
 
     val randomValue: Any
         get() = when {
@@ -148,9 +166,23 @@ data class Column(
         }
 
 
-    fun isSoftDelete(extension: GeneratorExtension): Boolean = columnName == extension.softDeleteColumnName
+    fun setValue(value: String): String {
+        return when {
+            javaType.shortName == "Boolean" -> "Boolean.valueOf($value)"
+            javaType.shortName == "Integer" -> "Integer.valueOf($value)"
+            javaType.shortName == "Long" -> "Long.valueOf($value)"
+            javaType.shortName == "Double" -> "Double.valueOf($value)"
+            javaType.shortName == "Float" -> "Float.valueOf($value)"
+            javaType.shortName == "BigDecimal" -> "new BigDecimal($value)"
+            else -> value
+        }
+    }
 
-    fun jsonViewIgnored(extension: GeneratorExtension): Boolean = extension.jsonViewIgnoredFieldNames.contains(javaName)
+    fun isSoftDelete(extension: GeneratorExtension): Boolean =
+        columnName == extension.softDeleteColumnName
+
+    fun jsonViewIgnored(extension: GeneratorExtension): Boolean =
+        extension.jsonViewIgnoredFieldNames.contains(javaName)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
