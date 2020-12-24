@@ -112,7 +112,7 @@ open class GeneratorExtension(
     /**
      * 表前缀
      */
-    var tablePrefix: String = "",
+    var tablePrefixes: Array<String> = arrayOf(),
     /**
      * 注释说明
      */
@@ -189,7 +189,7 @@ open class GeneratorExtension(
      * ClassName
      */
     var className: (String) -> String = { str ->
-        javaName(str.substringAfter(tablePrefix), true)
+        javaName(str.substringAfter(tablePrefixes.find { str.startsWith(it) } ?: ""), true)
     }
 
     val sqlDDLOutput: String

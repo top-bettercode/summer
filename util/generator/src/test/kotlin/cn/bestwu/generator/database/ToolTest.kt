@@ -38,7 +38,8 @@ class ToolTest {
 
     @Test
     fun regex() {
-        val s = "jdbc:mysql://127.0.0.1:3306/stopcar?useUnicode=true&characterEncoding=utf-8&useSSL=false"
+        val s =
+            "jdbc:mysql://127.0.0.1:3306/stopcar?useUnicode=true&characterEncoding=utf-8&useSSL=false"
         val s1 = "jdbc:mysql://127.0.0.1:3306/stopcar"
         System.err.println(s.replace("^.+\\/(.+)\\?.*$", "$1"))
         System.err.println(s1.replace("^.+\\/(.+).*$", "$1"))
@@ -48,7 +49,7 @@ class ToolTest {
     @Test
     fun javaName() {
         val extension = GeneratorExtension()
-        extension.tablePrefix = "ls_"
+        extension.tablePrefixes = arrayOf("ls_")
         println(GeneratorExtension.javaName("activity_event"))
         println(extension.className("ls_activity_event"))
     }
@@ -100,7 +101,8 @@ class ToolTest {
             val groupValues = regex.find(it)?.groupValues
             System.err.println(groupValues)
         }
-        val sss = "@com.cdwintech.framework.web.resolver.ModifyModel(idParameterName = \"indentifyId\") @org.springframework.validation.annotation.Validated"
+        val sss =
+            "@com.cdwintech.framework.web.resolver.ModifyModel(idParameterName = \"indentifyId\") @org.springframework.validation.annotation.Validated"
         sss.split(Annotations.splitRegex).forEach {
             val groupValues = regex.find(it)?.groupValues
             System.err.println(groupValues)

@@ -36,7 +36,7 @@ public class GenProperties extends AutodocExtension {
   /**
    * 表前缀
    */
-  private String tablePrefix = "";
+  private String[] tablePrefixes = new String[0];
   /**
    * JDBC连接配置
    */
@@ -91,11 +91,11 @@ public class GenProperties extends AutodocExtension {
     this.projectPath = projectPath;
   }
 
-  public String getTablePrefix() {
-    return tablePrefix;
+  public String[] getTablePrefixes() {
+    return tablePrefixes;
   }
 
-  public void setTablePrefix(String tablePrefix) {
-    this.tablePrefix = tablePrefix;
+  public void setTablePrefixes(String[] tablePrefixes) {
+    this.tablePrefixes = tablePrefixes;
   }
 }

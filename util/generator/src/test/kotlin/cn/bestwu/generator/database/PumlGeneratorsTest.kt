@@ -12,7 +12,15 @@ import java.io.File
  * @author Peter Wu
  */
 class PumlGeneratorsTest {
-    private val extension = GeneratorExtension(basePath = File("build"), dir = "gen/java", packageName = "com.bestwu.test", replaceAll = true, tablePrefix = "OAUTH_", dataType = DataType.PUML, tableNames = arrayOf("OAUTH_CLIENT_DETAILS", "OAUTH_CLIENT_TOKEN"))
+    private val extension = GeneratorExtension(
+        basePath = File("build"),
+        dir = "gen/java",
+        packageName = "com.bestwu.test",
+        replaceAll = true,
+        tablePrefixes = arrayOf("OAUTH_"),
+        dataType = DataType.PUML,
+        tableNames = arrayOf("OAUTH_CLIENT_DETAILS", "OAUTH_CLIENT_TOKEN")
+    )
 
     @Test
     fun gen() {
