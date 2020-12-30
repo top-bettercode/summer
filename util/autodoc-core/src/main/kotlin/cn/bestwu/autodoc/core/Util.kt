@@ -48,6 +48,7 @@ object Util {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         objectMapper.enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature())
         objectMapper.enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
+        objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
         objectMapper.registerKotlinModule()
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
     }

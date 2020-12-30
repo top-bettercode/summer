@@ -1,6 +1,7 @@
 package cn.bestwu.logging.operation
 
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import org.xml.sax.ErrorHandler
@@ -119,6 +120,7 @@ object PrettyPrintingContentModifier {
 
         private val objectMapper = ObjectMapper()
             .configure(SerializationFeature.INDENT_OUTPUT, true)
+            .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
             .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
 
         @Throws(IOException::class)
