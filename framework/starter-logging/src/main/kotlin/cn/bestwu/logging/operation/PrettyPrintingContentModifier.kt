@@ -1,5 +1,6 @@
 package cn.bestwu.logging.operation
 
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import org.xml.sax.ErrorHandler
@@ -54,8 +55,10 @@ object PrettyPrintingContentModifier {
         override fun prettyPrint(content: ByteArray): ByteArray {
             val transformer = transformerFactory.newTransformer()
             transformer.setOutputProperty(OutputKeys.INDENT, "yes")
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
-                    "4")
+            transformer.setOutputProperty(
+                "{http://xml.apache.org/xslt}indent-amount",
+                "4"
+            )
             transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
             val transformed = ByteArrayOutputStream()
             transformer.errorListener = SilentErrorListener()
@@ -115,18 +118,20 @@ object PrettyPrintingContentModifier {
     private class JsonPrettyPrinter : PrettyPrinter {
 
         private val objectMapper = ObjectMapper()
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
+            .configure(SerializationFeature.INDENT_OUTPUT, true)
+            .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
 
         @Throws(IOException::class)
         override fun prettyPrint(content: ByteArray): ByteArray {
             return this.objectMapper
-                    .writeValueAsBytes(this.objectMapper.readTree(content))
+                .writeValueAsBytes(this.objectMapper.readTree(content))
         }
 
     }
 
     private val PRETTY_PRINTERS = Collections
-            .unmodifiableList(
-                    listOf(JsonPrettyPrinter(), XmlPrettyPrinter()))
+        .unmodifiableList(
+            listOf(JsonPrettyPrinter(), XmlPrettyPrinter())
+        )
 
 }
