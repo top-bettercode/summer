@@ -3,7 +3,10 @@ package cn.bestwu.simpleframework.web.serializer;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
+import com.fasterxml.jackson.databind.ser.impl.UnwrappingBeanSerializer;
+import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
+import com.fasterxml.jackson.databind.util.NameTransformer;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -20,6 +23,11 @@ public class EmbeddedIdSerializer extends StdScalarSerializer<Serializable> {
   public void serialize(Serializable value, JsonGenerator gen,
       SerializerProvider provider) throws IOException {
     gen.writeString(value.toString());
+
+    UnwrappingBeanSerializer beanSerializer = new UnwrappingBeanSerializer(
+        (BeanSerializerBase) provider.findValueSerializer(value.getClass()),
+        NameTransformer.simpleTransformer("", ""));
+    beanSerializer.serialize(value, gen, provider);
   }
 
 
