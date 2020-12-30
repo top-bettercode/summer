@@ -7,6 +7,7 @@ import cn.bestwu.lang.util.RandomUtil
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.PropertyAccessor
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.json.JsonReadFeature
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -46,8 +47,9 @@ object Util {
         objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         objectMapper.enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature())
+        objectMapper.enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
         objectMapper.registerKotlinModule()
-                .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+            .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
     }
 }
 
@@ -66,8 +68,10 @@ fun <T> File.parseList(clazz: Class<T>): LinkedHashSet<T> {
     return if (exists() && length() > 0) {
         return try {
             val
-                    collectionType = TypeFactory.defaultInstance().constructCollectionType(LinkedHashSet::class.java, clazz)
-            val set = Util.yamlMapper.readValue<LinkedHashSet<T>>(this, collectionType).filter { it != null }
+                    collectionType = TypeFactory.defaultInstance()
+                .constructCollectionType(LinkedHashSet::class.java, clazz)
+            val set = Util.yamlMapper.readValue<LinkedHashSet<T>>(this, collectionType)
+                .filter { it != null }
             LinkedHashSet(set)
         } catch (e: Exception) {
             println("$this>>${e.message}")
@@ -89,7 +93,10 @@ val Any.type: String
             return "String"
         } else if (ClassUtils.isPrimitiveOrWrapper(this::class.java)) {
             return this::class.java.simpleName
-        } else if (this::class.java.isArray || (Collection::class.java.isAssignableFrom(this::class.java) && !Map::class.java.isAssignableFrom(this::class.java))) {
+        } else if (this::class.java.isArray || (Collection::class.java.isAssignableFrom(this::class.java) && !Map::class.java.isAssignableFrom(
+                this::class.java
+            ))
+        ) {
             return "Array"
         }
         return "Object"
@@ -156,10 +163,13 @@ fun Any.convert(unwrapped: Boolean = true): Any? {
 }
 
 private fun isEmpty(value: Any?) =
-        value == null || (value is Collection<*> && value.isEmpty()) || (value is Array<*> && value.isEmpty())
+    value == null || (value is Collection<*> && value.isEmpty()) || (value is Array<*> && value.isEmpty())
 
 internal fun File.readCollections(): LinkedHashSet<DocCollection> {
-    return if (exists() && length() > 0) Util.yamlMapper.readValue(this.inputStream(), DocCollections::class.java).mapTo(linkedSetOf()) { (k, v) ->
+    return if (exists() && length() > 0) Util.yamlMapper.readValue(
+        this.inputStream(),
+        DocCollections::class.java
+    ).mapTo(linkedSetOf()) { (k, v) ->
         DocCollection(k, LinkedHashSet(v), File(this.parentFile, "collection/${k}"))
     } else linkedSetOf()
 }
@@ -176,7 +186,7 @@ internal fun File.writeCollections(collections: LinkedHashSet<DocCollection>) {
 
 fun MutableMap<String, Int>.pyname(name: String): String {
     var pyname = PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE)
-            .replace("[^\\x00-\\xff]|[()\\[\\]{}|/]|\\s*|\t|\r|\n".toRegex(), "")
+        .replace("[^\\x00-\\xff]|[()\\[\\]{}|/]|\\s*|\t|\r|\n".toRegex(), "")
     val no = this[pyname]
     if (no != null) {
         val i = no + 1
