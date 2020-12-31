@@ -24,11 +24,15 @@ public class CodeService implements ICodeService {
         codeType = split[0];
         String code = split[1];
         if (v != null) {
-          try {
-            int codeKey = Integer.parseInt(code);
-            codeProperties.put(codeType + "." + v, codeKey);
-          } catch (NumberFormatException e) {
+          if (code.startsWith("0") && code.length() > 1) {
             codeProperties.put(codeType + "." + v, code);
+          } else {
+            try {
+              int codeKey = Integer.parseInt(code);
+              codeProperties.put(codeType + "." + v, codeKey);
+            } catch (NumberFormatException e) {
+              codeProperties.put(codeType + "." + v, code);
+            }
           }
         }
       }
