@@ -82,7 +82,9 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
                 }
                 sb.append('>')
             }
-
+            if (isArray) {
+                sb.append("[]")
+            }
             return sb.toString()
         }
 
@@ -128,7 +130,14 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
                     val sb = StringBuilder()
                     sb.append(packageName)
                     sb.append('.')
-                    sb.append(calculateActualImport(shortNameWithoutTypeArguments.substring(0, index)))
+                    sb.append(
+                        calculateActualImport(
+                            shortNameWithoutTypeArguments.substring(
+                                0,
+                                index
+                            )
+                        )
+                    )
                     answer.add(sb.toString())
                 }
             }
@@ -177,7 +186,9 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
                 }
                 sb.append('>')
             }
-
+            if (isArray) {
+                sb.append("[]")
+            }
             return sb.toString()
         }
 
@@ -279,7 +290,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
         if (fullyQualifiedNameWithoutTypeParameters.contains(".")) {
             packageName = fullyQualifiedNameWithoutTypeParameters.substringBeforeLast(".")
             shortNameWithoutTypeArguments = fullyQualifiedNameWithoutTypeParameters
-                    .substring(packageName.length + 1)
+                .substring(packageName.length + 1)
             val index = shortNameWithoutTypeArguments.lastIndexOf('.')
             if (index != -1) {
                 shortNameWithoutTypeArguments = shortNameWithoutTypeArguments.substring(index + 1)
@@ -354,7 +365,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
             } else if ("," == token) {
                 if (openCount == 0) {
                     typeArguments
-                            .add(JavaType(sb.toString()))
+                        .add(JavaType(sb.toString()))
                     sb.setLength(0)
                 } else {
                     sb.append(token)
