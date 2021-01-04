@@ -139,7 +139,31 @@ abstract class InnerUnit(
      * the imported types
      * @return the sets the
      */
-    fun calculateImports(importedTypes: Set<JavaType>): Set<String> {
+    open fun calculateImports(importedTypes: MutableSet<JavaType>): Set<String> {
+        fields.forEach { field1 ->
+            importedTypes.add(field1.type)
+            field1.annotations.needImportedTypes.forEach {
+                importedTypes.add(it)
+            }
+        }
+        methods.forEach { method ->
+            importedTypes.add(method.returnType)
+            method.parameters.forEach { parameter ->
+                importedTypes.add(parameter.type)
+                parameter.annotations.needImportedTypes.forEach {
+                    importedTypes.add(it)
+                }
+            }
+            method.annotations.needImportedTypes.forEach {
+                importedTypes.add(it)
+            }
+        }
+        superInterfaceTypes.forEach {
+            importedTypes.add(it)
+        }
+        super.annotations.needImportedTypes.forEach {
+            importedTypes.add(it)
+        }
         val sb = StringBuilder()
         val importStrings = TreeSet<String>()
         for (fqjt in importedTypes) {

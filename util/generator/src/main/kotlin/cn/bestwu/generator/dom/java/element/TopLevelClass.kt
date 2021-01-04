@@ -37,36 +37,6 @@ class TopLevelClass(type: JavaType) : InnerClass(type), CompilationUnit {
             if (staticImports.size > 0) {
                 newLine(sb)
             }
-            if (super.superClass != null) {
-                importedTypes.add(super.superClass!!)
-            }
-            super.typeParameters.forEach {
-                importedTypes.addAll(it.extendsTypes)
-            }
-            super.fields.forEach { field1 ->
-                importedTypes.add(field1.type)
-                field1.annotations.needImportedTypes.forEach {
-                    importedTypes.add(it)
-                }
-            }
-            super.methods.forEach { method ->
-                importedTypes.add(method.returnType)
-                method.parameters.forEach { parameter ->
-                    importedTypes.add(parameter.type)
-                    parameter.annotations.needImportedTypes.forEach {
-                        importedTypes.add(it)
-                    }
-                }
-                method.annotations.needImportedTypes.forEach {
-                    importedTypes.add(it)
-                }
-            }
-            super.superInterfaceTypes.forEach {
-                importedTypes.add(it)
-            }
-            super.annotations.needImportedTypes.forEach {
-                importedTypes.add(it)
-            }
 
             val importStrings = calculateImports(importedTypes)
             for (importString in importStrings) {

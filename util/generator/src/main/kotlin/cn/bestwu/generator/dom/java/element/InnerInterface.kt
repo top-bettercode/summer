@@ -9,7 +9,7 @@ import cn.bestwu.generator.dom.java.JavaType
  */
 open class InnerInterface(type: JavaType) : InnerUnit(type) {
     /** The inner interfaces.  */
-    private val innerInterfaces: MutableList<InnerInterface> = mutableListOf()
+    protected val innerInterfaces: MutableList<InnerInterface> = mutableListOf()
 
     // interfaces do not have superclasses
     val superClass: JavaType?
@@ -30,6 +30,13 @@ open class InnerInterface(type: JavaType) : InnerUnit(type) {
      */
     fun innerInterface(vararg innerInterface: InnerInterface) {
         innerInterfaces.addAll(innerInterface)
+    }
+
+    override fun calculateImports(importedTypes: MutableSet<JavaType>): Set<String> {
+        innerInterfaces.forEach {
+            it.calculateImports(importedTypes)
+        }
+        return super.calculateImports(importedTypes)
     }
 
     /**

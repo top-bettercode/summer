@@ -11,10 +11,10 @@ open class InnerClass(type: JavaType) : InnerUnit(type) {
 
 
     /** The inner classes.  */
-    private val innerClasses: MutableList<InnerClass> = mutableListOf()
+    protected val innerClasses: MutableList<InnerClass> = mutableListOf()
 
     /** The inner enums.  */
-    private val innerEnums: MutableList<InnerEnum> = mutableListOf()
+    protected val innerEnums: MutableList<InnerEnum> = mutableListOf()
 
     /** The type parameters.  */
     val typeParameters: MutableList<TypeParameter> = mutableListOf()
@@ -255,5 +255,21 @@ open class InnerClass(type: JavaType) : InnerUnit(type) {
         val initializationBlock = InitializationBlock(true)
         block(initializationBlock)
         initializationBlocks.add(initializationBlock)
+    }
+
+    override fun calculateImports(importedTypes: MutableSet<JavaType>): Set<String> {
+        if (superClass != null) {
+            importedTypes.add(superClass!!)
+        }
+        typeParameters.forEach {
+            importedTypes.addAll(it.extendsTypes)
+        }
+        innerClasses.forEach {
+            it.calculateImports(importedTypes)
+        }
+        innerEnums.forEach {
+            it.calculateImports(importedTypes)
+        }
+        return super.calculateImports(importedTypes)
     }
 }

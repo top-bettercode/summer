@@ -11,10 +11,10 @@ import cn.bestwu.generator.dom.java.JavaType
 open class InnerEnum(type: JavaType) : InnerUnit(type) {
 
     /** The inner classes.  */
-    private val innerClasses: MutableList<InnerClass> = mutableListOf()
+    protected val innerClasses: MutableList<InnerClass> = mutableListOf()
 
     /** The inner enums.  */
-    private val innerEnums: MutableList<InnerEnum> = mutableListOf()
+    protected val innerEnums: MutableList<InnerEnum> = mutableListOf()
 
 
     /** The enum constants.  */
@@ -25,6 +25,16 @@ open class InnerEnum(type: JavaType) : InnerUnit(type) {
         val field = EnumField(name)
         field.ef()
         enumConstant(field)
+    }
+
+    override fun calculateImports(importedTypes: MutableSet<JavaType>): Set<String> {
+        innerClasses.forEach {
+            it.calculateImports(importedTypes)
+        }
+        innerEnums.forEach {
+            it.calculateImports(importedTypes)
+        }
+        return super.calculateImports(importedTypes)
     }
 
     /**
