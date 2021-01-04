@@ -35,30 +35,6 @@ class TopLevelEnumeration
             if (staticImports.size > 0) {
                 newLine(sb)
             }
-            super.fields.forEach {
-                importedTypes.add(it.type)
-                it.annotations.needImportedTypes.forEach { t ->
-                    importedTypes.add(t)
-                }
-            }
-            super.methods.forEach {
-                importedTypes.add(it.returnType)
-                it.parameters.forEach { p ->
-                    importedTypes.add(p.type)
-                    p.annotations.needImportedTypes.forEach { t ->
-                        importedTypes.add(t)
-                    }
-                }
-                it.annotations.needImportedTypes.forEach { t ->
-                    importedTypes.add(t)
-                }
-            }
-            super.superInterfaceTypes.forEach {
-                importedTypes.add(it)
-            }
-            super.annotations.needImportedTypes.forEach {
-                importedTypes.add(it)
-            }
 
             val importStrings = calculateImports(importedTypes)
             for (importString in importStrings) {
