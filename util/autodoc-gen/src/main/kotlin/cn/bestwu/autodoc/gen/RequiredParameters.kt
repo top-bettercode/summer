@@ -68,7 +68,7 @@ object RequiredParameters {
 
             if ((pd.elementClass.isArray || Collection::class.java.isAssignableFrom(pd.elementClass))) {
                 pd.constrainedContainerElementTypes.forEach {
-                    if (it.elementClass.classLoader != null) {
+                    if (it.elementClass?.classLoader != null) {
                         addRequires(it.elementClass, requires, groups, "${prefix + pd.propertyName}.")
                     }
                 }
