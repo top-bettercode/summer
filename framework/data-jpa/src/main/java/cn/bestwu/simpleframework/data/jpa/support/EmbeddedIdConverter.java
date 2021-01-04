@@ -9,9 +9,6 @@ import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalGenericConverter;
 import org.springframework.util.StringUtils;
 
-/**
- * 原字符串(1.2)×100转长整型(120)注解
- */
 public class EmbeddedIdConverter implements ConditionalGenericConverter {
 
   @Override
