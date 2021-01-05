@@ -89,10 +89,10 @@ class GeneratorPlugin : Plugin<Project> {
             extension.pumlDiagramFormat = findProperty(project, "puml.diagramFormat") ?: "PNG"
             extension.sqlOutput = findProperty(project, "sqlOutput") ?: "database"
 
-            val settings = mutableMapOf<String, Any?>()
+            val settings = mutableMapOf<String, String>()
             project.properties.forEach { (t, any) ->
                 if (t.startsWith("generator.settings"))
-                    settings[t.substringAfter("generator.settings.")] = any
+                    settings[t.substringAfter("generator.settings.")] = any.toString()
             }
             extension.settings = settings
 
