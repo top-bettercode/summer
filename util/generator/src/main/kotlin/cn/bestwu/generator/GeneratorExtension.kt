@@ -145,7 +145,7 @@ open class GeneratorExtension(
     /**
      * 额外设置
      */
-    var settings: MutableMap<String, Any?> = mutableMapOf()
+    var settings: MutableMap<String,String> = mutableMapOf()
 ) {
 
     companion object {

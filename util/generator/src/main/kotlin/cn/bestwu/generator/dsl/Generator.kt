@@ -26,11 +26,13 @@ abstract class Generator {
                         1 -> {
                             val ch0 = obj[0]
                             if (ch0 == 'y' || ch0 == 'Y' ||
-                                    ch0 == 't' || ch0 == 'T' || ch0 == '1') {
+                                ch0 == 't' || ch0 == 'T' || ch0 == '1'
+                            ) {
                                 return true
                             }
                             if (ch0 == 'n' || ch0 == 'N' ||
-                                    ch0 == 'f' || ch0 == 'F' || ch0 == '0') {
+                                ch0 == 'f' || ch0 == 'F' || ch0 == '0'
+                            ) {
                                 return false
                             }
                         }
@@ -49,13 +51,15 @@ abstract class Generator {
                             val ch1 = obj[1]
                             val ch2 = obj[2]
                             if ((ch0 == 'y' || ch0 == 'Y') &&
-                                    (ch1 == 'e' || ch1 == 'E') &&
-                                    (ch2 == 's' || ch2 == 'S')) {
+                                (ch1 == 'e' || ch1 == 'E') &&
+                                (ch2 == 's' || ch2 == 'S')
+                            ) {
                                 return true
                             }
                             if ((ch0 == 'o' || ch0 == 'O') &&
-                                    (ch1 == 'f' || ch1 == 'F') &&
-                                    (ch2 == 'f' || ch2 == 'F')) {
+                                (ch1 == 'f' || ch1 == 'F') &&
+                                (ch2 == 'f' || ch2 == 'F')
+                            ) {
                                 return false
                             }
                         }
@@ -65,9 +69,10 @@ abstract class Generator {
                             val ch2 = obj[2]
                             val ch3 = obj[3]
                             if ((ch0 == 't' || ch0 == 'T') &&
-                                    (ch1 == 'r' || ch1 == 'R') &&
-                                    (ch2 == 'u' || ch2 == 'U') &&
-                                    (ch3 == 'e' || ch3 == 'E')) {
+                                (ch1 == 'r' || ch1 == 'R') &&
+                                (ch2 == 'u' || ch2 == 'U') &&
+                                (ch3 == 'e' || ch3 == 'E')
+                            ) {
                                 return true
                             }
                         }
@@ -78,10 +83,11 @@ abstract class Generator {
                             val ch3 = obj[3]
                             val ch4 = obj[4]
                             if ((ch0 == 'f' || ch0 == 'F') &&
-                                    (ch1 == 'a' || ch1 == 'A') &&
-                                    (ch2 == 'l' || ch2 == 'L') &&
-                                    (ch3 == 's' || ch3 == 'S') &&
-                                    (ch4 == 'e' || ch4 == 'E')) {
+                                (ch1 == 'a' || ch1 == 'A') &&
+                                (ch2 == 'l' || ch2 == 'L') &&
+                                (ch3 == 's' || ch3 == 'S') &&
+                                (ch4 == 'e' || ch4 == 'E')
+                            ) {
                                 return false
                             }
                         }
@@ -124,7 +130,15 @@ abstract class Generator {
 
     protected open val destFile: File
         get() {
-            return File(File(basePath, dir), if (this is JavaGenerator && !resources) "${name.replace(".", File.separator)}.java" else name)
+            return File(
+                File(basePath, dir),
+                if (this is JavaGenerator && !resources) "${
+                    name.replace(
+                        ".",
+                        File.separator
+                    )
+                }.java" else name
+            )
         }
 
     open var module: String = ""
@@ -139,7 +153,7 @@ abstract class Generator {
     protected open val applicationName: String
         get() = extension.applicationName
 
-    protected val settings: Map<String, Any?>
+    protected val settings: Map<String, String>
         get() = extension.settings
 
     protected open val Column.jsonViewIgnored: Boolean
@@ -151,23 +165,23 @@ abstract class Generator {
     protected open val Table.supportSoftDelete: Boolean
         get() = supportSoftDelete(extension)
 
-    protected fun property(key: String): Any? = settings[key]
+    protected fun setting(key: String): Any? = settings[key]
 
-    protected fun <T> property(key: String, default: T): T {
-        val any = settings[key]
-        return if (any == null) {
-            return default
-        } else {
-            @Suppress("UNCHECKED_CAST")
-            any as T
-        }
+    protected fun setting(key: String, default: String): String {
+        return settings[key] ?: return default
+    }
+
+    protected fun enable(key: String, default: Boolean = true): Boolean {
+        return setting(key, default.toString()) == "true"
     }
 
     protected open val className
         get() = table.className(extension)
 
     protected open val projectClassName
-        get() = className + projectName.substring(0, if (projectName.length > 5) 5 else projectName.length).capitalize()
+        get() = if (enable("projectClassName", true)) className + projectName.substring(
+            0, if (projectName.length > 5) 5 else projectName.length
+        ).capitalize() else className
 
     protected val entityName
         get() = table.entityName(extension)
@@ -198,7 +212,8 @@ abstract class Generator {
      */
     protected val remarks: String
         get() {
-            val comment = if (table.remarks.endsWith("表")) table.remarks.substringBeforeLast("表") else table.remarks
+            val comment =
+                if (table.remarks.endsWith("表")) table.remarks.substringBeforeLast("表") else table.remarks
             return if (comment.isBlank()) {
                 extension.remarks
             } else {
@@ -213,7 +228,8 @@ abstract class Generator {
         get() {
             val primaryKeys = table.primaryKeys
             return if (primaryKeys.isEmpty()) {
-                val primaryKey = columns.find { it.columnName.equals(extension.primaryKeyName, true) }
+                val primaryKey =
+                    columns.find { it.columnName.equals(extension.primaryKeyName, true) }
                         ?: columns.find { it.remarks.contains("主键") }
                 if (primaryKey != null) {
                     listOf(primaryKey)
@@ -307,7 +323,9 @@ abstract class Generator {
     }
 
     protected open fun doCall() {
-        if (destFile.exists() && ((!extension.replaceAll && !cover) || destFile.readLines().any { it.contains("[[Don't cover]]") })) {
+        if (destFile.exists() && ((!extension.replaceAll && !cover) || destFile.readLines()
+                .any { it.contains("[[Don't cover]]") })
+        ) {
             return
         }
         destFile.parentFile.mkdirs()
