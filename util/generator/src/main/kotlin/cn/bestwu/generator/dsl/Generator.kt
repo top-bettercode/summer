@@ -263,7 +263,7 @@ abstract class Generator {
      * 非主键字段
      */
     protected val otherColumns: List<Column>
-        get() = columns.filter { !it.isPrimary }
+        get() = columns.filter { !primaryKeys.contains(it) }
 
     /**
      * 字段
