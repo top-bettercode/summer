@@ -260,9 +260,6 @@ object InitField {
             if (tempVal.isBlank()) {
                 tempVal = field.defaultVal
             }
-            if ("" == tempVal) {
-                field.children = LinkedHashSet()
-            }
             field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
         }
         return findField
@@ -276,6 +273,8 @@ fun Map<String, Any?>.toFields(fields: Set<Field>, expand: Boolean = false): Lin
             val expandValue = field.value.toMap()
             if (expandValue != null) {
                 field.children = expandValue.toFields(field.children, expand)
+            } else {
+                field.children = LinkedHashSet()
             }
         }
         field
@@ -303,9 +302,7 @@ private fun Set<Field>.field(name: String, value: Any?): Field {
     if (tempVal == null || "" == tempVal) {
         tempVal = field.defaultVal
     }
-    if ("" == tempVal) {
-        field.children = LinkedHashSet()
-    }
+
     field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
 
     return field
