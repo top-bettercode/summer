@@ -195,7 +195,7 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
         if (debug)
             debug("column", rsmd)
         val columnName = getString("COLUMN_NAME")
-        val typeName = getString("TYPE_NAME")
+        val typeName = getString("TYPE_NAME").substringBefore("(")
         val dataType = getInt("DATA_TYPE")
         val nullable = getInt("NULLABLE") == 1
         val decimalDigits = getInt("DECIMAL_DIGITS")
