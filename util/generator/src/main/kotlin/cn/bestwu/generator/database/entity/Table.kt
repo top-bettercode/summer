@@ -34,7 +34,6 @@ data class Table(
          * 字段
          */
         var pumlColumns: List<Any>,
-        var desc: String = "<<(T,#DDDDDD)>>",
         val physicalOptions: String = "",
         var sequenceStartWith: Int? = null,
         val moduleName: String = "database") {

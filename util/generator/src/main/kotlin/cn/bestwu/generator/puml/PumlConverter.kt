@@ -30,7 +30,6 @@ object PumlConverter {
         var indexes = mutableListOf<Indexed>()
         var pumlColumns = mutableListOf<Any>()
         var tableName = ""
-        var desc = "<<(T,#DDDDDD)>>"
         var sequenceStartWith: Int? = null
         var isField = false
         var isUml = false
@@ -41,14 +40,9 @@ object PumlConverter {
                 if (line.startsWith("@startuml")) {
                     moduleName = line.substringAfter("@startuml").trim()
                     isUml = true
-                } else if (line.startsWith("class ")) {
+                } else if (line.startsWith("entity ")) {
                     val fieldDef = line.split(" ")
                     tableName = fieldDef[1].trim()
-                    if (fieldDef.size > 3) {
-                        val tableDesc = fieldDef[2]
-                        desc = tableDesc
-                        sequenceStartWith = tableDesc.replace(Regex("<<\\(T,#DDDDD(\\d)\\)>>"), "$1").toIntOrNull()
-                    }
                 } else if (tableName.isNotBlank() && !isField) {
                     if ("==" == line)
                         isField = true
@@ -60,7 +54,7 @@ object PumlConverter {
                         val columnNames = line.substringAfter(if (uniqueMult) "'UNIQUE" else "'INDEX").trim()
                         indexes.add(Indexed("${if (uniqueMult) "UK" else "IDX"}_${tableName.replace("_", "").takeLast(7)}_${columnNames.replace(tableName, "").replace("_", "").replace(",", "").takeLast(7)}", uniqueMult, columnNames.split(",").toMutableList()))
                     } else if ("}" == line) {
-                        val table = Table(productName = DataType.PUML.name, catalog = null, schema = null, tableName = tableName, tableType = "", remarks = remarks, primaryKeyNames = primaryKeyNames, indexes = indexes, pumlColumns = pumlColumns, desc = desc, sequenceStartWith = sequenceStartWith, moduleName = moduleName
+                        val table = Table(productName = DataType.PUML.name, catalog = null, schema = null, tableName = tableName, tableType = "", remarks = remarks, primaryKeyNames = primaryKeyNames, indexes = indexes, pumlColumns = pumlColumns, sequenceStartWith = sequenceStartWith, moduleName = moduleName
                                 ?: "")
                         call(table)
                         tables.add(table)
@@ -70,7 +64,6 @@ object PumlConverter {
                         pumlColumns = mutableListOf()
                         tableName = ""
                         remarks = ""
-                        desc = "<<(T,#DDDDDD)>>"
                         sequenceStartWith = null
                         isField = false
                     } else if (!line.startsWith("'")) {
@@ -124,7 +117,7 @@ object PumlConverter {
                     }
                 } else if (line.startsWith("@enduml")) {
                     isUml = false
-                } else if (isUml && line.isNotBlank() && !line.matches(Regex("^.* \"1\" -- \"0\\.\\.\\*\" .*$"))) {
+                } else if (isUml && line.isNotBlank() && !line.matches(Regex("^.* \\|\\|--o\\{ .*$"))) {
                     tables.add(line)
                 }
             }

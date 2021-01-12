@@ -12,30 +12,35 @@ import java.io.File
  */
 class PlantUML(private val myModuleName: String?, private val output: String) : Generator() {
 
+    private val fklines = mutableListOf<String>()
     override val destFile: File
         get() = File(output)
 
     override fun setUp() {
         destFile.parentFile.mkdirs()
-        destFile.writeText("""PK
+        destFile.writeText(
+            """PK
 FK
 UNIQUE
 INDEX
 
 @startuml ${if (myModuleName.isNullOrBlank()) DataType.DATABASE.name else myModuleName}
 
-""")
+"""
+        )
     }
 
     override fun doCall() {
         if (tableName.length > 32) {
             println("数据库对象的命名最好不要超过 32 个字符")
         }
-        destFile.appendText("""class ${if (catalog.isNullOrBlank()) "" else "$catalog."}${tableName} ${table.desc} {
+        destFile.appendText(
+            """entity ${if (catalog.isNullOrBlank()) "" else "$catalog."}${tableName} {
     $remarks
     ==
-""")
-        val fklines = mutableListOf<String>()
+"""
+        )
+
         table.pumlColumns.forEach {
             if (it is Column) {
                 val isPrimary = it.isPrimary
@@ -44,7 +49,7 @@ INDEX
                 }
                 destFile.appendText("    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- ${it.remarks}\n")
                 if (it.isForeignKey) {
-                    fklines.add("${it.pktableName} \"1\" -- \"0..*\" $tableName")
+                    fklines.add("${it.pktableName} ||--o{ $tableName")
                 }
             } else {
                 destFile.appendText("    $it\n")
@@ -52,20 +57,30 @@ INDEX
 
         }
         indexes.filter { it.columnName.size > 1 }.forEach {
-            destFile.appendText("    '${if (it.unique) "UNIQUE" else "INDEX"} ${it.columnName.joinToString(",")}\n")
+            destFile.appendText(
+                "    '${if (it.unique) "UNIQUE" else "INDEX"} ${
+                    it.columnName.joinToString(
+                        ","
+                    )
+                }\n"
+            )
         }
         destFile.appendText("}\n\n")
+
+    }
+
+    override fun tearDown() {
         fklines.forEach {
             destFile.appendText("$it\n")
         }
         if (fklines.isNotEmpty())
             destFile.appendText("\n")
-    }
 
-    override fun tearDown() {
-        destFile.appendText("""
+        destFile.appendText(
+            """
                 |@enduml
-            """.trimMargin())
+            """.trimMargin()
+        )
     }
 
     fun appendlnText(text: String) {
