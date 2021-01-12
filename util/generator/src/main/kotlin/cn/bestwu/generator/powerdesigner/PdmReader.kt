@@ -125,6 +125,6 @@ object PdmReader {
             columns.add(column)
         }
 
-        return Table(productName = DataType.PUML.name, catalog = null, schema = null, tableName = code!!, tableType = "", remarks = name, primaryKeyNames = primaryKeyNames, indexes = indexes, pumlColumns = columns, desc = "", physicalOptions = physicalOptions)
+        return Table(productName = DataType.PUML.name, catalog = null, schema = null, tableName = code!!, tableType = "", remarks = name, primaryKeyNames = primaryKeyNames, indexes = indexes, pumlColumns = columns, physicalOptions = physicalOptions)
     }
 }

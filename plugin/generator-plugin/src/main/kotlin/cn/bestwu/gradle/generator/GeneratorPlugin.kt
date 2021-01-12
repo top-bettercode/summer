@@ -185,6 +185,10 @@ class GeneratorPlugin : Plugin<Project> {
         }
         project.tasks.create("pumlToDiagram") { task ->
             task.group = "gen"
+            task.inputs.files(
+                File(project.gradle.gradleUserHomeDir, "gradle.properties"),
+                project.rootProject.file("gradle.properties")
+            )
             val src = extension.file(extension.pumlSrc)
             val out = File(
                 extension.file(extension.pumlSrc).parent,
@@ -214,6 +218,10 @@ class GeneratorPlugin : Plugin<Project> {
         }
         project.tasks.create("toDDL") { task ->
             task.group = "gen"
+            task.inputs.files(
+                File(project.gradle.gradleUserHomeDir, "gradle.properties"),
+                project.rootProject.file("gradle.properties")
+            )
             val src = extension.file(extension.pumlSrc)
             val pdm = extension.file(extension.pdmSrc)
             val out = extension.file(extension.sqlDDLOutput)
