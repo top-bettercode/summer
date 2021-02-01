@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.function.Consumer;
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.dhatim.fastexcel.AbsoluteListDataValidation;
 import org.dhatim.fastexcel.StyleSetter;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
@@ -56,6 +58,7 @@ public class ExcelExport {
    * 是否包含批注
    */
   private boolean includeComment = false;
+  private boolean includeDataValidation = false;
 
   private final ColumnWidths columnWidths = new ColumnWidths();
 
@@ -134,9 +137,14 @@ public class ExcelExport {
    * @param column 列号，从0开始
    * @return this ExcelExport
    */
-  public ExcelExport setRowAndColumn(Integer row, Integer column) {
+  public ExcelExport setRowAndColumn(int row, int column) {
     this.r = row;
     this.c = column;
+    return this;
+  }
+
+  public ExcelExport includeDataValidation() {
+    this.includeDataValidation = true;
     return this;
   }
 
@@ -183,6 +191,11 @@ public class ExcelExport {
             sheet.comment(r, c, commentStr);
           }
         }
+        if (includeDataValidation && StringUtils.hasText(excelField.dataValidation())) {
+          AbsoluteListDataValidation listDataValidation = new AbsoluteListDataValidation(
+              sheet.range(r + 1, c, Worksheet.MAX_ROWS - 1, c), excelField.dataValidation());
+          listDataValidation.add(sheet);
+        }
         c++;
       }
     }
@@ -201,6 +214,17 @@ public class ExcelExport {
         .set();
   }
 
+  public ExcelExport dataValidation(int column, Collection<String> dataValidation) {
+    return dataValidation(column, StringUtils.collectionToCommaDelimitedString(dataValidation));
+  }
+
+  public ExcelExport dataValidation(int column, String dataValidation) {
+    Assert.notNull(sheet, "请先初始化sheet");
+    AbsoluteListDataValidation listDataValidation = new AbsoluteListDataValidation(
+        sheet.range(r + 1, column, Worksheet.MAX_ROWS - 1, column), dataValidation);
+    listDataValidation.add(sheet);
+    return this;
+  }
 
   /**
    * @param <T>         E
