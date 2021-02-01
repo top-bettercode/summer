@@ -51,6 +51,10 @@ public class ExcelField<T, P> {
    */
   private String comment = "";
 
+  /**
+   * 有效数据范围“,”分隔
+   */
+  private String dataValidation = "";
 
   /**
    * 格式
@@ -567,6 +571,12 @@ public class ExcelField<T, P> {
     return this;
   }
 
+  public ExcelField<T, P> dataValidation(String dataValidation) {
+    this.dataValidation = dataValidation;
+    return this;
+  }
+
+
   public ExcelField<T, P> defaultValue(P defaultValue) {
     this.defaultValue = defaultValue;
     return this;
@@ -676,6 +686,10 @@ public class ExcelField<T, P> {
 
   String comment() {
     return comment;
+  }
+
+  String dataValidation() {
+    return dataValidation;
   }
 
   String pattern() {
