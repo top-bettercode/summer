@@ -2,6 +2,7 @@ package cn.bestwu.lang.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import org.springframework.util.StringUtils
 import java.io.*
 import java.nio.charset.Charset
 import java.util.*
@@ -17,6 +18,7 @@ object StringUtil {
 
     @JvmStatic
     var OBJECT_MAPPER = ObjectMapper()
+
     @JvmStatic
     var INDENT_OUTPUT_OBJECT_MAPPER = ObjectMapper()
 
@@ -54,8 +56,9 @@ object StringUtil {
         var i = 1
         while (i < buf.length - 1) {
             if (Character.isLowerCase(buf[i - 1]) &&
-                    Character.isUpperCase(buf[i]) &&
-                    Character.isLowerCase(buf[i + 1])) {
+                Character.isUpperCase(buf[i]) &&
+                Character.isLowerCase(buf[i + 1])
+            ) {
                 buf.insert(i++, '_')
             }
             i++
@@ -148,8 +151,10 @@ object StringUtil {
      * @param preserveAllTokens preserveAllTokens
      * @return 分割后数组
      */
-    private fun splitWorker(str: String?, separatorChars: String?, max: Int,
-                            preserveAllTokens: Boolean): Array<String>? {
+    private fun splitWorker(
+        str: String?, separatorChars: String?, max: Int,
+        preserveAllTokens: Boolean
+    ): Array<String>? {
         // Performance tuned for 2.0 (JDK1.4)
         // Direct code is quicker than StringTokenizer.
         // Also, StringTokenizer uses isSpace() not isWhitespace()
@@ -265,7 +270,8 @@ object StringUtil {
         }
         try {
             val byteArrayInputStream = ByteArrayInputStream(
-                    str.toByteArray(charset("ISO-8859-1")))
+                str.toByteArray(charset("ISO-8859-1"))
+            )
             val zipInputStream = InflaterInputStream(byteArrayInputStream)
             return copyToString(zipInputStream, Charset.forName("ISO-8859-1"))
         } catch (e: IOException) {
@@ -347,5 +353,14 @@ object StringUtil {
         for (i in 0 until indent) {
             sb.append("  ")
         }
+    }
+
+    @JvmStatic
+    fun trimMoneyTrailing(value: String): String {
+        return if (value.contains(".")) StringUtils.trimTrailingCharacter(
+            StringUtils.trimTrailingCharacter(
+                value, '0'
+            ), '.'
+        ) else value;
     }
 }
