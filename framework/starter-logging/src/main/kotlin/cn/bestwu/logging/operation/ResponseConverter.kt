@@ -73,14 +73,14 @@ object ResponseConverter {
         return header.toString()
     }
 
-    private fun appendIfAvailable(header: StringBuilder, value: String) {
+    private fun appendIfAvailable(header: StringBuilder, value: String?) {
         if (StringUtils.hasText(value)) {
             header.append("")
             header.append(value)
         }
     }
 
-    private fun appendIfAvailable(header: StringBuilder, name: String, value: String) {
+    private fun appendIfAvailable(header: StringBuilder, name: String, value: String?) {
         if (StringUtils.hasText(value)) {
             header.append(name)
             header.append(value)
