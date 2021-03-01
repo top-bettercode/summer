@@ -186,8 +186,9 @@ internal fun File.writeCollections(collections: LinkedHashSet<DocCollection>) {
 }
 
 fun MutableMap<String, Int>.pyname(name: String): String {
-    var pyname = PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE)
-        .replace("[^\\x00-\\xff]|[()\\[\\]{}|/]|\\s*|\t|\r|\n".toRegex(), "")
+    var pyname =
+        PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE).toLowerCase()
+            .replace("[^\\x00-\\xff]|[()\\[\\]{}|/]|\\s*|\t|\r|\n".toRegex(), "")
     val no = this[pyname]
     if (no != null) {
         val i = no + 1
