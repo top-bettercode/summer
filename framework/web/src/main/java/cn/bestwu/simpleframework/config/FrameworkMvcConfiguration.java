@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.config;
 
+import cn.bestwu.lang.util.LocalDateTimeHelper;
 import cn.bestwu.logging.LogDocAuthProperties;
 import cn.bestwu.logging.annotation.NoRequestLogging;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
@@ -27,6 +28,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -328,6 +331,26 @@ public class FrameworkMvcConfiguration {
         public java.sql.Date convert(String source) {
           if (StringUtils.hasLength(source) && !"null".equals(source)) {
             return new java.sql.Date(Long.parseLong(source));
+          } else {
+            return null;
+          }
+        }
+      });
+      registry.addConverter(new Converter<String, LocalDate>() {
+        @Override
+        public LocalDate convert(String source) {
+          if (StringUtils.hasLength(source) && !"null".equals(source)) {
+            return LocalDateTimeHelper.of(Long.parseLong(source)).toLocalDate();
+          } else {
+            return null;
+          }
+        }
+      });
+      registry.addConverter(new Converter<String, LocalDateTime>() {
+        @Override
+        public LocalDateTime convert(String source) {
+          if (StringUtils.hasLength(source) && !"null".equals(source)) {
+            return LocalDateTimeHelper.of(Long.parseLong(source)).toLocalDateTime();
           } else {
             return null;
           }
