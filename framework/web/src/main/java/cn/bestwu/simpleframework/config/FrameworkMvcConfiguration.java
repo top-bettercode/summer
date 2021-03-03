@@ -18,8 +18,11 @@ import cn.bestwu.simpleframework.web.resolver.StringToEnumConverterFactory;
 import cn.bestwu.simpleframework.web.resolver.WrapProcessorInvokingHandlerAdapter;
 import cn.bestwu.simpleframework.web.serializer.BigDecimalSerializer;
 import cn.bestwu.simpleframework.web.serializer.MixIn;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
@@ -207,6 +210,22 @@ public class FrameworkMvcConfiguration {
     @Override
     public void customize(Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder) {
       jacksonObjectMapperBuilder.serializerByType(BigDecimal.class, new BigDecimalSerializer());
+      jacksonObjectMapperBuilder.serializerByType(LocalDate.class, new JsonSerializer<LocalDate>() {
+        @Override
+        public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers)
+            throws IOException {
+          gen.writeNumber(LocalDateTimeHelper.of(value).toMillis());
+        }
+      });
+      jacksonObjectMapperBuilder
+          .serializerByType(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
+            @Override
+            public void serialize(LocalDateTime value, JsonGenerator gen,
+                SerializerProvider serializers)
+                throws IOException {
+              gen.writeNumber(LocalDateTimeHelper.of(value).toMillis());
+            }
+          });
     }
   }
 
