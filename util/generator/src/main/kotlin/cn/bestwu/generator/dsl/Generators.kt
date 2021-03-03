@@ -19,6 +19,8 @@ object Generators {
     fun call(extension: GeneratorExtension) {
         JavaTypeResolver.softDeleteColumnName = extension.softDeleteColumnName
         JavaTypeResolver.softDeleteAsBoolean = extension.softDeleteAsBoolean
+        JavaTypeResolver.useJSR310Types = extension.useJSR310Types
+
         if (extension.generators.isEmpty()) {
             return
         }
@@ -37,7 +39,8 @@ object Generators {
                 tableNames()
             }
             DataType.PUML -> {
-                extension.pumlSrcSources.map { PumlConverter.toTables(it) }.flatten().map { it.tableName }.toList()
+                extension.pumlSrcSources.map { PumlConverter.toTables(it) }.flatten()
+                    .map { it.tableName }.toList()
             }
             DataType.PDM -> {
                 PdmReader.read(extension.file(extension.pdmSrc)).map { it.tableName }.toList()
@@ -61,7 +64,7 @@ object Generators {
 
         extension.tableNames.forEach { tableName ->
             val table = tables.find { it.tableName == tableName }
-                    ?: throw RuntimeException("未在(${extension.tableNames})中找到${tableName}表")
+                ?: throw RuntimeException("未在(${extension.tableNames})中找到${tableName}表")
             generators.forEach { generator ->
                 generator.call(extension, table)
             }
