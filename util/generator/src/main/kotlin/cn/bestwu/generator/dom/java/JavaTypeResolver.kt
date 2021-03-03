@@ -12,7 +12,7 @@ object JavaTypeResolver {
 
     private var forceBigDecimals: Boolean = false
     private var forceIntegers: Boolean = true
-    private var useJSR310Types: Boolean = true
+    var useJSR310Types: Boolean = true
     var softDeleteAsBoolean: Boolean = false
     var softDeleteColumnName: String? = null
 

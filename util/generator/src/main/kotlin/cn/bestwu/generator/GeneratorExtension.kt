@@ -73,6 +73,8 @@ open class GeneratorExtension(
      * 覆盖所有已生成文件
      */
     var replaceAll: Boolean = true,
+
+    var useJSR310Types: Boolean = true,
     /**
      * 删除模式，为true时不生成文件，删除已生成的文件
      */
