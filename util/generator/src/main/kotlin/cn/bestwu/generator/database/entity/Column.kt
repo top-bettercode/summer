@@ -108,6 +108,8 @@ data class Column(
                 JavaType.dateInstance -> (System.currentTimeMillis())
                 JavaType("java.sql.Date") -> (System.currentTimeMillis())
                 JavaType("java.sql.Time") -> (System.currentTimeMillis())
+                JavaType("java.time.LocalDate") -> (System.currentTimeMillis())
+                JavaType("java.time.LocalDateTime") -> (System.currentTimeMillis())
                 PrimitiveTypeWrapper.booleanInstance -> true
                 PrimitiveTypeWrapper.doubleInstance -> 1.0
                 PrimitiveTypeWrapper.longInstance -> 1L
@@ -127,6 +129,8 @@ data class Column(
                 JavaType.dateInstance -> "new java.util.Date(System.currentTimeMillis())"
                 JavaType("java.sql.Date") -> "new java.sql.Date(System.currentTimeMillis())"
                 JavaType("java.sql.Time") -> "new java.sql.Time(System.currentTimeMillis())"
+                JavaType("java.time.LocalDate") -> "LocalDate.now()"
+                JavaType("java.time.LocalDateTime") -> "LocalDateTime.now()"
                 PrimitiveTypeWrapper.booleanInstance -> "true"
                 PrimitiveTypeWrapper.doubleInstance -> "1.0"
                 PrimitiveTypeWrapper.longInstance -> "1L"
@@ -152,7 +156,6 @@ data class Column(
     private val initializationString
         get() = if (!columnDef.isNullOrBlank()) {
             when {
-                columnDef == "CURRENT_TIMESTAMP" -> "new Date()"
                 javaType.shortName == "Boolean" -> Generator.toBoolean(columnDef).toString()
                 javaType.shortName == "Long" -> "${columnDef}L"
                 javaType.shortName == "Double" -> "${columnDef}D"
