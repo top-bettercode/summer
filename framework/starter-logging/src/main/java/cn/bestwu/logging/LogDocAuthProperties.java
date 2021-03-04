@@ -12,6 +12,10 @@ import org.springframework.util.AntPathMatcher;
 public class LogDocAuthProperties {
 
   private String[] pattern = {"/logs/**", "/doc/**"};
+  /**
+   * 访问授权有效时间，单位：秒
+   */
+  private int maxAge = -1;
   private String username = "logadmin";
   private String password;
   private final AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -31,6 +35,14 @@ public class LogDocAuthProperties {
 
   public void setPattern(String[] pattern) {
     this.pattern = pattern;
+  }
+
+  public int getMaxAge() {
+    return maxAge;
+  }
+
+  public void setMaxAge(int maxAge) {
+    this.maxAge = maxAge;
   }
 
   public String getUsername() {

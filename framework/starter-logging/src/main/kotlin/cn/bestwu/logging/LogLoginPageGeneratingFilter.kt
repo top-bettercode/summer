@@ -72,6 +72,7 @@ open class LogLoginPageGeneratingFilter(
         var uri = request.servletPath
         if (logDocAuthProperties.match(uri) && loginPageUrl != uri) {
             if (request.getCookie(LOGGER_AUTH_KEY) == authKey) {
+                response.setCookie(LOGGER_AUTH_KEY, authKey)
                 chain.doFilter(request, response)
             } else {
                 val queryString = request.queryString
@@ -120,7 +121,7 @@ open class LogLoginPageGeneratingFilter(
     private fun HttpServletResponse.setCookie(name: String, value: String) {
         val cookie = Cookie(name, value)
         cookie.path = "/"
-        cookie.maxAge = -1
+        cookie.maxAge = logDocAuthProperties.maxAge
         this.addCookie(cookie)
     }
 

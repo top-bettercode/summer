@@ -8,6 +8,7 @@ import cn.bestwu.generator.database.entity.Indexed
 import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.ddl.MysqlToDDL
 import cn.bestwu.generator.ddl.OracleToDDL
+import cn.bestwu.generator.ddl.SqlLiteToDDL
 import cn.bestwu.generator.dom.java.JavaTypeResolver
 import cn.bestwu.generator.dsl.def.PlantUML
 import cn.bestwu.generator.powerdesigner.PdmReader
@@ -264,6 +265,7 @@ object PumlConverter {
                     when (extension.pumlDatabaseDriver) {
                         DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(toTables(it), extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc)))
                         DatabaseDriver.ORACLE -> OracleToDDL.toDDL(toTables(it), extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc)))
+                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(toTables(it), extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc)))
                         else -> {
                             throw IllegalArgumentException("不支持的数据库")
                         }
@@ -275,6 +277,7 @@ object PumlConverter {
                 when (extension.pumlDatabaseDriver) {
                     DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(PdmReader.read(pdmFile), extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile))
                     DatabaseDriver.ORACLE -> OracleToDDL.toDDL(PdmReader.read(pdmFile), extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile))
+                    DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(PdmReader.read(pdmFile), extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile))
                     else -> {
                         throw IllegalArgumentException("不支持的数据库")
                     }
@@ -304,6 +307,7 @@ object PumlConverter {
                         when (extension.pumlDatabaseDriver) {
                             DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
                             DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
+                            DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
                             else -> {
                                 throw IllegalArgumentException("不支持的数据库")
                             }
@@ -317,6 +321,7 @@ object PumlConverter {
                     when (extension.pumlDatabaseDriver) {
                         DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
                         DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
+                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
                         else -> {
                             throw IllegalArgumentException("不支持的数据库")
                         }
