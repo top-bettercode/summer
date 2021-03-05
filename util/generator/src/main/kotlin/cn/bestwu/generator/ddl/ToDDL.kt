@@ -15,7 +15,7 @@ abstract class ToDDL : IToDDL {
     protected val quote: String
         get() = if (useQuote) quoteMark else ""
 
-    protected fun columnDef(it: Column, quote: String): String {
+    protected open fun columnDef(it: Column, quote: String): String {
         if (it.columnName.isBlank()) {
             throw Exception("${it.tableSchem ?: ""}:${it.columnName}:字段不能为空")
         }
@@ -35,7 +35,7 @@ abstract class ToDDL : IToDDL {
         return "$quote${it.columnName}$quote ${it.typeDesc}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}"
     }
 
-    protected fun appendKeys(table: Table, hasPrimary: Boolean, pw: PrintWriter, quote: String, tableName: String, useForeignKey: Boolean = false) {
+    protected open fun appendKeys(table: Table, hasPrimary: Boolean, pw: PrintWriter, quote: String, tableName: String, useForeignKey: Boolean = false) {
         val fks = table.columns.filter { it.isForeignKey }
         if (hasPrimary)
             pw.println("  PRIMARY KEY (${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }})${if (useForeignKey && fks.isNotEmpty()) "," else ""}")

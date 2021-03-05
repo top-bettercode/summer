@@ -21,7 +21,8 @@ import java.io.File
 object PumlConverter {
 
     fun toTables(puml: File, call: (Table) -> Unit = {}): List<Table> {
-        return toTableOrAnys(puml, call).asSequence().filter { it is Table }.map { it as Table }.toList()
+        return toTableOrAnys(puml, call).asSequence().filter { it is Table }.map { it as Table }
+            .toList()
     }
 
     private fun toTableOrAnys(puml: File, call: (Table) -> Unit = {}): List<Any> {
@@ -52,11 +53,36 @@ object PumlConverter {
                 } else if (isField) {
                     val uniqueMult = line.startsWith("'UNIQUE")
                     if (uniqueMult || line.startsWith("'INDEX")) {
-                        val columnNames = line.substringAfter(if (uniqueMult) "'UNIQUE" else "'INDEX").trim()
-                        indexes.add(Indexed("${if (uniqueMult) "UK" else "IDX"}_${tableName.replace("_", "").takeLast(7)}_${columnNames.replace(tableName, "").replace("_", "").replace(",", "").takeLast(7)}", uniqueMult, columnNames.split(",").toMutableList()))
+                        val columnNames =
+                            line.substringAfter(if (uniqueMult) "'UNIQUE" else "'INDEX").trim()
+                        indexes.add(
+                            Indexed(
+                                "${if (uniqueMult) "UK" else "IDX"}_${
+                                    tableName.replace(
+                                        "_",
+                                        ""
+                                    ).takeLast(7)
+                                }_${
+                                    columnNames.replace(tableName, "").replace("_", "")
+                                        .replace(",", "").takeLast(7)
+                                }", uniqueMult, columnNames.split(",").toMutableList()
+                            )
+                        )
                     } else if ("}" == line) {
-                        val table = Table(productName = DataType.PUML.name, catalog = null, schema = null, tableName = tableName, tableType = "", remarks = remarks, primaryKeyNames = primaryKeyNames, indexes = indexes, pumlColumns = pumlColumns, sequenceStartWith = sequenceStartWith, moduleName = moduleName
-                                ?: "")
+                        val table = Table(
+                            productName = DataType.PUML.name,
+                            catalog = null,
+                            schema = null,
+                            tableName = tableName,
+                            tableType = "",
+                            remarks = remarks,
+                            primaryKeyNames = primaryKeyNames,
+                            indexes = indexes,
+                            pumlColumns = pumlColumns,
+                            sequenceStartWith = sequenceStartWith,
+                            moduleName = moduleName
+                                ?: ""
+                        )
                         call(table)
                         tables.add(table)
 
@@ -79,14 +105,17 @@ object PumlConverter {
                         var defaultVal: String? = null
                         val unsigned = columnDef.contains("UNSIGNED", true)
                         if (columnDef.contains("DEFAULT", true)) {
-                            defaultVal = columnDef.substringAfter("DEFAULT").trim().substringBefore(" ").trim('\'').trim()
+                            defaultVal =
+                                columnDef.substringAfter("DEFAULT").trim().substringBefore(" ")
+                                    .trim('\'').trim()
                             extra = extra.replace(Regex(" DEFAULT +'?$defaultVal'?"), "")
                         }
                         var fk = false
                         var refTable: String? = null
                         var refColumn: String? = null
                         if (columnDef.contains("FK", true)) {//FK > docs.id
-                            val ref = columnDef.substringAfter("FK >").trim().substringBefore(" ").trim()
+                            val ref =
+                                columnDef.substringAfter("FK >").trim().substringBefore(" ").trim()
                             extra = extra.replace(Regex(" FK > +$ref"), "")
                             val refs = ref.split(".")
                             fk = true
@@ -96,19 +125,60 @@ object PumlConverter {
                         val typeName = type.substringBefore("(")
                         val unique = columnDef.contains("UNIQUE", true)
                         val indexed = columnDef.contains("INDEX", true)
-                        val autoIncrement = columnDef.contains("AUTO_INCREMENT", true)
+                        val autoIncrement = columnDef.contains(
+                            "AUTO_INCREMENT",
+                            true
+                        ) || columnDef.contains("AUTOINCREMENT", true)
                         extra = extra.replace(" UNSIGNED", "", true)
                         extra = extra.replace(" UNIQUE", "", true)
                         extra = extra.replace(" INDEX", "", true)
                         extra = extra.replace(" AUTO_INCREMENT", "", true)
+                        extra = extra.replace(" AUTOINCREMENT", "", true)
                         extra = extra.replace(" NOT NULL", "", true)
                         extra = extra.replace(" NULL", "", true)
                         extra = extra.replace(" PK", "", true).trim()
-                        val column = Column(tableCat = null, columnName = columnName, remarks = lineDef.last().trim(), typeName = typeName, dataType = JavaTypeResolver.calculateDataType(typeName), columnSize = columnSize, decimalDigits = decimalDigits, nullable = !columnDef.contains("NOT NULL", true), unique = unique, indexed = indexed, columnDef = defaultVal, extra = extra, tableSchem = null, isForeignKey = fk, pktableName = refTable, pkcolumnName = refColumn, autoIncrement = autoIncrement, unsigned = unsigned)
+                        val column = Column(
+                            tableCat = null,
+                            columnName = columnName,
+                            remarks = lineDef.last().trim(),
+                            typeName = typeName,
+                            dataType = JavaTypeResolver.calculateDataType(typeName),
+                            columnSize = columnSize,
+                            decimalDigits = decimalDigits,
+                            nullable = !columnDef.contains("NOT NULL", true),
+                            unique = unique,
+                            indexed = indexed,
+                            columnDef = defaultVal,
+                            extra = extra,
+                            tableSchem = null,
+                            isForeignKey = fk,
+                            pktableName = refTable,
+                            pkcolumnName = refColumn,
+                            autoIncrement = autoIncrement,
+                            unsigned = unsigned
+                        )
                         if (unique)
-                            indexes.add(Indexed("UK_${tableName.replace("_", "").takeLast(7)}_${columnName.replace(tableName, "").replace("_", "").replace(",", "").takeLast(7)}", true, mutableListOf(columnName)))
+                            indexes.add(
+                                Indexed(
+                                    "UK_${
+                                        tableName.replace("_", "").takeLast(7)
+                                    }_${
+                                        columnName.replace(tableName, "").replace("_", "")
+                                            .replace(",", "").takeLast(7)
+                                    }", true, mutableListOf(columnName)
+                                )
+                            )
                         if (indexed)
-                            indexes.add(Indexed("IDX_${tableName.replace("_", "").takeLast(7)}_${columnName.replace(tableName, "").replace("_", "").replace(",", "").takeLast(7)}", false, mutableListOf(columnName)))
+                            indexes.add(
+                                Indexed(
+                                    "IDX_${
+                                        tableName.replace("_", "").takeLast(7)
+                                    }_${
+                                        columnName.replace(tableName, "").replace("_", "")
+                                            .replace(",", "").takeLast(7)
+                                    }", false, mutableListOf(columnName)
+                                )
+                            )
                         if (columnDef.contains("PK", true)) {
                             primaryKeyNames.add(column.columnName)
                         }
@@ -263,9 +333,18 @@ object PumlConverter {
             DataType.PUML -> {
                 extension.pumlSrcSources.forEach {
                     when (extension.pumlDatabaseDriver) {
-                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(toTables(it), extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc)))
-                        DatabaseDriver.ORACLE -> OracleToDDL.toDDL(toTables(it), extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc)))
-                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(toTables(it), extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc)))
+                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
+                            toTables(it),
+                            extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc))
+                        )
+                        DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
+                            toTables(it),
+                            extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc))
+                        )
+                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
+                            toTables(it),
+                            extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc))
+                        )
                         else -> {
                             throw IllegalArgumentException("不支持的数据库")
                         }
@@ -275,9 +354,18 @@ object PumlConverter {
             DataType.PDM -> {
                 val pdmFile = extension.file(extension.pdmSrc)
                 when (extension.pumlDatabaseDriver) {
-                    DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(PdmReader.read(pdmFile), extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile))
-                    DatabaseDriver.ORACLE -> OracleToDDL.toDDL(PdmReader.read(pdmFile), extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile))
-                    DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(PdmReader.read(pdmFile), extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile))
+                    DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
+                        PdmReader.read(pdmFile),
+                        extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile)
+                    )
+                    DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
+                        PdmReader.read(pdmFile),
+                        extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile)
+                    )
+                    DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
+                        PdmReader.read(pdmFile),
+                        extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile)
+                    )
                     else -> {
                         throw IllegalArgumentException("不支持的数据库")
                     }
@@ -305,9 +393,36 @@ object PumlConverter {
                         val tables = toTables(file)
                         allTables.addAll(tables)
                         when (extension.pumlDatabaseDriver) {
-                            DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
-                            DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
-                            DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
+                            DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
+                                if (deleteTablesWhenUpdate) oldTables(
+                                    extension,
+                                    databaseFile
+                                ) else oldTables(
+                                    extension,
+                                    databaseFile,
+                                    tables.map { it.tableName }.toTypedArray()
+                                ), tables, pw, deleteTablesWhenUpdate
+                            )
+                            DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
+                                if (deleteTablesWhenUpdate) oldTables(
+                                    extension,
+                                    databaseFile
+                                ) else oldTables(
+                                    extension,
+                                    databaseFile,
+                                    tables.map { it.tableName }.toTypedArray()
+                                ), tables, pw, deleteTablesWhenUpdate
+                            )
+                            DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
+                                if (deleteTablesWhenUpdate) oldTables(
+                                    extension,
+                                    databaseFile
+                                ) else oldTables(
+                                    extension,
+                                    databaseFile,
+                                    tables.map { it.tableName }.toTypedArray()
+                                ), tables, pw, deleteTablesWhenUpdate
+                            )
                             else -> {
                                 throw IllegalArgumentException("不支持的数据库")
                             }
@@ -319,9 +434,36 @@ object PumlConverter {
                     val tables = PdmReader.read(pdmFile)
                     allTables.addAll(tables)
                     when (extension.pumlDatabaseDriver) {
-                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
-                        DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
-                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(if (deleteTablesWhenUpdate) oldTables(extension, databaseFile) else oldTables(extension, databaseFile, tables.map { it.tableName }.toTypedArray()), tables, pw, deleteTablesWhenUpdate)
+                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
+                            if (deleteTablesWhenUpdate) oldTables(
+                                extension,
+                                databaseFile
+                            ) else oldTables(
+                                extension,
+                                databaseFile,
+                                tables.map { it.tableName }.toTypedArray()
+                            ), tables, pw, deleteTablesWhenUpdate
+                        )
+                        DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
+                            if (deleteTablesWhenUpdate) oldTables(
+                                extension,
+                                databaseFile
+                            ) else oldTables(
+                                extension,
+                                databaseFile,
+                                tables.map { it.tableName }.toTypedArray()
+                            ), tables, pw, deleteTablesWhenUpdate
+                        )
+                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
+                            if (deleteTablesWhenUpdate) oldTables(
+                                extension,
+                                databaseFile
+                            ) else oldTables(
+                                extension,
+                                databaseFile,
+                                tables.map { it.tableName }.toTypedArray()
+                            ), tables, pw, deleteTablesWhenUpdate
+                        )
                         else -> {
                             throw IllegalArgumentException("不支持的数据库")
                         }
@@ -337,7 +479,11 @@ object PumlConverter {
 
     }
 
-    private fun oldTables(extension: GeneratorExtension, databaseFile: File, tableNameList: Array<String>? = null): List<Table> {
+    private fun oldTables(
+        extension: GeneratorExtension,
+        databaseFile: File,
+        tableNameList: Array<String>? = null
+    ): List<Table> {
         return if (DataType.PUML == extension.updateFromType && databaseFile.exists()) {
             toTables(databaseFile)
         } else {
