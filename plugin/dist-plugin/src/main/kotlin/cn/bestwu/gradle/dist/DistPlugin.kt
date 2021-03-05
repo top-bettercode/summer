@@ -149,7 +149,7 @@ class DistPlugin : Plugin<Project> {
                             project.copy { copySpec ->
                                 copySpec.from(project.tarTree(if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz)) { spec ->
                                     spec.eachFile {
-                                        it.path = it.path.replace("(jdk)|(jre).*?/".toRegex(), "jre/")
+                                        it.path = "jre/"+it.path.substringAfter("/")
                                     }
                                     spec.includeEmptyDirs = false
                                 }
