@@ -6,9 +6,13 @@ package cn.bestwu.util.excel;
 public class ExcelCell {
 
   /**
-   * 默认时间格式
+   * 默认日期格式
    */
   public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm";
+  /**
+   * 默认时间格式
+   */
+  public static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm";
   /**
    * 默认格式
    */
@@ -28,7 +32,7 @@ public class ExcelCell {
 
   public <T> ExcelCell(int row, int column, int firstRow, boolean lastRow,
       ExcelField<T, ?> excelField, T entity) {
-    this(row, column, lastRow,  row - firstRow + 1, excelField, entity);
+    this(row, column, lastRow, row - firstRow + 1, excelField, entity);
   }
 
   public <T> ExcelCell(int row, int column, boolean lastRow, int index,
@@ -36,7 +40,7 @@ public class ExcelCell {
     this.row = row;
     this.column = column;
     this.lastRow = lastRow;
-    this.dateField=excelField.isDateField();
+    this.dateField = excelField.isDateField();
     this.fillColor = index % 2 == 0;
     this.align = excelField.align().name();
     this.width = excelField.width();
