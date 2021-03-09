@@ -227,7 +227,7 @@ public class ExcelField<T, P> {
   }
 
   public ExcelField<T, P> millis() {
-    return millis(ExcelCell.DEFAULT_DATE_PATTERN);
+    return millis(ExcelCell.DEFAULT_DATE_TIME_PATTERN);
   }
 
   public ExcelField<T, P> millis(String pattern) {
@@ -447,15 +447,17 @@ public class ExcelField<T, P> {
         this.pattern = "0.00";
       } else if (propertyType == Float.class || propertyType == float.class) {
         this.pattern = "0.00";
-      } else if (propertyType == Date.class || propertyType == LocalDate.class
-          || propertyType == LocalDateTime.class) {
+      } else if (propertyType == LocalDate.class) {
         this.pattern = ExcelCell.DEFAULT_DATE_PATTERN;
+      } else if (propertyType == Date.class || propertyType == LocalDateTime.class) {
+        this.pattern = ExcelCell.DEFAULT_DATE_TIME_PATTERN;
       } else {
         this.pattern = ExcelCell.DEFAULT_PATTERN;
       }
     }
 
-    if (dateTimeFormatter == null && propertyType == Date.class) {
+    if (dateTimeFormatter == null && (propertyType == Date.class
+        || propertyType == LocalDateTime.class || propertyType == LocalDate.class)) {
       dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
     }
 
@@ -499,7 +501,7 @@ public class ExcelField<T, P> {
         }
       } else if (propertyType == LocalDate.class) {
         if (cellValue instanceof LocalDateTime) {
-          return LocalDateTimeHelper.of((LocalDateTime) cellValue).toLocalDate();
+          return ((LocalDateTime) cellValue).toLocalDate();
         } else {
           return LocalDateTimeHelper.parse(String.valueOf(cellValue), dateTimeFormatter)
               .toLocalDate();
