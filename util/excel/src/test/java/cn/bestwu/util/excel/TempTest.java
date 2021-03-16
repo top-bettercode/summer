@@ -9,6 +9,11 @@ import org.junit.jupiter.api.Test;
 public class TempTest {
 
   @Test
+  void name1() {
+    System.err.println("0." + String.format("%0" + 2 + "d", 0));
+  }
+
+  @Test
   public void name() {
     for (int c = 0; c < 200; c++) {
       String x = getString(c);
