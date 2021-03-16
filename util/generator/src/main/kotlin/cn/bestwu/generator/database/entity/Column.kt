@@ -122,7 +122,11 @@ data class Column(
         }
 
     val randomValueToSet: String
-        get() = if (initializationString.isNullOrBlank()) {
+        get() = if (initializationString.isNullOrBlank() || "CURRENT_TIMESTAMP".equals(
+                initializationString,
+                true
+            )
+        ) {
             when (javaType) {
                 JavaType("java.math.BigDecimal") -> "new java.math.BigDecimal(\"1.0\")"
                 JavaType("java.sql.Timestamp") -> "new java.sql.Timestamp(System.currentTimeMillis())"
