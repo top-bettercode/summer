@@ -199,7 +199,7 @@ data class Column(
         if (!typeDesc.equals(other.typeDesc, true)) return false
         if (remarks != other.remarks) return false
         if (nullable != other.nullable) return false
-        if (columnDef != other.columnDef) return false
+        if (!columnDefEquals(columnDef, other.columnDef)) return false
         if (!extra.equals(other.extra, true)) return false
         if (isForeignKey != other.isForeignKey) return false
         if (pktableName != other.pktableName) return false
@@ -209,6 +209,22 @@ data class Column(
         if (autoIncrement != other.autoIncrement) return false
 
         return true
+    }
+
+    private fun columnDefEquals(columnDef: String?, columnDef1: String?): Boolean {
+        return if (columnDef == null)
+            columnDef1 == null
+        else {
+            val decimal = columnDef.toBigDecimalOrNull()
+            val decimal1 = columnDef1?.toBigDecimalOrNull()
+            if (decimal != null && decimal1 != null) {
+                val scale = decimal.scale()
+                val scale1 = decimal1.scale()
+                val s = scale.coerceAtLeast(scale1)
+                decimal.setScale(s) == decimal1.setScale(s)
+            } else
+                columnDef == columnDef1
+        }
     }
 
     override fun hashCode(): Int {
