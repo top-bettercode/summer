@@ -441,8 +441,6 @@ public class ExcelField<T, P> {
         this.pattern = "0";
       } else if (propertyType == Long.class || propertyType == long.class) {
         this.pattern = "0";
-      } else if (propertyType.equals(BigDecimal.class)) {
-        this.pattern = "0.00";
       } else if (propertyType == Double.class || propertyType == double.class) {
         this.pattern = "0.00";
       } else if (propertyType == Float.class || propertyType == float.class) {
@@ -512,7 +510,8 @@ public class ExcelField<T, P> {
     };
 
     cellConverter = (property) -> {
-      if (propertyType == String.class || propertyType == Date.class) {
+      if (ClassUtils.isPrimitiveOrWrapper(propertyType) || propertyType == String.class
+          || propertyType == Date.class) {
         return property;
       } else if (propertyType == LocalDate.class) {
         return LocalDateTimeHelper.of((LocalDate) property).toDate();
@@ -525,7 +524,13 @@ public class ExcelField<T, P> {
       } else if (ClassUtils.isPrimitiveOrWrapper(propertyType)) {
         return property;
       } else if (propertyType == BigDecimal.class) {
-        return ((BigDecimal) property).toPlainString();
+        int scale = ((BigDecimal) property).scale();
+        if (scale > 0) {
+          this.pattern = "0." + String.format("%0" + scale + "d", 0);
+        } else {
+          this.pattern = "0";
+        }
+        return property;
       } else if (propertyType.isArray()) {
         int length = Array.getLength(property);
         StringBuilder buffer = new StringBuilder();
