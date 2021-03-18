@@ -151,14 +151,19 @@ object InitField {
     }
 
     private fun Table.fields(extension: GeneratorExtension): Set<Field> {
-        val fields = columns.mapTo(mutableSetOf()) { column ->
+        val fields = columns.flatMapTo(mutableSetOf()) { column ->
             var type =
                 if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits <= 0) "" else ",${column.decimalDigits}"})" else column.javaType.shortNameWithoutTypeArguments
             if (column.javaType.shortNameWithoutTypeArguments == "Date")//前端统一传毫秒数
                 type = "Long"
-            Field(
-                column.javaName, type, column.remarks, column.columnDef
-                    ?: "", "", required = column.nullable
+            setOf(
+                Field(
+                    column.javaName, type, column.remarks, column.columnDef
+                        ?: "", "", required = column.nullable
+                ), Field(
+                    column.columnName, type, column.remarks, column.columnDef
+                        ?: "", "", required = column.nullable
+                )
             )
         }
         fields.addAll(fields.map { Field(English.plural(it.name), "Array", it.description) })
