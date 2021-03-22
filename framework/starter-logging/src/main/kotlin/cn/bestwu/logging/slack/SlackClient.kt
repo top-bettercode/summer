@@ -91,6 +91,9 @@ class SlackClient(private val authToken: String, private val logUrl: String?) {
         }
 
         val result = restTemplate.postForObject("${api}chat.postMessage", params, Result::class.java)
+        if(log.isDebugEnabled){
+            log.debug("slack result:{}", result)
+        }
         return result?.ok == true
     }
 
@@ -109,6 +112,9 @@ class SlackClient(private val authToken: String, private val logUrl: String?) {
         }
         params.add("initial_comment", "$title\n$initialComment")
         val result = restTemplate.postForObject("${api}files.upload", params, Result::class.java)
+        if(log.isDebugEnabled){
+            log.debug("slack result:{}", result)
+        }
         if (result?.ok != true) {
             log.error("slack api request fail:{}", result?.error)
         }
