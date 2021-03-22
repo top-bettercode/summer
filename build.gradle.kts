@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     group = "cn.bestwu.summer"
-    version = "0.0.6-SNAPSHOT"
+    version = "0.0.7-SNAPSHOT"
 
     apply {
         plugin("java")
@@ -100,7 +100,7 @@ allprojects {
         }
     }
 
-    tasks{
+    tasks {
         "test"(Test::class) {
             useJUnitPlatform()
         }
