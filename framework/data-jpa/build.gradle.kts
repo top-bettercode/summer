@@ -10,7 +10,7 @@ dependencies {
     api("com.github.pagehelper:pagehelper")
 
     testAnnotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa")
-    testAnnotationProcessor("jakarta.persistence:jakarta.persistence-api:2.2.3")
+    testAnnotationProcessor("jakarta.persistence:jakarta.persistence-api")
     testImplementation("com.h2database:h2")
 }
 
