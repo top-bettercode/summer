@@ -97,6 +97,8 @@ allprojects {
             }
 
             dependency("com.github.pagehelper:pagehelper:5.1.11")
+
+            dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
         }
     }
 
