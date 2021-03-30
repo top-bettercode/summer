@@ -40,10 +40,11 @@ object Generators {
             }
             DataType.PUML -> {
                 extension.pumlSrcSources.map { PumlConverter.toTables(it) }.flatten()
-                    .map { it.tableName }.toList()
+                    .map { it.tableName }.distinct().toList()
             }
             DataType.PDM -> {
-                PdmReader.read(extension.file(extension.pdmSrc)).map { it.tableName }.toList()
+                PdmReader.read(extension.file(extension.pdmSrc)).map { it.tableName }.distinct()
+                    .toList()
             }
         }
     }
@@ -112,41 +113,31 @@ object Generators {
             generator.setUp(extension)
         }
 
-        val emptyTableNames = extension.tableNames.isEmpty()
-        if (emptyTableNames) {
+        var tableNames = extension.tableNames
+        if (tableNames.isEmpty())
+            tableNames = tableNames(extension).toTypedArray()
+
+
+        tableNames.forEach inner@{ tableName ->
+            println("查询：$tableName 表数据结构")
+            var found = false
+            val allTableNames = mutableSetOf<String>()
             extension.pumlAllSources.forEach { file ->
                 val tables = PumlConverter.toTables(file)
-                tables.forEach { table ->
-                    println("查询：${table.tableName} 表数据结构")
+                val table = tables.find { it.tableName == tableName }
+                if (table != null) {
+                    found = true
                     generators.forEach { generator ->
                         generator.module = file.nameWithoutExtension
                         generator.call(extension, table)
                     }
+                    return@inner
+                } else {
+                    allTableNames.addAll(tables.map { it.tableName })
                 }
             }
-
-        } else {
-            extension.tableNames.forEach { tableName ->
-                println("查询：$tableName 表数据结构")
-                var found = false
-                val allTableNames = mutableSetOf<String>()
-                extension.pumlAllSources.forEach inner@{ file ->
-                    val tables = PumlConverter.toTables(file)
-                    val table = tables.find { it.tableName == tableName }
-                    if (table != null) {
-                        found = true
-                        generators.forEach { generator ->
-                            generator.module = file.nameWithoutExtension
-                            generator.call(extension, table)
-                        }
-                        return@inner
-                    } else {
-                        allTableNames.addAll(tables.map { it.tableName })
-                    }
-                }
-                if (!found)
-                    throw RuntimeException("未在($allTableNames)中找到${tableName}表")
-            }
+            if (!found)
+                throw RuntimeException("未在($allTableNames)中找到${tableName}表")
         }
 
         generators.forEach { generator ->
