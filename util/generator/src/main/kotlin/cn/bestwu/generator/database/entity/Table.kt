@@ -10,52 +10,55 @@ import org.atteo.evo.inflector.English
  * @author Peter Wu
  */
 data class Table(
-        val productName: String,
-        val catalog: String?,
-        val schema: String?,
-        /**
-         * 表名
-         */
-        val tableName: String,
-        /**
-         * 表类型
-         */
-        val tableType: String,
-        /**
-         * 注释说明
-         */
-        var remarks: String,
-        /**
-         * 主键
-         */
-        var primaryKeyNames: List<String>,
-        val indexes: MutableList<Indexed>,
-        /**
-         * 字段
-         */
-        var pumlColumns: List<Any>,
-        val physicalOptions: String = "",
-        var sequenceStartWith: Int? = null,
-        val moduleName: String = "database") {
+    val productName: String,
+    val catalog: String?,
+    val schema: String?,
+    /**
+     * 表名
+     */
+    val tableName: String,
+    /**
+     * 表类型
+     */
+    val tableType: String,
+    /**
+     * 注释说明
+     */
+    var remarks: String,
+    /**
+     * 主键
+     */
+    var primaryKeyNames: List<String>,
+    val indexes: MutableList<Indexed>,
+    /**
+     * 字段
+     */
+    var pumlColumns: List<Any>,
+    val physicalOptions: String = "",
+    var sequenceStartWith: Int? = null,
+    val moduleName: String = "database"
+) {
 
 
     val primaryKeys: MutableList<Column>
-    val columns: MutableList<Column> = pumlColumns.asSequence().filter { it is Column }.map { it as Column }.toMutableList()
+    val columns: MutableList<Column> =
+        pumlColumns.asSequence().filter { it is Column }.map { it as Column }.toMutableList()
 
     init {
         val iterator = indexes.iterator()
         while (iterator.hasNext()) {
             val indexed = iterator.next()
+            if (primaryKeyNames.containsAll(indexed.columnName)) {
+                iterator.remove()
+            }
             if (indexed.columnName.size == 1) {
-                if (primaryKeyNames.contains(indexed.columnName[0])) {
-                    iterator.remove()
-                }
                 val column = columns.find { it.columnName == indexed.columnName[0] }!!
                 column.indexed = true
                 column.unique = indexed.unique
             }
         }
-        primaryKeys = columns.asSequence().filter { primaryKeyNames.contains(it.columnName) }.toMutableList()
+        primaryKeys =
+            columns.asSequence().filter { primaryKeyNames.contains(it.columnName) }.toMutableList()
         primaryKeys.forEach {
             it.isPrimary = true
             it.indexed = true
@@ -70,7 +73,8 @@ data class Table(
 
     fun pathName(extension: GeneratorExtension): String = English.plural(entityName(extension))
 
-    fun supportSoftDelete(extension: GeneratorExtension): Boolean = columns.find { it.isSoftDelete(extension) } != null
+    fun supportSoftDelete(extension: GeneratorExtension): Boolean =
+        columns.find { it.isSoftDelete(extension) } != null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
