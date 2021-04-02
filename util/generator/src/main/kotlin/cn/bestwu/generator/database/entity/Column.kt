@@ -4,6 +4,7 @@ import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.dom.java.JavaType
 import cn.bestwu.generator.dom.java.JavaTypeResolver
 import cn.bestwu.generator.dom.java.PrimitiveTypeWrapper
+import cn.bestwu.generator.dsl.DicCodes
 import cn.bestwu.generator.dsl.Generator
 
 /**
@@ -63,6 +64,15 @@ data class Column(
         }
     }
 
+    val codeRemarks: String
+        get() =
+            remarks.replace('（', '(').replace('）', ')').replace('：', ':').replace('，', ',')
+                .replace('；', ',').replace(' ', ',').replace(';', ',').replace(Regex(" *: *"), ":")
+                .replace(Regex(",+"), ",").replace(Regex(" +"), " ")
+
+    val isCodeField: Boolean
+        get() = codeRemarks.matches(Regex(".*\\((.*:.*[, ]?)+\\).*"))
+
     val javaType: JavaType
         get() = JavaTypeResolver.calculateJavaType(this)!!
     val jdbcType: String
@@ -99,91 +109,6 @@ data class Column(
             "CLOB",
             "NCLOB"
         ).contains(typeName.toUpperCase())
-
-    val randomValue: Any
-        get() = when {
-            columnDef.isNullOrBlank() -> when (javaType) {
-                JavaType("java.math.BigDecimal") -> java.math.BigDecimal("1.0")
-                JavaType("java.sql.Timestamp") -> (System.currentTimeMillis())
-                JavaType.dateInstance -> (System.currentTimeMillis())
-                JavaType("java.sql.Date") -> (System.currentTimeMillis())
-                JavaType("java.sql.Time") -> (System.currentTimeMillis())
-                JavaType("java.time.LocalDate") -> (System.currentTimeMillis())
-                JavaType("java.time.LocalDateTime") -> (System.currentTimeMillis())
-                PrimitiveTypeWrapper.booleanInstance -> true
-                PrimitiveTypeWrapper.doubleInstance -> 1.0
-                PrimitiveTypeWrapper.longInstance -> 1L
-                PrimitiveTypeWrapper.integerInstance -> 1
-                JavaType.stringInstance -> remarks.replace("\"", "\\\"")
-                else -> 1
-            }
-            columnDef == "CURRENT_TIMESTAMP" -> (System.currentTimeMillis())
-            else -> columnDef!!
-        }
-
-    val randomValueToSet: String
-        get() = if (initializationString.isNullOrBlank() || "CURRENT_TIMESTAMP".equals(
-                initializationString,
-                true
-            )
-        ) {
-            when (javaType) {
-                JavaType("java.math.BigDecimal") -> "new java.math.BigDecimal(\"1.0\")"
-                JavaType("java.sql.Timestamp") -> "new java.sql.Timestamp(System.currentTimeMillis())"
-                JavaType.dateInstance -> "new java.util.Date(System.currentTimeMillis())"
-                JavaType("java.sql.Date") -> "new java.sql.Date(System.currentTimeMillis())"
-                JavaType("java.sql.Time") -> "new java.sql.Time(System.currentTimeMillis())"
-                JavaType("java.time.LocalDate") -> "LocalDate.now()"
-                JavaType("java.time.LocalDateTime") -> "LocalDateTime.now()"
-                PrimitiveTypeWrapper.booleanInstance -> "true"
-                PrimitiveTypeWrapper.doubleInstance -> "1.0"
-                PrimitiveTypeWrapper.longInstance -> "1L"
-                PrimitiveTypeWrapper.integerInstance -> "1"
-                PrimitiveTypeWrapper.shortInstance -> "new Short(\"1\")"
-                PrimitiveTypeWrapper.byteInstance -> "new Byte(\"1\")"
-                JavaType("byte[]") -> "new byte[0]"
-                JavaType.stringInstance -> "\"${remarks.replace("\"", "\\\"")}\""
-                else -> "1"
-            }
-        } else {
-            initializationString!!
-        }
-
-    val testId: Any
-        get() = when (javaType) {
-            JavaType.stringInstance -> "\"1\""
-            PrimitiveTypeWrapper.longInstance -> "1L"
-            PrimitiveTypeWrapper.integerInstance -> 1
-            else -> 1
-        }
-
-    private val initializationString
-        get() = if (!columnDef.isNullOrBlank()) {
-            when {
-                javaType.shortName == "Boolean" -> Generator.toBoolean(columnDef).toString()
-                javaType.shortName == "Long" -> "${columnDef}L"
-                javaType.shortName == "Double" -> "${columnDef}D"
-                javaType.shortName == "Float" -> "${columnDef}F"
-                javaType.shortName == "BigDecimal" -> "new BigDecimal($columnDef)"
-                javaType.shortName == "String" -> "\"$columnDef\""
-                else -> columnDef
-            }
-        } else {
-            columnDef
-        }
-
-
-    fun setValue(value: String): String {
-        return when {
-            javaType.shortName == "Boolean" -> "Boolean.valueOf($value)"
-            javaType.shortName == "Integer" -> "Integer.valueOf($value)"
-            javaType.shortName == "Long" -> "Long.valueOf($value)"
-            javaType.shortName == "Double" -> "Double.valueOf($value)"
-            javaType.shortName == "Float" -> "Float.valueOf($value)"
-            javaType.shortName == "BigDecimal" -> "new BigDecimal($value)"
-            else -> value
-        }
-    }
 
     fun isSoftDelete(extension: GeneratorExtension): Boolean =
         columnName == extension.softDeleteColumnName

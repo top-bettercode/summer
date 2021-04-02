@@ -71,6 +71,9 @@ class GeneratorPlugin : Plugin<Project> {
             extension.remarks = findProperty(project, "remarks") ?: ""
             extension.softDeleteColumnName = findProperty(project, "softDeleteColumnName")
                 ?: "deleted"
+            extension.commonCodeTypes=(findProperty(project, "commonCodeTypes")
+                ?: extension.softDeleteColumnName).split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
+                .toTypedArray()
             extension.softDeleteAsBoolean =
                 (findProperty(project, "softDeleteAsBoolean"))?.toBoolean()
                     ?: true

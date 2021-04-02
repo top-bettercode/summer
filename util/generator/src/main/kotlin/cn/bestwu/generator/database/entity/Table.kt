@@ -1,7 +1,9 @@
 package cn.bestwu.generator.database.entity
 
 import cn.bestwu.generator.GeneratorExtension
+import cn.bestwu.generator.dsl.DicCodes
 import org.atteo.evo.inflector.English
+import java.lang.StringBuilder
 
 /**
  *
