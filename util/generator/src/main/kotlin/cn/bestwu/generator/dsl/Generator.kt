@@ -5,6 +5,8 @@ import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.database.entity.Column
 import cn.bestwu.generator.database.entity.Indexed
 import cn.bestwu.generator.database.entity.Table
+import cn.bestwu.generator.dom.java.JavaType
+import cn.bestwu.generator.dom.java.PrimitiveTypeWrapper
 import java.io.File
 import java.io.PrintWriter
 
@@ -101,6 +103,126 @@ abstract class Generator {
             return false
         }
 
+    }
+
+    fun Column.dicCodes(extension: GeneratorExtension): DicCodes? {
+        return if (isCodeField) {
+            val codeType = if (columnName.contains("_") || extension.commonCodeTypes.any {
+                    it.equals(
+                        columnName,
+                        true
+                    )
+                }) javaName else (className + javaName.capitalize()).decapitalize()
+            val codeRemarks = codeRemarks
+            val codeTypeName = codeRemarks.substringBefore('(')
+
+            val dicCodes = DicCodes(codeType, codeTypeName)
+            codeRemarks.substringAfter('(').substringBeforeLast(')').replace(" ", ",")
+                .replace(Regex(",+"), ",").split(",").filter { it.isNotBlank() }
+                .forEach { item: String ->
+                    val code = item.substringBefore(":").trim()
+                    val name = item.substringAfter(":").trim()
+                    dicCodes.codes[code] = name
+                }
+
+            return dicCodes
+        } else {
+            null
+        }
+    }
+
+    val Column.randomValue: Any
+        get() = when {
+            columnDef.isNullOrBlank() ->
+                when {
+                    isCodeField -> dicCodes(extension)!!.codes.keys.first()
+                    else ->
+                        when (javaType) {
+                            JavaType("java.math.BigDecimal") -> java.math.BigDecimal("1.0")
+                            JavaType("java.sql.Timestamp") -> (System.currentTimeMillis())
+                            JavaType.dateInstance -> (System.currentTimeMillis())
+                            JavaType("java.sql.Date") -> (System.currentTimeMillis())
+                            JavaType("java.sql.Time") -> (System.currentTimeMillis())
+                            JavaType("java.time.LocalDate") -> (System.currentTimeMillis())
+                            JavaType("java.time.LocalDateTime") -> (System.currentTimeMillis())
+                            PrimitiveTypeWrapper.booleanInstance -> true
+                            PrimitiveTypeWrapper.doubleInstance -> 1.0
+                            PrimitiveTypeWrapper.longInstance -> 1L
+                            PrimitiveTypeWrapper.integerInstance -> 1
+                            JavaType.stringInstance -> remarks.replace("\"", "\\\"")
+                            else -> 1
+                        }
+                }
+            "CURRENT_TIMESTAMP".equals(columnDef, true) -> (System.currentTimeMillis())
+            else -> columnDef!!
+        }
+
+    val Column.randomValueToSet: String
+        get() =
+            when {
+                initializationString.isNullOrBlank() -> {
+                    when {
+                        isCodeField -> {
+                            val value = dicCodes(extension)!!.codes.keys.first()
+                            if (JavaType.stringInstance == javaType) "\"$value\"" else value
+                        }
+                        else -> when (javaType) {
+                            JavaType("java.math.BigDecimal") -> "new java.math.BigDecimal(\"1.0\")"
+                            JavaType("java.sql.Timestamp") -> "new java.sql.Timestamp(System.currentTimeMillis())"
+                            JavaType.dateInstance -> "new java.util.Date(System.currentTimeMillis())"
+                            JavaType("java.sql.Date") -> "new java.sql.Date(System.currentTimeMillis())"
+                            JavaType("java.sql.Time") -> "new java.sql.Time(System.currentTimeMillis())"
+                            JavaType("java.time.LocalDate") -> "LocalDate.now()"
+                            JavaType("java.time.LocalDateTime") -> "LocalDateTime.now()"
+                            PrimitiveTypeWrapper.booleanInstance -> "true"
+                            PrimitiveTypeWrapper.doubleInstance -> "1.0"
+                            PrimitiveTypeWrapper.longInstance -> "1L"
+                            PrimitiveTypeWrapper.integerInstance -> "1"
+                            PrimitiveTypeWrapper.shortInstance -> "new Short(\"1\")"
+                            PrimitiveTypeWrapper.byteInstance -> "new Byte(\"1\")"
+                            JavaType("byte[]") -> "new byte[0]"
+                            JavaType.stringInstance -> "\"${remarks.replace("\"", "\\\"")}\""
+                            else -> "1"
+                        }
+                    }
+                }
+                else -> initializationString!!
+            }
+
+    val Column.testId: Any
+        get() = when (javaType) {
+            JavaType.stringInstance -> "\"1\""
+            PrimitiveTypeWrapper.longInstance -> "1L"
+            PrimitiveTypeWrapper.integerInstance -> 1
+            else -> 1
+        }
+
+    private val Column.initializationString
+        get() = if (!columnDef.isNullOrBlank()) {
+            when (javaType.shortName) {
+                "Boolean" -> toBoolean(columnDef).toString()
+                "Long" -> "${columnDef}L"
+                "Double" -> "${columnDef}D"
+                "Float" -> "${columnDef}F"
+                "BigDecimal" -> "new BigDecimal($columnDef)"
+                "String" -> "\"$columnDef\""
+                else -> columnDef
+            }
+        } else {
+            columnDef
+        }
+
+
+    fun Column.setValue(value: String): String {
+        return when {
+            javaType.shortName == "Boolean" -> "Boolean.valueOf($value)"
+            javaType.shortName == "Integer" -> "Integer.valueOf($value)"
+            javaType.shortName == "Long" -> "Long.valueOf($value)"
+            javaType.shortName == "Double" -> "Double.valueOf($value)"
+            javaType.shortName == "Float" -> "Float.valueOf($value)"
+            javaType.shortName == "BigDecimal" -> "new BigDecimal($value)"
+            else -> value
+        }
     }
 
     protected val Column.defaultRemarks: String
