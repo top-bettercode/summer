@@ -116,7 +116,11 @@ abstract class Generator {
             val codeRemarks = codeRemarks
             val codeTypeName = codeRemarks.substringBefore('(')
 
-            val dicCodes = DicCodes(codeType, codeTypeName)
+            val dicCodes = DicCodes(
+                codeType,
+                codeTypeName,
+                JavaType.intPrimitiveInstance == javaType || JavaType("java.lang.Integer") == javaType
+            )
             codeRemarks.substringAfter('(').substringBeforeLast(')').replace(" ", ",")
                 .replace(Regex(",+"), ",").split(",").filter { it.isNotBlank() }
                 .forEach { item: String ->
@@ -164,7 +168,7 @@ abstract class Generator {
                     when {
                         isCodeField -> {
                             val value = dicCodes(extension)!!.codes.keys.first()
-                            if (JavaType.stringInstance == javaType) "\"$value\"" else value
+                            if (JavaType.stringInstance == javaType) "\"$value\"" else "$value"
                         }
                         else -> when (javaType) {
                             JavaType("java.math.BigDecimal") -> "new java.math.BigDecimal(\"1.0\")"
