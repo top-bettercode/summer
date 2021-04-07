@@ -8,5 +8,6 @@ import java.io.Serializable
 class DicCodes(
     val type: String,
     val name: String,
-    val codes: MutableMap<String, String> = mutableMapOf()
+    var isInt: Boolean = false,
+    val codes: MutableMap<Serializable, String> = mutableMapOf()
 ) : Serializable
