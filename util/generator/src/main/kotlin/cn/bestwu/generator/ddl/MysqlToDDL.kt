@@ -7,7 +7,12 @@ object MysqlToDDL : ToDDL() {
     override val quoteMark: String = "`"
     override val commentPrefix: String = "#"
 
-    override fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: PrintWriter, deleteTablesWhenUpdate: Boolean) {
+    override fun toDDLUpdate(
+        oldTables: List<Table>,
+        tables: List<Table>,
+        out: PrintWriter,
+        deleteTablesWhenUpdate: Boolean
+    ) {
         if (tables != oldTables) {
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
@@ -33,12 +38,22 @@ object MysqlToDDL : ToDDL() {
                         val columns = table.columns
                         val oldPrimaryKeys = oldTable.primaryKeys
                         val primaryKeys = table.primaryKeys
-                        val oldPrimaryKey = oldPrimaryKeys[0]
-                        val primaryKey = primaryKeys[0]
-                        if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1 && oldPrimaryKey != primaryKey) {
-                            lines.add("ALTER TABLE $quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${columnDef(primaryKey, quote)} COMMENT '${primaryKey.remarks}';")
-                            oldColumns.remove(oldPrimaryKey)
-                            columns.remove(primaryKey)
+
+                        if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1) {
+                            val oldPrimaryKey = oldPrimaryKeys[0]
+                            val primaryKey = primaryKeys[0]
+                            if (oldPrimaryKey != primaryKey) {
+                                lines.add(
+                                    "ALTER TABLE $quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
+                                        columnDef(
+                                            primaryKey,
+                                            quote
+                                        )
+                                    } COMMENT '${primaryKey.remarks}';"
+                                )
+                                oldColumns.remove(oldPrimaryKey)
+                                columns.remove(primaryKey)
+                            }
                         }
 
                         val oldColumnNames = oldColumns.map { it.columnName }
@@ -52,12 +67,26 @@ object MysqlToDDL : ToDDL() {
                         columns.forEach { column ->
                             val columnName = column.columnName
                             if (newColumnNames.contains(columnName)) {
-                                lines.add("ALTER TABLE $quote$tableName$quote ADD COLUMN ${columnDef(column, quote)} COMMENT '${column.remarks}';")
+                                lines.add(
+                                    "ALTER TABLE $quote$tableName$quote ADD COLUMN ${
+                                        columnDef(
+                                            column,
+                                            quote
+                                        )
+                                    } COMMENT '${column.remarks}';"
+                                )
                                 addFk(column, lines, tableName, columnName)
                             } else {
                                 val oldColumn = oldColumns.find { it.columnName == columnName }!!
                                 if (column != oldColumn) {
-                                    lines.add("ALTER TABLE $quote$tableName$quote MODIFY ${columnDef(column, quote)} COMMENT '${column.remarks}';")
+                                    lines.add(
+                                        "ALTER TABLE $quote$tableName$quote MODIFY ${
+                                            columnDef(
+                                                column,
+                                                quote
+                                            )
+                                        } COMMENT '${column.remarks}';"
+                                    )
                                     updateFk(column, oldColumn, lines, tableName)
                                 }
                             }
@@ -75,7 +104,13 @@ object MysqlToDDL : ToDDL() {
         }
     }
 
-    override fun dropFkStatement(tableName: String, columnName: String): String = "ALTER TABLE $quote$tableName$quote DROP FOREIGN KEY ${foreignKeyName(tableName, columnName)};"
+    override fun dropFkStatement(tableName: String, columnName: String): String =
+        "ALTER TABLE $quote$tableName$quote DROP FOREIGN KEY ${
+            foreignKeyName(
+                tableName,
+                columnName
+            )
+        };"
 
     override fun appendTable(table: Table, pw: PrintWriter) {
         val tableName = table.tableName
@@ -85,7 +120,14 @@ object MysqlToDDL : ToDDL() {
         val hasPrimary = table.primaryKeyNames.isNotEmpty()
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
-            pw.println("  ${columnDef(column, quote)} COMMENT '${column.remarks}'${if (index < lastIndex || hasPrimary) "," else ""}")
+            pw.println(
+                "  ${
+                    columnDef(
+                        column,
+                        quote
+                    )
+                } COMMENT '${column.remarks}'${if (index < lastIndex || hasPrimary) "," else ""}"
+            )
         }
 
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
