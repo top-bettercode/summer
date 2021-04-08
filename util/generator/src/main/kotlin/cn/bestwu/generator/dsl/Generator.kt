@@ -137,7 +137,7 @@ abstract class Generator {
 
     val Column.randomValue: Any
         get() = when {
-            columnDef.isNullOrBlank() ->
+            columnDef.isNullOrBlank() || "CURRENT_TIMESTAMP".equals(columnDef, true) ->
                 when {
                     isCodeField -> dicCodes(extension)!!.codes.keys.first()
                     else ->
@@ -157,14 +157,16 @@ abstract class Generator {
                             else -> 1
                         }
                 }
-            "CURRENT_TIMESTAMP".equals(columnDef, true) -> (System.currentTimeMillis())
             else -> columnDef!!
         }
 
     val Column.randomValueToSet: String
         get() =
             when {
-                initializationString.isNullOrBlank() -> {
+                initializationString.isNullOrBlank() || "CURRENT_TIMESTAMP".equals(
+                    columnDef,
+                    true
+                ) -> {
                     when {
                         isCodeField -> {
                             val value = dicCodes(extension)!!.codes.keys.first()
@@ -176,8 +178,8 @@ abstract class Generator {
                             JavaType.dateInstance -> "new java.util.Date(System.currentTimeMillis())"
                             JavaType("java.sql.Date") -> "new java.sql.Date(System.currentTimeMillis())"
                             JavaType("java.sql.Time") -> "new java.sql.Time(System.currentTimeMillis())"
-                            JavaType("java.time.LocalDate") -> "LocalDate.now()"
-                            JavaType("java.time.LocalDateTime") -> "LocalDateTime.now()"
+                            JavaType("java.time.LocalDate") -> "java.time.LocalDate.now()"
+                            JavaType("java.time.LocalDateTime") -> "java.time.LocalDateTime.now()"
                             PrimitiveTypeWrapper.booleanInstance -> "true"
                             PrimitiveTypeWrapper.doubleInstance -> "1.0"
                             PrimitiveTypeWrapper.longInstance -> "1L"
