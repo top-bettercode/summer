@@ -119,7 +119,7 @@ abstract class Generator {
             val dicCodes = DicCodes(
                 codeType,
                 codeTypeName,
-                JavaType.intPrimitiveInstance == javaType || JavaType("java.lang.Integer") == javaType
+                JavaType.stringInstance != javaType
             )
             codeRemarks.substringAfter('(').substringBeforeLast(')').replace(" ", ",")
                 .replace(Regex(",+"), ",").split(",").filter { it.isNotBlank() }
