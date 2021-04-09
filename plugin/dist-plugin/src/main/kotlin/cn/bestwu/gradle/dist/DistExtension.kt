@@ -20,6 +20,7 @@ open class DistExtension(
         var runUser: String = "",
         var jreWindowsI586Gz: String = "",
         var jreWindowsX64Gz: String = "",
+        var jreLinuxI586Gz: String = "",
         var jreLinuxX64Gz: String = "",
         /**
          * windows service 老版本路径 用于生成更新包
