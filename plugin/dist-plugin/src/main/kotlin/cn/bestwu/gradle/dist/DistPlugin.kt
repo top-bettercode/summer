@@ -40,45 +40,46 @@ class DistPlugin : Plugin<Project> {
             it.runUser = findProperty(project, "run-user") ?: ""
             it.jreWindowsI586Gz = findProperty(project, "jre-windows-i-586-gz") ?: ""
             it.jreWindowsX64Gz = findProperty(project, "jre-windows-x-64-gz") ?: ""
+            it.jreLinuxI586Gz = findProperty(project, "jre-linux-i-586-gz") ?: ""
             it.jreLinuxX64Gz = findProperty(project, "jre-linux-x-64-gz") ?: ""
             it.windowsServiceOldPath = findProperty(project, "windows-service-old-path") ?: ""
             it.distOldPath = findProperty(project, "dist-old-path") ?: ""
             it.jvmArgs = (findProperty(project, "jvm-args") ?: "").split(" +".toRegex())
         }
         val windowsServiceEnable = (findProperty(project, "windows-service.enable"))?.toBoolean()
-                ?: false
+            ?: false
         if (windowsServiceEnable) {
             project.plugins.apply(WindowsServicePlugin::class.java)
             project.extensions.configure(WindowsServicePluginConfiguration::class.java) {
                 val isX64 = findProperty(project, "x64")?.toBoolean() != false
                 it.outputDir = (findProperty(project, "windows-service.output-dir"))
-                        ?: "windows-service-${if (isX64) "x64" else "x86"}/${project.name}"
+                    ?: "windows-service-${if (isX64) "x64" else "x86"}/${project.name}"
                 val arch = findProperty(project, "windows-service.architecture")
                 it.architecture = if (arch.isNullOrBlank()) {
                     (if (isX64) Architecture.AMD64 else Architecture.X86)
                 } else Architecture.valueOf(arch)
                 it.displayName = (findProperty(project, "windows-service.display-name"))
-                        ?: project.name
+                    ?: project.name
                 it.description = (findProperty(project, "windows-service.description"))
-                        ?: project.description
+                    ?: project.description
                 it.startClass = (findProperty(project, "windows-service.start-class"))
-                        ?: findProperty(project, "main-class-name")
+                    ?: findProperty(project, "main-class-name")
                 it.startMethod = findProperty(project, "windows-service.start-method")
-                        ?: "main"
+                    ?: "main"
                 it.startParams = findProperty(project, "windows-service.start-params")
-                        ?: "start"
+                    ?: "start"
                 it.stopClass = (findProperty(project, "windows-service.stop-class"))
-                        ?: findProperty(project, "main-class-name")
+                    ?: findProperty(project, "main-class-name")
                 it.stopMethod = findProperty(project, "windows-service.stop-method")
-                        ?: "main"
+                    ?: "main"
                 it.stopParams = findProperty(project, "windows-service.stop-params")
-                        ?: "stop"
+                    ?: "stop"
                 val startup = findProperty(project, "windows-service.startup")
                 it.startup = if (startup.isNullOrBlank()) Startup.AUTO else Startup.valueOf(startup)
                 it.interactive = findProperty(project, "windows-service.interactive")?.toBoolean()
-                        ?: false
+                    ?: false
                 it.dependsOn = (findProperty(project, "windows-service.depends-on")
-                        ?: "").split(";")
+                    ?: "").split(";")
                 it.environment = findProperty(project, "windows-service.environment") ?: ""
                 it.libraryPath = findProperty(project, "windows-service.library-path")
                 it.javaHome = findProperty(project, "windows-service.java-home")
@@ -97,18 +98,22 @@ class DistPlugin : Plugin<Project> {
                     }
                 }
                 it.jvmOptions = (findProperty(project, "windows-service.jvm-options")
-                        ?: "").split(" +".toRegex())
+                    ?: "").split(" +".toRegex())
                 it.jvmOptions9 = (findProperty(project, "windows-service.jvm-options-9")
-                        ?: "").split(" +".toRegex())
+                    ?: "").split(" +".toRegex())
                 it.jvmMs = findProperty(project, "windows-service.jvm-ms")?.toIntOrNull()
                 it.jvmMx = findProperty(project, "windows-service.jvm-mx")?.toIntOrNull()
                 it.jvmSs = findProperty(project, "windows-service.jvm-ss")?.toIntOrNull()
-                it.stopTimeout = findProperty(project, "windows-service.stop-timeout")?.toIntOrNull()
+                it.stopTimeout =
+                    findProperty(project, "windows-service.stop-timeout")?.toIntOrNull()
                 it.logPath = findProperty(project, "windows-service.log-path") ?: "logs"
                 it.logPrefix = findProperty(project, "windows-service.log-prefix") ?: "service"
-                it.logLevel = LogLevel.valueOf(findProperty(project, "windows-service.log-level")
-                        ?: "INFO")
-                it.logJniMessages = findProperty(project, "windows-service.log-jni-messages")?.toIntOrNull()
+                it.logLevel = LogLevel.valueOf(
+                    findProperty(project, "windows-service.log-level")
+                        ?: "INFO"
+                )
+                it.logJniMessages =
+                    findProperty(project, "windows-service.log-jni-messages")?.toIntOrNull()
                 it.stdOutput = findProperty(project, "windows-service.std-output")
                 it.stdError = findProperty(project, "windows-service.std-error")
                 it.pidFile = findProperty(project, "windows-service.pid-file")
@@ -120,9 +125,13 @@ class DistPlugin : Plugin<Project> {
             task.enabled = true
             task as Jar
             task.manifest {
-                it.attributes(mapOf("Manifest-Version" to project.version, "Implementation-Title"
-                        to (findProperty(project, "application.name")
-                        ?: project.name), "Implementation-Version" to project.version))
+                it.attributes(
+                    mapOf(
+                        "Manifest-Version" to project.version, "Implementation-Title"
+                                to (findProperty(project, "application.name")
+                            ?: project.name), "Implementation-Version" to project.version
+                    )
+                )
             }
         }
 
@@ -138,7 +147,8 @@ class DistPlugin : Plugin<Project> {
                 project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) { task ->
                     task as WindowsServicePluginTask
                     task.inputs.file(project.rootProject.file("gradle.properties"))
-                    task.automaticClasspath = project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
+                    task.automaticClasspath =
+                        project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
                     task.doLast {
                         val outputDirectory = task.outputDirectory
                         project.copy {
@@ -149,7 +159,7 @@ class DistPlugin : Plugin<Project> {
                             project.copy { copySpec ->
                                 copySpec.from(project.tarTree(if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz)) { spec ->
                                     spec.eachFile {
-                                        it.path = "jre/"+it.path.substringAfter("/")
+                                        it.path = "jre/" + it.path.substringAfter("/")
                                     }
                                     spec.includeEmptyDirs = false
                                 }
@@ -157,40 +167,53 @@ class DistPlugin : Plugin<Project> {
                             }
                         }
                         val installScript = File(outputDirectory, "${project.name}-install.bat")
-                        val installScriptText = installScript.readText().replace("%APP_HOME%lib\\conf", "%APP_HOME%conf").replace("if \"%OS%\"==\"Windows_NT\" endlocal", "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}")
+                        val installScriptText = installScript.readText()
+                            .replace("%APP_HOME%lib\\conf", "%APP_HOME%conf").replace(
+                            "if \"%OS%\"==\"Windows_NT\" endlocal",
+                            "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
+                        )
                         installScript.writeText(installScriptText)
                     }
                 }
                 project.tasks.create("windowsServiceZip", Zip::class.java) {
                     it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
-                    val createTask = project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
+                    val createTask =
+                        project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
                     it.group = createTask.group
                     it.from(createTask.outputDirectory)
                     if (dist.includeJre)
-                        it.archiveFileName.set("${project.name}-${project.version}-windows-${if (dist.x64) "x64" else "x86"}.zip")
+                        it.archiveFileName.set("${project.name}-windows-${if (dist.x64) "x64" else "x86"}-${project.version}.zip")
                     else
-                        it.archiveFileName.set("${project.name}-${project.version}-windows.zip")
+                        it.archiveFileName.set("${project.name}-windows-${project.version}.zip")
                     it.destinationDirectory.set(createTask.outputDirectory.parentFile)
                 }
 
                 project.tasks.create("windowsServiceUpdate") {
                     it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
-                    val createTask = project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
+                    val createTask =
+                        project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
                     it.group = createTask.group
                     it.doLast {
                         val updateDir = File(createTask.outputDirectory.parentFile, "update")
                         require(dist.windowsServiceOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                        compareUpdate(project, updateDir, project.file(dist.windowsServiceOldPath), createTask.outputDirectory, true)
+                        compareUpdate(
+                            project,
+                            updateDir,
+                            project.file(dist.windowsServiceOldPath),
+                            createTask.outputDirectory,
+                            true
+                        )
                     }
                 }
 
                 project.tasks.create("windowsServiceUpdateZip", Zip::class.java) {
                     it.dependsOn("windowsServiceUpdate")
-                    val createTask = project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
+                    val createTask =
+                        project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
                     it.group = createTask.group
                     val updateDir = File(createTask.outputDirectory.parentFile, "update")
                     it.from(updateDir)
-                    it.archiveFileName.set("${project.name}-${project.version}-windows-update.zip")
+                    it.archiveFileName.set("${project.name}-windows-update-${project.version}.zip")
                     it.destinationDirectory.set(createTask.outputDirectory.parentFile)
                 }
             }
@@ -198,13 +221,15 @@ class DistPlugin : Plugin<Project> {
                 project.tasks.getByName("jar") { task ->
                     task as Jar
                     task.exclude {
-                        val listFiles = (project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir.listFiles()
+                        val listFiles =
+                            (project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir.listFiles()
                         listFiles?.contains(it.file) ?: false
                     }
                 }
             }
             if (project.plugins.findPlugin(DistributionPlugin::class.java) != null) {
-                val distribution = project.extensions.getByType(DistributionContainer::class.java).getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
+                val distribution = project.extensions.getByType(DistributionContainer::class.java)
+                    .getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
                 distribution.contents { copySpec ->
                     if (dist.unwrapResources)
                         copySpec.from((project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir) {
@@ -216,12 +241,15 @@ class DistPlugin : Plugin<Project> {
                         }
                     }
                     if (dist.includeJre) {
-                        copySpec.from(project.tarTree(if (dist.windows) (if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz) else dist.jreLinuxX64Gz)) { spec ->
+                        copySpec.from(project.tarTree(if (dist.windows) (if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz) else (if (dist.x64) dist.jreLinuxX64Gz else dist.jreLinuxI586Gz))) { spec ->
                             spec.eachFile {
                                 it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
                             }
                             spec.includeEmptyDirs = false
                         }
+                        distribution.distributionBaseName.set("${project.name}-linux-${if (dist.x64) "x64" else "x86"}")
+                    } else {
+                        distribution.distributionBaseName.set("${project.name}-linux")
                     }
                     copySpec.from(File(project.buildDir, "service").absolutePath)
                 }
@@ -233,7 +261,13 @@ class DistPlugin : Plugin<Project> {
                         val dest = project.file("" + project.buildDir + "/install")
                         val updateDir = File(dest, "update")
                         require(dist.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                        compareUpdate(project, updateDir, project.file(dist.distOldPath), File(dest, distribution.distributionBaseName.get()), false)
+                        compareUpdate(
+                            project,
+                            updateDir,
+                            project.file(dist.distOldPath),
+                            File(dest, distribution.distributionBaseName.get()),
+                            false
+                        )
                     }
                 }
 
@@ -253,12 +287,14 @@ class DistPlugin : Plugin<Project> {
                 val encoding = "-Dfile.encoding=UTF-8"
                 application.applicationDefaultJvmArgs += encoding
                 val nativeLibArgs = if (dist.includeNative) {
-                    val nativeLibArgs = "-Djava.library.path=${project.file(dist.nativePath).absolutePath}"
+                    val nativeLibArgs =
+                        "-Djava.library.path=${project.file(dist.nativePath).absolutePath}"
                     application.applicationDefaultJvmArgs += nativeLibArgs
                     nativeLibArgs
                 } else ""
                 application.applicationDefaultJvmArgs += dist.jvmArgs.filter { it.isNotBlank() && encoding != it }
-                application.applicationDefaultJvmArgs = application.applicationDefaultJvmArgs.distinct()
+                application.applicationDefaultJvmArgs =
+                    application.applicationDefaultJvmArgs.distinct()
 
                 project.tasks.getByName("test") { task ->
                     task as Test
@@ -278,30 +314,37 @@ class DistPlugin : Plugin<Project> {
                         var windowsScriptText = it.windowsScript.readText()
                         if (dist.unwrapResources) {
                             unixScriptText = unixScriptText
-                                    .replace("\$APP_HOME/lib/conf", "\$APP_HOME/conf")
+                                .replace("\$APP_HOME/lib/conf", "\$APP_HOME/conf")
                             windowsScriptText = windowsScriptText
-                                    .replace("%APP_HOME%\\lib\\conf", "%APP_HOME%\\conf")
+                                .replace("%APP_HOME%\\lib\\conf", "%APP_HOME%\\conf")
                         }
                         if (dist.includeNative) {
                             unixScriptText = unixScriptText
-                                    .replace(nativeLibArgs, "-Djava.library.path=\$APP_HOME/native")
+                                .replace(nativeLibArgs, "-Djava.library.path=\$APP_HOME/native")
                             windowsScriptText = windowsScriptText
-                                    .replace(nativeLibArgs, "-Djava.library.path=%APP_HOME%\\native")
+                                .replace(nativeLibArgs, "-Djava.library.path=%APP_HOME%\\native")
                         }
                         if (dist.includeJre) {
                             if (dist.windows)
                                 windowsScriptText = windowsScriptText
-                                        .replace("set APP_HOME=%DIRNAME%..", "set APP_HOME=%DIRNAME%..\r\nset JAVA_HOME=%APP_HOME%\\jre")
+                                    .replace(
+                                        "set APP_HOME=%DIRNAME%..",
+                                        "set APP_HOME=%DIRNAME%..\r\nset JAVA_HOME=%APP_HOME%\\jre"
+                                    )
                             else
                                 unixScriptText = unixScriptText
-                                        .replace("APP_HOME=\"`pwd -P`\"", "APP_HOME=\"`pwd -P`\"\nJAVA_HOME=\"\$APP_HOME/jre\"")
+                                    .replace(
+                                        "APP_HOME=\"`pwd -P`\"",
+                                        "APP_HOME=\"`pwd -P`\"\nJAVA_HOME=\"\$APP_HOME/jre\""
+                                    )
                         }
 
                         it.unixScript.writeText(unixScriptText)
                         it.windowsScript.writeText(windowsScriptText)
 
                         //startup.sh
-                        writeServiceFile(project, "startup.sh", """
+                        writeServiceFile(
+                            project, "startup.sh", """
 #!/usr/bin/env sh
 
 # Attempt to set APP_HOME
@@ -325,10 +368,12 @@ cd ${'$'}APP_HOME
 mkdir -p "${'$'}APP_HOME/logs"
 nohup "${'$'}APP_HOME/bin/${project.name}" 1>/dev/null 2>"${'$'}APP_HOME/logs/error.log" &
 ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'
-""")
+"""
+                        )
 
                         //shutdown.sh
-                        writeServiceFile(project, "shutdown.sh", """
+                        writeServiceFile(
+                            project, "shutdown.sh", """
 #!/usr/bin/env sh
 
 # Attempt to set APP_HOME
@@ -357,9 +402,11 @@ then
     echo "${'$'}id"
     done
 fi
-""")
+"""
+                        )
                         //${project.name}-install
-                        writeServiceFile(project, "${project.name}-install", """
+                        writeServiceFile(
+                            project, "${project.name}-install", """
 #!/usr/bin/env sh
 
 # Attempt to set APP_HOME
@@ -436,10 +483,12 @@ EOF
   sudo systemctl enable ${project.name}.service
   sudo systemctl start ${project.name}.service
 fi
-""")
+"""
+                        )
 
                         //${project.name}-uninstall
-                        writeServiceFile(project, "${project.name}-uninstall", """
+                        writeServiceFile(
+                            project, "${project.name}-uninstall", """
 #!/usr/bin/env sh
 
 if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
@@ -451,14 +500,21 @@ else
   sudo systemctl disable ${project.name}.service
   sudo rm -f /etc/systemd/system/${project.name}.service
 fi
-""")
+"""
+                        )
                     }
                 }
             }
         }
     }
 
-    private fun compareUpdate(project: Project, updateDir: File, oldDir: File, newDir: File, isWindows: Boolean) {
+    private fun compareUpdate(
+        project: Project,
+        updateDir: File,
+        oldDir: File,
+        newDir: File,
+        isWindows: Boolean
+    ) {
         updateDir.deleteRecursively()
         updateDir.mkdirs()
         val olds = oldDir.walkTopDown().filter { it.isFile }
@@ -476,7 +532,8 @@ fi
             }
             deleteFileList.printWriter().use { pw ->
                 olds.forEach {
-                    val subPath = it.absolutePath.substringAfter(oldDir.absolutePath + File.separator)
+                    val subPath =
+                        it.absolutePath.substringAfter(oldDir.absolutePath + File.separator)
                     val newFile = File(newDir, subPath)
                     if (!newFile.exists()) {
                         pw.println(subPath)
@@ -522,7 +579,12 @@ fi
         return BigInteger(1, digest.digest()).toString(16)
     }
 
-    private fun writeServiceFile(project: Project, fileName: String, text: String, executable: Boolean = true) {
+    private fun writeServiceFile(
+        project: Project,
+        fileName: String,
+        text: String,
+        executable: Boolean = true
+    ) {
         val serviceScript = File(project.buildDir, "service/$fileName")
         if (!serviceScript.parentFile.exists()) {
             serviceScript.parentFile.mkdirs()
@@ -535,8 +597,8 @@ fi
     }
 
     private fun findProperty(project: Project, key: String) =
-            (project.findProperty("dist.${project.name}.$key") as? String
-                    ?: project.findProperty("dist.$key") as? String)
+        (project.findProperty("dist.${project.name}.$key") as? String
+            ?: project.findProperty("dist.$key") as? String)
 
     companion object {
         private const val CREATE_WINDOWS_SERVICE_TASK_NAME = "createWindowsService"

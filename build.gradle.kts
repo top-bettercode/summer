@@ -103,6 +103,10 @@ allprojects {
     }
 
     tasks {
+        build {
+            setDependsOn(listOf("testClasses"))
+        }
+
         "test"(Test::class) {
             useJUnitPlatform()
         }
