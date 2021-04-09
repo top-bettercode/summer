@@ -44,7 +44,7 @@ class AutoSignFilter(private val apiSignProperties: ApiSignProperties,
             return Enumerator(names)
         }
 
-        override fun getHeader(name: String): String {
+        override fun getHeader(name: String): String? {
             return if (apiSignProperties.parameterName == name) {
                 sign
             } else {
