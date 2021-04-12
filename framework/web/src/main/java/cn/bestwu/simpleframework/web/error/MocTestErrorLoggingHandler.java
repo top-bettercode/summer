@@ -4,13 +4,16 @@ import cn.bestwu.lang.util.StringUtil;
 import cn.bestwu.logging.RequestLoggingHandler;
 import cn.bestwu.logging.operation.Operation;
 import cn.bestwu.logging.operation.OperationResponse;
+import cn.bestwu.simpleframework.web.RespEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.HandlerMethod;
 
@@ -41,8 +44,21 @@ public class MocTestErrorLoggingHandler implements RequestLoggingHandler {
             .getErrorAttributes(webRequest, false);
         if (response.getContent().length == 0) {
           try {
-            response.setContent(
-                StringUtil.getINDENT_OUTPUT_OBJECT_MAPPER().writeValueAsBytes(errorAttributes));
+            Boolean isPlainText = (Boolean) webRequest
+                .getAttribute(ErrorAttributes.IS_PLAIN_TEXT_ERROR,
+                    RequestAttributes.SCOPE_REQUEST);
+            if (isPlainText != null && isPlainText) {
+              String msg = (String) errorAttributes.get(RespEntity.KEY_MESSAGE);
+              if (msg == null) {
+                msg = "";
+              }
+              response.setContent(msg.getBytes(
+                  StandardCharsets.UTF_8));
+            } else {
+              response.setContent(
+                  StringUtil.getINDENT_OUTPUT_OBJECT_MAPPER().writeValueAsBytes(errorAttributes));
+            }
+
           } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
           }
