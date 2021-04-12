@@ -3,6 +3,7 @@ package cn.bestwu.simpleframework.web;
 import cn.bestwu.lang.util.ParameterUtil;
 import cn.bestwu.lang.util.Sha1DigestUtil;
 import cn.bestwu.simpleframework.support.DeviceUtil;
+import cn.bestwu.simpleframework.web.error.ErrorAttributes;
 import cn.bestwu.simpleframework.web.resolver.ModifyModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,6 +78,10 @@ public class BaseController extends Response {
     } catch (JsonProcessingException e) {
       return ok(object);
     }
+  }
+
+  public void plainTextError() {
+    request.setAttribute(ErrorAttributes.IS_PLAIN_TEXT_ERROR, true);
   }
 
   /**
