@@ -47,6 +47,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
 
   private static final Logger log = LoggerFactory.getLogger(ErrorAttributes.class);
 
+  public static final String IS_PLAIN_TEXT_ERROR =ErrorAttributes.class.getName()+".plainText";
   private final MessageSource messageSource;
   private final List<IErrorHandler> errorHandlers;
   private static PropertiesSource propertiesSource = PropertiesSource

@@ -6,6 +6,7 @@ import cn.bestwu.logging.annotation.NoRequestLogging;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
 import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
 import cn.bestwu.simpleframework.web.ICaptchaService;
+import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.error.CustomErrorController;
 import cn.bestwu.simpleframework.web.error.DataErrorHandler;
 import cn.bestwu.simpleframework.web.error.ErrorAttributes;
@@ -108,9 +109,15 @@ public class FrameworkMvcConfiguration {
         if (response.getContentType() == null) {
           response.setContentType(getContentType());
         }
-        String result = objectMapper.writeValueAsString(model);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().append(result);
+        Boolean isPlainText = (Boolean) request.getAttribute(ErrorAttributes.IS_PLAIN_TEXT_ERROR);
+        if (isPlainText != null && isPlainText) {
+          response.setContentType(MediaType.TEXT_HTML_VALUE);
+          response.getWriter().append((String) model.get(RespEntity.KEY_MESSAGE));
+        } else {
+          String result = objectMapper.writeValueAsString(model);
+          response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+          response.getWriter().append(result);
+        }
       }
     };
   }
