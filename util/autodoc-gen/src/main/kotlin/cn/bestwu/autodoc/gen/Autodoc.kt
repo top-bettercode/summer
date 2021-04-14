@@ -14,6 +14,9 @@ object Autodoc {
      */
     @JvmStatic
     var name: String = ""
+
+    @JvmStatic
+    var version: String =""
     /**
      * 相关数据表名
      */
