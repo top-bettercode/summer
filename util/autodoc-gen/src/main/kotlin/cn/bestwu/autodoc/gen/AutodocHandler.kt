@@ -54,7 +54,7 @@ class AutodocHandler(private val genProperties: GenProperties, private val signP
                     return
                 }
                 //生成相应数据
-                val projectModuleDic = File(genProperties.source, genProperties.version)
+                val projectModuleDic = File(genProperties.source, if(Autodoc.version.isNotBlank()) Autodoc.version else genProperties.version)
                 projectModuleDic.mkdirs()
                 val module = cache.getOrPut(projectModuleDic) {
                     DocModule(null, projectModuleDic)
