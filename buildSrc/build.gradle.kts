@@ -27,6 +27,6 @@ dependencies {
 
     implementation("com.querydsl:querydsl-apt:4.3.0:jpa")
 
-    implementation("cn.bestwu.summer:publish-plugin:0.0.7-SNAPSHOT")
+    implementation("cn.bestwu.summer:publish-plugin:0.0.8-SNAPSHOT")
     implementation("org.jfrog.buildinfo:build-info-extractor-gradle:4.15.1")
 }
