@@ -1,4 +1,3 @@
-import cn.bestwu.generator.dsl.Generator
 import java.io.PrintWriter
 
 /**

@@ -65,7 +65,7 @@ open class Controller : ModuleJavaGenerator() {
                     JavaType("cn.bestwu.util.excel.ExcelField<$className, ?>[]"),
                     isFinal = true
                 ) {
-                    initializationString = "ArrayUtil.of(\n";
+                    initializationString = "ArrayUtil.of(\n"
                     val size = columns.size
                     columns.forEachIndexed { i, it ->
                         val code =

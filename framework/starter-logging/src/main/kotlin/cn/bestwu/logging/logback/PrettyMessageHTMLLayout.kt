@@ -134,7 +134,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         return buf.toString()
     }
 
-    override fun startNewTableIfLimitReached(sbuf: java.lang.StringBuilder) {
+    override fun startNewTableIfLimitReached(sbuf: StringBuilder) {
         if (counter >= 10000L) {
             counter = 0L
             sbuf.append("</table>")

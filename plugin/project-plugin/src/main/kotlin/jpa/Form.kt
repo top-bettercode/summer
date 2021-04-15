@@ -1,7 +1,5 @@
 import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.InnerClass
 import cn.bestwu.generator.dom.java.element.Parameter
-import cn.bestwu.generator.dom.java.element.JavaVisibility
 
 /**
  * @author Peter Wu

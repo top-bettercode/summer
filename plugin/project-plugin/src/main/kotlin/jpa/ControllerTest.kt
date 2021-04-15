@@ -168,7 +168,7 @@ open class ControllerTest : ModuleJavaGenerator() {
                 annotation("@org.junit.jupiter.api.Order(4)")
                 exception(JavaType("Exception"))
                 +"requires(\"${primaryKeyName}\");"
-                +"${primaryKeyType.shortName} ${primaryKeyName} = $insertName().get${primaryKeyName.capitalize()}();"
+                +"${primaryKeyType.shortName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
                 +"mockMvc.perform(post(\"/$pathName/update\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 columns.forEach {
@@ -188,7 +188,7 @@ open class ControllerTest : ModuleJavaGenerator() {
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(5)")
                 exception(JavaType("Exception"))
-                +"${primaryKeyType.shortName} ${primaryKeyName} = $insertName().get${primaryKeyName.capitalize()}();"
+                +"${primaryKeyType.shortName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
                 +"mockMvc.perform(post(\"/$pathName/delete\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 +").andExpect(status().isOk());"

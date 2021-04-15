@@ -50,7 +50,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   public static final String IS_PLAIN_TEXT_ERROR =ErrorAttributes.class.getName()+".plainText";
   private final MessageSource messageSource;
   private final List<IErrorHandler> errorHandlers;
-  private static PropertiesSource propertiesSource = PropertiesSource
+  private static final PropertiesSource propertiesSource = PropertiesSource
       .of("default-exception-handle", "exception-handle");
 
   public ErrorAttributes(List<IErrorHandler> errorHandlers,

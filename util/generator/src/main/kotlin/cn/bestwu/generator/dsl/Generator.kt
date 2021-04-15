@@ -220,13 +220,13 @@ abstract class Generator {
 
 
     fun Column.setValue(value: String): String {
-        return when {
-            javaType.shortName == "Boolean" -> "Boolean.valueOf($value)"
-            javaType.shortName == "Integer" -> "Integer.valueOf($value)"
-            javaType.shortName == "Long" -> "Long.valueOf($value)"
-            javaType.shortName == "Double" -> "Double.valueOf($value)"
-            javaType.shortName == "Float" -> "Float.valueOf($value)"
-            javaType.shortName == "BigDecimal" -> "new BigDecimal($value)"
+        return when (javaType.shortName) {
+            "Boolean" -> "Boolean.valueOf($value)"
+            "Integer" -> "Integer.valueOf($value)"
+            "Long" -> "Long.valueOf($value)"
+            "Double" -> "Double.valueOf($value)"
+            "Float" -> "Float.valueOf($value)"
+            "BigDecimal" -> "new BigDecimal($value)"
             else -> value
         }
     }

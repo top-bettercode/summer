@@ -3,9 +3,6 @@ package cn.bestwu.generator.database.entity
 import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.dom.java.JavaType
 import cn.bestwu.generator.dom.java.JavaTypeResolver
-import cn.bestwu.generator.dom.java.PrimitiveTypeWrapper
-import cn.bestwu.generator.dsl.DicCodes
-import cn.bestwu.generator.dsl.Generator
 
 /**
  * 字段

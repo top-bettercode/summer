@@ -33,7 +33,7 @@ class AutoSignFilter(private val apiSignProperties: ApiSignProperties,
     }
 
     internal inner class SignHttpServletRequestWrapper(request: HttpServletRequest?) : HttpServletRequestWrapper(request) {
-        private val sign: String
+        private val sign: String = apiSignAlgorithm.sign(request!!)
         override fun getHeaderNames(): Enumeration<String> {
             val names: MutableList<String> = ArrayList()
             val headerNames = super.getHeaderNames()
@@ -60,14 +60,5 @@ class AutoSignFilter(private val apiSignProperties: ApiSignProperties,
             }
         }
 
-        /**
-         * Constructs a request object wrapping the given request.
-         *
-         * @param request The request to wrap
-         * @throws IllegalArgumentException if the request is null
-         */
-        init {
-            sign = apiSignAlgorithm.sign(request!!)
-        }
     }
 }
