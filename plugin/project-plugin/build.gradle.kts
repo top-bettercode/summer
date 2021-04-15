@@ -2,11 +2,10 @@ import java.util.stream.Collectors
 
 plugins {
     `java-library`
-    `kotlin-dsl`
 }
 
 dependencies {
-    api("org.springframework.boot:spring-boot-gradle-plugin:2.2.5.RELEASE")
+    api("org.springframework.boot:spring-boot-gradle-plugin")
     api(project(":plugin:generator-plugin"))
     api(project(":plugin:dist-plugin"))
     api(project(":plugin:profile-plugin"))
@@ -14,7 +13,7 @@ dependencies {
         exclude("ch.qos.logback", "logback-classic")
     }
     api("mysql:mysql-connector-java")
-    api("com.oracle.database.jdbc:ojdbc8:19.7.0.0")
+    api("com.oracle.database.jdbc:ojdbc8")
     api(fileTree(mapOf("dir" to "libs")))
 }
 

@@ -7,9 +7,6 @@ import groovy.util.NodeList
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
-import org.gradle.api.artifacts.dsl.ArtifactHandler
-import org.gradle.api.internal.plugins.UploadRule
-import org.gradle.api.plugins.BasePlugin.UPLOAD_ARCHIVES_TASK_NAME
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.publish.PublishingExtension
@@ -18,7 +15,6 @@ import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
-import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
 import org.jfrog.gradle.plugin.artifactory.dsl.DoubleDelegateWrapper
@@ -175,23 +171,6 @@ abstract class AbstractPlugin : Plugin<Project> {
             }
 
         }
-    }
-
-    /**
-     * 配置 maven publish
-     */
-    private fun configureUploadArchives(project: Project) {
-        project.artifacts(closureOf<ArtifactHandler> {
-            add("archives", project.tasks.getByName("javadocJar"))
-            add("archives", project.tasks.getByName("sourcesJar"))
-        })
-        println(project.tasks.getAt("publish")::class.java)
-        project.extensions.configure(SigningExtension::class.java) {
-            it.isRequired = !((project.version as? String)?.endsWith("-SNAPSHOT") ?: true)
-            it.sign(project.configurations.getByName("archives"))
-        }
-
-        UploadRule(project).apply(UPLOAD_ARCHIVES_TASK_NAME)
     }
 
     /**

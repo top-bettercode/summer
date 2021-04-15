@@ -8,12 +8,12 @@ repositories {
     mavenLocal()
     maven("https://maven.aliyun.com/repository/gradle-plugin")
     maven("https://maven.aliyun.com/repository/public")
-    jcenter()
+    mavenCentral()
     gradlePluginPortal()
     maven("https://oss.jfrog.org/oss-snapshot-local")
 }
 
-val kotlinVersion = "1.4.20"
+val kotlinVersion = "1.4.32"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")

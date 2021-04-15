@@ -94,9 +94,9 @@ object AsciidocGenerator : AbstractbGenerator() {
         val pw = StringBuilder()
         autodoc.listModuleNames { name, pyname ->
             if (name != currentName) {
-                pw.appendln()
-                pw.appendln("[[_${pynames.pyname(name)}]]")
-                pw.appendln("== link:$pyname.html[$name]")
+                pw.appendLine()
+                pw.appendLine("[[_${pynames.pyname(name)}]]")
+                pw.appendLine("== link:$pyname.html[$name]")
             }
         }
         return pw.toString()
@@ -330,7 +330,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         out.append(" 3+|${str(field.description, true)}")
 
         out.append("|${str(if (field.children.isNotEmpty()) "" else field.value)}")
-        out.appendln()
+        out.appendLine()
         var size = 1
         field.children.forEach {
             size += writeResp(out, it, depth + 1)
@@ -345,7 +345,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         out.append("|${str(field.description, true)}")
         out.append("|${str(field.defaultVal)}")
         out.append("|${str(field.value)}")
-        out.appendln()
+        out.appendLine()
         var size = 1
         field.children.forEach {
             size += writeParam(out, it, depth + 1)

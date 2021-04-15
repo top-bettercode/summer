@@ -116,8 +116,8 @@ class DicCodeGen(private val project: Project) {
         codeTypes().forEach { (codeType, v) ->
             val codeTypeName = v.name
             docFile.appendText("|$codeType|$codeTypeName\n")
-            docText.appendln(".$codeTypeName($codeType)")
-            docText.appendln(
+            docText.appendLine(".$codeTypeName($codeType)")
+            docText.appendLine(
                 """|===
 | 编码 | 说明
 """
@@ -156,7 +156,7 @@ class DicCodeGen(private val project: Project) {
                 val innerClass = InnerClass(JavaType("Const"))
                 innerClass(innerClass)
                 v.codes.forEach { (code, name) ->
-                    docText.appendln("|$code|$name")
+                    docText.appendLine("|$code|$name")
 
                     val codeFieldName = underscoreName(
                         if (code is Int || code.toString()
@@ -302,8 +302,8 @@ class DicCodeGen(private val project: Project) {
                         +"return (String) CodeTypes.getCodeService().getCode(ENUM_NAME, name);"
                 }
             }
-            docText.appendln("|===")
-            docText.appendln()
+            docText.appendLine("|===")
+            docText.appendLine()
             enumFile.parentFile.mkdirs()
             enumFile.writeText(codeEnum.formattedContent)
         }

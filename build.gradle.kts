@@ -38,7 +38,7 @@ allprojects {
         mavenLocal()
         maven("https://maven.aliyun.com/repository/public")
         maven("https://maven.aliyun.com/repository/gradle-plugin")
-        jcenter()
+        mavenCentral()
         gradlePluginPortal()
         maven("https://oss.jfrog.org/oss-snapshot-local")
     }
@@ -52,6 +52,8 @@ allprojects {
     }
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         dependencies {
+            dependency("org.springframework.boot:spring-boot-gradle-plugin:2.2.5.RELEASE")
+            dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
             dependency("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
             dependency("com.gradle.publish:plugin-publish-plugin:0.10.0")
