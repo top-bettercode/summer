@@ -9,7 +9,6 @@ import hudson.cli.CLI
 import org.atteo.evo.inflector.English
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.invoke
 import java.io.File
 import java.util.*
 
@@ -20,14 +19,14 @@ import java.util.*
 class Tools : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.tasks {
+        project.tasks.apply {
             val jenkinsJobs = project.property("jenkins.jobs")?.toString()?.split(",")
             val jenkinsServer = project.property("jenkins.server")?.toString()
             val jenkinsAuth = project.property("jenkins.auth")?.toString()
             if (!jenkinsJobs.isNullOrEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
                 create("jenkins[All]") {
-                    group = "tool"
-                    doLast {
+                    it.group = "tool"
+                    it.doLast {
                         jenkinsJobs.forEach { jobName ->
                             CLI._main(
                                 arrayOf(
@@ -50,8 +49,8 @@ class Tools : Plugin<Project> {
                         ""
                     )
                     create("jenkins[$jobTaskName]") {
-                        group = "tool"
-                        doLast {
+                        it.group = "tool"
+                        it.doLast {
                             CLI._main(
                                 arrayOf(
                                     "-s",
@@ -70,31 +69,31 @@ class Tools : Plugin<Project> {
             }
 
             create("dbMerge") {
-                group = "tool"
-                doLast {
+                it.group = "tool"
+                it.doLast {
                     val destFile: File = project.rootProject.file("database/init.sql")
                     val initBuilder = StringBuilder()
-                    initBuilder.appendln("SET NAMES 'utf8';")
-//                    initBuilder.appendln(project.rootProject.file("database/database.sql").readText())
+                    initBuilder.appendLine("SET NAMES 'utf8';")
+//                    initBuilder.appendLine(project.rootProject.file("database/database.sql").readText())
                     project.rootProject.file("database/ddl").listFiles()?.filter { it.isFile }
                         ?.forEach {
-                            initBuilder.appendln(it.readText())
+                            initBuilder.appendLine(it.readText())
                         }
                     project.rootProject.file("database/init").listFiles()?.filter { it.isFile }
                         ?.forEach {
-                            initBuilder.appendln(it.readText())
+                            initBuilder.appendLine(it.readText())
                         }
                     destFile.writeText(initBuilder.toString())
                 }
             }
         }
         project.subprojects {
-            val subProject = this
+            val subProject = it
             if (subProject.name == project.findProperty("tools.project") ?: "core") {
-                subProject.tasks {
+                subProject.tasks.apply {
                     create("genSerializationViews") {
-                        group = "gen"
-                        doLast {
+                        it.group = "gen"
+                        it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
                             val tableNames =
@@ -125,8 +124,8 @@ class Tools : Plugin<Project> {
                         }
                     }
                     create("printMapper") {
-                        group = "gen"
-                        doLast {
+                        it.group = "gen"
+                        it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
                             gen.generators = arrayOf(MapperPrint())
@@ -134,8 +133,8 @@ class Tools : Plugin<Project> {
                         }
                     }
                     create("printMybatisWhere") {
-                        group = "gen"
-                        doLast {
+                        it.group = "gen"
+                        it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
                             gen.generators = arrayOf(MybatisWherePrint())
@@ -144,8 +143,8 @@ class Tools : Plugin<Project> {
                     }
 
                     create("printSetter") {
-                        group = "gen"
-                        doLast {
+                        it.group = "gen"
+                        it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
                             gen.generators = arrayOf(SetterPrint(false))
@@ -154,8 +153,8 @@ class Tools : Plugin<Project> {
                     }
 
                     create("printSetter2") {
-                        group = "gen"
-                        doLast {
+                        it.group = "gen"
+                        it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
                             gen.generators = arrayOf(SetterPrint(true))
@@ -165,8 +164,8 @@ class Tools : Plugin<Project> {
 
 
                     create("printExcelField") {
-                        group = "gen"
-                        doLast {
+                        it.group = "gen"
+                        it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
                             gen.generators = arrayOf(ExcelFieldPrint())
@@ -174,8 +173,8 @@ class Tools : Plugin<Project> {
                         }
                     }
                     create("dbDoc") {
-                        group = "tool"
-                        doLast {
+                        it.group = "tool"
+                        it.doLast {
                             val dbDoc = DbDoc(subProject)
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
@@ -185,8 +184,8 @@ class Tools : Plugin<Project> {
                         }
                     }
                     create("dicCode") {
-                        group = "tool"
-                        doLast {
+                        it.group = "tool"
+                        it.doLast {
                             val propertiesFile =
                                 subProject.file("src/main/resources/default-dic-code.properties")
                             propertiesFile.parentFile.mkdirs()
@@ -207,8 +206,8 @@ class Tools : Plugin<Project> {
                         }
                     }
                     create("genErrorCode") {
-                        group = "tool"
-                        doLast {
+                        it.group = "tool"
+                        it.doLast {
                             val file = subProject.file("src/main/resources/error-code.properties")
                             if (file.exists()) {
                                 val gen =

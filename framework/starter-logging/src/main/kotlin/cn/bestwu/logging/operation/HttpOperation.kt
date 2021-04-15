@@ -20,24 +20,24 @@ object HttpOperation {
         val stringBuilder = StringBuilder("")
         val separatorLine = "------------------------------------------------------------"
         val marginLine = "============================================================"
-        stringBuilder.appendln(marginLine)
+        stringBuilder.appendLine(marginLine)
         if (output.collectionName.isNotBlank() || output.name.isNotBlank()) {
-            stringBuilder.appendln("${output.collectionName}/${output.name}")
+            stringBuilder.appendLine("${output.collectionName}/${output.name}")
         }
-        stringBuilder.appendln("REQUEST    TIME : ${format(output.request.dateTime)}")
-        stringBuilder.appendln("RESPONSE   TIME : ${format(output.response.dateTime)}")
-        stringBuilder.appendln("DURATION MILLIS : ${output.duration}")
-        stringBuilder.appendln(separatorLine)
+        stringBuilder.appendLine("REQUEST    TIME : ${format(output.request.dateTime)}")
+        stringBuilder.appendLine("RESPONSE   TIME : ${format(output.response.dateTime)}")
+        stringBuilder.appendLine("DURATION MILLIS : ${output.duration}")
+        stringBuilder.appendLine(separatorLine)
         stringBuilder.append(toString(output.request, output.protocol, format))
-        stringBuilder.appendln()
+        stringBuilder.appendLine()
         stringBuilder.append(toString(output.response, output.protocol, format))
         val stackTrace = output.response.stackTrace
         if (stackTrace.isNotBlank()) {
-            stringBuilder.appendln(separatorLine)
-            stringBuilder.appendln("StackTrace:")
-            stringBuilder.appendln(stackTrace)
+            stringBuilder.appendLine(separatorLine)
+            stringBuilder.appendLine("StackTrace:")
+            stringBuilder.appendLine(stackTrace)
         }
-        stringBuilder.appendln(marginLine)
+        stringBuilder.appendLine(marginLine)
         val toString = stringBuilder.toString()
         return if (format) {
             (if (format) Operation.LINE_SEPARATOR else "") + toString
@@ -46,17 +46,17 @@ object HttpOperation {
 
     fun toString(request: OperationRequest, protocol: String, format: Boolean): String {
         val stringBuilder = StringBuilder("")
-        stringBuilder.appendln("${request.method} ${getPath(request)} $protocol")
-        getHeaders(request).forEach { k, v -> stringBuilder.appendln("$k: ${v.joinToString()}") }
-        stringBuilder.appendln(getRequestBody(request, format))
+        stringBuilder.appendLine("${request.method} ${getPath(request)} $protocol")
+        getHeaders(request).forEach { k, v -> stringBuilder.appendLine("$k: ${v.joinToString()}") }
+        stringBuilder.appendLine(getRequestBody(request, format))
         return stringBuilder.toString()
     }
 
     fun toString(response: OperationResponse, protocol: String, format: Boolean): String {
         val stringBuilder = StringBuilder("")
-        stringBuilder.appendln("$protocol ${response.statusCode} ${HttpStatus.valueOf(response.statusCode).reasonPhrase}")
-        response.headers.forEach { k, v -> stringBuilder.appendln("$k: ${v.joinToString()}") }
-        stringBuilder.appendln(getResponseBody(response, format))
+        stringBuilder.appendLine("$protocol ${response.statusCode} ${HttpStatus.valueOf(response.statusCode).reasonPhrase}")
+        response.headers.forEach { k, v -> stringBuilder.appendLine("$k: ${v.joinToString()}") }
+        stringBuilder.appendLine(getResponseBody(response, format))
         return stringBuilder.toString()
     }
 
