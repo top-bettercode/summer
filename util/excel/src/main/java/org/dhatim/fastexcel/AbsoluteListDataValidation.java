@@ -7,7 +7,7 @@ import java.io.IOException;
  */
 public class AbsoluteListDataValidation implements DataValidation {
 
-  private String list;
+  private final String list;
 
   private final static String TYPE = "list";
   private final Range range;

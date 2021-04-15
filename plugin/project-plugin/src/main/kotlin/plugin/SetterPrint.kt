@@ -1,5 +1,3 @@
-import cn.bestwu.generator.dom.java.JavaType
-
 /**
  * @author Peter Wu
  */

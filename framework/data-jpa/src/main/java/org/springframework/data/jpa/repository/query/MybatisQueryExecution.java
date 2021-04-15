@@ -105,7 +105,7 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
 
       Pageable pageable = page.getPageable();
       return new SliceImpl<>(page.getContent(), pageable,
-          page.getTotalElements() > (pageable.getPageNumber() + 1) * pageable.getPageSize());
+          page.getTotalElements() > (long) (pageable.getPageNumber() + 1) * pageable.getPageSize());
     }
 
   }

@@ -559,7 +559,7 @@ public class ExcelExport {
       if (!dir.exists()) {
         dir.mkdirs();
       }
-      File tmpFile = new File(file + "-" + UUID.randomUUID().toString());
+      File tmpFile = new File(file + "-" + UUID.randomUUID());
       try (OutputStream outputStream = new FileOutputStream(tmpFile)) {
         consumer.accept(outputStream);
       }

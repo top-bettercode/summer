@@ -21,13 +21,12 @@ class SocketTestClient {
         //		con.setRequestMethod("GET");
 
 
-        val `is`: BufferedReader
         val writer = OutputStreamWriter(con.outputStream, "GB2312")
         writer.write("</TX>")
         writer.flush()
         writer.close()
         //		con.disconnect();
-        `is` = BufferedReader(InputStreamReader(con.inputStream, "GB18030"))
+        val `is`: BufferedReader = BufferedReader(InputStreamReader(con.inputStream, "GB18030"))
         val line = `is`.readLine()
         System.err.println(line)
     }

@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import org.gradle.api.Project
 import java.io.File
 import java.util.*
-import kotlin.collections.LinkedHashSet
 
 
 /**
@@ -87,7 +86,7 @@ class DicCodeGen(private val project: Project) {
     }
 
     private lateinit var docFile: File
-    private val docText = java.lang.StringBuilder()
+    private val docText = StringBuilder()
 
     private lateinit var packageName: String
 

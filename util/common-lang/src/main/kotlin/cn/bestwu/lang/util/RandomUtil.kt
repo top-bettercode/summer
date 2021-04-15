@@ -47,7 +47,12 @@ object RandomUtil {
     fun nextString(count: Int, chars: CharArray?): String {
         return if (chars == null) {
             next(count, 0, 0, letters = false, numbers = false, chars = null, random = RANDOM)
-        } else next(count, 0, chars.size, false, false, chars, RANDOM)
+        } else next(count, 0, chars.size,
+            letters = false,
+            numbers = false,
+            chars = chars,
+            random = RANDOM
+        )
     }
 
     /**

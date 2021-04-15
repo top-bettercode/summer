@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets
 import java.util.function.Function
 import java.util.regex.Pattern
 import javax.servlet.FilterChain
-import javax.servlet.ServletException
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import javax.servlet.http.Cookie
@@ -22,7 +21,7 @@ import javax.servlet.http.HttpServletResponse
 open class LogLoginPageGeneratingFilter(
     private val logDocAuthProperties: LogDocAuthProperties, private val logViewPath: String
 ) : GenericFilterBean() {
-    var loginPageUrl: String
+    var loginPageUrl: String = DEFAULT_LOGIN_PAGE_URL
     private var logoutSuccessUrl: String
     private var failureUrl: String
     private var authenticationUrl: String
@@ -308,17 +307,17 @@ open class LogLoginPageGeneratingFilter(
     companion object {
         const val DEFAULT_LOGIN_PAGE_URL = "/logs/login"
         const val ERROR_PARAMETER_NAME = "error"
-        val LOGGER_AUTH_KEY = "_key"
-        val TARGET_URL_KEY = "_targetUrl"
+        const val LOGGER_AUTH_KEY = "_key"
+        const val TARGET_URL_KEY = "_targetUrl"
         fun isAbsoluteUrl(url: String?): Boolean {
             if (url == null) {
                 return false
             }
-            val ABSOLUTE_URL = Pattern.compile(
+            val absoluteUrl = Pattern.compile(
                 "\\A[a-z0-9.+-]+://.*",
                 Pattern.CASE_INSENSITIVE
             )
-            return ABSOLUTE_URL.matcher(url).matches()
+            return absoluteUrl.matcher(url).matches()
         }
 
         private fun createError(isError: Boolean, message: String): String {
@@ -332,7 +331,6 @@ open class LogLoginPageGeneratingFilter(
     }
 
     init {
-        loginPageUrl = DEFAULT_LOGIN_PAGE_URL
         authenticationUrl = DEFAULT_LOGIN_PAGE_URL
         logoutSuccessUrl = "$DEFAULT_LOGIN_PAGE_URL?logout"
         failureUrl = "$DEFAULT_LOGIN_PAGE_URL?$ERROR_PARAMETER_NAME"

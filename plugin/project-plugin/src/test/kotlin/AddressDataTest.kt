@@ -1,8 +1,6 @@
-import org.gradle.api.DefaultTask
-import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.util.Properties
+import java.util.*
 
 /**
  *

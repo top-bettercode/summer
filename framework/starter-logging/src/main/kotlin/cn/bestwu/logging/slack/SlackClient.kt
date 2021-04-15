@@ -17,7 +17,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
-class SlackClient(private val authToken: String, private val logUrl: String?) {
+class SlackClient(private val authToken: String, logUrl: String?) {
 
     private val api = "https://slack.com/api/"
     private val log: Logger = LoggerFactory.getLogger(SlackClient::class.java)

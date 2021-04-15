@@ -361,6 +361,6 @@ object StringUtil {
             StringUtils.trimTrailingCharacter(
                 value, '0'
             ), '.'
-        ) else value;
+        ) else value
     }
 }

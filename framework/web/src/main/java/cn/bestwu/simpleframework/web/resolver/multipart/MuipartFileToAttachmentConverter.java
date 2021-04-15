@@ -72,13 +72,13 @@ public class MuipartFileToAttachmentConverter implements Converter<MultipartFile
       String extension = hasExtension ? FilenameUtil.getExtension(originalFilename) : "";
       String path;
       if (multipartProperties.isKeepOriginalFilename()) {
-        filePath += File.separator + UUID.randomUUID().toString() + File.separator;
+        filePath += File.separator + UUID.randomUUID() + File.separator;
         String nameWithoutExtension = StringUtils
             .trimAllWhitespace(FilenameUtil.getNameWithoutExtension(originalFilename));
         path = filePath + URLEncoder.encode(nameWithoutExtension, "UTF-8");
         filePath += nameWithoutExtension;
       } else {
-        filePath += File.separator + UUID.randomUUID().toString();
+        filePath += File.separator + UUID.randomUUID();
         path = filePath;
       }
       if (hasExtension) {

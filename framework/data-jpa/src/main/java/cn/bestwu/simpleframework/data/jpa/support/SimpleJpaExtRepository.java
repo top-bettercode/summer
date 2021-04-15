@@ -65,7 +65,7 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   private <S extends T> Specification<S> getSoftDeleteSpecification(Object value) {
-    return (Specification<S>) (root, query, builder) -> builder
+    return (root, query, builder) -> builder
         .equal(root.get(softDeleteSupport.getPropertyName()),
             value);
   }

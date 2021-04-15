@@ -1,7 +1,5 @@
 import cn.bestwu.generator.DataType
 import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.Parameter
-import cn.bestwu.generator.dsl.JavaGenerator
 
 /**
  * @author Peter Wu

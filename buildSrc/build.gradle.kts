@@ -13,11 +13,11 @@ repositories {
     maven("https://oss.jfrog.org/oss-snapshot-local")
 }
 
-val kotlin_version = "1.4.20"
+val kotlinVersion = "1.4.20"
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
-    implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
 
     implementation("org.springframework.boot:spring-boot-gradle-plugin:2.2.5.RELEASE")
 

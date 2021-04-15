@@ -15,7 +15,6 @@ import cn.bestwu.logging.operation.OperationRequestPart
 import org.atteo.evo.inflector.English
 import java.io.File
 import java.util.*
-import kotlin.collections.LinkedHashSet
 
 /**
  *
@@ -272,7 +271,7 @@ object InitField {
 }
 
 fun Map<String, Any?>.toFields(fields: Set<Field>, expand: Boolean = false): LinkedHashSet<Field> {
-    return this.mapTo(LinkedHashSet(), { (k, v) ->
+    return this.mapTo(LinkedHashSet()) { (k, v) ->
         val field = fields.field(k, v)
         if (expand) {
             val expandValue = field.value.toMap()
@@ -283,16 +282,16 @@ fun Map<String, Any?>.toFields(fields: Set<Field>, expand: Boolean = false): Lin
             }
         }
         field
-    })
+    }
 }
 
 fun Collection<OperationRequestPart>.toFields(fields: Set<Field>): LinkedHashSet<Field> {
     return this.mapTo(
-        LinkedHashSet(),
-        {
-            fields.field(it.name, it.contentAsString)
-                .apply { partType = if (it.submittedFileName == null) "text" else "file" }
-        })
+        LinkedHashSet()
+    ) {
+        fields.field(it.name, it.contentAsString)
+            .apply { partType = if (it.submittedFileName == null) "text" else "file" }
+    }
 }
 
 private fun Set<Field>.blankField(): Set<Field> {

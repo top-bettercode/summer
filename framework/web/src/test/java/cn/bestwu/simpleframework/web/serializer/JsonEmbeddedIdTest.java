@@ -47,6 +47,7 @@ public class JsonEmbeddedIdTest {
 
   static class UserKey implements Serializable {
 
+    private static final long serialVersionUID = 657590294630200671L;
     String id;
     String key;
 
