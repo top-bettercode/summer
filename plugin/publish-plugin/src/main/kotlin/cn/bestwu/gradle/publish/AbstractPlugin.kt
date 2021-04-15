@@ -141,6 +141,7 @@ abstract class AbstractPlugin : Plugin<Project> {
                     handler.maven { repository ->
                         repository.name = mavenRepoName
                         repository.url = URI(mavenRepoUrl)
+                        repository.isAllowInsecureProtocol = true
                         repository.credentials {
                             it.username = mavenRepoUsername
                             it.password = mavenRepoPassword
