@@ -13,7 +13,7 @@ repositories {
     maven("https://oss.jfrog.org/oss-snapshot-local")
 }
 
-val kotlin_version = "1.3.70"
+val kotlin_version = "1.4.20"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
