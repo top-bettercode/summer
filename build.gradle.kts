@@ -52,12 +52,15 @@ allprojects {
     }
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         dependencies {
+            val kotlinVersion = property("kotlin.version")
             dependency("org.springframework.boot:spring-boot-gradle-plugin:2.2.5.RELEASE")
             dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
             dependency("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
             dependency("com.gradle.publish:plugin-publish-plugin:0.10.0")
-            dependency("org.jetbrains.dokka:dokka-gradle-plugin:0.10.1")
+            dependency("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
+            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
+            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
 
             dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.15.1")
 
@@ -77,7 +80,6 @@ allprojects {
             dependency("org.asciidoctor:asciidoctorj-pdf:1.5.3")
 
 
-            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5")
             dependency("net.logstash.logback:logstash-logback-encoder:6.3")
             dependency("javax.mail:mail:1.4.7")
             dependency("com.github.axet:kaptcha:0.0.9")

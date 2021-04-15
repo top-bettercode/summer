@@ -16,11 +16,13 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.DokkaVersion
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
 import org.jfrog.gradle.plugin.artifactory.dsl.DoubleDelegateWrapper
 import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import java.net.URI
+import java.util.*
 
 /**
  * @author Peter Wu
@@ -68,15 +70,9 @@ abstract class AbstractPlugin : Plugin<Project> {
      * 配置dokkaDoc
      */
     protected fun dokkaTask(project: Project) {
-        project.tasks.create("dokkaJavadoc", DokkaTask::class.java) {
-            it.outputFormat = "javadoc"
-            it.outputDirectory = "${project.buildDir}/dokkaJavadoc"
-            it.configuration.apply {
-                noAndroidSdkLink = true
-                noJdkLink = true
-                noStdlibLink = true
-            }
-        }
+      val dokkaJavadoc=  project.tasks.findByName("dokkaJavadoc")
+        dokkaJavadoc as DokkaTask
+        dokkaJavadoc.plugins.dependencies.add(project.dependencies.create("org.jetbrains.dokka:kotlin-as-java-plugin:${DokkaVersion.version}"))
     }
 
     /**
