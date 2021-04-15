@@ -1,3 +1,5 @@
+import java.util.Properties
+
 configurations {
     all {
         resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)
@@ -13,9 +15,11 @@ repositories {
     maven("https://oss.jfrog.org/oss-snapshot-local")
 }
 
-val kotlinVersion = "1.4.32"
-
 dependencies {
+    val properties = Properties()
+    properties.load(project.file("../gradle.properties").inputStream())
+    val kotlinVersion = properties.getProperty("kotlin.version")
+
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
 
