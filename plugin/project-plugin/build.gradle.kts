@@ -1,3 +1,4 @@
+import java.util.stream.Collectors
 
 plugins {
     `java-library`
@@ -14,5 +15,12 @@ dependencies {
     }
     api("mysql:mysql-connector-java")
     api("com.oracle.database.jdbc:ojdbc8:19.7.0.0")
-    api(fileTree(mapOf("dir" to "lib")))
+    api(fileTree(mapOf("dir" to "libs")))
+}
+
+tasks {
+    "jar"(Jar::class) {
+        from(fileTree(mapOf("dir" to "libs")).files.stream().map { zipTree(it) }
+            .collect(Collectors.toList()))
+    }
 }
