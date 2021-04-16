@@ -39,7 +39,8 @@ open class MController : MModuleJavaGenerator() {
             method("list", returnType) {
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/list\", name = \"${remarks}列表\")")
                 parameter {
-                    type = JavaType("com.baomidou.mybatisplus.plugins.Page").typeArgument(entityType)
+                    type =
+                        JavaType("com.baomidou.mybatisplus.plugins.Page").typeArgument(entityType)
                     name = "page"
                 }
                 parameter {
@@ -54,9 +55,13 @@ open class MController : MModuleJavaGenerator() {
             method("info", JavaType.objectInstance) {
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/info\", name = \"${remarks}详情\")")
                 parameter {
-                    annotation("@javax.validation.constraints.NotNull")
                     name = primaryKeyName
                     type = primaryKeyType
+                    if (JavaType.stringInstance == type) {
+                        annotation("@javax.validation.constraints.NotBlank")
+                    } else {
+                        annotation("@javax.validation.constraints.NotNull")
+                    }
                 }
                 +"$className $entityName = ${projectEntityName}Service.selectById(${primaryKeyName});"
                 +"if ($entityName == null) {"
@@ -99,9 +104,13 @@ open class MController : MModuleJavaGenerator() {
             method("delete", JavaType.objectInstance) {
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/delete\", name = \"${remarks}删除\")")
                 parameter {
-                    annotation("@javax.validation.constraints.NotNull")
                     name = primaryKeyName
                     type = primaryKeyType
+                    if (JavaType.stringInstance == type) {
+                        annotation("@javax.validation.constraints.NotBlank")
+                    } else {
+                        annotation("@javax.validation.constraints.NotNull")
+                    }
                 }
                 +"${projectEntityName}Service.deleteById(${primaryKeyName});"
                 +"return noContent();"

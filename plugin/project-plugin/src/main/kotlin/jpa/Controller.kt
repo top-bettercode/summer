@@ -106,9 +106,13 @@ open class Controller : ModuleJavaGenerator() {
             method("info", JavaType.objectInstance) {
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/info\", name = \"详情\")")
                 parameter {
-                    annotation("@javax.validation.constraints.NotNull")
                     name = primaryKeyName
                     type = if (compositePrimaryKey) JavaType.stringInstance else primaryKeyType
+                    if (JavaType.stringInstance == type) {
+                        annotation("@javax.validation.constraints.NotBlank")
+                    } else {
+                        annotation("@javax.validation.constraints.NotNull")
+                    }
                 }
                 import("java.util.Optional")
                 +"$className $entityName = ${projectEntityName}Service.findById(${if (compositePrimaryKey) "new ${primaryKeyType.shortNameWithoutTypeArguments}($primaryKeyName)" else primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
@@ -147,9 +151,13 @@ open class Controller : ModuleJavaGenerator() {
             method("delete", JavaType.objectInstance) {
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/delete\", name = \"删除\")")
                 parameter {
-                    annotation("@javax.validation.constraints.NotNull")
                     name = primaryKeyName
                     type = if (compositePrimaryKey) JavaType.stringInstance else primaryKeyType
+                    if (JavaType.stringInstance == type) {
+                        annotation("@javax.validation.constraints.NotBlank")
+                    } else {
+                        annotation("@javax.validation.constraints.NotNull")
+                    }
                 }
                 +"${projectEntityName}Service.deleteById(${if (compositePrimaryKey) "new ${primaryKeyType.shortNameWithoutTypeArguments}($primaryKeyName)" else primaryKeyName});"
                 +"return noContent();"
