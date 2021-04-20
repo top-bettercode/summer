@@ -93,6 +93,8 @@ class DicCodeGen(private val project: Project) {
 
     fun setUp() {
         docFile = project.rootProject.file("doc/v1.0/编码类型.adoc")
+        if (!docFile.parentFile.exists())
+            docFile.parentFile.mkdirs()
         packageName = project.rootProject.property("app.packageName") as String
 
         docFile.printWriter().use { pw ->
