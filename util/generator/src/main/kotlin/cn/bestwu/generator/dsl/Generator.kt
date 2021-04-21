@@ -113,16 +113,16 @@ abstract class Generator {
                         true
                     )
                 }) javaName else (className + javaName.capitalize()).decapitalize()
-            val codeRemarks = codeRemarks
-            val codeTypeName = codeRemarks.substringBefore('(')
+            val prettyRemarks = prettyRemarks
+            val codeTypeName = prettyRemarks.substringBefore('(')
 
             val dicCodes = DicCodes(
                 codeType,
                 codeTypeName,
                 JavaType.stringInstance != javaType
             )
-            codeRemarks.substringAfter('(').substringBeforeLast(')').replace(" ", ",")
-                .replace(Regex(",+"), ",").split(",").filter { it.isNotBlank() }
+            prettyRemarks.substringAfter('(').substringBeforeLast(')')
+                .split(";").filter { it.isNotBlank() }
                 .forEach { item: String ->
                     val code = item.substringBefore(":").trim()
                     val name = item.substringAfter(":").trim()
