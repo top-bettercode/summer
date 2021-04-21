@@ -5,6 +5,7 @@ import cn.bestwu.generator.dom.java.element.Interface
 import cn.bestwu.generator.dom.java.element.JavaVisibility
 import cn.bestwu.generator.dom.java.element.TopLevelClass
 import cn.bestwu.generator.dsl.Generators
+import cn.bestwu.generator.puml.PumlConverter
 import hudson.cli.CLI
 import org.atteo.evo.inflector.English
 import org.gradle.api.Plugin
@@ -196,6 +197,7 @@ class Tools : Plugin<Project> {
                             //生成 properties
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
+                            PumlConverter.reformat(gen)
                             gen.generators =
                                 arrayOf(DicCodeProperties(propertiesFile, codeTypes))
                             gen.tableNames = arrayOf()

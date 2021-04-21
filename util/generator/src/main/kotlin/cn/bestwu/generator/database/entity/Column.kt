@@ -61,14 +61,37 @@ data class Column(
         }
     }
 
-    val codeRemarks: String
+    private val codeRemarks: String
         get() =
-            remarks.replace('（', '(').replace('）', ')').replace('：', ':').replace('，', ',')
-                .replace('；', ',').replace(' ', ',').replace(';', ',').replace(Regex(" *: *"), ":")
-                .replace(Regex(",+"), ",").replace(Regex(" +"), " ")
+            remarks.replace('（', '(').replace('）', ')').replace('：', ':')
+                .replace(Regex(" *: *"), ":").replace(Regex(" +"), " ")
+                .replace('；', ';').replace(' ', ';')
+
+    private val oldCodeRemarks: String
+        get() = codeRemarks.replace('，', ',')
+            .replace(Regex(",+"), ",")
+
+
+    val prettyRemarks: String
+        get() {
+            return when {
+                oldCodeRemarks.matches(Regex(".*\\((.*:.*[, ]?)+\\).*")) && !oldCodeRemarks.contains(
+                    ";"
+                ) -> {
+                    oldCodeRemarks.replace(",", ";")
+                }
+                isCodeField -> {
+                    codeRemarks
+                }
+                else -> {
+                    remarks
+                }
+            }
+        }
 
     val isCodeField: Boolean
-        get() = codeRemarks.matches(Regex(".*\\((.*:.*[, ]?)+\\).*"))
+        get() = codeRemarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
+
 
     val javaType: JavaType
         get() = JavaTypeResolver.calculateJavaType(this)!!
