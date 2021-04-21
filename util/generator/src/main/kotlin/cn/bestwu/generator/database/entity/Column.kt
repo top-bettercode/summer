@@ -65,7 +65,7 @@ data class Column(
         get() =
             remarks.replace('（', '(').replace('）', ')').replace('：', ':')
                 .replace(Regex(" *: *"), ":").replace(Regex(" +"), " ")
-                .replace('；', ';').replace(' ', ';')
+                .replace('；', ';').replace(' ', ';').replace(Regex(";+"), ";")
 
     private val oldCodeRemarks: String
         get() = codeRemarks.replace('，', ',')
