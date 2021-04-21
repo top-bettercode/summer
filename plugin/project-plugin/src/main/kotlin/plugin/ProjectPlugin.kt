@@ -8,18 +8,83 @@ import cn.bestwu.generator.dsl.Generators
 import cn.bestwu.generator.puml.PumlConverter
 import hudson.cli.CLI
 import org.atteo.evo.inflector.English
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.bundling.Zip
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.testing.Test
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+import org.springframework.boot.gradle.tasks.run.BootRun
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
+import profilesActive
 
 /**
  *
  * @author Peter Wu
  */
-class Tools : Plugin<Project> {
+class ProjectPlugin : Plugin<Project> {
+
+    private val pluginBundle: ResourceBundle = ResourceBundle.getBundle("summer-version")
 
     override fun apply(project: Project) {
+
+        project.description = project.property("application.name") as? String
+
+        project.allprojects.forEach { subProject ->
+            subProject.plugins.apply("org.jetbrains.kotlin.jvm")
+            subProject.plugins.apply("idea")
+            subProject.plugins.apply("java")
+
+            subProject.group = subProject.properties["app.packageName"] as String
+            subProject.version = subProject.properties["app.version"] as String
+
+//            idea
+            subProject.extensions.configure(org.gradle.plugins.ide.idea.model.IdeaModel::class.java) { idea ->
+                idea.module {
+                    it.inheritOutputDirs = false
+                    it.isDownloadJavadoc = false
+                    it.isDownloadSources = true
+                    val convention = subProject.convention.getPlugin(
+                        JavaPluginConvention::class.java
+                    )
+                    it.outputDir = convention.sourceSets
+                        .getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.outputDir
+                    it.testOutputDir = convention.sourceSets
+                        .getByName(SourceSet.TEST_SOURCE_SET_NAME).java.outputDir
+                }
+            }
+
+//            java
+            subProject.extensions.configure(org.gradle.api.plugins.JavaPluginExtension::class.java) { java ->
+                java.sourceCompatibility = JavaVersion.VERSION_1_8
+                java.targetCompatibility = JavaVersion.VERSION_1_8
+            }
+
+            subProject.repositories.apply {
+                mavenLocal()
+                maven { it.setUrl("https://maven.aliyun.com/repository/public") }
+                mavenCentral()
+                maven {
+                    it.setUrl("http://maven.wintruelife.com/nexus/content/repositories/snapshots")
+                    it.isAllowInsecureProtocol = true
+                }
+
+                maven { it.setUrl("https://oss.jfrog.org/oss-snapshot-local") }
+            }
+
+            subProject.tasks.apply {
+                named("build") {
+                    it.setDependsOn(listOf("testClasses"))
+                }
+            }
+        }
+
         project.tasks.apply {
             val jenkinsJobs = project.property("jenkins.jobs")?.toString()?.split(",")
             val jenkinsServer = project.property("jenkins.server")?.toString()
@@ -88,10 +153,142 @@ class Tools : Plugin<Project> {
                 }
             }
         }
-        project.plugins.apply("org.jetbrains.kotlin.jvm")
+
+
         project.subprojects {
             val subProject = it
-            subProject.plugins.apply("org.jetbrains.kotlin.jvm")
+
+            val mainProject =
+                !arrayOf("core").contains(subProject.name) && subProject.parent?.name != "util" && subProject.name != "util"
+            val needDocProject = subProject.parent?.name != "util" && subProject.name != "util"
+
+            subProject.plugins.apply {
+                apply("org.jetbrains.kotlin.jvm")
+                apply("summer.profile")
+                apply("summer.packageinfo")
+                apply("io.spring.dependency-management")
+            }
+            if (needDocProject) {
+                subProject.plugins.apply {
+                    apply("summer.generator")
+                    apply("summer.autodoc")
+                }
+            }
+            if (mainProject) {
+                subProject.plugins.apply {
+                    apply("org.springframework.boot")
+                    apply("application")
+                    apply("summer.dist")
+                }
+            }
+
+            subProject.configurations.apply {
+                filter {
+                    arrayOf(
+                        "implementation",
+                        "testImplementation"
+                    ).contains(it.name)
+                }.forEach {
+                    it.exclude(mapOf("group" to "org.codehaus.jackson"))
+                    it.exclude(
+                        mapOf(
+                            "group" to "com.vaadin.external.google",
+                            "module" to "android-json"
+                        )
+                    )
+                    it.exclude(
+                        mapOf(
+                            "group" to "org.junit.vintage",
+                            "module" to "junit-vintage-engine"
+                        )
+                    )
+                }
+                all {
+                    it.resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)
+                }
+            }
+
+            subProject.extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class.java) { ext ->
+                ext.imports {
+                    it.mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+                }
+
+                ext.dependencies {
+                    val summerVersion = pluginBundle.getString("summer.version")
+                    it.dependency("cn.bestwu.wechat:weixin-mp:0.9.7")
+                    it.dependency("cn.bestwu.wechat:weixin-app:0.9.7")
+                    it.dependency("com.alipay.sdk:alipay-sdk-java:3.4.49.ALL")
+                    it.dependency("com.aliyun:aliyun-java-sdk-core:4.2.2")
+                    it.dependency("com.aliyun:aliyun-java-sdk-dysmsapi:1.1.0")
+                    it.dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
+
+                    it.dependency("org.bouncycastle:bcpkix-jdk15on:1.62")
+                    it.dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.2")
+                    it.dependency("com.github.axet:kaptcha:0.0.9")
+                    it.dependency("net.sf.ehcache:ehcache:2.10.6")
+
+                    it.dependency("cn.bestwu.summer:api-sign:$summerVersion")
+                    it.dependency("cn.bestwu.summer:common-lang:$summerVersion")
+                    it.dependency("cn.bestwu.summer:starter-logging:$summerVersion")
+                    it.dependency("cn.bestwu.summer:autodoc-gen:$summerVersion")
+                    it.dependency("cn.bestwu.summer:excel:$summerVersion")
+
+                    it.dependency("cn.bestwu.summer:web:$summerVersion")
+                    it.dependency("cn.bestwu.summer:data-jpa:$summerVersion")
+                    it.dependency("cn.bestwu.summer:data-mybatis:$summerVersion")
+                    it.dependency("cn.bestwu.summer:security-server:$summerVersion")
+                    it.dependency("cn.bestwu.summer:security-resource:$summerVersion")
+
+                    it.dependency("org.dhatim:fastexcel-reader:0.10.11")
+                    it.dependency("org.apache.poi:poi-ooxml:4.0.0")
+                    it.dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
+                    it.dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.5.RELEASE")
+                    it.dependency("org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE")
+
+                }
+            }
+
+            subProject.dependencies.apply {
+                add(
+                    "annotationProcessor",
+                    "org.springframework.boot:spring-boot-configuration-processor"
+                )
+                add("compileOnly", "org.springframework.boot:spring-boot-configuration-processor")
+
+                if ("release" != subProject.profilesActive)
+                    add("implementation", "org.springframework.boot:spring-boot-starter-websocket")
+            }
+
+            subProject.tasks.apply {
+                named("test", Test::class.java) {
+                    it.useJUnitPlatform()
+                }
+
+                named("compileJava", JavaCompile::class.java) {
+                    it.options.compilerArgs.add("-Xlint:unchecked")
+                    it.options.encoding = "UTF-8"
+                }
+                if (mainProject) {
+                    named("bootRun", BootRun::class.java) {
+                        System.getProperties().forEach { t, u ->
+                            it.systemProperty(t as String, u)
+                        }
+                    }
+                    named("bootJar", BootJar::class.java) {
+                        it.launchScript()
+                    }
+                    named("distZip", Zip::class.java) {
+                        it.archiveFileName.set("${project.name}.zip")
+                    }
+                }
+
+                if (needDocProject && !mainProject) {
+                    named("asciidoc") { it.enabled = false }
+                    named("htmldoc") { it.enabled = false }
+                    named("postman") { it.enabled = false }
+                }
+            }
+
             if (subProject.name == project.findProperty("tools.project") ?: "core") {
                 subProject.tasks.apply {
                     create("genSerializationViews") {
