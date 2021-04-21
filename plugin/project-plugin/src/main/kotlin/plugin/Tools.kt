@@ -87,8 +87,10 @@ class Tools : Plugin<Project> {
                 }
             }
         }
+        project.plugins.apply("org.jetbrains.kotlin.jvm")
         project.subprojects {
             val subProject = it
+            subProject.plugins.apply("org.jetbrains.kotlin.jvm")
             if (subProject.name == project.findProperty("tools.project") ?: "core") {
                 subProject.tasks.apply {
                     create("genSerializationViews") {
