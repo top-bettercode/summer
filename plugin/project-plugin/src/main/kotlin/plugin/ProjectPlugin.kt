@@ -278,7 +278,7 @@ class ProjectPlugin : Plugin<Project> {
                         it.launchScript()
                     }
                     named("distZip", Zip::class.java) {
-                        it.archiveFileName.set("${project.name}.zip")
+                        it.archiveFileName.set("${subProject.name}.zip")
                     }
                 }
 
