@@ -331,9 +331,9 @@ private fun Set<Field>.findFuzzyField(
         name.endsWith("Url") -> name.substringBeforeLast("Url")
         name.endsWith("Urls") -> name.substringBeforeLast("Urls")
         name.endsWith("Path") -> name.substringBeforeLast("Path")
-        name.startsWith("start") -> name.substringAfter("Start")
+        name.startsWith("start") -> name.substringAfter("start").decapitalize()
         name.endsWith("Start") -> name.substringBeforeLast("Start")
-        name.startsWith("end") -> name.substringAfter("End")
+        name.startsWith("end") -> name.substringAfter("end").decapitalize()
         name.endsWith("End") -> name.substringBeforeLast("End")
         else -> {
             return null
