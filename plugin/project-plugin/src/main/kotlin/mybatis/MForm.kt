@@ -17,12 +17,6 @@ class MForm : MModuleJavaGenerator() {
                 +" */"
             }
 
-            implement {
-                + methodInfoType
-                +"java.io.Serializable"
-            }
-            serialVersionUID()
-
             field(name = "entity", type = entityType, isFinal = true) {
                 annotation("@com.fasterxml.jackson.annotation.JsonIgnore")
             }
