@@ -34,6 +34,11 @@ public @interface JsonUrl {
   boolean extended() default true;
 
   /**
+   * @return collection serialize as map
+   */
+  boolean asMap() default false;
+
+  /**
    * @return 字符串分隔符, 当分隔符不为空时，字符串以分隔符分隔后序列化为数组
    */
   String separator() default "";
