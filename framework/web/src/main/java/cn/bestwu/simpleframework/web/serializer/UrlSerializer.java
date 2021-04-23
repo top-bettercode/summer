@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
@@ -46,21 +47,24 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
   private final String formatExpression;
   private String urlFieldName;
   private final boolean useExtensionField;
+  private final boolean asMap;
   private final String separator;
   private final Class<? extends JsonUrlMapper> mapperType;
 
   public UrlSerializer() {
-    this(null, "", true, ",", null);
+    this(null, "", true, true, ",", null);
   }
 
   public UrlSerializer(String formatExpression, String urlFieldName,
       boolean useExtensionField,
+      boolean asMap,
       String separator,
       Class<? extends JsonUrlMapper> mapperType) {
     super(Object.class, false);
     this.formatExpression = formatExpression;
     this.urlFieldName = urlFieldName;
     this.useExtensionField = useExtensionField;
+    this.asMap = asMap;
     this.separator = separator;
     this.mapperType = mapperType;
   }
@@ -158,34 +162,32 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
       } else {
         String path = (String) value;
         String[] split = path.split(separator);
-        genArray(path, gen, mapper, split);
+        genCollection(path, gen, mapper, Arrays.stream(split));
       }
     } else if (type.isArray()) {
       Object[] array = (Object[]) value;
-      genArray(value, gen, mapper, array);
+      genCollection(value, gen, mapper, Arrays.stream(array));
     } else if (Collection.class.isAssignableFrom(type) && !Map.class
         .isAssignableFrom(type)) {
       Collection<?> array = (Collection<?>) value;
-      List<String> urls = array.stream().map(mapper::mapper).filter(StringUtils::hasText)
-          .map(o -> convert(o, formatExpression)).collect(
-              Collectors.toList());
-      genCollection(value, gen, urls);
+      genCollection(value, gen, mapper, array.stream());
     } else {
       throw new UnsupportedOperationException();
     }
 
   }
 
-  private void genArray(Object value, JsonGenerator gen, JsonUrlMapper mapper, Object[] array)
+  private void genCollection(Object value, JsonGenerator gen, JsonUrlMapper mapper,
+      Stream<?> stream)
       throws IOException {
-    List<String> urls = Arrays.stream(array).map(mapper::mapper).filter(StringUtils::hasText)
-        .map(s -> convert(s, formatExpression)).collect(
-            Collectors.toList());
-    genCollection(value, gen, urls);
-  }
-
-  private void genCollection(Object value, JsonGenerator gen, List<String> urls)
-      throws IOException {
+    List<Object> urls = stream.map(mapper::mapper).filter(StringUtils::hasText)
+        .map(s -> {
+          if (asMap) {
+            return new PathUrl(s, convert(s, formatExpression));
+          } else {
+            return convert(s, formatExpression);
+          }
+        }).collect(Collectors.toList());
     if (useExtensionField) {
       gen.writeObject(value);
       JsonStreamContext outputContext = gen.getOutputContext();
@@ -213,6 +215,7 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
         throw new RuntimeException("未注解@" + JsonUrl.class.getName());
       }
       return new UrlSerializer(annotation.value(), annotation.urlFieldName(), annotation.extended(),
+          annotation.asMap(),
           annotation.separator(), annotation.mapper());
     }
     return this;
