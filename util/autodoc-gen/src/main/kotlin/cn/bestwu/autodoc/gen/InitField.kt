@@ -331,6 +331,10 @@ private fun Set<Field>.findFuzzyField(
         name.endsWith("Url") -> name.substringBeforeLast("Url")
         name.endsWith("Urls") -> name.substringBeforeLast("Urls")
         name.endsWith("Path") -> name.substringBeforeLast("Path")
+        name.startsWith("start") -> name.substringAfter("Start")
+        name.endsWith("Start") -> name.substringBeforeLast("Start")
+        name.startsWith("end") -> name.substringAfter("End")
+        name.endsWith("End") -> name.substringBeforeLast("End")
         else -> {
             return null
         }
@@ -341,6 +345,10 @@ private fun Set<Field>.findFuzzyField(
         field.type = "String"
         field.defaultVal = ""
         field.description = field.description.split(Regex("[（(,:，：]"))[0]
+        if (name.startsWith("start") || name.endsWith("Start"))
+            field.description = "开始" + field.description
+        if (name.startsWith("end") || name.endsWith("End"))
+            field.description = "结束" + field.description
     }
     return field
 }
