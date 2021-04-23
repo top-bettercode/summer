@@ -34,7 +34,7 @@ class ProjectPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
 
-        project.description = project.property("application.name") as? String
+        project.description = project.findProperty("application.name") as? String
 
         project.allprojects.forEach { subProject ->
             subProject.plugins.apply("org.jetbrains.kotlin.jvm")
@@ -86,9 +86,9 @@ class ProjectPlugin : Plugin<Project> {
         }
 
         project.tasks.apply {
-            val jenkinsJobs = project.property("jenkins.jobs")?.toString()?.split(",")
-            val jenkinsServer = project.property("jenkins.server")?.toString()
-            val jenkinsAuth = project.property("jenkins.auth")?.toString()
+            val jenkinsJobs = project.findProperty("jenkins.jobs")?.toString()?.split(",")
+            val jenkinsServer = project.findProperty("jenkins.server")?.toString()
+            val jenkinsAuth = project.findProperty("jenkins.auth")?.toString()
             if (!jenkinsJobs.isNullOrEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
                 create("jenkins[All]") {
                     it.group = "tool"
