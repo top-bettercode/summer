@@ -82,7 +82,7 @@ open class MController : MModuleJavaGenerator() {
                 }
                 +"$className $entityName = ${projectEntityName}Form.getEntity();"
                 +"${projectEntityName}Service.insert($entityName);"
-                +"return ok($entityName);"
+                +"return noContent();"
             }
 
             //update
@@ -97,7 +97,7 @@ open class MController : MModuleJavaGenerator() {
                 import("org.springframework.util.Assert")
                 +"$className $entityName = ${projectEntityName}Form.getEntity();"
                 +"${projectEntityName}Service.updateById($entityName);"
-                +"return ok($entityName);"
+                +"return noContent();"
             }
 
             //delete
