@@ -240,7 +240,7 @@ class ProjectPlugin : Plugin<Project> {
                     it.dependency("cn.bestwu.summer:security-server:$summerVersion")
                     it.dependency("cn.bestwu.summer:security-resource:$summerVersion")
 
-                    it.dependency("org.dhatim:fastexcel-reader:0.10.11")
+                    it.dependency("org.dhatim:fastexcel-reader:0.12.9")
                     it.dependency("org.apache.poi:poi-ooxml:4.0.0")
                     it.dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
                     it.dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.5.RELEASE")
