@@ -19,7 +19,7 @@ public class ExcelRangeCell extends ExcelCell {
 
     this.firstRow = firstRow;
     this.newRange = newRange;
-    this.lastRangeBottom = lastRow ? row : row - 1;
+    this.lastRangeBottom = lastRow && !newRange ? row : row - 1;
     this.mergeLastRange = (newRange || lastRow) && lastRangeBottom > lastRangeTop;
     this.merge = excelField.isMerge();
     this.lastRangeTop = lastRangeTop;

@@ -510,15 +510,14 @@ public class ExcelField<T, P> {
     };
 
     cellConverter = (property) -> {
-      if (ClassUtils.isPrimitiveOrWrapper(propertyType) || propertyType == String.class
-          || propertyType == Date.class) {
+      if (propertyType == String.class || propertyType == Date.class) {
         return property;
+      } else if (propertyType == boolean.class || propertyType == Boolean.class) {
+        return (Boolean) property ? "是" : "否";
       } else if (propertyType == LocalDate.class) {
         return LocalDateTimeHelper.of((LocalDate) property).toDate();
       } else if (propertyType == LocalDateTime.class) {
         return LocalDateTimeHelper.of((LocalDateTime) property).toDate();
-      } else if (propertyType == boolean.class || propertyType == Boolean.class) {
-        return (Boolean) property ? "是" : "否";
       } else if (isDateField() && (propertyType == Long.class || propertyType == long.class)) {
         return LocalDateTimeHelper.of((Long) property).format(dateTimeFormatter);
       } else if (ClassUtils.isPrimitiveOrWrapper(propertyType)) {

@@ -7,9 +7,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.dhatim.fastexcel.AbsoluteListDataValidation;
 import org.dhatim.fastexcel.StyleSetter;
+import org.dhatim.fastexcel.TimestampUtil;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 import org.springframework.util.Assert;
@@ -280,7 +286,28 @@ public class ExcelExport {
     }
     style.set();
     Object cellValue = excelCell.getCellValue();
-    sheet.value(row, column, cellValue);
+
+    if (cellValue == null) {
+      sheet.value(row, column);
+    } else if (cellValue instanceof String) {
+      sheet.value(row, column, (String) cellValue);
+    } else if (cellValue instanceof Number) {
+      sheet.value(row, column, (Number) cellValue);
+    } else if (cellValue instanceof Boolean) {
+      sheet.value(row, column, (Boolean) cellValue);
+    } else if (cellValue instanceof Date) {
+      sheet.value(row, column, TimestampUtil.convertDate((Date) cellValue));
+    } else if (cellValue instanceof LocalDateTime) {
+      sheet.value(row, column, TimestampUtil.convertDate(
+          Date.from(((LocalDateTime) cellValue).atZone(ZoneId.systemDefault()).toInstant())));
+    } else if (cellValue instanceof LocalDate) {
+      sheet.value(row, column, TimestampUtil.convertDate((LocalDate) cellValue));
+    } else if (cellValue instanceof ZonedDateTime) {
+      sheet.value(row, column, TimestampUtil.convertZonedDateTime((ZonedDateTime) cellValue));
+    } else {
+      throw new IllegalArgumentException("No supported cell type for " + cellValue.getClass());
+    }
+
     double width = excelCell.getWidth();
     if (width == -1) {
       columnWidths.put(column, excelCell.isDateField() ? pattern : cellValue);
@@ -320,7 +347,6 @@ public class ExcelExport {
     int firstColumn = c;
 
     int index = 0;
-    int mergeIndex = 0;
     boolean mergeFirstColumn = excelFields[0].isMerge();
     Map<Integer, Object> lastMergeIds = new HashMap<>();
     Map<Integer, Integer> lastRangeTops = new HashMap<>();
@@ -328,14 +354,13 @@ public class ExcelExport {
       T e = converter.convert(iterator.next());
       boolean lastRow = !iterator.hasNext();
 
-      int lastRowRangeTop = firstRow;
-
       List<ExcelRangeCell> cells;
       if (mergeFirstColumn) {
         cells = null;
       } else {
         cells = new ArrayList<>();
       }
+      int mergeIndex = 0;
       for (ExcelField<T, ?> excelField : excelFields) {
         if (excelField.isMerge()) {
           Object mergeIdValue = excelField.mergeId(e);
@@ -345,28 +370,29 @@ public class ExcelExport {
             lastMergeIds.put(mergeIndex, mergeIdValue);
           }
 
-          int lastRangeTop = lastRangeTops.getOrDefault(mergeIndex, firstRow);
-
           if (mergeIndex == 0) {
             if (newRange) {
               index++;
             }
-            lastRowRangeTop = lastRangeTop;
           }
           if (lastRangeTops.getOrDefault(0, firstRow) == r) {
             newRange = true;
           }
 
+          int lastRangeTop = lastRangeTops.getOrDefault(mergeIndex, firstRow);
+
+          if (newRange) {
+            lastRangeTops.put(mergeIndex, r);
+          }
+
           ExcelRangeCell rangeCell = new ExcelRangeCell(r, c, index, firstRow, lastRow, excelField,
-              e, newRange, Math.max(lastRangeTop, lastRowRangeTop));
+              e, newRange, lastRangeTop);
           if (mergeFirstColumn) {
             setRangeCell(rangeCell);
           } else {
             cells.add(rangeCell);
           }
-          if (newRange) {
-            lastRangeTops.put(mergeIndex, r);
-          }
+
           mergeIndex++;
         } else {
           ExcelRangeCell rangeCell = new ExcelRangeCell(r, c, index, firstRow, lastRow, excelField,
@@ -385,7 +411,6 @@ public class ExcelExport {
           setRangeCell(cell);
         }
       }
-      mergeIndex = 0;
       c = firstColumn;
       r++;
     }
@@ -403,29 +428,24 @@ public class ExcelExport {
     if (excelCell.needRange()) {
       sheet.range(excelCell.getLastRangeTop(), column, excelCell.getLastRangeBottom(), column)
           .merge();
-      if (excelCell.isLastRow()) {
-        double width = excelCell.getWidth();
-        String pattern = excelCell.getPattern();
-        if (width == -1) {
-          sheet.width(column, columnWidths.width(column));
-        } else {
-          sheet.width(column, width);
-        }
-        StyleSetter style = sheet
-            .range(excelCell.getLastRangeTop(), column, excelCell.getLastRangeBottom(), column)
-            .style();
-        style.horizontalAlignment(excelCell.getAlign())
-            .verticalAlignment(Alignment.center.name())
-            .wrapText(wrapText)
-            .format(pattern)
-            .borderStyle("thin")
-            .borderColor("000000");
-
-        if (excelCell.isFillColor()) {
-          style.fillColor("F8F8F7");
-        }
-        style.set();
+      double width = excelCell.getWidth();
+      String pattern = excelCell.getPattern();
+      if (width == -1) {
+        sheet.width(column, columnWidths.width(column));
+      } else {
+        sheet.width(column, width);
       }
+      StyleSetter style = sheet
+          .range(excelCell.getLastRangeTop(), column, excelCell.getLastRangeBottom(), column)
+          .style();
+      style.horizontalAlignment(excelCell.getAlign())
+          .verticalAlignment(Alignment.center.name())
+          .wrapText(wrapText)
+          .format(pattern)
+          .borderStyle("thin")
+          .borderColor("000000");
+
+      style.set();
     }
   }
 

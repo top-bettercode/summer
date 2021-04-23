@@ -61,7 +61,7 @@ public class ExcelTest {
   }
 
   private final ExcelField<DataBean, ?>[] excelMergeFields = ArrayUtil.of(
-      ExcelField.<DataBean, Integer>index("序号").mergeBy(DataBean::getIntCode),
+      ExcelField.<DataBean, Integer>index("序号"),
       ExcelField.of("编码", DataBean::getIntCode).mergeBy(DataBean::getIntCode),
       ExcelField.of("编码B", DataBean::getInteger).mergeBy(DataBean::getInteger),
       ExcelField.of("名称", from -> new String[]{"abc", "1"}),
@@ -72,7 +72,7 @@ public class ExcelTest {
   @Test
   public void testMergeExport() throws IOException {
     List<DataBean> list = new ArrayList<>();
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 22; i++) {
       DataBean bean = new DataBean(i);
       list.add(bean);
     }
