@@ -35,9 +35,10 @@ class MEntity : MModuleJavaGenerator() {
             //constructor no args
             constructor {}
             //constructor with id
-            constructor(Parameter(primaryKeyName, primaryKey.javaType)) {
-                +"this.${primaryKeyName} = ${primaryKeyName};"
-            }
+            if (primaryKeys.size == 1)
+                constructor(Parameter(primaryKeyName, primaryKey.javaType)) {
+                    +"this.${primaryKeyName} = ${primaryKeyName};"
+                }
 
             columns.forEach {
                 //field
@@ -66,9 +67,6 @@ class MEntity : MModuleJavaGenerator() {
                             }
                 }
             }
-
-            //constructor no args
-            constructor {}
 
             columns.forEach {
                 //getter
