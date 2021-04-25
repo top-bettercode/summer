@@ -285,31 +285,36 @@ public class ExcelExport {
       style.fillColor("F8F8F7");
     }
     style.set();
-    Object cellValue = excelCell.getCellValue();
 
-    if (cellValue == null) {
-      sheet.value(row, column);
-    } else if (cellValue instanceof String) {
-      sheet.value(row, column, (String) cellValue);
-    } else if (cellValue instanceof Number) {
-      sheet.value(row, column, (Number) cellValue);
-    } else if (cellValue instanceof Boolean) {
-      sheet.value(row, column, (Boolean) cellValue);
-    } else if (cellValue instanceof Date) {
-      sheet.value(row, column, TimestampUtil.convertDate((Date) cellValue));
-    } else if (cellValue instanceof LocalDateTime) {
-      sheet.value(row, column, TimestampUtil.convertDate(
-          Date.from(((LocalDateTime) cellValue).atZone(ZoneId.systemDefault()).toInstant())));
-    } else if (cellValue instanceof LocalDate) {
-      sheet.value(row, column, TimestampUtil.convertDate((LocalDate) cellValue));
-    } else if (cellValue instanceof ZonedDateTime) {
-      sheet.value(row, column, TimestampUtil.convertZonedDateTime((ZonedDateTime) cellValue));
+    if (excelCell.needSetValue()) {
+      Object cellValue = excelCell.getCellValue();
+      if (cellValue == null) {
+        sheet.value(row, column);
+      } else if (cellValue instanceof String) {
+        sheet.value(row, column, (String) cellValue);
+      } else if (cellValue instanceof Number) {
+        sheet.value(row, column, (Number) cellValue);
+      } else if (cellValue instanceof Boolean) {
+        sheet.value(row, column, (Boolean) cellValue);
+      } else if (cellValue instanceof Date) {
+        sheet.value(row, column, TimestampUtil.convertDate((Date) cellValue));
+      } else if (cellValue instanceof LocalDateTime) {
+        sheet.value(row, column, TimestampUtil.convertDate(
+            Date.from(((LocalDateTime) cellValue).atZone(ZoneId.systemDefault()).toInstant())));
+      } else if (cellValue instanceof LocalDate) {
+        sheet.value(row, column, TimestampUtil.convertDate((LocalDate) cellValue));
+      } else if (cellValue instanceof ZonedDateTime) {
+        sheet.value(row, column, TimestampUtil.convertZonedDateTime((ZonedDateTime) cellValue));
+      } else {
+        throw new IllegalArgumentException("No supported cell type for " + cellValue.getClass());
+      }
     } else {
-      throw new IllegalArgumentException("No supported cell type for " + cellValue.getClass());
+      sheet.value(excelCell.getRow(), column);
     }
 
     double width = excelCell.getWidth();
     if (width == -1) {
+      Object cellValue = excelCell.getCellValue();
       columnWidths.put(column, excelCell.isDateField() ? pattern : cellValue);
       if (excelCell.isLastRow()) {
         sheet.width(column, columnWidths.width(column));
@@ -419,11 +424,7 @@ public class ExcelExport {
 
   private void setRangeCell(ExcelRangeCell excelCell) {
     int column = excelCell.getColumn();
-    if (excelCell.needSetValue()) {
-      setCell(excelCell);
-    } else {
-      sheet.value(excelCell.getRow(), column);
-    }
+    setCell(excelCell);
 
     if (excelCell.needRange()) {
       sheet.range(excelCell.getLastRangeTop(), column, excelCell.getLastRangeBottom(), column)
