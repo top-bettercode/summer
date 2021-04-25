@@ -53,6 +53,10 @@ public class ExcelCell {
     }
   }
 
+  public boolean needSetValue() {
+    return true;
+  }
+
   public void setIndex(int index) {
     this.fillColor = index % 2 == 0;
     if (indexColumn) {
