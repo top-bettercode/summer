@@ -86,7 +86,8 @@ class ProjectPlugin : Plugin<Project> {
         }
 
         project.tasks.apply {
-            val jenkinsJobs = project.findProperty("jenkins.jobs")?.toString()?.split(",")?.filter { it.isNotBlank() }
+            val jenkinsJobs = project.findProperty("jenkins.jobs")?.toString()?.split(",")
+                ?.filter { it.isNotBlank() }
             val jenkinsServer = project.findProperty("jenkins.server")?.toString()
             val jenkinsAuth = project.findProperty("jenkins.auth")?.toString()
             if (!jenkinsJobs.isNullOrEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
@@ -135,7 +136,7 @@ class ProjectPlugin : Plugin<Project> {
             }
 
             create("dbMerge") {
-                it.group = "tool"
+                it.group = "gen"
                 it.doLast {
                     val destFile: File = project.rootProject.file("database/init.sql")
                     val initBuilder = StringBuilder()
@@ -290,7 +291,9 @@ class ProjectPlugin : Plugin<Project> {
                 }
             }
 
-            if (subProject.name == project.findProperty("tools.project") ?: "core") {
+            val toolsProjects =
+                (project.findProperty("tools.project") ?: "core").toString().split(",")
+            if (toolsProjects.contains(subProject.name)) {
                 subProject.tasks.apply {
                     create("genSerializationViews") {
                         it.group = "gen"
@@ -374,7 +377,7 @@ class ProjectPlugin : Plugin<Project> {
                         }
                     }
                     create("dbDoc") {
-                        it.group = "tool"
+                        it.group = "gen"
                         it.doLast {
                             val dbDoc = DbDoc(subProject)
                             val gen =
@@ -385,7 +388,7 @@ class ProjectPlugin : Plugin<Project> {
                         }
                     }
                     create("dicCode") {
-                        it.group = "tool"
+                        it.group = "gen"
                         it.doLast {
                             val propertiesFile =
                                 subProject.file("src/main/resources/default-dic-code.properties")
@@ -408,7 +411,7 @@ class ProjectPlugin : Plugin<Project> {
                         }
                     }
                     create("genErrorCode") {
-                        it.group = "tool"
+                        it.group = "gen"
                         it.doLast {
                             val file = subProject.file("src/main/resources/error-code.properties")
                             if (file.exists()) {
