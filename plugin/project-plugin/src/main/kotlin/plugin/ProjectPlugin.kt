@@ -86,7 +86,7 @@ class ProjectPlugin : Plugin<Project> {
         }
 
         project.tasks.apply {
-            val jenkinsJobs = project.findProperty("jenkins.jobs")?.toString()?.split(",")
+            val jenkinsJobs = project.findProperty("jenkins.jobs")?.toString()?.split(",")?.filter { it.isNotBlank() }
             val jenkinsServer = project.findProperty("jenkins.server")?.toString()
             val jenkinsAuth = project.findProperty("jenkins.auth")?.toString()
             if (!jenkinsJobs.isNullOrEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
