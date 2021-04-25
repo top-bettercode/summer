@@ -32,13 +32,12 @@ public class ResponseEntityResponseTraceExtractor<T> implements
   @Override
   public T extractData(ClientHttpResponse response) throws IOException {
     if (this.delegate != null) {
-      if (log.isDebugEnabled()) {
+      if (log.isInfoEnabled()) {
         response = new ClientHttpResponseWrapper(response);
       }
       T body = this.delegate.extractData(response);
-      if (log.isDebugEnabled()) {
-        log.debug("response:{}",
-            ((ClientHttpResponseWrapper) response).getRecord());
+      if (log.isInfoEnabled()) {
+        log.info("response:{}", ((ClientHttpResponseWrapper) response).getRecord());
       }
       return body;
     } else {

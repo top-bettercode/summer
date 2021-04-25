@@ -16,7 +16,7 @@ import org.springframework.http.client.ClientHttpResponse;
  */
 public class ClientHttpRequestWrapper implements ClientHttpRequest {
 
-  private Logger log = LoggerFactory.getLogger(ClientHttpRequestWrapper.class);
+  private final Logger log = LoggerFactory.getLogger(ClientHttpRequestWrapper.class);
   private final ClientHttpRequest request;
   private final ByteArrayOutputStream record = new ByteArrayOutputStream();
 
@@ -27,9 +27,9 @@ public class ClientHttpRequestWrapper implements ClientHttpRequest {
   @Override
   public ClientHttpResponse execute() throws IOException {
     ClientHttpResponse response = request.execute();
-    if (log.isDebugEnabled()) {
-      log.debug("request heads:{}",request.getHeaders());
-      log.debug("request:{}", record.toString());
+    if (log.isInfoEnabled()) {
+      log.info("request heads:{}",request.getHeaders());
+      log.info("request:{}", record.toString());
     }
     return response;
   }
