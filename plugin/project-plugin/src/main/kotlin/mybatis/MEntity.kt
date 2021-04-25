@@ -1,5 +1,6 @@
 import cn.bestwu.generator.DataType
 import cn.bestwu.generator.dom.java.JavaType
+import cn.bestwu.generator.dom.java.element.Parameter
 
 /**
  * @author Peter Wu
@@ -30,6 +31,14 @@ class MEntity : MModuleJavaGenerator() {
                 +"java.io.Serializable"
             }
             serialVersionUID()
+
+            //constructor no args
+            constructor {}
+            //constructor with id
+            constructor(Parameter(primaryKeyName, primaryKey.javaType)) {
+                +"this.${primaryKeyName} = ${primaryKeyName};"
+            }
+
             columns.forEach {
                 //field
                 import(it.javaType)
