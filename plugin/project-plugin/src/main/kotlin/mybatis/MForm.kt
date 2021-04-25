@@ -54,7 +54,6 @@ class MForm : MModuleJavaGenerator() {
                             }
                         }
                     }
-                    annotation("@Override")
                     +"return this.entity.get${it.javaName.capitalize()}();"
                 }
             }
