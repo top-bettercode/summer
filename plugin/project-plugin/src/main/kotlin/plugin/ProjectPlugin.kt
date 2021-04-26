@@ -291,9 +291,7 @@ class ProjectPlugin : Plugin<Project> {
                 }
             }
 
-            val toolsProjects =
-                (project.findProperty("tools.project") ?: "core").toString().split(",")
-            if (toolsProjects.contains(subProject.name)) {
+            if (subProject.name == project.findProperty("tools.project") ?: "core") {
                 subProject.tasks.apply {
                     create("genSerializationViews") {
                         it.group = "gen"
