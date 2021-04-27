@@ -127,7 +127,7 @@ class GeneratorPlugin : Plugin<Project> {
         project.afterEvaluate {
             val extension = project.extensions.getByType(GeneratorExtension::class.java)
             if (extension.singleDatasource) {
-                if (!project.rootProject.tasks.names.contains("tableNames"))
+                if (!project.rootProject.tasks.names.contains("printTableNames"))
                     configPuml(project.rootProject, extension)
             } else {
                 configPuml(project, extension)
