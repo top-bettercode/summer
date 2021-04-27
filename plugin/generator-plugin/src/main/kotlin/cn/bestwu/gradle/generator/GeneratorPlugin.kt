@@ -136,7 +136,7 @@ class GeneratorPlugin : Plugin<Project> {
     }
 
     private fun configPuml(project: Project, extension: GeneratorExtension) {
-        project.tasks.create("tableNames") { task ->
+        project.tasks.create("printTableNames") { task ->
             task.group = "gen"
             task.doLast {
                 print(Generators.tableNames(extension).joinToString(","))

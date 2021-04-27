@@ -135,7 +135,7 @@ class ProjectPlugin : Plugin<Project> {
                 }
             }
 
-            create("dbMerge") {
+            create("genDbScript") {
                 it.group = "gen"
                 it.doLast {
                     val destFile: File = project.rootProject.file("database/init.sql")
@@ -374,7 +374,7 @@ class ProjectPlugin : Plugin<Project> {
                             Generators.call(gen)
                         }
                     }
-                    create("dbDoc") {
+                    create("genDbDoc") {
                         it.group = "gen"
                         it.doLast {
                             val dbDoc = DbDoc(subProject)
@@ -385,7 +385,7 @@ class ProjectPlugin : Plugin<Project> {
                             Generators.call(gen)
                         }
                     }
-                    create("dicCode") {
+                    create("genDicCode") {
                         it.group = "gen"
                         it.doLast {
                             val propertiesFile =
