@@ -87,7 +87,8 @@ open class Controller : ModuleJavaGenerator() {
                         name = entityName
                     }
 
-                    +"Iterable<$className> results = ${projectEntityName}Service.findAll(predicate${sort()});"
+                    +"Example<${className}> example = Example.of(${entityName}); "
+                    +"Iterable<$className> results = ${projectEntityName}Service.findAll(example${sort()});"
                     import("cn.bestwu.util.excel.ExcelExport")
                     +"ExcelExport.export(request, response, \"$remarks\", excelExport -> excelExport.sheet(\"$remarks\").setData(results, excelFields));"
                 }
