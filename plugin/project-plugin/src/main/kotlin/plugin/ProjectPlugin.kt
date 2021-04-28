@@ -134,9 +134,9 @@ class ProjectPlugin : Plugin<Project> {
                 }
             }
 
-            create("genDbScript") {
-                it.group = "gen"
-                it.doLast {
+            create("genDbScript") { t ->
+                t.group = "gen"
+                t.doLast {
                     val destFile: File = project.rootProject.file("database/init.sql")
                     val initBuilder = StringBuilder()
                     initBuilder.appendLine("SET NAMES 'utf8';")
@@ -155,8 +155,7 @@ class ProjectPlugin : Plugin<Project> {
         }
 
 
-        project.subprojects {
-            val subProject = it
+        project.subprojects {subProject->
 
             val mainProject =
                 !arrayOf("core").contains(subProject.name) && subProject.parent?.name != "util" && subProject.name != "util"
@@ -292,9 +291,9 @@ class ProjectPlugin : Plugin<Project> {
 
             if (subProject.name == project.findProperty("tools.project") ?: "core") {
                 subProject.tasks.apply {
-                    create("genSerializationViews") {
-                        it.group = "gen"
-                        it.doLast {
+                    create("genSerializationViews") { t ->
+                        t.group = "gen"
+                        t.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
                             val tableNames =
@@ -407,9 +406,9 @@ class ProjectPlugin : Plugin<Project> {
                             dicCodeGen.tearDown()
                         }
                     }
-                    create("genErrorCode") {
-                        it.group = "gen"
-                        it.doLast {
+                    create("genErrorCode") { t ->
+                        t.group = "gen"
+                        t.doLast {
                             val file = subProject.file("src/main/resources/error-code.properties")
                             if (file.exists()) {
                                 val gen =
