@@ -1,5 +1,5 @@
 import cn.bestwu.generator.dsl.Generator
-import java.util.*
+import java.util.Properties
 
 /**
  * @author Peter Wu

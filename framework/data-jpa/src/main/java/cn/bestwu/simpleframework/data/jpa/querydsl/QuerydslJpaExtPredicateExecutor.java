@@ -1,7 +1,6 @@
-package cn.bestwu.simpleframework.data.jpa.support;
+package cn.bestwu.simpleframework.data.jpa.querydsl;
 
 import cn.bestwu.simpleframework.data.jpa.config.JpaExtProperties;
-import cn.bestwu.simpleframework.data.jpa.query.RecycleQuerydslPredicateExecutor;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import java.util.Collections;
@@ -23,7 +22,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExecutor<T> implements
     QuerydslPredicateExecutor<T>, RecycleQuerydslPredicateExecutor<T> {
 
-  private final SoftDeleteSupport softDeleteSupport;
+  private final QuerydslSoftDeleteSupport softDeleteSupport;
 
   public QuerydslJpaExtPredicateExecutor(
       JpaExtProperties jpaExtProperties,
@@ -32,7 +31,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
       EntityPathResolver resolver,
       CrudMethodMetadata metadata) {
     super(entityInformation, entityManager, resolver, metadata);
-    this.softDeleteSupport = new DefaultSoftDeleteSupport(jpaExtProperties,
+    this.softDeleteSupport = new QuerydslSoftDeleteSupport(jpaExtProperties,
         entityInformation.getJavaType(), resolver.createPath(entityInformation.getJavaType()));
   }
 

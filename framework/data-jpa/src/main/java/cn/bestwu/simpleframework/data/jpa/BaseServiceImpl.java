@@ -1,7 +1,5 @@
 package cn.bestwu.simpleframework.data.jpa;
 
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -11,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QSort;
 
 /**
  * @author Peter Wu
@@ -147,58 +144,17 @@ public class BaseServiceImpl<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
-  public Optional<T> findOne(Predicate predicate) {
-    return repository.findOne(predicate);
-  }
-
-  @Override
-  public Iterable<T> findAll(Predicate predicate) {
-    return repository.findAll(predicate);
-  }
-
-  @Override
-  public Iterable<T> findAll(Predicate predicate, Sort sort) {
-    return repository.findAll(predicate, sort);
-  }
-
-  @Override
-  public Iterable<T> findAll(Predicate predicate, OrderSpecifier<?>... orderSpecifiers) {
-    return repository.findAll(predicate, orderSpecifiers);
-  }
-
-  @Override
-  public Iterable<T> findAll(OrderSpecifier<?>... orderSpecifiers) {
-    return repository.findAll(orderSpecifiers);
-  }
-
-  @Override
-  public Page<T> findAll(Predicate predicate, Pageable pageable) {
-    return repository.findAll(predicate, pageable);
-  }
-
-  @Override
-  public Page<T> findAll(Predicate predicate, Pageable pageable,
-      OrderSpecifier<?>... defaultOrderSpecifiers) {
+  public <S extends T> Page<S> findAll(Example<S> example, Pageable pageable, Sort sort) {
     return repository
-        .findAll(predicate, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-            pageable.getSortOr(QSort.by(defaultOrderSpecifiers))));
+        .findAll(example, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+            pageable.getSortOr(sort)));
   }
 
   @Override
-  public Page<T> findAll(Pageable pageable,
-      OrderSpecifier<?>... defaultOrderSpecifiers) {
+  public Page<T> findAll(Pageable pageable, Sort sort) {
     return repository
         .findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-            pageable.getSortOr(QSort.by(defaultOrderSpecifiers))));
+            pageable.getSortOr(sort)));
   }
 
-  @Override
-  public long count(Predicate predicate) {
-    return repository.count(predicate);
-  }
-
-  @Override
-  public boolean exists(Predicate predicate) {
-    return repository.exists(predicate);
-  }
 }

@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.util.*
+import java.util.Properties
 
 /**
  *
@@ -14,7 +14,7 @@ class AddressDataTest {
     fun test() {
 
         val tableName = "ac_area"
-        val dest = File(AddressDataTest::class.java.classLoader.getResource("build/ac_area.sql").getFile())
+        val dest = File(AddressDataTest::class.java.classLoader.getResource("build/ac_area.sql").file)
         dest.printWriter().use { p ->
             p.println("delete from $tableName;")
             val addressData = Properties()

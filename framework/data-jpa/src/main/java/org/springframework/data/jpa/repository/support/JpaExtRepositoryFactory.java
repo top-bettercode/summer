@@ -3,7 +3,7 @@ package org.springframework.data.jpa.repository.support;
 import static org.springframework.data.querydsl.QuerydslUtils.QUERY_DSL_PRESENT;
 
 import cn.bestwu.simpleframework.data.jpa.config.JpaExtProperties;
-import cn.bestwu.simpleframework.data.jpa.support.QuerydslJpaExtPredicateExecutor;
+import cn.bestwu.simpleframework.data.jpa.querydsl.QuerydslJpaExtPredicateExecutor;
 import cn.bestwu.simpleframework.data.jpa.support.SimpleJpaExtRepository;
 import java.io.Serializable;
 import java.util.Optional;

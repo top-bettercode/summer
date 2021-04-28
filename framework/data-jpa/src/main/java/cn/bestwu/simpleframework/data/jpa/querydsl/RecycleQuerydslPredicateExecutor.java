@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.data.jpa.query;
+package cn.bestwu.simpleframework.data.jpa.querydsl;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;

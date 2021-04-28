@@ -1,11 +1,7 @@
 package cn.bestwu.simpleframework.data.jpa.support;
 
-import cn.bestwu.simpleframework.data.jpa.config.JpaExtProperties;
 import cn.bestwu.simpleframework.data.jpa.SoftDelete;
-import com.querydsl.core.types.EntityPath;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.SimplePath;
+import cn.bestwu.simpleframework.data.jpa.config.JpaExtProperties;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -27,6 +23,7 @@ public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
    * 是否支持逻辑删除
    */
   private boolean support = false;
+  private Class<?> propertyType;
   /**
    * 逻辑删除字段属性名.
    */
@@ -41,16 +38,9 @@ public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
   private Object falseValue;
   private Method readMethod;
   private Method writeMethod;
-  private SimplePath<Object> path;
 
-
-  public DefaultSoftDeleteSupport(JpaExtProperties jpaExtProperties, Class<?> domainClass)
+  public <T> DefaultSoftDeleteSupport(JpaExtProperties jpaExtProperties, Class<?> domainClass)
       throws BeansException {
-    this(jpaExtProperties, domainClass, null);
-  }
-
-  public <T> DefaultSoftDeleteSupport(JpaExtProperties jpaExtProperties, Class<?> domainClass,
-      EntityPath<T> entityPath) throws BeansException {
     SoftDelete annotation = null;
     Class<?> descriptClass = domainClass;
     if (descriptClass.getSuperclass().isAnnotationPresent(MappedSuperclass.class)) {
@@ -81,11 +71,7 @@ public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
           .getPropertyDescriptor(domainClass, propertyName);
       writeMethod = propertyDescriptor.getWriteMethod();
       readMethod = propertyDescriptor.getReadMethod();
-      Class<?> propertyType = propertyDescriptor.getPropertyType();
-
-      if (entityPath != null) {
-        path = Expressions.path(propertyType, entityPath, propertyName);
-      }
+      propertyType = propertyDescriptor.getPropertyType();
 
       String trueValue = annotation.trueValue();
       if (!"".equals(trueValue)) {
@@ -137,6 +123,11 @@ public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
   }
 
   @Override
+  public Class<?> getPropertyType() {
+    return propertyType;
+  }
+
+  @Override
   public String getPropertyName() {
     return propertyName;
   }
@@ -151,21 +142,4 @@ public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
     return falseValue;
   }
 
-  @Override
-  public Predicate andTruePredicate(Predicate predicate) {
-    return getPredicate(predicate, trueValue);
-  }
-
-  @Override
-  public Predicate andFalsePredicate(Predicate predicate) {
-    return getPredicate(predicate, falseValue);
-  }
-
-  protected Predicate getPredicate(Predicate predicate, Object value) {
-    if (predicate == null) {
-      return path.eq(value);
-    } else {
-      return path.eq(value).and(predicate);
-    }
-  }
 }

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.TypeFactory
 import org.gradle.api.Project
 import java.io.File
-import java.util.*
+import java.util.Properties
 
 
 /**
