@@ -1,5 +1,6 @@
 import cn.bestwu.generator.dom.java.JavaType
 import cn.bestwu.generator.dom.java.element.Parameter
+import cn.bestwu.generator.dom.java.element.TopLevelClass
 
 /**
  * @author Peter Wu
@@ -38,22 +39,17 @@ open class Controller : ModuleJavaGenerator() {
             method("list", returnType) {
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/list\", name = \"列表\")")
                 parameter {
-                    type = JavaType("com.querydsl.core.types.Predicate")
-                    name = "predicate"
-                    annotation("@org.springframework.data.querydsl.binding.QuerydslPredicate(root = $className.class)")
+                    type = entityType
+                    name = entityName
                 }
                 parameter {
                     type = JavaType("org.springframework.data.domain.Pageable")
                     name = "pageable"
                 }
-                import(queryDslType)
-                val dateSort = if (columns.any { it.javaName == "createdDate" })
-                    " Q${className}.${entityName}.createdDate.desc()," else ""
+                import("org.springframework.data.domain.Example")
                 import("org.springframework.data.domain.Page")
-                val idSort =
-                    if (compositePrimaryKey) "" else " Q${className}.${entityName}.${primaryKeyName}.desc()"
-                val sep = if ((dateSort + idSort).isNotBlank()) "," else ""
-                +"Page<$className> results = ${projectEntityName}Service.findAll(predicate, pageable${sep}${dateSort}$idSort);"
+                +"Example<${className}> example = Example.of(${entityName}); "
+                +"Page<$className> results = ${projectEntityName}Service.findAll(example, pageable${sort()});"
                 +"return ok(results);"
             }
 
@@ -87,16 +83,11 @@ open class Controller : ModuleJavaGenerator() {
                     annotation("@cn.bestwu.logging.annotation.RequestLogging(includeResponseBody = false, ignoredTimeout = true)")
                     annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/export.xlsx\", name = \"导出\")")
                     parameter {
-                        type = JavaType("com.querydsl.core.types.Predicate")
-                        name = "predicate"
-                        annotation("@org.springframework.data.querydsl.binding.QuerydslPredicate(root = $className.class)")
+                        type = entityType
+                        name = entityName
                     }
-                    val dateSort = if (columns.any { it.javaName == "createdDate" })
-                        " Q${className}.${entityName}.createdDate.desc()," else ""
-                    val idSort =
-                        if (compositePrimaryKey) "" else " Q${className}.${entityName}.${primaryKeyName}.desc()"
-                    val sep = if ((dateSort + idSort).isNotBlank()) "," else ""
-                    +"Iterable<$className> results = ${projectEntityName}Service.findAll(predicate${sep}${dateSort}$idSort);"
+
+                    +"Iterable<$className> results = ${projectEntityName}Service.findAll(predicate${sort()});"
                     import("cn.bestwu.util.excel.ExcelExport")
                     +"ExcelExport.export(request, response, \"$remarks\", excelExport -> excelExport.sheet(\"$remarks\").setData(results, excelFields));"
                 }
@@ -163,5 +154,24 @@ open class Controller : ModuleJavaGenerator() {
                 +"return noContent();"
             }
         }
+    }
+
+    private fun TopLevelClass.sort(): String {
+        var sort = ""
+        if (columns.any { it.javaName == "createdDate" } || !compositePrimaryKey) {
+            import(propertiesType)
+            import("org.springframework.data.domain.Sort.Direction")
+            import("org.springframework.data.domain.Sort")
+            sort = ", Sort.by(Direction.DESC, "
+            if (columns.any { it.javaName == "createdDate" }) {
+                sort += "P${className}.createdDate"
+                if (!compositePrimaryKey) {
+                    sort += ", P${className}.${primaryKeyName})"
+                }
+            } else if (!compositePrimaryKey) {
+                sort += "P${className}.${primaryKeyName})"
+            }
+        }
+        return sort
     }
 }

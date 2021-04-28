@@ -1,7 +1,5 @@
 package cn.bestwu.simpleframework.data.jpa;
 
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Example;
@@ -76,23 +74,7 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   <S extends T> boolean exists(Example<S> example);
 
-  Optional<T> findOne(Predicate predicate);
+  <S extends T> Page<S> findAll(Example<S> example, Pageable pageable, Sort sort);
 
-  Iterable<T> findAll(Predicate predicate);
-
-  Iterable<T> findAll(Predicate predicate, Sort sort);
-
-  Iterable<T> findAll(Predicate predicate, OrderSpecifier<?>... orderSpecifiers);
-
-  Iterable<T> findAll(OrderSpecifier<?>... orderSpecifiers);
-
-  Page<T> findAll(Predicate predicate, Pageable pageable);
-
-  Page<T> findAll(Predicate predicate, Pageable pageable, OrderSpecifier<?>... defaultOrderSpecifiers);
-
-  Page<T> findAll(Pageable pageable, OrderSpecifier<?>... defaultOrderSpecifiers);
-
-  long count(Predicate predicate);
-
-  boolean exists(Predicate predicate);
+  Page<T> findAll(Pageable pageable, Sort sort);
 }

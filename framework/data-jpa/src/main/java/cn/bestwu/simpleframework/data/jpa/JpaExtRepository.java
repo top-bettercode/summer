@@ -4,6 +4,7 @@ import cn.bestwu.simpleframework.data.jpa.query.RecycleQueryByExampleExecutor;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.query.QueryByExampleExecutor;
 
 /**
  * @param <T>  T
@@ -11,7 +12,7 @@ import org.springframework.data.repository.NoRepositoryBean;
  * @author Peter Wu
  */
 @NoRepositoryBean
-public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>,
+public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByExampleExecutor<T>,
     RecycleQueryByExampleExecutor<T, ID> {
 
   /**

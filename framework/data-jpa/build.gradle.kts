@@ -4,13 +4,15 @@ dependencies {
 
     //data
     api("org.springframework.boot:spring-boot-starter-data-jpa")
-    api("com.querydsl:querydsl-jpa")
     api("org.mybatis:mybatis")
     api("org.mybatis:mybatis-spring")
     api("com.github.pagehelper:pagehelper")
 
-    testAnnotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa")
-    testAnnotationProcessor("jakarta.persistence:jakarta.persistence-api")
+    compileOnly("com.querydsl:querydsl-jpa")
+    testCompileOnly("com.querydsl:querydsl-jpa")
+//    testAnnotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa")
+//    testAnnotationProcessor("jakarta.persistence:jakarta.persistence-api")
+
     testImplementation("com.h2database:h2")
 }
 

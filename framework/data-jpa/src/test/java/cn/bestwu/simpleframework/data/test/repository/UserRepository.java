@@ -2,7 +2,7 @@ package cn.bestwu.simpleframework.data.test.repository;
 
 import cn.bestwu.simpleframework.data.jpa.JpaExtRepository;
 import cn.bestwu.simpleframework.data.test.domain.User;
-import cn.bestwu.simpleframework.data.jpa.query.RecycleQuerydslPredicateExecutor;
+import cn.bestwu.simpleframework.data.jpa.querydsl.RecycleQuerydslPredicateExecutor;
 import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;

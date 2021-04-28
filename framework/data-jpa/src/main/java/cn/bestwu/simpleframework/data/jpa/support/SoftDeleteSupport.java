@@ -1,7 +1,5 @@
 package cn.bestwu.simpleframework.data.jpa.support;
 
-import com.querydsl.core.types.Predicate;
-
 /**
  * @author Peter Wu
  */
@@ -15,13 +13,12 @@ public interface SoftDeleteSupport {
 
   boolean isSoftDeleted(Object entity);
 
+  Class<?> getPropertyType();
+
   String getPropertyName();
 
   Object getTrueValue();
 
   Object getFalseValue();
 
-  Predicate andTruePredicate(Predicate predicate);
-
-  Predicate andFalsePredicate(Predicate predicate);
 }

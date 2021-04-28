@@ -12,7 +12,7 @@ abstract class ModuleJavaGenerator : JavaGenerator() {
         return if (onePackage)
             entityName.toLowerCase()
         else when (name) {
-            "Entity", "QueryDsl" -> "entity"
+            "Entity", "QueryDsl", "Properties" -> "entity"
             "MethodInfo" -> "info"
             "Form" -> "form"
             "MixIn" -> "response.mixin"
@@ -36,6 +36,7 @@ abstract class ModuleJavaGenerator : JavaGenerator() {
             }
         }
     protected val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.$className")
+    protected val propertiesType get() = JavaType("$packageName.${modulePackage("Properties")}.P$className")
     protected val queryDslType get() = JavaType("$packageName.${modulePackage("QueryDsl")}.Q$className")
     protected val methodInfoType get() = JavaType("$packageName.${modulePackage("MethodInfo")}.${className}MethodInfo")
     protected val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
