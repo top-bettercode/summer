@@ -71,8 +71,9 @@ class GeneratorPlugin : Plugin<Project> {
             extension.remarks = findProperty(project, "remarks") ?: ""
             extension.softDeleteColumnName = findProperty(project, "softDeleteColumnName")
                 ?: "deleted"
-            extension.commonCodeTypes=(findProperty(project, "commonCodeTypes")
-                ?: extension.softDeleteColumnName).split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
+            extension.commonCodeTypes = (findProperty(project, "commonCodeTypes")
+                ?: extension.softDeleteColumnName).split(",").asSequence()
+                .filter { it.isNotBlank() }.map { it.trim() }.toList()
                 .toTypedArray()
             extension.softDeleteAsBoolean =
                 (findProperty(project, "softDeleteAsBoolean"))?.toBoolean()
@@ -93,6 +94,8 @@ class GeneratorPlugin : Plugin<Project> {
             extension.pumlDatabase = findProperty(project, "puml.database") ?: "puml/database"
             extension.pumlDiagramFormat = findProperty(project, "puml.diagramFormat") ?: "PNG"
             extension.sqlOutput = findProperty(project, "sqlOutput") ?: "database"
+            extension.updateSqlOutput =
+                findProperty(project, "updateSqlOutput") ?: "v${project.version}.sql"
 
             val settings = mutableMapOf<String, String>()
             project.properties.forEach { (t, any) ->
