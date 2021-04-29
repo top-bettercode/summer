@@ -68,6 +68,10 @@ open class GeneratorExtension(
      * SQL 脚本目录
      */
     var sqlOutput: String = "database",
+    /**
+     * 升级SQL脚本文件名称
+     */
+    var updateSqlOutput: String = "update.sql",
     var sqlQuote: Boolean = true,
     /**
      * 覆盖所有已生成文件
@@ -143,7 +147,7 @@ open class GeneratorExtension(
     /**
      * 公共状态码
      */
-    var commonCodeTypes:Array<String> = arrayOf(),
+    var commonCodeTypes: Array<String> = arrayOf(),
     /**
      * 相关数据表
      */
@@ -152,7 +156,7 @@ open class GeneratorExtension(
     /**
      * 额外设置
      */
-    var settings: MutableMap<String,String> = mutableMapOf()
+    var settings: MutableMap<String, String> = mutableMapOf()
 ) {
 
     companion object {
@@ -223,7 +227,7 @@ open class GeneratorExtension(
     }
 
     fun <T> use(metaData: DatabaseMetaData.() -> T): T {
-        Class.forName(datasource.driverClass).newInstance()
+        Class.forName(datasource.driverClass).getConstructor().newInstance()
         val databaseMetaData = DatabaseMetaData(datasource, debug)
         try {
             return metaData(databaseMetaData)
@@ -233,7 +237,7 @@ open class GeneratorExtension(
     }
 
     fun <T> run(connectionFun: Connection.() -> T): T {
-        Class.forName(datasource.driverClass).newInstance()
+        Class.forName(datasource.driverClass).getConstructor().newInstance()
         val connection = DriverManager.getConnection(datasource.url, datasource.properties)
         try {
             return connectionFun(connection)
@@ -304,7 +308,7 @@ open class GeneratorExtension(
     }
 
     fun pumlSqlUpdateOutputFile(): File {
-        val dest = File(file(sqlUpdateOutput), "update.sql")
+        val dest = File(file(sqlUpdateOutput), updateSqlOutput)
         dest.parentFile.mkdirs()
         return dest
     }
