@@ -352,7 +352,7 @@ class ProjectPlugin : Plugin<Project> {
                         }
                     }
 
-                    create("printSetter2") {
+                    create("printSetterTest") {
                         it.group = "gen"
                         it.doLast {
                             val gen =
