@@ -239,6 +239,8 @@ class ProjectPlugin : Plugin<Project> {
                     it.dependency("cn.bestwu.summer:security-server:$summerVersion")
                     it.dependency("cn.bestwu.summer:security-resource:$summerVersion")
 
+                    it.dependency("cn.bestwu.summer:test:$summerVersion")
+
                     it.dependency("org.dhatim:fastexcel-reader:0.12.9")
                     it.dependency("org.apache.poi:poi-ooxml:4.0.0")
                     it.dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
