@@ -14,6 +14,7 @@ const val profilesActiveName: String = "profiles.active"
 val Project.profileProperties: Properties
     get() {
         val props = Properties()
+        props["app.project.name"] = name
         val gradleProperties = rootProject.file("gradle.properties")
         if (gradleProperties.exists()) {
             props.load(gradleProperties.inputStream())
@@ -26,25 +27,43 @@ val Project.profileProperties: Properties
         configProject { project ->
             val defaultConfigYmlFile = project.file("${profile.configDir}/$defaultConfigName.yml")
             if (defaultConfigYmlFile.exists()) {
-                props.putAll(parseYml(Yaml().loadAs(defaultConfigYmlFile.inputStream(), Map::class.java)))
+                props.putAll(
+                    parseYml(
+                        Yaml().loadAs(
+                            defaultConfigYmlFile.inputStream(),
+                            Map::class.java
+                        )
+                    )
+                )
             }
-            val activeYmlFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
+            val activeYmlFile =
+                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
             if (activeYmlFile.exists()) {
                 props.putAll(parseYml(Yaml().loadAs(activeYmlFile.inputStream(), Map::class.java)))
             }
             val defaultConfigYamlFile = project.file("${profile.configDir}/$defaultConfigName.yaml")
             if (defaultConfigYamlFile.exists()) {
-                props.putAll(parseYml(Yaml().loadAs(defaultConfigYamlFile.inputStream(), Map::class.java)))
+                props.putAll(
+                    parseYml(
+                        Yaml().loadAs(
+                            defaultConfigYamlFile.inputStream(),
+                            Map::class.java
+                        )
+                    )
+                )
             }
-            val activeYamlFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
+            val activeYamlFile =
+                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
             if (activeYamlFile.exists()) {
                 props.putAll(parseYml(Yaml().loadAs(activeYamlFile.inputStream(), Map::class.java)))
             }
-            val defaultConfigFile = project.file("${profile.configDir}/$defaultConfigName.properties")
+            val defaultConfigFile =
+                project.file("${profile.configDir}/$defaultConfigName.properties")
             if (defaultConfigFile.exists()) {
                 props.load(defaultConfigFile.inputStream())
             }
-            val activeFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
+            val activeFile =
+                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
             if (activeFile.exists()) {
                 props.load(activeFile.inputStream())
             }
@@ -73,7 +92,11 @@ val Project.profileProperties: Properties
         return props
     }
 
-private fun parseYml(map: Map<*, *>, result: MutableMap<Any, Any> = mutableMapOf(), prefix: String = ""): MutableMap<Any, Any> {
+private fun parseYml(
+    map: Map<*, *>,
+    result: MutableMap<Any, Any> = mutableMapOf(),
+    prefix: String = ""
+): MutableMap<Any, Any> {
     map.forEach { (k, u) ->
         if (u != null) {
             if (u is Map<*, *>) {
