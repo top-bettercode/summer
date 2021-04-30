@@ -1,0 +1,4 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cn.bestwu.summer.util.test.TestConfiguration,\
+cn.bestwu.summer.util.test.AutodocWebMvcConfigurer
