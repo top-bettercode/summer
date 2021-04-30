@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse
  * @author Peter Wu
  */
 class AutoDocFilter(
-    private val handlers: List<AutoDocRequestHandler>
+    private val handlers: List<AutoDocRequestHandler>?
 ) : OncePerRequestFilter(), Ordered {
 
     override fun getOrder(): Int {
@@ -25,7 +25,7 @@ class AutoDocFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        if (handlers.isNotEmpty()) {
+        if (!handlers.isNullOrEmpty()) {
             val servletRequest = AutoDocHttpServletRequest(request)
             handlers.forEach { it.handle(servletRequest) }
             filterChain.doFilter(servletRequest, response)
