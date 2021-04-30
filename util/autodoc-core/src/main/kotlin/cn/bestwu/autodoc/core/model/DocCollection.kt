@@ -9,26 +9,35 @@ import cn.bestwu.logging.operation.Parameters
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import java.io.File
 import java.net.URI
 
 @JsonPropertyOrder("name", "items")
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class DocCollection(override val name: String = "", var items: LinkedHashSet<String> = linkedSetOf(),
-                         /**
-                          * 集合目录
-                          */
-                         @JsonIgnore
-                         val dir: File) : ICollection {
+data class DocCollection(
+    override val name: String = "", var items: LinkedHashSet<String> = linkedSetOf(),
+    /**
+     * 集合目录
+     */
+    @JsonIgnore
+    val dir: File
+) : ICollection {
 
-
+    private val log: Logger = LoggerFactory.getLogger(DocCollection::class.java)
     private fun operationFile(operationName: String): File = File(dir, "$operationName.yml")
 
     fun operation(operationName: String): DocOperation? {
         val operationFile = operationFile(operationName)
         return if (operationFile.exists()) {
-            val docOperation = Util.yamlMapper.readValue(operationFile, DocOperation::class.java)
+            val docOperation = try {
+                Util.yamlMapper.readValue(operationFile, DocOperation::class.java)
+            } catch (e: Exception) {
+                log.error(name + "/" + operationName + "解析失败")
+                throw e
+            }
             docOperation.operationFile = operationFile
             docOperation.collectionName = name
             docOperation.name = operationName
@@ -55,7 +64,14 @@ data class DocCollection(override val name: String = "", var items: LinkedHashSe
                         listOf(field.value)
                     )
                 }
-                parts = partsExt.map { field -> OperationRequestPart(field.name, field.partType, headers, field.value.toByteArray()) }
+                parts = partsExt.map { field ->
+                    OperationRequestPart(
+                        field.name,
+                        field.partType,
+                        headers,
+                        field.value.toByteArray()
+                    )
+                }
             }
 
             docOperation.response.apply {
