@@ -34,7 +34,16 @@ internal fun formatFileNow(): String {
     return LocalDateTime.now().format(dateFileFormatter)
 }
 
-internal fun warnSubject(environment: Environment): String = environment.getProperty("logging.warn-subject", "${environment.getProperty("spring.application.name", "")} ${environment.getProperty("spring.profiles.active", "")} system exception")
+internal fun warnSubject(environment: Environment): String = environment.getProperty(
+    "logging.warn-subject",
+    "${environment.getProperty("spring.application.name", "")}${
+        if (existProperty(
+                environment,
+                "app.project.name"
+            )
+        ) " " + environment.getProperty("app.project.name") else ""
+    } ${environment.getProperty("spring.profiles.active", "")}"
+)
 
 internal fun existProperty(environment: Environment, key: String) =
-        environment.containsProperty(key) && !environment.getProperty(key).isNullOrBlank()
+    environment.containsProperty(key) && !environment.getProperty(key).isNullOrBlank()
