@@ -14,14 +14,16 @@ const val profilesActiveName: String = "profiles.active"
 val Project.profileProperties: Properties
     get() {
         val props = Properties()
+        props["app.project.name"] = name
         val gradleProperties = rootProject.file("gradle.properties")
         if (gradleProperties.exists()) {
             props.load(gradleProperties.inputStream())
             props.keys.forEach { t ->
-                props[t] = rootProject.properties[t]
+                val k = t as String
+                if (rootProject.hasProperty(k))
+                    props[k] = rootProject.properties[k]
             }
         }
-        props["app.project.name"] = name
 
         val profile = extensions.getByType(ProfileExtension::class.java)
         configProject { project ->
