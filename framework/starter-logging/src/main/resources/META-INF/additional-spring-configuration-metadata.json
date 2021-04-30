@@ -7,13 +7,21 @@
   ],
   "properties": [
     {
+      "name": "app.project.name",
+      "type": "java.lang.String",
+      "description": "项目名称.",
+      "sourceType": "cn.bestwu.logging.UtilKt"
+    },
+    {
       "name": "logging.log-url",
       "type": "java.lang.String",
+      "description": "日志浏览前缀路径.",
       "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem"
     },
     {
       "name": "logging.warn-subject",
       "type": "java.lang.String",
+      "description": "日志报警标题.",
       "defaultValue": "${spring.application.name}  ${spring.profiles.active} system exception;",
       "sourceType": "cn.bestwu.logging.UtilKt"
     },
@@ -38,6 +46,7 @@
     {
       "name": "logging.show.enabled",
       "sourceType": "cn.bestwu.logging.RequestLoggingConfiguration",
+      "description": "是否启用日志浏览功能.",
       "defaultValue": true,
       "type": "java.lang.Boolean"
     },
@@ -45,6 +54,7 @@
       "name": "logging.view.path",
       "sourceType": "cn.bestwu.logging.LogsController",
       "defaultValue": "/logs",
+      "description": "日志浏览路径.",
       "type": "java.lang.String"
     }
   ],
