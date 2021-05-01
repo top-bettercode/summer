@@ -233,6 +233,7 @@ class ProjectPlugin : Plugin<Project> {
                     it.dependency("cn.bestwu.summer:autodoc-gen:$summerVersion")
                     it.dependency("cn.bestwu.summer:excel:$summerVersion")
                     it.dependency("cn.bestwu.summer:ueditor:$summerVersion")
+                    it.dependency("cn.bestwu.summer:wechat:$summerVersion")
 
                     it.dependency("cn.bestwu.summer:web:$summerVersion")
                     it.dependency("cn.bestwu.summer:data-jpa:$summerVersion")

@@ -64,6 +64,8 @@ allprojects {
 
             dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.15.1")
 
+            dependency("cn.bestwu.wechat:weixin-mp:0.9.7")
+
             dependency("org.javassist:javassist:3.27.0-GA")
             dependency("org.yaml:snakeyaml:1.26")
             dependency("com.google.guava:guava:29.0-jre")
