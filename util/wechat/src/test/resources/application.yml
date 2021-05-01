@@ -24,7 +24,6 @@ logging:
     javax.activation: warn
   spilt-marker:
     request: info
-  file: @logging.files.path@/all.log
   files:
     path: @logging.files.path@
   spilt-level:
@@ -50,7 +49,7 @@ autodoc:
   gen:
     enable: @autodoc.enable@
     version: @autodoc.version@
-    table-prefix: @generator.tablePrefix@
+    table-prefixs: @generator.tablePrefixs@
     data-type: @generator.dataType@
     source: ../../app/src/doc
     root-source: ../../doc

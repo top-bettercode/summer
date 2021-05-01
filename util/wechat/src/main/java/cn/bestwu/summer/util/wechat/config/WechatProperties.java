@@ -1,4 +1,4 @@
-package com.cdwintech.wechat.config;
+package cn.bestwu.summer.util.wechat.config;
 
 import com.riversoft.weixin.mp.base.AppSetting;
 import org.springframework.boot.context.properties.ConfigurationProperties;

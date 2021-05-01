@@ -1,8 +1,7 @@
-package com.cdwintech.wechat.config;
+package cn.bestwu.summer.util.wechat.config;
 
-import com.cdwintech.wechat.controller.WechatCallbackController;
-import com.cdwintech.wechat.support.DefaultDuplicatedMessageChecker;
-import com.cdwintech.wechat.support.IWechatService;
+import cn.bestwu.summer.util.wechat.controller.WechatCallbackController;
+import cn.bestwu.summer.util.wechat.support.IWechatService;
 import com.riversoft.weixin.mp.oauth2.MpOAuth2s;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,16 +25,6 @@ public class WechatConfiguration {
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     }
-  }
-//
-//  @Bean
-//  public WechatPushClient wechatPushClient() {
-//    return new WechatPushClient(wechatProperties);
-//  }
-
-  @Bean
-  public DefaultDuplicatedMessageChecker duplicatedMessageChecker() {
-    return new DefaultDuplicatedMessageChecker();
   }
 
   @Bean

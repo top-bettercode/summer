@@ -3,4 +3,4 @@
  *
  * @author Peter Wu
  */
-package com.cdwintech.wechat.support;
+package cn.bestwu.summer.util.wechat.support;
