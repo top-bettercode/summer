@@ -1,21 +1,19 @@
-package com.cdwintech.wechat.controller;
+package cn.bestwu.summer.util.wechat.controller;
 
 import cn.bestwu.logging.annotation.RequestLogging;
 import cn.bestwu.simpleframework.web.BaseController;
-import com.cdwintech.wechat.support.IWechatService;
+import cn.bestwu.summer.util.wechat.support.IWechatService;
+import cn.bestwu.summer.util.wechat.config.WechatProperties;
 import com.riversoft.weixin.common.decrypt.AesException;
 import com.riversoft.weixin.common.decrypt.SHA1;
 import com.riversoft.weixin.common.jsapi.JsAPISignature;
 import com.riversoft.weixin.common.oauth2.AccessToken;
 import com.riversoft.weixin.mp.jsapi.JsAPIs;
 import com.riversoft.weixin.mp.oauth2.MpOAuth2s;
-import com.cdwintech.wechat.config.WechatProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -56,32 +54,6 @@ public class WechatCallbackController extends BaseController {
     return wechatProperties.redirectUrl(token, openId, token != null);
   }
 
-//  @ResponseBody
-//  @Transactional
-//  @PostMapping(value = "/miniOauth", name = "小程序code2Session授权接口")
-//  public Object miniOauth(String code) {
-//    log.debug("code:{}", code);
-//    try {
-//      Users users = Users.with(wechatMiniAppProperties);
-//      String openId;
-//      SessionKey sessionKey = users.code2Session(code);
-//      openId = sessionKey.getOpenId();
-//      log.info("openId:{}", openId);
-//      String token = wechatService.oauth(openId);
-//      Map<String, Object> result = new HashMap<>();
-//      result.put("access_token", token);
-//      result.put("openId", openId);
-//      result.put("hasBound", token != null);
-//      return ok(result);
-//    } catch (WxRuntimeException e) {
-//      log.warn("授权失败," + e.getWxError().getErrorMsg(), e);
-//      return "授权失败";
-//    } catch (Exception e) {
-//      log.error("授权失败", e);
-//      return "授权失败";
-//    }
-//  }
-
   /**
    * js签名
    */
@@ -107,14 +79,14 @@ public class WechatCallbackController extends BaseController {
     return echostr;
   }
 
-  @ResponseBody
-  @PostMapping(name = "事件推送")
-  public String receive(String signature, String timestamp,
-      String nonce, String openid, String encrypt_type, String msg_signature,
-      @RequestBody String content) {
-    wechatService.receive(timestamp, nonce, openid, encrypt_type, msg_signature, content);
-    return null;
-  }
+//  @ResponseBody
+//  @PostMapping(name = "事件推送")
+//  public String receive(String signature, String timestamp,
+//      String nonce, String openid, String encrypt_type, String msg_signature,
+//      @RequestBody String content) {
+//    wechatService.receive(timestamp, nonce, openid, encrypt_type, msg_signature, content);
+//    return null;
+//  }
 
 
 }

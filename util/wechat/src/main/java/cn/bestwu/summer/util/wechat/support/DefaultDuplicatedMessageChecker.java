@@ -1,4 +1,4 @@
-package com.cdwintech.wechat.support;
+package cn.bestwu.summer.util.wechat.support;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

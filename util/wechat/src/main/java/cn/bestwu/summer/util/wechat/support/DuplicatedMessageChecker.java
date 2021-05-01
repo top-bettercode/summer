@@ -1,4 +1,4 @@
-package com.cdwintech.wechat.support;
+package cn.bestwu.summer.util.wechat.support;
 
 public interface DuplicatedMessageChecker {
 

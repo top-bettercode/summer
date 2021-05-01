@@ -1,8 +1,6 @@
-package om.cdwintech.test.wechat;
+package com.cdwintech.test.wechat;
 
-import cn.bestwu.summer.util.wechat.config.WechatProperties;
 import cn.bestwu.summer.util.wechat.support.AbstractWechatService;
-import cn.bestwu.summer.util.wechat.support.DuplicatedMessageChecker;
 import cn.bestwu.summer.util.wechat.support.IWechatService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,8 +18,7 @@ public class TestApplication extends SpringBootServletInitializer {
   }
 
   @Bean
-  public IWechatService wechatService(DuplicatedMessageChecker duplicatedMessageChecker,
-      WechatProperties wechatProperties) {
+  public IWechatService wechatService() {
     return new AbstractWechatService() {
       @Override
       public String oauth(String openId) {

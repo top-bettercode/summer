@@ -1,3 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.cdwintech.wechat.config.WechatConfiguration
+cn.bestwu.summer.util.wechat.config.WechatConfiguration,\
+cn.bestwu.summer.util.wechat.config.WechatAppConfiguration
