@@ -16,11 +16,10 @@ open class MServiceImpl : MModuleJavaGenerator() {
                 +" * $remarks 服务层实现"
                 +" */"
             }
-            superClass = JavaType("cn.bestwu.simpleframework.data.BaseServiceImpl").typeArgument(JavaType("$packageName.dao.I${projectClassName}Dao"), entityType)
+            superClass = JavaType("cn.bestwu.simpleframework.data.BaseServiceImpl").typeArgument(daoType, entityType)
 
 
-            val impl = "$packageName.service.I${projectClassName}Service"
-            implement(impl)
+            implement(iServiceType)
         }
 
     }

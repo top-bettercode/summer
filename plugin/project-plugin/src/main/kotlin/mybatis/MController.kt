@@ -27,7 +27,7 @@ open class MController : MModuleJavaGenerator() {
             annotation("@org.springframework.web.bind.annotation.RestController")
             annotation("@org.springframework.web.bind.annotation.RequestMapping(value = \"/$module/$pathName\", name = \"$moduleName\")")
 
-            val fieldType = JavaType("$packageName.service.I${projectClassName}Service")
+            val fieldType = serviceType
             field("${projectEntityName}Service", fieldType, isFinal = true)
 
             constructor(Parameter("${projectEntityName}Service", fieldType)) {
@@ -44,7 +44,7 @@ open class MController : MModuleJavaGenerator() {
                     name = "page"
                 }
                 parameter {
-                    type = JavaType("$packageName.querydsl.Q$className")
+                    type = queryDslType
                     name = "wrapper"
                 }
                 +"Page<$className> results = ${projectEntityName}Service.selectPage(page, wrapper);"
@@ -78,7 +78,7 @@ open class MController : MModuleJavaGenerator() {
                     import("cn.bestwu.simpleframework.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
                     name = "${projectEntityName}Form"
-                    type = JavaType("$packageName.form.${projectClassName}Form")
+                    type = formType
                 }
                 +"$className $entityName = ${projectEntityName}Form.getEntity();"
                 +"${projectEntityName}Service.insert($entityName);"
@@ -92,7 +92,7 @@ open class MController : MModuleJavaGenerator() {
                     import("cn.bestwu.simpleframework.web.validator.UpdateConstraint")
                     annotation("@cn.bestwu.simpleframework.web.resolver.ModifyModel${if (primaryKeyName != "id") "(value = $className.class, idParameter = \"${primaryKeyName}\")" else "($className.class)"} @org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
                     name = "${projectEntityName}Form"
-                    type = JavaType("$packageName.form.${projectClassName}Form")
+                    type = formType
                 }
                 import("org.springframework.util.Assert")
                 +"$className $entityName = ${projectEntityName}Form.getEntity();"
