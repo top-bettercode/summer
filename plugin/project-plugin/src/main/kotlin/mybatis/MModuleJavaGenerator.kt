@@ -7,9 +7,6 @@ import cn.bestwu.generator.dsl.JavaGenerator
  */
 abstract class MModuleJavaGenerator : JavaGenerator() {
 
-    override val projectClassName: String
-        get() = super.className
-
     private fun modulePackage(name: String): String {
         val onePackage = enable("onePackage", true)
         return if (onePackage)
