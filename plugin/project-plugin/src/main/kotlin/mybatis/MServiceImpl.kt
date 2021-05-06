@@ -19,7 +19,7 @@ open class MServiceImpl : MModuleJavaGenerator() {
             superClass = JavaType("cn.bestwu.simpleframework.data.BaseServiceImpl").typeArgument(daoType, entityType)
 
 
-            implement(iServiceType)
+            implement(iserviceType)
         }
 
     }

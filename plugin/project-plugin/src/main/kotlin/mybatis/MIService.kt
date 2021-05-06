@@ -6,7 +6,7 @@ import cn.bestwu.generator.dom.java.JavaType
 open class MIService : MModuleJavaGenerator() {
 
     override val type: JavaType
-        get() = iServiceType
+        get() = iserviceType
 
     override fun content() {
         interfaze {

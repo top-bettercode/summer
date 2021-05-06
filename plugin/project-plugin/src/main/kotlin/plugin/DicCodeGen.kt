@@ -1,3 +1,5 @@
+package plugin
+
 import cn.bestwu.autodoc.core.Util
 import cn.bestwu.autodoc.core.model.Field
 import cn.bestwu.generator.dom.java.JavaType

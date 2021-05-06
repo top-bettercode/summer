@@ -1,3 +1,5 @@
+package plugin
+
 import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.generator.dom.java.JavaType
 import cn.bestwu.generator.dom.java.element.InnerInterface
@@ -18,6 +20,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
+import profilesActive
 import java.io.File
 import java.util.*
 import java.util.Properties

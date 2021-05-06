@@ -1,3 +1,7 @@
+package plugin
+
+import ModuleJavaGenerator
+
 /**
  * @author Peter Wu
  */

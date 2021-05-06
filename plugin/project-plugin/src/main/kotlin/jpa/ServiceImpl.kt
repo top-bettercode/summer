@@ -19,7 +19,7 @@ open class ServiceImpl : ModuleJavaGenerator() {
             }
             superClass = JavaType("cn.bestwu.simpleframework.data.jpa.BaseServiceImpl").typeArgument(entityType, primaryKeyType, repositoryType)
 
-            implement(iServiceType)
+            implement(iserviceType)
 
             //constructor
             constructor(Parameter("repository", repositoryType)) {
