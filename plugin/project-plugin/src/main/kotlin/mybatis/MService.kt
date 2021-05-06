@@ -9,14 +9,14 @@ open class MService : MModuleJavaGenerator() {
         get() = serviceType
 
     override fun content() {
-        interfaze {
+        clazz {
+            annotation("@org.springframework.stereotype.Service")
             javadoc {
                 +"/**"
-                +" * $remarks 服务层"
+                +" * $remarks 服务层实现"
                 +" */"
             }
-            val superInterface = JavaType("cn.bestwu.simpleframework.data.IBaseService").typeArgument(JavaType("$packageName.dao.I${className}Dao"),entityType)
-            implement(superInterface)
+            superClass = JavaType("cn.bestwu.simpleframework.data.BaseServiceImpl").typeArgument(daoType, entityType)
         }
     }
 }
