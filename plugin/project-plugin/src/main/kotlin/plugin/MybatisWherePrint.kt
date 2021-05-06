@@ -1,3 +1,6 @@
+package plugin
+
+import ModuleJavaGenerator
 import cn.bestwu.generator.dom.java.JavaType
 
 /**

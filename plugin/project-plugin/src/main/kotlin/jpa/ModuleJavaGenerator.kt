@@ -43,7 +43,7 @@ abstract class ModuleJavaGenerator : JavaGenerator() {
     protected val mixInType get() = JavaType("$packageName.${modulePackage("MixIn")}.${projectClassName}MixIn")
     protected val controllerType get() = JavaType("$packageName.${modulePackage("Controller")}.${projectClassName}Controller")
     protected val controllerTestType get() = JavaType("$packageName.${modulePackage("ControllerTest")}.${projectClassName}ControllerTest")
-    protected val iServiceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
+    protected val iserviceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
     protected val serviceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}Service")
     protected val serviceImplType get() = JavaType("$packageName.${modulePackage("ServiceImpl")}.${projectClassName}ServiceImpl")
     protected val repositoryType get() = JavaType("$packageName.${modulePackage("Repository")}.${projectClassName}Repository")

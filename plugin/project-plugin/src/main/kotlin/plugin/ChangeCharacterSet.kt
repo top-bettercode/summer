@@ -1,3 +1,5 @@
+package plugin
+
 import cn.bestwu.generator.dsl.Generator
 import java.io.File
 

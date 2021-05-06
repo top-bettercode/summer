@@ -1,3 +1,5 @@
+package plugin
+
 import cn.bestwu.autodoc.core.AsciidocGenerator
 import cn.bestwu.generator.dsl.Generator
 import org.gradle.api.Project
