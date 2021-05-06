@@ -38,8 +38,8 @@ class AutodocPlugin : Plugin<Project> {
             } else
                 File(project.file("./"), path)
             autodocExtension.projectName = findProperty(project, "project-name")
-                    ?: project.findProperty("application.name") as? String
-                            ?: "${project.name}接口文档"
+                ?: project.findProperty("application.name") as? String
+                        ?: "${project.name}接口文档"
             autodocExtension.author = project.findProperty("autodoc.author") as? String ?: "autodoc"
             val output = project.findProperty("autodoc.output") as? String
             if (output != null) {
@@ -57,8 +57,17 @@ class AutodocPlugin : Plugin<Project> {
                 autodocExtension.authUri = authUri
             }
 
-            val authVariables = (findProperty(project, "autodoc.auth-variables")
-                    ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList().toTypedArray()
+            autodocExtension.toclevels = (findProperty(project, "toclevels") ?: "2").toInt()
+            autodocExtension.maxResponseTime =
+                (findProperty(project, "max-response-time") ?: "2000").toInt()
+
+            autodocExtension.signParam = (findProperty(project, "sign-param") ?: "sign")
+            autodocExtension.wrapResponse =
+                (findProperty(project, "wrap-response") ?: "true").toBoolean()
+
+            val authVariables = (findProperty(project, "auth-variables")
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
+                .toTypedArray()
 
             if (authVariables.isNotEmpty()) {
                 autodocExtension.authVariables = authVariables
@@ -66,7 +75,10 @@ class AutodocPlugin : Plugin<Project> {
         }
         val autodoc = project.extensions.findByType(AutodocExtension::class.java)!!
 
-        val docOutputDir = File((project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath, "public/doc")
+        val docOutputDir = File(
+            (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
+            "public/doc"
+        )
         if (autodoc.output == null)
             autodoc.output = docOutputDir
 
@@ -125,10 +137,15 @@ class AutodocPlugin : Plugin<Project> {
     }
 
     private fun findProperty(project: Project, key: String) =
-            (project.findProperty("autodoc.${project.name}.$key") as? String
-                    ?: project.findProperty("autodoc.$key") as? String)
+        (project.findProperty("autodoc.${project.name}.$key") as? String
+            ?: project.findProperty("autodoc.$key") as? String)
 
-    private fun configInputOutput(task: Task, group: String, autodoc: AutodocExtension, project: Project) {
+    private fun configInputOutput(
+        task: Task,
+        group: String,
+        autodoc: AutodocExtension,
+        project: Project
+    ) {
         task.group = group
 
         if (autodoc.source.exists()) {
