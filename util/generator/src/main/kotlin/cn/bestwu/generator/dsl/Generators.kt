@@ -119,7 +119,6 @@ object Generators {
 
 
         tableNames.forEach inner@{ tableName ->
-            println("查询：$tableName 表数据结构")
             var found = false
             val allTableNames = mutableSetOf<String>()
             extension.pumlAllSources.forEach { file ->
