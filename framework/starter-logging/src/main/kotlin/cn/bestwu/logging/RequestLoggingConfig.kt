@@ -1,19 +1,21 @@
 package cn.bestwu.logging
 
 
-data class RequestLoggingConfig(val includeRequestBody: Boolean,
-                                val includeResponseBody: Boolean,
-                                val includeTrace: Boolean,
-                                val encryptHeaders: Array<String>,
-                                val encryptParameters: Array<String>,
-                                /**
-                                 * 是否格式化日志
-                                 */
-                                val format: Boolean,
-                                /**
-                                 * 忽略超时
-                                 */
-                                val ignoredTimeout: Boolean) {
+data class RequestLoggingConfig(
+    val includeRequestBody: Boolean,
+    val includeResponseBody: Boolean,
+    val includeTrace: Boolean,
+    val encryptHeaders: Array<String>,
+    val encryptParameters: Array<String>,
+    /**
+     * 是否格式化日志
+     */
+    val format: Boolean,
+    /**
+     * 忽略超时
+     */
+    val ignoredTimeout: Boolean, val timeoutAlarmSeconds: Int
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is RequestLoggingConfig) return false
