@@ -142,7 +142,6 @@ object InitField {
             tableNames.addAll(tables.map { it.tableName })
 
         for (tableName in tableNames) {
-            println("查询：$tableName 表数据结构")
             val table = tables.find { it.tableName == tableName }
                 ?: throw RuntimeException("未在(${tables.joinToString(",") { it.tableName }})中找到${tableName}表")
             if (fn(table.fields(this))) break
