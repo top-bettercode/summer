@@ -2,6 +2,7 @@ package cn.bestwu.util.excel;
 
 import cn.bestwu.lang.util.CharUtil;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class ColumnWidths {
   public Double width(Integer column, Integer max) {
     Double w = colWidths.get(column);
     return BigDecimal.valueOf(Math.min(max, w == null ? 0 : w))
-        .setScale(2, BigDecimal.ROUND_HALF_UP)
+        .setScale(2, RoundingMode.UP)
         .doubleValue();
   }
 
