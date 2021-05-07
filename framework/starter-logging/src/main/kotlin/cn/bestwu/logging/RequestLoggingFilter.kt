@@ -38,7 +38,10 @@ import javax.servlet.http.HttpServletResponse
  * @author Peter Wu
  * @since 0.0.1
  */
-class RequestLoggingFilter(private val properties: RequestLoggingProperties, private val handlers: List<RequestLoggingHandler>) : OncePerRequestFilter(), Ordered {
+class RequestLoggingFilter(
+    private val properties: RequestLoggingProperties,
+    private val handlers: List<RequestLoggingHandler>
+) : OncePerRequestFilter(), Ordered {
 
     companion object {
         const val REQUEST_LOG_MARKER = "request"
@@ -61,10 +64,13 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
     }
 
     @Throws(ServletException::class, IOException::class)
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse,
-                                  filterChain: FilterChain) {
+    override fun doFilterInternal(
+        request: HttpServletRequest, response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
         if (SlackClient.LOG_URL.isNullOrBlank()) {
-            SlackClient.LOG_URL = String.format("%s://%s", request.scheme, request.getHeader(HttpHeaders.HOST))
+            SlackClient.LOG_URL =
+                String.format("%s://%s", request.scheme, request.getHeader(HttpHeaders.HOST))
         }
 //        ignored
         val uri = request.servletPath
@@ -82,7 +88,8 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
         }
         val responseToUse: HttpServletResponse = if (properties.isIncludeResponseBody) {
             TraceHttpServletResponseWrapper(
-                    response)
+                response
+            )
         } else {
             response
         }
@@ -94,14 +101,29 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
         }
     }
 
-    private fun record(requestToUse: HttpServletRequest, responseToUse: HttpServletResponse, uri: String) {
+    private fun record(
+        requestToUse: HttpServletRequest,
+        responseToUse: HttpServletResponse,
+        uri: String
+    ) {
         if (!isAsyncStarted(requestToUse)) {
-            val handler = requestToUse.getAttribute(HandlerMethodHandlerInterceptor.HANDLER_METHOD) as? HandlerMethod
+            val handler =
+                requestToUse.getAttribute(HandlerMethodHandlerInterceptor.HANDLER_METHOD) as? HandlerMethod
             val requestAttributes = ServletRequestAttributes(requestToUse)
             val error = getError(requestAttributes)
             if (handler != null || include(properties.includePath, uri) || includeError(error)) {
-                val config: RequestLoggingConfig = requestToUse.getAttribute(HandlerMethodHandlerInterceptor.REQUEST_LOGGING) as? RequestLoggingConfig
-                        ?: RequestLoggingConfig(includeRequestBody = properties.isIncludeRequestBody, includeResponseBody = properties.isIncludeResponseBody, includeTrace = properties.isIncludeTrace, encryptHeaders = properties.encryptHeaders, encryptParameters = properties.encryptParameters, format = properties.isFormat, ignoredTimeout = false)
+                val config: RequestLoggingConfig =
+                    requestToUse.getAttribute(HandlerMethodHandlerInterceptor.REQUEST_LOGGING) as? RequestLoggingConfig
+                        ?: RequestLoggingConfig(
+                            includeRequestBody = properties.isIncludeRequestBody,
+                            includeResponseBody = properties.isIncludeResponseBody,
+                            includeTrace = properties.isIncludeTrace,
+                            encryptHeaders = properties.encryptHeaders,
+                            encryptParameters = properties.encryptParameters,
+                            format = properties.isFormat,
+                            ignoredTimeout = false,
+                            timeoutAlarmSeconds = properties.timeoutAlarmSeconds
+                        )
                 val operationResponse = ResponseConverter.convert(responseToUse)
                 if (error != null) {
                     if (config.includeTrace) {
@@ -111,9 +133,15 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
                 val operationRequest = RequestConverter.convert(requestToUse)
 
 
-                val operation = Operation(collectionName = requestToUse.getAttribute(HandlerMethodHandlerInterceptor.COLLECTION_NAME) as? String
-                        ?: "", name = requestToUse.getAttribute(HandlerMethodHandlerInterceptor.OPERATION_NAME) as? String
-                        ?: "", protocol = requestToUse.protocol, request = operationRequest, response = operationResponse)
+                val operation = Operation(
+                    collectionName = requestToUse.getAttribute(HandlerMethodHandlerInterceptor.COLLECTION_NAME) as? String
+                        ?: "",
+                    name = requestToUse.getAttribute(HandlerMethodHandlerInterceptor.OPERATION_NAME) as? String
+                        ?: "",
+                    protocol = requestToUse.protocol,
+                    request = operationRequest,
+                    response = operationResponse
+                )
 
                 handlers.forEach {
                     //移动到生成日志消息之前，以便修改日志消息
@@ -125,16 +153,29 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
                 }
 
                 val msg = operation.toString(config)
-                if (!config.ignoredTimeout && properties.timeoutAlarmSeconds > 0 && handler != null && operation.duration > properties.timeoutAlarmSeconds * 1000 && !include(properties.ignoredTimeoutPath, uri)) {
-                    val timeoutLog = "${operation.collectionName}/${operation.name}(${operation.request.uri}) 请求超时"
+                if (!config.ignoredTimeout && config.timeoutAlarmSeconds > 0 && handler != null && operation.duration > config.timeoutAlarmSeconds * 1000 && !include(
+                        properties.ignoredTimeoutPath,
+                        uri
+                    )
+                ) {
+                    val timeoutLog =
+                        "${operation.collectionName}/${operation.name}(${operation.request.uri}) 请求超时"
                     val timeout = "：${operation.duration}毫秒"
                     MDC.put(WebUtils.ERROR_MESSAGE_ATTRIBUTE, timeoutLog)
                     MDC.put(TIMEOUT_MSG, timeout)
-                    log.warn(MarkerFactory.getMarker(ALARM_LOG_MARKER), "$timeoutLog${timeout}\n$msg")
+                    log.warn(
+                        MarkerFactory.getMarker(ALARM_LOG_MARKER),
+                        "$timeoutLog${timeout}\n$msg"
+                    )
                 }
                 val marker = MarkerFactory.getMarker(REQUEST_LOG_MARKER)
                 if (existProperty(environment, "logging.logstash.destinations[0]")) {
-                    marker.add(Markers.appendRaw(OPERATION_MARKER, operation.toString(config.copy(format = false))).and(Markers.append("title", warnSubject(environment))))
+                    marker.add(
+                        Markers.appendRaw(
+                            OPERATION_MARKER,
+                            operation.toString(config.copy(format = false))
+                        ).and(Markers.append("title", warnSubject(environment)))
+                    )
                     marker.add(Markers.append(IS_OPERATION_MARKER, true))
                 }
                 if (error == null || error is ClientAbortException) {
@@ -144,7 +185,7 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
                     if (!properties.ignoredErrorStatusCode.contains(httpStatusCode)) {
                         val message = "httpStatus:$httpStatusCode ${error.javaClass.name}:${
                             getMessage(requestAttributes)
-                                    ?: error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
+                                ?: error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                         }"
                         MDC.put(WebUtils.ERROR_MESSAGE_ATTRIBUTE, message)
                         if (config.includeTrace)
@@ -185,7 +226,10 @@ class RequestLoggingFilter(private val properties: RequestLoggingProperties, pri
     }
 
     private fun getError(requestAttributes: RequestAttributes): Throwable? {
-        return getAttribute<Throwable>(requestAttributes, DefaultErrorAttributes::class.java.name + ".ERROR")
+        return getAttribute<Throwable>(
+            requestAttributes,
+            DefaultErrorAttributes::class.java.name + ".ERROR"
+        )
     }
 
     @Suppress("UNCHECKED_CAST")

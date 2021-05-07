@@ -15,28 +15,50 @@ import javax.servlet.http.HttpServletResponse
  *
  * @author Peter Wu
  */
-class HandlerMethodHandlerInterceptor(private val properties: RequestLoggingProperties) : HandlerInterceptorAdapter() {
+class HandlerMethodHandlerInterceptor(private val properties: RequestLoggingProperties) :
+    HandlerInterceptorAdapter() {
 
     companion object {
         val HANDLER_METHOD = HandlerMethodHandlerInterceptor::class.java.name + ".handlerMethod"
-        val BEST_MATCHING_PATTERN_ATTRIBUTE = HandlerMethodHandlerInterceptor::class.java.name + ".bestMatchingPattern"
+        val BEST_MATCHING_PATTERN_ATTRIBUTE =
+            HandlerMethodHandlerInterceptor::class.java.name + ".bestMatchingPattern"
         val COLLECTION_NAME = HandlerMethodHandlerInterceptor::class.java.name + ".collectionName"
         val OPERATION_NAME = HandlerMethodHandlerInterceptor::class.java.name + ".operationName"
         val REQUEST_LOGGING = HandlerMethodHandlerInterceptor::class.java.name + ".requestLogging"
     }
 
-    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        if (handler is HandlerMethod && (properties.isForceRecord || (!handler.beanType.isAnnotationPresent(NoRequestLogging::class.java) && !handler.hasMethodAnnotation(NoRequestLogging::class.java))) && handler.bean !is ErrorController && useAnnotationMethodHandler(request) && (properties.handlerTypePrefix.isEmpty() || properties.handlerTypePrefix.any { handler.beanType.name.packageMatches(it) })) {
+    override fun preHandle(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: Any
+    ): Boolean {
+        if (handler is HandlerMethod && (properties.isForceRecord || (!handler.beanType.isAnnotationPresent(
+                NoRequestLogging::class.java
+            ) && !handler.hasMethodAnnotation(NoRequestLogging::class.java))) && handler.bean !is ErrorController && useAnnotationMethodHandler(
+                request
+            ) && (properties.handlerTypePrefix.isEmpty() || properties.handlerTypePrefix.any {
+                handler.beanType.name.packageMatches(
+                    it
+                )
+            })
+        ) {
             request.setAttribute(HANDLER_METHOD, handler)
-            request.setAttribute(BEST_MATCHING_PATTERN_ATTRIBUTE, request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE))
+            request.setAttribute(
+                BEST_MATCHING_PATTERN_ATTRIBUTE,
+                request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE)
+            )
 
             val collectionName = handler.beanType.getAnnotation(RequestMapping::class.java)?.name
-                    ?: ""
+                ?: ""
             request.setAttribute(COLLECTION_NAME, collectionName)
             val name = handler.getMethodAnnotation(RequestMapping::class.java)?.name ?: ""
             request.setAttribute(OPERATION_NAME, name)
-            val requestLoggingAnno = (handler.getMethodAnnotation(cn.bestwu.logging.annotation.RequestLogging::class.java)
-                    ?: AnnotatedElementUtils.findMergedAnnotation(handler.beanType, cn.bestwu.logging.annotation.RequestLogging::class.java))
+            val requestLoggingAnno =
+                (handler.getMethodAnnotation(cn.bestwu.logging.annotation.RequestLogging::class.java)
+                    ?: AnnotatedElementUtils.findMergedAnnotation(
+                        handler.beanType,
+                        cn.bestwu.logging.annotation.RequestLogging::class.java
+                    ))
 
 
             var encryptHeaders = requestLoggingAnno?.encryptHeaders
@@ -47,9 +69,20 @@ class HandlerMethodHandlerInterceptor(private val properties: RequestLoggingProp
             if (encryptParameters == null || encryptParameters.isEmpty()) {
                 encryptParameters = properties.encryptParameters
             }
-            val requestLogging = RequestLoggingConfig(includeRequestBody = properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false, includeResponseBody = properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false, includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false, encryptHeaders = encryptHeaders
-                    ?: arrayOf(), encryptParameters = encryptParameters
-                    ?: arrayOf(), format = properties.isFormat, ignoredTimeout = requestLoggingAnno?.ignoredTimeout == true)
+            var timeoutAlarmSeconds = requestLoggingAnno?.timeoutAlarmSeconds ?: 0
+            if (timeoutAlarmSeconds <= 0) {
+                timeoutAlarmSeconds = properties.timeoutAlarmSeconds
+            }
+            val requestLogging = RequestLoggingConfig(
+                includeRequestBody = properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false,
+                includeResponseBody = properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false,
+                includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false,
+                encryptHeaders = encryptHeaders ?: arrayOf(),
+                encryptParameters = encryptParameters ?: arrayOf(),
+                format = properties.isFormat,
+                ignoredTimeout = requestLoggingAnno?.ignoredTimeout == true,
+                timeoutAlarmSeconds = timeoutAlarmSeconds
+            )
 
             request.setAttribute(REQUEST_LOGGING, requestLogging)
         }
@@ -65,6 +98,6 @@ class HandlerMethodHandlerInterceptor(private val properties: RequestLoggingProp
     }
 
     private fun String.packageMatches(regex: String) =
-            matches(Regex("^" + regex.replace(".", "\\.").replace("*", ".+") + ".*$"))
+        matches(Regex("^" + regex.replace(".", "\\.").replace("*", ".+") + ".*$"))
 
 }
