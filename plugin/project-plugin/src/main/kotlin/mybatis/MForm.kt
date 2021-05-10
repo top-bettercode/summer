@@ -35,13 +35,14 @@ class MForm : MModuleJavaGenerator() {
             }
 
             import("javax.validation.groups.Default")
+
             columns.forEach {
                 //getter
-                method("get${it.javaName.capitalize()}", it.javaType) {
-                    if (it.isPrimary) {
-                        import("cn.bestwu.simpleframework.web.validator.UpdateConstraint")
-                        annotation("@javax.validation.constraints.NotNull(groups = UpdateConstraint.class)")
-                    } else {
+                if (it.isPrimary) {
+                    import("cn.bestwu.simpleframework.web.validator.UpdateConstraint")
+                    annotation("@javax.validation.constraints.NotNull(groups = UpdateConstraint.class)")
+                } else if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.isSoftDelete) {
+                    method("get${it.javaName.capitalize()}", it.javaType) {
                         if (it.columnSize > 0 && it.javaType == JavaType.stringInstance) {
                             annotation("@org.hibernate.validator.constraints.Length(max = ${it.columnSize}, groups = Default.class)")
                         }
@@ -53,20 +54,20 @@ class MForm : MModuleJavaGenerator() {
                                 annotation("@javax.validation.constraints.NotNull(groups = CreateConstraint.class)")
                             }
                         }
+                        +"return this.entity.get${it.javaName.capitalize()}();"
                     }
-                    +"return this.entity.get${it.javaName.capitalize()}();"
                 }
             }
-
             columns.forEach {
                 //setter
-                method("set${it.javaName.capitalize()}") {
-                    parameter {
-                        type = it.javaType
-                        name = it.javaName
+                if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.isSoftDelete)
+                    method("set${it.javaName.capitalize()}") {
+                        parameter {
+                            type = it.javaType
+                            name = it.javaName
+                        }
+                        +"this.entity.set${it.javaName.capitalize()}(${it.javaName});"
                     }
-                    +"this.entity.set${it.javaName.capitalize()}(${it.javaName});"
-                }
             }
         }
     }
