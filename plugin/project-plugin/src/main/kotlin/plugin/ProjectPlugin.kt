@@ -158,7 +158,7 @@ class ProjectPlugin : Plugin<Project> {
         }
 
 
-        project.subprojects {subProject->
+        project.subprojects { subProject ->
 
             val mainProject =
                 !arrayOf("core").contains(subProject.name) && subProject.parent?.name != "util" && subProject.name != "util"
@@ -320,14 +320,18 @@ class ProjectPlugin : Plugin<Project> {
                                     innerInterface(InnerInterface(JavaType("Get${pathName}Info")))
                                 }
                             }
-                            subProject.file(
+                            val file = subProject.file(
                                 "src/main/java/${
                                     type.fullyQualifiedName.replace(
                                         '.',
                                         '/'
                                     )
                                 }.java"
-                            ).writeText(serializationViews.formattedContent)
+                            )
+                            if (!file.parentFile.exists()) {
+                                file.parentFile.mkdirs()
+                            }
+                            file.writeText(serializationViews.formattedContent)
                         }
                     }
                     create("printMapper") {
