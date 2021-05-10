@@ -34,12 +34,9 @@ public class ResponseEntityResponseTraceExtractor<T> implements
     if (this.delegate != null) {
       if (log.isInfoEnabled()) {
         response = new ClientHttpResponseWrapper(response);
-      }
-      T body = this.delegate.extractData(response);
-      if (log.isInfoEnabled()) {
         log.info("response:{}", ((ClientHttpResponseWrapper) response).getRecord());
       }
-      return body;
+      return this.delegate.extractData(response);
     } else {
       return null;
     }
