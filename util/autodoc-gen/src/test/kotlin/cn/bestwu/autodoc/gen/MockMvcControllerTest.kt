@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.core.io.ClassPathResource
+import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -66,14 +67,15 @@ class MockMvcControllerTest {
     @Test
     @Throws(Exception::class)
     fun test2Create() {
-        mockMvc.perform(post("/clientTokens")
-                .param("map", "{\"a\":1}")
-                .param("list", "[{\"a\":1}]")
-                .param("tokenId", "test")
-                .param("token", "1")
-                .param("authenticationId", "1")
-                .param("userName", "test")
-                .param("clientId", "1")
+        mockMvc.perform(post("/clientTokens").contentType(MediaType.APPLICATION_JSON)
+            .content("[{}]")
+//                .param("map", "{\"a\":1}")
+//                .param("list", "[{\"a\":1}]")
+//                .param("tokenId", "test")
+//                .param("token", "1")
+//                .param("authenticationId", "1")
+//                .param("userName", "test")
+//                .param("clientId", "1")
         ).andExpect(status().isCreated)
     }
 
