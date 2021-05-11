@@ -1,12 +1,14 @@
 package cn.bestwu.api.sign
 
 import org.slf4j.LoggerFactory
+import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.http.HttpHeaders
 import org.springframework.util.DigestUtils
 import org.springframework.util.MultiValueMap
 import org.springframework.util.StringUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
+import org.springframework.web.method.HandlerMethod
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
@@ -15,9 +17,16 @@ import javax.servlet.http.HttpServletRequest
 
  * @author Peter Wu
  */
-class ApiSignAlgorithm(private val properties: ApiSignProperties) {
+class ApiSignAlgorithm(val properties: ApiSignProperties) {
 
     val isSimple: Boolean = properties.isSimple
+
+    fun requiredSign(handler: Any) =
+        handler is HandlerMethod && handler.bean !is ErrorController && properties.handlerTypePrefix.any {
+            handler.beanType.name.matches(Regex("^" + it.replace(".", "\\.").replace("*", ".+") + ".*$"))
+        } && !handler.hasMethodAnnotation(ApiSignIgnore::class.java) && !handler.beanType.isAnnotationPresent(
+            ApiSignIgnore::class.java
+        )
 
     /**
      * 验证参数签名
@@ -25,6 +34,9 @@ class ApiSignAlgorithm(private val properties: ApiSignProperties) {
      * @param request 请求
      */
     fun checkSign(request: HttpServletRequest) {
+        if (request.parameterMap.isEmpty() && isSimple)
+            return
+
         val signParameter = properties.parameterName
         var sign: String? = request.getHeader(signParameter)
         if (sign == null) {
@@ -63,10 +75,15 @@ class ApiSignAlgorithm(private val properties: ApiSignProperties) {
                 throw IllegalSignException()
             }
             if (properties.isVerifyUserAgent) {
-                val signUserAgent = signUserAgent(request.getHeader(HttpHeaders.USER_AGENT)).substring(16, 24)
+                val signUserAgent =
+                    signUserAgent(request.getHeader(HttpHeaders.USER_AGENT)).substring(16, 24)
                 if (!sign.substring(16, 24).equals(signUserAgent, ignoreCase = true)) {
                     if (log.isDebugEnabled) {
-                        log.debug("客户端UserAgent签名错误,客户端：{}，服务端：{}", sign.substring(16, 24), signUserAgent)
+                        log.debug(
+                            "客户端UserAgent签名错误,客户端：{}，服务端：{}",
+                            sign.substring(16, 24),
+                            signUserAgent
+                        )
                     }
                     throw IllegalSignException()
                 }
@@ -76,9 +93,12 @@ class ApiSignAlgorithm(private val properties: ApiSignProperties) {
             if (clientTimeDifference > 0) {
                 val signTime = sign.substring(24, 32)
                 val time = System.currentTimeMillis() / (clientTimeDifference * 1000)
-                if (!signTime(time).substring(24, 32).equals(signTime, ignoreCase = true) && !signTime(time - 1)
-                                .substring(24, 32).equals(signTime, ignoreCase = true) && !signTime(
-                                time + 1).substring(24, 32).equals(signTime, ignoreCase = true)) {
+                if (!signTime(time).substring(24, 32)
+                        .equals(signTime, ignoreCase = true) && !signTime(time - 1)
+                        .substring(24, 32).equals(signTime, ignoreCase = true) && !signTime(
+                        time + 1
+                    ).substring(24, 32).equals(signTime, ignoreCase = true)
+                ) {
                     if (log.isDebugEnabled) {
                         log.debug("客户端时间签名错误,客户端：{}", sign.substring(24, 32))
                     }
@@ -97,8 +117,15 @@ class ApiSignAlgorithm(private val properties: ApiSignProperties) {
         return if (properties.isSimple) {
             signParams(request)
         } else
-            signParams(request).substring(0, 16) + signUserAgent(request.getHeader(HttpHeaders.USER_AGENT)).substring(16, 24) + signTime(
-                    System.currentTimeMillis() / properties.allowableClientTimeDifference).substring(24, 32)
+            signParams(request).substring(
+                0,
+                16
+            ) + signUserAgent(request.getHeader(HttpHeaders.USER_AGENT)).substring(
+                16,
+                24
+            ) + signTime(
+                System.currentTimeMillis() / properties.allowableClientTimeDifference
+            ).substring(24, 32)
     }
 
     /**
@@ -112,8 +139,12 @@ class ApiSignAlgorithm(private val properties: ApiSignProperties) {
         return if (properties.isSimple) {
             signParams(requestParams)
         } else
-            signParams(requestParams).substring(0, 16) + signUserAgent(userAgent).substring(16, 24) + signTime(
-                    System.currentTimeMillis() / properties.allowableClientTimeDifference).substring(24, 32)
+            signParams(requestParams).substring(0, 16) + signUserAgent(userAgent).substring(
+                16,
+                24
+            ) + signTime(
+                System.currentTimeMillis() / properties.allowableClientTimeDifference
+            ).substring(24, 32)
     }
 
 
@@ -161,7 +192,11 @@ class ApiSignAlgorithm(private val properties: ApiSignProperties) {
                 value.append(values[i] ?: "")
                 value.append(if (i == length - 1) "" else ",")
             }
-            if (value.toString() == "" || key.equals("sign", ignoreCase = true) || key.equals("sign_type", ignoreCase = true)) {
+            if (value.toString() == "" || key.equals(
+                    "sign",
+                    ignoreCase = true
+                ) || key.equals("sign_type", ignoreCase = true)
+            ) {
                 continue
             }
             prestr.append(key).append("=").append(value).append("&")
@@ -190,7 +225,11 @@ class ApiSignAlgorithm(private val properties: ApiSignProperties) {
                 value.append(values[i])
                 value.append(if (i == length - 1) "" else ",")
             }
-            if (value.toString() == "" || key.equals("sign", ignoreCase = true) || key.equals("sign_type", ignoreCase = true)) {
+            if (value.toString() == "" || key.equals(
+                    "sign",
+                    ignoreCase = true
+                ) || key.equals("sign_type", ignoreCase = true)
+            ) {
                 continue
             }
             prestr.append(key).append("=").append(value).append("&")
@@ -233,7 +272,7 @@ class ApiSignAlgorithm(private val properties: ApiSignProperties) {
         private val request: HttpServletRequest?
             get() {
                 val requestAttributes = RequestContextHolder
-                        .getRequestAttributes() as? ServletRequestAttributes
+                    .getRequestAttributes() as? ServletRequestAttributes
                 return requestAttributes?.request
             }
     }
