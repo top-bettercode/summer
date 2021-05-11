@@ -42,8 +42,8 @@ class ClientTokenController {
     }
 
     @PostMapping(value = ["/clientTokens"], name = "新增")
-    fun create(@Validated clientToken: ClientToken): Any {
-        return ResponseEntity.status(HttpStatus.CREATED).body(insert())
+    fun create(@Validated @RequestBody clientToken: Array<ClientToken>): Any {
+        return ResponseEntity.status(HttpStatus.CREATED).body("")
     }
 
     @PutMapping(value = ["/clientTokens/{authenticationId}"], name = "编辑")
