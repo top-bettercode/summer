@@ -18,11 +18,8 @@ import javax.servlet.http.HttpServletResponse
 
  * @author Peter Wu
  */
-class ApiSignHandlerInterceptor(private var apiSignAlgorithm: ApiSignAlgorithm,
-                                /**
-                                 * 跳过验证的路径.
-                                 */
-                                private val handlerTypePrefix: Array<String>
+class ApiSignHandlerInterceptor(
+    private var apiSignAlgorithm: ApiSignAlgorithm,
 ) : HandlerInterceptorAdapter(), MessageSourceAware, Ordered {
 
     private var messageSource: MessageSource? = null
@@ -35,16 +32,19 @@ class ApiSignHandlerInterceptor(private var apiSignAlgorithm: ApiSignAlgorithm,
         return Ordered.HIGHEST_PRECEDENCE + 20
     }
 
-    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        if (request.parameterMap.isEmpty() && apiSignAlgorithm.isSimple) {
-            return true
-        }
-
-        if (handler is HandlerMethod && handler.bean !is ErrorController && handlerTypePrefix.any { handler.beanType.name.packageMatches(it) } && !handler.hasMethodAnnotation(ApiSignIgnore::class.java) && !handler.beanType.isAnnotationPresent(ApiSignIgnore::class.java)) {
+    override fun preHandle(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: Any
+    ): Boolean {
+        if (apiSignAlgorithm.properties.requiredSign(handler)) {
             try {
                 apiSignAlgorithm.checkSign(request)
             } catch (e: IllegalSignException) {
-                val responseStatus = AnnotatedElementUtils.findMergedAnnotation(e.javaClass, ResponseStatus::class.java)
+                val responseStatus = AnnotatedElementUtils.findMergedAnnotation(
+                    e.javaClass,
+                    ResponseStatus::class.java
+                )
                 if (responseStatus != null) {
                     val statusCode = responseStatus.code.value()
                     val reason = responseStatus.reason
@@ -52,7 +52,12 @@ class ApiSignHandlerInterceptor(private var apiSignAlgorithm: ApiSignAlgorithm,
                         response.sendError(statusCode)
                     } else {
                         val resolvedReason = if (this.messageSource != null) {
-                            this.messageSource!!.getMessage(reason, null, reason, LocaleContextHolder.getLocale())
+                            this.messageSource!!.getMessage(
+                                reason,
+                                null,
+                                reason,
+                                LocaleContextHolder.getLocale()
+                            )
                         } else
                             reason
                         response.sendError(statusCode, resolvedReason)
@@ -65,7 +70,5 @@ class ApiSignHandlerInterceptor(private var apiSignAlgorithm: ApiSignAlgorithm,
         return true
     }
 
-    private fun String.packageMatches(regex: String) =
-            matches(Regex("^" + regex.replace(".", "\\.").replace("*", ".+") + ".*$"))
 
 }

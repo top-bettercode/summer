@@ -56,9 +56,6 @@ public abstract class BaseWebNoAuthTest {
   public void setup() throws Exception {
 
     //--------------------------------------------
-    Autodoc.headers("Content-Type", "Accept");
-
-    //--------------------------------------------
     requestLoggingProperties.setForceRecord(true);
     requestLoggingProperties.setIncludeRequestBody(true);
     requestLoggingProperties.setIncludeResponseBody(true);

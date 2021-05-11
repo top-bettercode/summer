@@ -38,7 +38,7 @@ class ApiSignConfiguration : WebMvcConfigurer {
 
 
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(ApiSignHandlerInterceptor(apiSignAlgorithm, properties.handlerTypePrefix))
+        registry.addInterceptor(ApiSignHandlerInterceptor(apiSignAlgorithm))
     }
 
     internal class ApiSignCondition : Condition {
