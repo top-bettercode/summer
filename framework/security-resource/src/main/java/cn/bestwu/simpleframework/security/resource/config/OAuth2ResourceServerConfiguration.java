@@ -1,7 +1,9 @@
 package cn.bestwu.simpleframework.security.resource.config;
 
 import cn.bestwu.simpleframework.security.exception.CustomWebResponseExceptionTranslator;
+import cn.bestwu.simpleframework.security.exception.OAuth2ExceptionJackson2Serializer;
 import cn.bestwu.simpleframework.security.exception.SecurityOAuth2ErrorHandler;
+import cn.bestwu.simpleframework.web.error.IErrorRespEntityHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -42,7 +44,11 @@ public class OAuth2ResourceServerConfiguration {
 
 
   @Bean
-  public SecurityOAuth2ErrorHandler securityErrorHandler() {
+  public SecurityOAuth2ErrorHandler securityErrorHandler(@Autowired(required = false)
+      IErrorRespEntityHandler errorRespEntityHandler) {
+    if (errorRespEntityHandler != null) {
+      OAuth2ExceptionJackson2Serializer.setErrorRespEntityHandler(errorRespEntityHandler);
+    }
     return new SecurityOAuth2ErrorHandler();
   }
 

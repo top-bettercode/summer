@@ -11,6 +11,7 @@ import cn.bestwu.simpleframework.web.error.CustomErrorController;
 import cn.bestwu.simpleframework.web.error.DataErrorHandler;
 import cn.bestwu.simpleframework.web.error.ErrorAttributes;
 import cn.bestwu.simpleframework.web.error.IErrorHandler;
+import cn.bestwu.simpleframework.web.error.IErrorRespEntityHandler;
 import cn.bestwu.simpleframework.web.filter.ApiVersionFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
@@ -182,8 +183,10 @@ public class FrameworkMvcConfiguration {
   @ConditionalOnMissingBean(ErrorAttributes.class)
   @Bean
   public ErrorAttributes errorAttributes(
-      @Autowired(required = false) List<IErrorHandler> errorHandlers, MessageSource messageSource) {
-    return new ErrorAttributes(errorHandlers, messageSource);
+      @Autowired(required = false) List<IErrorHandler> errorHandlers,
+      @Autowired(required = false) IErrorRespEntityHandler errorRespEntityHandler,
+      MessageSource messageSource) {
+    return new ErrorAttributes(errorHandlers, errorRespEntityHandler, messageSource);
   }
 
   @ConditionalOnMissingBean(ErrorController.class)
