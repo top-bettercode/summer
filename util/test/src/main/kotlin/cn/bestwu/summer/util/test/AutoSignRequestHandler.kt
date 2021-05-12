@@ -1,4 +1,4 @@
-package cn.bestwu.autodoc.gen
+package cn.bestwu.summer.util.test
 
 import cn.bestwu.api.sign.ApiSignAlgorithm
 import cn.bestwu.api.sign.ApiSignProperties

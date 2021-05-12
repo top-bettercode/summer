@@ -1,7 +1,5 @@
 package cn.bestwu.summer.util.test;
 
-import cn.bestwu.autodoc.gen.AutoDocHttpServletRequest;
-import cn.bestwu.autodoc.gen.AutoDocRequestHandler;
 import cn.bestwu.autodoc.gen.Autodoc;
 import cn.bestwu.simpleframework.security.resource.Anonymous;
 import java.lang.annotation.Annotation;
