@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 /**
  * @author Peter Wu
  */
-public class RespEntity<T> implements Serializable {
+public class RespEntity<T> implements IRespEntity, Serializable {
 
   private static final long serialVersionUID = 3861540517275767213L;
   public static final String KEY_STATUS = "status";
@@ -170,7 +170,7 @@ public class RespEntity<T> implements Serializable {
     return map;
   }
 
-  public static class RespEntityMap extends HashMap<String, Object> {
+  public static class RespEntityMap extends HashMap<String, Object> implements IRespEntity {
 
     private static final long serialVersionUID = -8836404214545603605L;
   }
