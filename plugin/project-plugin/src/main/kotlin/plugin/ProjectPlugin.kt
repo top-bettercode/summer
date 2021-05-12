@@ -38,7 +38,6 @@ class ProjectPlugin : Plugin<Project> {
         project.description = project.findProperty("application.name") as? String
 
         project.allprojects.forEach { subProject ->
-            subProject.plugins.apply("org.jetbrains.kotlin.jvm")
             subProject.plugins.apply("idea")
             subProject.plugins.apply("java")
 
@@ -164,7 +163,6 @@ class ProjectPlugin : Plugin<Project> {
             val needDocProject = subProject.parent?.name != "util" && subProject.name != "util"
 
             subProject.plugins.apply {
-                apply("org.jetbrains.kotlin.jvm")
                 apply("summer.profile")
                 apply("summer.packageinfo")
                 apply("io.spring.dependency-management")
@@ -224,6 +222,9 @@ class ProjectPlugin : Plugin<Project> {
                     it.dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
                     it.dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
 
+                    it.dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
+                    it.dependency("org.jetbrains.kotlin:kotlin-stdlib:${KotlinVersion.CURRENT}")
+                    it.dependency("org.jetbrains.kotlin:kotlin-stdlib-common:${KotlinVersion.CURRENT}")
                     it.dependency("org.jetbrains.kotlin:kotlin-reflect:${KotlinVersion.CURRENT}")
                     it.dependency("org.bouncycastle:bcpkix-jdk15on:1.62")
                     it.dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.2")

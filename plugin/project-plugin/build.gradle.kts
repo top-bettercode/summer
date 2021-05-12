@@ -5,9 +5,6 @@ plugins {
 }
 
 dependencies {
-    val kotlinVersion = property("kotlin.version")
-    api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    api("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     api("org.springframework.boot:spring-boot-gradle-plugin")
     api(project(":plugin:generator-plugin"))
     api(project(":plugin:dist-plugin"))
