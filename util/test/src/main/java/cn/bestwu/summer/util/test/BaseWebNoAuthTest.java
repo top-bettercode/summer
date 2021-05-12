@@ -3,7 +3,6 @@ package cn.bestwu.summer.util.test;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import cn.bestwu.autodoc.gen.AutoDocFilter;
 import cn.bestwu.autodoc.gen.Autodoc;
 import cn.bestwu.autodoc.gen.AutodocSetting;
 import cn.bestwu.logging.RequestLoggingFilter;

@@ -1,4 +1,4 @@
-package cn.bestwu.autodoc.gen
+package cn.bestwu.summer.util.test
 
 import org.springframework.core.Ordered
 import org.springframework.web.filter.OncePerRequestFilter

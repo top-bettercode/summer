@@ -1,5 +1,6 @@
-package cn.bestwu.autodoc.gen
+package cn.bestwu.summer.util.test
 
+import cn.bestwu.autodoc.gen.Enumerator
 import org.springframework.util.StringUtils
 import java.util.*
 import javax.servlet.http.HttpServletRequest

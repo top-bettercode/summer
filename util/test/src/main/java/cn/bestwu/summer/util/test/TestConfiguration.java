@@ -2,9 +2,6 @@ package cn.bestwu.summer.util.test;
 
 import cn.bestwu.api.sign.ApiSignAlgorithm;
 import cn.bestwu.api.sign.ApiSignProperties;
-import cn.bestwu.autodoc.gen.AutoDocFilter;
-import cn.bestwu.autodoc.gen.AutoDocRequestHandler;
-import cn.bestwu.autodoc.gen.AutoSignRequestHandler;
 import cn.bestwu.simpleframework.web.error.ErrorAttributes;
 import cn.bestwu.simpleframework.web.error.MocTestErrorLoggingHandler;
 import java.util.List;
