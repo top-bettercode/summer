@@ -224,7 +224,7 @@ class ProjectPlugin : Plugin<Project> {
                     it.dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
                     it.dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
 
-//                    it.dependency("org.jetbrains.kotlin:kotlin-reflect:${KotlinVersion.CURRENT}")
+                    it.dependency("org.jetbrains.kotlin:kotlin-reflect:${KotlinVersion.CURRENT}")
                     it.dependency("org.bouncycastle:bcpkix-jdk15on:1.62")
                     it.dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.2")
                     it.dependency("com.github.axet:kaptcha:0.0.9")
