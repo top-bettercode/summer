@@ -124,6 +124,7 @@ class AutodocHandler(
                 request.headers.remove(HttpHeaders.USER_AGENT)
 
                 val headers = HttpHeaders()
+                headers.putAll(request.headers)
                 (setOf("Accept", "Content-Type") + Autodoc.headers + requiredHeaders).forEach {
                     val defaultValue = when (it) {
                         "Accept" -> listOf(MediaType.APPLICATION_JSON_VALUE)
@@ -132,8 +133,8 @@ class AutodocHandler(
                     }
                     headers[it] = request.headers.getOrDefault(it, defaultValue)
                 }
-                headers.putAll(request.headers)
-                request.headers = headers
+                request.headers.clear()
+                request.headers.putAll(headers)
 
                 //参数
                 val calculateParams = RequiredParameters.calculate(handler)
