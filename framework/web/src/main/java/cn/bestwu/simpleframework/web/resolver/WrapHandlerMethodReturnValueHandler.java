@@ -1,7 +1,7 @@
 package cn.bestwu.simpleframework.web.resolver;
 
+import cn.bestwu.simpleframework.web.IRespEntity;
 import cn.bestwu.simpleframework.web.RespEntity;
-import cn.bestwu.simpleframework.web.RespEntity.RespEntityMap;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -69,9 +69,9 @@ public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnV
     Class<?> typeContainingClass = returnType.getContainingClass();
     Class<?> parameterType = returnType.getParameterType();
     return !void.class.equals(parameterType) && !AnnotatedElementUtils
-        .hasAnnotation(parameterType, NoWrap.class) && !AnnotatedElementUtils
-        .hasAnnotation(typeContainingClass, NoWrap.class) &&
-        !returnType.hasMethodAnnotation(NoWrap.class) && (
+        .hasAnnotation(parameterType, NoWrapResp.class) && !AnnotatedElementUtils
+        .hasAnnotation(typeContainingClass, NoWrapResp.class) &&
+        !returnType.hasMethodAnnotation(NoWrapResp.class) && (
         AnnotatedElementUtils.hasAnnotation(typeContainingClass, ResponseBody.class) ||
             returnType.hasMethodAnnotation(ResponseBody.class)
             || HttpEntity.class.isAssignableFrom(parameterType) &&
@@ -84,7 +84,7 @@ public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnV
     } else if (originalValue instanceof Throwable) {
       return new RespEntity<>(String.valueOf(HttpStatus.BAD_REQUEST.value()),
           ((Throwable) originalValue).getMessage());
-    } else if (!(originalValue instanceof RespEntity || originalValue instanceof RespEntityMap)) {
+    } else if (!(originalValue instanceof IRespEntity)) {
       return new RespEntity<>(originalValue);
     } else {
       return originalValue;
