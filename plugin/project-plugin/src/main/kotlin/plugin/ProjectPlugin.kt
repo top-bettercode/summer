@@ -358,21 +358,10 @@ class ProjectPlugin : Plugin<Project> {
                         it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
-                            gen.generators = arrayOf(SetterPrint(false))
-                            Generators.call(gen)
-                        }
-                    }
-
-                    create("printSetterTest") {
-                        it.group = "gen"
-                        it.doLast {
-                            val gen =
-                                subProject.extensions.getByType(GeneratorExtension::class.java)
                             gen.generators = arrayOf(SetterPrint(true))
                             Generators.call(gen)
                         }
                     }
-
 
                     create("printExcelField") {
                         it.group = "gen"
