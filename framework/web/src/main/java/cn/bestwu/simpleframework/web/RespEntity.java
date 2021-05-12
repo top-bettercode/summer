@@ -159,7 +159,7 @@ public class RespEntity<T> implements IRespEntity, Serializable {
   }
 
 
-  @JsonIgnore
+  @Override
   public Map<String, Object> toMap() {
     RespEntityMap map = new RespEntityMap();
     map.put(KEY_STATUS, status);
@@ -173,5 +173,10 @@ public class RespEntity<T> implements IRespEntity, Serializable {
   public static class RespEntityMap extends HashMap<String, Object> implements IRespEntity {
 
     private static final long serialVersionUID = -8836404214545603605L;
+
+    @Override
+    public Map<String, Object> toMap() {
+      return this;
+    }
   }
 }

@@ -47,15 +47,18 @@ public class ErrorAttributes extends DefaultErrorAttributes {
 
   private static final Logger log = LoggerFactory.getLogger(ErrorAttributes.class);
 
-  public static final String IS_PLAIN_TEXT_ERROR =ErrorAttributes.class.getName()+".plainText";
+  public static final String IS_PLAIN_TEXT_ERROR = ErrorAttributes.class.getName() + ".plainText";
   private final MessageSource messageSource;
   private final List<IErrorHandler> errorHandlers;
+  private final IErrorRespEntityHandler errorRespEntityHandler;
   private static final PropertiesSource propertiesSource = PropertiesSource
       .of("default-exception-handle", "exception-handle");
 
   public ErrorAttributes(List<IErrorHandler> errorHandlers,
+      IErrorRespEntityHandler errorRespEntityHandler,
       MessageSource messageSource) {
     this.errorHandlers = errorHandlers;
+    this.errorRespEntityHandler = errorRespEntityHandler;
     this.messageSource = messageSource;
   }
 
@@ -177,8 +180,11 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     if (!errors.isEmpty()) {
       respEntity.setErrors(errors);
     }
-
-    return respEntity.toMap();
+    if (errorRespEntityHandler != null) {
+      return errorRespEntityHandler.handle(webRequest, respEntity).toMap();
+    } else {
+      return respEntity.toMap();
+    }
   }
 
   private Integer handleHttpStatusCode(Class<? extends Throwable> throwableClass) {
