@@ -168,9 +168,9 @@ class DistPlugin : Plugin<Project> {
                         val installScript = File(outputDirectory, "${project.name}-install.bat")
                         val installScriptText = installScript.readText()
                             .replace("%APP_HOME%lib\\conf", "%APP_HOME%conf").replace(
-                            "if \"%OS%\"==\"Windows_NT\" endlocal",
-                            "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
-                        )
+                                "if \"%OS%\"==\"Windows_NT\" endlocal",
+                                "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
+                            )
                         installScript.writeText(installScriptText)
                     }
                 }
@@ -281,24 +281,24 @@ class DistPlugin : Plugin<Project> {
                     it.destinationDirectory.set(dest)
                 }
             }
+
+            val jvmArgs = dist.jvmArgs.filter { it.isNotBlank() }.toMutableSet()
+            val encoding = "-Dfile.encoding=UTF-8"
+            jvmArgs += encoding
+            val nativeLibArgs = if (project.file(dist.nativePath).exists()) {
+                val nativeLibArgs =
+                    "-Djava.library.path=${project.file(dist.nativePath).absolutePath}"
+                jvmArgs += nativeLibArgs
+                nativeLibArgs
+            } else ""
+
             val application = project.convention.findPlugin(ApplicationPluginConvention::class.java)
+
             if (application != null) {
-                val encoding = "-Dfile.encoding=UTF-8"
-                application.applicationDefaultJvmArgs += encoding
-                val nativeLibArgs = if (project.file(dist.nativePath).exists()) {
-                    val nativeLibArgs =
-                        "-Djava.library.path=${project.file(dist.nativePath).absolutePath}"
-                    application.applicationDefaultJvmArgs += nativeLibArgs
-                    nativeLibArgs
-                } else ""
-                application.applicationDefaultJvmArgs += dist.jvmArgs.filter { it.isNotBlank() && encoding != it }
+                application.applicationDefaultJvmArgs += jvmArgs
                 application.applicationDefaultJvmArgs =
                     application.applicationDefaultJvmArgs.distinct()
 
-                project.tasks.getByName("test") { task ->
-                    task as Test
-                    task.jvmArgs = application.applicationDefaultJvmArgs.toList()
-                }
                 project.tasks.getByName("startScripts") { task ->
                     task as CreateStartScripts
                     task.inputs.file(project.rootProject.file("gradle.properties"))
@@ -503,6 +503,14 @@ fi
                         )
                     }
                 }
+            }
+
+            project.tasks.getByName("test") { task ->
+                task as Test
+                if (application != null)
+                    task.jvmArgs = application.applicationDefaultJvmArgs.toList()
+                else
+                    task.jvmArgs = jvmArgs.toList()
             }
         }
     }
