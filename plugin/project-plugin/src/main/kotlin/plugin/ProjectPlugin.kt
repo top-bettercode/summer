@@ -13,6 +13,7 @@ import org.atteo.evo.inflector.English
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Zip
@@ -32,6 +33,10 @@ import java.util.concurrent.TimeUnit
 class ProjectPlugin : Plugin<Project> {
 
     private val pluginBundle: ResourceBundle = ResourceBundle.getBundle("summer-version")
+
+    private fun findDistProperty(project: Project, key: String) =
+        (project.findProperty("dist.${project.name}.$key") as? String
+            ?: project.findProperty("dist.$key") as? String)
 
     override fun apply(project: Project) {
 
@@ -268,8 +273,32 @@ class ProjectPlugin : Plugin<Project> {
             }
 
             subProject.tasks.apply {
+                val nativePath = findDistProperty(subProject, "native-path") ?: "native"
+                val jvmArgs =
+                    (findDistProperty(subProject, "jvm-args") ?: "").split(" +".toRegex())
+                        .filter { it.isNotBlank() }.toMutableSet()
+                val encoding = "-Dfile.encoding=UTF-8"
+                jvmArgs += encoding
+                if (subProject.file(nativePath).exists()) {
+                    val nativeLibArgs =
+                        "-Djava.library.path=${subProject.file(nativePath).absolutePath}"
+                    jvmArgs += nativeLibArgs
+                }
+
+                val application =
+                    subProject.convention.findPlugin(ApplicationPluginConvention::class.java)
+                if (application != null) {
+                    application.applicationDefaultJvmArgs += jvmArgs
+                    application.applicationDefaultJvmArgs =
+                        application.applicationDefaultJvmArgs.distinct()
+                }
+
                 named("test", Test::class.java) {
                     it.useJUnitPlatform()
+                    if (application != null)
+                        it.jvmArgs = application.applicationDefaultJvmArgs.toList()
+                    else
+                        it.jvmArgs = jvmArgs.toList()
                 }
 
                 named("compileJava", JavaCompile::class.java) {

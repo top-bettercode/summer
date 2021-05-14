@@ -6,7 +6,6 @@ package cn.bestwu.gradle.dist
  */
 open class DistExtension(
         var unwrapResources: Boolean = false,
-        var includeNative: Boolean = false,
         var includeJre: Boolean = false,
         var x64: Boolean = true,
         var windows: Boolean = false,

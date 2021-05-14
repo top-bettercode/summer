@@ -32,7 +32,6 @@ class DistPlugin : Plugin<Project> {
         project.extensions.create("dist", DistExtension::class.java)
         project.extensions.configure(DistExtension::class.java) {
             it.unwrapResources = findProperty(project, "unwrap-resources")?.toBoolean() ?: false
-            it.includeNative = findProperty(project, "include-native")?.toBoolean() ?: false
             it.includeJre = findProperty(project, "include-jre")?.toBoolean() ?: false
             it.windows = findProperty(project, "windows")?.toBoolean() ?: false
             it.x64 = findProperty(project, "x64")?.toBoolean() ?: true
@@ -235,7 +234,7 @@ class DistPlugin : Plugin<Project> {
                         copySpec.from((project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir) {
                             it.into("conf")
                         }
-                    if (dist.includeNative) {
+                    if (project.file(dist.nativePath).exists()) {
                         copySpec.from(project.file(dist.nativePath).absolutePath) {
                             it.into("native")
                         }
@@ -286,7 +285,7 @@ class DistPlugin : Plugin<Project> {
             if (application != null) {
                 val encoding = "-Dfile.encoding=UTF-8"
                 application.applicationDefaultJvmArgs += encoding
-                val nativeLibArgs = if (dist.includeNative) {
+                val nativeLibArgs = if (project.file(dist.nativePath).exists()) {
                     val nativeLibArgs =
                         "-Djava.library.path=${project.file(dist.nativePath).absolutePath}"
                     application.applicationDefaultJvmArgs += nativeLibArgs
@@ -318,7 +317,7 @@ class DistPlugin : Plugin<Project> {
                             windowsScriptText = windowsScriptText
                                 .replace("%APP_HOME%\\lib\\conf", "%APP_HOME%\\conf")
                         }
-                        if (dist.includeNative) {
+                        if (project.file(dist.nativePath).exists()) {
                             unixScriptText = unixScriptText
                                 .replace(nativeLibArgs, "-Djava.library.path=\$APP_HOME/native")
                             windowsScriptText = windowsScriptText
