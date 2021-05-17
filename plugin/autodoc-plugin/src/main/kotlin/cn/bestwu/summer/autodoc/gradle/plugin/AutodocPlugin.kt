@@ -20,8 +20,6 @@ import java.util.*
  */
 class AutodocPlugin : Plugin<Project> {
 
-    private val pluginBundle: ResourceBundle = ResourceBundle.getBundle("plugin")
-
     @Suppress("DEPRECATION")
     override fun apply(project: Project) {
         project.plugins.apply(ProfilePlugin::class.java)
@@ -131,7 +129,7 @@ class AutodocPlugin : Plugin<Project> {
             }
         }
 
-        val version = pluginBundle.getString("summer.version")
+        val version = AutodocPlugin::class.java.`package`.implementationVersion
         project.dependencies.add("testImplementation", "cn.bestwu.summer:autodoc-gen:$version")
 
     }

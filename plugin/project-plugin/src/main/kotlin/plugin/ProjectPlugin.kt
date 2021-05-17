@@ -32,8 +32,6 @@ import java.util.concurrent.TimeUnit
  */
 class ProjectPlugin : Plugin<Project> {
 
-    private val pluginBundle: ResourceBundle = ResourceBundle.getBundle("summer-version")
-
     private fun findDistProperty(project: Project, key: String) =
         (project.findProperty("dist.${project.name}.$key") as? String
             ?: project.findProperty("dist.$key") as? String)
@@ -218,7 +216,7 @@ class ProjectPlugin : Plugin<Project> {
                 }
 
                 ext.dependencies {
-                    val summerVersion = pluginBundle.getString("summer.version")
+                    val summerVersion = ProjectPlugin::class.java.`package`.implementationVersion
                     it.dependency("cn.bestwu.wechat:weixin-mp:0.9.7")
                     it.dependency("cn.bestwu.wechat:weixin-app:0.9.7")
                     it.dependency("com.alipay.sdk:alipay-sdk-java:3.4.49.ALL")

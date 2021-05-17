@@ -42,12 +42,13 @@ fun Node.getAt(name: String): Node? {
  * 配置工具类
  */
 class KotlinClosure1<in T : Any, V : Any>(
-        /**
-         *
-         */
-        private val function: T.() -> V?,
-        owner: Any? = null,
-        thisObject: Any? = null) : Closure<V?>(owner, thisObject) {
+    /**
+     *
+     */
+    private val function: T.() -> V?,
+    owner: Any? = null,
+    thisObject: Any? = null
+) : Closure<V?>(owner, thisObject) {
     /**
      * 实际调用方法
      */
@@ -59,7 +60,7 @@ class KotlinClosure1<in T : Any, V : Any>(
  * 配置工具类
  */
 fun <T : Any> Any.closureOf(action: T.() -> Unit): Closure<Any?> =
-        KotlinClosure1(action, this, this)
+    KotlinClosure1(action, this, this)
 
 /**
  * 抽象类
@@ -70,7 +71,7 @@ abstract class AbstractPlugin : Plugin<Project> {
      * 配置dokkaDoc
      */
     protected fun dokkaTask(project: Project) {
-      val dokkaJavadoc=  project.tasks.findByName("dokkaJavadoc")
+        val dokkaJavadoc = project.tasks.findByName("dokkaJavadoc")
         dokkaJavadoc as DokkaTask
         dokkaJavadoc.plugins.dependencies.add(project.dependencies.create("org.jetbrains.dokka:kotlin-as-java-plugin:${DokkaVersion.version}"))
     }
@@ -128,13 +129,13 @@ abstract class AbstractPlugin : Plugin<Project> {
 
             if (project.version.toString().endsWith("SNAPSHOT")) {
                 mavenRepoName = project.findProperty("mavenRepo.snapshots.name") as? String
-                        ?: mavenRepoName
+                    ?: mavenRepoName
                 mavenRepoUrl = project.findProperty("mavenRepo.snapshots.url") as? String
-                        ?: mavenRepoUrl
+                    ?: mavenRepoUrl
                 mavenRepoUsername = project.findProperty("mavenRepo.snapshots.username") as? String
-                        ?: mavenRepoUsername
+                    ?: mavenRepoUsername
                 mavenRepoPassword = project.findProperty("mavenRepo.snapshots.password") as? String
-                        ?: mavenRepoPassword
+                    ?: mavenRepoPassword
             }
             if (mavenRepoUrl != null)
                 p.repositories { handler ->
@@ -173,7 +174,11 @@ abstract class AbstractPlugin : Plugin<Project> {
     /**
      * 配置pom.xml相关信息
      */
-    private fun configurePomXml(project: Project, projectUrl: String?, projectVcsUrl: String?): (XmlProvider) -> Unit {
+    private fun configurePomXml(
+        project: Project,
+        projectUrl: String?,
+        projectVcsUrl: String?
+    ): (XmlProvider) -> Unit {
         return {
             val root = it.asNode()
 
@@ -214,7 +219,12 @@ abstract class AbstractPlugin : Plugin<Project> {
     /**
      * 发布到Jcenter 私有仓库 同步中央仓库或者同步到mavenCentral
      */
-    private fun configureBintray(project: Project, publicationNames: MutableSet<String>, projectUrl: String?, projectVcsUrl: String?) {
+    private fun configureBintray(
+        project: Project,
+        publicationNames: MutableSet<String>,
+        projectUrl: String?,
+        projectVcsUrl: String?
+    ) {
         project.extensions.configure(BintrayExtension::class.java) { bintray ->
             with(bintray) {
                 user = project.findProperty("bintrayUsername") as? String
@@ -238,7 +248,8 @@ abstract class AbstractPlugin : Plugin<Project> {
                     with(version) {
                         desc = "${project.name} ${project.version}"
                         with(mavenCentralSync) {
-                            sync = (project.findProperty("mavenCentralSync") as? String)?.toBoolean()
+                            sync =
+                                (project.findProperty("mavenCentralSync") as? String)?.toBoolean()
                                     ?: false
                             user = project.findProperty("mavenCentralUsername") as? String
                             password = project.findProperty("mavenCentralPassword") as? String
@@ -267,7 +278,22 @@ abstract class AbstractPlugin : Plugin<Project> {
         project.tasks.create("sourcesJar", Jar::class.java) {
             it.dependsOn("classes")
             it.archiveClassifier.set("sources")
-            it.from(project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName("main").allSource)
+            it.from(
+                project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(
+                    "main"
+                ).allSource
+            )
+        }
+        project.tasks.named("jar", Jar::class.java) {
+            it.manifest { manifest ->
+                manifest.attributes(
+                    mapOf(
+                        "Manifest-Version" to project.version,
+                        "Implementation-Title" to "${if (project != project.rootProject) "${project.rootProject.name}:" else ""}${project.name}",
+                        "Implementation-Version" to project.version
+                    )
+                )
+            }
         }
         project.tasks.withType(Javadoc::class.java) {
             it.isFailOnError = false
@@ -277,9 +303,16 @@ abstract class AbstractPlugin : Plugin<Project> {
     /**
      * 配置pom.xml相关信息
      */
-    protected fun Node.configurePomXml(project: Project, projectUrl: String?, projectVcsUrl: String?) {
+    protected fun Node.configurePomXml(
+        project: Project,
+        projectUrl: String?,
+        projectVcsUrl: String?
+    ) {
         appendNode("name", project.name)
-        appendNode("description", if (!project.description.isNullOrBlank()) project.description else project.name)
+        appendNode(
+            "description",
+            if (!project.description.isNullOrBlank()) project.description else project.name
+        )
         if (!projectUrl.isNullOrBlank())
             appendNode("url", projectUrl)
 
@@ -296,7 +329,8 @@ abstract class AbstractPlugin : Plugin<Project> {
         if (projectVcsUrl != null && projectVcsUrl.isNotBlank()) {
             val scm = appendNode("scm")
             scm.appendNode("url", projectVcsUrl)
-            val tag = if (projectVcsUrl.contains("git")) "git" else if (projectVcsUrl.contains("svn")) "svn" else projectVcsUrl
+            val tag =
+                if (projectVcsUrl.contains("git")) "git" else if (projectVcsUrl.contains("svn")) "svn" else projectVcsUrl
             scm.appendNode("connection", "scm:$tag:$projectVcsUrl")
             scm.appendNode("developerConnection", "scm:$tag:$projectVcsUrl")
         }
