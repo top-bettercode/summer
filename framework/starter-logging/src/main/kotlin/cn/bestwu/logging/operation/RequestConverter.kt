@@ -2,12 +2,14 @@ package cn.bestwu.logging.operation
 
 import cn.bestwu.logging.HandlerMethodHandlerInterceptor
 import cn.bestwu.logging.RequestLoggingFilter
+import cn.bestwu.logging.client.ClientHttpRequestWrapper
 import cn.bestwu.logging.trace.TraceHttpServletRequestWrapper
 import cn.bestwu.logging.trace.TracePart
 import org.springframework.core.convert.ConversionException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import org.springframework.http.client.ClientHttpRequest
 import org.springframework.util.FileCopyUtils
 import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
@@ -52,26 +54,67 @@ object RequestConverter {
         val parts = extractParts(request)
         val cookies = extractCookies(request, headers)
         val uri = URI.create(getRequestUri(request))
-        val restUri = (request.getAttribute(HandlerMethodHandlerInterceptor.BEST_MATCHING_PATTERN_ATTRIBUTE) as? String)
+        val restUri =
+            (request.getAttribute(HandlerMethodHandlerInterceptor.BEST_MATCHING_PATTERN_ATTRIBUTE) as? String)
                 ?: request.requestURI.substringAfter(request.contextPath)
 
         @Suppress("UNCHECKED_CAST")
-        val uriTemplateVariables = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as? Map<String, String>
+        val uriTemplateVariables =
+            request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as? Map<String, String>
                 ?: mapOf()
-        val remoteUser = (request.getAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME) as? String)
+        val remoteUser =
+            (request.getAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME) as? String)
                 ?: request.remoteUser ?: "anonymousUser"
 
         val content = (request as? TraceHttpServletRequestWrapper)?.contentAsByteArray
-                ?: try {
-            FileCopyUtils.copyToByteArray(request.inputStream)
-        } catch (e: Exception) {
-            "Request inputStream has been read.Can't record the original data.".toByteArray()
-        }
-        return OperationRequest(uri, restUri, uriTemplateVariables, HttpMethod.valueOf(request.method), headers, cookies, remoteUser, parameters, parts, content, dateTime)
+            ?: try {
+                FileCopyUtils.copyToByteArray(request.inputStream)
+            } catch (e: Exception) {
+                "Request inputStream has been read.Can't record the original data.".toByteArray()
+            }
+        return OperationRequest(
+            uri,
+            restUri,
+            uriTemplateVariables,
+            HttpMethod.valueOf(request.method),
+            headers,
+            cookies,
+            remoteUser,
+            parameters,
+            parts,
+            content,
+            dateTime
+        )
     }
 
-    private fun extractCookies(request: HttpServletRequest,
-                               headers: HttpHeaders): Collection<RequestCookie> {
+    fun convert(request: ClientHttpRequestWrapper,dateTime:LocalDateTime): OperationRequest {
+        val headers = request.headers
+        val cookies = request.headers[HttpHeaders.COOKIE]?.map {
+            val cookie = it.split(":")
+            RequestCookie(cookie[0],cookie[2])
+        }?: listOf()
+        val uri = request.uri
+        val restUri =uri.toString()
+        val content = request.record.toByteArray()
+        return OperationRequest(
+            uri,
+            restUri,
+            mapOf(),
+            request.method,
+            headers,
+            cookies,
+            "",
+            Parameters().getUniqueParameters(uri),
+            listOf(),
+            content,
+            dateTime
+        )
+    }
+
+    private fun extractCookies(
+        request: HttpServletRequest,
+        headers: HttpHeaders
+    ): Collection<RequestCookie> {
         if (request.cookies == null || request.cookies!!.isEmpty()) {
             return emptyList()
         }
@@ -98,7 +141,8 @@ object RequestConverter {
 
     @Throws(IOException::class, ServletException::class)
     private fun extractServletRequestParts(
-            servletRequest: HttpServletRequest): List<OperationRequestPart> {
+        servletRequest: HttpServletRequest
+    ): List<OperationRequestPart> {
         val parts = ArrayList<OperationRequestPart>()
         for (part in servletRequest.parts) {
             parts.add(createOperationRequestPart(part))
@@ -119,12 +163,14 @@ object RequestConverter {
         } catch (e: Exception) {
             "Request part has been read.Can't record the original data.".toByteArray()
         }
-        return OperationRequestPart(part.name,
-                if (StringUtils.hasText(part.submittedFileName))
-                    part.submittedFileName
-                else
-                    null, partHeaders,
-                content)
+        return OperationRequestPart(
+            part.name,
+            if (StringUtils.hasText(part.submittedFileName))
+                part.submittedFileName
+            else
+                null, partHeaders,
+            content
+        )
     }
 
     @Throws(IOException::class)
@@ -149,13 +195,15 @@ object RequestConverter {
         } catch (e: Exception) {
             "Request part has been read.Can't record the original data.".toByteArray()
         }
-        return OperationRequestPart(file.name,
-                if (StringUtils.hasText(file.originalFilename))
-                    file.originalFilename
-                else
-                    null,
-                partHeaders,
-                content)
+        return OperationRequestPart(
+            file.name,
+            if (StringUtils.hasText(file.originalFilename))
+                file.originalFilename
+            else
+                null,
+            partHeaders,
+            content
+        )
     }
 
     private fun extractHeaders(part: Part): HttpHeaders {
