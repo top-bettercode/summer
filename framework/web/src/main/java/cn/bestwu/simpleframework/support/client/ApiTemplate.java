@@ -1,18 +1,16 @@
 package cn.bestwu.simpleframework.support.client;
 
+import cn.bestwu.logging.client.ClientHttpRequestWrapper;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -23,8 +21,13 @@ import org.springframework.web.client.RestTemplate;
 public class ApiTemplate extends RestTemplate {
 
   private final Logger log = LoggerFactory.getLogger(this.getClass());
+  private final String collectionName;
+  private final String name;
 
-  public ApiTemplate(int connectTimeout, int readTimeout) {
+  public ApiTemplate(String collectionName,
+      String name, int connectTimeout, int readTimeout) {
+    this.collectionName = collectionName;
+    this.name = name;
     MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
     messageConverter.getObjectMapper().setDefaultPropertyInclusion(Include.NON_NULL);
     setMessageConverters(Collections.singletonList(messageConverter));
@@ -40,18 +43,9 @@ public class ApiTemplate extends RestTemplate {
   @Override
   protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
     if (log.isInfoEnabled()) {
-      return new ClientHttpRequestWrapper(super.createRequest(url, method));
+      return new ClientHttpRequestWrapper(collectionName, name, super.createRequest(url, method));
     } else {
       return super.createRequest(url, method);
-    }
-  }
-
-  @Override
-  public <T> ResponseExtractor<ResponseEntity<T>> responseEntityExtractor(Type responseType) {
-    if (log.isInfoEnabled()) {
-      return new ResponseEntityResponseTraceExtractor<>(responseType, getMessageConverters());
-    } else {
-      return super.responseEntityExtractor(responseType);
     }
   }
 

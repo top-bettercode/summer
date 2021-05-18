@@ -1,5 +1,6 @@
 package cn.bestwu.logging.operation
 
+import cn.bestwu.logging.client.ClientHttpResponseWrapper
 import cn.bestwu.logging.trace.TraceHttpServletResponseWrapper
 import org.springframework.http.HttpHeaders
 import org.springframework.util.StringUtils
@@ -26,6 +27,12 @@ object ResponseConverter {
                 response.status,
                 extractHeaders(response), (response as? TraceHttpServletResponseWrapper)?.contentAsByteArray
                 ?: byteArrayOf())
+    }
+
+    fun convert(response: ClientHttpResponseWrapper): OperationResponse {
+        return OperationResponse(
+            response.statusCode.value(),
+            response.headers, response.bytes)
     }
 
     private fun extractHeaders(response: HttpServletResponse): HttpHeaders {
