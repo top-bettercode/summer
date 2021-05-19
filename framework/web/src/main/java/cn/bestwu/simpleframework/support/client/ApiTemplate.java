@@ -24,6 +24,11 @@ public class ApiTemplate extends RestTemplate {
   private final String collectionName;
   private final String name;
 
+
+  public ApiTemplate(int connectTimeout, int readTimeout) {
+    this("", "", connectTimeout, readTimeout);
+  }
+
   public ApiTemplate(String collectionName,
       String name, int connectTimeout, int readTimeout) {
     this.collectionName = collectionName;

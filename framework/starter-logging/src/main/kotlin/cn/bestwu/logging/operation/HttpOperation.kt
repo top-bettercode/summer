@@ -64,7 +64,10 @@ object HttpOperation {
         return getPath(request, forceParametersInUri, request.uri.rawPath)
     }
 
-    fun getRestRequestPath(request: OperationRequest, forceParametersInUri: Boolean = false): String {
+    fun getRestRequestPath(
+        request: OperationRequest,
+        forceParametersInUri: Boolean = false
+    ): String {
         var path = request.restUri
         request.uriVariables.forEach { (t, u) ->
             path = path.replace("{$t}", u)
@@ -72,7 +75,11 @@ object HttpOperation {
         return getPath(request, forceParametersInUri, path)
     }
 
-    private fun getPath(request: OperationRequest, forceParametersInUri: Boolean, path: String): String {
+    private fun getPath(
+        request: OperationRequest,
+        forceParametersInUri: Boolean,
+        path: String
+    ): String {
         var rpath = path
         var queryString = request.uri.rawQuery
         val uniqueParameters = request.parameters.getUniqueParameters(request.uri)
@@ -91,7 +98,7 @@ object HttpOperation {
 
     private fun includeParametersInUri(request: OperationRequest): Boolean {
         return request.method === HttpMethod.GET || request.method === HttpMethod.DELETE || request.content.isNotEmpty() && !MediaType.APPLICATION_FORM_URLENCODED
-                .isCompatibleWith(request.headers.contentType)
+            .isCompatibleWith(request.headers.contentType)
     }
 
     private fun getHeaders(request: OperationRequest): HttpHeaders {
@@ -100,8 +107,10 @@ object HttpOperation {
         for (header in request.headers.entries) {
             for (value in header.value) {
                 if (HttpHeaders.CONTENT_TYPE == header.key && !request.parts.isEmpty()) {
-                    headers.add(header.key,
-                            String.format("%s; boundary=%s", value, MULTIPART_BOUNDARY))
+                    headers.add(
+                        header.key,
+                        String.format("%s; boundary=%s", value, MULTIPART_BOUNDARY)
+                    )
                 } else {
                     headers.add(header.key, value)
                 }
@@ -110,8 +119,10 @@ object HttpOperation {
         }
 
         for (cookie in request.cookies) {
-            headers.add(HttpHeaders.COOKIE,
-                    String.format("%s=%s", cookie.name, cookie.value))
+            headers.add(
+                HttpHeaders.COOKIE,
+                String.format("%s=%s", cookie.name, cookie.value)
+            )
         }
 
         if (requiresFormEncodingContentTypeHeader(request)) {
@@ -172,12 +183,16 @@ object HttpOperation {
     }
 
     private fun writePart(part: OperationRequestPart, writer: PrintWriter) {
-        writePart(part.name, part.contentAsString, part.submittedFileName,
-                part.headers.contentType, writer)
+        writePart(
+            part.name, part.contentAsString, part.submittedFileName,
+            part.headers.contentType, writer
+        )
     }
 
-    private fun writePart(name: String, value: String, filename: String?,
-                          contentType: MediaType?, writer: PrintWriter) {
+    private fun writePart(
+        name: String, value: String, filename: String?,
+        contentType: MediaType?, writer: PrintWriter
+    ) {
         writer.printf("Content-Disposition: form-data; name=%s", name)
         if (StringUtils.hasText(filename)) {
             writer.printf("; filename=%s", filename)
@@ -196,7 +211,9 @@ object HttpOperation {
 
     private fun requiresFormEncodingContentTypeHeader(request: OperationRequest): Boolean {
         return (request.headers[HttpHeaders.CONTENT_TYPE] == null
-                && isPutOrPost(request) && !request.parameters.isEmpty() && !includeParametersInUri(request))
+                && isPutOrPost(request) && !request.parameters.isEmpty() && !includeParametersInUri(
+            request
+        ))
     }
 
     private fun getResponseBody(response: OperationResponse, format: Boolean): String {
