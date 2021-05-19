@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.client.ClientHttpRequest
 import org.springframework.util.FileCopyUtils
+import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
@@ -87,14 +88,20 @@ object RequestConverter {
         )
     }
 
-    fun convert(request: ClientHttpRequestWrapper,dateTime:LocalDateTime): OperationRequest {
-        val headers = request.headers
+    fun convert(request: ClientHttpRequestWrapper, dateTime: LocalDateTime): OperationRequest {
+        val headers = HttpHeaders()
         val cookies = request.headers[HttpHeaders.COOKIE]?.map {
             val cookie = it.split(":")
-            RequestCookie(cookie[0],cookie[2])
-        }?: listOf()
+            RequestCookie(cookie[0], cookie[2])
+        } ?: listOf()
+
         val uri = request.uri
-        val restUri =uri.toString()
+
+        headers.add(HttpHeaders.HOST, uri.authority)
+        headers.addAll(request.headers)
+        headers.remove(HttpHeaders.COOKIE)
+
+        val restUri = uri.toString()
         val content = request.record.toByteArray()
         return OperationRequest(
             uri,

@@ -33,32 +33,39 @@ class ClientHttpRequestWrapper(
             if (log.isInfoEnabled) {
                 LocalDateTime.now()
             } else null
-        var response = request.execute()
-        if (log.isInfoEnabled) {
-            response = ClientHttpResponseWrapper(response)
-            val operation = Operation(
-                collectionName = collectionName,
-                name = name,
-                protocol = "HTTP/1.1",
-                request = RequestConverter.convert(this, dateTime!!),
-                response = ResponseConverter.convert(response)
-            )
-            log.info(
-                operation.toString(
-                    RequestLoggingConfig(
-                        true,
-                        true,
-                        true,
-                        arrayOf(),
-                        arrayOf(),
-                        true,
-                        true,
-                        -1
+        var response: ClientHttpResponse? = null
+        try {
+            response = request.execute()
+            if (log.isInfoEnabled)
+                response = ClientHttpResponseWrapper(response)
+            return response!!
+        } finally {
+            if (log.isInfoEnabled) {
+                if (response == null)
+                    response = ClientHttpResponseWrapper(null)
+                val operation = Operation(
+                    collectionName = collectionName,
+                    name = name,
+                    protocol = "HTTP/1.1",
+                    request = RequestConverter.convert(this, dateTime!!),
+                    response = ResponseConverter.convert(response as ClientHttpResponseWrapper)
+                )
+                log.info(
+                    operation.toString(
+                        RequestLoggingConfig(
+                            true,
+                            true,
+                            true,
+                            arrayOf(),
+                            arrayOf(),
+                            true,
+                            true,
+                            -1
+                        )
                     )
                 )
-            )
+            }
         }
-        return response
     }
 
     override fun getMethod(): HttpMethod {
