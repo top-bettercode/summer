@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.common.exceptions.InsufficientScopeEx
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.web.util.ThrowableAnalyzer;
+import org.springframework.util.StringUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -72,9 +73,12 @@ public class CustomWebResponseExceptionTranslator implements
       return handleOAuth2Exception(new MethodNotAllowed(ase.getMessage(), ase));
     }
 
-    return handleOAuth2Exception(
-        new ServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e));
+    String msg = cause != null ? cause.getMessage() : e.getMessage();
+    if (!StringUtils.hasText(msg)) {
+      msg = HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase();
+    }
 
+    return handleOAuth2Exception(new ServerErrorException(msg, e));
   }
 
   private ResponseEntity<OAuth2Exception> handleOAuth2Exception(OAuth2Exception e) {
