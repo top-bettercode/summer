@@ -13,12 +13,13 @@ import java.io.InputStream
  *
  * @author Peter Wu
  */
-class ClientHttpResponseWrapper(private val response: ClientHttpResponse) : ClientHttpResponse {
+class ClientHttpResponseWrapper(private val response: ClientHttpResponse?) : ClientHttpResponse {
 
-    val bytes: ByteArray = StreamUtils.copyToByteArray(response.body)
+    val bytes: ByteArray =
+        if (response != null) StreamUtils.copyToByteArray(response.body) else ByteArray(0)
 
     override fun getHeaders(): HttpHeaders {
-        return response.headers
+        return response?.headers ?: HttpHeaders.EMPTY
     }
 
     @Throws(IOException::class)
@@ -28,21 +29,21 @@ class ClientHttpResponseWrapper(private val response: ClientHttpResponse) : Clie
 
     @Throws(IOException::class)
     override fun getStatusCode(): HttpStatus {
-        return response.statusCode
+        return response?.statusCode ?: HttpStatus.INTERNAL_SERVER_ERROR
     }
 
     @Throws(IOException::class)
     override fun getRawStatusCode(): Int {
-        return response.rawStatusCode
+        return response?.rawStatusCode ?: HttpStatus.INTERNAL_SERVER_ERROR.value()
     }
 
     @Throws(IOException::class)
     override fun getStatusText(): String {
-        return response.statusText
+        return response?.statusText ?: ""
     }
 
     override fun close() {
-        response.close()
+        response?.close()
     }
 
 }
