@@ -62,7 +62,7 @@ allprojects {
             dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
             dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
 
-            dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.15.1")
+            dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.23.4")
 
             dependency("cn.bestwu.wechat:weixin-mp:0.9.7")
             dependency("cn.bestwu.wechat:weixin-app:0.9.7")
