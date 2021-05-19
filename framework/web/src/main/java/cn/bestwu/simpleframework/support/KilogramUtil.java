@@ -1,6 +1,7 @@
 package cn.bestwu.simpleframework.support;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * @author Peter Wu
@@ -12,7 +13,7 @@ public class KilogramUtil {
    * @return 单位克
    */
   public static Long toGram(String kilogram) {
-    return new BigDecimal(kilogram).setScale(3, BigDecimal.ROUND_HALF_UP)
+    return new BigDecimal(kilogram).setScale(3, RoundingMode.HALF_UP)
         .multiply(new BigDecimal(1000)).longValue();
   }
 
@@ -30,7 +31,7 @@ public class KilogramUtil {
    * @return 单位千克
    */
   public static BigDecimal toKilogram(BigDecimal gram, int scale) {
-    return gram.divide(new BigDecimal(1000), scale, BigDecimal.ROUND_HALF_UP);
+    return gram.divide(new BigDecimal(1000), scale, RoundingMode.HALF_UP);
   }
 
 }

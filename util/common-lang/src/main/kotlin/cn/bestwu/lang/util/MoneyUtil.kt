@@ -1,6 +1,7 @@
 package cn.bestwu.lang.util
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * 金额相关计算工具类
@@ -15,7 +16,7 @@ object MoneyUtil {
      */
     @JvmStatic
     fun toCent(yuan: String): Long {
-        return BigDecimal(yuan).setScale(2, BigDecimal.ROUND_HALF_UP)
+        return BigDecimal(yuan).setScale(2, RoundingMode.HALF_UP)
                 .multiply(BigDecimal(100)).toLong()
     }
 
@@ -25,7 +26,7 @@ object MoneyUtil {
      */
     @JvmStatic
     fun toCent(yuan: BigDecimal): Long {
-        return yuan.setScale(2, BigDecimal.ROUND_HALF_UP)
+        return yuan.setScale(2, RoundingMode.HALF_UP)
                 .multiply(BigDecimal(100)).toLong()
     }
 
@@ -56,6 +57,6 @@ object MoneyUtil {
      */
     @JvmStatic
     fun toYun(cent: BigDecimal, scale: Int): BigDecimal {
-        return cent.divide(BigDecimal(100), scale, BigDecimal.ROUND_HALF_UP)
+        return cent.divide(BigDecimal(100), scale, RoundingMode.HALF_UP)
     }
 }

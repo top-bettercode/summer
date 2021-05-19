@@ -31,14 +31,14 @@ class GeneratorPlugin : Plugin<Project> {
         project.extensions.create("generator", GeneratorExtension::class.java)
         project.extensions.configure(GeneratorExtension::class.java) { extension ->
 
-            extension.datasource(Action {
+            extension.datasource {
                 it.url = findDatasourceProperty(project, "url") ?: ""
                 it.catalog = findDatasourceProperty(project, "catalog")
                 it.schema = findDatasourceProperty(project, "schema")
                 it.username = findDatasourceProperty(project, "username") ?: "root"
                 it.password = findDatasourceProperty(project, "password") ?: "root"
                 it.driverClass = findDatasourceProperty(project, "driverClass") ?: ""
-            })
+            }
             extension.singleDatasource = (findProperty(project, "singleDatasource"))?.toBoolean()
                 ?: true
             extension.delete = (findProperty(project, "delete"))?.toBoolean() ?: false
@@ -117,7 +117,7 @@ class GeneratorPlugin : Plugin<Project> {
 
             extension.generators = (findProperty(project, "generators")
                 ?: "").split(",").asSequence().filter { it.isNotBlank() }
-                .map { Class.forName(it.trim()).newInstance() as Generator }.toList().toTypedArray()
+                .map { Class.forName(it.trim()).getDeclaredConstructor().newInstance() as Generator }.toList().toTypedArray()
         }
 
         project.tasks.create("generate") { task ->

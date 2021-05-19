@@ -587,7 +587,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             queueSize = socketProperties.ringBufferSize
             socketProperties.destinations.forEach { addDestination(it) }
             writeBufferSize = socketProperties.writeBufferSize
-            encoder = socketProperties.encoderClass.newInstance()
+            encoder = socketProperties.encoderClass.getDeclaredConstructor().newInstance()
             keepAliveDuration = socketProperties.keepAliveDuration
             start()
         }

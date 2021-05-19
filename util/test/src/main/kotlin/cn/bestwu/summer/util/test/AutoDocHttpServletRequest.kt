@@ -10,15 +10,15 @@ import kotlin.collections.ArrayList
 class AutoDocHttpServletRequest(request: HttpServletRequest?) :
     HttpServletRequestWrapper(request) {
 
-    private val extHeaders: MutableMap<String, Array<String>> = mutableMapOf()
-    private val extParams: MutableMap<String, Array<String>> = mutableMapOf()
+    private val extHeaders: MutableMap<String, Array<out String>> = mutableMapOf()
+    private val extParams: MutableMap<String, Array<out String>> = mutableMapOf()
 
     fun header(name: String, vararg value: String) {
-        extHeaders[name] = value as Array<String>
+        extHeaders[name] = value
     }
 
     fun param(name: String, vararg value: String) {
-        extParams[name] = value as Array<String>
+        extParams[name] = value
     }
 
     override fun getParameterNames(): Enumeration<String> {
@@ -38,7 +38,7 @@ class AutoDocHttpServletRequest(request: HttpServletRequest?) :
             super.getParameter(name)
     }
 
-    override fun getParameterValues(name: String?): Array<String>? {
+    override fun getParameterValues(name: String?): Array<out String>? {
         return if (extParams.containsKey(name)) {
             extParams[name]
         } else {
@@ -46,8 +46,8 @@ class AutoDocHttpServletRequest(request: HttpServletRequest?) :
         }
     }
 
-    override fun getParameterMap(): Map<String, Array<String>> {
-        val parameterMap = mutableMapOf<String, Array<String>>()
+    override fun getParameterMap(): Map<String, Array<out String>> {
+        val parameterMap = mutableMapOf<String, Array<out String>>()
         parameterMap.putAll(extParams)
         parameterMap.putAll(super.getParameterMap())
         return parameterMap
