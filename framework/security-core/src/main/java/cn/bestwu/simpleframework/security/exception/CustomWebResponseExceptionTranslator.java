@@ -41,7 +41,7 @@ public class CustomWebResponseExceptionTranslator implements
   public ResponseEntity<OAuth2Exception> translate(Exception e) {
 
     Throwable cause = e.getCause();
-    if (cause instanceof IllegalUserException) {
+    if (cause instanceof IllegalUserException || cause instanceof IllegalArgumentException) {
       e = new IllegalUserOauth2Exception(cause.getMessage(), cause);
     }
     // Try to extract a SpringSecurityException from the stacktrace
