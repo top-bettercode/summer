@@ -23,6 +23,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
 import javax.servlet.http.HttpServletRequest
@@ -329,8 +330,8 @@ document.documentElement.scrollIntoView({
         }
         var newScale = index - 2
         newScale = max(newScale, 0)
-        val result = if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(BigDecimal(1024), BigDecimal.ROUND_UP)
-                .setScale(newScale, BigDecimal.ROUND_UP).toString()
+        val result = if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(BigDecimal(1024), RoundingMode.UP)
+                .setScale(newScale, RoundingMode.UP).toString()
         return trimTrailing(result) + units[index]
     }
 
