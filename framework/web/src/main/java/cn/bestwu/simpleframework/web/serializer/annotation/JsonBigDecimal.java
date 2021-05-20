@@ -18,4 +18,9 @@ import java.lang.annotation.Target;
 @JsonSerialize(using = BigDecimalSerializer.class)
 public @interface JsonBigDecimal {
 
+  /**
+   * @return 小数位数
+   */
+  int scale() default 2;
+
 }

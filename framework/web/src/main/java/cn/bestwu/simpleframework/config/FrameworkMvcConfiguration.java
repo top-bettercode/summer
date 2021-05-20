@@ -18,7 +18,6 @@ import cn.bestwu.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
 import cn.bestwu.simpleframework.web.kaptcha.KaptchaProperties;
 import cn.bestwu.simpleframework.web.resolver.StringToEnumConverterFactory;
 import cn.bestwu.simpleframework.web.resolver.WrapProcessorInvokingHandlerAdapter;
-import cn.bestwu.simpleframework.web.serializer.BigDecimalSerializer;
 import cn.bestwu.simpleframework.web.serializer.MixIn;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -32,7 +31,6 @@ import com.google.code.kaptcha.util.Config;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -221,7 +219,6 @@ public class FrameworkMvcConfiguration {
 
     @Override
     public void customize(Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder) {
-      jacksonObjectMapperBuilder.serializerByType(BigDecimal.class, new BigDecimalSerializer());
       jacksonObjectMapperBuilder.serializerByType(LocalDate.class, new JsonSerializer<LocalDate>() {
         @Override
         public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers)
