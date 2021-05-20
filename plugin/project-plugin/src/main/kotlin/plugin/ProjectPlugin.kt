@@ -73,9 +73,15 @@ class ProjectPlugin : Plugin<Project> {
                 mavenLocal()
                 maven { it.setUrl("https://maven.aliyun.com/repository/public") }
                 mavenCentral()
-                maven {
-                    it.setUrl("http://maven.wintruelife.com/nexus/content/repositories/snapshots")
-                    it.isAllowInsecureProtocol = true
+                val repositories = (project.findProperty("repositories") as? String
+                    ?: "http://maven.wintruelife.com/nexus/content/repositories/snapshots").split(",")
+                    .filter { it.isNotBlank() }
+
+                repositories.forEach { repository ->
+                    maven {
+                        it.setUrl(repository)
+                        it.isAllowInsecureProtocol = repository.startsWith("http://")
+                    }
                 }
 
                 maven { it.setUrl("https://oss.jfrog.org/oss-snapshot-local") }
