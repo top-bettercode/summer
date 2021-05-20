@@ -41,13 +41,14 @@ public class BigDecimalSerializer extends NumberSerializer implements
     if (content.scale() != scale) {
       content = content.setScale(scale, RoundingMode.HALF_UP);
     }
+    String plainString = content.toPlainString();
+    if (reduceFraction) {
+      plainString = plainString.contains(".") ? StringUtils
+          .trimTrailingCharacter(StringUtils.trimTrailingCharacter(plainString, '0'), '.')
+          : plainString;
+      content = new BigDecimal(plainString);
+    }
     if (toPlainString) {
-      String plainString = content.toPlainString();
-      if (reduceFraction) {
-        plainString = plainString.contains(".") ? StringUtils
-            .trimTrailingCharacter(StringUtils.trimTrailingCharacter(plainString, '0'), '.')
-            : plainString;
-      }
       gen.writeString(plainString);
     } else {
       gen.writeNumber(content);

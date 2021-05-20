@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import org.xml.sax.ErrorHandler
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
@@ -121,7 +122,11 @@ object PrettyPrintingContentModifier {
         private val objectMapper = ObjectMapper()
             .configure(SerializationFeature.INDENT_OUTPUT, true)
             .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
-            .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
+            .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true);
+
+        init {
+            objectMapper.nodeFactory = JsonNodeFactory.withExactBigDecimals(true)
+        }
 
         @Throws(IOException::class)
         override fun prettyPrint(content: ByteArray): ByteArray {

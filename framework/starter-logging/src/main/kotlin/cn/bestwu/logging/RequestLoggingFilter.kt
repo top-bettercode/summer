@@ -56,12 +56,6 @@ class RequestLoggingFilter(
     }
 
     private val log = LoggerFactory.getLogger(RequestLoggingFilter::class.java)
-    private val objectMapper: ObjectMapper = ObjectMapper()
-
-    init {
-        objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
-        objectMapper.enable(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS)
-    }
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
