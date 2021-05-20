@@ -185,8 +185,9 @@ public class FrameworkMvcConfiguration {
   public ErrorAttributes errorAttributes(
       @Autowired(required = false) List<IErrorHandler> errorHandlers,
       @Autowired(required = false) IErrorRespEntityHandler errorRespEntityHandler,
-      MessageSource messageSource) {
-    return new ErrorAttributes(errorHandlers, errorRespEntityHandler, messageSource);
+      MessageSource messageSource,
+      @Value("${app.constraint-violation.separator:}") String separator) {
+    return new ErrorAttributes(errorHandlers, errorRespEntityHandler, messageSource, separator);
   }
 
   @ConditionalOnMissingBean(ErrorController.class)
@@ -206,8 +207,9 @@ public class FrameworkMvcConfiguration {
   protected static class ErrorHandlerConfiguration {
 
     @Bean
-    public DataErrorHandler dataErrorHandler() {
-      return new DataErrorHandler();
+    public DataErrorHandler dataErrorHandler(MessageSource messageSource,
+        @Autowired(required = false) HttpServletRequest request) {
+      return new DataErrorHandler(messageSource, request);
     }
 
   }

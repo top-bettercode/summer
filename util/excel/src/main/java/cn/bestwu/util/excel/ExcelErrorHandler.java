@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.util.StringUtils;
 
@@ -18,14 +17,18 @@ import org.springframework.util.StringUtils;
  */
 public class ExcelErrorHandler implements IErrorHandler {
 
-  @Autowired
-  private MessageSource messageSource;
-  @Autowired(required = false)
-  private HttpServletRequest request;
+  private final MessageSource messageSource;
+  private final HttpServletRequest request;
+
+  public ExcelErrorHandler(MessageSource messageSource,
+      HttpServletRequest request) {
+    this.messageSource = messageSource;
+    this.request = request;
+  }
 
   @Override
   public void handlerException(Throwable error, RespEntity<?> respEntity,
-      Map<String, String> errors) {
+      Map<String, String> errors, String separator) {
     String message = null;
     if (error instanceof ExcelImportException) {
       List<CellError> cellErrors = ((ExcelImportException) error).getErrors();
@@ -45,7 +48,7 @@ public class ExcelErrorHandler implements IErrorHandler {
         }
       }
       Entry<String, String> firstError = errors.entrySet().iterator().next();
-      message = firstError.getKey() + ":" + firstError.getValue();
+      message = firstError.getKey() + separator + firstError.getValue();
     }
     if (StringUtils.hasText(message)) {
       respEntity.setMessage(message);

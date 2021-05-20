@@ -42,6 +42,12 @@
       "description": "接口版本号名称."
     },
     {
+      "name": "app.constraint-violation.separator",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "description": "字段效验异常信息分隔符."
+    },
+    {
       "name": "app.version",
       "type": "java.lang.String",
       "defaultValue": "v1.0",

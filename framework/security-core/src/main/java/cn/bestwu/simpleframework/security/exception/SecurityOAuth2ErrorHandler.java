@@ -13,7 +13,7 @@ public class SecurityOAuth2ErrorHandler implements IErrorHandler {
 
   @Override
   public void handlerException(Throwable error, RespEntity<?> respEntity,
-      Map<String, String> errors) {
+      Map<String, String> errors, String separator) {
     if (error instanceof OAuth2Exception) {
       respEntity.setHttpStatusCode(((OAuth2Exception) error).getHttpErrorCode());
     }
