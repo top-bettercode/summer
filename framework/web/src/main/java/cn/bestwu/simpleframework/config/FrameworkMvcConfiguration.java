@@ -219,6 +219,7 @@ public class FrameworkMvcConfiguration {
 
     @Override
     public void customize(Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder) {
+      jacksonObjectMapperBuilder.featuresToEnable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN);
       jacksonObjectMapperBuilder.serializerByType(LocalDate.class, new JsonSerializer<LocalDate>() {
         @Override
         public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers)
