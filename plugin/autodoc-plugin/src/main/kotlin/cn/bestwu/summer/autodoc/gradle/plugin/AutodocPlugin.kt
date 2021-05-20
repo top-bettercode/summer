@@ -3,6 +3,9 @@ package cn.bestwu.summer.autodoc.gradle.plugin
 import cn.bestwu.autodoc.core.AsciidocGenerator
 import cn.bestwu.autodoc.core.AutodocExtension
 import cn.bestwu.autodoc.core.PostmanGenerator
+import cn.bestwu.autodoc.core.model.Field
+import cn.bestwu.autodoc.core.operation.DocOperationRequest
+import cn.bestwu.autodoc.core.operation.DocOperationResponse
 import cn.bestwu.gradle.profile.ProfilePlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -116,7 +119,13 @@ class AutodocPlugin : Plugin<Project> {
             task.group = group
             task.doLast {
                 val extension = project.extensions.findByType(AutodocExtension::class.java)!!
-                AsciidocGenerator.setDefaultDesc(extension)
+                val file = project.file("src/main/resources/messages.properties")
+                val source = Properties()
+                if (file.exists()) {
+                    source.load(file.inputStream())
+                }
+
+                setDefaultDesc(extension, source)
             }
         }
         project.tasks.getByName("jar") {
@@ -132,6 +141,38 @@ class AutodocPlugin : Plugin<Project> {
         val version = AutodocPlugin::class.java.`package`.implementationVersion
         project.dependencies.add("testImplementation", "cn.bestwu.summer:autodoc-gen:$version")
 
+    }
+
+
+    fun setDefaultDesc(autodoc: AutodocExtension, properties: Properties) {
+        autodoc.listModules { module, _ ->
+            module.collections.forEach { collection ->
+                collection.operations.forEach { operation ->
+                    val request = operation.request as DocOperationRequest
+                    val response = operation.response as DocOperationResponse
+
+                    request.uriVariablesExt.setDefaultFieldDesc(properties)
+                    request.headersExt.setDefaultFieldDesc(properties)
+                    request.parametersExt.setDefaultFieldDesc(properties)
+                    request.partsExt.setDefaultFieldDesc(properties)
+                    request.contentExt.setDefaultFieldDesc(properties)
+
+                    response.headersExt.setDefaultFieldDesc(properties)
+                    response.contentExt.setDefaultFieldDesc(properties)
+
+                    operation.save()
+                }
+            }
+        }
+    }
+
+    private fun Set<Field>.setDefaultFieldDesc(properties: Properties) {
+        this.forEach {
+            if (it.description.isBlank() || it.name == it.description) {
+                it.description = properties.getOrDefault(it.name, it.name).toString()
+            }
+            it.children.setDefaultFieldDesc(properties)
+        }
     }
 
     private fun findProperty(project: Project, key: String) =

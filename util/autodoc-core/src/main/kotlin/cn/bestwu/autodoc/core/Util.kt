@@ -199,13 +199,6 @@ fun MutableMap<String, Int>.pyname(name: String): String {
     return pyname
 }
 
-fun Set<Field>.noneBlank(): Boolean {
-    return all { it.description.isNotBlank() && it.children.noneBlank() }
-}
-
-fun Set<Field>.anyblank(): Boolean {
-    return any { it.description.isBlank() || it.canCover || it.children.anyblank() }
-}
 
 fun Set<Field>.checkBlank(desc: String, prefix: String = ""): Set<Field> {
     forEach {
