@@ -1,10 +1,19 @@
 package cn.bestwu.simpleframework.web;
 
 import cn.bestwu.simpleframework.web.resolver.Cent;
+import cn.bestwu.simpleframework.web.serializer.annotation.JsonBigDecimal;
 import cn.bestwu.simpleframework.web.serializer.annotation.JsonUrl;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class DataDicBean {
+
+  private BigDecimal number1;
+  @JsonBigDecimal(scale = 3)
+  private BigDecimal number2;
+  @JsonBigDecimal(scale = 4)
+  private BigDecimal number3;
+
 
   private String name;
   private String code;
@@ -18,6 +27,31 @@ public class DataDicBean {
 
   private List<String> paths;
   private String[] pathArray;
+
+
+  public BigDecimal getNumber1() {
+    return number1;
+  }
+
+  public void setNumber1(BigDecimal number1) {
+    this.number1 = number1;
+  }
+
+  public BigDecimal getNumber2() {
+    return number2;
+  }
+
+  public void setNumber2(BigDecimal number2) {
+    this.number2 = number2;
+  }
+
+  public BigDecimal getNumber3() {
+    return number3;
+  }
+
+  public void setNumber3(BigDecimal number3) {
+    this.number3 = number3;
+  }
 
   public String getPath1() {
     return path1;

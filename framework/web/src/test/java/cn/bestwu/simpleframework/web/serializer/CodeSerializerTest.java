@@ -1,11 +1,14 @@
 package cn.bestwu.simpleframework.web.serializer;
 
+import cn.bestwu.logging.operation.PrettyPrintingContentModifier;
 import cn.bestwu.simpleframework.support.code.ICodeService;
 import cn.bestwu.simpleframework.web.DataDicBean;
 import cn.bestwu.simpleframework.web.serializer.annotation.JsonCode;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +35,29 @@ public class CodeSerializerTest {
   }
 
   @Test
+  public void serializeBigDecimal() throws Exception {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.setDefaultPropertyInclusion(Include.NON_NULL);
+
+    DataDicBean dicBean = new DataDicBean();
+    dicBean.setNumber1(new BigDecimal("1.234560"));
+    dicBean.setNumber2(new BigDecimal("1.23456"));
+    dicBean.setNumber3(new BigDecimal("1.10000"));
+    String string = objectMapper.writeValueAsString(dicBean);
+    System.err
+        .println(new String(PrettyPrintingContentModifier.INSTANCE.modifyContent(string.getBytes(
+            StandardCharsets.UTF_8))));
+    dicBean = new DataDicBean();
+    dicBean.setNumber1(new BigDecimal("1.234560"));
+    dicBean.setNumber2(new BigDecimal("1.20000"));
+    dicBean.setNumber3(new BigDecimal("1.010"));
+    string = objectMapper.writeValueAsString(dicBean);
+    System.err
+        .println(new String(PrettyPrintingContentModifier.INSTANCE.modifyContent(string.getBytes(
+            StandardCharsets.UTF_8))));
+  }
+
+  @Test
   public void serializeInt() throws Exception {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.setDefaultPropertyInclusion(Include.NON_NULL);
@@ -45,7 +71,8 @@ public class CodeSerializerTest {
     dicBean.setName("张三");
     dicBean.setIntCode(123);
     String str2 = objectMapper.writeValueAsString(dicBean);
-    org.junit.jupiter.api.Assertions.assertEquals("{\"name\":\"张三\",\"intCode\":123,\"intCodeName\":\"codeName\"}", str2);
+    org.junit.jupiter.api.Assertions
+        .assertEquals("{\"name\":\"张三\",\"intCode\":123,\"intCodeName\":\"codeName\"}", str2);
   }
 
   @Test
@@ -62,7 +89,8 @@ public class CodeSerializerTest {
     dicBean.setName("张三");
     dicBean.setCode("123");
     String str2 = objectMapper.writeValueAsString(dicBean);
-    org.junit.jupiter.api.Assertions.assertEquals("{\"name\":\"张三\",\"code\":\"123\",\"codeName\":\"codeName\"}", str2);
+    org.junit.jupiter.api.Assertions
+        .assertEquals("{\"name\":\"张三\",\"code\":\"123\",\"codeName\":\"codeName\"}", str2);
   }
 
   interface DataDicBeanMin {
