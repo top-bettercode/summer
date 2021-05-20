@@ -23,4 +23,9 @@ public @interface JsonBigDecimal {
    */
   int scale() default 2;
 
+  /**
+   * @return 序列化为字符
+   */
+  boolean toPlainString() default false;
+
 }

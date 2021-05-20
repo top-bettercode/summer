@@ -18,14 +18,16 @@ public class BigDecimalSerializer extends NumberSerializer implements
 
   private static final long serialVersionUID = -6196337598040684558L;
   private final int scale;
+  private final boolean toPlainString;
 
   public BigDecimalSerializer() {
-    this(2);
+    this(2, false);
   }
 
-  public BigDecimalSerializer(int scale) {
+  public BigDecimalSerializer(int scale, boolean toPlainString) {
     super(BigDecimal.class);
     this.scale = scale;
+    this.toPlainString = toPlainString;
   }
 
 
@@ -36,7 +38,11 @@ public class BigDecimalSerializer extends NumberSerializer implements
     if (content.scale() != scale) {
       content = content.setScale(scale, RoundingMode.HALF_UP);
     }
-    gen.writeNumber(content);
+    if (toPlainString) {
+      gen.writeString(content.toPlainString());
+    } else {
+      gen.writeNumber(content);
+    }
   }
 
   @Override
@@ -46,7 +52,7 @@ public class BigDecimalSerializer extends NumberSerializer implements
       if (annotation == null) {
         throw new RuntimeException("未注解@" + JsonBigDecimal.class.getName());
       }
-      return new BigDecimalSerializer(annotation.scale());
+      return new BigDecimalSerializer(annotation.scale(), annotation.toPlainString());
     }
     return this;
   }
