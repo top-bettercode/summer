@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -20,14 +19,18 @@ import org.springframework.util.StringUtils;
  */
 public class DataErrorHandler implements IErrorHandler {
 
-  @Autowired
-  private MessageSource messageSource;
-  @Autowired(required = false)
-  private HttpServletRequest request;
+  private final MessageSource messageSource;
+  private final HttpServletRequest request;
+
+  public DataErrorHandler(MessageSource messageSource,
+      HttpServletRequest request) {
+    this.messageSource = messageSource;
+    this.request = request;
+  }
 
   @Override
   public void handlerException(Throwable error, RespEntity<?> respEntity,
-      Map<String, String> errors) {
+      Map<String, String> errors, String separator) {
     String message = null;
     if (error instanceof org.springframework.transaction.TransactionSystemException) {//数据验证
       error = ((TransactionSystemException) error).getRootCause();
@@ -45,7 +48,8 @@ public class DataErrorHandler implements IErrorHandler {
             msg = constraintViolation.getMessage();
           } else {
             msg =
-                getText(messageSource, request, property) + ": " + constraintViolation.getMessage();
+                getText(messageSource, request, property) + separator + constraintViolation
+                    .getMessage();
           }
           errors.put(property, msg);
         }

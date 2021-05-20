@@ -51,15 +51,17 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   private final MessageSource messageSource;
   private final List<IErrorHandler> errorHandlers;
   private final IErrorRespEntityHandler errorRespEntityHandler;
+  private final String separator;
   private static final PropertiesSource propertiesSource = PropertiesSource
       .of("default-exception-handle", "exception-handle");
 
   public ErrorAttributes(List<IErrorHandler> errorHandlers,
       IErrorRespEntityHandler errorRespEntityHandler,
-      MessageSource messageSource) {
+      MessageSource messageSource, String separator) {
     this.errorHandlers = errorHandlers;
     this.errorRespEntityHandler = errorRespEntityHandler;
     this.messageSource = messageSource;
+    this.separator = separator;
   }
 
   @Override
@@ -75,7 +77,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     if (error != null) {
       if (errorHandlers != null) {
         for (IErrorHandler errorHandler : errorHandlers) {
-          errorHandler.handlerException(error, respEntity, errors);
+          errorHandler.handlerException(error, respEntity, errors, separator);
         }
       }
 
@@ -109,7 +111,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
               .contains(NoPropertyPath.class)) {
             msg = constraintViolation.getMessage();
           } else {
-            msg = getText(webRequest, property) + ": " + constraintViolation.getMessage();
+            msg = getText(webRequest, property) + separator + constraintViolation.getMessage();
           }
           errors.put(property, msg);
         }
@@ -227,10 +229,10 @@ public class ErrorAttributes extends DefaultErrorAttributes {
       }
       if (msg == null) {
         if (field.contains(".")) {
-          msg = getText(webRequest, field.substring(field.lastIndexOf('.') + 1)) + ": "
+          msg = getText(webRequest, field.substring(field.lastIndexOf('.') + 1)) + separator
               + defaultMessage;
         } else {
-          msg = getText(webRequest, field) + ": " + defaultMessage;
+          msg = getText(webRequest, field) + separator + defaultMessage;
         }
       }
       errors.put(field, msg);
