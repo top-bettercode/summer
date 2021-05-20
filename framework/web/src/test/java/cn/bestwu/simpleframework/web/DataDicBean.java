@@ -11,8 +11,10 @@ public class DataDicBean {
   private BigDecimal number1;
   @JsonBigDecimal(scale = 3)
   private BigDecimal number2;
-  @JsonBigDecimal(scale = 4)
+  @JsonBigDecimal(scale = 4, toPlainString = true)
   private BigDecimal number3;
+  @JsonBigDecimal(scale = 4, toPlainString = true, reduceFraction = true)
+  private BigDecimal number4;
 
 
   private String name;
@@ -51,6 +53,15 @@ public class DataDicBean {
 
   public void setNumber3(BigDecimal number3) {
     this.number3 = number3;
+  }
+
+
+  public BigDecimal getNumber4() {
+    return number4;
+  }
+
+  public void setNumber4(BigDecimal number4) {
+    this.number4 = number4;
   }
 
   public String getPath1() {
