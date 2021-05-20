@@ -14,7 +14,6 @@ import cn.bestwu.lang.property.PropertiesSource
 import cn.bestwu.logging.operation.OperationRequestPart
 import org.atteo.evo.inflector.English
 import java.io.File
-import java.util.*
 
 /**
  *
@@ -25,7 +24,9 @@ object InitField {
     private val contentWrapFields: Set<String> =
         setOf("status", "message", "data", "trace", "errors")
     private val fieldDescBundle: PropertiesSource = PropertiesSource.of("field-desc-replace")
-
+    private val messageFields = PropertiesSource.of("messages").all()
+        .map { Field(it.key.toString(), "Object", it.value.toString()) }
+        .toSet()
 
     fun init(
         operation: DocOperation,
@@ -38,24 +39,41 @@ object InitField {
         val request = operation.request as DocOperationRequest
         val response = operation.response as DocOperationResponse
 
-        val uriNeedFix = request.uriVariablesExt.blankField()
-        val reqHeadNeedFix = request.headersExt.blankField()
-        val paramNeedFix = request.parametersExt.blankField()
-        val partNeedFix = request.partsExt.blankField()
-        val reqContentNeedFix = request.contentExt.blankField()
-        val resHeadNeedFix = response.headersExt.blankField()
-        val resContentNeedFix = response.contentExt.blankField()
+        var uriNeedFix = request.uriVariablesExt.blankField()
+        var reqHeadNeedFix = request.headersExt.blankField()
+        var paramNeedFix = request.parametersExt.blankField()
+        var partNeedFix = request.partsExt.blankField()
+        var reqContentNeedFix = request.contentExt.blankField()
+        var resHeadNeedFix = response.headersExt.blankField()
+        var resContentNeedFix = response.contentExt.blankField()
         if (uriNeedFix.isNotEmpty() || reqHeadNeedFix.isNotEmpty() || paramNeedFix.isNotEmpty() || partNeedFix.isNotEmpty() || reqContentNeedFix.isNotEmpty() || resHeadNeedFix.isNotEmpty() || resContentNeedFix.isNotEmpty()) {
-            extension.fixFields(allTables) { fields ->
-                fields.fix(uriNeedFix)
-                fields.fix(reqHeadNeedFix)
-                fields.fix(paramNeedFix)
-                fields.fix(partNeedFix)
-                fields.fix(reqContentNeedFix)
-                fields.fix(resHeadNeedFix)
-                fields.fix(resContentNeedFix, wrap)
+            extension.fixFields(allTables) { fields, onlyDesc ->
+                fields.fix(needFixFields = uriNeedFix, onlyDesc = onlyDesc)
+                fields.fix(needFixFields = reqHeadNeedFix, onlyDesc = onlyDesc)
+                fields.fix(needFixFields = paramNeedFix, onlyDesc = onlyDesc)
+                fields.fix(needFixFields = partNeedFix, onlyDesc = onlyDesc)
+                fields.fix(needFixFields = reqContentNeedFix, onlyDesc = onlyDesc)
+                fields.fix(needFixFields = resHeadNeedFix, onlyDesc = onlyDesc)
+                fields.fix(needFixFields = resContentNeedFix, wrap = wrap, onlyDesc = onlyDesc)
+
+                uriNeedFix = request.uriVariablesExt.blankField(false)
+                reqHeadNeedFix = request.headersExt.blankField(false)
+                paramNeedFix = request.parametersExt.blankField(false)
+                partNeedFix = request.partsExt.blankField(false)
+                reqContentNeedFix = request.contentExt.blankField(false)
+                resHeadNeedFix = response.headersExt.blankField(false)
+                resContentNeedFix = response.contentExt.blankField(false)
 
                 uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()
+            }
+            if (uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()) {
+                uriNeedFix.fix(uriNeedFix)
+                reqHeadNeedFix.fix(reqHeadNeedFix)
+                paramNeedFix.fix(paramNeedFix)
+                partNeedFix.fix(partNeedFix)
+                reqContentNeedFix.fix(reqContentNeedFix)
+                resHeadNeedFix.fix(resHeadNeedFix)
+                resContentNeedFix.fix(resContentNeedFix, wrap)
             }
         }
 
@@ -92,29 +110,46 @@ object InitField {
         }
     }
 
-    private fun Set<Field>.fix(needFixFields: Set<Field>, wrap: Boolean = false) {
-        fixFieldTree(needFixFields, hasDesc = false, userDefault = false, wrap = wrap)
-        needFixFields.fixFieldTree(needFixFields)
+    private fun Set<Field>.fix(
+        needFixFields: Set<Field>,
+        wrap: Boolean = false,
+        onlyDesc: Boolean = false
+    ) {
+        fixFieldTree(
+            needFixFields,
+            hasDesc = false,
+            userDefault = false,
+            wrap = wrap,
+            onlyDesc = onlyDesc
+        )
     }
 
-    private fun GeneratorExtension.fixFields(allTables: Boolean, fn: (Set<Field>) -> Boolean) {
-        val tableNames = linkedSetOf<String>()
-        tableNames.addAll(Autodoc.tableNames)
+    private fun GeneratorExtension.fixFields(
+        allTables: Boolean,
+        fn: (Set<Field>, Boolean) -> Boolean
+    ) {
         this.datasource.schema = Autodoc.schema
 
         when (this.dataType) {
             DataType.DATABASE -> {
                 try {
-                    if (allTables)
-                        this.use {
-                            tableNames.addAll(tableNames())
-                        }
                     val ext = this
                     use {
-                        for (tableName in tableNames) {
+                        for (tableName in Autodoc.tableNames) {
                             val table = table(tableName)
                             if (table != null) {
-                                if (fn(table.fields(ext))) break
+                                if (fn(table.fields(extension = ext), false)) break
+                            }
+                        }
+                        fn(messageFields, true)
+                        if (allTables) {
+                            val tableNames =
+                                tableNames().filter { !Autodoc.tableNames.contains(it) }
+                            for (tableName in tableNames) {
+                                val table = table(tableName)
+                                if (table != null) {
+                                    if (fn(table.fields(extension = ext), false)) break
+                                }
                             }
                         }
                     }
@@ -123,28 +158,34 @@ object InitField {
             }
             DataType.PUML -> {
                 val tables = this.pumlAllSources.map { PumlConverter.toTables(it) }.flatten()
-                this.fixFields(allTables, tableNames, tables, fn)
+                this.fixFields(allTables, tables, fn)
             }
             DataType.PDM -> {
                 val tables = PdmReader.read(this.file(this.pdmSrc)).asSequence()
-                this.fixFields(allTables, tableNames, tables, fn)
+                this.fixFields(allTables, tables, fn)
             }
         }
     }
 
     private fun GeneratorExtension.fixFields(
         allTables: Boolean,
-        tableNames: LinkedHashSet<String>,
         tables: Sequence<Table>,
-        fn: (Set<Field>) -> Boolean
+        fn: (Set<Field>, Boolean) -> Boolean
     ) {
-        if (allTables)
-            tableNames.addAll(tables.map { it.tableName })
-
-        for (tableName in tableNames) {
+        for (tableName in Autodoc.tableNames) {
             val table = tables.find { it.tableName == tableName }
                 ?: throw RuntimeException("未在(${tables.joinToString(",") { it.tableName }})中找到${tableName}表")
-            if (fn(table.fields(this))) break
+
+            if (fn(table.fields(this), false)) break
+        }
+
+        fn(messageFields, true)
+
+        if (allTables) {
+            val needTables = tables.filter { !Autodoc.tableNames.contains(it.tableName) }
+            for (table in needTables) {
+                if (fn(table.fields(this), false)) break
+            }
         }
     }
 
@@ -220,7 +261,8 @@ object InitField {
         needFixFields: Set<Field>,
         hasDesc: Boolean = true,
         userDefault: Boolean = true,
-        wrap: Boolean = false
+        wrap: Boolean = false,
+        onlyDesc: Boolean = false
     ) {
         needFixFields.forEach { field ->
             val findField =
@@ -228,7 +270,8 @@ object InitField {
                     field = field,
                     hasDesc = hasDesc,
                     userDefault = userDefault,
-                    wrap = wrap
+                    wrap = wrap,
+                    onlyDesc = onlyDesc
                 )
             fieldDescBundle.all().forEach { (k, v) ->
                 field.description = field.description.replace(k as String, v as String)
@@ -244,26 +287,32 @@ object InitField {
         hasDesc: Boolean = false,
         coverType: Boolean = true,
         userDefault: Boolean = true,
-        wrap: Boolean = false
+        wrap: Boolean = false,
+        onlyDesc: Boolean = false
     ): Field? {
         val findField = this.findPossibleField(field.name, field.value.type, hasDesc)
         if (findField != null && (field.canCover || field.description.isBlank() || !findField.canCover) && (!wrap || !contentWrapFields.contains(
                 field.name
             ))
         ) {
-            field.canCover = findField.canCover
-            if (userDefault)
-                field.defaultVal = findField.defaultVal
-            if (coverType || !findField.canCover)
-                field.type = findField.type
-            if (findField.description.isNotBlank())
-                field.description = findField.description
+            if (onlyDesc) {
+                if (findField.description.isNotBlank())
+                    field.description = findField.description
+            } else {
+                field.canCover = findField.canCover
+                if (userDefault)
+                    field.defaultVal = findField.defaultVal
+                if (coverType || !findField.canCover)
+                    field.type = findField.type
+                if (findField.description.isNotBlank())
+                    field.description = findField.description
 
-            var tempVal = field.value
-            if (tempVal.isBlank()) {
-                tempVal = field.defaultVal
+                var tempVal = field.value
+                if (tempVal.isBlank()) {
+                    tempVal = field.defaultVal
+                }
+                field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
             }
-            field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
         }
         return findField
     }
@@ -293,8 +342,24 @@ fun Collection<OperationRequestPart>.toFields(fields: Set<Field>): LinkedHashSet
     }
 }
 
-private fun Set<Field>.blankField(): Set<Field> {
-    return filter { it.description.isBlank() || it.canCover || it.children.anyblank() }.toSet()
+private fun Set<Field>.blankField(canConver: Boolean = true): Set<Field> {
+    return filter {
+        it.description.isBlank() || canConver && it.canCover || it.children.anyblank(
+            canConver
+        )
+    }.toSet()
+}
+
+private fun Set<Field>.noneBlank(): Boolean {
+    return all { it.description.isNotBlank() && it.children.noneBlank() }
+}
+
+private fun Set<Field>.anyblank(canConver: Boolean): Boolean {
+    return any {
+        it.description.isBlank() || canConver && it.canCover || it.children.anyblank(
+            canConver
+        )
+    }
 }
 
 private fun Set<Field>.field(name: String, value: Any?): Field {

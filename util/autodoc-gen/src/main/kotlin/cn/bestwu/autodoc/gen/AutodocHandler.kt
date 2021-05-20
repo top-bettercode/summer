@@ -8,6 +8,7 @@ import cn.bestwu.autodoc.core.operation.DocOperation
 import cn.bestwu.autodoc.core.operation.DocOperationRequest
 import cn.bestwu.autodoc.core.operation.DocOperationResponse
 import cn.bestwu.generator.GeneratorExtension
+import cn.bestwu.lang.property.PropertiesSource
 import cn.bestwu.logging.RequestLoggingHandler
 import cn.bestwu.logging.operation.Operation
 import com.fasterxml.jackson.annotation.JsonIgnore

@@ -32,11 +32,24 @@ object AsciidocGenerator : AbstractbGenerator() {
             if (adocFile.exists()) {
                 val htmlFile = autodoc.htmlFile(pyname)
                 html(adocFile, htmlFile)
-                htmlFile.writeText(htmlFile.readText()
-                        .replace("https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700", "static/Open+Sans.css")
-                        .replace("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css", "static/font-awesome.min.css")
-                        .replace("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js", "static/highlight.min.js")
-                        .replace("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css", "static/github.min.css")
+                htmlFile.writeText(
+                    htmlFile.readText()
+                        .replace(
+                            "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700",
+                            "static/Open+Sans.css"
+                        )
+                        .replace(
+                            "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
+                            "static/font-awesome.min.css"
+                        )
+                        .replace(
+                            "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js",
+                            "static/highlight.min.js"
+                        )
+                        .replace(
+                            "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css",
+                            "static/github.min.css"
+                        )
                 )
             }
         }
@@ -73,8 +86,12 @@ object AsciidocGenerator : AbstractbGenerator() {
             val options = Options()
             options.setToFile(outFile.absolutePath)
             options.setBackend("pdf")
-            options.setAttributes(mapOf("pdf-fontsdir" to AsciidocGenerator::class.java.getResource("/data/fonts").file,
-                    "pdf-style" to AsciidocGenerator::class.java.getResource("/data/themes/default-theme.yml").file))
+            options.setAttributes(
+                mapOf(
+                    "pdf-fontsdir" to AsciidocGenerator::class.java.getResource("/data/fonts").file,
+                    "pdf-style" to AsciidocGenerator::class.java.getResource("/data/themes/default-theme.yml").file
+                )
+            )
             options.setMkDirs(true)
             options.setSafe(SafeMode.UNSAFE)
             try {
@@ -90,7 +107,11 @@ object AsciidocGenerator : AbstractbGenerator() {
         return Operation.LINE_SEPARATOR + "== link:${autodoc.postmanFile(name).name}[Postman Collection]" + Operation.LINE_SEPARATOR
     }
 
-    private fun moduleToc(autodoc: AutodocExtension, currentName: String, pynames: MutableMap<String, Int>): String {
+    private fun moduleToc(
+        autodoc: AutodocExtension,
+        currentName: String,
+        pynames: MutableMap<String, Int>
+    ): String {
         val pw = StringBuilder()
         autodoc.listModuleNames { name, pyname ->
             if (name != currentName) {
@@ -102,42 +123,10 @@ object AsciidocGenerator : AbstractbGenerator() {
         return pw.toString()
     }
 
-    fun setDefaultDesc(autodoc: AutodocExtension) {
-        autodoc.listModules { module, _ ->
-            module.collections.forEach { collection ->
-                collection.operations.forEach { operation ->
-                    val request = operation.request as DocOperationRequest
-                    val response = operation.response as DocOperationResponse
-
-                    request.uriVariablesExt.setDefaultFieldDesc()
-                    request.headersExt.setDefaultFieldDesc()
-                    request.parametersExt.setDefaultFieldDesc()
-                    request.partsExt.setDefaultFieldDesc()
-                    request.contentExt.setDefaultFieldDesc()
-
-                    response.headersExt.setDefaultFieldDesc()
-                    response.contentExt.setDefaultFieldDesc()
-
-                    operation.save()
-                }
-            }
-        }
-    }
-
-    private fun Set<Field>.setDefaultFieldDesc() {
-        this.forEach {
-            if (it.description.isBlank()) {
-                it.description = it.name
-            }
-            it.children.setDefaultFieldDesc()
-        }
-    }
-
-
     fun asciidoc(autodoc: AutodocExtension, pdf: Boolean = false) {
         val rootDoc = autodoc.rootSource
         val sourcePath = (rootDoc?.absoluteFile?.parentFile?.absolutePath
-                ?: autodoc.source.absolutePath) + File.separator
+            ?: autodoc.source.absolutePath) + File.separator
         val commonAdocs = autodoc.commonAdocs()
         autodoc.listModules { module, pyname ->
             module.clean()
@@ -157,7 +146,8 @@ object AsciidocGenerator : AbstractbGenerator() {
                             out.println(it)
                         }
                     } else {
-                        out.println(""":doctype: book
+                        out.println(
+                            """:doctype: book
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
@@ -165,7 +155,8 @@ object AsciidocGenerator : AbstractbGenerator() {
 :sectanchors:
 :docinfo1:
 :table-caption!:
-:sectlinks:""")
+:sectlinks:"""
+                        )
                     }
                     out.println(":toclevels: $toclevels")
                     out.println(":apiHost: $apiHost")
@@ -185,7 +176,11 @@ object AsciidocGenerator : AbstractbGenerator() {
                     }
                 }
                 val properties = autodoc.properties
-                ((commonAdocs + autodoc.commonAdocs(module)).sortedWith(Comparator { o1, o2 -> if (o1.name == "README.adoc") -1 else o1.name.compareTo(o2.name) })).forEach {
+                (commonAdocs + autodoc.commonAdocs(module)).sortedWith { o1, o2 ->
+                    if (o1.name == "README.adoc") -1 else o1.name.compareTo(
+                        o2.name
+                    )
+                }.forEach {
                     out.println()
                     var pre = ""
                     it.readLines().forEach { l ->
@@ -212,7 +207,8 @@ object AsciidocGenerator : AbstractbGenerator() {
 
                     collection.operations.forEach { operation ->
                         out.println()
-                        val operationPath = operation.operationFile.absolutePath.substringAfter(sourcePath)
+                        val operationPath =
+                            operation.operationFile.absolutePath.substringAfter(sourcePath)
                         val operationName = operation.name
                         out.println("[[_${pynames.pyname("$collectionName-$operationName")}]]")
                         out.println("=== $operationName")
@@ -227,10 +223,19 @@ object AsciidocGenerator : AbstractbGenerator() {
                         request.apply {
                             out.println(".1+.^|方法 6+.^|${method}")
 
-                            out.println(".1+.^|地址 6+.^|link:{apiHost}${str(HttpOperation.getRestRequestPath(request))}[{apiHost}++$restUri++]")
+                            out.println(
+                                ".1+.^|地址 6+.^|link:{apiHost}${
+                                    str(
+                                        HttpOperation.getRestRequestPath(
+                                            request
+                                        )
+                                    )
+                                }[{apiHost}++$restUri++]"
+                            )
 
                             if (uriVariablesExt.isNotEmpty()) {
-                                val uriFields = uriVariablesExt.checkBlank("$operationPath:request.uriVariablesExt")
+                                val uriFields =
+                                    uriVariablesExt.checkBlank("$operationPath:request.uriVariablesExt")
                                 out.println(".${uriFields.size + 1}+.^|URL")
                                 out.println("h|名称 h|类型 3+h|描述 h|示例")
                                 uriFields.forEach {
@@ -242,7 +247,8 @@ object AsciidocGenerator : AbstractbGenerator() {
                                 }
                             }
                             if (headersExt.isNotEmpty()) {
-                                val headerFields = headersExt.checkBlank("$operationPath:request.headersExt")
+                                val headerFields =
+                                    headersExt.checkBlank("$operationPath:request.headersExt")
                                 out.println(".${headerFields.size + 1}+.^|请求头")
                                 out.println("h|名称 h|类型 h|必填 2+h|描述 h|示例")
                                 headerFields.forEach {
@@ -255,11 +261,18 @@ object AsciidocGenerator : AbstractbGenerator() {
                                 }
                             }
 
-                            val parameterFields = parametersExt.checkBlank("$operationPath:request.parametersExt")
+                            val parameterFields =
+                                parametersExt.checkBlank("$operationPath:request.parametersExt")
                             val partsFields = partsExt.checkBlank("$operationPath:request.partsExt")
-                            val contentFields = contentExt.checkBlank("$operationPath:request.contentExt")
+                            val contentFields =
+                                contentExt.checkBlank("$operationPath:request.contentExt")
                             val parameterBuilder = StringBuilder()
-                            val size = writeParameters(parameterBuilder, parameterFields, partsFields, contentFields)
+                            val size = writeParameters(
+                                parameterBuilder,
+                                parameterFields,
+                                partsFields,
+                                contentFields
+                            )
 
                             out.println(".${size + 1}+.^|请求")
                             if (size == 0) {
@@ -271,7 +284,8 @@ object AsciidocGenerator : AbstractbGenerator() {
                         }
                         val response = operation.response as DocOperationResponse
                         response.apply {
-                            val contentFields = contentExt.checkBlank("$operationPath:response.contentExt")
+                            val contentFields =
+                                contentExt.checkBlank("$operationPath:response.contentExt")
                             val responseBuilder = StringBuilder()
                             val size = writeResponse(responseBuilder, contentFields)
                             out.println(".${size + 1}+.^|响应")
@@ -286,9 +300,19 @@ object AsciidocGenerator : AbstractbGenerator() {
                             out.println(".1+.^|示例 6+a|")
                             out.println("[source,http,options=\"nowrap\"]")
                             out.println("----")
-                            out.println(HttpOperation.toString(operation.request, operation.protocol, true).replace("|", "\\|"))
-                            response.content = PrettyPrintingContentModifier.modifyContent(response.content)
-                            out.println(HttpOperation.toString(response, operation.protocol, true).replace("|", "\\|"))
+                            out.println(
+                                HttpOperation.toString(
+                                    operation.request,
+                                    operation.protocol,
+                                    true
+                                ).replace("|", "\\|")
+                            )
+                            response.content =
+                                PrettyPrintingContentModifier.modifyContent(response.content)
+                            out.println(
+                                HttpOperation.toString(response, operation.protocol, true)
+                                    .replace("|", "\\|")
+                            )
                             out.println("----")
                         }
 
@@ -310,7 +334,12 @@ object AsciidocGenerator : AbstractbGenerator() {
         return size
     }
 
-    private fun writeParameters(out: StringBuilder, parameterFields: Set<Field>, partsFields: Set<Field>, contentFields: Set<Field>): Int {
+    private fun writeParameters(
+        out: StringBuilder,
+        parameterFields: Set<Field>,
+        partsFields: Set<Field>,
+        contentFields: Set<Field>
+    ): Int {
         var size = 0
         parameterFields.forEach {
             size += writeParam(out, it)
