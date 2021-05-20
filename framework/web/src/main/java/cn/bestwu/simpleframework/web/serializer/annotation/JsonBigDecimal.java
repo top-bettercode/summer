@@ -28,4 +28,9 @@ public @interface JsonBigDecimal {
    */
   boolean toPlainString() default false;
 
+  /**
+   * @return 当小数位为零时，是否精简小数位
+   */
+  boolean reduceFraction() default false;
+
 }
