@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 open class LogLoginPageGeneratingFilter(
-    private val logDocAuthProperties: LogDocAuthProperties, private val logViewPath: String
+    private val logDocAuthProperties: LogDocAuthProperties
 ) : GenericFilterBean() {
     var loginPageUrl: String = DEFAULT_LOGIN_PAGE_URL
     private var logoutSuccessUrl: String
@@ -93,7 +93,7 @@ open class LogLoginPageGeneratingFilter(
                         == logDocAuthProperties.username) && (password
                         == logDocAuthProperties.password)) {
                 response.setCookie(LOGGER_AUTH_KEY, authKey)
-                val url = request.getCookie(TARGET_URL_KEY) ?: logViewPath
+                val url = request.getCookie(TARGET_URL_KEY) ?: "/"
                 sendRedirect(request, response, url)
                 return
             }

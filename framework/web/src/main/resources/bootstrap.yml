@@ -7,7 +7,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: config,env,refresh,health,loggers
+        include: config,env,refresh,health,loggers,logs
   endpoint:
     env:
       post:
