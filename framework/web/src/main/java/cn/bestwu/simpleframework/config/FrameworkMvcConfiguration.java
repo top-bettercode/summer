@@ -143,7 +143,7 @@ public class FrameworkMvcConfiguration {
     for (Class<?> aClass : allSubClasses) {
       try {
         ParameterizedType object = (ParameterizedType) aClass.getGenericInterfaces()[0];
-        Class targetType = (Class) object.getActualTypeArguments()[0];
+        Class<?> targetType = (Class<?>) object.getActualTypeArguments()[0];
         if (log.isTraceEnabled()) {
           log.trace("Detected MixInAnnotation:{}=>{}", targetType, aClass);
         }
@@ -325,7 +325,6 @@ public class FrameworkMvcConfiguration {
       public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
         return new WrapProcessorInvokingHandlerAdapter(okEnable, wrapEnable);
       }
-
     };
   }
 
