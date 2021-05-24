@@ -8,7 +8,11 @@ import cn.bestwu.logging.annotation.NoRequestLogging
 import cn.bestwu.logging.logback.Logback2LoggingSystem
 import cn.bestwu.logging.logback.PrettyMessageHTMLLayout
 import org.slf4j.impl.StaticLoggerBinder
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
+import org.springframework.boot.actuate.endpoint.annotation.Selector
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
+import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -33,74 +37,73 @@ import kotlin.math.max
 /**
  * 日志
  */
-@ConditionalOnWebApplication
-@RequestMapping(value = ["\${logging.view.path:/logs}"], name = "日志")
-class LogsController(private val loggingFilesPath: String, environment: Environment, private val websocketProperties: WebsocketProperties) {
+@Endpoint(id = "logs")
+class LogsEndpoint(
+    private val loggingFilesPath: String,
+    environment: Environment,
+    private val websocketProperties: WebsocketProperties,
+    private val serverProperties: ServerProperties,
+    private val request: HttpServletRequest,
+    private val response: HttpServletResponse
+) {
 
-    private val useWebSocket: Boolean = ClassUtils.isPresent("org.springframework.web.socket.server.standard.ServerEndpointExporter", Logback2LoggingSystem::class.java.classLoader) && ("true" == environment.getProperty("logging.websocket.enabled") || environment.getProperty("logging.websocket.enabled").isNullOrBlank())
+    private val useWebSocket: Boolean = ClassUtils.isPresent(
+        "org.springframework.web.socket.server.standard.ServerEndpointExporter",
+        Logback2LoggingSystem::class.java.classLoader
+    ) && ("true" == environment.getProperty("logging.websocket.enabled") || environment.getProperty(
+        "logging.websocket.enabled"
+    ).isNullOrBlank())
     private val loggerContext: LoggerContext
         get() {
             val factory = StaticLoggerBinder.getSingleton().loggerFactory
-            Assert.isInstanceOf(LoggerContext::class.java, factory,
-                    String.format(
-                            "LoggerFactory is not a Logback LoggerContext but Logback is on "
-                                    + "the classpath. Either remove Logback or the competing "
-                                    + "implementation (%s loaded from %s). If you are using "
-                                    + "WebLogic you will need to add 'org.slf4j' to "
-                                    + "prefer-application-packages in WEB-INF/weblogic.xml",
-                            factory.javaClass, Logback2LoggingSystem.getLocation(factory)))
+            Assert.isInstanceOf(
+                LoggerContext::class.java, factory,
+                String.format(
+                    "LoggerFactory is not a Logback LoggerContext but Logback is on "
+                            + "the classpath. Either remove Logback or the competing "
+                            + "implementation (%s loaded from %s). If you are using "
+                            + "WebLogic you will need to add 'org.slf4j' to "
+                            + "prefer-application-packages in WEB-INF/weblogic.xml",
+                    factory.javaClass, Logback2LoggingSystem.getLocation(factory)
+                )
+            )
             return factory as LoggerContext
         }
 
-    @NoRequestLogging
-    @GetMapping(name = "日志")
-    @Throws(IOException::class)
-    fun root(request: HttpServletRequest, response: HttpServletResponse) {
+    @ReadOperation
+    fun root() {
         index(File(loggingFilesPath), request, response, true)
     }
 
-    @NoRequestLogging
-    @GetMapping(value = ["/{path}"], name = "日志")
-    @Throws(IOException::class)
-    fun path(@PathVariable path: String, request: HttpServletRequest, response: HttpServletResponse) {
-        response.contentType = "text/plain;charset=UTF-8"
-        val file = File(loggingFilesPath, path)
-        if (file.isFile) {
-            showLogFile(response, file)
+    @ReadOperation
+    fun path(@Selector(match = Selector.Match.ALL_REMAINING) path: String) {
+        if ("real-time" != path) {
+            response.contentType = "text/plain;charset=UTF-8"
+            val file = File(loggingFilesPath, path.replace(",", "/"))
+            if (file.isFile) {
+                showLogFile(response, file)
+            } else {
+                index(file, request, response, false)
+            }
         } else {
-            index(file, request, response, false)
-        }
-    }
-
-    @NoRequestLogging
-    @GetMapping(value = ["/{path}/{file}"], name = "日志")
-    @Throws(IOException::class)
-    fun log(@PathVariable path: String, @PathVariable file: String,
-            response: HttpServletResponse) {
-        val logFile = File(loggingFilesPath, "$path/$file")
-        showLogFile(response, logFile)
-    }
-
-
-    @NoRequestLogging
-    @GetMapping(value = ["/real-time"], name = "实时日志")
-    @Throws(IOException::class)
-    fun websocketLog(request: HttpServletRequest, response: HttpServletResponse) {
-        if (useWebSocket) {
-            val wsUrl = "ws://" + request.getHeader(HttpHeaders.HOST) + request.contextPath + "/websocket/logging"
-            response.contentType = "text/html;charset=utf-8"
-            response.setHeader("Pragma", "No-cache")
-            response.setHeader("Cache-Control", "no-cache")
-            response.setDateHeader("Expires", 0)
-            val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
-            prettyMessageHTMLLayout.context = loggerContext
-            prettyMessageHTMLLayout.start()
-            prettyMessageHTMLLayout.title = "实时日志"
-            response.writer.use { writer ->
-                writer.println(prettyMessageHTMLLayout.fileHeader)
-                writer.println(prettyMessageHTMLLayout.presentationHeader)
-                writer.println(prettyMessageHTMLLayout.presentationFooter)
-                writer.println("""
+            if (useWebSocket) {
+                val wsUrl =
+                    "ws://" + request.getHeader(HttpHeaders.HOST)
+                        .substringBefore(":") + ":" + serverProperties.port + request.contextPath + "/websocket/logging"
+                response.contentType = "text/html;charset=utf-8"
+                response.setHeader("Pragma", "No-cache")
+                response.setHeader("Cache-Control", "no-cache")
+                response.setDateHeader("Expires", 0)
+                val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
+                prettyMessageHTMLLayout.context = loggerContext
+                prettyMessageHTMLLayout.start()
+                prettyMessageHTMLLayout.title = "实时日志"
+                response.writer.use { writer ->
+                    writer.println(prettyMessageHTMLLayout.fileHeader)
+                    writer.println(prettyMessageHTMLLayout.presentationHeader)
+                    writer.println(prettyMessageHTMLLayout.presentationFooter)
+                    writer.println(
+                        """
 <script type="text/javascript">
     function getScrollTop() {
     var scrollTop = 0, bodyScrollTop = 0, documentScrollTop = 0;
@@ -185,11 +188,13 @@ class LogsController(private val loggingFilesPath: String, environment: Environm
     };
   }
 </script>
-                """.trimIndent())
-                writer.println(prettyMessageHTMLLayout.fileFooter)
+                """.trimIndent()
+                    )
+                    writer.println(prettyMessageHTMLLayout.fileFooter)
+                }
+            } else {
+                response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
             }
-        } else {
-            response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
         }
     }
 
@@ -200,9 +205,11 @@ class LogsController(private val loggingFilesPath: String, environment: Environm
                 if (logFile.extension == "log") {
                     response.contentType = "text/html;charset=utf-8"
                 } else {
-                    response.setHeader("Content-Disposition",
-                            "attachment;filename=${logFile.name};filename*=UTF-8''" + URLEncoder
-                                    .encode(logFile.name, "UTF-8"))
+                    response.setHeader(
+                        "Content-Disposition",
+                        "attachment;filename=${logFile.name};filename*=UTF-8''" + URLEncoder
+                            .encode(logFile.name, "UTF-8")
+                    )
                     response.contentType = "application/octet-stream"
                 }
                 response.setHeader("Pragma", "No-cache")
@@ -232,8 +239,12 @@ class LogsController(private val loggingFilesPath: String, environment: Environm
                             }
                             if (llevel != null) {
                                 if (!msg.isBlank()) {
-                                    writer.println(prettyMessageHTMLLayout.doLayout(msg.toString(), level
-                                            ?: Level.INFO.levelStr))
+                                    writer.println(
+                                        prettyMessageHTMLLayout.doLayout(
+                                            msg.toString(), level
+                                                ?: Level.INFO.levelStr
+                                        )
+                                    )
                                 }
                                 msg = java.lang.StringBuilder(it)
                                 level = llevel
@@ -243,11 +254,16 @@ class LogsController(private val loggingFilesPath: String, environment: Environm
                             }
                         }
                         if (!msg.isBlank()) {
-                            writer.println(prettyMessageHTMLLayout.doLayout(msg.toString(), level
-                                    ?: Level.INFO.levelStr))
+                            writer.println(
+                                prettyMessageHTMLLayout.doLayout(
+                                    msg.toString(), level
+                                        ?: Level.INFO.levelStr
+                                )
+                            )
                         }
                         writer.println(prettyMessageHTMLLayout.presentationFooter)
-                        writer.println("""
+                        writer.println(
+                            """
 <script type="text/javascript">
 
 document.documentElement.scrollIntoView({
@@ -257,7 +273,8 @@ document.documentElement.scrollIntoView({
           });
           
 </script>
-                """.trimIndent())
+                """.trimIndent()
+                        )
 
                         writer.println(prettyMessageHTMLLayout.fileFooter)
                     }
@@ -272,7 +289,12 @@ document.documentElement.scrollIntoView({
         }
     }
 
-    private fun index(file: File, request: HttpServletRequest, response: HttpServletResponse, root: Boolean) {
+    private fun index(
+        file: File,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        root: Boolean
+    ) {
         if (file.exists()) {
             val servletPath = request.servletPath
             val endsWith = servletPath.endsWith("/")
@@ -283,10 +305,12 @@ document.documentElement.scrollIntoView({
             response.setHeader("Cache-Control", "no-cache")
             response.setDateHeader("Expires", 0)
             response.writer.use { writer ->
-                writer.println("""
+                writer.println(
+                    """
 <html>
 <head><title>Index of /</title></head>
-<body>""")
+<body>"""
+                )
                 writer.print("<h1>Index of /</h1><hr><pre>")
 
                 val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -294,14 +318,30 @@ document.documentElement.scrollIntoView({
                 if (!root)
                     writer.println("<a href=\"$upPath\">../</a>")
                 else if (useWebSocket) {
-                    writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${LocalDateTimeHelper.now().format(dateTimeFormatter)}       -")
+                    writer.println(
+                        "<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${
+                            LocalDateTimeHelper.now().format(dateTimeFormatter)
+                        }       -"
+                    )
                 }
 
                 file.listFiles()?.forEach { it ->
                     if (it.isDirectory) {
-                        writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${LocalDateTimeHelper.of(it.lastModified()).format(dateTimeFormatter)}       -")
+                        writer.println(
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${
+                                LocalDateTimeHelper.of(
+                                    it.lastModified()
+                                ).format(dateTimeFormatter)
+                            }       -"
+                        )
                     } else {
-                        writer.println("<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}\">${it.name}</a>                                        ${LocalDateTimeHelper.of(it.lastModified()).format(dateTimeFormatter)}       ${prettyValue(it.length())}")
+                        writer.println(
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}\">${it.name}</a>                                        ${
+                                LocalDateTimeHelper.of(
+                                    it.lastModified()
+                                ).format(dateTimeFormatter)
+                            }       ${prettyValue(it.length())}"
+                        )
                     }
                 }
                 writer.println("</pre><hr></body>\n</html>")
@@ -330,15 +370,20 @@ document.documentElement.scrollIntoView({
         }
         var newScale = index - 2
         newScale = max(newScale, 0)
-        val result = if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(BigDecimal(1024), RoundingMode.UP)
-                .setScale(newScale, RoundingMode.UP).toString()
+        val result = if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(
+            BigDecimal(1024), RoundingMode.UP
+        )
+            .setScale(newScale, RoundingMode.UP).toString()
         return trimTrailing(result) + units[index]
     }
 
     private fun trimTrailing(value: String): String {
         return if (value.contains(".")) StringUtils
-                .trimTrailingCharacter(StringUtils.trimTrailingCharacter(
-                        value, '0'), '.') else value
+            .trimTrailingCharacter(
+                StringUtils.trimTrailingCharacter(
+                    value, '0'
+                ), '.'
+            ) else value
     }
 
 }

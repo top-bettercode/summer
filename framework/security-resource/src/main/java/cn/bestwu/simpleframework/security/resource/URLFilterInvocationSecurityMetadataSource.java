@@ -1,6 +1,5 @@
 package cn.bestwu.simpleframework.security.resource;
 
-import cn.bestwu.logging.LogsController;
 import cn.bestwu.simpleframework.security.DefaultAuthority;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -48,8 +47,7 @@ public class URLFilterInvocationSecurityMetadataSource implements
 
     handlerMapping.getHandlerMethods().forEach((mappingInfo, handlerMethod) -> {
       //非匿名权限
-      if (!hasAnnotation(handlerMethod, Anonymous.class) && (!ignoreLogs || !handlerMethod
-          .getBeanType().equals(LogsController.class))) {
+      if (!hasAnnotation(handlerMethod, Anonymous.class) && !ignoreLogs) {
         for (String pattern : mappingInfo.getPatternsCondition().getPatterns()) {
           if (!ignored(pattern)) {
             Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
