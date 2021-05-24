@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: config,env,refresh,health,loggers
+  endpoint:
+    env:
+      post:
+        enabled: true

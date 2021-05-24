@@ -62,6 +62,7 @@ allprojects {
             dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
             dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
 
+            dependency("org.springframework.cloud:spring-cloud-starter-config:2.2.5.RELEASE")
             dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.23.4")
 
             dependency("cn.bestwu.wechat:weixin-mp:0.9.7")
