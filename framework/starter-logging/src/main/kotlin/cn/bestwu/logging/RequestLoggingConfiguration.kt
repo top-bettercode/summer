@@ -1,10 +1,12 @@
 package cn.bestwu.logging
 
 import cn.bestwu.lang.util.RandomUtil.nextString2
+import cn.bestwu.simpleframework.web.filter.cn.bestwu.simpleframework.web.filter.ManagementLoginPageGeneratingFilter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -35,7 +37,11 @@ import javax.servlet.http.HttpServletResponse
     matchIfMissing = true
 )
 @Configuration
-@EnableConfigurationProperties(RequestLoggingProperties::class, WebsocketProperties::class)
+@EnableConfigurationProperties(
+    RequestLoggingProperties::class,
+    WebsocketProperties::class,
+    ManagementAuthProperties::class
+)
 class RequestLoggingConfiguration {
 
     private val log: Logger = LoggerFactory.getLogger(RequestLoggingConfiguration::class.java)
@@ -61,18 +67,19 @@ class RequestLoggingConfiguration {
 
     @Profile("release")
     @Bean
-    @ConditionalOnMissingBean(LogLoginPageGeneratingFilter::class)
+    @ConditionalOnMissingBean(ManagementLoginPageGeneratingFilter::class)
     fun logLoginPageGeneratingFilter(
-        logDocAuthProperties: LogDocAuthProperties,
-    ): LogLoginPageGeneratingFilter {
-        if (!StringUtils.hasText(logDocAuthProperties.password)) {
-            logDocAuthProperties.password = nextString2(6)
+        managementAuthProperties: ManagementAuthProperties,
+        webEndpointProperties: WebEndpointProperties
+    ): ManagementLoginPageGeneratingFilter {
+        if (!StringUtils.hasText(managementAuthProperties.password)) {
+            managementAuthProperties.password = nextString2(6)
             log.info(
-                "默认日志访问用户名密码：{}:{}", logDocAuthProperties.username,
-                logDocAuthProperties.password
+                "默认日志访问用户名密码：{}:{}", managementAuthProperties.username,
+                managementAuthProperties.password
             )
         }
-        return LogLoginPageGeneratingFilter(logDocAuthProperties)
+        return ManagementLoginPageGeneratingFilter(managementAuthProperties, webEndpointProperties)
     }
 
     @ConditionalOnProperty(
