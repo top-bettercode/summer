@@ -1,5 +1,8 @@
-package cn.bestwu.logging
+package cn.bestwu.simpleframework.web.filter.cn.bestwu.simpleframework.web.filter
 
+import cn.bestwu.logging.ManagementAuthProperties
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
+import org.springframework.util.AntPathMatcher
 import org.springframework.util.Assert
 import org.springframework.util.DigestUtils
 import org.springframework.web.filter.GenericFilterBean
@@ -18,17 +21,21 @@ import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-open class LogLoginPageGeneratingFilter(
-    private val logDocAuthProperties: LogDocAuthProperties
+class ManagementLoginPageGeneratingFilter(
+    private val managementAuthProperties: ManagementAuthProperties,
+    private val webEndpointProperties: WebEndpointProperties,
 ) : GenericFilterBean() {
-    var loginPageUrl: String = DEFAULT_LOGIN_PAGE_URL
+    private var loginPageUrl: String = "${webEndpointProperties.basePath}/$DEFAULT_LOGIN_PAGE"
     private var logoutSuccessUrl: String
     private var failureUrl: String
     private var authenticationUrl: String
     private var usernameParameter: String
     private var pwdParameter: String
-    private var resolveHiddenInputs = Function<HttpServletRequest, Map<String?, String>> { emptyMap() }
-    private val authKey: String = DigestUtils.md5DigestAsHex("${logDocAuthProperties.username}:${logDocAuthProperties.password}".toByteArray())
+    private val antPathMatcher = AntPathMatcher()
+    private var resolveHiddenInputs =
+        Function<HttpServletRequest, Map<String?, String>> { emptyMap() }
+    private val authKey: String =
+        DigestUtils.md5DigestAsHex("${managementAuthProperties.username}:${managementAuthProperties.password}".toByteArray())
 
     /**
      * Sets a Function used to resolve a Map of the hidden inputs where the key is the name of the
@@ -64,12 +71,23 @@ open class LogLoginPageGeneratingFilter(
         this.pwdParameter = passwordParameter
     }
 
+    fun match(uri: String): Boolean {
+        if (antPathMatcher.match("${webEndpointProperties.basePath}/**", uri)) {
+            return true
+        }
+        for (pattern in managementAuthProperties.pattern) {
+            if (antPathMatcher.match(pattern, uri)) {
+                return true
+            }
+        }
+        return false
+    }
 
     override fun doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain) {
         val request = req as HttpServletRequest
         val response = res as HttpServletResponse
         var uri = request.servletPath
-        if (logDocAuthProperties.match(uri) && loginPageUrl != uri) {
+        if (match(uri) && loginPageUrl != uri) {
             if (request.getCookie(LOGGER_AUTH_KEY) == authKey) {
                 response.setCookie(LOGGER_AUTH_KEY, authKey)
                 chain.doFilter(request, response)
@@ -90,8 +108,8 @@ open class LogLoginPageGeneratingFilter(
             val username = request.getParameter(usernameParameter)
             val password = request.getParameter(pwdParameter)
             if (username != null && password != null && (username.trim { it <= ' ' }
-                        == logDocAuthProperties.username) && (password
-                        == logDocAuthProperties.password)) {
+                        == managementAuthProperties.username) && (password
+                        == managementAuthProperties.password)) {
                 response.setCookie(LOGGER_AUTH_KEY, authKey)
                 val url = request.getCookie(TARGET_URL_KEY) ?: "/"
                 sendRedirect(request, response, url)
@@ -120,7 +138,7 @@ open class LogLoginPageGeneratingFilter(
     private fun HttpServletResponse.setCookie(name: String, value: String) {
         val cookie = Cookie(name, value)
         cookie.path = "/"
-        cookie.maxAge = logDocAuthProperties.maxAge
+        cookie.maxAge = managementAuthProperties.maxAge
         this.addCookie(cookie)
     }
 
@@ -305,7 +323,7 @@ open class LogLoginPageGeneratingFilter(
     }
 
     companion object {
-        const val DEFAULT_LOGIN_PAGE_URL = "/logs/login"
+        const val DEFAULT_LOGIN_PAGE = "login"
         const val ERROR_PARAMETER_NAME = "error"
         const val LOGGER_AUTH_KEY = "_key"
         const val TARGET_URL_KEY = "_targetUrl"
@@ -331,9 +349,9 @@ open class LogLoginPageGeneratingFilter(
     }
 
     init {
-        authenticationUrl = DEFAULT_LOGIN_PAGE_URL
-        logoutSuccessUrl = "$DEFAULT_LOGIN_PAGE_URL?logout"
-        failureUrl = "$DEFAULT_LOGIN_PAGE_URL?$ERROR_PARAMETER_NAME"
+        authenticationUrl = "${webEndpointProperties.basePath}/$DEFAULT_LOGIN_PAGE"
+        logoutSuccessUrl = "${webEndpointProperties.basePath}/$DEFAULT_LOGIN_PAGE?logout"
+        failureUrl = "${webEndpointProperties.basePath}/$DEFAULT_LOGIN_PAGE?$ERROR_PARAMETER_NAME"
         usernameParameter = "username"
         pwdParameter = "password"
     }
