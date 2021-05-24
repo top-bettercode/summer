@@ -3,13 +3,13 @@ subprojects {
         plugin("com.jfrog.artifactory")
         plugin("org.springframework.boot")
     }
-    if(name.contains("logging")){
+    if (name.contains("logging")) {
         apply {
             plugin("org.jetbrains.kotlin.jvm")
             plugin("org.jetbrains.kotlin.plugin.spring")
             plugin("summer.kotlin-publish")
         }
-    }else{
+    } else {
         apply {
             plugin("summer.publish")
         }
