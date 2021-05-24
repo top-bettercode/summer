@@ -4,6 +4,7 @@ import cn.bestwu.lang.util.LocalDateTimeHelper;
 import cn.bestwu.logging.LogDocAuthProperties;
 import cn.bestwu.logging.annotation.NoRequestLogging;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
+import cn.bestwu.simpleframework.web.ConfigEndpoint;
 import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
 import cn.bestwu.simpleframework.web.ICaptchaService;
 import cn.bestwu.simpleframework.web.RespEntity;
@@ -91,6 +92,11 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 public class FrameworkMvcConfiguration {
 
   private final Logger log = LoggerFactory.getLogger(FrameworkMvcConfiguration.class);
+
+  @Bean
+  public ConfigEndpoint configEndpoint(ApplicationContext applicationContext) {
+    return new ConfigEndpoint(applicationContext);
+  }
 
   @Bean(name = "error")
   @ConditionalOnMissingBean(name = "error")
