@@ -1,7 +1,6 @@
 package cn.bestwu.simpleframework.config;
 
 import cn.bestwu.lang.util.LocalDateTimeHelper;
-import cn.bestwu.logging.LogDocAuthProperties;
 import cn.bestwu.logging.annotation.NoRequestLogging;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
 import cn.bestwu.simpleframework.web.ConfigEndpoint;
@@ -87,7 +86,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @Configuration
 @ConditionalOnWebApplication
-@EnableConfigurationProperties(LogDocAuthProperties.class)
 @AutoConfigureBefore({ErrorMvcAutoConfiguration.class, JacksonAutoConfiguration.class})
 public class FrameworkMvcConfiguration {
 
