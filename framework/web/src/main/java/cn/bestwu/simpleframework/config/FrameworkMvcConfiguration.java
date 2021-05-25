@@ -69,6 +69,7 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
@@ -99,8 +100,9 @@ public class FrameworkMvcConfiguration {
   }
 
   @Bean
-  public NavController navController(WebEndpointProperties webEndpointProperties) {
-    return new NavController(webEndpointProperties);
+  public NavController navController(WebEndpointProperties webEndpointProperties,
+      ResourceLoader resourceLoader) {
+    return new NavController(webEndpointProperties, resourceLoader);
   }
 
   @Bean(name = "error")
