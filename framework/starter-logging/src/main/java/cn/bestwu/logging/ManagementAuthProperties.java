@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("management.auth")
 public class ManagementAuthProperties {
 
-  private String[] pattern = {"/doc/**"};
+  private String[] pattern = {};
   /**
    * 访问授权有效时间，单位：秒
    */
