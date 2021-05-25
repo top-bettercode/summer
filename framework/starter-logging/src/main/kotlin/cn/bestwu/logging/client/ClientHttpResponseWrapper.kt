@@ -1,5 +1,7 @@
 package cn.bestwu.logging.client
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.ClientHttpResponse
@@ -13,13 +15,19 @@ import java.io.InputStream
  *
  * @author Peter Wu
  */
-class ClientHttpResponseWrapper(private val response: ClientHttpResponse?) : ClientHttpResponse {
+class ClientHttpResponseWrapper(private val response: ClientHttpResponse) : ClientHttpResponse {
 
-    val bytes: ByteArray =
-        if (response != null) StreamUtils.copyToByteArray(response.body) else ByteArray(0)
+    private val log: Logger = LoggerFactory.getLogger(ClientHttpResponseWrapper::class.java)
+
+    val bytes: ByteArray = try {
+        StreamUtils.copyToByteArray(response.body)
+    } catch (e: Exception) {
+        log.warn("读取响应错误", e)
+        ByteArray(0)
+    }
 
     override fun getHeaders(): HttpHeaders {
-        return response?.headers ?: HttpHeaders.EMPTY
+        return response.headers
     }
 
     @Throws(IOException::class)
@@ -29,21 +37,21 @@ class ClientHttpResponseWrapper(private val response: ClientHttpResponse?) : Cli
 
     @Throws(IOException::class)
     override fun getStatusCode(): HttpStatus {
-        return response?.statusCode ?: HttpStatus.INTERNAL_SERVER_ERROR
+        return response.statusCode
     }
 
     @Throws(IOException::class)
     override fun getRawStatusCode(): Int {
-        return response?.rawStatusCode ?: HttpStatus.INTERNAL_SERVER_ERROR.value()
+        return response.rawStatusCode
     }
 
     @Throws(IOException::class)
     override fun getStatusText(): String {
-        return response?.statusText ?: ""
+        return response.statusText
     }
 
     override fun close() {
-        response?.close()
+        response.close()
     }
 
 }
