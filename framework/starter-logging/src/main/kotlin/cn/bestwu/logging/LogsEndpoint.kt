@@ -289,6 +289,8 @@ document.documentElement.scrollIntoView({
         }
     }
 
+    private val comparator: Comparator<File> = LogFileNameComparator()
+
     private fun index(
         file: File,
         request: HttpServletRequest,
@@ -325,7 +327,9 @@ document.documentElement.scrollIntoView({
                     )
                 }
 
-                file.listFiles()?.forEach { it ->
+                val listFiles = file.listFiles()
+                listFiles?.sortWith(comparator)
+                listFiles?.forEach { it ->
                     if (it.isDirectory) {
                         writer.println(
                             "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${

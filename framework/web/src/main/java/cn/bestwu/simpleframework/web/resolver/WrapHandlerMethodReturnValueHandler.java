@@ -2,6 +2,7 @@ package cn.bestwu.simpleframework.web.resolver;
 
 import cn.bestwu.simpleframework.web.IRespEntity;
 import cn.bestwu.simpleframework.web.RespEntity;
+import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -68,7 +69,7 @@ public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnV
   public boolean supportsRewrapType(MethodParameter returnType) {
     Class<?> typeContainingClass = returnType.getContainingClass();
     Class<?> parameterType = returnType.getParameterType();
-    return !void.class.equals(parameterType) && !AnnotatedElementUtils
+    boolean support = !void.class.equals(parameterType) && !AnnotatedElementUtils
         .hasAnnotation(parameterType, NoWrapResp.class) && !AnnotatedElementUtils
         .hasAnnotation(typeContainingClass, NoWrapResp.class) &&
         !returnType.hasMethodAnnotation(NoWrapResp.class) && (
@@ -76,6 +77,11 @@ public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnV
             returnType.hasMethodAnnotation(ResponseBody.class)
             || HttpEntity.class.isAssignableFrom(parameterType) &&
             !RequestEntity.class.isAssignableFrom(parameterType));
+    if(support){
+      return !Objects.equals(returnType.getExecutable().getDeclaringClass().getPackage().getName(),
+          "org.springframework.boot.actuate.endpoint.web.servlet");
+    }
+    return support;
   }
 
   private Object rewrapResult(Object originalValue) {
