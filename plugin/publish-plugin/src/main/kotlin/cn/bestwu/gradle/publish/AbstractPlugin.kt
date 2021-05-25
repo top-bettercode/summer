@@ -73,6 +73,7 @@ abstract class AbstractPlugin : Plugin<Project> {
     protected fun dokkaTask(project: Project) {
         val dokkaJavadoc = project.tasks.findByName("dokkaJavadoc")
         dokkaJavadoc as DokkaTask
+        dokkaJavadoc.offlineMode.set(true)
         dokkaJavadoc.plugins.dependencies.add(project.dependencies.create("org.jetbrains.dokka:kotlin-as-java-plugin:${DokkaVersion.version}"))
     }
 
