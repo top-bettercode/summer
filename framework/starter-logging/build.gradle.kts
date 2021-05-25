@@ -9,6 +9,7 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-web")
     api("com.google.guava:guava")
     api("org.springframework.boot:spring-boot-starter-actuator")
+    api("org.springframework.cloud:spring-cloud-starter-config")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
