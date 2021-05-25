@@ -3,11 +3,13 @@ package cn.bestwu.logging.client
 import cn.bestwu.logging.RequestLoggingConfig
 import cn.bestwu.logging.client.ClientHttpRequestWrapper
 import cn.bestwu.logging.operation.Operation
+import cn.bestwu.logging.operation.OperationResponse
 import cn.bestwu.logging.operation.RequestConverter
 import cn.bestwu.logging.operation.ResponseConverter
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.client.ClientHttpRequest
 import org.springframework.http.client.ClientHttpResponse
 import java.io.ByteArrayOutputStream
@@ -41,14 +43,15 @@ class ClientHttpRequestWrapper(
             return response!!
         } finally {
             if (log.isInfoEnabled) {
-                if (response == null)
-                    response = ClientHttpResponseWrapper(null)
                 val operation = Operation(
                     collectionName = collectionName,
                     name = name,
                     protocol = "HTTP/1.1",
                     request = RequestConverter.convert(this, dateTime!!),
-                    response = ResponseConverter.convert(response as ClientHttpResponseWrapper)
+                    response = if (response == null) OperationResponse(
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        HttpHeaders.EMPTY, ByteArray(0)
+                    ) else ResponseConverter.convert(response as ClientHttpResponseWrapper)
                 )
                 log.info(
                     operation.toString(
