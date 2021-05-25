@@ -95,7 +95,6 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             }
         }
 
-        val logUrl = environment.getProperty("logging.log-url")
         //slack log
         if (existProperty(environment, "logging.slack.auth-token") && existProperty(
                 environment,
@@ -107,8 +106,16 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     Binder.get(environment).bind("logging.slack", SlackProperties::class.java).get()
                 try {
                     val logsPath = environment.getProperty("logging.files.path")
+                    val logUrl = environment.getProperty("logging.log-url")
+                    val logPath =
+                        environment.getProperty("management.endpoints.web.base-path") ?: "/actuator"
                     val slackAppender =
-                        SlackAppender(slackProperties, warnSubject, logsPath, logUrl)
+                        SlackAppender(
+                            slackProperties,
+                            warnSubject,
+                            logsPath,
+                            if (logUrl == null) null else logUrl + logPath
+                        )
                     slackAppender.context = context
                     slackAppender.start()
                     slackProperties.logger.map { loggerName -> context.getLogger(loggerName.trim()) }
