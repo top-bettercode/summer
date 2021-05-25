@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.support.ErrorPageFilter
+import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.annotation.*
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
@@ -67,6 +68,7 @@ class RequestLoggingConfiguration {
 
     @Profile("release")
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(ManagementLoginPageGeneratingFilter::class)
     fun logLoginPageGeneratingFilter(
         managementAuthProperties: ManagementAuthProperties,
