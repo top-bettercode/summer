@@ -6,6 +6,7 @@ import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
 import cn.bestwu.simpleframework.web.ConfigEndpoint;
 import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
 import cn.bestwu.simpleframework.web.ICaptchaService;
+import cn.bestwu.simpleframework.web.NavController;
 import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.error.CustomErrorController;
 import cn.bestwu.simpleframework.web.error.DataErrorHandler;
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -94,6 +96,11 @@ public class FrameworkMvcConfiguration {
   @Bean
   public ConfigEndpoint configEndpoint(ApplicationContext applicationContext) {
     return new ConfigEndpoint(applicationContext);
+  }
+
+  @Bean
+  public NavController navController(WebEndpointProperties webEndpointProperties) {
+    return new NavController(webEndpointProperties);
   }
 
   @Bean(name = "error")

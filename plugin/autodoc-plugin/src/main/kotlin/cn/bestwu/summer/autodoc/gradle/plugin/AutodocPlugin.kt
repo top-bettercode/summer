@@ -42,10 +42,6 @@ class AutodocPlugin : Plugin<Project> {
                 ?: project.findProperty("application.name") as? String
                         ?: "${project.name}接口文档"
             autodocExtension.author = project.findProperty("autodoc.author") as? String ?: "autodoc"
-            val output = project.findProperty("autodoc.output") as? String
-            if (output != null) {
-                autodocExtension.output = File(output)
-            }
             var version = project.findProperty("autodoc.version") as? String
             if (version.isNullOrBlank()) {
                 version = project.findProperty("app.version") as? String
@@ -78,7 +74,7 @@ class AutodocPlugin : Plugin<Project> {
 
         val docOutputDir = File(
             (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
-            "public/doc"
+            "/META-INF/resources//actuator/doc"
         )
         if (autodoc.output == null)
             autodoc.output = docOutputDir

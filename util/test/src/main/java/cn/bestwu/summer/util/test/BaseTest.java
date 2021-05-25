@@ -16,7 +16,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     properties = {
         "api.sign.handler-type-prefix=",
         "spring.jackson.default-property-inclusion=USE_DEFAULTS",
-        "logging.level.root=debug"
+        "logging.level.root=debug",
+        "logging.level.org.springframework.test=warn",
+        "logging.level.org.springframework.boot.test=warn",
     })
 public abstract class BaseTest {
 
