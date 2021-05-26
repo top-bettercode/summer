@@ -70,7 +70,7 @@ class RequestLoggingConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(ManagementLoginPageGeneratingFilter::class)
-    fun logLoginPageGeneratingFilter(
+    fun managementLoginPageGeneratingFilter(
         managementAuthProperties: ManagementAuthProperties,
         webEndpointProperties: WebEndpointProperties
     ): ManagementLoginPageGeneratingFilter {
