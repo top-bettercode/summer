@@ -51,7 +51,7 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
     private var asynchronousSending = true
 
     override fun start() {
-        val cache: Cache<String, Int> = CacheBuilder.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS).maximumSize(10).build()
+        val cache: Cache<String, Int> = CacheBuilder.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS).maximumSize(100).build()
         cacheMap = cache.asMap()
 
         val alarmEvaluator = object : EventEvaluatorBase<ILoggingEvent>() {
