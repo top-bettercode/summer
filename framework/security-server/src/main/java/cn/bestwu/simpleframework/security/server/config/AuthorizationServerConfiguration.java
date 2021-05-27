@@ -7,21 +7,11 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.annotation.Order;
 import org.springframework.hateoas.server.core.AnnotationMappingDiscoverer;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
-import org.springframework.security.oauth2.config.annotation.configuration.ClientDetailsServiceConfiguration;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration;
 import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpoint;
 import org.springframework.stereotype.Controller;
@@ -38,12 +28,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Peter Wu
  */
 @SuppressWarnings("deprecation")
-@ConditionalOnClass(OAuth2Exception.class)
-@Order(-1)
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
-@Configuration
-@ConditionalOnWebApplication
-@Import({ClientDetailsServiceConfiguration.class, AuthorizationServerEndpointsConfiguration.class})
+//@ConditionalOnClass(OAuth2Exception.class)
+//@Order(-1)
+//@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
+//@Configuration
+//@ConditionalOnWebApplication
+//@Import({ClientDetailsServiceConfiguration.class, AuthorizationServerEndpointsConfiguration.class})
 public class AuthorizationServerConfiguration extends AuthorizationServerSecurityConfiguration {
 
   private List<AuthorizationServerHttpSecurityConfigurerAdapter> configurers = Collections

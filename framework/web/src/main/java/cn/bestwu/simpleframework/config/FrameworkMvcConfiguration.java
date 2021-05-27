@@ -9,6 +9,7 @@ import cn.bestwu.simpleframework.web.NavController;
 import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.error.CustomErrorController;
 import cn.bestwu.simpleframework.web.error.DataErrorHandler;
+import cn.bestwu.simpleframework.web.error.DefaultErrorHandler;
 import cn.bestwu.simpleframework.web.error.ErrorAttributes;
 import cn.bestwu.simpleframework.web.error.IErrorHandler;
 import cn.bestwu.simpleframework.web.error.IErrorRespEntityHandler;
@@ -17,7 +18,7 @@ import cn.bestwu.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
 import cn.bestwu.simpleframework.web.kaptcha.KaptchaProperties;
 import cn.bestwu.simpleframework.web.resolver.StringToEnumConverterFactory;
-import cn.bestwu.simpleframework.web.resolver.WrapProcessorInvokingHandlerAdapter;
+import cn.bestwu.simpleframework.web.resolver.WrapHandlerMethodReturnValueHandler;
 import cn.bestwu.simpleframework.web.serializer.MixIn;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -77,8 +79,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 /**
@@ -185,14 +190,22 @@ public class FrameworkMvcConfiguration {
     return new OrderedHttpPutFormContentFilter();
   }
 
+  @Bean
+  public DefaultErrorHandler defaultErrorHandler(MessageSource messageSource,
+      @Autowired(required = false) HttpServletRequest request) {
+    return new DefaultErrorHandler(messageSource, request);
+  }
+
   @ConditionalOnMissingBean(ErrorAttributes.class)
   @Bean
   public ErrorAttributes errorAttributes(
       @Autowired(required = false) List<IErrorHandler> errorHandlers,
       @Autowired(required = false) IErrorRespEntityHandler errorRespEntityHandler,
       MessageSource messageSource,
-      @Value("${app.constraint-violation.separator:}") String separator) {
-    return new ErrorAttributes(errorHandlers, errorRespEntityHandler, messageSource, separator);
+      @Value("${app.constraint-violation.separator:}") String separator,
+      ServerProperties serverProperties) {
+    return new ErrorAttributes(serverProperties.getError(), errorHandlers, errorRespEntityHandler,
+        messageSource, separator);
   }
 
   @ConditionalOnMissingBean(ErrorController.class)
@@ -320,11 +333,52 @@ public class FrameworkMvcConfiguration {
   @Bean
   public WebMvcRegistrations webMvcRegistrations(
       @Value("${app.web.ok.enable:true}") Boolean okEnable,
-      @Value("${app.web.wrap.enable:true}") Boolean wrapEnable) {
+      @Value("${app.web.wrap.enable:true}") Boolean wrapEnable, ErrorAttributes errorAttributes) {
     return new WebMvcRegistrations() {
       @Override
       public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
-        return new WrapProcessorInvokingHandlerAdapter(okEnable, wrapEnable);
+        return new RequestMappingHandlerAdapter() {
+          @Override
+          public void afterPropertiesSet() {
+            super.afterPropertiesSet();
+
+            // Retrieve actual handlers to use as delegate
+            HandlerMethodReturnValueHandlerComposite oldHandlers = new HandlerMethodReturnValueHandlerComposite()
+                .addHandlers(this.getReturnValueHandlers());
+
+            // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
+            List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
+            newHandlers
+                .add(new WrapHandlerMethodReturnValueHandler(oldHandlers, okEnable, wrapEnable,
+                    errorAttributes));
+
+            // Configure the new handler to be used
+            this.setReturnValueHandlers(newHandlers);
+          }
+        };
+      }
+
+
+      @Override
+      public ExceptionHandlerExceptionResolver getExceptionHandlerExceptionResolver() {
+        return new ExceptionHandlerExceptionResolver() {
+          @Override
+          public void afterPropertiesSet() {
+            super.afterPropertiesSet();
+
+            // Retrieve actual handlers to use as delegate
+            HandlerMethodReturnValueHandlerComposite oldHandlers = this.getReturnValueHandlers();
+
+            // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
+            List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
+            newHandlers
+                .add(new WrapHandlerMethodReturnValueHandler(oldHandlers, okEnable, wrapEnable,
+                    errorAttributes));
+
+            // Configure the new handler to be used
+            this.setReturnValueHandlers(newHandlers);
+          }
+        };
       }
     };
   }

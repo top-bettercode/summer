@@ -2,6 +2,7 @@ package cn.bestwu.simpleframework.web.resolver;
 
 import cn.bestwu.simpleframework.web.IRespEntity;
 import cn.bestwu.simpleframework.web.RespEntity;
+import cn.bestwu.simpleframework.web.error.ErrorAttributes;
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
@@ -24,12 +25,15 @@ public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnV
   private final HandlerMethodReturnValueHandler delegate;
   private final Boolean okEnable;
   private final Boolean wrapEnable;
+  private final ErrorAttributes errorAttributes;
 
   public WrapHandlerMethodReturnValueHandler(
-      HandlerMethodReturnValueHandler delegate, Boolean okEnable, Boolean wrapEnable) {
+      HandlerMethodReturnValueHandler delegate, Boolean okEnable, Boolean wrapEnable,
+      ErrorAttributes errorAttributes) {
     this.delegate = delegate;
     this.okEnable = okEnable;
     this.wrapEnable = wrapEnable;
+    this.errorAttributes = errorAttributes;
   }
 
 
@@ -52,7 +56,21 @@ public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnV
         }
       }
     }
-    if (wrapEnable && supportsRewrapType(returnType)) {
+
+    //异常信息处理
+    Object body =
+        returnValue instanceof ResponseEntity ? ((ResponseEntity<?>) returnValue).getBody()
+            : returnValue;
+    if (body instanceof Throwable) {
+      body = errorAttributes.getErrorAttributes((Throwable) body, webRequest);
+
+      returnValue =
+          returnValue instanceof ResponseEntity ? ResponseEntity
+              .status(((ResponseEntity<?>) returnValue).getStatusCode())
+              .headers(((ResponseEntity<?>) returnValue).getHeaders()).body(body)
+              : body;
+    } else if (wrapEnable && (!(returnValue instanceof IRespEntity))
+        && supportsRewrapType(returnType)) {
       Object value = returnValue;
 
       if (returnValue instanceof HttpEntity) {
@@ -77,7 +95,7 @@ public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnV
             returnType.hasMethodAnnotation(ResponseBody.class)
             || HttpEntity.class.isAssignableFrom(parameterType) &&
             !RequestEntity.class.isAssignableFrom(parameterType));
-    if(support){
+    if (support) {
       return !Objects.equals(returnType.getExecutable().getDeclaringClass().getPackage().getName(),
           "org.springframework.boot.actuate.endpoint.web.servlet");
     }
@@ -85,15 +103,7 @@ public class WrapHandlerMethodReturnValueHandler implements HandlerMethodReturnV
   }
 
   private Object rewrapResult(Object originalValue) {
-    if (originalValue == null) {
-      return new RespEntity<>(null);
-    } else if (originalValue instanceof Throwable) {
-      return new RespEntity<>(String.valueOf(HttpStatus.BAD_REQUEST.value()),
-          ((Throwable) originalValue).getMessage());
-    } else if (!(originalValue instanceof IRespEntity)) {
-      return new RespEntity<>(originalValue);
-    } else {
-      return originalValue;
-    }
+    return new RespEntity<>(originalValue);
   }
+
 }
