@@ -75,10 +75,13 @@ public class ApiHandlerMethodReturnValueHandler implements HandlerMethodReturnVa
                   .headers(((ResponseEntity<?>) returnValue).getHeaders())
                   .body(body);
         } else {
-          returnValue =
-              body;
+          returnValue = body;
         }
-      } else if (webProperties.getWrapEnable() && (!(returnValue instanceof IRespEntity))
+      }
+
+      if (webProperties.getWrapEnable() && (!(returnValue instanceof IRespEntity || (
+          returnValue instanceof HttpEntity && ((HttpEntity<?>) returnValue)
+              .getBody() instanceof IRespEntity)))
           && supportsRewrapType(returnType)) {
         Object value = returnValue;
 
