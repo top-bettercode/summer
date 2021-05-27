@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.security.resource.config;
 
+import cn.bestwu.simpleframework.security.SecurityProperties;
 import cn.bestwu.simpleframework.security.resource.IResourceService;
 import cn.bestwu.simpleframework.security.resource.URLFilterInvocationSecurityMetadataSource;
 import java.util.Collection;
@@ -7,9 +8,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionManager;
@@ -26,14 +27,20 @@ public class SecurityResourceServerConfiguration {
 
   private final Logger log = LoggerFactory.getLogger(SecurityResourceServerConfiguration.class);
 
+  private final SecurityProperties securityProperties;
+
+  public SecurityResourceServerConfiguration(
+      SecurityProperties securityProperties) {
+    this.securityProperties = securityProperties;
+  }
+
   @Bean
+  @RefreshScope
   public URLFilterInvocationSecurityMetadataSource securityMetadataSource(
       IResourceService apiService,
-      RequestMappingHandlerMapping requestMappingHandlerMapping,
-      @Value("${security.url-filter.ignored:}") String[] ignored,
-      @Value("${security.ignore-logs:true}") boolean ignoreLogs) {
+      RequestMappingHandlerMapping requestMappingHandlerMapping) {
     return new URLFilterInvocationSecurityMetadataSource(apiService,
-        requestMappingHandlerMapping, ignored, ignoreLogs);
+        requestMappingHandlerMapping, securityProperties);
   }
 
   @ConditionalOnMissingBean

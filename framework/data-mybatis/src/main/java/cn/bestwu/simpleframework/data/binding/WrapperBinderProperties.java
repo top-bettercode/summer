@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * @author Peter Wu
  */
-@ConfigurationProperties("app.wrapper-binder")
+@ConfigurationProperties("summer.wrapper-binder")
 public class WrapperBinderProperties {
 
   private String isAscParameter = "sort";

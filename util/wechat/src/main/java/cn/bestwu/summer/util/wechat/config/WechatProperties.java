@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * @author Peter Wu
  */
-@ConfigurationProperties(prefix = "wechat")
+@ConfigurationProperties(prefix = "summer.wechat")
 public class WechatProperties extends AppSetting {
 
   public static final String OAUTH_URL = "/wechat/oauth";

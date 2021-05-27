@@ -11,6 +11,7 @@ import cn.bestwu.generator.GeneratorExtension
 import cn.bestwu.lang.property.PropertiesSource
 import cn.bestwu.logging.RequestLoggingHandler
 import cn.bestwu.logging.operation.Operation
+import cn.bestwu.simpleframework.config.WebProperties
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -31,7 +32,7 @@ import javax.annotation.PreDestroy
 class AutodocHandler(
     private val genProperties: GenProperties,
     private val signProperties: ApiSignProperties,
-    private val wrap: Boolean
+    private val webProperties: WebProperties
 ) : RequestLoggingHandler {
 
     private val log: Logger = LoggerFactory.getLogger(AutodocHandler::class.java)
@@ -194,7 +195,7 @@ class AutodocHandler(
                     docOperation,
                     extension,
                     genProperties.allTables,
-                    wrap,
+                    webProperties.wrapEnable,
                     defaultValueHeaders,
                     defaultValueParams
                 )

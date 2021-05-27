@@ -5,11 +5,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-@ConditionalOnProperty(prefix = "security.cors", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "summer.security.cors", value = "enable", havingValue = "true")
 @Configuration
 @EnableConfigurationProperties(CorsProperties.class)
 public class CorsConfiguration {
@@ -21,8 +23,10 @@ public class CorsConfiguration {
     return source;
   }
 
+  @Order(Ordered.HIGHEST_PRECEDENCE)
   @Bean
-  public CorsFilter corsFilter(@Qualifier("corsConfigurationSource") CorsConfigurationSource configurationSource){
+  public CorsFilter corsFilter(
+      @Qualifier("corsConfigurationSource") CorsConfigurationSource configurationSource) {
     return new CorsFilter(configurationSource);
   }
 

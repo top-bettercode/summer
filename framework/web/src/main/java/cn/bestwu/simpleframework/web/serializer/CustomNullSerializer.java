@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.web.serializer;
 
+import cn.bestwu.simpleframework.config.JacksonExtProperties;
 import cn.bestwu.simpleframework.web.serializer.annotation.JsonCode;
 import cn.bestwu.simpleframework.web.serializer.annotation.JsonUrl;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -25,18 +26,18 @@ public class CustomNullSerializer extends StdSerializer<Object> {
   private static final long serialVersionUID = 1L;
   private final Class<?> type;
   private final String defaultValue;
-  private final boolean defaultEmpty;
+  private final JacksonExtProperties jacksonExtProperties;
   private final boolean isArray;
   private final BeanPropertyWriter writer;
   private static final ConversionService CONVERSION_SERVICE = new DefaultConversionService();
 
   public CustomNullSerializer(BeanPropertyWriter writer, String defaultValue,
-      boolean defaultEmpty) {
+      JacksonExtProperties jacksonExtProperties) {
     super(Object.class);
     this.writer = writer;
     this.type = writer.getType().getRawClass();
     this.defaultValue = defaultValue;
-    this.defaultEmpty = defaultEmpty;
+    this.jacksonExtProperties = jacksonExtProperties;
     isArray = type.isArray() || (Collection.class.isAssignableFrom(type) && !Map.class
         .isAssignableFrom(type));
   }
@@ -48,7 +49,7 @@ public class CustomNullSerializer extends StdSerializer<Object> {
     String fieldName = outputContext.getCurrentName();
 
     if (defaultValue == null) {
-      if (defaultEmpty) {
+      if (jacksonExtProperties.getDefaultEmpty()) {
         serializeNull(gen, type, value);
         serializeExtend(gen, fieldName, true);
       } else {

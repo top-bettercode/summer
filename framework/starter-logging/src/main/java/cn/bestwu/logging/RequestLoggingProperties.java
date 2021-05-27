@@ -8,7 +8,7 @@ import org.springframework.util.AntPathMatcher;
  *
  * @author Peter Wu
  */
-@ConfigurationProperties("logging.request")
+@ConfigurationProperties("summer.logging.request")
 public class RequestLoggingProperties {
 
   /**

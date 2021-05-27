@@ -24,18 +24,26 @@ logging:
     javax.xml: warn
     net.sf: warn
     javax.activation: warn
-  spilt-marker:
-    request: info
-  file: build/logs/all.log
-  files:
-    path: build/logs
-  spilt-level:
-  - error
-  - warn
-  request:
-    include-path: /oauth/*
-    include-request-body: true
-    include-response-body: true
+
+summer:
+  logging:
+    spilt-marker:
+      request: info
+    files:
+      path: build/logs
+    spilt-level:
+      - error
+      - warn
+    request:
+      include-path: /oauth/*
+      include-request-body: true
+      include-response-body: true
+  security:
+    cors:
+      enable: true
+    url-filter-ignored: /
+    session-creation-policy: stateless
+
 security:
   oauth2:
     client:
@@ -46,16 +54,14 @@ security:
       authorized-grant-types: password,refresh_token
     authorization:
       check-token-access: isAuthenticated()
-  cors:
-    enable: true
-#  keyStore:
-#    alias: wintech
-#    password: hg4O6jkj
-#    resource-path: wintech.jks
-  url-filter:
-    ignored: /
-  http:
-    session-creation-policy: stateless
+
+
+  #  keyStore:
+  #    alias: wintech
+  #    password: hg4O6jkj
+  #    resource-path: wintech.jks
+
+
 server:
   compression:
     enabled: true

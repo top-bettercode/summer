@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse
  * @since 0.1.5
  */
 @ConditionalOnProperty(
-    prefix = "logging.request",
+    prefix = "summer.logging.request",
     name = ["enabled"],
     havingValue = "true",
     matchIfMissing = true
@@ -85,8 +85,8 @@ class RequestLoggingConfiguration {
     }
 
     @ConditionalOnProperty(
-        prefix = "logging.show",
-        name = ["enabled"],
+        prefix = "summer.logging",
+        name = ["show-enabled"],
         havingValue = "true",
         matchIfMissing = true
     )
@@ -94,7 +94,7 @@ class RequestLoggingConfiguration {
     @ConditionalOnWebApplication
     @Bean
     fun logsEndpoint(
-        @Value("\${logging.files.path}") loggingFilesPath: String,
+        @Value("\${summer.logging.files.path}") loggingFilesPath: String,
         environment: Environment,
         websocketProperties: WebsocketProperties,
         serverProperties: ServerProperties,
@@ -114,7 +114,7 @@ class RequestLoggingConfiguration {
     internal class LogsEndpointCondition : Condition {
 
         override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
-            return StringUtils.hasText(context.environment.getProperty("logging.files.path"))
+            return StringUtils.hasText(context.environment.getProperty("summer.logging.files.path"))
         }
     }
 

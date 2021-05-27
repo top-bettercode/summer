@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 /**
  * @author Peter Wu
  */
-@ConfigurationProperties("autodoc.gen")
+@ConfigurationProperties("summer.autodoc.gen")
 public class GenProperties extends AutodocExtension {
 
   /**

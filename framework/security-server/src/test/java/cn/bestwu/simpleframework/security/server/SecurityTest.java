@@ -6,6 +6,7 @@ import cn.bestwu.simpleframework.security.impl.TestApplication;
 import cn.bestwu.simpleframework.web.RespEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,6 +71,13 @@ public class SecurityTest {
     return resp.getData();
 
   }
+
+  @Test
+  public void options() {
+    Set<HttpMethod> httpMethods = clientRestTemplate.optionsForAllow("/oauth/token");
+    System.out.println(httpMethods);
+  }
+
 
   @Test
   public void accessToken() throws Exception {

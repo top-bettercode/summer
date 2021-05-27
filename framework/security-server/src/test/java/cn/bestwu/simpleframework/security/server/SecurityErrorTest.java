@@ -23,8 +23,12 @@ import org.springframework.util.MultiValueMap;
  */
 @ExtendWith(SpringExtension.class)
 @SuppressWarnings("deprecation")
-@SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
-    "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)
+@SpringBootTest(classes = TestApplication.class,
+    properties = {
+        "api.sign.handler-type-prefix=",
+        "logging.level.root=debug",
+        "summer.web.ok-enable=false",
+    }, webEnvironment = RANDOM_PORT)
 public class SecurityErrorTest {
 
   @Autowired
@@ -55,6 +59,22 @@ public class SecurityErrorTest {
         .postForEntity("/oauth/token", new HttpEntity<>(params),
             String.class);
     Thread.sleep(5 * 1000);
-    org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
+    org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
+  }
+
+  @Test
+  public void disableUsername() throws Exception {
+    MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+    params.add("grant_type", "password");
+    params.add("scope", "trust");
+    params.add("username", "disableUsername");
+    params.add("password", "wrong password");
+    params.add("openId", "");
+
+    ResponseEntity<String> entity = clientRestTemplate
+        .postForEntity("/oauth/token", new HttpEntity<>(params),
+            String.class);
+    Thread.sleep(5 * 1000);
+    org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
   }
 }

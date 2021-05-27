@@ -1,11 +1,15 @@
-package cn.bestwu.simpleframework.exception;
+package cn.bestwu.simpleframework.security.server;
 
 import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @author Peter Wu
  */
-public class IllegalUserException extends RuntimeException {
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class IllegalUserException extends InternalAuthenticationServiceException {
 
   private static final long serialVersionUID = 4634232939775284312L;
 

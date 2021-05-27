@@ -9,7 +9,7 @@ import org.springframework.web.method.HandlerMethod;
  *
  * @author Peter Wu
  */
-@ConfigurationProperties("api.sign")
+@ConfigurationProperties("summer.sign")
 public class ApiSignProperties {
 
   /**

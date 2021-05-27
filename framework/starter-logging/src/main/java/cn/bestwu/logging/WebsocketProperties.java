@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Peter Wu
  */
-@ConfigurationProperties("logging.websocket")
+@ConfigurationProperties("summer.logging.websocket")
 public class WebsocketProperties {
 
   /**

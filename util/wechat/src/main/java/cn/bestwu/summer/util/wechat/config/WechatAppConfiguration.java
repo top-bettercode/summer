@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @ConditionalOnClass(AppSetting.class)
-@ConditionalOnProperty(prefix = "wechat.mini", name = "appId")
+@ConditionalOnProperty(prefix = "summer.wechat.mini", name = "appId")
 @Configuration
 @EnableConfigurationProperties({WechatMiniAppProperties.class})
 public class WechatAppConfiguration {

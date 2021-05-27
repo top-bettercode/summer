@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 public @interface JsonUrl {
 
   /**
-   * @return URL路径前缀配置 expression: e.g. "${app.multipart.file-url-format}".
+   * @return URL路径前缀配置 expression: e.g. "${summer.multipart.file-url-format}".
    */
   String value() default "";
 

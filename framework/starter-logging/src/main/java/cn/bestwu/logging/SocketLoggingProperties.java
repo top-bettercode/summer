@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Peter Wu
  */
-@ConfigurationProperties("logging.socket")
+@ConfigurationProperties("summer.logging.socket")
 public class SocketLoggingProperties {
 
   /**

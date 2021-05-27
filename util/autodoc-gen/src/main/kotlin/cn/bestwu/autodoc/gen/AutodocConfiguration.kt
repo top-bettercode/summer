@@ -3,12 +3,14 @@ package cn.bestwu.autodoc.gen
 import cn.bestwu.api.sign.ApiSignProperties
 import cn.bestwu.logging.RequestLoggingConfiguration
 import cn.bestwu.logging.RequestLoggingProperties
+import cn.bestwu.simpleframework.config.WebProperties
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -55,8 +57,8 @@ class AutodocConfiguration {
     }
 
     @Bean
-    fun autodocHandler(signProperties: ApiSignProperties, @Value("\${app.web.wrap.enable:true}") wrap: Boolean): AutodocHandler {
-        return AutodocHandler(genProperties, signProperties, wrap)
+    fun autodocHandler(signProperties: ApiSignProperties, webProperties: WebProperties): AutodocHandler {
+        return AutodocHandler(genProperties, signProperties, webProperties)
     }
 
 }

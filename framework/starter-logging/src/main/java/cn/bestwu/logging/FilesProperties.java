@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Peter Wu
  */
-@ConfigurationProperties("logging.files")
+@ConfigurationProperties("summer.logging.files")
 public class FilesProperties {
 
   private String path;

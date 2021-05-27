@@ -57,6 +57,7 @@ public class RespEntity<T> implements IRespEntity, Serializable {
     this.data = data;
   }
 
+  @Override
   public Integer getHttpStatusCode() {
     return httpStatusCode;
   }
@@ -173,6 +174,16 @@ public class RespEntity<T> implements IRespEntity, Serializable {
   public static class RespEntityMap extends HashMap<String, Object> implements IRespEntity {
 
     private static final long serialVersionUID = -8836404214545603605L;
+
+    @JsonIgnore
+    @Override
+    public Integer getHttpStatusCode() {
+      try {
+        return HttpStatus.valueOf(Integer.parseInt((String) this.get(KEY_STATUS))).value();
+      } catch (Exception e) {
+        return HttpStatus.OK.value();
+      }
+    }
 
     @Override
     public Map<String, Object> toMap() {

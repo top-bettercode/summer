@@ -24,7 +24,7 @@ import org.springframework.util.MultiValueMap;
 @SuppressWarnings("deprecation")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
-    "logging.level.root=debug", "app.web.ok.enable=true"}, webEnvironment = RANDOM_PORT)
+    "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)
 public class SecurityError200Test {
 
   @Autowired
@@ -53,7 +53,6 @@ public class SecurityError200Test {
     ResponseEntity<String> entity = clientRestTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params),
             String.class);
-    System.err.println(entity.getBody());
     org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
   }
 }

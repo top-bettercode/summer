@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * @author Peter Wu
  */
-@ConfigurationProperties(prefix = "wechat.mini")
+@ConfigurationProperties(prefix = "summer.wechat.mini")
 public class WechatMiniAppProperties extends AppSetting {
 
   public static final String OPEN_ID_FIELD_NAME = "openId";

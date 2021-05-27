@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Peter Wu
  */
-@ConfigurationProperties("management.auth")
+@ConfigurationProperties("summer.management.auth")
 public class ManagementAuthProperties {
 
   private String[] pattern = {};

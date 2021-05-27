@@ -1,7 +1,6 @@
 package cn.bestwu.simpleframework.web.error;
 
 import cn.bestwu.simpleframework.exception.BusinessException;
-import cn.bestwu.simpleframework.exception.IllegalUserException;
 import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotWritableException;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -77,11 +75,6 @@ public class DefaultErrorHandler extends AbstractErrorHandler {
     } else if (error instanceof BusinessException) {
       respEntity.setStatus(((BusinessException) error).getCode());
       respEntity.setErrors(((BusinessException) error).getData());
-    } else if (error instanceof IllegalUserException) {
-      Map<String, String> userErrors = ((IllegalUserException) error).getErrors();
-      if (!CollectionUtils.isEmpty(userErrors)) {
-        errors.putAll(userErrors);
-      }
     }
 
     if (StringUtils.hasText(message)) {
