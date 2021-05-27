@@ -8,9 +8,10 @@ logging:
     com.sun: warn
     javax.xml: warn
     com.zaxxer: warn
-  request:
-    include-response-body: true
-    include-request-body: true
-app:
+summer:
+  logging:
+    request:
+      include-response-body: true
+      include-request-body: true
   multipart:
     file-url-format: /path%s

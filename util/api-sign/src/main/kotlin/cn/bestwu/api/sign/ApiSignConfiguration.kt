@@ -44,7 +44,7 @@ class ApiSignConfiguration : WebMvcConfigurer {
     internal class ApiSignCondition : Condition {
 
         override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
-            return (StringUtils.hasText(context.environment.getProperty("api.sign.client-secret")) || StringUtils.hasText(context.environment.getProperty("api.sign.clientSecret"))) && (StringUtils.hasText(context.environment.getProperty("api.sign.handler-type-prefix")) || StringUtils.hasText(context.environment.getProperty("api.sign.handlerTypePrefix")))
+            return (StringUtils.hasText(context.environment.getProperty("summer.sign.client-secret")) || StringUtils.hasText(context.environment.getProperty("summer.sign.clientSecret"))) && (StringUtils.hasText(context.environment.getProperty("summer.sign.handler-type-prefix")) || StringUtils.hasText(context.environment.getProperty("summer.sign.handlerTypePrefix")))
         }
     }
 }

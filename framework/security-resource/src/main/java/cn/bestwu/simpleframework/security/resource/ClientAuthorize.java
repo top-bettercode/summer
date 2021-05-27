@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.security;
+package cn.bestwu.simpleframework.security.resource;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

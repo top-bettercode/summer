@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @ConditionalOnClass(AppSetting.class)
-@ConditionalOnProperty(prefix = "wechat", name = "appId")
+@ConditionalOnProperty(prefix = "summer.wechat", name = "appId")
 @Configuration
 @EnableConfigurationProperties({WechatProperties.class})
 public class WechatConfiguration {

@@ -3,6 +3,7 @@ package cn.bestwu.simpleframework.web.serializer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import cn.bestwu.logging.operation.PrettyPrintingContentModifier;
+import cn.bestwu.simpleframework.config.JacksonExtProperties;
 import cn.bestwu.simpleframework.web.DataDicBean;
 import cn.bestwu.simpleframework.web.serializer.annotation.JsonUrl;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -20,17 +21,18 @@ import org.springframework.mock.env.MockEnvironment;
  */
 public class UrlSerializerTest {
 
+  private JacksonExtProperties jacksonExtProperties = new JacksonExtProperties();
   final ObjectMapper objectMapper = new ObjectMapper();
 
   @BeforeEach
   public void setUp() {
     objectMapper.setDefaultPropertyInclusion(Include.NON_NULL);
     objectMapper.setSerializerFactory(objectMapper.getSerializerFactory()
-        .withSerializerModifier(new CustomNullSerializerModifier(true)));
+        .withSerializerModifier(new CustomNullSerializerModifier(jacksonExtProperties)));
 
     MockEnvironment mockEnvironment = new MockEnvironment();
-//    mockEnvironment.setProperty("app.multipart.file-url-format", "/path%s");
-    mockEnvironment.setProperty("app.multipart.file-url-format", "http://127.0.0.1%s");
+//    mockEnvironment.setProperty("summer.multipart.file-url-format", "/path%s");
+    mockEnvironment.setProperty("summer.multipart.file-url-format", "http://127.0.0.1%s");
     mockEnvironment.setProperty("path1-url", "http://127.0.0.2%s");
     UrlSerializer.setEnvironment(mockEnvironment);
   }

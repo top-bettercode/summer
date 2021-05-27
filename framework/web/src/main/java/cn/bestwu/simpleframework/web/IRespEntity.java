@@ -10,6 +10,8 @@ import java.util.Map;
  */
 public interface IRespEntity {
 
+  Integer getHttpStatusCode();
+
   @JsonIgnore
   Map<String, Object> toMap();
 }

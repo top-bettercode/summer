@@ -75,10 +75,10 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         val environment = initializationContext.environment
         val warnSubject = warnSubject(environment)
         //smtp log
-        if (existProperty(environment, "logging.smtp.host")) {
+        if (existProperty(environment, "summer.logging.smtp.host")) {
             synchronized(context.configurationLock) {
                 val smtpProperties =
-                    Binder.get(environment).bind("logging.smtp", SmtpProperties::class.java).get()
+                    Binder.get(environment).bind("summer.logging.smtp", SmtpProperties::class.java).get()
                 val levelMailAppender = mailAppender(context, smtpProperties, warnSubject)
                 val mailMarker = smtpProperties.marker
                 val markerMailAppender = if (!mailMarker.isNullOrBlank())
@@ -96,17 +96,17 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         }
 
         //slack log
-        if (existProperty(environment, "logging.slack.auth-token") && existProperty(
+        if (existProperty(environment, "summer.logging.slack.auth-token") && existProperty(
                 environment,
-                "logging.slack.channel"
+                "summer.logging.slack.channel"
             )
         ) {
             synchronized(context.configurationLock) {
                 val slackProperties =
-                    Binder.get(environment).bind("logging.slack", SlackProperties::class.java).get()
+                    Binder.get(environment).bind("summer.logging.slack", SlackProperties::class.java).get()
                 try {
-                    val logsPath = environment.getProperty("logging.files.path")
-                    val logUrl = environment.getProperty("logging.log-url")
+                    val logsPath = environment.getProperty("summer.logging.files.path")
+                    val logUrl = environment.getProperty("summer.logging.log-url")
                     val logPath =
                         environment.getProperty("management.endpoints.web.base-path") ?: "/actuator"
                     val slackAppender =
@@ -133,8 +133,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         if (ClassUtils.isPresent(
                 "org.springframework.web.socket.server.standard.ServerEndpointExporter",
                 Logback2LoggingSystem::class.java.classLoader
-            ) && ("true" == environment.getProperty("logging.websocket.enabled") || environment.getProperty(
-                "logging.websocket.enabled"
+            ) && ("true" == environment.getProperty("summer.logging.websocket.enabled") || environment.getProperty(
+                "summer.logging.websocket.enabled"
             ).isNullOrBlank())
         ) {
             synchronized(context.configurationLock) {
@@ -157,10 +157,10 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         }
 
         //socket log
-        if (existProperty(environment, "logging.socket.remote-host")) {
+        if (existProperty(environment, "summer.logging.socket.remote-host")) {
             synchronized(context.configurationLock) {
                 val socketProperties = Binder.get(environment)
-                    .bind("logging.socket", SocketLoggingProperties::class.java).get()
+                    .bind("summer.logging.socket", SocketLoggingProperties::class.java).get()
                 val socketAppender = if (socketProperties.ssl == null) socketAppender(
                     context,
                     socketProperties
@@ -175,10 +175,10 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         }
 
         //logstashTcpSocketAppender
-        if (existProperty(environment, "logging.logstash.destinations[0]")) {
+        if (existProperty(environment, "summer.logging.logstash.destinations[0]")) {
             synchronized(context.configurationLock) {
                 val socketProperties = Binder.get(environment)
-                    .bind("logging.logstash", LogstashTcpSocketProperties::class.java).get()
+                    .bind("summer.logging.logstash", LogstashTcpSocketProperties::class.java).get()
                 val socketAppender = logstashTcpSocketAppender(context, socketProperties)
                 socketAppender.start()
                 context.getLogger("root").addAppender(socketAppender)
@@ -186,15 +186,15 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         }
 
         //file log
-        if (existProperty(environment, "logging.files.path")) {
+        if (existProperty(environment, "summer.logging.files.path")) {
             val filesProperties =
-                Binder.get(environment).bind("logging.files", FilesProperties::class.java).get()
+                Binder.get(environment).bind("summer.logging.files", FilesProperties::class.java).get()
             val fileLogPattern = environment.getProperty("logging.pattern.file", FILE_LOG_PATTERN)
 
-            val spilts = bind(environment, "logging.spilt")
-            val markers = bind(environment, "logging.spilt-marker")
+            val spilts = bind(environment, "summer.logging.spilt")
+            val markers = bind(environment, "summer.logging.spilt-marker")
             val levels = Binder.get(environment)
-                .bind("logging.spilt-level", Bindable.setOf(String::class.java))
+                .bind("summer.logging.spilt-level", Bindable.setOf(String::class.java))
                 .orElseGet { setOf() }
 
             val rootName = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase()

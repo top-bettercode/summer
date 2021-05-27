@@ -35,13 +35,13 @@ internal fun formatFileNow(): String {
 }
 
 internal fun warnSubject(environment: Environment): String = environment.getProperty(
-    "logging.warn-subject",
+    "summer.logging.warn-subject",
     "${environment.getProperty("spring.application.name", "")}${
         if (existProperty(
                 environment,
-                "app.project.name"
+                "summer.web.project-name"
             )
-        ) " " + environment.getProperty("app.project.name") else ""
+        ) " " + environment.getProperty("summer.web.project-name") else ""
     } ${environment.getProperty("spring.profiles.active", "")}"
 )
 

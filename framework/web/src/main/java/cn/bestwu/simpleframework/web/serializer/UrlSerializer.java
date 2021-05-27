@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
 
   private static final long serialVersionUID = 1L;
 
-  private static String defaultFormatExpression = "${app.multipart.file-url-format}";
+  private static String defaultFormatExpression = "${summer.multipart.file-url-format}";
   private static final JsonUrlMapper defaultMapper = new JsonUrlMapper() {
   };
   private static Environment environment;
@@ -130,9 +131,9 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
       JsonUrlMapper jsonUrlMapper = mapperCache.get(mapperType);
       if (jsonUrlMapper == null) {
         try {
-          jsonUrlMapper = mapperType.newInstance();
+          jsonUrlMapper = mapperType.getConstructor().newInstance();
           mapperCache.put(mapperType, jsonUrlMapper);
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
           throw new RuntimeException("mapper实例化失败", e);
         }
       }

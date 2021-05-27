@@ -1,28 +1,4 @@
 {
   "properties": [
-    {
-      "name": "security.url-filter.ignored",
-      "type": "java.lang.String[]",
-      "defaultValue": "",
-      "description": "security.url-filter.ignored."
-    },
-    {
-      "name": "security.ignore-logs",
-      "type": "java.lang.Boolean",
-      "defaultValue": "true",
-      "description": "security.ignore-logs."
-    },
-    {
-      "name": "security.http.session-creation-policy",
-      "type": "org.springframework.security.config.http.SessionCreationPolicy",
-      "defaultValue": "STATELESS",
-      "description": "security.url-filter.ignored."
-    },
-    {
-      "name": "security.http.frame-options-disable",
-      "type": "java.lang.Boolean",
-      "defaultValue": true,
-      "description": "是否禁用同源策略."
-    }
   ]
 }

@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * @author Peter Wu
  */
-@ConfigurationProperties("kaptcha")
+@ConfigurationProperties("summer.kaptcha")
 public class KaptchaProperties {
 
   private String border = "no";

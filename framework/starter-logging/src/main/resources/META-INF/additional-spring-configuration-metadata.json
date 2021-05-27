@@ -7,53 +7,15 @@
   ],
   "properties": [
     {
-      "name": "app.project.name",
+      "name": "summer.web.project-name",
       "type": "java.lang.String",
       "description": "项目名称.",
       "sourceType": "cn.bestwu.logging.UtilKt"
-    },
-    {
-      "name": "logging.log-url",
-      "type": "java.lang.String",
-      "description": "日志浏览前缀路径.",
-      "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem"
-    },
-    {
-      "name": "logging.warn-subject",
-      "type": "java.lang.String",
-      "description": "日志报警标题.",
-      "defaultValue": "${spring.application.name}  ${spring.profiles.active} system exception;",
-      "sourceType": "cn.bestwu.logging.UtilKt"
-    },
-    {
-      "name": "logging.spilt",
-      "type": "java.util.Map<java.lang.String,java.lang.String>",
-      "description": "Log levels severity mapping. Use 'root' for the root logger.Stored in different files, respectively.",
-      "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem"
-    },
-    {
-      "name": "logging.spilt-marker",
-      "type": "java.util.Map<java.lang.String,java.lang.String>",
-      "description": "Log levels severity mapping.Delimited files based on markup.",
-      "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem"
-    },
-    {
-      "name": "logging.spilt-level",
-      "type": "java.lang.String[]",
-      "description": "Log levels.Stored in different files, respectively.",
-      "sourceType": "cn.bestwu.logging.logback.Logback2LoggingSystem"
-    },
-    {
-      "name": "logging.show.enabled",
-      "sourceType": "cn.bestwu.logging.RequestLoggingConfiguration",
-      "description": "是否启用日志浏览功能.",
-      "defaultValue": true,
-      "type": "java.lang.Boolean"
     }
   ],
   "hints": [
     {
-      "name": "logging.spilt.keys",
+      "name": "summer.logging.spilt.keys",
       "values": [
         {
           "value": "root",
@@ -67,7 +29,7 @@
       ]
     },
     {
-      "name": "logging.spilt.values",
+      "name": "summer.logging.spilt.values",
       "values": [
         {
           "value": "trace"
@@ -98,7 +60,7 @@
       ]
     },
     {
-      "name": "logging.spilt-level",
+      "name": "summer.logging.spilt-level",
       "values": [
         {
           "value": "trace"
@@ -129,7 +91,7 @@
       ]
     },
     {
-      "name": "logging.spilt-marker.keys",
+      "name": "summer.logging.spilt-marker.keys",
       "providers": [
         {
           "name": "any"
@@ -137,7 +99,7 @@
       ]
     },
     {
-      "name": "logging.spilt-marker.values",
+      "name": "summer.logging.spilt-marker.values",
       "values": [
         {
           "value": "trace"

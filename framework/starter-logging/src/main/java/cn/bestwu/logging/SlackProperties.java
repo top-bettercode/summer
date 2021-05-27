@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Peter Wu
  */
-@ConfigurationProperties("logging.slack")
+@ConfigurationProperties("summer.logging.slack")
 public class SlackProperties {
 
   private String[] logger = {"root"};

@@ -15,7 +15,7 @@ public class TestSecurityConfiguration {
 
   @Bean
   public IRevokeTokenService revokeTokenService() {
-    return (securityUser, access_token) -> System.err.println(StringUtil.valueOf(securityUser, true));
+    return (securityUser, access_token) -> System.err.println("revoke:"+StringUtil.valueOf(securityUser, true));
   }
 
   @Bean

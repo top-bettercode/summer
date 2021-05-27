@@ -1,6 +1,7 @@
 package cn.bestwu.simpleframework.security.impl;
 
 import cn.bestwu.simpleframework.security.DefaultAuthority;
+import cn.bestwu.simpleframework.security.server.IllegalUserException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,6 +34,9 @@ public class CustomUserDetailsService implements UserDetailsService {
    */
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    if ("disableUsername".equals(username)) {
+      throw new IllegalUserException("帐户已禁用");
+    }
     return new User(username, DigestUtils.md5DigestAsHex("123456".getBytes()),
         getAuthorities(username));
   }

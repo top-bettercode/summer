@@ -1,8 +1,8 @@
 package cn.bestwu.simpleframework.security.impl;
 
 import cn.bestwu.simpleframework.security.resource.Anonymous;
+import cn.bestwu.simpleframework.security.resource.ClientAuthorize;
 import cn.bestwu.simpleframework.security.resource.ConfigAuthority;
-import cn.bestwu.simpleframework.security.ClientAuthorize;
 import cn.bestwu.simpleframework.web.BaseController;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.web.bind.annotation.RequestMapping;

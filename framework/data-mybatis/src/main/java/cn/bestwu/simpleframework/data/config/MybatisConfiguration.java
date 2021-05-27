@@ -21,7 +21,7 @@ public class MybatisConfiguration {
   /**
    * specifying the packages to scan for mixIn annotation.
    */
-  @Value("${app.data.binding.query-dsl.base-packages:}")
+  @Value("${summer.data.mybatis.binding.query-dsl.base-packages:}")
   private String[] basePackages;
 
   private final List<MapperFactoryBean> mapperFactoryBeans;

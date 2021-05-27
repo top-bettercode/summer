@@ -19,7 +19,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter
  */
 @ConditionalOnWebApplication
 @ConditionalOnClass(org.springframework.web.socket.server.standard.ServerEndpointExporter::class)
-@ConditionalOnProperty(prefix = "logging.websocket", name = ["enabled"], havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "summer.logging.websocket", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 @Configuration
 class WebsocketConfiguration {
 

@@ -2,7 +2,6 @@ package cn.bestwu.simpleframework.config;
 
 import cn.bestwu.lang.util.LocalDateTimeHelper;
 import cn.bestwu.logging.annotation.NoRequestLogging;
-import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
 import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
 import cn.bestwu.simpleframework.web.ICaptchaService;
 import cn.bestwu.simpleframework.web.NavController;
@@ -17,21 +16,14 @@ import cn.bestwu.simpleframework.web.filter.ApiVersionFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
 import cn.bestwu.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
 import cn.bestwu.simpleframework.web.kaptcha.KaptchaProperties;
+import cn.bestwu.simpleframework.web.resolver.ApiHandlerMethodReturnValueHandler;
 import cn.bestwu.simpleframework.web.resolver.StringToEnumConverterFactory;
-import cn.bestwu.simpleframework.web.resolver.WrapHandlerMethodReturnValueHandler;
-import cn.bestwu.simpleframework.web.serializer.MixIn;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,7 +31,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -48,37 +39,27 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Condition;
-import org.springframework.context.annotation.ConditionContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.web.servlet.View;
@@ -93,10 +74,16 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @Configuration
 @ConditionalOnWebApplication
+@EnableConfigurationProperties({WebProperties.class})
 @AutoConfigureBefore({ErrorMvcAutoConfiguration.class, JacksonAutoConfiguration.class})
 public class FrameworkMvcConfiguration {
 
-  private final Logger log = LoggerFactory.getLogger(FrameworkMvcConfiguration.class);
+  private final WebProperties webProperties;
+
+  public FrameworkMvcConfiguration(
+      WebProperties webProperties) {
+    this.webProperties = webProperties;
+  }
 
   @Bean
   public NavController navController(WebEndpointProperties webEndpointProperties,
@@ -104,10 +91,75 @@ public class FrameworkMvcConfiguration {
     return new NavController(webEndpointProperties, resourceLoader);
   }
 
+
+  /*
+   * 响应增加api version
+   */
+  @Bean
+  public ApiVersionFilter apiVersionFilter() {
+    return new ApiVersionFilter(webProperties);
+  }
+
+  /*
+   * 隐藏方法，网页支持
+   */
+  @Bean
+  public OrderedHiddenHttpMethodFilter hiddenHttpMethodFilter() {
+    return new OrderedHiddenHttpMethodFilter();
+  }
+
+  /*
+   * Put方法，网页支持
+   */
+  @Bean
+  public OrderedHttpPutFormContentFilter putFormContentFilter() {
+    return new OrderedHttpPutFormContentFilter();
+  }
+
+  @Bean
+  public DefaultErrorHandler defaultErrorHandler(MessageSource messageSource,
+      @Autowired(required = false) HttpServletRequest request) {
+    return new DefaultErrorHandler(messageSource, request);
+  }
+
+  @Configuration
+  @ConditionalOnClass(org.springframework.jdbc.UncategorizedSQLException.class)
+  @ConditionalOnWebApplication
+  protected static class ErrorHandlerConfiguration {
+
+    @Bean
+    public DataErrorHandler dataErrorHandler(MessageSource messageSource,
+        @Autowired(required = false) HttpServletRequest request) {
+      return new DataErrorHandler(messageSource, request);
+    }
+
+  }
+
+
+  @ConditionalOnMissingBean(ErrorAttributes.class)
+  @Bean
+  public ErrorAttributes errorAttributes(
+      @Autowired(required = false) List<IErrorHandler> errorHandlers,
+      @Autowired(required = false) IErrorRespEntityHandler errorRespEntityHandler,
+      MessageSource messageSource,
+      ServerProperties serverProperties) {
+    return new ErrorAttributes(serverProperties.getError(), errorHandlers, errorRespEntityHandler,
+        messageSource, webProperties);
+  }
+
+  @ConditionalOnMissingBean(ErrorController.class)
+  @Bean
+  public CustomErrorController customErrorController(ErrorAttributes errorAttributes,
+      ServerProperties serverProperties) {
+    return new CustomErrorController(errorAttributes, serverProperties.getError());
+  }
+
+
   @Bean(name = "error")
   @ConditionalOnMissingBean(name = "error")
   public View error(ObjectMapper objectMapper) {
     return new View() {
+
       @Override
       public String getContentType() {
         return "text/html;charset=utf-8";
@@ -133,131 +185,58 @@ public class FrameworkMvcConfiguration {
     };
   }
 
+
   @Bean
-  public Module module(ApplicationContext applicationContext,
-      PackageScanClassResolver packageScanClassResolver,
-      @Value("${app.jackson.mix-in-annotation.base-packages:}")
-          String[] basePackages) {
-    SimpleModule module = new SimpleModule();
-    Set<String> packages = PackageScanClassResolver
-        .detectPackagesToScan(applicationContext, basePackages);
+  public WebMvcRegistrations webMvcRegistrations(ErrorAttributes errorAttributes) {
+    return new WebMvcRegistrations() {
+      @Override
+      public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
+        return new RequestMappingHandlerAdapter() {
+          @Override
+          public void afterPropertiesSet() {
+            super.afterPropertiesSet();
 
-    packages.add("cn.bestwu.simpleframework.data.serializer");
+            // Retrieve actual handlers to use as delegate
+            HandlerMethodReturnValueHandlerComposite oldHandlers = new HandlerMethodReturnValueHandlerComposite()
+                .addHandlers(this.getReturnValueHandlers());
 
-    Set<Class<?>> allSubClasses = packageScanClassResolver
-        .findImplementations(MixIn.class, packages.toArray(new String[0]));
-    for (Class<?> aClass : allSubClasses) {
-      try {
-        ParameterizedType object = (ParameterizedType) aClass.getGenericInterfaces()[0];
-        Class<?> targetType = (Class<?>) object.getActualTypeArguments()[0];
-        if (log.isTraceEnabled()) {
-          log.trace("Detected MixInAnnotation:{}=>{}", targetType, aClass);
-        }
-        module.setMixInAnnotation(targetType, aClass);
-      } catch (Exception e) {
-        log.warn(aClass + "Detected fail", e);
+            // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
+            List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
+            newHandlers
+                .add(new ApiHandlerMethodReturnValueHandler(oldHandlers, webProperties,
+                    errorAttributes));
+
+            // Configure the new handler to be used
+            this.setReturnValueHandlers(newHandlers);
+          }
+        };
       }
-    }
-    return module;
+
+
+      @Override
+      public ExceptionHandlerExceptionResolver getExceptionHandlerExceptionResolver() {
+        return new ExceptionHandlerExceptionResolver() {
+          @Override
+          public void afterPropertiesSet() {
+            super.afterPropertiesSet();
+
+            // Retrieve actual handlers to use as delegate
+            HandlerMethodReturnValueHandlerComposite oldHandlers = this.getReturnValueHandlers();
+
+            // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
+            List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
+            newHandlers
+                .add(new ApiHandlerMethodReturnValueHandler(oldHandlers, webProperties,
+                    errorAttributes));
+
+            // Configure the new handler to be used
+            this.setReturnValueHandlers(newHandlers);
+          }
+        };
+      }
+    };
   }
 
-
-  /*
-   * 响应增加api version
-   */
-  @Bean
-  public ApiVersionFilter apiVersionFilter(
-      @Value("${app.version-name:apiVersion}") String appVersionName,
-      @Value("${app.version:v1.0}") String appVersion,
-      @Value("${app.version-no-name:apiVersionNo}") String appVersionNoName,
-      @Value("${app.version-no:1}") String appVersionNo) {
-    return new ApiVersionFilter(appVersionName, appVersion, appVersionNoName, appVersionNo);
-  }
-
-  /*
-   * 隐藏方法，网页支持
-   */
-  @Bean
-  public OrderedHiddenHttpMethodFilter hiddenHttpMethodFilter() {
-    return new OrderedHiddenHttpMethodFilter();
-  }
-
-  /*
-   * Put方法，网页支持
-   */
-  @Bean
-  public OrderedHttpPutFormContentFilter putFormContentFilter() {
-    return new OrderedHttpPutFormContentFilter();
-  }
-
-  @Bean
-  public DefaultErrorHandler defaultErrorHandler(MessageSource messageSource,
-      @Autowired(required = false) HttpServletRequest request) {
-    return new DefaultErrorHandler(messageSource, request);
-  }
-
-  @ConditionalOnMissingBean(ErrorAttributes.class)
-  @Bean
-  public ErrorAttributes errorAttributes(
-      @Autowired(required = false) List<IErrorHandler> errorHandlers,
-      @Autowired(required = false) IErrorRespEntityHandler errorRespEntityHandler,
-      MessageSource messageSource,
-      @Value("${app.constraint-violation.separator:}") String separator,
-      ServerProperties serverProperties) {
-    return new ErrorAttributes(serverProperties.getError(), errorHandlers, errorRespEntityHandler,
-        messageSource, separator);
-  }
-
-  @ConditionalOnMissingBean(ErrorController.class)
-  @Bean
-  public CustomErrorController customErrorController(ErrorAttributes errorAttributes,
-      ServerProperties serverProperties,
-      @Autowired(required = false) @Qualifier("corsConfigurationSource") CorsConfigurationSource configSource,
-      @Value("${app.web.ok.enable:true}")
-          Boolean okEnable) {
-    return new CustomErrorController(errorAttributes, serverProperties.getError(), configSource,
-        okEnable);
-  }
-
-  @Configuration
-  @ConditionalOnClass(org.springframework.jdbc.UncategorizedSQLException.class)
-  @ConditionalOnWebApplication
-  protected static class ErrorHandlerConfiguration {
-
-    @Bean
-    public DataErrorHandler dataErrorHandler(MessageSource messageSource,
-        @Autowired(required = false) HttpServletRequest request) {
-      return new DataErrorHandler(messageSource, request);
-    }
-
-  }
-
-  @Configuration
-  @ConditionalOnWebApplication
-  protected static class ObjectMapperBuilderCustomizer implements
-      Jackson2ObjectMapperBuilderCustomizer {
-
-    @Override
-    public void customize(Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder) {
-      jacksonObjectMapperBuilder.featuresToEnable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN);
-      jacksonObjectMapperBuilder.serializerByType(LocalDate.class, new JsonSerializer<LocalDate>() {
-        @Override
-        public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers)
-            throws IOException {
-          gen.writeNumber(LocalDateTimeHelper.of(value).toMillis());
-        }
-      });
-      jacksonObjectMapperBuilder
-          .serializerByType(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
-            @Override
-            public void serialize(LocalDateTime value, JsonGenerator gen,
-                SerializerProvider serializers)
-                throws IOException {
-              gen.writeNumber(LocalDateTimeHelper.of(value).toMillis());
-            }
-          });
-    }
-  }
 
   @Configuration
   @ConditionalOnClass(DefaultKaptcha.class)
@@ -329,70 +308,6 @@ public class FrameworkMvcConfiguration {
     }
   }
 
-  @Conditional(CustomRequestMappingConditio.class)
-  @Bean
-  public WebMvcRegistrations webMvcRegistrations(
-      @Value("${app.web.ok.enable:true}") Boolean okEnable,
-      @Value("${app.web.wrap.enable:true}") Boolean wrapEnable, ErrorAttributes errorAttributes) {
-    return new WebMvcRegistrations() {
-      @Override
-      public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
-        return new RequestMappingHandlerAdapter() {
-          @Override
-          public void afterPropertiesSet() {
-            super.afterPropertiesSet();
-
-            // Retrieve actual handlers to use as delegate
-            HandlerMethodReturnValueHandlerComposite oldHandlers = new HandlerMethodReturnValueHandlerComposite()
-                .addHandlers(this.getReturnValueHandlers());
-
-            // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
-            List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
-            newHandlers
-                .add(new WrapHandlerMethodReturnValueHandler(oldHandlers, okEnable, wrapEnable,
-                    errorAttributes));
-
-            // Configure the new handler to be used
-            this.setReturnValueHandlers(newHandlers);
-          }
-        };
-      }
-
-
-      @Override
-      public ExceptionHandlerExceptionResolver getExceptionHandlerExceptionResolver() {
-        return new ExceptionHandlerExceptionResolver() {
-          @Override
-          public void afterPropertiesSet() {
-            super.afterPropertiesSet();
-
-            // Retrieve actual handlers to use as delegate
-            HandlerMethodReturnValueHandlerComposite oldHandlers = this.getReturnValueHandlers();
-
-            // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
-            List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
-            newHandlers
-                .add(new WrapHandlerMethodReturnValueHandler(oldHandlers, okEnable, wrapEnable,
-                    errorAttributes));
-
-            // Configure the new handler to be used
-            this.setReturnValueHandlers(newHandlers);
-          }
-        };
-      }
-    };
-  }
-
-  public static class CustomRequestMappingConditio implements Condition {
-
-    @Override
-    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-      String wrapEnable = context.getEnvironment().getProperty("app.web.wrap.enable");
-      String okEnable = context.getEnvironment().getProperty("app.web.ok.enable");
-      return wrapEnable == null || "true".equals(wrapEnable) || okEnable == null || "true"
-          .equals(okEnable);
-    }
-  }
 
   @SuppressWarnings("Convert2Lambda")
   @Configuration

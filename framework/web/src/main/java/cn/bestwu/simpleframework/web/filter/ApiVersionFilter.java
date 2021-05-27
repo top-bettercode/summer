@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.web.filter;
 
+import cn.bestwu.simpleframework.config.WebProperties;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -21,19 +22,10 @@ public class ApiVersionFilter extends OncePerRequestFilter implements Ordered {
   public static final int DEFAULT_ORDER = -9900;
   private int order = DEFAULT_ORDER;
 
-  private final String appVersionName;
-  private final String appVersion;
+  private final WebProperties webProperties;
 
-  private final String appVersionNoName;
-  private final String appVersionNo;
-
-
-  public ApiVersionFilter(String appVersionName, String appVersion,
-      String appVersionNoName, String appVersionNo) {
-    this.appVersionName = appVersionName;
-    this.appVersion = appVersion;
-    this.appVersionNoName = appVersionNoName;
-    this.appVersionNo = appVersionNo;
+  public ApiVersionFilter(WebProperties webProperties) {
+    this.webProperties = webProperties;
   }
 
   @Override
@@ -53,8 +45,8 @@ public class ApiVersionFilter extends OncePerRequestFilter implements Ordered {
   @Override
   protected void doFilterInternal(final HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws IOException, ServletException {
-    response.setHeader(appVersionName, appVersion);
-    response.setHeader(appVersionNoName, appVersionNo);
+    response.setHeader(webProperties.getVersionName(), webProperties.getVersion());
+    response.setHeader(webProperties.getVersionNoName(), webProperties.getVersionNo());
     filterChain.doFilter(request, response);
   }
 

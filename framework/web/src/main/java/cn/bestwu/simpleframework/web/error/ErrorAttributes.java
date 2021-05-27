@@ -1,6 +1,7 @@
 package cn.bestwu.simpleframework.web.error;
 
 import cn.bestwu.lang.property.PropertiesSource;
+import cn.bestwu.simpleframework.config.WebProperties;
 import cn.bestwu.simpleframework.web.IRespEntity;
 import cn.bestwu.simpleframework.web.RespEntity;
 import java.io.PrintWriter;
@@ -41,19 +42,19 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   private final MessageSource messageSource;
   private final List<IErrorHandler> errorHandlers;
   private final IErrorRespEntityHandler errorRespEntityHandler;
-  private final String separator;
+  private final WebProperties webProperties;
   private static final PropertiesSource propertiesSource = PropertiesSource
       .of("default-exception-handle", "exception-handle");
 
   public ErrorAttributes(ErrorProperties errorProperties,
       List<IErrorHandler> errorHandlers,
       IErrorRespEntityHandler errorRespEntityHandler,
-      MessageSource messageSource, String separator) {
+      MessageSource messageSource, WebProperties webProperties) {
     this.errorProperties = errorProperties;
     this.errorHandlers = errorHandlers;
     this.errorRespEntityHandler = errorRespEntityHandler;
     this.messageSource = messageSource;
-    this.separator = separator;
+    this.webProperties = webProperties;
   }
 
   @Override
@@ -78,7 +79,8 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     if (error != null) {
       if (errorHandlers != null) {
         for (IErrorHandler errorHandler : errorHandlers) {
-          errorHandler.handlerException(error, respEntity, errors, separator);
+          errorHandler.handlerException(error, respEntity, errors,
+              webProperties.getConstraintViolationSeparator());
         }
       }
 
@@ -135,7 +137,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     }
     message = getText(webRequest, message);
 
-    setErrorInfo(webRequest, httpStatusCode, statusCode, message, error);
+    setErrorInfo(webRequest, httpStatusCode, message, error);
 
     respEntity.setStatus(statusCode);
     respEntity.setMessage(message);
@@ -166,7 +168,6 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   }
 
   private void setErrorInfo(WebRequest request, Integer httpStatusCode,
-      String statusCode,
       String message,
       Throwable error) {
     request.setAttribute("javax.servlet.error.status_code", httpStatusCode,

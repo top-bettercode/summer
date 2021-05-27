@@ -44,8 +44,8 @@ class ProjectPlugin : Plugin<Project> {
             subProject.plugins.apply("idea")
             subProject.plugins.apply("java")
 
-            subProject.group = subProject.properties["app.packageName"] as String
-            subProject.version = subProject.properties["app.version"] as String
+            subProject.group = subProject.properties["summer.packageName"] as String
+            subProject.version = subProject.properties["summer.version"] as String
 
 //            idea
             subProject.extensions.configure(org.gradle.plugins.ide.idea.model.IdeaModel::class.java) { idea ->

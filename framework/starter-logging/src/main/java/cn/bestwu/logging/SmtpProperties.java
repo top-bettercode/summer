@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Peter Wu
  */
-@ConfigurationProperties("logging.smtp")
+@ConfigurationProperties("summer.logging.smtp")
 public class SmtpProperties {
 
   private String[] logger = {"root"};

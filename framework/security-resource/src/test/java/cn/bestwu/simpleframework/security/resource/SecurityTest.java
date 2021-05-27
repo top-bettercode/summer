@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import cn.bestwu.simpleframework.security.impl.TestApplication;
+import cn.bestwu.simpleframework.web.RespEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +43,7 @@ public class SecurityTest {
   TestRestTemplate clientRestTemplate;
   @Autowired
   IResourceService securityService;
+  final ObjectMapper objectMapper = new ObjectMapper();
 
   String username = "root";
   final String password = DigestUtils.md5DigestAsHex("123456".getBytes());
@@ -51,7 +55,7 @@ public class SecurityTest {
   }
 
   @NotNull
-  private DefaultOAuth2AccessToken getAccessToken() {
+  private DefaultOAuth2AccessToken getAccessToken() throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
     params.add("scope", "trust");
@@ -59,15 +63,19 @@ public class SecurityTest {
     params.add("username", username);
     params.add("password", password);
 
-    ResponseEntity<DefaultOAuth2AccessToken> entity = clientRestTemplate
-        .postForEntity("/oauth/token", new HttpEntity<>(params),
-            DefaultOAuth2AccessToken.class);
-    assertEquals(HttpStatus.OK, entity.getStatusCode());
-    return entity.getBody();
+    ResponseEntity<String> entity = clientRestTemplate
+        .postForEntity("/oauth/token", new HttpEntity<>(params), String.class);
+    org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
+    String body = entity.getBody();
+
+    RespEntity<DefaultOAuth2AccessToken> resp = objectMapper
+        .readValue(body, TypeFactory.defaultInstance().constructParametricType(
+            RespEntity.class, DefaultOAuth2AccessToken.class));
+    return resp.getData();
   }
 
   @Test
-  public void accessToken() {
+  public void accessToken() throws Exception {
     org.junit.jupiter.api.Assertions.assertNotNull(getAccessToken());
   }
 
@@ -75,7 +83,7 @@ public class SecurityTest {
    * 刷新token
    */
   @Test
-  public void refreshToken() {
+  public void refreshToken() throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "refresh_token");
     params.add("scope", "trust");
@@ -87,7 +95,7 @@ public class SecurityTest {
   }
 
   @Test
-  public void revokeToken() {
+  public void revokeToken() throws Exception {
     String accessToken = getAccessToken().getValue();
     ResponseEntity<String> entity2 = clientRestTemplate
         .exchange("/oauth/token?access_token=" + accessToken,
@@ -97,7 +105,7 @@ public class SecurityTest {
   }
 
   @Test
-  public void auth() {
+  public void auth() throws Exception {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.set("Authorization", "bearer " + getAccessToken().getValue());
     ResponseEntity<String> entity = restTemplate
@@ -106,7 +114,7 @@ public class SecurityTest {
   }
 
   @Test
-  public void authority() {
+  public void authority() throws Exception {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.set("Authorization", "bearer " + getAccessToken().getValue());
     ResponseEntity<String> entity = restTemplate
@@ -115,7 +123,7 @@ public class SecurityTest {
   }
 
   @Test
-  public void noauthority() {
+  public void noauthority() throws Exception {
     username = "peter";
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.set("Authorization", "bearer " + getAccessToken().getValue());

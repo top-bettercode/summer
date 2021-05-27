@@ -2,6 +2,7 @@ package cn.bestwu.simpleframework.web.serializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import cn.bestwu.simpleframework.config.JacksonExtProperties;
 import cn.bestwu.simpleframework.web.DataDicBean;
 import cn.bestwu.simpleframework.web.serializer.annotation.JsonDefault;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -14,13 +15,15 @@ import org.junit.jupiter.api.Test;
  */
 public class JsonDefaultSerializerTest {
 
+  private JacksonExtProperties jacksonExtProperties = new JacksonExtProperties();
+
   @Test
   public void serialize() throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.addMixIn(DataDicBean.class, DataDicBeanMin.class);
     objectMapper.setDefaultPropertyInclusion(Include.NON_NULL);
     objectMapper.setSerializerFactory(objectMapper.getSerializerFactory()
-        .withSerializerModifier(new CustomNullSerializerModifier(true)));
+        .withSerializerModifier(new CustomNullSerializerModifier(jacksonExtProperties)));
 
     DataDicBean dicBean = new DataDicBean();
     assertEquals("{\"price\":0,\"path\":\"/default.jpg\",\"path1\":\"\"}",
@@ -40,7 +43,7 @@ public class JsonDefaultSerializerTest {
     objectMapper.addMixIn(DataDicBean.class, DataDicBeanMin.class);
     objectMapper.setDefaultPropertyInclusion(Include.NON_NULL);
     objectMapper.setSerializerFactory(objectMapper.getSerializerFactory()
-        .withSerializerModifier(new CustomNullSerializerModifier(true)));
+        .withSerializerModifier(new CustomNullSerializerModifier(jacksonExtProperties)));
 
     DataDicBean dicBean = new DataDicBean();
     assertEquals(

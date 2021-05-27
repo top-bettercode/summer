@@ -1,6 +1,7 @@
 package cn.bestwu.simpleframework.security.resource;
 
 import cn.bestwu.simpleframework.security.DefaultAuthority;
+import cn.bestwu.simpleframework.security.SecurityProperties;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,21 +36,20 @@ public class URLFilterInvocationSecurityMetadataSource implements
   private final Map<AntPathRequestMatcher, Set<ConfigAttribute>> defaultConfigAttributes = new HashMap<>();
   private Map<AntPathRequestMatcher, Set<ConfigAttribute>> requestMatcherConfigAttributes;
   private final IResourceService securityService;
-  private final String[] ignored;
 
   // ~ Constructors
   // ===================================================================================================
   public URLFilterInvocationSecurityMetadataSource(
       IResourceService securityService,
-      RequestMappingHandlerMapping handlerMapping, String[] ignored, boolean ignoreLogs) {
+      RequestMappingHandlerMapping handlerMapping,
+      SecurityProperties securityProperties) {
     this.securityService = securityService;
-    this.ignored = ignored;
 
     handlerMapping.getHandlerMethods().forEach((mappingInfo, handlerMethod) -> {
       //非匿名权限
-      if (!hasAnnotation(handlerMethod, Anonymous.class) && !ignoreLogs) {
+      if (!hasAnnotation(handlerMethod, Anonymous.class)) {
         for (String pattern : mappingInfo.getPatternsCondition().getPatterns()) {
-          if (!ignored(pattern)) {
+          if (!securityProperties.ignored(pattern)) {
             Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
             ConfigAuthority authority = getAnnotation(handlerMethod, ConfigAuthority.class);
             Set<ConfigAttribute> configAttributes = new HashSet<>();
@@ -95,18 +95,6 @@ public class URLFilterInvocationSecurityMetadataSource implements
     }
   }
 
-  private boolean ignored(String path) {
-    if (ignored == null) {
-      return false;
-    }
-    AntPathMatcher antPathMatcher = new AntPathMatcher();
-    for (String pattern : ignored) {
-      if (antPathMatcher.match(pattern, path)) {
-        return true;
-      }
-    }
-    return false;
-  }
 
   /**
    * @return 不再检查是否支持

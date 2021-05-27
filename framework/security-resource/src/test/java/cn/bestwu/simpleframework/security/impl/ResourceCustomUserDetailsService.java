@@ -1,6 +1,7 @@
 package cn.bestwu.simpleframework.security.impl;
 
 import cn.bestwu.simpleframework.security.DefaultAuthority;
+import cn.bestwu.simpleframework.security.server.IllegalUserException;
 import java.util.Collection;
 import java.util.Collections;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,7 +19,7 @@ import org.springframework.util.DigestUtils;
  * @author Peter Wu
  */
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class ResourceCustomUserDetailsService implements UserDetailsService {
 
 
   /**
@@ -28,6 +29,9 @@ public class CustomUserDetailsService implements UserDetailsService {
    */
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    if ("disableUsername".equals(username)) {
+      throw new IllegalUserException("帐户已禁用");
+    }
     return new User(username, DigestUtils.md5DigestAsHex("123456".getBytes()),
         getAuthorities(username));
   }

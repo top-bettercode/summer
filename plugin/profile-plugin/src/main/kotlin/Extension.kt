@@ -14,7 +14,7 @@ const val profilesActiveName: String = "profiles.active"
 val Project.profileProperties: Properties
     get() {
         val props = Properties()
-        props["app.project.name"] = name
+        props["summer.web.project-name"] = name
         val gradleProperties = rootProject.file("gradle.properties")
         if (gradleProperties.exists()) {
             props.load(gradleProperties.inputStream())

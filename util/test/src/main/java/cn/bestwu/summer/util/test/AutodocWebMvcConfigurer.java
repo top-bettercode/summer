@@ -1,13 +1,13 @@
 package cn.bestwu.summer.util.test;
 
 import cn.bestwu.autodoc.gen.Autodoc;
+import cn.bestwu.simpleframework.security.SecurityProperties;
 import cn.bestwu.simpleframework.security.resource.Anonymous;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -24,8 +24,13 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 @Configuration
 public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequestHandler {
 
-  @Value("${security.url-filter.ignored:}")
-  private String[] ignored;
+
+  private final SecurityProperties securityProperties;
+
+  public AutodocWebMvcConfigurer(
+      SecurityProperties securityProperties) {
+    this.securityProperties = securityProperties;
+  }
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
@@ -39,7 +44,8 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
           AnnotationMappingDiscoverer DISCOVERER = new AnnotationMappingDiscoverer(
               RequestMapping.class);
           String url = DISCOVERER.getMapping(((HandlerMethod) handler).getMethod());
-          if (!hasAnnotation((HandlerMethod) handler, Anonymous.class) && !ignored(url)) {
+          if (!hasAnnotation((HandlerMethod) handler, Anonymous.class) && !securityProperties
+              .ignored(url)) {
             requiredHeaders = new HashSet<>(requiredHeaders);
             requiredHeaders.add("Authorization");
             Autodoc.requiredHeaders(requiredHeaders.toArray(new String[0]));
@@ -67,19 +73,5 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
       return AnnotatedElementUtils.hasAnnotation(handlerMethod.getBeanType(), annotationType);
     }
   }
-
-  private boolean ignored(String path) {
-    if (ignored == null) {
-      return false;
-    }
-    AntPathMatcher antPathMatcher = new AntPathMatcher();
-    for (String pattern : ignored) {
-      if (antPathMatcher.match(pattern, path)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
 
 }

@@ -50,8 +50,8 @@ class LogsEndpoint(
     private val useWebSocket: Boolean = ClassUtils.isPresent(
         "org.springframework.web.socket.server.standard.ServerEndpointExporter",
         Logback2LoggingSystem::class.java.classLoader
-    ) && ("true" == environment.getProperty("logging.websocket.enabled") || environment.getProperty(
-        "logging.websocket.enabled"
+    ) && ("true" == environment.getProperty("summer.logging.websocket.enabled") || environment.getProperty(
+        "summer.logging.websocket.enabled"
     ).isNullOrBlank())
     private val loggerContext: LoggerContext
         get() {

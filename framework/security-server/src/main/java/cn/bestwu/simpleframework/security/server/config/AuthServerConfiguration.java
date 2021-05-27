@@ -3,7 +3,6 @@ package cn.bestwu.simpleframework.security.server.config;
 import cn.bestwu.simpleframework.security.server.AccessTokenService;
 import cn.bestwu.simpleframework.security.server.IRevokeTokenService;
 import cn.bestwu.simpleframework.security.server.RevokeTokenEndpoint;
-import cn.bestwu.simpleframework.security.server.exception.SecurityOAuth2ErrorHandler;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,27 +44,6 @@ public class AuthServerConfiguration extends GlobalAuthenticationConfigurerAdapt
   public void init(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService);
   }
-
-//  @Configuration
-//  @ConditionalOnWebApplication
-//  protected static class OAuth2ExceptionBuilderCustomizer implements
-//      Jackson2ObjectMapperBuilderCustomizer {
-//
-//    @Override
-//    public void customize(Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder) {
-//      jacksonObjectMapperBuilder
-//          .serializerByType(OAuth2Exception.class, new OAuth2ExceptionJackson2Serializer());
-//    }
-//  }
-
-//  @Bean
-//  public WebResponseExceptionTranslator<OAuth2Exception> webResponseExceptionTranslator(
-//      @Value("${app.web.ok.enable:true}") boolean okEnable) {
-//    CustomWebResponseExceptionTranslator exceptionTranslator = new CustomWebResponseExceptionTranslator(
-//        okEnable, messageSource);
-//    tokenEndpoint.setProviderExceptionHandler(exceptionTranslator);
-//    return exceptionTranslator;
-//  }
 
   @Bean
   public SecurityOAuth2ErrorHandler securityOAuth2ErrorHandler(MessageSource messageSource,
