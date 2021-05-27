@@ -17,15 +17,12 @@ import org.springframework.util.StringUtils;
 /**
  * @author Peter Wu
  */
-public class DataErrorHandler implements IErrorHandler {
+public class DataErrorHandler extends AbstractErrorHandler {
 
-  private final MessageSource messageSource;
-  private final HttpServletRequest request;
 
   public DataErrorHandler(MessageSource messageSource,
       HttpServletRequest request) {
-    this.messageSource = messageSource;
-    this.request = request;
+    super(messageSource, request);
   }
 
   @Override
@@ -41,14 +38,14 @@ public class DataErrorHandler implements IErrorHandler {
         ConstraintViolationException er = (ConstraintViolationException) error;
         Set<ConstraintViolation<?>> constraintViolations = er.getConstraintViolations();
         for (ConstraintViolation<?> constraintViolation : constraintViolations) {
-          String property = ErrorAttributes.getProperty(constraintViolation);
+          String property = getProperty(constraintViolation);
           String msg;
           if (constraintViolation.getConstraintDescriptor().getPayload()
               .contains(NoPropertyPath.class)) {
             msg = constraintViolation.getMessage();
           } else {
             msg =
-                getText(messageSource, request, property) + separator + constraintViolation
+                getText(property) + separator + constraintViolation
                     .getMessage();
           }
           errors.put(property, msg);
@@ -67,23 +64,23 @@ public class DataErrorHandler implements IErrorHandler {
       String outOfRangeRegex = "^Data truncation: Out of range value for column '(.*?)'.*";
       String constraintSubfix = "Cannot delete or update a parent row";
       if (specificCauseMessage.matches(duplicateRegex)) {
-        String columnName = getText(messageSource, request,
+        String columnName = getText(
             specificCauseMessage.replaceAll(duplicateRegex, "$1"));
-        message = getText(messageSource, request, "duplicate.entry", columnName);
+        message = getText("duplicate.entry", columnName);
         if (!StringUtils.hasText(message)) {
           message = "data.valid.failed";
         }
       } else if (specificCauseMessage.matches(dataTooLongRegex)) {
-        String columnName = getText(messageSource, request,
+        String columnName = getText(
             specificCauseMessage.replaceAll(dataTooLongRegex, "$1"));
-        message = getText(messageSource, request, "data.too.long", columnName);
+        message = getText("data.too.long", columnName);
         if (!StringUtils.hasText(message)) {
           message = "data.valid.failed";
         }
       } else if (specificCauseMessage.matches(outOfRangeRegex)) {
-        String columnName = getText(messageSource, request,
+        String columnName = getText(
             specificCauseMessage.replaceAll(outOfRangeRegex, "$1"));
-        message = getText(messageSource, request, "data Out of range", columnName);
+        message = getText("data Out of range", columnName);
         if (!StringUtils.hasText(message)) {
           message = "data.valid.failed";
         }

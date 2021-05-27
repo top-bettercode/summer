@@ -1,37 +1,26 @@
 package cn.bestwu.simpleframework.web.error;
 
 import cn.bestwu.lang.property.PropertiesSource;
-import cn.bestwu.simpleframework.exception.BusinessException;
+import cn.bestwu.simpleframework.web.IRespEntity;
 import cn.bestwu.simpleframework.web.RespEntity;
-import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Path;
-import org.hibernate.validator.internal.engine.path.PathImpl;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.web.ErrorProperties;
+import org.springframework.boot.autoconfigure.web.ErrorProperties.IncludeStacktrace;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.context.MessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
@@ -48,6 +37,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   private static final Logger log = LoggerFactory.getLogger(ErrorAttributes.class);
 
   public static final String IS_PLAIN_TEXT_ERROR = ErrorAttributes.class.getName() + ".plainText";
+  private final ErrorProperties errorProperties;
   private final MessageSource messageSource;
   private final List<IErrorHandler> errorHandlers;
   private final IErrorRespEntityHandler errorRespEntityHandler;
@@ -55,9 +45,11 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   private static final PropertiesSource propertiesSource = PropertiesSource
       .of("default-exception-handle", "exception-handle");
 
-  public ErrorAttributes(List<IErrorHandler> errorHandlers,
+  public ErrorAttributes(ErrorProperties errorProperties,
+      List<IErrorHandler> errorHandlers,
       IErrorRespEntityHandler errorRespEntityHandler,
       MessageSource messageSource, String separator) {
+    this.errorProperties = errorProperties;
     this.errorHandlers = errorHandlers;
     this.errorRespEntityHandler = errorRespEntityHandler;
     this.messageSource = messageSource;
@@ -67,10 +59,19 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   @Override
   public Map<String, Object> getErrorAttributes(WebRequest webRequest,
       boolean includeStackTrace) {
+    Throwable error = getError(webRequest);
+    return getErrorAttributes(error, webRequest, includeStackTrace).toMap();
+  }
+
+  public IRespEntity getErrorAttributes(Throwable error, WebRequest webRequest) {
+    return getErrorAttributes(error, webRequest, isIncludeStackTrace(webRequest, MediaType.ALL));
+  }
+
+  public IRespEntity getErrorAttributes(Throwable error, WebRequest webRequest,
+      boolean includeStackTrace) {
     String statusCode = null;
     Integer httpStatusCode = null;
     String message;
-    Throwable error = getError(webRequest);
     RespEntity<Object> respEntity = new RespEntity<>();
     Map<String, String> errors = new HashMap<>();
 
@@ -89,62 +90,16 @@ public class ErrorAttributes extends DefaultErrorAttributes {
         addStackTrace(respEntity, error);
       }
 
-      if (error instanceof BindException) {//参数错误
-        BindException er = (BindException) error;
-        List<FieldError> fieldErrors = er.getFieldErrors();
-        message = handleFieldError(webRequest, errors, fieldErrors);
-      } else if (error instanceof MethodArgumentNotValidException) {
-        BindingResult bindingResult = ((MethodArgumentNotValidException) error).getBindingResult();
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        message = handleFieldError(webRequest, errors, fieldErrors);
-      } else if (error instanceof ConversionFailedException) {
-        message = getText(webRequest, "typeMismatch",
-            ((ConversionFailedException) error).getValue(),
-            ((ConversionFailedException) error).getTargetType());
-      } else if (error instanceof ConstraintViolationException) {//数据验证
-        ConstraintViolationException er = (ConstraintViolationException) error;
-        Set<ConstraintViolation<?>> constraintViolations = er.getConstraintViolations();
-        for (ConstraintViolation<?> constraintViolation : constraintViolations) {
-          String property = getProperty(constraintViolation);
-          String msg;
-          if (constraintViolation.getConstraintDescriptor().getPayload()
-              .contains(NoPropertyPath.class)) {
-            msg = constraintViolation.getMessage();
-          } else {
-            msg = getText(webRequest, property) + separator + constraintViolation.getMessage();
-          }
-          errors.put(property, msg);
+      if (!StringUtils.hasText(message)) {
+        message = handleMessage(error.getClass());
+        if (StringUtils.hasText(error.getMessage()) && (!StringUtils.hasText(message) || !error
+            .getMessage()
+            .contains("Exception"))) {
+          message = error.getMessage();
         }
-        message = errors.values().iterator().next();
-      } else if (error instanceof HttpMediaTypeNotAcceptableException) {
-        message =
-            "MediaType not Acceptable!Must ACCEPT:" + ((HttpMediaTypeNotAcceptableException) error)
-                .getSupportedMediaTypes();
-      } else if (error instanceof HttpMessageNotWritableException) {
-        message = error.getMessage();
-        if (message != null && message.contains("Session is closed")) {
-          httpStatusCode = HttpStatus.REQUEST_TIMEOUT.value();
-          message = "request.timeout";
-        }
-      } else if (error instanceof BusinessException) {
-        statusCode = ((BusinessException) error).getCode();
-        respEntity.setErrors(((BusinessException) error).getData());
       }
-    } else {
-      message = getMessage(webRequest);
-    }
 
-    if (!StringUtils.hasText(message) && error != null) {
-      message = handleMessage(error.getClass());
-      if (StringUtils.hasText(error.getMessage()) && (!StringUtils.hasText(message) || !error
-          .getMessage()
-          .contains("Exception"))) {
-        message = error.getMessage();
-      }
-    }
-
-    if (httpStatusCode == null) {
-      if (error != null) {
+      if (httpStatusCode == null) {
         Class<? extends Throwable> errorClass = error.getClass();
         httpStatusCode = handleHttpStatusCode(errorClass);
 
@@ -159,10 +114,15 @@ public class ErrorAttributes extends DefaultErrorAttributes {
             message = reason;
           }
         }
+
       }
-      if (httpStatusCode == null) {
-        httpStatusCode = getStatus(webRequest).value();
-      }
+
+    } else {
+      message = getMessage(webRequest);
+    }
+
+    if (httpStatusCode == null) {
+      httpStatusCode = getStatus(webRequest).value();
     }
 
     statusCode = statusCode == null ? String.valueOf(httpStatusCode) : statusCode;
@@ -183,11 +143,12 @@ public class ErrorAttributes extends DefaultErrorAttributes {
       respEntity.setErrors(errors);
     }
     if (errorRespEntityHandler != null) {
-      return errorRespEntityHandler.handle(webRequest, respEntity).toMap();
+      return errorRespEntityHandler.handle(webRequest, respEntity);
     } else {
-      return respEntity.toMap();
+      return respEntity;
     }
   }
+
 
   private Integer handleHttpStatusCode(Class<? extends Throwable> throwableClass) {
     String key = throwableClass.getName() + ".code";
@@ -204,61 +165,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     return propertiesSource.getString(key);
   }
 
-
-  @NotNull
-  private String handleFieldError(WebRequest webRequest, Map<String, String> errors,
-      List<FieldError> fieldErrors) {
-    String message;
-    for (FieldError fieldError : fieldErrors) {
-      String defaultMessage = fieldError.getDefaultMessage();
-      if (defaultMessage.contains("required type")) {
-        defaultMessage = getText(webRequest, fieldError.getCode());
-      }
-      String regrex = "^.*threw exception; nested exception is .*: (.*)$";
-      if (defaultMessage.matches(regrex)) {
-        defaultMessage = defaultMessage.replaceAll(regrex, "$1");
-        defaultMessage = getText(webRequest, defaultMessage);
-      }
-      String field = fieldError.getField();
-      String msg = null;
-      if (fieldError.contains(ConstraintViolation.class)) {
-        ConstraintViolation<?> violation = fieldError.unwrap(ConstraintViolation.class);
-        if (violation.getConstraintDescriptor().getPayload().contains(NoPropertyPath.class)) {
-          msg = violation.getMessage();
-        }
-      }
-      if (msg == null) {
-        if (field.contains(".")) {
-          msg = getText(webRequest, field.substring(field.lastIndexOf('.') + 1)) + separator
-              + defaultMessage;
-        } else {
-          msg = getText(webRequest, field) + separator + defaultMessage;
-        }
-      }
-      errors.put(field, msg);
-    }
-    message = errors.values().iterator().next();
-
-    if (!StringUtils.hasText(message)) {
-      message = "data.valid.failed";
-    }
-    return message;
-  }
-
-  @NotNull
-  public static String getProperty(ConstraintViolation<?> constraintViolation) {
-    Path propertyPath = constraintViolation.getPropertyPath();
-    String property = propertyPath.toString();
-    if (propertyPath instanceof PathImpl) {
-      property = ((PathImpl) propertyPath).getLeafNode().getName();
-    }
-    if (property.contains(".")) {
-      property = property.substring(property.lastIndexOf('.') + 1);
-    }
-    return property;
-  }
-
-  public static void setErrorInfo(WebRequest request, Integer httpStatusCode,
+  private void setErrorInfo(WebRequest request, Integer httpStatusCode,
       String statusCode,
       String message,
       Throwable error) {
@@ -283,7 +190,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     respEntity.setTrace(stackTrace.toString());
   }
 
-  public static HttpStatus getStatus(RequestAttributes requestAttributes) {
+  private HttpStatus getStatus(RequestAttributes requestAttributes) {
     Integer statusCode = getAttribute(requestAttributes, WebUtils.ERROR_STATUS_CODE_ATTRIBUTE);
     if (statusCode != null) {
       try {
@@ -294,12 +201,12 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     return HttpStatus.INTERNAL_SERVER_ERROR;
   }
 
-  public static String getMessage(RequestAttributes requestAttributes) {
+  private String getMessage(RequestAttributes requestAttributes) {
     return getAttribute(requestAttributes, WebUtils.ERROR_MESSAGE_ATTRIBUTE);
   }
 
   @SuppressWarnings("unchecked")
-  private static <T> T getAttribute(RequestAttributes requestAttributes, String name) {
+  private <T> T getAttribute(RequestAttributes requestAttributes, String name) {
     return (T) requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST);
   }
 
@@ -315,5 +222,24 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     String codeString = String.valueOf(code);
     return messageSource.getMessage(codeString, args, codeString,
         webRequest == null ? Locale.CHINA : webRequest.getLocale());
+  }
+
+  private boolean isIncludeStackTrace(WebRequest request, MediaType produces) {
+    IncludeStacktrace include = errorProperties.getIncludeStacktrace();
+    if (include == IncludeStacktrace.ALWAYS) {
+      return true;
+    }
+    if (include == IncludeStacktrace.ON_TRACE_PARAM) {
+      return getTraceParameter(request);
+    }
+    return false;
+  }
+
+  private boolean getTraceParameter(WebRequest request) {
+    String parameter = request.getParameter("trace");
+    if (parameter == null) {
+      return false;
+    }
+    return !"false".equalsIgnoreCase(parameter);
   }
 }

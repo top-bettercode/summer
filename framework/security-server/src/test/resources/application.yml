@@ -2,6 +2,7 @@ logging:
   level:
     root: info
     org.springframework.boot.web.servlet.support.ErrorPageFilter: off
+    jdk.event.security: warn
     io.lettuce: warn
     org.thymeleaf: warn
     cn.bestwu.lang: warn
@@ -92,3 +93,4 @@ spring:
   security:
     filter:
       dispatcher-types: REQUEST
+

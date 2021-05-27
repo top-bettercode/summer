@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.security.exception;
+package cn.bestwu.simpleframework.security.server.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;

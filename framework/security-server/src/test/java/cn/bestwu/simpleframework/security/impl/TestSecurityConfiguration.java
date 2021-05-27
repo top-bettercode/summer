@@ -7,12 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 @SuppressWarnings("deprecation")
 @Configuration
 @ConditionalOnWebApplication
-@EnableResourceServer
 public class TestSecurityConfiguration {
 
   @Bean

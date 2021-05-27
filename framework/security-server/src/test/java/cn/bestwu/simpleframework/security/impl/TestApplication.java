@@ -3,10 +3,12 @@ package cn.bestwu.simpleframework.security.impl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 
 /**
  * @author Peter Wu
  */
+@EnableAuthorizationServer
 @SpringBootApplication
 public class TestApplication extends SpringBootServletInitializer {
 

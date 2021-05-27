@@ -54,8 +54,7 @@ public class SecurityErrorTest {
     ResponseEntity<String> entity = clientRestTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params),
             String.class);
-    System.err.println(entity.getBody());
     Thread.sleep(5 * 1000);
-    org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
+    org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
   }
 }

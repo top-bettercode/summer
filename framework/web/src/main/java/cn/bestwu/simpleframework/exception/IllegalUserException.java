@@ -1,12 +1,11 @@
-package cn.bestwu.simpleframework.security.exception;
+package cn.bestwu.simpleframework.exception;
 
 import java.util.Map;
-import org.springframework.security.core.AuthenticationException;
 
 /**
  * @author Peter Wu
  */
-public class IllegalUserException extends AuthenticationException {
+public class IllegalUserException extends RuntimeException {
 
   private static final long serialVersionUID = 4634232939775284312L;
 

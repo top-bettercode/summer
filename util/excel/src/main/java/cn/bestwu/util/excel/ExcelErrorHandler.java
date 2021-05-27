@@ -1,8 +1,8 @@
 package cn.bestwu.util.excel;
 
-import cn.bestwu.util.excel.ExcelImportException.CellError;
 import cn.bestwu.simpleframework.web.RespEntity;
-import cn.bestwu.simpleframework.web.error.IErrorHandler;
+import cn.bestwu.simpleframework.web.error.AbstractErrorHandler;
+import cn.bestwu.util.excel.ExcelImportException.CellError;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,15 +15,12 @@ import org.springframework.util.StringUtils;
 /**
  * @author Peter Wu
  */
-public class ExcelErrorHandler implements IErrorHandler {
+public class ExcelErrorHandler extends AbstractErrorHandler {
 
-  private final MessageSource messageSource;
-  private final HttpServletRequest request;
 
   public ExcelErrorHandler(MessageSource messageSource,
       HttpServletRequest request) {
-    this.messageSource = messageSource;
-    this.request = request;
+    super(messageSource, request);
   }
 
   @Override
@@ -34,7 +31,7 @@ public class ExcelErrorHandler implements IErrorHandler {
       List<CellError> cellErrors = ((ExcelImportException) error).getErrors();
 
       for (CellError cellError : cellErrors) {
-        String key = getText(messageSource, request, cellError.getMessage(), cellError.getRow(),
+        String key = getText(cellError.getMessage(), cellError.getRow(),
             cellError.getColumnName());
         String title = cellError.getTitle();
         Exception value = cellError.getException();
@@ -44,7 +41,7 @@ public class ExcelErrorHandler implements IErrorHandler {
             errors.put(key, title + constraintViolation.getMessage());
           }
         } else {
-          errors.put(key, title + getText(messageSource, request, value.getMessage()));
+          errors.put(key, title + getText(value.getMessage()));
         }
       }
       Entry<String, String> firstError = errors.entrySet().iterator().next();
