@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.security;
+package cn.bestwu.simpleframework.security.resource;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,7 +20,7 @@ public final class AuthenticationHelper {
    * @return 授权信息
    */
   public static Object getPrincipal() {
-    Authentication authentication = AuthenticationHelper.getAuthentication();
+    Authentication authentication = getAuthentication();
     if (authentication != null) {
       return authentication.getPrincipal();
     }

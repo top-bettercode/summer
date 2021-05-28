@@ -2,6 +2,7 @@ logging:
   level:
     root: info
     org.springframework.boot.web.servlet.support.ErrorPageFilter: off
+    jdk.event.security: warn
     io.lettuce: warn
     org.thymeleaf: warn
     cn.bestwu.lang: warn
@@ -23,38 +24,37 @@ logging:
     javax.xml: warn
     net.sf: warn
     javax.activation: warn
-  spilt-marker:
-    request: info
-  file: build/logs/all.log
-  files:
-    path: build/logs
-  spilt-level:
-  - error
-  - warn
-  request:
-    include-path: /oauth/*
-    include-request-body: true
-    include-response-body: true
+
+
 security:
   oauth2:
     client:
-      client-id:
-      client-secret:
+      client-id: 123
+      client-secret: 456
       scope: trust
       auto-approve-scopes: true
       authorized-grant-types: password,refresh_token
-    authorization:
-      check-token-access: isAuthenticated()
-  cors:
-    enable: true
-#  keyStore:
-#    alias: wintech
-#    password: hg4O6jkj
-#    resource-path: wintech.jks
-  url-filter:
-    ignored: /
-  http:
+
+summer:
+  security:
+    cors:
+      enable: true
+    url-filter-ignored: /
     session-creation-policy: stateless
+  logging:
+    spilt-marker:
+      request: info
+    files:
+      path: build/logs
+    spilt-level:
+      - error
+      - warn
+    request:
+      include-path: /oauth/*
+      include-request-body: true
+      include-response-body: true
+
+
 server:
   compression:
     enabled: true

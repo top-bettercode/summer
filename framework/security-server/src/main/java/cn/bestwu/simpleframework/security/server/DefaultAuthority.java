@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.security;
+package cn.bestwu.simpleframework.security.server;
 
 import java.util.Arrays;
 import java.util.Collection;

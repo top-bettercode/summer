@@ -21,12 +21,14 @@ import org.springframework.util.MultiValueMap;
  * @author Peter Wu
  * @since 1.0.0
  */
-@SuppressWarnings("deprecation")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
-    "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)
+@SpringBootTest(classes = TestApplication.class, properties = {
+    "api.sign.handler-type-prefix=",
+    "logging.level.root=debug",
+}, webEnvironment = RANDOM_PORT)
 public class SecurityError200Test {
 
+  @Deprecated
   @Autowired
   ClientDetails clientDetails;
   @Autowired

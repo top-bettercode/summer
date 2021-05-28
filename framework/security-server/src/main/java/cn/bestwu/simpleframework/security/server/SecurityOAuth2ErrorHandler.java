@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.security.server.config;
+package cn.bestwu.simpleframework.security.server;
 
 import cn.bestwu.simpleframework.security.server.IllegalUserException;
 import cn.bestwu.simpleframework.web.RespEntity;
@@ -13,7 +13,7 @@ import org.springframework.util.CollectionUtils;
 /**
  * @author Peter Wu
  */
-@SuppressWarnings("deprecation")
+@Deprecated
 public class SecurityOAuth2ErrorHandler extends AbstractErrorHandler {
 
   public SecurityOAuth2ErrorHandler(MessageSource messageSource,

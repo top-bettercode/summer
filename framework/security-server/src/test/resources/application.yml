@@ -47,13 +47,13 @@ summer:
 security:
   oauth2:
     client:
-      client-id:
-      client-secret:
+      client-id: 123
+      client-secret: 456
       scope: trust
       auto-approve-scopes: true
       authorized-grant-types: password,refresh_token
-    authorization:
-      check-token-access: isAuthenticated()
+#    authorization:
+#      check-token-access: isAuthenticated()
 
 
   #  keyStore:
