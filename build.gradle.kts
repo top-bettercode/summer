@@ -91,8 +91,7 @@ allprojects {
             dependency("org.dhatim:fastexcel:0.12.8")
             dependency("org.dhatim:fastexcel-reader:0.12.9")
 
-            dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.5.RELEASE")
-            dependency("org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE")
+            dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.5.0")
 
             dependency("org.mybatis:mybatis:3.5.4")
             dependency("org.mybatis:mybatis-spring:2.0.4")
