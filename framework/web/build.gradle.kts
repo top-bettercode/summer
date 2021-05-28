@@ -4,6 +4,7 @@ dependencies {
 
     //web
     api("org.springframework.boot:spring-boot-starter-web")
+    api("org.springframework.boot:spring-boot-starter-validation")
 
     //config
     api("org.springframework.boot:spring-boot-starter-actuator")

@@ -37,7 +37,7 @@ allprojects {
     repositories {
         mavenLocal()
         maven("https://maven.aliyun.com/repository/public")
-        maven("https://maven.aliyun.com/repository/gradle-plugin")
+//        maven("https://maven.aliyun.com/repository/gradle-plugin")
         mavenCentral()
         gradlePluginPortal()
         maven("https://oss.jfrog.org/oss-snapshot-local")
@@ -53,48 +53,55 @@ allprojects {
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         dependencies {
             val kotlinVersion = property("kotlin.version")
-            dependency("org.springframework.boot:spring-boot-gradle-plugin:2.2.5.RELEASE")
+            dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+            dependency("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
+            dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+
+            dependency("org.springframework.boot:spring-boot-gradle-plugin:2.5.0")
+            dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
             dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
-            dependency("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
-            dependency("com.gradle.publish:plugin-publish-plugin:0.10.0")
-            dependency("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
-            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
-            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
+            dependency("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
+            dependency("com.gradle.publish:plugin-publish-plugin:0.15.0")
+            dependency("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32")
+            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
+            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
-            dependency("org.springframework.cloud:spring-cloud-starter-config:2.2.5.RELEASE")
-            dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.23.4")
+            dependency("org.springframework.cloud:spring-cloud-starter-config:3.0.3")
+            dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.24.3")
 
             dependency("cn.bestwu.wechat:weixin-mp:0.9.7")
             dependency("cn.bestwu.wechat:weixin-app:0.9.7")
 
-            dependency("org.javassist:javassist:3.27.0-GA")
-            dependency("org.yaml:snakeyaml:1.26")
-            dependency("com.google.guava:guava:29.0-jre")
-            dependency("org.dom4j:dom4j:2.1.1")
+            dependency("commons-codec:commons-codec:1.15")
+            dependency("org.json:json:20210307")
+            dependency("org.javassist:javassist:3.28.0-GA")
+            dependency("org.yaml:snakeyaml:1.28")
+            dependency("com.google.guava:guava:30.1.1-jre")
+            dependency("org.dom4j:dom4j:2.1.3")
             dependency("org.atteo:evo-inflector:1.2.2")
-            dependency("net.sourceforge.plantuml:plantuml:1.2020.4")
+            dependency("net.sourceforge.plantuml:plantuml:8059")
 
             dependency("org.jsoup:jsoup:1.13.1")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
-            dependency("mysql:mysql-connector-java:8.0.19")
+            dependency("mysql:mysql-connector-java:8.0.25")
 
-            dependency("org.asciidoctor:asciidoctorj:2.4.0")
-            dependency("org.asciidoctor:asciidoctorj-diagram:2.0.2")
-            dependency("org.asciidoctor:asciidoctorj-pdf:1.5.3")
+            dependency("org.asciidoctor:asciidoctorj:2.5.1")
+            dependency("org.asciidoctor:asciidoctorj-diagram:2.1.2")
+            dependency("org.asciidoctor:asciidoctorj-pdf:1.6.0")
 
 
-            dependency("net.logstash.logback:logstash-logback-encoder:6.3")
+            dependency("net.logstash.logback:logstash-logback-encoder:6.6")
             dependency("javax.mail:mail:1.4.7")
             dependency("com.github.axet:kaptcha:0.0.9")
 
-            dependency("org.dhatim:fastexcel:0.12.8")
-            dependency("org.dhatim:fastexcel-reader:0.12.9")
+            dependency("org.dhatim:fastexcel:0.12.11")
+            dependency("org.dhatim:fastexcel-reader:0.12.11")
 
             dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.5.0")
 
-            dependency("org.mybatis:mybatis:3.5.4")
-            dependency("org.mybatis:mybatis-spring:2.0.4")
+            dependency("org.mybatis:mybatis:3.5.7")
+            dependency("org.mybatis:mybatis-spring:2.0.6")
             dependency("org.mybatis.generator:mybatis-generator-core:1.4.0")
             dependency("com.baomidou:mybatis-plus:2.3.3") {
                 exclude("com.baomidou:mybatis-plus-generate")
@@ -103,9 +110,12 @@ allprojects {
                 exclude("org.springframework.boot:spring-boot-configuration-processor")
             }
 
-            dependency("com.github.pagehelper:pagehelper:5.1.11")
+            dependency("com.github.pagehelper:pagehelper:5.2.0")
 
             dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
+
+            //-
+
         }
     }
 

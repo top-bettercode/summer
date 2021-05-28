@@ -50,7 +50,7 @@ public class CustomErrorController extends BasicErrorController {
   public ModelAndView errorHtml(HttpServletRequest request,
       HttpServletResponse response) {
     Map<String, Object> model = Collections.unmodifiableMap(getErrorAttributes(
-        request, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
+        request, getErrorAttributeOptions(request, MediaType.TEXT_HTML)));
     HttpStatus status = getStatus(request);
     response.setStatus(status.value());
     ModelAndView modelAndView = resolveErrorView(request, response, status, model);
@@ -62,7 +62,7 @@ public class CustomErrorController extends BasicErrorController {
   @Override
   public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
     Map<String, Object> body = getErrorAttributes(request,
-        isIncludeStackTrace(request, MediaType.ALL));
+        getErrorAttributeOptions(request, MediaType.ALL));
     HttpStatus status = getStatus(request);
     ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
         .getRequestAttributes();

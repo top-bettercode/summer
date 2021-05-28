@@ -1,9 +1,9 @@
 package cn.bestwu.summer.util.test;
 
 import cn.bestwu.autodoc.gen.Autodoc;
+import cn.bestwu.logging.AnnotatedUtils;
 import cn.bestwu.simpleframework.security.resource.Anonymous;
 import cn.bestwu.simpleframework.security.resource.SecurityProperties;
-import cn.bestwu.logging.AnnotatedUtils;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +14,9 @@ import org.springframework.hateoas.server.core.AnnotationMappingDiscoverer;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 @ConditionalOnClass(Anonymous.class)
 @Configuration
@@ -30,9 +30,10 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
     this.securityProperties = securityProperties;
   }
 
+  @Deprecated
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(new HandlerInterceptorAdapter() {
+    registry.addInterceptor(new AsyncHandlerInterceptor() {
 
       @Override
       public boolean preHandle(HttpServletRequest request, HttpServletResponse response,

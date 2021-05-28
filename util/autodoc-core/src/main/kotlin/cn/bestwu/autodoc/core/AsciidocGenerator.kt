@@ -7,6 +7,7 @@ import cn.bestwu.logging.operation.HttpOperation
 import cn.bestwu.logging.operation.Operation
 import cn.bestwu.logging.operation.PrettyPrintingContentModifier
 import org.asciidoctor.Asciidoctor
+import org.asciidoctor.Attributes
 import org.asciidoctor.Options
 import org.asciidoctor.SafeMode
 import java.io.File
@@ -57,12 +58,12 @@ object AsciidocGenerator : AbstractbGenerator() {
 
     fun html(inFile: File, outFile: File) {
         if (inFile.exists()) {
-            val options = Options()
-            options.setToFile(outFile.absolutePath)
-            options.setMkDirs(true)
-            options.setSafe(SafeMode.UNSAFE)
+            val optionsBuilder = Options.builder()
+            optionsBuilder.toFile(outFile)
+            optionsBuilder.mkDirs(true)
+            optionsBuilder.safe(SafeMode.UNSAFE)
             try {
-                asciidoctor.convertFile(inFile, options)
+                asciidoctor.convertFile(inFile, optionsBuilder.build())
                 println("生成：$outFile")
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -83,19 +84,20 @@ object AsciidocGenerator : AbstractbGenerator() {
 
     fun pdf(inFile: File, outFile: File) {
         if (inFile.exists()) {
-            val options = Options()
-            options.setToFile(outFile.absolutePath)
-            options.setBackend("pdf")
-            options.setAttributes(
-                mapOf(
-                    "pdf-fontsdir" to AsciidocGenerator::class.java.getResource("/data/fonts").file,
-                    "pdf-style" to AsciidocGenerator::class.java.getResource("/data/themes/default-theme.yml").file
-                )
+            val optionsBuilder = Options.builder()
+            optionsBuilder.toFile(outFile)
+            optionsBuilder.backend("pdf")
+            optionsBuilder.attributes(
+                Attributes.builder().attributes(
+                    mapOf(
+                    "pdf-fontsdir" to AsciidocGenerator::class.java.getResource("/data/fonts")?.file,
+                    "pdf-style" to AsciidocGenerator::class.java.getResource("/data/themes/default-theme.yml")?.file
+                )).build()
             )
-            options.setMkDirs(true)
-            options.setSafe(SafeMode.UNSAFE)
+            optionsBuilder.mkDirs(true)
+            optionsBuilder.safe(SafeMode.UNSAFE)
             try {
-                asciidoctor.convertFile(inFile, options)
+                asciidoctor.convertFile(inFile, optionsBuilder.build())
                 println("生成：$outFile")
             } catch (e: Exception) {
                 e.printStackTrace()

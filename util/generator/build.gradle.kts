@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(kotlin("stdlib"))
+    api("org.jetbrains.kotlin:kotlin-stdlib")
     api(project(":util:common-lang"))
     api("org.atteo:evo-inflector")
     api("org.dom4j:dom4j")
@@ -11,7 +11,7 @@ dependencies {
 
     testImplementation("org.mybatis.generator:mybatis-generator-core")
 
-    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 
     testImplementation("com.h2database:h2")

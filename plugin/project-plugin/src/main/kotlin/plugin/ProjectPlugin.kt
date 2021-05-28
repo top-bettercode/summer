@@ -8,6 +8,7 @@ import cn.bestwu.generator.dom.java.element.JavaVisibility
 import cn.bestwu.generator.dom.java.element.TopLevelClass
 import cn.bestwu.generator.dsl.Generators
 import cn.bestwu.generator.puml.PumlConverter
+import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
 import hudson.cli.CLI
 import org.atteo.evo.inflector.English
 import org.gradle.api.JavaVersion
@@ -216,50 +217,55 @@ class ProjectPlugin : Plugin<Project> {
                 }
             }
 
-            subProject.extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class.java) { ext ->
+            subProject.extensions.configure(StandardDependencyManagementExtension::class.java) { ext ->
                 ext.imports {
                     it.mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
                 }
 
                 ext.dependencies {
-                    val summerVersion = ProjectPlugin::class.java.`package`.implementationVersion
-                    it.dependency("cn.bestwu.wechat:weixin-mp:0.9.7")
-                    it.dependency("cn.bestwu.wechat:weixin-app:0.9.7")
-                    it.dependency("com.alipay.sdk:alipay-sdk-java:3.4.49.ALL")
-                    it.dependency("com.aliyun:aliyun-java-sdk-core:4.2.2")
-                    it.dependency("com.aliyun:aliyun-java-sdk-dysmsapi:1.1.0")
-                    it.dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
-                    it.dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
+                    it.apply {
+                        val summerVersion =
+                            ProjectPlugin::class.java.`package`.implementationVersion
 
-                    it.dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-                    it.dependency("org.jetbrains.kotlin:kotlin-stdlib:${KotlinVersion.CURRENT}")
-                    it.dependency("org.jetbrains.kotlin:kotlin-stdlib-common:${KotlinVersion.CURRENT}")
-                    it.dependency("org.jetbrains.kotlin:kotlin-reflect:${KotlinVersion.CURRENT}")
-                    it.dependency("org.bouncycastle:bcpkix-jdk15on:1.62")
-                    it.dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.2")
-                    it.dependency("com.github.axet:kaptcha:0.0.9")
-                    it.dependency("net.sf.ehcache:ehcache:2.10.6")
+                        dependency("cn.bestwu.wechat:weixin-mp:0.9.7")
+                        dependency("cn.bestwu.wechat:weixin-app:0.9.7")
+                        dependency("com.alipay.sdk:alipay-sdk-java:4.13.58.ALL")
+                        dependency("com.aliyun:aliyun-java-sdk-core:4.5.20")
+                        dependency("com.aliyun:aliyun-java-sdk-dysmsapi:2.1.0")
+                        dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
+                        dependency("jakarta.persistence:jakarta.persistence-api:3.0.0")
 
-                    it.dependency("cn.bestwu.summer:api-sign:$summerVersion")
-                    it.dependency("cn.bestwu.summer:common-lang:$summerVersion")
-                    it.dependency("cn.bestwu.summer:starter-logging:$summerVersion")
-                    it.dependency("cn.bestwu.summer:autodoc-gen:$summerVersion")
-                    it.dependency("cn.bestwu.summer:excel:$summerVersion")
-                    it.dependency("cn.bestwu.summer:ueditor:$summerVersion")
-                    it.dependency("cn.bestwu.summer:wechat:$summerVersion")
+                        dependency("org.bouncycastle:bcpkix-jdk15on:1.68")
+                        dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
+                        dependency("com.github.axet:kaptcha:0.0.9")
+                        dependency("net.sf.ehcache:ehcache:2.10.9.2")
+                        dependency("org.dhatim:fastexcel-reader:0.12.11")
+                        dependency("org.apache.poi:poi-ooxml:5.0.0")
+                        dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
+                        dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.5.0")
+                        dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
-                    it.dependency("cn.bestwu.summer:web:$summerVersion")
-                    it.dependency("cn.bestwu.summer:data-jpa:$summerVersion")
-                    it.dependency("cn.bestwu.summer:data-mybatis:$summerVersion")
-                    it.dependency("cn.bestwu.summer:security-server:$summerVersion")
-                    it.dependency("cn.bestwu.summer:security-resource:$summerVersion")
+                        dependency("org.jetbrains.kotlin:kotlin-stdlib:${KotlinVersion.CURRENT}")
+                        dependency("org.jetbrains.kotlin:kotlin-stdlib-common:${KotlinVersion.CURRENT}")
+                        dependency("org.jetbrains.kotlin:kotlin-reflect:${KotlinVersion.CURRENT}")
 
-                    it.dependency("cn.bestwu.summer:test:$summerVersion")
+                        dependency("cn.bestwu.summer:api-sign:$summerVersion")
+                        dependency("cn.bestwu.summer:common-lang:$summerVersion")
+                        dependency("cn.bestwu.summer:starter-logging:$summerVersion")
+                        dependency("cn.bestwu.summer:autodoc-gen:$summerVersion")
+                        dependency("cn.bestwu.summer:excel:$summerVersion")
+                        dependency("cn.bestwu.summer:ueditor:$summerVersion")
+                        dependency("cn.bestwu.summer:wechat:$summerVersion")
 
-                    it.dependency("org.dhatim:fastexcel-reader:0.12.9")
-                    it.dependency("org.apache.poi:poi-ooxml:4.0.0")
-                    it.dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
-                    it.dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.5.0")
+                        dependency("cn.bestwu.summer:web:$summerVersion")
+                        dependency("cn.bestwu.summer:data-jpa:$summerVersion")
+                        dependency("cn.bestwu.summer:data-mybatis:$summerVersion")
+                        dependency("cn.bestwu.summer:security-server:$summerVersion")
+                        dependency("cn.bestwu.summer:security-resource:$summerVersion")
+
+                        dependency("cn.bestwu.summer:test:$summerVersion")
+
+                    }
                 }
             }
 

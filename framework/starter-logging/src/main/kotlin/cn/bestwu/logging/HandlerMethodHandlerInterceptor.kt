@@ -5,8 +5,8 @@ import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.method.HandlerMethod
+import org.springframework.web.servlet.AsyncHandlerInterceptor
 import org.springframework.web.servlet.HandlerMapping
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse
  * @author Peter Wu
  */
 class HandlerMethodHandlerInterceptor(private val properties: RequestLoggingProperties) :
-    HandlerInterceptorAdapter() {
+    AsyncHandlerInterceptor {
 
     companion object {
         val HANDLER_METHOD = HandlerMethodHandlerInterceptor::class.java.name + ".handlerMethod"
@@ -90,7 +90,7 @@ class HandlerMethodHandlerInterceptor(private val properties: RequestLoggingProp
 
             request.setAttribute(REQUEST_LOGGING, requestLogging)
         }
-        return super.preHandle(request, response, handler)
+        return true
     }
 
     /**

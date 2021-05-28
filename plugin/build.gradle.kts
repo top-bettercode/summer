@@ -8,9 +8,9 @@ subprojects {
     }
     dependencies {
         api(gradleApi())
-        api(kotlin("stdlib"))
+        api("org.jetbrains.kotlin:kotlin-stdlib")
 
-        testImplementation(kotlin("test-junit5"))
+        testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     }
     tasks {

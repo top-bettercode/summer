@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     api("org.springframework.boot:spring-boot-gradle-plugin")
+    api("io.spring.gradle:dependency-management-plugin")
     api(project(":plugin:generator-plugin"))
     api(project(":plugin:dist-plugin"))
     api(project(":plugin:profile-plugin"))

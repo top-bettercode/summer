@@ -15,7 +15,7 @@ dependencies {
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
 
     //test
-    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-jdbc")
     testImplementation("com.h2database:h2")
