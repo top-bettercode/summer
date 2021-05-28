@@ -44,7 +44,7 @@ class AutodocPlugin : Plugin<Project> {
             autodocExtension.author = project.findProperty("autodoc.author") as? String ?: "autodoc"
             var version = project.findProperty("autodoc.version") as? String
             if (version.isNullOrBlank()) {
-                version = project.findProperty("summer.version") as? String
+                version = project.findProperty("app.version") as? String
             }
             if (!version.isNullOrBlank()) {
                 autodocExtension.version = if (version.startsWith("v")) version else "v$version"
