@@ -2,6 +2,7 @@ package cn.bestwu.simpleframework.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Map;
+import org.springframework.http.HttpStatus;
 
 /**
  * 响应实体
@@ -10,7 +11,9 @@ import java.util.Map;
  */
 public interface IRespEntity {
 
-  Integer getHttpStatusCode();
+  default Integer getHttpStatusCode() {
+    return HttpStatus.OK.value();
+  }
 
   @JsonIgnore
   Map<String, Object> toMap();
