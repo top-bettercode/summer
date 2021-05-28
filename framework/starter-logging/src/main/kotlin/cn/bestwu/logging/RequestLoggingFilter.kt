@@ -105,7 +105,11 @@ class RequestLoggingFilter(
                 requestToUse.getAttribute(HandlerMethodHandlerInterceptor.HANDLER_METHOD) as? HandlerMethod
             val requestAttributes = ServletRequestAttributes(requestToUse)
             val error = getError(requestAttributes)
-            if (handler != null || include(properties.includePath, uri) || includeError(error)) {
+            val httpStatusCode = getStatus(requestAttributes)
+            if (handler != null ||
+                include(properties.includePath, uri)
+                || includeError(error) || !HttpStatus.valueOf(httpStatusCode).is2xxSuccessful
+            ) {
                 val config: RequestLoggingConfig =
                     requestToUse.getAttribute(HandlerMethodHandlerInterceptor.REQUEST_LOGGING) as? RequestLoggingConfig
                         ?: RequestLoggingConfig(
@@ -175,7 +179,6 @@ class RequestLoggingFilter(
                 if (error == null || error is ClientAbortException) {
                     log.info(marker, msg)
                 } else {
-                    val httpStatusCode = getStatus(requestAttributes)
                     if (!properties.ignoredErrorStatusCode.contains(httpStatusCode)) {
                         val message = "httpStatus:$httpStatusCode ${error.javaClass.name}:${
                             getMessage(requestAttributes)
