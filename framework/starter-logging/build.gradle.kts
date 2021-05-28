@@ -1,6 +1,6 @@
 plugins { `java-library` }
 dependencies {
-    api(kotlin("reflect"))
+    api("org.jetbrains.kotlin:kotlin-reflect")
 
     api(project(":util:common-lang"))
     api("org.springframework.boot:spring-boot")
@@ -22,5 +22,5 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-websocket")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 }

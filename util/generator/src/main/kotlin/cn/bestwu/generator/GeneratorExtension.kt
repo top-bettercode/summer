@@ -4,6 +4,7 @@ import cn.bestwu.generator.database.DatabaseMetaData
 import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.dom.java.element.JavaElement
 import cn.bestwu.generator.dsl.Generator
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking

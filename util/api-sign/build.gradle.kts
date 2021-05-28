@@ -5,12 +5,12 @@ plugins {
 
 dependencies {
     api("org.springframework.boot:spring-boot-starter-web")
-    api(kotlin("reflect"))
+    api("org.jetbrains.kotlin:kotlin-reflect")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
 
-    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation(project(":framework:starter-logging"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

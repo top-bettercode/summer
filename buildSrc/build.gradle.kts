@@ -8,7 +8,7 @@ configurations {
 
 repositories {
     mavenLocal()
-    maven("https://maven.aliyun.com/repository/gradle-plugin")
+//    maven("https://maven.aliyun.com/repository/gradle-plugin")
     maven("https://maven.aliyun.com/repository/public")
     mavenCentral()
     gradlePluginPortal()
@@ -23,8 +23,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
 
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:2.2.5.RELEASE")
-    implementation("org.jfrog.buildinfo:build-info-extractor-gradle:4.15.1")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:2.5.0")
+    implementation("org.jfrog.buildinfo:build-info-extractor-gradle:4.24.3")
 
     implementation("cn.bestwu.summer:publish-plugin:0.0.9-SNAPSHOT")
 }

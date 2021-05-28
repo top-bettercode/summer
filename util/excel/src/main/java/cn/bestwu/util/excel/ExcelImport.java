@@ -172,7 +172,7 @@ public class ExcelImport {
    * @throws InstantiationException InstantiationException
    */
   public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields)
-      throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
+      throws Exception {
     return getData(excelFields[0].entityType, excelFields);
   }
 
@@ -191,7 +191,7 @@ public class ExcelImport {
    * @throws InstantiationException InstantiationException
    */
   public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields, ExcelConverter<F, E> converter)
-      throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
+      throws Exception {
     return getData(excelFields[0].entityType, excelFields, converter);
   }
 
@@ -210,7 +210,7 @@ public class ExcelImport {
    */
   @SuppressWarnings("unchecked")
   public <F, E> List<E> getData(Class<F> cls, ExcelField<F, ?>[] excelFields)
-      throws IOException, IllegalAccessException, InstantiationException, ExcelImportException {
+      throws Exception {
     return getData(cls, excelFields, (o) -> (E) o);
   }
 
@@ -230,7 +230,7 @@ public class ExcelImport {
    */
   public <F, E> List<E> getData(Class<F> cls, ExcelField<F, ?>[] excelFields,
       ExcelConverter<F, E> converter)
-      throws IOException, IllegalAccessException, ExcelImportException, InstantiationException {
+      throws Exception {
     if (sheet == null) {
       throw new RuntimeException("文档中未找到相应工作表!");
     }
@@ -249,10 +249,10 @@ public class ExcelImport {
 
   public <F, E> E readRow(Class<F> cls, ExcelField<F, ?>[] excelFields, Row row,
       ExcelConverter<F, E> converter)
-      throws InstantiationException, IllegalAccessException, ExcelImportException {
+      throws Exception {
     boolean notAllBlank = false;
     int column = c;
-    F o = cls.newInstance();
+    F o = cls.getConstructor().newInstance();
     List<CellError> rowErrors = new ArrayList<>();
     r = row.getRowNum();
 

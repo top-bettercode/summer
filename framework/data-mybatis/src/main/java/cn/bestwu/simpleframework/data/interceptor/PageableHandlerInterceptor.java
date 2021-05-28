@@ -6,14 +6,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 /**
  * Mybatis Page 参数解析
  *
  * @author Peter Wu
  */
-public class PageableHandlerInterceptor extends HandlerInterceptorAdapter {
+public class PageableHandlerInterceptor implements AsyncHandlerInterceptor {
 
   private static final String DEFAULT_PAGE_PARAMETER = "page";
   private static final String DEFAULT_SIZE_PARAMETER = "size";
@@ -26,7 +26,8 @@ public class PageableHandlerInterceptor extends HandlerInterceptorAdapter {
   private boolean oneIndexedParameters = false;
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
+      Object handler) {
     if (supportsHandler(handler)) {
       String pageString = request.getParameter(pageParameterName);
       String pageSizeString = request.getParameter(sizeParameterName);

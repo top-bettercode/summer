@@ -1,6 +1,6 @@
 plugins { `java-library` }
 dependencies {
-    api(kotlin("reflect"))
+    api("org.jetbrains.kotlin:kotlin-reflect")
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin")
     api("com.gradle.publish:plugin-publish-plugin")
     api("org.jetbrains.dokka:dokka-gradle-plugin")
@@ -10,6 +10,6 @@ dependencies {
     compileOnly("org.jfrog.buildinfo:build-info-extractor-gradle") {
         exclude(module = "groovy-all")
     }
-    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
@@ -41,7 +42,7 @@ public class MocTestErrorLoggingHandler implements RequestLoggingHandler {
     if (StringUtils.hasText(stackTrace)) {
       try {
         Map<String, Object> errorAttributes = this.errorAttributes
-            .getErrorAttributes(webRequest, false);
+            .getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
         if (response.getContent().length == 0) {
           try {
             Boolean isPlainText = (Boolean) webRequest

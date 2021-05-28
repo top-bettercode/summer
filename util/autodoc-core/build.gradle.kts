@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(kotlin("stdlib"))
+    api("org.jetbrains.kotlin:kotlin-stdlib")
 
     api(project(":framework:starter-logging"))
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
@@ -12,7 +12,7 @@ dependencies {
     api("org.asciidoctor:asciidoctorj-pdf")
     api("com.github.stuxuhai:jpinyin")
 
-    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 
 }

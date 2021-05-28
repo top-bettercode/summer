@@ -1,6 +1,5 @@
 package cn.bestwu.api.sign
 
-import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.context.MessageSource
 import org.springframework.context.MessageSourceAware
 import org.springframework.context.i18n.LocaleContextHolder
@@ -8,8 +7,7 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.method.HandlerMethod
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
+import org.springframework.web.servlet.AsyncHandlerInterceptor
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -20,7 +18,7 @@ import javax.servlet.http.HttpServletResponse
  */
 class ApiSignHandlerInterceptor(
     private var apiSignAlgorithm: ApiSignAlgorithm,
-) : HandlerInterceptorAdapter(), MessageSourceAware, Ordered {
+) : AsyncHandlerInterceptor, MessageSourceAware, Ordered {
 
     private var messageSource: MessageSource? = null
 

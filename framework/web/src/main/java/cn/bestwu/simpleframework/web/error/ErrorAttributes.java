@@ -13,7 +13,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
-import org.springframework.boot.autoconfigure.web.ErrorProperties.IncludeStacktrace;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.error.ErrorAttributeOptions.Include;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.context.MessageSource;
 import org.springframework.core.Ordered;
@@ -59,9 +60,10 @@ public class ErrorAttributes extends DefaultErrorAttributes {
 
   @Override
   public Map<String, Object> getErrorAttributes(WebRequest webRequest,
-      boolean includeStackTrace) {
+      ErrorAttributeOptions options) {
     Throwable error = getError(webRequest);
-    return getErrorAttributes(error, webRequest, includeStackTrace).toMap();
+    return getErrorAttributes(error, webRequest, options.isIncluded(
+        Include.STACK_TRACE)).toMap();
   }
 
   public IRespEntity getErrorAttributes(Throwable error, WebRequest webRequest) {
@@ -225,16 +227,25 @@ public class ErrorAttributes extends DefaultErrorAttributes {
         webRequest == null ? Locale.CHINA : webRequest.getLocale());
   }
 
-  private boolean isIncludeStackTrace(WebRequest request, MediaType produces) {
-    IncludeStacktrace include = errorProperties.getIncludeStacktrace();
-    if (include == IncludeStacktrace.ALWAYS) {
-      return true;
+
+  /**
+   * Determine if the stacktrace attribute should be included.
+   *
+   * @param request  the source request
+   * @param produces the media type produced (or {@code MediaType.ALL})
+   * @return if the stacktrace attribute should be included
+   */
+  protected boolean isIncludeStackTrace(WebRequest request, MediaType produces) {
+    switch (errorProperties.getIncludeStacktrace()) {
+      case ALWAYS:
+        return true;
+      case ON_PARAM:
+        return getTraceParameter(request);
+      default:
+        return false;
     }
-    if (include == IncludeStacktrace.ON_TRACE_PARAM) {
-      return getTraceParameter(request);
-    }
-    return false;
   }
+
 
   private boolean getTraceParameter(WebRequest request) {
     String parameter = request.getParameter("trace");
@@ -243,4 +254,6 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     }
     return !"false".equalsIgnoreCase(parameter);
   }
+
+
 }
