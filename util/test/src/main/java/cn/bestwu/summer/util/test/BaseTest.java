@@ -15,7 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     webEnvironment = SpringBootTest.WebEnvironment.NONE,
     properties = {
         "summer.sign.handler-type-prefix=",
-        "summer.spring.jackson.default-property-inclusion=USE_DEFAULTS",
+        "spring.jackson.default-property-inclusion=ALWAYS",
         "logging.level.root=debug",
         "logging.level.org.springframework.test=warn",
         "logging.level.org.springframework.boot.test=warn",
