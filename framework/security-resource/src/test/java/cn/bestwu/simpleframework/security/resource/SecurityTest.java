@@ -31,8 +31,11 @@ import org.springframework.util.MultiValueMap;
  * @since 1.0.0
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
-    "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)
+@SpringBootTest(classes = TestApplication.class, properties = {
+    "api.sign.handler-type-prefix=",
+    "logging.level.root=debug",
+    "summer.web.ok-enable=false",
+}, webEnvironment = RANDOM_PORT)
 public class SecurityTest {
 
   @Deprecated
@@ -101,7 +104,7 @@ public class SecurityTest {
         .exchange("/oauth/token?access_token=" + accessToken,
             HttpMethod.DELETE, null,
             String.class);
-    assertEquals(HttpStatus.OK, entity2.getStatusCode());
+    assertEquals(HttpStatus.NO_CONTENT, entity2.getStatusCode());
   }
 
   @Test

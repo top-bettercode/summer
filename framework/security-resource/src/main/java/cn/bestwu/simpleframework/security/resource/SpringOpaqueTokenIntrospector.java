@@ -3,14 +3,15 @@ package cn.bestwu.simpleframework.security.resource;
 import static org.springframework.security.oauth2.server.resource.introspection.OAuth2IntrospectionClaimNames.CLIENT_ID;
 import static org.springframework.security.oauth2.server.resource.introspection.OAuth2IntrospectionClaimNames.EXPIRES_AT;
 import static org.springframework.security.oauth2.server.resource.introspection.OAuth2IntrospectionClaimNames.SCOPE;
+import static org.springframework.security.oauth2.server.resource.introspection.OAuth2IntrospectionClaimNames.SUBJECT;
 
 import cn.bestwu.lang.util.LocalDateTimeHelper;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
-import org.springframework.security.oauth2.core.DefaultOAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
@@ -47,7 +48,9 @@ public class SpringOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
 
     claims.put(SCOPE, oAuth2Request.getScope());
 
-    return new DefaultOAuth2AuthenticatedPrincipal(claims, oAuth2Authentication.getAuthorities());
+    Object principal = oAuth2Authentication.getPrincipal();
+    claims.put(SUBJECT, principal);
+    return new DefaultOAuth2User(oAuth2Authentication.getAuthorities(), claims, SUBJECT);
   }
 
 }

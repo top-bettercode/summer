@@ -1,6 +1,5 @@
 package cn.bestwu.simpleframework.security.impl;
 
-import cn.bestwu.lang.util.StringUtil;
 import cn.bestwu.simpleframework.security.resource.Anonymous;
 import cn.bestwu.simpleframework.security.resource.AuthenticationHelper;
 import cn.bestwu.simpleframework.security.resource.ClientAuthorize;
@@ -29,7 +28,6 @@ public class SecurityTestController extends BaseController {
   @RequestMapping(value = "/testAuth")
   public Object testAuth() {
     Authentication authentication = AuthenticationHelper.getAuthentication();
-    System.err.println(StringUtil.valueOf(authentication, true));
     System.err.println("-----------------------");
     return ok("success");
   }

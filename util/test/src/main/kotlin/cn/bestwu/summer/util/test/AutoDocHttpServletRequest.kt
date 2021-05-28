@@ -32,14 +32,14 @@ class AutoDocHttpServletRequest(request: HttpServletRequest?) :
     }
 
     override fun getParameter(name: String?): String? {
-        return if (extParams.containsKey(name)) {
+        return if (extParams.any { name.equals(it.key, true) }) {
             StringUtils.arrayToCommaDelimitedString(extParams[name])
         } else
             super.getParameter(name)
     }
 
     override fun getParameterValues(name: String?): Array<out String>? {
-        return if (extParams.containsKey(name)) {
+        return if (extParams.any { name.equals(it.key, true) }) {
             extParams[name]
         } else {
             super.getParameterValues(name)
@@ -64,7 +64,7 @@ class AutoDocHttpServletRequest(request: HttpServletRequest?) :
     }
 
     override fun getHeader(name: String): String? {
-        return if (extHeaders.containsKey(name)) {
+        return if (extHeaders.any { name.equals(it.key, true) }) {
             StringUtils.arrayToCommaDelimitedString(extHeaders[name])
         } else {
             super.getHeader(name)
@@ -72,7 +72,7 @@ class AutoDocHttpServletRequest(request: HttpServletRequest?) :
     }
 
     override fun getHeaders(name: String): Enumeration<String> {
-        return if (extHeaders.containsKey(name)) {
+        return if (extHeaders.any { name.equals(it.key, true) }) {
             Enumerator(extHeaders[name]?.toList() ?: listOf())
         } else {
             super.getHeaders(name)

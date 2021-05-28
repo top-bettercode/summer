@@ -1,8 +1,8 @@
 package cn.bestwu.summer.util.test;
 
 import cn.bestwu.autodoc.gen.Autodoc;
-import cn.bestwu.simpleframework.security.resource.SecurityProperties;
 import cn.bestwu.simpleframework.security.resource.Anonymous;
+import cn.bestwu.simpleframework.security.resource.SecurityProperties;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +12,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.hateoas.server.core.AnnotationMappingDiscoverer;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
