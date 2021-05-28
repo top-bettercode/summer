@@ -13,7 +13,7 @@ import org.springframework.util.LinkedMultiValueMap
  * @author Peter Wu
  */
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [ApiSignConfiguration::class, TestController::class], properties = ["api.sign.clientSecret=abcd", "api.sign.handler-type-prefix=cn.bestwu.api.sign.TestController", "logging.level.root=debug"], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = [ApiSignConfiguration::class, TestController::class], properties = ["summer.sign.clientSecret=abcd", "summer.sign.handler-type-prefix=cn.bestwu.api.sign.TestController", "logging.level.root=debug"], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SignTest {
 
     @Autowired

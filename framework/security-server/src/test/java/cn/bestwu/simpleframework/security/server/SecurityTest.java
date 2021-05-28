@@ -31,7 +31,7 @@ import org.springframework.util.MultiValueMap;
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestApplication.class, properties = {
-    "api.sign.handler-type-prefix=",
+    "summer.sign.handler-type-prefix=",
     "logging.level.root=debug",
 }, webEnvironment = RANDOM_PORT)
 public class SecurityTest {

@@ -4,7 +4,7 @@
  
 [source,properties]
 ----
-clientSecret = @api.sign.client-secret@
+clientSecret = @summer.sign.client-secret@
 ----
 
 * 筛选
