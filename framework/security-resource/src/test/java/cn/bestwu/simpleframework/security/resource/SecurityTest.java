@@ -31,11 +31,11 @@ import org.springframework.util.MultiValueMap;
  * @since 1.0.0
  */
 @ExtendWith(SpringExtension.class)
-@SuppressWarnings("deprecation")
 @SpringBootTest(classes = TestApplication.class, properties = {"api.sign.handler-type-prefix=",
     "logging.level.root=debug"}, webEnvironment = RANDOM_PORT)
 public class SecurityTest {
 
+  @Deprecated
   @Autowired
   ClientDetails clientDetails;
   @Autowired
@@ -54,12 +54,12 @@ public class SecurityTest {
         clientDetails.getClientSecret());
   }
 
+  @Deprecated
   @NotNull
   private DefaultOAuth2AccessToken getAccessToken() throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
     params.add("scope", "trust");
-    params.add("useDefaultAuthorization", "true");
     params.add("username", username);
     params.add("password", password);
 
@@ -101,7 +101,7 @@ public class SecurityTest {
         .exchange("/oauth/token?access_token=" + accessToken,
             HttpMethod.DELETE, null,
             String.class);
-    assertEquals(HttpStatus.NO_CONTENT, entity2.getStatusCode());
+    assertEquals(HttpStatus.OK, entity2.getStatusCode());
   }
 
   @Test

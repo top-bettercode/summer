@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 /**
  * @author Peter Wu
  */
-@SuppressWarnings("deprecation")
+@Deprecated
 public class AccessTokenService {
 
   private final ClientDetails clientDetails;

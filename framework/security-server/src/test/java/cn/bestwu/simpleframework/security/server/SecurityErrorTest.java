@@ -22,7 +22,6 @@ import org.springframework.util.MultiValueMap;
  * @since 1.0.0
  */
 @ExtendWith(SpringExtension.class)
-@SuppressWarnings("deprecation")
 @SpringBootTest(classes = TestApplication.class,
     properties = {
         "api.sign.handler-type-prefix=",
@@ -31,6 +30,7 @@ import org.springframework.util.MultiValueMap;
     }, webEnvironment = RANDOM_PORT)
 public class SecurityErrorTest {
 
+  @Deprecated
   @Autowired
   ClientDetails clientDetails;
   @Autowired

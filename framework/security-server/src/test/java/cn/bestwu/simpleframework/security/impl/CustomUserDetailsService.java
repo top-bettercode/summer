@@ -1,6 +1,6 @@
 package cn.bestwu.simpleframework.security.impl;
 
-import cn.bestwu.simpleframework.security.DefaultAuthority;
+import cn.bestwu.simpleframework.security.server.DefaultAuthority;
 import cn.bestwu.simpleframework.security.server.IllegalUserException;
 import java.util.Collection;
 import java.util.Collections;

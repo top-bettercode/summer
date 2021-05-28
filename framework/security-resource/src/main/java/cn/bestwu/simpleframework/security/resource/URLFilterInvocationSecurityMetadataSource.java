@@ -1,7 +1,5 @@
 package cn.bestwu.simpleframework.security.resource;
 
-import cn.bestwu.simpleframework.security.DefaultAuthority;
-import cn.bestwu.simpleframework.security.SecurityProperties;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,7 +127,7 @@ public class URLFilterInvocationSecurityMetadataSource implements
         }
       }
       return bestMatch.configAttributes.isEmpty() ? SecurityConfig
-          .createList(DefaultAuthority.DEFAULT_AUTHORITY_STRING) : bestMatch.configAttributes;
+          .createList("authenticated") : bestMatch.configAttributes;
     }
     return Collections.emptyList();
   }

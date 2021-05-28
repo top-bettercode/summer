@@ -1,4 +1,4 @@
-package cn.bestwu.simpleframework.security;
+package cn.bestwu.simpleframework.security.resource;
 
 import cn.bestwu.lang.util.ArrayUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;

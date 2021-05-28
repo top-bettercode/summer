@@ -1,7 +1,7 @@
 package cn.bestwu.summer.util.test;
 
 import cn.bestwu.autodoc.gen.Autodoc;
-import cn.bestwu.simpleframework.security.SecurityProperties;
+import cn.bestwu.simpleframework.security.resource.SecurityProperties;
 import cn.bestwu.simpleframework.security.resource.Anonymous;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;

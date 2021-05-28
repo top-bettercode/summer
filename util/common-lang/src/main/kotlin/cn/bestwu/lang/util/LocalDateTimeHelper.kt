@@ -102,7 +102,7 @@ class LocalDateTimeHelper private constructor(private val localDateTime: LocalDa
         return Date.from(toInstant())
     }
 
-    private fun toInstant(): Instant {
+    fun toInstant(): Instant {
         return toLocalDateTime().toInstant(zoneOffset)
     }
 
