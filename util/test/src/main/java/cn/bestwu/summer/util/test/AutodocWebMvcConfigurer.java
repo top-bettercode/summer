@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.hateoas.server.core.AnnotationMappingDiscoverer;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -52,7 +53,10 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
 
   @Override
   public void handle(AutoDocHttpServletRequest request) {
-    request.header("Authorization", "bearer xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
+    String authorization = request.getHeader("Authorization");
+    if (!StringUtils.hasText(authorization)) {
+      request.header("Authorization", "bearer xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
+    }
   }
 
   protected <A extends Annotation> boolean hasAnnotation(HandlerMethod handlerMethod,
