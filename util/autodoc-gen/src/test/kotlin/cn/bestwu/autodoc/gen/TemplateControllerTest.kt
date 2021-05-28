@@ -13,7 +13,7 @@ import java.io.FileReader
 import javax.sql.DataSource
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = ["api.sign.handler-type-prefix=", "logging.level.root=debug"])
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = ["summer.sign.handler-type-prefix=", "logging.level.root=debug"])
 class TemplateControllerTest {
 
     @Autowired
