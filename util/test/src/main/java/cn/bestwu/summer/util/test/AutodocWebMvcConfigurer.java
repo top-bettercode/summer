@@ -3,14 +3,13 @@ package cn.bestwu.summer.util.test;
 import cn.bestwu.autodoc.gen.Autodoc;
 import cn.bestwu.simpleframework.security.resource.Anonymous;
 import cn.bestwu.simpleframework.security.resource.SecurityProperties;
-import java.lang.annotation.Annotation;
+import cn.bestwu.logging.AnnotatedUtils;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.hateoas.server.core.AnnotationMappingDiscoverer;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +42,7 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
           AnnotationMappingDiscoverer DISCOVERER = new AnnotationMappingDiscoverer(
               RequestMapping.class);
           String url = DISCOVERER.getMapping(((HandlerMethod) handler).getMethod());
-          if (!hasAnnotation((HandlerMethod) handler, Anonymous.class) && !securityProperties
+          if (!AnnotatedUtils.hasAnnotation((HandlerMethod) handler, Anonymous.class) && !securityProperties
               .ignored(url)) {
             requiredHeaders = new HashSet<>(requiredHeaders);
             requiredHeaders.add("Authorization");
@@ -61,15 +60,6 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
     String authorization = request.getHeader("Authorization");
     if (!StringUtils.hasText(authorization)) {
       request.header("Authorization", "bearer xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
-    }
-  }
-
-  protected <A extends Annotation> boolean hasAnnotation(HandlerMethod handlerMethod,
-      Class<A> annotationType) {
-    if (handlerMethod.hasMethodAnnotation(annotationType)) {
-      return true;
-    } else {
-      return AnnotatedElementUtils.hasAnnotation(handlerMethod.getBeanType(), annotationType);
     }
   }
 

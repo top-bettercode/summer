@@ -32,9 +32,13 @@ class HandlerMethodHandlerInterceptor(private val properties: RequestLoggingProp
         response: HttpServletResponse,
         handler: Any
     ): Boolean {
-        if (handler is HandlerMethod && (properties.isForceRecord || (!handler.beanType.isAnnotationPresent(
-                NoRequestLogging::class.java
-            ) && !handler.hasMethodAnnotation(NoRequestLogging::class.java))) && handler.bean !is ErrorController && useAnnotationMethodHandler(
+        if (handler is HandlerMethod && (
+                    properties.isForceRecord
+                            || (!AnnotatedUtils.hasAnnotation(
+                        handler,
+                        NoRequestLogging::class.java
+                    ))
+                    ) && handler.bean !is ErrorController && useAnnotationMethodHandler(
                 request
             ) && (properties.handlerTypePrefix.isEmpty() || properties.handlerTypePrefix.any {
                 handler.beanType.name.packageMatches(

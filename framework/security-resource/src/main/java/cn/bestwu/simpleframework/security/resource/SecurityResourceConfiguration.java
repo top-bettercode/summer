@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.security.resource;
 
+import cn.bestwu.simpleframework.security.ClientDetailsProperties;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,6 +29,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 @Configuration
@@ -87,16 +90,26 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
 
 
   @Configuration
+  @EnableConfigurationProperties(ClientDetailsProperties.class)
   @ConditionalOnWebApplication
-  protected static class AccessDecisionManagerConfiguration {
+  protected static class AccessDecisionManagerConfiguration implements WebMvcConfigurer {
 
     private final Logger log = LoggerFactory.getLogger(SecurityResourceConfiguration.class);
     private final SecurityProperties securityProperties;
+    private final ClientDetailsProperties clientDetailsProperties;
 
     public AccessDecisionManagerConfiguration(
-        SecurityProperties securityProperties) {
+        SecurityProperties securityProperties,
+        ClientDetailsProperties clientDetailsProperties) {
       this.securityProperties = securityProperties;
+      this.clientDetailsProperties = clientDetailsProperties;
     }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+      registry.addInterceptor(new ClientAuthorizeHandlerInterceptor(clientDetailsProperties));
+    }
+
 
     @Bean
     @RefreshScope

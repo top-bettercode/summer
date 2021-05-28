@@ -1,6 +1,6 @@
 package cn.bestwu.simpleframework.security.resource;
 
-import java.lang.annotation.Annotation;
+import cn.bestwu.logging.AnnotatedUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
@@ -20,7 +19,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
@@ -45,11 +43,13 @@ public class URLFilterInvocationSecurityMetadataSource implements
 
     handlerMapping.getHandlerMethods().forEach((mappingInfo, handlerMethod) -> {
       //非匿名权限
-      if (!hasAnnotation(handlerMethod, Anonymous.class)) {
+      if (!AnnotatedUtils.hasAnnotation(handlerMethod, Anonymous.class) && !AnnotatedUtils
+          .hasAnnotation(handlerMethod, ClientAuthorize.class)) {
         for (String pattern : mappingInfo.getPatternsCondition().getPatterns()) {
           if (!securityProperties.ignored(pattern)) {
             Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
-            ConfigAuthority authority = getAnnotation(handlerMethod, ConfigAuthority.class);
+            ConfigAuthority authority = AnnotatedUtils
+                .getAnnotation(handlerMethod, ConfigAuthority.class);
             Set<ConfigAttribute> configAttributes = new HashSet<>();
             if (authority != null) {
               for (String s : authority.value()) {
@@ -72,27 +72,6 @@ public class URLFilterInvocationSecurityMetadataSource implements
     });
     bindConfigAttributes();
   }
-
-  protected <A extends Annotation> boolean hasAnnotation(HandlerMethod handlerMethod,
-      Class<A> annotationType) {
-    if (handlerMethod.hasMethodAnnotation(annotationType)) {
-      return true;
-    } else {
-      return AnnotatedElementUtils.hasAnnotation(handlerMethod.getBeanType(), annotationType);
-    }
-  }
-
-  protected <A extends Annotation> A getAnnotation(HandlerMethod handlerMethod,
-      Class<A> annotationType) {
-    A annotation = handlerMethod.getMethodAnnotation(annotationType);
-    if (annotation != null) {
-      return annotation;
-    } else {
-      return AnnotatedElementUtils
-          .findMergedAnnotation(handlerMethod.getBeanType(), annotationType);
-    }
-  }
-
 
   /**
    * @return 不再检查是否支持
