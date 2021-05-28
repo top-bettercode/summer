@@ -2,6 +2,7 @@ package cn.bestwu.simpleframework.config;
 
 import cn.bestwu.lang.util.LocalDateTimeHelper;
 import cn.bestwu.logging.annotation.NoRequestLogging;
+import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
 import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
 import cn.bestwu.simpleframework.web.ICaptchaService;
 import cn.bestwu.simpleframework.web.NavController;
@@ -18,12 +19,18 @@ import cn.bestwu.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
 import cn.bestwu.simpleframework.web.kaptcha.KaptchaProperties;
 import cn.bestwu.simpleframework.web.resolver.ApiHandlerMethodReturnValueHandler;
 import cn.bestwu.simpleframework.web.resolver.StringToEnumConverterFactory;
+import cn.bestwu.simpleframework.web.serializer.MixIn;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -44,12 +52,14 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,6 +67,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,15 +85,20 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @Configuration
 @ConditionalOnWebApplication
-@EnableConfigurationProperties({WebProperties.class})
+@EnableConfigurationProperties({WebProperties.class, JacksonExtProperties.class})
 @AutoConfigureBefore({ErrorMvcAutoConfiguration.class, JacksonAutoConfiguration.class})
 public class FrameworkMvcConfiguration {
 
+  private final Logger log = LoggerFactory.getLogger(SerializerConfiguration.class);
+
   private final WebProperties webProperties;
+  private final JacksonExtProperties jacksonExtProperties;
 
   public FrameworkMvcConfiguration(
-      WebProperties webProperties) {
+      WebProperties webProperties,
+      JacksonExtProperties jacksonExtProperties) {
     this.webProperties = webProperties;
+    this.jacksonExtProperties = jacksonExtProperties;
   }
 
   @Bean
@@ -115,6 +131,61 @@ public class FrameworkMvcConfiguration {
   public OrderedHttpPutFormContentFilter putFormContentFilter() {
     return new OrderedHttpPutFormContentFilter();
   }
+
+  @Bean
+  public com.fasterxml.jackson.databind.Module module(ApplicationContext applicationContext,
+      PackageScanClassResolver packageScanClassResolver) {
+    SimpleModule module = new SimpleModule();
+    Set<String> packages = PackageScanClassResolver
+        .detectPackagesToScan(applicationContext,
+            jacksonExtProperties.getMixInAnnotationBasePackages());
+
+    packages.add("cn.bestwu.simpleframework.data.serializer");
+
+    Set<Class<?>> allSubClasses = packageScanClassResolver
+        .findImplementations(MixIn.class, packages.toArray(new String[0]));
+    for (Class<?> aClass : allSubClasses) {
+      try {
+        ParameterizedType object = (ParameterizedType) aClass.getGenericInterfaces()[0];
+        Class<?> targetType = (Class<?>) object.getActualTypeArguments()[0];
+        if (log.isTraceEnabled()) {
+          log.trace("Detected MixInAnnotation:{}=>{}", targetType, aClass);
+        }
+        module.setMixInAnnotation(targetType, aClass);
+      } catch (Exception e) {
+        log.warn(aClass + "Detected fail", e);
+      }
+    }
+    return module;
+  }
+
+  @Configuration
+  @ConditionalOnWebApplication
+  protected static class ObjectMapperBuilderCustomizer implements
+      Jackson2ObjectMapperBuilderCustomizer {
+
+    @Override
+    public void customize(Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder) {
+      jacksonObjectMapperBuilder.featuresToEnable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN);
+      jacksonObjectMapperBuilder.serializerByType(LocalDate.class, new JsonSerializer<LocalDate>() {
+        @Override
+        public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers)
+            throws IOException {
+          gen.writeNumber(LocalDateTimeHelper.of(value).toMillis());
+        }
+      });
+      jacksonObjectMapperBuilder
+          .serializerByType(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
+            @Override
+            public void serialize(LocalDateTime value, JsonGenerator gen,
+                SerializerProvider serializers)
+                throws IOException {
+              gen.writeNumber(LocalDateTimeHelper.of(value).toMillis());
+            }
+          });
+    }
+  }
+
 
   @Bean
   public DefaultErrorHandler defaultErrorHandler(MessageSource messageSource,
