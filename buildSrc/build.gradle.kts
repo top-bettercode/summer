@@ -23,7 +23,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
 
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:2.5.0")
+    implementation("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
     implementation("org.jfrog.buildinfo:build-info-extractor-gradle:4.24.3")
 
     implementation("cn.bestwu.summer:publish-plugin:0.0.9-SNAPSHOT")

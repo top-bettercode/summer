@@ -51,6 +51,10 @@ allprojects {
 
     }
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
+        imports {
+            mavenBom(property("spring.boot.bom-coordinates") as String)
+        }
+
         dependencies {
             val kotlinVersion = property("kotlin.version")
             dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")

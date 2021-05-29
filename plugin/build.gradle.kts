@@ -4,7 +4,6 @@ subprojects {
         plugin("org.jetbrains.kotlin.jvm")
         plugin("summer.plugin-publish")
         plugin("com.jfrog.artifactory")
-        plugin("org.springframework.boot")
     }
     dependencies {
         api(gradleApi())
@@ -14,12 +13,8 @@ subprojects {
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     }
     tasks {
-        "jar"(Jar::class) {
-            enabled = true
-        }
         "compileJava" {
             dependsOn("processResources")
         }
-        "bootJar" { enabled = false }
     }
 }

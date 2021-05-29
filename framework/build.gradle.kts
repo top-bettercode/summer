@@ -1,7 +1,10 @@
+plugins {
+    `java-library`
+}
+
 subprojects {
     apply {
         plugin("com.jfrog.artifactory")
-        plugin("org.springframework.boot")
     }
     if (name.contains("logging")) {
         apply {
@@ -26,9 +29,5 @@ subprojects {
         "compileJava"(JavaCompile::class) {
             dependsOn("processResources")
         }
-        "jar"(Jar::class) {
-            enabled = true
-        }
-        "bootJar" { enabled = false }
     }
 }

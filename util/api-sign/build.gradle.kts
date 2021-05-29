@@ -25,7 +25,6 @@ tasks {
 //        }
 //    }
     "jar"(Jar::class) {
-        enabled = true
 //        dependsOn("minifyJs")
     }
     "processResources" {
