@@ -4,10 +4,7 @@ import cn.bestwu.generator.database.DatabaseMetaData
 import cn.bestwu.generator.database.entity.Table
 import cn.bestwu.generator.dom.java.element.JavaElement
 import cn.bestwu.generator.dsl.Generator
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
@@ -260,21 +257,22 @@ open class GeneratorExtension(
             map.computeIfAbsent(i) { mutableListOf() }.add(it)
             i++
         }
-        val deferred = map.values.map {
-            GlobalScope.async {
-                use {
-                    it.map {
-                        try {
-                            table(it)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            null
+
+        runBlocking {
+            val deferred = map.values.map {
+                async {
+                    use {
+                        it.map {
+                            try {
+                                table(it)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                null
+                            }
                         }
                     }
                 }
             }
-        }
-        runBlocking {
             resultMap.putAll(
                 deferred.flatMap { it.await() }.filterNotNull().associateBy { it.tableName })
         }
