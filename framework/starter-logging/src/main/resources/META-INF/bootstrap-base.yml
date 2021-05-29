@@ -25,3 +25,13 @@ logging:
     com.ulisesbocchio.jasyptspringboot.EncryptablePropertySourceConverter: warn
     com.ulisesbocchio.jasyptspringboot.filter.DefaultLazyPropertyFilter: warn
     com.ulisesbocchio.jasyptspringboot.configuration.EnableEncryptablePropertiesBeanFactoryPostProcessor: warn
+    org.jboss: info
+    io.micrometer: info
+    cn.bestwu: info
+    org.springframework: info
+    org.springframework.cloud: warn
+    jdk.event.security: warn
+    _org.springframework: warn
+    org.springframework.boot.availability: warn
+    org.springframework.boot.actuate: warn
+    org.springframework.web.servlet: warn
