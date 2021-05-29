@@ -5,3 +5,6 @@ cn.bestwu.logging.websocket.WebsocketConfiguration
 # Application Listeners
 org.springframework.context.ApplicationListener=\
 cn.bestwu.logging.BeforeLoggingApplicationListener
+
+org.springframework.boot.env.EnvironmentPostProcessor=\
+cn.bestwu.logging.ConfigEnvironmentPostProcessor

@@ -8,6 +8,7 @@ dependencies {
     api("com.fasterxml.jackson.module:jackson-module-kotlin")
     api("org.springframework.boot:spring-boot-starter-web")
     api("com.google.guava:guava")
+
     api("org.springframework.boot:spring-boot-starter-actuator")
     api("org.springframework.cloud:spring-cloud-starter-config")
 

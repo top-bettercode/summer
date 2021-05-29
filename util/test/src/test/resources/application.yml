@@ -2,7 +2,7 @@ summer:
   security:
     cors:
       enable: true
-    url-filter-ignored: /
+    url-filter-ignored: /test
     session-creation-policy: stateless
   logging:
     spilt-marker:
@@ -16,6 +16,13 @@ summer:
       include-path: /oauth/*
       include-request-body: true
       include-response-body: true
+  autodoc:
+    gen:
+      enable: true
+      source: build/doc
+      output: build/docOutput
+      api-host: http://127.0.0.1:8080
+      doc: true
 
 
 security:
