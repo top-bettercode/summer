@@ -1,7 +1,10 @@
+plugins {
+    `java-library`
+}
+
 subprojects {
     apply {
         plugin("com.jfrog.artifactory")
-        plugin("org.springframework.boot")
     }
     if (arrayOf("excel").contains(name)) {
         apply {
@@ -19,12 +22,8 @@ subprojects {
         compileOnly("org.springframework.boot:spring-boot-configuration-processor")
     }
     tasks {
-        "jar"(Jar::class) {
-            enabled = true
-        }
         "compileJava" {
             dependsOn("processResources")
         }
-        "bootJar" { enabled = false }
     }
 }
