@@ -25,6 +25,7 @@ summer:
       doc: true
 
 
+
 security:
   oauth2:
     client:

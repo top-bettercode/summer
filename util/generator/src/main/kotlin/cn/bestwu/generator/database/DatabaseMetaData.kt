@@ -25,7 +25,10 @@ fun ResultSet.each(rs: ResultSet.() -> Unit) {
     }
 }
 
-class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, private val debug: Boolean = false) : AutoCloseable {
+class DatabaseMetaData(
+    private val datasource: JDBCConnectionConfiguration,
+    private val debug: Boolean = false
+) : AutoCloseable {
 
     private var metaData: java.sql.DatabaseMetaData
     private val catalog: String?
@@ -57,7 +60,8 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
      */
     fun tableNames(): List<String> {
         val tableNames = mutableListOf<String>()
-        metaData.getTables(datasource.catalog, datasource.schema, null, null).each { tableNames.add(getString("TABLE_NAME")) }
+        metaData.getTables(datasource.catalog, datasource.schema, null, null)
+            .each { tableNames.add(getString("TABLE_NAME")) }
         return tableNames
     }
 
@@ -105,8 +109,18 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
                 indexes = mutableListOf()
             }
             metaData.getTables(catalog, curentSchema, curentTableName, null).each {
-                table = Table(productName = databaseProductName, catalog = catalog, schema = curentSchema, tableName = getString("TABLE_NAME"), tableType = getString("TABLE_TYPE"), remarks = getString("REMARKS")?.trim()
-                        ?: "", primaryKeyNames = primaryKeyNames, indexes = indexes, pumlColumns = columns.toMutableList())
+                table = Table(
+                    productName = databaseProductName,
+                    catalog = catalog,
+                    schema = curentSchema,
+                    tableName = getString("TABLE_NAME"),
+                    tableType = getString("TABLE_TYPE"),
+                    remarks = getString("REMARKS")?.trim()
+                        ?: "",
+                    primaryKeyNames = primaryKeyNames,
+                    indexes = indexes,
+                    pumlColumns = columns.toMutableList()
+                )
             }
         }
         if (table == null) {
@@ -117,9 +131,13 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
 
     private fun fixColumns(tableName: String, columns: MutableList<Column>) {
         val databaseDriver = DatabaseDriver.fromJdbcUrl(metaData.url)
-        if (arrayOf(DatabaseDriver.MYSQL, DatabaseDriver.MARIADB, DatabaseDriver.H2).contains(databaseDriver)) {
+        if (arrayOf(DatabaseDriver.MYSQL, DatabaseDriver.MARIADB, DatabaseDriver.H2).contains(
+                databaseDriver
+            )
+        ) {
             try {
-                val prepareStatement = metaData.connection.prepareStatement("SHOW COLUMNS FROM $tableName")
+                val prepareStatement =
+                    metaData.connection.prepareStatement("SHOW COLUMNS FROM $tableName")
                 prepareStatement.executeQuery().each {
                     val find = columns.find { it.columnName == getString(1) }
                     if (find != null) {
@@ -129,7 +147,8 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
                             find.extra = getString(6)
                             if (find.extra.contains("AUTO_INCREMENT", true)) {
                                 find.autoIncrement = true
-                                find.extra = find.extra.replace("AUTO_INCREMENT", "", true).replace("  ", " ", true).trim()
+                                find.extra = find.extra.replace("AUTO_INCREMENT", "", true)
+                                    .replace("  ", " ", true).trim()
                             }
                         } catch (ignore: Exception) {
                         }
@@ -169,7 +188,11 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
         return columns
     }
 
-    private fun fixImportedKeys(curentSchema: String?, curentTableName: String, columns: MutableList<Column>) {
+    private fun fixImportedKeys(
+        curentSchema: String?,
+        curentTableName: String,
+        columns: MutableList<Column>
+    ) {
         metaData.getImportedKeys(catalog, curentSchema, curentTableName).each {
             val find = columns.find { it.columnName == getString("FKCOLUMN_NAME") }!!
             find.isForeignKey = true
@@ -202,10 +225,22 @@ class DatabaseMetaData(private val datasource: JDBCConnectionConfiguration, priv
         val columnDef = getString("COLUMN_DEF")?.trim()?.trim('\'')?.trim()
         val columnSize = getInt("COLUMN_SIZE")
         val remarks = getString("REMARKS")?.replace("[\t\n\r]", "")?.trim()
-                ?: ""
+            ?: ""
         val tableCat = getString("TABLE_CAT")
         val tableSchem = getString("TABLE_SCHEM")
-        val column = Column(tableCat = tableCat, tableSchem = tableSchem, columnName = columnName, typeName = typeName, dataType = dataType, decimalDigits = decimalDigits, columnSize = columnSize, remarks = remarks, nullable = nullable, columnDef = columnDef, unsigned = typeName.contains("UNSIGNED", true))
+        val column = Column(
+            tableCat = tableCat,
+            tableSchem = tableSchem,
+            columnName = columnName,
+            typeName = typeName,
+            dataType = dataType,
+            decimalDigits = decimalDigits,
+            columnSize = columnSize,
+            remarks = remarks,
+            nullable = nullable,
+            columnDef = columnDef,
+            unsigned = typeName.contains("UNSIGNED", true)
+        )
         if (supportsIsAutoIncrement) {
             column.autoIncrement = "YES" == getString("IS_AUTOINCREMENT")
         }
