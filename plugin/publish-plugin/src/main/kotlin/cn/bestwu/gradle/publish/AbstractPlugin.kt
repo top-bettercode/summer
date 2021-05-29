@@ -285,7 +285,6 @@ abstract class AbstractPlugin : Plugin<Project> {
             )
         }
         project.tasks.named("jar", Jar::class.java) {
-            it.name
             it.manifest { manifest ->
                 manifest.attributes(
                     mapOf(
