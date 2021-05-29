@@ -47,7 +47,7 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   private final Interceptor[] interceptors;
 
-  private final TypeHandler<?>[] typeHandlers;
+  private final TypeHandler[] typeHandlers;
 
   private final ResourceLoader resourceLoader;
 
@@ -56,7 +56,7 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   public JpaMybatisAutoConfiguration(
       MybatisProperties properties, ObjectProvider<Interceptor[]> interceptorsProvider,
-      ObjectProvider<TypeHandler<?>[]> typeHandlersProvider,
+      ObjectProvider<TypeHandler[]> typeHandlersProvider,
       ResourceLoader resourceLoader, ObjectProvider<DatabaseIdProvider> databaseIdProvider) {
     this.properties = properties;
     this.interceptors = interceptorsProvider.getIfAvailable();
