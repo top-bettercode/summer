@@ -12,7 +12,6 @@ import cn.bestwu.generator.ddl.SqlLiteToDDL
 import cn.bestwu.generator.dom.java.JavaTypeResolver
 import cn.bestwu.generator.dsl.def.PlantUML
 import cn.bestwu.generator.powerdesigner.PdmReader
-import kotlinx.coroutines.DelicateCoroutinesApi
 import java.io.File
 
 /**

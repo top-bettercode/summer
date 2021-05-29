@@ -3,7 +3,6 @@ package cn.bestwu.logging.operation
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.http.HttpHeaders
 import java.nio.charset.Charset
-import java.util.*
 
 /**
  * Abstract base class for operation requests, request parts, and responses.

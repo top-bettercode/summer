@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
 @ConditionalOnWebApplication
 public class BaseController extends Response {
 
-  protected Logger log = LoggerFactory.getLogger(getClass());
+  protected final Logger log = LoggerFactory.getLogger(getClass());
 
   @Autowired(required = false)
   protected HttpServletRequest request;

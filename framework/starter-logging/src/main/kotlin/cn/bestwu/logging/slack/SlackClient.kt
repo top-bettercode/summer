@@ -107,7 +107,7 @@ class SlackClient(private val authToken: String, logUrl: String?) {
         params.add("content", message.joinToString("").toByteArray())
         params.add("filename", "$title.log")
         params.add("filetype", "text")
-        if (!title.isBlank()) {
+        if (title.isNotBlank()) {
             params.add("title", title)
         }
         params.add("initial_comment", "$title\n$initialComment")

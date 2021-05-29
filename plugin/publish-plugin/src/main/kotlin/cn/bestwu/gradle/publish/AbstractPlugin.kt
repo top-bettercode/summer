@@ -15,14 +15,13 @@ import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.DokkaVersion
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
 import org.jfrog.gradle.plugin.artifactory.dsl.DoubleDelegateWrapper
 import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import java.net.URI
-import java.util.*
 
 /**
  * @author Peter Wu

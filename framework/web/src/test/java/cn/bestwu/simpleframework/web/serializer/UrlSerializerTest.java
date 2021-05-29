@@ -21,7 +21,7 @@ import org.springframework.mock.env.MockEnvironment;
  */
 public class UrlSerializerTest {
 
-  private JacksonExtProperties jacksonExtProperties = new JacksonExtProperties();
+  private final JacksonExtProperties jacksonExtProperties = new JacksonExtProperties();
   final ObjectMapper objectMapper = new ObjectMapper();
 
   @BeforeEach

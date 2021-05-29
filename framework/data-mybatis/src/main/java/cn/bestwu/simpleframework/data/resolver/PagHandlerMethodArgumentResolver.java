@@ -23,9 +23,9 @@ public class PagHandlerMethodArgumentResolver implements HandlerMethodArgumentRe
   private static final String DEFAULT_PREFIX = "";
   private static final String DEFAULT_QUALIFIER_DELIMITER = "_";
   private static final int DEFAULT_MAX_PAGE_SIZE = 2000;
-  private static final Page DEFAULT_PAGE_REQUEST = new Page(1, 20);
+  private static final Page<?> DEFAULT_PAGE_REQUEST = new Page<>(1, 20);
 
-  private Page fallbackPageable = DEFAULT_PAGE_REQUEST;
+  private Page<?> fallbackPageable = DEFAULT_PAGE_REQUEST;
   private String pageParameterName = DEFAULT_PAGE_PARAMETER;
   private String sizeParameterName = DEFAULT_SIZE_PARAMETER;
   private String prefix = DEFAULT_PREFIX;
@@ -33,7 +33,7 @@ public class PagHandlerMethodArgumentResolver implements HandlerMethodArgumentRe
   private int maxPageSize = DEFAULT_MAX_PAGE_SIZE;
   private boolean oneIndexedParameters = false;
 
-  public void setFallbackPageable(Page fallbackPageable) {
+  public void setFallbackPageable(Page<?> fallbackPageable) {
     this.fallbackPageable = fallbackPageable;
   }
 
@@ -92,10 +92,10 @@ public class PagHandlerMethodArgumentResolver implements HandlerMethodArgumentRe
   }
 
   @Override
-  public Page resolveArgument(MethodParameter methodParameter, ModelAndViewContainer mavContainer,
+  public Page<?> resolveArgument(MethodParameter methodParameter, ModelAndViewContainer mavContainer,
       NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
 
-    Page defaultOrFallback = getDefaultFromAnnotationOrFallback(methodParameter);
+    Page<?> defaultOrFallback = getDefaultFromAnnotationOrFallback(methodParameter);
 
     String pageString = webRequest
         .getParameter(getParameterNameToUse(pageParameterName, methodParameter));
@@ -108,7 +108,7 @@ public class PagHandlerMethodArgumentResolver implements HandlerMethodArgumentRe
             false)
             : defaultOrFallback.getSize();
 
-    return new Page(page, pageSize);
+    return new Page<>(page, pageSize);
   }
 
   protected String getParameterNameToUse(String source, MethodParameter parameter) {
@@ -123,7 +123,7 @@ public class PagHandlerMethodArgumentResolver implements HandlerMethodArgumentRe
     return builder.append(source).toString();
   }
 
-  private Page getDefaultFromAnnotationOrFallback(MethodParameter methodParameter) {
+  private Page<?> getDefaultFromAnnotationOrFallback(MethodParameter methodParameter) {
     return fallbackPageable;
   }
 

@@ -26,7 +26,7 @@ class SocketTestClient {
         writer.flush()
         writer.close()
         //		con.disconnect();
-        val `is`: BufferedReader = BufferedReader(InputStreamReader(con.inputStream, "GB18030"))
+        val `is` = BufferedReader(InputStreamReader(con.inputStream, "GB18030"))
         val line = `is`.readLine()
         System.err.println(line)
     }

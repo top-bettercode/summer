@@ -94,9 +94,9 @@ data class Column(
 
 
     val javaType: JavaType
-        get() = JavaTypeResolver.calculateJavaType(this)!!
+        get() = JavaTypeResolver.calculateJavaType(this)
     val jdbcType: String
-        get() = JavaTypeResolver.calculateJdbcTypeName(this)!!
+        get() = JavaTypeResolver.calculateJdbcTypeName(this)
     val javaName: String = GeneratorExtension.javaName(this.columnName)
     val typeDesc: String
         get() = "$typeName${if (containsSize) "($columnSize${if (decimalDigits > 0) ",$decimalDigits" else ""})" else ""}"

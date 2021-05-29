@@ -1,11 +1,18 @@
 package cn.bestwu.simpleframework.web.error;
 
+import cn.bestwu.simpleframework.web.RespEntity;
+import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Peter Wu
@@ -29,7 +36,7 @@ public abstract class AbstractErrorHandler implements IErrorHandler {
   }
 
 
-  public  String getProperty(ConstraintViolation<?> constraintViolation) {
+  public String getProperty(ConstraintViolation<?> constraintViolation) {
     Path propertyPath = constraintViolation.getPropertyPath();
     String property = propertyPath.toString();
     if (propertyPath instanceof PathImpl) {
@@ -39,6 +46,30 @@ public abstract class AbstractErrorHandler implements IErrorHandler {
       property = property.substring(property.lastIndexOf('.') + 1);
     }
     return property;
+  }
+
+  protected void constraintViolationException(ConstraintViolationException error,
+      RespEntity<?> respEntity, Map<String, String> errors,
+      String separator) {
+    String message;
+    respEntity.setHttpStatusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    Set<ConstraintViolation<?>> constraintViolations = error.getConstraintViolations();
+    for (ConstraintViolation<?> constraintViolation : constraintViolations) {
+      String property = getProperty(constraintViolation);
+      String msg;
+      if (constraintViolation.getConstraintDescriptor().getPayload()
+          .contains(NoPropertyPath.class)) {
+        msg = constraintViolation.getMessage();
+      } else {
+        msg = getText(property) + separator + constraintViolation.getMessage();
+      }
+      errors.put(property, msg);
+    }
+    message = errors.values().iterator().next();
+    if (!StringUtils.hasText(message)) {
+      message = "data.valid.failed";
+    }
+    respEntity.setMessage(message);
   }
 
 }

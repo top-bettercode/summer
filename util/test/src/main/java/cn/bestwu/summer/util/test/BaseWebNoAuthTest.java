@@ -51,10 +51,10 @@ public abstract class BaseWebNoAuthTest {
   @Autowired
   protected RequestLoggingProperties requestLoggingProperties;
 
-  protected ObjectMapper objectMapper = new ObjectMapper();
+  protected final ObjectMapper objectMapper = new ObjectMapper();
 
   @BeforeEach
-  public void setup() throws Exception {
+  public void setup() {
 
     //--------------------------------------------
     requestLoggingProperties.setForceRecord(true);

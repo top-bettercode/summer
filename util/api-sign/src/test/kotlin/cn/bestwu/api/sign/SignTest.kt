@@ -24,7 +24,7 @@ class SignTest {
 
     @Test
     fun testGetSuccess() {
-        val entity = testRestTemplate.getForEntity("/test?limit=25&page=0&size=25&start=0&type=0&sign=" + api.sign(LinkedMultiValueMap<String, String>(mutableMapOf<String, List<String>>(
+        val entity = testRestTemplate.getForEntity("/test?limit=25&page=0&size=25&start=0&type=0&sign=" + api.sign(LinkedMultiValueMap(mutableMapOf<String, List<String>>(
                 "limit" to listOf("25"),
                 "page" to listOf("0"),
                 "size" to listOf("25"),
@@ -45,7 +45,7 @@ class SignTest {
 
     @Test
     fun testPostSuccess() {
-        val requestParams = LinkedMultiValueMap<String, String>(mutableMapOf<String, List<String>>(
+        val requestParams = LinkedMultiValueMap(mutableMapOf<String, List<String>>(
                 "limit" to listOf("25"),
                 "page" to listOf("0"),
                 "size" to listOf("25"),
@@ -62,7 +62,7 @@ class SignTest {
 
     @Test
     fun testPostFail() {
-        val requestParams = LinkedMultiValueMap<String, String>(mutableMapOf<String, List<String>>(
+        val requestParams = LinkedMultiValueMap(mutableMapOf<String, List<String>>(
                 "limit" to listOf("25"),
                 "page" to listOf("0"),
                 "size" to listOf("25"),
@@ -77,7 +77,7 @@ class SignTest {
 
     @Test
     fun testEmptyParamsSuccess() {
-        val requestParams = LinkedMultiValueMap<String, String>(mutableMapOf<String, List<String>>(
+        val requestParams = LinkedMultiValueMap(mutableMapOf<String, List<String>>(
         ))
         val entity = testRestTemplate.postForEntity("/test", requestParams, String::class.java)
         org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
@@ -87,7 +87,7 @@ class SignTest {
 
     @Test
     fun testSignIgnoreTypeSuccess() {
-        val requestParams = LinkedMultiValueMap<String, String>(mutableMapOf<String, List<String>>(
+        val requestParams = LinkedMultiValueMap(mutableMapOf<String, List<String>>(
                 "limit" to listOf("25"),
                 "page" to listOf("0"),
                 "size" to listOf("25"),
@@ -102,7 +102,7 @@ class SignTest {
 
     @Test
     fun testSignIgnoreMthodSuccess() {
-        val requestParams = LinkedMultiValueMap<String, String>(mutableMapOf<String, List<String>>(
+        val requestParams = LinkedMultiValueMap(mutableMapOf<String, List<String>>(
                 "limit" to listOf("25"),
                 "page" to listOf("0"),
                 "size" to listOf("25"),

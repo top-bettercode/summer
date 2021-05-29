@@ -3,6 +3,7 @@ package cn.bestwu.simpleframework.data.config;
 import cn.bestwu.simpleframework.data.Repositories;
 import cn.bestwu.simpleframework.data.dsl.EntityPathWrapper;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 import java.util.List;
 import java.util.Set;
 import org.mybatis.spring.mapper.MapperFactoryBean;
@@ -24,16 +25,18 @@ public class MybatisConfiguration {
   @Value("${summer.data.mybatis.binding.query-dsl.base-packages:}")
   private String[] basePackages;
 
-  private final List<MapperFactoryBean> mapperFactoryBeans;
+  private final List<MapperFactoryBean<? extends BaseMapper<?>>> mapperFactoryBeans;
 
   public MybatisConfiguration(
-      @Autowired(required = false) List<MapperFactoryBean> mapperFactoryBeans) {
+      @Autowired(required = false) List<MapperFactoryBean<? extends BaseMapper<?>>> mapperFactoryBeans) {
     this.mapperFactoryBeans = mapperFactoryBeans;
   }
 
   @Bean
-  public Repositories repositories(ApplicationContext applicationContext,PackageScanClassResolver packageScanClassResolver) {
-    Set<String> packages = PackageScanClassResolver.detectPackagesToScan(applicationContext,basePackages);
+  public Repositories repositories(ApplicationContext applicationContext,
+      PackageScanClassResolver packageScanClassResolver) {
+    Set<String> packages = PackageScanClassResolver
+        .detectPackagesToScan(applicationContext, basePackages);
     Set<Class<?>> allSubClasses = packageScanClassResolver
         .findImplementations(EntityPathWrapper.class, packages.toArray(new String[0]));
     return new Repositories(mapperFactoryBeans, allSubClasses);

@@ -227,20 +227,16 @@ open class GeneratorExtension(
     fun <T> use(metaData: DatabaseMetaData.() -> T): T {
         Class.forName(datasource.driverClass).getConstructor().newInstance()
         val databaseMetaData = DatabaseMetaData(datasource, debug)
-        try {
-            return metaData(databaseMetaData)
-        } finally {
-            databaseMetaData.close()
+        databaseMetaData.use {
+            return metaData(it)
         }
     }
 
     fun <T> run(connectionFun: Connection.() -> T): T {
         Class.forName(datasource.driverClass).getConstructor().newInstance()
         val connection = DriverManager.getConnection(datasource.url, datasource.properties)
-        try {
-            return connectionFun(connection)
-        } finally {
-            connection.close()
+        connection.use {
+            return connectionFun(it)
         }
     }
 
@@ -358,7 +354,7 @@ class JDBCConnectionConfiguration(
 
     var driverClass: String = ""
         get() {
-            return if (field.isBlank() && !url.isBlank()) {
+            return if (field.isBlank() && url.isNotBlank()) {
                 databaseDriver.driverClassName ?: ""
             } else {
                 field

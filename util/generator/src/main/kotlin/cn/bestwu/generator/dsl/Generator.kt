@@ -270,10 +270,10 @@ abstract class Generator {
         }
 
     open var module: String = ""
-        get() = if (extension.module.isNotBlank()) extension.module else field
+        get() = extension.module.ifBlank { field }
 
     open val moduleName: String
-        get() = if (table.moduleName.isNotBlank()) table.moduleName else extension.moduleName
+        get() = table.moduleName.ifBlank { extension.moduleName }
 
     protected open val projectName: String
         get() = extension.projectName
@@ -342,10 +342,8 @@ abstract class Generator {
         get() {
             val comment =
                 if (table.remarks.endsWith("表")) table.remarks.substringBeforeLast("表") else table.remarks
-            return if (comment.isBlank()) {
+            return comment.ifBlank {
                 extension.remarks
-            } else {
-                comment
             }
         }
 

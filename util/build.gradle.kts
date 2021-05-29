@@ -14,6 +14,10 @@ subprojects {
             plugin("summer.kotlin-publish")
         }
     }
+    dependencies {
+        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+        compileOnly("org.springframework.boot:spring-boot-configuration-processor")
+    }
     tasks {
         "jar"(Jar::class) {
             enabled = true

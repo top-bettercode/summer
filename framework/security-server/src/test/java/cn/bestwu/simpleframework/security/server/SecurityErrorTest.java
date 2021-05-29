@@ -63,7 +63,7 @@ public class SecurityErrorTest {
   }
 
   @Test
-  public void disableUsername() throws Exception {
+  public void disableUsername() {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
     params.add("scope", "trust");

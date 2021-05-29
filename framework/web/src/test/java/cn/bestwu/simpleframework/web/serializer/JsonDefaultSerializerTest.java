@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
  */
 public class JsonDefaultSerializerTest {
 
-  private JacksonExtProperties jacksonExtProperties = new JacksonExtProperties();
+  private final JacksonExtProperties jacksonExtProperties = new JacksonExtProperties();
 
   @Test
   public void serialize() throws JsonProcessingException {

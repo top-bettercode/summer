@@ -182,7 +182,7 @@ object JavaTypeResolver {
         return typeNameMap[calculateJdbcTypeName(jdbcTypeName)]
     }
 
-    fun calculateJavaType(column: Column): JavaType? {
+    fun calculateJavaType(column: Column): JavaType {
         if (softDeleteAsBoolean && softDeleteColumnName != null && softDeleteColumnName == column.columnName) {
             return JavaType("java.lang.Boolean")
         }
@@ -200,7 +200,7 @@ object JavaTypeResolver {
             answer
     }
 
-    fun calculateJdbcTypeName(column: Column): String? {
+    fun calculateJdbcTypeName(column: Column): String {
         val jdbcTypeInformation = calculateJdbcTypeInformation(column)
         return jdbcTypeInformation.jdbcTypeName
     }

@@ -50,7 +50,7 @@ class Enumerator<T> : Enumeration<T> {
      *
      * @param collection Collection whose values should be enumerated
      */
-    constructor(collection: Collection<T>) : this(collection.iterator()) {}
+    constructor(collection: Collection<T>) : this(collection.iterator())
 
     /**
      * Return an Enumeration over the values of the specified Collection.
@@ -58,7 +58,7 @@ class Enumerator<T> : Enumeration<T> {
      * @param collection Collection whose values should be enumerated
      * @param clone true to clone iterator
      */
-    constructor(collection: Collection<T>, clone: Boolean) : this(collection.iterator(), clone) {}
+    constructor(collection: Collection<T>, clone: Boolean) : this(collection.iterator(), clone)
 
     /**
      * Return an Enumeration over the values returned by the specified Iterator.
@@ -92,7 +92,7 @@ class Enumerator<T> : Enumeration<T> {
      *
      * @param map Map whose values should be enumerated
      */
-    constructor(map: Map<*, T>) : this(map.values.iterator()) {}
+    constructor(map: Map<*, T>) : this(map.values.iterator())
 
     /**
      * Return an Enumeration over the values of the specified Map.
@@ -100,7 +100,7 @@ class Enumerator<T> : Enumeration<T> {
      * @param map Map whose values should be enumerated
      * @param clone true to clone iterator
      */
-    constructor(map: Map<*, T>, clone: Boolean) : this(map.values.iterator(), clone) {}
+    constructor(map: Map<*, T>, clone: Boolean) : this(map.values.iterator(), clone)
     // ~ Methods
     // ========================================================================================================
     /**

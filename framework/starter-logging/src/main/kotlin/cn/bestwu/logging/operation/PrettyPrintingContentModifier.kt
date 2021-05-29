@@ -122,7 +122,7 @@ object PrettyPrintingContentModifier {
         private val objectMapper = ObjectMapper()
             .configure(SerializationFeature.INDENT_OUTPUT, true)
             .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
-            .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true);
+            .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
 
         init {
             objectMapper.nodeFactory = JsonNodeFactory.withExactBigDecimals(true)

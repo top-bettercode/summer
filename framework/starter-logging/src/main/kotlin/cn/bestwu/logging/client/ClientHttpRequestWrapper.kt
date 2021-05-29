@@ -1,7 +1,6 @@
 package cn.bestwu.logging.client
 
 import cn.bestwu.logging.RequestLoggingConfig
-import cn.bestwu.logging.client.ClientHttpRequestWrapper
 import cn.bestwu.logging.operation.Operation
 import cn.bestwu.logging.operation.OperationResponse
 import cn.bestwu.logging.operation.RequestConverter
@@ -56,14 +55,14 @@ class ClientHttpRequestWrapper(
                 log.info(
                     operation.toString(
                         RequestLoggingConfig(
-                            true,
-                            true,
-                            true,
-                            arrayOf(),
-                            arrayOf(),
-                            true,
-                            true,
-                            -1
+                            includeRequestBody = true,
+                            includeResponseBody = true,
+                            includeTrace = true,
+                            encryptHeaders = arrayOf(),
+                            encryptParameters = arrayOf(),
+                            format = true,
+                            ignoredTimeout = true,
+                            timeoutAlarmSeconds = -1
                         )
                     )
                 )

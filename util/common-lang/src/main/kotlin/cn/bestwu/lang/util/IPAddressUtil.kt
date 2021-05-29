@@ -102,7 +102,6 @@ object IPAddressUtil {
     fun getMACAddress(ipAddress: String): String {
         var str: String?
         var strMAC = ""
-        val macAddress: String
         try {
             val pp = Runtime.getRuntime().exec("nbtstat -a $ipAddress")
             val ir = InputStreamReader(pp.inputStream)
@@ -124,7 +123,8 @@ object IPAddressUtil {
             return "Error!"
         }
 
-        macAddress = (strMAC.substring(0, 2) + ":" + strMAC.substring(3, 5) + ":" + strMAC.substring(6, 8) + ":"
+        val macAddress: String =
+            (strMAC.substring(0, 2) + ":" + strMAC.substring(3, 5) + ":" + strMAC.substring(6, 8) + ":"
                 + strMAC.substring(9, 11) + ":" + strMAC.substring(12, 14) + ":" + strMAC
                 .substring(15, 17))
         return macAddress

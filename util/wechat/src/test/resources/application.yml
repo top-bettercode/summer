@@ -1,3 +1,33 @@
+summer:
+  logging:
+    spilt-marker:
+      request: info
+    files:
+      path: @logging.files.path@
+    spilt-level:
+      - error
+      - warn
+    request:
+      include-path: /oauth/*
+      include-request-body: true
+      include-response-body: true
+  wechat:
+    app-id: @wechat.appid@
+    secret: @wechat.secret@
+    token: @wechat.token@
+    aes-key: @wechat.aes-key@
+    app-base-url: @wechat.app-base-url@
+    wechat-base-url: @wechat.wechat-base-url@
+    wechat-web-oauth-url: @wechat.wechat-web-oauth-url@
+  autodoc:
+    gen:
+      enable: @autodoc.enable@
+      version: @autodoc.version@
+      table-prefixes: @generator.tablePrefixs@
+      data-type: @generator.dataType@
+      source: ../../app/src/doc
+      root-source: ../../doc
+
 logging:
   level:
     root: info
@@ -22,34 +52,3 @@ logging:
     javax.xml: warn
     net.sf: warn
     javax.activation: warn
-  spilt-marker:
-    request: info
-  files:
-    path: @logging.files.path@
-  spilt-level:
-    - error
-    - warn
-  request:
-    include-path: /oauth/*
-    include-request-body: true
-    include-response-body: true
-app:
-  web:
-    wrap.enable: true
-    ok.enable: true
-wechat:
-  app-id: @wechat.appid@
-  secret: @wechat.secret@
-  token: @wechat.token@
-  aes-key: @wechat.aes-key@
-  app-base-url: @wechat.app-base-url@
-  wechat-base-url: @wechat.wechat-base-url@
-  wechat-web-oauth-url: @wechat.wechat-web-oauth-url@
-autodoc:
-  gen:
-    enable: @autodoc.enable@
-    version: @autodoc.version@
-    table-prefixs: @generator.tablePrefixs@
-    data-type: @generator.dataType@
-    source: ../../app/src/doc
-    root-source: ../../doc
