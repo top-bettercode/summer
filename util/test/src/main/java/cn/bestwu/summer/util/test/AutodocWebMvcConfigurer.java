@@ -10,9 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.hateoas.server.core.AnnotationMappingDiscoverer;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -30,7 +28,6 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
     this.securityProperties = securityProperties;
   }
 
-  @Deprecated
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(new AsyncHandlerInterceptor() {
@@ -40,9 +37,7 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
           Object handler) {
         Set<String> requiredHeaders = Autodoc.getRequiredHeaders();
         if (handler instanceof HandlerMethod) {
-          AnnotationMappingDiscoverer DISCOVERER = new AnnotationMappingDiscoverer(
-              RequestMapping.class);
-          String url = DISCOVERER.getMapping(((HandlerMethod) handler).getMethod());
+          String url = request.getServletPath();
           if (!AnnotatedUtils.hasAnnotation((HandlerMethod) handler, Anonymous.class) && !securityProperties
               .ignored(url)) {
             requiredHeaders = new HashSet<>(requiredHeaders);

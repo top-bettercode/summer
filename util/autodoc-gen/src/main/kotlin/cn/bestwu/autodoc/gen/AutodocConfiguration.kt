@@ -20,7 +20,7 @@ import javax.annotation.PostConstruct
 /**
  * @author Peter Wu
  */
-@ConditionalOnProperty(prefix = "autodoc.gen", name = ["enable"], havingValue = "true")
+@ConditionalOnProperty(prefix = "summer.autodoc.gen", name = ["enable"], havingValue = "true")
 @EnableConfigurationProperties(GenProperties::class, ApiSignProperties::class)
 @Configuration
 @ImportAutoConfiguration(RequestLoggingConfiguration::class)
