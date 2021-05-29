@@ -233,7 +233,7 @@ class ProjectPlugin : Plugin<Project> {
                         dependency("com.aliyun:aliyun-java-sdk-core:4.5.20")
                         dependency("com.aliyun:aliyun-java-sdk-dysmsapi:2.1.0")
                         dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
-                        dependency("jakarta.persistence:jakarta.persistence-api:3.0.0")
+                        dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
 
                         dependency("org.bouncycastle:bcpkix-jdk15on:1.68")
                         dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
