@@ -4,14 +4,12 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.core.CoreConstants
 import cn.bestwu.lang.util.LocalDateTimeHelper
-import cn.bestwu.logging.annotation.NoRequestLogging
 import cn.bestwu.logging.logback.Logback2LoggingSystem
 import cn.bestwu.logging.logback.PrettyMessageHTMLLayout
 import org.slf4j.impl.StaticLoggerBinder
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.boot.actuate.endpoint.annotation.Selector
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders
@@ -20,12 +18,8 @@ import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.StreamUtils
 import org.springframework.util.StringUtils
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
 import java.io.File
 import java.io.FileInputStream
-import java.io.IOException
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.net.URLEncoder
@@ -238,7 +232,7 @@ class LogsEndpoint(
                                 else -> null
                             }
                             if (llevel != null) {
-                                if (!msg.isBlank()) {
+                                if (msg.isNotBlank()) {
                                     writer.println(
                                         prettyMessageHTMLLayout.doLayout(
                                             msg.toString(), level
@@ -253,7 +247,7 @@ class LogsEndpoint(
                                 msg.append(it)
                             }
                         }
-                        if (!msg.isBlank()) {
+                        if (msg.isNotBlank()) {
                             writer.println(
                                 prettyMessageHTMLLayout.doLayout(
                                     msg.toString(), level

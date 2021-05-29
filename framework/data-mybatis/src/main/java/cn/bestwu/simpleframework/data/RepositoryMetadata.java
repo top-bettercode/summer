@@ -40,15 +40,15 @@ public class RepositoryMetadata {
   /**
    * 创建资源元数据
    *
-   * @param repository 仓库
+   * @param repository          仓库
    * @param repositoryInterface repositoryInterface
-   * @param queryDsls queryDsls
+   * @param queryDsls           queryDsls
    * @throws NoSuchMethodException NoSuchMethodException
-   * @throws NoSuchFieldException NoSuchFieldException
+   * @throws NoSuchFieldException  NoSuchFieldException
    */
-  public RepositoryMetadata(BaseMapper repository,
-      Class<? extends BaseMapper> repositoryInterface,
-      Map<Class, Class> queryDsls) throws NoSuchFieldException, NoSuchMethodException {
+  public RepositoryMetadata(BaseMapper<?> repository,
+      Class<? extends BaseMapper<?>> repositoryInterface,
+      Map<Class<?>, Class> queryDsls) throws NoSuchFieldException, NoSuchMethodException {
     this.repository = repository;
 
     init(repositoryInterface);
@@ -85,9 +85,9 @@ public class RepositoryMetadata {
           .getRawType().getTypeName().equals(BaseMapper.class.getName())) {
         Type[] typeArguments = ((ParameterizedType) genericInterface)
             .getActualTypeArguments();
-        modelClass = (Class) typeArguments[0];
+        modelClass = (Class<?>) typeArguments[0];
       } else if (genericInterface instanceof Class
-          && ((Class) genericInterface).getGenericInterfaces().length > 0) {
+          && ((Class<?>) genericInterface).getGenericInterfaces().length > 0) {
         init((Class<?>) genericInterface);
       }
     }
@@ -137,8 +137,9 @@ public class RepositoryMetadata {
     return queryDslType;
   }
 
-  public EntityPathWrapper getWrapper(Class<EntityPathWrapper> parameterType)
-      throws IllegalAccessException, InstantiationException {
-    return queryDslType == null ? parameterType.newInstance() : queryDslType.newInstance();
+  public EntityPathWrapper<?, ?> getWrapper(Class<EntityPathWrapper<?, ?>> parameterType)
+      throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    return queryDslType == null ? parameterType.getDeclaredConstructor().newInstance()
+        : queryDslType.getDeclaredConstructor().newInstance();
   }
 }

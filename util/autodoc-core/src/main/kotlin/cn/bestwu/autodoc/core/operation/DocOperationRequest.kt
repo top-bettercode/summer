@@ -33,8 +33,6 @@ class DocOperationRequest(operationRequest: OperationRequest = OperationRequest(
                            * 请求体参数说明
                            */
                           var contentExt: LinkedHashSet<Field> = LinkedHashSet()
-) : OperationRequest(operationRequest.uri, operationRequest.restUri, operationRequest.uriVariables, operationRequest.method, operationRequest.headers, operationRequest.cookies, operationRequest.remoteUser, operationRequest.parameters, operationRequest.parts.apply {
-    forEach {
-        it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)
-    }
+) : OperationRequest(operationRequest.uri, operationRequest.restUri, operationRequest.uriVariables, operationRequest.method, operationRequest.headers, operationRequest.cookies, operationRequest.remoteUser, operationRequest.parameters, operationRequest.parts.onEach {
+    it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)
 }, operationRequest.content, operationRequest.dateTime)

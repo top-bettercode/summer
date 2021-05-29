@@ -5,7 +5,6 @@ import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -48,20 +47,8 @@ public class DefaultErrorHandler extends AbstractErrorHandler {
           ((ConversionFailedException) error).getValue(),
           ((ConversionFailedException) error).getTargetType());
     } else if (error instanceof ConstraintViolationException) {//数据验证
-      ConstraintViolationException er = (ConstraintViolationException) error;
-      Set<ConstraintViolation<?>> constraintViolations = er.getConstraintViolations();
-      for (ConstraintViolation<?> constraintViolation : constraintViolations) {
-        String property = getProperty(constraintViolation);
-        String msg;
-        if (constraintViolation.getConstraintDescriptor().getPayload()
-            .contains(NoPropertyPath.class)) {
-          msg = constraintViolation.getMessage();
-        } else {
-          msg = getText(property) + separator + constraintViolation.getMessage();
-        }
-        errors.put(property, msg);
-      }
-      message = errors.values().iterator().next();
+      constraintViolationException((ConstraintViolationException) error, respEntity, errors,
+          separator);
     } else if (error instanceof HttpMediaTypeNotAcceptableException) {
       message =
           "MediaType not Acceptable!Must ACCEPT:" + ((HttpMediaTypeNotAcceptableException) error)

@@ -20,7 +20,6 @@ constructor(inputStream: Any) {
      * @return 格式名
      */
     private var formatName: String
-        private set
     /**
      * @return 宽度
      */
@@ -30,7 +29,6 @@ constructor(inputStream: Any) {
      * @return 高度
      */
     private var height: Int = 0
-        private set
     /**
      * @return 格式
      */
@@ -278,7 +276,7 @@ constructor(inputStream: Any) {
 
     }
 
-    fun asBufferedImages(): BufferedImage? {
+    fun asBufferedImages(): BufferedImage {
         return this.bufferedImage
     }
 

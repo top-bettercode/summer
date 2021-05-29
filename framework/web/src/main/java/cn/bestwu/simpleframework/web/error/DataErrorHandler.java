@@ -1,15 +1,11 @@
 package cn.bestwu.simpleframework.web.error;
 
 import cn.bestwu.simpleframework.web.RespEntity;
-import cn.bestwu.simpleframework.web.validator.NoPropertyPath;
 import java.util.Map;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.util.StringUtils;
@@ -33,28 +29,8 @@ public class DataErrorHandler extends AbstractErrorHandler {
       error = ((TransactionSystemException) error).getRootCause();
 
       if (error instanceof ConstraintViolationException) {
-        respEntity.setHttpStatusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
-
-        ConstraintViolationException er = (ConstraintViolationException) error;
-        Set<ConstraintViolation<?>> constraintViolations = er.getConstraintViolations();
-        for (ConstraintViolation<?> constraintViolation : constraintViolations) {
-          String property = getProperty(constraintViolation);
-          String msg;
-          if (constraintViolation.getConstraintDescriptor().getPayload()
-              .contains(NoPropertyPath.class)) {
-            msg = constraintViolation.getMessage();
-          } else {
-            msg =
-                getText(property) + separator + constraintViolation
-                    .getMessage();
-          }
-          errors.put(property, msg);
-        }
-        message = errors.values().iterator().next();
-
-        if (!StringUtils.hasText(message)) {
-          message = "data.valid.failed";
-        }
+        constraintViolationException((ConstraintViolationException) error, respEntity, errors,
+            separator);
       }
     } else if (error instanceof DataIntegrityViolationException) {
       String specificCauseMessage = ((DataIntegrityViolationException) error).getMostSpecificCause()

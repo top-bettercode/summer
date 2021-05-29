@@ -74,7 +74,7 @@ class MEntity : MModuleJavaGenerator() {
                     if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                         javadoc {
                             +"/**"
-                            +" * @return ${(if (it.remarks.isBlank()) "" else it.remarks)}${if (it.columnDef.isNullOrBlank()) "" else " 默认值：${it.columnDef}"}"
+                            +" * @return ${(it.remarks.ifBlank { "" })}${if (it.columnDef.isNullOrBlank()) "" else " 默认值：${it.columnDef}"}"
                             +" */"
                         }
                     +"return ${it.javaName};"

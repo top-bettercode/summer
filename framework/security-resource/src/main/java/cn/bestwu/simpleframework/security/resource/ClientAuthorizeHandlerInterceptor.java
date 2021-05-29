@@ -9,14 +9,14 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 /**
  * 权限拦截
  *
  * @author Peter Wu
  */
-public class ClientAuthorizeHandlerInterceptor extends HandlerInterceptorAdapter {
+public class ClientAuthorizeHandlerInterceptor implements AsyncHandlerInterceptor {
 
   private final ClientDetailsProperties clientDetailsProperties;
   private final BasicAuthenticationConverter authenticationConverter=new BasicAuthenticationConverter();

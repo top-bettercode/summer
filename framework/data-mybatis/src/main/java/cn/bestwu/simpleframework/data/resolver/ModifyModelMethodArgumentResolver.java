@@ -106,7 +106,7 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
 
   protected Object resolveName(String name,
       NativeWebRequest request) {
-    Map uriTemplateVars = (Map) request
+    Map<?, ?> uriTemplateVars = (Map<?, ?>) request
         .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE,
             RequestAttributes.SCOPE_REQUEST);
     return (uriTemplateVars != null) ? uriTemplateVars.get(name) : null;
@@ -144,14 +144,14 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
       throw new ResourceNotFoundException();
     }
 
-    Object oldModel = modelType.newInstance();
+    Object oldModel = modelType.getDeclaredConstructor().newInstance();
     BeanUtils.copyProperties(modelForUpdate, oldModel);
     webRequest.setAttribute(ModifyModel.OLD_MODEL, oldModel, NativeWebRequest.SCOPE_REQUEST);
 
     if (parameterType.equals(modelType)) {
       return modelForUpdate;
     } else {
-      Object paramForUpdate = parameterType.newInstance();
+      Object paramForUpdate = parameterType.getDeclaredConstructor().newInstance();
       BeanUtils.copyProperties(modelForUpdate, paramForUpdate);
       return paramForUpdate;
     }

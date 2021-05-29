@@ -110,9 +110,7 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
     }
 
     fun postmanEvents(operation: DocOperation, autodoc: AutodocExtension): List<Event> {
-        return listOf(Event("prerequest", Script(exec = if (operation.prerequest.isNotEmpty()) operation.prerequest else defaultPrerequestExec(operation))), Event("test", Script(exec = if (operation.testExec.isNotEmpty()) {
-            operation.testExec
-        } else {
+        return listOf(Event("prerequest", Script(exec = operation.prerequest.ifEmpty { defaultPrerequestExec(operation) })), Event("test", Script(exec = operation.testExec.ifEmpty {
             defaultPostmanTestExec(operation, autodoc)
         })))
     }

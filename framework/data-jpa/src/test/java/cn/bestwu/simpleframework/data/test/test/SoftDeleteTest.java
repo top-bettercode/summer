@@ -81,7 +81,7 @@ public class SoftDeleteTest {
 
   @Test
   public void methdQuery() {
-    repository.deleteInBatch(batch);
+    repository.deleteAllInBatch(batch);
 
     List<User> users = repository.findByLastname("Matthews");
     System.err.println(users);

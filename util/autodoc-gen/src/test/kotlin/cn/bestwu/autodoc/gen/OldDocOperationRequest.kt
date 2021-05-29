@@ -21,11 +21,9 @@ class OldDocOperationRequest(operationRequest: OperationRequest = OperationReque
                              /**
                            * 必填参数
                            */
-                          var requiredParameters: Set<String> = setOf()) : OperationRequest(operationRequest.uri, operationRequest.restUri, operationRequest.uriVariables, operationRequest.method, operationRequest.headers, operationRequest.cookies, operationRequest.remoteUser, operationRequest.parameters, operationRequest.parts.apply {
-    forEach {
-        it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)
-    }
-}, operationRequest.content, operationRequest.dateTime) {
+                          var requiredParameters: Set<String> = setOf()) : OperationRequest(operationRequest.uri, operationRequest.restUri, operationRequest.uriVariables, operationRequest.method, operationRequest.headers, operationRequest.cookies, operationRequest.remoteUser, operationRequest.parameters, operationRequest.parts.onEach {
+                              it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)
+                          }, operationRequest.content, operationRequest.dateTime) {
 
     val docParameters: Map<String, Any?>
         @JsonIgnore

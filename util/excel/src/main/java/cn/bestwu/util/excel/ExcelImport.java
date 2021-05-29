@@ -252,7 +252,7 @@ public class ExcelImport {
       throws Exception {
     boolean notAllBlank = false;
     int column = c;
-    F o = cls.getConstructor().newInstance();
+    F o = cls.getDeclaredConstructor().newInstance();
     List<CellError> rowErrors = new ArrayList<>();
     r = row.getRowNum();
 

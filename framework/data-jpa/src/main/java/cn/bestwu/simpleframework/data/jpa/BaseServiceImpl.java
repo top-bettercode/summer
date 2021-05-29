@@ -49,8 +49,8 @@ public class BaseServiceImpl<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
-  public void deleteInBatch(Iterable<T> entities) {
-    repository.deleteInBatch(entities);
+  public void deleteAllInBatch(Iterable<T> entities) {
+    repository.deleteAllInBatch(entities);
   }
 
   @Override

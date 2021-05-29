@@ -16,8 +16,8 @@ abstract class JavaGenerator : Generator() {
 
     open var packageName: String = ""
         get() {
-            return if (field.isBlank()) {
-                var packageName = if (field.isBlank()) basePackageName else field
+            return field.ifBlank {
+                var packageName = field.ifBlank { basePackageName }
                 if (settings["no-modules"] == null)
                     packageName = "$packageName.modules"
                 if (extension.userModule && module.isNotBlank()) {
@@ -25,14 +25,12 @@ abstract class JavaGenerator : Generator() {
                 } else {
                     packageName
                 }
-            } else {
-                field
             }
         }
 
     open var basePackageName: String = ""
         get() {
-            return if (field.isBlank()) (if (extension.projectPackage) "${extension.packageName}.$projectName" else extension.packageName) else field
+            return field.ifBlank { (if (extension.projectPackage) "${extension.packageName}.$projectName" else extension.packageName) }
         }
 
     override val name: String

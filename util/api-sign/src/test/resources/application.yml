@@ -23,9 +23,3 @@ logging:
     javax.xml: warn
     net.sf: warn
     javax.activation: warn
-  request:
-    include-response-body: true
-    include-request-body: true
-api:
-  sign:
-    enabled: true

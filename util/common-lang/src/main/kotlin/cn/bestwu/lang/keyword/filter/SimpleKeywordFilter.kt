@@ -4,7 +4,6 @@ import cn.bestwu.lang.keyword.CharNode
 import cn.bestwu.lang.keyword.MatchType
 import cn.bestwu.lang.keyword.replace.DefaultReplaceStrategy
 import cn.bestwu.lang.keyword.replace.ReplaceStrategy
-import java.util.*
 
 /**
  * 简单实现

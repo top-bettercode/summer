@@ -10,7 +10,6 @@ import cn.bestwu.generator.dsl.Generators
 import cn.bestwu.generator.dsl.def.PlantUML
 import cn.bestwu.generator.powerdesigner.PdmReader
 import cn.bestwu.generator.puml.PumlConverter
-import kotlinx.coroutines.DelicateCoroutinesApi
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceFileReader

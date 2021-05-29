@@ -23,7 +23,7 @@ public class Repositories implements Iterable<Class<?>> {
   private final Logger log = LoggerFactory.getLogger(Repositories.class);
   private final Map<Class<?>, RepositoryMetadata> repositoryMetadatas;
 
-  public Repositories(List<MapperFactoryBean> mapperFactoryBeans,
+  public Repositories(List<MapperFactoryBean<? extends BaseMapper<?>>> mapperFactoryBeans,
       Set<Class<?>> allSubClasses) {
     this.repositoryMetadatas = new HashMap<>();
 
@@ -32,12 +32,12 @@ public class Repositories implements Iterable<Class<?>> {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private void populateRepositoryMetadata(List<MapperFactoryBean> mapperFactoryBeans,
+  private void populateRepositoryMetadata(
+      List<MapperFactoryBean<? extends BaseMapper<?>>> mapperFactoryBeans,
       Set<Class<?>> allSubClasses) {
-    Map<Class, Class> queryDsls = new HashMap<>();
+    Map<Class<?>, Class> queryDsls = new HashMap<>();
     for (Class<?> queryDslType : allSubClasses) {
-      Class<?> modelClass = (Class) ((ParameterizedType) queryDslType.getGenericSuperclass())
+      Class<?> modelClass = (Class<?>) ((ParameterizedType) queryDslType.getGenericSuperclass())
           .getActualTypeArguments()[1];
       if (log.isTraceEnabled()) {
         log.trace("Detected queryDsl:{}=>{}", modelClass, queryDslType);
@@ -45,10 +45,10 @@ public class Repositories implements Iterable<Class<?>> {
       queryDsls.put(modelClass, queryDslType);
     }
     try {
-      for (MapperFactoryBean mapperFactoryBean : mapperFactoryBeans) {
+      for (MapperFactoryBean<? extends BaseMapper<?>> mapperFactoryBean : mapperFactoryBeans) {
         if (BaseMapper.class.isAssignableFrom(mapperFactoryBean.getMapperInterface())) {
           RepositoryMetadata repositoryMetadata = new RepositoryMetadata(
-              (BaseMapper) mapperFactoryBean.getObject(), mapperFactoryBean.getMapperInterface(),
+              mapperFactoryBean.getObject(), mapperFactoryBean.getMapperInterface(),
               queryDsls);
           putRepositoryMetadata(repositoryMetadata);
         }

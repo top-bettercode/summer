@@ -27,7 +27,7 @@ open class AutodocExtension(
         var properties: Map<Any, Any?> = emptyMap()) {
 
     var projectName: String = ""
-        get() = if (field.isBlank()) "接口文档" else field
+        get() = field.ifBlank { "接口文档" }
 
 
     val outputFile: File

@@ -1,16 +1,3 @@
-/**
- * Copyright 2015-2019 the original author or authors.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
 package cn.bestwu.simpleframework.data.jpa.config;
 
 import com.github.pagehelper.PageInterceptor;
@@ -60,7 +47,7 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   private final Interceptor[] interceptors;
 
-  private final TypeHandler[] typeHandlers;
+  private final TypeHandler<?>[] typeHandlers;
 
   private final ResourceLoader resourceLoader;
 
@@ -69,7 +56,7 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   public JpaMybatisAutoConfiguration(
       MybatisProperties properties, ObjectProvider<Interceptor[]> interceptorsProvider,
-      ObjectProvider<TypeHandler[]> typeHandlersProvider,
+      ObjectProvider<TypeHandler<?>[]> typeHandlersProvider,
       ResourceLoader resourceLoader, ObjectProvider<DatabaseIdProvider> databaseIdProvider) {
     this.properties = properties;
     this.interceptors = interceptorsProvider.getIfAvailable();

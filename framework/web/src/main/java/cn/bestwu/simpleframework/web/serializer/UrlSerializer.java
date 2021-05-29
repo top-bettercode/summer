@@ -131,7 +131,7 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
       JsonUrlMapper jsonUrlMapper = mapperCache.get(mapperType);
       if (jsonUrlMapper == null) {
         try {
-          jsonUrlMapper = mapperType.getConstructor().newInstance();
+          jsonUrlMapper = mapperType.getDeclaredConstructor().newInstance();
           mapperCache.put(mapperType, jsonUrlMapper);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
           throw new RuntimeException("mapper实例化失败", e);

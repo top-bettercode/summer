@@ -59,7 +59,7 @@ public class PageInfoInterceptor extends PaginationInterceptor implements Interc
       }
       Object proceed = invocation.proceed();
       if (rowBounds instanceof Pagination) {
-        List records = (List) proceed;
+        List<?> records = (List) proceed;
         if (rowBounds instanceof Page) {
           ((Page) rowBounds).setRecords(records);
         }

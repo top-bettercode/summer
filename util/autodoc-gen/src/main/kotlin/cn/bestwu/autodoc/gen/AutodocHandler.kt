@@ -8,7 +8,6 @@ import cn.bestwu.autodoc.core.operation.DocOperation
 import cn.bestwu.autodoc.core.operation.DocOperationRequest
 import cn.bestwu.autodoc.core.operation.DocOperationResponse
 import cn.bestwu.generator.GeneratorExtension
-import cn.bestwu.lang.property.PropertiesSource
 import cn.bestwu.logging.RequestLoggingHandler
 import cn.bestwu.logging.operation.Operation
 import cn.bestwu.simpleframework.config.WebProperties
@@ -62,7 +61,7 @@ class AutodocHandler(
                 //生成相应数据
                 val projectModuleDic = File(
                     genProperties.source,
-                    if (Autodoc.version.isNotBlank()) Autodoc.version else genProperties.version
+                    Autodoc.version.ifBlank { genProperties.version }
                 )
                 projectModuleDic.mkdirs()
                 val module = cache.getOrPut(projectModuleDic) {
@@ -145,8 +144,7 @@ class AutodocHandler(
                 val requiredParameters = calculateParams.keys.toMutableSet()
                 requiredParameters.addAll(Autodoc.requiredParameters)
 
-                val signName = signParamName
-                if (requiredHeaders.contains(signName)) {
+                if (requiredHeaders.contains(signParamName)) {
                     docOperation.prerequest = prerequestExec(docOperation, signProperties)
                 }
 

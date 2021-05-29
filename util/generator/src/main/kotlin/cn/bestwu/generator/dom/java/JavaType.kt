@@ -34,7 +34,6 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
      * @return Returns the wrapperClass.
      */
     private var primitiveTypeWrapper: PrimitiveTypeWrapper? = null
-        private set
 
     val typeArguments: MutableList<JavaType>
 
