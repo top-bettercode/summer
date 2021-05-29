@@ -9,7 +9,7 @@ dependencies {
     api("com.github.pagehelper:pagehelper")
 
     compileOnly("com.querydsl:querydsl-jpa")
-    testCompileOnly("com.querydsl:querydsl-jpa")
+    testImplementation("com.querydsl:querydsl-jpa")
 //    testAnnotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa")
 //    testAnnotationProcessor("jakarta.persistence:jakarta.persistence-api")
 

@@ -44,11 +44,11 @@ object AsciidocGenerator : AbstractbGenerator() {
                             "static/font-awesome.min.css"
                         )
                         .replace(
-                            "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js",
+                            "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js",
                             "static/highlight.min.js"
                         )
                         .replace(
-                            "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css",
+                            "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css",
                             "static/github.min.css"
                         )
                 )
