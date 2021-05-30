@@ -2,6 +2,7 @@ logging:
   level:
     root: debug
     org.springframework: warn
+#    org.springframework.boot.SpringApplication: info
     org.apache: warn
     org.hibernate: warn
     com.netflix: warn
@@ -10,6 +11,7 @@ logging:
     com.zaxxer: warn
   pattern:
     console: "%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%logger) %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+
 summer:
   logging:
     request:

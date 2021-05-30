@@ -3,9 +3,6 @@ plugins {
 }
 
 dependencies {
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    compileOnly("org.springframework.boot:spring-boot-configuration-processor")
-
     api("org.javassist:javassist")
     api(project(":util:common-lang"))
     api("javax.mail:mail")

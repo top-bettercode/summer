@@ -1,9 +1,9 @@
 plugins { `java-library` }
-dependencies {
-    api("org.jetbrains.kotlin:kotlin-reflect")
 
+dependencies {
+    api(project(":framework:config"))
     api(project(":util:common-lang"))
-    api("org.springframework.boot:spring-boot")
+
     api("org.springframework.boot:spring-boot-starter-logging")
     api("com.fasterxml.jackson.module:jackson-module-kotlin")
     api("org.springframework.boot:spring-boot-starter-web")
@@ -11,9 +11,6 @@ dependencies {
 
     api("org.springframework.boot:spring-boot-starter-actuator")
     api("org.springframework.cloud:spring-cloud-starter-config")
-
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    compileOnly("org.springframework.boot:spring-boot-configuration-processor")
 
     compileOnly("javax.mail:mail")
     compileOnly("net.logstash.logback:logstash-logback-encoder")

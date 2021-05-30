@@ -32,7 +32,6 @@ import org.springframework.util.MultiValueMap;
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestApplication.class, properties = {
-    "summer.sign.handler-type-prefix=",
     "summer.web.ok-enable=false",
 }, webEnvironment = RANDOM_PORT)
 public class SecurityTest {

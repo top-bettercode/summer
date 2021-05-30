@@ -3,10 +3,7 @@ plugins {
 }
 
 subprojects {
-    apply {
-        plugin("com.jfrog.artifactory")
-    }
-    if (arrayOf("excel").contains(name)) {
+    if (arrayOf("excel", "wechat", "ueditor").contains(name)) {
         apply {
             plugin("summer.publish")
         }
@@ -15,15 +12,6 @@ subprojects {
             plugin("org.jetbrains.kotlin.jvm")
             plugin("org.jetbrains.kotlin.plugin.spring")
             plugin("summer.kotlin-publish")
-        }
-    }
-    dependencies {
-        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-        compileOnly("org.springframework.boot:spring-boot-configuration-processor")
-    }
-    tasks {
-        "compileJava" {
-            dependsOn("processResources")
         }
     }
 }

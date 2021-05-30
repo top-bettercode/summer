@@ -5,6 +5,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.env.Environment;
@@ -19,13 +20,20 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-   )
+)
 public class WebTest {
 
   @Autowired
   TestRestTemplate restTemplate;
   @Autowired
   Environment environment;
+  @Value("${logging.level.org.springframework.boot.SpringApplication}")
+  String logLevel;
+
+  @Test
+  void env() {
+    System.err.println(logLevel);
+  }
 
   @Test
   public void test() {

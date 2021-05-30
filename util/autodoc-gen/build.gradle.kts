@@ -11,9 +11,6 @@ dependencies {
     api(project(":util:api-sign"))
     api(project(":util:generator"))
 
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    compileOnly("org.springframework.boot:spring-boot-configuration-processor")
-
     //test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

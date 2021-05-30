@@ -42,54 +42,16 @@ server:
 spring:
   profiles:
     active: alpha
-  mvc:
-    dispatchOptionsRequest: true
-  messages:
-    cache-duration: PT10S
-  jackson:
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: true
-      WRITE_BIGDECIMAL_AS_PLAIN: true
-      WRITE_ENUMS_USING_INDEX: true
-      FAIL_ON_EMPTY_BEANS: false
-      WRITE_NULL_MAP_VALUES: false
-    default-property-inclusion: non_null
-    deserialization:
-      FAIL_ON_UNKNOWN_PROPERTIES: false
   servlet:
     multipart:
       max-file-size: 100MB
       max-request-size: 200MB
       enabled: true
-  security:
-    filter:
-      dispatcher-types: REQUEST
+
 
 
 logging:
   level:
     root: info
-    org.springframework.boot.web.servlet.support.ErrorPageFilter: off
-    jdk.event.security: warn
-    io.lettuce: warn
-    org.thymeleaf: warn
-    cn.bestwu.lang: warn
-    cn.bestwu.simpleframework.support.packagescan: warn
-    javax.management: warn
-    org.quartz: warn
-    io.netty: warn
-    com.alibaba: warn
-    com.zaxxer.hikari: info
-    springfox: warn
-    com.baomidou: warn
-    org.springframework: warn
-    org.apache: warn
-    org.hibernate: warn
-    org.mybatis: warn
-    com.netflix: warn
-    org.jboss: warn
-    com.sun: warn
-    javax.xml: warn
-    net.sf: warn
-    javax.activation: warn
+
 

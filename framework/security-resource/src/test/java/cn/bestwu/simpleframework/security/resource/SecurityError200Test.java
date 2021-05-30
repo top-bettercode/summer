@@ -25,11 +25,7 @@ import org.springframework.util.MultiValueMap;
  * @since 1.0.0
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = TestApplication.class,
-    properties = {
-        "summer.sign.handler-type-prefix=",
-        "logging.level.root=debug",
-    }, webEnvironment = RANDOM_PORT)
+@SpringBootTest(classes = TestApplication.class, webEnvironment = RANDOM_PORT)
 public class SecurityError200Test {
 
   @Deprecated

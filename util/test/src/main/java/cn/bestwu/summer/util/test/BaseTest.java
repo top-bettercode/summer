@@ -11,15 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  * @author Peter Wu
  */
 @ExtendWith(value = {SpringExtension.class, AutodocSetting.class})
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.NONE,
-    properties = {
-        "summer.sign.handler-type-prefix=",
-        "spring.jackson.default-property-inclusion=ALWAYS",
-        "logging.level.root=debug",
-        "logging.level.org.springframework.test=warn",
-        "logging.level.org.springframework.boot.test=warn",
-    })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public abstract class BaseTest {
 
 }
