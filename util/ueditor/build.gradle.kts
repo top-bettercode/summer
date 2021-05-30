@@ -1,4 +1,5 @@
 plugins { `java-library` }
+
 dependencies {
     api("commons-codec:commons-codec")
     api("org.json:json")

@@ -5,6 +5,7 @@ plugins {
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib")
     api("com.fasterxml.jackson.core:jackson-databind")
+
     compileOnly("org.jsoup:jsoup")
     compileOnly("org.springframework.boot:spring-boot-starter-web")
 

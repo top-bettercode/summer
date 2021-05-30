@@ -1,5 +1,8 @@
-package cn.bestwu.logging
+package cn.bestwu.summer.util.test
 
+import cn.bestwu.config.ConfigEnvironmentPostProcessor
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.env.EnvironmentPostProcessor
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.boot.SpringApplication
@@ -7,18 +10,13 @@ import org.springframework.boot.env.YamlPropertySourceLoader
 import org.springframework.core.Ordered
 import org.springframework.core.io.ClassPathResource
 
-class ConfigEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
+class TestConfigEnvironmentPostProcessor : ConfigEnvironmentPostProcessor(), Ordered {
+
     override fun postProcessEnvironment(
-        environment: ConfigurableEnvironment,
-        application: SpringApplication
+        environment: ConfigurableEnvironment, application: SpringApplication
     ) {
-        val configs = YamlPropertySourceLoader().load(
-            "META-INF/bootstrap-base.yml",
-            ClassPathResource("META-INF/bootstrap-base.yml")
-        )
-        configs.forEach {
-            environment.propertySources.addFirst(it)
-        }
+        addConfig(environment, "application-test")
+        addConfig(environment, "application-test-default")
     }
 
     override fun getOrder(): Int {

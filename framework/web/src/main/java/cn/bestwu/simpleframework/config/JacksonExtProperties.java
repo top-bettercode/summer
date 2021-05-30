@@ -21,7 +21,7 @@ public class JacksonExtProperties {
   /**
    * Feature that controls whether null should be serialize as empty.
    */
-  private Boolean defaultEmpty = false;
+  private Boolean defaultEmpty = true;
 
   /**
    * specifying the packages to scan for mixIn annotation.

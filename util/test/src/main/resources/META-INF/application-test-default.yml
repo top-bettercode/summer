@@ -1,0 +1,21 @@
+summer:
+  sign:
+    handler-type-prefix:
+  logging:
+    files:
+      path: build/logs
+    websocket:
+      enabled: false
+    slack:
+      channel:
+    request:
+      timeout-alarm-seconds: -1
+
+
+logging:
+  level:
+    root: debug
+
+spring:
+  jackson:
+    default-property-inclusion: ALWAYS

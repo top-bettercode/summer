@@ -31,14 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
  * @author Peter Wu
  */
 @ExtendWith(value = {SpringExtension.class, AutodocSetting.class})
-@SpringBootTest(properties = {
-    "spring.jackson.default-property-inclusion=ALWAYS",
-    "logging.level.root=debug",
-    "logging.level.org.springframework.test=warn",
-    "logging.level.org.springframework.boot.test=warn",
-    "summer.logging.websocket.enabled=false",
-    "summer.logging.slack.channel=",
-    "summer.logging.request.timeout-alarm-seconds=30"})
+@SpringBootTest
 public abstract class BaseWebNoAuthTest {
 
   @Autowired

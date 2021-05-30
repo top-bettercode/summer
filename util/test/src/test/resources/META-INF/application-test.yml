@@ -1,4 +1,6 @@
 summer:
+  sign:
+    handler-type-prefix:
   security:
     cors:
       enable: true

@@ -13,11 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 /**
  * @author Peter Wu
  */
-@SpringBootTest(classes = TestApplication.class, properties = {"summer.sign.handler-type-prefix=",
-    "spring.jackson.default-property-inclusion=USE_DEFAULTS", "logging.level.root=debug",
-    "logging.request.timeout-alarm-seconds=30"})
+@SpringBootTest(classes = TestApplication.class)
 public class WechatCallbackControllerTest extends BaseWebNoAuthTest {
-
 
   @Test
   public void miniOauth() throws Exception {

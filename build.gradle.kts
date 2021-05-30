@@ -10,6 +10,7 @@ allprojects {
     apply {
         plugin("java")
         plugin("idea")
+        plugin("com.jfrog.artifactory")
         plugin("io.spring.dependency-management")
     }
 
@@ -122,6 +123,11 @@ allprojects {
         }
     }
 
+    dependencies {
+        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+        compileOnly("org.springframework.boot:spring-boot-configuration-processor")
+    }
+
     tasks {
         build {
             setDependsOn(listOf("testClasses"))
@@ -133,6 +139,7 @@ allprojects {
         "compileJava"(JavaCompile::class) {
 //            options.compilerArgs.add("-Xlint:deprecation")
             options.encoding = "UTF-8"
+            dependsOn("processResources")
         }
     }
 

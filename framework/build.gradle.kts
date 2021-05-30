@@ -3,10 +3,7 @@ plugins {
 }
 
 subprojects {
-    apply {
-        plugin("com.jfrog.artifactory")
-    }
-    if (name.contains("logging")) {
+    if (arrayOf("starter-logging", "config").contains(name)) {
         apply {
             plugin("org.jetbrains.kotlin.jvm")
             plugin("org.jetbrains.kotlin.plugin.spring")
@@ -19,15 +16,6 @@ subprojects {
     }
 
     dependencies {
-        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-        compileOnly("org.springframework.boot:spring-boot-configuration-processor")
-
         testImplementation("org.springframework.boot:spring-boot-starter-test")
-    }
-
-    tasks {
-        "compileJava"(JavaCompile::class) {
-            dependsOn("processResources")
-        }
     }
 }

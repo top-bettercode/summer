@@ -3,7 +3,6 @@ subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
         plugin("summer.plugin-publish")
-        plugin("com.jfrog.artifactory")
     }
     dependencies {
         api(gradleApi())
@@ -11,10 +10,5 @@ subprojects {
 
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    }
-    tasks {
-        "compileJava" {
-            dependsOn("processResources")
-        }
     }
 }
