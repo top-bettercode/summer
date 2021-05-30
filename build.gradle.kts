@@ -53,7 +53,7 @@ allprojects {
     }
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         imports {
-            mavenBom(property("spring.boot.bom-coordinates") as String)
+            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
         }
 
         dependencies {
