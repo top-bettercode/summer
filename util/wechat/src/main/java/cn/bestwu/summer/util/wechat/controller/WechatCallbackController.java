@@ -30,10 +30,8 @@ public class WechatCallbackController extends BaseController {
     this.wechatProperties = wechatProperties;
   }
 
-  /**
+  /*
    * 公众号OAuth回调接口
-   *
-   * @param state state
    */
   @RequestLogging(ignoredTimeout = true)
   @GetMapping(value = "/oauth", name = "OAuth回调接口")
@@ -54,7 +52,7 @@ public class WechatCallbackController extends BaseController {
     return wechatProperties.redirectUrl(token, openId, token != null);
   }
 
-  /**
+  /*
    * js签名
    */
   @ResponseBody
