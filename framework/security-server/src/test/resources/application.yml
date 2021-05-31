@@ -50,8 +50,6 @@ spring:
       WRITE_BIGDECIMAL_AS_PLAIN: true
       WRITE_ENUMS_USING_INDEX: true
       FAIL_ON_EMPTY_BEANS: false
-      WRITE_NULL_MAP_VALUES: false
-    default-property-inclusion: non_null
     deserialization:
       FAIL_ON_UNKNOWN_PROPERTIES: false
   servlet:
