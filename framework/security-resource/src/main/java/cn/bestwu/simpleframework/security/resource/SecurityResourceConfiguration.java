@@ -24,7 +24,6 @@ import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
@@ -81,7 +80,10 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
       http.cors();
     }
 
-    http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::opaqueToken)
+    http.oauth2ResourceServer(config -> {
+      config.opaqueToken();
+      config.bearerTokenResolver(new MultipleBearerTokenResolver());
+    })
         .sessionManagement().sessionCreationPolicy(securityProperties.getSessionCreationPolicy())
         .and()
         .authorizeRequests()
