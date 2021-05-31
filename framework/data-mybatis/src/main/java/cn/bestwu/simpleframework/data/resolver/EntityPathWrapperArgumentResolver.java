@@ -42,22 +42,22 @@ public class EntityPathWrapperArgumentResolver implements HandlerMethodArgumentR
   @Override
   public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
       NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-    Class<?> modelClass;
+    Class modelClass;
     Class<?> parameterType = parameter.getParameterType();
     if (EntityPathWrapper.class.equals(parameterType.getSuperclass())) {
-      modelClass = (Class<?>) ((ParameterizedType) parameterType.getGenericSuperclass())
+      modelClass = (Class) ((ParameterizedType) parameterType.getGenericSuperclass())
           .getActualTypeArguments()[1];
     } else {
-      modelClass = (Class<?>) ((ParameterizedType) parameter.getGenericParameterType())
+      modelClass = (Class) ((ParameterizedType) parameter.getGenericParameterType())
           .getActualTypeArguments()[0];
     }
     return resolveWrapper(webRequest, modelClass, parameterType);
   }
 
   @SuppressWarnings("unchecked")
-  private Object resolveWrapper(NativeWebRequest request, Class<?> modelClass,
+  private Object resolveWrapper(NativeWebRequest request, Class modelClass,
       Class<?> parameterType)
-      throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+      throws InvocationTargetException, IllegalAccessException, InstantiationException {
     String orderBy = request.getParameter(properties.getOrderByParameter());
     String isAsc = request.getParameter(properties.getIsAscParameter());
     if (!StringUtils.hasText(isAsc)) {
@@ -67,8 +67,8 @@ public class EntityPathWrapperArgumentResolver implements HandlerMethodArgumentR
     String isNull = request.getParameter(properties.getIsNullParameter());
     String isNotNull = request.getParameter(properties.getIsNotNullParameter());
     RepositoryMetadata repositoryMetadataFor = repositories.getRepositoryMetadataFor(modelClass);
-    EntityPathWrapper<?,?> wrapper = repositoryMetadataFor.getWrapper(
-        (Class<EntityPathWrapper<?,?>>) parameterType);
+    EntityPathWrapper wrapper = repositoryMetadataFor.getWrapper(
+        (Class<EntityPathWrapper>) parameterType);
     Map<String, String> cachedFieldsMap = repositoryMetadataFor.getCachedFieldsMap();
     if (StringUtils.hasText(orderBy)) {
       for (String s : orderBy.split(",")) {
