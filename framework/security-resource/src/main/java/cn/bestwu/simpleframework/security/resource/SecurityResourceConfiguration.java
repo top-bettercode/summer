@@ -2,13 +2,14 @@ package cn.bestwu.simpleframework.security.resource;
 
 import cn.bestwu.simpleframework.config.CorsProperties;
 import cn.bestwu.simpleframework.security.ClientDetailsProperties;
+import cn.bestwu.simpleframework.security.server.SecurityServerConfiguration;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,7 +39,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @EnableWebSecurity
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
 @ConditionalOnWebApplication
-@EnableConfigurationProperties(SecurityProperties.class)
+@EnableConfigurationProperties({SecurityProperties.class, CorsProperties.class})
 public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter {
 
   private final SecurityProperties securityProperties;
@@ -60,7 +61,7 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
 
   @Deprecated
   @ConditionalOnMissingBean(OpaqueTokenIntrospector.class)
-  @ConditionalOnBean(AuthorizationServerEndpointsConfiguration.class)
+  @ConditionalOnClass(SecurityServerConfiguration.class)
   @Bean
   public OpaqueTokenIntrospector opaqueTokenIntrospector(
       AuthorizationServerEndpointsConfiguration configuration) {

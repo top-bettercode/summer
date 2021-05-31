@@ -11,7 +11,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-@ConditionalOnProperty(prefix = "summer.security.cors", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "summer.security.cors", value = "enable", havingValue = "true", matchIfMissing = true)
 @Configuration
 @EnableConfigurationProperties(CorsProperties.class)
 public class CorsConfiguration {
