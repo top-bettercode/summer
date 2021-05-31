@@ -3,6 +3,12 @@ plugins {
 }
 
 subprojects {
+
+    apply {
+        plugin("org.springframework.boot")
+    }
+
+
     if (arrayOf("excel", "wechat", "ueditor").contains(name)) {
         apply {
             plugin("summer.publish")
@@ -13,5 +19,13 @@ subprojects {
             plugin("org.jetbrains.kotlin.plugin.spring")
             plugin("summer.kotlin-publish")
         }
+    }
+
+    tasks {
+        "jar"(Jar::class) {
+            enabled = true
+            archiveClassifier.convention("")
+        }
+        "bootJar" { enabled = false }
     }
 }
