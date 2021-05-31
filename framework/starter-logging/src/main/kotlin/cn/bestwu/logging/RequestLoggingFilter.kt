@@ -213,7 +213,7 @@ class RequestLoggingFilter(
         if (statusCode != null) {
             return statusCode
         }
-        return HttpStatus.INTERNAL_SERVER_ERROR.value()
+        return HttpStatus.OK.value()
     }
 
     private fun getMessage(requestAttributes: RequestAttributes): String? {
