@@ -11,13 +11,13 @@ import org.springframework.web.cors.CorsConfiguration;
 @ConfigurationProperties("summer.security.cors")
 public class CorsProperties extends CorsConfiguration {
 
-  private boolean enable = false;
+  private boolean enable = true;
   private String path = "/**";
 
   public CorsProperties() {
     setAllowedOrigins(Collections.singletonList("*"));
     setAllowedMethods(Collections.singletonList("*"));
-    setAllowCredentials(true);
+//    setAllowCredentials(true);
     setAllowedHeaders(Collections.singletonList("*"));
   }
 

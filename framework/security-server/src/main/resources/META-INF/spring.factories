@@ -1,3 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cn.bestwu.simpleframework.security.server.AuthorizationServerConfiguration,\
 cn.bestwu.simpleframework.security.server.SecurityServerConfiguration
