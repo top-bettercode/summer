@@ -127,6 +127,7 @@ public class BaseController extends Response {
   /**
    * @return 更新前的实体
    */
+  @Deprecated
   protected Object getOldModel() {
     String oldModel = ModifyModel.OLD_MODEL;
     return request.getAttribute(oldModel);

@@ -36,6 +36,7 @@ import org.springframework.web.servlet.HandlerMapping;
  *
  * @author Peter Wu
  */
+@Deprecated
 public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
   private final Logger log = LoggerFactory.getLogger(ModifyModelMethodArgumentResolver.class);

@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
  *
  * @author Peter Wu
  */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 public @interface ModifyModel {
