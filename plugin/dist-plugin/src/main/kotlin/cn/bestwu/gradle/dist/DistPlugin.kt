@@ -309,38 +309,79 @@ class DistPlugin : Plugin<Project> {
                         task.classpath = project.files(task.classpath).from("\$APP_HOME/conf")
                     task.doLast {
                         it as CreateStartScripts
-                        var unixScriptText = it.unixScript.readText()
-                        var windowsScriptText = it.windowsScript.readText()
-                        if (dist.unwrapResources) {
-                            unixScriptText = unixScriptText
-                                .replace("\$APP_HOME/lib/conf", "\$APP_HOME/conf")
-                            windowsScriptText = windowsScriptText
-                                .replace("%APP_HOME%\\lib\\conf", "%APP_HOME%\\conf")
-                        }
-                        if (project.file(dist.nativePath).exists()) {
-                            unixScriptText = unixScriptText
-                                .replace(nativeLibArgs, "-Djava.library.path=\$APP_HOME/native")
-                            windowsScriptText = windowsScriptText
-                                .replace(nativeLibArgs, "-Djava.library.path=%APP_HOME%\\native")
-                        }
-                        if (dist.includeJre) {
-                            if (dist.windows)
-                                windowsScriptText = windowsScriptText
-                                    .replace(
-                                        "set APP_HOME=%DIRNAME%..",
-                                        "set APP_HOME=%DIRNAME%..\r\nset JAVA_HOME=%APP_HOME%\\jre"
+                        val newUnixScriptLine = mutableListOf<String>()
+                        val newWindowsScriptLine = mutableListOf<String>()
+                        val unixScriptLine = it.unixScript.readLines()
+                        val windowsScriptLine = it.windowsScript.readLines()
+                        unixScriptLine.forEach { l ->
+                            if (dist.unwrapResources && l.endsWith("\$APP_HOME/lib/conf")) {
+                                newUnixScriptLine.add(
+                                    l.substring(
+                                        0,
+                                        l.lastIndexOf(":\$APP_HOME/lib/conf")
+                                    ) + ":\$APP_HOME/conf"
+                                )
+                            } else if (project.file(dist.nativePath).exists() && l.contains(
+                                    nativeLibArgs
+                                )
+                            ) {
+                                newUnixScriptLine.add(
+                                    l.replace(
+                                        nativeLibArgs,
+                                        "-Djava.library.path=\$APP_HOME/native"
                                     )
-                            else
-                                unixScriptText = unixScriptText
-                                    .replace(
+                                )
+                            } else if (dist.includeJre) {
+                                newUnixScriptLine.add(
+                                    l.replace(
                                         "APP_HOME=\"`pwd -P`\"",
                                         "APP_HOME=\"`pwd -P`\"\nJAVA_HOME=\"\$APP_HOME/jre\""
                                     )
+                                )
+                            } else {
+                                newUnixScriptLine.add(l)
+                            }
+                        }
+                        windowsScriptLine.forEach { l ->
+                            if (dist.unwrapResources && l.endsWith("%APP_HOME%\\lib\\conf")) {
+                                newWindowsScriptLine.add(
+                                    l.substring(
+                                        0,
+                                        l.lastIndexOf("%APP_HOME%\\lib\\conf")
+                                    ) + "%APP_HOME%\\conf"
+                                )
+                            }
+                            if (project.file(dist.nativePath).exists() && l.contains(nativeLibArgs)
+                            ) {
+                                newWindowsScriptLine.add(
+                                    l.replace(
+                                        nativeLibArgs,
+                                        "-Djava.library.path=%APP_HOME%\\native"
+                                    )
+                                )
+                            }
+                            if (dist.includeJre) {
+                                newWindowsScriptLine.add(
+                                    l.replace(
+                                        "set APP_HOME=%DIRNAME%..",
+                                        "set APP_HOME=%DIRNAME%..\r\nset JAVA_HOME=%APP_HOME%\\jre"
+                                    )
+                                )
+                            } else {
+                                newWindowsScriptLine.add(l)
+                            }
                         }
 
-                        it.unixScript.writeText(unixScriptText)
-                        it.windowsScript.writeText(windowsScriptText)
-
+                        it.unixScript.printWriter().use { pw ->
+                            newUnixScriptLine.forEach { l ->
+                                pw.println(l)
+                            }
+                        }
+                        it.windowsScript.printWriter().use { pw ->
+                            newWindowsScriptLine.forEach { l ->
+                                pw.println(l)
+                            }
+                        }
                         //startup.sh
                         writeServiceFile(
                             project, "startup.sh", """
