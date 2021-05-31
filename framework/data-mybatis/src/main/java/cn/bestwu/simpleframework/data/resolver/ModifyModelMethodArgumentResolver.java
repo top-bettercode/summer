@@ -107,7 +107,7 @@ public class ModifyModelMethodArgumentResolver implements HandlerMethodArgumentR
 
   protected Object resolveName(String name,
       NativeWebRequest request) {
-    Map<?, ?> uriTemplateVars = (Map<?, ?>) request
+    Map uriTemplateVars = (Map) request
         .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE,
             RequestAttributes.SCOPE_REQUEST);
     return (uriTemplateVars != null) ? uriTemplateVars.get(name) : null;
