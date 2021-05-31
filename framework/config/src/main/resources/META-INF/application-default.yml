@@ -53,7 +53,6 @@ spring:
     show-sql: true
   datasource:
     hikari:
-      connection-test-query: SELECT 1 FROM DUAL
       connection-timeout: 60000
 
 security:
