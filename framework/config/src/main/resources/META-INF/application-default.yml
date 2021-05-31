@@ -93,6 +93,7 @@ logging:
   level:
     org.springframework.boot.web.servlet.support.ErrorPageFilter: off
     org.mybatis.spring.mapper.ClassPathMapperScanner: error
+    org.springframework.data.convert.CustomConversions: error
     org.springframework.boot.context.logging.ClasspathLoggingApplicationListener: warn
     org.springframework.boot.SpringApplication: warn
     org.springframework.context.annotation.AnnotationConfigApplicationContext: warn
