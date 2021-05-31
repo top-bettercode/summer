@@ -3,6 +3,9 @@ plugins {
 }
 
 subprojects {
+    apply {
+        plugin("org.springframework.boot")
+    }
     if (arrayOf("starter-logging", "config").contains(name)) {
         apply {
             plugin("org.jetbrains.kotlin.jvm")
@@ -17,5 +20,13 @@ subprojects {
 
     dependencies {
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+    }
+
+    tasks {
+        "jar"(Jar::class) {
+            enabled = true
+            archiveClassifier.convention("")
+        }
+        "bootJar" { enabled = false }
     }
 }
