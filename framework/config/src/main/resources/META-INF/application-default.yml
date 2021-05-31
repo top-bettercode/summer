@@ -129,4 +129,5 @@ logging:
     javax.xml: warn
     net.sf: warn
     javax.activation: warn
+    org.mongodb: warn
     cn.bestwu: info
