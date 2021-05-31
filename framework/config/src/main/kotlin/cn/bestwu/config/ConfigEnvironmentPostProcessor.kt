@@ -31,6 +31,9 @@ open class ConfigEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
             configs.forEach {
                 environment.propertySources.addLast(it)
             }
+            if (log.isInfoEnabled) {
+                log.info("load config in class path:META-INF/${configName}.yml")
+            }
         } else {
             if (log.isInfoEnabled) {
                 log.info("No config in class path:META-INF/${configName}.yml")
