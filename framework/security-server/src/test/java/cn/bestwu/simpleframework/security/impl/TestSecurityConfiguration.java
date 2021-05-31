@@ -7,12 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 
-@Deprecated
 @Configuration
 @ConditionalOnWebApplication
-@EnableAuthorizationServer
 public class TestSecurityConfiguration {
 
   @Bean
@@ -20,6 +17,7 @@ public class TestSecurityConfiguration {
     return (securityUser, access_token) -> System.err.println("revoke:"+StringUtil.valueOf(securityUser, true));
   }
 
+  @Deprecated
   @Bean
   public PasswordEncoder passwordEncoder(){
     return NoOpPasswordEncoder.getInstance();
