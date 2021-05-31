@@ -82,6 +82,12 @@ val Project.profileProperties: Properties
         }
 
         props.putAll(System.getProperties())
+
+        val packageName = props["app.packageName"]?.toString()
+        if (packageName != null) {
+            props["app.packagePath"] = packageName.replace(".", "/")
+        }
+
         props[profilesActiveName] = profilesActive
         configProject { project ->
             props.forEach { t, u ->
