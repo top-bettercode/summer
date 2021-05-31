@@ -1,5 +1,6 @@
 package cn.bestwu.simpleframework.security.resource;
 
+import cn.bestwu.simpleframework.config.CorsProperties;
 import cn.bestwu.simpleframework.security.ClientDetailsProperties;
 import java.util.Collection;
 import java.util.function.Function;
@@ -41,14 +42,17 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter {
 
   private final SecurityProperties securityProperties;
+  private final CorsProperties corsProperties;
   private final URLFilterInvocationSecurityMetadataSource securityMetadataSource;
   private final AccessDecisionManager accessDecisionManager;
 
   public SecurityResourceConfiguration(
       SecurityProperties securityProperties,
+      CorsProperties corsProperties,
       URLFilterInvocationSecurityMetadataSource securityMetadataSource,
       AccessDecisionManager accessDecisionManager) {
     this.securityProperties = securityProperties;
+    this.corsProperties = corsProperties;
     this.securityMetadataSource = securityMetadataSource;
     this.accessDecisionManager = accessDecisionManager;
   }
@@ -70,6 +74,10 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
     }
     if (securityProperties.getFrameOptionsDisable()) {
       http.headers().frameOptions().disable();
+    }
+
+    if (corsProperties.isEnable()) {
+      http.cors();
     }
 
     http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::opaqueToken)
