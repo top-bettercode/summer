@@ -47,6 +47,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -71,6 +72,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.web.servlet.View;
@@ -221,8 +223,10 @@ public class FrameworkMvcConfiguration {
   @ConditionalOnMissingBean(ErrorController.class)
   @Bean
   public CustomErrorController customErrorController(ErrorAttributes errorAttributes,
-      ServerProperties serverProperties) {
-    return new CustomErrorController(errorAttributes, serverProperties.getError());
+      ServerProperties serverProperties,
+      @Autowired(required = false) @Qualifier("corsConfigurationSource") CorsConfigurationSource corsConfigurationSource) {
+    return new CustomErrorController(errorAttributes, serverProperties.getError(),
+        corsConfigurationSource);
   }
 
 
