@@ -30,7 +30,7 @@ import javax.tools.StandardLocation;
 import kotlin.text.Charsets;
 import org.yaml.snakeyaml.Yaml;
 
-@SupportedAnnotationTypes({"org.springframework.boot.autoconfigure.SpringBootApplication"})
+@SupportedAnnotationTypes({"java.lang.Override"})
 public class ResourcesAnnotationProcessor extends AbstractProcessor {
 
 
@@ -64,7 +64,7 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
       File configDir = findConfigDir(buildDirectory);
       File rootConfigDir;
       try {
-        rootConfigDir = new File(buildDirectory.getParentFile().getParentFile(), "config");
+        rootConfigDir = new File(buildDirectory.getParentFile().getParentFile(), "conf");
         if (!rootConfigDir.exists() || rootConfigDir.isFile()) {
           rootConfigDir = configDir;
           configDir = null;
@@ -79,13 +79,19 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
       Properties properties = new Properties();
       loadProperties(rootConfigDir, configDir, properties);
 
-      for (File resource : classPathDir.listFiles()) {
-        processor(resource, properties);
+      File[] files = classPathDir.listFiles();
+      if (files != null) {
+        for (File resource : files) {
+          processor(resource, properties);
+        }
       }
       File test = new File(classPathDir.getParentFile(), "test");
       if (test.exists()) {
-        for (File resource : test.listFiles()) {
-          processor(resource, properties);
+        files = test.listFiles();
+        if (files != null) {
+          for (File resource : files) {
+            processor(resource, properties);
+          }
         }
       }
     } catch (IOException e) {
@@ -94,7 +100,7 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
     return false;
   }
 
-  private void processor(File resource, Properties properties) {
+  private void processor(File resource, Properties properties) throws IOException {
     if (resource.isDirectory()) {
       for (File file : resource.listFiles()) {
         processor(file, properties);
@@ -118,7 +124,10 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
             while (matcher.find()) {
               String group = matcher.group();
               group = group.substring(1, group.length() - 1);
-              lstr = lstr.replace("@" + group + "@", properties.getProperty(group));
+              String property = properties.getProperty(group);
+              if (property != null) {
+                lstr = lstr.replace("@" + group + "@", property);
+              }
             }
             lines.add(lstr);
             line = bufferedReader.readLine();
@@ -135,89 +144,79 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
           buffer.flush();
           fileOutputStream.flush();
           fileOutputStream.close();
-        } catch (IOException ignored) {
         } finally {
           if (fileOutputStream != null) {
-            try {
-              fileOutputStream.close();
-            } catch (IOException ignored) {
-            }
+            fileOutputStream.close();
           }
         }
       }
     }
   }
 
-  private void loadProperties(File rootConfigDir, File configDir, Properties properties) {
-    try {
-      String projectName;
-      if (configDir == null) {
-        projectName = rootConfigDir.getParentFile().getName();
-      } else {
-        projectName = configDir.getParentFile().getName();
-      }
-      properties.put("summer.web.project-name", projectName);
+  private void loadProperties(File rootConfigDir, File configDir, Properties properties)
+      throws IOException {
+    String projectName;
+    if (configDir == null) {
+      projectName = rootConfigDir.getParentFile().getName();
+    } else {
+      projectName = configDir.getParentFile().getName();
+    }
+    properties.put("summer.web.project-name", projectName);
 
-      File gradle = new File(rootConfigDir.getParentFile(), "gradle.properties");
-      if (gradle.exists()) {
-        properties.load(new FileInputStream(gradle));
-      }
-      File rootGradle = new File(System.getProperty("user.home"), ".gradle/gradle.properties");
-      if (rootGradle.exists()) {
-        properties.load(new FileInputStream(rootGradle));
-      }
-      String profilesActive = properties.getProperty("profiles.active");
+    File gradle = new File(rootConfigDir.getParentFile(), "gradle.properties");
+    if (gradle.exists()) {
+      properties.load(new FileInputStream(gradle));
+    }
+    File rootGradle = new File(System.getProperty("user.home"), ".gradle/gradle.properties");
+    if (rootGradle.exists()) {
+      properties.load(new FileInputStream(rootGradle));
+    }
+    String profilesActive = properties.getProperty("profiles.active");
 
-      loadConfigProperties(rootConfigDir, profilesActive, properties);
-      if (configDir != null) {
-        loadConfigProperties(configDir, profilesActive, properties);
-      }
+    loadConfigProperties(rootConfigDir, profilesActive, properties);
+    if (configDir != null) {
+      loadConfigProperties(configDir, profilesActive, properties);
+    }
 
-      String packageName = properties.getProperty("app.packageName");
-      if (packageName != null && packageName.length() > 0) {
-        properties.put("app.packagePath", packageName.replace(".", "/"));
-      }
-    } catch (IOException ignored) {
+    String packageName = properties.getProperty("app.packageName");
+    if (packageName != null && packageName.length() > 0) {
+      properties.put("app.packagePath", packageName.replace(".", "/"));
     }
   }
 
   private void loadConfigProperties(File configDir, String profilesActive,
-      Properties properties) {
-    try {
-      Yaml yaml = new Yaml();
-      File defaultConfigYmlFile = new File(configDir, "default.yml");
-      if (defaultConfigYmlFile.exists()) {
-        Map<?, ?> load = yaml.load(new FileInputStream(defaultConfigYmlFile));
-        properties.putAll(parseYml(load, new HashMap<>(), ""));
-      }
-      File activeYmlFile = new File(configDir, profilesActive + ".yml");
-      if (activeYmlFile.exists()) {
-        Map<?, ?> load = yaml.load(new FileInputStream(activeYmlFile));
-        properties.putAll(parseYml(load, new HashMap<>(), ""));
-      }
-
-      defaultConfigYmlFile = new File(configDir, "default.yaml");
-      if (defaultConfigYmlFile.exists()) {
-        Map<?, ?> load = yaml.load(new FileInputStream(defaultConfigYmlFile));
-        properties.putAll(parseYml(load, new HashMap<>(), ""));
-      }
-      activeYmlFile = new File(configDir, profilesActive + ".yaml");
-      if (activeYmlFile.exists()) {
-        Map<?, ?> load = yaml.load(new FileInputStream(activeYmlFile));
-        properties.putAll(parseYml(load, new HashMap<>(), ""));
-      }
-
-      File defaultConfigFile = new File(configDir, "default.properties");
-      if (defaultConfigFile.exists()) {
-        properties.load(new FileInputStream(defaultConfigFile));
-      }
-      File activeFile = new File(configDir, profilesActive + ".properties");
-      if (activeFile.exists()) {
-        properties.load(new FileInputStream(activeFile));
-      }
-    } catch (IOException ignored) {
+      Properties properties) throws IOException {
+    Yaml yaml = new Yaml();
+    File defaultConfigYmlFile = new File(configDir, "default.yml");
+    if (defaultConfigYmlFile.exists()) {
+      Map<?, ?> load = yaml.load(new FileInputStream(defaultConfigYmlFile));
+      properties.putAll(parseYml(load, new HashMap<>(), ""));
+    }
+    File activeYmlFile = new File(configDir, profilesActive + ".yml");
+    if (activeYmlFile.exists()) {
+      Map<?, ?> load = yaml.load(new FileInputStream(activeYmlFile));
+      properties.putAll(parseYml(load, new HashMap<>(), ""));
     }
 
+    defaultConfigYmlFile = new File(configDir, "default.yaml");
+    if (defaultConfigYmlFile.exists()) {
+      Map<?, ?> load = yaml.load(new FileInputStream(defaultConfigYmlFile));
+      properties.putAll(parseYml(load, new HashMap<>(), ""));
+    }
+    activeYmlFile = new File(configDir, profilesActive + ".yaml");
+    if (activeYmlFile.exists()) {
+      Map<?, ?> load = yaml.load(new FileInputStream(activeYmlFile));
+      properties.putAll(parseYml(load, new HashMap<>(), ""));
+    }
+
+    File defaultConfigFile = new File(configDir, "default.properties");
+    if (defaultConfigFile.exists()) {
+      properties.load(new FileInputStream(defaultConfigFile));
+    }
+    File activeFile = new File(configDir, profilesActive + ".properties");
+    if (activeFile.exists()) {
+      properties.load(new FileInputStream(activeFile));
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -243,7 +242,7 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
       return null;
     }
     File parentFile = buildDirectoryPath.getParentFile();
-    File config = new File(parentFile, "config");
+    File config = new File(parentFile, "conf");
     if (config.exists() && config.isDirectory()) {
       return config;
     } else {

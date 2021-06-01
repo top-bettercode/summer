@@ -101,7 +101,7 @@ private fun findActive(profiles: Set<String>, active: String): String {
  */
 open class ProfileExtension(
         var matchFiles: Set<String> = setOf("**/*.yml", "**/*.yaml", "**/*.properties", "**/*.xml", "**/*.conf"),
-        var configDir: String = "config",
+        var configDir: String = "conf",
         var configFile: String = "",
         var activeFileSuffix: String = "",
         var beginToken: String = "@",

@@ -27,7 +27,7 @@ class ProfilePlugin : Plugin<Project> {
                     ?: false
             it.excludeOther = (project.findProperty("profile.exclude-other") as? String)?.toBoolean()
                     ?: true
-            it.configDir = (project.findProperty("profile.config-dir") as? String) ?: "config"
+            it.configDir = (project.findProperty("profile.conf-dir") as? String) ?: "conf"
             it.configFile = (project.findProperty("profile.config-file") as? String) ?: ""
             it.activeFileSuffix = (project.findProperty("profile.active-file-suffix") as? String)
                     ?: ""
