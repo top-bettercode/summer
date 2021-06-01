@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
@@ -38,6 +40,7 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
   private static final String RESOURCES_DIRECTORY = "resources";
 
   private static final String CLASSES_DIRECTORY = "classes";
+  private static final Pattern TOKEN_PATTERN = Pattern.compile("@.+?@");
 
   @Override
   public SourceVersion getSupportedSourceVersion() {
@@ -79,6 +82,12 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
       for (File resource : classPathDir.listFiles()) {
         processor(resource, properties);
       }
+      File test = new File(classPathDir.getParentFile(), "test");
+      if (test.exists()) {
+        for (File resource : test.listFiles()) {
+          processor(resource, properties);
+        }
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -105,8 +114,11 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
           String line = bufferedReader.readLine();
           while (line != null) {
             String lstr = line;
-            for (Entry<Object, Object> entry : properties.entrySet()) {
-              lstr = lstr.replace("@" + entry.getKey() + "@", String.valueOf(entry.getValue()));
+            Matcher matcher = TOKEN_PATTERN.matcher(line);
+            while (matcher.find()) {
+              String group = matcher.group();
+              group = group.substring(1, group.length() - 1);
+              lstr = lstr.replace("@" + group + "@", properties.getProperty(group));
             }
             lines.add(lstr);
             line = bufferedReader.readLine();

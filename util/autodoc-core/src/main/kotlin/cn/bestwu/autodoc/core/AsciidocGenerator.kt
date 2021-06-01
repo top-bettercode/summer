@@ -11,6 +11,8 @@ import org.asciidoctor.Attributes
 import org.asciidoctor.Options
 import org.asciidoctor.SafeMode
 import java.io.File
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 /**
@@ -21,6 +23,7 @@ import java.io.File
 object AsciidocGenerator : AbstractbGenerator() {
 
     private val asciidoctor: Asciidoctor = Asciidoctor.Factory.create()
+    private val TOKEN_PATTERN = Pattern.compile("@.+?@")
 
     init {
         asciidoctor.requireLibrary("asciidoctor-diagram")
@@ -90,9 +93,10 @@ object AsciidocGenerator : AbstractbGenerator() {
             optionsBuilder.attributes(
                 Attributes.builder().attributes(
                     mapOf(
-                    "pdf-fontsdir" to AsciidocGenerator::class.java.getResource("/data/fonts")?.file,
-                    "pdf-style" to AsciidocGenerator::class.java.getResource("/data/themes/default-theme.yml")?.file
-                )).build()
+                        "pdf-fontsdir" to AsciidocGenerator::class.java.getResource("/data/fonts")?.file,
+                        "pdf-style" to AsciidocGenerator::class.java.getResource("/data/themes/default-theme.yml")?.file
+                    )
+                ).build()
             )
             optionsBuilder.mkDirs(true)
             optionsBuilder.safe(SafeMode.UNSAFE)
@@ -187,8 +191,11 @@ object AsciidocGenerator : AbstractbGenerator() {
                     var pre = ""
                     it.readLines().forEach { l ->
                         var line = l
-                        properties.forEach { entry ->
-                            line = line.replace("@${entry.key}@", entry.value.toString())
+                        val matcher: Matcher = TOKEN_PATTERN.matcher(line)
+                        while (matcher.find()) {
+                            var group = matcher.group()
+                            group = group.substring(1, group.length - 1)
+                            line = line.replace("@$group@", properties[group].toString())
                         }
                         if (line.startsWith("==") && !pre.startsWith("[["))
                             out.println("[[_${pynames.pyname(line.substringAfter(" "))}]]")
