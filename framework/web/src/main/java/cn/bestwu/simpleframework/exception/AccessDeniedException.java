@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Peter Wu
  */
 @ResponseStatus(HttpStatus.FORBIDDEN)
-public class WebAccessDeniedException extends RuntimeException {
+public class AccessDeniedException extends RuntimeException {
 
   private static final long serialVersionUID = -7941819415782111951L;
 
-  public WebAccessDeniedException() {
+  public AccessDeniedException() {
     this("access.denied");
   }
 
-  public WebAccessDeniedException(String message) {
+  public AccessDeniedException(String message) {
     super(message);
   }
 }
