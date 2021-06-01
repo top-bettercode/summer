@@ -5,7 +5,7 @@ import cn.bestwu.logging.annotation.NoRequestLogging;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
 import cn.bestwu.simpleframework.web.DefaultCaptchaServiceImpl;
 import cn.bestwu.simpleframework.web.ICaptchaService;
-import cn.bestwu.simpleframework.web.NavController;
+import cn.bestwu.simpleframework.web.NavFilter;
 import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.error.CustomErrorController;
 import cn.bestwu.simpleframework.web.error.DataErrorHandler;
@@ -104,9 +104,9 @@ public class FrameworkMvcConfiguration {
   }
 
   @Bean
-  public NavController navController(WebEndpointProperties webEndpointProperties,
+  public NavFilter navFilter(WebEndpointProperties webEndpointProperties,
       ResourceLoader resourceLoader) {
-    return new NavController(webEndpointProperties, resourceLoader);
+    return new NavFilter(webEndpointProperties, resourceLoader);
   }
 
 

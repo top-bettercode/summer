@@ -1,7 +1,6 @@
 package cn.bestwu.simpleframework.security.resource;
 
 import cn.bestwu.logging.AnnotatedUtils;
-import cn.bestwu.simpleframework.web.NavController;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,8 +44,7 @@ public class URLFilterInvocationSecurityMetadataSource implements
     handlerMapping.getHandlerMethods().forEach((mappingInfo, handlerMethod) -> {
       //非匿名权限
       if (!AnnotatedUtils.hasAnnotation(handlerMethod, Anonymous.class) && !AnnotatedUtils
-          .hasAnnotation(handlerMethod, ClientAuthorize.class) && !handlerMethod
-          .getBeanType().equals(NavController.class)) {
+          .hasAnnotation(handlerMethod, ClientAuthorize.class)) {
         for (String pattern : mappingInfo.getPatternsCondition().getPatterns()) {
           if (!securityProperties.ignored(pattern)) {
             Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
