@@ -29,10 +29,7 @@ public class MultipleBearerTokenResolver implements BearerTokenResolver {
     if (authorizationHeaderToken != null) {
       return authorizationHeaderToken;
     }
-    if (parameterToken != null && isParameterTokenSupportedForRequest(request)) {
-      return parameterToken;
-    }
-    return null;
+    return parameterToken;
   }
 
   /**
