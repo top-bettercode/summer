@@ -1,12 +1,15 @@
 package cn.bestwu.simpleframework.security.resource;
 
 import cn.bestwu.simpleframework.config.CorsProperties;
-import cn.bestwu.simpleframework.exception.WebAccessDeniedException;
 import cn.bestwu.simpleframework.security.ClientDetailsProperties;
 import cn.bestwu.simpleframework.security.server.SecurityServerConfiguration;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -19,15 +22,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -85,7 +92,23 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
       config.bearerTokenResolver(new MultipleBearerTokenResolver());
     })
         .sessionManagement().sessionCreationPolicy(securityProperties.getSessionCreationPolicy())
-        .and()
+        .and().exceptionHandling(config->{
+          config.accessDeniedHandler(new AccessDeniedHandler() {
+            @Override
+            public void handle(HttpServletRequest request, HttpServletResponse response,
+                AccessDeniedException accessDeniedException) throws IOException, ServletException {
+              throw accessDeniedException;
+            }
+          });
+          config.authenticationEntryPoint(new AuthenticationEntryPoint(){
+            @Override
+            public void commence(HttpServletRequest request, HttpServletResponse response,
+                AuthenticationException authException) throws IOException, ServletException {
+              throw authException;
+            }
+          });
+
+    })
         .authorizeRequests()
         .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
           public <O extends FilterSecurityInterceptor> O postProcess(
@@ -158,7 +181,7 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
               StringUtils.collectionToCommaDelimitedString(configAttributes.stream().map(
                   (Function<ConfigAttribute, Object>) ConfigAttribute::getAttribute).collect(
                   Collectors.toList())));
-          throw new WebAccessDeniedException("无权访问");
+          throw new AccessDeniedException("无权访问");
         }
 
         private boolean contains(Collection<? extends GrantedAuthority> authorities,

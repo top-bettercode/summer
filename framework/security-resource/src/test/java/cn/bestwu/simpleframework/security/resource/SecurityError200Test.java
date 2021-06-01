@@ -58,7 +58,7 @@ public class SecurityError200Test {
     ResponseEntity<String> entity = restTemplate
         .exchange("/test?access_token=", HttpMethod.GET,
             new HttpEntity<>(httpHeaders), String.class);
-    assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
+    assertEquals(HttpStatus.OK, entity.getStatusCode());
 
   }
 
