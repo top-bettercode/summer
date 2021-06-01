@@ -165,30 +165,11 @@ class ProjectPlugin : Plugin<Project> {
             }
         }
 
-
-        project.subprojects { subProject ->
-
-            val mainProject =
-                !arrayOf("core").contains(subProject.name) && subProject.parent?.name != "util" && subProject.name != "util"
-            val needDocProject = subProject.parent?.name != "util" && subProject.name != "util"
-
+        project.allprojects { subProject ->
             subProject.plugins.apply {
                 apply("summer.profile")
                 apply("summer.packageinfo")
                 apply("io.spring.dependency-management")
-            }
-            if (needDocProject) {
-                subProject.plugins.apply {
-                    apply("summer.generator")
-                    apply("summer.autodoc")
-                }
-            }
-            if (mainProject) {
-                subProject.plugins.apply {
-                    apply("org.springframework.boot")
-                    apply("application")
-                    apply("summer.dist")
-                }
             }
 
             subProject.configurations.apply {
@@ -266,6 +247,29 @@ class ProjectPlugin : Plugin<Project> {
                         dependency("cn.bestwu.summer:test:$summerVersion")
 
                     }
+                }
+            }
+
+        }
+
+
+        project.subprojects { subProject ->
+
+            val mainProject =
+                !arrayOf("core").contains(subProject.name) && subProject.parent?.name != "util" && subProject.name != "util"
+            val needDocProject = subProject.parent?.name != "util" && subProject.name != "util"
+
+            if (needDocProject) {
+                subProject.plugins.apply {
+                    apply("summer.generator")
+                    apply("summer.autodoc")
+                }
+            }
+            if (mainProject) {
+                subProject.plugins.apply {
+                    apply("org.springframework.boot")
+                    apply("application")
+                    apply("summer.dist")
                 }
             }
 
