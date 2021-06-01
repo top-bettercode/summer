@@ -88,84 +88,26 @@ class ProjectPlugin : Plugin<Project> {
                 maven { it.setUrl("https://oss.jfrog.org/oss-snapshot-local") }
             }
 
-            subProject.tasks.apply {
-                named("build") {
-                    it.setDependsOn(listOf("testClasses"))
+            val mainProject =
+                !arrayOf("core").contains(subProject.name) && subProject.parent?.name != "util" && subProject.name != "util"
+            val needDocProject = subProject.parent?.name != "util" && subProject.name != "util"
+
+            if (needDocProject) {
+                subProject.plugins.apply {
+                    apply("summer.generator")
+                    apply("summer.autodoc")
                 }
             }
-        }
-
-        project.tasks.apply {
-            val jenkinsJobs = project.findProperty("jenkins.jobs")?.toString()?.split(",")
-                ?.filter { it.isNotBlank() }
-            val jenkinsServer = project.findProperty("jenkins.server")?.toString()
-            val jenkinsAuth = project.findProperty("jenkins.auth")?.toString()
-            if (!jenkinsJobs.isNullOrEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
-                create("jenkins[All]") {
-                    it.group = "tool"
-                    it.doLast {
-                        jenkinsJobs.forEach { jobName ->
-                            CLI._main(
-                                arrayOf(
-                                    "-s",
-                                    jenkinsServer,
-                                    "-auth",
-                                    jenkinsAuth,
-                                    "build",
-                                    jobName,
-                                    "-s",
-                                    "-v"
-                                )
-                            )
-                        }
-                    }
-                }
-                jenkinsJobs.forEach { jobName ->
-                    val jobTaskName = jobName.replace(
-                        "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
-                        ""
-                    )
-                    create("jenkins[$jobTaskName]") {
-                        it.group = "tool"
-                        it.doLast {
-                            CLI._main(
-                                arrayOf(
-                                    "-s",
-                                    jenkinsServer,
-                                    "-auth",
-                                    jenkinsAuth,
-                                    "build",
-                                    jobName,
-                                    "-s",
-                                    "-v"
-                                )
-                            )
-                        }
-                    }
+            if (mainProject) {
+                subProject.plugins.apply {
+                    apply("org.springframework.boot")
+                    apply("application")
+                    apply("summer.dist")
                 }
             }
 
-            create("genDbScript") { t ->
-                t.group = "gen"
-                t.doLast {
-                    val destFile: File = project.rootProject.file("database/init.sql")
-                    val initBuilder = StringBuilder()
-                    initBuilder.appendLine("SET NAMES 'utf8';")
-//                    initBuilder.appendLine(project.rootProject.file("database/database.sql").readText())
-                    project.rootProject.file("database/ddl").listFiles()?.filter { it.isFile }
-                        ?.forEach {
-                            initBuilder.appendLine(it.readText())
-                        }
-                    project.rootProject.file("database/init").listFiles()?.filter { it.isFile }
-                        ?.forEach {
-                            initBuilder.appendLine(it.readText())
-                        }
-                    destFile.writeText(initBuilder.toString())
-                }
-            }
-        }
 
-        project.allprojects { subProject ->
+
             subProject.plugins.apply {
                 apply("summer.profile")
                 apply("summer.packageinfo")
@@ -250,36 +192,6 @@ class ProjectPlugin : Plugin<Project> {
                 }
             }
 
-            if (project.findProperty("resources-processor") == "true")
-                subProject.dependencies.apply {
-                    add(
-                        "annotationProcessor",
-                        "cn.bestwu.summer:resources-processor"
-                    )
-                    add("compileOnly", "cn.bestwu.summer:resources-processor")
-                }
-        }
-
-
-        project.subprojects { subProject ->
-
-            val mainProject =
-                !arrayOf("core").contains(subProject.name) && subProject.parent?.name != "util" && subProject.name != "util"
-            val needDocProject = subProject.parent?.name != "util" && subProject.name != "util"
-
-            if (needDocProject) {
-                subProject.plugins.apply {
-                    apply("summer.generator")
-                    apply("summer.autodoc")
-                }
-            }
-            if (mainProject) {
-                subProject.plugins.apply {
-                    apply("org.springframework.boot")
-                    apply("application")
-                    apply("summer.dist")
-                }
-            }
 
             subProject.dependencies.apply {
                 add(
@@ -290,6 +202,14 @@ class ProjectPlugin : Plugin<Project> {
 
                 if ("release" != subProject.profilesActive)
                     add("implementation", "org.springframework.boot:spring-boot-starter-websocket")
+
+
+                if (project.findProperty("resources-processor") == "true")
+                    add(
+                        "annotationProcessor",
+                        "cn.bestwu.summer:resources-processor"
+                    )
+                add("compileOnly", "cn.bestwu.summer:resources-processor")
             }
 
             subProject.tasks.apply {
@@ -321,10 +241,15 @@ class ProjectPlugin : Plugin<Project> {
                         it.jvmArgs = jvmArgs.toList()
                 }
 
+                named("build") {
+                    it.setDependsOn(listOf("testClasses"))
+                }
+
                 named("compileJava", JavaCompile::class.java) {
                     it.options.compilerArgs.add("-Xlint:unchecked")
                     it.options.encoding = "UTF-8"
                 }
+
                 if (mainProject) {
                     named("bootRun", BootRun::class.java) {
                         System.getProperties().forEach { t, u ->
@@ -345,7 +270,79 @@ class ProjectPlugin : Plugin<Project> {
                     named("postman") { it.enabled = false }
                 }
             }
+        }
 
+        project.tasks.apply {
+            val jenkinsJobs = project.findProperty("jenkins.jobs")?.toString()?.split(",")
+                ?.filter { it.isNotBlank() }
+            val jenkinsServer = project.findProperty("jenkins.server")?.toString()
+            val jenkinsAuth = project.findProperty("jenkins.auth")?.toString()
+            if (!jenkinsJobs.isNullOrEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
+                create("jenkins[All]") {
+                    it.group = "tool"
+                    it.doLast {
+                        jenkinsJobs.forEach { jobName ->
+                            CLI._main(
+                                arrayOf(
+                                    "-s",
+                                    jenkinsServer,
+                                    "-auth",
+                                    jenkinsAuth,
+                                    "build",
+                                    jobName,
+                                    "-s",
+                                    "-v"
+                                )
+                            )
+                        }
+                    }
+                }
+                jenkinsJobs.forEach { jobName ->
+                    val jobTaskName = jobName.replace(
+                        "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
+                        ""
+                    )
+                    create("jenkins[$jobTaskName]") {
+                        it.group = "tool"
+                        it.doLast {
+                            CLI._main(
+                                arrayOf(
+                                    "-s",
+                                    jenkinsServer,
+                                    "-auth",
+                                    jenkinsAuth,
+                                    "build",
+                                    jobName,
+                                    "-s",
+                                    "-v"
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            create("genDbScript") { t ->
+                t.group = "gen"
+                t.doLast {
+                    val destFile: File = project.rootProject.file("database/init.sql")
+                    val initBuilder = StringBuilder()
+                    initBuilder.appendLine("SET NAMES 'utf8';")
+//                    initBuilder.appendLine(project.rootProject.file("database/database.sql").readText())
+                    project.rootProject.file("database/ddl").listFiles()?.filter { it.isFile }
+                        ?.forEach {
+                            initBuilder.appendLine(it.readText())
+                        }
+                    project.rootProject.file("database/init").listFiles()?.filter { it.isFile }
+                        ?.forEach {
+                            initBuilder.appendLine(it.readText())
+                        }
+                    destFile.writeText(initBuilder.toString())
+                }
+            }
+        }
+
+        project.subprojects { subProject ->
             if (subProject.name == project.findProperty("tools.project") ?: "core") {
                 subProject.tasks.apply {
                     create("genSerializationViews") { t ->
