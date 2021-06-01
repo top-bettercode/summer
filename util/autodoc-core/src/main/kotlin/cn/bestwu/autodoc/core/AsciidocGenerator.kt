@@ -195,7 +195,9 @@ object AsciidocGenerator : AbstractbGenerator() {
                         while (matcher.find()) {
                             var group = matcher.group()
                             group = group.substring(1, group.length - 1)
-                            line = line.replace("@$group@", properties[group].toString())
+                            val any = properties[group]
+                            if (any != null)
+                                line = line.replace("@$group@", any.toString())
                         }
                         if (line.startsWith("==") && !pre.startsWith("[["))
                             out.println("[[_${pynames.pyname(line.substringAfter(" "))}]]")
