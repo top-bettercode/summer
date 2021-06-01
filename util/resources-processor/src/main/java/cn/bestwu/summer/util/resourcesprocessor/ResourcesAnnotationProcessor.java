@@ -36,9 +36,7 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
 
   private final Map<String, String> properties = new TreeMap<>();
 
-  static final String ADDITIONAL_METADATA_LOCATIONS_OPTION = "org.springframework.boot.configurationprocessor.additionalMetadataLocations";
-  private static final String RESOURCES_DIRECTORY = "resources";
-
+  private static final String CONF_DIRECTORY = "conf";
   private static final String CLASSES_DIRECTORY = "classes";
   private static final Pattern TOKEN_PATTERN = Pattern.compile("@.+?@");
 
@@ -54,6 +52,7 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
       FileObject file = filer.getResource(StandardLocation.CLASS_OUTPUT, "", "application.yml");
 
       File classPathDir = new File(file.toUri().toURL().getFile()).getParentFile();
+      System.err.println("=======" + classPathDir.getAbsolutePath());
       String classPath = classPathDir.getAbsolutePath();
       int index = classPath.lastIndexOf(CLASSES_DIRECTORY);
       if (index < 0) {
@@ -61,10 +60,13 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
       }
       String buildDirectoryPath = classPath.substring(0, index);
       File buildDirectory = new File(buildDirectoryPath);
-      File configDir = findConfigDir(buildDirectory);
+      File configDir = findConfigDir(buildDirectory.getParentFile());
+      if (configDir == null) {
+        return false;
+      }
       File rootConfigDir;
       try {
-        rootConfigDir = new File(buildDirectory.getParentFile().getParentFile(), "conf");
+        rootConfigDir = new File(buildDirectory.getParentFile().getParentFile(), CONF_DIRECTORY);
         if (!rootConfigDir.exists() || rootConfigDir.isFile()) {
           rootConfigDir = configDir;
           configDir = null;
@@ -237,16 +239,15 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
   }
 
 
-  private File findConfigDir(File buildDirectoryPath) {
-    if (buildDirectoryPath == null) {
+  private File findConfigDir(File directoryPath) {
+    if (directoryPath == null) {
       return null;
     }
-    File parentFile = buildDirectoryPath.getParentFile();
-    File config = new File(parentFile, "conf");
+    File config = new File(directoryPath, CONF_DIRECTORY);
     if (config.exists() && config.isDirectory()) {
       return config;
     } else {
-      return findConfigDir(parentFile.getParentFile());
+      return findConfigDir(directoryPath.getParentFile());
     }
   }
 
