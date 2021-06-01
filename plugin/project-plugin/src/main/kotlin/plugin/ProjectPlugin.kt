@@ -245,11 +245,19 @@ class ProjectPlugin : Plugin<Project> {
                         dependency("cn.bestwu.summer:security-resource:$summerVersion")
 
                         dependency("cn.bestwu.summer:test:$summerVersion")
-
+                        dependency("cn.bestwu.summer:resources-processor:$summerVersion")
                     }
                 }
             }
 
+            if (project.findProperty("resources-processor") == "true")
+                subProject.dependencies.apply {
+                    add(
+                        "annotationProcessor",
+                        "cn.bestwu.summer:resources-processor"
+                    )
+                    add("compileOnly", "cn.bestwu.summer:resources-processor")
+                }
         }
 
 
