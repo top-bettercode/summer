@@ -104,16 +104,19 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
 
   private void processor(File resource, Properties properties) throws IOException {
     if (resource.isDirectory()) {
-      for (File file : resource.listFiles()) {
-        processor(file, properties);
+      File[] files = resource.listFiles();
+      if (files != null) {
+        for (File file : files) {
+          processor(file, properties);
+        }
       }
     } else {
       String name = resource.getName();
       int indexOf = name.lastIndexOf(".");
-      if (indexOf == -1) {
-        return;
+      if (indexOf != -1) {
+        name = name.substring(indexOf + 1);
       }
-      if (name.substring(indexOf + 1) != "class") {
+      if (name != "class") {
         FileOutputStream fileOutputStream = null;
         try {
           List<String> lines = new ArrayList<>();
@@ -129,6 +132,14 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
               String property = properties.getProperty(group);
               if (property != null) {
                 lstr = lstr.replace("@" + group + "@", property);
+              } else {
+//                Enumeration<Object> keys = properties.keys();
+//                String val = "";
+//                while (keys.hasMoreElements()) {
+//                  Object o = keys.nextElement();
+//                  val += o.toString() + ":" + properties.getProperty(o.toString()) + "\n";
+//                }
+//                lstr = lstr.replace("@" + group + "@", val);
               }
             }
             lines.add(lstr);
@@ -174,6 +185,9 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
       properties.load(new FileInputStream(rootGradle));
     }
     String profilesActive = properties.getProperty("profiles.active");
+    if (profilesActive == null || profilesActive.length() == 0) {
+      profilesActive = "local";
+    }
 
     loadConfigProperties(rootConfigDir, profilesActive, properties);
     if (configDir != null) {
