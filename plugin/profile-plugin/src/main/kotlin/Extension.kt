@@ -28,10 +28,11 @@ val Project.profileProperties: Properties
         val profile = extensions.getByType(ProfileExtension::class.java)
         configProject { project ->
             val defaultConfigYmlFile = project.file("${profile.configDir}/$defaultConfigName.yml")
+            val yaml = Yaml()
             if (defaultConfigYmlFile.exists()) {
                 props.putAll(
                     parseYml(
-                        Yaml().loadAs(
+                        yaml.loadAs(
                             defaultConfigYmlFile.inputStream(),
                             Map::class.java
                         )
@@ -41,13 +42,13 @@ val Project.profileProperties: Properties
             val activeYmlFile =
                 project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
             if (activeYmlFile.exists()) {
-                props.putAll(parseYml(Yaml().loadAs(activeYmlFile.inputStream(), Map::class.java)))
+                props.putAll(parseYml(yaml.loadAs(activeYmlFile.inputStream(), Map::class.java)))
             }
             val defaultConfigYamlFile = project.file("${profile.configDir}/$defaultConfigName.yaml")
             if (defaultConfigYamlFile.exists()) {
                 props.putAll(
                     parseYml(
-                        Yaml().loadAs(
+                        yaml.loadAs(
                             defaultConfigYamlFile.inputStream(),
                             Map::class.java
                         )
@@ -57,7 +58,7 @@ val Project.profileProperties: Properties
             val activeYamlFile =
                 project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
             if (activeYamlFile.exists()) {
-                props.putAll(parseYml(Yaml().loadAs(activeYamlFile.inputStream(), Map::class.java)))
+                props.putAll(parseYml(yaml.loadAs(activeYamlFile.inputStream(), Map::class.java)))
             }
             val defaultConfigFile =
                 project.file("${profile.configDir}/$defaultConfigName.properties")
