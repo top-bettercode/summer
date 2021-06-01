@@ -9,4 +9,5 @@ interface AutoDocRequestHandler {
 
     fun handle(request: AutoDocHttpServletRequest)
 
+    fun support(request: AutoDocHttpServletRequest): Boolean
 }

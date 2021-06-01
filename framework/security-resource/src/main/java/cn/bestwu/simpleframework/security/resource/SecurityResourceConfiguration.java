@@ -1,6 +1,7 @@
 package cn.bestwu.simpleframework.security.resource;
 
 import cn.bestwu.simpleframework.config.CorsProperties;
+import cn.bestwu.simpleframework.exception.WebAccessDeniedException;
 import cn.bestwu.simpleframework.security.ClientDetailsProperties;
 import cn.bestwu.simpleframework.security.server.SecurityServerConfiguration;
 import java.util.Collection;
@@ -18,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.security.access.AccessDecisionManager;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -158,7 +158,7 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
               StringUtils.collectionToCommaDelimitedString(configAttributes.stream().map(
                   (Function<ConfigAttribute, Object>) ConfigAttribute::getAttribute).collect(
                   Collectors.toList())));
-          throw new AccessDeniedException("无权访问");
+          throw new WebAccessDeniedException("无权访问");
         }
 
         private boolean contains(Collection<? extends GrantedAuthority> authorities,

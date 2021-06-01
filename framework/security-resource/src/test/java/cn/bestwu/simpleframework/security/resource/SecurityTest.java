@@ -114,6 +114,15 @@ public class SecurityTest {
     assertEquals(HttpStatus.OK, entity.getStatusCode());
   }
 
+//  @Test
+//  public void authInParam() throws Exception {
+//    HttpHeaders httpHeaders = new HttpHeaders();
+//    ResponseEntity<String> entity = restTemplate
+//        .exchange("/test?access_token=" + getAccessToken().getValue(), HttpMethod.GET,
+//            new HttpEntity<>(httpHeaders), String.class);
+//    assertEquals(HttpStatus.FORBIDDEN, entity.getStatusCode());
+//  }
+
   @Test
   public void authority() throws Exception {
     HttpHeaders httpHeaders = new HttpHeaders();
