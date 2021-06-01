@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -59,4 +60,8 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
     }
   }
 
+  @Override
+  public boolean support(@NotNull AutoDocHttpServletRequest request) {
+    return request.isMock();
+  }
 }

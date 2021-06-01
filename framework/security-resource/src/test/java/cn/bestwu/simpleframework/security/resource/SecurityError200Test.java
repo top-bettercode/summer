@@ -53,6 +53,16 @@ public class SecurityError200Test {
   }
 
   @Test
+  public void authInParam() throws Exception {
+    HttpHeaders httpHeaders = new HttpHeaders();
+    ResponseEntity<String> entity = restTemplate
+        .exchange("/test?access_token=", HttpMethod.GET,
+            new HttpEntity<>(httpHeaders), String.class);
+    assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
+
+  }
+
+  @Test
   public void noToken() {
     HttpHeaders httpHeaders = new HttpHeaders();
 //    httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_XML));

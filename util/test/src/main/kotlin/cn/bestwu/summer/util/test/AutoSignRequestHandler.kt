@@ -15,4 +15,8 @@ class AutoSignRequestHandler(
     override fun handle(request: AutoDocHttpServletRequest) {
         request.header(apiSignProperties.parameterName, apiSignAlgorithm.sign(request))
     }
+
+    override fun support(request: AutoDocHttpServletRequest): Boolean {
+        return true
+    }
 }

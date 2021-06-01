@@ -27,7 +27,7 @@ class AutoDocFilter(
     ) {
         if (!handlers.isNullOrEmpty()) {
             val servletRequest = AutoDocHttpServletRequest(request)
-            handlers.forEach { it.handle(servletRequest) }
+            handlers.filter { it.support(servletRequest) }.forEach { it.handle(servletRequest) }
             filterChain.doFilter(servletRequest, response)
         } else {
             filterChain.doFilter(request, response)

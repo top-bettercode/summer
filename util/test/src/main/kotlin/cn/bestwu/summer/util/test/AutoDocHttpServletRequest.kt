@@ -1,6 +1,7 @@
 package cn.bestwu.summer.util.test
 
 import cn.bestwu.autodoc.gen.Enumerator
+import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.util.StringUtils
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -12,6 +13,11 @@ class AutoDocHttpServletRequest(request: HttpServletRequest?) :
 
     private val extHeaders: MutableMap<String, Array<out String>> = mutableMapOf()
     private val extParams: MutableMap<String, Array<out String>> = mutableMapOf()
+
+    fun isMock(): Boolean {
+        return request is MockHttpServletRequest
+    }
+
 
     fun header(name: String, vararg value: String) {
         extHeaders[name] = value
