@@ -6,7 +6,6 @@ dependencies {
     compileOnly("org.springframework.security:spring-security-rsa")
 
 
-    testImplementation("org.springframework.security:spring-security-rsa")
     testImplementation(project(":util:test"))
 }
 
