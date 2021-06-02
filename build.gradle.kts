@@ -73,6 +73,7 @@ allprojects {
             dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
             dependency("org.springframework.cloud:spring-cloud-starter-config:3.0.3")
+            dependency("org.springframework.security:spring-security-rsa:1.0.10.RELEASE")
             dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.24.3")
 
             dependency("cn.bestwu.wechat:weixin-mp:0.9.7")

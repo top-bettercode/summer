@@ -50,7 +50,7 @@ public class SecurityServerConfiguration extends GlobalAuthenticationConfigurerA
     auth.userDetailsService(userDetailsService);
   }
 
-  @ConditionalOnClass(org.springframework.security.rsa.crypto.KeyStoreKeyFactory.class)
+  @ConditionalOnClass(KeyStoreKeyFactory.class)
   @ConditionalOnProperty(prefix = "summer.security.key-store", value = "resource-path")
   @Bean
   public JwtAccessTokenConverter jwtAccessTokenConverter(KeyStoreProperties keyStoreProperties) {

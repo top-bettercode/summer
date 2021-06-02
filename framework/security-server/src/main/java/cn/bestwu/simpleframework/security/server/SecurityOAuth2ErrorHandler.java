@@ -4,8 +4,8 @@ import cn.bestwu.simpleframework.web.RespEntity;
 import cn.bestwu.simpleframework.web.error.AbstractErrorHandler;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.http.HttpStatus;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.util.CollectionUtils;
@@ -31,7 +31,7 @@ public class SecurityOAuth2ErrorHandler extends AbstractErrorHandler {
         cause = cause.getCause();
       }
       if (cause instanceof IllegalUserException || cause instanceof IllegalArgumentException) {
-        httpErrorCode = HttpStatus.SC_BAD_REQUEST;
+        httpErrorCode = HttpStatus.BAD_REQUEST.value();
       }
       if (cause instanceof IllegalUserException) {
         Map<String, String> userErrors = ((IllegalUserException) cause).getErrors();
