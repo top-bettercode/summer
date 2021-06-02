@@ -204,12 +204,13 @@ class ProjectPlugin : Plugin<Project> {
                     add("implementation", "org.springframework.boot:spring-boot-starter-websocket")
 
 
-                if (project.findProperty("resources-processor") == "true")
-                    add(
-                        "annotationProcessor",
-                        "cn.bestwu.summer:resources-processor"
-                    )
-                add("compileOnly", "cn.bestwu.summer:resources-processor")
+//                if (project.findProperty("resources-processor") == "true") {
+//                    add(
+//                        "annotationProcessor",
+//                        "cn.bestwu.summer:resources-processor"
+//                    )
+//                    add("compileOnly", "cn.bestwu.summer:resources-processor")
+//                }
             }
 
             subProject.tasks.apply {
