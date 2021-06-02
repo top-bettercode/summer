@@ -23,7 +23,7 @@ public class SecurityProperties {
    */
   private Boolean frameOptionsDisable = true;
 
-  private Boolean supportClientCache=true;
+  private Boolean supportClientCache = true;
 
   //--------------------------------------------
   public boolean ignored(String path) {
