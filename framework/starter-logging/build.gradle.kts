@@ -10,7 +10,6 @@ dependencies {
     api("com.google.guava:guava")
 
     api("org.springframework.boot:spring-boot-starter-actuator")
-    api("org.springframework.cloud:spring-cloud-starter-config")
 
     compileOnly("javax.mail:mail")
     compileOnly("net.logstash.logback:logstash-logback-encoder")
