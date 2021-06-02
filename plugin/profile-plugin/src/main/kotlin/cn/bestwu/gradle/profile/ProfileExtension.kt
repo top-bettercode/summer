@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import profilesActive
 import profilesActiveName
 import profilesDefaultActive
-import defaultConfigName
 import simpleProfilesActiveName
 import java.io.File
 
@@ -21,29 +20,41 @@ internal val Project.profileFiles: Array<File>
         array.add(File(gradle.gradleUserHomeDir, "gradle.properties"))
         array.add(rootProject.file("gradle.properties"))
         configProject { project ->
-            val defaultConfigYmlFile = project.file("${profile.configDir}/$defaultConfigName.yml")
+            val defaultConfigYmlFile =
+                project.file("${profile.configDir}/$profilesDefaultActive.yml")
             if (defaultConfigYmlFile.exists()) {
                 array.add(defaultConfigYmlFile)
             }
-            val activeYmlFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
-            if (activeYmlFile.exists()) {
-                array.add(activeYmlFile)
+            if (profilesActive != profilesDefaultActive) {
+                val activeYmlFile =
+                    project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
+                if (activeYmlFile.exists()) {
+                    array.add(activeYmlFile)
+                }
             }
-            val defaultConfigYamlFile = project.file("${profile.configDir}/$defaultConfigName.yaml")
+            val defaultConfigYamlFile =
+                project.file("${profile.configDir}/$profilesDefaultActive.yaml")
             if (defaultConfigYamlFile.exists()) {
                 array.add(defaultConfigYamlFile)
             }
-            val activeYamlFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
-            if (activeYamlFile.exists()) {
-                array.add(activeYamlFile)
+            if (profilesActive != profilesDefaultActive) {
+                val activeYamlFile =
+                    project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
+                if (activeYamlFile.exists()) {
+                    array.add(activeYamlFile)
+                }
             }
-            val defaultConfigFile = project.file("${profile.configDir}/$defaultConfigName.properties")
+            val defaultConfigFile =
+                project.file("${profile.configDir}/$profilesDefaultActive.properties")
             if (defaultConfigFile.exists()) {
                 array.add(defaultConfigFile)
             }
-            val activeFile = project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
-            if (activeFile.exists()) {
-                array.add(activeFile)
+            if (profilesActive != profilesDefaultActive) {
+                val activeFile =
+                    project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
+                if (activeFile.exists()) {
+                    array.add(activeFile)
+                }
             }
         }
 
@@ -57,12 +68,14 @@ internal val Project.profiles: Set<String>
         configProject { project ->
             val configFile = project.file(profile.configDir)
             if (configFile.exists()) {
-                set.addAll(configFile.listFiles()?.filter { it.isFile }?.map { if (profile.activeFileSuffix.isNotBlank()) it.nameWithoutExtension.substringBeforeLast(profile.activeFileSuffix) else it.nameWithoutExtension }
-                        ?: emptySet())
+                set.addAll(configFile.listFiles()?.filter { it.isFile }?.map {
+                    if (profile.activeFileSuffix.isNotBlank()) it.nameWithoutExtension.substringBeforeLast(
+                        profile.activeFileSuffix
+                    ) else it.nameWithoutExtension
+                }
+                    ?: emptySet())
             }
         }
-        set.add(profilesDefaultActive)
-        set.remove(defaultConfigName)
         return set
     }
 
@@ -100,13 +113,20 @@ private fun findActive(profiles: Set<String>, active: String): String {
  * @author Peter Wu
  */
 open class ProfileExtension(
-        var matchFiles: Set<String> = setOf("**/*.yml", "**/*.yaml", "**/*.properties", "**/*.xml", "**/*.conf"),
-        var configDir: String = "conf",
-        var configFile: String = "",
-        var activeFileSuffix: String = "",
-        var beginToken: String = "@",
-        var endToken: String = "@",
-        var extraVersion: Boolean = false,
-        var excludeOther: Boolean = true,
-        var closure: MutableSet<Project.(ProfileExtension) -> Unit> = mutableSetOf(),
-        val profileClosure: MutableMap<String, MutableSet<Project.(ProfileExtension) -> Unit>> = mutableMapOf())
+    var matchFiles: Set<String> = setOf(
+        "**/*.yml",
+        "**/*.yaml",
+        "**/*.properties",
+        "**/*.xml",
+        "**/*.conf"
+    ),
+    var configDir: String = "conf",
+    var configFile: String = "",
+    var activeFileSuffix: String = "",
+    var beginToken: String = "@",
+    var endToken: String = "@",
+    var extraVersion: Boolean = false,
+    var excludeOther: Boolean = true,
+    var closure: MutableSet<Project.(ProfileExtension) -> Unit> = mutableSetOf(),
+    val profileClosure: MutableMap<String, MutableSet<Project.(ProfileExtension) -> Unit>> = mutableMapOf()
+)

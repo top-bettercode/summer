@@ -8,7 +8,6 @@ import java.util.*
 
 const val profilesDefaultActive: String = "default"
 const val simpleProfilesActiveName: String = "P"
-const val defaultConfigName: String = "default"
 const val profilesActiveName: String = "profiles.active"
 
 val Project.profileProperties: Properties
@@ -27,7 +26,8 @@ val Project.profileProperties: Properties
 
         val profile = extensions.getByType(ProfileExtension::class.java)
         configProject { project ->
-            val defaultConfigYmlFile = project.file("${profile.configDir}/$defaultConfigName.yml")
+            val defaultConfigYmlFile =
+                project.file("${profile.configDir}/$profilesDefaultActive.yml")
             val yaml = Yaml()
             if (defaultConfigYmlFile.exists()) {
                 props.putAll(
@@ -39,12 +39,22 @@ val Project.profileProperties: Properties
                     )
                 )
             }
-            val activeYmlFile =
-                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
-            if (activeYmlFile.exists()) {
-                props.putAll(parseYml(yaml.loadAs(activeYmlFile.inputStream(), Map::class.java)))
+            if (profilesActive != profilesDefaultActive) {
+                val activeYmlFile =
+                    project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
+                if (activeYmlFile.exists()) {
+                    props.putAll(
+                        parseYml(
+                            yaml.loadAs(
+                                activeYmlFile.inputStream(),
+                                Map::class.java
+                            )
+                        )
+                    )
+                }
             }
-            val defaultConfigYamlFile = project.file("${profile.configDir}/$defaultConfigName.yaml")
+            val defaultConfigYamlFile =
+                project.file("${profile.configDir}/$profilesDefaultActive.yaml")
             if (defaultConfigYamlFile.exists()) {
                 props.putAll(
                     parseYml(
@@ -55,20 +65,32 @@ val Project.profileProperties: Properties
                     )
                 )
             }
-            val activeYamlFile =
-                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
-            if (activeYamlFile.exists()) {
-                props.putAll(parseYml(yaml.loadAs(activeYamlFile.inputStream(), Map::class.java)))
+            if (profilesActive != profilesDefaultActive) {
+                val activeYamlFile =
+                    project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
+                if (activeYamlFile.exists()) {
+                    props.putAll(
+                        parseYml(
+                            yaml.loadAs(
+                                activeYamlFile.inputStream(),
+                                Map::class.java
+                            )
+                        )
+                    )
+                }
             }
             val defaultConfigFile =
-                project.file("${profile.configDir}/$defaultConfigName.properties")
+                project.file("${profile.configDir}/$profilesDefaultActive.properties")
             if (defaultConfigFile.exists()) {
                 props.load(defaultConfigFile.inputStream())
             }
-            val activeFile =
-                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
-            if (activeFile.exists()) {
-                props.load(activeFile.inputStream())
+
+            if (profilesActive != profilesDefaultActive) {
+                val activeFile =
+                    project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
+                if (activeFile.exists()) {
+                    props.load(activeFile.inputStream())
+                }
             }
         }
         if (profile.configFile.isNotBlank()) {

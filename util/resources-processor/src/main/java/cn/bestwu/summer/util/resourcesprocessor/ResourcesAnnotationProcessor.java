@@ -36,6 +36,7 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
 
   private final Map<String, String> properties = new TreeMap<>();
 
+  private static final String DEFAULT_PROFILES_ACTIVE = "default";
   private static final String CONF_DIRECTORY = "conf";
   private static final String CLASSES_DIRECTORY = "classes";
   private static final Pattern TOKEN_PATTERN = Pattern.compile("@.+?@");
@@ -186,7 +187,7 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
     }
     String profilesActive = properties.getProperty("profiles.active");
     if (profilesActive == null || profilesActive.length() == 0) {
-      profilesActive = "local";
+      profilesActive = DEFAULT_PROFILES_ACTIVE;
     }
 
     loadConfigProperties(rootConfigDir, profilesActive, properties);
@@ -208,30 +209,35 @@ public class ResourcesAnnotationProcessor extends AbstractProcessor {
       Map<?, ?> load = yaml.load(new FileInputStream(defaultConfigYmlFile));
       properties.putAll(parseYml(load, new HashMap<>(), ""));
     }
-    File activeYmlFile = new File(configDir, profilesActive + ".yml");
-    if (activeYmlFile.exists()) {
-      Map<?, ?> load = yaml.load(new FileInputStream(activeYmlFile));
-      properties.putAll(parseYml(load, new HashMap<>(), ""));
+    if (profilesActive != DEFAULT_PROFILES_ACTIVE) {
+      File activeYmlFile = new File(configDir, profilesActive + ".yml");
+      if (activeYmlFile.exists()) {
+        Map<?, ?> load = yaml.load(new FileInputStream(activeYmlFile));
+        properties.putAll(parseYml(load, new HashMap<>(), ""));
+      }
     }
-
     defaultConfigYmlFile = new File(configDir, "default.yaml");
     if (defaultConfigYmlFile.exists()) {
       Map<?, ?> load = yaml.load(new FileInputStream(defaultConfigYmlFile));
       properties.putAll(parseYml(load, new HashMap<>(), ""));
     }
-    activeYmlFile = new File(configDir, profilesActive + ".yaml");
-    if (activeYmlFile.exists()) {
-      Map<?, ?> load = yaml.load(new FileInputStream(activeYmlFile));
-      properties.putAll(parseYml(load, new HashMap<>(), ""));
+    if (profilesActive != DEFAULT_PROFILES_ACTIVE) {
+      File activeYmlFile = new File(configDir, profilesActive + ".yaml");
+      if (activeYmlFile.exists()) {
+        Map<?, ?> load = yaml.load(new FileInputStream(activeYmlFile));
+        properties.putAll(parseYml(load, new HashMap<>(), ""));
+      }
     }
 
     File defaultConfigFile = new File(configDir, "default.properties");
     if (defaultConfigFile.exists()) {
       properties.load(new FileInputStream(defaultConfigFile));
     }
-    File activeFile = new File(configDir, profilesActive + ".properties");
-    if (activeFile.exists()) {
-      properties.load(new FileInputStream(activeFile));
+    if (profilesActive != DEFAULT_PROFILES_ACTIVE) {
+      File activeFile = new File(configDir, profilesActive + ".properties");
+      if (activeFile.exists()) {
+        properties.load(new FileInputStream(activeFile));
+      }
     }
   }
 
