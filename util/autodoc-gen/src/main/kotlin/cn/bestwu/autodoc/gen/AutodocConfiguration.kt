@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct
  * @author Peter Wu
  */
 @ConditionalOnProperty(prefix = "summer.autodoc.gen", name = ["enable"], havingValue = "true")
-@EnableConfigurationProperties(GenProperties::class, ApiSignProperties::class)
+@EnableConfigurationProperties(GenProperties::class, ApiSignProperties::class, WebProperties::class)
 @Configuration(proxyBeanMethods = false)
 @ImportAutoConfiguration(RequestLoggingConfiguration::class)
 class AutodocConfiguration {
@@ -41,7 +41,8 @@ class AutodocConfiguration {
                 genProperties.datasource.url = dataSourceProperties!!.determineUrl() ?: ""
                 genProperties.datasource.username = dataSourceProperties!!.determineUsername() ?: ""
                 genProperties.datasource.password = dataSourceProperties!!.determinePassword() ?: ""
-                genProperties.datasource.driverClass = dataSourceProperties!!.determineDriverClassName()
+                genProperties.datasource.driverClass =
+                    dataSourceProperties!!.determineDriverClassName()
                         ?: ""
             }
         } catch (e: Exception) {
@@ -55,7 +56,10 @@ class AutodocConfiguration {
     }
 
     @Bean
-    fun autodocHandler(signProperties: ApiSignProperties, webProperties: WebProperties): AutodocHandler {
+    fun autodocHandler(
+        signProperties: ApiSignProperties,
+        webProperties: WebProperties
+    ): AutodocHandler {
         return AutodocHandler(genProperties, signProperties, webProperties)
     }
 

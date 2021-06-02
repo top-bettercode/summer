@@ -86,6 +86,8 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
       http.cors();
     }
 
+    http.csrf().disable();
+
     http.oauth2ResourceServer(config -> {
       config.opaqueToken();
       config.bearerTokenResolver(new MultipleBearerTokenResolver());

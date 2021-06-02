@@ -1,2 +1,6 @@
+# AutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cn.bestwu.config.WritableEnvironmentEndpointAutoConfiguration
+
 org.springframework.boot.env.EnvironmentPostProcessor=\
 cn.bestwu.config.ConfigEnvironmentPostProcessor
