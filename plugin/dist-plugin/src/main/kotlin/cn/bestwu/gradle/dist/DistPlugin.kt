@@ -14,6 +14,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
+import profilesActive
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -285,6 +286,7 @@ class DistPlugin : Plugin<Project> {
             val jvmArgs = dist.jvmArgs.filter { it.isNotBlank() }.toMutableSet()
             val encoding = "-Dfile.encoding=UTF-8"
             jvmArgs += encoding
+            jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
             val nativeLibArgs = if (project.file(dist.nativePath).exists()) {
                 val nativeLibArgs =
                     "-Djava.library.path=${project.file(dist.nativePath).absolutePath}"
