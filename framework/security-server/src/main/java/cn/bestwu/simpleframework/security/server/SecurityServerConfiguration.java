@@ -4,6 +4,7 @@ import java.security.KeyPair;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -49,6 +50,7 @@ public class SecurityServerConfiguration extends GlobalAuthenticationConfigurerA
     auth.userDetailsService(userDetailsService);
   }
 
+  @ConditionalOnClass(org.springframework.security.rsa.crypto.KeyStoreKeyFactory.class)
   @ConditionalOnProperty(prefix = "summer.security.key-store", value = "resource-path")
   @Bean
   public JwtAccessTokenConverter jwtAccessTokenConverter(KeyStoreProperties keyStoreProperties) {
