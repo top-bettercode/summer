@@ -85,7 +85,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  *
  * @author Peter Wu
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 @EnableConfigurationProperties({WebProperties.class, JacksonExtProperties.class})
 @AutoConfigureBefore({ErrorMvcAutoConfiguration.class, JacksonAutoConfiguration.class})
@@ -161,7 +161,7 @@ public class FrameworkMvcConfiguration {
     return module;
   }
 
-  @Configuration
+  @Configuration(proxyBeanMethods = false)
   @ConditionalOnWebApplication
   protected static class ObjectMapperBuilderCustomizer implements
       Jackson2ObjectMapperBuilderCustomizer {
@@ -195,7 +195,7 @@ public class FrameworkMvcConfiguration {
     return new DefaultErrorHandler(messageSource, request);
   }
 
-  @Configuration
+  @Configuration(proxyBeanMethods = false)
   @ConditionalOnClass(org.springframework.jdbc.UncategorizedSQLException.class)
   @ConditionalOnWebApplication
   protected static class ErrorHandlerConfiguration {
@@ -313,7 +313,7 @@ public class FrameworkMvcConfiguration {
   }
 
 
-  @Configuration
+  @Configuration(proxyBeanMethods = false)
   @ConditionalOnClass(DefaultKaptcha.class)
   @ConditionalOnWebApplication
   @EnableConfigurationProperties(KaptchaProperties.class)
@@ -385,7 +385,7 @@ public class FrameworkMvcConfiguration {
 
 
   @SuppressWarnings("Convert2Lambda")
-  @Configuration
+  @Configuration(proxyBeanMethods = false)
   @ConditionalOnWebApplication
   protected static class WebMvcConfiguration implements WebMvcConfigurer {
 

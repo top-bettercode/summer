@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 
 @ConditionalOnClass(AppSetting.class)
 @ConditionalOnProperty(prefix = "summer.wechat", name = "app-id")
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({WechatProperties.class})
 public class WechatConfiguration {
 

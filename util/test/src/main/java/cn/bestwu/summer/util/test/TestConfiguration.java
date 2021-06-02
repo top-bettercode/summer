@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.WebRequest;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 public class TestConfiguration {
 

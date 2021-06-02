@@ -20,7 +20,7 @@ import javax.annotation.PostConstruct
  */
 @ConditionalOnProperty(prefix = "summer.autodoc.gen", name = ["enable"], havingValue = "true")
 @EnableConfigurationProperties(GenProperties::class, ApiSignProperties::class)
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ImportAutoConfiguration(RequestLoggingConfiguration::class)
 class AutodocConfiguration {
     private val log: Logger = LoggerFactory.getLogger(AutodocConfiguration::class.java)

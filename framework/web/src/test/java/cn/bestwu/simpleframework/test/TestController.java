@@ -40,7 +40,7 @@ public class TestController extends BaseController {
     throw new RuntimeException("xx");
   }
 
-  @Configuration
+  @Configuration(proxyBeanMethods = false)
   protected static class CodeConfiguration {
 
     @Bean

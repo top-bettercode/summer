@@ -26,7 +26,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author Peter Wu
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnBean(DataSource.class)
 @ConditionalOnClass(JpaRepository.class)
 @Order(Ordered.HIGHEST_PRECEDENCE)
