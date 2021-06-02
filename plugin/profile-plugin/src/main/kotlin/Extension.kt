@@ -6,7 +6,7 @@ import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.util.*
 
-const val profilesDefaultActive: String = "local"
+const val profilesDefaultActive: String = "default"
 const val simpleProfilesActiveName: String = "P"
 const val defaultConfigName: String = "default"
 const val profilesActiveName: String = "profiles.active"

@@ -220,6 +220,7 @@ class ProjectPlugin : Plugin<Project> {
                         .filter { it.isNotBlank() }.toMutableSet()
                 val encoding = "-Dfile.encoding=UTF-8"
                 jvmArgs += encoding
+                jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
                 if (subProject.file(nativePath).exists()) {
                     val nativeLibArgs =
                         "-Djava.library.path=${subProject.file(nativePath).absolutePath}"
