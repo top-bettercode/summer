@@ -99,7 +99,8 @@ private fun findActive(profiles: Set<String>, active: String): String {
     return if (find == null) {
         val filter = profiles.filter { it.startsWith(active) }
         if (filter.isEmpty() || filter.size > 1) {
-            throw IllegalArgumentException("未找到适合的profiles.active:${active}配置文件")
+            println("未找到适合的profiles.active:${active}配置文件,使用${profilesDefaultActive}默认配置")
+            profilesDefaultActive
         } else {
             filter[0]
         }
