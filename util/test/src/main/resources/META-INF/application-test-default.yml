@@ -22,5 +22,3 @@ spring:
   cloud:
     refresh:
       enabled: false
-  autoconfigure:
-    exclude:
