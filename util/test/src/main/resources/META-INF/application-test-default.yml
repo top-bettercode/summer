@@ -19,3 +19,8 @@ logging:
 spring:
   jackson:
     default-property-inclusion: ALWAYS
+  cloud:
+    refresh:
+      enabled: false
+  autoconfigure:
+    exclude:

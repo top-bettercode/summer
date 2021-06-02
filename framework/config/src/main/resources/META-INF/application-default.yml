@@ -15,6 +15,10 @@ summer:
 
 
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClientAutoConfiguration
+      - org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration
   cloud:
     config:
       enabled: false
