@@ -30,8 +30,6 @@ class ManagementLoginPageGeneratingFilter(
     private val antPathMatcher = AntPathMatcher()
     private var resolveHiddenInputs =
         Function<HttpServletRequest, Map<String?, String>> { emptyMap() }
-    private val authKey: String =
-        DigestUtils.md5DigestAsHex("${managementAuthProperties.username}:${managementAuthProperties.password}".toByteArray())
 
     /**
      * Sets a Function used to resolve a Map of the hidden inputs where the key is the name of the
@@ -84,8 +82,8 @@ class ManagementLoginPageGeneratingFilter(
         val response = res as HttpServletResponse
         var uri = request.servletPath
         if (match(uri) && loginPageUrl != uri) {
-            if (request.getCookie(LOGGER_AUTH_KEY) == authKey) {
-                response.setCookie(LOGGER_AUTH_KEY, authKey)
+            if (request.getCookie(LOGGER_AUTH_KEY) == managementAuthProperties.authKey) {
+                response.setCookie(LOGGER_AUTH_KEY, managementAuthProperties.authKey)
                 chain.doFilter(request, response)
             } else {
                 val queryString = request.queryString
@@ -106,7 +104,7 @@ class ManagementLoginPageGeneratingFilter(
             if (username != null && password != null && (username.trim { it <= ' ' }
                         == managementAuthProperties.username) && (password
                         == managementAuthProperties.password)) {
-                response.setCookie(LOGGER_AUTH_KEY, authKey)
+                response.setCookie(LOGGER_AUTH_KEY, managementAuthProperties.authKey)
                 val url = request.getCookie(TARGET_URL_KEY) ?: "/"
                 sendRedirect(request, response, url)
                 return

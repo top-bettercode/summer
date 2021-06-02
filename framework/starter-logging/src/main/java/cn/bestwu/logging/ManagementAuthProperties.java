@@ -1,6 +1,8 @@
 package cn.bestwu.logging;
 
+import java.nio.charset.StandardCharsets;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.util.DigestUtils;
 
 /**
  * 日志访问权限 配置
@@ -17,6 +19,14 @@ public class ManagementAuthProperties {
   private int maxAge = -1;
   private String username = "madmin";
   private String password;
+
+  //--------------------------------------------
+  public String getAuthKey() {
+    return DigestUtils.md5DigestAsHex(
+        "${managementAuthProperties.username}:${managementAuthProperties.password}".getBytes(
+            StandardCharsets.UTF_8));
+  }
+  //--------------------------------------------
 
   public String[] getPattern() {
     return pattern;
