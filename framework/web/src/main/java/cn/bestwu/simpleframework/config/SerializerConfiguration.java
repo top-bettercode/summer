@@ -23,7 +23,7 @@ import org.springframework.util.ClassUtils;
 /**
  * @author Peter Wu
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SerializerConfiguration {
@@ -49,7 +49,7 @@ public class SerializerConfiguration {
   }
 
 
-  @Configuration
+  @Configuration(proxyBeanMethods = false)
   @ConditionalOnWebApplication
   protected static class UrlSerializerConfiguration {
 
@@ -64,7 +64,7 @@ public class SerializerConfiguration {
     return new CodeService(new PropertiesSource("default-dic-code", "dic-code"));
   }
 
-  @Configuration
+  @Configuration(proxyBeanMethods = false)
   @ConditionalOnWebApplication
   protected static class CodeSerializerConfiguration {
 

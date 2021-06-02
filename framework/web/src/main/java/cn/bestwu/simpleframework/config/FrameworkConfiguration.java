@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 0.1.14
  */
 @AutoConfigureBefore({JacksonAutoConfiguration.class})
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class FrameworkConfiguration {
 
   @Bean

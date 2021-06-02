@@ -41,7 +41,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
 @ConditionalOnWebApplication
@@ -123,7 +123,7 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
   }
 
 
-  @Configuration
+  @Configuration(proxyBeanMethods = false)
   @EnableConfigurationProperties(ClientDetailsProperties.class)
   @ConditionalOnWebApplication
   protected static class AccessDecisionManagerConfiguration implements WebMvcConfigurer {

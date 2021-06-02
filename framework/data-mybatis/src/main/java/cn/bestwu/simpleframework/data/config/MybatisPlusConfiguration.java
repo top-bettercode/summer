@@ -19,7 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * @author Peter Wu
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class MybatisPlusConfiguration {
 
   @ConditionalOnMissingBean(PageInfoInterceptor.class)
@@ -28,7 +28,7 @@ public class MybatisPlusConfiguration {
     return new PageInfoInterceptor();
   }
 
-  @Configuration
+  @Configuration(proxyBeanMethods = false)
   @ConditionalOnWebApplication
   @EnableConfigurationProperties(WrapperBinderProperties.class)
   protected static class MybatisWebMvcConfiguration implements WebMvcConfigurer {

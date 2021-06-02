@@ -23,7 +23,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.rsa.crypto.KeyStoreKeyFactory;
 
 @Deprecated
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(KeyStoreProperties.class)
 public class SecurityServerConfiguration extends GlobalAuthenticationConfigurerAdapter {

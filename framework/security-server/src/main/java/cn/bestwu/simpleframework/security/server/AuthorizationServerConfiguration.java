@@ -19,7 +19,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
  */
 @Deprecated
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 @Order(-1)
 @ConditionalOnProperty(prefix = "summer.security.cors", value = "enable", havingValue = "true", matchIfMissing = true)

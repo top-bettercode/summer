@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
  * @author Peter Wu
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 @Conditional(ApiSignConfiguration.ApiSignCondition::class)
 @EnableConfigurationProperties(ApiSignProperties::class)

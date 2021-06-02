@@ -18,7 +18,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @ConditionalOnClass(Anonymous.class)
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequestHandler {
 
 

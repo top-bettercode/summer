@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.stereotype.Service;
 
 @Deprecated
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 @EnableAuthorizationServer
 public class TestSecurityConfiguration {

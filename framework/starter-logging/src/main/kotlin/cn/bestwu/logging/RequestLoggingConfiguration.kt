@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse
     havingValue = "true",
     matchIfMissing = true
 )
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(
     RequestLoggingProperties::class,
     WebsocketProperties::class,
@@ -48,7 +48,7 @@ class RequestLoggingConfiguration {
     private val log: Logger = LoggerFactory.getLogger(RequestLoggingConfiguration::class.java)
 
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     class CustomWebMvcConfigurer : WebMvcConfigurer {
         @Autowired
         private lateinit var properties: RequestLoggingProperties

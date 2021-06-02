@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Peter Wu
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class DataJpaConfiguration {
 
   @Bean("jpaExtProperties")
