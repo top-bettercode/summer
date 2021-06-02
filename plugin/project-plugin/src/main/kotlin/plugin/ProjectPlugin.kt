@@ -167,6 +167,7 @@ class ProjectPlugin : Plugin<Project> {
                         dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
                         dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.5.0")
                         dependency("org.springframework.cloud:spring-cloud-starter-config:3.0.3")
+                        dependency("org.springframework.security:spring-security-rsa:1.0.10.RELEASE")
                         dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
                         dependency("org.jetbrains.kotlin:kotlin-stdlib:${KotlinVersion.CURRENT}")
