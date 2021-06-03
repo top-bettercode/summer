@@ -7,7 +7,6 @@ import org.springframework.boot.actuate.env.EnvironmentEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -25,7 +24,6 @@ import org.springframework.core.env.Environment;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnMissingClass("org.springframework.cloud.autoconfigure.WritableEnvironmentEndpointAutoConfiguration")
 @ConditionalOnClass({EnvironmentEndpoint.class, EnvironmentEndpointProperties.class})
-@ConditionalOnBean(EnvironmentManager.class)
 @AutoConfigureBefore(EnvironmentEndpointAutoConfiguration.class)
 @AutoConfigureAfter(WebMvcAutoConfiguration.class)
 @EnableConfigurationProperties({EnvironmentEndpointProperties.class})
