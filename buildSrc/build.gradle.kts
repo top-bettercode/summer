@@ -9,10 +9,15 @@ configurations {
 repositories {
     mavenLocal()
 //    maven("https://maven.aliyun.com/repository/gradle-plugin")
-    maven("https://maven.aliyun.com/repository/public")
-    mavenCentral()
     gradlePluginPortal()
-    maven("https://oss.jfrog.org/oss-snapshot-local")
+    maven {
+        credentials {
+            username = "60b89f54395ee4198d8c67cf"
+            password = "WnLfTlxXBq(k"
+        }
+        setUrl("https://packages.aliyun.com/maven/repository/2021488-snapshot-4ZYq5w/")
+    }
+    mavenCentral()
 }
 
 dependencies {
