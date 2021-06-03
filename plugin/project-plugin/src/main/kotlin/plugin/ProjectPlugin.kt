@@ -135,9 +135,10 @@ class ProjectPlugin : Plugin<Project> {
                         )
                     )
                 }
-                all {
-                    it.resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)
-                }
+                if ("false" != project.findProperty("dependencies.disable-cache"))
+                    all {
+                        it.resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)
+                    }
             }
 
             subProject.extensions.configure(StandardDependencyManagementExtension::class.java) { ext ->
