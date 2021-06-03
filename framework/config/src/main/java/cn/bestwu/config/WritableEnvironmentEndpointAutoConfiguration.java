@@ -1,12 +1,14 @@
 package cn.bestwu.config;
 
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.env.EnvironmentEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.env.EnvironmentEndpointProperties;
 import org.springframework.boot.actuate.env.EnvironmentEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -23,6 +25,7 @@ import org.springframework.core.env.Environment;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnMissingClass("org.springframework.cloud.autoconfigure.WritableEnvironmentEndpointAutoConfiguration")
+@ConditionalOnBean(WebEndpointProperties.class)
 @ConditionalOnClass({EnvironmentEndpoint.class, EnvironmentEndpointProperties.class})
 @AutoConfigureBefore(EnvironmentEndpointAutoConfiguration.class)
 @AutoConfigureAfter(WebMvcAutoConfiguration.class)

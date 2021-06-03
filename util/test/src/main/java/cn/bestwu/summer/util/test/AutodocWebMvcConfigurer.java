@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @ConditionalOnClass(Anonymous.class)
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(SecurityProperties.class)
 public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequestHandler {
 
 
