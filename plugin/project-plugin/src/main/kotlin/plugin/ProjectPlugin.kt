@@ -70,23 +70,6 @@ class ProjectPlugin : Plugin<Project> {
                 java.targetCompatibility = JavaVersion.VERSION_1_8
             }
 
-//            subProject.repositories.apply {
-//                mavenLocal()
-//                maven { it.setUrl("https://maven.aliyun.com/repository/public") }
-//                mavenCentral()
-//                val repositories = (project.findProperty("repositories") as? String)?.split(",")
-//                    ?.filter { it.isNotBlank() }
-//
-//                repositories?.forEach { repository ->
-//                    maven {
-//                        it.setUrl(repository)
-//                        it.isAllowInsecureProtocol = repository.startsWith("http://")
-//                    }
-//                }
-//
-//                maven { it.setUrl("https://oss.jfrog.org/oss-snapshot-local") }
-//            }
-
             val mainProject =
                 !arrayOf("core").contains(subProject.name) && subProject.parent?.name != "util" && subProject.name != "util"
             val needDocProject = subProject.parent?.name != "util" && subProject.name != "util"
