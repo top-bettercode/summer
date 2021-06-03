@@ -1,14 +1,17 @@
 package cn.bestwu.simpleframework.data.config;
 
+import cn.bestwu.simpleframework.data.IbatisErrorHandler;
 import cn.bestwu.simpleframework.data.Repositories;
 import cn.bestwu.simpleframework.data.dsl.EntityPathWrapper;
 import cn.bestwu.simpleframework.support.packagescan.PackageScanClassResolver;
 import java.util.List;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,6 +32,12 @@ public class MybatisConfiguration {
   public MybatisConfiguration(
       @Autowired(required = false) List<MapperFactoryBean> mapperFactoryBeans) {
     this.mapperFactoryBeans = mapperFactoryBeans;
+  }
+
+  @Bean
+  public IbatisErrorHandler ibatisErrorHandler(MessageSource messageSource,
+      HttpServletRequest request) {
+    return new IbatisErrorHandler(messageSource, request);
   }
 
   @Bean
