@@ -6,6 +6,7 @@ import cn.bestwu.logging.operation.OperationResponse
 import cn.bestwu.logging.operation.RequestConverter
 import cn.bestwu.logging.operation.ResponseConverter
 import org.slf4j.LoggerFactory
+import org.slf4j.MarkerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -23,6 +24,7 @@ import java.time.LocalDateTime
 class ClientHttpRequestWrapper(
     private val collectionName: String,
     private val name: String,
+    private val logMarker: String?,
     private val request: ClientHttpRequest
 ) : ClientHttpRequest {
     private val log = LoggerFactory.getLogger(ClientHttpRequestWrapper::class.java)
@@ -52,20 +54,38 @@ class ClientHttpRequestWrapper(
                         HttpHeaders.EMPTY, ByteArray(0)
                     ) else ResponseConverter.convert(response as ClientHttpResponseWrapper)
                 )
-                log.info(
-                    operation.toString(
-                        RequestLoggingConfig(
-                            includeRequestBody = true,
-                            includeResponseBody = true,
-                            includeTrace = true,
-                            encryptHeaders = arrayOf(),
-                            encryptParameters = arrayOf(),
-                            format = true,
-                            ignoredTimeout = true,
-                            timeoutAlarmSeconds = -1
+                if (logMarker.isNullOrBlank()) {
+                    log.info(
+                        operation.toString(
+                            RequestLoggingConfig(
+                                includeRequestBody = true,
+                                includeResponseBody = true,
+                                includeTrace = true,
+                                encryptHeaders = arrayOf(),
+                                encryptParameters = arrayOf(),
+                                format = true,
+                                ignoredTimeout = true,
+                                timeoutAlarmSeconds = -1
+                            )
                         )
                     )
-                )
+                } else {
+                    log.info(
+                        MarkerFactory.getMarker(logMarker),
+                        operation.toString(
+                            RequestLoggingConfig(
+                                includeRequestBody = true,
+                                includeResponseBody = true,
+                                includeTrace = true,
+                                encryptHeaders = arrayOf(),
+                                encryptParameters = arrayOf(),
+                                format = true,
+                                ignoredTimeout = true,
+                                timeoutAlarmSeconds = -1
+                            )
+                        )
+                    )
+                }
             }
         }
     }
