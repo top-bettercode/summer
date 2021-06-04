@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
+import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.*
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.context.annotation.*
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletResponse
  */
 @ConditionalOnBean(WebEndpointProperties::class)
 @ConditionalOnClass(WebEndpointProperties::class)
+@AutoConfigureAfter(org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration::class)
 @Configuration(proxyBeanMethods = false)
 class ActuateLoggingConfiguration {
 
