@@ -20,15 +20,21 @@ public class ApiTemplate extends RestTemplate {
   private final Logger log = LoggerFactory.getLogger(this.getClass());
   private final String collectionName;
   private final String name;
+  private final String logMarker;
 
   public ApiTemplate(int connectTimeout, int readTimeout) {
-    this("", "", connectTimeout, readTimeout);
+    this("", "", null, connectTimeout, readTimeout);
   }
 
-  public ApiTemplate(String collectionName,
-      String name, int connectTimeout, int readTimeout) {
+  public ApiTemplate(String collectionName, String name, int connectTimeout, int readTimeout) {
+    this(collectionName, name, null, connectTimeout, readTimeout);
+  }
+
+  public ApiTemplate(String collectionName, String name, String logMarker, int connectTimeout,
+      int readTimeout) {
     this.collectionName = collectionName;
     this.name = name;
+    this.logMarker = logMarker;
 
     SimpleClientHttpRequestFactory clientHttpRequestFactory = new SimpleClientHttpRequestFactory();
     //Connect timeout
@@ -41,7 +47,8 @@ public class ApiTemplate extends RestTemplate {
   @Override
   protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
     if (log.isInfoEnabled()) {
-      return new ClientHttpRequestWrapper(collectionName, name, super.createRequest(url, method));
+      return new ClientHttpRequestWrapper(collectionName, name, logMarker,
+          super.createRequest(url, method));
     } else {
       return super.createRequest(url, method);
     }
