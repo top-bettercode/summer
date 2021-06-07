@@ -1,9 +1,9 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-cn.bestwu.logging.RequestLoggingConfiguration,\
-cn.bestwu.logging.websocket.WebsocketConfiguration,\
-cn.bestwu.logging.ActuateLoggingConfiguration
+top.bettercode.logging.RequestLoggingConfiguration,\
+top.bettercode.logging.websocket.WebsocketConfiguration,\
+top.bettercode.logging.ActuateLoggingConfiguration
 
 # Application Listeners
 org.springframework.context.ApplicationListener=\
-cn.bestwu.logging.BeforeLoggingApplicationListener
+top.bettercode.logging.BeforeLoggingApplicationListener

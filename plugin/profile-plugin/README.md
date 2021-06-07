@@ -10,17 +10,17 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'cn.bestwu.gradle:profile-plugin:1.0'
+        classpath 'top.bettercode.gradle:profile-plugin:1.0'
     }
 }
 
-apply plugin: 'cn.bestwu.profile'
+apply plugin: 'top.bettercode.profile'
 ```
 或
 
 ```groovy
 plugins {
-  id "cn.bestwu.profile" version "1.0"
+  id "top.bettercode.profile" version "1.0"
 }
 ```
 

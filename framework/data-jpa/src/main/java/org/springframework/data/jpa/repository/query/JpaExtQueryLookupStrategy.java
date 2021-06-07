@@ -1,6 +1,6 @@
 package org.springframework.data.jpa.repository.query;
 
-import cn.bestwu.simpleframework.data.jpa.config.JpaExtProperties;
+import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 import java.lang.reflect.Method;
 import javax.persistence.EntityManager;
 import org.mybatis.spring.SqlSessionTemplate;

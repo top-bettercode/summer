@@ -1,4 +1,4 @@
-import cn.bestwu.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.JavaType
 
 /**
  * @author Peter Wu
@@ -16,7 +16,7 @@ open class MServiceImpl : MModuleJavaGenerator() {
                 +" * $remarks 服务层实现"
                 +" */"
             }
-            superClass = JavaType("cn.bestwu.simpleframework.data.BaseServiceImpl").typeArgument(daoType, entityType)
+            superClass = JavaType("top.bettercode.simpleframework.data.BaseServiceImpl").typeArgument(daoType, entityType)
 
 
             implement(iserviceType)

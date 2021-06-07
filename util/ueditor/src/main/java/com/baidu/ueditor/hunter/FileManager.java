@@ -1,7 +1,7 @@
 package com.baidu.ueditor.hunter;
 
-import cn.bestwu.lang.util.ArrayUtil;
-import cn.bestwu.lang.util.FileUtil;
+import top.bettercode.lang.util.ArrayUtil;
+import top.bettercode.lang.util.FileUtil;
 import com.baidu.ueditor.PathFormat;
 import com.baidu.ueditor.define.AppInfo;
 import com.baidu.ueditor.define.BaseState;

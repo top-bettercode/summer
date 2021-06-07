@@ -1,13 +1,13 @@
 package plugin
 
-import cn.bestwu.generator.GeneratorExtension
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.InnerInterface
-import cn.bestwu.generator.dom.java.element.Interface
-import cn.bestwu.generator.dom.java.element.JavaVisibility
-import cn.bestwu.generator.dom.java.element.TopLevelClass
-import cn.bestwu.generator.dsl.Generators
-import cn.bestwu.generator.puml.PumlConverter
+import top.bettercode.generator.GeneratorExtension
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.InnerInterface
+import top.bettercode.generator.dom.java.element.Interface
+import top.bettercode.generator.dom.java.element.JavaVisibility
+import top.bettercode.generator.dom.java.element.TopLevelClass
+import top.bettercode.generator.dsl.Generators
+import top.bettercode.generator.puml.PumlConverter
 import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
 import hudson.cli.CLI
 import org.atteo.evo.inflector.English
@@ -133,8 +133,8 @@ class ProjectPlugin : Plugin<Project> {
                         val summerVersion =
                             ProjectPlugin::class.java.`package`.implementationVersion
 
-                        dependency("cn.bestwu.wechat:weixin-mp:0.9.7")
-                        dependency("cn.bestwu.wechat:weixin-app:0.9.7")
+                        dependency("top.bettercode.wechat:weixin-mp:0.9.7")
+                        dependency("top.bettercode.wechat:weixin-app:0.9.7")
                         dependency("com.alipay.sdk:alipay-sdk-java:4.13.58.ALL")
                         dependency("com.aliyun:aliyun-java-sdk-core:4.5.20")
                         dependency("com.aliyun:aliyun-java-sdk-dysmsapi:2.1.0")
@@ -157,22 +157,22 @@ class ProjectPlugin : Plugin<Project> {
                         dependency("org.jetbrains.kotlin:kotlin-stdlib-common:${KotlinVersion.CURRENT}")
                         dependency("org.jetbrains.kotlin:kotlin-reflect:${KotlinVersion.CURRENT}")
 
-                        dependency("cn.bestwu.summer:api-sign:$summerVersion")
-                        dependency("cn.bestwu.summer:common-lang:$summerVersion")
-                        dependency("cn.bestwu.summer:starter-logging:$summerVersion")
-                        dependency("cn.bestwu.summer:autodoc-gen:$summerVersion")
-                        dependency("cn.bestwu.summer:excel:$summerVersion")
-                        dependency("cn.bestwu.summer:ueditor:$summerVersion")
-                        dependency("cn.bestwu.summer:wechat:$summerVersion")
+                        dependency("top.bettercode.summer:api-sign:$summerVersion")
+                        dependency("top.bettercode.summer:common-lang:$summerVersion")
+                        dependency("top.bettercode.summer:starter-logging:$summerVersion")
+                        dependency("top.bettercode.summer:autodoc-gen:$summerVersion")
+                        dependency("top.bettercode.summer:excel:$summerVersion")
+                        dependency("top.bettercode.summer:ueditor:$summerVersion")
+                        dependency("top.bettercode.summer:wechat:$summerVersion")
 
-                        dependency("cn.bestwu.summer:web:$summerVersion")
-                        dependency("cn.bestwu.summer:data-jpa:$summerVersion")
-                        dependency("cn.bestwu.summer:data-mybatis:$summerVersion")
-                        dependency("cn.bestwu.summer:security-server:$summerVersion")
-                        dependency("cn.bestwu.summer:security-resource:$summerVersion")
+                        dependency("top.bettercode.summer:web:$summerVersion")
+                        dependency("top.bettercode.summer:data-jpa:$summerVersion")
+                        dependency("top.bettercode.summer:data-mybatis:$summerVersion")
+                        dependency("top.bettercode.summer:security-server:$summerVersion")
+                        dependency("top.bettercode.summer:security-resource:$summerVersion")
 
-                        dependency("cn.bestwu.summer:test:$summerVersion")
-                        dependency("cn.bestwu.summer:resources-processor:$summerVersion")
+                        dependency("top.bettercode.summer:test:$summerVersion")
+                        dependency("top.bettercode.summer:resources-processor:$summerVersion")
                     }
                 }
             }
@@ -192,9 +192,9 @@ class ProjectPlugin : Plugin<Project> {
 //                if (project.findProperty("resources-processor") == "true") {
 //                    add(
 //                        "annotationProcessor",
-//                        "cn.bestwu.summer:resources-processor"
+//                        "top.bettercode.summer:resources-processor"
 //                    )
-//                    add("compileOnly", "cn.bestwu.summer:resources-processor")
+//                    add("compileOnly", "top.bettercode.summer:resources-processor")
 //                }
             }
 

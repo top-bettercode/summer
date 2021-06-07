@@ -69,8 +69,8 @@ logging:
     jdk.event.security: warn
     io.lettuce: warn
     org.thymeleaf: warn
-    cn.bestwu.lang: warn
-    cn.bestwu.simpleframework.support.packagescan: warn
+    top.bettercode.lang: warn
+    top.bettercode.simpleframework.support.packagescan: warn
     javax.management: warn
     org.quartz: warn
     io.netty: warn

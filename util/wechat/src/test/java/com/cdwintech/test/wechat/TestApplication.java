@@ -1,7 +1,7 @@
 package com.cdwintech.test.wechat;
 
-import cn.bestwu.summer.util.wechat.support.AbstractWechatService;
-import cn.bestwu.summer.util.wechat.support.IWechatService;
+import top.bettercode.summer.util.wechat.support.AbstractWechatService;
+import top.bettercode.summer.util.wechat.support.IWechatService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

@@ -1,6 +1,6 @@
-import cn.bestwu.generator.DataType
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.Parameter
+import top.bettercode.generator.DataType
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.Parameter
 
 /**
  * @author Peter Wu

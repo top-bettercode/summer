@@ -4,7 +4,7 @@ plugins {
 }
 
 allprojects {
-    group = "cn.bestwu.summer"
+    group = "top.bettercode.summer"
     version = properties["version"] as String
 
     apply {
@@ -80,8 +80,8 @@ allprojects {
             dependency("org.springframework.security:spring-security-rsa:1.0.10.RELEASE")
             dependency("org.jfrog.buildinfo:build-info-extractor-gradle:4.24.3")
 
-            dependency("cn.bestwu.wechat:weixin-mp:0.9.7")
-            dependency("cn.bestwu.wechat:weixin-app:0.9.7")
+            dependency("top.bettercode.wechat:weixin-mp:0.9.8-SNAPSHOT")
+            dependency("top.bettercode.wechat:weixin-app:0.9.8-SNAPSHOT")
 
             dependency("commons-codec:commons-codec:1.15")
             dependency("org.json:json:20210307")

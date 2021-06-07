@@ -1,8 +1,8 @@
 package org.springframework.data.jpa.repository.query;
 
-import cn.bestwu.simpleframework.data.jpa.config.JpaExtProperties;
-import cn.bestwu.simpleframework.data.jpa.support.DefaultSoftDeleteSupport;
-import cn.bestwu.simpleframework.data.jpa.support.SoftDeleteSupport;
+import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
+import top.bettercode.simpleframework.data.jpa.support.DefaultSoftDeleteSupport;
+import top.bettercode.simpleframework.data.jpa.support.SoftDeleteSupport;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;

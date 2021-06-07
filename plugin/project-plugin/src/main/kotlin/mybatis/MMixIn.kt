@@ -1,4 +1,4 @@
-import cn.bestwu.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.JavaType
 
 /**
  * @author Peter Wu
@@ -17,7 +17,7 @@ open class MMixIn : MModuleJavaGenerator() {
                 +" */"
             }
             val serializationViews = JavaType("$basePackageName.web.SerializationViews")
-            implement(JavaType("cn.bestwu.simpleframework.web.serializer.MixIn").typeArgument(entityType), methodInfoType, serializationViews)
+            implement(JavaType("top.bettercode.simpleframework.web.serializer.MixIn").typeArgument(entityType), methodInfoType, serializationViews)
 
             columns.forEach {
                 //getter

@@ -1,4 +1,4 @@
-import cn.bestwu.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.JavaType
 import java.io.PrintWriter
 
 /**

@@ -4,8 +4,8 @@ dependencies {
     api(project(":framework:web"))
     api("org.springframework:spring-tx")
 
-    compileOnly("cn.bestwu.wechat:weixin-mp")
-    compileOnly("cn.bestwu.wechat:weixin-app")
+    compileOnly("top.bettercode.wechat:weixin-mp")
+    compileOnly("top.bettercode.wechat:weixin-app")
 
     testImplementation(project(":util:test"))
 }

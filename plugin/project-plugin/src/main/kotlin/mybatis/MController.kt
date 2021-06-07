@@ -1,5 +1,5 @@
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.Parameter
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.Parameter
 
 /**
  * @author Peter Wu
@@ -18,7 +18,7 @@ open class MController : MModuleJavaGenerator() {
                 +" */"
             }
             import(entityType)
-            import("cn.bestwu.simpleframework.exception.ResourceNotFoundException")
+            import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
 
             superClass("$basePackageName.support.AppController")
 
@@ -75,7 +75,7 @@ open class MController : MModuleJavaGenerator() {
             method("create", JavaType.objectInstance) {
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/create\", name = \"${remarks}新增\")")
                 parameter {
-                    import("cn.bestwu.simpleframework.web.validator.CreateConstraint")
+                    import("top.bettercode.simpleframework.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
                     name = "${projectEntityName}Form"
                     type = formType
@@ -89,8 +89,8 @@ open class MController : MModuleJavaGenerator() {
             method("update", JavaType.objectInstance) {
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/update\", name = \"${remarks}编辑\")")
                 parameter {
-                    import("cn.bestwu.simpleframework.web.validator.UpdateConstraint")
-                    annotation("@cn.bestwu.simpleframework.web.resolver.ModifyModel${if (primaryKeyName != "id") "(value = $className.class, idParameter = \"${primaryKeyName}\")" else "($className.class)"} @org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
+                    import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
+                    annotation("@top.bettercode.simpleframework.web.resolver.ModifyModel${if (primaryKeyName != "id") "(value = $className.class, idParameter = \"${primaryKeyName}\")" else "($className.class)"} @org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
                     name = "${projectEntityName}Form"
                     type = formType
                 }

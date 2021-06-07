@@ -1,4 +1,4 @@
-import cn.bestwu.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.JavaType
 
 /**
  * @author Peter Wu
@@ -17,7 +17,7 @@ open class Repository : ModuleJavaGenerator() {
                 +" */"
             }
             implement(
-                JavaType("cn.bestwu.simpleframework.data.jpa.BaseRepository").typeArgument(
+                JavaType("top.bettercode.simpleframework.data.jpa.BaseRepository").typeArgument(
                     entityType,
                     primaryKeyType
                 )

@@ -1,4 +1,4 @@
-import cn.bestwu.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.JavaType
 
 /**
  * @author Peter Wu
@@ -14,7 +14,7 @@ open class IService : ModuleJavaGenerator() {
                 +" * $remarks 服务层"
                 +" */"
             }
-            val superInterface = JavaType("cn.bestwu.simpleframework.data.jpa.IBaseService").typeArgument(entityType, primaryKeyType, repositoryType)
+            val superInterface = JavaType("top.bettercode.simpleframework.data.jpa.IBaseService").typeArgument(entityType, primaryKeyType, repositoryType)
             implement(superInterface)
         }
     }

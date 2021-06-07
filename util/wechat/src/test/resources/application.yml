@@ -34,7 +34,7 @@ logging:
     org.springframework.boot.web.servlet.support.ErrorPageFilter: off
     io.lettuce: warn
     org.thymeleaf: warn
-    cn.bestwu: info
+    top.bettercode: info
     javax.management: warn
     org.quartz: warn
     io.netty: warn
