@@ -324,7 +324,7 @@ fun Map<String, Any?>.toFields(fields: Set<Field>, expand: Boolean = false): Lin
         if (expand) {
             val expandValue = field.value.toMap()
             if (expandValue != null) {
-                field.children = expandValue.toFields(field.children, expand)
+                field.children = expandValue.toFields(fields, expand)
             } else {
                 field.children = LinkedHashSet()
             }
