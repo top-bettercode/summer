@@ -1,4 +1,4 @@
-import cn.bestwu.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.JavaType
 
 /**
  * @author Peter Wu
@@ -18,7 +18,7 @@ open class MixIn : ModuleJavaGenerator() {
             }
             val serializationViews = JavaType("$basePackageName.web.SerializationViews")
             implement(
-                JavaType("cn.bestwu.simpleframework.web.serializer.MixIn").typeArgument(
+                JavaType("top.bettercode.simpleframework.web.serializer.MixIn").typeArgument(
                     entityType
                 ), methodInfoType, serializationViews
             )
@@ -32,7 +32,7 @@ open class MixIn : ModuleJavaGenerator() {
                 }
                 annotation("@com.fasterxml.jackson.annotation.JsonView(Object.class)")
                 if (compositePrimaryKey)
-                    annotation("@cn.bestwu.simpleframework.web.serializer.annotation.JsonEmbeddedId")
+                    annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonEmbeddedId")
                 annotation("@Override")
             }
             otherColumns.forEach {
@@ -49,10 +49,10 @@ open class MixIn : ModuleJavaGenerator() {
                 if (!it.jsonViewIgnored && it.isCodeField) {
                     method("get${it.javaName.capitalize()}", it.javaType) {
                         if (it.columnName.contains("_") || extension.softDeleteColumnName == it.columnName)
-                            annotation("@cn.bestwu.simpleframework.web.serializer.annotation.JsonCode")
+                            annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonCode")
                         else {
                             import("${(extension.packageName + ".support.dic." + className + it.javaName.capitalize())}Enum")
-                            annotation("@cn.bestwu.simpleframework.web.serializer.annotation.JsonCode(${(className + it.javaName.capitalize())}Enum.ENUM_NAME)")
+                            annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonCode(${(className + it.javaName.capitalize())}Enum.ENUM_NAME)")
                         }
                         annotation("@Override")
                     }

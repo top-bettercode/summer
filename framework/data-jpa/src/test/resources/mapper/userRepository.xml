@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="cn.bestwu.simpleframework.data.test.repository.UserRepository">
+<mapper namespace="top.bettercode.simpleframework.data.test.repository.UserRepository">
   <insert id="insert">
     insert into user (firstname, lastname,id) values (#{firstname},#{lastname},100)
   </insert>
@@ -19,12 +19,12 @@
   </delete>
 
 
-  <select id="findByMybatis" resultType="cn.bestwu.simpleframework.data.test.domain.User">
+  <select id="findByMybatis" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user
     where deleted = 0
   </select>
-  <select id="findByMybatis2" resultType="cn.bestwu.simpleframework.data.test.domain.User">
+  <select id="findByMybatis2" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user
     where firstname = #{firstname}
@@ -32,20 +32,20 @@
       and lastname = #{param2}
     </if>
   </select>
-  <select id="findByMybatis3" resultType="cn.bestwu.simpleframework.data.test.domain.User">
+  <select id="findByMybatis3" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user
     where firstname = #{firstname}
   </select>
   <select id="findOneByMybatis"
-    resultType="cn.bestwu.simpleframework.data.test.domain.User">
+    resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user
     where deleted = 0
       and firstname = #{firstname}
   </select>
-  <select id="findByMybatis22" resultType="cn.bestwu.simpleframework.data.test.domain.User"
-    parameterType="cn.bestwu.simpleframework.data.test.domain.User">
+  <select id="findByMybatis22" resultType="top.bettercode.simpleframework.data.test.domain.User"
+    parameterType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user
     where firstname = #{firstname}
@@ -54,7 +54,7 @@
     </if>
   </select>
   <select id="findByMybatis222"
-    resultType="cn.bestwu.simpleframework.data.test.domain.User">
+    resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user
     where firstname = #{firstname}

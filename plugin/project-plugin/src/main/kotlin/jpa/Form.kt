@@ -1,5 +1,5 @@
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.Parameter
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.Parameter
 
 /**
  * @author Peter Wu
@@ -47,7 +47,7 @@ class Form : ModuleJavaGenerator() {
                     +" * ${remarks}主键"
                     +" */"
                 }
-                import("cn.bestwu.simpleframework.web.validator.UpdateConstraint")
+                import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
                 if (primaryKeyType == JavaType.stringInstance) {
                     annotation("@javax.validation.constraints.NotBlank(groups = UpdateConstraint.class)")
                 } else {
@@ -64,7 +64,7 @@ class Form : ModuleJavaGenerator() {
                             annotation("@org.hibernate.validator.constraints.Length(max = ${it.columnSize}, groups = Default.class)")
                         }
                         if (!it.nullable) {
-                            import("cn.bestwu.simpleframework.web.validator.CreateConstraint")
+                            import("top.bettercode.simpleframework.web.validator.CreateConstraint")
                             if (it.javaType == JavaType.stringInstance) {
                                 annotation("@javax.validation.constraints.NotBlank(groups = CreateConstraint.class)")
                             } else {

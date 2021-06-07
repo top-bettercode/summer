@@ -1,6 +1,6 @@
 package plugin
 
-import cn.bestwu.generator.dsl.Generator
+import top.bettercode.generator.dsl.Generator
 import java.io.File
 
 /**

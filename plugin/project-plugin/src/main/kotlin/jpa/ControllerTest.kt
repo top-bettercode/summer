@@ -1,5 +1,5 @@
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.JavaVisibility
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.JavaVisibility
 
 /**
  * @author Peter Wu

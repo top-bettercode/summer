@@ -1,7 +1,7 @@
 package org.springframework.data.jpa.repository;
 
-import cn.bestwu.simpleframework.data.jpa.config.JpaExtProperties;
-import cn.bestwu.simpleframework.data.jpa.support.JpaExtRepositoryFactoryBean;
+import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
+import top.bettercode.simpleframework.data.jpa.support.JpaExtRepositoryFactoryBean;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

@@ -1,5 +1,5 @@
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.Parameter
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.Parameter
 
 /**
  * @author Peter Wu
@@ -17,7 +17,7 @@ open class ServiceImpl : ModuleJavaGenerator() {
                 +" * $remarks 服务层实现"
                 +" */"
             }
-            superClass = JavaType("cn.bestwu.simpleframework.data.jpa.BaseServiceImpl").typeArgument(entityType, primaryKeyType, repositoryType)
+            superClass = JavaType("top.bettercode.simpleframework.data.jpa.BaseServiceImpl").typeArgument(entityType, primaryKeyType, repositoryType)
 
             implement(iserviceType)
 

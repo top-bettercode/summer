@@ -26,9 +26,9 @@ spring:
     exclude:
       - org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClientAutoConfiguration
       - org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration
-      - cn.bestwu.config.WritableEnvironmentEndpointAutoConfiguration
-      - cn.bestwu.logging.websocket.WebsocketConfiguration
-      - cn.bestwu.logging.ActuateLoggingConfiguration
+      - top.bettercode.config.WritableEnvironmentEndpointAutoConfiguration
+      - top.bettercode.logging.websocket.WebsocketConfiguration
+      - top.bettercode.logging.ActuateLoggingConfiguration
       - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketMessagingAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.amqp.RabbitHealthContributorAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.audit.AuditAutoConfiguration

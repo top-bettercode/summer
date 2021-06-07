@@ -16,7 +16,7 @@ class ClosureTest {
     fun test() {
         val project = ProjectBuilder.builder().withProjectDir(File(ClosureTest::class.java.getResource("").path.substringBefore("/build/"))).build()
 //        project.plugins.apply("java")
-        project.plugins.apply("cn.bestwu.kotlin-publish")
+        project.plugins.apply("top.bettercode.kotlin-publish")
 
         (project.tasks.findByName("uploadArchives") as DefaultTask)
 //        project.extensions.create("artifactory", ArtifactoryPluginConvention::class.java, project)

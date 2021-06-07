@@ -1,4 +1,4 @@
-import cn.bestwu.generator.dsl.Generator
+import top.bettercode.generator.dsl.Generator
 import java.util.Properties
 
 /**

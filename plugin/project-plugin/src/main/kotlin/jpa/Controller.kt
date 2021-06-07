@@ -1,6 +1,6 @@
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.Parameter
-import cn.bestwu.generator.dom.java.element.TopLevelClass
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.Parameter
+import top.bettercode.generator.dom.java.element.TopLevelClass
 
 /**
  * @author Peter Wu
@@ -19,7 +19,7 @@ open class Controller : ModuleJavaGenerator() {
                 +" */"
             }
             import(entityType)
-            import("cn.bestwu.simpleframework.exception.ResourceNotFoundException")
+            import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
 
             superClass("$basePackageName.support.AppController")
 
@@ -55,10 +55,10 @@ open class Controller : ModuleJavaGenerator() {
 
             val excel = enable("excel", false)
             if (excel) {
-                import("cn.bestwu.lang.util.ArrayUtil")
+                import("top.bettercode.lang.util.ArrayUtil")
                 field(
                     "excelFields",
-                    JavaType("cn.bestwu.util.excel.ExcelField<$className, ?>[]"),
+                    JavaType("top.bettercode.util.excel.ExcelField<$className, ?>[]"),
                     isFinal = true
                 ) {
                     initializationString = "ArrayUtil.of(\n"
@@ -80,7 +80,7 @@ open class Controller : ModuleJavaGenerator() {
                 //export
                 method("export", JavaType.voidPrimitiveInstance) {
                     this.exception(JavaType("java.io.IOException"))
-                    annotation("@cn.bestwu.logging.annotation.RequestLogging(includeResponseBody = false, ignoredTimeout = true)")
+                    annotation("@top.bettercode.logging.annotation.RequestLogging(includeResponseBody = false, ignoredTimeout = true)")
                     annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/export.xlsx\", name = \"导出\")")
                     parameter {
                         type = entityType
@@ -89,7 +89,7 @@ open class Controller : ModuleJavaGenerator() {
 
                     +"Example<${className}> example = Example.of(${entityName}); "
                     +"Iterable<$className> results = ${projectEntityName}Service.findAll(example${sort()});"
-                    import("cn.bestwu.util.excel.ExcelExport")
+                    import("top.bettercode.util.excel.ExcelExport")
                     +"ExcelExport.export(request, response, \"$remarks\", excelExport -> excelExport.sheet(\"$remarks\").setData(results, excelFields));"
                 }
             }
@@ -115,7 +115,7 @@ open class Controller : ModuleJavaGenerator() {
             method("create", JavaType.objectInstance) {
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/create\", name = \"新增\")")
                 parameter {
-                    import("cn.bestwu.simpleframework.web.validator.CreateConstraint")
+                    import("top.bettercode.simpleframework.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
                     name = "${projectEntityName}Form"
                     type = formType
@@ -129,7 +129,7 @@ open class Controller : ModuleJavaGenerator() {
             method("update", JavaType.objectInstance) {
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/update\", name = \"编辑\")")
                 parameter {
-                    import("cn.bestwu.simpleframework.web.validator.UpdateConstraint")
+                    import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
                     name = "${projectEntityName}Form"
                     type = formType

@@ -1,13 +1,13 @@
 package plugin
 
-import cn.bestwu.autodoc.core.Util
-import cn.bestwu.autodoc.core.model.Field
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.InnerClass
-import cn.bestwu.generator.dom.java.element.JavaVisibility
-import cn.bestwu.generator.dom.java.element.Parameter
-import cn.bestwu.generator.dom.java.element.TopLevelEnumeration
-import cn.bestwu.generator.dsl.DicCodes
+import top.bettercode.autodoc.core.Util
+import top.bettercode.autodoc.core.model.Field
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.InnerClass
+import top.bettercode.generator.dom.java.element.JavaVisibility
+import top.bettercode.generator.dom.java.element.Parameter
+import top.bettercode.generator.dom.java.element.TopLevelEnumeration
+import top.bettercode.generator.dsl.DicCodes
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.TypeFactory
 import org.gradle.api.Project
@@ -226,7 +226,7 @@ class DicCodeGen(private val project: Project) {
                     +"return code;"
                 }
 
-                import("cn.bestwu.simpleframework.support.code.CodeTypes")
+                import("top.bettercode.simpleframework.support.code.CodeTypes")
                 method("nameOf", JavaType.stringInstance) {
                     javadoc {
                         +"/**"

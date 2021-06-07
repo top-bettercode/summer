@@ -1,6 +1,6 @@
 package org.springframework.data.jpa.repository;
 
-import cn.bestwu.simpleframework.data.jpa.config.JpaExtRepositoryConfigExtension;
+import top.bettercode.simpleframework.data.jpa.config.JpaExtRepositoryConfigExtension;
 import java.lang.annotation.Annotation;
 import org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;

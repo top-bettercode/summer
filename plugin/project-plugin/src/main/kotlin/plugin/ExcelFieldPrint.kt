@@ -1,6 +1,6 @@
 package plugin
 
-import cn.bestwu.generator.dsl.JavaGenerator
+import top.bettercode.generator.dsl.JavaGenerator
 
 /**
  * @author Peter Wu

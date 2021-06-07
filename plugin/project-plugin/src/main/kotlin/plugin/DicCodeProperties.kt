@@ -1,6 +1,6 @@
 package plugin
 
-import cn.bestwu.generator.dsl.Generator
+import top.bettercode.generator.dsl.Generator
 import org.apache.tools.ant.util.Native2AsciiUtils
 import java.io.File
 

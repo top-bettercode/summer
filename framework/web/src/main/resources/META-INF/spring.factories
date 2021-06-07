@@ -1,7 +1,7 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-cn.bestwu.simpleframework.config.FrameworkConfiguration,\
-cn.bestwu.simpleframework.config.MessageSourceConfiguration,\
-cn.bestwu.simpleframework.config.FrameworkMvcConfiguration,\
-cn.bestwu.simpleframework.config.SerializerConfiguration,\
-cn.bestwu.simpleframework.config.CorsConfiguration
+top.bettercode.simpleframework.config.FrameworkConfiguration,\
+top.bettercode.simpleframework.config.MessageSourceConfiguration,\
+top.bettercode.simpleframework.config.FrameworkMvcConfiguration,\
+top.bettercode.simpleframework.config.SerializerConfiguration,\
+top.bettercode.simpleframework.config.CorsConfiguration

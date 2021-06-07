@@ -2,7 +2,7 @@
   "groups": [
     {
       "name": "logging",
-      "type": "cn.bestwu.logging.logback.Logback2LoggingSystem"
+      "type": "top.bettercode.logging.logback.Logback2LoggingSystem"
     }
   ],
   "properties": [
@@ -10,7 +10,7 @@
       "name": "summer.web.project-name",
       "type": "java.lang.String",
       "description": "项目名称.",
-      "sourceType": "cn.bestwu.logging.UtilKt"
+      "sourceType": "top.bettercode.logging.UtilKt"
     }
   ],
   "hints": [

@@ -1,7 +1,7 @@
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.InnerClass
-import cn.bestwu.generator.dom.java.element.JavaVisibility
-import cn.bestwu.generator.dom.java.element.Parameter
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.InnerClass
+import top.bettercode.generator.dom.java.element.JavaVisibility
+import top.bettercode.generator.dom.java.element.Parameter
 
 /**
  * @author Peter Wu
@@ -115,7 +115,7 @@ class Entity : ModuleJavaGenerator() {
                         annotation("@javax.persistence.Version")
                     }
                     if (it.isSoftDelete) {
-                        annotation("@cn.bestwu.simpleframework.data.jpa.SoftDelete")
+                        annotation("@top.bettercode.simpleframework.data.jpa.SoftDelete")
                     }
                 }
 

@@ -1,6 +1,6 @@
-import cn.bestwu.gradle.profile.ProfileExtension
-import cn.bestwu.gradle.profile.configProject
-import cn.bestwu.gradle.profile.findActive
+import top.bettercode.gradle.profile.ProfileExtension
+import top.bettercode.gradle.profile.configProject
+import top.bettercode.gradle.profile.findActive
 import org.gradle.api.Project
 import org.yaml.snakeyaml.Yaml
 import java.io.File

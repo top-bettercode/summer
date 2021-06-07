@@ -1,4 +1,4 @@
-package cn.bestwu.gradle.dist
+package top.bettercode.gradle.dist
 
 /**
  *

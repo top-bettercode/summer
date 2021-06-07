@@ -1,5 +1,5 @@
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dsl.JavaGenerator
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dsl.JavaGenerator
 
 /**
  *

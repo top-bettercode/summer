@@ -1,6 +1,6 @@
 package org.springframework.data.jpa.repository.query;
 
-import cn.bestwu.simpleframework.data.jpa.support.SoftDeleteSupport;
+import top.bettercode.simpleframework.data.jpa.support.SoftDeleteSupport;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;

@@ -1,6 +1,6 @@
 
-import cn.bestwu.generator.dom.java.JavaType
-import cn.bestwu.generator.dom.java.element.JavaVisibility
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.JavaVisibility
 
 /**
  * @author Peter Wu
@@ -18,11 +18,11 @@ class MQueryDsl : MModuleJavaGenerator() {
                 +" * $remarks 对应表名：$tableName"
                 +" */"
             }
-            superClass = JavaType("cn.bestwu.simpleframework.data.dsl.EntityPathWrapper").typeArgument(type, entityType)
+            superClass = JavaType("top.bettercode.simpleframework.data.dsl.EntityPathWrapper").typeArgument(type, entityType)
 
             serialVersionUID()
 
-            val basePathType = JavaType("cn.bestwu.simpleframework.data.dsl.BasePath").typeArgument(type, entityType)
+            val basePathType = JavaType("top.bettercode.simpleframework.data.dsl.BasePath").typeArgument(type, entityType)
             columns.forEach {
                 //field
                 field(it.javaName, basePathType, "new BasePath<>(this, \"${it.columnName}\")", visibility = JavaVisibility.PUBLIC) {

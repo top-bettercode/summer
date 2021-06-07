@@ -1,4 +1,4 @@
-import cn.bestwu.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.JavaType
 
 /**
  * @author Peter Wu
@@ -16,7 +16,7 @@ open class MIService : MModuleJavaGenerator() {
                 +" */"
             }
             val superInterface =
-                JavaType("cn.bestwu.simpleframework.data.IBaseService").typeArgument(
+                JavaType("top.bettercode.simpleframework.data.IBaseService").typeArgument(
                     daoType,
                     entityType
                 )
