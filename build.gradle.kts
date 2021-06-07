@@ -44,6 +44,7 @@ allprojects {
             }
             setUrl("https://packages.aliyun.com/maven/repository/2021488-snapshot-4ZYq5w/")
         }
+        gradlePluginPortal()
         mavenCentral()
     }
 
