@@ -1,10 +1,8 @@
 package top.bettercode.gradle.publish
 
-import com.jfrog.bintray.gradle.BintrayExtension
 import groovy.lang.Closure
 import groovy.util.Node
 import groovy.util.NodeList
-import io.codearte.gradle.nexus.CloseAndReleaseAllRepositoryTask
 import io.codearte.gradle.nexus.NexusStagingExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -20,10 +18,6 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
-import org.jfrog.gradle.plugin.artifactory.dsl.DoubleDelegateWrapper
-import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
-import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 import java.net.URI
 
 /**
@@ -117,10 +111,10 @@ abstract class AbstractPlugin : Plugin<Project> {
         project.tasks.getByName("publish").dependsOn("publishToMavenLocal")
 
         if (project.plugins.hasPlugin("com.jfrog.artifactory"))
-            configureArtifactory(project, publicationNames)
+            ArtifactoryUtil.configureArtifactory(project, publicationNames)
 
-
-        configureBintray(project, publicationNames, projectUrl, projectVcsUrl)
+        if (project.plugins.hasPlugin("com.jfrog.bintray"))
+            BintrayUtil.configureBintray(project, publicationNames, projectUrl, projectVcsUrl)
     }
 
     /**
@@ -203,74 +197,6 @@ abstract class AbstractPlugin : Plugin<Project> {
         }
     }
 
-    /**
-     * 发布到artifactory仓库
-     */
-    private fun configureArtifactory(project: Project, publicationNames: MutableSet<String>) {
-        val conv = project.convention.plugins["artifactory"] as ArtifactoryPluginConvention
-        conv.setContextUrl(project.findProperty("artifactoryContextUrl"))
-        conv.publish(closureOf<PublisherConfig> {
-
-            repository(closureOf<DoubleDelegateWrapper> {
-                setProperty("repoKey", project.findProperty("artifactoryRepoKey"))
-                setProperty("username", project.findProperty("artifactoryUsername"))
-                setProperty("password", project.findProperty("artifactoryPassword"))
-                setProperty("maven", true)
-            })
-            defaults(closureOf<ArtifactoryTask> {
-                setPublishArtifacts(true)
-                publications(*publicationNames.toTypedArray())
-            })
-        })
-
-        project.tasks.getByName("artifactoryPublish").dependsOn("publishToMavenLocal")
-    }
-
-    /**
-     * 发布到Jcenter 私有仓库 同步中央仓库或者同步到mavenCentral
-     */
-    private fun configureBintray(
-        project: Project,
-        publicationNames: MutableSet<String>,
-        projectUrl: String?,
-        projectVcsUrl: String?
-    ) {
-        project.extensions.configure(BintrayExtension::class.java) { bintray ->
-            with(bintray) {
-                user = project.findProperty("bintrayUsername") as? String
-                key = project.findProperty("bintrayApiKey") as? String
-                setPublications(*publicationNames.toTypedArray())
-
-                publish = true
-
-                with(pkg) {
-                    repo = "maven"
-                    name = project.findProperty("bintrayPackage") as? String ?: project.name
-                    desc = project.name
-                    if (!projectUrl.isNullOrBlank()) {
-                        websiteUrl = projectUrl
-                    }
-                    if (!projectVcsUrl.isNullOrBlank())
-                        vcsUrl = projectVcsUrl
-                    setLicenses(project.findProperty("license.shortName") as? String)
-                    setLabels(project.name)
-
-                    with(version) {
-                        desc = "${project.name} ${project.version}"
-                        with(mavenCentralSync) {
-                            sync =
-                                (project.findProperty("mavenCentralSync") as? String)?.toBoolean()
-                                    ?: false
-                            user = project.findProperty("mavenCentralUsername") as? String
-                            password = project.findProperty("mavenCentralPassword") as? String
-                            close = "1"
-                        }
-                    }
-                }
-            }
-        }
-        project.tasks.getByName("bintrayUpload").dependsOn("publishToMavenLocal")
-    }
 
     /**
      * 前置配置
@@ -285,8 +211,9 @@ abstract class AbstractPlugin : Plugin<Project> {
         if (!project.rootProject.plugins.hasPlugin("io.codearte.nexus-staging")) {
             project.rootProject.plugins.apply("io.codearte.nexus-staging")
         }
-        if (!project.plugins.hasPlugin("com.jfrog.bintray")) {
-            project.plugins.apply("com.jfrog.bintray")
+
+        project.tasks.withType(Javadoc::class.java) {
+            it.isFailOnError = false
         }
 
 //        源文件打包Task
@@ -343,10 +270,6 @@ abstract class AbstractPlugin : Plugin<Project> {
             }
             this.username = mavenRepoUsername
             this.password = mavenRepoPassword
-        }
-
-        project.tasks.withType(Javadoc::class.java) {
-            it.isFailOnError = false
         }
     }
 
