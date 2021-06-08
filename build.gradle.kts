@@ -10,7 +10,6 @@ allprojects {
     apply {
         plugin("java")
         plugin("idea")
-        plugin("com.jfrog.artifactory")
         plugin("io.spring.dependency-management")
     }
 

@@ -24,7 +24,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
 
     implementation("org.springframework.boot:spring-boot-gradle-plugin:2.5.0")
-    implementation("org.jfrog.buildinfo:build-info-extractor-gradle:4.24.3")
 
     implementation("top.bettercode.summer:publish-plugin:0.0.10-SNAPSHOT")
 }
