@@ -132,7 +132,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     statusCode = statusCode == null ? String.valueOf(httpStatusCode) : statusCode;
     if (!StringUtils.hasText(message)) {
       if (httpStatusCode == 404) {
-        message = "Page not found";
+        message = "resource.not.found";
       } else {
         message = "";
       }
