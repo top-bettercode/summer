@@ -72,6 +72,8 @@ allprojects {
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
             dependency("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
             dependency("com.gradle.publish:plugin-publish-plugin:0.15.0")
+            dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
+
             dependency("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32")
             dependency("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
             dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
