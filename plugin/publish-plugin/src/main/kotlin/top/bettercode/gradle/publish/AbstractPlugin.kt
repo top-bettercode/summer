@@ -4,6 +4,8 @@ import com.jfrog.bintray.gradle.BintrayExtension
 import groovy.lang.Closure
 import groovy.util.Node
 import groovy.util.NodeList
+import io.codearte.gradle.nexus.CloseAndReleaseAllRepositoryTask
+import io.codearte.gradle.nexus.NexusStagingExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
@@ -15,6 +17,7 @@ import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
+import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
@@ -103,6 +106,14 @@ abstract class AbstractPlugin : Plugin<Project> {
         publicationNames.add("mavenJava")
         publicationNames.addAll(publicationName)
 
+        project.extensions.getByType(SigningExtension::class.java).apply {
+            sign(
+                project.extensions.getByType(PublishingExtension::class.java).publications.findByName(
+                    "mavenJava"
+                )
+            )
+        }
+
         project.tasks.getByName("publish").dependsOn("publishToMavenLocal")
 
         if (project.plugins.hasPlugin("com.jfrog.artifactory"))
@@ -121,7 +132,6 @@ abstract class AbstractPlugin : Plugin<Project> {
             it.enabled = false
         }
         project.extensions.configure(PublishingExtension::class.java) { p ->
-
             var mavenRepoName = project.findProperty("mavenRepo.name") as? String ?: "mavenDeployer"
             var mavenRepoUrl = project.findProperty("mavenRepo.url") as? String
             var mavenRepoUsername = project.findProperty("mavenRepo.username") as? String
@@ -269,6 +279,12 @@ abstract class AbstractPlugin : Plugin<Project> {
         if (!project.plugins.hasPlugin("maven-publish")) {
             project.plugins.apply("maven-publish")
         }
+        if (!project.plugins.hasPlugin("signing")) {
+            project.plugins.apply("signing")
+        }
+        if (!project.rootProject.plugins.hasPlugin("io.codearte.nexus-staging")) {
+            project.rootProject.plugins.apply("io.codearte.nexus-staging")
+        }
         if (!project.plugins.hasPlugin("com.jfrog.bintray")) {
             project.plugins.apply("com.jfrog.bintray")
         }
@@ -295,6 +311,66 @@ abstract class AbstractPlugin : Plugin<Project> {
                 )
             }
         }
+        val extension = project.rootProject.extensions.getByType(NexusStagingExtension::class.java)
+        extension.apply {
+            //required only for projects registered in Sonatype after 2021-02-24
+            serverUrl = project.rootProject.findProperty("nexusStaging.serverUrl")?.toString()
+                ?: "https://s01.oss.sonatype.org/service/local/"
+            //optional if packageGroup == project.getGroup()
+            val packageGroup = project.rootProject.findProperty("nexusStaging.packageGroup")
+            if (packageGroup != null) {
+                this.packageGroup = packageGroup.toString()
+            }
+            //when not defined will be got from server using "packageGroup"
+            val stagingProfileId = project.rootProject.findProperty("nexusStaging.stagingProfileId")
+            if (stagingProfileId != null) {
+                this.stagingProfileId = stagingProfileId.toString()
+            }
+            val stagingRepositoryId =
+                project.rootProject.findProperty("nexusStaging.stagingRepositoryId")
+            if (stagingRepositoryId != null) {
+                this.stagingRepositoryId.set(stagingRepositoryId.toString())
+            }
+
+            var mavenRepoUsername = project.findProperty("mavenRepo.username") as? String
+            var mavenRepoPassword = project.findProperty("mavenRepo.password") as? String
+
+            if (project.version.toString().endsWith("SNAPSHOT")) {
+                mavenRepoUsername = project.findProperty("mavenRepo.snapshots.username") as? String
+                    ?: mavenRepoUsername
+                mavenRepoPassword = project.findProperty("mavenRepo.snapshots.password") as? String
+                    ?: mavenRepoPassword
+            }
+            this.username = mavenRepoUsername
+            this.password = mavenRepoPassword
+        }
+
+//        if (project.rootProject.tasks.findByName("closeAndReleaseAllRepository") == null) {
+//            project.rootProject.tasks.create(
+//                "closeAndReleaseAllRepository",
+//                CloseAndReleaseAllRepositoryTask::class.java,
+//                project,
+//                extension
+//            ).apply {
+//                group = "release"
+//                description = "Closes and Releases all open artifacts repository in Nexus"
+//
+//                serverUrl = extension.serverUrl
+//                username = extension.username
+//                password = extension.password
+//                packageGroup = if (extension.packageGroup.isNullOrBlank()) {
+//                    project.rootProject.group.toString()
+//                } else {
+//                    extension.packageGroup
+//                }
+//
+//                stagingProfileId = extension.stagingProfileId
+//                numberOfRetries = extension.numberOfRetries
+//                delayBetweenRetriesInMillis = extension.delayBetweenRetriesInMillis
+//                repositoryDescription = extension.repositoryDescription
+//            }
+//        }
+
         project.tasks.withType(Javadoc::class.java) {
             it.isFailOnError = false
         }
