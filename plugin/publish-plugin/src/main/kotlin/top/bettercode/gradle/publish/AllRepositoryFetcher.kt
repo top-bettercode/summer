@@ -23,7 +23,7 @@ class AllRepositoryFetcher(
         log.info("Getting '$state' repository for staging profile '$stagingProfileId'")
         val allStagingRepositoriesResponseAsMap =
             client.get("$nexusUrl/staging/profile_repositories/$stagingProfileId")
-        val data: List<Map<String, Any?>> =
+        @Suppress("UNCHECKED_CAST") val data: List<Map<String, Any?>> =
             allStagingRepositoriesResponseAsMap["data"] as List<Map<String, Any?>>
         return data.filter { it["type"] == state.toString() }
             .map { it["repositoryId"] as String }
