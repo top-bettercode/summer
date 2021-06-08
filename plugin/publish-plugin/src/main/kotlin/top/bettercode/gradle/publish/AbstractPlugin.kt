@@ -345,32 +345,6 @@ abstract class AbstractPlugin : Plugin<Project> {
             this.password = mavenRepoPassword
         }
 
-//        if (project.rootProject.tasks.findByName("closeAndReleaseAllRepository") == null) {
-//            project.rootProject.tasks.create(
-//                "closeAndReleaseAllRepository",
-//                CloseAndReleaseAllRepositoryTask::class.java,
-//                project,
-//                extension
-//            ).apply {
-//                group = "release"
-//                description = "Closes and Releases all open artifacts repository in Nexus"
-//
-//                serverUrl = extension.serverUrl
-//                username = extension.username
-//                password = extension.password
-//                packageGroup = if (extension.packageGroup.isNullOrBlank()) {
-//                    project.rootProject.group.toString()
-//                } else {
-//                    extension.packageGroup
-//                }
-//
-//                stagingProfileId = extension.stagingProfileId
-//                numberOfRetries = extension.numberOfRetries
-//                delayBetweenRetriesInMillis = extension.delayBetweenRetriesInMillis
-//                repositoryDescription = extension.repositoryDescription
-//            }
-//        }
-
         project.tasks.withType(Javadoc::class.java) {
             it.isFailOnError = false
         }
