@@ -37,15 +37,11 @@ allprojects {
 
     repositories {
         mavenLocal()
-        maven {
-            credentials {
-                username = "60b89f54395ee4198d8c67cf"
-                password = "WnLfTlxXBq(k"
-            }
-            setUrl("https://packages.aliyun.com/maven/repository/2021488-snapshot-4ZYq5w/")
-        }
-        gradlePluginPortal()
+        maven("https://maven.aliyun.com/repository/public/")
+        maven("https://maven.aliyun.com/repository/gradle-plugin/")
+        maven("https://s01.oss.sonatype.org/content/groups/public/")
         mavenCentral()
+        gradlePluginPortal()
     }
 
     configurations {
