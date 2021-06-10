@@ -78,6 +78,13 @@ object StringUtil {
     fun valueOf(`object`: Any?, format: Boolean = false): String {
         if (`object` is CharSequence) {
             return `object`.toString()
+        } else if (`object` is Throwable) {
+            val stringWriter = StringWriter()
+            PrintWriter(stringWriter).use { printWriter ->
+                `object`.printStackTrace(printWriter)
+                printWriter.flush()
+            }
+            return stringWriter.toString()
         }
         return try {
             if (format) {
