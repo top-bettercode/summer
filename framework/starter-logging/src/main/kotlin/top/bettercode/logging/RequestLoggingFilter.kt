@@ -21,6 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.util.WebUtils
+import top.bettercode.lang.util.StringUtil
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -123,7 +124,7 @@ class RequestLoggingFilter(
                 val operationResponse = ResponseConverter.convert(responseToUse)
                 if (error != null) {
                     if (config.includeTrace) {
-                        operationResponse.stackTrace = asString(error)
+                        operationResponse.stackTrace = StringUtil.valueOf(error)
                     }
                 }
                 val operationRequest = RequestConverter.convert(requestToUse)
@@ -230,15 +231,6 @@ class RequestLoggingFilter(
     @Suppress("UNCHECKED_CAST")
     private fun <T> getAttribute(requestAttributes: RequestAttributes, name: String): T? {
         return requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST) as? T
-    }
-
-    private fun asString(throwable: Throwable): String {
-        val stringWriter = StringWriter()
-        PrintWriter(stringWriter).use { printWriter ->
-            throwable.printStackTrace(printWriter)
-            printWriter.flush()
-        }
-        return stringWriter.toString()
     }
 
     override fun getOrder(): Int {
