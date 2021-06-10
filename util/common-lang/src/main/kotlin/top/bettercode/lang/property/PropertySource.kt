@@ -42,7 +42,7 @@ interface PropertySource {
 
     fun doRemove(key: String)
 
-    fun mapOf(name: String): Map<Any, Any>
+    fun mapOf(name: String): Map<String, Any>
 
     fun all(): Map<Any, Any>
 }

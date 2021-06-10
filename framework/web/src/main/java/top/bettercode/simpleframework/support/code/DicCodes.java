@@ -14,11 +14,11 @@ public class DicCodes implements Serializable {
 
   private String name;
 
-  private Map<Object, Object> codes;
+  private Map<String, Object> codes;
 
   //--------------------------------------------
 
-  public DicCodes(String type, String name, Map<Object, Object> codes) {
+  public DicCodes(String type, String name, Map<String, Object> codes) {
     this.type = type;
     this.name = name;
     this.codes = codes;
@@ -42,11 +42,11 @@ public class DicCodes implements Serializable {
     this.name = name;
   }
 
-  public Map<Object, Object> getCodes() {
+  public Map<String, Object> getCodes() {
     return codes;
   }
 
-  public void setCodes(Map<Object, Object> codes) {
+  public void setCodes(Map<String, Object> codes) {
     this.codes = codes;
   }
 }

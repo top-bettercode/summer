@@ -80,6 +80,8 @@ server:
   servlet:
     session:
       timeout: PT10M
+    encoding:
+      force: true
 
 
 management:
