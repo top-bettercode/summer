@@ -19,17 +19,13 @@ open class MapPropertySource(protected val source: MutableMap<Any, Any>) : Prope
         source.remove(key)
     }
 
-    override fun mapOf(name: String): Map<Any, Any> {
-        val map: MutableMap<Any, Any> = HashMap()
+    override fun mapOf(name: String): Map<String, Any> {
+        val map: MutableMap<String, Any> = HashMap()
         source.forEach { (k: Any, v: Any) ->
             val key = k as String
-            if (key == name) {
-                map[""] = v
-            } else {
-                val prefix = "$name."
-                if (key.startsWith(prefix)) {
-                    map[key.substring(prefix.length)] = v
-                }
+            val prefix = "$name."
+            if (key.startsWith(prefix)) {
+                map[key.substring(prefix.length)] = v
             }
         }
         return map

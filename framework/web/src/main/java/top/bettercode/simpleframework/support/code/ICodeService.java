@@ -21,4 +21,6 @@ public interface ICodeService {
     return null;
   }
 
+  default void put(String codeTypeKey, String name) {
+  }
 }

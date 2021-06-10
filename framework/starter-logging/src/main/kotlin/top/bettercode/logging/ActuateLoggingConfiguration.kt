@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletResponse
  * @author Peter Wu
  * @since 0.1.5
  */
-@ConditionalOnBean(WebEndpointProperties::class)
 @ConditionalOnClass(WebEndpointProperties::class)
+@ConditionalOnBean(WebEndpointProperties::class)
 @AutoConfigureAfter(org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration::class)
 @Configuration(proxyBeanMethods = false)
 class ActuateLoggingConfiguration {
