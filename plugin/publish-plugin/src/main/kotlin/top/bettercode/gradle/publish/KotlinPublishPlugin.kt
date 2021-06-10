@@ -18,14 +18,12 @@ class KotlinPublishPlugin : AbstractPlugin() {
 
         project.plugins.apply("org.jetbrains.dokka")
         dokkaTask(project)
-        project.afterEvaluate { _ ->
-            project.tasks.create("javadocJar", Jar::class.java) {
-                it.archiveClassifier.set("javadoc")
-                it.from(project.tasks.getByName("dokkaJavadoc").outputs)
-            }
-
-            configPublish(project)
+        project.tasks.create("javadocJar", Jar::class.java) {
+            it.archiveClassifier.set("javadoc")
+            it.from(project.tasks.getByName("dokkaJavadoc").outputs)
         }
+
+        configPublish(project)
     }
 
 

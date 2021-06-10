@@ -32,40 +32,43 @@ class PluginPublishPlugin : AbstractPlugin() {
 
             dokkaTask(project)
         }
-        project.afterEvaluate { _ ->
 
-            configureDoc(project)
+        configureDoc(project)
 
-            val projectUrl = project.findProperty("projectUrl") as? String
-            val projectVcsUrl = project.findProperty("vcsUrl") as? String
-            configureGradlePlugins(project, projectUrl, projectVcsUrl)
+        val projectUrl = project.findProperty("projectUrl") as? String
+        val projectVcsUrl = project.findProperty("vcsUrl") as? String
+        configureGradlePlugins(project, projectUrl, projectVcsUrl)
 
 
-            configurePluginsPublication(project, projectUrl, projectVcsUrl)
+        configurePluginsPublication(project, projectUrl, projectVcsUrl)
 
-            //发布到gradle plugins
-            val name = project.name
-            project.extensions.configure(PluginBundleExtension::class.java) {
-                if (!projectUrl.isNullOrBlank())
-                    it.website = projectUrl
-                if (!projectVcsUrl.isNullOrBlank())
-                    it.vcsUrl = projectVcsUrl
-                it.description = name
-                it.tags = setOf(name)
-            }
+        //发布到gradle plugins
+        val name = project.name
+        project.extensions.configure(PluginBundleExtension::class.java) {
+            if (!projectUrl.isNullOrBlank())
+                it.website = projectUrl
+            if (!projectVcsUrl.isNullOrBlank())
+                it.vcsUrl = projectVcsUrl
+            it.description = name
+            it.tags = setOf(name)
         }
     }
 
     /**
      * 配置每个插件的发布信息
      */
-    private fun configurePluginsPublication(project: Project, projectUrl: String?, projectVcsUrl: String?) {
+    private fun configurePluginsPublication(
+        project: Project,
+        projectUrl: String?,
+        projectVcsUrl: String?
+    ) {
         project.extensions.configure(GradlePluginDevelopmentExtension::class.java) {
             with(it.plugins) {
                 configPublish(project, names.toTypedArray())
                 forEach { plugin ->
                     project.extensions.configure(PublishingExtension::class.java) { p ->
-                        val publication = p.publications.create(plugin.name, MavenPublication::class.java)
+                        val publication =
+                            p.publications.create(plugin.name, MavenPublication::class.java)
                         publication.groupId = plugin.id
                         publication.artifactId = plugin.id + ".gradle.plugin"
                         publication.pom.withXml { po ->
@@ -96,7 +99,10 @@ class PluginPublishPlugin : AbstractPlugin() {
                     it.from(project.tasks.getByName("dokkaJavadoc").outputs)
                 }
             }
-            project.plugins.hasPlugin("groovy") -> project.tasks.create("javadocJar", Jar::class.java) {
+            project.plugins.hasPlugin("groovy") -> project.tasks.create(
+                "javadocJar",
+                Jar::class.java
+            ) {
                 it.archiveClassifier.set("javadoc")
                 it.from(project.tasks.getByName("groovydoc").outputs)
             }
@@ -111,16 +117,21 @@ class PluginPublishPlugin : AbstractPlugin() {
     /**
      * 配置GradlePlugin
      */
-    private fun configureGradlePlugins(project: Project, projectUrl: String?, projectVcsUrl: String?) {
+    private fun configureGradlePlugins(
+        project: Project,
+        projectUrl: String?,
+        projectVcsUrl: String?
+    ) {
         val gradlePlugin = project.findProperty("gradlePlugin.plugins.${project.name}") as? String
-                ?: project.findProperty("gradlePlugin.plugins") as? String
+            ?: project.findProperty("gradlePlugin.plugins") as? String
         gradlePlugin?.split(",")?.forEach { plugin ->
             val pluginId = project.findProperty("gradlePlugin.plugins.$plugin.id") as String
 
             project.extensions.configure(GradlePluginDevelopmentExtension::class.java) { extension ->
                 extension.plugins.create(plugin) {
                     it.id = pluginId
-                    it.implementationClass = project.findProperty("gradlePlugin.plugins.$plugin.implementationClass") as String
+                    it.implementationClass =
+                        project.findProperty("gradlePlugin.plugins.$plugin.implementationClass") as String
                 }
             }
             project.extensions.configure(PluginBundleExtension::class.java) { extension ->

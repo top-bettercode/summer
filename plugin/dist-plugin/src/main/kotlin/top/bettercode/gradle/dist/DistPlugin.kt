@@ -141,252 +141,251 @@ class DistPlugin : Plugin<Project> {
             it.dependsOn("processResources")
         }
 
-        project.afterEvaluate { _ ->
-            val dist = project.extensions.getByType(DistExtension::class.java)
-            if (windowsServiceEnable) {
-                project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) { task ->
-                    task as WindowsServicePluginTask
-                    task.inputs.file(project.rootProject.file("gradle.properties"))
-                    task.automaticClasspath =
-                        project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
-                    task.doLast {
-                        val outputDirectory = task.outputDirectory
-                        project.copy {
-                            it.from((project.tasks.getByName("processResources") as ProcessResources).destinationDir)
-                            it.into(File(outputDirectory, "conf").absolutePath)
-                        }
-                        if (dist.includeJre) {
-                            project.copy { copySpec ->
-                                copySpec.from(project.tarTree(if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz)) { spec ->
-                                    spec.eachFile {
-                                        it.path = "jre/" + it.path.substringAfter("/")
-                                    }
-                                    spec.includeEmptyDirs = false
-                                }
-                                copySpec.into(outputDirectory.absolutePath)
-                            }
-                        }
-                        val installScript = File(outputDirectory, "${project.name}-install.bat")
-                        val installScriptText = installScript.readText()
-                            .replace("%APP_HOME%lib\\conf", "%APP_HOME%conf").replace(
-                                "if \"%OS%\"==\"Windows_NT\" endlocal",
-                                "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
-                            )
-                        installScript.writeText(installScriptText)
-                    }
-                }
-                project.tasks.create("windowsServiceZip", Zip::class.java) {
-                    it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
-                    val createTask =
-                        project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
-                    it.group = createTask.group
-                    it.from(createTask.outputDirectory)
-                    if (dist.includeJre)
-                        it.archiveFileName.set("${project.name}-windows-${if (dist.x64) "x64" else "x86"}-${project.version}.zip")
-                    else
-                        it.archiveFileName.set("${project.name}-windows-${project.version}.zip")
-                    it.destinationDirectory.set(createTask.outputDirectory.parentFile)
-                }
-
-                project.tasks.create("windowsServiceUpdate") {
-                    it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
-                    val createTask =
-                        project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
-                    it.group = createTask.group
-                    it.doLast {
-                        val updateDir = File(createTask.outputDirectory.parentFile, "update")
-                        require(dist.windowsServiceOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                        compareUpdate(
-                            project,
-                            updateDir,
-                            project.file(dist.windowsServiceOldPath),
-                            createTask.outputDirectory,
-                            true
-                        )
-                    }
-                }
-
-                project.tasks.create("windowsServiceUpdateZip", Zip::class.java) {
-                    it.dependsOn("windowsServiceUpdate")
-                    val createTask =
-                        project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
-                    it.group = createTask.group
-                    val updateDir = File(createTask.outputDirectory.parentFile, "update")
-                    it.from(updateDir)
-                    it.archiveFileName.set("${project.name}-windows-update-${project.version}.zip")
-                    it.destinationDirectory.set(createTask.outputDirectory.parentFile)
-                }
-            }
-            if (windowsServiceEnable || dist.unwrapResources) {
-                project.tasks.getByName("jar") { task ->
-                    task as Jar
-                    task.exclude {
-                        val listFiles =
-                            (project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir.listFiles()
-                        listFiles?.contains(it.file) ?: false
-                    }
-                }
-            }
-            if (project.plugins.findPlugin(DistributionPlugin::class.java) != null) {
-                val distribution = project.extensions.getByType(DistributionContainer::class.java)
-                    .getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
-                distribution.contents { copySpec ->
-                    if (dist.unwrapResources)
-                        copySpec.from((project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir) {
-                            it.into("conf")
-                        }
-                    if (project.file(dist.nativePath).exists()) {
-                        copySpec.from(project.file(dist.nativePath).absolutePath) {
-                            it.into("native")
-                        }
+        val dist = project.extensions.getByType(DistExtension::class.java)
+        if (windowsServiceEnable) {
+            project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) { task ->
+                task as WindowsServicePluginTask
+                task.inputs.file(project.rootProject.file("gradle.properties"))
+                task.automaticClasspath =
+                    project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
+                task.doLast {
+                    val outputDirectory = task.outputDirectory
+                    project.copy {
+                        it.from((project.tasks.getByName("processResources") as ProcessResources).destinationDir)
+                        it.into(File(outputDirectory, "conf").absolutePath)
                     }
                     if (dist.includeJre) {
-                        copySpec.from(project.tarTree(if (dist.windows) (if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz) else (if (dist.x64) dist.jreLinuxX64Gz else dist.jreLinuxI586Gz))) { spec ->
-                            spec.eachFile {
-                                it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
+                        project.copy { copySpec ->
+                            copySpec.from(project.tarTree(if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz)) { spec ->
+                                spec.eachFile {
+                                    it.path = "jre/" + it.path.substringAfter("/")
+                                }
+                                spec.includeEmptyDirs = false
                             }
-                            spec.includeEmptyDirs = false
+                            copySpec.into(outputDirectory.absolutePath)
                         }
-                        distribution.distributionBaseName.set("${project.name}-linux-${if (dist.x64) "x64" else "x86"}")
-                    } else {
-                        distribution.distributionBaseName.set("${project.name}-linux")
                     }
-                    copySpec.from(File(project.buildDir, "service").absolutePath)
-                }
-                project.tasks.create("installDistUpdate") {
-                    it.dependsOn(TASK_INSTALL_NAME)
-                    val createTask = project.tasks.getByName(TASK_INSTALL_NAME)
-                    it.group = createTask.group
-                    it.doLast {
-                        val dest = project.file("" + project.buildDir + "/install")
-                        val updateDir = File(dest, "update")
-                        require(dist.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                        compareUpdate(
-                            project,
-                            updateDir,
-                            project.file(dist.distOldPath),
-                            File(dest, distribution.distributionBaseName.get()),
-                            false
+                    val installScript = File(outputDirectory, "${project.name}-install.bat")
+                    val installScriptText = installScript.readText()
+                        .replace("%APP_HOME%lib\\conf", "%APP_HOME%conf").replace(
+                            "if \"%OS%\"==\"Windows_NT\" endlocal",
+                            "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
                         )
-                    }
+                    installScript.writeText(installScriptText)
                 }
+            }
+            project.tasks.create("windowsServiceZip", Zip::class.java) {
+                it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
+                val createTask =
+                    project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
+                it.group = createTask.group
+                it.from(createTask.outputDirectory)
+                if (dist.includeJre)
+                    it.archiveFileName.set("${project.name}-windows-${if (dist.x64) "x64" else "x86"}-${project.version}.zip")
+                else
+                    it.archiveFileName.set("${project.name}-windows-${project.version}.zip")
+                it.destinationDirectory.set(createTask.outputDirectory.parentFile)
+            }
 
-                project.tasks.create("installDistUpdateZip", Zip::class.java) {
-                    it.dependsOn("installDistUpdate")
-                    val createTask = project.tasks.getByName("installDistUpdate")
-                    it.group = createTask.group
-                    val dest = project.file("" + project.buildDir + "/install")
-                    val updateDir = File(dest, "update")
-                    it.from(updateDir)
-                    it.archiveFileName.set("${project.name}-${project.version}-dist_update.zip")
-                    it.destinationDirectory.set(dest)
+            project.tasks.create("windowsServiceUpdate") {
+                it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
+                val createTask =
+                    project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
+                it.group = createTask.group
+                it.doLast {
+                    val updateDir = File(createTask.outputDirectory.parentFile, "update")
+                    require(dist.windowsServiceOldPath.isNotBlank()) { "旧版本路径不能为空" }
+                    compareUpdate(
+                        project,
+                        updateDir,
+                        project.file(dist.windowsServiceOldPath),
+                        createTask.outputDirectory,
+                        true
+                    )
                 }
             }
 
-            val jvmArgs = dist.jvmArgs.filter { it.isNotBlank() }.toMutableSet()
-            val encoding = "-Dfile.encoding=UTF-8"
-            jvmArgs += encoding
-            jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
-            val nativeLibArgs = if (project.file(dist.nativePath).exists()) {
-                val nativeLibArgs =
-                    "-Djava.library.path=${project.file(dist.nativePath).absolutePath}"
-                jvmArgs += nativeLibArgs
-                nativeLibArgs
-            } else ""
-
-            val application = project.convention.findPlugin(ApplicationPluginConvention::class.java)
-
-            if (application != null) {
-                application.applicationDefaultJvmArgs += jvmArgs
-                application.applicationDefaultJvmArgs =
-                    application.applicationDefaultJvmArgs.distinct()
-
-                project.tasks.getByName("startScripts") { task ->
-                    task as CreateStartScripts
-                    task.inputs.file(project.rootProject.file("gradle.properties"))
-                    if (task.mainClassName.isNullOrBlank()) {
-                        task.mainClassName = findProperty(project, "main-class-name")
+            project.tasks.create("windowsServiceUpdateZip", Zip::class.java) {
+                it.dependsOn("windowsServiceUpdate")
+                val createTask =
+                    project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
+                it.group = createTask.group
+                val updateDir = File(createTask.outputDirectory.parentFile, "update")
+                it.from(updateDir)
+                it.archiveFileName.set("${project.name}-windows-update-${project.version}.zip")
+                it.destinationDirectory.set(createTask.outputDirectory.parentFile)
+            }
+        }
+        if (windowsServiceEnable || dist.unwrapResources) {
+            project.tasks.getByName("jar") { task ->
+                task as Jar
+                task.exclude {
+                    val listFiles =
+                        (project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir.listFiles()
+                    listFiles?.contains(it.file) ?: false
+                }
+            }
+        }
+        if (project.plugins.findPlugin(DistributionPlugin::class.java) != null) {
+            val distribution = project.extensions.getByType(DistributionContainer::class.java)
+                .getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
+            distribution.contents { copySpec ->
+                if (dist.unwrapResources)
+                    copySpec.from((project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir) {
+                        it.into("conf")
                     }
-                    if (dist.unwrapResources)
-                        task.classpath = project.files(task.classpath).from("\$APP_HOME/conf")
-                    task.doLast {
-                        it as CreateStartScripts
-                        val newUnixScriptLine = mutableListOf<String>()
-                        val newWindowsScriptLine = mutableListOf<String>()
-                        val unixScriptLine = it.unixScript.readLines()
-                        val windowsScriptLine = it.windowsScript.readLines()
-                        unixScriptLine.forEach { l ->
-                            if (dist.unwrapResources && l.endsWith("\$APP_HOME/lib/conf")) {
-                                newUnixScriptLine.add(
-                                    l.substring(
-                                        0,
-                                        l.lastIndexOf(":\$APP_HOME/lib/conf")
-                                    ) + ":\$APP_HOME/conf"
-                                )
-                            } else if (project.file(dist.nativePath).exists() && l.contains(
-                                    nativeLibArgs
-                                )
-                            ) {
-                                newUnixScriptLine.add(
-                                    l.replace(
-                                        nativeLibArgs,
-                                        "-Djava.library.path=\$APP_HOME/native"
-                                    )
-                                )
-                            } else if (dist.includeJre) {
-                                newUnixScriptLine.add(
-                                    l.replace(
-                                        "APP_HOME=\"`pwd -P`\"",
-                                        "APP_HOME=\"`pwd -P`\"\nJAVA_HOME=\"\$APP_HOME/jre\""
-                                    )
-                                )
-                            } else {
-                                newUnixScriptLine.add(l)
-                            }
+                if (project.file(dist.nativePath).exists()) {
+                    copySpec.from(project.file(dist.nativePath).absolutePath) {
+                        it.into("native")
+                    }
+                }
+                if (dist.includeJre) {
+                    copySpec.from(project.tarTree(if (dist.windows) (if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz) else (if (dist.x64) dist.jreLinuxX64Gz else dist.jreLinuxI586Gz))) { spec ->
+                        spec.eachFile {
+                            it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
                         }
-                        windowsScriptLine.forEach { l ->
-                            if (dist.unwrapResources && l.endsWith("%APP_HOME%\\lib\\conf")) {
-                                newWindowsScriptLine.add(
-                                    l.substring(
-                                        0,
-                                        l.lastIndexOf("%APP_HOME%\\lib\\conf")
-                                    ) + "%APP_HOME%\\conf"
-                                )
-                            }
-                            if (project.file(dist.nativePath).exists() && l.contains(nativeLibArgs)
-                            ) {
-                                newWindowsScriptLine.add(
-                                    l.replace(
-                                        nativeLibArgs,
-                                        "-Djava.library.path=%APP_HOME%\\native"
-                                    )
-                                )
-                            }
-                            if (dist.includeJre) {
-                                newWindowsScriptLine.add(
-                                    l.replace(
-                                        "set APP_HOME=%DIRNAME%..",
-                                        "set APP_HOME=%DIRNAME%..\r\nset JAVA_HOME=%APP_HOME%\\jre"
-                                    )
-                                )
-                            } else {
-                                newWindowsScriptLine.add(l)
-                            }
-                        }
+                        spec.includeEmptyDirs = false
+                    }
+                    distribution.distributionBaseName.set("${project.name}-linux-${if (dist.x64) "x64" else "x86"}")
+                } else {
+                    distribution.distributionBaseName.set("${project.name}-linux")
+                }
+                copySpec.from(File(project.buildDir, "service").absolutePath)
+            }
+            project.tasks.create("installDistUpdate") {
+                it.dependsOn(TASK_INSTALL_NAME)
+                val createTask = project.tasks.getByName(TASK_INSTALL_NAME)
+                it.group = createTask.group
+                it.doLast {
+                    val dest = project.file("" + project.buildDir + "/install")
+                    val updateDir = File(dest, "update")
+                    require(dist.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
+                    compareUpdate(
+                        project,
+                        updateDir,
+                        project.file(dist.distOldPath),
+                        File(dest, distribution.distributionBaseName.get()),
+                        false
+                    )
+                }
+            }
 
-                        it.unixScript.printWriter().use { pw ->
-                            newUnixScriptLine.forEach { l ->
-                                pw.println(l)
-                            }
+            project.tasks.create("installDistUpdateZip", Zip::class.java) {
+                it.dependsOn("installDistUpdate")
+                val createTask = project.tasks.getByName("installDistUpdate")
+                it.group = createTask.group
+                val dest = project.file("" + project.buildDir + "/install")
+                val updateDir = File(dest, "update")
+                it.from(updateDir)
+                it.archiveFileName.set("${project.name}-${project.version}-dist_update.zip")
+                it.destinationDirectory.set(dest)
+            }
+        }
+
+        val jvmArgs = dist.jvmArgs.filter { it.isNotBlank() }.toMutableSet()
+        val encoding = "-Dfile.encoding=UTF-8"
+        jvmArgs += encoding
+        jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
+        val nativeLibArgs = if (project.file(dist.nativePath).exists()) {
+            val nativeLibArgs =
+                "-Djava.library.path=${project.file(dist.nativePath).absolutePath}"
+            jvmArgs += nativeLibArgs
+            nativeLibArgs
+        } else ""
+
+        val application = project.convention.findPlugin(ApplicationPluginConvention::class.java)
+
+        if (application != null) {
+            application.applicationDefaultJvmArgs += jvmArgs
+            application.applicationDefaultJvmArgs =
+                application.applicationDefaultJvmArgs.distinct()
+
+            project.tasks.getByName("startScripts") { task ->
+                task as CreateStartScripts
+                task.inputs.file(project.rootProject.file("gradle.properties"))
+                if (task.mainClassName.isNullOrBlank()) {
+                    task.mainClassName = findProperty(project, "main-class-name")
+                }
+                if (dist.unwrapResources)
+                    task.classpath = project.files(task.classpath).from("\$APP_HOME/conf")
+                task.doLast {
+                    it as CreateStartScripts
+                    val newUnixScriptLine = mutableListOf<String>()
+                    val newWindowsScriptLine = mutableListOf<String>()
+                    val unixScriptLine = it.unixScript.readLines()
+                    val windowsScriptLine = it.windowsScript.readLines()
+                    unixScriptLine.forEach { l ->
+                        if (dist.unwrapResources && l.endsWith("\$APP_HOME/lib/conf")) {
+                            newUnixScriptLine.add(
+                                l.substring(
+                                    0,
+                                    l.lastIndexOf(":\$APP_HOME/lib/conf")
+                                ) + ":\$APP_HOME/conf"
+                            )
+                        } else if (project.file(dist.nativePath).exists() && l.contains(
+                                nativeLibArgs
+                            )
+                        ) {
+                            newUnixScriptLine.add(
+                                l.replace(
+                                    nativeLibArgs,
+                                    "-Djava.library.path=\$APP_HOME/native"
+                                )
+                            )
+                        } else if (dist.includeJre) {
+                            newUnixScriptLine.add(
+                                l.replace(
+                                    "APP_HOME=\"`pwd -P`\"",
+                                    "APP_HOME=\"`pwd -P`\"\nJAVA_HOME=\"\$APP_HOME/jre\""
+                                )
+                            )
+                        } else {
+                            newUnixScriptLine.add(l)
                         }
-                        it.windowsScript.printWriter().use { pw ->
-                            newWindowsScriptLine.forEach { l ->
-                                pw.println(l)
-                            }
+                    }
+                    windowsScriptLine.forEach { l ->
+                        if (dist.unwrapResources && l.endsWith("%APP_HOME%\\lib\\conf")) {
+                            newWindowsScriptLine.add(
+                                l.substring(
+                                    0,
+                                    l.lastIndexOf("%APP_HOME%\\lib\\conf")
+                                ) + "%APP_HOME%\\conf"
+                            )
                         }
-                        //startup.sh
-                        writeServiceFile(
-                            project, "startup.sh", """
+                        if (project.file(dist.nativePath).exists() && l.contains(nativeLibArgs)
+                        ) {
+                            newWindowsScriptLine.add(
+                                l.replace(
+                                    nativeLibArgs,
+                                    "-Djava.library.path=%APP_HOME%\\native"
+                                )
+                            )
+                        }
+                        if (dist.includeJre) {
+                            newWindowsScriptLine.add(
+                                l.replace(
+                                    "set APP_HOME=%DIRNAME%..",
+                                    "set APP_HOME=%DIRNAME%..\r\nset JAVA_HOME=%APP_HOME%\\jre"
+                                )
+                            )
+                        } else {
+                            newWindowsScriptLine.add(l)
+                        }
+                    }
+
+                    it.unixScript.printWriter().use { pw ->
+                        newUnixScriptLine.forEach { l ->
+                            pw.println(l)
+                        }
+                    }
+                    it.windowsScript.printWriter().use { pw ->
+                        newWindowsScriptLine.forEach { l ->
+                            pw.println(l)
+                        }
+                    }
+                    //startup.sh
+                    writeServiceFile(
+                        project, "startup.sh", """
 #!/usr/bin/env sh
 
 # Attempt to set APP_HOME
@@ -411,11 +410,11 @@ mkdir -p "${'$'}APP_HOME/logs"
 nohup "${'$'}APP_HOME/bin/${project.name}" 1>/dev/null 2>"${'$'}APP_HOME/logs/error.log" &
 ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'
 """
-                        )
+                    )
 
-                        //shutdown.sh
-                        writeServiceFile(
-                            project, "shutdown.sh", """
+                    //shutdown.sh
+                    writeServiceFile(
+                        project, "shutdown.sh", """
 #!/usr/bin/env sh
 
 # Attempt to set APP_HOME
@@ -445,10 +444,10 @@ then
     done
 fi
 """
-                        )
-                        //${project.name}-install
-                        writeServiceFile(
-                            project, "${project.name}-install", """
+                    )
+                    //${project.name}-install
+                    writeServiceFile(
+                        project, "${project.name}-install", """
 #!/usr/bin/env sh
 
 # Attempt to set APP_HOME
@@ -526,11 +525,11 @@ EOF
   sudo systemctl start ${project.name}.service
 fi
 """
-                        )
+                    )
 
-                        //${project.name}-uninstall
-                        writeServiceFile(
-                            project, "${project.name}-uninstall", """
+                    //${project.name}-uninstall
+                    writeServiceFile(
+                        project, "${project.name}-uninstall", """
 #!/usr/bin/env sh
 
 if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
@@ -543,18 +542,17 @@ else
   sudo rm -f /etc/systemd/system/${project.name}.service
 fi
 """
-                        )
-                    }
+                    )
                 }
             }
+        }
 
-            project.tasks.getByName("test") { task ->
-                task as Test
-                if (application != null)
-                    task.jvmArgs = application.applicationDefaultJvmArgs.toList()
-                else
-                    task.jvmArgs = jvmArgs.toList()
-            }
+        project.tasks.getByName("test") { task ->
+            task as Test
+            if (application != null)
+                task.jvmArgs = application.applicationDefaultJvmArgs.toList()
+            else
+                task.jvmArgs = jvmArgs.toList()
         }
     }
 

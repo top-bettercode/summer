@@ -127,12 +127,6 @@ class AutodocPlugin : Plugin<Project> {
         project.tasks.getByName("jar") {
             it.dependsOn("htmldoc", "postman")
         }
-        project.afterEvaluate {
-            val autodocExtension = project.extensions.findByType(AutodocExtension::class.java)!!
-            if (autodocExtension.projectName.isBlank()) {
-                autodocExtension.projectName = project.name
-            }
-        }
 
         val version = AutodocPlugin::class.java.`package`.implementationVersion
         project.dependencies.add("testImplementation", "top.bettercode.summer:autodoc-gen:$version")
