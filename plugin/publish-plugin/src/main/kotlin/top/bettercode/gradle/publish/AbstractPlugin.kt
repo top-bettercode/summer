@@ -238,6 +238,16 @@ abstract class AbstractPlugin : Plugin<Project> {
                 )
             }
         }
+        project.tasks.named("publish") {
+            it.doLast {
+                var mavenRepoUrl = project.findProperty("mavenRepo.url") as? String
+                if (project.version.toString().endsWith("SNAPSHOT")) {
+                    mavenRepoUrl = project.findProperty("mavenRepo.snapshots.url") as? String
+                        ?: mavenRepoUrl
+                }
+                println("${project.name} published to: $mavenRepoUrl")
+            }
+        }
         val extension = project.rootProject.extensions.getByType(NexusStagingExtension::class.java)
         extension.apply {
             //required only for projects registered in Sonatype after 2021-02-24
