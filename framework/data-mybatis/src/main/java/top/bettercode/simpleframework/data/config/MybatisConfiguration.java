@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.data.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import top.bettercode.simpleframework.data.IbatisErrorHandler;
 import top.bettercode.simpleframework.data.Repositories;
 import top.bettercode.simpleframework.data.dsl.EntityPathWrapper;
@@ -34,6 +35,7 @@ public class MybatisConfiguration {
     this.mapperFactoryBeans = mapperFactoryBeans;
   }
 
+  @ConditionalOnWebApplication
   @Bean
   public IbatisErrorHandler ibatisErrorHandler(MessageSource messageSource,
       HttpServletRequest request) {
