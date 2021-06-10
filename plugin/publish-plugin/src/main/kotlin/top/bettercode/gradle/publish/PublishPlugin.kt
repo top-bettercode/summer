@@ -17,13 +17,11 @@ class PublishPlugin : AbstractPlugin() {
     override fun apply(project: Project) {
         beforeConfigigure(project)
 
-        project.afterEvaluate { _ ->
-            project.tasks.create("javadocJar", Jar::class.java) {
-                it.archiveClassifier.set("javadoc")
-                it.from(project.tasks.getByName("javadoc").outputs)
-            }
-            configPublish(project)
+        project.tasks.create("javadocJar", Jar::class.java) {
+            it.archiveClassifier.set("javadoc")
+            it.from(project.tasks.getByName("javadoc").outputs)
         }
+        configPublish(project)
     }
 
 }

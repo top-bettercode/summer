@@ -90,7 +90,8 @@ class GeneratorPlugin : Plugin<Project> {
             extension.pumlSrc = findProperty(project, "puml.src") ?: "puml/src"
             val pumlDatabaseDriver = findProperty(project, "puml.databaseDriver")
                 ?: extension.datasource.databaseDriver.id
-            extension.pumlDatabaseDriver = top.bettercode.generator.DatabaseDriver.fromProductName(pumlDatabaseDriver)
+            extension.pumlDatabaseDriver =
+                top.bettercode.generator.DatabaseDriver.fromProductName(pumlDatabaseDriver)
             extension.pumlDatabase = findProperty(project, "puml.database") ?: "puml/database"
             extension.pumlDiagramFormat = findProperty(project, "puml.diagramFormat") ?: "PNG"
             extension.sqlOutput = findProperty(project, "sqlOutput") ?: "database"
@@ -117,7 +118,9 @@ class GeneratorPlugin : Plugin<Project> {
 
             extension.generators = (findProperty(project, "generators")
                 ?: "").split(",").asSequence().filter { it.isNotBlank() }
-                .map { Class.forName(it.trim()).getDeclaredConstructor().newInstance() as Generator }.toList().toTypedArray()
+                .map {
+                    Class.forName(it.trim()).getDeclaredConstructor().newInstance() as Generator
+                }.toList().toTypedArray()
         }
 
         project.tasks.create("generate") { task ->
@@ -127,14 +130,12 @@ class GeneratorPlugin : Plugin<Project> {
             }
         }
 
-        project.afterEvaluate {
-            val extension = project.extensions.getByType(GeneratorExtension::class.java)
-            if (extension.singleDatasource) {
-                if (!project.rootProject.tasks.names.contains("printTableNames"))
-                    configPuml(project.rootProject, extension)
-            } else {
-                configPuml(project, extension)
-            }
+        val extension = project.extensions.getByType(GeneratorExtension::class.java)
+        if (extension.singleDatasource) {
+            if (!project.rootProject.tasks.names.contains("printTableNames"))
+                configPuml(project.rootProject, extension)
+        } else {
+            configPuml(project, extension)
         }
     }
 
