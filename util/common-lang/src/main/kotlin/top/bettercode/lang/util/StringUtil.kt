@@ -79,10 +79,14 @@ object StringUtil {
         if (`object` is CharSequence) {
             return `object`.toString()
         }
-        return if (format) {
-            INDENT_OUTPUT_OBJECT_MAPPER.writeValueAsString(`object`)
-        } else {
-            OBJECT_MAPPER.writeValueAsString(`object`)
+        return try {
+            if (format) {
+                INDENT_OUTPUT_OBJECT_MAPPER.writeValueAsString(`object`)
+            } else {
+                OBJECT_MAPPER.writeValueAsString(`object`)
+            }
+        } catch (e: Exception) {
+            `object`.toString()
         }
     }
 
