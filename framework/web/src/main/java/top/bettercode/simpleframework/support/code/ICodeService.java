@@ -23,4 +23,7 @@ public interface ICodeService {
 
   default void put(String codeTypeKey, String name) {
   }
+
+  default void delete(String codeTypeKey) {
+  }
 }

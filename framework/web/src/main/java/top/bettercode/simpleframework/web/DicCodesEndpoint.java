@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.web;
 
+import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -25,6 +26,11 @@ public class DicCodesEndpoint {
     return codeService.getDicCodes(codeTypeKey.substring(0, codeTypeKey.indexOf('.')));
   }
 
+  @DeleteOperation
+  public Object delete(String codeTypeKey) {
+    codeService.delete(codeTypeKey);
+    return codeService.getDicCodes(codeTypeKey.substring(0, codeTypeKey.indexOf('.')));
+  }
 
   @ReadOperation
   public DicCodes environmentEntry(@Selector String codeType) {
