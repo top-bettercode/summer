@@ -124,8 +124,8 @@ abstract class Generator {
             prettyRemarks.substringAfter('(').substringBeforeLast(')')
                 .split(";").filter { it.isNotBlank() }
                 .forEach { item: String ->
-                    val code = item.substringBefore(":").trim()
-                    val name = item.substringAfter(":").trim()
+                    val code = item.substringBefore(":").trim().trim(',', '，').trim()
+                    val name = item.substringAfter(":").trim().trim(',', '，').trim()
                     dicCodes.codes[code] = name
                 }
 
