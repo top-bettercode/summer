@@ -79,7 +79,7 @@ public class ApiHandlerMethodReturnValueHandler implements HandlerMethodReturnVa
         }
       }
 
-      if (webProperties.getWrapEnable() && (!(returnValue instanceof IRespEntity || (
+      if (webProperties.wrapEnable(webRequest) && (!(returnValue instanceof IRespEntity || (
           returnValue instanceof HttpEntity && ((HttpEntity<?>) returnValue)
               .getBody() instanceof IRespEntity)))
           && supportsRewrapType(returnType)) {
@@ -94,7 +94,7 @@ public class ApiHandlerMethodReturnValueHandler implements HandlerMethodReturnVa
         }
       }
 
-      if (webProperties.getOkEnable()) {
+      if (webProperties.okEnable(webRequest)) {
         webRequest.getNativeResponse(HttpServletResponse.class).setStatus(HttpStatus.OK.value());
         if (returnValue instanceof ResponseEntity) {
           int statusCode = ((ResponseEntity<?>) returnValue).getStatusCode().value();

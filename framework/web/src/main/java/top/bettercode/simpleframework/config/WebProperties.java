@@ -1,6 +1,8 @@
 package top.bettercode.simpleframework.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.NativeWebRequest;
 
 /**
  * @author Peter Wu
@@ -45,6 +47,26 @@ public class WebProperties {
    */
   private String constraintViolationSeparator = "";
 
+  //--------------------------------------------
+  public Boolean wrapEnable(NativeWebRequest request) {
+    String wrapResponse = request.getHeader("wrapResponse");
+    if (StringUtils.hasText(wrapResponse)) {
+      return "true".equals(wrapResponse);
+    } else {
+      return wrapEnable;
+    }
+  }
+
+  public Boolean okEnable(NativeWebRequest request) {
+    String okResponse = request.getHeader("okResponse");
+    if (StringUtils.hasText(okResponse)) {
+      return "true".equals(okResponse);
+    } else {
+      return okEnable;
+    }
+  }
+
+  //--------------------------------------------
   public Boolean getWrapEnable() {
     return wrapEnable;
   }
