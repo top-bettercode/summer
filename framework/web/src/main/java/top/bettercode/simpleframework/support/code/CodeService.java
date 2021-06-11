@@ -26,6 +26,11 @@ public class CodeService implements ICodeService {
     propertiesSource.put(codeTypeKey, name);
   }
 
+  @Override
+  public void delete(String codeTypeKey) {
+    propertiesSource.remove(codeTypeKey);
+  }
+
   private boolean isInt(String code) {
     if (code.startsWith("0") && code.length() > 1) {
       return false;
