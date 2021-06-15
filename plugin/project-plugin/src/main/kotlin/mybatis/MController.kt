@@ -90,7 +90,7 @@ open class MController : MModuleJavaGenerator() {
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/update\", name = \"${remarks}编辑\")")
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
-                    annotation("@top.bettercode.simpleframework.web.resolver.ModifyModel${if (primaryKeyName != "id") "(value = $className.class, idParameter = \"${primaryKeyName}\")" else "($className.class)"} @org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
+                    annotation("@org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
                     name = "${projectEntityName}Form"
                     type = formType
                 }
