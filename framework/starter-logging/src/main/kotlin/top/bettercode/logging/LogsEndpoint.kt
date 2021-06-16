@@ -301,13 +301,14 @@ document.documentElement.scrollIntoView({
             response.setHeader("Cache-Control", "no-cache")
             response.setDateHeader("Expires", 0)
             response.writer.use { writer ->
+                val dir = servletPath.substringAfterLast("/logs/")
                 writer.println(
                     """
 <html>
-<head><title>Index of /</title></head>
+<head><title>Index of /$dir</title></head>
 <body>"""
                 )
-                writer.print("<h1>Index of /</h1><hr><pre>")
+                writer.print("<h1>Index of /$dir</h1><hr><pre>")
 
                 val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
