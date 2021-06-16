@@ -40,7 +40,7 @@ class NavFilter(
             )
             return
         }
-        if (webEndpointProperties.basePath + "/doc" == servletPath) {
+        if (webEndpointProperties.basePath + "/doc" == servletPath || webEndpointProperties.basePath + "/doc/" == servletPath) {
             val name = staticLocations + webEndpointProperties.basePath + "/doc/"
             val resource = resourceLoader.getResource(name)
             if (resource.exists()) {
