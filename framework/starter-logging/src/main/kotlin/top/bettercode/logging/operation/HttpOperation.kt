@@ -39,9 +39,7 @@ object HttpOperation {
         }
         stringBuilder.appendLine(marginLine)
         val toString = stringBuilder.toString()
-        return if (format) {
-            (if (format) Operation.LINE_SEPARATOR else "") + toString
-        } else toString.replace(Operation.LINE_SEPARATOR, "\\n")
+        return Operation.LINE_SEPARATOR + toString
     }
 
     fun toString(request: OperationRequest, protocol: String, format: Boolean): String {
