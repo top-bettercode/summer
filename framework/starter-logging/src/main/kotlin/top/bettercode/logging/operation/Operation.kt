@@ -84,7 +84,6 @@ open class Operation(
             }
             parameters
         }
-        val format = config.format
         request.headers = headers
         request.parameters = parameters
 
@@ -103,19 +102,19 @@ open class Operation(
 
         request.content =
             if (config.includeRequestBody || error || originRequestContent.isEmpty()) {
-                (if (format) request.prettyContent else originRequestContent)
+                originRequestContent
             } else "unrecorded".toByteArray()
 
 
         response.content =
             if (config.includeResponseBody || error || originResponseContent.isEmpty()) {
-                (if (format) response.prettyContent else originResponseContent)
+                originResponseContent
             } else "unrecorded".toByteArray()
 
         response.stackTrace =
             if (config.includeTrace || originStackTrace.isBlank()) originStackTrace else "unrecorded"
 
-        val log = HttpOperation.toString(this, format)
+        val log = HttpOperation.toString(this, config.format)
 
         request.headers = originHeaders
         request.parameters = originParameters
