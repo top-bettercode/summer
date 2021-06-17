@@ -102,7 +102,7 @@ class ToolTest {
             System.err.println(groupValues)
         }
         val sss =
-            "@com.cdwintech.framework.web.resolver.ModifyModel(idParameterName = \"indentifyId\") @org.springframework.validation.annotation.Validated"
+            "@org.springframework.validation.annotation.Validated"
         sss.split(Annotations.splitRegex).forEach {
             val groupValues = regex.find(it)?.groupValues
             System.err.println(groupValues)

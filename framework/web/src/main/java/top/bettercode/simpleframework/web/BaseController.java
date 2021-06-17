@@ -1,10 +1,5 @@
 package top.bettercode.simpleframework.web;
 
-import top.bettercode.lang.util.ParameterUtil;
-import top.bettercode.lang.util.Sha1DigestUtil;
-import top.bettercode.simpleframework.support.DeviceUtil;
-import top.bettercode.simpleframework.web.error.ErrorAttributes;
-import top.bettercode.simpleframework.web.resolver.ModifyModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -22,6 +17,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.StringUtils;
+import top.bettercode.lang.util.ParameterUtil;
+import top.bettercode.lang.util.Sha1DigestUtil;
+import top.bettercode.simpleframework.support.DeviceUtil;
+import top.bettercode.simpleframework.web.error.ErrorAttributes;
 
 /**
  * 基础Controller
@@ -122,15 +121,6 @@ public class BaseController extends Response {
    */
   public String getUserAgent() {
     return DeviceUtil.getUserAgent(request);
-  }
-
-  /**
-   * @return 更新前的实体
-   */
-  @Deprecated
-  protected Object getOldModel() {
-    String oldModel = ModifyModel.OLD_MODEL;
-    return request.getAttribute(oldModel);
   }
 
   /**
