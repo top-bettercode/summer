@@ -24,7 +24,7 @@ public class WebProperties {
    */
   private Boolean okEnable = true;
   /**
-   * 接口版本号名称.
+   * 接口版本号header参数名称.
    */
   private String versionName = "apiVersion";
 
@@ -34,7 +34,7 @@ public class WebProperties {
   private String version = "v1.0";
 
   /**
-   * 接口版本号名称.
+   * 接口版本号header参数名称.
    */
   private String versionNoName = "apiVersionNo";
   /**
@@ -47,9 +47,17 @@ public class WebProperties {
    */
   private String constraintViolationSeparator = "";
 
+  /**
+   * Response wrap header参数名称
+   */
+  private String wrapName = "wrapResponse";
+  /**
+   * Response ok header参数名称
+   */
+  private String okName = "okResponse";
   //--------------------------------------------
   public Boolean wrapEnable(NativeWebRequest request) {
-    String wrapResponse = request.getHeader("wrapResponse");
+    String wrapResponse = request.getHeader(wrapName);
     if (StringUtils.hasText(wrapResponse)) {
       return "true".equals(wrapResponse);
     } else {
@@ -58,7 +66,7 @@ public class WebProperties {
   }
 
   public Boolean okEnable(NativeWebRequest request) {
-    String okResponse = request.getHeader("okResponse");
+    String okResponse = request.getHeader(okName);
     if (StringUtils.hasText(okResponse)) {
       return "true".equals(okResponse);
     } else {
@@ -67,6 +75,32 @@ public class WebProperties {
   }
 
   //--------------------------------------------
+
+
+  public String getProjectName() {
+    return projectName;
+  }
+
+  public void setProjectName(String projectName) {
+    this.projectName = projectName;
+  }
+
+  public String getWrapName() {
+    return wrapName;
+  }
+
+  public void setWrapName(String wrapName) {
+    this.wrapName = wrapName;
+  }
+
+  public String getOkName() {
+    return okName;
+  }
+
+  public void setOkName(String okName) {
+    this.okName = okName;
+  }
+
   public Boolean getWrapEnable() {
     return wrapEnable;
   }
