@@ -1,15 +1,14 @@
 package top.bettercode.autodoc.core
 
+import org.asciidoctor.Asciidoctor
+import org.asciidoctor.Attributes
+import org.asciidoctor.Options
+import org.asciidoctor.SafeMode
 import top.bettercode.autodoc.core.model.Field
 import top.bettercode.autodoc.core.operation.DocOperationRequest
 import top.bettercode.autodoc.core.operation.DocOperationResponse
 import top.bettercode.logging.operation.HttpOperation
 import top.bettercode.logging.operation.Operation
-import top.bettercode.logging.operation.PrettyPrintingContentModifier
-import org.asciidoctor.Asciidoctor
-import org.asciidoctor.Attributes
-import org.asciidoctor.Options
-import org.asciidoctor.SafeMode
 import java.io.File
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -20,22 +19,22 @@ import java.util.regex.Pattern
  *
  * @author Peter Wu
  */
-object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
+object AsciidocGenerator : AbstractbGenerator() {
 
     private val asciidoctor: Asciidoctor = Asciidoctor.Factory.create()
     private val TOKEN_PATTERN = Pattern.compile("@.+?@")
 
     init {
-        top.bettercode.autodoc.core.AsciidocGenerator.asciidoctor.requireLibrary("asciidoctor-diagram")
+        asciidoctor.requireLibrary("asciidoctor-diagram")
     }
 
-    fun html(autodoc: top.bettercode.autodoc.core.AutodocExtension) {
+    fun html(autodoc: AutodocExtension) {
         autodoc.docStatic()
         autodoc.listModuleNames { name, pyname ->
             val adocFile = autodoc.adocFile(name)
             if (adocFile.exists()) {
                 val htmlFile = autodoc.htmlFile(pyname)
-                top.bettercode.autodoc.core.AsciidocGenerator.html(adocFile, htmlFile)
+                html(adocFile, htmlFile)
                 htmlFile.writeText(
                     htmlFile.readText()
                         .replace(
@@ -66,7 +65,7 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
             optionsBuilder.mkDirs(true)
             optionsBuilder.safe(SafeMode.UNSAFE)
             try {
-                top.bettercode.autodoc.core.AsciidocGenerator.asciidoctor.convertFile(inFile, optionsBuilder.build())
+                asciidoctor.convertFile(inFile, optionsBuilder.build())
                 println("生成：$outFile")
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -74,13 +73,13 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
         }
     }
 
-    fun pdf(autodoc: top.bettercode.autodoc.core.AutodocExtension) {
-        top.bettercode.autodoc.core.AsciidocGenerator.asciidoc(autodoc, true)
+    fun pdf(autodoc: AutodocExtension) {
+        asciidoc(autodoc, true)
         autodoc.listModuleNames { name, _ ->
             val adocFile = autodoc.adocFile(name)
             if (adocFile.exists()) {
                 val pdfFile = autodoc.pdfFile(name)
-                top.bettercode.autodoc.core.AsciidocGenerator.pdf(adocFile, pdfFile)
+                pdf(adocFile, pdfFile)
             }
         }
     }
@@ -93,15 +92,15 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
             optionsBuilder.attributes(
                 Attributes.builder().attributes(
                     mapOf(
-                        "pdf-fontsdir" to top.bettercode.autodoc.core.AsciidocGenerator::class.java.getResource("/data/fonts")?.file,
-                        "pdf-style" to top.bettercode.autodoc.core.AsciidocGenerator::class.java.getResource("/data/themes/default-theme.yml")?.file
+                        "pdf-fontsdir" to AsciidocGenerator::class.java.getResource("/data/fonts")?.file,
+                        "pdf-style" to AsciidocGenerator::class.java.getResource("/data/themes/default-theme.yml")?.file
                     )
                 ).build()
             )
             optionsBuilder.mkDirs(true)
             optionsBuilder.safe(SafeMode.UNSAFE)
             try {
-                top.bettercode.autodoc.core.AsciidocGenerator.asciidoctor.convertFile(inFile, optionsBuilder.build())
+                asciidoctor.convertFile(inFile, optionsBuilder.build())
                 println("生成：$outFile")
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -109,12 +108,12 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
         }
     }
 
-    private fun postmanLink(autodoc: top.bettercode.autodoc.core.AutodocExtension, name: String): String {
+    private fun postmanLink(autodoc: AutodocExtension, name: String): String {
         return Operation.LINE_SEPARATOR + "== link:${autodoc.postmanFile(name).name}[Postman Collection]" + Operation.LINE_SEPARATOR
     }
 
     private fun moduleToc(
-        autodoc: top.bettercode.autodoc.core.AutodocExtension,
+        autodoc: AutodocExtension,
         currentName: String,
         pynames: MutableMap<String, Int>
     ): String {
@@ -129,7 +128,7 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
         return pw.toString()
     }
 
-    fun asciidoc(autodoc: top.bettercode.autodoc.core.AutodocExtension, pdf: Boolean = false) {
+    fun asciidoc(autodoc: AutodocExtension, pdf: Boolean = false) {
         val rootDoc = autodoc.rootSource
         val sourcePath = (rootDoc?.absoluteFile?.parentFile?.absolutePath
             ?: autodoc.source.absolutePath) + File.separator
@@ -169,14 +168,14 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
                 }
                 if (!pdf) {
                     out.print(
-                        top.bettercode.autodoc.core.AsciidocGenerator.moduleToc(
+                        moduleToc(
                             autodoc,
                             module.name,
                             pynames
                         )
                     )
                     out.print(
-                        top.bettercode.autodoc.core.AsciidocGenerator.postmanLink(
+                        postmanLink(
                             autodoc,
                             pyname
                         )
@@ -202,7 +201,7 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
                     var pre = ""
                     it.readLines().forEach { l ->
                         var line = l
-                        val matcher: Matcher = top.bettercode.autodoc.core.AsciidocGenerator.TOKEN_PATTERN.matcher(line)
+                        val matcher: Matcher = TOKEN_PATTERN.matcher(line)
                         while (matcher.find()) {
                             var group = matcher.group()
                             group = group.substring(1, group.length - 1)
@@ -247,7 +246,7 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
 
                             out.println(
                                 ".1+.^|地址 6+.^|link:{apiHost}${
-                                    top.bettercode.autodoc.core.AsciidocGenerator.str(
+                                    str(
                                         HttpOperation.getRestRequestPath(
                                             request
                                         )
@@ -262,23 +261,23 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
                                 out.println("h|名称 h|类型 3+h|描述 h|示例")
                                 uriFields.forEach {
                                     out.print("|${
-                                        top.bettercode.autodoc.core.AsciidocGenerator.str(
+                                        str(
                                             it.name
                                         )
                                     }")
                                     out.print("|${
-                                        top.bettercode.autodoc.core.AsciidocGenerator.str(
+                                        str(
                                             it.type
                                         )
                                     }")
                                     out.print(" 3+|${
-                                        top.bettercode.autodoc.core.AsciidocGenerator.str(
+                                        str(
                                             it.description,
                                             true
                                         )
                                     }")
                                     out.print("|${
-                                        top.bettercode.autodoc.core.AsciidocGenerator.str(
+                                        str(
                                             it.value
                                         )
                                     }")
@@ -292,28 +291,28 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
                                 out.println("h|名称 h|类型 h|必填 2+h|描述 h|示例")
                                 headerFields.forEach {
                                     out.print("|${
-                                        top.bettercode.autodoc.core.AsciidocGenerator.str(
+                                        str(
                                             it.name
                                         )
                                     }")
                                     out.print("|${
-                                        top.bettercode.autodoc.core.AsciidocGenerator.str(
+                                        str(
                                             it.type
                                         )
                                     }")
                                     out.print("|${
-                                        top.bettercode.autodoc.core.AsciidocGenerator.str(
+                                        str(
                                             it.requiredDescription
                                         )
                                     }")
                                     out.print(" 2+|${
-                                        top.bettercode.autodoc.core.AsciidocGenerator.str(
+                                        str(
                                             it.description,
                                             true
                                         )
                                     }")
                                     out.print("|${
-                                        top.bettercode.autodoc.core.AsciidocGenerator.str(
+                                        str(
                                             it.value
                                         )
                                     }")
@@ -328,7 +327,7 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
                                 contentExt.checkBlank("$operationPath:request.contentExt")
                             val parameterBuilder = StringBuilder()
                             val size =
-                                top.bettercode.autodoc.core.AsciidocGenerator.writeParameters(
+                                writeParameters(
                                     parameterBuilder,
                                     parameterFields,
                                     partsFields,
@@ -348,7 +347,7 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
                             val contentFields =
                                 contentExt.checkBlank("$operationPath:response.contentExt")
                             val responseBuilder = StringBuilder()
-                            val size = top.bettercode.autodoc.core.AsciidocGenerator.writeResponse(
+                            val size = writeResponse(
                                 responseBuilder,
                                 contentFields
                             )
@@ -371,8 +370,6 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
                                     true
                                 ).replace("|", "\\|")
                             )
-                            response.content =
-                                PrettyPrintingContentModifier.modifyContent(response.content)
                             out.println(
                                 HttpOperation.toString(response, operation.protocol, true)
                                     .replace("|", "\\|")
@@ -393,7 +390,7 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
     private fun writeResponse(out: StringBuilder, contentFields: Set<Field>): Int {
         var size = 0
         contentFields.forEach { field ->
-            size += top.bettercode.autodoc.core.AsciidocGenerator.writeResp(out, field)
+            size += writeResp(out, field)
         }
         return size
     }
@@ -406,55 +403,55 @@ object AsciidocGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
     ): Int {
         var size = 0
         parameterFields.forEach {
-            size += top.bettercode.autodoc.core.AsciidocGenerator.writeParam(out, it)
+            size += writeParam(out, it)
         }
         partsFields.forEach {
-            size += top.bettercode.autodoc.core.AsciidocGenerator.writeParam(out, it)
+            size += writeParam(out, it)
         }
         contentFields.forEach {
-            size += top.bettercode.autodoc.core.AsciidocGenerator.writeParam(out, it)
+            size += writeParam(out, it)
         }
         return size
     }
 
     private fun writeResp(out: StringBuilder, field: Field, depth: Int = 0): Int {
-        out.append("|${top.bettercode.autodoc.core.AsciidocGenerator.fillBlank(depth)}${
-            top.bettercode.autodoc.core.AsciidocGenerator.str(
+        out.append("|${fillBlank(depth)}${
+            str(
                 field.name
             )
         }")
-        out.append("|${top.bettercode.autodoc.core.AsciidocGenerator.str(field.type)}")
+        out.append("|${str(field.type)}")
         out.append(" 3+|${
-            top.bettercode.autodoc.core.AsciidocGenerator.str(
+            str(
                 field.description,
                 true
             )
         }")
 
-        out.append("|${top.bettercode.autodoc.core.AsciidocGenerator.str(if (field.children.isNotEmpty()) "" else field.value)}")
+        out.append("|${str(if (field.children.isNotEmpty()) "" else field.value)}")
         out.appendLine()
         var size = 1
         field.children.forEach {
-            size += top.bettercode.autodoc.core.AsciidocGenerator.writeResp(out, it, depth + 1)
+            size += writeResp(out, it, depth + 1)
         }
         return size
     }
 
     private fun writeParam(out: StringBuilder, field: Field, depth: Int = 0): Int {
-        out.append("|${top.bettercode.autodoc.core.AsciidocGenerator.fillBlank(depth)}${
-            top.bettercode.autodoc.core.AsciidocGenerator.str(
+        out.append("|${fillBlank(depth)}${
+            str(
                 field.name
             )
         }")
-        out.append("|${top.bettercode.autodoc.core.AsciidocGenerator.str(field.type)}")
-        out.append("|${top.bettercode.autodoc.core.AsciidocGenerator.str(field.requiredDescription)}")
-        out.append("|${top.bettercode.autodoc.core.AsciidocGenerator.str(field.description, true)}")
-        out.append("|${top.bettercode.autodoc.core.AsciidocGenerator.str(field.defaultVal)}")
-        out.append("|${top.bettercode.autodoc.core.AsciidocGenerator.str(field.value)}")
+        out.append("|${str(field.type)}")
+        out.append("|${str(field.requiredDescription)}")
+        out.append("|${str(field.description, true)}")
+        out.append("|${str(field.defaultVal)}")
+        out.append("|${str(field.value)}")
         out.appendLine()
         var size = 1
         field.children.forEach {
-            size += top.bettercode.autodoc.core.AsciidocGenerator.writeParam(out, it, depth + 1)
+            size += writeParam(out, it, depth + 1)
         }
         return size
     }
