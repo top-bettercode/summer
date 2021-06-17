@@ -26,7 +26,7 @@ public class WebProperties {
   /**
    * 接口版本号header参数名称.
    */
-  private String versionName = "apiVersion";
+  private String versionName = "api-version";
 
   /**
    * 接口版本号.
@@ -36,7 +36,7 @@ public class WebProperties {
   /**
    * 接口版本号header参数名称.
    */
-  private String versionNoName = "apiVersionNo";
+  private String versionNoName = "api-version-no";
   /**
    * 接口版本号.
    */
@@ -50,11 +50,11 @@ public class WebProperties {
   /**
    * Response wrap header参数名称
    */
-  private String wrapName = "wrapResponse";
+  private String wrapName = "wrap-response";
   /**
    * Response ok header参数名称
    */
-  private String okName = "okResponse";
+  private String okName = "ok-response";
   //--------------------------------------------
   public Boolean wrapEnable(NativeWebRequest request) {
     String wrapResponse = request.getHeader(wrapName);
