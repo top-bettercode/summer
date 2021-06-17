@@ -2,19 +2,18 @@ package top.bettercode.simpleframework.web.serializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import top.bettercode.logging.operation.PrettyPrintingContentModifier;
-import top.bettercode.simpleframework.config.JacksonExtProperties;
-import top.bettercode.simpleframework.web.DataDicBean;
-import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
+import top.bettercode.logging.operation.PrettyPrintingContentModifier;
+import top.bettercode.simpleframework.config.JacksonExtProperties;
+import top.bettercode.simpleframework.web.DataDicBean;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 
 /**
  * @author Peter Wu
@@ -117,8 +116,7 @@ public class UrlSerializerTest {
 
   @NotNull
   private String prettyStr(String actual) {
-    return new String(PrettyPrintingContentModifier.INSTANCE.modifyContent(actual.getBytes(
-        StandardCharsets.UTF_8)));
+    return PrettyPrintingContentModifier.modifyContent(actual);
   }
 
   @Test

@@ -1,16 +1,15 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.logging.operation.PrettyPrintingContentModifier;
-import top.bettercode.simpleframework.support.code.ICodeService;
-import top.bettercode.simpleframework.web.DataDicBean;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import top.bettercode.logging.operation.PrettyPrintingContentModifier;
+import top.bettercode.simpleframework.support.code.ICodeService;
+import top.bettercode.simpleframework.web.DataDicBean;
 
 /**
  * @author Peter Wu
@@ -38,7 +37,7 @@ public class BigDecimalSerializerTest {
   public void serializeBigDecimal() throws Exception {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.setDefaultPropertyInclusion(Include.NON_NULL);
-    objectMapper.configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN,true);
+    objectMapper.configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true);
 
     DataDicBean dicBean = new DataDicBean();
     dicBean.setNumber1(new BigDecimal("1.234560"));
@@ -47,9 +46,7 @@ public class BigDecimalSerializerTest {
     dicBean.setNumber3(new BigDecimal("1.00000"));
     dicBean.setNumber4(new BigDecimal("1.00000"));
     String string = objectMapper.writeValueAsString(dicBean);
-    System.err
-        .println(new String(PrettyPrintingContentModifier.INSTANCE.modifyContent(string.getBytes(
-            StandardCharsets.UTF_8))));
+    System.err.println(PrettyPrintingContentModifier.modifyContent(string));
     dicBean = new DataDicBean();
     dicBean.setNumber1(new BigDecimal("1.234560"));
     dicBean.setNumber2(new BigDecimal("1.20000"));
@@ -57,9 +54,7 @@ public class BigDecimalSerializerTest {
     dicBean.setNumber3(new BigDecimal("1.010"));
     dicBean.setNumber4(new BigDecimal("1.010"));
     string = objectMapper.writeValueAsString(dicBean);
-    System.err
-        .println(new String(PrettyPrintingContentModifier.INSTANCE.modifyContent(string.getBytes(
-            StandardCharsets.UTF_8))));
+    System.err.println(PrettyPrintingContentModifier.modifyContent(string));
   }
 
 }

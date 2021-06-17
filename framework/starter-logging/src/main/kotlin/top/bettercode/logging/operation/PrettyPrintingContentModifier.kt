@@ -25,6 +25,7 @@ import javax.xml.transform.stream.StreamResult
  */
 object PrettyPrintingContentModifier {
 
+    @JvmStatic
     fun modifyContent(originalContent: ByteArray): ByteArray {
         if (originalContent.isNotEmpty()) {
             for (prettyPrinter in PRETTY_PRINTERS) {
@@ -36,6 +37,11 @@ object PrettyPrintingContentModifier {
             }
         }
         return originalContent
+    }
+
+    @JvmStatic
+    fun modifyContent(originalContent: String?): String {
+        return String(modifyContent(originalContent?.toByteArray() ?: ByteArray(0)))
     }
 
     private interface PrettyPrinter {
