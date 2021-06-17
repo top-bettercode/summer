@@ -1,9 +1,5 @@
 package top.bettercode.simpleframework.data.resolver;
 
-import top.bettercode.simpleframework.data.Repositories;
-import top.bettercode.simpleframework.data.RepositoryMetadata;
-import top.bettercode.simpleframework.data.binding.WrapperBinderProperties;
-import top.bettercode.simpleframework.data.dsl.EntityPathWrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
@@ -15,6 +11,10 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import top.bettercode.simpleframework.data.Repositories;
+import top.bettercode.simpleframework.data.RepositoryMetadata;
+import top.bettercode.simpleframework.data.binding.WrapperBinderProperties;
+import top.bettercode.simpleframework.data.dsl.EntityPathWrapper;
 
 /**
  * Wrapper参数解析
@@ -112,14 +112,11 @@ public class EntityPathWrapperArgumentResolver implements HandlerMethodArgumentR
     keySet.remove(properties.getIsNotNullParameter());
     for (String property : keySet) {
       String column = cachedFieldsMap.get(property);
-      if (column != null) {
-        String value = request.getParameter(property);
-        if (StringUtils.hasText(value)) {
+      String value = request.getParameter(property);
+      if (StringUtils.hasText(value)) {
+        if (column != null) {
           wrapper.addConditions(column, value);
-        }
-      } else {
-        String value = request.getParameter(property);
-        if (StringUtils.hasText(value)) {
+        } else {
           wrapper.addAdditions(property, value);
         }
       }
