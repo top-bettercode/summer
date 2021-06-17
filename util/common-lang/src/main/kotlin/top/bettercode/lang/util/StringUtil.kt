@@ -39,6 +39,15 @@ object StringUtil {
 
     /**
      * @param str 字符
+     * @return 非null字符串
+     */
+    @JvmStatic
+    fun null2empty(str: String?): String {
+        return str ?: ""
+    }
+
+    /**
+     * @param str 字符
      * @return 是否有字符
      */
     @JvmStatic
