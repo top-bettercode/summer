@@ -5,6 +5,7 @@ import org.xml.sax.ErrorHandler
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
 import org.xml.sax.SAXParseException
+import top.bettercode.lang.util.StringUtil
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -117,6 +118,7 @@ object PrettyPrintingContentModifier {
 
         @Throws(IOException::class)
         override fun prettyPrint(content: ByteArray): ByteArray {
+            StringUtil.OBJECT_MAPPER.readTree(content)
             return JsonUtils.prettyPrint(String(content)).toByteArray()
         }
 
