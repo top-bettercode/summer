@@ -15,7 +15,7 @@ data class RequestLoggingConfig(
      * 忽略超时
      */
     val ignoredTimeout: Boolean, val timeoutAlarmSeconds: Int,
-    val logMarker: String=RequestLoggingFilter.REQUEST_LOG_MARKER
+    val logMarker: String = RequestLoggingFilter.REQUEST_LOG_MARKER
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
