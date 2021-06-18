@@ -166,6 +166,9 @@ class RequestLoggingFilter(
                     )
                 }
                 val marker = MarkerFactory.getMarker(REQUEST_LOG_MARKER)
+                if (config.logMarker != REQUEST_LOG_MARKER) {
+                    marker.add(MarkerFactory.getMarker(config.logMarker))
+                }
                 if (existProperty(environment, "summer.logging.logstash.destinations[0]")) {
                     marker.add(
                         Markers.appendRaw(

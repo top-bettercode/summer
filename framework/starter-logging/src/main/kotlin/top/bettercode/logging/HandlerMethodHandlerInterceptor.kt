@@ -85,7 +85,8 @@ class HandlerMethodHandlerInterceptor(private val properties: RequestLoggingProp
                 encryptParameters = encryptParameters ?: arrayOf(),
                 format = properties.isFormat,
                 ignoredTimeout = requestLoggingAnno?.ignoredTimeout == true,
-                timeoutAlarmSeconds = timeoutAlarmSeconds
+                timeoutAlarmSeconds = timeoutAlarmSeconds,
+                logMarker = requestLoggingAnno?.logMarker ?: RequestLoggingFilter.REQUEST_LOG_MARKER
             )
 
             request.setAttribute(REQUEST_LOGGING, requestLogging)
