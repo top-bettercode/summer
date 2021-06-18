@@ -14,7 +14,8 @@ data class RequestLoggingConfig(
     /**
      * 忽略超时
      */
-    val ignoredTimeout: Boolean, val timeoutAlarmSeconds: Int
+    val ignoredTimeout: Boolean, val timeoutAlarmSeconds: Int,
+    val logMarker: String=RequestLoggingFilter.REQUEST_LOG_MARKER
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -27,6 +28,8 @@ data class RequestLoggingConfig(
         if (!encryptParameters.contentEquals(other.encryptParameters)) return false
         if (format != other.format) return false
         if (ignoredTimeout != other.ignoredTimeout) return false
+        if (timeoutAlarmSeconds != other.timeoutAlarmSeconds) return false
+        if (logMarker != other.logMarker) return false
 
         return true
     }
@@ -39,8 +42,8 @@ data class RequestLoggingConfig(
         result = 31 * result + encryptParameters.contentHashCode()
         result = 31 * result + format.hashCode()
         result = 31 * result + ignoredTimeout.hashCode()
+        result = 31 * result + timeoutAlarmSeconds
+        result = 31 * result + logMarker.hashCode()
         return result
     }
-
-
 }
