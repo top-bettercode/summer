@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
  */
 public interface IRespEntity {
 
+  @JsonIgnore
   default Integer getHttpStatusCode() {
     return HttpStatus.OK.value();
   }

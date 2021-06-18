@@ -20,7 +20,7 @@ public class RespEntity<T> implements IRespEntity, Serializable {
   public static final String KEY_DATA = "data";
   public static final String KEY_TRACE = "trace";
   public static final String KEY_ERRORS = "errors";
-  @JsonIgnore
+
   Integer httpStatusCode;
 
   @JsonView(Object.class)
@@ -175,7 +175,6 @@ public class RespEntity<T> implements IRespEntity, Serializable {
 
     private static final long serialVersionUID = -8836404214545603605L;
 
-    @JsonIgnore
     @Override
     public Integer getHttpStatusCode() {
       try {
