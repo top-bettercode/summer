@@ -59,7 +59,7 @@ public class WebProperties {
   /**
    * 表单防重复提交，key有效时间
    */
-  private Long formExpireSeconds = 10L;
+  private Long formExpireSeconds = 60L;
 
   //--------------------------------------------
   public Boolean wrapEnable(NativeWebRequest request) {
