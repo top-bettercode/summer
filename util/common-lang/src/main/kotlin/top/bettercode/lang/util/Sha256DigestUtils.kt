@@ -41,7 +41,7 @@ object Sha256DigestUtils {
      * caught.
      */
     private val sha256Digest: MessageDigest
-        private get() = try {
+        get() = try {
             MessageDigest.getInstance("SHA-256")
         } catch (e: NoSuchAlgorithmException) {
             throw RuntimeException(e.message)

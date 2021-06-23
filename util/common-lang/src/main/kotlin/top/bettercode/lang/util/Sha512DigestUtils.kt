@@ -13,7 +13,7 @@ object Sha512DigestUtils {
      * caught.
      */
     private val sha512Digest: MessageDigest
-        private get() = try {
+        get() = try {
             MessageDigest.getInstance("SHA-512")
         } catch (ex: NoSuchAlgorithmException) {
             throw RuntimeException(ex.message)
