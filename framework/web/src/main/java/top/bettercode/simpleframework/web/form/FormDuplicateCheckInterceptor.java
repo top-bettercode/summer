@@ -8,6 +8,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import top.bettercode.lang.util.Sha512DigestUtils;
+import top.bettercode.lang.util.StringUtil;
+import top.bettercode.simpleframework.web.UserInfoHelper;
 
 /**
  * 表单重复检查,须检查的接口包括：入库、出库、转移、注册、注销
@@ -30,13 +32,16 @@ public class FormDuplicateCheckInterceptor implements AsyncHandlerInterceptor {
     String method = request.getMethod();
     if (("POST".equals(method) || "PUT".equals(method)) && handler instanceof HandlerMethod
         && ((HandlerMethod) handler).hasMethodAnnotation(FormDuplicateCheck.class)) {
+      Object userInfo = UserInfoHelper.get(request);
+      String userKey = StringUtil.valueOf(userInfo);
+
       String requestURL = request.getRequestURL().toString();
       String formKey = request.getHeader("formKey");
       if (!StringUtils.hasText(formKey)) {
         return true;
       }
 
-      formKey = Sha512DigestUtils.shaHex(requestURL + formKey);
+      formKey = Sha512DigestUtils.shaHex(userKey + requestURL + formKey);
 
       if (formKeyService.exist(formKey)) {
         throw new IllegalArgumentException("请勿重复提交");

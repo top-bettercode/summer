@@ -110,7 +110,7 @@ public class SecurityTest {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.set("Authorization", "bearer " + getAccessToken().getValue());
     ResponseEntity<String> entity = restTemplate
-        .exchange("/test", HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
+        .exchange("/test", HttpMethod.POST, new HttpEntity<>(httpHeaders), String.class);
     assertEquals(HttpStatus.OK, entity.getStatusCode());
   }
 
