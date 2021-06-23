@@ -5,7 +5,6 @@ package top.bettercode.simpleframework.web.form;
  */
 public interface IFormKeyService {
 
-
    String putKey(String formKey);
 
    boolean exist(String formKey);
