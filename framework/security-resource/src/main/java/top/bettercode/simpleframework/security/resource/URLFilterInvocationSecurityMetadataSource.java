@@ -20,6 +20,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import top.bettercode.simpleframework.web.UserInfoHelper;
 
 /**
  * 自定义权限过滤
@@ -84,6 +85,7 @@ public class URLFilterInvocationSecurityMetadataSource implements
   @Override
   public Collection<ConfigAttribute> getAttributes(Object object) {
     final HttpServletRequest request = ((FilterInvocation) object).getRequest();
+    UserInfoHelper.put(request, AuthenticationHelper.getPrincipal());
     List<Match> matches = new ArrayList<>();
     Comparator<String> comparator = new AntPathMatcher()
         .getPatternComparator(getRequestPath(request));
