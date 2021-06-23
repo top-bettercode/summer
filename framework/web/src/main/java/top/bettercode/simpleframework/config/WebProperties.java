@@ -55,6 +55,12 @@ public class WebProperties {
    * Response ok header参数名称
    */
   private String okName = "ok-response";
+
+  /**
+   * 表单防重复提交，key有效时间
+   */
+  private Long formExpireSeconds = 10L;
+
   //--------------------------------------------
   public Boolean wrapEnable(NativeWebRequest request) {
     String wrapResponse = request.getHeader(wrapName);
@@ -76,6 +82,14 @@ public class WebProperties {
 
   //--------------------------------------------
 
+
+  public Long getFormExpireSeconds() {
+    return formExpireSeconds;
+  }
+
+  public void setFormExpireSeconds(Long formExpireSeconds) {
+    this.formExpireSeconds = formExpireSeconds;
+  }
 
   public String getProjectName() {
     return projectName;

@@ -1,24 +1,5 @@
 package top.bettercode.simpleframework.config;
 
-import top.bettercode.lang.util.LocalDateTimeHelper;
-import top.bettercode.logging.annotation.NoRequestLogging;
-import top.bettercode.simpleframework.support.packagescan.PackageScanClassResolver;
-import top.bettercode.simpleframework.web.DefaultCaptchaServiceImpl;
-import top.bettercode.simpleframework.web.ICaptchaService;
-import top.bettercode.simpleframework.web.RespEntity;
-import top.bettercode.simpleframework.web.error.CustomErrorController;
-import top.bettercode.simpleframework.web.error.DataErrorHandler;
-import top.bettercode.simpleframework.web.error.DefaultErrorHandler;
-import top.bettercode.simpleframework.web.error.ErrorAttributes;
-import top.bettercode.simpleframework.web.error.IErrorHandler;
-import top.bettercode.simpleframework.web.error.IErrorRespEntityHandler;
-import top.bettercode.simpleframework.web.filter.ApiVersionFilter;
-import top.bettercode.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
-import top.bettercode.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
-import top.bettercode.simpleframework.web.kaptcha.KaptchaProperties;
-import top.bettercode.simpleframework.web.resolver.ApiHandlerMethodReturnValueHandler;
-import top.bettercode.simpleframework.web.resolver.StringToEnumConverterFactory;
-import top.bettercode.simpleframework.web.serializer.MixIn;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,9 +54,32 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import top.bettercode.lang.util.LocalDateTimeHelper;
+import top.bettercode.logging.annotation.NoRequestLogging;
+import top.bettercode.simpleframework.support.packagescan.PackageScanClassResolver;
+import top.bettercode.simpleframework.web.DefaultCaptchaServiceImpl;
+import top.bettercode.simpleframework.web.ICaptchaService;
+import top.bettercode.simpleframework.web.RespEntity;
+import top.bettercode.simpleframework.web.error.CustomErrorController;
+import top.bettercode.simpleframework.web.error.DataErrorHandler;
+import top.bettercode.simpleframework.web.error.DefaultErrorHandler;
+import top.bettercode.simpleframework.web.error.ErrorAttributes;
+import top.bettercode.simpleframework.web.error.IErrorHandler;
+import top.bettercode.simpleframework.web.error.IErrorRespEntityHandler;
+import top.bettercode.simpleframework.web.filter.ApiVersionFilter;
+import top.bettercode.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
+import top.bettercode.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
+import top.bettercode.simpleframework.web.form.FormDuplicateCheckInterceptor;
+import top.bettercode.simpleframework.web.form.FormKeyService;
+import top.bettercode.simpleframework.web.form.IFormKeyService;
+import top.bettercode.simpleframework.web.kaptcha.KaptchaProperties;
+import top.bettercode.simpleframework.web.resolver.ApiHandlerMethodReturnValueHandler;
+import top.bettercode.simpleframework.web.resolver.StringToEnumConverterFactory;
+import top.bettercode.simpleframework.web.serializer.MixIn;
 
 /**
  * Rest MVC 配置
@@ -123,6 +127,12 @@ public class FrameworkMvcConfiguration {
   @Bean
   public OrderedHttpPutFormContentFilter putFormContentFilter() {
     return new OrderedHttpPutFormContentFilter();
+  }
+
+  @ConditionalOnMissingBean(IFormKeyService.class)
+  @Bean
+  public IFormKeyService formKeyService() {
+    return new FormKeyService(webProperties.getFormExpireSeconds());
   }
 
   @Bean
@@ -379,6 +389,17 @@ public class FrameworkMvcConfiguration {
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnWebApplication
   protected static class WebMvcConfiguration implements WebMvcConfigurer {
+
+    private final IFormKeyService formKeyService;
+
+    public WebMvcConfiguration(IFormKeyService formKeyService) {
+      this.formKeyService = formKeyService;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+      registry.addInterceptor(new FormDuplicateCheckInterceptor(formKeyService));
+    }
 
     /**
      * @param registry 注册转换类
