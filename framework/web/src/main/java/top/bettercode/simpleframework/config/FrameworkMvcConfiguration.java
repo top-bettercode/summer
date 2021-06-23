@@ -43,6 +43,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
@@ -398,7 +399,8 @@ public class FrameworkMvcConfiguration {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-      registry.addInterceptor(new FormDuplicateCheckInterceptor(formKeyService));
+      registry.addInterceptor(new FormDuplicateCheckInterceptor(formKeyService))
+          .order(Ordered.LOWEST_PRECEDENCE);
     }
 
     /**
