@@ -48,4 +48,16 @@ public final class AuthenticationHelper {
     return false;
   }
 
+  /**
+   * @param authority 权限
+   * @return 授权信息是否包含指定权限
+   */
+  public static boolean hasAuthority(String authority) {
+    Authentication authentication = getAuthentication();
+    if (authentication == null) {
+      return false;
+    }
+    return hasAuthority(authentication, authority);
+  }
+
 }
