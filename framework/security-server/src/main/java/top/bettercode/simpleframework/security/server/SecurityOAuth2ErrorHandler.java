@@ -1,14 +1,15 @@
 package top.bettercode.simpleframework.security.server;
 
-import top.bettercode.simpleframework.web.RespEntity;
-import top.bettercode.simpleframework.web.error.AbstractErrorHandler;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.util.CollectionUtils;
+import top.bettercode.simpleframework.web.RespEntity;
+import top.bettercode.simpleframework.web.error.AbstractErrorHandler;
 
 /**
  * @author Peter Wu
@@ -24,7 +25,11 @@ public class SecurityOAuth2ErrorHandler extends AbstractErrorHandler {
   @Override
   public void handlerException(Throwable error, RespEntity<?> respEntity,
       Map<String, String> errors, String separator) {
-    if (error instanceof OAuth2Exception) {
+    if (error instanceof InvalidTokenException) {
+      int httpErrorCode = ((OAuth2Exception) error).getHttpErrorCode();
+      respEntity.setHttpStatusCode(httpErrorCode);
+      respEntity.setMessage("Invalid access token");
+    } else if (error instanceof OAuth2Exception) {
       int httpErrorCode = ((OAuth2Exception) error).getHttpErrorCode();
       Throwable cause = error.getCause();
       if (cause instanceof InternalAuthenticationServiceException) {
