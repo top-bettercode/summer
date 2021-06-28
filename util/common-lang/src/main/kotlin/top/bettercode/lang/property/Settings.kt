@@ -28,4 +28,10 @@ object Settings : HashMap<String, PropertiesSource>() {
         put("dic-code", dicCode)
         put("exception-handle", exceptionHandle)
     }
+
+
+    @JvmStatic
+    fun isDicCode(baseName: String): Boolean {
+        return "dic-code" == baseName
+    }
 }
