@@ -36,15 +36,25 @@ public class SettingsEndpoint {
       return Collections.emptyMap();
     } else {
       String remove = propertiesSource.remove(key);
-      if (remove == null) {
-        Map<String, String> map = propertiesSource.mapOf(key);
+      Map<String, String> map;
+      if (Settings.isDicCode(baseName)) {
+        map = propertiesSource.mapOf(key);
+        String prefix = key + ".";
         for (String k : map.keySet()) {
-          propertiesSource.remove(k);
+          propertiesSource.remove(prefix + k);
         }
-        return map;
+        String typeKey = key + "|TYPE";
+        String removeType = propertiesSource.remove(typeKey);
+        if (removeType != null) {
+          map.put("TYPE", removeType);
+        }
+        if (remove != null) {
+          map.put(key, remove);
+        }
       } else {
-        return Collections.singletonMap(key, remove);
+        map = Collections.singletonMap(key, remove);
       }
+      return map;
     }
   }
 
@@ -56,11 +66,21 @@ public class SettingsEndpoint {
     } else {
       if (StringUtils.hasText(key)) {
         String value = propertiesSource.get(key);
-        if (value == null) {
-          return propertiesSource.mapOf(key);
+        Map<String, String> map;
+        if (Settings.isDicCode(baseName)) {
+          map = propertiesSource.mapOf(key);
+          String typeKey = key + "|TYPE";
+          String typeValue = propertiesSource.get(typeKey);
+          if (typeValue != null) {
+            map.put("TYPE", typeValue);
+          }
+          if (value != null) {
+            map.put(key, value);
+          }
         } else {
-          return Collections.singletonMap(key, value);
+          map = Collections.singletonMap(key, value);
         }
+        return map;
       } else {
         return propertiesSource.all();
       }
