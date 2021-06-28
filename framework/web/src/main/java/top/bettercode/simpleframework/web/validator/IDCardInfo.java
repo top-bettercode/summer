@@ -3,10 +3,11 @@ package top.bettercode.simpleframework.web.validator;
 import top.bettercode.lang.property.PropertiesSource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import top.bettercode.lang.property.Settings;
 
 public class IDCardInfo {
 
-  private static final PropertiesSource areaCodeBundle = PropertiesSource.of("areaCode");
+  private static final PropertiesSource areaCodes = Settings.getAreaCode();
 
   private String idcard;
   // 省份
@@ -30,7 +31,7 @@ public class IDCardInfo {
 
 
   private String getString(String key, String defaultVal) {
-    return areaCodeBundle.getOrDefault(key, defaultVal);
+    return areaCodes.getOrDefault(key, defaultVal);
   }
 
   public IDCardInfo(String idcard) {

@@ -11,11 +11,14 @@ import javax.validation.ConstraintValidatorContext;
  */
 public class ChinaCellValidator implements ConstraintValidator<ChinaCell, String> {
 
+  private CellUtil.Model model;
+
   public ChinaCellValidator() {
   }
 
   @Override
   public void initialize(ChinaCell constraintAnnotation) {
+    model = constraintAnnotation.model();
   }
 
   public boolean isValid(String charSequence,
@@ -23,7 +26,20 @@ public class ChinaCellValidator implements ConstraintValidator<ChinaCell, String
     if (charSequence == null || charSequence.length() == 0) {
       return true;
     }
-    return CellUtil.isChinaCell(charSequence);
+    switch (model) {
+      case ALL:
+        return CellUtil.isChinaCell(charSequence);
+      case MOBILE:
+        return CellUtil.isChinaMobile(charSequence);
+      case UNICOM:
+        return CellUtil.isChinaUnicom(charSequence);
+      case TELECOM:
+        return CellUtil.isChinaTelecom(charSequence);
+      case VNO:
+        return CellUtil.isChinaVNO(charSequence);
+      default:
+        return CellUtil.isSimpleCell(charSequence);
+    }
   }
 }
 

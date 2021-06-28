@@ -1,12 +1,5 @@
 package top.bettercode.simpleframework.config;
 
-import top.bettercode.lang.property.PropertiesSource;
-import top.bettercode.simpleframework.support.code.CodeService;
-import top.bettercode.simpleframework.support.code.CodeTypes;
-import top.bettercode.simpleframework.support.code.ICodeService;
-import top.bettercode.simpleframework.web.serializer.CodeSerializer;
-import top.bettercode.simpleframework.web.serializer.CustomNullSerializerModifier;
-import top.bettercode.simpleframework.web.serializer.UrlSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +12,13 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.util.ClassUtils;
+import top.bettercode.lang.property.Settings;
+import top.bettercode.simpleframework.support.code.CodeService;
+import top.bettercode.simpleframework.support.code.CodeTypes;
+import top.bettercode.simpleframework.support.code.ICodeService;
+import top.bettercode.simpleframework.web.serializer.CodeSerializer;
+import top.bettercode.simpleframework.web.serializer.CustomNullSerializerModifier;
+import top.bettercode.simpleframework.web.serializer.UrlSerializer;
 
 /**
  * @author Peter Wu
@@ -61,7 +61,7 @@ public class SerializerConfiguration {
   @ConditionalOnMissingBean
   @Bean
   public ICodeService codeService() {
-    return new CodeService(new PropertiesSource("default-dic-code", "dic-code"));
+    return new CodeService(Settings.getDicCode());
   }
 
   @Configuration(proxyBeanMethods = false)

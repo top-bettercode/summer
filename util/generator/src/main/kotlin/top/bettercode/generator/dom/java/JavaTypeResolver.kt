@@ -2,6 +2,7 @@ package top.bettercode.generator.dom.java
 
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.lang.property.PropertiesSource
+import top.bettercode.lang.property.Settings
 import java.sql.Types
 import java.util.*
 
@@ -18,8 +19,7 @@ object JavaTypeResolver {
 
     private val typeMap: MutableMap<Int, JdbcTypeInformation> = HashMap()
     private val typeNameMap: MutableMap<String, Int> = HashMap()
-    private val typeNameProperties: PropertiesSource =
-        PropertiesSource.of("defaultJdbcTypeName", "jdbcTypeName")
+    private val typeNames: PropertiesSource = Settings.jdbcTypeName
 
     init {
 
@@ -175,7 +175,7 @@ object JavaTypeResolver {
 
     private fun calculateJdbcTypeName(typeName: String): String {
         val typeNameUpper = typeName.toUpperCase()
-        return typeNameProperties.getOrDefault(typeNameUpper, typeNameUpper)
+        return typeNames.getOrDefault(typeNameUpper, typeNameUpper)
     }
 
     fun calculateDataType(jdbcTypeName: String): Int? {
