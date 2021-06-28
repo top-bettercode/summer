@@ -15,8 +15,8 @@ open class MapPropertySource(protected val source: MutableMap<String, String>) :
         source[key] = value
     }
 
-    override fun doRemove(key: String) {
-        source.remove(key)
+    override fun doRemove(key: String): String? {
+        return source.remove(key)
     }
 
     override fun mapOf(name: String): Map<String, String> {

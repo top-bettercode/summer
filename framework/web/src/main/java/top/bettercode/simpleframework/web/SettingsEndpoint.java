@@ -1,6 +1,7 @@
 package top.bettercode.simpleframework.web;
 
 import java.util.Collections;
+import java.util.Map;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -24,7 +25,7 @@ public class SettingsEndpoint {
       return Collections.emptyMap();
     } else {
       propertiesSource.put(key, value);
-      return propertiesSource.all();
+      return Collections.singletonMap(key, value);
     }
   }
 
@@ -34,8 +35,16 @@ public class SettingsEndpoint {
     if (propertiesSource == null) {
       return Collections.emptyMap();
     } else {
-      propertiesSource.remove(key);
-      return propertiesSource.all();
+      String remove = propertiesSource.remove(key);
+      if (remove == null) {
+        Map<String, String> map = propertiesSource.mapOf(key);
+        for (String k : map.keySet()) {
+          propertiesSource.remove(k);
+        }
+        return map;
+      } else {
+        return Collections.singletonMap(key, remove);
+      }
     }
   }
 
@@ -46,9 +55,15 @@ public class SettingsEndpoint {
       return Collections.emptyMap();
     } else {
       if (StringUtils.hasText(key)) {
-        return propertiesSource.get(key);
+        String value = propertiesSource.get(key);
+        if (value == null) {
+          return propertiesSource.mapOf(key);
+        } else {
+          return Collections.singletonMap(key, value);
+        }
+      } else {
+        return propertiesSource.all();
       }
-      return propertiesSource.all();
     }
   }
 

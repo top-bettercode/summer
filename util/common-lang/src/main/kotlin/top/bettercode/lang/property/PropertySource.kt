@@ -35,13 +35,15 @@ interface PropertySource {
 
     fun doPut(key: String, value: String)
 
-    fun remove(key: String) {
-        if (get(key) != null) {
+    fun remove(key: String): String? {
+        return if (get(key) != null) {
             doRemove(key)
+        } else {
+            null;
         }
     }
 
-    fun doRemove(key: String)
+    fun doRemove(key: String): String?
 
     fun mapOf(name: String): Map<String, String>
 
