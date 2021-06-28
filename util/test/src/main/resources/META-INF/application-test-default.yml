@@ -1,6 +1,4 @@
 summer:
-  sign:
-    handler-type-prefix:
   logging:
     files:
       path: build/logs

@@ -8,9 +8,9 @@ import top.bettercode.api.sign.ApiSignProperties
  * @author Peter Wu
  */
 class AutoSignRequestHandler(
-    private val apiSignProperties: ApiSignProperties,
-    private val apiSignAlgorithm: ApiSignAlgorithm
+    private val apiSignProperties: ApiSignProperties
 ) : AutoDocRequestHandler {
+    private val apiSignAlgorithm: ApiSignAlgorithm = ApiSignAlgorithm(apiSignProperties)
 
     override fun handle(request: AutoDocHttpServletRequest) {
         request.header(apiSignProperties.parameterName, apiSignAlgorithm.sign(request))
