@@ -63,6 +63,14 @@ public class Response {
   }
 
   /**
+   * @param message message
+   * @return 400 ResponseEntity
+   */
+  protected ResponseEntity<?> errorMessage(String message) {
+    return ok(new RespEntity<>(String.valueOf(HttpStatus.BAD_REQUEST.value()), message));
+  }
+
+  /**
    * 响应空白内容
    *
    * @return 204
