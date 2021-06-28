@@ -17,13 +17,4 @@ public interface ICodeService {
     return null;
   }
 
-  default DicCodes getDicCodes(String codeType) {
-    return null;
-  }
-
-  default void put(String codeTypeKey, String name) {
-  }
-
-  default void delete(String codeTypeKey) {
-  }
 }

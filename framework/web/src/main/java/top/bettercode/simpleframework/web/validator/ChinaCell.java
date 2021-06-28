@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.ReportAsSingleViolation;
+import top.bettercode.lang.util.CellUtil;
+import top.bettercode.lang.util.CellUtil.Model;
 
 /**
  * 中国内地手机号验证
@@ -23,6 +25,11 @@ import javax.validation.ReportAsSingleViolation;
 @Retention(RetentionPolicy.RUNTIME)
 @ReportAsSingleViolation
 public @interface ChinaCell {
+
+  /**
+   * @return 检查方式
+   */
+  CellUtil.Model model() default Model.SIMPLE;
 
   String message() default "{chinaCell.notValid}";
 

@@ -1,29 +1,33 @@
 package top.bettercode.simpleframework.test;
 
 
+import java.io.Serializable;
+import java.util.Date;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.support.code.ICodeService;
 import top.bettercode.simpleframework.web.BaseController;
 import top.bettercode.simpleframework.web.DataDicBean;
 import top.bettercode.simpleframework.web.resolver.Cent;
 import top.bettercode.simpleframework.web.resolver.CentConverter;
-import java.io.Serializable;
-import java.util.Date;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import top.bettercode.simpleframework.web.validator.ChinaCell;
 
 /**
  * @author Peter Wu
  */
 @SpringBootApplication
 @RestController
+@Validated
+
 public class TestController extends BaseController {
 
   @RequestMapping(value = "/test")
-  public Object test(DataDicBean form,@Cent Long cent, Date a) {
+  public Object test(DataDicBean form,@Cent Long cent, Date a,@ChinaCell String cell) {
     System.err.println(a);
     System.err.println(cent);
     System.err.println(form.getPrice());

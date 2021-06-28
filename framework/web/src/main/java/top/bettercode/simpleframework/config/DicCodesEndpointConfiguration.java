@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import top.bettercode.simpleframework.support.code.ICodeService;
-import top.bettercode.simpleframework.web.DicCodesEndpoint;
+import top.bettercode.simpleframework.web.SettingsEndpoint;
 
 /**
  * @author Peter Wu
@@ -19,8 +18,8 @@ import top.bettercode.simpleframework.web.DicCodesEndpoint;
 public class DicCodesEndpointConfiguration {
 
   @Bean
-  public DicCodesEndpoint dicCodesEndpoint(ICodeService codeService) {
-    return new DicCodesEndpoint(codeService);
+  public SettingsEndpoint settingsEndpoint() {
+    return new SettingsEndpoint();
   }
 
 }

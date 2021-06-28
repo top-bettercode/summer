@@ -32,15 +32,15 @@ public class Setting {
     return new Setting(source);
   }
 
-  public static Setting of(Map<Object, Object> source) {
+  public static Setting of(Map<String, String> source) {
     return new Setting(new MapPropertySource(source));
   }
 
-  public Object get(String key) {
+  public String get(String key) {
     return source.get(key);
   }
 
-  public Object getOrDefault(String key, Object defaultValue) {
+  public String getOrDefault(String key, String defaultValue) {
     return source.getOrDefault(key, defaultValue);
   }
 
@@ -50,7 +50,7 @@ public class Setting {
    * @param key   配置项
    * @param value 值
    */
-  public void put(String key, Object value) {
+  public void put(String key, String value) {
     source.put(key, value);
   }
 
@@ -100,7 +100,7 @@ public class Setting {
       } else if (methodName.startsWith("set") && objects.length == 1) {
         Object result = methodProxy.invokeSuper(o, objects);
         String propertyName = StringUtils.uncapitalize(methodName.substring(3));
-        put(name + "." + propertyName, objects[0]);
+        put(name + "." + propertyName, String.valueOf(objects[0]));
         return result;
       } else {
         return methodProxy.invokeSuper(o, objects);
@@ -117,8 +117,8 @@ public class Setting {
     String key = name + "." + propertyName;
     Object result = get(key);
     if (result == null) {
-      result = methodProxy.invokeSuper(o, objects);
-      put(key, result);
+      result = String.valueOf(methodProxy.invokeSuper(o, objects));
+      put(key, String.valueOf(result));
       return result;
     } else {
       return conversionService.convert(result, method.getReturnType());

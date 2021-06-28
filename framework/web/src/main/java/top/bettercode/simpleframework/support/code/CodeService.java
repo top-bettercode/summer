@@ -21,16 +21,6 @@ public class CodeService implements ICodeService {
     this.propertiesSource = propertiesSource;
   }
 
-  @Override
-  public void put(String codeTypeKey, String name) {
-    propertiesSource.put(codeTypeKey, name);
-  }
-
-  @Override
-  public void delete(String codeTypeKey) {
-    propertiesSource.remove(codeTypeKey);
-  }
-
   private boolean isInt(String code) {
     if (code.startsWith("0") && code.length() > 1) {
       return false;
@@ -57,12 +47,12 @@ public class CodeService implements ICodeService {
   @Override
   public Serializable getCode(String codeType, String name) {
     Assert.notNull(name, "name不能为空");
-    Map<String, Object> codes = propertiesSource.mapOf(codeType);
+    Map<String, String> codes = propertiesSource.mapOf(codeType);
     Optional<String> first = codes.entrySet().stream()
         .filter(entry -> name.equals(entry.getValue())).map(Entry::getKey).findFirst();
     String code = first.orElse(null);
     if (code != null) {
-      String type = propertiesSource.getString(codeType + "|TYPE");
+      String type = propertiesSource.get(codeType + "|TYPE");
       boolean isInt = type == null ? isInt(code) : "Int".equals(type);
       if (isInt) {
         try {
@@ -79,9 +69,4 @@ public class CodeService implements ICodeService {
     }
   }
 
-  @Override
-  public DicCodes getDicCodes(String codeType) {
-    Map<String, Object> codes = propertiesSource.mapOf(codeType);
-    return new DicCodes(codeType, getName(codeType), codes);
-  }
 }

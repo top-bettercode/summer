@@ -5,24 +5,15 @@ package top.bettercode.lang.property
  */
 interface PropertySource {
 
-    operator fun get(key: String): Any?
+    operator fun get(key: String): String?
 
-    fun getString(key: String): String? {
-        val v = get(key)
-        return v?.toString()
-    }
-
-    fun getOrDefault(key: String, defaultValue: Any): Any {
+    fun getOrDefault(key: String, defaultValue: String): String {
         val value = get(key)
         return value ?: defaultValue
     }
 
-    fun getOrDefault(key: String, defaultValue: String): String {
-        val value = getString(key)
-        return value ?: defaultValue
-    }
 
-    fun put(key: String, value: Any?) {
+    fun put(key: String, value: String?) {
         if (value == null) {
             remove(key)
         } else {
@@ -32,7 +23,17 @@ interface PropertySource {
         }
     }
 
-    fun doPut(key: String, value: Any)
+    fun putIfAbsent(key: String, value: String?) {
+        if (value == null) {
+            remove(key)
+        } else {
+            if (null == get(key)) {
+                doPut(key, value)
+            }
+        }
+    }
+
+    fun doPut(key: String, value: String)
 
     fun remove(key: String) {
         if (get(key) != null) {
@@ -42,7 +43,7 @@ interface PropertySource {
 
     fun doRemove(key: String)
 
-    fun mapOf(name: String): Map<String, Any>
+    fun mapOf(name: String): Map<String, String>
 
-    fun all(): Map<Any, Any>
+    fun all(): Map<String, String>
 }

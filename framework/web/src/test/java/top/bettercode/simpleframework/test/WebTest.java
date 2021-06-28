@@ -38,7 +38,7 @@ public class WebTest {
   @Test
   public void test() {
     ResponseEntity<String> entity = restTemplate
-        .getForEntity("/test?price=12&cent=22&a=1585549626000", String.class);
+        .getForEntity("/test?price=12&cent=22&a=1585549626000&cell=18224060100", String.class);
     org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
   }
 

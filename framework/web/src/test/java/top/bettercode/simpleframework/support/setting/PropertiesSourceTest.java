@@ -12,7 +12,7 @@ class PropertiesSourceTest {
   @Test
   void mapOf() {
     PropertiesSource propertiesSource = new PropertiesSource("base-messages");
-    Map<String, Object> typeMismatch = propertiesSource.mapOf("typeMismatch");
+    Map<String, String> typeMismatch = propertiesSource.mapOf("typeMismatch");
     typeMismatch.forEach((k, v) -> System.err.println(k + ":" + v));
   }
 

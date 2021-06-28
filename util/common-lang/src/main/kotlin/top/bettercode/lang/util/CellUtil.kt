@@ -1,7 +1,6 @@
 package top.bettercode.lang.util
 
-import top.bettercode.lang.property.PropertiesSource
-import java.util.*
+import top.bettercode.lang.property.Settings
 
 
 /**
@@ -19,15 +18,20 @@ import java.util.*
  */
 object CellUtil {
 
+    enum class Model {
+        ALL, SIMPLE, MOBILE, UNICOM, TELECOM, VNO
+    }
+
     /**
      * 中国移动号段
      * 2G号段（GSM网络）有134x（0-8）、135、136、137、138、139、150、151、152、158、159、182、183、184。
      * 3G号段（TD-SCDMA网络）有157、187、188
      * 3G上网卡 147
      * 4G号段 178、184
-     * 新 198 148 144
+     * 新 198 148 144 172
      */
-    private var CHINA_MOBILE_CELL_REGEX = "^(144\\d|148\\d|198\\d|134\\d|135\\d|136\\d|137\\d|138\\d|139\\d|150\\d|151\\d|152\\d|157\\d|158\\d|159\\d|182\\d|183\\d|184\\d|187\\d|178\\d|188\\d|147\\d|1705)\\d{7}$"
+    private const val CHINA_MOBILE_CELL_REGEX =
+        "^(144\\d|148\\d|198\\d|134\\d|135\\d|136\\d|137\\d|138\\d|139\\d|150\\d|151\\d|152\\d|157\\d|158\\d|159\\d|182\\d|183\\d|184\\d|187\\d|172\\d|178\\d|188\\d|147\\d|1705)\\d{7}$"
 
     /**
      * 中国联通号段
@@ -37,7 +41,8 @@ object CellUtil {
      * 4G号段 176、185[1]
      * 新 166 146
      */
-    private var CHINA_UNICOM_CELL_REGEX = "^(146\\d|166\\d|130\\d|131\\d|132\\d|155\\d|156\\d|175\\d|176\\d|185\\d|186\\d|1709)\\d{7}$"
+    private const val CHINA_UNICOM_CELL_REGEX =
+        "^(146\\d|166\\d|130\\d|131\\d|132\\d|155\\d|156\\d|175\\d|176\\d|185\\d|186\\d|1709)\\d{7}$"
 
     /**
      * 中国电信号段
@@ -46,23 +51,26 @@ object CellUtil {
      * 新 199 141
      * 1740、1741电信和工信部的卫星通信号段
      */
-    private var CHINA_TELECOM_CELL_REGEX = "^(141\\d|199\\d|133\\d|153\\d|173\\d|177\\d|180\\d|181\\d|189\\d|191\\d|1700|1740|1741)\\d{7}$"
+    private const val CHINA_TELECOM_CELL_REGEX =
+        "^(141\\d|199\\d|133\\d|153\\d|173\\d|177\\d|180\\d|181\\d|189\\d|191\\d|1700|1740|1741)\\d{7}$"
 
     /**
      * 中国虚拟运营商号段
      */
-    private var CHINA_VNO_CELL_REGEX = "^(170|171)\\d{8}$"
+    private const val CHINA_VNO_CELL_REGEX = "^(170|171)\\d{8}$"
 
+    private val cellRegexes = Settings.cellRegex
+
+    private const val CHINA_MOBILE_CELL_REGEX_KEY = "regexp.china_mobile_cell"
+    private const val CHINA_UNICOM_CELL_REGEX_KEY = "regexp.china_unicom_cell"
+    private const val CHINA_TELECOM_CELL_REGEX_KEY = "regexp.china_telecom_cell"
+    private const val CHINA_VNO_CELL_REGEX_KEY = "regexp.china_vno_cell"
 
     init {
-        try {
-            val cellRegexProperties = PropertiesSource.of("cell-regex")
-            CHINA_MOBILE_CELL_REGEX = cellRegexProperties.getOrDefault("china_mobile_cell.regexp", CHINA_MOBILE_CELL_REGEX)
-            CHINA_UNICOM_CELL_REGEX = cellRegexProperties.getOrDefault("china_unicom_cell.regexp", CHINA_UNICOM_CELL_REGEX)
-            CHINA_TELECOM_CELL_REGEX = cellRegexProperties.getOrDefault("china_telecom_cell.regexp", CHINA_TELECOM_CELL_REGEX)
-            CHINA_VNO_CELL_REGEX = cellRegexProperties.getOrDefault("china_vno_cell.regexp", CHINA_VNO_CELL_REGEX)
-        } catch (ignored: MissingResourceException) {
-        }
+        cellRegexes.putIfAbsent(CHINA_MOBILE_CELL_REGEX_KEY, CHINA_MOBILE_CELL_REGEX)
+        cellRegexes.putIfAbsent(CHINA_UNICOM_CELL_REGEX_KEY, CHINA_UNICOM_CELL_REGEX)
+        cellRegexes.putIfAbsent(CHINA_TELECOM_CELL_REGEX_KEY, CHINA_TELECOM_CELL_REGEX)
+        cellRegexes.putIfAbsent(CHINA_VNO_CELL_REGEX_KEY, CHINA_VNO_CELL_REGEX)
     }
 
     /**
@@ -73,7 +81,7 @@ object CellUtil {
      */
     @JvmStatic
     fun isChinaMobile(cell: String?): Boolean {
-        return cell?.matches(CHINA_MOBILE_CELL_REGEX.toRegex()) ?: false
+        return cell?.matches(cellRegexes[CHINA_MOBILE_CELL_REGEX_KEY]!!.toRegex()) ?: false
     }
 
     /**
@@ -84,7 +92,7 @@ object CellUtil {
      */
     @JvmStatic
     fun isChinaUnicom(cell: String?): Boolean {
-        return cell?.matches(CHINA_UNICOM_CELL_REGEX.toRegex()) ?: false
+        return cell?.matches(cellRegexes[CHINA_UNICOM_CELL_REGEX_KEY]!!.toRegex()) ?: false
     }
 
     /**
@@ -95,7 +103,7 @@ object CellUtil {
      */
     @JvmStatic
     fun isChinaTelecom(cell: String?): Boolean {
-        return cell?.matches(CHINA_TELECOM_CELL_REGEX.toRegex()) ?: false
+        return cell?.matches(cellRegexes[CHINA_TELECOM_CELL_REGEX_KEY]!!.toRegex()) ?: false
     }
 
     /**
@@ -106,7 +114,7 @@ object CellUtil {
      */
     @JvmStatic
     fun isChinaVNO(cell: String?): Boolean {
-        return cell?.matches(CHINA_VNO_CELL_REGEX.toRegex()) ?: false
+        return cell?.matches(cellRegexes[CHINA_VNO_CELL_REGEX_KEY]!!.toRegex()) ?: false
     }
 
     /**
@@ -122,5 +130,16 @@ object CellUtil {
         } else {
             isChinaMobile(cell) || isChinaUnicom(cell) || isChinaTelecom(cell) || isChinaVNO(cell)
         }
+    }
+
+    /**
+     * 是否为中国内地手机号
+     *
+     * @param cell 手机号码
+     * @return 是否为中国内地手机号
+     */
+    @JvmStatic
+    fun isSimpleCell(cell: String?): Boolean {
+        return cell?.matches(Regex("^\\d{11}$")) ?: false
     }
 }

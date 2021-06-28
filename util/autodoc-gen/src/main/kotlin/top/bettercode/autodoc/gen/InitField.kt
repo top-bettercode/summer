@@ -25,7 +25,7 @@ object InitField {
         setOf("status", "message", "data", "trace", "errors")
     private val fieldDescBundle: PropertiesSource = PropertiesSource.of("field-desc-replace")
     private val messageFields = PropertiesSource.of("messages").all()
-        .map { Field(it.key.toString(), "Object", it.value.toString()) }
+        .map { Field(it.key, "Object", it.value) }
         .toSet()
 
     fun init(
@@ -274,7 +274,7 @@ object InitField {
                     onlyDesc = onlyDesc
                 )
             fieldDescBundle.all().forEach { (k, v) ->
-                field.description = field.description.replace(k as String, v as String)
+                field.description = field.description.replace(k, v)
             }
 
             findField?.children?.fixFieldTree(field.children)

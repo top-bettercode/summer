@@ -6,7 +6,7 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-class PropertiesSource(vararg baseName: String) : MapPropertySource(Properties()) {
+class PropertiesSource(vararg baseName: String) : MapPropertySource(mutableMapOf()) {
     companion object {
         @JvmStatic
         fun of(vararg baseName: String): PropertiesSource {
@@ -18,16 +18,19 @@ class PropertiesSource(vararg baseName: String) : MapPropertySource(Properties()
      * @param baseName Bundle baseName
      */
     init {
-        val source = source as Properties
+        val properties = Properties()
         for (name in baseName) {
             try {
                 val resourceAsStream = PropertiesSource::class.java
-                        .getResourceAsStream("/$name.properties")
+                    .getResourceAsStream("/$name.properties")
                 if (resourceAsStream != null) {
-                    source.load(resourceAsStream)
+                    properties.load(resourceAsStream)
                 }
             } catch (ignored: IOException) {
             }
+        }
+        properties.forEach { t, u ->
+            source[t.toString()] = u.toString()
         }
     }
 }

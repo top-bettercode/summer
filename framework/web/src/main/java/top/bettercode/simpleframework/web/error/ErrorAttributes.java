@@ -1,6 +1,7 @@
 package top.bettercode.simpleframework.web.error;
 
 import top.bettercode.lang.property.PropertiesSource;
+import top.bettercode.lang.property.Settings;
 import top.bettercode.simpleframework.config.WebProperties;
 import top.bettercode.simpleframework.web.IRespEntity;
 import top.bettercode.simpleframework.web.RespEntity;
@@ -44,8 +45,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   private final List<IErrorHandler> errorHandlers;
   private final IErrorRespEntityHandler errorRespEntityHandler;
   private final WebProperties webProperties;
-  private static final PropertiesSource propertiesSource = PropertiesSource
-      .of("default-exception-handle", "exception-handle");
+  private static final PropertiesSource propertiesSource = Settings.getExceptionHandle();
 
   public ErrorAttributes(ErrorProperties errorProperties,
       List<IErrorHandler> errorHandlers,
@@ -156,7 +156,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
 
   private Integer handleHttpStatusCode(Class<? extends Throwable> throwableClass) {
     String key = throwableClass.getName() + ".code";
-    String value = propertiesSource.getString(key);
+    String value = propertiesSource.get(key);
     if (StringUtils.hasText(value)) {
       return Integer.parseInt(value);
     } else {
@@ -166,7 +166,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
 
   private String handleMessage(Class<? extends Throwable> throwableClass) {
     String key = throwableClass.getName() + ".message";
-    return propertiesSource.getString(key);
+    return propertiesSource.get(key);
   }
 
   private void setErrorInfo(WebRequest request, Integer httpStatusCode,
