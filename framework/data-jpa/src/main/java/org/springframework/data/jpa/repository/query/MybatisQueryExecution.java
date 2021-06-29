@@ -24,7 +24,8 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
     return doMybatisExecute((MybatisQuery) query, accessor);
   }
 
-  protected abstract Object doMybatisExecute(MybatisQuery mybatisQuery,JpaParametersParameterAccessor accessor);
+  protected abstract Object doMybatisExecute(MybatisQuery mybatisQuery,
+      JpaParametersParameterAccessor accessor);
 
   static class CollectionExecution extends MybatisQueryExecution {
 
@@ -46,7 +47,9 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
       String sort = MybatisQueryExecution.getSort(parameters, values);
       if (StringUtils.hasText(sort)) {
         PageHelper.orderBy(sort);
-        return PageHelper.getLocalPage()
+        Page<Object> localPage = PageHelper.getLocalPage();
+        localPage.setCount(false);
+        return localPage
             .doSelectPage(() -> query.getSqlSessionTemplate().selectList(statement, params))
             .getResult();
       } else {
@@ -100,7 +103,7 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Object doMybatisExecute(MybatisQuery query,JpaParametersParameterAccessor accessor) {
+    protected Object doMybatisExecute(MybatisQuery query, JpaParametersParameterAccessor accessor) {
       PageImpl<Object> page = (PageImpl<Object>) super.doMybatisExecute(query, accessor);
 
       Pageable pageable = page.getPageable();
@@ -115,7 +118,7 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
     private static final String NO_SURROUNDING_TRANSACTION = "You're trying to execute a streaming query method without a surrounding transaction that keeps the connection open so that the Stream can actually be consumed. Make sure the code consuming the stream uses @Transactional or any other way of declaring a (read-only) transaction.";
 
     @Override
-    protected Object doMybatisExecute(MybatisQuery query,JpaParametersParameterAccessor accessor) {
+    protected Object doMybatisExecute(MybatisQuery query, JpaParametersParameterAccessor accessor) {
 
       if (!SurroundingTransactionDetectorMethodInterceptor.INSTANCE
           .isSurroundingTransactionActive()) {
@@ -130,7 +133,7 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
   static class SingleEntityExecution extends MybatisQueryExecution {
 
     @Override
-    protected Object doMybatisExecute(MybatisQuery query,JpaParametersParameterAccessor accessor) {
+    protected Object doMybatisExecute(MybatisQuery query, JpaParametersParameterAccessor accessor) {
       Object[] values = accessor.getValues();
       if (null == values || values.length == 0) {
         return query.getSqlSessionTemplate().selectOne(query.getQueryMethod().getStatement());
