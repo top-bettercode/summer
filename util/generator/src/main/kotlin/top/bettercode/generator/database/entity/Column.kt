@@ -131,7 +131,7 @@ data class Column(
         ).contains(typeName.toUpperCase())
 
     fun isSoftDelete(extension: GeneratorExtension): Boolean =
-        columnName == extension.softDeleteColumnName
+        javaName == extension.softDeleteColumnName
 
     fun jsonViewIgnored(extension: GeneratorExtension): Boolean =
         extension.jsonViewIgnoredFieldNames.contains(javaName)
