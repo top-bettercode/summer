@@ -182,7 +182,7 @@ class RequestLoggingFilter(
                     log.info(marker, msg)
                 } else {
                     if (!properties.ignoredErrorStatusCode.contains(httpStatusCode)) {
-                        val message = "httpStatus:$httpStatusCode ${error.javaClass.name}:${
+                        val message = "$httpStatusCode ${error.javaClass.name}:${
                             getMessage(requestAttributes)
                                 ?: error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                         }"
