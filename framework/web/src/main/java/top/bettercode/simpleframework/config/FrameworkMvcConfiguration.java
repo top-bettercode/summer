@@ -412,7 +412,7 @@ public class FrameworkMvcConfiguration {
       registry.addConverter(new Converter<String, Date>() {
         @Override
         public Date convert(String source) {
-          if (StringUtils.hasLength(source) && !"null".equals(source)) {
+          if (legalDate(source)) {
             return new Date(Long.parseLong(source));
           } else {
             return null;
@@ -422,7 +422,7 @@ public class FrameworkMvcConfiguration {
       registry.addConverter(new Converter<String, java.sql.Date>() {
         @Override
         public java.sql.Date convert(String source) {
-          if (StringUtils.hasLength(source) && !"null".equals(source)) {
+          if (legalDate(source)) {
             return new java.sql.Date(Long.parseLong(source));
           } else {
             return null;
@@ -432,7 +432,7 @@ public class FrameworkMvcConfiguration {
       registry.addConverter(new Converter<String, LocalDate>() {
         @Override
         public LocalDate convert(String source) {
-          if (StringUtils.hasLength(source) && !"null".equals(source)) {
+          if (legalDate(source)) {
             return LocalDateTimeHelper.of(Long.parseLong(source)).toLocalDate();
           } else {
             return null;
@@ -442,13 +442,17 @@ public class FrameworkMvcConfiguration {
       registry.addConverter(new Converter<String, LocalDateTime>() {
         @Override
         public LocalDateTime convert(String source) {
-          if (StringUtils.hasLength(source) && !"null".equals(source)) {
+          if (legalDate(source)) {
             return LocalDateTimeHelper.of(Long.parseLong(source)).toLocalDateTime();
           } else {
             return null;
           }
         }
       });
+    }
+
+    private boolean legalDate(String source) {
+      return StringUtils.hasLength(source) && !"null".equals(source) && !"0".equals(source);
     }
   }
 

@@ -519,7 +519,7 @@ public class ExcelField<T, P> {
       } else if (propertyType == LocalDateTime.class) {
         return LocalDateTimeHelper.of((LocalDateTime) property).toDate();
       } else if (isDateField() && (propertyType == Long.class || propertyType == long.class)) {
-        return LocalDateTimeHelper.of((Long) property).format(dateTimeFormatter);
+        return LocalDateTimeHelper.of((Long) property).toDate();
       } else if (ClassUtils.isPrimitiveOrWrapper(propertyType)) {
         return property;
       } else if (propertyType == BigDecimal.class) {
