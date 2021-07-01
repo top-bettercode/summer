@@ -6,9 +6,4 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     api("com.gradle.publish:plugin-publish-plugin")
     api("io.codearte.gradle.nexus:gradle-nexus-staging-plugin")
-
-    compileOnly("com.jfrog.bintray.gradle:gradle-bintray-plugin")
-    compileOnly("org.jfrog.buildinfo:build-info-extractor-gradle") {
-        exclude(module = "groovy-all")
-    }
 }

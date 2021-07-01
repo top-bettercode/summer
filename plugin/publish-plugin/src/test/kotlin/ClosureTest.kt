@@ -19,32 +19,5 @@ class ClosureTest {
         project.plugins.apply("top.bettercode.kotlin-publish")
 
         (project.tasks.findByName("uploadArchives") as DefaultTask)
-//        project.extensions.create("artifactory", ArtifactoryPluginConvention::class.java, project)
-//        project.extensions.configure(ArtifactoryPluginConvention::class.java) { artifactory ->
-//            with(artifactory) {
-//                setContextUrl(project.findProperty("snapshotContextUrl"))
-//
-//
-//                publish(delegateClosureOf<PublisherConfig> {
-//
-//                    repository(delegateClosureOf<PublisherConfig.Repository> {
-//                                                setRepoKey(project.findProperty("snapshotRepoKey"))
-////                        setUsername(project.findProperty("snapshotUsername"))
-////                        setPassword(project.findProperty("snapshotPassword"))
-////                        setMavenCompatible(true)
-////                        setProperty("repoKey", project.findProperty("snapshotRepoKey"))
-////                        setProperty("username", project.findProperty("snapshotUsername"))
-////                        setProperty("password", project.findProperty("snapshotPassword"))
-//                        setProperty("maven", true)
-//                    })
-//                    defaults(closureOf<Any> {
-//                        setProperty("publications", arrayOf("mavenJava"))
-//                        setProperty("publishArtifacts", true)
-//                    })
-//                })
-//            }
-//        }
-//        println()
-
     }
 }
