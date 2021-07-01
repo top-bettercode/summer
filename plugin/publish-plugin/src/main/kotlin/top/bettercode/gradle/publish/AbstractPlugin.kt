@@ -109,12 +109,6 @@ abstract class AbstractPlugin : Plugin<Project> {
         }
 
         project.tasks.getByName("publish").dependsOn("publishToMavenLocal")
-
-        if (project.plugins.hasPlugin("com.jfrog.artifactory"))
-            ArtifactoryUtil.configureArtifactory(project, publicationNames)
-
-        if (project.plugins.hasPlugin("com.jfrog.bintray"))
-            BintrayUtil.configureBintray(project, publicationNames, projectUrl, projectVcsUrl)
     }
 
     /**
