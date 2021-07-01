@@ -246,9 +246,9 @@ class DistPlugin : Plugin<Project> {
                         }
                         spec.includeEmptyDirs = false
                     }
-                    distribution.distributionBaseName.set("${project.name}-linux-${if (dist.x64) "x64" else "x86"}")
+                    distribution.distributionBaseName.set("${project.name}-${if (dist.x64) "x64" else "x86"}")
                 } else {
-                    distribution.distributionBaseName.set("${project.name}-linux")
+                    distribution.distributionBaseName.set(project.name)
                 }
                 copySpec.from(File(project.buildDir, "service").absolutePath)
             }
