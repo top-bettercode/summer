@@ -383,6 +383,34 @@ class DistPlugin : Plugin<Project> {
                             pw.println(l)
                         }
                     }
+                    //run.sh
+                    writeServiceFile(
+                        project, "run.sh", """
+#!/usr/bin/env sh
+
+# Attempt to set APP_HOME
+# Resolve links: ${'$'}0 may be a link
+PRG="${'$'}0"
+# Need this for relative symlinks.
+while [ -h "${'$'}PRG" ] ; do
+    ls=`ls -ld "${'$'}PRG"`
+    link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
+    if expr "${'$'}link" : '/.*' > /dev/null; then
+        PRG="${'$'}link"
+    else
+        PRG=`dirname "${'$'}PRG"`"/${'$'}link"
+    fi
+done
+SAVED="`pwd`"
+cd "`dirname \"${'$'}PRG\"`/" >/dev/null
+APP_HOME="`pwd -P`"
+
+cd ${'$'}APP_HOME
+mkdir -p "${'$'}APP_HOME/logs"
+${'$'}APP_HOME/bin/${project.name}
+"""
+                    )
+
                     //startup.sh
                     writeServiceFile(
                         project, "startup.sh", """
