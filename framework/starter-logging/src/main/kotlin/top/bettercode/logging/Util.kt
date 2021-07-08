@@ -14,9 +14,7 @@ private const val dateFormatFilePattern = "yyyy-MM-dd+HH:mm:ss.SSS"
 private val dateFormatter = DateTimeFormatter.ofPattern(dateFormatPattern)
 private val dateFileFormatter = DateTimeFormatter.ofPattern(dateFormatFilePattern)
 
-internal fun formatNow(): String {
-    return LocalDateTime.now().format(dateFormatter)
-}
+internal fun anchor(msg: String): String = msg.substringBefore(" ---").replace(" ", "-")
 
 internal fun format(localDateTime: LocalDateTime): String {
     return localDateTime.format(dateFormatter)
@@ -24,10 +22,6 @@ internal fun format(localDateTime: LocalDateTime): String {
 
 internal fun format(timeStamp: Long): String {
     return LocalDateTimeHelper.of(timeStamp).format(dateFormatter)
-}
-
-internal fun formatFile(timeStamp: Long): String {
-    return LocalDateTimeHelper.of(timeStamp).format(dateFileFormatter)
 }
 
 internal fun formatFileNow(): String {

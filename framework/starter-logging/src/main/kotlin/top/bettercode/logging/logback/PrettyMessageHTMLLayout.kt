@@ -7,6 +7,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.CoreConstants.LINE_SEPARATOR
 import ch.qos.logback.core.helpers.Transform
 import ch.qos.logback.core.pattern.Converter
+import top.bettercode.logging.anchor
 import top.bettercode.logging.format
 import java.util.*
 
@@ -81,8 +82,10 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         return buf.toString()
     }
 
-    private fun appendEventToBuffer(buf: StringBuilder, c: Converter<ILoggingEvent>,
-                                    event: ILoggingEvent) {
+    private fun appendEventToBuffer(
+        buf: StringBuilder, c: Converter<ILoggingEvent>,
+        event: ILoggingEvent
+    ) {
         buf.append("<td class=\"")
         when {
             event.level == Level.WARN -> buf.append("Warn")
@@ -110,7 +113,8 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         }
 
         buf.append(LINE_SEPARATOR)
-        buf.append("<tr class=\"")
+        val anchor = anchor(msg)
+        buf.append("<tr id=\"$anchor\" ondblclick=\"window.location.href = '#$anchor';\" class=\"")
         buf.append(level)
         if (odd) {
             buf.append(" odd\">")

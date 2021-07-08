@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test
  */
 class SlackClientTest {
 
-    private val slackClient = SlackClient("", "http://abc.com/")
+    private val slackClient = SlackClient("", "http://abc.com/", true)
 
     @Test
     fun errorToken() {
-        println(StringUtil.valueOf(SlackClient("xoxb-", "").channelsList(), true))
+        println(StringUtil.valueOf(SlackClient("xoxb-", "", true).channelsList(), true))
     }
 
     @Test
@@ -41,11 +41,30 @@ class SlackClientTest {
 
     @Test
     fun postMessage() {
-        println(StringUtil.valueOf(slackClient.postMessage("dev", "test", "test", listOf("123testtest"), null), true))
+        println(
+            StringUtil.valueOf(
+                slackClient.postMessage(
+                    "dev",
+                    "test",
+                    "test",
+                    listOf("123testtest"),
+                    null
+                ), true
+            )
+        )
     }
 
     @Test
     fun filesUpload() {
-        println(StringUtil.valueOf(slackClient.filesUpload("dev", "test", "test", listOf("123testtest")), true))
+        println(
+            StringUtil.valueOf(
+                slackClient.filesUpload(
+                    "dev",
+                    "test",
+                    "test",
+                    listOf("123testtest")
+                ), true
+            )
+        )
     }
 }
