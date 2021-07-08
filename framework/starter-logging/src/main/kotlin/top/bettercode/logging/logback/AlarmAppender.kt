@@ -13,17 +13,22 @@ import ch.qos.logback.core.helpers.CyclicBuffer
 import ch.qos.logback.core.sift.DefaultDiscriminator
 import ch.qos.logback.core.spi.CyclicBufferTracker
 import ch.qos.logback.core.util.OptionHelper
-import top.bettercode.logging.RequestLoggingFilter
-import top.bettercode.logging.formatFileNow
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import org.springframework.web.util.WebUtils
+import top.bettercode.logging.RequestLoggingFilter
+import top.bettercode.logging.formatFileNow
 import java.io.File
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.TimeUnit
 
 
-abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cacheSeconds: Long, private val ignoredWarnLogger: Array<String>) : AppenderBase<ILoggingEvent>() {
+abstract class AlarmAppender(
+    private val cyclicBufferSize: Int,
+    private val cacheSeconds: Long,
+    private val ignoredWarnLogger: Array<String>,
+    private val logAll: Boolean
+) : AppenderBase<ILoggingEvent>() {
 
     companion object {
         const val MAX_DELAY_BETWEEN_STATUS_MESSAGES = 1228800 * CoreConstants.MILLIS_IN_ONE_SECOND
@@ -51,7 +56,9 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
     private var asynchronousSending = true
 
     override fun start() {
-        val cache: Cache<String, Int> = CacheBuilder.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS).maximumSize(100).build()
+        val cache: Cache<String, Int> =
+            CacheBuilder.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS)
+                .maximumSize(100).build()
         cacheMap = cache.asMap()
 
         val alarmEvaluator = object : EventEvaluatorBase<ILoggingEvent>() {
@@ -62,7 +69,9 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
                         return false
                     }
                 }
-                return (event.level.levelInt >= Level.ERROR_INT || event.marker?.contains(RequestLoggingFilter.ALARM_LOG_MARKER) == true) && (event.marker == null || !event.marker.contains(RequestLoggingFilter.NO_ALARM_LOG_MARKER))
+                return (event.level.levelInt >= Level.ERROR_INT || event.marker?.contains(
+                    RequestLoggingFilter.ALARM_LOG_MARKER
+                ) == true) && (event.marker == null || !event.marker.contains(RequestLoggingFilter.NO_ALARM_LOG_MARKER))
             }
         }
         alarmEvaluator.context = context
@@ -74,7 +83,7 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
         encoder.start()
         if (cbTracker == null) {
             cbTracker = CyclicBufferTracker()
-            cbTracker!!.bufferSize = if (cyclicBufferSize > 0) cyclicBufferSize else 1
+            cbTracker!!.bufferSize = if (cyclicBufferSize > 0 && !logAll) cyclicBufferSize else 1
         }
         super.start()
     }
@@ -138,7 +147,7 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
             if (i == len - 1) {
                 val tp = e.throwableProxy
                 initialComment = e.mdcPropertyMap[WebUtils.ERROR_MESSAGE_ATTRIBUTE]
-                        ?: if (tp != null) "${tp.className}:${tp.message}" else e.formattedMessage
+                    ?: if (tp != null) "${tp.className}:${tp.message}" else e.formattedMessage
             }
         }
 
@@ -169,7 +178,7 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
 
     private fun send(timeStamp: Long, initialComment: String, message: List<String>) {
         if (sendErrorCount > 0)
-            Thread.sleep(2 * 1000)
+            Thread.sleep(2 * 1000L)
 
         if (sendMessage(timeStamp, initialComment, message)) {
             sendErrorCount = 0
@@ -181,9 +190,16 @@ abstract class AlarmAppender(private val cyclicBufferSize: Int, private val cach
         }
     }
 
-    abstract fun sendMessage(timeStamp: Long, initialComment: String, message: List<String>): Boolean
+    abstract fun sendMessage(
+        timeStamp: Long,
+        initialComment: String,
+        message: List<String>
+    ): Boolean
 
-    internal inner class SenderRunnable(private val cyclicBuffer: CyclicBuffer<ILoggingEvent>, private val e: ILoggingEvent) : Runnable {
+    internal inner class SenderRunnable(
+        private val cyclicBuffer: CyclicBuffer<ILoggingEvent>,
+        private val e: ILoggingEvent
+    ) : Runnable {
         override fun run() {
             sendBuffer(cyclicBuffer, e)
         }

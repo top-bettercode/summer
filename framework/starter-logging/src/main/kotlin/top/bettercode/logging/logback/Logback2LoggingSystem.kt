@@ -21,9 +21,6 @@ import ch.qos.logback.core.spi.FilterReply
 import ch.qos.logback.core.spi.LifeCycle
 import ch.qos.logback.core.util.FileSize
 import ch.qos.logback.core.util.OptionHelper
-import top.bettercode.logging.*
-import top.bettercode.logging.slack.SlackAppender
-import top.bettercode.logging.websocket.WebSocketAppender
 import net.logstash.logback.appender.LogstashTcpSocketAppender
 import org.slf4j.ILoggerFactory
 import org.slf4j.Logger
@@ -39,6 +36,8 @@ import org.springframework.core.env.Environment
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import top.bettercode.logging.*
+import top.bettercode.logging.slack.SlackAppender
+import top.bettercode.logging.websocket.WebSocketAppender
 import java.io.File
 import java.nio.charset.Charset
 
@@ -79,7 +78,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         if (existProperty(environment, "summer.logging.smtp.host")) {
             synchronized(context.configurationLock) {
                 val smtpProperties =
-                    Binder.get(environment).bind("summer.logging.smtp", SmtpProperties::class.java).get()
+                    Binder.get(environment).bind("summer.logging.smtp", SmtpProperties::class.java)
+                        .get()
                 val levelMailAppender = mailAppender(context, smtpProperties, warnSubject)
                 val mailMarker = smtpProperties.marker
                 val markerMailAppender = if (!mailMarker.isNullOrBlank())
@@ -95,6 +95,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     }
             }
         }
+        val filesProperties =
+            Binder.get(environment).bind("summer.logging.files", FilesProperties::class.java).get()
 
         //slack log
         if (existProperty(environment, "summer.logging.slack.auth-token") && existProperty(
@@ -104,7 +106,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         ) {
             synchronized(context.configurationLock) {
                 val slackProperties =
-                    Binder.get(environment).bind("summer.logging.slack", SlackProperties::class.java).get()
+                    Binder.get(environment)
+                        .bind("summer.logging.slack", SlackProperties::class.java).get()
                 try {
                     val logsPath = environment.getProperty("summer.logging.files.path")
                     val logUrl = environment.getProperty("summer.logging.log-url")
@@ -115,6 +118,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                             slackProperties,
                             warnSubject,
                             logsPath,
+                            filesProperties.isLogAll,
                             if (logUrl == null) null else logUrl + logPath
                         )
                     slackAppender.context = context
@@ -188,8 +192,6 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         //file log
         if (existProperty(environment, "summer.logging.files.path")) {
-            val filesProperties =
-                Binder.get(environment).bind("summer.logging.files", FilesProperties::class.java).get()
             val fileLogPattern = environment.getProperty("logging.pattern.file", FILE_LOG_PATTERN)
 
             val spilts = bind(environment, "summer.logging.spilt")

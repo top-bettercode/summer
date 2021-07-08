@@ -99,50 +99,6 @@ class LogsEndpoint(
                     writer.println(
                         """
 <script type="text/javascript">
-    function getScrollTop() {
-    var scrollTop = 0, bodyScrollTop = 0, documentScrollTop = 0;
-    if (document.body) {
-      bodyScrollTop = document.body.scrollTop;
-    }
-    if (document.documentElement) {
-      documentScrollTop = document.documentElement.scrollTop;
-    }
-    scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
-    return scrollTop;
-  }
-
-  //文档的总高度
-
-  function getScrollHeight() {
-    var scrollHeight = 0, bodyScrollHeight = 0, documentScrollHeight = 0;
-    if (document.body) {
-      bodyScrollHeight = document.body.scrollHeight;
-    }
-    if (document.documentElement) {
-      documentScrollHeight = document.documentElement.scrollHeight;
-    }
-    scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight
-        : documentScrollHeight;
-    return scrollHeight;
-  }
-
-  //浏览器视口的高度
-
-  function getWindowHeight() {
-    var windowHeight = 0;
-    if (document.compatMode === "CSS1Compat") {
-      windowHeight = document.documentElement.clientHeight;
-    } else {
-      windowHeight = document.body.clientHeight;
-    }
-    return windowHeight;
-  }
-  
-  document.onEnd = true
-  window.onscroll = function () {
-    document.onEnd = getScrollTop() + getWindowHeight() === getScrollHeight();
-  };
-
   //websocket对象
   let websocket = null;
   //判断当前浏览器是否支持WebSocket
@@ -256,20 +212,6 @@ class LogsEndpoint(
                             )
                         }
                         writer.println(prettyMessageHTMLLayout.presentationFooter)
-                        writer.println(
-                            """
-<script type="text/javascript">
-
-document.documentElement.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-            inline: "nearest"
-          });
-          
-</script>
-                """.trimIndent()
-                        )
-
                         writer.println(prettyMessageHTMLLayout.fileFooter)
                     }
                 } else {
