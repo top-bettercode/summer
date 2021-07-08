@@ -18,7 +18,7 @@ import org.springframework.web.context.WebApplicationContext
  * @author Peter Wu
  */
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(properties = ["logging.level.root=info"])
+@SpringBootTest(properties = ["logging.level.root=info", "spring.autoconfigure.exclude=top.bettercode.logging.websocket.WebsocketConfiguration"])
 abstract class BaseWebTest {
 
     @Autowired
@@ -33,8 +33,12 @@ abstract class BaseWebTest {
         properties.isFormat = true
         properties.encryptHeaders = arrayOf("token")
         properties.encryptParameters = arrayOf("password")
-        mockMvc = webAppContextSetup(context).addFilter<DefaultMockMvcBuilder>(RequestLoggingFilter(properties,
-                emptyList())).build()
+        mockMvc = webAppContextSetup(context).addFilter<DefaultMockMvcBuilder>(
+            RequestLoggingFilter(
+                properties,
+                emptyList()
+            )
+        ).build()
     }
 
 }
