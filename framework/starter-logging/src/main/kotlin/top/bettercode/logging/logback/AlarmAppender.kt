@@ -17,8 +17,6 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import org.springframework.web.util.WebUtils
 import top.bettercode.logging.RequestLoggingFilter
-import top.bettercode.logging.formatFileNow
-import java.io.File
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.TimeUnit
 
@@ -74,7 +72,7 @@ abstract class AlarmAppender(
         encoder.start()
         if (cbTracker == null) {
             cbTracker = CyclicBufferTracker()
-            cbTracker!!.bufferSize = if (cyclicBufferSize > 0 && !logAll) cyclicBufferSize else 1
+            cbTracker!!.bufferSize = if (cyclicBufferSize > 0) cyclicBufferSize else 1
         }
         super.start()
     }

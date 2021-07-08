@@ -28,7 +28,7 @@ open class SlackAppender(
     override fun start() {
         if (slackClient.channelExist(properties.channel)) {
             super.start()
-            if (!logsPath.isNullOrBlank() && !logAll) {
+            if (!logsPath.isNullOrBlank()) {
                 val file = File(logsPath, "alarm")
                 if (!file.exists()) {
                     file.mkdirs()
