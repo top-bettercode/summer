@@ -103,7 +103,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
     }
 
 
-    fun doLayout(msg: String, level: String): String {
+    fun doLayout(msg: String, level: String, last: Boolean = false): String {
         val buf = StringBuilder()
         startNewTableIfLimitReached(buf)
 
@@ -123,7 +123,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         }
         buf.append(LINE_SEPARATOR)
 
-        buf.append("<td class=\"")
+        buf.append("<td${if (last) " id=\"last\"" else ""} class=\"")
         when {
             Level.valueOf(level) == Level.WARN -> buf.append("Warn")
             Level.valueOf(level).isGreaterOrEqual(Level.ERROR) -> buf.append("Exception")

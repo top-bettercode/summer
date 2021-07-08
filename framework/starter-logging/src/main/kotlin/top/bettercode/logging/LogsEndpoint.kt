@@ -207,7 +207,7 @@ class LogsEndpoint(
                             writer.println(
                                 prettyMessageHTMLLayout.doLayout(
                                     msg.toString(), level
-                                        ?: Level.INFO.levelStr
+                                        ?: Level.INFO.levelStr, true
                                 )
                             )
                         }
@@ -277,7 +277,7 @@ class LogsEndpoint(
                         )
                     } else {
                         writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}\">${it.name}</a>                                        ${
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        ${
                                 LocalDateTimeHelper.of(
                                     it.lastModified()
                                 ).format(dateTimeFormatter)
