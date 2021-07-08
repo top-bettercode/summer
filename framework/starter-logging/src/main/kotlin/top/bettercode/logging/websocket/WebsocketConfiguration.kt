@@ -3,6 +3,7 @@ package top.bettercode.logging.websocket
 import top.bettercode.logging.WebsocketProperties
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -18,6 +19,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter
  * @since 0.1.5
  */
 @ConditionalOnWebApplication
+@ConditionalOnBean(javax.websocket.server.ServerContainer::class)
 @ConditionalOnClass(org.springframework.web.socket.server.standard.ServerEndpointExporter::class)
 @ConditionalOnProperty(prefix = "summer.logging.websocket", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 @Configuration(proxyBeanMethods = false)
