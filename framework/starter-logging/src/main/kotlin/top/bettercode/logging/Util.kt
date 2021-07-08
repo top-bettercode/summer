@@ -2,6 +2,7 @@ package top.bettercode.logging
 
 import top.bettercode.lang.util.LocalDateTimeHelper
 import org.springframework.core.env.Environment
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -22,6 +23,15 @@ internal fun format(localDateTime: LocalDateTime): String {
 
 internal fun format(timeStamp: Long): String {
     return LocalDateTimeHelper.of(timeStamp).format(dateFormatter)
+}
+
+internal fun getFileName(filesPath: String, index: Int = 0): String {
+    val fileName = "alarm/${formatFileNow()}.${index}.log"
+    return if (File(filesPath, fileName).exists()) {
+        getFileName(filesPath, index + 1)
+    } else {
+        fileName
+    }
 }
 
 internal fun formatFileNow(): String {

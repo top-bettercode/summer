@@ -11,6 +11,7 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import top.bettercode.logging.anchor
+import top.bettercode.logging.getFileName
 import java.io.File
 import java.util.*
 
@@ -96,7 +97,7 @@ class SlackClient(private val authToken: String, logUrl: String?, private val lo
                         )
                     )
                 } else {
-                    val fileName = AlarmAppender.getFileName(logsPath!!)
+                    val fileName = getFileName(logsPath!!)
                     File(logsPath, fileName).writeText(message.joinToString(""))
                     params["attachments"] =
                         arrayOf(
