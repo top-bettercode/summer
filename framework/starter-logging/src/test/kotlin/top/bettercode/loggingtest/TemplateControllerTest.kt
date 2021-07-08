@@ -33,7 +33,7 @@ class TemplateControllerTest {
     @Test
     fun testNoRead() {
         val entity = testRestTemplate.postForEntity("/testNoRead", requestBody, String::class.java)
-        Thread.sleep(20 * 1000)
+        Thread.sleep(20 * 1000L)
         org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
         org.junit.jupiter.api.Assertions.assertEquals("null", entity.body)
     }
@@ -48,7 +48,7 @@ class TemplateControllerTest {
     @Test
     fun error() {
         val entity = testRestTemplate.postForEntity("/error/1", null, String::class.java)
-        Thread.sleep(20 * 1000)
+        Thread.sleep(20 * 1000L)
         org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, entity.statusCode)
     }
 
