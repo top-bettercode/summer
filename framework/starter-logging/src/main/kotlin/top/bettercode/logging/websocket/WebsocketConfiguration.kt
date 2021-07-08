@@ -19,7 +19,6 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter
  * @since 0.1.5
  */
 @ConditionalOnWebApplication
-@ConditionalOnBean(javax.websocket.server.ServerContainer::class)
 @ConditionalOnClass(org.springframework.web.socket.server.standard.ServerEndpointExporter::class)
 @ConditionalOnProperty(prefix = "summer.logging.websocket", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 @Configuration(proxyBeanMethods = false)
