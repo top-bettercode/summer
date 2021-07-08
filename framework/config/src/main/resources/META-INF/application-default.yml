@@ -109,6 +109,7 @@ logging:
     com.ulisesbocchio.jasyptspringboot.EncryptablePropertySourceConverter: warn
     com.ulisesbocchio.jasyptspringboot.filter.DefaultLazyPropertyFilter: warn
     com.ulisesbocchio.jasyptspringboot.configuration.EnableEncryptablePropertiesBeanFactoryPostProcessor: warn
+    reactor.util.Loggers: info
     org.jboss: warn
     io.micrometer: warn
     org.springframework: warn
