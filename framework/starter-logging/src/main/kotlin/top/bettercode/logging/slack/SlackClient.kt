@@ -1,6 +1,5 @@
 package top.bettercode.logging.slack
 
-import top.bettercode.logging.logback.AlarmAppender
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,7 +10,6 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import top.bettercode.logging.anchor
-import top.bettercode.logging.getFileName
 import java.io.File
 import java.util.*
 
@@ -89,16 +87,21 @@ class SlackClient(private val authToken: String, logUrl: String?, private val lo
         } else {
             params["text"] = initialComment
             if (message.isNotEmpty()) {
+                val anchor = anchor(message.last())
+                val fileName = "alarm/${anchor}.log"
+                File(logsPath, fileName).writeText(message.joinToString(""))
                 if (logAll) {
                     params["attachments"] = arrayOf(
                         mapOf(
                             "title" to title,
-                            "title_link" to "$LOG_URL/logs/all.log#${anchor(message[0])}"
+                            "title_link" to "$LOG_URL/logs/all.log#$anchor"
+                        ),
+                        mapOf(
+                            "title" to "备份链接",
+                            "title_link" to "$LOG_URL/logs/${fileName}"
                         )
                     )
                 } else {
-                    val fileName = getFileName(logsPath!!)
-                    File(logsPath, fileName).writeText(message.joinToString(""))
                     params["attachments"] =
                         arrayOf(
                             mapOf(

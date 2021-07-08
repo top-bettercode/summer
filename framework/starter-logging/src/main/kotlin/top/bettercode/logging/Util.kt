@@ -11,9 +11,7 @@ import java.time.format.DateTimeFormatter
  * @author Peter Wu
  */
 private const val dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS"
-private const val dateFormatFilePattern = "yyyy-MM-dd+HH:mm:ss.SSS"
 private val dateFormatter = DateTimeFormatter.ofPattern(dateFormatPattern)
-private val dateFileFormatter = DateTimeFormatter.ofPattern(dateFormatFilePattern)
 
 internal fun anchor(msg: String): String = msg.substringBefore(" ---").replace(" ", "-")
 
@@ -23,19 +21,6 @@ internal fun format(localDateTime: LocalDateTime): String {
 
 internal fun format(timeStamp: Long): String {
     return LocalDateTimeHelper.of(timeStamp).format(dateFormatter)
-}
-
-internal fun getFileName(filesPath: String, index: Int = 0): String {
-    val fileName = "alarm/${formatFileNow()}.${index}.log"
-    return if (File(filesPath, fileName).exists()) {
-        getFileName(filesPath, index + 1)
-    } else {
-        fileName
-    }
-}
-
-internal fun formatFileNow(): String {
-    return LocalDateTime.now().format(dateFileFormatter)
 }
 
 internal fun warnSubject(environment: Environment): String = environment.getProperty(
