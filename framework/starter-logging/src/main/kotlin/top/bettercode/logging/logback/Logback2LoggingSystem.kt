@@ -118,8 +118,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                             slackProperties,
                             warnSubject,
                             logsPath,
-                            filesProperties.isLogAll,
-                            if (logUrl == null) null else logUrl + logPath
+                            if (logUrl == null) null else logUrl + logPath,
+                            filesProperties.isLogAll
                         )
                     slackAppender.context = context
                     slackAppender.start()

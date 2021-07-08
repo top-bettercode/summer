@@ -27,20 +27,11 @@ abstract class AlarmAppender(
     private val cyclicBufferSize: Int,
     private val cacheSeconds: Long,
     private val ignoredWarnLogger: Array<String>,
-    private val logAll: Boolean
+    protected val logAll: Boolean
 ) : AppenderBase<ILoggingEvent>() {
 
     companion object {
         const val MAX_DELAY_BETWEEN_STATUS_MESSAGES = 1228800 * CoreConstants.MILLIS_IN_ONE_SECOND
-
-        fun getFileName(filesPath: String, index: Int = 0): String {
-            val fileName = "alarm/${formatFileNow()}.${index}.log"
-            return if (File(filesPath, fileName).exists()) {
-                getFileName(filesPath, index + 1)
-            } else {
-                fileName
-            }
-        }
     }
 
     private lateinit var cacheMap: ConcurrentMap<String, Int>

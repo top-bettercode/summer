@@ -13,8 +13,8 @@ open class SlackAppender(
     private val properties: SlackProperties,
     private val title: String,
     private val logsPath: String?,
-    logAll: Boolean,
-    val logUrl: String?
+    logUrl: String?,
+    logAll: Boolean
 ) : AlarmAppender(
     properties.cyclicBufferSize,
     properties.cacheSeconds,
@@ -28,7 +28,7 @@ open class SlackAppender(
     override fun start() {
         if (slackClient.channelExist(properties.channel)) {
             super.start()
-            if (!logsPath.isNullOrBlank()) {
+            if (!logsPath.isNullOrBlank() && !logAll) {
                 val file = File(logsPath, "alarm")
                 if (!file.exists()) {
                     file.mkdirs()
