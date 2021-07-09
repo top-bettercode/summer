@@ -7,24 +7,24 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Peter Wu
  */
-public class FormKeyService implements IFormKeyService {
+public class FormkeyService implements IFormkeyService {
 
   private final Cache<String, Boolean> cache;
 
-  public FormKeyService(Long expireSeconds) {
+  public FormkeyService(Long expireSeconds) {
     this.cache = CacheBuilder
         .newBuilder().expireAfterWrite(expireSeconds, TimeUnit.SECONDS).maximumSize(1000).build();
   }
 
   @Override
-  public String putKey(String formKey) {
-    cache.put(formKey, true);
-    return formKey;
+  public String putKey(String formkey) {
+    cache.put(formkey, true);
+    return formkey;
   }
 
   @Override
-  public boolean exist(String formKey) {
-    Boolean present = cache.getIfPresent(formKey);
+  public boolean exist(String formkey) {
+    Boolean present = cache.getIfPresent(formkey);
     return present != null && present;
   }
 
