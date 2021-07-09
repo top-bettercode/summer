@@ -98,7 +98,7 @@ class SlackClient(private val authToken: String, logUrl: String?, private val lo
                         ),
                         mapOf(
                             "title" to "备份链接",
-                            "title_link" to "$LOG_URL/logs/${fileName}"
+                            "title_link" to "$LOG_URL/logs/${fileName}#last"
                         )
                     )
                 } else {
@@ -106,14 +106,14 @@ class SlackClient(private val authToken: String, logUrl: String?, private val lo
                         arrayOf(
                             mapOf(
                                 "title" to title,
-                                "title_link" to "$LOG_URL/logs/${fileName}"
+                                "title_link" to "$LOG_URL/logs/${fileName}#last"
                             )
                         )
                 }
             } else {
                 if (logAll)
                     params["attachments"] =
-                        arrayOf(mapOf("title" to title, "title_link" to "$LOG_URL/logs/all.log"))
+                        arrayOf(mapOf("title" to title, "title_link" to "$LOG_URL/logs/all.log#last"))
             }
         }
 
