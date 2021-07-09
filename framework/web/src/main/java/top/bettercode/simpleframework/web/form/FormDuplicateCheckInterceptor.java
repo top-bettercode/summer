@@ -33,32 +33,34 @@ public class FormDuplicateCheckInterceptor implements AsyncHandlerInterceptor {
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
       Object handler) {
     String method = request.getMethod();
-    if (("POST".equals(method) || "PUT".equals(method)) && handler instanceof HandlerMethod
-        && ((HandlerMethod) handler).hasMethodAnnotation(FormDuplicateCheck.class)) {
-      String formKey = request.getHeader("formKey");
-      if (!StringUtils.hasText(formKey)) {
-        HttpHeaders httpHeaders = new ServletServerHttpRequest(request).getHeaders();
-        if (httpHeaders.getContentType().includes(MediaType.APPLICATION_FORM_URLENCODED)
-            || httpHeaders.getContentLength() == 0) {
-          String headers = StringUtil.valueOf(httpHeaders);
-          String params = StringUtil.valueOf(request.getParameterMap());
-          formKey = headers + "::" + params;
-        } else {//其他ContentType如：application/json等不自动生成formKey。如需重复提交检查，须前端传递formKey
-          return true;
+    String formKey = request.getHeader("formKey");
+    if (("POST".equals(method) || "PUT".equals(method)) && handler instanceof HandlerMethod) {
+      boolean hasFormKey = StringUtils.hasText(formKey);
+      if (hasFormKey || ((HandlerMethod) handler).hasMethodAnnotation(FormDuplicateCheck.class)) {
+        if (!hasFormKey) {
+          HttpHeaders httpHeaders = new ServletServerHttpRequest(request).getHeaders();
+          if (httpHeaders.getContentType().includes(MediaType.APPLICATION_FORM_URLENCODED)
+              || httpHeaders.getContentLength() == 0) {
+            String headers = StringUtil.valueOf(httpHeaders);
+            String params = StringUtil.valueOf(request.getParameterMap());
+            formKey = headers + "::" + params;
+          } else {//其他ContentType如：application/json等不自动生成formKey。如需重复提交检查，须前端传递formKey
+            return true;
+          }
         }
+
+        Object userInfo = UserInfoHelper.get(request);
+        String userKey = StringUtil.valueOf(userInfo);
+
+        String servletPath = request.getServletPath();
+
+        formKey = Sha512DigestUtils.shaHex(userKey + servletPath + formKey);
+
+        if (formKeyService.exist(formKey)) {
+          throw new IllegalArgumentException("请勿重复提交");
+        }
+        formKeyService.putKey(formKey);
       }
-
-      Object userInfo = UserInfoHelper.get(request);
-      String userKey = StringUtil.valueOf(userInfo);
-
-      String servletPath = request.getServletPath();
-
-      formKey = Sha512DigestUtils.shaHex(userKey + servletPath + formKey);
-
-      if (formKeyService.exist(formKey)) {
-        throw new IllegalArgumentException("请勿重复提交");
-      }
-      formKeyService.putKey(formKey);
     }
     return true;
   }
