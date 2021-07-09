@@ -75,8 +75,8 @@ import top.bettercode.simpleframework.web.filter.ApiVersionFilter;
 import top.bettercode.simpleframework.web.filter.OrderedHiddenHttpMethodFilter;
 import top.bettercode.simpleframework.web.filter.OrderedHttpPutFormContentFilter;
 import top.bettercode.simpleframework.web.form.FormDuplicateCheckInterceptor;
-import top.bettercode.simpleframework.web.form.FormKeyService;
-import top.bettercode.simpleframework.web.form.IFormKeyService;
+import top.bettercode.simpleframework.web.form.FormkeyService;
+import top.bettercode.simpleframework.web.form.IFormkeyService;
 import top.bettercode.simpleframework.web.kaptcha.KaptchaProperties;
 import top.bettercode.simpleframework.web.resolver.ApiHandlerMethodReturnValueHandler;
 import top.bettercode.simpleframework.web.resolver.StringToEnumConverterFactory;
@@ -130,10 +130,10 @@ public class FrameworkMvcConfiguration {
     return new OrderedHttpPutFormContentFilter();
   }
 
-  @ConditionalOnMissingBean(IFormKeyService.class)
+  @ConditionalOnMissingBean(IFormkeyService.class)
   @Bean
-  public IFormKeyService formKeyService() {
-    return new FormKeyService(webProperties.getFormExpireSeconds());
+  public IFormkeyService formkeyService() {
+    return new FormkeyService(webProperties.getFormExpireSeconds());
   }
 
   @Bean
@@ -391,15 +391,15 @@ public class FrameworkMvcConfiguration {
   @ConditionalOnWebApplication
   protected static class WebMvcConfiguration implements WebMvcConfigurer {
 
-    private final IFormKeyService formKeyService;
+    private final IFormkeyService formkeyService;
 
-    public WebMvcConfiguration(IFormKeyService formKeyService) {
-      this.formKeyService = formKeyService;
+    public WebMvcConfiguration(IFormkeyService formkeyService) {
+      this.formkeyService = formkeyService;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-      registry.addInterceptor(new FormDuplicateCheckInterceptor(formKeyService))
+      registry.addInterceptor(new FormDuplicateCheckInterceptor(formkeyService))
           .order(Ordered.LOWEST_PRECEDENCE);
     }
 

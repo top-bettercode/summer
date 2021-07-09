@@ -22,10 +22,10 @@ import top.bettercode.simpleframework.web.UserInfoHelper;
 public class FormDuplicateCheckInterceptor implements AsyncHandlerInterceptor {
 
   private final Logger log = LoggerFactory.getLogger(FormDuplicateCheckInterceptor.class);
-  private final IFormKeyService formKeyService;
+  private final IFormkeyService formkeyService;
 
-  public FormDuplicateCheckInterceptor(IFormKeyService formKeyService) {
-    this.formKeyService = formKeyService;
+  public FormDuplicateCheckInterceptor(IFormkeyService formkeyService) {
+    this.formkeyService = formkeyService;
   }
 
 
@@ -33,9 +33,9 @@ public class FormDuplicateCheckInterceptor implements AsyncHandlerInterceptor {
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
       Object handler) {
     String method = request.getMethod();
-    String formKey = request.getHeader("formKey");
+    String formkey = request.getHeader("formkey");
     if (("POST".equals(method) || "PUT".equals(method)) && handler instanceof HandlerMethod) {
-      boolean hasFormKey = StringUtils.hasText(formKey);
+      boolean hasFormKey = StringUtils.hasText(formkey);
       if (hasFormKey || ((HandlerMethod) handler).hasMethodAnnotation(FormDuplicateCheck.class)) {
         if (!hasFormKey) {
           HttpHeaders httpHeaders = new ServletServerHttpRequest(request).getHeaders();
@@ -43,8 +43,8 @@ public class FormDuplicateCheckInterceptor implements AsyncHandlerInterceptor {
               || httpHeaders.getContentLength() == 0) {
             String headers = StringUtil.valueOf(httpHeaders);
             String params = StringUtil.valueOf(request.getParameterMap());
-            formKey = headers + "::" + params;
-          } else {//其他ContentType如：application/json等不自动生成formKey。如需重复提交检查，须前端传递formKey
+            formkey = headers + "::" + params;
+          } else {//其他ContentType如：application/json等不自动生成formkey。如需重复提交检查，须前端传递formkey
             return true;
           }
         }
@@ -54,12 +54,12 @@ public class FormDuplicateCheckInterceptor implements AsyncHandlerInterceptor {
 
         String servletPath = request.getServletPath();
 
-        formKey = Sha512DigestUtils.shaHex(userKey + servletPath + formKey);
+        formkey = Sha512DigestUtils.shaHex(userKey + servletPath + formkey);
 
-        if (formKeyService.exist(formKey)) {
+        if (formkeyService.exist(formkey)) {
           throw new IllegalArgumentException("请勿重复提交");
         }
-        formKeyService.putKey(formKey);
+        formkeyService.putKey(formkey);
       }
     }
     return true;
