@@ -257,6 +257,16 @@ class LogsEndpoint(
                             )
                         }
                         writer.println(prettyMessageHTMLLayout.presentationFooter)
+                        writer.println(
+                            """
+<script type="text/javascript">
+    if(!location.hash){
+        window.location.href = '#last';
+    }
+</script>
+"""
+                        )
+
                         writer.println(prettyMessageHTMLLayout.fileFooter)
                     }
                 } else {
