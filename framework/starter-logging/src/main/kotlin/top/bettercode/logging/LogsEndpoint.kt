@@ -24,6 +24,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
+import java.util.zip.GZIPInputStream
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import kotlin.math.max
@@ -197,80 +198,72 @@ class LogsEndpoint(
     private fun showLogFile(response: HttpServletResponse, logFile: File) {
         if (logFile.exists()) {
             if (logFile.isFile) {
-                if (logFile.extension == "log") {
-                    response.contentType = "text/html;charset=utf-8"
-                } else {
-                    response.setHeader(
-                        "Content-Disposition",
-                        "attachment;filename=${logFile.name};filename*=UTF-8''" + URLEncoder
-                            .encode(logFile.name, "UTF-8")
-                    )
-                    response.contentType = "application/octet-stream"
-                }
+                response.contentType = "text/html;charset=utf-8"
                 response.setHeader("Pragma", "No-cache")
                 response.setHeader("Cache-Control", "no-cache")
                 response.setDateHeader("Expires", 0)
-                if (logFile.extension == "log") {
-                    val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
-                    prettyMessageHTMLLayout.title = logFile.name
-                    prettyMessageHTMLLayout.context = loggerContext
-                    prettyMessageHTMLLayout.start()
-                    response.writer.use { writer ->
-                        writer.println(prettyMessageHTMLLayout.fileHeader)
-                        writer.println(prettyMessageHTMLLayout.presentationHeader)
+                val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
+                prettyMessageHTMLLayout.title = logFile.name
+                prettyMessageHTMLLayout.context = loggerContext
+                prettyMessageHTMLLayout.start()
+                response.writer.use { writer ->
+                    writer.println(prettyMessageHTMLLayout.fileHeader)
+                    writer.println(prettyMessageHTMLLayout.presentationHeader)
 
-                        var msg = StringBuilder("")
-                        var level: String? = null
-                        logFile.forEachLine {
-                            val m = it.substringAfter(" ", "").substringAfter(" ", "").trimStart()
-                            val llevel = when {
-                                m.startsWith(Level.TRACE.levelStr) -> Level.TRACE.levelStr
-                                m.startsWith(Level.DEBUG.levelStr) -> Level.DEBUG.levelStr
-                                m.startsWith(Level.INFO.levelStr) -> Level.INFO.levelStr
-                                m.startsWith(Level.WARN.levelStr) -> Level.WARN.levelStr
-                                m.startsWith(Level.ERROR.levelStr) -> Level.ERROR.levelStr
-                                m.startsWith(Level.OFF.levelStr) -> Level.OFF.levelStr
-                                else -> null
-                            }
-                            if (llevel != null) {
-                                if (msg.isNotBlank()) {
-                                    writer.println(
-                                        prettyMessageHTMLLayout.doLayout(
-                                            msg.toString(), level
-                                                ?: Level.INFO.levelStr
-                                        )
+                    var msg = StringBuilder("")
+                    var level: String? = null
+                    val lines = if ("gz".equals(logFile.extension, true)) {
+                        GZIPInputStream(FileInputStream(logFile)).bufferedReader().lines()
+                    } else {
+                        logFile.readLines().stream()
+                    }
+                    lines.forEach {
+                        val m = it.substringAfter(" ", "").substringAfter(" ", "").trimStart()
+                        val llevel = when {
+                            m.startsWith(Level.TRACE.levelStr) -> Level.TRACE.levelStr
+                            m.startsWith(Level.DEBUG.levelStr) -> Level.DEBUG.levelStr
+                            m.startsWith(Level.INFO.levelStr) -> Level.INFO.levelStr
+                            m.startsWith(Level.WARN.levelStr) -> Level.WARN.levelStr
+                            m.startsWith(Level.ERROR.levelStr) -> Level.ERROR.levelStr
+                            m.startsWith(Level.OFF.levelStr) -> Level.OFF.levelStr
+                            else -> null
+                        }
+                        if (llevel != null) {
+                            if (msg.isNotBlank()) {
+                                writer.println(
+                                    prettyMessageHTMLLayout.doLayout(
+                                        msg.toString(), level
+                                            ?: Level.INFO.levelStr
                                     )
-                                }
-                                msg = java.lang.StringBuilder(it)
-                                level = llevel
-                            } else {
-                                msg.append(CoreConstants.LINE_SEPARATOR)
-                                msg.append(it)
-                            }
-                        }
-                        if (msg.isNotBlank()) {
-                            writer.println(
-                                prettyMessageHTMLLayout.doLayout(
-                                    msg.toString(), level
-                                        ?: Level.INFO.levelStr, true
                                 )
-                            )
+                            }
+                            msg = java.lang.StringBuilder(it)
+                            level = llevel
+                        } else {
+                            msg.append(CoreConstants.LINE_SEPARATOR)
+                            msg.append(it)
                         }
-                        writer.println(prettyMessageHTMLLayout.presentationFooter)
+                    }
+                    if (msg.isNotBlank()) {
                         writer.println(
-                            """
+                            prettyMessageHTMLLayout.doLayout(
+                                msg.toString(), level
+                                    ?: Level.INFO.levelStr, true
+                            )
+                        )
+                    }
+                    writer.println(prettyMessageHTMLLayout.presentationFooter)
+                    writer.println(
+                        """
 <script type="text/javascript">
     if(!location.hash){
         window.location.href = '#last';
     }
 </script>
 """
-                        )
+                    )
 
-                        writer.println(prettyMessageHTMLLayout.fileFooter)
-                    }
-                } else {
-                    StreamUtils.copy(FileInputStream(logFile), response.outputStream)
+                    writer.println(prettyMessageHTMLLayout.fileFooter)
                 }
             } else {
                 response.sendError(HttpStatus.CONFLICT.value(), "Path is directory")
