@@ -74,6 +74,12 @@ class ProjectPlugin : Plugin<Project> {
                 !arrayOf("core").contains(subProject.name) && subProject.parent?.name != "util" && subProject.name != "util"
             val needDocProject = subProject.parent?.name != "util" && subProject.name != "util"
 
+            subProject.plugins.apply {
+                apply("summer.profile")
+                apply("summer.packageinfo")
+                apply("io.spring.dependency-management")
+            }
+
             if (needDocProject) {
                 subProject.plugins.apply {
                     apply("summer.generator")
@@ -88,13 +94,6 @@ class ProjectPlugin : Plugin<Project> {
                 }
             }
 
-
-
-            subProject.plugins.apply {
-                apply("summer.profile")
-                apply("summer.packageinfo")
-                apply("io.spring.dependency-management")
-            }
 
             subProject.configurations.apply {
                 filter {
