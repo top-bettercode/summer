@@ -60,6 +60,9 @@ allprojects {
             dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             dependency("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
             dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+            dependency("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
+            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
+            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
 
             dependency("org.springframework.boot:spring-boot-gradle-plugin:2.5.0")
             dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
@@ -67,10 +70,6 @@ allprojects {
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
             dependency("com.gradle.publish:plugin-publish-plugin:0.15.0")
             dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
-
-            dependency("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32")
-            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
-            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
             dependency("org.springframework.cloud:spring-cloud-starter-config:3.0.3")
             dependency("org.springframework.security:spring-security-rsa:1.0.10.RELEASE")
