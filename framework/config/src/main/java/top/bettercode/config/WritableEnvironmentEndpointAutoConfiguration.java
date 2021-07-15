@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,6 @@ import org.springframework.core.env.Environment;
 
 /**
  * {@link EnableAutoConfiguration Auto-configuration} for the {@link WritableEnvironmentEndpoint}.
- *
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnMissingClass("org.springframework.cloud.autoconfigure.WritableEnvironmentEndpointAutoConfiguration")
@@ -36,6 +36,20 @@ public class WritableEnvironmentEndpointAutoConfiguration {
 
   public WritableEnvironmentEndpointAutoConfiguration(EnvironmentEndpointProperties properties) {
     this.properties = properties;
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(search = SearchStrategy.CURRENT)
+  public static ConfigurationPropertiesBeans configurationPropertiesBeans() {
+    return new ConfigurationPropertiesBeans();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(search = SearchStrategy.CURRENT)
+  public ConfigurationPropertiesRebinder configurationPropertiesRebinder(
+      ConfigurationPropertiesBeans beans) {
+    ConfigurationPropertiesRebinder rebinder = new ConfigurationPropertiesRebinder(beans);
+    return rebinder;
   }
 
   @Bean
