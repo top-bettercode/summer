@@ -1,4 +1,4 @@
-package top.bettercode.logging.logback
+package top.bettercode.lang
 
 import ch.qos.logback.core.CoreConstants
 import ch.qos.logback.core.html.CssBuilder

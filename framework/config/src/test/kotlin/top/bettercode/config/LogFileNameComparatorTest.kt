@@ -1,13 +1,14 @@
-package top.bettercode.logging
+package top.bettercode.config.top.bettercode.config
 
 import org.junit.jupiter.api.Test
+import top.bettercode.config.LogFileNameComparator
 import java.io.File
 
 /**
  *
  * @author Peter Wu
  */
-internal class LogsEndpointTest {
+internal class LogFileNameComparatorTest {
 
     @Test
     internal fun comparator() {

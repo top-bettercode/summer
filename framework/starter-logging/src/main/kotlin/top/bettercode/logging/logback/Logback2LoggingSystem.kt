@@ -35,6 +35,7 @@ import org.springframework.boot.logging.logback.LogbackLoggingSystem
 import org.springframework.core.env.Environment
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
+import top.bettercode.lang.PrettyMessageHTMLLayout
 import top.bettercode.logging.*
 import top.bettercode.logging.slack.SlackAppender
 import top.bettercode.logging.websocket.WebSocketAppender

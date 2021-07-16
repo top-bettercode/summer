@@ -19,10 +19,9 @@ import org.springframework.util.StringUtils;
 
 /**
  * Listens for {@link EnvironmentChangeEvent} and rebinds beans that were bound to the
- * {@link Environment} using {@link ConfigurationProperties
- * <code>@ConfigurationProperties</code>}. When these beans are re-bound and
+ * {@link Environment} using {@link ConfigurationProperties ConfigurationProperties}. When these beans are re-bound and
  * re-initialized, the changes are available immediately to any component that is using
- * the <code>@ConfigurationProperties</code> bean.
+ * the @ConfigurationProperties bean.
  *
  *
  */

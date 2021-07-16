@@ -1,7 +1,6 @@
 plugins { `java-library` }
 
 dependencies {
-    api(project(":framework:config"))
     api(project(":util:common-lang"))
 
     api("org.springframework.boot:spring-boot-starter-logging")

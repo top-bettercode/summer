@@ -157,6 +157,8 @@ class ProjectPlugin : Plugin<Project> {
                         dependency("org.jetbrains.kotlin:kotlin-stdlib-common:${KotlinVersion.CURRENT}")
                         dependency("org.jetbrains.kotlin:kotlin-reflect:${KotlinVersion.CURRENT}")
 
+                        dependency("top.bettercode.summer:config:$summerVersion")
+                        dependency("top.bettercode.summer:environment:$summerVersion")
                         dependency("top.bettercode.summer:api-sign:$summerVersion")
                         dependency("top.bettercode.summer:common-lang:$summerVersion")
                         dependency("top.bettercode.summer:starter-logging:$summerVersion")

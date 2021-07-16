@@ -1,12 +1,12 @@
 package top.bettercode.logging.slack
 
-import top.bettercode.logging.RequestLoggingFilter
-import top.bettercode.logging.SlackProperties
-import top.bettercode.logging.format
-import top.bettercode.logging.logback.AlarmAppender
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
+import top.bettercode.lang.util.LocalDateTimeHelper
+import top.bettercode.logging.RequestLoggingFilter
+import top.bettercode.logging.SlackProperties
+import top.bettercode.logging.logback.AlarmAppender
 import java.io.File
 
 open class SlackAppender(
@@ -43,7 +43,7 @@ open class SlackAppender(
         message: List<String>
     ): Boolean {
         return try {
-            val title = "$title ${format(timeStamp)}"
+            val title = "$title ${LocalDateTimeHelper.format(timeStamp)}"
             slackClient.postMessage(properties.channel, title, initialComment, message, logsPath)
         } catch (e: Exception) {
             log.error(

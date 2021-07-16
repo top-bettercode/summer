@@ -1,11 +1,9 @@
-package top.bettercode.logging
+package top.bettercode.config
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.core.CoreConstants
-import top.bettercode.lang.util.LocalDateTimeHelper
-import top.bettercode.logging.logback.Logback2LoggingSystem
-import top.bettercode.logging.logback.PrettyMessageHTMLLayout
+import org.slf4j.ILoggerFactory
 import org.slf4j.impl.StaticLoggerBinder
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
@@ -16,13 +14,14 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
-import org.springframework.util.StreamUtils
 import org.springframework.util.StringUtils
+import top.bettercode.lang.PrettyMessageHTMLLayout
+import top.bettercode.lang.util.LocalDateTimeHelper
+import top.bettercode.logging.WebsocketProperties
 import java.io.File
 import java.io.FileInputStream
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
 import javax.servlet.http.HttpServletRequest
@@ -44,7 +43,7 @@ class LogsEndpoint(
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
         "org.springframework.web.socket.server.standard.ServerEndpointExporter",
-        Logback2LoggingSystem::class.java.classLoader
+        LogsEndpoint::class.java.classLoader
     ) && ("true" == environment.getProperty("summer.logging.websocket.enabled") || environment.getProperty(
         "summer.logging.websocket.enabled"
     ).isNullOrBlank())
@@ -59,11 +58,25 @@ class LogsEndpoint(
                             + "implementation (%s loaded from %s). If you are using "
                             + "WebLogic you will need to add 'org.slf4j' to "
                             + "prefer-application-packages in WEB-INF/weblogic.xml",
-                    factory.javaClass, Logback2LoggingSystem.getLocation(factory)
+                    factory.javaClass, getLocation(factory)
                 )
             )
             return factory as LoggerContext
         }
+
+    private fun getLocation(factory: ILoggerFactory): Any {
+        try {
+            val protectionDomain = factory.javaClass.protectionDomain
+            val codeSource = protectionDomain.codeSource
+            if (codeSource != null) {
+                return codeSource.location
+            }
+        } catch (ex: SecurityException) {
+            // Unable to determine location
+        }
+
+        return "unknown location"
+    }
 
     @ReadOperation
     fun root() {

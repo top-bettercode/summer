@@ -3,7 +3,7 @@ package top.bettercode.summer.util.test
 import org.springframework.boot.SpringApplication
 import org.springframework.core.Ordered
 import org.springframework.core.env.ConfigurableEnvironment
-import top.bettercode.environment.ConfigEnvironmentPostProcessor
+import top.bettercode.config.ConfigEnvironmentPostProcessor
 
 class TestConfigEnvironmentPostProcessor : ConfigEnvironmentPostProcessor(), Ordered {
 

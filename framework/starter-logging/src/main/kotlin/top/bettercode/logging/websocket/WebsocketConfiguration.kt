@@ -1,9 +1,7 @@
 package top.bettercode.logging.websocket
 
-import top.bettercode.logging.WebsocketProperties
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -33,7 +31,7 @@ class WebsocketConfiguration {
     }
 
     @Bean
-    fun webSocketController(websocketProperties: WebsocketProperties): WebSocketController {
+    fun webSocketController(): WebSocketController {
         return WebSocketController()
     }
 

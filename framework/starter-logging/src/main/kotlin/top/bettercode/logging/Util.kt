@@ -10,19 +10,6 @@ import java.time.format.DateTimeFormatter
  *
  * @author Peter Wu
  */
-private const val dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS"
-private val dateFormatter = DateTimeFormatter.ofPattern(dateFormatPattern)
-
-internal fun anchor(msg: String): String = msg.substringBefore(" ---").replace(" ", "-")
-
-internal fun format(localDateTime: LocalDateTime): String {
-    return localDateTime.format(dateFormatter)
-}
-
-internal fun format(timeStamp: Long): String {
-    return LocalDateTimeHelper.of(timeStamp).format(dateFormatter)
-}
-
 internal fun warnSubject(environment: Environment): String = environment.getProperty(
     "summer.logging.warn-subject",
     "${environment.getProperty("spring.application.name", "")}${

@@ -3,7 +3,7 @@ package top.bettercode.logging.websocket
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.Layout
 import ch.qos.logback.core.UnsynchronizedAppenderBase
-import top.bettercode.logging.logback.PrettyMessageHTMLLayout
+import top.bettercode.lang.PrettyMessageHTMLLayout
 
 /**
  *

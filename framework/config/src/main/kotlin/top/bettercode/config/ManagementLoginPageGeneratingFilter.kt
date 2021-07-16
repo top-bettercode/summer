@@ -1,10 +1,8 @@
-package top.bettercode.simpleframework.web.filter.top.bettercode.simpleframework.web.filter
+package top.bettercode.config
 
-import top.bettercode.logging.ManagementAuthProperties
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.util.AntPathMatcher
 import org.springframework.util.Assert
-import org.springframework.util.DigestUtils
 import org.springframework.web.filter.GenericFilterBean
 import org.springframework.web.util.HtmlUtils
 import java.nio.charset.StandardCharsets

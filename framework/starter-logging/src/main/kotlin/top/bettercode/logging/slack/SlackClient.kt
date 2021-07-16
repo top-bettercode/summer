@@ -9,7 +9,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
-import top.bettercode.logging.anchor
+import top.bettercode.lang.PrettyMessageHTMLLayout
 import java.io.File
 import java.util.*
 
@@ -87,7 +87,7 @@ class SlackClient(private val authToken: String, logUrl: String?, private val lo
         } else {
             params["text"] = initialComment
             if (message.isNotEmpty()) {
-                val anchor = anchor(message.last())
+                val anchor = PrettyMessageHTMLLayout.anchor(message.last())
                 val fileName = "alarm/${anchor}.log"
                 File(logsPath, fileName).writeText(message.joinToString(""))
                 if (logAll) {
@@ -113,7 +113,12 @@ class SlackClient(private val authToken: String, logUrl: String?, private val lo
             } else {
                 if (logAll)
                     params["attachments"] =
-                        arrayOf(mapOf("title" to title, "title_link" to "$LOG_URL/logs/all.log#last"))
+                        arrayOf(
+                            mapOf(
+                                "title" to title,
+                                "title_link" to "$LOG_URL/logs/all.log#last"
+                            )
+                        )
             }
         }
 
