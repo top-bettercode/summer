@@ -1,4 +1,4 @@
-package top.bettercode.logging;
+package top.bettercode.config;
 
 import java.nio.charset.StandardCharsets;
 import org.springframework.boot.context.properties.ConfigurationProperties;

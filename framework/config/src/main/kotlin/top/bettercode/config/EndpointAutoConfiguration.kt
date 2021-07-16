@@ -1,36 +1,43 @@
-package top.bettercode.logging
+package top.bettercode.config
 
-import top.bettercode.lang.util.RandomUtil.nextString2
-import top.bettercode.simpleframework.web.filter.top.bettercode.simpleframework.web.filter.ManagementLoginPageGeneratingFilter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.*
 import org.springframework.boot.autoconfigure.web.ServerProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.*
 import org.springframework.core.env.Environment
 import org.springframework.core.io.ResourceLoader
 import org.springframework.core.type.AnnotatedTypeMetadata
 import org.springframework.util.StringUtils
+import top.bettercode.lang.util.RandomUtil
+import top.bettercode.logging.WebsocketProperties
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 /**
- * 自动增加请求日志过滤器
- *
  * @author Peter Wu
- * @since 0.1.5
  */
 @ConditionalOnClass(WebEndpointProperties::class)
 @ConditionalOnBean(WebEndpointProperties::class)
-@AutoConfigureAfter(org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration::class)
+@AutoConfigureAfter(WebEndpointAutoConfiguration::class)
+@EnableConfigurationProperties(
+    ManagementAuthProperties::class
+)
 @Configuration(proxyBeanMethods = false)
-class ActuateLoggingConfiguration {
+class EndpointAutoConfiguration {
 
-    private val log: Logger = LoggerFactory.getLogger(ActuateLoggingConfiguration::class.java)
+    private val log: Logger = LoggerFactory.getLogger(EndpointAutoConfiguration::class.java)
+
+    @Bean
+    fun settingsEndpoint(): SettingsEndpoint {
+        return SettingsEndpoint()
+    }
 
 
     @Bean
@@ -52,7 +59,7 @@ class ActuateLoggingConfiguration {
         webEndpointProperties: WebEndpointProperties
     ): ManagementLoginPageGeneratingFilter {
         if (!StringUtils.hasText(managementAuthProperties.password)) {
-            managementAuthProperties.password = nextString2(6)
+            managementAuthProperties.password = RandomUtil.nextString2(6)
             log.info(
                 "默认日志访问用户名密码：{}:{}", managementAuthProperties.username,
                 managementAuthProperties.password
@@ -60,6 +67,7 @@ class ActuateLoggingConfiguration {
         }
         return ManagementLoginPageGeneratingFilter(managementAuthProperties, webEndpointProperties)
     }
+
 
     @ConditionalOnProperty(
         prefix = "summer.logging",

@@ -1,11 +1,11 @@
 package top.bettercode.logging.operation
 
-import top.bettercode.logging.format
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.util.StringUtils
+import top.bettercode.lang.util.LocalDateTimeHelper
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -24,8 +24,8 @@ object HttpOperation {
         if (output.collectionName.isNotBlank() || output.name.isNotBlank()) {
             stringBuilder.appendLine("${output.collectionName}/${output.name}")
         }
-        stringBuilder.appendLine("REQUEST    TIME : ${format(output.request.dateTime)}")
-        stringBuilder.appendLine("RESPONSE   TIME : ${format(output.response.dateTime)}")
+        stringBuilder.appendLine("REQUEST    TIME : ${LocalDateTimeHelper.format(output.request.dateTime)}")
+        stringBuilder.appendLine("RESPONSE   TIME : ${LocalDateTimeHelper.format(output.response.dateTime)}")
         stringBuilder.appendLine("DURATION MILLIS : ${output.duration}")
         stringBuilder.appendLine(separatorLine)
         stringBuilder.append(toString(output.request, output.protocol, format))

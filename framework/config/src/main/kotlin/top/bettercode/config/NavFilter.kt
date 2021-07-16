@@ -1,10 +1,9 @@
-package top.bettercode.logging
+package top.bettercode.config
 
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.core.io.ResourceLoader
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
-import top.bettercode.logging.NavFilter
 import java.io.File
 import java.util.*
 import javax.servlet.FilterChain

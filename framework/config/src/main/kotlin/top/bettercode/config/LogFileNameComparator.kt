@@ -1,4 +1,4 @@
-package top.bettercode.logging
+package top.bettercode.config
 
 import java.io.File
 

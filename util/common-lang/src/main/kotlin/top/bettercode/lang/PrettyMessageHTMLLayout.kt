@@ -1,4 +1,4 @@
-package top.bettercode.logging.logback
+package top.bettercode.lang
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.html.HTMLLayout
@@ -7,14 +7,17 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.CoreConstants.LINE_SEPARATOR
 import ch.qos.logback.core.helpers.Transform
 import ch.qos.logback.core.pattern.Converter
-import top.bettercode.logging.anchor
-import top.bettercode.logging.format
+import top.bettercode.lang.util.LocalDateTimeHelper
 import java.util.*
 
 /**
  * @author Peter Wu
  */
 class PrettyMessageHTMLLayout : HTMLLayout() {
+
+    companion object {
+        fun anchor(msg: String): String = msg.substringBefore(" ---").replace(" ", "-")
+    }
 
     init {
         setCssBuilder(CustCssBuilder())
@@ -93,7 +96,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
             else -> buf.append("Message")
         }
         buf.append("\"><pre>")
-        buf.append("${format(event.timeStamp)} ")
+        buf.append("${LocalDateTimeHelper.format(event.timeStamp)} ")
         buf.append("${event.level} ")
         buf.append("[${event.threadName}] ")
         buf.append("${event.loggerName} :")
