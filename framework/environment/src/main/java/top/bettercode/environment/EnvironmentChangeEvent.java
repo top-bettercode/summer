@@ -1,4 +1,4 @@
-package top.bettercode.config;
+package top.bettercode.environment;
 
 import java.util.Set;
 

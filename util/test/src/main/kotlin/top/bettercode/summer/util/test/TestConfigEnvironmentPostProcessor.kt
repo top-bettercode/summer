@@ -1,14 +1,9 @@
 package top.bettercode.summer.util.test
 
-import top.bettercode.config.ConfigEnvironmentPostProcessor
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.boot.env.EnvironmentPostProcessor
-import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.boot.SpringApplication
-import org.springframework.boot.env.YamlPropertySourceLoader
 import org.springframework.core.Ordered
-import org.springframework.core.io.ClassPathResource
+import org.springframework.core.env.ConfigurableEnvironment
+import top.bettercode.environment.ConfigEnvironmentPostProcessor
 
 class TestConfigEnvironmentPostProcessor : ConfigEnvironmentPostProcessor(), Ordered {
 

@@ -1,4 +1,4 @@
-package top.bettercode.config;
+package top.bettercode.environment;
 
 import org.springframework.boot.actuate.env.EnvironmentEndpoint;
 import org.springframework.core.env.Environment;

@@ -1,4 +1,4 @@
-package top.bettercode.config
+package top.bettercode.environment
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
