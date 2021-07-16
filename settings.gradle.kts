@@ -7,6 +7,7 @@ pluginManagement {
     }
 }
 
+include(":framework:environment")
 include(":framework:config")
 include(":framework:data-jpa")
 include(":framework:data-mybatis")

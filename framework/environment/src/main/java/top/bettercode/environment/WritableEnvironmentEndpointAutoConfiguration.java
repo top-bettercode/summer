@@ -1,4 +1,4 @@
-package top.bettercode.config;
+package top.bettercode.environment;
 
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
