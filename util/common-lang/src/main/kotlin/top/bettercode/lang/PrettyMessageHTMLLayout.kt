@@ -117,7 +117,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
 
         buf.append(LINE_SEPARATOR)
         val anchor = anchor(msg)
-        buf.append("<tr id=\"$anchor\" ondblclick=\"window.location.href = '#$anchor';\" class=\"")
+        buf.append("<tr id=\"$anchor\" onclick=\"if(window.event.ctrlKey){window.location.href = '#$anchor';}\" class=\"")
         buf.append(level)
         if (odd) {
             buf.append(" odd\">")
