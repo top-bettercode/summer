@@ -11,19 +11,22 @@ import top.bettercode.generator.puml.PumlConverter
 import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
 import hudson.cli.CLI
 import org.atteo.evo.inflector.English
-import org.gradle.api.JavaVersion
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import org.gradle.api.*
 import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
+import org.springframework.boot.gradle.plugin.ResolveMainClassName
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 import profilesActive
 import java.io.File
+import java.io.IOException
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -77,6 +80,7 @@ class ProjectPlugin : Plugin<Project> {
             subProject.plugins.apply {
                 apply("summer.profile")
                 apply("summer.packageinfo")
+                apply("org.springframework.boot")
                 apply("io.spring.dependency-management")
             }
 
@@ -88,7 +92,6 @@ class ProjectPlugin : Plugin<Project> {
             }
             if (mainProject) {
                 subProject.plugins.apply {
-                    apply("org.springframework.boot")
                     apply("application")
                     apply("summer.dist")
                 }
@@ -241,6 +244,42 @@ class ProjectPlugin : Plugin<Project> {
                 }
 
                 if (mainProject) {
+                    named(
+                        "bootJarMainClassName",
+                        ResolveMainClassName::class.java
+                    ) { resolveMainClassNameTask ->
+                        resolveMainClassNameTask as ResolveMainClassName
+                        resolveMainClassNameTask.doLast {
+                            subProject.tasks.findByName("startScripts").apply {
+                                this as CreateStartScripts
+                                if (mainClassName.isNullOrBlank()) {
+                                    val mainClassNameProvider =
+                                        resolveMainClassNameTask.outputFile.map(Transformer { file ->
+                                            if (file.asFile.length() == 0L) {
+                                                throw InvalidUserDataException("Main class name has not been configured and it could not be resolved")
+                                            } else {
+                                                val output = file.asFile.toPath()
+                                                try {
+                                                    String(
+                                                        Files.readAllBytes(output),
+                                                        StandardCharsets.UTF_8
+                                                    )
+                                                } catch (var4: IOException) {
+                                                    throw RuntimeException("Failed to read main class name from '$output'")
+                                                }
+                                            }
+                                        })
+
+                                    if (mainClassNameProvider.isPresent) {
+                                        mainClassName = mainClassNameProvider.get()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    named("startScripts") {
+                        it.dependsOn("bootJarMainClassName")
+                    }
                     named("bootRun", BootRun::class.java) {
                         System.getProperties().forEach { t, u ->
                             it.systemProperty(t as String, u)
@@ -252,6 +291,12 @@ class ProjectPlugin : Plugin<Project> {
                     named("distZip", Zip::class.java) {
                         it.archiveFileName.set("${subProject.name}.zip")
                     }
+                } else {
+                    named("bootRunMainClassName") { it.enabled = false }
+                    named("bootRun") { it.enabled = false }
+                    named("bootJarMainClassName") { it.enabled = false }
+                    named("bootJar") { it.enabled = false }
+                    named("bootBuildImage") { it.enabled = false }
                 }
 
                 if (needDocProject && !mainProject) {
