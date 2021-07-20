@@ -1,6 +1,4 @@
 "授权": 
-  - "获取accessToken"
-  - "刷新accessToken"
   - "导出"
 "服务器监控信息":
   - "列表"

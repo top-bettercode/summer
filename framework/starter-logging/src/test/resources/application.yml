@@ -27,10 +27,10 @@ logging:
 summer:
   logging:
     #  smtp:
-    #    host: 10.13.3.206
+    #    host:
     #    port: 26
     #    username: dev@dev.com
-    #    password: 9AjqMAVG
+    #    password:
     #    from: dev@dev.com
     #    to: dev@dev.com
     #    asynchronousSending: false
@@ -51,7 +51,7 @@ summer:
     files:
       path: build/logs
       rollover-on-start: true
-    log-url: http://testdemoh.cdwintech.com/user
+    log-url: http://demo/
     warn-subject: 日志测试系统异常
     slack:
       auth-token:
