@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.StringUtils;
@@ -12,6 +13,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import top.bettercode.lang.util.Sha512DigestUtils;
 import top.bettercode.lang.util.StringUtil;
+import top.bettercode.simpleframework.exception.BusinessException;
 import top.bettercode.simpleframework.web.UserInfoHelper;
 
 /**
@@ -57,7 +59,8 @@ public class FormDuplicateCheckInterceptor implements AsyncHandlerInterceptor {
         formkey = Sha512DigestUtils.shaHex(userKey + servletPath + formkey);
 
         if (formkeyService.exist(formkey)) {
-          throw new IllegalArgumentException("请勿重复提交");
+          throw new BusinessException(String.valueOf(HttpStatus.CREATED.value()),
+              "请勿重复提交");
         }
         formkeyService.putKey(formkey);
       }
