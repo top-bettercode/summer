@@ -100,13 +100,14 @@ abstract class AbstractPlugin : Plugin<Project> {
         publicationNames.add("mavenJava")
         publicationNames.addAll(publicationName)
 
-        project.extensions.getByType(SigningExtension::class.java).apply {
-            sign(
-                project.extensions.getByType(PublishingExtension::class.java).publications.findByName(
-                    "mavenJava"
+        if (project.hasProperty("signing.keyId"))
+            project.extensions.getByType(SigningExtension::class.java).apply {
+                sign(
+                    project.extensions.getByType(PublishingExtension::class.java).publications.findByName(
+                        "mavenJava"
+                    )
                 )
-            )
-        }
+            }
 
         project.tasks.getByName("publish").dependsOn("publishToMavenLocal")
     }
@@ -199,7 +200,7 @@ abstract class AbstractPlugin : Plugin<Project> {
         if (!project.plugins.hasPlugin("maven-publish")) {
             project.plugins.apply("maven-publish")
         }
-        if (!project.plugins.hasPlugin("signing")) {
+        if (project.hasProperty("signing.keyId") && !project.plugins.hasPlugin("signing")) {
             project.plugins.apply("signing")
         }
         if (!project.rootProject.plugins.hasPlugin("io.codearte.nexus-staging")) {
