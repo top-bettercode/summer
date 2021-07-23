@@ -211,7 +211,6 @@ class ProjectPlugin : Plugin<Project> {
                 val encoding = "-Dfile.encoding=UTF-8"
                 jvmArgs += encoding
                 jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
-                jvmArgs += "-Dspring.cloud.refresh.enabled=false"
                 if (subProject.file(nativePath).exists()) {
                     val nativeLibArgs =
                         "-Djava.library.path=${subProject.file(nativePath).absolutePath}"
