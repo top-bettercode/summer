@@ -17,4 +17,7 @@ public interface ICodeService {
     return null;
   }
 
+  default DicCodes getDicCodes(String codeType) {
+    return null;
+  }
 }

@@ -69,4 +69,9 @@ public class CodeService implements ICodeService {
     }
   }
 
+  @Override
+  public DicCodes getDicCodes(String codeType) {
+    Map<String, String> codes = propertiesSource.mapOf(codeType);
+    return new DicCodes(codeType, propertiesSource.get(codeType), codes);
+  }
 }
