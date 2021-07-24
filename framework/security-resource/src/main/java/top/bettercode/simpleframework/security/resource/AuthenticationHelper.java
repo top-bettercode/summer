@@ -14,7 +14,7 @@ public final class AuthenticationHelper {
   /**
    * @return 授权信息
    */
-  public static Authentication getAuthentication() {
+  private static Authentication getAuthentication() {
     return SecurityContextHolder.getContext().getAuthentication();
   }
 
@@ -39,7 +39,7 @@ public final class AuthenticationHelper {
    * @param authority      权限
    * @return 授权信息是否包含指定权限
    */
-  public static boolean hasAuthority(Authentication authentication, String authority) {
+  private static boolean hasAuthority(Authentication authentication, String authority) {
     for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
       if (grantedAuthority.getAuthority().equals(authority)) {
         return true;
