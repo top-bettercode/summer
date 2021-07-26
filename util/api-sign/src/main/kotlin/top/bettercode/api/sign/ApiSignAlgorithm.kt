@@ -23,7 +23,11 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
 
     fun requiredSign(handler: Any) =
         handler is HandlerMethod && handler.bean !is ErrorController && properties.handlerTypePrefix.any {
-            handler.beanType.name.matches(Regex("^" + it.replace(".", "\\.").replace("*", ".+") + ".*$"))
+            handler.beanType.name.matches(
+                Regex(
+                    "^" + it.replace(".", "\\.").replace("*", ".+") + ".*$"
+                )
+            )
         } && !handler.hasMethodAnnotation(ApiSignIgnore::class.java) && !handler.beanType.isAnnotationPresent(
             ApiSignIgnore::class.java
         )
@@ -47,30 +51,30 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
             return
         }
         if (!StringUtils.hasText(sign)) {
-            if (log.isDebugEnabled) {
-                log.debug("客户端签名为空")
+            if (log.isWarnEnabled) {
+                log.warn("客户端签名为空")
             }
             throw IllegalSignException()
         }
         if (sign!!.length != 32) {
-            if (log.isDebugEnabled) {
-                log.debug("客户端签名长度不匹配{}：{}", sign.length, sign)
+            if (log.isWarnEnabled) {
+                log.warn("客户端签名长度不匹配{}：{}", sign.length, sign)
             }
             throw IllegalSignException()
         }
         if (properties.isSimple) {
             val signParams = signParams(request)
             if (!sign.equals(signParams, ignoreCase = true)) {
-                if (log.isDebugEnabled) {
-                    log.debug("客户端参数签名错误,客户端：{}，服务端：{}", sign, signParams)
+                if (log.isWarnEnabled) {
+                    log.warn("客户端参数签名错误,客户端：{}，服务端：{}", sign, signParams)
                 }
                 throw IllegalSignException()
             }
         } else {
             val signParams = signParams(request).substring(0, 16)
             if (!sign.substring(0, 16).equals(signParams, ignoreCase = true)) {
-                if (log.isDebugEnabled) {
-                    log.debug("客户端参数签名错误,客户端：{}，服务端：{}", sign.substring(0, 16), signParams)
+                if (log.isWarnEnabled) {
+                    log.warn("客户端参数签名错误,客户端：{}，服务端：{}", sign.substring(0, 16), signParams)
                 }
                 throw IllegalSignException()
             }
@@ -78,8 +82,8 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
                 val signUserAgent =
                     signUserAgent(request.getHeader(HttpHeaders.USER_AGENT)).substring(16, 24)
                 if (!sign.substring(16, 24).equals(signUserAgent, ignoreCase = true)) {
-                    if (log.isDebugEnabled) {
-                        log.debug(
+                    if (log.isWarnEnabled) {
+                        log.warn(
                             "客户端UserAgent签名错误,客户端：{}，服务端：{}",
                             sign.substring(16, 24),
                             signUserAgent
@@ -99,8 +103,8 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
                         time + 1
                     ).substring(24, 32).equals(signTime, ignoreCase = true)
                 ) {
-                    if (log.isDebugEnabled) {
-                        log.debug("客户端时间签名错误,客户端：{}", sign.substring(24, 32))
+                    if (log.isWarnEnabled) {
+                        log.warn("客户端时间签名错误,客户端：{}", sign.substring(24, 32))
                     }
                     throw IllegalSignException()
                 }
