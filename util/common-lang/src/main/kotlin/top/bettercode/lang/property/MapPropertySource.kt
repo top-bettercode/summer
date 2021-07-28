@@ -33,4 +33,8 @@ open class MapPropertySource(protected val source: MutableMap<String, String>) :
     override fun all(): Map<String, String> {
         return source
     }
+
+    override fun clear() {
+        source.clear()
+    }
 }

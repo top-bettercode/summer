@@ -13,40 +13,51 @@ import java.util.*
 class SettingsEndpoint {
 
     @WriteOperation
-    fun write(@Selector baseName: String?, key: String, value: String): Any {
+    fun write(@Selector baseName: String?, @Nullable key: String?, @Nullable value: String?): Any {
         val propertiesSource: PropertiesSource? = Settings[baseName]
         return if (propertiesSource == null) {
             emptyMap<Any, Any>()
         } else {
-            propertiesSource.put(key, value)
-            Collections.singletonMap(key, value)
+            if (key.isNullOrBlank()) {
+                propertiesSource.load()
+                propertiesSource.all()
+            } else {
+                propertiesSource.put(key, value)
+                Collections.singletonMap(key, value)
+            }
         }
     }
 
     @DeleteOperation
-    fun delete(@Selector baseName: String, key: String): Any {
+    fun delete(@Selector baseName: String, @Nullable key: String?): Any {
         val propertiesSource: PropertiesSource? = Settings[baseName]
         return if (propertiesSource == null) {
             emptyMap<Any, Any>()
         } else {
-            val remove: String? = propertiesSource.remove(key)
             val map: MutableMap<String, String?>
-            if (Settings.isDicCode(baseName)) {
-                map = propertiesSource.mapOf(key).toMutableMap()
-                val prefix = "$key."
-                for (k in map.keys) {
-                    propertiesSource.remove(prefix + k)
-                }
-                val typeKey = "$key|TYPE"
-                val removeType: String? = propertiesSource.remove(typeKey)
-                if (removeType != null) {
-                    map["TYPE"] = removeType
-                }
-                if (remove != null) {
-                    map[key] = remove
+            if (!key.isNullOrBlank()) {
+                val remove: String? = propertiesSource.remove(key)
+                if (Settings.isDicCode(baseName)) {
+                    map = propertiesSource.mapOf(key).toMutableMap()
+                    val prefix = "$key."
+                    for (k in map.keys) {
+                        propertiesSource.remove(prefix + k)
+                    }
+                    val typeKey = "$key|TYPE"
+                    val removeType: String? = propertiesSource.remove(typeKey)
+                    if (removeType != null) {
+                        map["TYPE"] = removeType
+                    }
+                    if (remove != null) {
+                        map[key] = remove
+                    }
+                } else {
+                    map = Collections.singletonMap(key, remove)
                 }
             } else {
-                map = Collections.singletonMap(key, remove)
+                map = mutableMapOf()
+                map.putAll(propertiesSource.all())
+                propertiesSource.clear()
             }
             map
         }

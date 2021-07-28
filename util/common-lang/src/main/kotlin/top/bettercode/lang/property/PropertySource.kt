@@ -48,4 +48,6 @@ interface PropertySource {
     fun mapOf(name: String): Map<String, String>
 
     fun all(): Map<String, String>
+
+    fun clear()
 }

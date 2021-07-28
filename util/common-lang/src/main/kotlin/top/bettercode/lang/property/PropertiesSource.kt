@@ -6,7 +6,8 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-class PropertiesSource(vararg baseName: String) : MapPropertySource(mutableMapOf()) {
+class PropertiesSource(private vararg val baseName: String) : MapPropertySource(mutableMapOf()) {
+
     companion object {
         @JvmStatic
         fun of(vararg baseName: String): PropertiesSource {
@@ -14,10 +15,12 @@ class PropertiesSource(vararg baseName: String) : MapPropertySource(mutableMapOf
         }
     }
 
-    /**
-     * @param baseName Bundle baseName
-     */
     init {
+        load()
+    }
+
+    fun load() {
+        source.clear()
         val properties = Properties()
         for (name in baseName) {
             try {
