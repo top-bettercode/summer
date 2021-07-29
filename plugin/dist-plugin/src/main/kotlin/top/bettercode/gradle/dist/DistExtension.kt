@@ -5,7 +5,7 @@ package top.bettercode.gradle.dist
  * @author Peter Wu
  */
 open class DistExtension(
-        var unwrapResources: Boolean = false,
+        var unwrapResources: Boolean = true,
         var includeJre: Boolean = false,
         var x64: Boolean = true,
         var windows: Boolean = false,
