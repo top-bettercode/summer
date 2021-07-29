@@ -45,6 +45,10 @@ class DistPlugin : Plugin<Project> {
             it.windowsServiceOldPath = findProperty(project, "windows-service-old-path") ?: ""
             it.distOldPath = findProperty(project, "dist-old-path") ?: ""
             it.jvmArgs = (findProperty(project, "jvm-args") ?: "").split(" +".toRegex())
+            it.excludeUnWrapResources = (findProperty(project, "exclude-unwrap-resources")
+                ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories").split(
+                ","
+            )
         }
         val windowsServiceEnable = (findProperty(project, "windows-service.enable"))?.toBoolean()
             ?: false
@@ -152,7 +156,18 @@ class DistPlugin : Plugin<Project> {
                     val outputDirectory = task.outputDirectory
                     project.rootProject.allprojects { p ->
                         p.copy {
-                            it.from((p.tasks.getByName("processResources") as ProcessResources).destinationDir)
+                            val destinationDir =
+                                (p.tasks.getByName("processResources") as ProcessResources).destinationDir
+                            it.from(destinationDir)
+                            it.exclude { f ->
+                                dist.excludeUnWrapResources.any {
+                                    f.file.absolutePath == File(
+                                        destinationDir,
+                                        it
+                                    ).absolutePath
+                                }
+
+                            }
                             it.into(File(outputDirectory, "conf").absolutePath)
                         }
                     }
@@ -223,10 +238,25 @@ class DistPlugin : Plugin<Project> {
                 project.rootProject.allprojects { p ->
                     p.tasks.getByName("jar") { task ->
                         task as Jar
-                        task.exclude {
+                        task.exclude { file ->
+                            val destinationDir =
+                                (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
                             val listFiles =
-                                (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir.listFiles()
-                            listFiles?.contains(it.file) ?: false
+                                destinationDir.walkTopDown()
+                                    .filter { f ->
+                                        dist.excludeUnWrapResources.none {
+                                            f.absolutePath == File(destinationDir, it).absolutePath
+                                        } && f.walkTopDown()
+                                            .none { fi ->
+                                                dist.excludeUnWrapResources.any {
+                                                    fi.absolutePath == File(
+                                                        destinationDir,
+                                                        it
+                                                    ).absolutePath
+                                                }
+                                            }
+                                    }
+                            listFiles.contains(file.file)
                         }
                     }
                 }
@@ -237,8 +267,15 @@ class DistPlugin : Plugin<Project> {
                 distribution.contents { copySpec ->
                     if (dist.unwrapResources)
                         project.rootProject.allprojects { p ->
-                            copySpec.from((p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir) {
-                                it.into("conf")
+                            val destinationDir =
+                                (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
+                            copySpec.from(destinationDir) { c ->
+                                c.exclude { f ->
+                                    dist.excludeUnWrapResources.any {
+                                        f.file.absolutePath == File(destinationDir, it).absolutePath
+                                    }
+                                }
+                                c.into("conf")
                             }
                         }
                     if (project.file(dist.nativePath).exists()) {
