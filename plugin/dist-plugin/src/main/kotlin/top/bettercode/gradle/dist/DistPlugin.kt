@@ -32,7 +32,7 @@ class DistPlugin : Plugin<Project> {
 
         project.extensions.create("dist", DistExtension::class.java)
         project.extensions.configure(DistExtension::class.java) {
-            it.unwrapResources = findProperty(project, "unwrap-resources")?.toBoolean() ?: false
+            it.unwrapResources = findProperty(project, "unwrap-resources")?.toBoolean() ?: true
             it.includeJre = findProperty(project, "include-jre")?.toBoolean() ?: false
             it.windows = findProperty(project, "windows")?.toBoolean() ?: false
             it.x64 = findProperty(project, "x64")?.toBoolean() ?: true
