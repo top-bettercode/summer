@@ -150,9 +150,11 @@ class DistPlugin : Plugin<Project> {
                     project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
                 task.doLast {
                     val outputDirectory = task.outputDirectory
-                    project.copy {
-                        it.from((project.tasks.getByName("processResources") as ProcessResources).destinationDir)
-                        it.into(File(outputDirectory, "conf").absolutePath)
+                    project.rootProject.allprojects { p ->
+                        p.copy {
+                            it.from((p.tasks.getByName("processResources") as ProcessResources).destinationDir)
+                            it.into(File(outputDirectory, "conf").absolutePath)
+                        }
                     }
                     if (dist.includeJre) {
                         project.copy { copySpec ->
@@ -216,72 +218,77 @@ class DistPlugin : Plugin<Project> {
                 it.destinationDirectory.set(createTask.outputDirectory.parentFile)
             }
         }
-        if (windowsServiceEnable || dist.unwrapResources) {
-            project.tasks.getByName("jar") { task ->
-                task as Jar
-                task.exclude {
-                    val listFiles =
-                        (project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir.listFiles()
-                    listFiles?.contains(it.file) ?: false
-                }
-            }
-        }
-        if (project.plugins.findPlugin(DistributionPlugin::class.java) != null) {
-            val distribution = project.extensions.getByType(DistributionContainer::class.java)
-                .getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
-            distribution.contents { copySpec ->
-                if (dist.unwrapResources)
-                    copySpec.from((project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir) {
-                        it.into("conf")
-                    }
-                if (project.file(dist.nativePath).exists()) {
-                    copySpec.from(project.file(dist.nativePath).absolutePath) {
-                        it.into("native")
-                    }
-                }
-                if (dist.includeJre) {
-                    copySpec.from(project.tarTree(if (dist.windows) (if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz) else (if (dist.x64) dist.jreLinuxX64Gz else dist.jreLinuxI586Gz))) { spec ->
-                        spec.eachFile {
-                            it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
+        project.afterEvaluate {
+            if (windowsServiceEnable || dist.unwrapResources) {
+                project.rootProject.allprojects { p ->
+                    p.tasks.getByName("jar") { task ->
+                        task as Jar
+                        task.exclude {
+                            val listFiles =
+                                (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir.listFiles()
+                            listFiles?.contains(it.file) ?: false
                         }
-                        spec.includeEmptyDirs = false
                     }
-                    distribution.distributionBaseName.set("${project.name}-${if (dist.x64) "x64" else "x86"}")
-                } else {
-                    distribution.distributionBaseName.set(project.name)
                 }
-                copySpec.from(File(project.buildDir, "service").absolutePath)
             }
-            project.tasks.create("installDistUpdate") {
-                it.dependsOn(TASK_INSTALL_NAME)
-                val createTask = project.tasks.getByName(TASK_INSTALL_NAME)
-                it.group = createTask.group
-                it.doLast {
+            if (project.plugins.findPlugin(DistributionPlugin::class.java) != null) {
+                val distribution = project.extensions.getByType(DistributionContainer::class.java)
+                    .getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
+                distribution.contents { copySpec ->
+                    if (dist.unwrapResources)
+                        project.rootProject.allprojects { p ->
+                            copySpec.from((p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir) {
+                                it.into("conf")
+                            }
+                        }
+                    if (project.file(dist.nativePath).exists()) {
+                        copySpec.from(project.file(dist.nativePath).absolutePath) {
+                            it.into("native")
+                        }
+                    }
+                    if (dist.includeJre) {
+                        copySpec.from(project.tarTree(if (dist.windows) (if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz) else (if (dist.x64) dist.jreLinuxX64Gz else dist.jreLinuxI586Gz))) { spec ->
+                            spec.eachFile {
+                                it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
+                            }
+                            spec.includeEmptyDirs = false
+                        }
+                        distribution.distributionBaseName.set("${project.name}-${if (dist.x64) "x64" else "x86"}")
+                    } else {
+                        distribution.distributionBaseName.set(project.name)
+                    }
+                    copySpec.from(File(project.buildDir, "service").absolutePath)
+                }
+                project.tasks.create("installDistUpdate") {
+                    it.dependsOn(TASK_INSTALL_NAME)
+                    val createTask = project.tasks.getByName(TASK_INSTALL_NAME)
+                    it.group = createTask.group
+                    it.doLast {
+                        val dest = project.file("" + project.buildDir + "/install")
+                        val updateDir = File(dest, "update")
+                        require(dist.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
+                        compareUpdate(
+                            project,
+                            updateDir,
+                            project.file(dist.distOldPath),
+                            File(dest, distribution.distributionBaseName.get()),
+                            false
+                        )
+                    }
+                }
+
+                project.tasks.create("installDistUpdateZip", Zip::class.java) {
+                    it.dependsOn("installDistUpdate")
+                    val createTask = project.tasks.getByName("installDistUpdate")
+                    it.group = createTask.group
                     val dest = project.file("" + project.buildDir + "/install")
                     val updateDir = File(dest, "update")
-                    require(dist.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                    compareUpdate(
-                        project,
-                        updateDir,
-                        project.file(dist.distOldPath),
-                        File(dest, distribution.distributionBaseName.get()),
-                        false
-                    )
+                    it.from(updateDir)
+                    it.archiveFileName.set("${project.name}-${project.version}-dist_update.zip")
+                    it.destinationDirectory.set(dest)
                 }
             }
-
-            project.tasks.create("installDistUpdateZip", Zip::class.java) {
-                it.dependsOn("installDistUpdate")
-                val createTask = project.tasks.getByName("installDistUpdate")
-                it.group = createTask.group
-                val dest = project.file("" + project.buildDir + "/install")
-                val updateDir = File(dest, "update")
-                it.from(updateDir)
-                it.archiveFileName.set("${project.name}-${project.version}-dist_update.zip")
-                it.destinationDirectory.set(dest)
-            }
         }
-
         val jvmArgs = dist.jvmArgs.filter { it.isNotBlank() }.toMutableSet()
         val encoding = "-Dfile.encoding=UTF-8"
         jvmArgs += encoding
