@@ -154,22 +154,20 @@ class DistPlugin : Plugin<Project> {
                     project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
                 task.doLast {
                     val outputDirectory = task.outputDirectory
-                    project.rootProject.allprojects { p ->
-                        p.copy {
-                            val destinationDir =
-                                (p.tasks.getByName("processResources") as ProcessResources).destinationDir
-                            it.from(destinationDir)
-                            it.exclude { f ->
-                                dist.excludeUnWrapResources.any {
-                                    f.file.absolutePath == File(
-                                        destinationDir,
-                                        it
-                                    ).absolutePath
-                                }
-
+                    project.copy {
+                        val destinationDir =
+                            (project.tasks.getByName("processResources") as ProcessResources).destinationDir
+                        it.from(destinationDir)
+                        it.exclude { f ->
+                            dist.excludeUnWrapResources.any {
+                                f.file.absolutePath == File(
+                                    destinationDir,
+                                    it
+                                ).absolutePath
                             }
-                            it.into(File(outputDirectory, "conf").absolutePath)
+
                         }
+                        it.into(File(outputDirectory, "conf").absolutePath)
                     }
                     if (dist.includeJre) {
                         project.copy { copySpec ->
@@ -235,29 +233,27 @@ class DistPlugin : Plugin<Project> {
         }
         project.afterEvaluate {
             if (windowsServiceEnable || dist.unwrapResources) {
-                project.rootProject.allprojects { p ->
-                    p.tasks.getByName("jar") { task ->
-                        task as Jar
-                        task.exclude { file ->
-                            val destinationDir =
-                                (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
-                            val listFiles =
-                                destinationDir.walkTopDown()
-                                    .filter { f ->
-                                        dist.excludeUnWrapResources.none {
-                                            f.absolutePath == File(destinationDir, it).absolutePath
-                                        } && f.walkTopDown()
-                                            .none { fi ->
-                                                dist.excludeUnWrapResources.any {
-                                                    fi.absolutePath == File(
-                                                        destinationDir,
-                                                        it
-                                                    ).absolutePath
-                                                }
+                project.tasks.getByName("jar") { task ->
+                    task as Jar
+                    task.exclude { file ->
+                        val destinationDir =
+                            (project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
+                        val listFiles =
+                            destinationDir.walkTopDown()
+                                .filter { f ->
+                                    dist.excludeUnWrapResources.none {
+                                        f.absolutePath == File(destinationDir, it).absolutePath
+                                    } && f.walkTopDown()
+                                        .none { fi ->
+                                            dist.excludeUnWrapResources.any {
+                                                fi.absolutePath == File(
+                                                    destinationDir,
+                                                    it
+                                                ).absolutePath
                                             }
-                                    }
-                            listFiles.contains(file.file)
-                        }
+                                        }
+                                }
+                        listFiles.contains(file.file)
                     }
                 }
             }
@@ -265,19 +261,18 @@ class DistPlugin : Plugin<Project> {
                 val distribution = project.extensions.getByType(DistributionContainer::class.java)
                     .getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
                 distribution.contents { copySpec ->
-                    if (dist.unwrapResources)
-                        project.rootProject.allprojects { p ->
-                            val destinationDir =
-                                (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
-                            copySpec.from(destinationDir) { c ->
-                                c.exclude { f ->
-                                    dist.excludeUnWrapResources.any {
-                                        f.file.absolutePath == File(destinationDir, it).absolutePath
-                                    }
+                    if (dist.unwrapResources) {
+                        val destinationDir =
+                            (project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
+                        copySpec.from(destinationDir) { c ->
+                            c.exclude { f ->
+                                dist.excludeUnWrapResources.any {
+                                    f.file.absolutePath == File(destinationDir, it).absolutePath
                                 }
-                                c.into("conf")
                             }
+                            c.into("conf")
                         }
+                    }
                     if (project.file(dist.nativePath).exists()) {
                         copySpec.from(project.file(dist.nativePath).absolutePath) {
                             it.into("native")
