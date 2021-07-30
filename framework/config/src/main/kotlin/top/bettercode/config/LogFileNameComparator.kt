@@ -17,19 +17,21 @@ class LogFileNameComparator : Comparator<File> {
                 try {
                     val name1 = o1.nameWithoutExtension
                     val name2 = o2.nameWithoutExtension
+                    val contains1 = name1.contains("-")
                     val a1 =
-                        if (name1.contains("-")) name1.substringBefore("-") else name1.substringBefore(
+                        if (contains1) name1.substringBefore("-") else name1.substringBefore(
                             "."
                         )
+                    val contains2 = name2.contains("-")
                     val a2 =
-                        if (name2.contains("-")) name2.substringBefore("-") else name2.substringBefore(
+                        if (contains2) name2.substringBefore("-") else name2.substringBefore(
                             "."
                         )
                     val compareTo1 = a1.compareTo(a2)
                     if (compareTo1 == 0) {
                         val compareTo2 = o2.lastModified().compareTo(o1.lastModified())
                         if (compareTo2 == 0) {
-                            name1.contains("-").compareTo(name2.contains("-"))
+                            contains1.compareTo(contains2)
                         } else
                             compareTo2
                     } else
