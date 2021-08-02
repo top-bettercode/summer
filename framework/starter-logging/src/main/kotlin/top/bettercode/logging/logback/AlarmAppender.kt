@@ -47,7 +47,7 @@ abstract class AlarmAppender(
     override fun start() {
         val cache: Cache<String, Int> =
             CacheBuilder.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS)
-                .maximumSize(100).build()
+                .maximumSize(1000).build()
         cacheMap = cache.asMap()
 
         val alarmEvaluator = object : EventEvaluatorBase<ILoggingEvent>() {
