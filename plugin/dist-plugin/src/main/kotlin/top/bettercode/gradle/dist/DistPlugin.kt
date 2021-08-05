@@ -324,7 +324,8 @@ class DistPlugin : Plugin<Project> {
         val jvmArgs = dist.jvmArgs.filter { it.isNotBlank() }.toMutableSet()
         val encoding = "-Dfile.encoding=UTF-8"
         jvmArgs += encoding
-        jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
+        if (project.extensions.findByName("profile") != null)
+            jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
         val nativeLibArgs = if (project.file(dist.nativePath).exists()) {
             val nativeLibArgs =
                 "-Djava.library.path=${project.file(dist.nativePath).absolutePath}"
