@@ -31,10 +31,17 @@ class DistPlugin : Plugin<Project> {
         project.plugins.apply(JavaPlugin::class.java)
 
         project.extensions.create("dist", DistExtension::class.java)
+
+        val windowsServiceEnable = (findProperty(project, "windows-service.enable"))?.toBoolean()
+            ?: false
+
         project.extensions.configure(DistExtension::class.java) {
             it.unwrapResources = findProperty(project, "unwrap-resources")?.toBoolean() ?: true
             it.includeJre = findProperty(project, "include-jre")?.toBoolean() ?: false
-            it.windows = findProperty(project, "windows")?.toBoolean() ?: false
+            it.windows = if (windowsServiceEnable) windowsServiceEnable else findProperty(
+                project,
+                "windows"
+            )?.toBoolean() ?: false
             it.x64 = findProperty(project, "x64")?.toBoolean() ?: true
             it.nativePath = findProperty(project, "native-path") ?: "native"
             it.runUser = findProperty(project, "run-user") ?: ""
@@ -50,8 +57,7 @@ class DistPlugin : Plugin<Project> {
                 ","
             )
         }
-        val windowsServiceEnable = (findProperty(project, "windows-service.enable"))?.toBoolean()
-            ?: false
+
         if (windowsServiceEnable) {
             project.plugins.apply(WindowsServicePlugin::class.java)
             project.extensions.configure(WindowsServicePluginConfiguration::class.java) {
