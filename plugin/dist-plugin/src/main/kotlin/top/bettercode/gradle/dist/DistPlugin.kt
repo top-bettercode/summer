@@ -37,6 +37,7 @@ class DistPlugin : Plugin<Project> {
 
         project.extensions.configure(DistExtension::class.java) {
             it.unwrapResources = findProperty(project, "unwrap-resources")?.toBoolean() ?: true
+            it.autoStart = findProperty(project, "auto-start")?.toBoolean() ?: true
             it.includeJre = findProperty(project, "include-jre")?.toBoolean() ?: false
             it.windows = if (windowsServiceEnable) windowsServiceEnable else findProperty(
                 project,
@@ -187,11 +188,14 @@ class DistPlugin : Plugin<Project> {
                         }
                     }
                     val installScript = File(outputDirectory, "${project.name}-install.bat")
-                    val installScriptText = installScript.readText()
-                        .replace("%APP_HOME%lib\\conf", "%APP_HOME%conf").replace(
+                    var installScriptText = installScript.readText()
+                        .replace("%APP_HOME%lib\\conf", "%APP_HOME%conf")
+                    if (dist.autoStart) {
+                        installScriptText = installScriptText.replace(
                             "if \"%OS%\"==\"Windows_NT\" endlocal",
                             "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
                         )
+                    }
                     installScript.writeText(installScriptText)
                 }
             }
@@ -574,8 +578,12 @@ exit 0
 EOF
   ) | sudo tee /etc/init.d/${project.name}
   sudo chmod +x /etc/init.d/${project.name}
-  sudo service ${project.name} start
   sudo chkconfig ${project.name} on
+  ${
+                            if (dist.autoStart) """
+  sudo service ${project.name} start
+  """.trimIndent() else ""
+                        }
 else
   (
     cat <<EOF
@@ -596,7 +604,11 @@ EOF
   ) | sudo tee /etc/systemd/system/${project.name}.service
   sudo systemctl daemon-reload
   sudo systemctl enable ${project.name}.service
+  ${
+                            if (dist.autoStart) """
   sudo systemctl start ${project.name}.service
+  """.trimIndent() else ""
+                        }
 fi
 """
                     )

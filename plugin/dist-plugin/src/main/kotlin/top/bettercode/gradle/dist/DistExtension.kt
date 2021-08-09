@@ -6,6 +6,7 @@ package top.bettercode.gradle.dist
  */
 open class DistExtension(
     var unwrapResources: Boolean = true,
+    var autoStart: Boolean = true,
     var includeJre: Boolean = false,
     var x64: Boolean = true,
     var windows: Boolean = false,
