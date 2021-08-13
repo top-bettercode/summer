@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +35,11 @@ public class FormDuplicateCheckInterceptor implements AsyncHandlerInterceptor {
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
       Object handler) {
+    if (handler instanceof HandlerMethod && ErrorController.class
+        .isAssignableFrom(((HandlerMethod) handler).getBeanType())) {
+      return true;
+    }
+
     String method = request.getMethod();
     String formkey = request.getHeader("formkey");
     if (("POST".equals(method) || "PUT".equals(method)) && handler instanceof HandlerMethod) {
