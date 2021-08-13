@@ -123,7 +123,7 @@ class GeneratorPlugin : Plugin<Project> {
                 }.toList().toTypedArray()
         }
 
-        project.tasks.create("generate") { task ->
+        project.tasks.create("gen") { task ->
             task.group = "gen"
             task.doLast {
                 Generators.call(project.extensions.getByType(GeneratorExtension::class.java))
