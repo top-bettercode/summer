@@ -153,6 +153,7 @@ class DistPlugin : Plugin<Project> {
         }
 
         val dist = project.extensions.getByType(DistExtension::class.java)
+        var jreGz = if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz
         if (windowsServiceEnable) {
             project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) { task ->
                 task as WindowsServicePluginTask
@@ -176,9 +177,9 @@ class DistPlugin : Plugin<Project> {
                         }
                         it.into(File(outputDirectory, "conf").absolutePath)
                     }
-                    if (dist.includeJre) {
+                    if (dist.includeJre && jreGz.isNotBlank()) {
                         project.copy { copySpec ->
-                            copySpec.from(project.tarTree(if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz)) { spec ->
+                            copySpec.from(project.tarTree(jreGz)) { spec ->
                                 spec.eachFile {
                                     it.path = "jre/" + it.path.substringAfter("/")
                                 }
@@ -289,12 +290,15 @@ class DistPlugin : Plugin<Project> {
                         }
                     }
                     if (dist.includeJre) {
-                        copySpec.from(project.tarTree(if (dist.windows) (if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz) else (if (dist.x64) dist.jreLinuxX64Gz else dist.jreLinuxI586Gz))) { spec ->
-                            spec.eachFile {
-                                it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
+                        jreGz =
+                            if (dist.windows) jreGz else (if (dist.x64) dist.jreLinuxX64Gz else dist.jreLinuxI586Gz)
+                        if (jreGz.isNotBlank())
+                            copySpec.from(project.tarTree(jreGz)) { spec ->
+                                spec.eachFile {
+                                    it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
+                                }
+                                spec.includeEmptyDirs = false
                             }
-                            spec.includeEmptyDirs = false
-                        }
                         distribution.distributionBaseName.set("${project.name}-${if (dist.x64) "x64" else "x86"}")
                     } else {
                         distribution.distributionBaseName.set(project.name)
