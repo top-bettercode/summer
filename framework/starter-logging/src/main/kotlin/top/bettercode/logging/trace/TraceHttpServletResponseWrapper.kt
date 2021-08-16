@@ -25,7 +25,7 @@ class TraceHttpServletResponseWrapper constructor(response: HttpServletResponse)
     }
 
     override fun getWriter(): PrintWriter {
-        return TracePrintWriter(super.getWriter(), byteArrayOutputStream)
+        return PrintWriter(outputStream)
     }
 
     override fun addCookie(cookie: Cookie) {

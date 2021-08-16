@@ -1,14 +1,13 @@
 package top.bettercode.simpleframework.security.impl;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import top.bettercode.simpleframework.security.resource.Anonymous;
 import top.bettercode.simpleframework.security.resource.AuthenticationHelper;
 import top.bettercode.simpleframework.security.resource.ClientAuthorize;
 import top.bettercode.simpleframework.security.resource.ConfigAuthority;
 import top.bettercode.simpleframework.web.BaseController;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Peter Wu
@@ -27,7 +26,7 @@ public class SecurityTestController extends BaseController {
   @ConfigAuthority("a")
   @RequestMapping(value = "/testAuth")
   public Object testAuth() {
-    Authentication authentication = AuthenticationHelper.getAuthentication();
+    Object authentication = AuthenticationHelper.getPrincipal();
     System.err.println("-----------------------");
     return ok("success");
   }

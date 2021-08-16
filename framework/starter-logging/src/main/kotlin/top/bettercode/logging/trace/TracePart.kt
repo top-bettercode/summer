@@ -1,6 +1,5 @@
 package top.bettercode.logging.trace
 
-import org.springframework.util.StreamUtils
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import javax.servlet.http.Part
@@ -11,17 +10,16 @@ import javax.servlet.http.Part
  */
 class TracePart(private val part: Part) : Part by part {
     private val byteArrayOutputStream = ByteArrayOutputStream()
+    private var inputStream: InputStream? = null
 
     val contentAsByteArray: ByteArray
-        get() = if (byteArrayOutputStream.size()>0) byteArrayOutputStream.toByteArray() else try {
-            StreamUtils.copyToByteArray(part.inputStream)
-        } catch (e: Exception) {
-            "Request part has been read.Can't record the original data.".toByteArray()
-        }
-
+        get() = byteArrayOutputStream.toByteArray()
 
 
     override fun getInputStream(): InputStream {
-        return TraceInputStream(part.inputStream, byteArrayOutputStream)
+        if (inputStream == null) {
+            inputStream = TraceInputStream(part.inputStream, byteArrayOutputStream)
+        }
+        return inputStream!!
     }
 }

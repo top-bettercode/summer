@@ -1,18 +1,16 @@
 package top.bettercode.logging.trace
 
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import javax.servlet.ReadListener
 import javax.servlet.ServletInputStream
 
-class TraceServletInputStream(private val delegate: ServletInputStream, private val byteArrayOutputStream: ByteArrayOutputStream) : ServletInputStream() {
+class TraceServletInputStream(
+    private val delegate: ServletInputStream,
+    private val byteArrayOutputStream: ByteArrayOutputStream
+) : ServletInputStream() {
 
-    override fun equals(other: Any?): Boolean {
-        return delegate == other
-    }
-
-    override fun hashCode(): Int {
-        return delegate.hashCode()
-    }
+    private var byteArrayInputStream: ByteArrayInputStream? = null
 
     override fun toString(): String {
         return delegate.toString()
@@ -36,7 +34,7 @@ class TraceServletInputStream(private val delegate: ServletInputStream, private 
     }
 
     override fun reset() {
-        delegate.reset()
+        byteArrayInputStream?.reset()
     }
 
     override fun close() {
@@ -52,11 +50,19 @@ class TraceServletInputStream(private val delegate: ServletInputStream, private 
     }
 
     override fun read(): Int {
-        val read = delegate.read()
-        if (read != -1) {
-            byteArrayOutputStream.write(read)
+        return if (byteArrayInputStream == null) {
+            val ch = delegate.read()
+            if (ch != -1) {
+                byteArrayOutputStream.write(ch)
+            } else {
+                val byteArray = byteArrayOutputStream.toByteArray()
+                byteArrayInputStream = ByteArrayInputStream(byteArray)
+                byteArrayInputStream!!.skip(byteArray.size.toLong())
+            }
+            ch
+        } else {
+            byteArrayInputStream!!.read()
         }
-        return read
     }
 
 
