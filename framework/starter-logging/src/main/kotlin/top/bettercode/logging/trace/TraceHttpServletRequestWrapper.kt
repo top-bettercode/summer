@@ -1,9 +1,9 @@
 package top.bettercode.logging.trace
 
-import org.springframework.util.StreamUtils
+import org.springframework.web.util.WebUtils
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
-import java.io.TraceBufferedReader
+import java.io.InputStreamReader
 import javax.servlet.ServletInputStream
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
@@ -23,43 +23,33 @@ class TraceHttpServletRequestWrapper
  */
 constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request) {
     private val byteArrayOutputStream = ByteArrayOutputStream()
-    private val parts: MutableCollection<Part>? = if (request.contentType?.toLowerCase()?.startsWith("multipart/") == true)
-        super.getParts().map { TracePart(it) }.toMutableList()
-    else
-        null
+    private var servletInputStream: ServletInputStream? = null
 
     val contentAsByteArray: ByteArray
-        get() = if (isFinished()) byteArrayOutputStream.toByteArray() else try {
-            StreamUtils.copyToByteArray(request.inputStream)
-        } catch (e: Exception) {
-            "Request inputStream has been read.Can't record the original data.".toByteArray()
-        }
+        get() = byteArrayOutputStream.toByteArray()
 
-    private fun isFinished(): Boolean {
-        return try {
-            request.inputStream.isFinished
-        } catch (e: AbstractMethodError) {
-            byteArrayOutputStream.size() != 0
-        }
-    }
 
     override fun getPart(name: String?): Part? {
-        return parts?.find { it.name == name } ?: super.getPart(name)
+        return parts.find { it.name == name }
     }
 
     override fun getParts(): MutableCollection<Part> {
-        return parts ?: super.getParts()
+        return super.getParts().map { TracePart(it) }.toMutableList()
     }
 
     override fun getInputStream(): ServletInputStream {
-        return TraceServletInputStream(super.getInputStream(), byteArrayOutputStream)
+        if (servletInputStream == null) {
+            servletInputStream =
+                TraceServletInputStream(super.getInputStream(), byteArrayOutputStream)
+        }
+        return servletInputStream!!
     }
 
     override fun getReader(): BufferedReader {
-        return TraceBufferedReader(super.getReader(), byteArrayOutputStream)
+        return BufferedReader(InputStreamReader(inputStream))
     }
 
     override fun getCharacterEncoding(): String {
-        return super.getCharacterEncoding() ?: "UTF-8"
+        return super.getCharacterEncoding() ?: WebUtils.DEFAULT_CHARACTER_ENCODING
     }
 }

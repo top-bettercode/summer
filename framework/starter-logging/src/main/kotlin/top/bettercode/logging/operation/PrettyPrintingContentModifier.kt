@@ -125,7 +125,8 @@ object PrettyPrintingContentModifier {
         @Throws(IOException::class)
         override fun prettyPrint(content: ByteArray): ByteArray {
             StringUtil.OBJECT_MAPPER.readTree(content)
-            return JsonUtils.prettyPrint(String(content)).toByteArray()
+            return JsonUtils.prettyPrint(String(content).split("\n").joinToString("") { it.trim() })
+                .toByteArray()
         }
 
     }

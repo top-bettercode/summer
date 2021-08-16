@@ -54,14 +54,6 @@ class TraceServletOutputStream(private val delegate: ServletOutputStream, privat
     }
 
     //--------------------------------------------
-    override fun equals(other: Any?): Boolean {
-        return delegate == other
-    }
-
-    override fun hashCode(): Int {
-        return delegate.hashCode()
-    }
-
     override fun toString(): String {
         return delegate.toString()
     }
