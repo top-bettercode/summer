@@ -213,33 +213,35 @@ class DistPlugin : Plugin<Project> {
                 it.destinationDirectory.set(createTask.outputDirectory.parentFile)
             }
 
-            project.tasks.create("windowsServiceUpdate") {
-                it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
-                val createTask =
-                    project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
-                it.group = createTask.group
-                it.doLast {
-                    val updateDir = File(createTask.outputDirectory.parentFile, "update")
-                    require(dist.windowsServiceOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                    compareUpdate(
-                        project,
-                        updateDir,
-                        project.file(dist.windowsServiceOldPath),
-                        createTask.outputDirectory,
-                        true
-                    )
+            if (dist.windowsServiceOldPath.isNotBlank()) {
+                project.tasks.create("windowsServiceUpdate") {
+                    it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
+                    val createTask =
+                        project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
+                    it.group = createTask.group
+                    it.doLast {
+                        val updateDir = File(createTask.outputDirectory.parentFile, "update")
+                        require(dist.windowsServiceOldPath.isNotBlank()) { "旧版本路径不能为空" }
+                        compareUpdate(
+                            project,
+                            updateDir,
+                            project.file(dist.windowsServiceOldPath),
+                            createTask.outputDirectory,
+                            true
+                        )
+                    }
                 }
-            }
 
-            project.tasks.create("windowsServiceUpdateZip", Zip::class.java) {
-                it.dependsOn("windowsServiceUpdate")
-                val createTask =
-                    project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
-                it.group = createTask.group
-                val updateDir = File(createTask.outputDirectory.parentFile, "update")
-                it.from(updateDir)
-                it.archiveFileName.set("${project.name}-windows-update-${project.version}.zip")
-                it.destinationDirectory.set(createTask.outputDirectory.parentFile)
+                project.tasks.create("windowsServiceUpdateZip", Zip::class.java) {
+                    it.dependsOn("windowsServiceUpdate")
+                    val createTask =
+                        project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
+                    it.group = createTask.group
+                    val updateDir = File(createTask.outputDirectory.parentFile, "update")
+                    it.from(updateDir)
+                    it.archiveFileName.set("${project.name}-windows-update-${project.version}.zip")
+                    it.destinationDirectory.set(createTask.outputDirectory.parentFile)
+                }
             }
         }
         project.afterEvaluate {
@@ -305,33 +307,35 @@ class DistPlugin : Plugin<Project> {
                     }
                     copySpec.from(File(project.buildDir, "service").absolutePath)
                 }
-                project.tasks.create("installDistUpdate") {
-                    it.dependsOn(TASK_INSTALL_NAME)
-                    val createTask = project.tasks.getByName(TASK_INSTALL_NAME)
-                    it.group = createTask.group
-                    it.doLast {
+                if (dist.distOldPath.isNotBlank()) {
+                    project.tasks.create("installDistUpdate") {
+                        it.dependsOn(TASK_INSTALL_NAME)
+                        val createTask = project.tasks.getByName(TASK_INSTALL_NAME)
+                        it.group = createTask.group
+                        it.doLast {
+                            val dest = project.file("" + project.buildDir + "/install")
+                            val updateDir = File(dest, "update")
+                            require(dist.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
+                            compareUpdate(
+                                project,
+                                updateDir,
+                                project.file(dist.distOldPath),
+                                File(dest, distribution.distributionBaseName.get()),
+                                false
+                            )
+                        }
+                    }
+
+                    project.tasks.create("installDistUpdateZip", Zip::class.java) {
+                        it.dependsOn("installDistUpdate")
+                        val createTask = project.tasks.getByName("installDistUpdate")
+                        it.group = createTask.group
                         val dest = project.file("" + project.buildDir + "/install")
                         val updateDir = File(dest, "update")
-                        require(dist.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                        compareUpdate(
-                            project,
-                            updateDir,
-                            project.file(dist.distOldPath),
-                            File(dest, distribution.distributionBaseName.get()),
-                            false
-                        )
+                        it.from(updateDir)
+                        it.archiveFileName.set("${project.name}-${project.version}-dist_update.zip")
+                        it.destinationDirectory.set(dest)
                     }
-                }
-
-                project.tasks.create("installDistUpdateZip", Zip::class.java) {
-                    it.dependsOn("installDistUpdate")
-                    val createTask = project.tasks.getByName("installDistUpdate")
-                    it.group = createTask.group
-                    val dest = project.file("" + project.buildDir + "/install")
-                    val updateDir = File(dest, "update")
-                    it.from(updateDir)
-                    it.archiveFileName.set("${project.name}-${project.version}-dist_update.zip")
-                    it.destinationDirectory.set(dest)
                 }
             }
         }
