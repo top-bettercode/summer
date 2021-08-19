@@ -3,7 +3,6 @@ package top.bettercode.simpleframework.data;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
@@ -117,8 +116,8 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, 
   }
 
 
-  public static <T> Page<T> page(List<T> list) {
-    Page<T> page = new Page<>();
+  public static <T> PageExtra<T> page(List<T> list) {
+    PageExtra<T> page = new PageExtra<>();
     page.setRecords(list);
     if (list instanceof PaginationList) {
       Pagination pagination = ((PaginationList<?>) list).getPagination();

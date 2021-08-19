@@ -1,8 +1,9 @@
 package top.bettercode.simpleframework.data;
 
-import top.bettercode.simpleframework.web.BaseController;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
+import top.bettercode.simpleframework.web.BaseController;
 
 /**
  * @author Peter Wu
@@ -15,7 +16,12 @@ public class PageController extends BaseController {
    * @return 200 ResponseEntity
    */
   protected <T> ResponseEntity<?> page(List<T> list) {
-    return ok(BaseServiceImpl.page(list));
+    return ok(of(list));
+  }
+
+  @NotNull
+  protected <T> PageExtra<T> of(List<T> list) {
+    return BaseServiceImpl.page(list);
   }
 
   @Override

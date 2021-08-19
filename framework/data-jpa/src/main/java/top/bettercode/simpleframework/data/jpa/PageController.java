@@ -1,13 +1,13 @@
 package top.bettercode.simpleframework.data.jpa;
 
-import top.bettercode.simpleframework.web.BaseController;
-import top.bettercode.simpleframework.web.PagedResources;
-import top.bettercode.simpleframework.web.PagedResources.PageMetadata;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import top.bettercode.simpleframework.web.BaseController;
+import top.bettercode.simpleframework.web.PagedResources;
+import top.bettercode.simpleframework.web.PagedResources.PageMetadata;
 
 /**
  * @author Peter Wu
@@ -40,14 +40,19 @@ public class PageController extends BaseController {
     }
   }
 
-  private ResponseEntity<?> page(Page<?> object) {
+  protected <T> PagedResources<T> of(Page<T> object) {
     int number =
         properties.getPageable().isOneIndexedParameters() ? object.getNumber() + 1
             : object.getNumber();
-    return super.ok(new PagedResources<>(object.getContent(),
+    return new PagedResources<>(object.getContent(),
         new PageMetadata(object.getSize(), number,
             object.getTotalElements(), object
-            .getTotalPages())));
+            .getTotalPages()));
+  }
+
+
+  private ResponseEntity<?> page(Page<?> object) {
+    return super.ok(of(object));
   }
 
 }

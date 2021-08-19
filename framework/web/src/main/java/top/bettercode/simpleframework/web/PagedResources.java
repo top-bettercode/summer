@@ -1,8 +1,12 @@
 package top.bettercode.simpleframework.web;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.springframework.util.Assert;
 
@@ -12,6 +16,13 @@ public class PagedResources<T> {
 
   private PageMetadata metadata;
 
+  @JsonAnyGetter
+  private Map<String, Object> extra = new HashMap<>();
+
+  @JsonView(Object.class)
+  @JsonUnwrapped
+  private Object extraPOJO;
+
   public PagedResources() {
   }
 
@@ -20,6 +31,17 @@ public class PagedResources<T> {
     this.content = content;
     this.metadata = metadata;
   }
+
+  public PagedResources<T> extra(String key, Object value) {
+    this.extra.put(key, value);
+    return this;
+  }
+
+  public PagedResources<T> extraPOJO(Object POJO) {
+    this.extraPOJO = POJO;
+    return this;
+  }
+
 
   @JsonView(Object.class)
   public Collection<T> getContent() {
@@ -37,6 +59,22 @@ public class PagedResources<T> {
 
   public void setPage(PageMetadata metadata) {
     this.metadata = metadata;
+  }
+
+  public Map<String, Object> getExtra() {
+    return extra;
+  }
+
+  public void setExtra(Map<String, Object> extra) {
+    this.extra = extra;
+  }
+
+  public Object getExtraPOJO() {
+    return extraPOJO;
+  }
+
+  public void setExtraPOJO(Object extraPOJO) {
+    this.extraPOJO = extraPOJO;
   }
 
   public static class PageMetadata {
