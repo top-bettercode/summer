@@ -16,11 +16,8 @@ public class PagedResources<T> {
 
   private PageMetadata metadata;
 
-  @JsonAnyGetter
   private Map<String, Object> extra = new HashMap<>();
 
-  @JsonView(Object.class)
-  @JsonUnwrapped
   private Object extraPOJO;
 
   public PagedResources() {
@@ -61,6 +58,7 @@ public class PagedResources<T> {
     this.metadata = metadata;
   }
 
+  @JsonAnyGetter
   public Map<String, Object> getExtra() {
     return extra;
   }
@@ -69,6 +67,8 @@ public class PagedResources<T> {
     this.extra = extra;
   }
 
+  @JsonView(Object.class)
+  @JsonUnwrapped
   public Object getExtraPOJO() {
     return extraPOJO;
   }
