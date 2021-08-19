@@ -14,11 +14,8 @@ public class PageExtra<T> extends Page<T> {
 
   private static final long serialVersionUID = -8674517568275448549L;
 
-  @JsonAnyGetter
   private Map<String, Object> extra = new HashMap<>();
 
-  @JsonView(Object.class)
-  @JsonUnwrapped
   private Object extraPOJO;
 
   public PageExtra<T> extra(String key, Object value) {
@@ -31,6 +28,7 @@ public class PageExtra<T> extends Page<T> {
     return this;
   }
 
+  @JsonAnyGetter
   public Map<String, Object> getExtra() {
     return extra;
   }
@@ -39,6 +37,8 @@ public class PageExtra<T> extends Page<T> {
     this.extra = extra;
   }
 
+  @JsonView(Object.class)
+  @JsonUnwrapped
   public Object getExtraPOJO() {
     return extraPOJO;
   }
