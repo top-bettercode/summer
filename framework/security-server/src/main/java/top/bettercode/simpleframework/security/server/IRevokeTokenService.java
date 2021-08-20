@@ -5,5 +5,5 @@ package top.bettercode.simpleframework.security.server;
  */
 public interface IRevokeTokenService {
 
-  void revokeToken(Object principal, String access_token);
+  void revokeToken(Object principal);
 }

@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.config;
 
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -63,6 +64,15 @@ public class WebProperties {
 
   //--------------------------------------------
   public Boolean wrapEnable(NativeWebRequest request) {
+    String wrapResponse = request.getHeader(wrapName);
+    if (StringUtils.hasText(wrapResponse)) {
+      return "true".equals(wrapResponse);
+    } else {
+      return wrapEnable;
+    }
+  }
+
+  public Boolean wrapEnable(HttpServletRequest request) {
     String wrapResponse = request.getHeader(wrapName);
     if (StringUtils.hasText(wrapResponse)) {
       return "true".equals(wrapResponse);

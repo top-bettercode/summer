@@ -11,7 +11,7 @@ summer:
       - error
       - warn
     request:
-      include-path: /oauth/*
+      include-path: /oauth/*,/oauth2/*
       include-request-body: true
       include-response-body: true
 

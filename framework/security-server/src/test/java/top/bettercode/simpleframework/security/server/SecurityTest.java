@@ -2,8 +2,6 @@ package top.bettercode.simpleframework.security.server;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import top.bettercode.simpleframework.security.impl.TestApplication;
-import top.bettercode.simpleframework.web.RespEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import java.util.Set;
@@ -18,12 +16,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
-import org.springframework.security.oauth2.provider.ClientDetails;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import top.bettercode.simpleframework.security.ClientDetailsProperties;
+import top.bettercode.simpleframework.security.impl.TestApplication;
+import top.bettercode.simpleframework.web.RespEntity;
 
 /**
  * @author Peter Wu
@@ -33,9 +33,8 @@ import org.springframework.util.MultiValueMap;
 @SpringBootTest(classes = TestApplication.class, webEnvironment = RANDOM_PORT)
 public class SecurityTest {
 
-  @Deprecated
   @Autowired
-  ClientDetails clientDetails;
+  ClientDetailsProperties clientDetails;
   @Autowired
   TestRestTemplate restTemplate;
   TestRestTemplate clientRestTemplate;
@@ -50,9 +49,8 @@ public class SecurityTest {
         clientDetails.getClientSecret());
   }
 
-  @Deprecated
   @NotNull
-  private DefaultOAuth2AccessToken getAccessToken() throws Exception {
+  private OAuth2AccessTokenResponse getAccessToken() throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
     params.add("scope", "trust");
@@ -64,9 +62,9 @@ public class SecurityTest {
     org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
     String body = entity.getBody();
 
-    RespEntity<DefaultOAuth2AccessToken> resp = objectMapper
+    RespEntity<OAuth2AccessTokenResponse> resp = objectMapper
         .readValue(body, TypeFactory.defaultInstance().constructParametricType(
-            RespEntity.class, DefaultOAuth2AccessToken.class));
+            RespEntity.class, OAuth2AccessTokenResponse.class));
     return resp.getData();
 
   }
@@ -91,7 +89,7 @@ public class SecurityTest {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "refresh_token");
     params.add("scope", "trust");
-    params.add("refresh_token", getAccessToken().getRefreshToken().getValue());
+    params.add("refresh_token", getAccessToken().getRefreshToken().getTokenValue());
     ResponseEntity<String> entity2 = clientRestTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params), String.class);
     org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity2.getStatusCode());
@@ -100,7 +98,7 @@ public class SecurityTest {
 
   @Test
   public void revokeToken() throws Exception {
-    String accessToken = getAccessToken().getValue();
+    String accessToken = getAccessToken().getAccessToken().getTokenValue();
     ResponseEntity<String> entity2 = clientRestTemplate
         .exchange("/oauth/token?access_token=" + accessToken,
             HttpMethod.DELETE, null,

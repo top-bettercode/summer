@@ -1,8 +1,5 @@
 package top.bettercode.simpleframework.security.resource;
 
-import top.bettercode.simpleframework.config.CorsProperties;
-import top.bettercode.simpleframework.security.ClientDetailsProperties;
-import top.bettercode.simpleframework.security.server.SecurityServerConfiguration;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.function.Function;
@@ -13,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,8 +26,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
-import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
@@ -39,6 +33,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import top.bettercode.simpleframework.config.CorsProperties;
+import top.bettercode.simpleframework.security.ClientDetailsProperties;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
@@ -64,14 +60,14 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
   }
 
 
-  @Deprecated
-  @ConditionalOnMissingBean(OpaqueTokenIntrospector.class)
-  @ConditionalOnClass(SecurityServerConfiguration.class)
-  @Bean
-  public OpaqueTokenIntrospector opaqueTokenIntrospector(
-      AuthorizationServerEndpointsConfiguration configuration) {
-    return new SpringOpaqueTokenIntrospector(configuration);
-  }
+//  @Deprecated
+//  @ConditionalOnMissingBean(OpaqueTokenIntrospector.class)
+//  @ConditionalOnClass(SecurityServerConfiguration.class)
+//  @Bean
+//  public OpaqueTokenIntrospector opaqueTokenIntrospector(
+//      AuthorizationServerEndpointsConfiguration configuration) {
+//    return new SpringOpaqueTokenIntrospector(configuration);
+//  }
 
   @Override
   public void configure(HttpSecurity http) throws Exception {
@@ -125,7 +121,6 @@ public class SecurityResourceConfiguration extends WebSecurityConfigurerAdapter 
 
 
   @Configuration(proxyBeanMethods = false)
-  @EnableConfigurationProperties(ClientDetailsProperties.class)
   @ConditionalOnWebApplication
   protected static class AccessDecisionManagerConfiguration implements WebMvcConfigurer {
 

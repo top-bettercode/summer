@@ -2,7 +2,6 @@ package top.bettercode.simpleframework.security.server;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import top.bettercode.simpleframework.security.impl.TestApplication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,10 +11,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import top.bettercode.simpleframework.security.ClientDetailsProperties;
+import top.bettercode.simpleframework.security.impl.TestApplication;
 
 /**
  * @author Peter Wu
@@ -27,9 +27,8 @@ import org.springframework.util.MultiValueMap;
 }, webEnvironment = RANDOM_PORT)
 public class SecurityErrorTest {
 
-  @Deprecated
   @Autowired
-  ClientDetails clientDetails;
+  ClientDetailsProperties clientDetails;
   @Autowired
   TestRestTemplate restTemplate;
   TestRestTemplate clientRestTemplate;

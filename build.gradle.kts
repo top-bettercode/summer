@@ -72,6 +72,7 @@ allprojects {
             dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
             dependency("org.springframework.cloud:spring-cloud-starter-config:3.0.3")
+            dependency("org.springframework.security:spring-security-oauth2-authorization-server:0.2.0")
             dependency("org.springframework.security:spring-security-rsa:1.0.10.RELEASE")
 
             dependency("top.bettercode.wechat:weixin-mp:0.9.8-SNAPSHOT")
