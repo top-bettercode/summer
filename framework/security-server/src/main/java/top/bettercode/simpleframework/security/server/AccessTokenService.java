@@ -59,7 +59,6 @@ public class AccessTokenService {
         null, null, null, null);
     OAuth2Authentication auth2Authentication = new OAuth2Authentication(request,
         new UsernamePasswordAuthenticationToken(userDetails, "N/A", userDetails.getAuthorities()));
-    SecurityContextHolder.getContext().setAuthentication(auth2Authentication);
     return authorizationServerTokenServices.createAccessToken(auth2Authentication);
   }
 
