@@ -1,8 +1,5 @@
 package top.bettercode.simpleframework.security.authorization;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.sql.Types;
 import javax.sql.DataSource;
 import org.jetbrains.annotations.Nullable;
@@ -15,9 +12,9 @@ import org.springframework.util.Assert;
 import top.bettercode.simpleframework.security.ApiAuthenticationToken;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 
-public class JdbcRedisAuthorizationService implements ApiAuthorizationService {
+public class JdbcApiAuthorizationService implements ApiAuthorizationService {
 
-  private final Logger log = LoggerFactory.getLogger(JdbcRedisAuthorizationService.class);
+  private final Logger log = LoggerFactory.getLogger(JdbcApiAuthorizationService.class);
 
   private static final String DEFAULT_INSERT_STATEMENT = "insert into api_token (prefix, id, access_token, refresh_token, authentication) values (?, ?, ?, ?, ?)";
 
@@ -30,15 +27,14 @@ public class JdbcRedisAuthorizationService implements ApiAuthorizationService {
 
   private final String prefix;
 
-  private final ObjectMapper objectMapper;
+  private final JdkSerializationSerializer jdkSerializationSerializer = new JdkSerializationSerializer();
 
   private final JdbcTemplate jdbcTemplate;
 
-  public JdbcRedisAuthorizationService(DataSource dataSource,
-      ObjectMapper objectMapper, ApiSecurityProperties securityProperties) {
+  public JdbcApiAuthorizationService(DataSource dataSource,
+      ApiSecurityProperties securityProperties) {
     Assert.notNull(dataSource, "DataSource required");
     this.jdbcTemplate = new JdbcTemplate(dataSource);
-    this.objectMapper = objectMapper;
     this.prefix = securityProperties.getApiTokenSavePrefix();
   }
 
@@ -48,12 +44,7 @@ public class JdbcRedisAuthorizationService implements ApiAuthorizationService {
     remove(id);
     String accessToken = authorization.getAccessToken().getTokenValue();
     String refreshToken = authorization.getRefreshToken().getTokenValue();
-    byte[] auth;
-    try {
-      auth = objectMapper.writeValueAsBytes(authorization);
-    } catch (JsonProcessingException e) {
-      throw new IllegalArgumentException(e);
-    }
+    byte[] auth = jdkSerializationSerializer.serialize(authorization);
     jdbcTemplate.update(DEFAULT_INSERT_STATEMENT,
         new Object[]{prefix, id, accessToken, refreshToken, new SqlLobValue(auth)}, new int[]{
             Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB});
@@ -81,12 +72,12 @@ public class JdbcRedisAuthorizationService implements ApiAuthorizationService {
       return jdbcTemplate.queryForObject(selectStatement,
           (rs, rowNum) -> {
             byte[] bytes = rs.getBytes(1);
-            if (RedisAuthorizationService.isEmpty(bytes)) {
+            if (JdkSerializationSerializer.isEmpty(bytes)) {
               return null;
             }
             try {
-              return objectMapper.readValue(bytes, ApiAuthenticationToken.class);
-            } catch (IOException e) {
+              return (ApiAuthenticationToken) jdkSerializationSerializer.deserialize(bytes);
+            } catch (Exception e) {
               log.error("apiToken反序列化失败", e);
               return null;
             }

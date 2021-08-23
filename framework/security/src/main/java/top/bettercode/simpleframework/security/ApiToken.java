@@ -5,7 +5,7 @@ import java.time.Instant;
 
 public class ApiToken implements Serializable {
 
-  private static final long serialVersionUID = 2581555221091320726L;
+  private static final long serialVersionUID = 1L;
 
   private final String tokenValue;
 
