@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import top.bettercode.autodoc.gen.Autodoc;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.security.ApiTokenResponse;
 import top.bettercode.simpleframework.security.IResourceService;
@@ -33,7 +34,6 @@ import top.bettercode.simpleframework.web.RespEntity;
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestApplication.class, properties = {
-    "summer.web.ok-enable=false",
 }, webEnvironment = RANDOM_PORT)
 public class SecurityTest {
 
@@ -48,6 +48,7 @@ public class SecurityTest {
 
   @BeforeEach
   public void setUp() {
+    Autodoc.setCollectionName("登录授权");
   }
 
   @NotNull
@@ -71,8 +72,11 @@ public class SecurityTest {
 
   @Test
   public void accessToken() throws Exception {
+    Autodoc.setDescription("");
+    Autodoc.setName("获取accessToken");
+    Autodoc.requiredParameters("grant_type", "scope", "username", "password");
     ApiTokenResponse accessToken = getAccessToken();
-    System.err.println(StringUtil.valueOf(accessToken,true));
+    System.err.println(StringUtil.valueOf(accessToken, true));
     org.junit.jupiter.api.Assertions.assertNotNull(accessToken);
   }
 
@@ -81,10 +85,14 @@ public class SecurityTest {
    */
   @Test
   public void refreshToken() throws Exception {
+    Autodoc.disable();
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "refresh_token");
     params.add("scope", "trust");
     params.add("refresh_token", getAccessToken().getRefresh_token());
+    Autodoc.enable();
+    Autodoc.setName("刷新accessToken");
+    Autodoc.requiredParameters("grant_type", "scope", "refresh_token");
     ResponseEntity<String> entity2 = restTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params), String.class);
     assertEquals(HttpStatus.OK, entity2.getStatusCode());
@@ -93,7 +101,11 @@ public class SecurityTest {
 
   @Test
   public void revokeToken() throws Exception {
+    Autodoc.disable();
     String accessToken = getAccessToken().getAccess_token();
+    Autodoc.enable();
+    Autodoc.setName("撤销accessToken");
+    Autodoc.requiredParameters("access_token");
     ResponseEntity<String> entity2 = restTemplate
         .exchange("/oauth/token?access_token=" + accessToken,
             HttpMethod.DELETE, null,

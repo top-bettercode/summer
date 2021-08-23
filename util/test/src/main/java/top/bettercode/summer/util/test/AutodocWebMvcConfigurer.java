@@ -16,19 +16,19 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.bettercode.autodoc.gen.Autodoc;
 import top.bettercode.logging.AnnotatedUtils;
-import top.bettercode.simpleframework.security.resource.Anonymous;
-import top.bettercode.simpleframework.security.resource.SecurityProperties;
+import top.bettercode.simpleframework.security.Anonymous;
+import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 
 @ConditionalOnClass(Anonymous.class)
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(SecurityProperties.class)
+@EnableConfigurationProperties(ApiSecurityProperties.class)
 public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequestHandler {
 
 
-  private final SecurityProperties securityProperties;
+  private final ApiSecurityProperties securityProperties;
 
   public AutodocWebMvcConfigurer(
-      SecurityProperties securityProperties) {
+      ApiSecurityProperties securityProperties) {
     this.securityProperties = securityProperties;
   }
 

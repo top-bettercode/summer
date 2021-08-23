@@ -50,12 +50,6 @@ spring:
     hikari:
       connection-timeout: 60000
 
-security:
-  oauth2:
-    client:
-      scope: trust
-      authorized-grant-types: password,refresh_token
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
