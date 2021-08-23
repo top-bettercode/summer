@@ -3,10 +3,6 @@ package top.bettercode.summer.util.test;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import top.bettercode.autodoc.gen.Autodoc;
-import top.bettercode.autodoc.gen.AutodocSetting;
-import top.bettercode.logging.RequestLoggingFilter;
-import top.bettercode.logging.RequestLoggingProperties;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +20,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.context.WebApplicationContext;
+import top.bettercode.autodoc.gen.Autodoc;
+import top.bettercode.autodoc.gen.AutodocSetting;
+import top.bettercode.logging.RequestLoggingFilter;
+import top.bettercode.logging.RequestLoggingProperties;
 
 /**
  * mockMvc 基础测试类
@@ -33,12 +33,11 @@ import org.springframework.web.context.WebApplicationContext;
 @ExtendWith(value = {SpringExtension.class, AutodocSetting.class})
 @SpringBootTest(properties = {
     "spring.autoconfigure.exclude="
-        + "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClientAutoConfiguration,"
-        + "org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration,"
+        + "top.bettercode.simpleframework.security.config.ApiSecurityConfiguration,"
         + "top.bettercode.simpleframework.security.server.AuthorizationServerConfiguration,"
         + "top.bettercode.simpleframework.security.server.SecurityServerConfiguration,"
         + "top.bettercode.simpleframework.security.server.KeyStoreConfiguration,"
-        + "top.bettercode.config.WritableEnvironmentEndpointAutoConfiguration,"
+        + "top.bettercode.environment.WritableEnvironmentEndpointAutoConfiguration,"
         + "top.bettercode.simpleframework.security.resource.SecurityResourceConfiguration,"
         + "top.bettercode.simpleframework.config.CorsConfiguration,"
         + "top.bettercode.logging.websocket.WebsocketConfiguration,"

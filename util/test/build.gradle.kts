@@ -7,9 +7,8 @@ dependencies {
     api(project(":util:autodoc-gen"))
     api("org.springframework.boot:spring-boot-starter-test")
 
-    compileOnly(project(":framework:security-resource"))
+    compileOnly(project(":framework:security"))
 
-    testImplementation(project(":framework:security-resource"))
-    testImplementation(project(":framework:security-server"))
+    testImplementation(project(":framework:security"))
 }
 

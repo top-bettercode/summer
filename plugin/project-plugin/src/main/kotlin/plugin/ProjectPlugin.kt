@@ -173,8 +173,7 @@ class ProjectPlugin : Plugin<Project> {
                         dependency("top.bettercode.summer:web:$summerVersion")
                         dependency("top.bettercode.summer:data-jpa:$summerVersion")
                         dependency("top.bettercode.summer:data-mybatis:$summerVersion")
-                        dependency("top.bettercode.summer:security-server:$summerVersion")
-                        dependency("top.bettercode.summer:security-resource:$summerVersion")
+                        dependency("top.bettercode.summer:security:$summerVersion")
 
                         dependency("top.bettercode.summer:test:$summerVersion")
                         dependency("top.bettercode.summer:resources-processor:$summerVersion")

@@ -14,12 +14,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE
 ,properties = {
     "spring.autoconfigure.exclude="
-        + "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClientAutoConfiguration,"
-        + "org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration,"
+        + "top.bettercode.simpleframework.security.config.ApiSecurityConfiguration,"
         + "top.bettercode.simpleframework.security.server.AuthorizationServerConfiguration,"
         + "top.bettercode.simpleframework.security.server.SecurityServerConfiguration,"
         + "top.bettercode.simpleframework.security.server.KeyStoreConfiguration,"
-        + "top.bettercode.config.WritableEnvironmentEndpointAutoConfiguration,"
+        + "top.bettercode.environment.WritableEnvironmentEndpointAutoConfiguration,"
         + "top.bettercode.simpleframework.security.resource.SecurityResourceConfiguration,"
         + "top.bettercode.simpleframework.config.CorsConfiguration,"
         + "top.bettercode.logging.websocket.WebsocketConfiguration,"
