@@ -55,7 +55,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       ApiSecurityProperties apiSecurityProperties,
       ObjectMapper objectMapper) {
     this(apiAuthorizationService, authenticationManager, DEFAULT_TOKEN_ENDPOINT_URI,
-         apiTokenBuilder, summerWebProperties, apiSecurityProperties,
+        apiTokenBuilder, summerWebProperties, apiSecurityProperties,
         revokeTokenService, objectMapper);
   }
 
@@ -104,7 +104,9 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
           SecurityContextHolder.setContext(context);
           UserInfoHelper.put(request, userDetails);
           if (this.revokeTokenEndpointMatcher.matches(request)) {
-            revokeTokenService.revokeToken(userDetails);
+            if (revokeTokenService != null) {
+              revokeTokenService.revokeToken(userDetails);
+            }
             apiAuthorizationService.remove(apiAuthenticationToken);
             SecurityContextHolder.clearContext();
             if (summerWebProperties.okEnable(request)) {
@@ -157,7 +159,8 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
           apiAuthenticationToken = apiAuthorizationService.findByRefreshToken(
               refreshToken);
 
-          if (apiAuthenticationToken == null || apiAuthenticationToken.getRefreshToken().isExpired()) {
+          if (apiAuthenticationToken == null || apiAuthenticationToken.getRefreshToken()
+              .isExpired()) {
             throw new UnauthorizedException("请重新登录");
           }
 

@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public class ApiAuthenticationToken implements Serializable {
 
-  private static final long serialVersionUID = -6193857647931135747L;
+  private static final long serialVersionUID = 1L;
 
   private String scope;
 
