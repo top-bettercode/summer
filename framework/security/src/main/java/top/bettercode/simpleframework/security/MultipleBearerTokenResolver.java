@@ -1,16 +1,13 @@
-package top.bettercode.simpleframework.security.resource;
+package top.bettercode.simpleframework.security;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.server.resource.BearerTokenError;
-import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
-import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-public class MultipleBearerTokenResolver implements BearerTokenResolver {
+public class MultipleBearerTokenResolver {
 
   private static final Pattern authorizationPattern = Pattern
       .compile("^Bearer (?<token>[a-zA-Z0-9-._~+/]+=*)$",
@@ -22,13 +19,13 @@ public class MultipleBearerTokenResolver implements BearerTokenResolver {
 
   private String bearerTokenHeaderName = HttpHeaders.AUTHORIZATION;
 
-  @Override
   public String resolve(HttpServletRequest request) {
     String authorizationHeaderToken = resolveFromAuthorizationHeader(request);
     if (authorizationHeaderToken != null) {
       return authorizationHeaderToken;
+    } else {
+      return resolveFromRequestParameters(request);
     }
-    return resolveFromRequestParameters(request);
   }
 
   /**
@@ -74,10 +71,7 @@ public class MultipleBearerTokenResolver implements BearerTokenResolver {
       return null;
     }
     Matcher matcher = authorizationPattern.matcher(authorization);
-    if (!matcher.matches()) {
-      BearerTokenError error = BearerTokenErrors.invalidToken("Bearer token is malformed");
-      throw new OAuth2AuthenticationException(error);
-    }
+    Assert.isTrue(matcher.matches(), "Bearer token is malformed");
     return matcher.group("token");
   }
 
@@ -86,12 +80,7 @@ public class MultipleBearerTokenResolver implements BearerTokenResolver {
     if (values == null || values.length == 0) {
       return null;
     }
-    if (values.length == 1) {
-      return values[0];
-    }
-    BearerTokenError error = BearerTokenErrors
-        .invalidRequest("Found multiple bearer tokens in the request");
-    throw new OAuth2AuthenticationException(error);
+    return values[0];
   }
 
   private boolean isParameterTokenSupportedForRequest(HttpServletRequest request) {

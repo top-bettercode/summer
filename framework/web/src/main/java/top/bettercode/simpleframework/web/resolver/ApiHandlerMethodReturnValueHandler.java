@@ -1,6 +1,6 @@
 package top.bettercode.simpleframework.web.resolver;
 
-import top.bettercode.simpleframework.config.WebProperties;
+import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.web.IRespEntity;
 import top.bettercode.simpleframework.web.RespEntity;
 import top.bettercode.simpleframework.web.error.ErrorAttributes;
@@ -24,14 +24,14 @@ public class ApiHandlerMethodReturnValueHandler implements HandlerMethodReturnVa
 
 
   private final HandlerMethodReturnValueHandler delegate;
-  private final WebProperties webProperties;
+  private final SummerWebProperties summerWebProperties;
   private final ErrorAttributes errorAttributes;
 
   public ApiHandlerMethodReturnValueHandler(
       HandlerMethodReturnValueHandler delegate,
-      WebProperties webProperties, ErrorAttributes errorAttributes) {
+      SummerWebProperties summerWebProperties, ErrorAttributes errorAttributes) {
     this.delegate = delegate;
-    this.webProperties = webProperties;
+    this.summerWebProperties = summerWebProperties;
     this.errorAttributes = errorAttributes;
   }
 
@@ -79,7 +79,7 @@ public class ApiHandlerMethodReturnValueHandler implements HandlerMethodReturnVa
         }
       }
 
-      if (webProperties.wrapEnable(webRequest) && (!(returnValue instanceof IRespEntity || (
+      if (summerWebProperties.wrapEnable(webRequest) && (!(returnValue instanceof IRespEntity || (
           returnValue instanceof HttpEntity && ((HttpEntity<?>) returnValue)
               .getBody() instanceof IRespEntity)))
           && supportsRewrapType(returnType)) {
@@ -94,7 +94,7 @@ public class ApiHandlerMethodReturnValueHandler implements HandlerMethodReturnVa
         }
       }
 
-      if (webProperties.okEnable(webRequest)) {
+      if (summerWebProperties.okEnable(webRequest)) {
         webRequest.getNativeResponse(HttpServletResponse.class).setStatus(HttpStatus.OK.value());
         if (returnValue instanceof ResponseEntity) {
           int statusCode = ((ResponseEntity<?>) returnValue).getStatusCode().value();

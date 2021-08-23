@@ -1,17 +1,17 @@
 package top.bettercode.simpleframework.security.impl;
 
-import top.bettercode.simpleframework.security.server.DefaultAuthority;
-import top.bettercode.simpleframework.security.server.IllegalUserException;
 import java.util.Collection;
 import java.util.Collections;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import top.bettercode.simpleframework.security.AdditionalUserDetails;
+import top.bettercode.simpleframework.security.DefaultAuthority;
+import top.bettercode.simpleframework.security.IllegalUserException;
 
 /**
  * 自定义UserDetailsService
@@ -32,8 +32,11 @@ public class ResourceCustomUserDetailsService implements UserDetailsService {
     if ("disableUsername".equals(username)) {
       throw new IllegalUserException("帐户已禁用");
     }
-    return new User(username, DigestUtils.md5DigestAsHex("123456".getBytes()),
+    AdditionalUserDetails additionalUserDetails = new AdditionalUserDetails(username,
+        DigestUtils.md5DigestAsHex("123456".getBytes()),
         getAuthorities(username));
+    additionalUserDetails.put("key","value");
+    return additionalUserDetails;
   }
 
   public Collection<? extends GrantedAuthority> getAuthorities(String username) {

@@ -3,7 +3,7 @@ package top.bettercode.autodoc.gen
 import top.bettercode.api.sign.ApiSignProperties
 import top.bettercode.logging.RequestLoggingConfiguration
 import top.bettercode.logging.RequestLoggingProperties
-import top.bettercode.simpleframework.config.WebProperties
+import top.bettercode.simpleframework.config.SummerWebProperties
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct
  * @author Peter Wu
  */
 @ConditionalOnProperty(prefix = "summer.autodoc.gen", name = ["enable"], havingValue = "true")
-@EnableConfigurationProperties(GenProperties::class, ApiSignProperties::class, WebProperties::class)
+@EnableConfigurationProperties(GenProperties::class, ApiSignProperties::class, SummerWebProperties::class)
 @Configuration(proxyBeanMethods = false)
 @ImportAutoConfiguration(RequestLoggingConfiguration::class)
 class AutodocConfiguration {
@@ -58,9 +58,9 @@ class AutodocConfiguration {
     @Bean
     fun autodocHandler(
         signProperties: ApiSignProperties,
-        webProperties: WebProperties
+        summerWebProperties: SummerWebProperties
     ): AutodocHandler {
-        return AutodocHandler(genProperties, signProperties, webProperties)
+        return AutodocHandler(genProperties, signProperties, summerWebProperties)
     }
 
 }

@@ -2,7 +2,7 @@ package top.bettercode.simpleframework.web.error;
 
 import top.bettercode.lang.property.PropertiesSource;
 import top.bettercode.lang.property.Settings;
-import top.bettercode.simpleframework.config.WebProperties;
+import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.web.IRespEntity;
 import top.bettercode.simpleframework.web.RespEntity;
 import java.io.PrintWriter;
@@ -44,18 +44,18 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   private final MessageSource messageSource;
   private final List<IErrorHandler> errorHandlers;
   private final IErrorRespEntityHandler errorRespEntityHandler;
-  private final WebProperties webProperties;
+  private final SummerWebProperties summerWebProperties;
   private static final PropertiesSource propertiesSource = Settings.getExceptionHandle();
 
   public ErrorAttributes(ErrorProperties errorProperties,
       List<IErrorHandler> errorHandlers,
       IErrorRespEntityHandler errorRespEntityHandler,
-      MessageSource messageSource, WebProperties webProperties) {
+      MessageSource messageSource, SummerWebProperties summerWebProperties) {
     this.errorProperties = errorProperties;
     this.errorHandlers = errorHandlers;
     this.errorRespEntityHandler = errorRespEntityHandler;
     this.messageSource = messageSource;
-    this.webProperties = webProperties;
+    this.summerWebProperties = summerWebProperties;
   }
 
   @Override
@@ -82,7 +82,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
       if (errorHandlers != null) {
         for (IErrorHandler errorHandler : errorHandlers) {
           errorHandler.handlerException(error, respEntity, errors,
-              webProperties.getConstraintViolationSeparator());
+              summerWebProperties.getConstraintViolationSeparator());
         }
       }
 

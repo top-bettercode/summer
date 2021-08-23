@@ -10,7 +10,7 @@ import top.bettercode.autodoc.core.operation.DocOperationResponse
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.logging.RequestLoggingHandler
 import top.bettercode.logging.operation.Operation
-import top.bettercode.simpleframework.config.WebProperties
+import top.bettercode.simpleframework.config.SummerWebProperties
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -31,7 +31,7 @@ import javax.annotation.PreDestroy
 class AutodocHandler(
     private val genProperties: GenProperties,
     private val signProperties: ApiSignProperties,
-    private val webProperties: WebProperties
+    private val summerWebProperties: SummerWebProperties
 ) : RequestLoggingHandler {
 
     private val log: Logger = LoggerFactory.getLogger(AutodocHandler::class.java)
@@ -190,7 +190,7 @@ class AutodocHandler(
                     docOperation,
                     extension,
                     genProperties.allTables,
-                    webProperties.wrapEnable,
+                    summerWebProperties.wrapEnable,
                     defaultValueHeaders,
                     defaultValueParams
                 )

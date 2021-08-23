@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.config;
 
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -8,7 +9,7 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.web")
-public class WebProperties {
+public class SummerWebProperties {
 
   /**
    * 项目名称.
@@ -71,6 +72,17 @@ public class WebProperties {
     }
   }
 
+
+  public boolean wrapEnable(HttpServletRequest request) {
+    String wrapResponse = request.getHeader(wrapName);
+    if (StringUtils.hasText(wrapResponse)) {
+      return "true".equals(wrapResponse);
+    } else {
+      return wrapEnable;
+    }
+  }
+
+
   public Boolean okEnable(NativeWebRequest request) {
     String okResponse = request.getHeader(okName);
     if (StringUtils.hasText(okResponse)) {
@@ -80,6 +92,14 @@ public class WebProperties {
     }
   }
 
+  public boolean okEnable(HttpServletRequest request) {
+    String okResponse = request.getHeader(okName);
+    if (StringUtils.hasText(okResponse)) {
+      return "true".equals(okResponse);
+    } else {
+      return okEnable;
+    }
+  }
   //--------------------------------------------
 
 
@@ -170,4 +190,6 @@ public class WebProperties {
   public void setConstraintViolationSeparator(String constraintViolationSeparator) {
     this.constraintViolationSeparator = constraintViolationSeparator;
   }
+
+
 }
