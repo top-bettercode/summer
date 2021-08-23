@@ -89,19 +89,19 @@ import top.bettercode.simpleframework.web.serializer.MixIn;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
-@EnableConfigurationProperties({WebProperties.class, JacksonExtProperties.class})
+@EnableConfigurationProperties({SummerWebProperties.class, JacksonExtProperties.class})
 @AutoConfigureBefore({ErrorMvcAutoConfiguration.class, JacksonAutoConfiguration.class})
 public class FrameworkMvcConfiguration {
 
   private final Logger log = LoggerFactory.getLogger(SerializerConfiguration.class);
 
-  private final WebProperties webProperties;
+  private final SummerWebProperties summerWebProperties;
   private final JacksonExtProperties jacksonExtProperties;
 
   public FrameworkMvcConfiguration(
-      WebProperties webProperties,
+      SummerWebProperties summerWebProperties,
       JacksonExtProperties jacksonExtProperties) {
-    this.webProperties = webProperties;
+    this.summerWebProperties = summerWebProperties;
     this.jacksonExtProperties = jacksonExtProperties;
   }
 
@@ -111,7 +111,7 @@ public class FrameworkMvcConfiguration {
    */
   @Bean
   public ApiVersionFilter apiVersionFilter() {
-    return new ApiVersionFilter(webProperties);
+    return new ApiVersionFilter(summerWebProperties);
   }
 
   /*
@@ -133,7 +133,7 @@ public class FrameworkMvcConfiguration {
   @ConditionalOnMissingBean(IFormkeyService.class)
   @Bean
   public IFormkeyService formkeyService() {
-    return new FormkeyService(webProperties.getFormExpireSeconds());
+    return new FormkeyService(summerWebProperties.getFormExpireSeconds());
   }
 
   @Bean
@@ -219,7 +219,7 @@ public class FrameworkMvcConfiguration {
       MessageSource messageSource,
       ServerProperties serverProperties) {
     return new ErrorAttributes(serverProperties.getError(), errorHandlers, errorRespEntityHandler,
-        messageSource, webProperties);
+        messageSource, summerWebProperties);
   }
 
   @ConditionalOnMissingBean(ErrorController.class)
@@ -280,7 +280,7 @@ public class FrameworkMvcConfiguration {
             // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
             List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
             newHandlers
-                .add(new ApiHandlerMethodReturnValueHandler(oldHandlers, webProperties,
+                .add(new ApiHandlerMethodReturnValueHandler(oldHandlers, summerWebProperties,
                     errorAttributes));
 
             // Configure the new handler to be used
@@ -303,7 +303,7 @@ public class FrameworkMvcConfiguration {
             // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
             List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
             newHandlers
-                .add(new ApiHandlerMethodReturnValueHandler(oldHandlers, webProperties,
+                .add(new ApiHandlerMethodReturnValueHandler(oldHandlers, summerWebProperties,
                     errorAttributes));
 
             // Configure the new handler to be used

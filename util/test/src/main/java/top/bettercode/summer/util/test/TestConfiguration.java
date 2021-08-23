@@ -2,6 +2,7 @@ package top.bettercode.summer.util.test;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ public class TestConfiguration {
     return new MocTestErrorLoggingHandler(errorAttributes, webRequest);
   }
 
+  @ConditionalOnBean(ApiSignProperties.class)
   @Bean
   public AutoSignRequestHandler autoSignRequestHandler(ApiSignProperties apiSignProperties) {
     return new AutoSignRequestHandler(apiSignProperties);

@@ -22,11 +22,9 @@ spring:
       enabled: false
   autoconfigure:
     exclude:
-      - org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClientAutoConfiguration
-      - org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration
-      - top.bettercode.config.WritableEnvironmentEndpointAutoConfiguration
+      - top.bettercode.environment.WritableEnvironmentEndpointAutoConfiguration
+      - top.bettercode.config.EndpointAutoConfiguration
       - top.bettercode.logging.websocket.WebsocketConfiguration
-      - top.bettercode.logging.ActuateLoggingConfiguration
       - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketMessagingAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.amqp.RabbitHealthContributorAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.audit.AuditAutoConfiguration
