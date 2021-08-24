@@ -1,16 +1,5 @@
 package top.bettercode.autodoc.gen
 
-import top.bettercode.api.sign.ApiSignProperties
-import top.bettercode.autodoc.core.*
-import top.bettercode.autodoc.core.model.DocModule
-import top.bettercode.autodoc.core.model.Field
-import top.bettercode.autodoc.core.operation.DocOperation
-import top.bettercode.autodoc.core.operation.DocOperationRequest
-import top.bettercode.autodoc.core.operation.DocOperationResponse
-import top.bettercode.generator.GeneratorExtension
-import top.bettercode.logging.RequestLoggingHandler
-import top.bettercode.logging.operation.Operation
-import top.bettercode.simpleframework.config.SummerWebProperties
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,6 +8,20 @@ import org.springframework.http.MediaType
 import org.springframework.util.StreamUtils
 import org.springframework.web.bind.annotation.ValueConstants
 import org.springframework.web.method.HandlerMethod
+import top.bettercode.api.sign.ApiSignProperties
+import top.bettercode.autodoc.core.PostmanGenerator
+import top.bettercode.autodoc.core.Util
+import top.bettercode.autodoc.core.model.DocModule
+import top.bettercode.autodoc.core.model.Field
+import top.bettercode.autodoc.core.operation.DocOperation
+import top.bettercode.autodoc.core.operation.DocOperationRequest
+import top.bettercode.autodoc.core.operation.DocOperationResponse
+import top.bettercode.autodoc.core.singleValueMap
+import top.bettercode.autodoc.core.toMap
+import top.bettercode.generator.GeneratorExtension
+import top.bettercode.logging.RequestLoggingHandler
+import top.bettercode.logging.operation.Operation
+import top.bettercode.simpleframework.config.SummerWebProperties
 import java.io.File
 import java.net.URI
 import java.util.concurrent.ConcurrentHashMap
@@ -55,6 +58,9 @@ class AutodocHandler(
     override fun handle(operation: Operation, handler: HandlerMethod?) {
         if (Autodoc.enable) {
             try {
+                if (operation.response.stackTrace.isNotBlank() && operation.response.content.isEmpty()) {
+                    return
+                }
                 //生成相应数据
                 val projectModuleDic = File(
                     genProperties.source,
