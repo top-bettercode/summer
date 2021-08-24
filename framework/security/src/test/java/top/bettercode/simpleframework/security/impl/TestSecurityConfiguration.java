@@ -3,7 +3,6 @@ package top.bettercode.simpleframework.security.impl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import top.bettercode.lang.util.StringUtil;
@@ -26,7 +25,18 @@ public class TestSecurityConfiguration {
 
   @Bean
   public PasswordEncoder passwordEncoder() {
-    return NoOpPasswordEncoder.getInstance();
+    return new PasswordEncoder(){
+
+      @Override
+      public String encode(CharSequence rawPassword) {
+        return rawPassword.toString();
+      }
+
+      @Override
+      public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        return rawPassword.toString().equals(encodedPassword);
+      }
+    };
   }
 
 }

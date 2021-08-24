@@ -38,7 +38,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   private final AuthenticationManager authenticationManager;
   private final RequestMatcher tokenEndpointMatcher;
   private final RequestMatcher revokeTokenEndpointMatcher;
-  private final TokenBuild apiTokenBuilder;
+  private final TokenService apiTokenBuilder;
   private final SummerWebProperties summerWebProperties;
   private final ApiSecurityProperties apiSecurityProperties;
   private final IRevokeTokenService revokeTokenService;
@@ -49,7 +49,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
   public ApiTokenEndpointFilter(AuthenticationManager authenticationManager,
       ApiAuthorizationService apiAuthorizationService,
-      TokenBuild apiTokenBuilder,
+      TokenService apiTokenBuilder,
       SummerWebProperties summerWebProperties,
       IRevokeTokenService revokeTokenService,
       ApiSecurityProperties apiSecurityProperties,
@@ -63,7 +63,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   public ApiTokenEndpointFilter(
       ApiAuthorizationService apiAuthorizationService,
       AuthenticationManager authenticationManager, String tokenEndpointUri,
-      TokenBuild apiTokenBuilder,
+      TokenService apiTokenBuilder,
       SummerWebProperties summerWebProperties,
       ApiSecurityProperties apiSecurityProperties,
       IRevokeTokenService revokeTokenService,

@@ -57,7 +57,7 @@ public class EntityPathWrapperArgumentResolver implements HandlerMethodArgumentR
   @SuppressWarnings("unchecked")
   private Object resolveWrapper(NativeWebRequest request, Class modelClass,
       Class<?> parameterType)
-      throws InvocationTargetException, IllegalAccessException, InstantiationException {
+      throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
     String orderBy = request.getParameter(properties.getOrderByParameter());
     String isAsc = request.getParameter(properties.getIsAscParameter());
     if (!StringUtils.hasText(isAsc)) {

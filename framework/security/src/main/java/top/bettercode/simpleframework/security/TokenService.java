@@ -13,7 +13,7 @@ import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 /**
  * @author Peter Wu
  */
-public class TokenBuild {
+public class TokenService {
 
   private static final BytesKeyGenerator DEFAULT_TOKEN_GENERATOR = KeyGenerators.secureRandom(20);
 
@@ -21,7 +21,7 @@ public class TokenBuild {
   private final ApiAuthorizationService apiAuthorizationService;
   private final ScopeUserDetailsService userDetailsService;
 
-  public TokenBuild(
+  public TokenService(
       ApiSecurityProperties apiSecurityProperties,
       ApiAuthorizationService apiAuthorizationService,
       ScopeUserDetailsService userDetailsService) {
