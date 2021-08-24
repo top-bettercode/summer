@@ -9,6 +9,7 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 import top.bettercode.simpleframework.security.ApiAuthenticationToken;
 
 public final class RedisApiAuthorizationService implements ApiAuthorizationService {
@@ -31,8 +32,16 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
   private Method redisConnectionSet_2_0;
 
   public RedisApiAuthorizationService(RedisConnectionFactory connectionFactory) {
+    this(connectionFactory, "");
+  }
+
+  public RedisApiAuthorizationService(RedisConnectionFactory connectionFactory, String prefix) {
     this.connectionFactory = connectionFactory;
-    this.keyPrefix = API_AUTH;
+    if (StringUtils.hasText(prefix)) {
+      this.keyPrefix = API_AUTH + prefix + ":";
+    } else {
+      this.keyPrefix = API_AUTH;
+    }
     if (springDataRedis_2_0) {
       this.loadRedisConnectionMethods_2_0();
     }
