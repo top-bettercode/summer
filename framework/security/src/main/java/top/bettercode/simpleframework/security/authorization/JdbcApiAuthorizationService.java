@@ -62,7 +62,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
   @Override
   public void remove(String scope, String username) {
     String id = this.app + ":" + scope + ":" + username;
-    jdbcTemplate.update(DEFAULT_DELETE_STATEMENT, app, id);
+    jdbcTemplate.update(DEFAULT_DELETE_STATEMENT, id);
   }
 
   @Override
