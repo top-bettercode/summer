@@ -23,7 +23,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import top.bettercode.autodoc.gen.Autodoc;
 import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.security.ApiTokenResponse;
+import top.bettercode.simpleframework.security.ApiToken;
 import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.impl.TestApplication;
 import top.bettercode.simpleframework.web.RespEntity;
@@ -34,6 +34,7 @@ import top.bettercode.simpleframework.web.RespEntity;
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestApplication.class, properties = {
+    "summer.web.ok-enable=false",
 }, webEnvironment = RANDOM_PORT)
 public class SecurityTest {
 
@@ -52,7 +53,7 @@ public class SecurityTest {
   }
 
   @NotNull
-  private ApiTokenResponse getAccessToken() throws Exception {
+  private ApiToken getAccessToken() throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
     params.add("scope", "trust");
@@ -64,9 +65,9 @@ public class SecurityTest {
     String body = entity.getBody();
     org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
 
-    RespEntity<ApiTokenResponse> resp = objectMapper
+    RespEntity<ApiToken> resp = objectMapper
         .readValue(body, TypeFactory.defaultInstance().constructParametricType(
-            RespEntity.class, ApiTokenResponse.class));
+            RespEntity.class, ApiToken.class));
     return resp.getData();
   }
 
@@ -75,7 +76,7 @@ public class SecurityTest {
     Autodoc.setDescription("");
     Autodoc.setName("获取accessToken");
     Autodoc.requiredParameters("grant_type", "scope", "username", "password");
-    ApiTokenResponse accessToken = getAccessToken();
+    ApiToken accessToken = getAccessToken();
     System.err.println(StringUtil.valueOf(accessToken, true));
     org.junit.jupiter.api.Assertions.assertNotNull(accessToken);
   }

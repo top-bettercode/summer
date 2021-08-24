@@ -16,16 +16,16 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
 
   private final Logger log = LoggerFactory.getLogger(JdbcApiAuthorizationService.class);
 
-  private static final String DEFAULT_INSERT_STATEMENT = "insert into api_token (prefix, id, access_token, refresh_token, authentication) values (?, ?, ?, ?, ?)";
+  private static final String DEFAULT_INSERT_STATEMENT = "insert into api_token (id, app, access_token, refresh_token, authentication) values (?, ?, ?, ?, ?)";
 
-  private static final String DEFAULT_SELECT_STATEMENT = "select authentication from api_token where prefix=? and id = ?";
+  private static final String DEFAULT_SELECT_STATEMENT = "select authentication from api_token where id=?";
 
-  private static final String DEFAULT_SELECT_BY_ACCESS_STATEMENT = "select authentication from api_token where prefix=? and access_token = ?";
-  private static final String DEFAULT_SELECT_BY_REFRESH_STATEMENT = "select authentication from api_token where prefix=? and refresh_token = ?";
+  private static final String DEFAULT_SELECT_BY_ACCESS_STATEMENT = "select authentication from api_token where app=? and access_token = ?";
+  private static final String DEFAULT_SELECT_BY_REFRESH_STATEMENT = "select authentication from api_token where app=? and refresh_token = ?";
 
-  private static final String DEFAULT_DELETE_STATEMENT = "delete from api_token where prefix=? and id = ?";
+  private static final String DEFAULT_DELETE_STATEMENT = "delete from api_token where id=?";
 
-  private final String prefix;
+  private final String app;
 
   private final JdkSerializationSerializer jdkSerializationSerializer = new JdkSerializationSerializer();
 
@@ -35,40 +35,69 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
       ApiSecurityProperties securityProperties) {
     Assert.notNull(dataSource, "DataSource required");
     this.jdbcTemplate = new JdbcTemplate(dataSource);
-    this.prefix = securityProperties.getApiTokenSavePrefix();
+    this.app = securityProperties.getApp();
   }
 
   @Override
   public void save(ApiAuthenticationToken authorization) {
-    String id = authorization.getId();
-    remove(id);
+    String scope = authorization.getScope();
+    String username = authorization.getUsername();
+    String id = this.app + ":" + scope + ":" + username;
+    remove(scope, username);
     String accessToken = authorization.getAccessToken().getTokenValue();
     String refreshToken = authorization.getRefreshToken().getTokenValue();
     byte[] auth = jdkSerializationSerializer.serialize(authorization);
     jdbcTemplate.update(DEFAULT_INSERT_STATEMENT,
-        new Object[]{prefix, id, accessToken, refreshToken, new SqlLobValue(auth)}, new int[]{
-            Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB});
+        new Object[]{id, app, accessToken, refreshToken, new SqlLobValue(auth)},
+        new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB});
   }
 
   @Override
   public void remove(ApiAuthenticationToken authorization) {
-    String id = authorization.getId();
-    jdbcTemplate.update(DEFAULT_DELETE_STATEMENT, prefix, id);
+    String scope = authorization.getScope();
+    String username = authorization.getUsername();
+    remove(scope, username);
   }
 
   @Override
-  public void remove(String id) {
-    jdbcTemplate.update(DEFAULT_DELETE_STATEMENT, prefix, id);
+  public void remove(String scope, String username) {
+    String id = this.app + ":" + scope + ":" + username;
+    jdbcTemplate.update(DEFAULT_DELETE_STATEMENT, app, id);
   }
 
   @Override
-  public ApiAuthenticationToken findById(String id) {
-    return getApiAuthenticationToken(id, DEFAULT_SELECT_STATEMENT);
+  public ApiAuthenticationToken findByScopeAndUsername(String scope, String username) {
+    String id = this.app + ":" + scope + ":" + username;
+    return getApiAuthenticationToken(0, id, DEFAULT_SELECT_STATEMENT);
   }
 
+
+  @Override
+  public ApiAuthenticationToken findByAccessToken(String accessToken) {
+    return getApiAuthenticationToken(1, accessToken, DEFAULT_SELECT_BY_ACCESS_STATEMENT);
+  }
+
+  @Override
+  public ApiAuthenticationToken findByRefreshToken(String refreshToken) {
+    return getApiAuthenticationToken(1, refreshToken, DEFAULT_SELECT_BY_REFRESH_STATEMENT);
+  }
+
+  /**
+   * @param type            0：基于id查询，1：基于token查询
+   * @param param           参数，ID/token
+   * @param selectStatement 查询语句
+   * @return 结果
+   */
   @Nullable
-  private ApiAuthenticationToken getApiAuthenticationToken(String id, String selectStatement) {
+  private ApiAuthenticationToken getApiAuthenticationToken(int type, String param,
+      String selectStatement) {
     try {
+      Object[] params;
+      if (type == 0) {
+        params = new Object[]{param};
+      } else {
+        params = new Object[]{app, param};
+      }
       return jdbcTemplate.queryForObject(selectStatement,
           (rs, rowNum) -> {
             byte[] bytes = rs.getBytes(1);
@@ -81,21 +110,10 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
               log.error("apiToken反序列化失败", e);
               return null;
             }
-          }, prefix, id);
+          }, params);
     } catch (EmptyResultDataAccessException e) {
       return null;
     }
   }
-
-  @Override
-  public ApiAuthenticationToken findByAccessToken(String accessToken) {
-    return getApiAuthenticationToken(accessToken, DEFAULT_SELECT_BY_ACCESS_STATEMENT);
-  }
-
-  @Override
-  public ApiAuthenticationToken findByRefreshToken(String refreshToken) {
-    return getApiAuthenticationToken(refreshToken, DEFAULT_SELECT_BY_REFRESH_STATEMENT);
-  }
-
 
 }

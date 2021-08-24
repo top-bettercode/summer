@@ -9,13 +9,15 @@ public interface ApiAuthorizationService {
 
   void remove(ApiAuthenticationToken authorization);
 
-  void remove(String id);
+  void remove(String scope, String username);
 
   @Nullable
-  ApiAuthenticationToken findById(String id);
+  ApiAuthenticationToken findByScopeAndUsername(String scope, String username);
 
+  @Nullable
   ApiAuthenticationToken findByAccessToken(String accessToken);
 
+  @Nullable
   ApiAuthenticationToken findByRefreshToken(String refreshToken);
 
 }

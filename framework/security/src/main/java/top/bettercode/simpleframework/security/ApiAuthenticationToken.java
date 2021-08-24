@@ -12,29 +12,29 @@ public class ApiAuthenticationToken implements Serializable {
 
   private String scope;
 
-  private ApiToken accessToken;
+  private Token accessToken;
 
-  private ApiToken refreshToken;
+  private Token refreshToken;
 
   private UserDetails userDetails;
 
   public ApiAuthenticationToken() {
   }
 
-  public ApiAuthenticationToken(String scope, ApiToken accessToken,
-      ApiToken refreshToken, UserDetails userDetails) {
+  public ApiAuthenticationToken(String scope, Token accessToken,
+      Token refreshToken, UserDetails userDetails) {
     this.scope = scope;
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     this.userDetails = userDetails;
   }
 
-  public String getId() {
+  public String getUsername() {
     return userDetails.getUsername();
   }
 
-  public ApiTokenResponse tokenResponse(){
-    return new ApiTokenResponse(this);
+  public ApiToken toApiToken(){
+    return new ApiToken(this);
   }
 
   //--------------------------------------------
@@ -47,19 +47,19 @@ public class ApiAuthenticationToken implements Serializable {
     this.scope = scope;
   }
 
-  public ApiToken getAccessToken() {
+  public Token getAccessToken() {
     return accessToken;
   }
 
-  public void setAccessToken(ApiToken accessToken) {
+  public void setAccessToken(Token accessToken) {
     this.accessToken = accessToken;
   }
 
-  public ApiToken getRefreshToken() {
+  public Token getRefreshToken() {
     return refreshToken;
   }
 
-  public void setRefreshToken(ApiToken refreshToken) {
+  public void setRefreshToken(Token refreshToken) {
     this.refreshToken = refreshToken;
   }
 
