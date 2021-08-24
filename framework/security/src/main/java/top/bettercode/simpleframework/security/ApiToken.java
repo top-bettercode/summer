@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.security;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collections;
@@ -10,19 +11,24 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetails;
 
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiToken implements Serializable {
 
-  private static final long serialVersionUID = 914967629530462926L;
+  private static final long serialVersionUID = 1L;
 
-  private String token_type;
+  @JsonProperty("token_type")
+  private String tokenType;
 
-  private String access_token;
+  @JsonProperty("access_token")
+  private String accessToken;
 
   private Instant expiresAt;
 
-  private String refresh_token;
+  @JsonProperty("refresh_token")
+  private String refreshToken;
 
+  @JsonProperty("scope")
   private String scope;
 
   private Map<String, Object> additionalInformation = new HashMap<>();
@@ -34,36 +40,37 @@ public class ApiToken implements Serializable {
     Token accessToken = apiAuthenticationToken.getAccessToken();
     UserDetails userDetails = apiAuthenticationToken.getUserDetails();
 
-    this.token_type = "bearer";
-    this.access_token = accessToken.getTokenValue();
+    this.tokenType = "bearer";
+    this.accessToken = accessToken.getTokenValue();
     this.expiresAt = accessToken.getExpiresAt();
-    this.refresh_token = apiAuthenticationToken.getRefreshToken().getTokenValue();
+    this.refreshToken = apiAuthenticationToken.getRefreshToken().getTokenValue();
     this.scope = apiAuthenticationToken.getScope();
     this.additionalInformation = userDetails instanceof AdditionalUserDetails
         ? ((AdditionalUserDetails) userDetails).getAdditionalInformation()
         : Collections.emptyMap();
   }
 
-  public int getExpires_in() {
+  @JsonProperty("expires_in")
+  public int getExpiresIn() {
     return expiresAt != null ? Long.valueOf(
             (expiresAt.toEpochMilli() - System.currentTimeMillis()) / 1000L)
         .intValue() : 0;
   }
 
-  protected void setExpires_in(int delta) {
-    expiresAt = Instant.ofEpochMilli(System.currentTimeMillis() + delta);
+  protected void setExpiresIn(int delta) {
+    expiresAt = Instant.ofEpochSecond(System.currentTimeMillis() / 1000L + delta);
   }
 
-  public String getAccess_token() {
-    return access_token;
+  public String getAccessToken() {
+    return accessToken;
   }
 
-  public String getToken_type() {
-    return token_type;
+  public String getTokenType() {
+    return tokenType;
   }
 
-  public String getRefresh_token() {
-    return refresh_token;
+  public String getRefreshToken() {
+    return refreshToken;
   }
 
   public String getScope() {
@@ -75,20 +82,20 @@ public class ApiToken implements Serializable {
     return additionalInformation;
   }
 
-  public void setToken_type(String token_type) {
-    this.token_type = token_type;
+  public void setTokenType(String tokenType) {
+    this.tokenType = tokenType;
   }
 
-  public void setAccess_token(String access_token) {
-    this.access_token = access_token;
+  public void setAccessToken(String accessToken) {
+    this.accessToken = accessToken;
   }
 
   public void setExpiresAt(Instant expiresAt) {
     this.expiresAt = expiresAt;
   }
 
-  public void setRefresh_token(String refresh_token) {
-    this.refresh_token = refresh_token;
+  public void setRefreshToken(String refreshToken) {
+    this.refreshToken = refreshToken;
   }
 
   public void setScope(String scope) {

@@ -80,7 +80,7 @@ public class Security200Test {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "refresh_token");
     params.add("scope", "trust");
-    params.add("refresh_token", getAccessToken().getRefresh_token());
+    params.add("refresh_token", getAccessToken().getRefreshToken());
     ResponseEntity<String> entity2 = restTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params), String.class);
     assertEquals(HttpStatus.OK, entity2.getStatusCode());
@@ -89,7 +89,7 @@ public class Security200Test {
 
   @Test
   public void revokeToken() throws Exception {
-    String accessToken = getAccessToken().getAccess_token();
+    String accessToken = getAccessToken().getAccessToken();
     ResponseEntity<String> entity2 = restTemplate
         .exchange("/oauth/token?access_token=" + accessToken,
             HttpMethod.DELETE, null,

@@ -76,7 +76,7 @@ public class MultipleBearerTokenResolver {
   }
 
   private static String resolveFromRequestParameters(HttpServletRequest request) {
-    String[] values = request.getParameterValues("access_token");
+    String[] values = request.getParameterValues(SecurityParameterNames.ACCESS_TOKEN);
     if (values == null || values.length == 0) {
       return null;
     }
