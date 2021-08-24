@@ -138,7 +138,7 @@ public class RepositoryMetadata {
   }
 
   public EntityPathWrapper getWrapper(Class<EntityPathWrapper> parameterType)
-      throws IllegalAccessException, InstantiationException {
-    return queryDslType == null ? parameterType.newInstance() : queryDslType.newInstance();
+      throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    return queryDslType == null ? parameterType.getDeclaredConstructor().newInstance() : queryDslType.getDeclaredConstructor().newInstance();
   }
 }

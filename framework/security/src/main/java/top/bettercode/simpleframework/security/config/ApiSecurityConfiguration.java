@@ -40,7 +40,7 @@ import top.bettercode.simpleframework.security.ApiTokenEndpointFilter;
 import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.IRevokeTokenService;
 import top.bettercode.simpleframework.security.ScopeUserDetailsService;
-import top.bettercode.simpleframework.security.TokenBuild;
+import top.bettercode.simpleframework.security.TokenService;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
 import top.bettercode.simpleframework.security.UserDetailsAuthenticationProvider;
 import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
@@ -57,7 +57,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
   private final CorsProperties corsProperties;
   private final URLFilterInvocationSecurityMetadataSource securityMetadataSource;
   private final AccessDecisionManager accessDecisionManager;
-  private final TokenBuild apiTokenBuild;
+  private final TokenService tokenService;
   private final IRevokeTokenService revokeTokenService;
   private final SummerWebProperties summerWebProperties;
   private final ObjectMapper objectMapper;
@@ -68,7 +68,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
       CorsProperties corsProperties,
       URLFilterInvocationSecurityMetadataSource securityMetadataSource,
       AccessDecisionManager accessDecisionManager,
-      TokenBuild apiTokenBuild,
+      TokenService tokenService,
       @Autowired(required = false) IRevokeTokenService revokeTokenService,
       SummerWebProperties summerWebProperties,
       ObjectMapper objectMapper,
@@ -77,7 +77,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
     this.corsProperties = corsProperties;
     this.securityMetadataSource = securityMetadataSource;
     this.accessDecisionManager = accessDecisionManager;
-    this.apiTokenBuild = apiTokenBuild;
+    this.tokenService = tokenService;
     this.revokeTokenService = revokeTokenService;
     this.summerWebProperties = summerWebProperties;
     this.objectMapper = objectMapper;
@@ -101,7 +101,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
     http.csrf().disable();
 
     ApiTokenEndpointFilter apiTokenEndpointFilter = new ApiTokenEndpointFilter(
-        authenticationManagerBean(), apiAuthorizationService, apiTokenBuild,
+        authenticationManagerBean(), apiAuthorizationService, tokenService,
         summerWebProperties, revokeTokenService, securityProperties, objectMapper);
 
     http.authenticationProvider(new UserDetailsAuthenticationProvider());
@@ -144,9 +144,9 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public TokenBuild apiTokenBuild(ApiAuthorizationService apiAuthorizationService,
+    public TokenService tokenService(ApiAuthorizationService apiAuthorizationService,
         ScopeUserDetailsService userDetailsService) {
-      return new TokenBuild(securityProperties, apiAuthorizationService, userDetailsService);
+      return new TokenService(securityProperties, apiAuthorizationService, userDetailsService);
     }
 
     @Bean
