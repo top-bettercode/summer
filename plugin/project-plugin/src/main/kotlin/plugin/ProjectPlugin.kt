@@ -188,18 +188,6 @@ class ProjectPlugin : Plugin<Project> {
                     "org.springframework.boot:spring-boot-configuration-processor"
                 )
                 add("compileOnly", "org.springframework.boot:spring-boot-configuration-processor")
-
-                if ("release" != subProject.profilesActive)
-                    add("implementation", "org.springframework.boot:spring-boot-starter-websocket")
-
-
-//                if (project.findProperty("resources-processor") == "true") {
-//                    add(
-//                        "annotationProcessor",
-//                        "top.bettercode.summer:resources-processor"
-//                    )
-//                    add("compileOnly", "top.bettercode.summer:resources-processor")
-//                }
             }
 
             subProject.tasks.apply {
