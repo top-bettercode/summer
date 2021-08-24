@@ -29,6 +29,10 @@ public class AdditionalUserDetails extends User {
     this.additionalInformation.put(key, value);
   }
 
+  public Object get(String key){
+    return this.additionalInformation.get(key);
+  }
+
   public Map<String, Object> getAdditionalInformation() {
     return additionalInformation;
   }
