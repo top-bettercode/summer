@@ -10,7 +10,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import top.bettercode.simpleframework.security.ApiAuthenticationToken;
-import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 
 public final class RedisApiAuthorizationService implements ApiAuthorizationService {
 
@@ -31,10 +30,9 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
 
   private Method redisConnectionSet_2_0;
 
-  public RedisApiAuthorizationService(RedisConnectionFactory connectionFactory,
-      ApiSecurityProperties securityProperties) {
+  public RedisApiAuthorizationService(RedisConnectionFactory connectionFactory) {
     this.connectionFactory = connectionFactory;
-    this.keyPrefix = API_AUTH + securityProperties.getApp() + ":";
+    this.keyPrefix = API_AUTH;
     if (springDataRedis_2_0) {
       this.loadRedisConnectionMethods_2_0();
     }
@@ -60,7 +58,7 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
     String username = authorization.getUsername();
     String id = scope + ":" + username;
 
-    remove(scope,username);
+    remove(scope, username);
 
     byte[] auth = jdkSerializationSerializer.serialize(authorization);
 
@@ -115,7 +113,7 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
 
   @Override
   public void remove(String scope, String username) {
-    ApiAuthenticationToken authenticationToken = findByScopeAndUsername(scope,username);
+    ApiAuthenticationToken authenticationToken = findByScopeAndUsername(scope, username);
     if (authenticationToken != null) {
       remove(authenticationToken);
     }

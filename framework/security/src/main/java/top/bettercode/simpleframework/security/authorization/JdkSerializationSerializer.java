@@ -3,7 +3,6 @@ package top.bettercode.simpleframework.security.authorization;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.serializer.support.DeserializingConverter;
 import org.springframework.core.serializer.support.SerializingConverter;
-import org.springframework.data.redis.serializer.SerializationException;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
@@ -42,7 +41,7 @@ public class JdkSerializationSerializer {
 		try {
 			return deserializer.convert(bytes);
 		} catch (Exception ex) {
-			throw new SerializationException("Cannot deserialize", ex);
+			throw new RuntimeException("Cannot deserialize", ex);
 		}
 	}
 
@@ -53,7 +52,7 @@ public class JdkSerializationSerializer {
 		try {
 			return serializer.convert(object);
 		} catch (Exception ex) {
-			throw new SerializationException("Cannot serialize", ex);
+			throw new RuntimeException("Cannot serialize", ex);
 		}
 	}
 

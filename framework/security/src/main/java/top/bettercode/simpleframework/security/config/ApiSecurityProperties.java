@@ -30,8 +30,6 @@ public class ApiSecurityProperties {
   private Boolean supportClientCache = true;
 
 
-  private String app = "app";
-
   //--------------------------------------------
   public boolean ignored(String path) {
     if (ArrayUtil.isEmpty(urlFilterIgnored)) {
@@ -47,14 +45,6 @@ public class ApiSecurityProperties {
   }
 
   //--------------------------------------------
-
-  public String getApp() {
-    return app;
-  }
-
-  public void setApp(String app) {
-    this.app = app;
-  }
 
   public Integer getRefreshTokenValiditySeconds() {
     return refreshTokenValiditySeconds;
