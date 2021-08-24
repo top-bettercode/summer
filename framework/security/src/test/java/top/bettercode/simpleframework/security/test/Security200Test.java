@@ -49,7 +49,7 @@ public class Security200Test {
   }
 
   @NotNull
-  private ApiToken getAccessToken() throws Exception {
+  private ApiToken getApiToken() throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
     params.add("scope", "trust");
@@ -67,7 +67,7 @@ public class Security200Test {
 
   @Test
   public void accessToken() throws Exception {
-    ApiToken accessToken = getAccessToken();
+    ApiToken accessToken = getApiToken();
     System.err.println(StringUtil.valueOf(accessToken, true));
     org.junit.jupiter.api.Assertions.assertNotNull(accessToken);
   }
@@ -80,7 +80,7 @@ public class Security200Test {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "refresh_token");
     params.add("scope", "trust");
-    params.add("refresh_token", getAccessToken().getRefreshToken());
+    params.add("refresh_token", getApiToken().getRefreshToken());
     ResponseEntity<String> entity2 = restTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params), String.class);
     assertEquals(HttpStatus.OK, entity2.getStatusCode());
@@ -89,7 +89,7 @@ public class Security200Test {
 
   @Test
   public void revokeToken() throws Exception {
-    String accessToken = getAccessToken().getAccessToken();
+    String accessToken = getApiToken().getAccessToken();
     ResponseEntity<String> entity2 = restTemplate
         .exchange("/oauth/token?access_token=" + accessToken,
             HttpMethod.DELETE, null,
