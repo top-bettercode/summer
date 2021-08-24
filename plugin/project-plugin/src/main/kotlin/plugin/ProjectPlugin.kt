@@ -1,15 +1,7 @@
 package plugin
 
-import top.bettercode.generator.GeneratorExtension
-import top.bettercode.generator.dom.java.JavaType
-import top.bettercode.generator.dom.java.element.InnerInterface
-import top.bettercode.generator.dom.java.element.Interface
-import top.bettercode.generator.dom.java.element.JavaVisibility
-import top.bettercode.generator.dom.java.element.TopLevelClass
-import top.bettercode.generator.dsl.Generators
-import top.bettercode.generator.puml.PumlConverter
-import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
 import hudson.cli.CLI
+import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
 import org.atteo.evo.inflector.English
 import org.gradle.api.*
 import org.gradle.api.plugins.ApplicationPluginConvention
@@ -23,6 +15,14 @@ import org.springframework.boot.gradle.plugin.ResolveMainClassName
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 import profilesActive
+import top.bettercode.generator.GeneratorExtension
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.InnerInterface
+import top.bettercode.generator.dom.java.element.Interface
+import top.bettercode.generator.dom.java.element.JavaVisibility
+import top.bettercode.generator.dom.java.element.TopLevelClass
+import top.bettercode.generator.dsl.Generators
+import top.bettercode.generator.puml.PumlConverter
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
