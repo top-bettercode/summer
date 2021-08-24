@@ -1,0 +1,14 @@
+
+@startuml
+
+entity api_token {
+    api token
+    ==
+    id : VARCHAR(255) PK NOT NULL -- id
+    app : VARCHAR(255) INDEX NOT NULL -- app
+    access_token : VARCHAR(255) INDEX NOT NULL -- accessToken
+    refresh_token : VARCHAR(255) INDEX NOT NULL -- refreshToken
+    authentication : BLOB NULL -- authentication
+}
+
+@endum

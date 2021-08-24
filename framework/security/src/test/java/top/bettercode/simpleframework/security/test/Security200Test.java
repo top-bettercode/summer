@@ -20,7 +20,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.security.ApiTokenResponse;
+import top.bettercode.simpleframework.security.ApiToken;
 import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.impl.TestApplication;
 
@@ -49,7 +49,7 @@ public class Security200Test {
   }
 
   @NotNull
-  private ApiTokenResponse getAccessToken() throws Exception {
+  private ApiToken getAccessToken() throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
     params.add("scope", "trust");
@@ -61,13 +61,13 @@ public class Security200Test {
     String body = entity.getBody();
     org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
 
-    ApiTokenResponse resp = objectMapper.readValue(body, ApiTokenResponse.class);
+    ApiToken resp = objectMapper.readValue(body, ApiToken.class);
     return resp;
   }
 
   @Test
   public void accessToken() throws Exception {
-    ApiTokenResponse accessToken = getAccessToken();
+    ApiToken accessToken = getAccessToken();
     System.err.println(StringUtil.valueOf(accessToken, true));
     org.junit.jupiter.api.Assertions.assertNotNull(accessToken);
   }

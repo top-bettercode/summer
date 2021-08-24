@@ -23,8 +23,10 @@ public class InMemoryApiAuthorizationService implements ApiAuthorizationService 
 
   @Override
   public void save(ApiAuthenticationToken authorization) {
-    String id = authorization.getId();
-    remove(id);
+    String scope = authorization.getScope();
+    String username = authorization.getUsername();
+    String id = scope + ":" + username;
+    remove(scope, username);
     accessTokenMap.put(authorization.getAccessToken().getTokenValue(), id);
     refreshTokenMap.put(authorization.getRefreshToken().getTokenValue(), id);
     tokenMap.put(id, authorization);
@@ -32,22 +34,25 @@ public class InMemoryApiAuthorizationService implements ApiAuthorizationService 
 
   @Override
   public void remove(ApiAuthenticationToken authorization) {
-    String id = authorization.getId();
+    String scope = authorization.getScope();
+    String username = authorization.getUsername();
+    String id = scope + ":" + username;
     accessTokenMap.remove(authorization.getAccessToken().getTokenValue());
     refreshTokenMap.remove(authorization.getRefreshToken().getTokenValue());
     tokenMap.remove(id);
   }
 
   @Override
-  public void remove(String id) {
-    ApiAuthenticationToken authenticationToken = findById(id);
+  public void remove(String scope, String username) {
+    ApiAuthenticationToken authenticationToken = findByScopeAndUsername(scope, username);
     if (authenticationToken != null) {
       remove(authenticationToken);
     }
   }
 
   @Override
-  public ApiAuthenticationToken findById(String id) {
+  public ApiAuthenticationToken findByScopeAndUsername(String scope, String username) {
+    String id = scope + ":" + username;
     return tokenMap.get(id);
   }
 
@@ -55,7 +60,7 @@ public class InMemoryApiAuthorizationService implements ApiAuthorizationService 
   public ApiAuthenticationToken findByAccessToken(String accessToken) {
     String id = accessTokenMap.get(accessToken);
     if (id != null) {
-      return findById(id);
+      return tokenMap.get(id);
     }
     return null;
   }
@@ -64,7 +69,7 @@ public class InMemoryApiAuthorizationService implements ApiAuthorizationService 
   public ApiAuthenticationToken findByRefreshToken(String refreshToken) {
     String id = refreshTokenMap.get(refreshToken);
     if (id != null) {
-      return findById(id);
+      return tokenMap.get(id);
     }
     return null;
   }

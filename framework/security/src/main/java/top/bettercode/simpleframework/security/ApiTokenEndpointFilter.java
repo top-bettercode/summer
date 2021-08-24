@@ -38,7 +38,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   private final AuthenticationManager authenticationManager;
   private final RequestMatcher tokenEndpointMatcher;
   private final RequestMatcher revokeTokenEndpointMatcher;
-  private final ApiTokenBuild apiTokenBuilder;
+  private final TokenBuild apiTokenBuilder;
   private final SummerWebProperties summerWebProperties;
   private final ApiSecurityProperties apiSecurityProperties;
   private final IRevokeTokenService revokeTokenService;
@@ -49,7 +49,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
   public ApiTokenEndpointFilter(AuthenticationManager authenticationManager,
       ApiAuthorizationService apiAuthorizationService,
-      ApiTokenBuild apiTokenBuilder,
+      TokenBuild apiTokenBuilder,
       SummerWebProperties summerWebProperties,
       IRevokeTokenService revokeTokenService,
       ApiSecurityProperties apiSecurityProperties,
@@ -63,7 +63,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   public ApiTokenEndpointFilter(
       ApiAuthorizationService apiAuthorizationService,
       AuthenticationManager authenticationManager, String tokenEndpointUri,
-      ApiTokenBuild apiTokenBuilder,
+      TokenBuild apiTokenBuilder,
       SummerWebProperties summerWebProperties,
       ApiSecurityProperties apiSecurityProperties,
       IRevokeTokenService revokeTokenService,
@@ -133,8 +133,11 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       try {
         String grantType = request.getParameter(SecurityParameterNames.GRANT_TYPE);
         Assert.hasText(grantType, "grantType 不能为空");
+        String scope = request.getParameter(SecurityParameterNames.SCOPE);
+        Assert.hasText(scope, "scope 不能为空");
 
         ApiAuthenticationToken apiAuthenticationToken;
+
         if (SecurityParameterNames.PASSWORD.equals(grantType)) {
           String username = request.getParameter(SecurityParameterNames.USERNAME);
           Assert.hasText(username, "用户名不能为空");
@@ -150,8 +153,8 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
           UserDetails userDetails = (UserDetails) principal;
 
-          apiAuthenticationToken = new ApiAuthenticationToken(
-              apiSecurityProperties.getApiTokenSavePrefix(), apiTokenBuilder.createAccessToken(),
+          apiAuthenticationToken = new ApiAuthenticationToken(scope,
+              apiTokenBuilder.createAccessToken(),
               apiTokenBuilder.createRefreshToken(), userDetails);
         } else if (SecurityParameterNames.REFRESH_TOKEN.equals(grantType)) {
           String refreshToken = request.getParameter(SecurityParameterNames.REFRESH_TOKEN);
@@ -178,7 +181,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         context.setAuthentication(authenticationResult);
         SecurityContextHolder.setContext(context);
 
-        Object apiTokenResponse = apiAuthenticationToken.tokenResponse();
+        Object apiTokenResponse = apiAuthenticationToken.toApiToken();
         if (summerWebProperties.wrapEnable(request)) {
           apiTokenResponse = RespEntity.ok(apiTokenResponse);
         }

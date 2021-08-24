@@ -30,7 +30,7 @@ public class ApiSecurityProperties {
   private Boolean supportClientCache = true;
 
 
-  private String apiTokenSavePrefix = "trust";
+  private String app = "app";
 
   //--------------------------------------------
   public boolean ignored(String path) {
@@ -48,12 +48,12 @@ public class ApiSecurityProperties {
 
   //--------------------------------------------
 
-  public String getApiTokenSavePrefix() {
-    return apiTokenSavePrefix;
+  public String getApp() {
+    return app;
   }
 
-  public void setApiTokenSavePrefix(String apiTokenSavePrefix) {
-    this.apiTokenSavePrefix = apiTokenSavePrefix;
+  public void setApp(String app) {
+    this.app = app;
   }
 
   public Integer getRefreshTokenValiditySeconds() {

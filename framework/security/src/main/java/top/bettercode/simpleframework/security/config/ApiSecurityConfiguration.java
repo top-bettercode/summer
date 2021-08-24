@@ -35,15 +35,16 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import top.bettercode.simpleframework.config.CorsProperties;
 import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.security.ApiAuthenticationToken;
-import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
 import top.bettercode.simpleframework.security.ApiSecurityErrorHandler;
-import top.bettercode.simpleframework.security.ApiTokenBuild;
 import top.bettercode.simpleframework.security.ApiTokenEndpointFilter;
 import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.IRevokeTokenService;
-import top.bettercode.simpleframework.security.authorization.InMemoryApiAuthorizationService;
+import top.bettercode.simpleframework.security.ScopeUserDetailsService;
+import top.bettercode.simpleframework.security.TokenBuild;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
 import top.bettercode.simpleframework.security.UserDetailsAuthenticationProvider;
+import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
+import top.bettercode.simpleframework.security.authorization.InMemoryApiAuthorizationService;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
@@ -56,7 +57,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
   private final CorsProperties corsProperties;
   private final URLFilterInvocationSecurityMetadataSource securityMetadataSource;
   private final AccessDecisionManager accessDecisionManager;
-  private final ApiTokenBuild apiTokenBuild;
+  private final TokenBuild apiTokenBuild;
   private final IRevokeTokenService revokeTokenService;
   private final SummerWebProperties summerWebProperties;
   private final ObjectMapper objectMapper;
@@ -67,7 +68,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
       CorsProperties corsProperties,
       URLFilterInvocationSecurityMetadataSource securityMetadataSource,
       AccessDecisionManager accessDecisionManager,
-      ApiTokenBuild apiTokenBuild,
+      TokenBuild apiTokenBuild,
       @Autowired(required = false) IRevokeTokenService revokeTokenService,
       SummerWebProperties summerWebProperties,
       ObjectMapper objectMapper,
@@ -143,14 +144,15 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public ApiSecurityErrorHandler securityOAuth2ErrorHandler(MessageSource messageSource,
-        @Autowired(required = false) HttpServletRequest request) {
-      return new ApiSecurityErrorHandler(messageSource, request);
+    public TokenBuild apiTokenBuild(ApiAuthorizationService apiAuthorizationService,
+        ScopeUserDetailsService userDetailsService) {
+      return new TokenBuild(securityProperties, apiAuthorizationService, userDetailsService);
     }
 
     @Bean
-    public ApiTokenBuild apiTokenBuild() {
-      return new ApiTokenBuild(securityProperties);
+    public ApiSecurityErrorHandler securityOAuth2ErrorHandler(MessageSource messageSource,
+        @Autowired(required = false) HttpServletRequest request) {
+      return new ApiSecurityErrorHandler(messageSource, request);
     }
 
     @ConditionalOnMissingBean(ApiAuthorizationService.class)

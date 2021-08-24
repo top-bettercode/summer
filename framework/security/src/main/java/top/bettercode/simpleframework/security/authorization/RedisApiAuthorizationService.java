@@ -15,12 +15,12 @@ import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 public final class RedisApiAuthorizationService implements ApiAuthorizationService {
 
   private final Logger log = LoggerFactory.getLogger(RedisApiAuthorizationService.class);
-  private static final String API_AUTHORIZATION = "api_authorization:";
+  private static final String API_AUTH = "api_auth:";
   private static final String ID = "id:";
   private static final String ACCESS_TOKEN = "access_token:";
   private static final String REFRESH_TOKEN = "refresh_token:";
 
-  private final String prefix;
+  private final String keyPrefix;
 
   private static final boolean springDataRedis_2_0 = ClassUtils.isPresent(
       "org.springframework.data.redis.connection.RedisStandaloneConfiguration",
@@ -34,7 +34,7 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
   public RedisApiAuthorizationService(RedisConnectionFactory connectionFactory,
       ApiSecurityProperties securityProperties) {
     this.connectionFactory = connectionFactory;
-    this.prefix = API_AUTHORIZATION + securityProperties.getApiTokenSavePrefix() + ":";
+    this.keyPrefix = API_AUTH + securityProperties.getApp() + ":";
     if (springDataRedis_2_0) {
       this.loadRedisConnectionMethods_2_0();
     }
@@ -50,14 +50,17 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
   }
 
   private byte[] serializeKey(String object) {
-    return (this.prefix + object).getBytes(StandardCharsets.UTF_8);
+    return (this.keyPrefix + object).getBytes(StandardCharsets.UTF_8);
   }
 
 
   @Override
   public void save(ApiAuthenticationToken authorization) {
-    String id = authorization.getId();
-    remove(id);
+    String scope = authorization.getScope();
+    String username = authorization.getUsername();
+    String id = scope + ":" + username;
+
+    remove(scope,username);
 
     byte[] auth = jdkSerializationSerializer.serialize(authorization);
 
@@ -94,7 +97,9 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
 
   @Override
   public void remove(ApiAuthenticationToken authorization) {
-    String id = authorization.getId();
+    String scope = authorization.getScope();
+    String username = authorization.getUsername();
+    String id = scope + ":" + username;
     byte[] accessKey = serializeKey(ACCESS_TOKEN + authorization.getAccessToken().getTokenValue());
     byte[] refreshKey = serializeKey(
         REFRESH_TOKEN + authorization.getRefreshToken().getTokenValue());
@@ -109,15 +114,16 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
   }
 
   @Override
-  public void remove(String id) {
-    ApiAuthenticationToken authenticationToken = findById(id);
+  public void remove(String scope, String username) {
+    ApiAuthenticationToken authenticationToken = findByScopeAndUsername(scope,username);
     if (authenticationToken != null) {
       remove(authenticationToken);
     }
   }
 
   @Override
-  public ApiAuthenticationToken findById(String id) {
+  public ApiAuthenticationToken findByScopeAndUsername(String scope, String username) {
+    String id = scope + ":" + username;
     byte[] idKey = serializeKey(ID + id);
     return findByIdKey(idKey);
   }
