@@ -153,9 +153,20 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
           UserDetails userDetails = (UserDetails) principal;
 
-          apiAuthenticationToken = new ApiAuthenticationToken(scope,
-              apiTokenBuilder.createAccessToken(),
-              apiTokenBuilder.createRefreshToken(), userDetails);
+          if (apiSecurityProperties.getLoginKickedOut()) {
+            apiAuthenticationToken = new ApiAuthenticationToken(scope,
+                apiTokenBuilder.createAccessToken(),
+                apiTokenBuilder.createRefreshToken(), userDetails);
+          } else {
+            apiAuthenticationToken = apiAuthorizationService.findByScopeAndUsername(scope,
+                username);
+            if (apiAuthenticationToken == null || apiAuthenticationToken.getAccessToken()
+                .isExpired()) {
+              apiAuthenticationToken = new ApiAuthenticationToken(scope,
+                  apiTokenBuilder.createAccessToken(),
+                  apiTokenBuilder.createRefreshToken(), userDetails);
+            }
+          }
         } else if (SecurityParameterNames.REFRESH_TOKEN.equals(grantType)) {
           String refreshToken = request.getParameter(SecurityParameterNames.REFRESH_TOKEN);
           Assert.hasText(refreshToken, "refreshToken不能为空");
