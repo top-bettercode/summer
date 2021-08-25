@@ -76,9 +76,9 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
     byte[] idKey = serializeKey(ID + id);
 
     try (RedisConnection conn = getConnection()) {
+      ApiAuthenticationToken exist = getApiAuthenticationToken(idKey, conn);
       conn.openPipeline();
       //删除已存在
-      ApiAuthenticationToken exist = getApiAuthenticationToken(idKey, conn);
       if (exist != null) {
         byte[] existAccessKey = serializeKey(ACCESS_TOKEN + exist.getAccessToken().getTokenValue());
         byte[] existRefreshKey = serializeKey(
@@ -139,9 +139,9 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
     String id = scope + ":" + username;
     byte[] idKey = serializeKey(ID + id);
     try (RedisConnection conn = getConnection()) {
-      conn.openPipeline();
       ApiAuthenticationToken apiAuthenticationToken = getApiAuthenticationToken(idKey, conn);
       if (apiAuthenticationToken != null) {
+        conn.openPipeline();
         byte[] accessKey = serializeKey(
             ACCESS_TOKEN + apiAuthenticationToken.getAccessToken().getTokenValue());
         byte[] refreshKey = serializeKey(
@@ -149,8 +149,8 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
         conn.del(accessKey);
         conn.del(refreshKey);
         conn.del(idKey);
+        conn.closePipeline();
       }
-      conn.closePipeline();
     }
   }
 
@@ -186,14 +186,11 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
   public ApiAuthenticationToken findByAccessToken(String accessToken) {
     byte[] accessKey = serializeKey(ACCESS_TOKEN + accessToken);
     try (RedisConnection conn = getConnection()) {
-      conn.openPipeline();
       byte[] bytes = conn.get(accessKey);
       if (JdkSerializationSerializer.isEmpty(bytes)) {
         return null;
       }
-      ApiAuthenticationToken apiAuthenticationToken = getApiAuthenticationToken(bytes, conn);
-      conn.closePipeline();
-      return apiAuthenticationToken;
+      return getApiAuthenticationToken(bytes, conn);
     }
   }
 
@@ -201,14 +198,11 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
   public ApiAuthenticationToken findByRefreshToken(String refreshToken) {
     byte[] refreshKey = serializeKey(REFRESH_TOKEN + refreshToken);
     try (RedisConnection conn = getConnection()) {
-      conn.openPipeline();
       byte[] bytes = conn.get(refreshKey);
       if (JdkSerializationSerializer.isEmpty(bytes)) {
         return null;
       }
-      ApiAuthenticationToken apiAuthenticationToken = getApiAuthenticationToken(bytes, conn);
-      conn.closePipeline();
-      return apiAuthenticationToken;
+      return getApiAuthenticationToken(bytes, conn);
     }
   }
 }
