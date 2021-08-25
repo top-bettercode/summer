@@ -106,10 +106,11 @@ public class SecurityTest {
     String accessToken = getApiToken().getAccessToken();
     Autodoc.enable();
     Autodoc.setName("撤销accessToken");
-    Autodoc.requiredParameters("access_token");
-    ResponseEntity<String> entity2 = restTemplate
-        .exchange("/oauth/token?access_token=" + accessToken,
-            HttpMethod.DELETE, null,
+
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.set("Authorization", "bearer " + accessToken);
+    ResponseEntity<String> entity2 = restTemplate .exchange("/oauth/token",
+            HttpMethod.DELETE, new HttpEntity<>(httpHeaders),
             String.class);
     assertEquals(HttpStatus.NO_CONTENT, entity2.getStatusCode());
   }
