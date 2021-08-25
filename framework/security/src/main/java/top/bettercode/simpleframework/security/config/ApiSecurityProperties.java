@@ -29,6 +29,10 @@ public class ApiSecurityProperties {
 
   private Boolean supportClientCache = true;
 
+  /**
+   * 登录时是否踢出前一个登录用户
+   */
+  private Boolean loginKickedOut = false;
 
   //--------------------------------------------
   public boolean ignored(String path) {
@@ -45,6 +49,14 @@ public class ApiSecurityProperties {
   }
 
   //--------------------------------------------
+
+  public Boolean getLoginKickedOut() {
+    return loginKickedOut;
+  }
+
+  public void setLoginKickedOut(Boolean loginKickedOut) {
+    this.loginKickedOut = loginKickedOut;
+  }
 
   public Integer getRefreshTokenValiditySeconds() {
     return refreshTokenValiditySeconds;
