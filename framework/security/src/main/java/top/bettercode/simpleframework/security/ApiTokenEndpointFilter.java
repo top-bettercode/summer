@@ -175,6 +175,9 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
           if (apiAuthenticationToken == null || apiAuthenticationToken.getRefreshToken()
               .isExpired()) {
+            if (apiAuthenticationToken != null) {
+              apiAuthorizationService.remove(apiAuthenticationToken);
+            }
             throw new UnauthorizedException("请重新登录");
           }
 

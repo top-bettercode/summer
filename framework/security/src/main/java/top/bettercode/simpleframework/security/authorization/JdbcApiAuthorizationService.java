@@ -86,8 +86,6 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
   private ApiAuthenticationToken getApiAuthenticationToken(String param,
       String selectStatement) {
     try {
-      Object[] params;
-
       return jdbcTemplate.queryForObject(selectStatement,
           (rs, rowNum) -> {
             byte[] bytes = rs.getBytes(1);
