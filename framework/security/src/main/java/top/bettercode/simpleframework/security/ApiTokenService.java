@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 import java.time.Instant;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
@@ -19,15 +20,17 @@ public class ApiTokenService {
 
   private final ApiSecurityProperties apiSecurityProperties;
   private final ApiAuthorizationService apiAuthorizationService;
-  private final ScopeUserDetailsService userDetailsService;
+  private final UserDetailsService userDetailsService;
+  private final boolean isScopeUserDetailsService;
 
   public ApiTokenService(
       ApiSecurityProperties apiSecurityProperties,
       ApiAuthorizationService apiAuthorizationService,
-      ScopeUserDetailsService userDetailsService) {
+      UserDetailsService userDetailsService) {
     this.apiSecurityProperties = apiSecurityProperties;
     this.apiAuthorizationService = apiAuthorizationService;
     this.userDetailsService = userDetailsService;
+    this.isScopeUserDetailsService = userDetailsService instanceof ScopeUserDetailsService;
   }
 
   public Token createAccessToken() {
@@ -50,7 +53,15 @@ public class ApiTokenService {
     ApiAuthenticationToken authenticationToken = apiAuthorizationService.findByScopeAndUsername(
         scope, username);
     if (authenticationToken == null) {
-      UserDetails userDetails = userDetailsService.loadUserByScopeAndUsername(scope, username);
+
+      UserDetails userDetails;
+      if (isScopeUserDetailsService) {
+        userDetails = ((ScopeUserDetailsService) userDetailsService).loadUserByScopeAndUsername(
+            scope, username);
+      } else {
+        userDetails = userDetailsService.loadUserByUsername(username);
+      }
+
       authenticationToken = new ApiAuthenticationToken(scope, createAccessToken(),
           createRefreshToken(), userDetails);
       apiAuthorizationService.save(authenticationToken);

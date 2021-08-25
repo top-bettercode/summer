@@ -5,13 +5,13 @@ import java.util.Collections;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import top.bettercode.simpleframework.security.AdditionalUserDetails;
 import top.bettercode.simpleframework.security.DefaultAuthority;
 import top.bettercode.simpleframework.security.IllegalUserException;
-import top.bettercode.simpleframework.security.ScopeUserDetailsService;
 
 /**
  * 自定义UserDetailsService
@@ -19,7 +19,7 @@ import top.bettercode.simpleframework.security.ScopeUserDetailsService;
  * @author Peter Wu
  */
 @Service
-public class CustomUserDetailsService implements ScopeUserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
 
   /**

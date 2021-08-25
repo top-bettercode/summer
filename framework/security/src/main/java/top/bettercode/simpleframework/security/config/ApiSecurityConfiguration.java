@@ -28,6 +28,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StringUtils;
@@ -37,10 +38,9 @@ import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.security.ApiAuthenticationToken;
 import top.bettercode.simpleframework.security.ApiSecurityErrorHandler;
 import top.bettercode.simpleframework.security.ApiTokenEndpointFilter;
+import top.bettercode.simpleframework.security.ApiTokenService;
 import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.IRevokeTokenService;
-import top.bettercode.simpleframework.security.ScopeUserDetailsService;
-import top.bettercode.simpleframework.security.ApiTokenService;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
 import top.bettercode.simpleframework.security.UserDetailsAuthenticationProvider;
 import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
@@ -145,7 +145,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public ApiTokenService apiTokenService(ApiAuthorizationService apiAuthorizationService,
-        ScopeUserDetailsService userDetailsService) {
+        UserDetailsService userDetailsService) {
       return new ApiTokenService(securityProperties, apiAuthorizationService, userDetailsService);
     }
 
