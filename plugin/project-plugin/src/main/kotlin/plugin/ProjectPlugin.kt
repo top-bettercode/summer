@@ -240,7 +240,7 @@ class ProjectPlugin : Plugin<Project> {
                                 this as CreateStartScripts
                                 if (mainClassName.isNullOrBlank()) {
                                     val mainClassNameProvider =
-                                        resolveMainClassNameTask.outputFile.map(Transformer { file ->
+                                        resolveMainClassNameTask.outputFile.map({ file ->
                                             if (file.asFile.length() == 0L) {
                                                 throw InvalidUserDataException("Main class name has not been configured and it could not be resolved")
                                             } else {
@@ -364,7 +364,7 @@ class ProjectPlugin : Plugin<Project> {
         }
 
         project.subprojects { subProject ->
-            if (subProject.name == project.findProperty("tools.project") ?: "core") {
+            if (subProject.name == (project.findProperty("tools.project") ?: "core")) {
                 subProject.tasks.apply {
                     create("genSerializationViews") { t ->
                         t.group = "gen"
