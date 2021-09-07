@@ -122,6 +122,8 @@ class ManagementLoginPageGeneratingFilter(
             response.contentType = "text/html;charset=UTF-8"
             response.setContentLength(loginPageHtml.toByteArray(StandardCharsets.UTF_8).size)
             response.writer.write(loginPageHtml)
+            response.writer.flush()
+            response.flushBuffer()
             return
         }
         chain.doFilter(request, response)

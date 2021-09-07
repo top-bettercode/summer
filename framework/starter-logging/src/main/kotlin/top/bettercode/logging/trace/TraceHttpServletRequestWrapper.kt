@@ -24,6 +24,8 @@ class TraceHttpServletRequestWrapper
 constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request) {
     private val byteArrayOutputStream = ByteArrayOutputStream()
     private var servletInputStream: ServletInputStream? = null
+    private var servletReader: BufferedReader? = null
+    private var servletParts: MutableCollection<Part>? = null
 
     val contentAsByteArray: ByteArray
         get() = byteArrayOutputStream.toByteArray()
@@ -34,7 +36,10 @@ constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request
     }
 
     override fun getParts(): MutableCollection<Part> {
-        return super.getParts().map { TracePart(it) }.toMutableList()
+        if (servletParts == null) {
+            servletParts = super.getParts().map { TracePart(it) }.toMutableList()
+        }
+        return servletParts!!
     }
 
     override fun getInputStream(): ServletInputStream {
@@ -46,7 +51,10 @@ constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request
     }
 
     override fun getReader(): BufferedReader {
-        return BufferedReader(InputStreamReader(inputStream))
+        if (servletReader == null) {
+            servletReader = BufferedReader(InputStreamReader(this.inputStream))
+        }
+        return servletReader!!;
     }
 
     override fun getCharacterEncoding(): String {
