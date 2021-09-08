@@ -3,7 +3,10 @@ package plugin
 import hudson.cli.CLI
 import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
 import org.atteo.evo.inflector.English
-import org.gradle.api.*
+import org.gradle.api.InvalidUserDataException
+import org.gradle.api.JavaVersion
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
@@ -226,6 +229,7 @@ class ProjectPlugin : Plugin<Project> {
 
                 named("compileJava", JavaCompile::class.java) {
                     it.options.compilerArgs.add("-Xlint:unchecked")
+                    it.options.compilerArgs.add("-parameters")
                     it.options.encoding = "UTF-8"
                 }
 
@@ -240,7 +244,7 @@ class ProjectPlugin : Plugin<Project> {
                                 this as CreateStartScripts
                                 if (mainClassName.isNullOrBlank()) {
                                     val mainClassNameProvider =
-                                        resolveMainClassNameTask.outputFile.map({ file ->
+                                        resolveMainClassNameTask.outputFile.map { file ->
                                             if (file.asFile.length() == 0L) {
                                                 throw InvalidUserDataException("Main class name has not been configured and it could not be resolved")
                                             } else {
@@ -254,7 +258,7 @@ class ProjectPlugin : Plugin<Project> {
                                                     throw RuntimeException("Failed to read main class name from '$output'")
                                                 }
                                             }
-                                        })
+                                        }
 
                                     if (mainClassNameProvider.isPresent) {
                                         mainClassName = mainClassNameProvider.get()
