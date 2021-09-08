@@ -1,6 +1,5 @@
 package top.bettercode.logging.trace
 
-import org.springframework.web.util.WebUtils
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.InputStreamReader
@@ -58,6 +57,6 @@ constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request
     }
 
     override fun getCharacterEncoding(): String {
-        return super.getCharacterEncoding() ?: WebUtils.DEFAULT_CHARACTER_ENCODING
+        return super.getCharacterEncoding() ?: "UTF-8"
     }
 }
