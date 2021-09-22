@@ -16,5 +16,6 @@ dependencies {
 
     testImplementation("com.h2database:h2")
     testImplementation("mysql:mysql-connector-java")
+    testImplementation("com.oracle.database.jdbc:ojdbc8")
 
 }
