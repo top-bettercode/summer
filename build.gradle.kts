@@ -66,7 +66,6 @@ allprojects {
 
             dependency("org.springframework.boot:spring-boot-gradle-plugin:2.5.0")
             dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
-            dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
             dependency("com.gradle.publish:plugin-publish-plugin:0.15.0")
             dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
@@ -88,6 +87,7 @@ allprojects {
             dependency("org.jsoup:jsoup:1.13.1")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
             dependency("mysql:mysql-connector-java:8.0.25")
+            dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
 
             dependency("org.asciidoctor:asciidoctorj:2.5.1")
             dependency("org.asciidoctor:asciidoctorj-diagram:2.1.2")
