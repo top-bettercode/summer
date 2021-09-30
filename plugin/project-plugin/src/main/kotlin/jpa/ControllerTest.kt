@@ -141,7 +141,7 @@ open class ControllerTest : ModuleJavaGenerator() {
                         }
                     }
                 }
-                +"mockMvc.perform(post(\"/$pathName/create\")"
+                +"mockMvc.perform(post(\"/$pathName/save\")"
                 if (compositePrimaryKey || !primaryKey.autoIncrement) {
                     import(primaryKeyType)
                     if (compositePrimaryKey) {
@@ -169,7 +169,7 @@ open class ControllerTest : ModuleJavaGenerator() {
                 exception(JavaType("Exception"))
                 +"requires(\"${primaryKeyName}\");"
                 +"${primaryKeyType.shortName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
-                +"mockMvc.perform(post(\"/$pathName/update\")"
+                +"mockMvc.perform(post(\"/$pathName/save\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 columns.forEach {
                     if (!it.isPrimary && !it.jsonViewIgnored && it.javaName != "createdDate") {

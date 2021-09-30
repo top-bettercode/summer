@@ -110,10 +110,12 @@ open class Controller : ModuleJavaGenerator() {
                 +"$className $entityName = ${projectEntityName}Service.findById(${if (compositePrimaryKey) "new ${primaryKeyType.shortNameWithoutTypeArguments}($primaryKeyName)" else primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
                 +"return ok($entityName);"
             }
-            import("javax.validation.groups.Default")
+
+
             //create
+            import("javax.validation.groups.Default")
             method("create", JavaType.objectInstance) {
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/create\", name = \"新增\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"!${primaryKeyName}\", name = \"新增\")")
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
@@ -127,7 +129,7 @@ open class Controller : ModuleJavaGenerator() {
 
             //update
             method("update", JavaType.objectInstance) {
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/update\", name = \"编辑\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"${primaryKeyName}\", name = \"编辑\")")
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
