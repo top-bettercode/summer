@@ -99,7 +99,7 @@ open class MControllerTest : MModuleJavaGenerator() {
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(2)")
                 exception(JavaType("Exception"))
-                +"mockMvc.perform(post(\"/$module/$pathName/create\")"
+                +"mockMvc.perform(post(\"/$module/$pathName/save\")"
                 columns.forEach {
                     if (it.isPrimary) {
 //                        2 + ".param(\"${it.javaName}\", \"1\")"
@@ -121,7 +121,7 @@ open class MControllerTest : MModuleJavaGenerator() {
                 exception(JavaType("Exception"))
                 +"requires(\"${primaryKeyName}\");"
                 +"${primaryKeyType.shortName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
-                +"mockMvc.perform(post(\"/$module/$pathName/update\")"
+                +"mockMvc.perform(post(\"/$module/$pathName/save\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 columns.forEach {
                     if (!it.isPrimary && !it.jsonViewIgnored) {

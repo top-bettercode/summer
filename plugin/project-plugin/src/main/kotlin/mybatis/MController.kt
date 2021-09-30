@@ -25,7 +25,7 @@ open class MController : MModuleJavaGenerator() {
             annotation("@org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication")
             annotation("@org.springframework.validation.annotation.Validated")
             annotation("@org.springframework.web.bind.annotation.RestController")
-            annotation("@org.springframework.web.bind.annotation.RequestMapping(value = \"/$module/$pathName\", name = \"$moduleName\")")
+            annotation("@org.springframework.web.bind.annotation.RequestMapping(value = \"/$module/$pathName\", name = \"$remarks\")")
 
             val fieldType = serviceType
             field("${projectEntityName}Service", fieldType, isFinal = true)
@@ -37,7 +37,7 @@ open class MController : MModuleJavaGenerator() {
             //list
             val returnType = JavaType.objectInstance
             method("list", returnType) {
-                annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/list\", name = \"${remarks}列表\")")
+                annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/list\", name = \"列表\")")
                 parameter {
                     type =
                         JavaType("com.baomidou.mybatisplus.plugins.Page").typeArgument(entityType)
@@ -51,9 +51,54 @@ open class MController : MModuleJavaGenerator() {
                 +"return ok(results);"
             }
 
+            val excel = enable("excel", false)
+            if (excel) {
+                import("top.bettercode.lang.util.ArrayUtil")
+                field(
+                    "excelFields",
+                    JavaType("top.bettercode.util.excel.ExcelField<$className, ?>[]"),
+                    isFinal = true
+                ) {
+                    initializationString = "ArrayUtil.of(\n"
+                    val size = columns.size
+                    columns.forEachIndexed { i, it ->
+                        val code =
+                            if (it.isCodeField) {
+                                if (it.columnName.contains("_") || extension.softDeleteColumnName == it.columnName) ".code()" else ".code(${(className + it.javaName.capitalize())}Enum.ENUM_NAME)"
+                            } else {
+                                ""
+                            }
+                        val propertyGetter =
+                            if (it.isPrimary && compositePrimaryKey) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${primaryKeyName.capitalize()}().get${it.javaName.capitalize()}()" else "$className::get${it.javaName.capitalize()}"
+                        initializationString += "      ExcelField.of(\"${it.remarks.split(Regex("[:：,， (（]"))[0]}\", $propertyGetter)${code}${if (i == size - 1) "" else ","}\n"
+                    }
+
+                    initializationString += "  );"
+                }
+                //export
+                method("export", JavaType.voidPrimitiveInstance) {
+                    this.exception(JavaType("java.io.IOException"))
+                    annotation("@top.bettercode.logging.annotation.RequestLogging(includeResponseBody = false, ignoredTimeout = true)")
+                    annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/export.xlsx\", name = \"导出\")")
+                    parameter {
+                        type =
+                            JavaType("com.baomidou.mybatisplus.plugins.Page").typeArgument(entityType)
+                        name = "page"
+                    }
+                    parameter {
+                        type = queryDslType
+                        name = "wrapper"
+                    }
+
+                    +"Page<$className> results = ${projectEntityName}Service.selectPage(page, wrapper);"
+                    import("top.bettercode.util.excel.ExcelExport")
+                    +"ExcelExport.export(request, response, \"$remarks\", excelExport -> excelExport.sheet(\"$remarks\").setData(results, excelFields));"
+                }
+            }
+
             //info
             method("info", JavaType.objectInstance) {
-                annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/info\", name = \"${remarks}详情\")")
+                annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/info\", name = \"详情\")")
                 parameter {
                     name = primaryKeyName
                     type = primaryKeyType
@@ -70,10 +115,10 @@ open class MController : MModuleJavaGenerator() {
                 +"return ok($entityName);"
             }
 
-            import("javax.validation.groups.Default")
             //create
+            import("javax.validation.groups.Default")
             method("create", JavaType.objectInstance) {
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/create\", name = \"${remarks}新增\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"!${primaryKeyName}\", name = \"新增\")")
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
@@ -87,7 +132,7 @@ open class MController : MModuleJavaGenerator() {
 
             //update
             method("update", JavaType.objectInstance) {
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/update\", name = \"${remarks}编辑\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"${primaryKeyName}\", name = \"编辑\")")
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
@@ -102,7 +147,7 @@ open class MController : MModuleJavaGenerator() {
 
             //delete
             method("delete", JavaType.objectInstance) {
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/delete\", name = \"${remarks}删除\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/delete\", name = \"删除\")")
                 parameter {
                     name = primaryKeyName
                     type = primaryKeyType
