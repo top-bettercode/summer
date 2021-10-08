@@ -81,7 +81,7 @@ data class Table(
         if (other !is Table) return false
 
         if (tableName != other.tableName) return false
-        if (remarks.trimEnd('表') != other.remarks.trimEnd('表')) return false
+        if (remarks != other.remarks) return false
         if (sequenceStartWith != other.sequenceStartWith) return false
         if (physicalOptions != other.physicalOptions) return false
         if (primaryKeyNames.size != other.primaryKeyNames.size || (primaryKeyNames - other.primaryKeyNames).isNotEmpty() || (other.primaryKeyNames - primaryKeyNames).isNotEmpty()) return false
