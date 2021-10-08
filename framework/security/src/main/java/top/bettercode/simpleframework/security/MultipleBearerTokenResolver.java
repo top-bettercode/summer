@@ -18,14 +18,28 @@ public class MultipleBearerTokenResolver {
   private boolean allowUriQueryParameter = false;
 
   private String bearerTokenHeaderName = HttpHeaders.AUTHORIZATION;
+  /**
+   * 是否兼容旧toekn名称
+   */
+  private Boolean compatibleAccessToken = false;
 
   public String resolve(HttpServletRequest request) {
     String authorizationHeaderToken = resolveFromAuthorizationHeader(request);
-    if (authorizationHeaderToken != null) {
-      return authorizationHeaderToken;
-    } else {
-      return resolveFromRequestParameters(request);
+    if (authorizationHeaderToken == null) {
+      authorizationHeaderToken = resolveFromRequestParameters(request,
+          SecurityParameterNames.ACCESS_TOKEN);
     }
+
+    if (compatibleAccessToken) {
+      if (authorizationHeaderToken == null) {
+        authorizationHeaderToken = resolveFromHeader(request);
+      }
+      if (authorizationHeaderToken == null) {
+        authorizationHeaderToken = resolveFromRequestParameters(request,
+            SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
+      }
+    }
+    return authorizationHeaderToken;
   }
 
   /**
@@ -65,6 +79,10 @@ public class MultipleBearerTokenResolver {
     this.bearerTokenHeaderName = bearerTokenHeaderName;
   }
 
+  public void setCompatibleAccessToken(Boolean compatibleAccessToken) {
+    this.compatibleAccessToken = compatibleAccessToken;
+  }
+
   private String resolveFromAuthorizationHeader(HttpServletRequest request) {
     String authorization = request.getHeader(this.bearerTokenHeaderName);
     if (!StringUtils.startsWithIgnoreCase(authorization, "bearer")) {
@@ -75,8 +93,14 @@ public class MultipleBearerTokenResolver {
     return matcher.group("token");
   }
 
-  private static String resolveFromRequestParameters(HttpServletRequest request) {
-    String[] values = request.getParameterValues(SecurityParameterNames.ACCESS_TOKEN);
+  private String resolveFromHeader(HttpServletRequest request) {
+    String token = request.getHeader(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
+    Assert.isTrue(StringUtils.hasText(token), "Bearer token is malformed");
+    return token;
+  }
+
+  private static String resolveFromRequestParameters(HttpServletRequest request, String tokenName) {
+    String[] values = request.getParameterValues(tokenName);
     if (values == null || values.length == 0) {
       return null;
     }

@@ -33,6 +33,10 @@ public class ApiSecurityProperties {
    * 登录时是否踢出前一个登录用户
    */
   private Boolean loginKickedOut = false;
+  /**
+   * 是否兼容旧toekn名称
+   */
+  private Boolean compatibleAccessToken = false;
 
   //--------------------------------------------
   public boolean ignored(String path) {
@@ -105,5 +109,13 @@ public class ApiSecurityProperties {
 
   public void setSupportClientCache(Boolean supportClientCache) {
     this.supportClientCache = supportClientCache;
+  }
+
+  public Boolean getCompatibleAccessToken() {
+    return compatibleAccessToken;
+  }
+
+  public void setCompatibleAccessToken(Boolean compatibleAccessToken) {
+    this.compatibleAccessToken = compatibleAccessToken;
   }
 }

@@ -23,6 +23,11 @@ public interface SecurityParameterNames {
   String ACCESS_TOKEN = "access_token";
 
   /**
+   * 兼容toekn名称
+   */
+  String COMPATIBLE_ACCESS_TOKEN = "accessToken";
+
+  /**
    * {@code refresh_token} - used in Access Token Request and Access Token Response.
    */
   String REFRESH_TOKEN = "refresh_token";
