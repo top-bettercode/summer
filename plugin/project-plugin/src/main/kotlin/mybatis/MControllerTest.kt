@@ -140,12 +140,12 @@ open class MControllerTest : MModuleJavaGenerator() {
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(4)")
                 exception(JavaType("Exception"))
-                staticImport("org.junit.jupiter.api.Assertions.assertNotNull")
+                staticImport("org.junit.jupiter.api.Assertions.assertNull")
                 +"${primaryKeyType.shortName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
                 +"mockMvc.perform(post(\"/$module/$pathName/delete\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 +").andExpect(status().isOk());"
-                +"assertNotNull(${projectEntityName}Service.selectById(${primaryKeyName}));"
+                +"assertNull(${projectEntityName}Service.selectById(${primaryKeyName}));"
             }
         }
     }

@@ -8,16 +8,21 @@ open class DaoXml : MModuleJavaGenerator() {
         get() = true
 
     override fun output(printWriter: PrintWriter) {
-        printWriter.println("""<?xml version="1.0" encoding="UTF-8"?>
+        printWriter.println(
+            """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="$daoType">""")
-        
-        printWriter.println("""
-</mapper>""")
+<mapper namespace="$daoType">"""
+        )
+
+        printWriter.println(
+            """
+</mapper>"""
+        )
     }
 
-    override val dir: String = "src/main/resources/mapper"
+    override val dir: String
+        get() = "src/main/resources/${settings["mapper-name"] ?: "mapper"}"
     override val name: String
         get() = if (extension.userModule && module.isNotBlank()) {
             "$module/$projectEntityName.xml"
