@@ -80,6 +80,8 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
     this.tokenEndpointMatcher = new AntPathRequestMatcher(tokenEndpointUri, HttpMethod.POST.name());
     this.revokeTokenEndpointMatcher = new AntPathRequestMatcher(tokenEndpointUri,
         HttpMethod.DELETE.name());
+
+    bearerTokenResolver.setCompatibleAccessToken(apiSecurityProperties.getCompatibleAccessToken());
   }
 
   @Override
