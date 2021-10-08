@@ -19,7 +19,7 @@ abstract class JavaGenerator : Generator() {
             return field.ifBlank {
                 var packageName = field.ifBlank { basePackageName }
                 if (settings["no-modules"] == null)
-                    packageName = "$packageName.modules"
+                    packageName = "$packageName.${settings["modules-name"] ?: "modules"}"
                 if (extension.userModule && module.isNotBlank()) {
                     "$packageName.$module"
                 } else {
@@ -65,7 +65,12 @@ abstract class JavaGenerator : Generator() {
 
 
     protected open fun getRemark(it: Column) =
-            "${(if (it.remarks.isBlank()) "" else (if (it.isSoftDelete) it.remarks.split(Regex("[:：,， (（]"))[0] else it.remarks.replace("@", "\\@")))}${if (it.columnDef.isNullOrBlank() || it.isSoftDelete) "" else " 默认值：${it.columnDef}"}"
+        "${
+            (if (it.remarks.isBlank()) "" else (if (it.isSoftDelete) it.remarks.split(Regex("[:：,， (（]"))[0] else it.remarks.replace(
+                "@",
+                "\\@"
+            )))
+        }${if (it.columnDef.isNullOrBlank() || it.isSoftDelete) "" else " 默认值：${it.columnDef}"}"
 
     protected open fun getParamRemark(it: Column): String {
         val remark = getRemark(it)
@@ -86,14 +91,20 @@ abstract class JavaGenerator : Generator() {
         }
     }
 
-    protected fun interfaze(visibility: JavaVisibility = JavaVisibility.PUBLIC, interfaze: Interface.() -> Unit) {
+    protected fun interfaze(
+        visibility: JavaVisibility = JavaVisibility.PUBLIC,
+        interfaze: Interface.() -> Unit
+    ) {
         val value = Interface(type)
         value.visibility = visibility
         interfaze(value)
         compilationUnits.add(value)
     }
 
-    protected fun clazz(visibility: JavaVisibility = JavaVisibility.PUBLIC, clazz: TopLevelClass.() -> Unit) {
+    protected fun clazz(
+        visibility: JavaVisibility = JavaVisibility.PUBLIC,
+        clazz: TopLevelClass.() -> Unit
+    ) {
         val value = TopLevelClass(type)
         value.visibility = visibility
         clazz(value)
