@@ -340,8 +340,7 @@ abstract class Generator {
      */
     protected val remarks: String
         get() {
-            val comment =
-                if (table.remarks.endsWith("表")) table.remarks.substringBeforeLast("表") else table.remarks
+            val comment = table.remarks
             return comment.ifBlank {
                 extension.remarks
             }

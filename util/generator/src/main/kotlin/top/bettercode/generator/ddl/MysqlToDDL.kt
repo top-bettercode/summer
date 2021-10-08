@@ -31,7 +31,7 @@ object MysqlToDDL : ToDDL() {
                     val oldTable = oldTables.find { it.tableName == tableName }!!
                     if (oldTable != table) {
                         val lines = mutableListOf<String>()
-                        if (oldTable.remarks.trimEnd('表') != table.remarks)
+                        if (oldTable.remarks != table.remarks)
                             lines.add("ALTER TABLE $quote$tableName$quote COMMENT '${table.remarks}';")
 
                         val oldColumns = oldTable.columns

@@ -34,7 +34,7 @@ object OracleToDDL : ToDDL() {
                     val oldTable = oldTables.find { it.tableName == tableName }!!
                     if (oldTable != table) {
                         val lines = mutableListOf<String>()
-                        if (oldTable.remarks.trimEnd('表') != table.remarks)
+                        if (oldTable.remarks != table.remarks)
                             lines.add("COMMENT ON TABLE $quote$tableName$quote IS '${table.remarks}';")
                         val oldColumns = oldTable.columns
                         val columns = table.columns
