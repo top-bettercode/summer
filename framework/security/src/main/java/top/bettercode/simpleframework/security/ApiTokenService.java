@@ -50,10 +50,13 @@ public class ApiTokenService {
   }
 
   public ApiToken getApiToken(String scope, String username) {
+    return getApiToken(scope, username, false);
+  }
+
+  public ApiToken getApiToken(String scope, String username, Boolean forceCreate) {
     ApiAuthenticationToken authenticationToken = apiAuthorizationService.findByScopeAndUsername(
         scope, username);
-    if (authenticationToken == null) {
-
+    if (authenticationToken == null || forceCreate) {
       UserDetails userDetails;
       if (isScopeUserDetailsService) {
         userDetails = ((ScopeUserDetailsService) userDetailsService).loadUserByScopeAndUsername(
