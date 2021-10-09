@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -20,6 +21,7 @@ import top.bettercode.autodoc.gen.Autodoc;
 import top.bettercode.logging.AnnotatedUtils;
 import top.bettercode.simpleframework.security.Anonymous;
 import top.bettercode.simpleframework.security.ApiTokenService;
+import top.bettercode.simpleframework.security.SecurityParameterNames;
 import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 
@@ -63,7 +65,11 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
               && !securityProperties
               .ignored(url)) {
             requiredHeaders = new HashSet<>(requiredHeaders);
-            requiredHeaders.add("Authorization");
+            if (securityProperties.getCompatibleAccessToken()) {
+              requiredHeaders.add(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
+            } else {
+              requiredHeaders.add(HttpHeaders.AUTHORIZATION);
+            }
             Autodoc.requiredHeaders(requiredHeaders.toArray(new String[0]));
           }
         }
@@ -75,10 +81,19 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
 
   @Override
   public void handle(AutoDocHttpServletRequest request) {
-    String authorization = request.getHeader("Authorization");
-    if (!StringUtils.hasText(authorization)) {
-      request.header("Authorization", "bearer xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
+    if (securityProperties.getCompatibleAccessToken()) {
+      String authorization = request.getHeader(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
+      if (!StringUtils.hasText(authorization)) {
+        request.header(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN,
+            "xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
+      }
+    } else {
+      String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+      if (!StringUtils.hasText(authorization)) {
+        request.header(HttpHeaders.AUTHORIZATION, "bearer xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
+      }
     }
+
   }
 
   @Override
