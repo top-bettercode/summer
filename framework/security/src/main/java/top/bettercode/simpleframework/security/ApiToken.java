@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.security;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
@@ -33,10 +34,13 @@ public class ApiToken implements Serializable {
 
   private Map<String, Object> additionalInformation = new HashMap<>();
 
+  private ApiAuthenticationToken apiAuthenticationToken;
+
   public ApiToken() {
   }
 
   public ApiToken(ApiAuthenticationToken apiAuthenticationToken) {
+    this.apiAuthenticationToken = apiAuthenticationToken;
     Token accessToken = apiAuthenticationToken.getAccessToken();
     UserDetails userDetails = apiAuthenticationToken.getUserDetails();
 
@@ -49,6 +53,18 @@ public class ApiToken implements Serializable {
         ? ((AdditionalUserDetails) userDetails).getAdditionalInformation()
         : Collections.emptyMap();
   }
+
+  @JsonIgnore
+  public ApiAuthenticationToken getApiAuthenticationToken() {
+    return apiAuthenticationToken;
+  }
+
+  @JsonIgnore
+  public UserDetails getUserDetails() {
+    return apiAuthenticationToken.getUserDetails();
+  }
+
+  //--------------------------------------------
 
   @JsonProperty("expires_in")
   public int getExpiresIn() {
