@@ -1,6 +1,5 @@
 package top.bettercode.autodoc.gen
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -40,6 +39,7 @@ class AutodocHandler(
     private val log: Logger = LoggerFactory.getLogger(AutodocHandler::class.java)
     private val cache: ConcurrentMap<File, DocModule> = ConcurrentHashMap()
 
+    @Suppress("unused")
     @PreDestroy
     fun destroy() {
         try {
@@ -222,22 +222,42 @@ class AutodocHandler(
         prefix: String = ""
     ) {
         field.required = requiredParameters.contains(prefix + field.name)
-        if (!field.children.isNullOrEmpty()) {
+        if (field.children.isNotEmpty()) {
             field.children.forEach {
                 setRequired(it, requiredParameters, "${prefix + field.name}.")
             }
         }
     }
 
-    @JsonIgnore
+
     private fun Operation.description(dir: File, description: String): DocOperation {
         val operationFile = File(dir, "collection/$collectionName/$name.yml")
-        return if (operationFile.exists()) {
-            val exist = Util.yamlMapper.readValue(operationFile, DocOperation::class.java)
-            exist.description = description
-            exist.operationFile = operationFile
+        var docOperation: DocOperation? = null
+        if (!operationFile.exists()) {
+            val subDirs = dir.parentFile.listFiles()
+            if (subDirs != null) {
+                for (oDir in subDirs) {
+                    if (!oDir.equals(dir)) {
+                        val oldOperationFile = File(oDir, "collection/$collectionName/$name.yml")
+                        if (oldOperationFile.exists()) {
+                            docOperation =
+                                Util.yamlMapper.readValue(
+                                    oldOperationFile,
+                                    DocOperation::class.java
+                                )
+                            break
+                        }
+                    }
+                }
+            }
+        } else {
+            docOperation = Util.yamlMapper.readValue(operationFile, DocOperation::class.java)
+        }
+        return if (docOperation != null) {
+            docOperation.description = description
+            docOperation.operationFile = operationFile
             val operation = this
-            exist.apply {
+            docOperation.apply {
                 collectionName = operation.collectionName
                 name = operation.name
                 protocol = operation.protocol
@@ -257,9 +277,9 @@ class AutodocHandler(
                     contentExt = existRes.contentExt
                 )
             }
-            exist
+            docOperation
         } else {
-            val docOperation = DocOperation(this, description)
+            docOperation = DocOperation(this, description)
             docOperation.operationFile = operationFile
             docOperation
         }
