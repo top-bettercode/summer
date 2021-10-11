@@ -234,8 +234,9 @@ class AutodocHandler(
         val operationFile = File(dir, "collection/$collectionName/$name.yml")
         var docOperation: DocOperation? = null
         if (!operationFile.exists()) {
-            val subDirs = dir.parentFile.listFiles()
+            val subDirs = dir.parentFile.listFiles()?.filter { it.isDirectory }
             if (subDirs != null) {
+                subDirs.sortedByDescending { it.name }
                 for (oDir in subDirs) {
                     if (!oDir.equals(dir)) {
                         val oldOperationFile = File(oDir, "collection/$collectionName/$name.yml")
