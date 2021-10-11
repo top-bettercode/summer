@@ -11,7 +11,6 @@ import java.io.File
  */
 class ConvertTest {
 
-
     @Test
     fun convert() {
         File("/data/repositories/bettercode/wintruelife/auction-api/app").walkTopDown().filter { it.isDirectory && it.name == "doc" }.forEach { doc ->
