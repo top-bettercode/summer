@@ -6,8 +6,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.util.StreamUtils
-import java.io.IOException
 import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.io.InputStream
 
 /**
@@ -19,12 +19,19 @@ class ClientHttpResponseWrapper(private val response: ClientHttpResponse) : Clie
 
     private val log: Logger = LoggerFactory.getLogger(ClientHttpResponseWrapper::class.java)
 
-    val bytes: ByteArray = try {
-        StreamUtils.copyToByteArray(response.body)
-    } catch (e: Exception) {
-        log.warn("读取响应错误", e)
-        ByteArray(0)
-    }
+    var bytes: ByteArray? = null
+    val content: ByteArray
+        get() {
+            if (bytes == null) {
+                bytes = try {
+                    StreamUtils.copyToByteArray(response.body)
+                } catch (e: Exception) {
+                    log.warn("读取响应错误", e)
+                    ByteArray(0)
+                }
+            }
+            return bytes!!
+        }
 
     override fun getHeaders(): HttpHeaders {
         return response.headers
@@ -32,8 +39,9 @@ class ClientHttpResponseWrapper(private val response: ClientHttpResponse) : Clie
 
     @Throws(IOException::class)
     override fun getBody(): InputStream {
-        return ByteArrayInputStream(bytes)
+        return ByteArrayInputStream(content)
     }
+
 
     @Throws(IOException::class)
     override fun getStatusCode(): HttpStatus {

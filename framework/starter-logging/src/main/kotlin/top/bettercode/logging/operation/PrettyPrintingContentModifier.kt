@@ -1,10 +1,11 @@
 package top.bettercode.logging.operation
 
+import com.sun.org.apache.xml.internal.utils.DefaultErrorHandler
 import io.micrometer.core.instrument.util.JsonUtils
-import org.xml.sax.ErrorHandler
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
-import org.xml.sax.SAXParseException
 import top.bettercode.lang.util.StringUtil
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -12,18 +13,19 @@ import java.io.IOException
 import java.util.*
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParserFactory
-import javax.xml.transform.ErrorListener
 import javax.xml.transform.OutputKeys
-import javax.xml.transform.TransformerException
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.sax.SAXSource
 import javax.xml.transform.stream.StreamResult
+
 
 /**
  * A ContentModifier that modifies the content by pretty printing it.
  *
  */
 object PrettyPrintingContentModifier {
+
+    private val log: Logger = LoggerFactory.getLogger(PrettyPrintingContentModifier::class.java)
 
     @JvmStatic
     fun modifyContent(originalContent: ByteArray): ByteArray {
@@ -32,7 +34,6 @@ object PrettyPrintingContentModifier {
                 try {
                     return prettyPrinter.prettyPrint(originalContent)
                 } catch (ex: Exception) {
-                    // Continue
                 }
             }
         }
@@ -66,7 +67,7 @@ object PrettyPrintingContentModifier {
             )
             transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
             val transformed = ByteArrayOutputStream()
-            transformer.errorListener = SilentErrorListener()
+            transformer.errorListener = DefaultErrorHandler()
             transformer.transform(createSaxSource(content), StreamResult(transformed))
 
             return transformed.toByteArray()
@@ -76,46 +77,8 @@ object PrettyPrintingContentModifier {
         private fun createSaxSource(original: ByteArray): SAXSource {
             val parser = parserFactory.newSAXParser()
             val xmlReader = parser.xmlReader
-            xmlReader.errorHandler = SilentErrorHandler()
+            xmlReader.errorHandler = DefaultErrorHandler()
             return SAXSource(xmlReader, InputSource(ByteArrayInputStream(original)))
-        }
-
-        private class SilentErrorListener : ErrorListener {
-
-            @Throws(TransformerException::class)
-            override fun warning(exception: TransformerException) {
-                // Suppress
-            }
-
-            @Throws(TransformerException::class)
-            override fun error(exception: TransformerException) {
-                // Suppress
-            }
-
-            @Throws(TransformerException::class)
-            override fun fatalError(exception: TransformerException) {
-                // Suppress
-            }
-
-        }
-
-        private class SilentErrorHandler : ErrorHandler {
-
-            @Throws(SAXException::class)
-            override fun warning(exception: SAXParseException) {
-                // Suppress
-            }
-
-            @Throws(SAXException::class)
-            override fun error(exception: SAXParseException) {
-                // Suppress
-            }
-
-            @Throws(SAXException::class)
-            override fun fatalError(exception: SAXParseException) {
-                // Suppress
-            }
-
         }
 
     }
