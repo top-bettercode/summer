@@ -23,8 +23,8 @@ spring:
   autoconfigure:
     exclude:
       - top.bettercode.environment.WritableEnvironmentEndpointAutoConfiguration
-      - top.bettercode.config.EndpointAutoConfiguration
       - top.bettercode.logging.websocket.WebsocketConfiguration
+      - top.bettercode.config.EndpointAutoConfiguration
       - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketMessagingAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.amqp.RabbitHealthContributorAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.audit.AuditAutoConfiguration

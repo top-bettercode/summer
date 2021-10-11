@@ -14,15 +14,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE
 ,properties = {
     "spring.autoconfigure.exclude="
-        + "top.bettercode.simpleframework.security.config.ApiSecurityConfiguration,"
-        + "top.bettercode.simpleframework.security.server.AuthorizationServerConfiguration,"
-        + "top.bettercode.simpleframework.security.server.SecurityServerConfiguration,"
-        + "top.bettercode.simpleframework.security.server.KeyStoreConfiguration,"
+        + "top.bettercode.simpleframework.security.config.SecurityConfiguration,"
         + "top.bettercode.environment.WritableEnvironmentEndpointAutoConfiguration,"
-        + "top.bettercode.simpleframework.security.resource.SecurityResourceConfiguration,"
         + "top.bettercode.simpleframework.config.CorsConfiguration,"
         + "top.bettercode.logging.websocket.WebsocketConfiguration,"
-        + "top.bettercode.logging.ActuateLoggingConfiguration"
+        + "top.bettercode.config.EndpointAutoConfiguration,"
         + "org.springframework.boot.autoconfigure.websocket.servlet.WebSocketMessagingAutoConfiguration,"
         + "org.springframework.boot.actuate.autoconfigure.amqp.RabbitHealthContributorAutoConfiguration,"
         + "org.springframework.boot.actuate.autoconfigure.audit.AuditAutoConfiguration,"
