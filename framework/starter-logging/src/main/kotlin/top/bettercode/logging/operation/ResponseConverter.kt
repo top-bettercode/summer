@@ -32,7 +32,7 @@ object ResponseConverter {
     fun convert(response: ClientHttpResponseWrapper): OperationResponse {
         return OperationResponse(
             response.statusCode.value(),
-            response.headers, response.bytes)
+            response.headers, response.content)
     }
 
     private fun extractHeaders(response: HttpServletResponse): HttpHeaders {
