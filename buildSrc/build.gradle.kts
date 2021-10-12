@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 configurations {
     all {
@@ -19,11 +19,13 @@ dependencies {
     val properties = Properties()
     properties.load(project.file("../gradle.properties").inputStream())
     val kotlinVersion = properties.getProperty("kotlin.version")
+    val summerVersion = properties.getProperty("version")
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
 
     implementation("org.springframework.boot:spring-boot-gradle-plugin:2.5.0")
 
-    implementation("top.bettercode.summer:publish-plugin:0.0.11-SNAPSHOT")
+//    implementation("top.bettercode.summer:publish-plugin:0.0.12-SNAPSHOT")
+    implementation("top.bettercode.summer:publish-plugin:$summerVersion")
 }

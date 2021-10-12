@@ -1,5 +1,6 @@
 package top.bettercode.gradle.publish
 
+import com.gradle.publish.PublishTask
 import groovy.lang.Closure
 import groovy.util.Node
 import groovy.util.NodeList
@@ -7,6 +8,7 @@ import io.codearte.gradle.nexus.NexusStagingExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.publish.PublishingExtension
@@ -115,39 +117,41 @@ abstract class AbstractPlugin : Plugin<Project> {
     /**
      * 配置 Publishing
      */
-    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     private fun configurePublishing(project: Project, projectUrl: String?, projectVcsUrl: String?) {
         project.tasks.withType(GenerateModuleMetadata::class.java) {
             it.enabled = false
         }
         project.extensions.configure(PublishingExtension::class.java) { p ->
-            var mavenRepoName = project.findProperty("mavenRepo.name") as? String ?: "mavenDeployer"
-            var mavenRepoUrl = project.findProperty("mavenRepo.url") as? String
-            var mavenRepoUsername = project.findProperty("mavenRepo.username") as? String
-            var mavenRepoPassword = project.findProperty("mavenRepo.password") as? String
+            project.findProperty("mavenRepos")?.toString()?.split(",")?.forEach {
+                var mavenRepoName = project.findProperty("$it.name") as? String ?: it
+                var mavenRepoUrl = project.findProperty("$it.url") as? String
+                var mavenRepoUsername = project.findProperty("$it.username") as? String
+                var mavenRepoPassword = project.findProperty("$it.password") as? String
 
-            if (project.version.toString().endsWith("SNAPSHOT")) {
-                mavenRepoName = project.findProperty("mavenRepo.snapshots.name") as? String
-                    ?: mavenRepoName
-                mavenRepoUrl = project.findProperty("mavenRepo.snapshots.url") as? String
-                    ?: mavenRepoUrl
-                mavenRepoUsername = project.findProperty("mavenRepo.snapshots.username") as? String
-                    ?: mavenRepoUsername
-                mavenRepoPassword = project.findProperty("mavenRepo.snapshots.password") as? String
-                    ?: mavenRepoPassword
-            }
-            if (mavenRepoUrl != null)
-                p.repositories { handler ->
-                    handler.maven { repository ->
-                        repository.name = mavenRepoName
-                        repository.url = URI(mavenRepoUrl)
-                        repository.isAllowInsecureProtocol = true
-                        repository.credentials {
-                            it.username = mavenRepoUsername
-                            it.password = mavenRepoPassword
+                if (project.version.toString().endsWith("SNAPSHOT")) {
+                    mavenRepoName = project.findProperty("$it.snapshots.name") as? String
+                        ?: mavenRepoName
+                    mavenRepoUrl = project.findProperty("$it.snapshots.url") as? String
+                        ?: mavenRepoUrl
+                    mavenRepoUsername = project.findProperty("$it.snapshots.username") as? String
+                        ?: mavenRepoUsername
+                    mavenRepoPassword = project.findProperty("$it.snapshots.password") as? String
+                        ?: mavenRepoPassword
+                }
+                if (mavenRepoUrl != null)
+                    p.repositories { handler ->
+                        handler.maven { repository ->
+                            repository.name = mavenRepoName
+                            repository.url = URI(mavenRepoUrl)
+                            repository.isAllowInsecureProtocol = true
+                            repository.credentials { credentials ->
+                                credentials.username = mavenRepoUsername
+                                credentials.password = mavenRepoPassword
+                            }
                         }
                     }
-                }
+            }
+
 
             p.publications.create("mavenJava", MavenPublication::class.java) { m ->
                 if (project.plugins.hasPlugin("war")) {
@@ -235,12 +239,14 @@ abstract class AbstractPlugin : Plugin<Project> {
         }
         project.tasks.named("publish") {
             it.doLast {
-                var mavenRepoUrl = project.findProperty("mavenRepo.url") as? String
-                if (project.version.toString().endsWith("SNAPSHOT")) {
-                    mavenRepoUrl = project.findProperty("mavenRepo.snapshots.url") as? String
-                        ?: mavenRepoUrl
+                project.extensions.getByType(PublishingExtension::class.java).repositories.forEach { repository ->
+                    if (repository is MavenArtifactRepository) {
+                        println("${project.name} published to: ${repository.url}")
+                    } else {
+                        println("${project.name} published to: ${repository.name}")
+                    }
                 }
-                println("${project.name} published to: $mavenRepoUrl")
+
             }
         }
         val extension = project.rootProject.extensions.getByType(NexusStagingExtension::class.java)
