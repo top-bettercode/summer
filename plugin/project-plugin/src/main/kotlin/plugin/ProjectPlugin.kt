@@ -37,6 +37,9 @@ import java.util.concurrent.TimeUnit
  *
  * @author Peter Wu
  */
+val Project.mainProject: Boolean
+    get() = !arrayOf("core").contains(name) && parent?.name != "util" && name != "util"
+
 class ProjectPlugin : Plugin<Project> {
 
     private fun findDistProperty(project: Project, key: String) =
@@ -76,8 +79,7 @@ class ProjectPlugin : Plugin<Project> {
                 java.targetCompatibility = JavaVersion.VERSION_1_8
             }
 
-            val mainProject =
-                !arrayOf("core").contains(subProject.name) && subProject.parent?.name != "util" && subProject.name != "util"
+            val mainProject = subProject.mainProject
             val needDocProject = subProject.parent?.name != "util" && subProject.name != "util"
 
             subProject.plugins.apply {
