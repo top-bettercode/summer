@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.security;
 
+import java.util.Collection;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,13 +38,19 @@ public final class AuthenticationHelper {
    * @return 授权信息是否包含指定权限
    */
   private static boolean hasAuthority(Authentication authentication, String authority) {
-    for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+    return hasAuthority(authentication.getAuthorities(), authority);
+  }
+
+  public static boolean hasAuthority(Collection<? extends GrantedAuthority> authorities,
+      String authority) {
+    for (GrantedAuthority grantedAuthority : authorities) {
       if (grantedAuthority.getAuthority().equals(authority)) {
         return true;
       }
     }
     return false;
   }
+
 
   /**
    * @param authority 权限
