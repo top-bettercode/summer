@@ -239,8 +239,8 @@ object PumlConverter {
         }
     }
 
-    fun reformat(extension: GeneratorExtension, all: Boolean = false) {
-        (if (all) extension.pumlAllSources else extension.pumlSrcSources).forEach {
+    fun reformat(extension: GeneratorExtension) {
+        (extension.pumlSrcSources + extension.file(extension.pumlDatabase + "/database.puml")).forEach {
             when (extension.pumlDatabaseDriver) {
                 top.bettercode.generator.DatabaseDriver.MYSQL -> toMysql(extension, it, it)
                 top.bettercode.generator.DatabaseDriver.ORACLE -> toOracle(extension, it, it)
