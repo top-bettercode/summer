@@ -21,7 +21,7 @@ public class PageController extends BaseController {
 
   @NotNull
   protected <T> PageExtra<T> of(List<T> list) {
-    return BaseServiceImpl.page(list);
+    return BaseService.page(list);
   }
 
   @Override
