@@ -468,7 +468,7 @@ class ProjectPlugin : Plugin<Project> {
                             //生成 properties
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
-                            PumlConverter.reformat(gen, true)
+                            PumlConverter.reformat(gen)
                             gen.generators =
                                 arrayOf(DicCodeProperties(propertiesFile, codeTypes))
                             gen.tableNames = arrayOf()

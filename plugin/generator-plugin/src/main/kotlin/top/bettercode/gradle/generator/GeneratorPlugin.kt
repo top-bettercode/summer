@@ -193,7 +193,7 @@ class GeneratorPlugin : Plugin<Project> {
         project.tasks.create("pumlReformat") { task ->
             task.group = "gen"
             task.doLast {
-                PumlConverter.reformat(extension, true)
+                PumlConverter.reformat(extension)
             }
         }
         project.tasks.create("pumlToDiagram") { task ->
