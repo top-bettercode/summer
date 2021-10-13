@@ -1,7 +1,6 @@
 package top.bettercode.generator.puml
 
 import top.bettercode.generator.DataType
-import top.bettercode.generator.DatabaseDriver
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.database.entity.Indexed
@@ -13,6 +12,7 @@ import top.bettercode.generator.dom.java.JavaTypeResolver
 import top.bettercode.generator.dsl.def.PlantUML
 import top.bettercode.generator.powerdesigner.PdmReader
 import java.io.File
+import java.util.*
 
 /**
  * @author Peter Wu
@@ -215,8 +215,18 @@ object PumlConverter {
 
     private fun compile(extension: GeneratorExtension, tables: List<Any>, out: File) {
         if (tables.isNotEmpty()) {
+            val remarksFile = extension.file("puml/remarks.properties")
+            val remarksProperties = Properties()
+            if (remarksFile.exists()) {
+                remarksProperties.load(remarksFile.inputStream())
+            }
+
             val any = tables[0]
-            val plantUML = PlantUML(if (any is Table) any.moduleName else null, out.absolutePath)
+            val plantUML = PlantUML(
+                if (any is Table) any.moduleName else null,
+                out.absolutePath,
+                remarksProperties
+            )
             plantUML.setUp()
             tables.forEach {
                 if (it is Table) {
@@ -229,8 +239,8 @@ object PumlConverter {
         }
     }
 
-    fun reformat(extension: GeneratorExtension) {
-        extension.pumlSrcSources.forEach {
+    fun reformat(extension: GeneratorExtension, all: Boolean = false) {
+        (if (all) extension.pumlAllSources else extension.pumlSrcSources).forEach {
             when (extension.pumlDatabaseDriver) {
                 top.bettercode.generator.DatabaseDriver.MYSQL -> toMysql(extension, it, it)
                 top.bettercode.generator.DatabaseDriver.ORACLE -> toOracle(extension, it, it)
