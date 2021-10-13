@@ -379,6 +379,12 @@ abstract class Generator {
         }
 
     /**
+     * 是否有主键
+     */
+    protected val hasPrimaryKey: Boolean
+        get() = primaryKeys.isNotEmpty()
+
+    /**
      * 是否组合主键
      */
     protected val compositePrimaryKey: Boolean

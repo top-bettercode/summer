@@ -15,7 +15,7 @@ open class MIService : MModuleJavaGenerator() {
                 +" * $remarks 服务层"
                 +" */"
             }
-            if (primaryKeys.isNotEmpty()) {
+            if (hasPrimaryKey) {
                 val superInterface =
                     JavaType("top.bettercode.simpleframework.data.IBaseService").typeArgument(
                         daoType,

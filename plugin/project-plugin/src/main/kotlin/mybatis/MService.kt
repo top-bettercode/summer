@@ -16,7 +16,7 @@ open class MService : MModuleJavaGenerator() {
                 +" * $remarks 服务层实现"
                 +" */"
             }
-            superClass = if (primaryKeys.isNotEmpty()) {
+            superClass = if (hasPrimaryKey) {
                 JavaType("top.bettercode.simpleframework.data.BaseService").typeArgument(
                     daoType,
                     entityType

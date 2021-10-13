@@ -14,12 +14,15 @@ class Entity : ModuleJavaGenerator() {
 
     override fun content() {
         clazz {
-            annotation("@org.hibernate.annotations.DynamicInsert")
-            annotation("@org.hibernate.annotations.DynamicUpdate")
-            annotation("@javax.persistence.Entity")
-            annotation("@javax.persistence.Table(name = \"$tableName\")")
-            import("org.springframework.data.jpa.domain.support.AuditingEntityListener")
-            annotation("@javax.persistence.EntityListeners(AuditingEntityListener.class)")
+            if (hasPrimaryKey) {
+                annotation("@org.hibernate.annotations.DynamicInsert")
+                annotation("@org.hibernate.annotations.DynamicUpdate")
+                annotation("@javax.persistence.Entity")
+                annotation("@javax.persistence.Table(name = \"$tableName\")")
+                import("org.springframework.data.jpa.domain.support.AuditingEntityListener")
+                annotation("@javax.persistence.EntityListeners(AuditingEntityListener.class)")
+            }
+
             javadoc {
                 +"/**"
                 +" * $remarks 对应表名：$tableName"
@@ -32,56 +35,59 @@ class Entity : ModuleJavaGenerator() {
 
             //constructor no args
             constructor {}
-            //constructor with id
-            constructor(Parameter(primaryKeyName, primaryKeyType)) {
-                +"this.${primaryKeyName} = ${primaryKeyName};"
-            }
 
-            //primaryKey
-            field(primaryKeyName, primaryKeyType) {
-                if (primaryKeys.size == 1) {
-                    if (primaryKey.remarks.isNotBlank() || !primaryKey.columnDef.isNullOrBlank())
+            if (hasPrimaryKey) {
+                //constructor with id
+                constructor(Parameter(primaryKeyName, primaryKeyType)) {
+                    +"this.${primaryKeyName} = ${primaryKeyName};"
+                }
+
+                //primaryKey
+                field(primaryKeyName, primaryKeyType) {
+                    if (primaryKeys.size == 1) {
+                        if (primaryKey.remarks.isNotBlank() || !primaryKey.columnDef.isNullOrBlank())
+                            javadoc {
+                                +"/**"
+                                +" * ${getRemark(primaryKey)}"
+                                +" */"
+                            }
+
+                        annotation("@javax.persistence.Id")
+                        if (primaryKey.autoIncrement) {
+                            import("javax.persistence.GenerationType")
+                            annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
+                        }
+                    } else {
                         javadoc {
                             +"/**"
-                            +" * ${getRemark(primaryKey)}"
+                            +" * ${remarks}主键"
                             +" */"
                         }
-
-                    annotation("@javax.persistence.Id")
-                    if (primaryKey.autoIncrement) {
-                        import("javax.persistence.GenerationType")
-                        annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
+                        annotation("@javax.persistence.EmbeddedId")
                     }
-                } else {
+                }
+                //primaryKey getter
+                method("get${primaryKeyName.capitalize()}", primaryKeyType) {
                     javadoc {
                         +"/**"
                         +" * ${remarks}主键"
                         +" */"
                     }
-                    annotation("@javax.persistence.EmbeddedId")
+                    +"return ${primaryKeyName};"
                 }
-            }
-            //primaryKey getter
-            method("get${primaryKeyName.capitalize()}", primaryKeyType) {
-                javadoc {
-                    +"/**"
-                    +" * ${remarks}主键"
-                    +" */"
+                //primaryKey setter
+                method("set${primaryKeyName.capitalize()}") {
+                    javadoc {
+                        +"/**"
+                        +" * ${remarks}主键"
+                        +" */"
+                    }
+                    parameter {
+                        type = primaryKeyType
+                        name = primaryKeyName
+                    }
+                    +"this.${primaryKeyName} = ${primaryKeyName};"
                 }
-                +"return ${primaryKeyName};"
-            }
-            //primaryKey setter
-            method("set${primaryKeyName.capitalize()}") {
-                javadoc {
-                    +"/**"
-                    +" * ${remarks}主键"
-                    +" */"
-                }
-                parameter {
-                    type = primaryKeyType
-                    name = primaryKeyName
-                }
-                +"this.${primaryKeyName} = ${primaryKeyName};"
             }
 
             otherColumns.forEach {
@@ -93,29 +99,32 @@ class Entity : ModuleJavaGenerator() {
                             +" * ${getRemark(it)}"
                             +" */"
                         }
-                    var columnAnnotation =
-                        "@javax.persistence.Column(name = \"${it.columnName}\", columnDefinition = \"${it.typeDesc}${it.defaultDesc}${if (it.extra.isBlank()) "" else " ${it.extra}"}\""
-                    if (it.columnSize > 0 && it.columnSize != 255 || !it.nullable) {
-                        if (it.columnSize > 0 && it.columnSize != 255) {
-                            columnAnnotation += ", length = ${it.columnSize}"
+
+                    if (hasPrimaryKey) {
+                        var columnAnnotation =
+                            "@javax.persistence.Column(name = \"${it.columnName}\", columnDefinition = \"${it.typeDesc}${it.defaultDesc}${if (it.extra.isBlank()) "" else " ${it.extra}"}\""
+                        if (it.columnSize > 0 && it.columnSize != 255 || !it.nullable) {
+                            if (it.columnSize > 0 && it.columnSize != 255) {
+                                columnAnnotation += ", length = ${it.columnSize}"
+                            }
+                            if (!it.nullable) {
+                                columnAnnotation += ", nullable = false"
+                            }
                         }
-                        if (!it.nullable) {
-                            columnAnnotation += ", nullable = false"
+                        columnAnnotation += ")"
+                        annotation(columnAnnotation)
+                        if (it.javaName == "createdDate") {
+                            annotation("@org.springframework.data.annotation.CreatedDate")
                         }
-                    }
-                    columnAnnotation += ")"
-                    annotation(columnAnnotation)
-                    if (it.javaName == "createdDate") {
-                        annotation("@org.springframework.data.annotation.CreatedDate")
-                    }
-                    if (it.extra.contains("ON UPDATE CURRENT_TIMESTAMP")) {
-                        annotation("@org.springframework.data.annotation.LastModifiedDate")
-                    }
-                    if (it.javaName == "version") {
-                        annotation("@javax.persistence.Version")
-                    }
-                    if (it.isSoftDelete) {
-                        annotation("@top.bettercode.simpleframework.data.jpa.SoftDelete")
+                        if (it.extra.contains("ON UPDATE CURRENT_TIMESTAMP")) {
+                            annotation("@org.springframework.data.annotation.LastModifiedDate")
+                        }
+                        if (it.javaName == "version") {
+                            annotation("@javax.persistence.Version")
+                        }
+                        if (it.isSoftDelete) {
+                            annotation("@top.bettercode.simpleframework.data.jpa.SoftDelete")
+                        }
                     }
                 }
 
@@ -150,7 +159,9 @@ class Entity : ModuleJavaGenerator() {
             method("toString", JavaType.stringInstance) {
                 annotation("@Override")
                 +"return \"${className}{\" +"
-                +"    \"${primaryKeyName}='\" + $primaryKeyName + '\\'' +"
+                if (hasPrimaryKey) {
+                    +"    \"${primaryKeyName}='\" + $primaryKeyName + '\\'' +"
+                }
                 otherColumns.forEachIndexed { i, it ->
                     +"    \"${if (i > 0) ", " else ""}${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
                 }

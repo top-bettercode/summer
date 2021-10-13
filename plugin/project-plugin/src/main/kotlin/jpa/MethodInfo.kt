@@ -17,12 +17,14 @@ class MethodInfo : ModuleJavaGenerator() {
                 +" * $remarks"
                 +" */"
             }
-            //primaryKey getter
-            method("get${primaryKeyName.capitalize()}", primaryKeyType) {
-                javadoc {
-                    +"/**"
-                    +" * ${remarks}主键"
-                    +" */"
+            if (hasPrimaryKey) {
+                //primaryKey getter
+                method("get${primaryKeyName.capitalize()}", primaryKeyType) {
+                    javadoc {
+                        +"/**"
+                        +" * ${remarks}主键"
+                        +" */"
+                    }
                 }
             }
             otherColumns.forEach {

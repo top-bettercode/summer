@@ -17,7 +17,7 @@ open class Dao : MModuleJavaGenerator() {
                 +" */"
             }
             annotation("@org.apache.ibatis.annotations.Mapper")
-            if (primaryKeys.isNotEmpty()) {
+            if (hasPrimaryKey) {
                 val superInterface =
                     JavaType("com.baomidou.mybatisplus.mapper.BaseMapper").typeArgument(entityType)
                 implement(superInterface)
