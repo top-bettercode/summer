@@ -1,6 +1,5 @@
 package top.bettercode.generator.database
 
-import top.bettercode.generator.DatabaseDriver
 import top.bettercode.generator.JDBCConnectionConfiguration
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.database.entity.Indexed
@@ -25,7 +24,8 @@ fun ResultSet.each(rs: ResultSet.() -> Unit) {
 
 class DatabaseMetaData(
     private val datasource: JDBCConnectionConfiguration,
-    private val debug: Boolean = false
+    private val debug: Boolean = false,
+    private val queryIndex: Boolean = true
 ) : AutoCloseable {
 
     private var metaData: java.sql.DatabaseMetaData
@@ -94,7 +94,10 @@ class DatabaseMetaData(
             if (canReadIndexed) {
                 try {
                     primaryKeyNames = primaryKeyNames(tableName)
-                    indexes = indexes(tableName)
+                    if (queryIndex)
+                        indexes = indexes(tableName)
+                    else
+                        indexes = mutableListOf()
                 } catch (e: Exception) {
                     System.err.println("查询索引出错:${e.message}")
                     reConnect()
@@ -129,13 +132,18 @@ class DatabaseMetaData(
 
     private fun fixColumns(tableName: String, columns: MutableList<Column>) {
         val databaseDriver = top.bettercode.generator.DatabaseDriver.fromJdbcUrl(metaData.url)
-        if (arrayOf(top.bettercode.generator.DatabaseDriver.MYSQL, top.bettercode.generator.DatabaseDriver.MARIADB, top.bettercode.generator.DatabaseDriver.H2).contains(
+        if (arrayOf(
+                top.bettercode.generator.DatabaseDriver.MYSQL,
+                top.bettercode.generator.DatabaseDriver.MARIADB,
+                top.bettercode.generator.DatabaseDriver.H2
+            ).contains(
                 databaseDriver
             )
         ) {
             try {
                 val prepareStatement =
                     metaData.connection.prepareStatement("SHOW COLUMNS FROM $tableName")
+                prepareStatement.queryTimeout = 5
                 prepareStatement.executeQuery().each {
                     val find = columns.find { it.columnName == getString(1) }
                     if (find != null) {

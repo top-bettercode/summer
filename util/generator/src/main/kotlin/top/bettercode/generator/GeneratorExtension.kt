@@ -1,10 +1,11 @@
 package top.bettercode.generator
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import top.bettercode.generator.database.DatabaseMetaData
 import top.bettercode.generator.database.entity.Table
 import top.bettercode.generator.dom.java.element.JavaElement
 import top.bettercode.generator.dsl.Generator
-import kotlinx.coroutines.*
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
@@ -152,6 +153,10 @@ open class GeneratorExtension(
     var tableNames: Array<String> = arrayOf(),
     var pumlTableNames: Array<String> = arrayOf(),
     /**
+     * 生成PUML时是否查询index，查询较耗时
+     */
+    var queryIndex: Boolean = true,
+    /**
      * 额外设置
      */
     var settings: MutableMap<String, String> = mutableMapOf()
@@ -226,7 +231,7 @@ open class GeneratorExtension(
 
     fun <T> use(metaData: DatabaseMetaData.() -> T): T {
         Class.forName(datasource.driverClass).getConstructor().newInstance()
-        val databaseMetaData = DatabaseMetaData(datasource, debug)
+        val databaseMetaData = DatabaseMetaData(datasource, debug, queryIndex)
         databaseMetaData.use {
             return metaData(it)
         }

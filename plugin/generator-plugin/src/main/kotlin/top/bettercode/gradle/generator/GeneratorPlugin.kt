@@ -37,6 +37,9 @@ class GeneratorPlugin : Plugin<Project> {
                 it.username = findDatasourceProperty(project, "username") ?: "root"
                 it.password = findDatasourceProperty(project, "password") ?: "root"
                 it.driverClass = findDatasourceProperty(project, "driverClass") ?: ""
+                if (it.isOracle) {
+                    it.properties["oracle.net.CONNECT_TIMEOUT"] = "10000";
+                }
             }
             extension.singleDatasource = (findProperty(project, "singleDatasource"))?.toBoolean()
                 ?: true
@@ -77,6 +80,7 @@ class GeneratorPlugin : Plugin<Project> {
             extension.softDeleteAsBoolean =
                 (findProperty(project, "softDeleteAsBoolean"))?.toBoolean()
                     ?: true
+            extension.queryIndex = (findProperty(project, "queryIndex"))?.toBoolean() ?: true
             extension.dataType = DataType.valueOf(
                 (findProperty(project, "dataType")
                     ?: DataType.DATABASE.name).toUpperCase()
