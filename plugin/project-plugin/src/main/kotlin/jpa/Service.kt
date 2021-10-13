@@ -16,7 +16,7 @@ open class Service : ModuleJavaGenerator() {
                 +" * $remarks 服务层实现"
                 +" */"
             }
-            superClass = JavaType("top.bettercode.simpleframework.data.jpa.BaseServiceImpl").typeArgument(entityType, primaryKeyType, repositoryType)
+            superClass = JavaType("top.bettercode.simpleframework.data.jpa.BaseService").typeArgument(entityType, primaryKeyType, repositoryType)
 
 
             //constructor

@@ -406,19 +406,21 @@ abstract class Generator {
         get() = table.pathName(extension)
 
     fun call(extension: GeneratorExtension, table: Table): Any? {
-        this.extension = extension
-        this.table = table
-        return if (extension.delete) {
-            if (destFile.delete()) {
-                println("删除：${destFile.absolutePath.substringAfter(basePath.absolutePath + File.separator)}")
-            }
-            null
-        } else {
-            if (supports())
-                doCall()
-            else
+        return if (table.primaryKeys.isNotEmpty() || "MQueryDsl" != this.javaClass.simpleName) {
+            this.extension = extension
+            this.table = table
+            if (extension.delete) {
+                if (destFile.delete()) {
+                    println("删除：${destFile.absolutePath.substringAfter(basePath.absolutePath + File.separator)}")
+                }
                 null
-        }
+            } else {
+                if (supports())
+                    doCall()
+                else
+                    null
+            }
+        } else null
     }
 
     protected open fun supports(): Boolean {

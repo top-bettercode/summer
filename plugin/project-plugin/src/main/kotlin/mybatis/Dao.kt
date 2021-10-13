@@ -17,8 +17,11 @@ open class Dao : MModuleJavaGenerator() {
                 +" */"
             }
             annotation("@org.apache.ibatis.annotations.Mapper")
-            val superInterface = JavaType("com.baomidou.mybatisplus.mapper.BaseMapper").typeArgument(entityType)
-            implement(superInterface)
+            if (primaryKeys.isNotEmpty()) {
+                val superInterface =
+                    JavaType("com.baomidou.mybatisplus.mapper.BaseMapper").typeArgument(entityType)
+                implement(superInterface)
+            }
         }
     }
 }

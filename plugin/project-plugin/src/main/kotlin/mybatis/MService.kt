@@ -16,7 +16,17 @@ open class MService : MModuleJavaGenerator() {
                 +" * $remarks 服务层实现"
                 +" */"
             }
-            superClass = JavaType("top.bettercode.simpleframework.data.BaseServiceImpl").typeArgument(daoType, entityType)
+            superClass = if (primaryKeys.isNotEmpty()) {
+                JavaType("top.bettercode.simpleframework.data.BaseService").typeArgument(
+                    daoType,
+                    entityType
+                )
+            } else {
+                JavaType("top.bettercode.simpleframework.data.BaseSimpleService").typeArgument(
+                    daoType
+                )
+            }
+
         }
     }
 }
