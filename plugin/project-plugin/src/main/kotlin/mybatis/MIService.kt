@@ -15,12 +15,14 @@ open class MIService : MModuleJavaGenerator() {
                 +" * $remarks 服务层"
                 +" */"
             }
-            val superInterface =
-                JavaType("top.bettercode.simpleframework.data.IBaseService").typeArgument(
-                    daoType,
-                    entityType
-                )
-            implement(superInterface)
+            if (primaryKeys.isNotEmpty()) {
+                val superInterface =
+                    JavaType("top.bettercode.simpleframework.data.IBaseService").typeArgument(
+                        daoType,
+                        entityType
+                    )
+                implement(superInterface)
+            }
         }
     }
 }
