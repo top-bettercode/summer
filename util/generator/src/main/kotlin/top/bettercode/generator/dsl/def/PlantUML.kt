@@ -4,13 +4,18 @@ import top.bettercode.generator.DataType
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dsl.Generator
 import java.io.File
+import java.util.*
 
 /**
  *
  * @author Peter Wu
  * @since 0.0.41
  */
-class PlantUML(private val myModuleName: String?, private val output: String) : Generator() {
+class PlantUML(
+    private val myModuleName: String?,
+    private val output: String,
+    private val remarksProperties: Properties?
+) : Generator() {
 
     private val fklines = mutableListOf<String>()
     override val destFile: File
@@ -47,7 +52,12 @@ INDEX
                 if (it.columnName.length > 32) {
                     println("数据库对象的命名最好不要超过 32 个字符")
                 }
-                destFile.appendText("    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- ${it.prettyRemarks}\n")
+                var prettyRemarks = it.prettyRemarks
+                if (prettyRemarks.isBlank()) {
+                    prettyRemarks = remarksProperties?.getProperty(it.columnName) ?: ""
+                }
+
+                destFile.appendText("    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- $prettyRemarks\n")
                 if (it.isForeignKey) {
                     fklines.add("${it.pktableName} ||--o{ $tableName")
                 }

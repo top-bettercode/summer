@@ -1,7 +1,12 @@
 package top.bettercode.gradle.generator
 
+import net.sourceforge.plantuml.FileFormat
+import net.sourceforge.plantuml.FileFormatOption
+import net.sourceforge.plantuml.SourceFileReader
+import org.gradle.api.Action
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 import top.bettercode.generator.DataType
-import top.bettercode.generator.DatabaseDriver
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.JDBCConnectionConfiguration
 import top.bettercode.generator.database.entity.Table
@@ -10,12 +15,6 @@ import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.dsl.def.PlantUML
 import top.bettercode.generator.powerdesigner.PdmReader
 import top.bettercode.generator.puml.PumlConverter
-import net.sourceforge.plantuml.FileFormat
-import net.sourceforge.plantuml.FileFormatOption
-import net.sourceforge.plantuml.SourceFileReader
-import org.gradle.api.Action
-import org.gradle.api.Plugin
-import org.gradle.api.Project
 import java.io.File
 
 
@@ -173,7 +172,8 @@ class GeneratorPlugin : Plugin<Project> {
                 if (tables.isNotEmpty()) {
                     val plantUML = PlantUML(
                         tables[0].moduleName,
-                        extension.file(extension.pumlDatabase).absolutePath + "/database.puml"
+                        extension.file(extension.pumlDatabase).absolutePath + "/database.puml",
+                        null
                     )
                     plantUML.setUp()
                     pumlTableNames.forEach { tableName ->
@@ -189,7 +189,7 @@ class GeneratorPlugin : Plugin<Project> {
         project.tasks.create("pumlReformat") { task ->
             task.group = "gen"
             task.doLast {
-                PumlConverter.reformat(extension)
+                PumlConverter.reformat(extension, true)
             }
         }
         project.tasks.create("pumlToDiagram") { task ->

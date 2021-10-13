@@ -38,7 +38,7 @@ class GeneratorsTest {
     @Test
     fun gen() {
         extension.generators = arrayOf(
-                PlantUML(null, "build/gen/puml/database.puml")
+                PlantUML(null, "build/gen/puml/database.puml", null)
         )
         extension.dataType = DataType.PDM
         Generators.call(extension)
