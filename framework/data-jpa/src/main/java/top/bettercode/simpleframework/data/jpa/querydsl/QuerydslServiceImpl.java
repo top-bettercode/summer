@@ -1,6 +1,6 @@
 package top.bettercode.simpleframework.data.jpa.querydsl;
 
-import top.bettercode.simpleframework.data.jpa.BaseServiceImpl;
+import top.bettercode.simpleframework.data.jpa.BaseService;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import java.util.Optional;
@@ -16,7 +16,7 @@ import org.springframework.data.querydsl.QSort;
  * @author Peter Wu
  */
 public class QuerydslServiceImpl<T, ID, M extends QuerydslRepository<T, ID>> extends
-    BaseServiceImpl<T, ID, M> implements
+    BaseService<T, ID, M> implements
     IQuerydslService<T, ID, M> {
 
   protected final Logger log = LoggerFactory.getLogger(getClass());
