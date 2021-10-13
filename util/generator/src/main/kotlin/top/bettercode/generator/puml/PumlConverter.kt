@@ -246,8 +246,18 @@ object PumlConverter {
         }
         (extension.pumlSrcSources + extension.file(extension.pumlDatabase + "/database.puml")).forEach {
             when (extension.pumlDatabaseDriver) {
-                top.bettercode.generator.DatabaseDriver.MYSQL -> toMysql(extension, it, it)
-                top.bettercode.generator.DatabaseDriver.ORACLE -> toOracle(extension, it, it)
+                top.bettercode.generator.DatabaseDriver.MYSQL -> toMysql(
+                    extension,
+                    it,
+                    it,
+                    remarksProperties
+                )
+                top.bettercode.generator.DatabaseDriver.ORACLE -> toOracle(
+                    extension,
+                    it,
+                    it,
+                    remarksProperties
+                )
                 else -> compile(extension, it, it, remarksProperties)
             }
         }
@@ -262,7 +272,10 @@ object PumlConverter {
         compile(extension, toTableOrAnys(src), out, remarksProperties)
     }
 
-    fun toMysql(extension: GeneratorExtension, src: File, out: File) {
+    fun toMysql(
+        extension: GeneratorExtension, src: File, out: File,
+        remarksProperties: Properties? = null
+    ) {
         val tables = toTableOrAnys(src)
         tables.forEach { t ->
             if (t is Table) {
@@ -301,10 +314,13 @@ object PumlConverter {
                 }
             }
         }
-        compile(extension, tables, out)
+        compile(extension, tables, out, remarksProperties)
     }
 
-    fun toOracle(extension: GeneratorExtension, src: File, out: File) {
+    fun toOracle(
+        extension: GeneratorExtension, src: File, out: File,
+        remarksProperties: Properties? = null
+    ) {
         val tables = toTableOrAnys(src)
         tables.forEach { t ->
             if (t is Table) {
@@ -340,7 +356,7 @@ object PumlConverter {
                 }
             }
         }
-        compile(extension, tables, out)
+        compile(extension, tables, out, remarksProperties)
     }
 
     fun toDDL(extension: GeneratorExtension) {
