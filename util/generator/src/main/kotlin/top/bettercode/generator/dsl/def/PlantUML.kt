@@ -54,7 +54,7 @@ INDEX
                 }
                 var prettyRemarks = it.prettyRemarks
                 if (prettyRemarks.isBlank()) {
-                    prettyRemarks = remarksProperties?.getProperty(it.columnName) ?: ""
+                    prettyRemarks = remarksProperties?.getProperty(it.columnName)?.trim() ?: ""
                 }
 
                 destFile.appendText("    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- $prettyRemarks\n")
