@@ -213,19 +213,18 @@ object PumlConverter {
         return Pair(columnSize, decimalDigits)
     }
 
-    private fun compile(extension: GeneratorExtension, tables: List<Any>, out: File) {
+    private fun compile(
+        extension: GeneratorExtension,
+        tables: List<Any>,
+        out: File,
+        remarksProperties: Properties? = null
+    ) {
         if (tables.isNotEmpty()) {
-            val remarksFile = extension.file("puml/remarks.properties")
-            val remarksProperties = Properties()
-            if (remarksFile.exists()) {
-                remarksProperties.load(remarksFile.inputStream())
-            }
-
             val any = tables[0]
             val plantUML = PlantUML(
                 if (any is Table) any.moduleName else null,
                 out.absolutePath,
-                remarksProperties
+                if ("database.puml" == out.name) remarksProperties else null
             )
             plantUML.setUp()
             tables.forEach {
@@ -240,17 +239,27 @@ object PumlConverter {
     }
 
     fun reformat(extension: GeneratorExtension) {
+        val remarksProperties = Properties()
+        val remarksFile = extension.file("puml/remarks.properties")
+        if (remarksFile.exists()) {
+            remarksProperties.load(remarksFile.inputStream())
+        }
         (extension.pumlSrcSources + extension.file(extension.pumlDatabase + "/database.puml")).forEach {
             when (extension.pumlDatabaseDriver) {
                 top.bettercode.generator.DatabaseDriver.MYSQL -> toMysql(extension, it, it)
                 top.bettercode.generator.DatabaseDriver.ORACLE -> toOracle(extension, it, it)
-                else -> compile(extension, it, it)
+                else -> compile(extension, it, it, remarksProperties)
             }
         }
     }
 
-    fun compile(extension: GeneratorExtension, src: File, out: File) {
-        compile(extension, toTableOrAnys(src), out)
+    fun compile(
+        extension: GeneratorExtension,
+        src: File,
+        out: File,
+        remarksProperties: Properties? = null
+    ) {
+        compile(extension, toTableOrAnys(src), out, remarksProperties)
     }
 
     fun toMysql(extension: GeneratorExtension, src: File, out: File) {
