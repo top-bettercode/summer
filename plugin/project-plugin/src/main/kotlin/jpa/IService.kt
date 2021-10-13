@@ -14,8 +14,15 @@ open class IService : ModuleJavaGenerator() {
                 +" * $remarks 服务层"
                 +" */"
             }
-            val superInterface = JavaType("top.bettercode.simpleframework.data.jpa.IBaseService").typeArgument(entityType, primaryKeyType, repositoryType)
-            implement(superInterface)
+            if (hasPrimaryKey) {
+                val superInterface =
+                    JavaType("top.bettercode.simpleframework.data.jpa.IBaseService").typeArgument(
+                        entityType,
+                        primaryKeyType,
+                        repositoryType
+                    )
+                implement(superInterface)
+            }
         }
     }
 }

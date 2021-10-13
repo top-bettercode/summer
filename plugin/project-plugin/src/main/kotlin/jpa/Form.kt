@@ -25,9 +25,11 @@ class Form : ModuleJavaGenerator() {
             constructor {
                 +"this.entity = new $className();"
             }
-            //constructor with id
-            constructor(Parameter(primaryKeyName, primaryKeyType)) {
-                +"this.entity = new $className(${primaryKeyName});"
+            if (hasPrimaryKey) {
+                //constructor with id
+                constructor(Parameter(primaryKeyName, primaryKeyType)) {
+                    +"this.entity = new $className(${primaryKeyName});"
+                }
             }
             //constructor with entity
             constructor(Parameter(entityName, entityType)) {
@@ -40,20 +42,22 @@ class Form : ModuleJavaGenerator() {
 
             import("javax.validation.groups.Default")
 
-            //primaryKey getter
-            method("get${primaryKeyName.capitalize()}", primaryKeyType) {
-                javadoc {
-                    +"/**"
-                    +" * ${remarks}主键"
-                    +" */"
+            if (hasPrimaryKey) {
+                //primaryKey getter
+                method("get${primaryKeyName.capitalize()}", primaryKeyType) {
+                    javadoc {
+                        +"/**"
+                        +" * ${remarks}主键"
+                        +" */"
+                    }
+                    import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
+                    if (primaryKeyType == JavaType.stringInstance) {
+                        annotation("@javax.validation.constraints.NotBlank(groups = UpdateConstraint.class)")
+                    } else {
+                        annotation("@javax.validation.constraints.NotNull(groups = UpdateConstraint.class)")
+                    }
+                    +"return this.entity.get${primaryKeyName.capitalize()}();"
                 }
-                import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
-                if (primaryKeyType == JavaType.stringInstance) {
-                    annotation("@javax.validation.constraints.NotBlank(groups = UpdateConstraint.class)")
-                } else {
-                    annotation("@javax.validation.constraints.NotNull(groups = UpdateConstraint.class)")
-                }
-                +"return this.entity.get${primaryKeyName.capitalize()}();"
             }
 
             otherColumns.forEach {
@@ -74,18 +78,21 @@ class Form : ModuleJavaGenerator() {
                         +"return this.entity.get${it.javaName.capitalize()}();"
                     }
             }
-            //primaryKey setter
-            method("set${primaryKeyName.capitalize()}") {
-                javadoc {
-                    +"/**"
-                    +" * ${remarks}主键"
-                    +" */"
+
+            if (hasPrimaryKey) {
+                //primaryKey setter
+                method("set${primaryKeyName.capitalize()}") {
+                    javadoc {
+                        +"/**"
+                        +" * ${remarks}主键"
+                        +" */"
+                    }
+                    parameter {
+                        type = primaryKeyType
+                        name = primaryKeyName
+                    }
+                    +"this.entity.set${primaryKeyName.capitalize()}(${primaryKeyName});"
                 }
-                parameter {
-                    type = primaryKeyType
-                    name = primaryKeyName
-                }
-                +"this.entity.set${primaryKeyName.capitalize()}(${primaryKeyName});"
             }
             otherColumns.forEach {
                 //setter

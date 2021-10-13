@@ -16,8 +16,17 @@ open class Service : ModuleJavaGenerator() {
                 +" * $remarks 服务层实现"
                 +" */"
             }
-            superClass = JavaType("top.bettercode.simpleframework.data.jpa.BaseService").typeArgument(entityType, primaryKeyType, repositoryType)
-
+            superClass = if (hasPrimaryKey) {
+                JavaType("top.bettercode.simpleframework.data.jpa.BaseService").typeArgument(
+                    entityType,
+                    primaryKeyType,
+                    repositoryType
+                )
+            }else{
+                JavaType("top.bettercode.simpleframework.data.jpa.BaseSimpleService").typeArgument(
+                    repositoryType
+                )
+            }
 
             //constructor
             constructor(Parameter("repository", repositoryType)) {
