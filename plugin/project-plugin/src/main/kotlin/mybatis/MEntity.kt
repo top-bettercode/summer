@@ -1,5 +1,6 @@
 import top.bettercode.generator.DataType
 import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
 
 /**
@@ -24,7 +25,7 @@ class MEntity : MModuleJavaGenerator() {
                 annotation("@com.baomidou.mybatisplus.annotations.KeySequence(\"${tableName}_S\")")
             javadoc {
                 +"/**"
-                +" * $remarks 对应表名：$tableName"
+                +" * $remarks 对应数据库表名：$tableName"
                 +" */"
             }
             implement {
@@ -39,6 +40,17 @@ class MEntity : MModuleJavaGenerator() {
                 constructor(Parameter(primaryKeyName, primaryKey.javaType)) {
                     +"this.${primaryKeyName} = ${primaryKeyName};"
                 }
+
+            field("TABLE_NAME", JavaType.stringInstance, "\"${tableName}\"") {
+                visibility = JavaVisibility.PUBLIC
+                isStatic = true
+                isFinal = true
+                javadoc {
+                    +"/**"
+                    +" * 对应数据库表名"
+                    +" */"
+                }
+            }
 
             columns.forEach {
                 //field
