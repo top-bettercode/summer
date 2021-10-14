@@ -25,7 +25,7 @@ class Entity : ModuleJavaGenerator() {
 
             javadoc {
                 +"/**"
-                +" * $remarks 对应表名：$tableName"
+                +" * $remarks 对应数据库表名：$tableName"
                 +" */"
             }
             implement {
@@ -35,6 +35,17 @@ class Entity : ModuleJavaGenerator() {
 
             //constructor no args
             constructor {}
+
+            field("TABLE_NAME", JavaType.stringInstance, "\"${tableName}\"") {
+                visibility = JavaVisibility.PUBLIC
+                isStatic = true
+                isFinal = true
+                javadoc {
+                    +"/**"
+                    +" * 对应数据库表名"
+                    +" */"
+                }
+            }
 
             if (hasPrimaryKey) {
                 //constructor with id
