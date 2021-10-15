@@ -53,6 +53,14 @@ public class ApiTokenService {
     return getApiToken(scope, username, false);
   }
 
+  public ApiToken getApiToken(String scope, UserDetails userDetails) {
+    ApiAuthenticationToken authenticationToken = new ApiAuthenticationToken(scope,
+        createAccessToken(),
+        createRefreshToken(), userDetails);
+    apiAuthorizationService.save(authenticationToken);
+    return authenticationToken.toApiToken();
+  }
+
   public ApiToken getApiToken(String scope, String username, Boolean forceCreate) {
     ApiAuthenticationToken authenticationToken = apiAuthorizationService.findByScopeAndUsername(
         scope, username);
