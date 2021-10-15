@@ -58,6 +58,9 @@ class AutodocHandler(
     override fun handle(operation: Operation, handler: HandlerMethod?) {
         if (Autodoc.enable) {
             try {
+                if (genProperties.ignoreOnException && operation.response.stackTrace.isNotBlank() && operation.response.content.isEmpty()) {
+                    return
+                }
                 //生成相应数据
                 val projectModuleDic = File(
                     genProperties.source,
