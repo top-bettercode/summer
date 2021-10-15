@@ -1,10 +1,10 @@
 package top.bettercode.autodoc.gen;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import top.bettercode.autodoc.core.AutodocExtension;
 import top.bettercode.generator.DataType;
 import top.bettercode.generator.JDBCConnectionConfiguration;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * @author Peter Wu
@@ -16,6 +16,11 @@ public class GenProperties extends AutodocExtension {
    * 是否启用
    */
   private Boolean enable = true;
+  /**
+   * 异常时是否不生成文档
+   */
+  private Boolean ignoreOnException = true;
+
   /**
    * 在查询字段说明时，是否自动注入所有数据表
    */
@@ -49,6 +54,14 @@ public class GenProperties extends AutodocExtension {
 
   public void setEnable(Boolean enable) {
     this.enable = enable;
+  }
+
+  public Boolean getIgnoreOnException() {
+    return ignoreOnException;
+  }
+
+  public void setIgnoreOnException(Boolean ignoreOnException) {
+    this.ignoreOnException = ignoreOnException;
   }
 
   public Boolean getAllTables() {
