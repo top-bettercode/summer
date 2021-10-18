@@ -94,9 +94,7 @@ public class MultipleBearerTokenResolver {
   }
 
   private String resolveFromHeader(HttpServletRequest request) {
-    String token = request.getHeader(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
-    Assert.isTrue(StringUtils.hasText(token), "Bearer token is malformed");
-    return token;
+    return request.getHeader(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
   }
 
   private static String resolveFromRequestParameters(HttpServletRequest request, String tokenName) {
