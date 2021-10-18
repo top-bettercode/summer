@@ -31,7 +31,15 @@ public class IbatisErrorHandler extends AbstractErrorHandler {
         if (causeMessage != null) {
           message = causeMessage.trim();
 //ORA-12899: 列 "YUNTUDEV"."PU_ASK_SEND_TMS"."FROM_ADDRESS" 的值太大 (实际值: 1421, 最大值: 600)
-          String regex = "ORA-12899: .*\\..*\\.\"(.*?)\" 的值太大 \\(实际值: \\d+, 最大值: (\\d+)\\)";
+          String regex = ".*ORA-12899: .*\\..*\\.\"(.*?)\" 的值太大 \\(实际值: \\d+, 最大值: (\\d+)\\)";
+          if (message.matches(regex)) {
+            String field = message.replaceAll(regex, "$1");
+            String maxLeng = message.replaceAll(regex, "$2");
+            message = getText(field) + "长度不能大于" + maxLeng;
+            respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
+          }
+          //ORA-12899: value too large for column "YUNTUDEV"."PU_DELIVERY_ORDER"."LICENSE" (actual: 47, maximum: 30)
+           regex = ".*ORA-12899: value too large for column .*\\..*\\.\"(.*?)\" \\(actual: \\d+, maximum: (\\d+)\\)";
           if (message.matches(regex)) {
             String field = message.replaceAll(regex, "$1");
             String maxLeng = message.replaceAll(regex, "$2");
