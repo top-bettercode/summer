@@ -4,7 +4,9 @@ summer:
       enable: true
     url-filter-ignored: /
     session-creation-policy: stateless
-#    login-kicked-out: true
+    client-id: 123
+    client-secret: 456
+  #    login-kicked-out: true
   logging:
     spilt-marker:
       request: info

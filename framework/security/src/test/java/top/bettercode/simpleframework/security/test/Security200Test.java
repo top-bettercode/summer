@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import top.bettercode.lang.util.StringUtil;
+import top.bettercode.autodoc.gen.Autodoc;
 import top.bettercode.simpleframework.security.ApiToken;
-import top.bettercode.simpleframework.security.IResourceService;
+import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 import top.bettercode.simpleframework.security.impl.TestApplication;
 
 /**
@@ -31,45 +32,53 @@ import top.bettercode.simpleframework.security.impl.TestApplication;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestApplication.class, properties = {
     "summer.web.wrap-enable=false",
-    "summer.web.ok-enable=false",
 }, webEnvironment = RANDOM_PORT)
 public class Security200Test {
 
   @Autowired
   TestRestTemplate restTemplate;
   @Autowired
-  IResourceService securityService;
+  TestRestTemplate clientRestTemplate;
+  @Autowired
+  ApiSecurityProperties apiSecurityProperties;
   final ObjectMapper objectMapper = new ObjectMapper();
 
   String username = "root";
   final String password = DigestUtils.md5DigestAsHex("123456".getBytes());
 
+
   @BeforeEach
   public void setUp() {
+    Autodoc.setCollectionName("登录授权");
+    Autodoc.requiredHeaders(HttpHeaders.AUTHORIZATION);
+    clientRestTemplate = restTemplate.withBasicAuth(apiSecurityProperties.getClientId(),
+        apiSecurityProperties.getClientSecret());
   }
 
   @NotNull
   private ApiToken getApiToken() throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
-    params.add("scope", "trust");
+    params.add("scope", "app");
     params.add("username", username);
     params.add("password", password);
 
-    ResponseEntity<String> entity = restTemplate
+    ResponseEntity<String> entity = clientRestTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params), String.class);
     String body = entity.getBody();
     org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
 
-    ApiToken resp = objectMapper.readValue(body, ApiToken.class);
-    return resp;
+    return objectMapper.readValue(body, ApiToken.class);
   }
 
   @Test
   public void accessToken() throws Exception {
+    Autodoc.setDescription("");
+    Autodoc.setName("获取accessToken");
+    Autodoc.requiredParameters("grant_type", "scope", "username", "password");
     ApiToken accessToken = getApiToken();
-    System.err.println(StringUtil.valueOf(accessToken, true));
     org.junit.jupiter.api.Assertions.assertNotNull(accessToken);
+    Thread.sleep(1000);
   }
 
   /**
@@ -77,24 +86,44 @@ public class Security200Test {
    */
   @Test
   public void refreshToken() throws Exception {
+    Autodoc.disable();
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "refresh_token");
-    params.add("scope", "trust");
+    params.add("scope", "app");
     params.add("refresh_token", getApiToken().getRefreshToken());
-    ResponseEntity<String> entity2 = restTemplate
+    Autodoc.enable();
+    Autodoc.setName("刷新accessToken");
+    Autodoc.requiredParameters("grant_type", "scope", "refresh_token");
+    ResponseEntity<String> entity2 = clientRestTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params), String.class);
     assertEquals(HttpStatus.OK, entity2.getStatusCode());
-
+    Thread.sleep(1000);
   }
 
   @Test
   public void revokeToken() throws Exception {
+    Autodoc.disable();
     String accessToken = getApiToken().getAccessToken();
-    ResponseEntity<String> entity2 = restTemplate
-        .exchange("/oauth/token?access_token=" + accessToken,
-            HttpMethod.DELETE, null,
-            String.class);
-    assertEquals(HttpStatus.NO_CONTENT, entity2.getStatusCode());
+    Autodoc.enable();
+    Autodoc.setName("撤销accessToken");
+
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + accessToken);
+    ResponseEntity<String> entity2 = restTemplate.exchange("/oauth/token",
+        HttpMethod.DELETE, new HttpEntity<>(httpHeaders),
+        String.class);
+    assertEquals(HttpStatus.OK, entity2.getStatusCode());
   }
+
+
+  @Test
+  public void auth() throws Exception {
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer -58QL-aFbMk6NBOFAfy8BQ1541Y");
+    ResponseEntity<String> entity = restTemplate
+        .exchange("/test", HttpMethod.POST, new HttpEntity<>(httpHeaders), String.class);
+    assertEquals(HttpStatus.OK, entity.getStatusCode());
+  }
+
 
 }
