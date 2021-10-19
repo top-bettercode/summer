@@ -2,13 +2,16 @@ package top.bettercode.simpleframework.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -43,6 +46,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   private final ApiSecurityProperties apiSecurityProperties;
   private final IRevokeTokenService revokeTokenService;
   private final ObjectMapper objectMapper;
+  private final String encodedBasicCredentials;
 
   private final MultipleBearerTokenResolver bearerTokenResolver = new MultipleBearerTokenResolver();
 
@@ -70,6 +74,14 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       ObjectMapper objectMapper) {
     this.summerWebProperties = summerWebProperties;
     this.apiSecurityProperties = apiSecurityProperties;
+    if (StringUtils.hasText(apiSecurityProperties.getClientId()) && StringUtils.hasText(
+        apiSecurityProperties.getClientSecret())) {
+      this.encodedBasicCredentials = HttpHeaders.encodeBasicAuth(
+          apiSecurityProperties.getClientId(),
+          apiSecurityProperties.getClientSecret(), StandardCharsets.UTF_8);
+    } else {
+      this.encodedBasicCredentials = null;
+    }
     this.revokeTokenService = revokeTokenService;
     this.objectMapper = objectMapper;
     Assert.notNull(authenticationManager, "authenticationManager cannot be null");
@@ -89,49 +101,8 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       FilterChain filterChain)
       throws ServletException, IOException {
 
-    if (!this.tokenEndpointMatcher.matches(request)) {
-      String accessToken = bearerTokenResolver.resolve(request);
-      if (StringUtils.hasText(accessToken)) {
-        ApiAuthenticationToken apiAuthenticationToken = apiAuthorizationService.findByAccessToken(
-            accessToken);
-        if (apiAuthenticationToken == null || apiAuthenticationToken.getAccessToken().isExpired()) {
-          throw new UnauthorizedException("请重新登录");
-        }
-        try {
-          UserDetails userDetails = apiAuthenticationToken.getUserDetails();
-          Authentication authenticationResult = authenticationManager.authenticate(
-              new UserDetailsAuthenticationToken(userDetails));
-          SecurityContext context = SecurityContextHolder.createEmptyContext();
-          context.setAuthentication(authenticationResult);
-          SecurityContextHolder.setContext(context);
-          UserInfoHelper.put(request, userDetails);
-          if (this.revokeTokenEndpointMatcher.matches(request)) {
-            if (revokeTokenService != null) {
-              revokeTokenService.revokeToken(userDetails);
-            }
-            apiAuthorizationService.remove(apiAuthenticationToken);
-            SecurityContextHolder.clearContext();
-            if (summerWebProperties.okEnable(request)) {
-              response.setStatus(HttpStatus.OK.value());
-            } else {
-              response.setStatus(HttpStatus.NO_CONTENT.value());
-            }
-            if (summerWebProperties.wrapEnable(request)) {
-              RespEntity<Object> respEntity = new RespEntity<>();
-              respEntity.setStatus(String.valueOf(HttpStatus.NO_CONTENT.value()));
-              objectMapper.writeValue(response.getOutputStream(), respEntity);
-            } else {
-              response.flushBuffer();
-            }
-            return;
-          }
-        } catch (Exception failed) {
-          SecurityContextHolder.clearContext();
-          throw failed;
-        }
-      }
-      filterChain.doFilter(request, response);
-    } else {
+    if (this.tokenEndpointMatcher.matches(request)) {
+      authenticateBasic(request);
       try {
         String grantType = request.getParameter(SecurityParameterNames.GRANT_TYPE);
         Assert.hasText(grantType, "grantType 不能为空");
@@ -206,7 +177,66 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         SecurityContextHolder.clearContext();
         throw ex;
       }
+    } else {
+      String accessToken = bearerTokenResolver.resolve(request);
+      if (StringUtils.hasText(accessToken)) {
+        ApiAuthenticationToken apiAuthenticationToken = apiAuthorizationService.findByAccessToken(
+            accessToken);
+        if (apiAuthenticationToken == null || apiAuthenticationToken.getAccessToken().isExpired()) {
+          throw new UnauthorizedException("请重新登录");
+        }
+        try {
+          UserDetails userDetails = apiAuthenticationToken.getUserDetails();
+          Authentication authenticationResult = authenticationManager.authenticate(
+              new UserDetailsAuthenticationToken(userDetails));
+          SecurityContext context = SecurityContextHolder.createEmptyContext();
+          context.setAuthentication(authenticationResult);
+          SecurityContextHolder.setContext(context);
+          UserInfoHelper.put(request, userDetails);
+          if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
+            if (revokeTokenService != null) {
+              revokeTokenService.revokeToken(userDetails);
+            }
+            apiAuthorizationService.remove(apiAuthenticationToken);
+            SecurityContextHolder.clearContext();
+            if (summerWebProperties.okEnable(request)) {
+              response.setStatus(HttpStatus.OK.value());
+            } else {
+              response.setStatus(HttpStatus.NO_CONTENT.value());
+            }
+            if (summerWebProperties.wrapEnable(request)) {
+              RespEntity<Object> respEntity = new RespEntity<>();
+              respEntity.setStatus(String.valueOf(HttpStatus.NO_CONTENT.value()));
+              objectMapper.writeValue(response.getOutputStream(), respEntity);
+            } else {
+              response.flushBuffer();
+            }
+            return;
+          }
+        } catch (Exception failed) {
+          SecurityContextHolder.clearContext();
+          throw failed;
+        }
+      }
+      filterChain.doFilter(request, response);
     }
+  }
+
+  private void authenticateBasic(HttpServletRequest request) {
+    if (this.encodedBasicCredentials == null) {
+      return;
+    }
+    String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+    if (header != null) {
+      header = header.trim();
+      if (StringUtils.startsWithIgnoreCase(header, "Basic") && !header.equalsIgnoreCase("Basic")) {
+        String encodedBasicCredentials = header.substring(6);
+        if (this.encodedBasicCredentials.equals(encodedBasicCredentials)) {
+          return;
+        }
+      }
+    }
+    throw new BadCredentialsException("basic authentication 认证失败");
   }
 
 }
