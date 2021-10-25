@@ -85,7 +85,6 @@ class ProjectPlugin : Plugin<Project> {
             subProject.plugins.apply {
                 apply("summer.profile")
                 apply("summer.packageinfo")
-                apply("org.springframework.boot")
                 apply("io.spring.dependency-management")
             }
 
@@ -98,6 +97,7 @@ class ProjectPlugin : Plugin<Project> {
             if (mainProject) {
                 subProject.plugins.apply {
                     apply("application")
+                    apply("org.springframework.boot")
                     apply("summer.dist")
                 }
             }
@@ -283,12 +283,6 @@ class ProjectPlugin : Plugin<Project> {
                     named("distZip", Zip::class.java) {
                         it.archiveFileName.set("${subProject.name}.zip")
                     }
-                } else {
-                    named("bootRunMainClassName") { it.enabled = false }
-                    named("bootRun") { it.enabled = false }
-                    named("bootJarMainClassName") { it.enabled = false }
-                    named("bootJar") { it.enabled = false }
-                    named("bootBuildImage") { it.enabled = false }
                 }
 
                 if (needDocProject && !mainProject) {
