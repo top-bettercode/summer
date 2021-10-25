@@ -1,11 +1,5 @@
 package top.bettercode.logging
 
-import top.bettercode.logging.operation.Operation
-import top.bettercode.logging.operation.RequestConverter
-import top.bettercode.logging.operation.ResponseConverter
-import top.bettercode.logging.slack.SlackClient
-import top.bettercode.logging.trace.TraceHttpServletRequestWrapper
-import top.bettercode.logging.trace.TraceHttpServletResponseWrapper
 import net.logstash.logback.marker.Markers
 import org.apache.catalina.connector.ClientAbortException
 import org.slf4j.LoggerFactory
@@ -13,7 +7,6 @@ import org.slf4j.MDC
 import org.slf4j.MarkerFactory
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.core.Ordered
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.util.AntPathMatcher
 import org.springframework.web.context.request.RequestAttributes
@@ -22,9 +15,13 @@ import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.util.WebUtils
 import top.bettercode.lang.util.StringUtil
+import top.bettercode.logging.operation.Operation
+import top.bettercode.logging.operation.RequestConverter
+import top.bettercode.logging.operation.ResponseConverter
+import top.bettercode.logging.slack.SlackClient
+import top.bettercode.logging.trace.TraceHttpServletRequestWrapper
+import top.bettercode.logging.trace.TraceHttpServletResponseWrapper
 import java.io.IOException
-import java.io.PrintWriter
-import java.io.StringWriter
 import java.time.LocalDateTime
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
@@ -62,8 +59,9 @@ class RequestLoggingFilter(
         filterChain: FilterChain
     ) {
         if (SlackClient.LOG_URL.isNullOrBlank()) {
-            SlackClient.LOG_URL =
-                String.format("%s://%s", request.scheme, request.getHeader(HttpHeaders.HOST))
+            val logPath =
+                environment.getProperty("management.endpoints.web.base-path") ?: "/actuator"
+            SlackClient.LOG_URL = RequestConverter.getRequestPath(request) + logPath
         }
 //        ignored
         val uri = request.servletPath

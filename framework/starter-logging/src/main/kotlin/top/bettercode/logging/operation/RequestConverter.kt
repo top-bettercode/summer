@@ -1,10 +1,5 @@
 package top.bettercode.logging.operation
 
-import top.bettercode.logging.HandlerMethodHandlerInterceptor
-import top.bettercode.logging.RequestLoggingFilter
-import top.bettercode.logging.client.ClientHttpRequestWrapper
-import top.bettercode.logging.trace.TraceHttpServletRequestWrapper
-import top.bettercode.logging.trace.TracePart
 import org.springframework.core.convert.ConversionException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -14,6 +9,11 @@ import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.servlet.HandlerMapping
+import top.bettercode.logging.HandlerMethodHandlerInterceptor
+import top.bettercode.logging.RequestLoggingFilter
+import top.bettercode.logging.client.ClientHttpRequestWrapper
+import top.bettercode.logging.trace.TraceHttpServletRequestWrapper
+import top.bettercode.logging.trace.TracePart
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -257,4 +257,16 @@ object RequestConverter {
         return uriWriter.toString()
     }
 
+    fun getRequestPath(request: HttpServletRequest): String {
+        val uriWriter = StringWriter()
+        val printer = PrintWriter(uriWriter)
+
+        printer.printf("%s://%s", request.scheme, request.serverName)
+        if (isNonStandardPort(request)) {
+            printer.printf(":%d", request.serverPort)
+        }
+        if ("/" != request.contextPath)
+            printer.print(request.contextPath)
+        return uriWriter.toString()
+    }
 }
