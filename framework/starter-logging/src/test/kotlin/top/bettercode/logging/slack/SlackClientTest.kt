@@ -1,18 +1,18 @@
 package top.bettercode.logging.slack
 
-import top.bettercode.lang.util.StringUtil
 import org.junit.jupiter.api.Test
+import top.bettercode.lang.util.StringUtil
 
 /**
  * @author Peter Wu
  */
 class SlackClientTest {
 
-    private val slackClient = SlackClient("", "http://abc.com/", true)
+    private val slackClient = SlackClient("", true)
 
     @Test
     fun errorToken() {
-        println(StringUtil.valueOf(SlackClient("xoxb-", "", true).channelsList(), true))
+        println(StringUtil.valueOf(SlackClient("xoxb-", true).channelsList(), true))
     }
 
     @Test

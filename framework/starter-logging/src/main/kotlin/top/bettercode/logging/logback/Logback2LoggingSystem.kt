@@ -113,15 +113,11 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                         .bind("summer.logging.slack", SlackProperties::class.java).get()
                 try {
                     val logsPath = environment.getProperty("summer.logging.files.path")
-                    val logUrl = environment.getProperty("summer.logging.log-url")
-                    val logPath =
-                        environment.getProperty("management.endpoints.web.base-path") ?: "/actuator"
                     val slackAppender =
                         SlackAppender(
                             slackProperties,
                             warnSubject,
                             logsPath,
-                            if (logUrl == null) null else logUrl + logPath,
                             filesProperties.isLogAll
                         )
                     slackAppender.context = context

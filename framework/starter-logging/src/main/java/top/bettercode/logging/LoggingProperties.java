@@ -10,10 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class LoggingProperties {
 
   /**
-   * 日志浏览前缀路径.
-   */
-  private String logUrl;
-  /**
    * 日志报警标题.
    */
   private String warnSubject = "${spring.application.name}  ${spring.profiles.active} system exception;";
@@ -37,15 +33,6 @@ public class LoggingProperties {
    * 是否启用日志浏览功能.
    */
   private Boolean showEnabled = true;
-
-
-  public String getLogUrl() {
-    return logUrl;
-  }
-
-  public void setLogUrl(String logUrl) {
-    this.logUrl = logUrl;
-  }
 
   public String getWarnSubject() {
     return warnSubject;

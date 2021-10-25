@@ -13,7 +13,7 @@ class AsciidocGeneratorTest {
     @BeforeEach
     fun setUp() {
         val file = File("src/doc")
-        autodoc = AutodocExtension(apiHost = "http://10.13.3.205:8080", source = file, output = File("build/doc"))
+        autodoc = AutodocExtension(source = file, output = File("build/doc"))
         autodoc.projectName = "文档"
     }
 

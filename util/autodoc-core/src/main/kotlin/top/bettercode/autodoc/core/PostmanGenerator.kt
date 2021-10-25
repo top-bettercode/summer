@@ -26,7 +26,7 @@ object PostmanGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
             postmanFile.parentFile.mkdirs()
 
             val variables = linkedSetOf<Variable>()
-            variables.add(Variable(key = "apiHost", value = autodoc.apiHost, type = "string", description = "接口地址"))
+            variables.add(Variable(key = "apiHost", value = "http://localhost:8080", type = "string", description = "接口地址"))
             val items: List<Item> = module.collections.map { collection ->
                 val collectionName = collection.name
 

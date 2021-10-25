@@ -17,7 +17,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
-class SlackClient(private val authToken: String, logUrl: String?, private val logAll: Boolean) {
+class SlackClient(private val authToken: String,  private val logAll: Boolean) {
 
     private val api = "https://slack.com/api/"
     private val log: Logger = LoggerFactory.getLogger(SlackClient::class.java)
@@ -28,7 +28,6 @@ class SlackClient(private val authToken: String, logUrl: String?, private val lo
     }
 
     init {
-        LOG_URL = logUrl
         val clientHttpRequestFactory = SimpleClientHttpRequestFactory()
         //Connect timeout
         clientHttpRequestFactory.setConnectTimeout(2000)

@@ -164,7 +164,6 @@ object AsciidocGenerator : AbstractbGenerator() {
                         )
                     }
                     out.println(":toclevels: $toclevels")
-                    out.println(":apiHost: $apiHost")
                 }
                 if (!pdf) {
                     out.print(
@@ -245,13 +244,13 @@ object AsciidocGenerator : AbstractbGenerator() {
                             out.println(".1+.^|方法 6+.^|${method}")
 
                             out.println(
-                                ".1+.^|地址 6+.^|link:{apiHost}${
+                                ".1+.^|地址 6+.^|link:{{apiHost}}${
                                     str(
                                         HttpOperation.getRestRequestPath(
                                             request
                                         )
                                     )
-                                }[{apiHost}++$restUri++]"
+                                }[{{apiHost}}++$restUri++]"
                             )
 
                             if (uriVariablesExt.isNotEmpty()) {
