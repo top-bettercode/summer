@@ -46,7 +46,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   private final ApiSecurityProperties apiSecurityProperties;
   private final IRevokeTokenService revokeTokenService;
   private final ObjectMapper objectMapper;
-  private final String encodedBasicCredentials;
+  private final String basicCredentials;
 
   private final MultipleBearerTokenResolver bearerTokenResolver = new MultipleBearerTokenResolver();
 
@@ -76,11 +76,10 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
     this.apiSecurityProperties = apiSecurityProperties;
     if (StringUtils.hasText(apiSecurityProperties.getClientId()) && StringUtils.hasText(
         apiSecurityProperties.getClientSecret())) {
-      this.encodedBasicCredentials = HttpHeaders.encodeBasicAuth(
-          apiSecurityProperties.getClientId(),
-          apiSecurityProperties.getClientSecret(), StandardCharsets.UTF_8);
+      this.basicCredentials =
+          apiSecurityProperties.getClientId() + ":" + apiSecurityProperties.getClientSecret();
     } else {
-      this.encodedBasicCredentials = null;
+      this.basicCredentials = null;
     }
     this.revokeTokenService = revokeTokenService;
     this.objectMapper = objectMapper;
@@ -223,15 +222,16 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   }
 
   private void authenticateBasic(HttpServletRequest request) {
-    if (this.encodedBasicCredentials == null) {
+    if (this.basicCredentials == null) {
       return;
     }
     String header = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (header != null) {
       header = header.trim();
       if (StringUtils.startsWithIgnoreCase(header, "Basic") && !header.equalsIgnoreCase("Basic")) {
-        String encodedBasicCredentials = header.substring(6);
-        if (this.encodedBasicCredentials.equals(encodedBasicCredentials)) {
+        String encodedBasicCredentials = new String(
+            decode(header.substring(6).getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+        if (this.basicCredentials.equals(encodedBasicCredentials)) {
           return;
         }
       }
@@ -239,4 +239,11 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
     throw new BadCredentialsException("basic authentication 认证失败");
   }
 
+  private byte[] decode(byte[] base64Token) {
+    try {
+      return java.util.Base64.getDecoder().decode(base64Token);
+    } catch (IllegalArgumentException var3) {
+      throw new BadCredentialsException("Failed to decode basic authentication token");
+    }
+  }
 }
