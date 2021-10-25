@@ -132,11 +132,17 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
           } else {
             apiAuthenticationToken = apiAuthorizationService.findByScopeAndUsername(scope,
                 username);
-            if (apiAuthenticationToken == null || apiAuthenticationToken.getAccessToken()
+            if (apiAuthenticationToken == null || apiAuthenticationToken.getRefreshToken()
                 .isExpired()) {
               apiAuthenticationToken = new ApiAuthenticationToken(scope,
                   apiTokenBuilder.createAccessToken(),
                   apiTokenBuilder.createRefreshToken(), userDetails);
+            } else if (apiAuthenticationToken.getAccessToken()
+                .isExpired()) {
+              apiAuthenticationToken.setAccessToken(apiTokenBuilder.createAccessToken());
+              apiAuthenticationToken.setUserDetails(userDetails);
+            } else {
+              apiAuthenticationToken.setUserDetails(userDetails);
             }
           }
         } else if (SecurityParameterNames.REFRESH_TOKEN.equals(grantType)) {
@@ -153,15 +159,27 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             throw new UnauthorizedException("请重新登录");
           }
 
+          UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+              apiAuthenticationToken.getUsername(),
+              apiAuthenticationToken.getUserDetails().getPassword());
+          Authentication authentication = authenticationManager.authenticate(
+              usernamePasswordAuthenticationToken);
+          Object principal = authentication.getPrincipal();
+          Assert.isTrue(principal instanceof UserDetails, "授权异常");
+
+          UserDetails userDetails = (UserDetails) principal;
+
           apiAuthenticationToken.setAccessToken(apiTokenBuilder.createAccessToken());
+          apiAuthenticationToken.setUserDetails(userDetails);
         } else {
           throw new IllegalArgumentException("不支持的grantType类型");
         }
 
-        apiAuthorizationService.save(apiAuthenticationToken);
         UserDetails userDetails = apiAuthenticationToken.getUserDetails();
         Authentication authenticationResult = authenticationManager.authenticate(
             new UserDetailsAuthenticationToken(userDetails));
+
+        apiAuthorizationService.save(apiAuthenticationToken);
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authenticationResult);
