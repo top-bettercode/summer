@@ -1,4 +1,4 @@
-<style type="text/css">
+<style>
 
   table tr td:last-child {
     max-width: 200px;
@@ -22,9 +22,22 @@
 
 </style>
 <script type="text/javascript">
-  window.onload = function () {
-    [].slice.call(document.getElementsByTagName("td")).forEach(function (item) {
-      item.setAttribute("title", item.innerText);
-    })
-  }
+    window.onload = function () {
+        let indexOf = window.location.href.indexOf("/actuator");
+        if (indexOf < 0) {
+            indexOf = window.location.href.indexOf("/doc");
+            if (indexOf < 0) {
+                indexOf = window.location.href.lastIndexOf("/");
+            }
+        }
+        const apiHost = window.location.href.substr(0, indexOf);
+        console.info(apiHost);
+        [].slice.call(document.getElementsByTagName("td")).forEach(function (item) {
+            item.setAttribute("title", item.innerText.replace("{{apiHost}}", apiHost));
+        });
+        [].slice.call(document.getElementsByTagName("a")).forEach(function (item) {
+            item.setAttribute("href", item.getAttribute("href").replace("{{apiHost}}", apiHost));
+            item.innerText = item.innerText.replace("{{apiHost}}", apiHost);
+        });
+    }
 </script>

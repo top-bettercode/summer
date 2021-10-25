@@ -1,17 +1,16 @@
 package top.bettercode.summer.autodoc.gradle.plugin
 
-import top.bettercode.autodoc.core.AsciidocGenerator
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.language.jvm.tasks.ProcessResources
+import profileProperties
 import top.bettercode.autodoc.core.AutodocExtension
 import top.bettercode.autodoc.core.PostmanGenerator
 import top.bettercode.autodoc.core.model.Field
 import top.bettercode.autodoc.core.operation.DocOperationRequest
 import top.bettercode.autodoc.core.operation.DocOperationResponse
 import top.bettercode.gradle.profile.ProfilePlugin
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.language.jvm.tasks.ProcessResources
-import profileProperties
 import java.io.File
 import java.util.*
 
@@ -29,9 +28,6 @@ class AutodocPlugin : Plugin<Project> {
         project.extensions.create("autodoc", AutodocExtension::class.java)
 
         project.extensions.configure(AutodocExtension::class.java) { autodocExtension ->
-            val apiHost = findProperty(project, "api-host")
-            if (!apiHost.isNullOrBlank())
-                autodocExtension.apiHost = apiHost
             autodocExtension.rootSource = project.rootProject.file("doc")
             val path = findProperty(project, "source") ?: "src/doc"
             autodocExtension.source = if (path.startsWith("/")) {
@@ -94,14 +90,22 @@ class AutodocPlugin : Plugin<Project> {
             task.dependsOn("asciidoc")
             configInputOutput(task, group, autodoc, project)
             task.doLast {
-                top.bettercode.autodoc.core.AsciidocGenerator.html(project.extensions.findByType(AutodocExtension::class.java)!!)
+                top.bettercode.autodoc.core.AsciidocGenerator.html(
+                    project.extensions.findByType(
+                        AutodocExtension::class.java
+                    )!!
+                )
             }
         }
         project.tasks.create("pdfdoc") { task ->
             task.dependsOn("asciidoc")
             configInputOutput(task, group, autodoc, project)
             task.doLast {
-                top.bettercode.autodoc.core.AsciidocGenerator.pdf(project.extensions.findByType(AutodocExtension::class.java)!!)
+                top.bettercode.autodoc.core.AsciidocGenerator.pdf(
+                    project.extensions.findByType(
+                        AutodocExtension::class.java
+                    )!!
+                )
             }
         }
         project.tasks.create("postman") { task ->

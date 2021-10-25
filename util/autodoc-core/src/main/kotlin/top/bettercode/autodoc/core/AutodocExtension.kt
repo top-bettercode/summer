@@ -12,7 +12,6 @@ import java.io.File
 open class AutodocExtension(
         var author: String = "autodoc",
         var version: String = "v1.0",
-        var apiHost: String = "",
         var toclevels: Int = 2,
         /**
          * 最大响应时间(单位毫秒)

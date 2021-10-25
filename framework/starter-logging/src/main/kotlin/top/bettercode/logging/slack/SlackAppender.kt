@@ -13,7 +13,6 @@ open class SlackAppender(
     private val properties: SlackProperties,
     private val title: String,
     private val logsPath: String?,
-    logUrl: String?,
     logAll: Boolean
 ) : AlarmAppender(
     properties.cyclicBufferSize,
@@ -23,7 +22,7 @@ open class SlackAppender(
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
-    private val slackClient: SlackClient = SlackClient(properties.authToken, logUrl, logAll)
+    private val slackClient: SlackClient = SlackClient(properties.authToken, logAll)
 
     override fun start() {
         if (slackClient.channelExist(properties.channel)) {
