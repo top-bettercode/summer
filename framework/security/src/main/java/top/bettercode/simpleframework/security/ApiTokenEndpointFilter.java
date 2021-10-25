@@ -159,18 +159,23 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             throw new UnauthorizedException("请重新登录");
           }
 
-          UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-              apiAuthenticationToken.getUsername(),
-              apiAuthenticationToken.getUserDetails().getPassword());
-          Authentication authentication = authenticationManager.authenticate(
-              usernamePasswordAuthenticationToken);
-          Object principal = authentication.getPrincipal();
-          Assert.isTrue(principal instanceof UserDetails, "授权异常");
+          try {
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                apiAuthenticationToken.getUsername(),
+                apiAuthenticationToken.getUserDetails().getPassword());
+            Authentication authentication = authenticationManager.authenticate(
+                usernamePasswordAuthenticationToken);
+            Object principal = authentication.getPrincipal();
+            Assert.isTrue(principal instanceof UserDetails, "授权异常");
 
-          UserDetails userDetails = (UserDetails) principal;
+            UserDetails userDetails = (UserDetails) principal;
 
-          apiAuthenticationToken.setAccessToken(apiTokenBuilder.createAccessToken());
-          apiAuthenticationToken.setUserDetails(userDetails);
+            apiAuthenticationToken.setAccessToken(apiTokenBuilder.createAccessToken());
+            apiAuthenticationToken.setUserDetails(userDetails);
+          } catch (Exception e) {
+            throw new UnauthorizedException("请重新登录", e);
+          }
+
         } else {
           throw new IllegalArgumentException("不支持的grantType类型");
         }
