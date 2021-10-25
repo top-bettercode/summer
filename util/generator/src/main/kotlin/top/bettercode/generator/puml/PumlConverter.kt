@@ -245,20 +245,22 @@ object PumlConverter {
             remarksProperties.load(remarksFile.inputStream())
         }
         (extension.pumlSrcSources + extension.file(extension.pumlDatabase + "/database.puml")).forEach {
-            when (extension.pumlDatabaseDriver) {
-                top.bettercode.generator.DatabaseDriver.MYSQL -> toMysql(
-                    extension,
-                    it,
-                    it,
-                    remarksProperties
-                )
-                top.bettercode.generator.DatabaseDriver.ORACLE -> toOracle(
-                    extension,
-                    it,
-                    it,
-                    remarksProperties
-                )
-                else -> compile(extension, it, it, remarksProperties)
+            if (it.exists()) {
+                when (extension.pumlDatabaseDriver) {
+                    top.bettercode.generator.DatabaseDriver.MYSQL -> toMysql(
+                        extension,
+                        it,
+                        it,
+                        remarksProperties
+                    )
+                    top.bettercode.generator.DatabaseDriver.ORACLE -> toOracle(
+                        extension,
+                        it,
+                        it,
+                        remarksProperties
+                    )
+                    else -> compile(extension, it, it, remarksProperties)
+                }
             }
         }
     }
