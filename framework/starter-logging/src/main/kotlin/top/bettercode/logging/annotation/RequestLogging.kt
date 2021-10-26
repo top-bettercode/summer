@@ -1,9 +1,11 @@
 package top.bettercode.logging.annotation
 
 import top.bettercode.logging.RequestLoggingFilter
+import java.lang.annotation.Inherited
 
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS)
 @Retention
+@Inherited
 @MustBeDocumented
 annotation class RequestLogging(
     val includeRequestBody: Boolean = true,
