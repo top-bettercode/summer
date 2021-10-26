@@ -12,6 +12,7 @@ import java.io.File
 open class SlackAppender(
     private val properties: SlackProperties,
     private val warnSubject: String,
+    private val managementPath: String,
     private val logsPath: String?,
     logAll: Boolean
 ) : AlarmAppender(
@@ -22,7 +23,7 @@ open class SlackAppender(
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
-    private val slackClient: SlackClient = SlackClient(properties.authToken, logAll)
+    private val slackClient: SlackClient = SlackClient(properties.authToken, logAll, managementPath)
 
     override fun start() {
         if (slackClient.channelExist(properties.channel)) {
