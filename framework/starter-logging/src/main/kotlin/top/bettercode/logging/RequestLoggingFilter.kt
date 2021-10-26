@@ -46,7 +46,6 @@ class RequestLoggingFilter(
         const val IS_OPERATION_MARKER = "is_operation"
 
         var API_HOST: String? = null
-        var MANAGEMENT_PATH: String? = null
 
         val TIMEOUT_MSG = RequestLoggingFilter::class.java.name + ".timeout_msg"
         val REQUEST_LOGGING_USERNAME = RequestLoggingFilter::class.java.name + ".username"
@@ -62,10 +61,6 @@ class RequestLoggingFilter(
     ) {
         if (API_HOST.isNullOrBlank()) {
             API_HOST = RequestConverter.getRequestPath(request)
-        }
-        if (MANAGEMENT_PATH.isNullOrBlank()) {
-            MANAGEMENT_PATH =
-                environment.getProperty("management.endpoints.web.base-path") ?: "/actuator"
         }
 
 //        ignored

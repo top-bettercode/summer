@@ -17,7 +17,11 @@ import java.io.File
  *
  * @author Peter Wu
  */
-class SlackClient(private val authToken: String, private val logAll: Boolean) {
+class SlackClient(
+    private val authToken: String,
+    private val logAll: Boolean,
+    private val managementPath: String
+) {
 
     private val api = "https://slack.com/api/"
     private val log: Logger = LoggerFactory.getLogger(SlackClient::class.java)
@@ -81,7 +85,7 @@ class SlackClient(private val authToken: String, private val logAll: Boolean) {
             return filesUpload(channel, title, initialComment, message)
         } else {
             params["text"] = initialComment
-            val logUrl = RequestLoggingFilter.API_HOST + RequestLoggingFilter.MANAGEMENT_PATH
+            val logUrl = RequestLoggingFilter.API_HOST + managementPath
             if (message.isNotEmpty()) {
                 val anchor = PrettyMessageHTMLLayout.anchor(message.last())
                 val fileName = "alarm/${anchor}.log"
