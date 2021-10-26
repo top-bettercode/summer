@@ -10,22 +10,18 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import top.bettercode.lang.PrettyMessageHTMLLayout
+import top.bettercode.logging.RequestLoggingFilter
 import java.io.File
-import java.util.*
 
 /**
  *
  * @author Peter Wu
  */
-class SlackClient(private val authToken: String,  private val logAll: Boolean) {
+class SlackClient(private val authToken: String, private val logAll: Boolean) {
 
     private val api = "https://slack.com/api/"
     private val log: Logger = LoggerFactory.getLogger(SlackClient::class.java)
     private val restTemplate: RestTemplate = RestTemplate()
-
-    companion object {
-        var LOG_URL: String? = null
-    }
 
     init {
         val clientHttpRequestFactory = SimpleClientHttpRequestFactory()
@@ -81,10 +77,11 @@ class SlackClient(private val authToken: String,  private val logAll: Boolean) {
         params.add("token", authToken)
         params.add("channel", channel)
         val hasFilesPath = !logsPath.isNullOrBlank()
-        if (!hasFilesPath || LOG_URL == null) {
+        if (!hasFilesPath || RequestLoggingFilter.API_HOST == null) {
             return filesUpload(channel, title, initialComment, message)
         } else {
             params["text"] = initialComment
+            val logUrl = RequestLoggingFilter.API_HOST + RequestLoggingFilter.MANAGEMENT_PATH
             if (message.isNotEmpty()) {
                 val anchor = PrettyMessageHTMLLayout.anchor(message.last())
                 val fileName = "alarm/${anchor}.log"
@@ -93,11 +90,11 @@ class SlackClient(private val authToken: String,  private val logAll: Boolean) {
                     params["attachments"] = arrayOf(
                         mapOf(
                             "title" to title,
-                            "title_link" to "$LOG_URL/logs/all.log#$anchor"
+                            "title_link" to "$logUrl/logs/all.log#$anchor"
                         ),
                         mapOf(
                             "title" to "备份链接",
-                            "title_link" to "$LOG_URL/logs/${fileName}#last"
+                            "title_link" to "$logUrl/logs/${fileName}#last"
                         )
                     )
                 } else {
@@ -105,7 +102,7 @@ class SlackClient(private val authToken: String,  private val logAll: Boolean) {
                         arrayOf(
                             mapOf(
                                 "title" to title,
-                                "title_link" to "$LOG_URL/logs/${fileName}#last"
+                                "title_link" to "$logUrl/logs/${fileName}#last"
                             )
                         )
                 }
@@ -115,7 +112,7 @@ class SlackClient(private val authToken: String,  private val logAll: Boolean) {
                         arrayOf(
                             mapOf(
                                 "title" to title,
-                                "title_link" to "$LOG_URL/logs/all.log#last"
+                                "title_link" to "$logUrl/logs/all.log#last"
                             )
                         )
             }
@@ -133,9 +130,6 @@ class SlackClient(private val authToken: String,  private val logAll: Boolean) {
         return result?.ok == true
     }
 
-    /**
-     * @param channels Comma-separated list of channel names or IDs where the file will be shared.
-     */
     fun filesUpload(
         channel: String,
         title: String,
