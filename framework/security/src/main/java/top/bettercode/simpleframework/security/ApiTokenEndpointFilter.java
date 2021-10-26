@@ -204,40 +204,43 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       if (StringUtils.hasText(accessToken)) {
         ApiAuthenticationToken apiAuthenticationToken = apiAuthorizationService.findByAccessToken(
             accessToken);
-        if (apiAuthenticationToken == null || apiAuthenticationToken.getAccessToken().isExpired()) {
-          throw new UnauthorizedException("请重新登录");
-        }
-        try {
-          UserDetails userDetails = apiAuthenticationToken.getUserDetails();
-          Authentication authenticationResult = authenticationManager.authenticate(
-              new UserDetailsAuthenticationToken(userDetails));
-          SecurityContext context = SecurityContextHolder.createEmptyContext();
-          context.setAuthentication(authenticationResult);
-          SecurityContextHolder.setContext(context);
-          UserInfoHelper.put(request, userDetails);
-          if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
-            if (revokeTokenService != null) {
-              revokeTokenService.revokeToken(userDetails);
+        if (apiAuthenticationToken != null && !apiAuthenticationToken.getAccessToken()
+            .isExpired()) {
+          try {
+            UserDetails userDetails = apiAuthenticationToken.getUserDetails();
+            Authentication authenticationResult = authenticationManager.authenticate(
+                new UserDetailsAuthenticationToken(userDetails));
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authenticationResult);
+            SecurityContextHolder.setContext(context);
+            UserInfoHelper.put(request, userDetails);
+            if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
+              if (revokeTokenService != null) {
+                revokeTokenService.revokeToken(userDetails);
+              }
+              apiAuthorizationService.remove(apiAuthenticationToken);
+              SecurityContextHolder.clearContext();
+              if (summerWebProperties.okEnable(request)) {
+                response.setStatus(HttpStatus.OK.value());
+              } else {
+                response.setStatus(HttpStatus.NO_CONTENT.value());
+              }
+              if (summerWebProperties.wrapEnable(request)) {
+                RespEntity<Object> respEntity = new RespEntity<>();
+                respEntity.setStatus(String.valueOf(HttpStatus.NO_CONTENT.value()));
+                objectMapper.writeValue(response.getOutputStream(), respEntity);
+              } else {
+                response.flushBuffer();
+              }
+              return;
             }
-            apiAuthorizationService.remove(apiAuthenticationToken);
+          } catch (Exception failed) {
             SecurityContextHolder.clearContext();
-            if (summerWebProperties.okEnable(request)) {
-              response.setStatus(HttpStatus.OK.value());
-            } else {
-              response.setStatus(HttpStatus.NO_CONTENT.value());
-            }
-            if (summerWebProperties.wrapEnable(request)) {
-              RespEntity<Object> respEntity = new RespEntity<>();
-              respEntity.setStatus(String.valueOf(HttpStatus.NO_CONTENT.value()));
-              objectMapper.writeValue(response.getOutputStream(), respEntity);
-            } else {
-              response.flushBuffer();
-            }
-            return;
+            throw failed;
           }
-        } catch (Exception failed) {
-          SecurityContextHolder.clearContext();
-          throw failed;
+        } else {
+          //不处理错误及过期token
+//              throw new UnauthorizedException("请重新登录");
         }
       }
       filterChain.doFilter(request, response);
