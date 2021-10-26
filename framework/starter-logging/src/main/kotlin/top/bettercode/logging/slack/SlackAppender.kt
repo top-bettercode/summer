@@ -11,7 +11,7 @@ import java.io.File
 
 open class SlackAppender(
     private val properties: SlackProperties,
-    private val title: String,
+    private val warnSubject: String,
     private val logsPath: String?,
     logAll: Boolean
 ) : AlarmAppender(
@@ -42,7 +42,10 @@ open class SlackAppender(
         message: List<String>
     ): Boolean {
         return try {
-            val title = "$title ${LocalDateTimeHelper.format(timeStamp)}"
+            val title =
+                "$warnSubject${if (!RequestLoggingFilter.API_HOST.isNullOrBlank()) "(${RequestLoggingFilter.API_HOST})" else ""} ${
+                    LocalDateTimeHelper.format(timeStamp)
+                }"
             slackClient.postMessage(properties.channel, title, initialComment, message, logsPath)
         } catch (e: Exception) {
             log.error(

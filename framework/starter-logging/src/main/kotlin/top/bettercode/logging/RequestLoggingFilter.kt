@@ -18,7 +18,6 @@ import top.bettercode.lang.util.StringUtil
 import top.bettercode.logging.operation.Operation
 import top.bettercode.logging.operation.RequestConverter
 import top.bettercode.logging.operation.ResponseConverter
-import top.bettercode.logging.slack.SlackClient
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper
 import top.bettercode.logging.trace.TraceHttpServletResponseWrapper
 import java.io.IOException
@@ -46,6 +45,9 @@ class RequestLoggingFilter(
         const val OPERATION_MARKER = "operation"
         const val IS_OPERATION_MARKER = "is_operation"
 
+        var API_HOST: String? = null
+        var MANAGEMENT_PATH: String? = null
+
         val TIMEOUT_MSG = RequestLoggingFilter::class.java.name + ".timeout_msg"
         val REQUEST_LOGGING_USERNAME = RequestLoggingFilter::class.java.name + ".username"
         val REQUEST_DATE_TIME = RequestLoggingFilter::class.java.name + ".dateTime"
@@ -58,11 +60,14 @@ class RequestLoggingFilter(
         request: HttpServletRequest, response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        if (SlackClient.LOG_URL.isNullOrBlank()) {
-            val logPath =
-                environment.getProperty("management.endpoints.web.base-path") ?: "/actuator"
-            SlackClient.LOG_URL = RequestConverter.getRequestPath(request) + logPath
+        if (API_HOST.isNullOrBlank()) {
+            API_HOST = RequestConverter.getRequestPath(request)
         }
+        if (MANAGEMENT_PATH.isNullOrBlank()) {
+            MANAGEMENT_PATH =
+                environment.getProperty("management.endpoints.web.base-path") ?: "/actuator"
+        }
+
 //        ignored
         val uri = request.servletPath
         if (properties.matchIgnored(uri)) {
