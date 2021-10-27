@@ -1,9 +1,9 @@
 package top.bettercode.simpleframework.data;
 
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import top.bettercode.simpleframework.web.BaseController;
+import top.bettercode.simpleframework.web.RespExtra;
 
 /**
  * @author Peter Wu
@@ -16,12 +16,16 @@ public class PageController extends BaseController {
    * @return 200 ResponseEntity
    */
   protected <T> ResponseEntity<?> page(List<T> list) {
-    return ok(of(list));
+    return super.ok(BaseService.page(list));
   }
 
-  @NotNull
-  protected <T> PageExtra<T> of(List<T> list) {
-    return BaseService.page(list);
+  @Override
+  protected  RespExtra<?> of(Object object) {
+    if (object instanceof List) {
+      return super.of(BaseService.page((List<?>) object));
+    } else {
+      return super.of(object);
+    }
   }
 
   @Override
