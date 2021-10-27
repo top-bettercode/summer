@@ -9,7 +9,6 @@ import org.springframework.util.StringUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.method.HandlerMethod
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -66,7 +65,12 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
             val signParams = signParams(request)
             if (!sign.equals(signParams, ignoreCase = true)) {
                 if (log.isWarnEnabled) {
-                    log.warn("客户端参数签名错误,客户端：{}，服务端：{}", sign, signParams)
+                    log.warn(
+                        "客户端参数签名错误,客户端：{}，服务端：{}，服务端待签名字段：{}",
+                        sign.substring(0, 16),
+                        signParams,
+                        preSignStr(request)
+                    )
                 }
                 throw IllegalSignException()
             }
@@ -74,7 +78,12 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
             val signParams = signParams(request).substring(0, 16)
             if (!sign.substring(0, 16).equals(signParams, ignoreCase = true)) {
                 if (log.isWarnEnabled) {
-                    log.warn("客户端参数签名错误,客户端：{}，服务端：{}", sign.substring(0, 16), signParams)
+                    log.warn(
+                        "客户端参数签名错误,客户端：{}，服务端：{}，服务端待签名字段：{}",
+                        sign.substring(0, 16),
+                        signParams,
+                        preSignStr(request)
+                    )
                 }
                 throw IllegalSignException()
             }
@@ -184,6 +193,11 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
      * @return 签名后的参数
      */
     private fun signParams(request: HttpServletRequest): String {
+        val prestr = preSignStr(request)
+        return DigestUtils.md5DigestAsHex(prestr.toString().toByteArray())
+    }
+
+    private fun preSignStr(request: HttpServletRequest): StringBuilder {
         val requestParams = request.parameterMap
         val keys = ArrayList(requestParams.keys)
         keys.sort()
@@ -209,7 +223,7 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
         if (log.isDebugEnabled) {
             log.debug("待签名参数字符串：{}", prestr)
         }
-        return DigestUtils.md5DigestAsHex(prestr.toString().toByteArray())
+        return prestr
     }
 
     /**
