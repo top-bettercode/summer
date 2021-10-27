@@ -53,31 +53,45 @@ public class ApiTokenService {
     return getApiToken(scope, username, false);
   }
 
+  public ApiToken getApiToken(String scope, String username, Boolean forceCreate) {
+    UserDetails userDetails = getUserDetails(scope, username);
+    return getApiToken(scope, userDetails, forceCreate);
+  }
+
   public ApiToken getApiToken(String scope, UserDetails userDetails) {
-    ApiAuthenticationToken authenticationToken = new ApiAuthenticationToken(scope,
-        createAccessToken(),
-        createRefreshToken(), userDetails);
-    apiAuthorizationService.save(authenticationToken);
+    return getApiToken(scope, userDetails, false);
+  }
+
+  public ApiToken getApiToken(String scope, UserDetails userDetails, Boolean forceCreate) {
+    ApiAuthenticationToken authenticationToken;
+    if (forceCreate || apiSecurityProperties.getLoginKickedOut()) {
+      authenticationToken = new ApiAuthenticationToken(scope, createAccessToken(),
+          createRefreshToken(), userDetails);
+    } else {
+      authenticationToken = apiAuthorizationService.findByScopeAndUsername(scope,
+          userDetails.getUsername());
+      if (authenticationToken == null || authenticationToken.getRefreshToken().isExpired()) {
+        authenticationToken = new ApiAuthenticationToken(scope, createAccessToken(),
+            createRefreshToken(), userDetails);
+      } else if (authenticationToken.getAccessToken().isExpired()) {
+        authenticationToken.setAccessToken(createAccessToken());
+        authenticationToken.setUserDetails(userDetails);
+      } else {
+        authenticationToken.setUserDetails(userDetails);
+      }
+    }
     return authenticationToken.toApiToken();
   }
 
-  public ApiToken getApiToken(String scope, String username, Boolean forceCreate) {
-    ApiAuthenticationToken authenticationToken = apiAuthorizationService.findByScopeAndUsername(
-        scope, username);
-    if (authenticationToken == null || forceCreate) {
-      UserDetails userDetails;
-      if (isScopeUserDetailsService) {
-        userDetails = ((ScopeUserDetailsService) userDetailsService).loadUserByScopeAndUsername(
-            scope, username);
-      } else {
-        userDetails = userDetailsService.loadUserByUsername(username);
-      }
-
-      authenticationToken = new ApiAuthenticationToken(scope, createAccessToken(),
-          createRefreshToken(), userDetails);
-      apiAuthorizationService.save(authenticationToken);
+  private UserDetails getUserDetails(String scope, String username) {
+    UserDetails userDetails;
+    if (isScopeUserDetailsService) {
+      userDetails = ((ScopeUserDetailsService) userDetailsService).loadUserByScopeAndUsername(
+          scope, username);
+    } else {
+      userDetails = userDetailsService.loadUserByUsername(username);
     }
-    return authenticationToken.toApiToken();
+    return userDetails;
   }
 
   public void removeApiToken(String scope, String username) {
