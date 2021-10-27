@@ -67,7 +67,7 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
                 if (log.isWarnEnabled) {
                     log.warn(
                         "客户端参数签名错误,客户端：{}，服务端：{}，服务端待签名字段：{}",
-                        sign.substring(0, 16),
+                        sign,
                         signParams,
                         preSignStr(request)
                     )
