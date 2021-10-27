@@ -118,10 +118,6 @@ class AutodocHandler(
                 else
                     request.headers.remove(signParamName)
 
-                if (!requiredHeaders.contains("Authorization")) {
-                    request.headers.remove("Authorization")
-                }
-
                 request.headers.remove(HttpHeaders.HOST)
                 request.headers.remove(HttpHeaders.CONTENT_LENGTH)
                 request.headers.remove(HttpHeaders.CONNECTION)
