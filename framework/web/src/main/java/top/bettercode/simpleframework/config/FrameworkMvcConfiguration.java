@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -148,17 +149,18 @@ public class FrameworkMvcConfiguration {
 
     Set<Class<?>> allSubClasses = packageScanClassResolver
         .findImplementations(MixIn.class, packages.toArray(new String[0]));
+    HashMap<Class<?>, Class<?>> targetTypes = new HashMap<>();
     for (Class<?> aClass : allSubClasses) {
-      try {
-        ParameterizedType object = (ParameterizedType) aClass.getGenericInterfaces()[0];
-        Class<?> targetType = (Class<?>) object.getActualTypeArguments()[0];
-        if (log.isTraceEnabled()) {
-          log.trace("Detected MixInAnnotation:{}=>{}", targetType, aClass);
-        }
-        module.setMixInAnnotation(targetType, aClass);
-      } catch (Exception e) {
-        log.warn(aClass + "Detected fail", e);
+      ParameterizedType object = (ParameterizedType) aClass.getGenericInterfaces()[0];
+      Class<?> targetType = (Class<?>) object.getActualTypeArguments()[0];
+      if (targetTypes.containsKey(targetType)) {
+        throw new Error(targetType + " 已存在对应Json MixIn: " + targetTypes.get(targetType));
       }
+      targetTypes.put(targetType, aClass);
+      if (log.isTraceEnabled()) {
+        log.trace("Detected MixInAnnotation:{}=>{}", targetType, aClass);
+      }
+      module.setMixInAnnotation(targetType, aClass);
     }
     return module;
   }
