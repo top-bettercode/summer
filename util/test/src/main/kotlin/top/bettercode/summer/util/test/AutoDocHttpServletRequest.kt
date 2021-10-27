@@ -1,18 +1,17 @@
 package top.bettercode.summer.util.test
 
-import top.bettercode.autodoc.gen.Enumerator
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.util.StringUtils
+import top.bettercode.autodoc.gen.Enumerator
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
-import kotlin.collections.ArrayList
 
 class AutoDocHttpServletRequest(request: HttpServletRequest?) :
     HttpServletRequestWrapper(request) {
 
-    private val extHeaders: MutableMap<String, Array<out String>> = mutableMapOf()
-    private val extParams: MutableMap<String, Array<out String>> = mutableMapOf()
+    val extHeaders: MutableMap<String, Array<out String>> = mutableMapOf()
+    val extParams: MutableMap<String, Array<out String>> = mutableMapOf()
 
     fun isMock(): Boolean {
         return request is MockHttpServletRequest

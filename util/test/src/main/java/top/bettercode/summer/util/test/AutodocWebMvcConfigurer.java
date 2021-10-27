@@ -17,6 +17,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.bettercode.autodoc.gen.Autodoc;
 import top.bettercode.logging.AnnotatedUtils;
+import top.bettercode.logging.trace.TraceHttpServletRequestWrapper;
 import top.bettercode.simpleframework.security.Anonymous;
 import top.bettercode.simpleframework.security.SecurityParameterNames;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
@@ -59,6 +60,20 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
               requiredHeaders.add(HttpHeaders.AUTHORIZATION);
             }
             Autodoc.requiredHeaders(requiredHeaders.toArray(new String[0]));
+          } else if (request instanceof TraceHttpServletRequestWrapper
+              && ((TraceHttpServletRequestWrapper) request).getRequest() instanceof AutoDocHttpServletRequest) {
+            AutoDocHttpServletRequest autoRequest = (AutoDocHttpServletRequest) ((TraceHttpServletRequestWrapper) request).getRequest();
+            if (!requiredHeaders.contains(HttpHeaders.AUTHORIZATION) && !requiredHeaders.contains(
+                HttpHeaders.AUTHORIZATION.toLowerCase()
+            )
+            ) {
+              autoRequest.getExtHeaders().remove(HttpHeaders.AUTHORIZATION);
+            }
+            if (!requiredHeaders.contains(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN)
+                && !requiredHeaders.contains(
+                SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN.toLowerCase())) {
+              autoRequest.getExtHeaders().remove(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
+            }
           }
         }
         return true;
