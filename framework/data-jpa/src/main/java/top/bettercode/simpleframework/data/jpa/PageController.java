@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import top.bettercode.simpleframework.web.BaseController;
 import top.bettercode.simpleframework.web.PagedResources;
 import top.bettercode.simpleframework.web.PagedResources.PageMetadata;
+import top.bettercode.simpleframework.web.RespExtra;
 
 /**
  * @author Peter Wu
@@ -18,29 +19,38 @@ public class PageController extends BaseController {
   private SpringDataWebProperties properties;
 
   @Override
+  protected RespExtra<?> of(Object object) {
+    return super.of(pagedObject(object));
+  }
+
+  @Override
   protected ResponseEntity<?> ok(Object object) {
     if (object instanceof Page) {
-      return page((Page<?>) object);
+      return super.ok(pagedResources((Page<?>) object));
     } else {
       return super.ok(object);
     }
   }
 
   protected ResponseEntity<?> page(Object object) {
+    return super.ok(pagedObject(object));
+  }
+
+  private Object pagedObject(Object object) {
     if (object instanceof Page) {
-      return page((Page<?>) object);
+      return pagedResources((Page<?>) object);
     } else if (object instanceof Collection) {
       Collection<?> collection = (Collection<?>) object;
       int number = properties.getPageable().isOneIndexedParameters() ? 1 : 0;
       int size = collection.size();
-      return super.ok(new PagedResources<>(collection,
-          new PageMetadata(size, number, size, 1)));
+      return new PagedResources<>(collection,
+          new PageMetadata(size, number, size, 1));
     } else {
-      return super.ok(object);
+      return object;
     }
   }
 
-  protected <T> PagedResources<T> of(Page<T> object) {
+  private PagedResources<?> pagedResources(Page<?> object) {
     int number =
         properties.getPageable().isOneIndexedParameters() ? object.getNumber() + 1
             : object.getNumber();
@@ -48,11 +58,6 @@ public class PageController extends BaseController {
         new PageMetadata(object.getSize(), number,
             object.getTotalElements(), object
             .getTotalPages()));
-  }
-
-
-  private ResponseEntity<?> page(Page<?> object) {
-    return super.ok(of(object));
   }
 
 }

@@ -46,6 +46,10 @@ public class Response {
     return ok(resource);
   }
 
+  protected RespExtra<?> of(Object object) {
+    return new RespExtra<>(object);
+  }
+
   /**
    * @param object object
    * @return 200 ResponseEntity
