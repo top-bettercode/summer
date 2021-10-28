@@ -80,6 +80,7 @@ public class ApiTokenService {
         authenticationToken.setUserDetails(userDetails);
       }
     }
+    apiAuthorizationService.save(authenticationToken);
     return authenticationToken.toApiToken();
   }
 
