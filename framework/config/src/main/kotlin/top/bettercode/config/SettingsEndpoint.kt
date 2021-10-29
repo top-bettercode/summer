@@ -23,7 +23,7 @@ class SettingsEndpoint {
                 if (value.isNullOrBlank())
                     propertiesSource.load()
                 else
-                    propertiesSource.load(UrlResource(value).inputStream)
+                    propertiesSource.load(value)
 
                 propertiesSource.all()
             } else {
