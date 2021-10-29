@@ -1,6 +1,7 @@
 package top.bettercode.config
 
 import org.springframework.boot.actuate.endpoint.annotation.*
+import org.springframework.core.io.UrlResource
 import org.springframework.lang.Nullable
 import top.bettercode.lang.property.PropertiesSource
 import top.bettercode.lang.property.Settings
@@ -19,7 +20,11 @@ class SettingsEndpoint {
             emptyMap<Any, Any>()
         } else {
             if (key.isNullOrBlank()) {
-                propertiesSource.load()
+                if (value.isNullOrBlank())
+                    propertiesSource.load()
+                else
+                    propertiesSource.load(UrlResource(value).inputStream)
+
                 propertiesSource.all()
             } else {
                 propertiesSource.put(key, value)
