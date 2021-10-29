@@ -1,7 +1,7 @@
 package top.bettercode.lang.property
 
+import org.springframework.core.io.UrlResource
 import java.io.IOException
-import java.io.InputStream
 import java.util.*
 
 /**
@@ -38,10 +38,12 @@ class PropertiesSource(private vararg val baseName: String) : MapPropertySource(
         }
     }
 
-    fun load(inputStream: InputStream) {
+    fun load(url: String) {
         source.clear()
         val properties = Properties()
-        properties.load(inputStream)
+        url.split(",").forEach {
+            properties.load(UrlResource(it).inputStream)
+        }
         properties.forEach { t, u ->
             source[t.toString()] = u.toString()
         }
