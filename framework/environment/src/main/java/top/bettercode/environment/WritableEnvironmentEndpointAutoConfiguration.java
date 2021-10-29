@@ -77,4 +77,10 @@ public class WritableEnvironmentEndpointAutoConfiguration {
     return new WritableEnvironmentEndpointWebExtension(endpoint, environment);
   }
 
+  @Bean
+  @ConditionalOnAvailableEndpoint
+  public ConfigEndpoint configEndpoint(EnvironmentManager environment) {
+    return new ConfigEndpoint(environment);
+  }
+
 }
