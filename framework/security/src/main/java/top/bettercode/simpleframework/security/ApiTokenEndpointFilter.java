@@ -239,8 +239,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             throw failed;
           }
         } else {
-          //不处理错误及过期token
-//              throw new UnauthorizedException("请重新登录");
+          logger.warn("错误或过期的token:" + accessToken);
         }
       }
       filterChain.doFilter(request, response);
