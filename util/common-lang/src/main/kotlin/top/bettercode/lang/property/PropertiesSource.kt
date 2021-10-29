@@ -1,6 +1,7 @@
 package top.bettercode.lang.property
 
 import java.io.IOException
+import java.io.InputStream
 import java.util.*
 
 /**
@@ -32,6 +33,15 @@ class PropertiesSource(private vararg val baseName: String) : MapPropertySource(
             } catch (ignored: IOException) {
             }
         }
+        properties.forEach { t, u ->
+            source[t.toString()] = u.toString()
+        }
+    }
+
+    fun load(inputStream: InputStream) {
+        source.clear()
+        val properties = Properties()
+        properties.load(inputStream)
         properties.forEach { t, u ->
             source[t.toString()] = u.toString()
         }
