@@ -50,21 +50,21 @@ public class ApiTokenService {
   }
 
   public ApiToken getApiToken(String scope, String username) {
-    return getApiToken(scope, username, false);
+    return getApiToken(scope, username, apiSecurityProperties.getLoginKickedOut());
   }
 
-  public ApiToken getApiToken(String scope, String username, Boolean forceCreate) {
+  public ApiToken getApiToken(String scope, String username, Boolean loginKickedOut) {
     UserDetails userDetails = getUserDetails(scope, username);
-    return getApiToken(scope, userDetails, forceCreate);
+    return getApiToken(scope, userDetails, loginKickedOut);
   }
 
   public ApiToken getApiToken(String scope, UserDetails userDetails) {
-    return getApiToken(scope, userDetails, false);
+    return getApiToken(scope, userDetails, apiSecurityProperties.getLoginKickedOut());
   }
 
-  public ApiToken getApiToken(String scope, UserDetails userDetails, Boolean forceCreate) {
+  public ApiToken getApiToken(String scope, UserDetails userDetails, Boolean loginKickedOut) {
     ApiAuthenticationToken authenticationToken;
-    if (forceCreate || apiSecurityProperties.getLoginKickedOut()) {
+    if (loginKickedOut) {
       authenticationToken = new ApiAuthenticationToken(scope, createAccessToken(),
           createRefreshToken(), userDetails);
     } else {
