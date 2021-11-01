@@ -34,7 +34,7 @@ class StartAndSizeAndTimeBasedRollingPolicy<E> : TimeBasedRollingPolicy<E>() {
 
 
     override fun toString(): String {
-        return "c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@" + this.hashCode()
+        return "c.q.l.core.rolling.StartAndSizeAndTimeBasedRollingPolicy@" + this.hashCode()
     }
 
 }
