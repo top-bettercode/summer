@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.databind.BeanProperty;
@@ -21,10 +20,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import top.bettercode.logging.operation.RequestConverter;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 
 /**
  * JSON序列化url自动补全
@@ -106,10 +106,9 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
             .getRequestAttributes();
         if (requestAttributes != null) {
           HttpServletRequest request = requestAttributes.getRequest();
-          String scheme = request.getScheme();
-          String host = request.getHeader(HttpHeaders.HOST);
-          if (StringUtils.hasText(host)) {
-            url = String.format("%s://%s%s", scheme, host, url);
+          String requestPath = RequestConverter.INSTANCE.getRequestPath(request);
+          if (StringUtils.hasText(requestPath)) {
+            url = String.format("%s%s", requestPath, url);
           }
         }
       }
