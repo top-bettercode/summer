@@ -19,7 +19,7 @@ public class GenProperties extends AutodocExtension {
   /**
    * 异常时是否不生成文档
    */
-  private Boolean ignoreOnException = true;
+  private Boolean disableOnException = true;
 
   /**
    * 在查询字段说明时，是否自动注入所有数据表
@@ -56,12 +56,12 @@ public class GenProperties extends AutodocExtension {
     this.enable = enable;
   }
 
-  public Boolean getIgnoreOnException() {
-    return ignoreOnException;
+  public Boolean getDisableOnException() {
+    return disableOnException;
   }
 
-  public void setIgnoreOnException(Boolean ignoreOnException) {
-    this.ignoreOnException = ignoreOnException;
+  public void setDisableOnException(Boolean disableOnException) {
+    this.disableOnException = disableOnException;
   }
 
   public Boolean getAllTables() {

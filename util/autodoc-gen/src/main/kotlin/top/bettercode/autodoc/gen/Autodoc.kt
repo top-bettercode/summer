@@ -9,6 +9,7 @@ object Autodoc {
      */
     @JvmStatic
     var collectionName: String = ""
+
     /**
      * 接口名称
      */
@@ -16,7 +17,8 @@ object Autodoc {
     var name: String = ""
 
     @JvmStatic
-    var version: String =""
+    var version: String = ""
+
     /**
      * 相关数据表名
      */
@@ -28,21 +30,31 @@ object Autodoc {
      */
     @JvmStatic
     var requiredParameters: Set<String> = setOf()
+
     /**
      * 请求头必填参数
      */
     @JvmStatic
     var requiredHeaders: Set<String> = setOf()
+
     /**
      * 请求头
      */
     @JvmStatic
     var headers: Set<String> = setOf()
+
     /**
      * 是否启用文档数据生成
      */
     @JvmStatic
     var enable: Boolean = true
+
+    /**
+     * 异常时是否不生成文档
+     */
+    @JvmStatic
+    var disableOnException: Boolean? = null
+
     /**
      * 接口描述
      */
@@ -102,5 +114,15 @@ object Autodoc {
     @JvmStatic
     fun disable() {
         enable = false
+    }
+
+    @JvmStatic
+    fun disableOnException() {
+        disableOnException = true
+    }
+
+    @JvmStatic
+    fun enableOnException() {
+        disableOnException = false
     }
 }
