@@ -361,6 +361,14 @@ class ProjectPlugin : Plugin<Project> {
                     destFile.writeText(initBuilder.toString())
                 }
             }
+
+            create("prettyConfig") { t ->
+                t.doLast {
+                    ConfigTool.prettyConfig(
+                        project.file("conf"),
+                        project.subprojects.map { it.file("src/main/resources/application.yml") }.filter { it.exists() })
+                }
+            }
         }
 
         project.subprojects { subProject ->
