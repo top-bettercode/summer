@@ -1,12 +1,8 @@
 package plugin
 
-import com.fasterxml.jackson.core.JsonToken
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.dataformat.yaml.YAMLParser
+import com.fasterxml.jackson.module.kotlin.readValue
+import top.bettercode.autodoc.core.Util
 import java.io.File
-import java.io.FileInputStream
-import java.io.InputStreamReader
-import java.nio.charset.Charset
 import java.util.*
 
 
@@ -26,7 +22,7 @@ object ConfigTool {
         "datasource.password"
     )
 
-    fun prettyConfig(configDir: File,  ymlFiles: List<File>) {
+    fun prettyConfig(configDir: File, ymlFiles: List<File>) {
         val map = linkedMapOf<String, String>()
         ymlFiles.forEach { ymlFile ->
             val lines = ymlFile.readLines()
@@ -45,86 +41,73 @@ object ConfigTool {
 
                 if (value.matches(Regex("@[^@]*@"))) {
                     val va = value.trim('@')
-                    if (!filterValues.contains(va) && va != prefix && "summer.multipart.file-url-format" != prefix) {
+                    if (!filterValues.contains(va) && va != prefix) {
                         map[va] = prefix
                     }
                 }
             }
         }
-        ymlFiles.forEach { ymlFile ->
-            var text = ymlFile.readText()
-            map.forEach { (t, u) ->
-                text = text.replace("@$t@", "@$u@")
+        if (map.isNotEmpty()) {
+            ymlFiles.forEach { ymlFile ->
+                var text = ymlFile.readText()
+                map.forEach { (t, u) ->
+                    text = text.replace("@$t@", "@$u@")
+                }
+                ymlFile.writeText(text)
             }
-            ymlFile.writeText(text)
-        }
 
-        configDir.listFiles()?.forEach {
-            val properties = yml2Properties(it)
-//            println(StringUtil.valueOf(properties, true))
-            map.forEach { (t, u) ->
-                if (properties.containsKey(t)) {
-                    properties.setProperty(u, properties.getProperty(t))
-                    properties.remove(t)
+            configDir.listFiles()?.filter { it.extension == "yml" }?.forEach {
+                val properties = toProperties(it)
+                var change = false
+                map.forEach { (t, u) ->
+                    if (properties.containsKey(t)) {
+                        properties.setProperty(u, properties.getProperty(t))
+                        properties.remove(t)
+                        change = true
+                    }
+                }
+                if (change) {
+                    properties.store(
+                        File(
+                            it.parentFile,
+                            it.nameWithoutExtension + ".properties"
+                        ).outputStream(), ""
+                    )
+                    it.delete()
                 }
             }
-//            System.err.println(StringUtil.valueOf(properties,true))
-            properties.store(
-                File(
-                    it.parentFile,
-                    it.nameWithoutExtension + ".properties"
-                ).outputStream(), ""
-            )
         }
-
     }
 
-    private const val ENCODING = "utf-8"
-
-    fun yml2Properties(ymlFile: File): Properties {
-        val dot = "."
+    fun toProperties(ymlFile: File): Properties {
+        val map = Util.yamlMapper.readValue<Map<String, Any>>(ymlFile)
         val properties = Properties()
-        val yamlFactory = YAMLFactory()
-        val parser: YAMLParser = yamlFactory.createParser(
-            InputStreamReader(
-                FileInputStream(ymlFile),
-                Charset.forName(ENCODING)
-            )
-        )
-        var key = ""
-        var value: String?
-        var token: JsonToken? = parser.nextToken()
-        while (token != null) {
-            if (JsonToken.START_OBJECT == token) {
-//                key = ""
-            } else if (JsonToken.FIELD_NAME == token) {
-                if (key.isNotEmpty()) {
-                    key += dot
-                }
-                key += parser.currentName
-                token = parser.nextToken()
-                if (JsonToken.START_OBJECT == token) {
-                    continue
-                }
-                value = parser.text
-                properties[key] = value
-                val dotOffset = key.lastIndexOf(dot)
-                key = if (dotOffset > 0) {
-                    key.substring(0, dotOffset)
-                } else {
-                    ""
-                }
-            } else if (JsonToken.END_OBJECT == token) {
-                val dotOffset = key.lastIndexOf(dot)
-                key = if (dotOffset > 0) {
-                    key.substring(0, dotOffset)
-                } else {
-                    ""
-                }
-            }
-            token = parser.nextToken()
-        }
-        parser.close()
+        iterateAndProcess(properties, map, "")
         return properties
     }
+
+
+    private fun iterateAndProcess(
+        properties: Properties,
+        ymlEntry: Map<String, Any>?,
+        rootKey: String
+    ) {
+        for (key in ymlEntry!!.keys) {
+            val value = ymlEntry[key]
+            if (value is Map<*, *>) {
+                @Suppress("UNCHECKED_CAST")
+                iterateAndProcess(
+                    properties,
+                    value as Map<String, Any>?,
+                    if (rootKey.isEmpty()) key else "$rootKey.$key"
+                )
+            } else {
+                properties.setProperty(
+                    if (rootKey.isEmpty()) key else "$rootKey.$key",
+                    value.toString()
+                )
+            }
+        }
+    }
+
 }
