@@ -168,7 +168,6 @@ open class ControllerTest : ModuleJavaGenerator() {
                     annotation("@org.junit.jupiter.api.Test")
                     annotation("@org.junit.jupiter.api.Order(4)")
                     exception(JavaType("Exception"))
-                    +"requires(\"${primaryKeyName}\");"
                     +"${primaryKeyType.shortName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
                     +"mockMvc.perform(post(\"/$pathName/save\")"
                     2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
