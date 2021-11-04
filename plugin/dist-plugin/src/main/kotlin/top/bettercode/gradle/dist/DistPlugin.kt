@@ -349,88 +349,17 @@ class DistPlugin : Plugin<Project> {
 
             project.tasks.getByName("startScripts") { task ->
                 task as CreateStartScripts
+
+                task.unixStartScriptGenerator =
+                    StartScript.startScriptGenerator(project, dist, false)
+                task.windowsStartScriptGenerator =
+                    StartScript.startScriptGenerator(project, dist, true)
+
                 task.inputs.file(project.rootProject.file("gradle.properties"))
                 if (task.mainClassName.isNullOrBlank()) {
                     task.mainClassName = project.findDistProperty("main-class-name")
                 }
-                if (dist.unwrapResources)
-                    task.classpath = project.files(task.classpath).from("\$APP_HOME/conf")
                 task.doLast {
-                    it as CreateStartScripts
-                    val newUnixScriptLine = mutableListOf<String>()
-                    val newWindowsScriptLine = mutableListOf<String>()
-                    val unixScriptLine = it.unixScript.readLines()
-                    val windowsScriptLine = it.windowsScript.readLines()
-                    val nativeLibArgs = project.nativeLibArgs
-                    unixScriptLine.forEach { l ->
-                        if (dist.unwrapResources && l.endsWith("\$APP_HOME/lib/conf")) {
-                            newUnixScriptLine.add(
-                                l.substring(
-                                    0,
-                                    l.lastIndexOf(":\$APP_HOME/lib/conf")
-                                ) + ":\$APP_HOME/conf"
-                            )
-                        } else if (project.file(dist.nativePath).exists() && l.contains(
-                                nativeLibArgs
-                            )
-                        ) {
-                            newUnixScriptLine.add(
-                                l.replace(
-                                    nativeLibArgs,
-                                    "-Djava.library.path=\$APP_HOME/native"
-                                )
-                            )
-                        } else if (dist.includeJre) {
-                            newUnixScriptLine.add(
-                                l.replace(
-                                    "APP_HOME=\"`pwd -P`\"",
-                                    "APP_HOME=\"`pwd -P`\"\nJAVA_HOME=\"\$APP_HOME/jre\""
-                                )
-                            )
-                        } else {
-                            newUnixScriptLine.add(l)
-                        }
-                    }
-                    windowsScriptLine.forEach { l ->
-                        if (dist.unwrapResources && l.endsWith("%APP_HOME%\\lib\\conf")) {
-                            newWindowsScriptLine.add(
-                                l.substring(
-                                    0,
-                                    l.lastIndexOf("%APP_HOME%\\lib\\conf")
-                                ) + "%APP_HOME%\\conf"
-                            )
-                        }
-                        if (project.file(dist.nativePath).exists() && l.contains(nativeLibArgs)
-                        ) {
-                            newWindowsScriptLine.add(
-                                l.replace(
-                                    nativeLibArgs,
-                                    "-Djava.library.path=%APP_HOME%\\native"
-                                )
-                            )
-                        }
-                        if (dist.includeJre) {
-                            newWindowsScriptLine.add(
-                                l.replace(
-                                    "set APP_HOME=%DIRNAME%..",
-                                    "set APP_HOME=%DIRNAME%..\r\nset JAVA_HOME=%APP_HOME%\\jre"
-                                )
-                            )
-                        } else {
-                            newWindowsScriptLine.add(l)
-                        }
-                    }
-
-                    it.unixScript.printWriter().use { pw ->
-                        newUnixScriptLine.forEach { l ->
-                            pw.println(l)
-                        }
-                    }
-                    it.windowsScript.printWriter().use { pw ->
-                        newWindowsScriptLine.forEach { l ->
-                            pw.println(l)
-                        }
-                    }
                     //run.sh
                     writeServiceFile(
                         project, "run.sh", """
@@ -639,6 +568,7 @@ fi
                 task.jvmArgs = jvmArgs.toList()
         }
     }
+
 
     private fun compareUpdate(
         project: Project,

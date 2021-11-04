@@ -1,5 +1,6 @@
 package top.bettercode.gradle.dist
 
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Project
 import profilesActive
 
@@ -49,7 +50,7 @@ val Project.jvmArgs: Set<String>
                 .toMutableSet()
         val encoding = "-Dfile.encoding=UTF-8"
         jvmArgs += encoding
-        if ((findDistProperty("urandom") ?: "false").toBoolean()) {
+        if (Os.isFamily(Os.FAMILY_UNIX) && (findDistProperty("urandom") ?: "false").toBoolean()) {
             jvmArgs += "-Djava.security.egd=file:/dev/urandom"
         }
         if (project.extensions.findByName("profile") != null) {
