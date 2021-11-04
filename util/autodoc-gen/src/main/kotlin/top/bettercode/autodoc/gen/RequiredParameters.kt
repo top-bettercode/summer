@@ -2,6 +2,7 @@ package top.bettercode.autodoc.gen
 
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ValueConstants
 import org.springframework.web.method.HandlerMethod
@@ -40,6 +41,13 @@ object RequiredParameters {
 
     fun calculate(handler: HandlerMethod?): Map<String, String> {
         val requiredParameters = mutableMapOf<String, String>()
+        val requestMapping = handler?.getMethodAnnotation(RequestMapping::class.java)
+        val requiredParams = requestMapping?.params?.filter { !it.startsWith("!") }
+        if (!requiredParams.isNullOrEmpty()) {
+            requiredParams.forEach {
+                requiredParameters[it] = ValueConstants.DEFAULT_NONE
+            }
+        }
         handler?.methodParameters?.forEach {
             val requestParam = it.getParameterAnnotation(RequestParam::class.java)
             if (it.hasParameterAnnotation(NotNull::class.java) || it.hasParameterAnnotation(NotBlank::class.java) || it.hasParameterAnnotation(
