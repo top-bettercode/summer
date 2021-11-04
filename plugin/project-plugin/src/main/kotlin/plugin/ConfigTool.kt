@@ -98,13 +98,13 @@ object ConfigTool {
                 @Suppress("UNCHECKED_CAST")
                 iterateAndProcess(
                     properties,
-                    value as Map<String, Any>?,
+                    value as Map<String, Any>,
                     if (rootKey.isEmpty()) key else "$rootKey.$key"
                 )
             } else {
                 properties.setProperty(
                     if (rootKey.isEmpty()) key else "$rootKey.$key",
-                    value.toString()
+                    value?.toString() ?: ""
                 )
             }
         }
