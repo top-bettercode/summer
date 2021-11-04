@@ -14,7 +14,6 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
-import profilesActive
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -32,28 +31,28 @@ class DistPlugin : Plugin<Project> {
 
         project.extensions.create("dist", DistExtension::class.java)
 
-        val windowsServiceEnable = (findProperty(project, "windows-service.enable"))?.toBoolean()
+        val windowsServiceEnable = (project.findDistProperty("windows-service.enable"))?.toBoolean()
             ?: false
 
         project.extensions.configure(DistExtension::class.java) {
-            it.unwrapResources = findProperty(project, "unwrap-resources")?.toBoolean() ?: true
-            it.autoStart = findProperty(project, "auto-start")?.toBoolean() ?: true
-            it.includeJre = findProperty(project, "include-jre")?.toBoolean() ?: false
-            it.windows = if (windowsServiceEnable) windowsServiceEnable else findProperty(
-                project,
-                "windows"
-            )?.toBoolean() ?: false
-            it.x64 = findProperty(project, "x64")?.toBoolean() ?: true
-            it.nativePath = findProperty(project, "native-path") ?: "native"
-            it.runUser = findProperty(project, "run-user") ?: ""
-            it.jreWindowsI586Gz = findProperty(project, "jre-windows-i-586-gz") ?: ""
-            it.jreWindowsX64Gz = findProperty(project, "jre-windows-x-64-gz") ?: ""
-            it.jreLinuxI586Gz = findProperty(project, "jre-linux-i-586-gz") ?: ""
-            it.jreLinuxX64Gz = findProperty(project, "jre-linux-x-64-gz") ?: ""
-            it.windowsServiceOldPath = findProperty(project, "windows-service-old-path") ?: ""
-            it.distOldPath = findProperty(project, "dist-old-path") ?: ""
-            it.jvmArgs = (findProperty(project, "jvm-args") ?: "").split(" +".toRegex())
-            it.excludeUnWrapResources = (findProperty(project, "exclude-unwrap-resources")
+            it.unwrapResources = project.findDistProperty("unwrap-resources")?.toBoolean() ?: true
+            it.autoStart = project.findDistProperty("auto-start")?.toBoolean() ?: true
+            it.includeJre = project.findDistProperty("include-jre")?.toBoolean() ?: false
+            it.windows =
+                if (windowsServiceEnable) windowsServiceEnable else project.findDistProperty("windows")
+                    ?.toBoolean() ?: false
+            it.urandom = (project.findDistProperty("urandom") ?: "false").toBoolean()
+            it.x64 = project.findDistProperty("x64")?.toBoolean() ?: true
+            it.nativePath = project.findDistProperty("native-path") ?: "native"
+            it.runUser = project.findDistProperty("run-user") ?: ""
+            it.jreWindowsI586Gz = project.findDistProperty("jre-windows-i-586-gz") ?: ""
+            it.jreWindowsX64Gz = project.findDistProperty("jre-windows-x-64-gz") ?: ""
+            it.jreLinuxI586Gz = project.findDistProperty("jre-linux-i-586-gz") ?: ""
+            it.jreLinuxX64Gz = project.findDistProperty("jre-linux-x-64-gz") ?: ""
+            it.windowsServiceOldPath = project.findDistProperty("windows-service-old-path") ?: ""
+            it.distOldPath = project.findDistProperty("dist-old-path") ?: ""
+            it.jvmArgs = (project.findDistProperty("jvm-args") ?: "").split(" +".toRegex())
+            it.excludeUnWrapResources = (project.findDistProperty("exclude-unwrap-resources")
                 ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories").split(
                 ","
             )
@@ -62,42 +61,43 @@ class DistPlugin : Plugin<Project> {
         if (windowsServiceEnable) {
             project.plugins.apply(WindowsServicePlugin::class.java)
             project.extensions.configure(WindowsServicePluginConfiguration::class.java) {
-                val isX64 = findProperty(project, "x64")?.toBoolean() != false
-                it.outputDir = (findProperty(project, "windows-service.output-dir"))
+                val isX64 = project.findDistProperty("x64")?.toBoolean() != false
+                it.outputDir = (project.findDistProperty("windows-service.output-dir"))
                     ?: "windows-service-${if (isX64) "x64" else "x86"}/${project.name}"
-                val arch = findProperty(project, "windows-service.architecture")
+                val arch = project.findDistProperty("windows-service.architecture")
                 it.architecture = if (arch.isNullOrBlank()) {
                     (if (isX64) Architecture.AMD64 else Architecture.X86)
                 } else Architecture.valueOf(arch)
-                it.displayName = (findProperty(project, "windows-service.display-name"))
+                it.displayName = (project.findDistProperty("windows-service.display-name"))
                     ?: project.name
-                it.description = (findProperty(project, "windows-service.description"))
+                it.description = (project.findDistProperty("windows-service.description"))
                     ?: project.description
-                it.startClass = (findProperty(project, "windows-service.start-class"))
-                    ?: findProperty(project, "main-class-name")
-                it.startMethod = findProperty(project, "windows-service.start-method")
+                it.startClass = (project.findDistProperty("windows-service.start-class"))
+                    ?: project.findDistProperty("main-class-name")
+                it.startMethod = project.findDistProperty("windows-service.start-method")
                     ?: "main"
-                it.startParams = findProperty(project, "windows-service.start-params")
+                it.startParams = project.findDistProperty("windows-service.start-params")
                     ?: "start"
-                it.stopClass = (findProperty(project, "windows-service.stop-class"))
-                    ?: findProperty(project, "main-class-name")
-                it.stopMethod = findProperty(project, "windows-service.stop-method")
+                it.stopClass = (project.findDistProperty("windows-service.stop-class"))
+                    ?: project.findDistProperty("main-class-name")
+                it.stopMethod = project.findDistProperty("windows-service.stop-method")
                     ?: "main"
-                it.stopParams = findProperty(project, "windows-service.stop-params")
+                it.stopParams = project.findDistProperty("windows-service.stop-params")
                     ?: "stop"
-                val startup = findProperty(project, "windows-service.startup")
+                val startup = project.findDistProperty("windows-service.startup")
                 it.startup = if (startup.isNullOrBlank()) Startup.AUTO else Startup.valueOf(startup)
-                it.interactive = findProperty(project, "windows-service.interactive")?.toBoolean()
-                    ?: false
-                it.dependsOn = (findProperty(project, "windows-service.depends-on")
+                it.interactive =
+                    project.findDistProperty("windows-service.interactive")?.toBoolean()
+                        ?: false
+                it.dependsOn = (project.findDistProperty("windows-service.depends-on")
                     ?: "").split(";")
-                it.environment = findProperty(project, "windows-service.environment") ?: ""
-                it.libraryPath = findProperty(project, "windows-service.library-path")
-                it.javaHome = findProperty(project, "windows-service.java-home")
+                it.environment = project.findDistProperty("windows-service.environment") ?: ""
+                it.libraryPath = project.findDistProperty("windows-service.library-path")
+                it.javaHome = project.findDistProperty("windows-service.java-home")
                 val dist = project.extensions.getByType(DistExtension::class.java)
                 if (it.javaHome.isNullOrBlank() && dist.includeJre)
                     it.javaHome = "\"%APP_HOME%jre\""
-                it.jvm = findProperty(project, "windows-service.jvm")
+                it.jvm = project.findDistProperty("windows-service.jvm")
                 if (it.jvm.isNullOrBlank()) {
                     it.jvm = if (dist.includeJre) {
                         if (dist.x64) {
@@ -108,28 +108,28 @@ class DistPlugin : Plugin<Project> {
                         "auto"
                     }
                 }
-                it.jvmOptions = (findProperty(project, "windows-service.jvm-options")
+                it.jvmOptions = (project.findDistProperty("windows-service.jvm-options")
                     ?: "").split(" +".toRegex())
-                it.jvmOptions9 = (findProperty(project, "windows-service.jvm-options-9")
+                it.jvmOptions9 = (project.findDistProperty("windows-service.jvm-options-9")
                     ?: "").split(" +".toRegex())
-                it.jvmMs = findProperty(project, "windows-service.jvm-ms")?.toIntOrNull()
-                it.jvmMx = findProperty(project, "windows-service.jvm-mx")?.toIntOrNull()
-                it.jvmSs = findProperty(project, "windows-service.jvm-ss")?.toIntOrNull()
+                it.jvmMs = project.findDistProperty("windows-service.jvm-ms")?.toIntOrNull()
+                it.jvmMx = project.findDistProperty("windows-service.jvm-mx")?.toIntOrNull()
+                it.jvmSs = project.findDistProperty("windows-service.jvm-ss")?.toIntOrNull()
                 it.stopTimeout =
-                    findProperty(project, "windows-service.stop-timeout")?.toIntOrNull()
-                it.logPath = findProperty(project, "windows-service.log-path") ?: "logs"
-                it.logPrefix = findProperty(project, "windows-service.log-prefix") ?: "service"
+                    project.findDistProperty("windows-service.stop-timeout")?.toIntOrNull()
+                it.logPath = project.findDistProperty("windows-service.log-path") ?: "logs"
+                it.logPrefix = project.findDistProperty("windows-service.log-prefix") ?: "service"
                 it.logLevel = LogLevel.valueOf(
-                    findProperty(project, "windows-service.log-level")
+                    project.findDistProperty("windows-service.log-level")
                         ?: "INFO"
                 )
                 it.logJniMessages =
-                    findProperty(project, "windows-service.log-jni-messages")?.toIntOrNull()
-                it.stdOutput = findProperty(project, "windows-service.std-output")
-                it.stdError = findProperty(project, "windows-service.std-error")
-                it.pidFile = findProperty(project, "windows-service.pid-file")
-                it.serviceUser = findProperty(project, "windows-service.service-user")
-                it.servicePassword = findProperty(project, "windows-service.service-password")
+                    project.findDistProperty("windows-service.log-jni-messages")?.toIntOrNull()
+                it.stdOutput = project.findDistProperty("windows-service.std-output")
+                it.stdError = project.findDistProperty("windows-service.std-error")
+                it.pidFile = project.findDistProperty("windows-service.pid-file")
+                it.serviceUser = project.findDistProperty("windows-service.service-user")
+                it.servicePassword = project.findDistProperty("windows-service.service-password")
             }
         }
         project.tasks.getByName("jar") { task ->
@@ -339,30 +339,19 @@ class DistPlugin : Plugin<Project> {
                 }
             }
         }
-        val jvmArgs = dist.jvmArgs.filter { it.isNotBlank() }.toMutableSet()
-        val encoding = "-Dfile.encoding=UTF-8"
-        jvmArgs += encoding
-        if (project.extensions.findByName("profile") != null)
-            jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
-        val nativeLibArgs = if (project.file(dist.nativePath).exists()) {
-            val nativeLibArgs =
-                "-Djava.library.path=${project.file(dist.nativePath).absolutePath}"
-            jvmArgs += nativeLibArgs
-            nativeLibArgs
-        } else ""
+        val jvmArgs = project.jvmArgs
 
         val application = project.convention.findPlugin(ApplicationPluginConvention::class.java)
 
         if (application != null) {
             application.applicationDefaultJvmArgs += jvmArgs
-            application.applicationDefaultJvmArgs =
-                application.applicationDefaultJvmArgs.distinct()
+            application.applicationDefaultJvmArgs = application.applicationDefaultJvmArgs.distinct()
 
             project.tasks.getByName("startScripts") { task ->
                 task as CreateStartScripts
                 task.inputs.file(project.rootProject.file("gradle.properties"))
                 if (task.mainClassName.isNullOrBlank()) {
-                    task.mainClassName = findProperty(project, "main-class-name")
+                    task.mainClassName = project.findDistProperty("main-class-name")
                 }
                 if (dist.unwrapResources)
                     task.classpath = project.files(task.classpath).from("\$APP_HOME/conf")
@@ -372,6 +361,7 @@ class DistPlugin : Plugin<Project> {
                     val newWindowsScriptLine = mutableListOf<String>()
                     val unixScriptLine = it.unixScript.readLines()
                     val windowsScriptLine = it.windowsScript.readLines()
+                    val nativeLibArgs = project.nativeLibArgs
                     unixScriptLine.forEach { l ->
                         if (dist.unwrapResources && l.endsWith("\$APP_HOME/lib/conf")) {
                             newUnixScriptLine.add(
@@ -737,10 +727,6 @@ fi
         if (executable)
             serviceScript.setExecutable(true, false)
     }
-
-    private fun findProperty(project: Project, key: String) =
-        (project.findProperty("dist.${project.name}.$key") as? String
-            ?: project.findProperty("dist.$key") as? String)
 
     companion object {
         private const val CREATE_WINDOWS_SERVICE_TASK_NAME = "createWindowsService"

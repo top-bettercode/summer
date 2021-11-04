@@ -17,7 +17,6 @@ import org.gradle.api.tasks.testing.Test
 import org.springframework.boot.gradle.plugin.ResolveMainClassName
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
-import profilesActive
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.InnerInterface
@@ -26,6 +25,7 @@ import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.TopLevelClass
 import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.puml.PumlConverter
+import top.bettercode.gradle.dist.jvmArgs
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -41,10 +41,6 @@ val Project.mainProject: Boolean
     get() = !arrayOf("core").contains(name) && parent?.name != "util" && name != "util"
 
 class ProjectPlugin : Plugin<Project> {
-
-    private fun findDistProperty(project: Project, key: String) =
-        (project.findProperty("dist.${project.name}.$key") as? String
-            ?: project.findProperty("dist.$key") as? String)
 
     override fun apply(project: Project) {
 
@@ -196,18 +192,7 @@ class ProjectPlugin : Plugin<Project> {
             }
 
             subProject.tasks.apply {
-                val nativePath = findDistProperty(subProject, "native-path") ?: "native"
-                val jvmArgs =
-                    (findDistProperty(subProject, "jvm-args") ?: "").split(" +".toRegex())
-                        .filter { it.isNotBlank() }.toMutableSet()
-                val encoding = "-Dfile.encoding=UTF-8"
-                jvmArgs += encoding
-                jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
-                if (subProject.file(nativePath).exists()) {
-                    val nativeLibArgs =
-                        "-Djava.library.path=${subProject.file(nativePath).absolutePath}"
-                    jvmArgs += nativeLibArgs
-                }
+                val jvmArgs = subProject.jvmArgs
 
                 val application =
                     subProject.convention.findPlugin(ApplicationPluginConvention::class.java)
@@ -366,7 +351,8 @@ class ProjectPlugin : Plugin<Project> {
                 t.doLast {
                     ConfigTool.prettyConfig(
                         project.file("conf"),
-                        project.subprojects.map { it.file("src/main/resources/application.yml") }.filter { it.exists() })
+                        project.subprojects.map { it.file("src/main/resources/application.yml") }
+                            .filter { it.exists() })
                 }
             }
         }

@@ -1,5 +1,8 @@
 package top.bettercode.gradle.dist
 
+import org.gradle.api.Project
+import profilesActive
+
 
 /**
  * @author Peter Wu
@@ -10,6 +13,7 @@ open class DistExtension(
     var includeJre: Boolean = false,
     var x64: Boolean = true,
     var windows: Boolean = false,
+    var urandom: Boolean = false,
     /**
      * 相对当前项目的路径
      */
@@ -37,3 +41,34 @@ open class DistExtension(
             "META-INF/spring.factories"
         )
 )
+
+val Project.jvmArgs: Set<String>
+    get() {
+        val jvmArgs =
+            (findDistProperty("jvm-args") ?: "").split(" +".toRegex()).filter { it.isNotBlank() }
+                .toMutableSet()
+        val encoding = "-Dfile.encoding=UTF-8"
+        jvmArgs += encoding
+        if ((findDistProperty("urandom") ?: "false").toBoolean()) {
+            jvmArgs += "-Djava.security.egd=file:/dev/urandom"
+        }
+        if (project.extensions.findByName("profile") != null) {
+            jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
+        }
+        if (project.file(nativePath).exists()) {
+            jvmArgs += nativeLibArgs
+        }
+        return jvmArgs
+    }
+
+
+fun Project.findDistProperty(key: String) =
+    (findProperty("dist.${name}.$key") as? String ?: findProperty("dist.$key") as? String)
+
+private val Project.nativePath: String
+    get() = findDistProperty("native-path") ?: "native"
+
+internal val Project.nativeLibArgs: String
+    get() {
+        return "-Djava.library.path=${this.file(nativePath).absolutePath}"
+    }
