@@ -60,7 +60,7 @@ class DatabaseMetaData(
         val tableNames = mutableListOf<String>()
         metaData.getTables(datasource.catalog, datasource.schema, null, null)
             .each { tableNames.add(getString("TABLE_NAME")) }
-        return tableNames
+        return tableNames.sortedBy { it }
     }
 
 
