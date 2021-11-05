@@ -366,7 +366,7 @@ class ProjectPlugin : Plugin<Project> {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
                             val tableNames =
-                                (Generators.tableNames(gen) + gen.tableNames).distinct()
+                                (Generators.tableNames(gen) + gen.tableNames).sortedBy { it }.distinct()
                             val type =
                                 JavaType("${if (gen.projectPackage) "${gen.packageName}.${gen.projectName}" else gen.packageName}.web.CoreSerializationViews")
                             val serializationViews = Interface(type).apply {
