@@ -40,10 +40,10 @@ object Generators {
             }
             DataType.PUML -> {
                 extension.pumlSrcSources.map { PumlConverter.toTables(it) }.flatten()
-                    .map { it.tableName }.distinct().toList()
+                    .map { it.tableName }.distinct().sortedBy { it }.toList()
             }
             DataType.PDM -> {
-                PdmReader.read(extension.file(extension.pdmSrc)).map { it.tableName }.distinct()
+                PdmReader.read(extension.file(extension.pdmSrc)).map { it.tableName }.distinct().sortedBy { it }
                     .toList()
             }
         }

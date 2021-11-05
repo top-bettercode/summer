@@ -109,14 +109,14 @@ class GeneratorPlugin : Plugin<Project> {
             extension.settings = settings
 
             extension.tableNames = (findProperty(project, "tableNames")
-                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.sortedBy { it }.toList()
                 .toTypedArray()
             extension.jsonViewIgnoredFieldNames =
                 (findProperty(project, "jsonViewIgnoredFieldNames")
                     ?: "deleted,lastModifiedDate").split(",").asSequence()
-                    .filter { it.isNotBlank() }.map { it.trim() }.toList().toTypedArray()
+                    .filter { it.isNotBlank() }.map { it.trim() }.sortedBy { it }.toList().toTypedArray()
             extension.pumlTableNames = (findProperty(project, "puml.tableNames")
-                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.sortedBy { it }.toList()
                 .toTypedArray()
 
             extension.generators = (findProperty(project, "generators")

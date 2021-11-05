@@ -1,7 +1,7 @@
 package top.bettercode.generator.database.entity
 
-import top.bettercode.generator.GeneratorExtension
 import org.atteo.evo.inflector.English
+import top.bettercode.generator.GeneratorExtension
 
 /**
  *
@@ -42,7 +42,8 @@ data class Table(
 
     val primaryKeys: MutableList<Column>
     val columns: MutableList<Column> =
-        pumlColumns.asSequence().filter { it is Column }.map { it as Column }.toMutableList()
+        pumlColumns.asSequence().filter { it is Column }.map { it as Column }
+            .sortedBy { it.columnName }.toMutableList()
 
     init {
         val iterator = indexes.iterator()
@@ -58,7 +59,7 @@ data class Table(
             }
         }
         primaryKeys =
-            columns.asSequence().filter { primaryKeyNames.contains(it.columnName) }.toMutableList()
+            columns.asSequence().filter { primaryKeyNames.contains(it.columnName) }.sortedBy { it.columnName }.toMutableList()
         primaryKeys.forEach {
             it.isPrimary = true
             it.indexed = true
