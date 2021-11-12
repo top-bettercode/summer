@@ -35,4 +35,8 @@ public @interface JsonBigDecimal {
    */
   boolean reduceFraction() default false;
 
+  /**
+   * @return 扩展序列化百分比字段
+   */
+  boolean percent() default false;
 }
