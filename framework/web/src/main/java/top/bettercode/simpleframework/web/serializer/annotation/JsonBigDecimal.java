@@ -7,6 +7,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.math.RoundingMode;
 import top.bettercode.simpleframework.web.serializer.BigDecimalSerializer;
 
 /**
@@ -24,6 +25,8 @@ public @interface JsonBigDecimal {
    * @return 小数位数
    */
   int scale() default 2;
+
+  RoundingMode roundingMode() default RoundingMode.HALF_UP;
 
   /**
    * @return 序列化为字符
