@@ -23,15 +23,18 @@ public class BigDecimalSerializer extends NumberSerializer implements
   private final boolean toPlainString;
   private final boolean reduceFraction;
   private final boolean percent;
+  private final RoundingMode roundingMode;
 
   public BigDecimalSerializer() {
-    this(2, false, false, false);
+    this(2, RoundingMode.HALF_UP, false, false, false);
   }
 
-  public BigDecimalSerializer(int scale, boolean toPlainString, boolean reduceFraction,
+  public BigDecimalSerializer(int scale, RoundingMode roundingMode, boolean toPlainString,
+      boolean reduceFraction,
       boolean percent) {
     super(BigDecimal.class);
     this.scale = scale;
+    this.roundingMode = roundingMode;
     this.toPlainString = toPlainString;
     this.reduceFraction = reduceFraction;
     this.percent = percent;
@@ -46,7 +49,7 @@ public class BigDecimalSerializer extends NumberSerializer implements
     if (scale == -1) {
       scale = content.scale();
     } else if (content.scale() != scale) {
-      content = content.setScale(scale, RoundingMode.HALF_UP);
+      content = content.setScale(scale, roundingMode);
     }
     String plainString = content.toPlainString();
     if (reduceFraction) {
@@ -65,7 +68,7 @@ public class BigDecimalSerializer extends NumberSerializer implements
       JsonStreamContext outputContext = gen.getOutputContext();
       String fieldName = outputContext.getCurrentName();
       gen.writeStringField(fieldName + "Pct",
-          content.multiply(new BigDecimal(100)).setScale(scale - 2, RoundingMode.HALF_UP)
+          content.multiply(new BigDecimal(100)).setScale(scale - 2, roundingMode)
               .toPlainString() + "%");
     }
   }
@@ -77,7 +80,8 @@ public class BigDecimalSerializer extends NumberSerializer implements
       if (annotation == null) {
         throw new RuntimeException("未注解@" + JsonBigDecimal.class.getName());
       }
-      return new BigDecimalSerializer(annotation.scale(), annotation.toPlainString(),
+      return new BigDecimalSerializer(annotation.scale(), annotation.roundingMode(),
+          annotation.toPlainString(),
           annotation.reduceFraction(), annotation.percent());
     }
     return this;
