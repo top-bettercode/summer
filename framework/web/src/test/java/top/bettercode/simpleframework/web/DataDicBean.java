@@ -13,7 +13,7 @@ public class DataDicBean {
   private BigDecimal number2;
   @JsonBigDecimal(scale = 3, reduceFraction = true)
   private BigDecimal number22;
-  @JsonBigDecimal(scale = 4, toPlainString = true)
+  @JsonBigDecimal(scale = 4, toPlainString = true,percent = true)
   private BigDecimal number3;
   @JsonBigDecimal(scale = 4, toPlainString = true, reduceFraction = true)
   private BigDecimal number4;
