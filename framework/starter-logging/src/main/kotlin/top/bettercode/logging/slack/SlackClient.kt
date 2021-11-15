@@ -10,6 +10,7 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import top.bettercode.lang.PrettyMessageHTMLLayout
+import top.bettercode.lang.util.LocalDateTimeHelper
 import top.bettercode.logging.RequestLoggingFilter
 import java.io.File
 
@@ -72,6 +73,7 @@ class SlackClient(
      */
     fun postMessage(
         channel: String,
+        timeStamp: Long,
         title: String,
         initialComment: String,
         message: List<String>,
@@ -82,9 +84,11 @@ class SlackClient(
         params.add("channel", channel)
         val hasFilesPath = !logsPath.isNullOrBlank()
         if (!hasFilesPath || RequestLoggingFilter.API_HOST == null) {
-            return filesUpload(channel, title, initialComment, message)
+            return filesUpload(channel, timeStamp, title, initialComment, message)
         } else {
-            params["text"] = initialComment
+            params["text"] = "$title:\n$initialComment"
+            val linkTitle = LocalDateTimeHelper.format(timeStamp)
+
             val logUrl = RequestLoggingFilter.API_HOST + managementPath
             if (message.isNotEmpty()) {
                 val anchor = PrettyMessageHTMLLayout.anchor(message.last())
@@ -93,7 +97,7 @@ class SlackClient(
                 if (logAll) {
                     params["attachments"] = arrayOf(
                         mapOf(
-                            "title" to title,
+                            "title" to linkTitle,
                             "title_link" to "$logUrl/logs/all.log#$anchor"
                         ),
                         mapOf(
@@ -105,7 +109,7 @@ class SlackClient(
                     params["attachments"] =
                         arrayOf(
                             mapOf(
-                                "title" to title,
+                                "title" to linkTitle,
                                 "title_link" to "$logUrl/logs/${fileName}#last"
                             )
                         )
@@ -115,7 +119,7 @@ class SlackClient(
                     params["attachments"] =
                         arrayOf(
                             mapOf(
-                                "title" to title,
+                                "title" to linkTitle,
                                 "title_link" to "$logUrl/logs/all.log#last"
                             )
                         )
@@ -136,6 +140,7 @@ class SlackClient(
 
     fun filesUpload(
         channel: String,
+        timeStamp: Long,
         title: String,
         initialComment: String,
         message: List<String>
@@ -144,12 +149,12 @@ class SlackClient(
         params.add("token", authToken)
         params.add("channels", channel)
         params.add("content", message.joinToString("").toByteArray())
-        params.add("filename", "$title.log")
+        params.add("filename", "$title-${LocalDateTimeHelper.format(timeStamp)}.log")
         params.add("filetype", "text")
         if (title.isNotBlank()) {
-            params.add("title", title)
+            params.add("title", "$title-${LocalDateTimeHelper.format(timeStamp)}")
         }
-        params.add("initial_comment", "$title\n$initialComment")
+        params.add("initial_comment", "$title:\n$initialComment")
         val result = restTemplate.postForObject("${api}files.upload", params, Result::class.java)
         if (log.isDebugEnabled) {
             log.debug("slack result:{}", result)
