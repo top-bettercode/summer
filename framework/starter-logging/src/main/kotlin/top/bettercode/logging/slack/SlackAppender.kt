@@ -3,7 +3,6 @@ package top.bettercode.logging.slack
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
-import top.bettercode.lang.util.LocalDateTimeHelper
 import top.bettercode.logging.RequestLoggingFilter
 import top.bettercode.logging.SlackProperties
 import top.bettercode.logging.logback.AlarmAppender
@@ -44,10 +43,15 @@ open class SlackAppender(
     ): Boolean {
         return try {
             val title =
-                "$warnSubject${if (!RequestLoggingFilter.API_HOST.isNullOrBlank()) "(${RequestLoggingFilter.API_HOST})" else ""} ${
-                    LocalDateTimeHelper.format(timeStamp)
-                }"
-            slackClient.postMessage(properties.channel, title, initialComment, message, logsPath)
+                "$warnSubject${if (!RequestLoggingFilter.API_HOST.isNullOrBlank()) "(${RequestLoggingFilter.API_HOST})" else ""}"
+            slackClient.postMessage(
+                properties.channel,
+                timeStamp,
+                title,
+                initialComment,
+                message,
+                logsPath
+            )
         } catch (e: Exception) {
             log.error(
                 MarkerFactory.getMarker(RequestLoggingFilter.NO_ALARM_LOG_MARKER),

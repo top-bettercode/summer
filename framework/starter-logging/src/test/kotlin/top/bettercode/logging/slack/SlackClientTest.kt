@@ -50,6 +50,7 @@ class SlackClientTest {
             StringUtil.valueOf(
                 slackClient.postMessage(
                     "dev",
+                    System.currentTimeMillis(),
                     "test",
                     "test",
                     listOf("123testtest"),
