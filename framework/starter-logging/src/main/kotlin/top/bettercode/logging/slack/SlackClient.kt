@@ -87,22 +87,22 @@ class SlackClient(
             return filesUpload(channel, timeStamp, title, initialComment, message)
         } else {
             params["text"] = "$title:\n$initialComment"
-            val linkTitle = LocalDateTimeHelper.format(timeStamp)
 
             val logUrl = RequestLoggingFilter.API_HOST + managementPath
             if (message.isNotEmpty()) {
                 val anchor = PrettyMessageHTMLLayout.anchor(message.last())
                 val fileName = "alarm/${anchor}.log"
+                val linkTitle = "${fileName}#last"
                 File(logsPath, fileName).writeText(message.joinToString(""))
                 if (logAll) {
                     params["attachments"] = arrayOf(
                         mapOf(
                             "title" to linkTitle,
-                            "title_link" to "$logUrl/logs/all.log#$anchor"
+                            "title_link" to "$logUrl/logs/${fileName}#last"
                         ),
                         mapOf(
-                            "title" to "备份链接",
-                            "title_link" to "$logUrl/logs/${fileName}#last"
+                            "title" to "all#$anchor",
+                            "title_link" to "$logUrl/logs/all.log#$anchor"
                         )
                     )
                 } else {
@@ -119,7 +119,7 @@ class SlackClient(
                     params["attachments"] =
                         arrayOf(
                             mapOf(
-                                "title" to linkTitle,
+                                "title" to "all.log#last",
                                 "title_link" to "$logUrl/logs/all.log#last"
                             )
                         )
