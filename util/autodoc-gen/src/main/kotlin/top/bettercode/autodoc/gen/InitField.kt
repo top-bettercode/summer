@@ -399,6 +399,7 @@ private fun Set<Field>.findFuzzyField(
         name.endsWith("Start") -> name.substringBeforeLast("Start")
         name.startsWith("end") -> name.substringAfter("end").decapitalize()
         name.endsWith("End") -> name.substringBeforeLast("End")
+        name.endsWith("Pct") -> name.substringBeforeLast("Pct")
         else -> {
             return null
         }
