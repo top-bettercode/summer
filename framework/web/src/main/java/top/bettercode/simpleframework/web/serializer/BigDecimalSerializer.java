@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-import com.fasterxml.jackson.databind.ser.std.NumberSerializer;
+import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
 
 @JacksonStdImpl
-public class BigDecimalSerializer extends NumberSerializer implements
+public class BigDecimalSerializer extends StdScalarSerializer<BigDecimal> implements
     ContextualSerializer {
 
   private static final long serialVersionUID = -6196337598040684558L;
@@ -42,10 +42,10 @@ public class BigDecimalSerializer extends NumberSerializer implements
 
 
   @Override
-  public void serialize(Number value, JsonGenerator gen,
+  public void serialize(BigDecimal value, JsonGenerator gen,
       SerializerProvider provider) throws IOException {
     int scale = this.scale;
-    BigDecimal content = (BigDecimal) value;
+    BigDecimal content = value;
     if (scale == -1) {
       scale = content.scale();
     } else if (content.scale() != scale) {
