@@ -151,8 +151,8 @@ public abstract class BaseWebNoAuthTest {
   private AutoDocFilter autoDocFilter;
   @Autowired
   protected RequestLoggingProperties requestLoggingProperties;
-
-  protected final ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired
+  protected ObjectMapper objectMapper;
 
   @BeforeEach
   public void setup() throws Exception {
