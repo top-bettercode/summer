@@ -109,14 +109,17 @@ class GeneratorPlugin : Plugin<Project> {
             extension.settings = settings
 
             extension.tableNames = (findProperty(project, "tableNames")
-                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.sortedBy { it }.toList()
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
+                .sortedBy { it }.toList()
                 .toTypedArray()
             extension.jsonViewIgnoredFieldNames =
                 (findProperty(project, "jsonViewIgnoredFieldNames")
                     ?: "deleted,lastModifiedDate").split(",").asSequence()
-                    .filter { it.isNotBlank() }.map { it.trim() }.sortedBy { it }.toList().toTypedArray()
+                    .filter { it.isNotBlank() }.map { it.trim() }.sortedBy { it }.toList()
+                    .toTypedArray()
             extension.pumlTableNames = (findProperty(project, "puml.tableNames")
-                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.sortedBy { it }.toList()
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
+                .sortedBy { it }.toList()
                 .toTypedArray()
 
             extension.generators = (findProperty(project, "generators")
@@ -181,7 +184,7 @@ class GeneratorPlugin : Plugin<Project> {
                     )
                     plantUML.setUp()
                     pumlTableNames.forEach { tableName ->
-                        val table = tables.find { it.tableName == tableName }
+                        val table = tables.find { it.tableName.equals(tableName, true) }
                         if (table != null) {
                             plantUML.call(extension, table)
                         }

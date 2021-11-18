@@ -43,7 +43,8 @@ object Generators {
                     .map { it.tableName }.distinct().sortedBy { it }.toList()
             }
             DataType.PDM -> {
-                PdmReader.read(extension.file(extension.pdmSrc)).map { it.tableName }.distinct().sortedBy { it }
+                PdmReader.read(extension.file(extension.pdmSrc)).map { it.tableName }.distinct()
+                    .sortedBy { it }
                     .toList()
             }
         }
@@ -64,7 +65,7 @@ object Generators {
         }
 
         extension.tableNames.forEach { tableName ->
-            val table = tables.find { it.tableName == tableName }
+            val table = tables.find { it.tableName.equals(tableName, true) }
                 ?: throw RuntimeException("未在(${extension.tableNames})中找到${tableName}表")
             generators.forEach { generator ->
                 generator.call(extension, table)
@@ -123,7 +124,7 @@ object Generators {
             val allTableNames = mutableSetOf<String>()
             extension.pumlAllSources.forEach { file ->
                 val tables = PumlConverter.toTables(file)
-                val table = tables.find { it.tableName == tableName }
+                val table = tables.find { it.tableName.equals(tableName, true) }
                 if (table != null) {
                     found = true
                     generators.forEach { generator ->
