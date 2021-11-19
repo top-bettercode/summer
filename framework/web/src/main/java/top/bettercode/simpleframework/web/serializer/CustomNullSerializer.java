@@ -8,9 +8,12 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.StringUtils;
@@ -25,19 +28,22 @@ import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 public class CustomNullSerializer extends StdSerializer<Object> {
 
   private static final long serialVersionUID = 1L;
+  private final Logger log = LoggerFactory.getLogger(CustomNullSerializer.class);
   private final Class<?> type;
   private final String defaultValue;
+  private final String extendedValue;
   private final JacksonExtProperties jacksonExtProperties;
   private final boolean isArray;
   private final BeanPropertyWriter writer;
   private static final ConversionService CONVERSION_SERVICE = new DefaultConversionService();
 
   public CustomNullSerializer(BeanPropertyWriter writer, String defaultValue,
-      JacksonExtProperties jacksonExtProperties) {
+      String extendedValue, JacksonExtProperties jacksonExtProperties) {
     super(Object.class);
     this.writer = writer;
     this.type = writer.getType().getRawClass();
     this.defaultValue = defaultValue;
+    this.extendedValue = extendedValue;
     this.jacksonExtProperties = jacksonExtProperties;
     isArray = type.isArray() || (Collection.class.isAssignableFrom(type) && !Map.class
         .isAssignableFrom(type));
@@ -73,6 +79,15 @@ public class CustomNullSerializer extends StdSerializer<Object> {
               jsonUrl.separator(), jsonUrl.mapper()).serialize(val, gen, provider);
           return;
         }
+        JsonBigDecimal jsonBigDecimal = writer.getAnnotation(JsonBigDecimal.class);
+        if (jsonBigDecimal != null) {
+          new BigDecimalSerializer(jsonBigDecimal.scale(), jsonBigDecimal.roundingMode(),
+              jsonBigDecimal.toPlainString(),
+              jsonBigDecimal.reduceFraction(), jsonBigDecimal.percent()).serialize(
+              (BigDecimal) val, gen,
+              provider);
+          return;
+        }
         gen.writeObject(val);
       } else {
         serializeNull(gen, type, value);
@@ -84,7 +99,7 @@ public class CustomNullSerializer extends StdSerializer<Object> {
   private void serializeExtend(JsonGenerator gen, String fieldName,
       boolean defaultEmpty)
       throws IOException {
-    String value = defaultEmpty ? "" : null;
+    String value = StringUtils.hasText(extendedValue) ? extendedValue : (defaultEmpty ? "" : null);
     JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
     if (jsonCode != null) {
       gen.writeStringField(fieldName + "Name", value);
@@ -109,7 +124,6 @@ public class CustomNullSerializer extends StdSerializer<Object> {
         gen.writeObjectField(urlFieldName, defaultEmpty ? Collections.EMPTY_LIST : null);
       } else {
         gen.writeStringField(urlFieldName, value);
-
       }
     }
   }

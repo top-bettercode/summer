@@ -16,4 +16,8 @@ public @interface JsonDefault {
    */
   String value() default "";
 
+  /**
+   * @return 扩展默认值
+   */
+  String extended() default "";
 }
