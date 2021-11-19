@@ -1,8 +1,5 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.simpleframework.config.JacksonExtProperties;
-import top.bettercode.simpleframework.web.serializer.annotation.JsonCode;
-import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -17,6 +14,10 @@ import java.util.Map;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.StringUtils;
+import top.bettercode.simpleframework.config.JacksonExtProperties;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonCode;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 
 /**
  * @author Peter Wu
@@ -87,6 +88,11 @@ public class CustomNullSerializer extends StdSerializer<Object> {
     JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
     if (jsonCode != null) {
       gen.writeStringField(fieldName + "Name", value);
+      return;
+    }
+    JsonBigDecimal jsonBigDecimal = writer.getAnnotation(JsonBigDecimal.class);
+    if (jsonBigDecimal != null && jsonBigDecimal.percent()) {
+      gen.writeStringField(fieldName + "Pct", value);
       return;
     }
     JsonUrl jsonUrl = writer.getAnnotation(JsonUrl.class);
