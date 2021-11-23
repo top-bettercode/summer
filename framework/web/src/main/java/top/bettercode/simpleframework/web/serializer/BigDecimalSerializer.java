@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.StringUtils;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
 
@@ -53,9 +54,7 @@ public class BigDecimalSerializer extends StdScalarSerializer<BigDecimal> implem
     }
     String plainString = content.toPlainString();
     if (reduceFraction) {
-      plainString = plainString.contains(".") ? StringUtils
-          .trimTrailingCharacter(StringUtils.trimTrailingCharacter(plainString, '0'), '.')
-          : plainString;
+      plainString = reduceFraction(plainString);
       content = new BigDecimal(plainString);
     }
     if (toPlainString) {
@@ -67,10 +66,20 @@ public class BigDecimalSerializer extends StdScalarSerializer<BigDecimal> implem
     if (percent) {
       JsonStreamContext outputContext = gen.getOutputContext();
       String fieldName = outputContext.getCurrentName();
-      gen.writeStringField(fieldName + "Pct",
-          content.multiply(new BigDecimal(100)).setScale(scale - 2, roundingMode)
-              .toPlainString() + "%");
+      String percentPlainSring = content.multiply(new BigDecimal(100))
+          .setScale(scale - 2, roundingMode).toPlainString();
+      if(reduceFraction){
+        percentPlainSring=reduceFraction(percentPlainSring);
+      }
+      gen.writeStringField(fieldName + "Pct", percentPlainSring + "%");
     }
+  }
+
+  @NotNull
+  private String reduceFraction(String plainString) {
+    return plainString.contains(".") ? StringUtils
+        .trimTrailingCharacter(StringUtils.trimTrailingCharacter(plainString, '0'), '.')
+        : plainString;
   }
 
   @Override
