@@ -3,14 +3,11 @@ package plugin
 import top.bettercode.autodoc.core.Util
 import top.bettercode.autodoc.core.model.Field
 import top.bettercode.generator.dom.java.JavaType
-import top.bettercode.generator.dom.java.element.InnerClass
-import top.bettercode.generator.dom.java.element.JavaVisibility
-import top.bettercode.generator.dom.java.element.Parameter
-import top.bettercode.generator.dom.java.element.TopLevelEnumeration
 import top.bettercode.generator.dsl.DicCodes
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.TypeFactory
 import org.gradle.api.Project
+import top.bettercode.generator.dom.java.element.*
 import java.io.File
 import java.util.Properties
 
@@ -157,8 +154,8 @@ class DicCodeGen(private val project: Project) {
                     +" * ${codeTypeName.replace("@", "\\@")}"
                     +" */"
                 }
-                val innerClass = InnerClass(JavaType("Const"))
-                innerClass(innerClass)
+                val innerInterface = InnerInterface(JavaType("${className}Const"))
+                innerInterface(innerInterface)
                 v.codes.forEach { (code, name) ->
                     docText.appendLine("|$code|$name")
 
@@ -171,18 +168,14 @@ class DicCodeGen(private val project: Project) {
                             code as String
                         }
                     )
-                    innerClass.apply {
-                        visibility = JavaVisibility.PUBLIC
-                        isStatic = true
+                    innerInterface.apply {
                         val initializationString = if (isIntCode) code.toString() else "\"$code\""
                         field(
                             codeFieldName,
                             fieldType,
-                            initializationString,
-                            true,
-                            JavaVisibility.PUBLIC
+                            initializationString
                         ) {
-                            isStatic = true
+                            visibility = JavaVisibility.DEFAULT
                             javadoc {
                                 +"/**"
                                 +" * ${name.replace("@", "\\@")}"
@@ -191,7 +184,7 @@ class DicCodeGen(private val project: Project) {
                         }
                     }
 
-                    enumConstant("${codeFieldName}(Const.${codeFieldName})") {
+                    enumConstant("${codeFieldName}(${className}Const.${codeFieldName})") {
                         javadoc {
                             +"/**"
                             +" * ${name.replace("@", "\\@")}"
