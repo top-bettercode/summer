@@ -1,5 +1,6 @@
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.InnerClass
+import top.bettercode.generator.dom.java.element.InnerInterface
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
 
@@ -307,6 +308,22 @@ class Entity : ModuleJavaGenerator() {
                     method("toString", JavaType.stringInstance) {
                         annotation("@Override")
                         +"return ${primaryKeys.joinToString(" + \"${keySep}\" + ") { it.javaName }};"
+                    }
+                }
+            }
+
+            val innerInterface = InnerInterface(JavaType("${className}Properties"))
+            innerInterface(innerInterface)
+            innerInterface.apply {
+                columns.forEach {
+                    field(it.javaName, JavaType.stringInstance, "\"${it.javaName}\"") {
+                        visibility = JavaVisibility.DEFAULT
+                        if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+                            javadoc {
+                                +"/**"
+                                +" * ${getRemark(it)}"
+                                +" */"
+                            }
                     }
                 }
             }

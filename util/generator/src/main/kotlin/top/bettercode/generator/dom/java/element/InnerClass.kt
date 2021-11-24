@@ -9,6 +9,8 @@ import top.bettercode.generator.dom.java.JavaType
  */
 open class InnerClass(type: JavaType) : InnerUnit(type) {
 
+    /** The inner interfaces.  */
+    protected val innerInterfaces: MutableList<InnerInterface> = mutableListOf()
 
     /** The inner classes.  */
     protected val innerClasses: MutableList<InnerClass> = mutableListOf()
@@ -159,6 +161,19 @@ open class InnerClass(type: JavaType) : InnerUnit(type) {
             }
         }
 
+        if (innerInterfaces.size > 0) {
+            newLine(sb)
+        }
+        val iiIter = innerInterfaces.iterator()
+        while (iiIter.hasNext()) {
+            newLine(sb)
+            val innerInterface = iiIter.next()
+            sb.append(innerInterface.getFormattedContent(indentLevelInner, compilationUnit))
+            if (iiIter.hasNext()) {
+                newLine(sb)
+            }
+        }
+
         if (innerEnums.size > 0) {
             newLine(sb)
         }
@@ -213,6 +228,9 @@ open class InnerClass(type: JavaType) : InnerUnit(type) {
         innerClasses.addAll(innerClass)
     }
 
+    fun innerInterface(vararg innerInterface: InnerInterface) {
+        innerInterfaces.addAll(innerInterface)
+    }
 
     /**
      * Adds the inner enum.
@@ -265,6 +283,9 @@ open class InnerClass(type: JavaType) : InnerUnit(type) {
             importedTypes.addAll(it.extendsTypes)
         }
         innerClasses.forEach {
+            it.calculateImports(importedTypes)
+        }
+        innerInterfaces.forEach {
             it.calculateImports(importedTypes)
         }
         innerEnums.forEach {
