@@ -190,7 +190,7 @@ class DistPlugin : Plugin<Project> {
                     }
                     val installScript = File(outputDirectory, "${project.name}-install.bat")
                     var installScriptText = installScript.readText()
-                        .replace("%APP_HOME%lib\\conf", "%APP_HOME%conf")
+                        .replace("%APP_HOME%lib\\conf;", "%APP_HOME%conf;")
                     if (dist.autoStart) {
                         installScriptText = installScriptText.replace(
                             "if \"%OS%\"==\"Windows_NT\" endlocal",
