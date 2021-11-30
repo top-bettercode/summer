@@ -1,13 +1,19 @@
 package top.bettercode.lang.util
 
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.SerializerProvider
 import org.springframework.util.StringUtils
 import java.io.*
 import java.nio.charset.Charset
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 import java.util.zip.DeflaterOutputStream
 import java.util.zip.InflaterInputStream
+
 
 /**
  * 字符串工具类
@@ -26,6 +32,33 @@ object StringUtil {
         OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
         INDENT_OUTPUT_OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
         INDENT_OUTPUT_OBJECT_MAPPER.enable(SerializationFeature.INDENT_OUTPUT)
+
+        val module: com.fasterxml.jackson.databind.module.SimpleModule =
+            com.fasterxml.jackson.databind.module.SimpleModule()
+        module.addSerializer(
+            LocalDate::class.java,
+            object : JsonSerializer<LocalDate>() {
+                @Throws(IOException::class)
+                override fun serialize(
+                    value: LocalDate,
+                    gen: JsonGenerator,
+                    serializers: SerializerProvider
+                ) {
+                    gen.writeNumber(LocalDateTimeHelper.of(value).toMillis())
+                }
+            })
+        module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
+            @Throws(IOException::class)
+            override fun serialize(
+                value: LocalDateTime, gen: JsonGenerator,
+                serializers: SerializerProvider?
+            ) {
+                gen.writeNumber(LocalDateTimeHelper.of(value).toMillis())
+            }
+        })
+
+        OBJECT_MAPPER.registerModule(module)
+        INDENT_OUTPUT_OBJECT_MAPPER.registerModule(module)
     }
 
     /**
