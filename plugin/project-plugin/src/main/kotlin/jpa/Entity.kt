@@ -315,6 +315,7 @@ class Entity : ModuleJavaGenerator() {
             val innerInterface = InnerInterface(JavaType("${className}Properties"))
             innerInterface(innerInterface)
             innerInterface.apply {
+                visibility = JavaVisibility.PUBLIC
                 columns.forEach {
                     field(it.javaName, JavaType.stringInstance, "\"${it.javaName}\"") {
                         visibility = JavaVisibility.DEFAULT

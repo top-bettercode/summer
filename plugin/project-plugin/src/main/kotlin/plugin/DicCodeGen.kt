@@ -1,15 +1,18 @@
 package plugin
 
-import top.bettercode.autodoc.core.Util
-import top.bettercode.autodoc.core.model.Field
-import top.bettercode.generator.dom.java.JavaType
-import top.bettercode.generator.dsl.DicCodes
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.TypeFactory
 import org.gradle.api.Project
-import top.bettercode.generator.dom.java.element.*
+import top.bettercode.autodoc.core.Util
+import top.bettercode.autodoc.core.model.Field
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.InnerInterface
+import top.bettercode.generator.dom.java.element.JavaVisibility
+import top.bettercode.generator.dom.java.element.Parameter
+import top.bettercode.generator.dom.java.element.TopLevelEnumeration
+import top.bettercode.generator.dsl.DicCodes
 import java.io.File
-import java.util.Properties
+import java.util.*
 
 
 /**
@@ -169,6 +172,7 @@ class DicCodeGen(private val project: Project) {
                         }
                     )
                     innerInterface.apply {
+                        visibility = JavaVisibility.PUBLIC
                         val initializationString = if (isIntCode) code.toString() else "\"$code\""
                         field(
                             codeFieldName,
