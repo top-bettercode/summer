@@ -26,6 +26,10 @@ import java.io.File
  */
 class GeneratorPlugin : Plugin<Project> {
 
+    companion object {
+        const val taskGroup = "gen"
+    }
+
     override fun apply(project: Project) {
         project.extensions.create("generator", GeneratorExtension::class.java)
         project.extensions.configure(GeneratorExtension::class.java) { extension ->
@@ -130,7 +134,7 @@ class GeneratorPlugin : Plugin<Project> {
         }
 
         project.tasks.create("gen") { task ->
-            task.group = "gen"
+            task.group = taskGroup
             task.doLast {
                 Generators.call(project.extensions.getByType(GeneratorExtension::class.java))
             }
@@ -147,14 +151,14 @@ class GeneratorPlugin : Plugin<Project> {
 
     private fun configPuml(project: Project, extension: GeneratorExtension) {
         project.tasks.create("printTableNames") { task ->
-            task.group = "gen"
+            task.group = taskGroup
             task.doLast {
                 print(Generators.tableNames(extension).joinToString(","))
             }
         }
 
         project.tasks.create("toPuml") { task ->
-            task.group = "gen"
+            task.group = taskGroup
             task.doLast { _ ->
                 var pumlTableNames = extension.pumlTableNames
                 val tables: List<Table>
@@ -194,13 +198,13 @@ class GeneratorPlugin : Plugin<Project> {
             }
         }
         project.tasks.create("pumlReformat") { task ->
-            task.group = "gen"
+            task.group = taskGroup
             task.doLast {
                 PumlConverter.reformat(extension)
             }
         }
         project.tasks.create("pumlToDiagram") { task ->
-            task.group = "gen"
+            task.group = taskGroup
             task.inputs.files(
                 File(project.gradle.gradleUserHomeDir, "gradle.properties"),
                 project.rootProject.file("gradle.properties")
@@ -233,7 +237,7 @@ class GeneratorPlugin : Plugin<Project> {
             }
         }
         project.tasks.create("toDDL") { task ->
-            task.group = "gen"
+            task.group = taskGroup
             task.inputs.files(
                 File(project.gradle.gradleUserHomeDir, "gradle.properties"),
                 project.rootProject.file("gradle.properties")
@@ -252,13 +256,13 @@ class GeneratorPlugin : Plugin<Project> {
             }
         }
         project.tasks.create("toDDLUpdate") { task ->
-            task.group = "gen"
+            task.group = taskGroup
             task.doLast {
                 PumlConverter.toDDLUpdate(extension)
             }
         }
         project.tasks.create("pumlBuild") {
-            it.group = "gen"
+            it.group = taskGroup
             it.dependsOn("toDDLUpdate", "toDDL", "pumlToDiagram")
         }
     }

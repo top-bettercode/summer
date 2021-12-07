@@ -16,7 +16,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
     override fun apply(project: Project) {
 
         project.tasks.create("genPackageInfo") { task ->
-            task.group = "gen"
+            task.group = GeneratorPlugin.taskGroup
             task.doLast { _ ->
                 project.allprojects { p ->
                     p.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.srcDirs.forEach { file ->
@@ -65,7 +65,7 @@ package $packageinfo""".trimIndent())
         }
 
         project.tasks.create("genPackageInfoDoc") { task ->
-            task.group = "gen"
+            task.group = GeneratorPlugin.taskGroup
             task.doLast { _ ->
                 val regex = Regex(".*/\\*\\*(.*)\\*/.*", RegexOption.DOT_MATCHES_ALL)
                 val pregex = Regex("package ([^;]*);?")
