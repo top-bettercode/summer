@@ -26,6 +26,7 @@ import top.bettercode.generator.dom.java.element.TopLevelClass
 import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.puml.PumlConverter
 import top.bettercode.gradle.dist.jvmArgs
+import top.bettercode.gradle.generator.GeneratorPlugin
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -329,7 +330,7 @@ class ProjectPlugin : Plugin<Project> {
             }
 
             create("genDbScript") { t ->
-                t.group = "gen"
+                t.group = GeneratorPlugin.taskGroup
                 t.doLast {
                     val destFile: File = project.rootProject.file("database/init.sql")
                     val initBuilder = StringBuilder()
@@ -361,7 +362,7 @@ class ProjectPlugin : Plugin<Project> {
             if (subProject.name == (project.findProperty("tools.project") ?: "core")) {
                 subProject.tasks.apply {
                     create("genSerializationViews") { t ->
-                        t.group = "gen"
+                        t.group = GeneratorPlugin.taskGroup
                         t.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
@@ -397,7 +398,7 @@ class ProjectPlugin : Plugin<Project> {
                         }
                     }
                     create("printMapper") {
-                        it.group = "gen"
+                        it.group = GeneratorPlugin.taskGroup
                         it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
@@ -406,7 +407,7 @@ class ProjectPlugin : Plugin<Project> {
                         }
                     }
                     create("printMybatisWhere") {
-                        it.group = "gen"
+                        it.group = GeneratorPlugin.taskGroup
                         it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
@@ -416,7 +417,7 @@ class ProjectPlugin : Plugin<Project> {
                     }
 
                     create("printSetter") {
-                        it.group = "gen"
+                        it.group = GeneratorPlugin.taskGroup
                         it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
@@ -426,7 +427,7 @@ class ProjectPlugin : Plugin<Project> {
                     }
 
                     create("printExcelField") {
-                        it.group = "gen"
+                        it.group = GeneratorPlugin.taskGroup
                         it.doLast {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
@@ -435,7 +436,7 @@ class ProjectPlugin : Plugin<Project> {
                         }
                     }
                     create("genDbDoc") {
-                        it.group = "gen"
+                        it.group = GeneratorPlugin.taskGroup
                         it.doLast {
                             val dbDoc = DbDoc(subProject)
                             val gen =
@@ -446,7 +447,7 @@ class ProjectPlugin : Plugin<Project> {
                         }
                     }
                     create("genDicCode") {
-                        it.group = "gen"
+                        it.group = GeneratorPlugin.taskGroup
                         it.doLast {
                             val propertiesFile =
                                 subProject.file("src/main/resources/default-dic-code.properties")
@@ -469,7 +470,7 @@ class ProjectPlugin : Plugin<Project> {
                         }
                     }
                     create("genErrorCode") { t ->
-                        t.group = "gen"
+                        t.group = GeneratorPlugin.taskGroup
                         t.doLast {
                             val file = subProject.file("src/main/resources/error-code.properties")
                             if (file.exists()) {
