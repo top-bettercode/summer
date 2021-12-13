@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.AsyncHandlerInterceptor
 import org.springframework.web.servlet.HandlerMapping
+import top.bettercode.logging.annotation.RequestLogging
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -58,10 +59,10 @@ class HandlerMethodHandlerInterceptor(private val properties: RequestLoggingProp
             val name = handler.getMethodAnnotation(RequestMapping::class.java)?.name ?: ""
             request.setAttribute(OPERATION_NAME, name)
             val requestLoggingAnno =
-                (handler.getMethodAnnotation(top.bettercode.logging.annotation.RequestLogging::class.java)
+                (handler.getMethodAnnotation(RequestLogging::class.java)
                     ?: AnnotatedElementUtils.findMergedAnnotation(
                         handler.beanType,
-                        top.bettercode.logging.annotation.RequestLogging::class.java
+                        RequestLogging::class.java
                     ))
 
 
