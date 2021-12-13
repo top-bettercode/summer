@@ -178,7 +178,10 @@ class ProjectPlugin : Plugin<Project> {
                         dependency("top.bettercode.summer:security:$summerVersion")
 
                         dependency("top.bettercode.summer:test:$summerVersion")
-                        dependency("top.bettercode.summer:resources-processor:$summerVersion")
+
+                        dependency("org.apache.logging.log4j:log4j-api:2.15.0")
+                        dependency("org.apache.logging.log4j:log4j-core:2.15.0")
+                        dependency("org.apache.logging.log4j:log4j-to-slf4j:2.15.0")
                     }
                 }
             }
