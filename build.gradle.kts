@@ -116,11 +116,6 @@ allprojects {
             dependency("com.github.pagehelper:pagehelper:5.2.0")
 
             dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
-            //-
-            dependency("org.apache.logging.log4j:log4j-api:2.15.0")
-            dependency("org.apache.logging.log4j:log4j-core:2.15.0")
-            dependency("org.apache.logging.log4j:log4j-to-slf4j:2.15.0")
-
         }
     }
 
