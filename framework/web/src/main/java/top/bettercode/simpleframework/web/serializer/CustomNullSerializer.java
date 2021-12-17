@@ -65,7 +65,20 @@ public class CustomNullSerializer extends StdSerializer<Object> {
       }
     } else {
       if (StringUtils.hasText(defaultValue)) {
+        JsonBigDecimal jsonBigDecimal = writer.getAnnotation(JsonBigDecimal.class);
+        if (jsonBigDecimal != null && jsonBigDecimal.toPlainString()) {
+          gen.writeString(defaultValue);
+          return;
+        }
         Object val = CONVERSION_SERVICE.convert(defaultValue, type);
+        if (jsonBigDecimal != null) {
+          new BigDecimalSerializer(jsonBigDecimal.scale(), jsonBigDecimal.roundingMode(),
+              jsonBigDecimal.toPlainString(),
+              jsonBigDecimal.reduceFraction(), jsonBigDecimal.percent()).serialize(
+              (BigDecimal) val, gen,
+              provider);
+          return;
+        }
         JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
         if (jsonCode != null) {
           new CodeSerializer(jsonCode.value())
@@ -79,15 +92,7 @@ public class CustomNullSerializer extends StdSerializer<Object> {
               jsonUrl.separator(), jsonUrl.mapper()).serialize(val, gen, provider);
           return;
         }
-        JsonBigDecimal jsonBigDecimal = writer.getAnnotation(JsonBigDecimal.class);
-        if (jsonBigDecimal != null) {
-          new BigDecimalSerializer(jsonBigDecimal.scale(), jsonBigDecimal.roundingMode(),
-              jsonBigDecimal.toPlainString(),
-              jsonBigDecimal.reduceFraction(), jsonBigDecimal.percent()).serialize(
-              (BigDecimal) val, gen,
-              provider);
-          return;
-        }
+
         gen.writeObject(val);
       } else {
         serializeNull(gen, type, value);
