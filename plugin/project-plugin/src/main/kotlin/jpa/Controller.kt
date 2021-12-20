@@ -174,12 +174,12 @@ open class Controller : ModuleJavaGenerator() {
             import("org.springframework.data.domain.Sort")
             sort = ", Sort.by(Direction.DESC, "
             if (columns.any { it.javaName == "createdDate" }) {
-                sort += "P${className}.createdDate"
+                sort += "${className}Properties.createdDate"
                 if (!compositePrimaryKey) {
-                    sort += ", P${className}.${primaryKeyName})"
+                    sort += ", ${className}Properties.${primaryKeyName})"
                 }
             } else if (!compositePrimaryKey) {
-                sort += "P${className}.${primaryKeyName})"
+                sort += "${className}Properties.${primaryKeyName})"
             }
         }
         return sort

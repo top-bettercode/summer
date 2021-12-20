@@ -166,6 +166,45 @@ class Entity : ModuleJavaGenerator() {
                 }
             }
 
+            //equals
+            import("java.util.Objects")
+            method(
+                "equals",
+                JavaType.booleanPrimitiveInstance,
+                Parameter("o", JavaType.objectInstance)
+            ) {
+                annotation("@Override")
+                +"if (this == o) {"
+                +"return true;"
+                +"}"
+                +"if (!(o instanceof ${className})) {"
+                +"return false;"
+                +"}"
+                +"$className that = (${className}) o;"
+                +"if (${primaryKeyName} != that.get${primaryKeyName.capitalize()}()) {"
+                +"return false;"
+                +"}"
+                val size = otherColumns.size
+                otherColumns.forEachIndexed { index, column ->
+                    when (index) {
+                        0 -> {
+                            +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                        }
+                        size - 1 -> {
+                            +"    Objects.equals(${column.javaName}, that.${column.javaName});"
+                        }
+                        else -> {
+                            +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                        }
+                    }
+                }
+            }
+
+            //hashCode
+            method("hashCode", JavaType.intPrimitiveInstance) {
+                annotation("@Override")
+                +"return Objects.hash(${columns.joinToString(", ") { it.javaName }});"
+            }
 
             //toString
             method("toString", JavaType.stringInstance) {
