@@ -106,6 +106,56 @@ class MEntity : MModuleJavaGenerator() {
                     +"this.${it.javaName} = ${it.javaName};"
                 }
             }
+
+            //equals
+            import("java.util.Objects")
+            method(
+                "equals",
+                JavaType.booleanPrimitiveInstance,
+                Parameter("o", JavaType.objectInstance)
+            ) {
+                annotation("@Override")
+                +"if (this == o) {"
+                +"return true;"
+                +"}"
+                +"if (!(o instanceof ${className})) {"
+                +"return false;"
+                +"}"
+                +"$className that = (${className}) o;"
+                val size = columns.size
+                columns.forEachIndexed { index, column ->
+                    when (index) {
+                        0 -> {
+                            +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                        }
+                        size - 1 -> {
+                            +"    Objects.equals(${column.javaName}, that.${column.javaName});"
+                        }
+                        else -> {
+                            +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                        }
+                    }
+                }
+            }
+
+            //hashCode
+            method("hashCode", JavaType.intPrimitiveInstance) {
+                annotation("@Override")
+                +"return Objects.hash(${columns.joinToString(", ") { it.javaName }});"
+            }
+
+            //toString
+            method("toString", JavaType.stringInstance) {
+                annotation("@Override")
+                +"return \"${className}{\" +"
+                if (hasPrimaryKey) {
+                    +"    \"${primaryKeyName}='\" + $primaryKeyName + '\\'' +"
+                }
+                otherColumns.forEachIndexed { i, it ->
+                    +"    \"${if (i > 0) ", " else ""}${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
+                }
+                +"    '}';"
+            }
         }
     }
 }
