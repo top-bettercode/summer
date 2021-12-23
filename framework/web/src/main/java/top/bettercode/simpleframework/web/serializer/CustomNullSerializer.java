@@ -81,7 +81,7 @@ public class CustomNullSerializer extends StdSerializer<Object> {
         }
         JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
         if (jsonCode != null) {
-          new CodeSerializer(jsonCode.value())
+          new CodeSerializer(jsonCode.value(),jsonCode.extended())
               .serialize((Serializable) val, gen, provider);
           return;
         }
