@@ -1,7 +1,5 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.simpleframework.support.code.ICodeService;
-import top.bettercode.simpleframework.web.serializer.annotation.JsonCode;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.databind.BeanProperty;
@@ -16,6 +14,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import org.springframework.util.StringUtils;
+import top.bettercode.simpleframework.support.code.ICodeService;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonCode;
 
 /**
  * code name Serializer
@@ -30,14 +30,16 @@ public class CodeSerializer extends StdScalarSerializer<Serializable> implements
 
   private static ICodeService codeService;
   private final String codeType;
+  private final boolean useExtensionField;
 
   public CodeSerializer() {
-    this("");
+    this("", true);
   }
 
-  public CodeSerializer(String codeType) {
+  public CodeSerializer(String codeType, boolean useExtensionField) {
     super(Serializable.class, false);
     this.codeType = codeType;
+    this.useExtensionField = useExtensionField;
   }
 
   public static void setCodeService(ICodeService codeService) {
@@ -55,7 +57,6 @@ public class CodeSerializer extends StdScalarSerializer<Serializable> implements
   @Override
   public void serialize(Serializable value, JsonGenerator gen, SerializerProvider provider)
       throws IOException {
-    gen.writeObject(value);
 
     JsonStreamContext outputContext = gen.getOutputContext();
     String fieldName = outputContext.getCurrentName();
@@ -70,7 +71,13 @@ public class CodeSerializer extends StdScalarSerializer<Serializable> implements
         codeName = getName(trueCodeType, value);
       }
     }
-    gen.writeStringField(fieldName + "Name", codeName);
+
+    if (useExtensionField) {
+      gen.writeObject(value);
+      gen.writeStringField(fieldName + "Name", codeName);
+    } else {
+      gen.writeString(codeName);
+    }
   }
 
   private String getCodeType(String fieldName) {
@@ -84,9 +91,9 @@ public class CodeSerializer extends StdScalarSerializer<Serializable> implements
   public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property)
       throws JsonMappingException {
     if (property != null) {
-      JsonCode dicCodeAnno = property.getAnnotation(JsonCode.class);
-      String codeType = dicCodeAnno == null ? property.getName() : dicCodeAnno.value();
-      return new CodeSerializer(codeType);
+      JsonCode annotation = property.getAnnotation(JsonCode.class);
+      String codeType = annotation == null ? property.getName() : annotation.value();
+      return new CodeSerializer(codeType, annotation.extended());
     }
     return prov.findNullValueSerializer(property);
   }

@@ -20,4 +20,9 @@ public @interface JsonCode {
    * @return codeType
    */
   String value() default "";
+
+  /**
+   * @return 是否使用扩展的字段序列化
+   */
+  boolean extended() default true;
 }
