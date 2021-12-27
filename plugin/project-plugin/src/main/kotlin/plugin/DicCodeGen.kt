@@ -167,6 +167,8 @@ class DicCodeGen(private val project: Project) {
                                 .startsWith("0") && code.toString().length > 1
                         ) {
                             "CODE_${code.toString().replace("-", "MINUS_")}"
+                        } else if (code.toString().isBlank()) {
+                            "BLANK"
                         } else {
                             code as String
                         }
