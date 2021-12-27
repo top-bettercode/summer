@@ -60,16 +60,14 @@ public class CodeSerializer extends StdScalarSerializer<Serializable> implements
 
     JsonStreamContext outputContext = gen.getOutputContext();
     String fieldName = outputContext.getCurrentName();
-    String codeName = value.toString().trim();
-    if (StringUtils.hasText(value.toString())) {
-      String trueCodeType = getCodeType(fieldName);
-      if (value instanceof String && ((String) value).contains(",")) {
-        String[] split = ((String) value).split(",");
-        codeName = StringUtils.arrayToCommaDelimitedString(
-            Arrays.stream(split).map(s -> getName(trueCodeType, s.trim())).toArray());
-      } else {
-        codeName = getName(trueCodeType, value);
-      }
+    String codeName;
+    String trueCodeType = getCodeType(fieldName);
+    if (value instanceof String && ((String) value).contains(",")) {
+      String[] split = ((String) value).split(",");
+      codeName = StringUtils.arrayToCommaDelimitedString(
+          Arrays.stream(split).map(s -> getName(trueCodeType, s.trim())).toArray());
+    } else {
+      codeName = getName(trueCodeType, value);
     }
 
     if (useExtensionField) {

@@ -57,6 +57,12 @@ public class CustomNullSerializer extends StdSerializer<Object> {
 
     if (defaultValue == null) {
       if (jacksonExtProperties.getDefaultEmpty()) {
+        JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
+        if (jsonCode != null) {
+          new CodeSerializer(jsonCode.value(), jsonCode.extended())
+              .serialize("", gen, provider);
+          return;
+        }
         serializeNull(gen, type, value);
         serializeExtend(gen, fieldName, true);
       } else {
@@ -81,7 +87,7 @@ public class CustomNullSerializer extends StdSerializer<Object> {
         }
         JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
         if (jsonCode != null) {
-          new CodeSerializer(jsonCode.value(),jsonCode.extended())
+          new CodeSerializer(jsonCode.value(), jsonCode.extended())
               .serialize((Serializable) val, gen, provider);
           return;
         }
@@ -95,6 +101,12 @@ public class CustomNullSerializer extends StdSerializer<Object> {
 
         gen.writeObject(val);
       } else {
+        JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
+        if (jsonCode != null) {
+          new CodeSerializer(jsonCode.value(), jsonCode.extended())
+              .serialize("", gen, provider);
+          return;
+        }
         serializeNull(gen, type, value);
         serializeExtend(gen, fieldName, true);
       }
@@ -106,7 +118,7 @@ public class CustomNullSerializer extends StdSerializer<Object> {
       throws IOException {
     String value = StringUtils.hasText(extendedValue) ? extendedValue : (defaultEmpty ? "" : null);
     JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
-    if (jsonCode != null) {
+    if (jsonCode != null && jsonCode.extended()) {
       gen.writeStringField(fieldName + "Name", value);
       return;
     }
