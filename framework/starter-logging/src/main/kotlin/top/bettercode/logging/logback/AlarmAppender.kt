@@ -145,17 +145,19 @@ abstract class AlarmAppender(
             if (!cacheMap.containsKey(initialComment)) {
                 cacheMap[initialComment] = 1
                 val timeoutMsg = event.mdcPropertyMap[RequestLoggingFilter.TIMEOUT_MSG]
-                if (!timeoutMsg.isNullOrBlank()) {
+                val timeout = !timeoutMsg.isNullOrBlank()
+                if (timeout) {
                     initialComment += timeoutMsg
                 }
-                send(timeStamp, initialComment, message)
+                send(timeStamp, initialComment, message, timeout)
             }
         } else {
             val timeoutMsg = event.mdcPropertyMap[RequestLoggingFilter.TIMEOUT_MSG]
-            if (!timeoutMsg.isNullOrBlank()) {
+            val timeout = !timeoutMsg.isNullOrBlank()
+            if (timeout) {
                 initialComment += timeoutMsg
             }
-            send(timeStamp, initialComment, message)
+            send(timeStamp, initialComment, message, timeout)
         }
     }
 
@@ -165,11 +167,16 @@ abstract class AlarmAppender(
         return marker.contains(ClassicConstants.FINALIZE_SESSION_MARKER)
     }
 
-    private fun send(timeStamp: Long, initialComment: String, message: List<String>) {
+    private fun send(
+        timeStamp: Long,
+        initialComment: String,
+        message: List<String>,
+        timeout: Boolean
+    ) {
         if (sendErrorCount > 0)
             Thread.sleep(2 * 1000L)
 
-        if (sendMessage(timeStamp, initialComment, message)) {
+        if (sendMessage(timeStamp, initialComment, message, timeout)) {
             sendErrorCount = 0
         } else {
             sendErrorCount++
@@ -182,7 +189,8 @@ abstract class AlarmAppender(
     abstract fun sendMessage(
         timeStamp: Long,
         initialComment: String,
-        message: List<String>
+        message: List<String>,
+        timeout: Boolean
     ): Boolean
 
     internal inner class SenderRunnable(
