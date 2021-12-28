@@ -83,6 +83,13 @@ class SlackClient(
         params.add("token", authToken)
         params.add("channel", channel)
         val hasFilesPath = !logsPath.isNullOrBlank()
+
+        val anchor = PrettyMessageHTMLLayout.anchor(message.last())
+        val fileName = "alarm/${anchor}.log"
+        val linkTitle = "${fileName}#last"
+        if (hasFilesPath && message.isNotEmpty()) {
+            File(logsPath, fileName).writeText(message.joinToString(""))
+        }
         if (!hasFilesPath || RequestLoggingFilter.API_HOST == null) {
             return filesUpload(channel, timeStamp, title, initialComment, message)
         } else {
@@ -90,10 +97,6 @@ class SlackClient(
 
             val logUrl = RequestLoggingFilter.API_HOST + managementPath
             if (message.isNotEmpty()) {
-                val anchor = PrettyMessageHTMLLayout.anchor(message.last())
-                val fileName = "alarm/${anchor}.log"
-                val linkTitle = "${fileName}#last"
-                File(logsPath, fileName).writeText(message.joinToString(""))
                 if (logAll) {
                     params["attachments"] = arrayOf(
                         mapOf(
@@ -124,18 +127,18 @@ class SlackClient(
                             )
                         )
             }
-        }
 
-        if (log.isDebugEnabled) {
-            log.debug("slack params:{}", params)
-        }
+            if (log.isDebugEnabled) {
+                log.debug("slack params:{}", params)
+            }
 
-        val result =
-            restTemplate.postForObject("${api}chat.postMessage", params, Result::class.java)
-        if (log.isDebugEnabled) {
-            log.debug("slack result:{}", result)
+            val result =
+                restTemplate.postForObject("${api}chat.postMessage", params, Result::class.java)
+            if (log.isDebugEnabled) {
+                log.debug("slack result:{}", result)
+            }
+            return result?.ok == true
         }
-        return result?.ok == true
     }
 
     fun filesUpload(
