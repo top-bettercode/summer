@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.data;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -39,7 +40,7 @@ public class IbatisErrorHandler extends AbstractErrorHandler {
             respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
           }
           //ORA-12899: value too large for column "YUNTUDEV"."PU_DELIVERY_ORDER"."LICENSE" (actual: 47, maximum: 30)
-           regex = ".*ORA-12899: value too large for column .*\\..*\\.\"(.*?)\" \\(actual: \\d+, maximum: (\\d+)\\)";
+          regex = ".*ORA-12899: value too large for column .*\\..*\\.\"(.*?)\" \\(actual: \\d+, maximum: (\\d+)\\)";
           if (message.matches(regex)) {
             String field = message.replaceAll(regex, "$1");
             String maxLeng = message.replaceAll(regex, "$2");
@@ -47,6 +48,11 @@ public class IbatisErrorHandler extends AbstractErrorHandler {
             respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
           }
         }
+      }
+    } else if (error instanceof MyBatisSystemException) {
+      if (error.getMessage()
+          .contains("Cause: org.springframework.jdbc.CannotGetJdbcConnectionException")) {
+        message = getText("datasource.request.timeout");
       }
     }
     if (StringUtils.hasText(message)) {
