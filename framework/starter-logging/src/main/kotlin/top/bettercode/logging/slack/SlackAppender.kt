@@ -39,13 +39,14 @@ open class SlackAppender(
     override fun sendMessage(
         timeStamp: Long,
         initialComment: String,
-        message: List<String>
+        message: List<String>,
+        timeout: Boolean
     ): Boolean {
         return try {
             val title =
                 "$warnSubject${if (!RequestLoggingFilter.API_HOST.isNullOrBlank()) "(${RequestLoggingFilter.API_HOST})" else ""}"
             slackClient.postMessage(
-                properties.channel,
+                if (timeout) properties.timeoutChannel else properties.channel,
                 timeStamp,
                 title,
                 initialComment,

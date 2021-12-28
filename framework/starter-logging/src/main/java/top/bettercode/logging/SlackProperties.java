@@ -14,6 +14,7 @@ public class SlackProperties {
   private String[] ignoredWarnLogger = {};
   private String authToken;
   private String channel;
+  private String timeoutChannel = "timeout";
   private Long cacheSeconds = 5 * 60L;
   private Integer cyclicBufferSize = 20;
 
@@ -47,6 +48,14 @@ public class SlackProperties {
 
   public void setChannel(String channel) {
     this.channel = channel;
+  }
+
+  public String getTimeoutChannel() {
+    return timeoutChannel;
+  }
+
+  public void setTimeoutChannel(String timeoutChannel) {
+    this.timeoutChannel = timeoutChannel;
   }
 
   public Long getCacheSeconds() {
