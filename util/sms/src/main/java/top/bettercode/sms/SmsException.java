@@ -1,15 +1,15 @@
-package top.bettercode.sms.b2m;
+package top.bettercode.sms;
 
 /**
  * @author Peter Wu
  */
-public class B2mException extends RuntimeException {
+public class SmsException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 
 
-  public B2mException() {
-    this("亿美软通短信平台请求失败");
+  public SmsException() {
+    this("短信平台请求失败");
   }
 
   /**
@@ -19,7 +19,7 @@ public class B2mException extends RuntimeException {
    * @param message the detail message. The detail message is saved for later retrieval by the
    *                {@link #getMessage()} method.
    */
-  public B2mException(String message) {
+  public SmsException(String message) {
     super(message);
   }
 
@@ -35,7 +35,7 @@ public class B2mException extends RuntimeException {
    *                nonexistent or unknown.)
    * @since 1.4
    */
-  public B2mException(String message, Throwable cause) {
+  public SmsException(String message, Throwable cause) {
     super(message, cause);
   }
 
@@ -52,8 +52,8 @@ public class B2mException extends RuntimeException {
    *              or unknown.)
    * @since 1.4
    */
-  public B2mException(Throwable cause) {
-    this("亿美软通短信平台请求失败", cause);
+  public SmsException(Throwable cause) {
+    this("短信平台请求失败", cause);
   }
 
   /**
@@ -67,7 +67,7 @@ public class B2mException extends RuntimeException {
    * @param writableStackTrace whether or not the stack trace should be writable
    * @since 1.7
    */
-  public B2mException(String message, Throwable cause, boolean enableSuppression,
+  public SmsException(String message, Throwable cause, boolean enableSuppression,
       boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
   }
