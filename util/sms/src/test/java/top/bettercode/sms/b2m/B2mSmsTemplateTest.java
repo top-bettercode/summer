@@ -8,10 +8,10 @@ import top.bettercode.summer.util.test.BaseTest;
 /**
  * @author Peter Wu
  */
-class B2mTemplateTest extends BaseTest {
+class B2mSmsTemplateTest extends BaseTest {
 
   @Autowired
-  B2mTemplate b2mTemplate;
+  B2mSmsTemplate b2mTemplate;
 
   @org.junit.jupiter.api.Test
   void sendPersonalitySMS() {

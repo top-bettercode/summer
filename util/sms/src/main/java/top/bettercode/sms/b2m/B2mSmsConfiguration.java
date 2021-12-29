@@ -14,14 +14,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @ConditionalOnProperty(prefix = "summer.sms.b2m", value = "app-id")
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(B2mProperties.class)
-public class B2mConfiguration {
+@EnableConfigurationProperties(B2mSmsProperties.class)
+public class B2mSmsConfiguration {
 
-  private final Logger log = LoggerFactory.getLogger(B2mConfiguration.class);
+  private final Logger log = LoggerFactory.getLogger(B2mSmsConfiguration.class);
 
   @Bean
-  public B2mTemplate b2mTemplate(B2mProperties b2mProperties) {
-    return new B2mTemplate(b2mProperties);
+  public B2mSmsTemplate b2mTemplate(B2mSmsProperties b2mProperties) {
+    return new B2mSmsTemplate(b2mProperties);
   }
 
 }
