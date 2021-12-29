@@ -10,17 +10,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "summer.sms.b2m")
 public class B2mProperties {
 
-  private String url;
+  private String url="http://www.btom.cn:8080";
   private String appId;
   private String secretKey;
   /**
    * 请求连接超时时间毫秒数
    */
-  private int connectTimeout = 2000;
+  private int connectTimeout = 10000;
   /**
    * 请求读取超时时间毫秒数
    */
-  private int readTimeout = 2000;
+  private int readTimeout = 10000;
   /**
    * 请求有效时间(必填)[单位:秒]
    */

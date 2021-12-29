@@ -31,13 +31,15 @@ import org.springframework.web.client.RequestCallback;
 import top.bettercode.lang.util.AESUtil;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.support.client.ApiTemplate;
+import top.bettercode.sms.SmsException;
+import top.bettercode.sms.SmsSysException;
 
 /**
  * 亿美软通短信平台 接口请求
  */
 public class B2mTemplate extends ApiTemplate {
 
-  public static final String LOG_MARKER = "b2s";
+  private static final String LOG_MARKER = "sms";
   private final Logger log = LoggerFactory.getLogger(B2mTemplate.class);
   private final B2mProperties b2mProperties;
 
@@ -58,7 +60,6 @@ public class B2mTemplate extends ApiTemplate {
       }
     };
     ObjectMapper objectMapper = messageConverter.getObjectMapper();
-//    objectMapper.setConfig(objectMapper.getSerializationConfig().with(JsonWriteFeature.ESCAPE_NON_ASCII));
 
     objectMapper.setDefaultPropertyInclusion(Include.NON_NULL);
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
@@ -80,7 +81,8 @@ public class B2mTemplate extends ApiTemplate {
    * @return 结果
    */
   public List<B2mRespData> sendPersonalitySMS(Map<String, String> content) {
-    String timestamp = getTimestamp();
+//    格式：yyyyMMddHHmmss 14位
+    String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("appId", b2mProperties.getAppId());
     params.add("timestamp", timestamp);
@@ -94,9 +96,9 @@ public class B2mTemplate extends ApiTemplate {
         params.add(key, value);
       }
     });
-    params.add("timerTime", "");
-    params.add("customSmsId", "");
-    params.add("extendedCode", "");
+//    params.add("timerTime", "");
+//    params.add("customSmsId", "");
+//    params.add("extendedCode", "");
 
     RequestCallback requestCallback = httpEntityCallback(new HttpEntity<>(params),
         B2mResponse.class);
@@ -107,10 +109,10 @@ public class B2mTemplate extends ApiTemplate {
           requestCallback,
           responseEntityExtractor(B2mResponse.class));
     } catch (Exception e) {
-      throw new B2mException(e);
+      throw new SmsException(e);
     }
     if (entity == null) {
-      throw new B2mException();
+      throw new SmsException();
     }
     if (entity.getStatusCode().is2xxSuccessful()) {
       B2mResponse body = entity.getBody();
@@ -118,10 +120,10 @@ public class B2mTemplate extends ApiTemplate {
         return body.getData();
       } else {
         String message = body.getMessage();
-        throw new B2mSysException(message == null ? "请求失败" : message);
+        throw new SmsSysException(message == null ? "请求失败" : message);
       }
     } else {
-      throw new B2mException();
+      throw new SmsException();
     }
   }
 
@@ -167,10 +169,10 @@ public class B2mTemplate extends ApiTemplate {
           requestCallback,
           responseEntityExtractor(byte[].class));
     } catch (Exception e) {
-      throw new B2mException(e);
+      throw new SmsException(e);
     }
     if (entity == null) {
-      throw new B2mException();
+      throw new SmsException();
     }
     if (entity.getStatusCode().is2xxSuccessful()) {
       String code = entity.getHeaders().getFirst("result");
@@ -183,18 +185,12 @@ public class B2mTemplate extends ApiTemplate {
             TypeFactory.defaultInstance().constructCollectionType(List.class, B2mRespData.class));
       } else {
         String message = B2mResponse.getMessage(code);
-        throw new B2mSysException(message == null ? "请求失败" : message);
+        throw new SmsSysException(message == null ? "请求失败" : message);
       }
     } else {
-      throw new B2mException();
+      throw new SmsException();
     }
   }
 
-  /**
-   * @return 格式：yyyyMMddHHmmss 14位
-   */
-  private String getTimestamp() {
-    return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-  }
 
 }
