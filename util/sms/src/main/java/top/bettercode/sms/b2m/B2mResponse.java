@@ -8,11 +8,19 @@ import top.bettercode.lang.property.PropertiesSource;
  */
 public class B2mResponse {
 
-  public static final String SUCCESS="SUCCESS";
+  public static final String SUCCESS = "SUCCESS";
   private static final PropertiesSource codeMessageSource = PropertiesSource.of("b2m-message");
   private String code;
 
   private List<B2mRespData> data;
+
+  public B2mResponse() {
+  }
+
+  public B2mResponse(List<B2mRespData> data) {
+    this.code = SUCCESS;
+    this.data = data;
+  }
 
   public static String getMessage(String code) {
     return codeMessageSource.getOrDefault(code, code);
