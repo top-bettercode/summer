@@ -171,7 +171,7 @@ class ProjectPlugin : Plugin<Project> {
                         dependency("top.bettercode.summer:excel:$summerVersion")
                         dependency("top.bettercode.summer:ueditor:$summerVersion")
                         dependency("top.bettercode.summer:wechat:$summerVersion")
-                        dependency("top.bettercode.summer:sms-b2m:$summerVersion")
+                        dependency("top.bettercode.summer:sms:$summerVersion")
 
                         dependency("top.bettercode.summer:web:$summerVersion")
                         dependency("top.bettercode.summer:data-jpa:$summerVersion")
