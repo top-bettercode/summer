@@ -80,7 +80,7 @@ public class B2mSmsTemplate extends ApiTemplate {
    * @param content 手机号=内容(必填)【可多个】 以手机号为参数名，内容为参数值传输 如：18001000000=端午节快乐,(最多500个)
    * @return 结果
    */
-  public List<B2mRespData> sendPersonalitySMS(Map<String, String> content) {
+  public B2mResponse sendPersonalitySMS(Map<String, String> content) {
 //    格式：yyyyMMddHHmmss 14位
     String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
@@ -117,7 +117,7 @@ public class B2mSmsTemplate extends ApiTemplate {
     if (entity.getStatusCode().is2xxSuccessful()) {
       B2mResponse body = entity.getBody();
       if (body.isOk()) {
-        return body.getData();
+        return body;
       } else {
         String message = body.getMessage();
         throw new SmsSysException(message == null ? "请求失败" : message);
@@ -136,7 +136,7 @@ public class B2mSmsTemplate extends ApiTemplate {
    * @param content 手机号=内容(必填)【可多个】 以手机号为参数名，内容为参数值传输 如：18001000000=端午节快乐,(最多500个)
    * @return 结果
    */
-  public List<B2mRespData> sendPersonalityAllSMS(Map<String, String> content) {
+  public B2mResponse sendPersonalityAllSMS(Map<String, String> content) {
     HttpHeaders headers = new HttpHeaders();
     headers.add("appId", b2mProperties.getAppId());
     headers.add("gzip", "on");
@@ -181,8 +181,8 @@ public class B2mSmsTemplate extends ApiTemplate {
         respData = AESUtil.decrypt(respData, b2mProperties.getSecretKey());
         respData = StringUtil.ungzip(respData);
         log.info(MarkerFactory.getMarker(LOG_MARKER), "result:{}", new String(respData));
-        return StringUtil.readJson(respData,
-            TypeFactory.defaultInstance().constructCollectionType(List.class, B2mRespData.class));
+        return new B2mResponse(StringUtil.readJson(respData,
+            TypeFactory.defaultInstance().constructCollectionType(List.class, B2mRespData.class)));
       } else {
         String message = B2mResponse.getMessage(code);
         throw new SmsSysException(message == null ? "请求失败" : message);
