@@ -1,10 +1,7 @@
 package top.bettercode.lang.util
 
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.*
 import org.springframework.util.StringUtils
 import java.io.*
 import java.nio.charset.Charset
@@ -12,6 +9,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import java.util.zip.DeflaterOutputStream
+import java.util.zip.GZIPInputStream
+import java.util.zip.GZIPOutputStream
 import java.util.zip.InflaterInputStream
 
 
@@ -129,14 +128,30 @@ object StringUtil {
             return stringWriter.toString()
         }
         return try {
-            if (format) {
-                INDENT_OUTPUT_OBJECT_MAPPER.writeValueAsString(`object`)
-            } else {
-                OBJECT_MAPPER.writeValueAsString(`object`)
-            }
+            json(`object`, format)
         } catch (e: Exception) {
             `object`.toString()
         }
+    }
+
+    @JvmOverloads
+    @JvmStatic
+    fun json(`object`: Any?, format: Boolean = false): String {
+        return if (format) {
+            INDENT_OUTPUT_OBJECT_MAPPER.writeValueAsString(`object`)
+        } else {
+            OBJECT_MAPPER.writeValueAsString(`object`)
+        }
+    }
+
+    @JvmStatic
+    fun <T> readJson(`object`: ByteArray, valueType: Class<T>): T {
+        return OBJECT_MAPPER.readValue(`object`, valueType)
+    }
+
+    @JvmStatic
+    fun <T> readJson(`object`: ByteArray, valueType: JavaType): T {
+        return OBJECT_MAPPER.readValue(`object`, valueType)
     }
 
     /**
@@ -316,6 +331,7 @@ object StringUtil {
 
     }
 
+
     @JvmStatic
     fun decompress(str: String?): String? {
         if (str == null || str.isEmpty()) {
@@ -331,6 +347,34 @@ object StringUtil {
             throw RuntimeException(e)
         }
 
+    }
+
+    /**
+     * 压缩字符
+     *
+     * @param data 待压缩
+     * @return 压缩后
+     */
+    @JvmStatic
+    fun gzip(data: ByteArray): ByteArray {
+        if (data.isEmpty()) {
+            return data
+        }
+        val out = ByteArrayOutputStream()
+        val gzip = GZIPOutputStream(out)
+        gzip.write(data)
+        gzip.close()
+        return out.toByteArray()
+    }
+
+    @JvmStatic
+    fun ungzip(data: ByteArray): ByteArray {
+        if (data.isEmpty()) {
+            return data
+        }
+        val byteArrayInputStream = ByteArrayInputStream(data)
+        val zipInputStream = GZIPInputStream(byteArrayInputStream)
+        return zipInputStream.readBytes()
     }
 
     @Throws(IOException::class)

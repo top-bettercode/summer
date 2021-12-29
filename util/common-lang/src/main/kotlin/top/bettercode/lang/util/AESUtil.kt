@@ -1,97 +1,110 @@
 package top.bettercode.lang.util
 
-import java.security.SecureRandom
 import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
-import kotlin.experimental.and
 
 /**
- * @author Peter Wu
+ * AES加解密工具
+ *
+ * @author Frank
  */
 object AESUtil {
+    const val AES = "AES"
+    const val ECB = "ECB"
+    const val PKCS5Padding = "PKCS5Padding"
 
     /**
      * AES加密
      *
-     * @param content 待加密的字符串
-     * @param encryptKey 加密密钥
-     * @return 加密后的字符串
-     * @throws Exception Exception
+     * @param content 内容
+     * @param password 密钥
+     * @param algorithm 算法
+     * @return 加密后数据
      */
+    @JvmOverloads
     @JvmStatic
-    @Throws(Exception::class)
-    fun encrypt(content: String, encryptKey: String): String {
-        val kgen = KeyGenerator.getInstance("AES")
-        val random = SecureRandom.getInstance("SHA1PRNG")
-        random.setSeed(encryptKey.toByteArray())
-        kgen.init(128, random)
-
-        val cipher = Cipher.getInstance("AES")
-        cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(kgen.generateKey().encoded, "AES"))
-
-        return parseByte2HexStr(cipher.doFinal(content.toByteArray(charset("UTF-8"))))
+    fun encrypt(content: ByteArray, password: String, algorithm: String = AES): ByteArray {
+        val cipher: Cipher = if (algorithm.endsWith("PKCS7Padding")) {
+            Cipher.getInstance(algorithm, "BC")
+        } else {
+            Cipher.getInstance(algorithm)
+        }
+        cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(password.toByteArray(), "AES"))
+        return cipher.doFinal(content)
     }
 
     /**
      * AES解密
      *
-     * @param encryptedStr 待解密的字符串
-     * @param decryptKey 解密密钥
-     * @return 解密后的字符串
-     * @throws Exception Exception
+     * @param content 加密内容
+     * @param password 密钥
+     * @param algorithm 算法
+     * @return 解密后数据
      */
+    @JvmOverloads
     @JvmStatic
-    @Throws(Exception::class)
-    fun decrypt(encryptedStr: String, decryptKey: String): String {
-        val kgen = KeyGenerator.getInstance("AES")
-        val random = SecureRandom.getInstance("SHA1PRNG")
-        random.setSeed(decryptKey.toByteArray())
-        kgen.init(128, random)
-
-        val cipher = Cipher.getInstance("AES")
-        cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(kgen.generateKey().encoded, "AES"))
-        val decryptBytes = cipher.doFinal(parseHexStr2Byte(encryptedStr)!!)
-
-        return String(decryptBytes)
+    fun decrypt(content: ByteArray, password: String, algorithm: String = AES): ByteArray {
+        val cipher = if (algorithm.endsWith("PKCS7Padding")) {
+            Cipher.getInstance(algorithm, "BC")
+        } else {
+            Cipher.getInstance(algorithm)
+        }
+        cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(password.toByteArray(), "AES"))
+        return cipher.doFinal(content)
     }
 
     /**
-     * 将16进制转换为二进制
+     * AES加密
      *
-     * @param hexStr 16进制
-     * @return 二进制
+     * @param content 内容
+     * @param password 密钥
+     * @param algorithm 算法
+     * @param ivStr 向量
+     * @return 加密后数据
      */
+    @JvmOverloads
     @JvmStatic
-    fun parseHexStr2Byte(hexStr: String): ByteArray? {
-        if (hexStr.isEmpty()) {
-            return null
+    fun encrypt(
+        content: ByteArray,
+        password: String,
+        ivStr: ByteArray,
+        algorithm: String = AES
+    ): ByteArray {
+        val cipher = if (algorithm.endsWith("PKCS7Padding")) {
+            Cipher.getInstance(algorithm, "BC")
+        } else {
+            Cipher.getInstance(algorithm)
         }
-        val result = ByteArray(hexStr.length / 2)
-        for (i in 0 until hexStr.length / 2) {
-            val high = Integer.parseInt(hexStr.substring(i * 2, i * 2 + 1), 16)
-            val low = Integer.parseInt(hexStr.substring(i * 2 + 1, i * 2 + 2), 16)
-            result[i] = (high * 16 + low).toByte()
-        }
-        return result
+        val iv = IvParameterSpec(ivStr)
+        cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(password.toByteArray(), "AES"), iv)
+        return cipher.doFinal(content)
     }
 
     /**
-     * 将二进制转换成16进制
+     * AES解密
      *
-     * @param buf 二进制
-     * @return 16进制
+     * @param content 加密内容
+     * @param password 密钥
+     * @param algorithm 算法
+     * @param ivStr 向量
+     * @return 解密后数据
      */
+    @JvmOverloads
     @JvmStatic
-    fun parseByte2HexStr(buf: ByteArray): String {
-        val sb = StringBuilder()
-        for (aBuf in buf) {
-            var hex = Integer.toHexString((aBuf and 0xFF.toByte()).toInt())
-            if (hex.length == 1) {
-                hex = "0$hex"
-            }
-            sb.append(hex.toUpperCase())
+    fun decrypt(
+        content: ByteArray,
+        password: String,
+        ivStr: ByteArray,
+        algorithm: String = AES
+    ): ByteArray {
+        val cipher = if (algorithm.endsWith("PKCS7Padding")) {
+            Cipher.getInstance(algorithm, "BC")
+        } else {
+            Cipher.getInstance(algorithm)
         }
-        return sb.toString()
+        val iv = IvParameterSpec(ivStr)
+        cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(password.toByteArray(), "AES"), iv)
+        return cipher.doFinal(content)
     }
 }
