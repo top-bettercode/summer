@@ -129,7 +129,7 @@ public class B2mTemplate extends ApiTemplate {
   /**
    * 安全接口 个性短信接口【全属性个性】
    *
-   * <p>文档：http://www.b2m.cn/static/doc/sms/personalizedsmsall.html</p>
+   * <p>文档：http://www.b2m.cn/static/doc/sms/moresms_custom.html</p>
    *
    * @param content 手机号=内容(必填)【可多个】 以手机号为参数名，内容为参数值传输 如：18001000000=端午节快乐,(最多500个)
    * @return 结果
