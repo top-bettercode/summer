@@ -84,7 +84,7 @@ public class ApiTokenService {
     return authenticationToken.toApiToken();
   }
 
-  private UserDetails getUserDetails(String scope, String username) {
+  public UserDetails getUserDetails(String scope, String username) {
     UserDetails userDetails;
     if (isScopeUserDetailsService) {
       userDetails = ((ScopeUserDetailsService) userDetailsService).loadUserByScopeAndUsername(

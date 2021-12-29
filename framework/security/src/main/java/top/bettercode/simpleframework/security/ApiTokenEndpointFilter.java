@@ -41,7 +41,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   private final AuthenticationManager authenticationManager;
   private final RequestMatcher tokenEndpointMatcher;
   private final RequestMatcher revokeTokenEndpointMatcher;
-  private final ApiTokenService apiTokenBuilder;
+  private final ApiTokenService apiTokenService;
   private final SummerWebProperties summerWebProperties;
   private final ApiSecurityProperties apiSecurityProperties;
   private final IRevokeTokenService revokeTokenService;
@@ -53,13 +53,13 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
   public ApiTokenEndpointFilter(AuthenticationManager authenticationManager,
       ApiAuthorizationService apiAuthorizationService,
-      ApiTokenService apiTokenBuilder,
+      ApiTokenService apiTokenService,
       SummerWebProperties summerWebProperties,
       IRevokeTokenService revokeTokenService,
       ApiSecurityProperties apiSecurityProperties,
       ObjectMapper objectMapper) {
     this(apiAuthorizationService, authenticationManager, DEFAULT_TOKEN_ENDPOINT_URI,
-        apiTokenBuilder, summerWebProperties, apiSecurityProperties,
+        apiTokenService, summerWebProperties, apiSecurityProperties,
         revokeTokenService, objectMapper);
   }
 
@@ -67,7 +67,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   public ApiTokenEndpointFilter(
       ApiAuthorizationService apiAuthorizationService,
       AuthenticationManager authenticationManager, String tokenEndpointUri,
-      ApiTokenService apiTokenBuilder,
+      ApiTokenService apiTokenService,
       SummerWebProperties summerWebProperties,
       ApiSecurityProperties apiSecurityProperties,
       IRevokeTokenService revokeTokenService,
@@ -86,7 +86,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
     Assert.notNull(authenticationManager, "authenticationManager cannot be null");
     Assert.hasText(tokenEndpointUri, "tokenEndpointUri cannot be empty");
     this.apiAuthorizationService = apiAuthorizationService;
-    this.apiTokenBuilder = apiTokenBuilder;
+    this.apiTokenService = apiTokenService;
     this.authenticationManager = authenticationManager;
     this.tokenEndpointMatcher = new AntPathRequestMatcher(tokenEndpointUri, HttpMethod.POST.name());
     this.revokeTokenEndpointMatcher = new AntPathRequestMatcher(tokenEndpointUri,
@@ -127,19 +127,19 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
           if (apiSecurityProperties.getLoginKickedOut()) {
             apiAuthenticationToken = new ApiAuthenticationToken(scope,
-                apiTokenBuilder.createAccessToken(),
-                apiTokenBuilder.createRefreshToken(), userDetails);
+                apiTokenService.createAccessToken(),
+                apiTokenService.createRefreshToken(), userDetails);
           } else {
             apiAuthenticationToken = apiAuthorizationService.findByScopeAndUsername(scope,
                 username);
             if (apiAuthenticationToken == null || apiAuthenticationToken.getRefreshToken()
                 .isExpired()) {
               apiAuthenticationToken = new ApiAuthenticationToken(scope,
-                  apiTokenBuilder.createAccessToken(),
-                  apiTokenBuilder.createRefreshToken(), userDetails);
+                  apiTokenService.createAccessToken(),
+                  apiTokenService.createRefreshToken(), userDetails);
             } else if (apiAuthenticationToken.getAccessToken()
                 .isExpired()) {
-              apiAuthenticationToken.setAccessToken(apiTokenBuilder.createAccessToken());
+              apiAuthenticationToken.setAccessToken(apiTokenService.createAccessToken());
               apiAuthenticationToken.setUserDetails(userDetails);
             } else {
               apiAuthenticationToken.setUserDetails(userDetails);
@@ -160,17 +160,10 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
           }
 
           try {
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                apiAuthenticationToken.getUsername(),
-                apiAuthenticationToken.getUserDetails().getPassword());
-            Authentication authentication = authenticationManager.authenticate(
-                usernamePasswordAuthenticationToken);
-            Object principal = authentication.getPrincipal();
-            Assert.isTrue(principal instanceof UserDetails, "授权异常");
+            UserDetails userDetails = apiTokenService.getUserDetails(scope,
+                apiAuthenticationToken.getUsername());
 
-            UserDetails userDetails = (UserDetails) principal;
-
-            apiAuthenticationToken.setAccessToken(apiTokenBuilder.createAccessToken());
+            apiAuthenticationToken.setAccessToken(apiTokenService.createAccessToken());
             apiAuthenticationToken.setUserDetails(userDetails);
           } catch (Exception e) {
             throw new UnauthorizedException("请重新登录", e);
