@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.sms.b2m")
-public class B2mProperties {
+public class B2mSmsProperties {
 
   private String url="http://www.btom.cn:8080";
   private String appId;

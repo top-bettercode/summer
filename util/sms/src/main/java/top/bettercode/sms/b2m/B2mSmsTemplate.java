@@ -37,14 +37,14 @@ import top.bettercode.sms.SmsSysException;
 /**
  * 亿美软通短信平台 接口请求
  */
-public class B2mTemplate extends ApiTemplate {
+public class B2mSmsTemplate extends ApiTemplate {
 
   private static final String LOG_MARKER = "sms";
-  private final Logger log = LoggerFactory.getLogger(B2mTemplate.class);
-  private final B2mProperties b2mProperties;
+  private final Logger log = LoggerFactory.getLogger(B2mSmsTemplate.class);
+  private final B2mSmsProperties b2mProperties;
 
-  public B2mTemplate(
-      B2mProperties b2mProperties) {
+  public B2mSmsTemplate(
+      B2mSmsProperties b2mProperties) {
     super("第三方接口", "亿美软通短信平台", LOG_MARKER, b2mProperties.getConnectTimeout(),
         b2mProperties.getReadTimeout());
     this.b2mProperties = b2mProperties;
