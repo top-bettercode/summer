@@ -234,6 +234,8 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         } else {
           logger.warn("错误或过期的token:" + accessToken);
         }
+      } else if (URLFilterInvocationSecurityMetadataSource.matchClientAuthorize(request)) {
+        authenticateBasic(request);
       }
       filterChain.doFilter(request, response);
     }
