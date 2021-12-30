@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MarkerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,22 +29,21 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RequestCallback;
 import top.bettercode.lang.util.AESUtil;
 import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.support.client.ApiTemplate;
 import top.bettercode.sms.SmsException;
 import top.bettercode.sms.SmsSysException;
+import top.bettercode.sms.SmsTemplate;
 
 /**
  * 亿美软通短信平台 接口请求
  */
-public class B2mSmsTemplate extends ApiTemplate {
+public class B2mSmsTemplate extends SmsTemplate {
 
-  private static final String LOG_MARKER = "sms";
   private final Logger log = LoggerFactory.getLogger(B2mSmsTemplate.class);
   private final B2mSmsProperties b2mProperties;
 
   public B2mSmsTemplate(
       B2mSmsProperties b2mProperties) {
-    super("第三方接口", "亿美软通短信平台", LOG_MARKER, b2mProperties.getConnectTimeout(),
+    super("第三方接口", "亿美软通短信平台", LOG_MARKER_STR, b2mProperties.getConnectTimeout(),
         b2mProperties.getReadTimeout());
     this.b2mProperties = b2mProperties;
     MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter() {
@@ -155,7 +153,7 @@ public class B2mSmsTemplate extends ApiTemplate {
     params.put("requestValidPeriod", b2mProperties.getRequestValidPeriod());
 
     String json = StringUtil.json(params);
-    log.info(MarkerFactory.getMarker(LOG_MARKER), "params:{}", json);
+    log.info(LOG_MARKER, "params:{}", json);
     byte[] data = json.getBytes(StandardCharsets.UTF_8);
     data = StringUtil.gzip(data);
     data = AESUtil.encrypt(data, b2mProperties.getSecretKey());
@@ -180,7 +178,7 @@ public class B2mSmsTemplate extends ApiTemplate {
         byte[] respData = entity.getBody();
         respData = AESUtil.decrypt(respData, b2mProperties.getSecretKey());
         respData = StringUtil.ungzip(respData);
-        log.info(MarkerFactory.getMarker(LOG_MARKER), "result:{}", new String(respData));
+        log.info(LOG_MARKER, "result:{}", new String(respData));
         return new B2mResponse(StringUtil.readJson(respData,
             TypeFactory.defaultInstance().constructCollectionType(List.class, B2mRespData.class)));
       } else {
