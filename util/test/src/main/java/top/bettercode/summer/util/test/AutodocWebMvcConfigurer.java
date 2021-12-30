@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
@@ -19,7 +20,9 @@ import top.bettercode.autodoc.gen.Autodoc;
 import top.bettercode.logging.AnnotatedUtils;
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper;
 import top.bettercode.simpleframework.security.Anonymous;
+import top.bettercode.simpleframework.security.ClientAuthorize;
 import top.bettercode.simpleframework.security.SecurityParameterNames;
+import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 
 @ConditionalOnClass(Anonymous.class)
@@ -50,9 +53,10 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
         Set<String> requiredHeaders = Autodoc.getRequiredHeaders();
         if (handler instanceof HandlerMethod) {
           String url = request.getServletPath();
+          //set required
           if (!AnnotatedUtils.hasAnnotation((HandlerMethod) handler, Anonymous.class)
-              && !securityProperties
-              .ignored(url)) {
+              && !securityProperties.ignored(url) || AnnotatedUtils.hasAnnotation(
+              (HandlerMethod) handler, ClientAuthorize.class)) {
             requiredHeaders = new HashSet<>(requiredHeaders);
             if (securityProperties.getCompatibleAccessToken()) {
               requiredHeaders.add(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
@@ -60,6 +64,7 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
               requiredHeaders.add(HttpHeaders.AUTHORIZATION);
             }
             Autodoc.requiredHeaders(requiredHeaders.toArray(new String[0]));
+            //set required end
           } else if (request instanceof TraceHttpServletRequestWrapper
               && ((TraceHttpServletRequestWrapper) request).getRequest() instanceof AutoDocHttpServletRequest) {
             AutoDocHttpServletRequest autoRequest = (AutoDocHttpServletRequest) ((TraceHttpServletRequestWrapper) request).getRequest();
@@ -84,19 +89,24 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
 
   @Override
   public void handle(AutoDocHttpServletRequest request) {
-    if (securityProperties.getCompatibleAccessToken()) {
-      String authorization = request.getHeader(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
-      if (!StringUtils.hasText(authorization)) {
-        request.header(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN,
-            "xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
-      }
+    if (URLFilterInvocationSecurityMetadataSource.matchClientAuthorize(request)) {
+      request.header(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils.encodeToString(
+          (securityProperties.getClientId() + ":"
+              + securityProperties.getClientSecret()).getBytes()));
     } else {
-      String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-      if (!StringUtils.hasText(authorization)) {
-        request.header(HttpHeaders.AUTHORIZATION, "bearer xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
+      if (securityProperties.getCompatibleAccessToken()) {
+        String authorization = request.getHeader(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
+        if (!StringUtils.hasText(authorization)) {
+          request.header(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN,
+              "xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
+        }
+      } else {
+        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (!StringUtils.hasText(authorization)) {
+          request.header(HttpHeaders.AUTHORIZATION, "bearer xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
+        }
       }
     }
-
   }
 
   @Override
