@@ -26,12 +26,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import top.bettercode.simpleframework.config.CorsProperties;
 import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.security.ApiTokenEndpointFilter;
 import top.bettercode.simpleframework.security.ApiTokenService;
-import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.IRevokeTokenService;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
 import top.bettercode.simpleframework.security.UserDetailsAuthenticationProvider;
@@ -128,20 +126,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final Logger log = LoggerFactory.getLogger(
         top.bettercode.simpleframework.security.config.SecurityConfiguration.class);
-    private final ApiSecurityProperties securityProperties;
 
-    public AccessSecurityConfiguration(
-        ApiSecurityProperties securityProperties) {
-      this.securityProperties = securityProperties;
-    }
-
-    @Bean
-    public URLFilterInvocationSecurityMetadataSource securityMetadataSource(
-        IResourceService resourceService,
-        RequestMappingHandlerMapping requestMappingHandlerMapping) {
-      return new URLFilterInvocationSecurityMetadataSource(resourceService,
-          requestMappingHandlerMapping, securityProperties);
-    }
 
     @ConditionalOnMissingBean
     @Bean
