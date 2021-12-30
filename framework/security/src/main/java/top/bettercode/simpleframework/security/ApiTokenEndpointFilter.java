@@ -125,7 +125,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
           UserDetails userDetails = (UserDetails) principal;
 
-          if (apiSecurityProperties.getLoginKickedOut()) {
+          if (apiSecurityProperties.needKickedOut(scope)) {
             apiAuthenticationToken = new ApiAuthenticationToken(scope,
                 apiTokenService.createAccessToken(),
                 apiTokenService.createRefreshToken(), userDetails);

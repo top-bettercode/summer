@@ -50,7 +50,7 @@ public class ApiTokenService {
   }
 
   public ApiToken getApiToken(String scope, String username) {
-    return getApiToken(scope, username, apiSecurityProperties.getLoginKickedOut());
+    return getApiToken(scope, username, apiSecurityProperties.needKickedOut(scope));
   }
 
   public ApiToken getApiToken(String scope, String username, Boolean loginKickedOut) {
@@ -59,7 +59,7 @@ public class ApiTokenService {
   }
 
   public ApiToken getApiToken(String scope, UserDetails userDetails) {
-    return getApiToken(scope, userDetails, apiSecurityProperties.getLoginKickedOut());
+    return getApiToken(scope, userDetails, apiSecurityProperties.needKickedOut(scope));
   }
 
   public ApiToken getApiToken(String scope, UserDetails userDetails, Boolean loginKickedOut) {
