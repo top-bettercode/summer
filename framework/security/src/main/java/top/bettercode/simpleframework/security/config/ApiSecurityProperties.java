@@ -30,9 +30,13 @@ public class ApiSecurityProperties {
   private Boolean supportClientCache = true;
 
   /**
-   * 登录时是否踢出前一个登录用户
+   * 登录时是否踢出前一个登录用户,全局配置
    */
   private Boolean loginKickedOut = false;
+  /**
+   * 登录时是否踢出前一个登录用户，针对特殊scope
+   */
+  private String[] loginKickedOutScopes = new String[0];
   /**
    * 是否兼容旧toekn名称
    */
@@ -56,6 +60,10 @@ public class ApiSecurityProperties {
     return false;
   }
 
+  public Boolean needKickedOut(String scope) {
+    return loginKickedOut || ArrayUtil.contains(loginKickedOutScopes, scope);
+  }
+
   //--------------------------------------------
 
   public Boolean getLoginKickedOut() {
@@ -64,6 +72,14 @@ public class ApiSecurityProperties {
 
   public void setLoginKickedOut(Boolean loginKickedOut) {
     this.loginKickedOut = loginKickedOut;
+  }
+
+  public String[] getLoginKickedOutScopes() {
+    return loginKickedOutScopes;
+  }
+
+  public void setLoginKickedOutScopes(String[] loginKickedOutScopes) {
+    this.loginKickedOutScopes = loginKickedOutScopes;
   }
 
   public Integer getRefreshTokenValiditySeconds() {
