@@ -13,9 +13,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import top.bettercode.simpleframework.security.ApiAuthenticationToken;
 import top.bettercode.simpleframework.security.ApiSecurityErrorHandler;
 import top.bettercode.simpleframework.security.ApiTokenService;
+import top.bettercode.simpleframework.security.IResourceService;
+import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
 import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
 import top.bettercode.simpleframework.security.authorization.InMemoryApiAuthorizationService;
 
@@ -29,6 +32,14 @@ public class ApiSecurityConfiguration {
   public ApiSecurityConfiguration(
       ApiSecurityProperties securityProperties) {
     this.securityProperties = securityProperties;
+  }
+
+  @Bean
+  public URLFilterInvocationSecurityMetadataSource securityMetadataSource(
+      IResourceService resourceService,
+      RequestMappingHandlerMapping requestMappingHandlerMapping) {
+    return new URLFilterInvocationSecurityMetadataSource(resourceService,
+        requestMappingHandlerMapping, securityProperties);
   }
 
   @Bean
