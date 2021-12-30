@@ -13,10 +13,9 @@ import org.springframework.util.Base64Utils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import top.bettercode.lang.util.StringUtil.json
-import top.bettercode.simpleframework.support.client.ApiTemplate
 import top.bettercode.sms.SmsException
 import top.bettercode.sms.SmsSysException
-import top.bettercode.sms.aliyun.AliSmsTemplate
+import top.bettercode.sms.SmsTemplate
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -36,8 +35,8 @@ import javax.crypto.spec.SecretKeySpec
  */
 class AliSmsTemplate(
     private val aliSmsProperties: AliSmsProperties
-) : ApiTemplate(
-    "第三方接口", "阿里短信平台", LOG_MARKER, aliSmsProperties.connectTimeout,
+) : SmsTemplate(
+    "第三方接口", "阿里短信平台", LOG_MARKER_STR, aliSmsProperties.connectTimeout,
     aliSmsProperties.readTimeout
 ) {
     private val log = LoggerFactory.getLogger(AliSmsTemplate::class.java)
@@ -121,7 +120,7 @@ class AliSmsTemplate(
 //    签名
         sign(params)
         val requestCallback = httpEntityCallback<Any>(
-            HttpEntity(params,null),
+            HttpEntity(params, null),
             AliSmsResponse::class.java
         )
         val entity: ResponseEntity<AliSmsResponse> = try {
@@ -195,7 +194,7 @@ class AliSmsTemplate(
         //签名
         sign(params)
         val requestCallback = httpEntityCallback<Any>(
-            HttpEntity(params,null),
+            HttpEntity(params, null),
             QuerySendDetailsResponse::class.java
         )
         val entity: ResponseEntity<QuerySendDetailsResponse> = try {
@@ -224,7 +223,7 @@ class AliSmsTemplate(
         while (it.hasNext()) {
             val key = it.next()
             sortQueryStringTmp.append("&").append(specialUrlEncode(key)).append("=")
-                .append(specialUrlEncode(params.getFirst(key)?: ""))
+                .append(specialUrlEncode(params.getFirst(key) ?: ""))
         }
         val sortedQueryString = sortQueryStringTmp.substring(1) // 去除第一个多余的&符号
         val stringToSign =
@@ -262,7 +261,4 @@ class AliSmsTemplate(
         }
     }
 
-    companion object {
-        const val LOG_MARKER = "sms"
-    }
 }
