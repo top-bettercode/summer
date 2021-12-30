@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,20 @@ public class B2mSmsTemplate extends SmsTemplate {
     setMessageConverters(messageConverters);
   }
 
+  /**
+   * 个性短信接口
+   *
+   * <p>文档：http://www.b2m.cn/static/doc/sms/personalizedsms_or.html</p>
+   * <p>示例：http://ip:port/simpleinter/sendPersonalitySMS?appId=EUCP-EMY-DDDD-3EEEE&timestamp=20170101120000&sign=PIEUDJI987EUID62PKEDSESQEDSEDFSE&extendedCode=123&timerTime=20171211022000&customSmsId=10001&18001098901=天气不错1啊&18001098902=天气不错2啊
+   * </p>
+   *
+   * @param cell    手机号
+   * @param content 内容
+   * @return 结果
+   */
+  public B2mResponse sendPersonalitySMS(String cell, String content) {
+    return sendPersonalitySMS(Collections.singletonMap(cell, content));
+  }
 
   /**
    * 个性短信接口
@@ -125,6 +140,18 @@ public class B2mSmsTemplate extends SmsTemplate {
     }
   }
 
+  /**
+   * 安全接口 个性短信接口【全属性个性】
+   *
+   * <p>文档：http://www.b2m.cn/static/doc/sms/moresms_custom.html</p>
+   *
+   * @param cell    手机号
+   * @param content 内容
+   * @return 结果
+   */
+  public B2mResponse sendPersonalityAllSMS(String cell, String content) {
+    return sendPersonalityAllSMS(Collections.singletonMap(cell, content));
+  }
 
   /**
    * 安全接口 个性短信接口【全属性个性】

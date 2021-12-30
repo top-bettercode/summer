@@ -64,6 +64,22 @@ class AliSmsTemplate(
      * 发送短信。
      *
      * @param templateCode 短信模板CODE。
+     * @param phoneNumber 接收短信的手机号码
+     * @param signName 短信签名名称
+     * @param templateParam 短信模板变量对应的实际值
+     * @return 结果
+     */
+    fun sendSms(
+        templateCode: String, phoneNumber: String, signName: String,
+        templateParam: Map<String, String>
+    ): AliSmsResponse {
+        return sendBatchSms(templateCode, listOf(AliSmsReq(phoneNumber, signName, templateParam)))
+    }
+
+    /**
+     * 发送短信。
+     *
+     * @param templateCode 短信模板CODE。
      * @param aliSmsReq    请求信息。
      * @return 结果
      */
