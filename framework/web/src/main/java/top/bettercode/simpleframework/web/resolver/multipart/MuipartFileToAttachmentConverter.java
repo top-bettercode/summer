@@ -22,6 +22,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
+import top.bettercode.simpleframework.config.MultipartProperties;
 
 /**
  * MultipartFile 转换为对应的url或路径。
