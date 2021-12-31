@@ -27,7 +27,7 @@ request:
    -
     name: "sign"
     type: "String"
-    description: "接口签名 <<_jiekouqianmingsuanfa>>"
+    description: "接口签名 <<_qianmingsuanfa>>"
     value: "dea58c947e4ed3d2aea8cac4c01f67d7"
     canCover: true
     required: true
@@ -64,6 +64,7 @@ response:
      -
       name: "id"
       type: "String"
+      description: "id"
       value: "3314"
       canCover: true
       required: false

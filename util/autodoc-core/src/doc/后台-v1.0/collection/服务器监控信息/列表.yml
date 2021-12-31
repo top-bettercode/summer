@@ -27,6 +27,7 @@ response:
    -
     name: "status"
     type: "String"
+    description: "status"
     value: "200"
     canCover: true
     required: false
@@ -39,16 +40,19 @@ response:
    -
     name: "trace"
     type: "String"
+    description: "trace"
     canCover: true
     required: false
    -
     name: "errors"
     type: "String"
+    description: "errors"
     canCover: true
     required: false
    -
     name: "data"
     type: "Array"
+    description: "data"
     value: "[{\"itemInfoId\":1570,\"groupId\":1,\"hostId\":214,\"zabbixHostid\":\"\
       10291\",\"hostName\":\"10.0.1.131-windows-salt-test\",\"hostIp\":\"10.0.1.131\"\
       ,\"items\":[{\"itemInfoItemId\":6273,\"itemInfoId\":1570,\"warnType\":0,\"groupId\"\
@@ -84,18 +88,21 @@ response:
      -
       name: "itemInfoId"
       type: "Integer"
+      description: "itemInfoId"
       value: "1570"
       canCover: true
       required: false
      -
       name: "groupId"
       type: "Integer"
+      description: "groupId"
       value: "1"
       canCover: true
       required: false
      -
       name: "hostId"
       type: "Integer"
+      description: "hostId"
       value: "214"
       canCover: true
       required: false
@@ -123,6 +130,7 @@ response:
      -
       name: "items"
       type: "Array"
+      description: "items"
       value: "[{\"itemInfoItemId\":6273,\"itemInfoId\":1570,\"warnType\":0,\"groupId\"\
         :1,\"hostId\":214,\"itemName\":\"CPU\",\"itemPer\":\"7.8746\",\"itemUsed\"\
         :null,\"itemTotal\":null,\"lastModifiedDate\":null,\"highlight\":false},{\"\
@@ -140,65 +148,76 @@ response:
        -
         name: "itemInfoItemId"
         type: "Integer"
+        description: "itemInfoItemId"
         value: "6273"
         canCover: true
         required: false
        -
         name: "itemInfoId"
         type: "Integer"
+        description: "itemInfoId"
         value: "1570"
         canCover: true
         required: false
        -
         name: "warnType"
         type: "Integer"
+        description: "warnType"
         value: "0"
         canCover: true
         required: false
        -
         name: "groupId"
         type: "Integer"
+        description: "groupId"
         value: "1"
         canCover: true
         required: false
        -
         name: "hostId"
         type: "Integer"
+        description: "hostId"
         value: "214"
         canCover: true
         required: false
        -
         name: "itemName"
         type: "String"
+        description: "itemName"
         value: "CPU"
         canCover: true
         required: false
        -
         name: "itemPer"
         type: "String"
+        description: "itemPer"
         value: "7.8746"
         canCover: true
         required: false
        -
         name: "itemUsed"
         type: "String"
+        description: "itemUsed"
         value: "11571507200"
         canCover: true
         required: false
        -
         name: "itemTotal"
         type: "String"
+        description: "itemTotal"
         value: "33806921728"
         canCover: true
         required: false
        -
         name: "lastModifiedDate"
         type: "String"
+        description: "lastModifiedDate"
         canCover: true
         required: false
        -
         name: "highlight"
         type: "Boolean"
+        description: "highlight"
         value: "false"
         canCover: true
         required: false

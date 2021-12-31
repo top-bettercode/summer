@@ -55,7 +55,7 @@ request:
    -
     name: "sign"
     type: "String"
-    description: "接口签名 <<_jiekouqianmingsuanfa>>"
+    description: "接口签名 <<_qianmingsuanfa>>"
     value: "63502f8f9d2b86ea821c027b8a5bf97f"
     canCover: true
     required: true
@@ -261,6 +261,7 @@ response:
      -
       name: "createTime"
       type: "Long"
+      description: "createTime"
       value: "1523262472000"
       canCover: true
       required: false

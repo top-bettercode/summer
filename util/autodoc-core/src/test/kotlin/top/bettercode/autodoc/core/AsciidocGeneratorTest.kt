@@ -3,6 +3,7 @@ package top.bettercode.autodoc.core
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.util.*
 
 /**
  * @author Peter Wu
@@ -19,26 +20,31 @@ class AsciidocGeneratorTest {
 
     @Test
     fun genAdoc() {
-        top.bettercode.autodoc.core.AsciidocGenerator.asciidoc(autodoc)
+        AsciidocGenerator.asciidoc(autodoc)
     }
 
     @Test
     fun genHtml() {
-        top.bettercode.autodoc.core.AsciidocGenerator.asciidoc(autodoc)
-        top.bettercode.autodoc.core.AsciidocGenerator.html(autodoc)
+        AsciidocGenerator.asciidoc(autodoc)
+        AsciidocGenerator.html(autodoc)
     }
 
     @Test
     fun genPdf() {
 //        AsciidocGenerator.asciidoc(autodoc)
-        top.bettercode.autodoc.core.AsciidocGenerator.pdf(autodoc)
+        AsciidocGenerator.pdf(autodoc)
+    }
+
+    @Test
+    fun setDefaultDesc() {
+        AsciidocGenerator.setDefaultDesc(autodoc, Properties())
     }
 
     @Test
     fun genHtmlPdf() {
-        top.bettercode.autodoc.core.AsciidocGenerator.asciidoc(autodoc)
-        top.bettercode.autodoc.core.AsciidocGenerator.html(autodoc)
-        top.bettercode.autodoc.core.AsciidocGenerator.pdf(autodoc)
+        AsciidocGenerator.asciidoc(autodoc)
+        AsciidocGenerator.html(autodoc)
+        AsciidocGenerator.pdf(autodoc)
     }
 
     @Test
@@ -51,8 +57,8 @@ class AsciidocGeneratorTest {
 
     @Test
     fun postmanAndHtml() {
-        top.bettercode.autodoc.core.AsciidocGenerator.asciidoc(autodoc)
-        top.bettercode.autodoc.core.AsciidocGenerator.html(autodoc)
+        AsciidocGenerator.asciidoc(autodoc)
+        AsciidocGenerator.html(autodoc)
         PostmanGenerator.postman(autodoc)
     }
 

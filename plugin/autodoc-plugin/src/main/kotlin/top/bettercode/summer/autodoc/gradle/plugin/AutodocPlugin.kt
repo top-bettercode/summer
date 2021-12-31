@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.language.jvm.tasks.ProcessResources
 import profileProperties
+import top.bettercode.autodoc.core.AsciidocGenerator
 import top.bettercode.autodoc.core.AutodocExtension
 import top.bettercode.autodoc.core.PostmanGenerator
 import top.bettercode.autodoc.core.model.Field
@@ -22,7 +23,6 @@ import java.util.*
  */
 class AutodocPlugin : Plugin<Project> {
 
-    @Suppress("DEPRECATION")
     override fun apply(project: Project) {
         project.plugins.apply(ProfilePlugin::class.java)
         project.extensions.create("autodoc", AutodocExtension::class.java)
@@ -125,7 +125,7 @@ class AutodocPlugin : Plugin<Project> {
                     source.load(file.inputStream())
                 }
 
-                setDefaultDesc(extension, source)
+                AsciidocGenerator.setDefaultDesc(extension, source)
             }
         }
         project.tasks.getByName("jar") {
@@ -135,38 +135,6 @@ class AutodocPlugin : Plugin<Project> {
         val version = AutodocPlugin::class.java.`package`.implementationVersion
         project.dependencies.add("testImplementation", "top.bettercode.summer:autodoc-gen:$version")
 
-    }
-
-
-    fun setDefaultDesc(autodoc: AutodocExtension, properties: Properties) {
-        autodoc.listModules { module, _ ->
-            module.collections.forEach { collection ->
-                collection.operations.forEach { operation ->
-                    val request = operation.request as DocOperationRequest
-                    val response = operation.response as DocOperationResponse
-
-                    request.uriVariablesExt.setDefaultFieldDesc(properties)
-                    request.headersExt.setDefaultFieldDesc(properties)
-                    request.parametersExt.setDefaultFieldDesc(properties)
-                    request.partsExt.setDefaultFieldDesc(properties)
-                    request.contentExt.setDefaultFieldDesc(properties)
-
-                    response.headersExt.setDefaultFieldDesc(properties)
-                    response.contentExt.setDefaultFieldDesc(properties)
-
-                    operation.save()
-                }
-            }
-        }
-    }
-
-    private fun Set<Field>.setDefaultFieldDesc(properties: Properties) {
-        this.forEach {
-            if (it.description.isBlank() || it.name == it.description) {
-                it.description = properties.getOrDefault(it.name, it.name).toString()
-            }
-            it.children.setDefaultFieldDesc(properties)
-        }
     }
 
     private fun findProperty(project: Project, key: String) =
