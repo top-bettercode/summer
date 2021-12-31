@@ -60,11 +60,11 @@ allprojects {
             dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             dependency("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
             dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-            dependency("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
             dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
-            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinVersion")
+            dependency("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
+            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlin-coroutines.version")}")
 
-            dependency("org.springframework.boot:spring-boot-gradle-plugin:2.3.12.RELEASE")
+            dependency("org.springframework.boot:spring-boot-gradle-plugin:${property("spring.version")}")
             dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
 
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
