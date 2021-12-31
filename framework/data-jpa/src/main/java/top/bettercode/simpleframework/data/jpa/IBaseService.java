@@ -22,7 +22,7 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   <S extends T> List<S> saveAll(Iterable<S> entities);
 
-  void deleteAllInBatch(Iterable<T> entities);
+  void deleteInBatch(Iterable<T> entities);
 
   void deleteAllInBatch();
 

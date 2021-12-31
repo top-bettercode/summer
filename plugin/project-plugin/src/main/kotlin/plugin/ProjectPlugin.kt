@@ -14,7 +14,6 @@ import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
-import org.springframework.boot.gradle.plugin.ResolveMainClassName
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 import top.bettercode.generator.GeneratorExtension
@@ -137,24 +136,7 @@ class ProjectPlugin : Plugin<Project> {
                         val summerVersion =
                             ProjectPlugin::class.java.`package`.implementationVersion
 
-                        dependency("top.bettercode.wechat:weixin-mp:0.9.7")
-                        dependency("top.bettercode.wechat:weixin-app:0.9.7")
-                        dependency("com.alipay.sdk:alipay-sdk-java:4.13.58.ALL")
-                        dependency("com.aliyun:aliyun-java-sdk-core:4.5.20")
-                        dependency("com.aliyun:aliyun-java-sdk-dysmsapi:2.1.0")
-                        dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
-                        dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
-
-                        dependency("org.bouncycastle:bcpkix-jdk15on:1.68")
-                        dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
-                        dependency("com.github.axet:kaptcha:0.0.9")
-                        dependency("net.sf.ehcache:ehcache:2.10.9.2")
-                        dependency("org.dhatim:fastexcel-reader:0.12.11")
-                        dependency("org.apache.poi:poi-ooxml:5.0.0")
-                        dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
-
                         dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${KotlinVersion.CURRENT}")
-
                         dependency("org.jetbrains.kotlin:kotlin-stdlib:${KotlinVersion.CURRENT}")
                         dependency("org.jetbrains.kotlin:kotlin-stdlib-common:${KotlinVersion.CURRENT}")
                         dependency("org.jetbrains.kotlin:kotlin-reflect:${KotlinVersion.CURRENT}")
@@ -177,9 +159,22 @@ class ProjectPlugin : Plugin<Project> {
 
                         dependency("top.bettercode.summer:test:$summerVersion")
 
-                        dependency("org.apache.logging.log4j:log4j-api:2.16.0")
-                        dependency("org.apache.logging.log4j:log4j-core:2.16.0")
-                        dependency("org.apache.logging.log4j:log4j-to-slf4j:2.16.0")
+                        dependency("top.bettercode.wechat:weixin-mp:0.9.7")
+                        dependency("top.bettercode.wechat:weixin-app:0.9.7")
+                        dependency("com.oracle.database.jdbc:ojdbc8:21.4.0.0.1")
+                        dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
+
+                        dependency("org.bouncycastle:bcpkix-jdk15on:1.70")
+                        dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
+                        dependency("com.github.axet:kaptcha:0.0.9")
+                        dependency("net.sf.ehcache:ehcache:2.10.9.2")
+                        dependency("org.dhatim:fastexcel-reader:0.12.12")
+                        dependency("org.apache.poi:poi-ooxml:5.1.0")
+                        dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
+
+                        dependency("org.apache.logging.log4j:log4j-api:2.17.1")
+                        dependency("org.apache.logging.log4j:log4j-core:2.17.1")
+                        dependency("org.apache.logging.log4j:log4j-to-slf4j:2.17.1")
                     }
                 }
             }

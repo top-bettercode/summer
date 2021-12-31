@@ -2,12 +2,12 @@ package top.bettercode.config
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.env.EnvironmentPostProcessor
-import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.boot.SpringApplication
-import org.springframework.boot.context.config.ConfigDataEnvironmentPostProcessor
+import org.springframework.boot.context.config.ConfigFileApplicationListener
+import org.springframework.boot.env.EnvironmentPostProcessor
 import org.springframework.boot.env.YamlPropertySourceLoader
 import org.springframework.core.Ordered
+import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.io.ClassPathResource
 
 open class ConfigEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
@@ -42,6 +42,6 @@ open class ConfigEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
     }
 
     override fun getOrder(): Int {
-        return ConfigDataEnvironmentPostProcessor.ORDER + 1
+        return ConfigFileApplicationListener.DEFAULT_ORDER + 1
     }
 }
