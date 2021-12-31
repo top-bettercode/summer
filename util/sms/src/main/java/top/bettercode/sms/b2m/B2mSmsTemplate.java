@@ -69,7 +69,7 @@ public class B2mSmsTemplate extends SmsTemplate {
   }
 
   /**
-   * 个性短信接口
+   * 普通个性短信接口
    *
    * <p>文档：http://www.b2m.cn/static/doc/sms/personalizedsms_or.html</p>
    * <p>示例：http://ip:port/simpleinter/sendPersonalitySMS?appId=EUCP-EMY-DDDD-3EEEE&timestamp=20170101120000&sign=PIEUDJI987EUID62PKEDSESQEDSEDFSE&extendedCode=123&timerTime=20171211022000&customSmsId=10001&18001098901=天气不错1啊&18001098902=天气不错2啊
@@ -79,8 +79,8 @@ public class B2mSmsTemplate extends SmsTemplate {
    * @param content 内容
    * @return 结果
    */
-  public B2mResponse sendPersonalitySMS(String cell, String content) {
-    return sendPersonalitySMS(Collections.singletonMap(cell, content));
+  public B2mResponse simpleSendSms(String cell, String content) {
+    return simpleSendSms(Collections.singletonMap(cell, content));
   }
 
   /**
@@ -93,7 +93,7 @@ public class B2mSmsTemplate extends SmsTemplate {
    * @param content 手机号=内容(必填)【可多个】 以手机号为参数名，内容为参数值传输 如：18001000000=端午节快乐,(最多500个)
    * @return 结果
    */
-  public B2mResponse sendPersonalitySMS(Map<String, String> content) {
+  public B2mResponse simpleSendSms(Map<String, String> content) {
 //    格式：yyyyMMddHHmmss 14位
     String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
@@ -149,8 +149,8 @@ public class B2mSmsTemplate extends SmsTemplate {
    * @param content 内容
    * @return 结果
    */
-  public B2mResponse sendPersonalityAllSMS(String cell, String content) {
-    return sendPersonalityAllSMS(Collections.singletonMap(cell, content));
+  public B2mResponse sendSms(String cell, String content) {
+    return sendSms(Collections.singletonMap(cell, content));
   }
 
   /**
@@ -161,7 +161,7 @@ public class B2mSmsTemplate extends SmsTemplate {
    * @param content 手机号=内容(必填)【可多个】 以手机号为参数名，内容为参数值传输 如：18001000000=端午节快乐,(最多500个)
    * @return 结果
    */
-  public B2mResponse sendPersonalityAllSMS(Map<String, String> content) {
+  public B2mResponse sendSms(Map<String, String> content) {
     HttpHeaders headers = new HttpHeaders();
     headers.add("appId", b2mProperties.getAppId());
     headers.add("gzip", "on");

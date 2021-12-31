@@ -3,8 +3,9 @@ package top.bettercode.sms.aliyun;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Map;
+import top.bettercode.sms.SmsResponse;
 
-public class QuerySendDetailsResponse {
+public class QuerySendDetailsResponse implements SmsResponse {
 
   @JsonProperty("RequestId")
   private String requestId;
@@ -19,7 +20,7 @@ public class QuerySendDetailsResponse {
   private String totalCount;
 
   @JsonProperty("SmsSendDetailDTOs")
-  private Map<String,List<SmsSendDetailDTO>> smsSendDetailDTOs;
+  private Map<String, List<SmsSendDetailDTO>> smsSendDetailDTOs;
 
   public String getRequestId() {
     return this.requestId;
@@ -37,6 +38,7 @@ public class QuerySendDetailsResponse {
     this.code = code;
   }
 
+  @Override
   public String getMessage() {
     return this.message;
   }
@@ -62,9 +64,13 @@ public class QuerySendDetailsResponse {
     this.smsSendDetailDTOs = smsSendDetailDTOs;
   }
 
+  //--------------------------------------------
+  @Override
   public boolean isOk() {
     return "OK".equals(code);
   }
+
+  //--------------------------------------------
 
   public static class SmsSendDetailDTO {
 
