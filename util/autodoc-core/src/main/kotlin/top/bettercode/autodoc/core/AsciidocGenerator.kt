@@ -10,6 +10,7 @@ import top.bettercode.autodoc.core.operation.DocOperationResponse
 import top.bettercode.logging.operation.HttpOperation
 import top.bettercode.logging.operation.Operation
 import java.io.File
+import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -126,6 +127,37 @@ object AsciidocGenerator : AbstractbGenerator() {
             }
         }
         return pw.toString()
+    }
+
+    fun setDefaultDesc(autodoc: AutodocExtension, properties: Properties) {
+        autodoc.listModules { module, _ ->
+            module.collections.forEach { collection ->
+                collection.operations.forEach { operation ->
+                    val request = operation.request as DocOperationRequest
+                    val response = operation.response as DocOperationResponse
+
+                    request.uriVariablesExt.setDefaultFieldDesc(properties)
+                    request.headersExt.setDefaultFieldDesc(properties)
+                    request.parametersExt.setDefaultFieldDesc(properties)
+                    request.partsExt.setDefaultFieldDesc(properties)
+                    request.contentExt.setDefaultFieldDesc(properties)
+
+                    response.headersExt.setDefaultFieldDesc(properties)
+                    response.contentExt.setDefaultFieldDesc(properties)
+
+                    operation.save()
+                }
+            }
+        }
+    }
+
+    private fun Set<Field>.setDefaultFieldDesc(properties: Properties) {
+        this.forEach {
+            if (it.description.isBlank() || it.name == it.description) {
+                it.description = properties.getOrDefault(it.name, it.name).toString()
+            }
+            it.children.setDefaultFieldDesc(properties)
+        }
     }
 
     fun asciidoc(autodoc: AutodocExtension, pdf: Boolean = false) {

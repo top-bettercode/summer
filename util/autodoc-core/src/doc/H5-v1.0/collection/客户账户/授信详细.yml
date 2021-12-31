@@ -25,7 +25,7 @@ request:
    -
     name: "sign"
     type: "String"
-    description: "接口签名 <<_jiekouqianmingsuanfa>>"
+    description: "接口签名 <<_qianmingsuanfa>>"
     value: "6c5467aaaf8b8c5876b8016771744b64"
     canCover: true
     required: true
@@ -92,18 +92,21 @@ response:
    -
     name: "FundCreditFlow_beginDate"
     type: "Long"
+    description: "FundCreditFlow_beginDate"
     value: "1509206400000"
     canCover: true
     required: false
    -
     name: "FundCreditFlow_endDate"
     type: "Long"
+    description: "FundCreditFlow_endDate"
     value: "1509292800000"
     canCover: true
     required: false
    -
     name: "FundCreditFlow_repayDate"
     type: "Long"
+    description: "FundCreditFlow_repayDate"
     value: "1509379200000"
     canCover: true
     required: false
@@ -138,6 +141,7 @@ response:
    -
     name: "FundCreditFlow_inputDate"
     type: "Long"
+    description: "FundCreditFlow_inputDate"
     value: "1512282645000"
     canCover: true
     required: false
