@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import top.bettercode.logging.logback.AlarmMarker
 
 /**
  * @author Peter Wu
@@ -39,12 +40,14 @@ class TestController {
 
     @RequestMapping("/error/{path}")
     fun error(request: String?): Any {
+        val marker = MarkerFactory.getMarker(RequestLoggingFilter.ALARM_LOG_MARKER)
+        marker.add(AlarmMarker("initialComment"))
+        log.warn(marker, "警告")
         log.error("日志错误", RuntimeException("abc"))
 //        log.error("日志错误", RuntimeException("abc"))
 //        log.error("日志错误", RuntimeException("abc"))
 //        log.error("日志错误", RuntimeException("abc"))
 //        log.error("日志错误", RuntimeException("abc"))
-        log.warn(MarkerFactory.getMarker(RequestLoggingFilter.ALARM_LOG_MARKER), "警告")
 //        Thread.sleep(3*1000)
 //        throw RuntimeException("abc")
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail")
