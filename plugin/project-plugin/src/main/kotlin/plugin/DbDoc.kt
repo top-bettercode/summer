@@ -1,8 +1,8 @@
 package plugin
 
+import org.gradle.api.Project
 import top.bettercode.autodoc.core.AsciidocGenerator
 import top.bettercode.generator.dsl.Generator
-import org.gradle.api.Project
 import java.io.File
 
 /**
@@ -62,7 +62,7 @@ v${project.version}
     }
 
     override fun tearDown() {
-        top.bettercode.autodoc.core.AsciidocGenerator.pdf(file, File(file.parent, "${file.nameWithoutExtension}.pdf"))
+        AsciidocGenerator.pdf(file, File(file.parent, "${file.nameWithoutExtension}.pdf"))
     }
 }
 

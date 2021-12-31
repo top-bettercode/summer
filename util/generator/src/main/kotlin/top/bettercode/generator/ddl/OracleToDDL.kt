@@ -18,14 +18,14 @@ object OracleToDDL : ToDDL() {
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
             if (deleteTablesWhenUpdate)
-                (oldTableNames - tableNames).forEach { tableName ->
+                (oldTableNames - tableNames.toSet()).forEach { tableName ->
                     out.println("$commentPrefix DROP $tableName")
                     if (oldTables.find { it.tableName == tableName }!!.sequenceStartWith != null)
                         out.println("DROP SEQUENCE $quote${tableName}_S$quote;")
                     out.println("DROP TABLE $quote$tableName$quote;")
                     out.println()
                 }
-            val newTableNames = tableNames - oldTableNames
+            val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
                 val tableName = table.tableName
                 if (newTableNames.contains(tableName)) {
@@ -50,7 +50,7 @@ object OracleToDDL : ToDDL() {
 
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
-                        val dropColumnNames = oldColumnNames - columnNames
+                        val dropColumnNames = oldColumnNames - columnNames.toSet()
                         if (dropColumnNames.isNotEmpty()) {
                             lines.add(
                                 "ALTER TABLE $quote$tableName$quote DROP (${
@@ -61,7 +61,7 @@ object OracleToDDL : ToDDL() {
                             )
                         }
                         dropFk(oldColumns, dropColumnNames, lines, tableName)
-                        val newColumnNames = columnNames - oldColumnNames
+                        val newColumnNames = columnNames - oldColumnNames.toSet()
                         columns.forEach { column ->
                             val columnName = column.columnName
                             if (newColumnNames.contains(columnName)) {
@@ -114,7 +114,7 @@ object OracleToDDL : ToDDL() {
             throw Exception("${it.tableSchem ?: ""}:${it.columnName}:字段类型不能为空")
         }
         val def =
-            "${if (it.typeDesc != old.typeDesc) it.typeDesc else ""}${if (it.defaultDesc != old.defaultDesc) it.defaultDesc else ""}${if (it.extra.isNotBlank() && it.extra != old.extra) " ${it.extra}" else ""}${if (it.autoIncrement && it.autoIncrement != old.autoIncrement) " AUTO_INCREMENT" else ""}${if (old.nullable != it.nullable) if (it.nullable) " NULL" else " NOT NULL" else ""}"
+            "${if (it.typeDesc != old.typeDesc) it.typeDesc else ""}${if (it.defaultDesc != old.defaultDesc) it.defaultDesc else ""}${if (it.extra.isNotBlank() && it.extra != old.extra) " ${it.extra}" else ""}${if (it.autoIncrement && (it.autoIncrement != old.autoIncrement)) " AUTO_INCREMENT" else ""}${if (old.nullable != it.nullable) if (it.nullable) " NULL" else " NOT NULL" else ""}"
         return if (def.isBlank()) {
             ""
         } else
@@ -128,14 +128,14 @@ object OracleToDDL : ToDDL() {
         dropColumnNames: List<String>
     ) {
         val tableName = table.tableName
-        val delIndexes = oldTable.indexes - table.indexes
+        val delIndexes = oldTable.indexes - table.indexes.toSet()
         if (delIndexes.isNotEmpty()) {
             delIndexes.forEach {
                 if (!dropColumnNames.containsAll(it.columnName))
                     lines.add("DROP INDEX $quote${it.name}$quote;")
             }
         }
-        val newIndexes = table.indexes - oldTable.indexes
+        val newIndexes = table.indexes - oldTable.indexes.toSet()
         if (newIndexes.isNotEmpty()) {
             newIndexes.forEach { indexed ->
                 if (indexed.unique) {

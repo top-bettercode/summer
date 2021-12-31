@@ -16,10 +16,8 @@
 package top.bettercode.lang.util
 
 import top.bettercode.lang.util.Hex.encode
-import java.security.NoSuchAlgorithmException
-import java.lang.RuntimeException
-import top.bettercode.lang.util.Sha256DigestUtils
 import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 
 /**
  * Provides SHA512 digest methods.

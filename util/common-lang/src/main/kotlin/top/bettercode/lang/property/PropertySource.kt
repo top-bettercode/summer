@@ -39,7 +39,7 @@ interface PropertySource {
         return if (get(key) != null) {
             doRemove(key)
         } else {
-            null;
+            null
         }
     }
 

@@ -86,9 +86,9 @@ data class Table(
         if (remarks != other.remarks) return false
         if (sequenceStartWith != other.sequenceStartWith) return false
         if (physicalOptions != other.physicalOptions) return false
-        if (primaryKeyNames.size != other.primaryKeyNames.size || (primaryKeyNames - other.primaryKeyNames).isNotEmpty() || (other.primaryKeyNames - primaryKeyNames).isNotEmpty()) return false
-        if (indexes.size != other.indexes.size || (indexes - other.indexes).isNotEmpty() || (other.indexes - indexes).isNotEmpty()) return false
-        if (pumlColumns.size != other.pumlColumns.size || (pumlColumns - other.pumlColumns).isNotEmpty() || (other.pumlColumns - pumlColumns).isNotEmpty()) return false
+        if (primaryKeyNames.size != other.primaryKeyNames.size || (primaryKeyNames - other.primaryKeyNames.toSet()).isNotEmpty() || (other.primaryKeyNames - primaryKeyNames.toSet()).isNotEmpty()) return false
+        if (indexes.size != other.indexes.size || (indexes - other.indexes.toSet()).isNotEmpty() || (other.indexes - indexes.toSet()).isNotEmpty()) return false
+        if (pumlColumns.size != other.pumlColumns.size || (pumlColumns - other.pumlColumns.toSet()).isNotEmpty() || (other.pumlColumns - pumlColumns.toSet()).isNotEmpty()) return false
 
         return true
     }

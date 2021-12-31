@@ -162,11 +162,11 @@ class DistPlugin : Plugin<Project> {
                     project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
                 task.doLast {
                     val outputDirectory = task.outputDirectory
-                    project.copy {
+                    project.copy { spec ->
                         val destinationDir =
                             (project.tasks.getByName("processResources") as ProcessResources).destinationDir
-                        it.from(destinationDir)
-                        it.exclude { f ->
+                        spec.from(destinationDir)
+                        spec.exclude { f ->
                             dist.excludeUnWrapResources.any {
                                 f.file.absolutePath == File(
                                     destinationDir,
@@ -175,7 +175,7 @@ class DistPlugin : Plugin<Project> {
                             }
 
                         }
-                        it.into(File(outputDirectory, "conf").absolutePath)
+                        spec.into(File(outputDirectory, "conf").absolutePath)
                     }
                     if (dist.includeJre && jreGz.isNotBlank()) {
                         project.copy { copySpec ->

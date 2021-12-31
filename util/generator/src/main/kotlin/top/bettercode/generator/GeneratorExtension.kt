@@ -57,7 +57,7 @@ open class GeneratorExtension(
      * pdm文件路径
      */
     var pdmSrc: String = "database/database.pdm",
-    var pumlDatabaseDriver: top.bettercode.generator.DatabaseDriver = datasource.databaseDriver,
+    var pumlDatabaseDriver: DatabaseDriver = datasource.databaseDriver,
     var pumlDatabase: String = "puml/database",
     /**
      * PlantUML 图片类型
@@ -173,7 +173,7 @@ open class GeneratorExtension(
         private fun javaName(str: String, capitalize: Boolean = false): String {
             val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") {
                 it.lowercase(Locale.getDefault())
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                    .replaceFirstChar { it1 -> if (it1.isLowerCase()) it1.titlecase(Locale.getDefault()) else it1.toString() }
             }
             return if (capitalize) s else s.replaceFirstChar { it.lowercase(Locale.getDefault()) }
         }
@@ -344,7 +344,7 @@ class JDBCConnectionConfiguration(
             return if (field.isNullOrBlank()) {
                 when {
                     isOracle -> username.uppercase(Locale.getDefault())
-                    databaseDriver == top.bettercode.generator.DatabaseDriver.H2 -> "PUBLIC"
+                    databaseDriver == DatabaseDriver.H2 -> "PUBLIC"
                     else -> field
                 }
             } else {
@@ -353,10 +353,10 @@ class JDBCConnectionConfiguration(
         }
 
     val isOracle
-        get() = databaseDriver == top.bettercode.generator.DatabaseDriver.ORACLE
+        get() = databaseDriver == DatabaseDriver.ORACLE
 
     val databaseDriver
-        get() = top.bettercode.generator.DatabaseDriver.fromJdbcUrl(url)
+        get() = DatabaseDriver.fromJdbcUrl(url)
 
     var driverClass: String = ""
         get() {

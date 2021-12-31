@@ -223,7 +223,7 @@ enum class DatabaseDriver(private val productName: String?,
          * @param url the JDBC URL
          * @return the database driver or [UNKNOWN] if not found
          */
-        fun fromJdbcUrl(url: String): top.bettercode.generator.DatabaseDriver {
+        fun fromJdbcUrl(url: String): DatabaseDriver {
             if (url.isNotBlank()) {
                 if (!url.startsWith("jdbc")) {
                     throw IllegalArgumentException("URL must start with 'jdbc'")
@@ -233,7 +233,7 @@ enum class DatabaseDriver(private val productName: String?,
                 for (driver in values()) {
                     for (urlPrefix in driver.urlPrefixes) {
                         val prefix = ":$urlPrefix:"
-                        if (driver !== top.bettercode.generator.DatabaseDriver.UNKNOWN && urlWithoutPrefix.startsWith(
+                        if (driver !== UNKNOWN && urlWithoutPrefix.startsWith(
                                 prefix
                             )
                         ) {
@@ -242,7 +242,7 @@ enum class DatabaseDriver(private val productName: String?,
                     }
                 }
             }
-            return top.bettercode.generator.DatabaseDriver.UNKNOWN
+            return UNKNOWN
         }
 
         /**
@@ -250,7 +250,7 @@ enum class DatabaseDriver(private val productName: String?,
          * @param productName product name
          * @return the database driver or [UNKNOWN] if not found
          */
-        fun fromProductName(productName: String): top.bettercode.generator.DatabaseDriver {
+        fun fromProductName(productName: String): DatabaseDriver {
             if (productName.isNotBlank()) {
                 for (candidate in values()) {
                     if (candidate.matchProductName(productName)) {
@@ -258,7 +258,7 @@ enum class DatabaseDriver(private val productName: String?,
                     }
                 }
             }
-            return top.bettercode.generator.DatabaseDriver.UNKNOWN
+            return UNKNOWN
         }
     }
 

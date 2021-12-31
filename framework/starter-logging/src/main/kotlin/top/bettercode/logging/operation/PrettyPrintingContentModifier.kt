@@ -33,7 +33,7 @@ object PrettyPrintingContentModifier {
             for (prettyPrinter in PRETTY_PRINTERS) {
                 try {
                     return prettyPrinter.prettyPrint(originalContent)
-                } catch (ex: Exception) {
+                } catch (_: Exception) {
                 }
             }
         }

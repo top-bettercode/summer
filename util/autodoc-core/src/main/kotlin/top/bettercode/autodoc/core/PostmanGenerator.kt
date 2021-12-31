@@ -15,7 +15,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
-object PostmanGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
+object PostmanGenerator : AbstractbGenerator() {
 
     fun postman(autodoc: AutodocExtension) {
         val rootDoc = autodoc.rootSource

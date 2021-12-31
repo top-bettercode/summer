@@ -50,7 +50,7 @@ public class SecurityError200Test {
   }
 
   @Test
-  public void authInParam() throws Exception {
+  public void authInParam() {
     HttpHeaders httpHeaders = new HttpHeaders();
     ResponseEntity<String> entity = restTemplate
         .exchange("/test?access_token=", HttpMethod.GET,

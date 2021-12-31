@@ -122,7 +122,7 @@ public class SecurityTest {
 
 
   @Test
-  public void auth() throws Exception {
+  public void auth() {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer -58QL-aFbMk6NBOFAfy8BQ1541Y");
     ResponseEntity<String> entity = restTemplate

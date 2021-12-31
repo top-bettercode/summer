@@ -42,7 +42,7 @@ class GeneratorPlugin : Plugin<Project> {
                 it.password = findDatasourceProperty(project, "password") ?: "root"
                 it.driverClass = findDatasourceProperty(project, "driverClass") ?: ""
                 if (it.isOracle) {
-                    it.properties["oracle.net.CONNECT_TIMEOUT"] = "10000";
+                    it.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
                 }
             }
             extension.singleDatasource = (findProperty(project, "singleDatasource"))?.toBoolean()

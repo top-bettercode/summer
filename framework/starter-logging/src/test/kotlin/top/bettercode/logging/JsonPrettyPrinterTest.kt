@@ -2,8 +2,6 @@ package top.bettercode.logging
 
 import io.micrometer.core.instrument.util.JsonUtils
 import org.junit.jupiter.api.Test
-import java.util.*
-import java.util.stream.Collectors
 
 /**
  * @author Peter Wu

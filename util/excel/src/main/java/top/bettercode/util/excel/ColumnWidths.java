@@ -32,7 +32,7 @@ public class ColumnWidths {
           width += 1;
         }
       }
-      width += +20.0 / 7;
+      width += 20.0 / 7;
       width = Math
           .max(colWidths.getOrDefault(column, 0.0), width);
       colWidths.put(column, width);

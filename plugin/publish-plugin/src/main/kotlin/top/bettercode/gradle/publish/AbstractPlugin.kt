@@ -1,6 +1,5 @@
 package top.bettercode.gradle.publish
 
-import com.gradle.publish.PublishTask
 import groovy.lang.Closure
 import groovy.util.Node
 import groovy.util.NodeList
@@ -52,6 +51,10 @@ class KotlinClosure1<in T : Any, V : Any>(
      */
     @Suppress("unused") // to be called dynamically by Groovy
     fun doCall(it: T): V? = it.function()
+
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
 }
 
 /**
