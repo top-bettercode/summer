@@ -36,7 +36,7 @@ allprojects {
 
     repositories {
         mavenLocal()
-        maven("https://maven.aliyun.com/repository/public/")
+//        maven("https://maven.aliyun.com/repository/public/")
         maven("https://maven.aliyun.com/repository/gradle-plugin/")
         maven("https://s01.oss.sonatype.org/content/groups/public/")
         mavenCentral()
@@ -62,48 +62,44 @@ allprojects {
             dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
             dependency("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
             dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
-            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
+            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinVersion")
 
-            dependency("org.springframework.boot:spring-boot-gradle-plugin:2.5.0")
+            dependency("org.springframework.boot:spring-boot-gradle-plugin:2.3.12.RELEASE")
             dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
+
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
             dependency("com.gradle.publish:plugin-publish-plugin:0.15.0")
             dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
-            dependency("org.springframework.cloud:spring-cloud-starter-config:3.0.3")
-            dependency("org.springframework.security:spring-security-rsa:1.0.10.RELEASE")
-
-            dependency("top.bettercode.wechat:weixin-mp:0.9.8-SNAPSHOT")
-            dependency("top.bettercode.wechat:weixin-app:0.9.8-SNAPSHOT")
+            dependency("top.bettercode.wechat:weixin-mp:0.9.7")
+            dependency("top.bettercode.wechat:weixin-app:0.9.7")
 
             dependency("commons-codec:commons-codec:1.15")
-            dependency("org.json:json:20210307")
+            dependency("org.json:json:20211205")
             dependency("org.javassist:javassist:3.28.0-GA")
-            dependency("com.google.guava:guava:30.1.1-jre")
+            dependency("com.google.guava:guava:31.0.1-jre")
             dependency("org.dom4j:dom4j:2.1.3")
-            dependency("org.atteo:evo-inflector:1.2.2")
+            dependency("org.atteo:evo-inflector:1.3")
             dependency("net.sourceforge.plantuml:plantuml:8059")
 
-            dependency("org.jsoup:jsoup:1.13.1")
+            dependency("org.jsoup:jsoup:1.14.3")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
-            dependency("mysql:mysql-connector-java:8.0.25")
-            dependency("com.oracle.database.jdbc:ojdbc8:21.1.0.0")
+            dependency("mysql:mysql-connector-java:8.0.27")
+            dependency("com.oracle.database.jdbc:ojdbc8:21.4.0.0.1")
 
-            dependency("org.asciidoctor:asciidoctorj:2.5.1")
-            dependency("org.asciidoctor:asciidoctorj-diagram:2.1.2")
+            dependency("org.asciidoctor:asciidoctorj:2.5.2")
+            dependency("org.asciidoctor:asciidoctorj-diagram:2.2.1")
             dependency("org.asciidoctor:asciidoctorj-pdf:1.6.0")
 
 
-            dependency("net.logstash.logback:logstash-logback-encoder:6.6")
+            dependency("net.logstash.logback:logstash-logback-encoder:7.0.1")
             dependency("javax.mail:mail:1.4.7")
             dependency("com.github.axet:kaptcha:0.0.9")
 
-            dependency("org.dhatim:fastexcel:0.12.11")
-            dependency("org.dhatim:fastexcel-reader:0.12.11")
+            dependency("org.dhatim:fastexcel:0.12.12")
+            dependency("org.dhatim:fastexcel-reader:0.12.12")
 
-            dependency("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.5.0")
-
-            dependency("org.mybatis:mybatis:3.5.7")
+            dependency("org.mybatis:mybatis:3.5.9")
             dependency("org.mybatis:mybatis-spring:2.0.6")
             dependency("org.mybatis.generator:mybatis-generator-core:1.4.0")
             dependency("com.baomidou:mybatis-plus:2.3.3") {
@@ -113,9 +109,10 @@ allprojects {
                 exclude("org.springframework.boot:spring-boot-configuration-processor")
             }
 
-            dependency("com.github.pagehelper:pagehelper:5.2.0")
+            dependency("com.github.pagehelper:pagehelper:5.3.0")
 
             dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
+
         }
     }
 
