@@ -15,6 +15,7 @@ import ch.qos.logback.core.spi.CyclicBufferTracker
 import ch.qos.logback.core.util.OptionHelper
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
+import org.slf4j.Marker
 import org.springframework.web.util.WebUtils
 import top.bettercode.logging.RequestLoggingFilter
 import java.util.concurrent.ConcurrentMap
@@ -125,26 +126,43 @@ abstract class AlarmAppender(
         }
     }
 
+    private fun findAlarmMarker(marker: Marker?): AlarmMarker? {
+        if (marker != null) {
+            for (mk in marker.iterator()) {
+                if (mk is AlarmMarker)
+                    return mk
+            }
+        }
+        return null
+    }
+
     private fun sendBuffer(cbClone: CyclicBuffer<ILoggingEvent>, event: ILoggingEvent) {
         val message = mutableListOf<String>()
         val len = cbClone.length()
         var initialComment = ""
 
+        var alarmMarker: AlarmMarker? = null
         for (i in 0 until len) {
             val e = cbClone.get()
             message.add(String(encoder.encode(e)))
             if (i == len - 1) {
                 val tp = e.throwableProxy
-                initialComment = e.mdcPropertyMap[WebUtils.ERROR_MESSAGE_ATTRIBUTE]
-                    ?: if (tp != null) "${tp.className}:${tp.message}" else e.formattedMessage
+                val marker = findAlarmMarker(e.marker)
+                if (e == event)
+                    alarmMarker = marker
+                initialComment = marker?.name
+                    ?: (if (tp != null) "${tp.className}:${tp.message}" else e.formattedMessage)
+                            ?: e.mdcPropertyMap[WebUtils.ERROR_MESSAGE_ATTRIBUTE] ?: ""
             }
         }
 
         val timeStamp = event.timeStamp
+        if (alarmMarker == null)
+            alarmMarker = findAlarmMarker(event.marker)
         if (cacheSeconds > 0) {
             if (!cacheMap.containsKey(initialComment)) {
                 cacheMap[initialComment] = 1
-                val timeoutMsg = event.mdcPropertyMap[RequestLoggingFilter.TIMEOUT_MSG]
+                val timeoutMsg = alarmMarker?.timeoutMsg
                 val timeout = !timeoutMsg.isNullOrBlank()
                 if (timeout) {
                     initialComment += timeoutMsg
@@ -152,7 +170,7 @@ abstract class AlarmAppender(
                 send(timeStamp, initialComment, message, timeout)
             }
         } else {
-            val timeoutMsg = event.mdcPropertyMap[RequestLoggingFilter.TIMEOUT_MSG]
+            val timeoutMsg = alarmMarker?.timeoutMsg
             val timeout = !timeoutMsg.isNullOrBlank()
             if (timeout) {
                 initialComment += timeoutMsg

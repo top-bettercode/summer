@@ -3,7 +3,6 @@ package top.bettercode.logging
 import net.logstash.logback.marker.Markers
 import org.apache.catalina.connector.ClientAbortException
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.slf4j.MarkerFactory
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.core.Ordered
@@ -15,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.util.WebUtils
 import top.bettercode.lang.util.StringUtil
+import top.bettercode.logging.logback.AlarmMarker
 import top.bettercode.logging.operation.Operation
 import top.bettercode.logging.operation.RequestConverter
 import top.bettercode.logging.operation.ResponseConverter
@@ -87,7 +87,6 @@ class RequestLoggingFilter(
         try {
             filterChain.doFilter(requestToUse, responseToUse)
         } finally {
-            MDC.remove(WebUtils.ERROR_MESSAGE_ATTRIBUTE)
             record(requestToUse, responseToUse, uri)
         }
     }
@@ -153,15 +152,12 @@ class RequestLoggingFilter(
                         uri
                     )
                 ) {
-                    val timeoutLog =
+                    val initialComment =
                         "${operation.collectionName}/${operation.name}(${operation.request.uri}) 请求超时"
-                    val timeout = "：${operation.duration}毫秒"
-                    MDC.put(WebUtils.ERROR_MESSAGE_ATTRIBUTE, timeoutLog)
-                    MDC.put(TIMEOUT_MSG, timeout)
-                    log.warn(
-                        MarkerFactory.getMarker(ALARM_LOG_MARKER),
-                        "$timeoutLog${timeout}\n$msg"
-                    )
+                    val timeoutMsg = "：${operation.duration}毫秒"
+                    val marker = MarkerFactory.getDetachedMarker(ALARM_LOG_MARKER)
+                    marker.add(AlarmMarker(initialComment, timeoutMsg))
+                    log.warn(marker, "$initialComment${timeoutMsg}\n$msg")
                 }
                 val marker = MarkerFactory.getDetachedMarker(REQUEST_LOG_MARKER)
                 if (config.logMarker != REQUEST_LOG_MARKER) {
@@ -180,11 +176,10 @@ class RequestLoggingFilter(
                     log.info(marker, msg)
                 } else {
                     if (!properties.ignoredErrorStatusCode.contains(httpStatusCode)) {
-                        val message = "$httpStatusCode ${error.javaClass.name}:${
-                            getMessage(requestAttributes)
-                                ?: error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
+                        val initialComment = "$httpStatusCode ${error.javaClass.name}:${
+                            error.message ?: getMessage(requestAttributes) ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                         }"
-                        MDC.put(WebUtils.ERROR_MESSAGE_ATTRIBUTE, message)
+                        marker.add(AlarmMarker(initialComment))
                         if (config.includeTrace)
                             log.error(marker, msg)
                         else
