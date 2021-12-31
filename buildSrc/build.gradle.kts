@@ -18,13 +18,14 @@ repositories {
 dependencies {
     val properties = Properties()
     properties.load(project.file("../gradle.properties").inputStream())
+    val springVersion = properties.getProperty("spring.version")
     val kotlinVersion = properties.getProperty("kotlin.version")
     val summerVersion = properties.getProperty("version")
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
 
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:2.3.12.RELEASE")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:${springVersion}")
 
     implementation("top.bettercode.summer:publish-plugin:0.0.13-SNAPSHOT")
 //    implementation("top.bettercode.summer:publish-plugin:$summerVersion")

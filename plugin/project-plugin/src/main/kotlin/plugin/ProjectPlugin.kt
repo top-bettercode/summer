@@ -42,6 +42,12 @@ val Project.mainProject: Boolean
 
 class ProjectPlugin : Plugin<Project> {
 
+    val kotlinVersionConfig = ResourceBundle.getBundle("kotlin-version")
+    private val kotlinVersion =
+        kotlinVersionConfig.getString("kotlin.version")
+    private val kotlinCoroutinesVersion = kotlinVersionConfig.getString("kotlin-coroutines.version")
+
+
     override fun apply(project: Project) {
 
         project.description = project.findProperty("application.name") as? String
@@ -131,15 +137,16 @@ class ProjectPlugin : Plugin<Project> {
                     it.mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
                 }
 
+
                 ext.dependencies {
                     it.apply {
                         val summerVersion =
                             ProjectPlugin::class.java.`package`.implementationVersion
 
-                        dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${KotlinVersion.CURRENT}")
-                        dependency("org.jetbrains.kotlin:kotlin-stdlib:${KotlinVersion.CURRENT}")
-                        dependency("org.jetbrains.kotlin:kotlin-stdlib-common:${KotlinVersion.CURRENT}")
-                        dependency("org.jetbrains.kotlin:kotlin-reflect:${KotlinVersion.CURRENT}")
+                        dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+                        dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+                        dependency("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion")
+                        dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 
                         dependency("top.bettercode.summer:config:$summerVersion")
                         dependency("top.bettercode.summer:environment:$summerVersion")
@@ -175,6 +182,10 @@ class ProjectPlugin : Plugin<Project> {
                         dependency("org.apache.logging.log4j:log4j-api:2.17.1")
                         dependency("org.apache.logging.log4j:log4j-core:2.17.1")
                         dependency("org.apache.logging.log4j:log4j-to-slf4j:2.17.1")
+
+                        dependency("com.alipay.sdk:alipay-sdk-java:4.13.58.ALL")
+                        dependency("com.aliyun:aliyun-java-sdk-core:4.5.20")
+                        dependency("com.aliyun:aliyun-java-sdk-dysmsapi:2.1.0")
                     }
                 }
             }
@@ -218,7 +229,7 @@ class ProjectPlugin : Plugin<Project> {
                 }
 
                 if (mainProject) {
-                    named(
+                    create(
                         "bootJarMainClassName",
                         ResolveMainClassName::class.java
                     ) { resolveMainClassNameTask ->
@@ -363,7 +374,8 @@ class ProjectPlugin : Plugin<Project> {
                             val gen =
                                 subProject.extensions.getByType(GeneratorExtension::class.java)
                             val tableNames =
-                                (Generators.tableNames(gen) + gen.tableNames).sortedBy { it }.distinct()
+                                (Generators.tableNames(gen) + gen.tableNames).sortedBy { it }
+                                    .distinct()
                             val type =
                                 JavaType("${if (gen.projectPackage) "${gen.packageName}.${gen.projectName}" else gen.packageName}.web.CoreSerializationViews")
                             val serializationViews = Interface(type).apply {
