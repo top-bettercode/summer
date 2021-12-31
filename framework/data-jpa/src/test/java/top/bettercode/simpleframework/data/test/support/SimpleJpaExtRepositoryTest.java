@@ -117,13 +117,13 @@ public class SimpleJpaExtRepositoryTest {
 
   @Test
   public void deleteInBatch() {
-    repository.deleteAllInBatch(batch);
+    repository.deleteInBatch(batch);
 
     List<User> recycleAll = repository.findAllFromRecycleBin();
     System.err.println(recycleAll);
     org.junit.jupiter.api.Assertions.assertEquals(2, recycleAll.size());
 
-    repository.deleteAllInBatch(Collections.emptyList());
+    repository.deleteInBatch(Collections.emptyList());
 
     recycleAll = repository.findAllFromRecycleBin();
     System.err.println(recycleAll);
@@ -184,9 +184,9 @@ public class SimpleJpaExtRepositoryTest {
 
   @Test
   public void getById() {
-    User optionalUser = repository.getById(carterId);
+    User optionalUser = repository.getOne(carterId);
     org.junit.jupiter.api.Assertions.assertNotNull(optionalUser);
-    optionalUser = repository.getById(daveId);
+    optionalUser = repository.getOne(daveId);
     org.junit.jupiter.api.Assertions.assertNull(optionalUser);
   }
 
