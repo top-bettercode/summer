@@ -149,7 +149,7 @@ class LocalDateTimeHelper private constructor(
 
         @JvmStatic
         fun format(timeStamp: Long): String {
-            return LocalDateTimeHelper.of(timeStamp).format(dateFormatter)
+            return of(timeStamp).format(dateFormatter)
         }
 
         @JvmStatic

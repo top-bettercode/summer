@@ -65,14 +65,14 @@ abstract class ToDDL : IToDDL {
 
     protected open fun updateIndexes(oldTable: Table, table: Table, lines: MutableList<String>, dropColumnNames: List<String>) {
         val tableName = table.tableName
-        val delIndexes = oldTable.indexes - table.indexes
+        val delIndexes = oldTable.indexes - table.indexes.toSet()
         if (delIndexes.isNotEmpty()) {
             delIndexes.forEach {
                 if (!dropColumnNames.containsAll(it.columnName))
                     lines.add("DROP INDEX $quote${it.name}$quote ON $quote$tableName$quote;")
             }
         }
-        val newIndexes = table.indexes - oldTable.indexes
+        val newIndexes = table.indexes - oldTable.indexes.toSet()
         if (newIndexes.isNotEmpty()) {
             newIndexes.forEach { indexed ->
                 if (indexed.unique) {

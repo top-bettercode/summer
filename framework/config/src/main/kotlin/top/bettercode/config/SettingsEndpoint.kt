@@ -1,7 +1,6 @@
 package top.bettercode.config
 
 import org.springframework.boot.actuate.endpoint.annotation.*
-import org.springframework.core.io.UrlResource
 import org.springframework.lang.Nullable
 import top.bettercode.lang.property.PropertiesSource
 import top.bettercode.lang.property.Settings

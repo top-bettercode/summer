@@ -30,11 +30,11 @@ import org.springframework.util.StringUtils;
 public class ConfigurationPropertiesRebinder
 		implements ApplicationContextAware, ApplicationListener<EnvironmentChangeEvent> {
 
-	private ConfigurationPropertiesBeans beans;
+	private final ConfigurationPropertiesBeans beans;
 
 	private ApplicationContext applicationContext;
 
-	private Map<String, Exception> errors = new ConcurrentHashMap<>();
+	private final Map<String, Exception> errors = new ConcurrentHashMap<>();
 
 	public ConfigurationPropertiesRebinder(ConfigurationPropertiesBeans beans) {
 		this.beans = beans;

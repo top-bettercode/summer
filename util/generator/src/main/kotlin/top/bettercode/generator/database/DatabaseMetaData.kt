@@ -95,10 +95,10 @@ class DatabaseMetaData(
             if (canReadIndexed) {
                 try {
                     primaryKeyNames = primaryKeyNames(tableName)
-                    if (queryIndex)
-                        indexes = indexes(tableName)
+                    indexes = if (queryIndex)
+                        indexes(tableName)
                     else
-                        indexes = mutableListOf()
+                        mutableListOf()
                 } catch (e: Exception) {
                     System.err.println("查询索引出错:${e.message}")
                     reConnect()

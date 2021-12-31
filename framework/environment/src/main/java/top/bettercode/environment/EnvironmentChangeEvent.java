@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 @SuppressWarnings("serial")
 public class EnvironmentChangeEvent extends ApplicationEvent {
 
-	private Set<String> keys;
+	private final Set<String> keys;
 
 	public EnvironmentChangeEvent(Set<String> keys) {
 		// Backwards compatible constructor with less utility (practically no use at all)

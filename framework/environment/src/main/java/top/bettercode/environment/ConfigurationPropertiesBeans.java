@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConfigurationPropertiesBeans implements BeanPostProcessor, ApplicationContextAware {
 
-	private Map<String, ConfigurationPropertiesBean> beans = new HashMap<>();
+	private final Map<String, ConfigurationPropertiesBean> beans = new HashMap<>();
 
 	private ApplicationContext applicationContext;
 
@@ -70,7 +70,7 @@ public class ConfigurationPropertiesBeans implements BeanPostProcessor, Applicat
 	}
 
 	public Set<String> getBeanNames() {
-		return new HashSet<String>(this.beans.keySet());
+		return new HashSet<>(this.beans.keySet());
 	}
 
 }

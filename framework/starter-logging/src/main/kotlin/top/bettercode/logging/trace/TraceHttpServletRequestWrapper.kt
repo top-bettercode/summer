@@ -53,7 +53,7 @@ constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request
         if (servletReader == null) {
             servletReader = BufferedReader(InputStreamReader(this.inputStream))
         }
-        return servletReader!!;
+        return servletReader!!
     }
 
     override fun getCharacterEncoding(): String {

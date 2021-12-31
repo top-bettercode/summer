@@ -4,7 +4,6 @@ summer:
       enable: true
       source: build/doc
       output: build/docOutput
-      api-host: http://127.0.0.1:8080
       doc: true
 #    postman-tests: false
   sign:

@@ -101,7 +101,6 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
         /*
        * END Modification in logstash-logback-encoder to make this constructor public
        */
-        requireNotNull(name) { "A marker name cannot be null" }
         this.name = name
     }
 

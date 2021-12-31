@@ -27,10 +27,10 @@ object ConfigTool {
         ymlFiles.forEach { ymlFile ->
             val lines = ymlFile.readLines()
             var prefix = ""
-            lines.filter { it.isNotBlank() }.forEach {
-                val key = it.substringBefore(":").trim()
-                val value = it.substringAfter(":").trim()
-                val itStep = it.substringBefore(":").dropLastWhile { it != ' ' }.length / 2
+            lines.filter { it.isNotBlank() }.forEach { s ->
+                val key = s.substringBefore(":").trim()
+                val value = s.substringAfter(":").trim()
+                val itStep = s.substringBefore(":").dropLastWhile { s1 -> s1 != ' ' }.length / 2
                 prefix = if (prefix.isEmpty()) "" else prefix.split(".").subList(0, itStep)
                     .joinToString(".")
                 prefix = if (prefix.isEmpty()) {

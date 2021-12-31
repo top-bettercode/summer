@@ -155,7 +155,7 @@ public abstract class BaseWebNoAuthTest {
   protected ObjectMapper objectMapper;
 
   @BeforeEach
-  public void setup() throws Exception {
+  public void setup() {
     //--------------------------------------------
     requestLoggingProperties.setForceRecord(true);
     requestLoggingProperties.setIncludeRequestBody(true);

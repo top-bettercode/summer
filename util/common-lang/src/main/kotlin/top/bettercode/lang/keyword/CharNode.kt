@@ -11,7 +11,7 @@ data class CharNode(
     /**
          * 父节点
          */
-        var parent: top.bettercode.lang.keyword.CharNode? = null,
+        var parent: CharNode? = null,
     /**
          * 字符所在层级，即匹配的字符串的长度;
          */
@@ -20,12 +20,12 @@ data class CharNode(
     /**
      * 子节点
      */
-    private var children: MutableMap<Char, top.bettercode.lang.keyword.CharNode> = HashMap(0)
+    private var children: MutableMap<Char, CharNode> = HashMap(0)
 
     /**
      * 匹配失败时，指向较短的匹配，如：‘我是谁’，匹配失败时，指向，‘我是’节点
      */
-    var failNode: top.bettercode.lang.keyword.CharNode? = null
+    var failNode: CharNode? = null
 
 
     val isEnd: Boolean
@@ -35,22 +35,22 @@ data class CharNode(
 
 
     // function
-    fun addChild(character: Char): top.bettercode.lang.keyword.CharNode {
-        var charNode: top.bettercode.lang.keyword.CharNode? = children[character]
+    fun addChild(character: Char): CharNode {
+        var charNode: CharNode? = children[character]
         if (charNode == null) {
             val length = this.length + 1
-            charNode = top.bettercode.lang.keyword.CharNode(this, length)
+            charNode = CharNode(this, length)
             children[character] = charNode
         }
 
         return charNode
     }
 
-    fun childNodes(): Collection<top.bettercode.lang.keyword.CharNode> {
+    fun childNodes(): Collection<CharNode> {
         return children.values
     }
 
-    operator fun get(c: Char): top.bettercode.lang.keyword.CharNode? {
+    operator fun get(c: Char): CharNode? {
         return children[c]
     }
 }

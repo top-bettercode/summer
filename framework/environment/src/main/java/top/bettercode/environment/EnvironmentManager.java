@@ -24,9 +24,9 @@ public class EnvironmentManager implements ApplicationEventPublisherAware {
 
   private static final String MANAGER_PROPERTY_SOURCE = "manager";
 
-  private Map<String, Object> map = new LinkedHashMap<String, Object>();
+  private Map<String, Object> map = new LinkedHashMap<>();
 
-  private ConfigurableEnvironment environment;
+  private final ConfigurableEnvironment environment;
 
   private ApplicationEventPublisher publisher;
 
@@ -48,7 +48,7 @@ public class EnvironmentManager implements ApplicationEventPublisherAware {
 
   @ManagedOperation
   public Map<String, Object> reset() {
-    Map<String, Object> result = new LinkedHashMap<String, Object>(this.map);
+    Map<String, Object> result = new LinkedHashMap<>(this.map);
     if (!this.map.isEmpty()) {
       this.map.clear();
       publish(new EnvironmentChangeEvent(this.publisher, result.keySet()));

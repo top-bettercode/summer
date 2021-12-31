@@ -106,7 +106,7 @@ open class MControllerTest : MModuleJavaGenerator() {
                     columns.forEach {
                         if (it.isPrimary) {
 //                        2 + ".param(\"${it.javaName}\", \"1\")"
-                        } else if (!it.isPrimary && !it.jsonViewIgnored) {
+                        } else if (!it.jsonViewIgnored) {
                             2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
                         }
                     }

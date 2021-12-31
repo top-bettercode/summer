@@ -4,7 +4,6 @@ import top.bettercode.lang.keyword.CharNode
 import top.bettercode.lang.keyword.MatchType
 import top.bettercode.lang.keyword.replace.DefaultReplaceStrategy
 import top.bettercode.lang.keyword.replace.ReplaceStrategy
-import java.util.*
 
 /**
  * 可忽略中间的特殊字符,比如：过*滤，中的*
@@ -12,15 +11,15 @@ import java.util.*
  * @author Peter Wu
  */
 class SkipKeywordFilter(
-    root: top.bettercode.lang.keyword.CharNode = top.bettercode.lang.keyword.CharNode(),
+    root: CharNode = CharNode(),
     /**
          * 设置匹配模式
          */
-        matchType: top.bettercode.lang.keyword.MatchType = top.bettercode.lang.keyword.MatchType.LONG,
+        matchType: MatchType = MatchType.LONG,
     /**
          * 设置替换策略
          */
-        strategy: ReplaceStrategy = DefaultReplaceStrategy()) : top.bettercode.lang.keyword.filter.SimpleKeywordFilter(root, matchType, strategy) {
+        strategy: ReplaceStrategy = DefaultReplaceStrategy()) : SimpleKeywordFilter(root, matchType, strategy) {
 
     private val skipChars = HashSet<Char>(0)
     private var skip = false
@@ -30,7 +29,7 @@ class SkipKeywordFilter(
             var last = root
             val result = StringBuilder()
             val words = text.toCharArray()
-            val matchShort = matchType == top.bettercode.lang.keyword.MatchType.SHORT
+            val matchShort = matchType == MatchType.SHORT
             val ignoredWords = ArrayList<Int>()
             var i = 0
             while (i < words.size) {

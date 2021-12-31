@@ -1,6 +1,5 @@
 package top.bettercode.lang.util
 
-import java.lang.Integer.max
 import java.lang.Integer.min
 
 /**

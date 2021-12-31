@@ -6,6 +6,8 @@ package top.bettercode.lang.property
  */
 object Settings : HashMap<String, PropertiesSource>() {
 
+    private const val serialVersionUID: Long = 1L
+
     @JvmStatic
     val cellRegex = PropertiesSource.of("cell-regex")
 

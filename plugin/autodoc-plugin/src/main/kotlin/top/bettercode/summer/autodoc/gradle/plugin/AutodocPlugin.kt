@@ -8,9 +8,6 @@ import profileProperties
 import top.bettercode.autodoc.core.AsciidocGenerator
 import top.bettercode.autodoc.core.AutodocExtension
 import top.bettercode.autodoc.core.PostmanGenerator
-import top.bettercode.autodoc.core.model.Field
-import top.bettercode.autodoc.core.operation.DocOperationRequest
-import top.bettercode.autodoc.core.operation.DocOperationResponse
 import top.bettercode.gradle.profile.ProfilePlugin
 import java.io.File
 import java.util.*
@@ -83,14 +80,14 @@ class AutodocPlugin : Plugin<Project> {
             task.doLast {
                 val extension = project.extensions.findByType(AutodocExtension::class.java)!!
                 extension.properties = project.profileProperties
-                top.bettercode.autodoc.core.AsciidocGenerator.asciidoc(extension)
+                AsciidocGenerator.asciidoc(extension)
             }
         }
         project.tasks.create("htmldoc") { task ->
             task.dependsOn("asciidoc")
             configInputOutput(task, group, autodoc, project)
             task.doLast {
-                top.bettercode.autodoc.core.AsciidocGenerator.html(
+                AsciidocGenerator.html(
                     project.extensions.findByType(
                         AutodocExtension::class.java
                     )!!
@@ -101,7 +98,7 @@ class AutodocPlugin : Plugin<Project> {
             task.dependsOn("asciidoc")
             configInputOutput(task, group, autodoc, project)
             task.doLast {
-                top.bettercode.autodoc.core.AsciidocGenerator.pdf(
+                AsciidocGenerator.pdf(
                     project.extensions.findByType(
                         AutodocExtension::class.java
                     )!!

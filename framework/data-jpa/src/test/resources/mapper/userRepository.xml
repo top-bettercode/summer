@@ -8,7 +8,7 @@
   </insert>
 
   <update id="update">
-    update user
+    update "user"
     set lastname=#{lastname}
     where id = #{id}
   </update>
@@ -21,12 +21,12 @@
 
   <select id="findByMybatis" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from "user"
     where deleted = 0
   </select>
   <select id="findByMybatis2" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from "user"
     where firstname = #{firstname}
     <if test="param2!=null">
       and lastname = #{param2}
@@ -34,20 +34,20 @@
   </select>
   <select id="findByMybatis3" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from "user"
     where firstname = #{firstname}
   </select>
   <select id="findOneByMybatis"
     resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from "user"
     where deleted = 0
       and firstname = #{firstname}
   </select>
   <select id="findByMybatis22" resultType="top.bettercode.simpleframework.data.test.domain.User"
     parameterType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from "user"
     where firstname = #{firstname}
     <if test="lastname!=null">
       and lastname = #{lastname}
@@ -56,7 +56,7 @@
   <select id="findByMybatis222"
     resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from "user"
     where firstname = #{firstname}
     <if test="lastname!=null">
       and lastname = #{lastname}

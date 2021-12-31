@@ -10,4 +10,8 @@ class DicCodes(
     val name: String,
     var isInt: Boolean = false,
     val codes: MutableMap<Serializable, String> = mutableMapOf()
-) : Serializable
+) : Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
+}

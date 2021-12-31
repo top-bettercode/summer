@@ -106,19 +106,8 @@ class AliSmsTemplate(
     fun sendSms(templateCode: String, aliSmsReqs: List<AliSmsReq>): AliSmsResponse {
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         //公共参数
-        params.add("AccessKeyId", aliSmsProperties.accessKeyId)
-        params.add("Action", "SendBatchSms")
-        params.add("Format", "json")
-        params.add("RegionId", aliSmsProperties.regionId)
-        params.add("SignatureMethod", "HMAC-SHA1")
-        params.add("SignatureNonce", UUID.randomUUID().toString())
-        params.add("SignatureVersion", "1.0")
-        params.add(
-            "Timestamp",
-            LocalDateTime.now(ZoneId.from(ZoneOffset.UTC))
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
-        )
-        params.add("Version", "2017-05-25")
+        val action = "SendBatchSms"
+        commonParams(params, action)
         //公共参数结束
         val phoneNumbers: MutableList<String> = ArrayList()
         val signNames: MutableList<String> = ArrayList()
@@ -187,19 +176,8 @@ class AliSmsTemplate(
     ): QuerySendDetailsResponse {
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         //公共参数
-        params.add("AccessKeyId", aliSmsProperties.accessKeyId)
-        params.add("Action", "QuerySendDetails")
-        params.add("Format", "json")
-        params.add("RegionId", aliSmsProperties.regionId)
-        params.add("SignatureMethod", "HMAC-SHA1")
-        params.add("SignatureNonce", UUID.randomUUID().toString())
-        params.add("SignatureVersion", "1.0")
-        params.add(
-            "Timestamp",
-            LocalDateTime.now(ZoneId.from(ZoneOffset.UTC))
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
-        )
-        params.add("Version", "2017-05-25")
+        val action = "QuerySendDetails"
+        commonParams(params, action)
         //公共参数结束
         params.add("PhoneNumber", phoneNumber)
         params.add("BizId", bizId)
@@ -230,6 +208,25 @@ class AliSmsTemplate(
             val message = body?.message
             throw SmsSysException(message ?: "请求失败")
         }
+    }
+
+    private fun commonParams(
+        params: MultiValueMap<String, String>,
+        action: String
+    ) {
+        params.add("AccessKeyId", aliSmsProperties.accessKeyId)
+        params.add("Action", action)
+        params.add("Format", "json")
+        params.add("RegionId", aliSmsProperties.regionId)
+        params.add("SignatureMethod", "HMAC-SHA1")
+        params.add("SignatureNonce", UUID.randomUUID().toString())
+        params.add("SignatureVersion", "1.0")
+        params.add(
+            "Timestamp",
+            LocalDateTime.now(ZoneId.from(ZoneOffset.UTC))
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+        )
+        params.add("Version", "2017-05-25")
     }
 
     private fun sign(params: MultiValueMap<String, String>) {

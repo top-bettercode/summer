@@ -123,11 +123,12 @@ object IPAddressUtil {
             return "Error!"
         }
 
-        val macAddress: String =
-            (strMAC.substring(0, 2) + ":" + strMAC.substring(3, 5) + ":" + strMAC.substring(6, 8) + ":"
-                + strMAC.substring(9, 11) + ":" + strMAC.substring(12, 14) + ":" + strMAC
-                .substring(15, 17))
-        return macAddress
+        return (strMAC.substring(0, 2) + ":" + strMAC.substring(3, 5) + ":" + strMAC.substring(
+            6,
+            8
+        ) + ":"
+            + strMAC.substring(9, 11) + ":" + strMAC.substring(12, 14) + ":" + strMAC
+            .substring(15, 17))
     }
 
 }
