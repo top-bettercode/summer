@@ -1,6 +1,8 @@
-package top.bettercode.simpleframework.web.resolver.multipart;
+package top.bettercode.simpleframework.config;
 
+import kotlin.text.StringsKt;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import top.bettercode.lang.util.ArrayUtil;
 
 /**
  * @author Peter Wu
@@ -24,6 +26,11 @@ public class MultipartProperties {
    * 默认文件分类
    */
   private String defaultFileType = "file";
+
+  /**
+   * 文件资源访问位置
+   */
+  private String[] staticLocations;
 
   //--------------------------------------------
 
@@ -57,5 +64,16 @@ public class MultipartProperties {
 
   public void setDefaultFileType(String defaultFileType) {
     this.defaultFileType = defaultFileType;
+  }
+
+  public String[] getStaticLocations() {
+    return ArrayUtil.isNotEmpty(staticLocations) ? staticLocations
+        : new String[]{
+            "file:" + (baseSavePath.endsWith("static") ? StringsKt.substringBeforeLast(baseSavePath,
+                "static", baseSavePath) : baseSavePath)};
+  }
+
+  public void setStaticLocations(String[] staticLocations) {
+    this.staticLocations = staticLocations;
   }
 }
