@@ -30,6 +30,8 @@ public class AliSmsReq {
     this.templateParam = templateParam;
   }
 
+  //--------------------------------------------
+
   public String getPhoneNumber() {
     return phoneNumber;
   }
@@ -52,5 +54,12 @@ public class AliSmsReq {
 
   public void setTemplateParam(Map<String, String> templateParam) {
     this.templateParam = templateParam;
+  }
+
+  //--------------------------------------------
+
+  public static AliSmsReq of(String phoneNumber, String signName,
+      Map<String, String> templateParam) {
+    return new AliSmsReq(phoneNumber, signName, templateParam);
   }
 }

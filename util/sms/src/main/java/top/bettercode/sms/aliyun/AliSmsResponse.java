@@ -1,8 +1,9 @@
 package top.bettercode.sms.aliyun;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import top.bettercode.sms.SmsResponse;
 
-public class AliSmsResponse {
+public class AliSmsResponse implements SmsResponse {
 
   @JsonProperty("RequestId")
   private String requestId;
@@ -40,6 +41,7 @@ public class AliSmsResponse {
     this.code = code;
   }
 
+  @Override
   public String getMessage() {
     return this.message;
   }
@@ -48,6 +50,8 @@ public class AliSmsResponse {
     this.message = message;
   }
 
+  //--------------------------------------------
+  @Override
   public boolean isOk() {
     return "OK".equals(code);
   }

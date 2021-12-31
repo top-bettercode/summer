@@ -73,7 +73,7 @@ class AliSmsTemplate(
         templateCode: String, phoneNumber: String, signName: String,
         templateParam: Map<String, String>
     ): AliSmsResponse {
-        return sendBatchSms(templateCode, listOf(AliSmsReq(phoneNumber, signName, templateParam)))
+        return sendSms(templateCode, listOf(AliSmsReq(phoneNumber, signName, templateParam)))
     }
 
     /**
@@ -84,7 +84,7 @@ class AliSmsTemplate(
      * @return 结果
      */
     fun sendSms(templateCode: String, aliSmsReq: AliSmsReq): AliSmsResponse {
-        return sendBatchSms(templateCode, listOf(aliSmsReq))
+        return sendSms(templateCode, listOf(aliSmsReq))
     }
 
     /**
@@ -103,7 +103,7 @@ class AliSmsTemplate(
      * @param aliSmsReqs   请求信息。
      * @return 结果
      */
-    fun sendBatchSms(templateCode: String, aliSmsReqs: List<AliSmsReq>): AliSmsResponse {
+    fun sendSms(templateCode: String, aliSmsReqs: List<AliSmsReq>): AliSmsResponse {
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         //公共参数
         params.add("AccessKeyId", aliSmsProperties.accessKeyId)
