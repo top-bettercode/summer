@@ -30,9 +30,11 @@ enum class DatabaseDriver(private val productName: String?,
     /**
      * Apache Derby.
      */
-    DERBY("Apache Derby", "org.apache.derby.jdbc.EmbeddedDriver",
-            "org.apache.derby.jdbc.EmbeddedXADataSource",
-            "SELECT 1 FROM SYSIBM.SYSDUMMY1"),
+    DERBY(
+        "Apache Derby", "org.apache.derby.jdbc.EmbeddedDriver",
+        "org.apache.derby.jdbc.EmbeddedXADataSource",
+        "SELECT 1 FROM SYSIBM.SYSDUMMY1"
+    ),
 
     /**
      * H2.
@@ -42,9 +44,11 @@ enum class DatabaseDriver(private val productName: String?,
     /**
      * HyperSQL DataBase.
      */
-    HSQLDB("HSQL Database Engine", "org.hsqldb.jdbc.JDBCDriver",
-            "org.hsqldb.jdbc.pool.JDBCXADataSource",
-            "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SYSTEM_USERS"),
+    HSQLDB(
+        "HSQL Database Engine", "org.hsqldb.jdbc.JDBCDriver",
+        "org.hsqldb.jdbc.pool.JDBCXADataSource",
+        "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SYSTEM_USERS"
+    ),
 
     /**
      * SQL Lite.
@@ -54,14 +58,18 @@ enum class DatabaseDriver(private val productName: String?,
     /**
      * MySQL.
      */
-    MYSQL("MySQL", "com.mysql.cj.jdbc.Driver", "com.mysql.cj.jdbc.MysqlXADataSource",
-            "/* ping */ SELECT 1"),
+    MYSQL(
+        "MySQL", "com.mysql.cj.jdbc.Driver", "com.mysql.cj.jdbc.MysqlXADataSource",
+        "/* ping */ SELECT 1"
+    ),
 
     /**
      * Maria DB.
      */
-    MARIADB("MySQL", "org.mariadb.jdbc.Driver", "org.mariadb.jdbc.MariaDbDataSource",
-            "SELECT 1") {
+    MARIADB(
+        "MySQL", "org.mariadb.jdbc.Driver", "org.mariadb.jdbc.MariaDbDataSource",
+        "SELECT 1"
+    ) {
 
         override val id: String
             get() = "mysql"
@@ -75,21 +83,27 @@ enum class DatabaseDriver(private val productName: String?,
     /**
      * Oracle.
      */
-    ORACLE("Oracle", "oracle.jdbc.OracleDriver",
-            "oracle.jdbc.xa.client.OracleXADataSource", "SELECT 'Hello' from DUAL"),
+    ORACLE(
+        "Oracle", "oracle.jdbc.OracleDriver",
+        "oracle.jdbc.xa.client.OracleXADataSource", "SELECT 'Hello' from DUAL"
+    ),
 
     /**
      * Postgres.
      */
-    POSTGRESQL("PostgreSQL", "org.postgresql.Driver", "org.postgresql.xa.PGXADataSource",
-            "SELECT 1"),
+    POSTGRESQL(
+        "PostgreSQL", "org.postgresql.Driver", "org.postgresql.xa.PGXADataSource",
+        "SELECT 1"
+    ),
 
     /**
      * HANA - SAP HANA Database - HDB.
      * @since 2.1.0
      */
-    HANA("HDB", "com.sap.db.jdbc.Driver", "com.sap.db.jdbcext.XADataSourceSAP",
-            "SELECT 1 FROM SYS.DUMMY") {
+    HANA(
+        "HDB", "com.sap.db.jdbc.Driver", "com.sap.db.jdbcext.XADataSourceSAP",
+        "SELECT 1 FROM SYS.DUMMY"
+    ) {
         override val urlPrefixes: Collection<String>
             get() = setOf("sap")
     },
@@ -103,11 +117,16 @@ enum class DatabaseDriver(private val productName: String?,
     /**
      * SQL Server.
      */
-    SQLSERVER("Microsoft SQL Server", "com.microsoft.sqlserver.jdbc.SQLServerDriver",
-            "com.microsoft.sqlserver.jdbc.SQLServerXADataSource", "SELECT 1") {
+    SQLSERVER(
+        "Microsoft SQL Server", "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+        "com.microsoft.sqlserver.jdbc.SQLServerXADataSource", "SELECT 1"
+    ) {
 
         override fun matchProductName(productName: String): Boolean {
-            return super.matchProductName(productName) || "SQL SERVER".equals(productName, ignoreCase = true)
+            return super.matchProductName(productName) || "SQL SERVER".equals(
+                productName,
+                ignoreCase = true
+            )
 
         }
 
@@ -116,34 +135,42 @@ enum class DatabaseDriver(private val productName: String?,
     /**
      * Firebird.
      */
-    FIREBIRD("Firebird", "org.firebirdsql.jdbc.FBDriver",
-            "org.firebirdsql.ds.FBXADataSource", "SELECT 1 FROM RDB\$DATABASE") {
+    FIREBIRD(
+        "Firebird", "org.firebirdsql.jdbc.FBDriver",
+        "org.firebirdsql.ds.FBXADataSource", "SELECT 1 FROM RDB\$DATABASE"
+    ) {
 
         override val urlPrefixes: Collection<String>
             get() = setOf("firebirdsql")
 
         override fun matchProductName(productName: String): Boolean {
-            return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH).startsWith("firebird")
+            return super.matchProductName(productName) || productName.lowercase(Locale.ENGLISH)
+                .startsWith("firebird")
         }
     },
 
     /**
      * DB2 Server.
      */
-    DB2("DB2", "com.ibm.db2.jcc.DB2Driver", "com.ibm.db2.jcc.DB2XADataSource",
-            "SELECT 1 FROM SYSIBM.SYSDUMMY1") {
+    DB2(
+        "DB2", "com.ibm.db2.jcc.DB2Driver", "com.ibm.db2.jcc.DB2XADataSource",
+        "SELECT 1 FROM SYSIBM.SYSDUMMY1"
+    ) {
 
         override fun matchProductName(productName: String): Boolean {
-            return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH).startsWith("db2/")
+            return super.matchProductName(productName) || productName.lowercase(Locale.ENGLISH)
+                .startsWith("db2/")
         }
     },
 
     /**
      * DB2 AS400 Server.
      */
-    DB2_AS400("DB2 UDB for AS/400", "com.ibm.as400.access.AS400JDBCDriver",
-            "com.ibm.as400.access.AS400JDBCXADataSource",
-            "SELECT 1 FROM SYSIBM.SYSDUMMY1") {
+    DB2_AS400(
+        "DB2 UDB for AS/400", "com.ibm.as400.access.AS400JDBCDriver",
+        "com.ibm.as400.access.AS400JDBCXADataSource",
+        "SELECT 1 FROM SYSIBM.SYSDUMMY1"
+    ) {
 
         override val id: String
             get() = "db2"
@@ -152,7 +179,8 @@ enum class DatabaseDriver(private val productName: String?,
             get() = setOf("as400")
 
         override fun matchProductName(productName: String): Boolean {
-            return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH).contains("as/400")
+            return super.matchProductName(productName) || productName.lowercase(Locale.ENGLISH)
+                .contains("as/400")
         }
     },
 
@@ -164,8 +192,10 @@ enum class DatabaseDriver(private val productName: String?,
     /**
      * Informix.
      */
-    INFORMIX("Informix Dynamic Server", "com.informix.jdbc.IfxDriver", null,
-            "select count(*) from systables") {
+    INFORMIX(
+        "Informix Dynamic Server", "com.informix.jdbc.IfxDriver", null,
+        "select count(*) from systables"
+    ) {
 
         override val urlPrefixes: Collection<String>
             get() = listOf("informix-sqli", "informix-direct")
@@ -177,10 +207,10 @@ enum class DatabaseDriver(private val productName: String?,
      * @return the identifier
      */
     open val id: String
-        get() = name.toLowerCase(Locale.ENGLISH)
+        get() = name.lowercase(Locale.ENGLISH)
 
     protected open val urlPrefixes: Collection<String>
-        get() = setOf(this.name.toLowerCase(Locale.ENGLISH))
+        get() = setOf(this.name.lowercase(Locale.ENGLISH))
 
     protected open fun matchProductName(productName: String): Boolean {
         return this.productName != null && this.productName.equals(productName, ignoreCase = true)
@@ -199,11 +229,14 @@ enum class DatabaseDriver(private val productName: String?,
                     throw IllegalArgumentException("URL must start with 'jdbc'")
                 }
                 val urlWithoutPrefix = url.substring("jdbc".length)
-                        .toLowerCase(Locale.ENGLISH)
+                    .lowercase(Locale.ENGLISH)
                 for (driver in values()) {
                     for (urlPrefix in driver.urlPrefixes) {
                         val prefix = ":$urlPrefix:"
-                        if (driver !== top.bettercode.generator.DatabaseDriver.UNKNOWN && urlWithoutPrefix.startsWith(prefix)) {
+                        if (driver !== top.bettercode.generator.DatabaseDriver.UNKNOWN && urlWithoutPrefix.startsWith(
+                                prefix
+                            )
+                        ) {
                             return driver
                         }
                     }

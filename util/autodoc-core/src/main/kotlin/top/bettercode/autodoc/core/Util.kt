@@ -21,6 +21,8 @@ import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.springframework.util.ClassUtils
 import org.springframework.util.MultiValueMap
 import java.io.File
+import java.util.*
+import kotlin.collections.LinkedHashSet
 
 
 /**
@@ -187,13 +189,14 @@ internal fun File.writeCollections(collections: LinkedHashSet<DocCollection>) {
 
 fun MutableMap<String, Int>.pyname(name: String): String {
     var pyname =
-        PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE).toLowerCase()
+        PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE)
+            .lowercase(Locale.getDefault())
             .replace("[^\\x00-\\xff]|[()\\[\\]{}|/]|\\s*|\t|\r|\n".toRegex(), "")
     val no = this[pyname]
     if (no != null) {
         val i = no + 1
         this[pyname] = i
-        pyname += "_${RandomUtil.nextString(2).toLowerCase()}_$i"
+        pyname += "_${RandomUtil.nextString(2).lowercase(Locale.getDefault())}_$i"
     } else
         this[pyname] = 0
     return pyname

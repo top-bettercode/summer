@@ -8,6 +8,7 @@ import top.bettercode.generator.puml.PumlConverter
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
+import java.util.*
 
 /**
  * 数据库MetaData
@@ -160,7 +161,7 @@ class DatabaseMetaData(
                         }
                         val type = getString(2)
                         val (columnSize, decimalDigits) = PumlConverter.parseType(type)
-                        find.typeName = type.substringBefore('(').toUpperCase()
+                        find.typeName = type.substringBefore('(').uppercase(Locale.getDefault())
                         find.columnSize = columnSize
                         find.decimalDigits = decimalDigits
                     }

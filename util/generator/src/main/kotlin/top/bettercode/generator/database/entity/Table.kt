@@ -2,6 +2,7 @@ package top.bettercode.generator.database.entity
 
 import org.atteo.evo.inflector.English
 import top.bettercode.generator.GeneratorExtension
+import java.util.*
 
 /**
  *
@@ -69,7 +70,8 @@ data class Table(
 
     fun className(extension: GeneratorExtension): String = extension.className(tableName)
 
-    fun entityName(extension: GeneratorExtension): String = className(extension).decapitalize()
+    fun entityName(extension: GeneratorExtension): String =
+        className(extension).replaceFirstChar { it.lowercase(Locale.getDefault()) }
 
     fun pathName(extension: GeneratorExtension): String = English.plural(entityName(extension))
 

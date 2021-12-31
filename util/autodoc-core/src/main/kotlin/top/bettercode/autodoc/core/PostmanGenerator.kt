@@ -9,6 +9,7 @@ import top.bettercode.autodoc.core.postman.*
 import top.bettercode.autodoc.core.postman.Collection
 import top.bettercode.logging.operation.HttpOperation
 import java.io.File
+import java.util.*
 
 /**
  *
@@ -156,7 +157,7 @@ object PostmanGenerator : top.bettercode.autodoc.core.AbstractbGenerator() {
                     Urlencoded(
                         it.name,
                         it.value,
-                        it.type.substringBefore("(").toLowerCase(),
+                        it.type.substringBefore("(").lowercase(Locale.getDefault()),
                         it.postmanDescription
                     )
                 })
