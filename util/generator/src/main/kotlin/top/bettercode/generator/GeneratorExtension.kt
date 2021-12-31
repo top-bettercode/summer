@@ -172,9 +172,10 @@ open class GeneratorExtension(
 
         private fun javaName(str: String, capitalize: Boolean = false): String {
             val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") {
-                it.toLowerCase().capitalize()
+                it.lowercase(Locale.getDefault())
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             }
-            return if (capitalize) s else s.decapitalize()
+            return if (capitalize) s else s.replaceFirstChar { it.lowercase(Locale.getDefault()) }
         }
 
     }
@@ -342,7 +343,7 @@ class JDBCConnectionConfiguration(
         get() {
             return if (field.isNullOrBlank()) {
                 when {
-                    isOracle -> username.toUpperCase()
+                    isOracle -> username.uppercase(Locale.getDefault())
                     databaseDriver == top.bettercode.generator.DatabaseDriver.H2 -> "PUBLIC"
                     else -> field
                 }

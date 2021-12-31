@@ -1,5 +1,7 @@
 package top.bettercode.lang.util
 
+import java.util.*
+
 /**
  * Escape工具
  *
@@ -24,15 +26,15 @@ object EscapeUtil {
             if (Character.isDigit(j) || Character.isLowerCase(j)
                     || Character.isUpperCase(j)) {
                 tmp.append(j)
-            } else if (j.toInt() < 256) {
+            } else if (j.code < 256) {
                 tmp.append("%")
-                if (j.toInt() < 16) {
+                if (j.code < 16) {
                     tmp.append("0")
                 }
-                tmp.append(j.toInt().toString(16))
+                tmp.append(j.code.toString(16))
             } else {
                 tmp.append("%u")
-                tmp.append(j.toInt().toString(16).toUpperCase())
+                tmp.append(j.code.toString(16).uppercase(Locale.getDefault()))
             }
             i++
         }

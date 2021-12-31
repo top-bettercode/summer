@@ -14,6 +14,8 @@ import top.bettercode.lang.property.PropertiesSource
 import top.bettercode.logging.operation.OperationRequestPart
 import org.atteo.evo.inflector.English
 import java.io.File
+import java.util.*
+import kotlin.collections.LinkedHashSet
 
 /**
  *
@@ -395,9 +397,11 @@ private fun Set<Field>.findFuzzyField(
         name.endsWith("Url") -> name.substringBeforeLast("Url")
         name.endsWith("Urls") -> name.substringBeforeLast("Urls")
         name.endsWith("Path") -> name.substringBeforeLast("Path")
-        name.startsWith("start") -> name.substringAfter("start").decapitalize()
+        name.startsWith("start") -> name.substringAfter("start")
+            .replaceFirstChar { it.lowercase(Locale.getDefault()) }
         name.endsWith("Start") -> name.substringBeforeLast("Start")
-        name.startsWith("end") -> name.substringAfter("end").decapitalize()
+        name.startsWith("end") -> name.substringAfter("end")
+            .replaceFirstChar { it.lowercase(Locale.getDefault()) }
         name.endsWith("End") -> name.substringBeforeLast("End")
         name.endsWith("Pct") -> name.substringBeforeLast("Pct")
         else -> {

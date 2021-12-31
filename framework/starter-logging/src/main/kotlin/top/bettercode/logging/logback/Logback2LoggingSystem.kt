@@ -41,6 +41,7 @@ import top.bettercode.logging.slack.SlackAppender
 import top.bettercode.logging.websocket.WebSocketAppender
 import java.io.File
 import java.nio.charset.Charset
+import java.util.*
 
 /**
  * 自定义 LogbackLoggingSystem
@@ -202,7 +203,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 .bind("summer.logging.spilt-level", Bindable.setOf(String::class.java))
                 .orElseGet { setOf() }
 
-            val rootName = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase()
+            val rootName = LoggingSystem.ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
             spilts.remove(rootName)
 
             if (filesProperties.isLogAll || logFile != null) {
@@ -281,7 +282,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val name = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase()
+        val name = LoggingSystem.ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
         val logFile = (filesProperties.path + File.separator + name)
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
@@ -596,7 +597,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             name = "logstashTcpSocket"
             isIncludeCallerData = socketProperties.isIncludeCallerData
             reconnectionDelay = socketProperties.reconnectionDelay
-            queueSize = socketProperties.ringBufferSize
+            ringBufferSize = socketProperties.ringBufferSize
             socketProperties.destinations.forEach { addDestination(it) }
             writeBufferSize = socketProperties.writeBufferSize
             encoder = socketProperties.encoderClass.getDeclaredConstructor().newInstance()

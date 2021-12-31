@@ -19,9 +19,11 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.net.URI
 import java.time.LocalDateTime
+import java.util.*
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.Part
+import kotlin.collections.ArrayList
 
 /**
  * A `RequestConverter` is used to convert an implementation-specific request into
@@ -133,7 +135,9 @@ object RequestConverter {
     @Throws(IOException::class, ServletException::class)
     private fun extractParts(servletRequest: HttpServletRequest): List<OperationRequestPart> {
         val parts = ArrayList<OperationRequestPart>()
-        if (servletRequest.contentType?.toLowerCase()?.startsWith("multipart/") == true)
+        if (servletRequest.contentType?.lowercase(Locale.getDefault())
+                ?.startsWith("multipart/") == true
+        )
             parts.addAll(extractServletRequestParts(servletRequest))
         if (servletRequest is MultipartHttpServletRequest) {
             parts.addAll(extractMultipartRequestParts(servletRequest))

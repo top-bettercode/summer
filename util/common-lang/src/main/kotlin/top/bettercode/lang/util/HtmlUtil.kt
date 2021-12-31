@@ -2,7 +2,7 @@ package top.bettercode.lang.util
 
 import org.jsoup.Jsoup
 import org.jsoup.parser.Parser
-import org.jsoup.safety.Whitelist
+import org.jsoup.safety.Safelist
 import java.io.IOException
 
 /**
@@ -69,12 +69,12 @@ object HtmlUtil {
         }
         return try {
             // html过滤
-            var content = Jsoup.clean(inputString, Whitelist().addTags("br", "p"))
+            var content = Jsoup.clean(inputString, Safelist().addTags("br", "p"))
             val elements = Jsoup.parse(content).body()
             elements.select("br").append("\\n")
             elements.select("p").append("\\n")
             val html = elements.html()
-            val clean = Jsoup.clean(html, Whitelist.none())
+            val clean = Jsoup.clean(html, Safelist.none())
             content = Parser.unescapeEntities(clean, false)
             val split = content.split("\\\\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             val contentBuilder = StringBuilder("")

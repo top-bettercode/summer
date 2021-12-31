@@ -3,6 +3,7 @@ package top.bettercode.generator.database.entity
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.JavaTypeResolver
+import java.util.*
 
 /**
  * 字段
@@ -128,7 +129,7 @@ data class Column(
             "TEXT",
             "CLOB",
             "NCLOB"
-        ).contains(typeName.toUpperCase())
+        ).contains(typeName.uppercase(Locale.getDefault()))
 
     fun isSoftDelete(extension: GeneratorExtension): Boolean =
         javaName == extension.softDeleteColumnName
@@ -174,11 +175,11 @@ data class Column(
 
     override fun hashCode(): Int {
         var result = columnName.hashCode()
-        result = 31 * result + typeDesc.toUpperCase().hashCode()
+        result = 31 * result + typeDesc.uppercase(Locale.getDefault()).hashCode()
         result = 31 * result + remarks.hashCode()
         result = 31 * result + nullable.hashCode()
         result = 31 * result + (columnDef?.hashCode() ?: 0)
-        result = 31 * result + extra.toUpperCase().hashCode()
+        result = 31 * result + extra.uppercase(Locale.getDefault()).hashCode()
         result = 31 * result + isForeignKey.hashCode()
         result = 31 * result + (pktableName?.hashCode() ?: 0)
         result = 31 * result + (pkcolumnName?.hashCode() ?: 0)
