@@ -74,6 +74,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     ) {
         super.loadDefaults(initializationContext, null)
         val context = loggerContext
+        context.getLogger("org.springframework.core.env.PropertySourcesPropertyResolver").level =
+            Level.WARN
         val environment = initializationContext.environment
         val warnSubject = warnSubject(environment)
         //smtp log

@@ -95,6 +95,7 @@ logging:
     com.ulisesbocchio.jasyptspringboot.configuration.EnableEncryptablePropertiesBeanFactoryPostProcessor: warn
     sun.net.www.protocol.http.HttpURLConnection: warn
     reactor.util.Loggers: info
+    com.github.pagehelper.PageInterceptor: info
     org.jboss: warn
     io.micrometer: warn
     org.springframework: warn
