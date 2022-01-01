@@ -148,7 +148,6 @@ public class ResolveMainClassName extends DefaultTask {
 		return resolveMainClassNameProvider;
 	}
 
-	@SuppressWarnings("deprecation")
 	private static String getJavaApplicationMainClass(Convention convention) {
 		JavaApplication javaApplication = convention.findByType(JavaApplication.class);
 		if (javaApplication == null) {

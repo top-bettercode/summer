@@ -53,7 +53,7 @@ data class ClientToken(
 
     override fun hashCode(): Int {
         var result = tokenId?.hashCode() ?: 0
-        result = 31 * result + (token?.let { it.contentHashCode() } ?: 0)
+        result = 31 * result + (token?.contentHashCode() ?: 0)
         result = 31 * result + (authenticationId?.hashCode() ?: 0)
         result = 31 * result + (userName?.hashCode() ?: 0)
         result = 31 * result + (clientId ?: 0)

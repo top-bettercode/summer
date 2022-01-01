@@ -2,7 +2,6 @@ package top.bettercode.generator.database.entity
 
 import org.atteo.evo.inflector.English
 import top.bettercode.generator.GeneratorExtension
-import java.util.*
 
 /**
  *
