@@ -12,6 +12,7 @@ import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelEnumeration
 import top.bettercode.generator.dsl.DicCodes
 import java.io.File
+import java.io.Serializable
 import java.util.*
 
 
@@ -80,7 +81,7 @@ class DicCodeGen(private val project: Project) {
                 }
                 val codeKey =
                     if (code.startsWith("0") && code.length > 1) code else (code.toIntOrNull()
-                        ?: code)
+                        ?: code) as Serializable
                 dicCode.codes[codeKey] = properties.getProperty(key)
             }
         }
@@ -120,8 +121,8 @@ class DicCodeGen(private val project: Project) {
         codeTypes().forEach { (codeType, v) ->
             val codeTypeName = v.name
             docFile.appendText("|$codeType|$codeTypeName\n")
-            docText.appendLine(".$codeTypeName($codeType)")
-            docText.appendLine(
+            docText.appendln(".$codeTypeName($codeType)")
+            docText.appendln(
                 """|===
 | 编码 | 说明
 """
@@ -160,7 +161,7 @@ class DicCodeGen(private val project: Project) {
                 val innerInterface = InnerInterface(JavaType("${className}Const"))
                 innerInterface(innerInterface)
                 v.codes.forEach { (code, name) ->
-                    docText.appendLine("|$code|$name")
+                    docText.appendln("|$code|$name")
 
                     val codeFieldName = underscoreName(
                         if (code is Int || code.toString()
@@ -305,8 +306,8 @@ class DicCodeGen(private val project: Project) {
                         +"return (String) CodeTypes.getCodeService().getCode(ENUM_NAME, name);"
                 }
             }
-            docText.appendLine("|===")
-            docText.appendLine()
+            docText.appendln("|===")
+            docText.appendln()
             enumFile.parentFile.mkdirs()
             enumFile.writeText(codeEnum.formattedContent)
         }

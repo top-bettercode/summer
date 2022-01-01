@@ -58,7 +58,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
             odd = false
         }
 
-        val level = event.level.toString().lowercase(Locale.getDefault())
+        val level = event.level.toString().toLowerCase(Locale.getDefault())
 
         buf.append(LINE_SEPARATOR)
         buf.append("<tr class=\"")

@@ -71,7 +71,7 @@ data class Table(
     fun className(extension: GeneratorExtension): String = extension.className(tableName)
 
     fun entityName(extension: GeneratorExtension): String =
-        className(extension).replaceFirstChar { it.lowercase(Locale.getDefault()) }
+        className(extension).decapitalize()
 
     fun pathName(extension: GeneratorExtension): String = English.plural(entityName(extension))
 

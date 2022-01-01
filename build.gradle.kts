@@ -36,7 +36,7 @@ allprojects {
 
     repositories {
         mavenLocal()
-//        maven("https://maven.aliyun.com/repository/public/")
+        maven("https://maven.aliyun.com/repository/public/")
         maven("https://maven.aliyun.com/repository/gradle-plugin/")
         maven("https://s01.oss.sonatype.org/content/groups/public/")
         mavenCentral()
@@ -60,8 +60,8 @@ allprojects {
             dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             dependency("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
             dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
-            dependency("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
+            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
+            dependency("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32")
             dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlin-coroutines.version")}")
 
             dependency("org.springframework.boot:spring-boot-gradle-plugin:${property("spring.version")}")

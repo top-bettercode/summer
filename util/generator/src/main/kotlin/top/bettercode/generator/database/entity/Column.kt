@@ -129,7 +129,7 @@ data class Column(
             "TEXT",
             "CLOB",
             "NCLOB"
-        ).contains(typeName.uppercase(Locale.getDefault()))
+        ).contains(typeName.toUpperCase(Locale.getDefault()))
 
     fun isSoftDelete(extension: GeneratorExtension): Boolean =
         javaName == extension.softDeleteColumnName
@@ -175,11 +175,11 @@ data class Column(
 
     override fun hashCode(): Int {
         var result = columnName.hashCode()
-        result = 31 * result + typeDesc.uppercase(Locale.getDefault()).hashCode()
+        result = 31 * result + typeDesc.toUpperCase(Locale.getDefault()).hashCode()
         result = 31 * result + remarks.hashCode()
         result = 31 * result + nullable.hashCode()
         result = 31 * result + (columnDef?.hashCode() ?: 0)
-        result = 31 * result + extra.uppercase(Locale.getDefault()).hashCode()
+        result = 31 * result + extra.toUpperCase(Locale.getDefault()).hashCode()
         result = 31 * result + isForeignKey.hashCode()
         result = 31 * result + (pktableName?.hashCode() ?: 0)
         result = 31 * result + (pkcolumnName?.hashCode() ?: 0)

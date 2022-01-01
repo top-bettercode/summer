@@ -174,7 +174,7 @@ object JavaTypeResolver {
     }
 
     private fun calculateJdbcTypeName(typeName: String): String {
-        val typeNameUpper = typeName.uppercase(Locale.getDefault())
+        val typeNameUpper = typeName.toUpperCase(Locale.getDefault())
         return typeNames.getOrDefault(typeNameUpper, typeNameUpper)
     }
 

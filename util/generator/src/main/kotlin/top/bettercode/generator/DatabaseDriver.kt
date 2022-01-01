@@ -144,7 +144,7 @@ enum class DatabaseDriver(private val productName: String?,
             get() = setOf("firebirdsql")
 
         override fun matchProductName(productName: String): Boolean {
-            return super.matchProductName(productName) || productName.lowercase(Locale.ENGLISH)
+            return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH)
                 .startsWith("firebird")
         }
     },
@@ -158,7 +158,7 @@ enum class DatabaseDriver(private val productName: String?,
     ) {
 
         override fun matchProductName(productName: String): Boolean {
-            return super.matchProductName(productName) || productName.lowercase(Locale.ENGLISH)
+            return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH)
                 .startsWith("db2/")
         }
     },
@@ -179,7 +179,7 @@ enum class DatabaseDriver(private val productName: String?,
             get() = setOf("as400")
 
         override fun matchProductName(productName: String): Boolean {
-            return super.matchProductName(productName) || productName.lowercase(Locale.ENGLISH)
+            return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH)
                 .contains("as/400")
         }
     },
@@ -207,10 +207,10 @@ enum class DatabaseDriver(private val productName: String?,
      * @return the identifier
      */
     open val id: String
-        get() = name.lowercase(Locale.ENGLISH)
+        get() = name.toLowerCase(Locale.ENGLISH)
 
     protected open val urlPrefixes: Collection<String>
-        get() = setOf(this.name.lowercase(Locale.ENGLISH))
+        get() = setOf(this.name.toLowerCase(Locale.ENGLISH))
 
     protected open fun matchProductName(productName: String): Boolean {
         return this.productName != null && this.productName.equals(productName, ignoreCase = true)
@@ -229,7 +229,7 @@ enum class DatabaseDriver(private val productName: String?,
                     throw IllegalArgumentException("URL must start with 'jdbc'")
                 }
                 val urlWithoutPrefix = url.substring("jdbc".length)
-                    .lowercase(Locale.ENGLISH)
+                    .toLowerCase(Locale.ENGLISH)
                 for (driver in values()) {
                     for (urlPrefix in driver.urlPrefixes) {
                         val prefix = ":$urlPrefix:"

@@ -121,9 +121,9 @@ object AsciidocGenerator : AbstractbGenerator() {
         val pw = StringBuilder()
         autodoc.listModuleNames { name, pyname ->
             if (name != currentName) {
-                pw.appendLine()
-                pw.appendLine("[[_${pynames.pyname(name)}]]")
-                pw.appendLine("== link:$pyname.html[$name]")
+                pw.appendln()
+                pw.appendln("[[_${pynames.pyname(name)}]]")
+                pw.appendln("== link:$pyname.html[$name]")
             }
         }
         return pw.toString()
@@ -223,11 +223,11 @@ object AsciidocGenerator : AbstractbGenerator() {
                     }
                 }
                 val properties = autodoc.properties
-                (commonAdocs + autodoc.commonAdocs(module)).sortedWith { o1, o2 ->
+                (commonAdocs + autodoc.commonAdocs(module)).sortedWith(kotlin.Comparator { o1, o2 ->
                     if (o1.name == "README.adoc") -1 else o1.name.compareTo(
                         o2.name
                     )
-                }.forEach {
+                }).forEach {
                     out.println()
                     var pre = ""
                     it.readLines().forEach { l ->
@@ -291,27 +291,35 @@ object AsciidocGenerator : AbstractbGenerator() {
                                 out.println(".${uriFields.size + 1}+.^|URL")
                                 out.println("h|名称 h|类型 3+h|描述 h|示例")
                                 uriFields.forEach {
-                                    out.print("|${
-                                        str(
-                                            it.name
-                                        )
-                                    }")
-                                    out.print("|${
-                                        str(
-                                            it.type
-                                        )
-                                    }")
-                                    out.print(" 3+|${
-                                        str(
-                                            it.description,
-                                            true
-                                        )
-                                    }")
-                                    out.print("|${
-                                        str(
-                                            it.value
-                                        )
-                                    }")
+                                    out.print(
+                                        "|${
+                                            str(
+                                                it.name
+                                            )
+                                        }"
+                                    )
+                                    out.print(
+                                        "|${
+                                            str(
+                                                it.type
+                                            )
+                                        }"
+                                    )
+                                    out.print(
+                                        " 3+|${
+                                            str(
+                                                it.description,
+                                                true
+                                            )
+                                        }"
+                                    )
+                                    out.print(
+                                        "|${
+                                            str(
+                                                it.value
+                                            )
+                                        }"
+                                    )
                                     out.println()
                                 }
                             }
@@ -321,32 +329,42 @@ object AsciidocGenerator : AbstractbGenerator() {
                                 out.println(".${headerFields.size + 1}+.^|请求头")
                                 out.println("h|名称 h|类型 h|必填 2+h|描述 h|示例")
                                 headerFields.forEach {
-                                    out.print("|${
-                                        str(
-                                            it.name
-                                        )
-                                    }")
-                                    out.print("|${
-                                        str(
-                                            it.type
-                                        )
-                                    }")
-                                    out.print("|${
-                                        str(
-                                            it.requiredDescription
-                                        )
-                                    }")
-                                    out.print(" 2+|${
-                                        str(
-                                            it.description,
-                                            true
-                                        )
-                                    }")
-                                    out.print("|${
-                                        str(
-                                            it.value
-                                        )
-                                    }")
+                                    out.print(
+                                        "|${
+                                            str(
+                                                it.name
+                                            )
+                                        }"
+                                    )
+                                    out.print(
+                                        "|${
+                                            str(
+                                                it.type
+                                            )
+                                        }"
+                                    )
+                                    out.print(
+                                        "|${
+                                            str(
+                                                it.requiredDescription
+                                            )
+                                        }"
+                                    )
+                                    out.print(
+                                        " 2+|${
+                                            str(
+                                                it.description,
+                                                true
+                                            )
+                                        }"
+                                    )
+                                    out.print(
+                                        "|${
+                                            str(
+                                                it.value
+                                            )
+                                        }"
+                                    )
                                     out.println()
                                 }
                             }
@@ -446,21 +464,25 @@ object AsciidocGenerator : AbstractbGenerator() {
     }
 
     private fun writeResp(out: StringBuilder, field: Field, depth: Int = 0): Int {
-        out.append("|${fillBlank(depth)}${
-            str(
-                field.name
-            )
-        }")
+        out.append(
+            "|${fillBlank(depth)}${
+                str(
+                    field.name
+                )
+            }"
+        )
         out.append("|${str(field.type)}")
-        out.append(" 3+|${
-            str(
-                field.description,
-                true
-            )
-        }")
+        out.append(
+            " 3+|${
+                str(
+                    field.description,
+                    true
+                )
+            }"
+        )
 
         out.append("|${str(if (field.children.isNotEmpty()) "" else field.value)}")
-        out.appendLine()
+        out.appendln()
         var size = 1
         field.children.forEach {
             size += writeResp(out, it, depth + 1)
@@ -469,17 +491,19 @@ object AsciidocGenerator : AbstractbGenerator() {
     }
 
     private fun writeParam(out: StringBuilder, field: Field, depth: Int = 0): Int {
-        out.append("|${fillBlank(depth)}${
-            str(
-                field.name
-            )
-        }")
+        out.append(
+            "|${fillBlank(depth)}${
+                str(
+                    field.name
+                )
+            }"
+        )
         out.append("|${str(field.type)}")
         out.append("|${str(field.requiredDescription)}")
         out.append("|${str(field.description, true)}")
         out.append("|${str(field.defaultVal)}")
         out.append("|${str(field.value)}")
-        out.appendLine()
+        out.appendln()
         var size = 1
         field.children.forEach {
             size += writeParam(out, it, depth + 1)

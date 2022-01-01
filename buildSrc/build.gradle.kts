@@ -27,6 +27,6 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-gradle-plugin:${springVersion}")
 
-    implementation("top.bettercode.summer:publish-plugin:0.0.13-SNAPSHOT")
+    implementation("top.bettercode.summer:publish-plugin:0.0.12-SNAPSHOT")
 //    implementation("top.bettercode.summer:publish-plugin:$summerVersion")
 }
