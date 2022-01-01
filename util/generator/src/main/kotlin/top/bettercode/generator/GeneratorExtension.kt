@@ -172,10 +172,9 @@ open class GeneratorExtension(
 
         private fun javaName(str: String, capitalize: Boolean = false): String {
             val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") {
-                it.lowercase(Locale.getDefault())
-                    .replaceFirstChar { it1 -> if (it1.isLowerCase()) it1.titlecase(Locale.getDefault()) else it1.toString() }
+                it.toLowerCase().capitalize()
             }
-            return if (capitalize) s else s.replaceFirstChar { it.lowercase(Locale.getDefault()) }
+            return if (capitalize) s else s.decapitalize()
         }
 
     }
@@ -233,16 +232,20 @@ open class GeneratorExtension(
     fun <T> use(metaData: DatabaseMetaData.() -> T): T {
         Class.forName(datasource.driverClass).getConstructor().newInstance()
         val databaseMetaData = DatabaseMetaData(datasource, debug, queryIndex)
-        databaseMetaData.use {
-            return metaData(it)
+        try {
+            return metaData(databaseMetaData)
+        } finally {
+            databaseMetaData.close()
         }
     }
 
     fun <T> run(connectionFun: Connection.() -> T): T {
         Class.forName(datasource.driverClass).getConstructor().newInstance()
         val connection = DriverManager.getConnection(datasource.url, datasource.properties)
-        connection.use {
-            return connectionFun(it)
+        try {
+            return connectionFun(connection)
+        } finally {
+            connection.close()
         }
     }
 
@@ -343,7 +346,7 @@ class JDBCConnectionConfiguration(
         get() {
             return if (field.isNullOrBlank()) {
                 when {
-                    isOracle -> username.uppercase(Locale.getDefault())
+                    isOracle -> username.toUpperCase(Locale.getDefault())
                     databaseDriver == DatabaseDriver.H2 -> "PUBLIC"
                     else -> field
                 }

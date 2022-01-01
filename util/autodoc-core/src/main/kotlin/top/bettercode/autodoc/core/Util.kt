@@ -1,9 +1,5 @@
 package top.bettercode.autodoc.core
 
-import top.bettercode.autodoc.core.model.DocCollection
-import top.bettercode.autodoc.core.model.DocCollections
-import top.bettercode.autodoc.core.model.Field
-import top.bettercode.lang.util.RandomUtil
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.PropertyAccessor
@@ -20,9 +16,12 @@ import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.springframework.util.ClassUtils
 import org.springframework.util.MultiValueMap
+import top.bettercode.autodoc.core.model.DocCollection
+import top.bettercode.autodoc.core.model.DocCollections
+import top.bettercode.autodoc.core.model.Field
+import top.bettercode.lang.util.RandomUtil
 import java.io.File
 import java.util.*
-import kotlin.collections.LinkedHashSet
 
 
 /**
@@ -74,7 +73,7 @@ fun <T> File.parseList(clazz: Class<T>): LinkedHashSet<T> {
                     collectionType = TypeFactory.defaultInstance()
                 .constructCollectionType(LinkedHashSet::class.java, clazz)
             val set = Util.yamlMapper.readValue<LinkedHashSet<T>>(this, collectionType)
-                .filterNotNull()
+                .filterNot { it == null }
             LinkedHashSet(set)
         } catch (e: Exception) {
             println("$this>>${e.message}")
@@ -190,13 +189,13 @@ internal fun File.writeCollections(collections: LinkedHashSet<DocCollection>) {
 fun MutableMap<String, Int>.pyname(name: String): String {
     var pyname =
         PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE)
-            .lowercase(Locale.getDefault())
+            .toLowerCase(Locale.getDefault())
             .replace("[^\\x00-\\xff]|[()\\[\\]{}|/]|\\s*|\t|\r|\n".toRegex(), "")
     val no = this[pyname]
     if (no != null) {
         val i = no + 1
         this[pyname] = i
-        pyname += "_${RandomUtil.nextString(2).lowercase(Locale.getDefault())}_$i"
+        pyname += "_${RandomUtil.nextString(2).toLowerCase(Locale.getDefault())}_$i"
     } else
         this[pyname] = 0
     return pyname

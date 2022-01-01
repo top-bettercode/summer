@@ -203,7 +203,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                 .bind("summer.logging.spilt-level", Bindable.setOf(String::class.java))
                 .orElseGet { setOf() }
 
-            val rootName = LoggingSystem.ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
+            val rootName = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase(Locale.getDefault())
             spilts.remove(rootName)
 
             if (filesProperties.isLogAll || logFile != null) {
@@ -282,7 +282,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val name = LoggingSystem.ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
+        val name = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase(Locale.getDefault())
         val logFile = (filesProperties.path + File.separator + name)
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)

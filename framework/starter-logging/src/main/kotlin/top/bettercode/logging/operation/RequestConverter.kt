@@ -135,7 +135,7 @@ object RequestConverter {
     @Throws(IOException::class, ServletException::class)
     private fun extractParts(servletRequest: HttpServletRequest): List<OperationRequestPart> {
         val parts = ArrayList<OperationRequestPart>()
-        if (servletRequest.contentType?.lowercase(Locale.getDefault())
+        if (servletRequest.contentType?.toLowerCase(Locale.getDefault())
                 ?.startsWith("multipart/") == true
         )
             parts.addAll(extractServletRequestParts(servletRequest))

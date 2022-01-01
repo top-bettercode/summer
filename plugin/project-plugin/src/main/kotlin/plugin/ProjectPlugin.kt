@@ -341,15 +341,15 @@ class ProjectPlugin : Plugin<Project> {
                 t.doLast {
                     val destFile: File = project.rootProject.file("database/init.sql")
                     val initBuilder = StringBuilder()
-                    initBuilder.appendLine("SET NAMES 'utf8';")
-//                    initBuilder.appendLine(project.rootProject.file("database/database.sql").readText())
+                    initBuilder.appendln("SET NAMES 'utf8';")
+//                    initBuilder.appendln(project.rootProject.file("database/database.sql").readText())
                     project.rootProject.file("database/ddl").listFiles()?.filter { it.isFile }
                         ?.forEach {
-                            initBuilder.appendLine(it.readText())
+                            initBuilder.appendln(it.readText())
                         }
                     project.rootProject.file("database/init").listFiles()?.filter { it.isFile }
                         ?.forEach {
-                            initBuilder.appendLine(it.readText())
+                            initBuilder.appendln(it.readText())
                         }
                     destFile.writeText(initBuilder.toString())
                 }

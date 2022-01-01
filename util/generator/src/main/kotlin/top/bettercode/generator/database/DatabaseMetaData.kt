@@ -16,10 +16,12 @@ import java.util.*
  * @author Peter Wu
  */
 fun ResultSet.each(rs: ResultSet.() -> Unit) {
-    use {
+    try {
         while (next()) {
             rs(this)
         }
+    } finally {
+        close()
     }
 }
 
@@ -161,7 +163,7 @@ class DatabaseMetaData(
                         }
                         val type = getString(2)
                         val (columnSize, decimalDigits) = PumlConverter.parseType(type)
-                        find.typeName = type.substringBefore('(').uppercase(Locale.getDefault())
+                        find.typeName = type.substringBefore('(').toUpperCase(Locale.getDefault())
                         find.columnSize = columnSize
                         find.decimalDigits = decimalDigits
                     }

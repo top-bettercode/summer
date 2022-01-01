@@ -157,7 +157,7 @@ object PostmanGenerator : AbstractbGenerator() {
                     Urlencoded(
                         it.name,
                         it.value,
-                        it.type.substringBefore("(").lowercase(Locale.getDefault()),
+                        it.type.substringBefore("(").toLowerCase(Locale.getDefault()),
                         it.postmanDescription
                     )
                 })

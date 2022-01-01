@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse
 
 class ManagementLoginPageGeneratingFilter(
     private val managementAuthProperties: ManagementAuthProperties,
-    private val webEndpointProperties: WebEndpointProperties,
+    private val webEndpointProperties: WebEndpointProperties
 ) : GenericFilterBean() {
     private var loginPageUrl: String = "${webEndpointProperties.basePath}/$DEFAULT_LOGIN_PAGE"
     private var logoutSuccessUrl: String

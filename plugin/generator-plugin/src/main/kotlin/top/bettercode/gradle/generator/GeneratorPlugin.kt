@@ -34,7 +34,7 @@ class GeneratorPlugin : Plugin<Project> {
         project.extensions.create("generator", GeneratorExtension::class.java)
         project.extensions.configure(GeneratorExtension::class.java) { extension ->
 
-            extension.datasource {
+            extension.datasource(Action {
                 it.url = findDatasourceProperty(project, "url") ?: ""
                 it.catalog = findDatasourceProperty(project, "catalog")
                 it.schema = findDatasourceProperty(project, "schema")
@@ -44,7 +44,7 @@ class GeneratorPlugin : Plugin<Project> {
                 if (it.isOracle) {
                     it.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
                 }
-            }
+            })
             extension.singleDatasource = (findProperty(project, "singleDatasource"))?.toBoolean()
                 ?: true
             extension.delete = (findProperty(project, "delete"))?.toBoolean() ?: false
