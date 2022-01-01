@@ -3,7 +3,6 @@ package plugin
 import hudson.cli.CLI
 import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
 import org.atteo.evo.inflector.English
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -27,9 +26,6 @@ import top.bettercode.generator.puml.PumlConverter
 import top.bettercode.gradle.dist.jvmArgs
 import top.bettercode.gradle.generator.GeneratorPlugin
 import java.io.File
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -229,41 +225,20 @@ class ProjectPlugin : Plugin<Project> {
                 }
 
                 if (mainProject) {
-                    create(
-                        "bootJarMainClassName",
-                        ResolveMainClassName::class.java
-                    ) { resolveMainClassNameTask ->
-                        resolveMainClassNameTask as ResolveMainClassName
-                        resolveMainClassNameTask.doLast {
+                    create("resolveMainClass") {
+                        it.doLast {
                             subProject.tasks.findByName("startScripts").apply {
                                 this as CreateStartScripts
                                 if (mainClassName.isNullOrBlank()) {
-                                    val mainClassNameProvider =
-                                        resolveMainClassNameTask.outputFile.map { file ->
-                                            if (file.asFile.length() == 0L) {
-                                                throw InvalidUserDataException("Main class name has not been configured and it could not be resolved")
-                                            } else {
-                                                val output = file.asFile.toPath()
-                                                try {
-                                                    String(
-                                                        Files.readAllBytes(output),
-                                                        StandardCharsets.UTF_8
-                                                    )
-                                                } catch (var4: IOException) {
-                                                    throw RuntimeException("Failed to read main class name from '$output'")
-                                                }
-                                            }
-                                        }
-
-                                    if (mainClassNameProvider.isPresent) {
-                                        mainClassName = mainClassNameProvider.get()
-                                    }
+                                    val bootJar = subProject.tasks.getByName("bootJar")
+                                    bootJar as BootJar
+                                    mainClassName = bootJar.mainClassName
                                 }
                             }
                         }
                     }
-                    named("startScripts") {
-                        it.dependsOn("bootJarMainClassName")
+                    named("startScripts", CreateStartScripts::class.java) { scripts ->
+                        scripts.dependsOn("resolveMainClass")
                     }
                     named("bootRun", BootRun::class.java) {
                         System.getProperties().forEach { t, u ->
