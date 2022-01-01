@@ -17,7 +17,7 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
 import org.gradle.plugins.signing.SigningExtension
-import org.jetbrains.dokka.DokkaVersion
+//import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URI
 
@@ -72,10 +72,17 @@ abstract class AbstractPlugin : Plugin<Project> {
      * 配置dokkaDoc
      */
     protected fun dokkaTask(project: Project) {
-        val dokkaJavadoc = project.tasks.findByName("dokkaJavadoc")
-        dokkaJavadoc as DokkaTask
-        dokkaJavadoc.offlineMode.set(true)
-        dokkaJavadoc.plugins.dependencies.add(project.dependencies.create("org.jetbrains.dokka:kotlin-as-java-plugin:${DokkaVersion.version}"))
+        project.tasks.create("dokkaJavadoc", DokkaTask::class.java) {
+            it.outputFormat = "javadoc"
+            it.outputDirectory = "${project.buildDir}/dokkaJavadoc"
+            it.configuration.apply {
+                noAndroidSdkLink = true
+                noJdkLink = true
+                noStdlibLink = true
+            }
+        }
+//        dokkaJavadoc.offlineMode.set(true)
+//        dokkaJavadoc.plugins.dependencies.add(project.dependencies.create("org.jetbrains.dokka:kotlin-as-java-plugin:${DokkaVersion.version}"))
     }
 
     /**
