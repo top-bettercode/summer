@@ -1,5 +1,6 @@
 package top.bettercode.autodoc.gen
 
+import org.atteo.evo.inflector.English
 import top.bettercode.autodoc.core.*
 import top.bettercode.autodoc.core.model.Field
 import top.bettercode.autodoc.core.operation.DocOperation
@@ -12,10 +13,7 @@ import top.bettercode.generator.powerdesigner.PdmReader
 import top.bettercode.generator.puml.PumlConverter
 import top.bettercode.lang.property.PropertiesSource
 import top.bettercode.logging.operation.OperationRequestPart
-import org.atteo.evo.inflector.English
 import java.io.File
-import java.util.*
-import kotlin.collections.LinkedHashSet
 
 /**
  *

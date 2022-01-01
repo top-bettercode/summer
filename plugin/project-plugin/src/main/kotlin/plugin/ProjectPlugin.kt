@@ -42,7 +42,7 @@ val Project.mainProject: Boolean
 
 class ProjectPlugin : Plugin<Project> {
 
-    val kotlinVersionConfig = ResourceBundle.getBundle("kotlin-version")
+    val kotlinVersionConfig: ResourceBundle = ResourceBundle.getBundle("kotlin-version")
     private val kotlinVersion =
         kotlinVersionConfig.getString("kotlin.version")
     private val kotlinCoroutinesVersion = kotlinVersionConfig.getString("kotlin-coroutines.version")
