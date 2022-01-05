@@ -177,7 +177,7 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
     try {
       return (ApiAuthenticationToken) jdkSerializationSerializer.deserialize(bytes);
     } catch (Exception e) {
-      log.error("apiToken反序列化失败", e);
+      log.warn("apiToken反序列化失败", e);
       return null;
     }
   }
