@@ -80,7 +80,7 @@ allprojects {
             dependency("com.google.guava:guava:31.0.1-jre")
             dependency("org.dom4j:dom4j:2.1.3")
             dependency("org.atteo:evo-inflector:1.3")
-            dependency("net.sourceforge.plantuml:plantuml:8059")
+            dependency("net.sourceforge.plantuml:plantuml:1.2021.8")
 
             dependency("org.jsoup:jsoup:1.14.3")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
