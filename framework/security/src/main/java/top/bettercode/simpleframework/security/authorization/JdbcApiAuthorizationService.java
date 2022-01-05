@@ -95,7 +95,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
             try {
               return (ApiAuthenticationToken) jdkSerializationSerializer.deserialize(bytes);
             } catch (Exception e) {
-              log.error("apiToken反序列化失败", e);
+              log.warn("apiToken反序列化失败", e);
               return null;
             }
           }, param);
