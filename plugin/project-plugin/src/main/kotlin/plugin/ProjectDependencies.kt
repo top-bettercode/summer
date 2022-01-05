@@ -51,6 +51,7 @@ object ProjectDependencies {
                 it.mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
                 if (project.isCloud) {
                     it.mavenBom("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2.2.7.RELEASE")
+                    it.mavenBom("org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12")
                 }
             }
 
