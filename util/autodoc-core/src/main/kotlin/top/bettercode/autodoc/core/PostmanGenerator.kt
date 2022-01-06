@@ -174,9 +174,11 @@ object PostmanGenerator : AbstractbGenerator() {
             path = uri.split("/").filter { it.isNotBlank() }
             raw = "{{apiHost}}${HttpOperation.getRestRequestPath(request)}"
 
-            query = request.parametersExt.checkBlank("$operationPath:request.parametersExt").map {
-                Query(it.name, it.value, it.postmanDescription)
-            }
+            if (!HttpOperation.isPutOrPost(request))
+                query =
+                    request.parametersExt.checkBlank("$operationPath:request.parametersExt").map {
+                        Query(it.name, it.value, it.postmanDescription)
+                    }
         }
     }
 }
