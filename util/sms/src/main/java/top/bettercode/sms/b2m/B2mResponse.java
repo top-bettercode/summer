@@ -7,18 +7,18 @@ import top.bettercode.sms.SmsResponse;
 /**
  * @author Peter Wu
  */
-public class B2mResponse implements SmsResponse {
+public class B2mResponse<T> implements SmsResponse {
 
   public static final String SUCCESS = "SUCCESS";
   private static final PropertiesSource codeMessageSource = PropertiesSource.of("b2m-message");
   private String code;
 
-  private List<B2mRespData> data;
+  private List<T> data;
 
   public B2mResponse() {
   }
 
-  public B2mResponse(List<B2mRespData> data) {
+  public B2mResponse(List<T> data) {
     this.code = SUCCESS;
     this.data = data;
   }
@@ -33,11 +33,11 @@ public class B2mResponse implements SmsResponse {
     this.code = code;
   }
 
-  public List<B2mRespData> getData() {
+  public List<T> getData() {
     return data;
   }
 
-  public void setData(List<B2mRespData> data) {
+  public void setData(List<T> data) {
     this.data = data;
   }
 

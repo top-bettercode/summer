@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import top.bettercode.sms.SmsResponse;
 
-public class QuerySendDetailsResponse implements SmsResponse {
+public class AliSendReportResponse implements SmsResponse {
 
   @JsonProperty("RequestId")
   private String requestId;
@@ -20,7 +20,7 @@ public class QuerySendDetailsResponse implements SmsResponse {
   private String totalCount;
 
   @JsonProperty("SmsSendDetailDTOs")
-  private Map<String, List<SmsSendDetailDTO>> smsSendDetailDTOs;
+  private Map<String, List<AliSendReport>> smsSendDetailDTOs;
 
   public String getRequestId() {
     return this.requestId;
@@ -55,12 +55,12 @@ public class QuerySendDetailsResponse implements SmsResponse {
     this.totalCount = totalCount;
   }
 
-  public Map<String, List<SmsSendDetailDTO>> getSmsSendDetailDTOs() {
+  public Map<String, List<AliSendReport>> getSmsSendDetailDTOs() {
     return smsSendDetailDTOs;
   }
 
   public void setSmsSendDetailDTOs(
-      Map<String, List<SmsSendDetailDTO>> smsSendDetailDTOs) {
+      Map<String, List<AliSendReport>> smsSendDetailDTOs) {
     this.smsSendDetailDTOs = smsSendDetailDTOs;
   }
 
@@ -72,7 +72,7 @@ public class QuerySendDetailsResponse implements SmsResponse {
 
   //--------------------------------------------
 
-  public static class SmsSendDetailDTO {
+  public static class AliSendReport {
 
     /**
      * 接收短信的手机号码

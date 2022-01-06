@@ -19,7 +19,7 @@ class AliSmsTemplateTest extends BaseTest {
   }
 
   @Test
-  void querySendDetails(){
-    aliSmsTemplate.querySendDetails("18224060100");
+  void querySendReport(){
+    aliSmsTemplate.querySendReport("18224060100");
   }
 }
