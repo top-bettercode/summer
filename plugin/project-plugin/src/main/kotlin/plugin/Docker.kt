@@ -1,6 +1,6 @@
 package plugin
 
-import isMain
+import isBoot
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -44,7 +44,7 @@ class Docker : Plugin<Project> {
                 }
                 create("deployDockerCompose") { task ->
                     val mainProjects =
-                        project.subprojects.flatMap { it.subprojects }.filter { it.isMain }
+                        project.subprojects.flatMap { it.subprojects }.filter { it.isBoot }
                     val bootProjectNames =
                         mainProjects.map { ":${it.parent?.name}:${it.name}:installDist" }
                             .toTypedArray()

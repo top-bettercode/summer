@@ -2,7 +2,7 @@ package plugin
 
 import isCloud
 import isCore
-import isMain
+import isBoot
 import needDoc
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -62,7 +62,7 @@ class ProjectPlugin : Plugin<Project> {
                     apply("summer.autodoc")
                 }
             }
-            if (subProject.isMain) {
+            if (subProject.isBoot) {
                 subProject.plugins.apply {
                     apply("application")
                     apply("org.springframework.boot")

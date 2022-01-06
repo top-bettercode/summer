@@ -4,7 +4,7 @@ import org.gradle.api.Project
  *
  * @author Peter Wu
  */
-val Project.isMain: Boolean
+val Project.isBoot: Boolean
     get() = !isCore && parent?.name != "util" && name != "util"
 
 val Project.needDoc: Boolean
