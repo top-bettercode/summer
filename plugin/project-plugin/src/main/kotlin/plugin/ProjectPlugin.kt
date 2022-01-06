@@ -1,14 +1,21 @@
 package plugin
 
+import isBoot
 import isCloud
 import isCore
-import isBoot
 import needDoc
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
+
+@Deprecated(
+    message = "replaceWith isBoot",
+    replaceWith = ReplaceWith(expression = "isBoot", imports = arrayOf("isBoot"))
+)
+val Project.mainProject: Boolean
+    get() = isBoot
 
 /**
  *
