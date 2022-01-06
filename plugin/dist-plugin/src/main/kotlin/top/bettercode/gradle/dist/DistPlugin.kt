@@ -8,7 +8,6 @@ import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.distribution.plugins.DistributionPlugin.TASK_INSTALL_NAME
 import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPlugin.PROCESS_RESOURCES_TASK_NAME
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
@@ -132,168 +131,215 @@ class DistPlugin : Plugin<Project> {
                 it.servicePassword = project.findDistProperty("windows-service.service-password")
             }
         }
-        project.tasks.getByName("jar") { task ->
-            task.enabled = true
-            task as Jar
-            task.manifest {
-                it.attributes(
-                    mapOf(
-                        "Manifest-Version" to project.version,
-                        "Implementation-Title" to "${if (project != project.rootProject) "${project.rootProject.name}:" else ""}${project.name}",
-                        "Implementation-Version" to project.version
-                    )
-                )
-            }
-        }
 
+        if (project != project.rootProject) {
+            val unwrapResourcesTask = project.rootProject.tasks.findByName("unwrapResources")
+            if (unwrapResourcesTask == null) {
+                project.rootProject.tasks.create("unwrapResources") { task ->
+                    task.doLast {
+                        val dist = project.extensions.getByType(DistExtension::class.java)
+                        project.rootProject.allprojects { p ->
 
+                            p.tasks.named("processResources") { t ->
+                                t as ProcessResources
+                                val resources = mutableMapOf<String, String>()
+                                t.exclude { file ->
+                                    val fileParentPath =
+                                        file.file.absolutePath.substringBeforeLast(file.path)
+                                    if (!file.isDirectory) {
+                                        val exclude =
+                                            !dist.excludeUnWrapResources.contains(file.path)
+                                        if (exclude) resources[file.file.absolutePath] =
+                                            file.file.parentFile.absolutePath.substringAfter(
+                                                fileParentPath.trimEnd(File.separatorChar)
+                                            )
+                                        exclude
+                                    } else {
+                                        var exclude = true
+                                        file.file.walkTopDown().filter { it.isFile }.forEach {
+                                            val path = it.path.substringAfter(fileParentPath)
+                                            val contains =
+                                                dist.excludeUnWrapResources.contains(path)
+                                            if (contains) {
+                                                exclude = false
+                                            } else {
+                                                resources[it.absolutePath] =
+                                                    it.parentFile.absolutePath.substringAfter(
+                                                        fileParentPath.trimEnd(File.separatorChar)
+                                                    )
+                                            }
+                                        }
 
-        project.tasks.getByName("compileJava") {
-            it.dependsOn("processResources")
-        }
-
-        val dist = project.extensions.getByType(DistExtension::class.java)
-        var jreGz = if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz
-        if (windowsServiceEnable) {
-            project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) { task ->
-                task as WindowsServicePluginTask
-                task.inputs.file(project.rootProject.file("gradle.properties"))
-                task.automaticClasspath =
-                    project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
-                task.doLast {
-                    val outputDirectory = task.outputDirectory
-                    project.copy { spec ->
-                        val destinationDir =
-                            (project.tasks.getByName("processResources") as ProcessResources).destinationDir
-                        spec.from(destinationDir)
-                        spec.exclude { f ->
-                            dist.excludeUnWrapResources.any {
-                                f.file.absolutePath == File(
-                                    destinationDir,
-                                    it
-                                ).absolutePath
-                            }
-
-                        }
-                        spec.into(File(outputDirectory, "conf").absolutePath)
-                    }
-                    if (dist.includeJre && jreGz.isNotBlank()) {
-                        project.copy { copySpec ->
-                            copySpec.from(project.tarTree(jreGz)) { spec ->
-                                spec.eachFile {
-                                    it.path = "jre/" + it.path.substringAfter("/")
+                                        exclude
+                                    }
                                 }
-                                spec.includeEmptyDirs = false
+                                t.doLast {
+                                    if (resources.isNotEmpty()) {
+                                        p.copy { spec ->
+                                            resources.forEach { (filePath, to) ->
+                                                spec.from(filePath) {
+                                                    if (to.isNotBlank())
+                                                        it.into(to)
+                                                }
+                                            }
+                                            spec.into(File(project.buildDir, "conf").absolutePath)
+                                        }
+                                    }
+                                }
                             }
-                            copySpec.into(outputDirectory.absolutePath)
                         }
                     }
-                    val installScript = File(outputDirectory, "${project.name}-install.bat")
-                    var installScriptText = installScript.readText()
-                        .replace("%APP_HOME%lib\\conf;", "%APP_HOME%conf;")
-                    if (dist.autoStart) {
-                        installScriptText = installScriptText.replace(
-                            "if \"%OS%\"==\"Windows_NT\" endlocal",
-                            "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
-                        )
-                    }
-                    installScript.writeText(installScriptText)
                 }
             }
-            project.tasks.create("windowsServiceZip", Zip::class.java) {
-                it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
-                val createTask =
-                    project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
-                it.group = createTask.group
-                it.from(createTask.outputDirectory)
-                if (dist.includeJre)
-                    it.archiveFileName.set("${project.name}-windows-${if (dist.x64) "x64" else "x86"}-${project.version}.zip")
-                else
-                    it.archiveFileName.set("${project.name}-windows-${project.version}.zip")
-                it.destinationDirectory.set(createTask.outputDirectory.parentFile)
+        }
+
+        val extension = project.extensions.getByType(DistExtension::class.java)
+        project.tasks.apply {
+
+            named("compileJava") {
+                it.dependsOn("processResources")
             }
 
-            if (dist.windowsServiceOldPath.isNotBlank()) {
-                project.tasks.create("windowsServiceUpdate") {
+            named("jar") { task ->
+                task.enabled = true
+                task as Jar
+                task.manifest {
+                    it.attributes(
+                        mapOf(
+                            "Manifest-Version" to project.version,
+                            "Implementation-Title" to "${if (project != project.rootProject) "${project.rootProject.name}:" else ""}${project.name}",
+                            "Implementation-Version" to project.version
+                        )
+                    )
+                }
+            }
+
+            if (extension.unwrapResources)
+                this.filter { it.group == "distribution" }
+                    .forEach { it.dependsOn(":unwrapResources") }
+
+            if (windowsServiceEnable) {
+                named(CREATE_WINDOWS_SERVICE_TASK_NAME) { task ->
+                    task as WindowsServicePluginTask
+
+                    if (extension.unwrapResources)
+                        task.dependsOn(":unwrapResources")
+
+                    task.inputs.file(project.rootProject.file("gradle.properties"))
+                    task.automaticClasspath =
+                        project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
+                    task.doLast {
+                        val outputDirectory = task.outputDirectory
+
+                        val dist = project.extensions.getByType(DistExtension::class.java)
+
+                        if (dist.unwrapResources)
+                            project.copy { spec ->
+                                spec.from(File(project.buildDir, "conf").absolutePath)
+                                spec.into(File(outputDirectory, "conf").absolutePath)
+                            }
+
+
+                        val jreGz = if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz
+                        if (dist.includeJre && jreGz.isNotBlank()) {
+                            project.copy { copySpec ->
+                                copySpec.from(project.tarTree(jreGz)) { spec ->
+                                    spec.eachFile {
+                                        it.path = "jre/" + it.path.substringAfter("/")
+                                    }
+                                    spec.includeEmptyDirs = false
+                                }
+                                copySpec.into(outputDirectory.absolutePath)
+                            }
+                        }
+                        val installScript = File(outputDirectory, "${project.name}-install.bat")
+                        var installScriptText = installScript.readText()
+                            .replace("%APP_HOME%lib\\conf;", "%APP_HOME%conf;")
+                        if (dist.autoStart) {
+                            installScriptText = installScriptText.replace(
+                                "if \"%OS%\"==\"Windows_NT\" endlocal",
+                                "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
+                            )
+                        }
+                        installScript.writeText(installScriptText)
+                    }
+                }
+                create("windowsServiceZip", Zip::class.java) {
                     it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
                     val createTask =
                         project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
                     it.group = createTask.group
-                    it.doLast {
-                        val updateDir = File(createTask.outputDirectory.parentFile, "update")
-                        require(dist.windowsServiceOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                        compareUpdate(
-                            project,
-                            updateDir,
-                            project.file(dist.windowsServiceOldPath),
-                            createTask.outputDirectory,
-                            true
-                        )
-                    }
-                }
-
-                project.tasks.create("windowsServiceUpdateZip", Zip::class.java) {
-                    it.dependsOn("windowsServiceUpdate")
-                    val createTask =
-                        project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
-                    it.group = createTask.group
-                    val updateDir = File(createTask.outputDirectory.parentFile, "update")
-                    it.from(updateDir)
-                    it.archiveFileName.set("${project.name}-windows-update-${project.version}.zip")
+                    it.from(createTask.outputDirectory)
+                    if (extension.includeJre)
+                        it.archiveFileName.set("${project.name}-windows-${if (extension.x64) "x64" else "x86"}-${project.version}.zip")
+                    else
+                        it.archiveFileName.set("${project.name}-windows-${project.version}.zip")
                     it.destinationDirectory.set(createTask.outputDirectory.parentFile)
                 }
-            }
-        }
-        project.afterEvaluate {
-            if (windowsServiceEnable || dist.unwrapResources) {
-                project.tasks.getByName("jar") { task ->
-                    task as Jar
-                    task.exclude { file ->
-                        val destinationDir =
-                            (project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
-                        val listFiles =
-                            destinationDir.walkTopDown()
-                                .filter { f ->
-                                    dist.excludeUnWrapResources.none {
-                                        f.absolutePath == File(destinationDir, it).absolutePath
-                                    } && f.walkTopDown()
-                                        .none { fi ->
-                                            dist.excludeUnWrapResources.any {
-                                                fi.absolutePath == File(
-                                                    destinationDir,
-                                                    it
-                                                ).absolutePath
-                                            }
-                                        }
-                                }
-                        listFiles.contains(file.file)
+
+                if (extension.windowsServiceOldPath.isNotBlank()) {
+                    create("windowsServiceUpdate") {
+                        it.dependsOn(CREATE_WINDOWS_SERVICE_TASK_NAME)
+                        val createTask =
+                            project.tasks.getByName(CREATE_WINDOWS_SERVICE_TASK_NAME) as WindowsServicePluginTask
+                        it.group = createTask.group
+                        it.doLast {
+                            val dist = project.extensions.getByType(DistExtension::class.java)
+                            val updateDir = File(createTask.outputDirectory.parentFile, "update")
+                            require(dist.windowsServiceOldPath.isNotBlank()) { "旧版本路径不能为空" }
+                            compareUpdate(
+                                project,
+                                updateDir,
+                                project.file(dist.windowsServiceOldPath),
+                                createTask.outputDirectory,
+                                true
+                            )
+                        }
+                    }
+
+                    create("windowsServiceUpdateZip", Zip::class.java) {
+                        it.dependsOn("windowsServiceUpdate")
+                        val createTask =
+                            project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
+                        it.group = createTask.group
+                        val updateDir = File(createTask.outputDirectory.parentFile, "update")
+                        it.from(updateDir)
+                        it.archiveFileName.set("${project.name}-windows-update-${project.version}.zip")
+                        it.destinationDirectory.set(createTask.outputDirectory.parentFile)
                     }
                 }
             }
+
+        }
+
+        project.afterEvaluate {
+            project.rootProject.allprojects { p ->
+                p.tasks.getByName("processResources") { task ->
+                    task.mustRunAfter(":unwrapResources")
+//                    if (extension.unwrapResources) {
+//                        task.outputs.upToDateWhen { false }
+//                    }
+                }
+            }
+
             if (project.plugins.findPlugin(DistributionPlugin::class.java) != null) {
                 val distribution = project.extensions.getByType(DistributionContainer::class.java)
                     .getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
                 distribution.contents { copySpec ->
-                    if (dist.unwrapResources) {
-                        val destinationDir =
-                            (project.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
-                        copySpec.from(destinationDir) { c ->
-                            c.exclude { f ->
-                                dist.excludeUnWrapResources.any {
-                                    f.file.absolutePath == File(destinationDir, it).absolutePath
-                                }
-                            }
-                            c.into("conf")
+
+                    if (extension.unwrapResources)
+                        copySpec.from(File(project.buildDir, "conf").absolutePath) {
+                            it.into("conf")
                         }
-                    }
-                    if (project.file(dist.nativePath).exists()) {
-                        copySpec.from(project.file(dist.nativePath).absolutePath) {
+
+                    if (project.file(extension.nativePath).exists()) {
+                        copySpec.from(project.file(extension.nativePath).absolutePath) {
                             it.into("native")
                         }
                     }
-                    if (dist.includeJre) {
-                        jreGz =
-                            if (dist.windows) jreGz else (if (dist.x64) dist.jreLinuxX64Gz else dist.jreLinuxI586Gz)
+                    if (extension.includeJre) {
+                        val jreGz =
+                            if (extension.windows) (if (extension.x64) extension.jreWindowsX64Gz else extension.jreWindowsI586Gz) else (if (extension.x64) extension.jreLinuxX64Gz else extension.jreLinuxI586Gz)
                         if (jreGz.isNotBlank())
                             copySpec.from(project.tarTree(jreGz)) { spec ->
                                 spec.eachFile {
@@ -301,13 +347,14 @@ class DistPlugin : Plugin<Project> {
                                 }
                                 spec.includeEmptyDirs = false
                             }
-                        distribution.distributionBaseName.set("${project.name}-${if (dist.x64) "x64" else "x86"}")
+                        distribution.distributionBaseName.set("${project.name}-${if (extension.x64) "x64" else "x86"}")
                     } else {
                         distribution.distributionBaseName.set(project.name)
                     }
                     copySpec.from(File(project.buildDir, "service").absolutePath)
                 }
-                if (dist.distOldPath.isNotBlank()) {
+
+                if (extension.distOldPath.isNotBlank()) {
                     project.tasks.create("installDistUpdate") {
                         it.dependsOn(TASK_INSTALL_NAME)
                         val createTask = project.tasks.getByName(TASK_INSTALL_NAME)
@@ -315,11 +362,11 @@ class DistPlugin : Plugin<Project> {
                         it.doLast {
                             val dest = project.file("" + project.buildDir + "/install")
                             val updateDir = File(dest, "update")
-                            require(dist.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
+                            require(extension.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
                             compareUpdate(
                                 project,
                                 updateDir,
-                                project.file(dist.distOldPath),
+                                project.file(extension.distOldPath),
                                 File(dest, distribution.distributionBaseName.get()),
                                 false
                             )
@@ -344,6 +391,8 @@ class DistPlugin : Plugin<Project> {
         val application = project.convention.findPlugin(ApplicationPluginConvention::class.java)
 
         if (application != null) {
+            val dist = project.extensions.getByType(DistExtension::class.java)
+
             application.applicationDefaultJvmArgs += jvmArgs
             application.applicationDefaultJvmArgs = application.applicationDefaultJvmArgs.distinct()
 
