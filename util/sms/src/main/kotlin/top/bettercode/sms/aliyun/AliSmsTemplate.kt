@@ -168,12 +168,12 @@ class AliSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun querySendDetails(
+    fun querySendReport(
         phoneNumber: String, sendDate: String = LocalDate.now().format(
             DateTimeFormatter.ofPattern("yyyyMMdd")
         ),
         currentPage: Long = 1L, pageSize: Long = 10L, bizId: String = ""
-    ): QuerySendDetailsResponse {
+    ): AliSendReportResponse {
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         //公共参数
         val action = "QuerySendDetails"
@@ -189,14 +189,15 @@ class AliSmsTemplate(
         sign(params)
         val requestCallback = httpEntityCallback<Any>(
             HttpEntity(params, null),
-            QuerySendDetailsResponse::class.java
+            AliSendReportResponse::class.java
         )
-        val entity: ResponseEntity<QuerySendDetailsResponse> = try {
+        val entity: ResponseEntity<AliSendReportResponse> = try {
             execute(
                 aliSmsProperties.url,
                 HttpMethod.POST,
                 requestCallback,
-                responseEntityExtractor<QuerySendDetailsResponse>(QuerySendDetailsResponse::class.java)
+                responseEntityExtractor<AliSendReportResponse>(
+                    AliSendReportResponse::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)
