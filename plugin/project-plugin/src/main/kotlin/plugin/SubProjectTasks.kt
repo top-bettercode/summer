@@ -1,5 +1,7 @@
 package plugin
 
+import isMain
+import needDoc
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.tasks.application.CreateStartScripts
@@ -8,8 +10,6 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
-import plugin.ProjectPlugin.Companion.isMain
-import plugin.ProjectPlugin.Companion.needDoc
 import top.bettercode.gradle.dist.jvmArgs
 
 
@@ -51,6 +51,7 @@ object SubProjectTasks {
 
             if (project.isMain) {
                 create("resolveMainClass") {
+                    it.mustRunAfter("classes")
                     it.doLast {
                         project.tasks.findByName("startScripts").apply {
                             this as CreateStartScripts

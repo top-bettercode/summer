@@ -1,5 +1,9 @@
 package plugin
 
+import isCloud
+import isCore
+import isMain
+import needDoc
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -11,22 +15,6 @@ import org.gradle.api.tasks.SourceSet
  * @author Peter Wu
  */
 class ProjectPlugin : Plugin<Project> {
-
-    companion object {
-        val Project.isMain: Boolean
-            get() = !arrayOf("core").contains(name) && parent?.name != "util" && name != "util"
-
-        val Project.needDoc: Boolean
-            get() = parent?.name != "util" && name != "util"
-
-        val Project.isCore: Boolean
-            get() = name == (findProperty("tools.project") ?: "core")
-
-
-        val Project.isCloud: Boolean
-            get() = "true" == findProperty("app.cloud")
-
-    }
 
     override fun apply(project: Project) {
 

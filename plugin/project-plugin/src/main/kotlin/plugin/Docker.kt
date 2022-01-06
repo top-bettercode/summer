@@ -1,9 +1,9 @@
 package plugin
 
+import isMain
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import plugin.ProjectPlugin.Companion.isMain
 import profileProperties
 import java.io.File
 import java.util.*
@@ -42,15 +42,15 @@ class Docker : Plugin<Project> {
                         }
                     }
                 }
-                create("deployDockerCompose") {
+                create("deployDockerCompose") { task ->
                     val mainProjects =
                         project.subprojects.flatMap { it.subprojects }.filter { it.isMain }
                     val bootProjectNames =
                         mainProjects.map { ":${it.parent?.name}:${it.name}:installDist" }
                             .toTypedArray()
-                    it.dependsOn("buildDockerCompose", *bootProjectNames)
+                    task.dependsOn("buildDockerCompose", *bootProjectNames)
 
-                    it.doLast {
+                    task.doLast {
                         mainProjects.forEach { p ->
                             File(p.buildDir, "install/${p.name}").renameTo(
                                 File(

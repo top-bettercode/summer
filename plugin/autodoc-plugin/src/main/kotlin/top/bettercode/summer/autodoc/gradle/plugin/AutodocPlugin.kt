@@ -67,7 +67,7 @@ class AutodocPlugin : Plugin<Project> {
 
         val docOutputDir = File(
             (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
-            "/META-INF/resources//actuator/doc"
+            "/META-INF/resources/actuator/doc"
         )
         if (autodoc.output == null)
             autodoc.output = docOutputDir
