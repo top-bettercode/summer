@@ -1,6 +1,6 @@
 package plugin
 
-import isMain
+import isBoot
 import needDoc
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPluginConvention
@@ -49,7 +49,7 @@ object SubProjectTasks {
                 it.options.encoding = "UTF-8"
             }
 
-            if (project.isMain) {
+            if (project.isBoot) {
                 create("resolveMainClass") {
                     it.mustRunAfter("classes")
                     it.doLast {
@@ -79,7 +79,7 @@ object SubProjectTasks {
                 }
             }
 
-            if (project.needDoc && !project.isMain) {
+            if (project.needDoc && !project.isBoot) {
                 named("asciidoc") { it.enabled = false }
                 named("htmldoc") { it.enabled = false }
                 named("postman") { it.enabled = false }
