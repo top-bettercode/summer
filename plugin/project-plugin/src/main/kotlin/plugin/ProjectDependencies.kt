@@ -1,11 +1,10 @@
 package plugin
 
 import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
+import isCloud
 import org.gradle.api.Project
-import plugin.ProjectPlugin.Companion.isCloud
 import java.util.*
 import java.util.concurrent.TimeUnit
-
 
 /**
  *
