@@ -8,6 +8,7 @@ import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.distribution.plugins.DistributionPlugin.TASK_INSTALL_NAME
 import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPlugin.PROCESS_RESOURCES_TASK_NAME
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
@@ -140,37 +141,44 @@ class DistPlugin : Plugin<Project> {
                         val dist = project.extensions.getByType(DistExtension::class.java)
                         project.rootProject.allprojects { p ->
 
-                            p.tasks.named("processResources") { t ->
-                                t as ProcessResources
+                            p.tasks.named("jar") { t ->
+                                t as Jar
                                 val resources = mutableMapOf<String, String>()
                                 t.exclude { file ->
-                                    val fileParentPath =
-                                        file.file.absolutePath.substringBeforeLast(file.path)
-                                    if (!file.isDirectory) {
-                                        val exclude =
-                                            !dist.excludeUnWrapResources.contains(file.path)
-                                        if (exclude) resources[file.file.absolutePath] =
-                                            file.file.parentFile.absolutePath.substringAfter(
-                                                fileParentPath.trimEnd(File.separatorChar)
-                                            )
-                                        exclude
-                                    } else {
-                                        var exclude = true
-                                        file.file.walkTopDown().filter { it.isFile }.forEach {
-                                            val path = it.path.substringAfter(fileParentPath)
-                                            val contains =
-                                                dist.excludeUnWrapResources.contains(path)
-                                            if (contains) {
-                                                exclude = false
-                                            } else {
-                                                resources[it.absolutePath] =
-                                                    it.parentFile.absolutePath.substringAfter(
-                                                        fileParentPath.trimEnd(File.separatorChar)
+                                    val destinationDir =
+                                        (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
+                                    if (file.file.absolutePath.startsWith(destinationDir.absolutePath)) {
+                                        val fileParentPath = destinationDir.absolutePath + "/"
+                                        if (!file.isDirectory) {
+                                            val exclude =
+                                                !dist.excludeUnWrapResources.contains(file.path)
+                                            if (exclude) resources[file.file.absolutePath] =
+                                                if (file.file.parentFile == destinationDir) "" else
+                                                    file.file.parentFile.absolutePath.substringAfter(
+                                                        fileParentPath
                                                     )
+                                            exclude
+                                        } else {
+                                            var exclude = true
+                                            file.file.walkTopDown().filter { it.isFile }.forEach {
+                                                val path = it.path.substringAfter(fileParentPath)
+                                                val contains =
+                                                    dist.excludeUnWrapResources.contains(path)
+                                                if (contains) {
+                                                    exclude = false
+                                                } else {
+                                                    resources[it.absolutePath] =
+                                                        if (it.parentFile == destinationDir) "" else
+                                                            it.parentFile.absolutePath.substringAfter(
+                                                                fileParentPath
+                                                            )
+                                                }
                                             }
-                                        }
 
-                                        exclude
+                                            exclude
+                                        }
+                                    } else {
+                                        false
                                     }
                                 }
                                 t.doLast {
@@ -197,7 +205,7 @@ class DistPlugin : Plugin<Project> {
         project.tasks.apply {
 
             named("compileJava") {
-                it.dependsOn("processResources")
+                it.dependsOn(PROCESS_RESOURCES_TASK_NAME)
             }
 
             named("jar") { task ->
@@ -314,7 +322,7 @@ class DistPlugin : Plugin<Project> {
 
         project.afterEvaluate {
             project.rootProject.allprojects { p ->
-                p.tasks.getByName("processResources") { task ->
+                p.tasks.getByName("jar") { task ->
                     task.mustRunAfter(":unwrapResources")
 //                    if (extension.unwrapResources) {
 //                        task.outputs.upToDateWhen { false }
