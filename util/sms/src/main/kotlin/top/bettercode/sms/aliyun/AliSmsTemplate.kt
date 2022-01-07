@@ -6,12 +6,14 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.util.Base64Utils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
+import org.springframework.web.client.DefaultResponseErrorHandler
 import top.bettercode.lang.util.StringUtil.json
 import top.bettercode.sms.SmsException
 import top.bettercode.sms.SmsSysException
@@ -58,6 +60,10 @@ class AliSmsTemplate(
         messageConverters.add(AllEncompassingFormHttpMessageConverter())
         messageConverters.add(messageConverter)
         setMessageConverters(messageConverters)
+
+        errorHandler = object : DefaultResponseErrorHandler() {
+            override fun handleError(response: ClientHttpResponse) {}
+        }
     }
 
     /**

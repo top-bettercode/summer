@@ -6,9 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import top.bettercode.logging.client.ClientHttpRequestWrapper;
 
@@ -44,12 +42,6 @@ public class ApiTemplate extends RestTemplate {
     //Read timeout
     clientHttpRequestFactory.setReadTimeout(readTimeout);
     setRequestFactory(clientHttpRequestFactory);
-
-    setErrorHandler(new DefaultResponseErrorHandler() {
-      @Override
-      public void handleError(ClientHttpResponse response) {
-      }
-    });
   }
 
   @Override
