@@ -6,8 +6,8 @@ import org.gradle.api.Project
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.distribution.plugins.DistributionPlugin.TASK_INSTALL_NAME
+import org.gradle.api.internal.GradleInternal
 import org.gradle.api.plugins.ApplicationPluginConvention
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.PROCESS_RESOURCES_TASK_NAME
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Zip
@@ -27,7 +27,7 @@ import java.security.MessageDigest
 class DistPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.plugins.apply(JavaPlugin::class.java)
+        project.plugins.apply("java")
 
         project.extensions.create("dist", DistExtension::class.java)
 
@@ -133,105 +133,23 @@ class DistPlugin : Plugin<Project> {
             }
         }
 
-        if (project != project.rootProject) {
-            val unwrapResourcesTask = project.rootProject.tasks.findByName("unwrapResources")
-            if (unwrapResourcesTask == null) {
-                project.rootProject.tasks.create("unwrapResources") { task ->
-                    task.doLast {
-                        val dist = project.extensions.getByType(DistExtension::class.java)
-                        project.rootProject.allprojects { p ->
-
-                            p.tasks.named("jar") { t ->
-                                t as Jar
-                                val resources = mutableMapOf<String, String>()
-                                t.exclude { file ->
-                                    val destinationDir =
-                                        (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
-                                    if (file.file.absolutePath.startsWith(destinationDir.absolutePath)) {
-                                        val fileParentPath = destinationDir.absolutePath + "/"
-                                        if (!file.isDirectory) {
-                                            val exclude =
-                                                !dist.excludeUnWrapResources.contains(file.path)
-                                            if (exclude) resources[file.file.absolutePath] =
-                                                if (file.file.parentFile == destinationDir) "" else
-                                                    file.file.parentFile.absolutePath.substringAfter(
-                                                        fileParentPath
-                                                    )
-                                            exclude
-                                        } else {
-                                            var exclude = true
-                                            file.file.walkTopDown().filter { it.isFile }.forEach {
-                                                val path = it.path.substringAfter(fileParentPath)
-                                                val contains =
-                                                    dist.excludeUnWrapResources.contains(path)
-                                                if (contains) {
-                                                    exclude = false
-                                                } else {
-                                                    resources[it.absolutePath] =
-                                                        if (it.parentFile == destinationDir) "" else
-                                                            it.parentFile.absolutePath.substringAfter(
-                                                                fileParentPath
-                                                            )
-                                                }
-                                            }
-
-                                            exclude
-                                        }
-                                    } else {
-                                        false
-                                    }
-                                }
-                                t.doLast {
-                                    if (resources.isNotEmpty()) {
-                                        p.copy { spec ->
-                                            resources.forEach { (filePath, to) ->
-                                                spec.from(filePath) {
-                                                    if (to.isNotBlank())
-                                                        it.into(to)
-                                                }
-                                            }
-                                            spec.into(File(project.buildDir, "conf").absolutePath)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         val extension = project.extensions.getByType(DistExtension::class.java)
+
+
+
         project.tasks.apply {
+
+            named("jar") { task ->
+                task.enabled = true
+            }
 
             named("compileJava") {
                 it.dependsOn(PROCESS_RESOURCES_TASK_NAME)
             }
 
-            named("jar") { task ->
-                task.enabled = true
-                task as Jar
-                task.manifest {
-                    it.attributes(
-                        mapOf(
-                            "Manifest-Version" to project.version,
-                            "Implementation-Title" to "${if (project != project.rootProject) "${project.rootProject.name}:" else ""}${project.name}",
-                            "Implementation-Version" to project.version
-                        )
-                    )
-                }
-            }
-
-            if (extension.unwrapResources)
-                this.filter { it.group == "distribution" }
-                    .forEach { it.dependsOn(":unwrapResources") }
-
             if (windowsServiceEnable) {
                 named(CREATE_WINDOWS_SERVICE_TASK_NAME) { task ->
                     task as WindowsServicePluginTask
-
-                    if (extension.unwrapResources)
-                        task.dependsOn(":unwrapResources")
 
                     task.inputs.file(project.rootProject.file("gradle.properties"))
                     task.automaticClasspath =
@@ -321,14 +239,92 @@ class DistPlugin : Plugin<Project> {
         }
 
         project.afterEvaluate {
-            project.rootProject.allprojects { p ->
-                p.tasks.getByName("jar") { task ->
-                    task.mustRunAfter(":unwrapResources")
-//                    if (extension.unwrapResources) {
-//                        task.outputs.upToDateWhen { false }
-//                    }
+            if (project == project.rootProject)
+                project.rootProject.allprojects { p ->
+                    p.tasks.named("jar") { task ->
+                        task as Jar
+                        if (extension.unwrapResources) {
+                            val gradle = project.gradle as GradleInternal
+                            val needUnwrapTask =
+                                gradle.startParameter.taskNames.map {
+                                    gradle.defaultProject.tasks.findByPath(
+                                        it
+                                    )
+                                }.filterNotNull().firstOrNull {
+                                    it.group == "distribution" ||
+                                            CREATE_WINDOWS_SERVICE_TASK_NAME == it.name
+                                }
+                            if (needUnwrapTask != null) {
+                                task.outputs.upToDateWhen { false }
+                                val resources = mutableMapOf<String, String>()
+                                task.exclude { file ->
+                                    val destinationDir =
+                                        (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
+                                    if (file.file.absolutePath.startsWith(destinationDir.absolutePath)) {
+                                        val fileParentPath = destinationDir.absolutePath + "/"
+                                        if (!file.isDirectory) {
+                                            val exclude =
+                                                !extension.excludeUnWrapResources.contains(file.path)
+                                            if (exclude) resources[file.file.absolutePath] =
+                                                if (file.file.parentFile == destinationDir) "" else
+                                                    file.file.parentFile.absolutePath.substringAfter(
+                                                        fileParentPath
+                                                    )
+                                            exclude
+                                        } else {
+                                            var exclude = true
+                                            file.file.walkTopDown().filter { it.isFile }.forEach {
+                                                val path = it.path.substringAfter(fileParentPath)
+                                                val contains =
+                                                    extension.excludeUnWrapResources.contains(path)
+                                                if (contains) {
+                                                    exclude = false
+                                                } else {
+                                                    resources[it.absolutePath] =
+                                                        if (it.parentFile == destinationDir) "" else
+                                                            it.parentFile.absolutePath.substringAfter(
+                                                                fileParentPath
+                                                            )
+                                                }
+                                            }
+
+                                            exclude
+                                        }
+                                    } else {
+                                        false
+                                    }
+                                }
+                                task.doLast {
+                                    if (resources.isNotEmpty()) {
+                                        p.copy { spec ->
+                                            resources.forEach { (filePath, to) ->
+                                                spec.from(filePath) {
+                                                    if (to.isNotBlank())
+                                                        it.into(to)
+                                                }
+                                            }
+                                            spec.into(
+                                                File(
+                                                    needUnwrapTask.project.buildDir,
+                                                    "conf"
+                                                ).absolutePath
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        task.manifest {
+                            it.attributes(
+                                mapOf(
+                                    "Manifest-Version" to project.version,
+                                    "Implementation-Title" to "${if (project != project.rootProject) "${project.rootProject.name}:" else ""}${project.name}",
+                                    "Implementation-Version" to project.version
+                                )
+                            )
+                        }
+                    }
                 }
-            }
 
             if (project.plugins.findPlugin(DistributionPlugin::class.java) != null) {
                 val distribution = project.extensions.getByType(DistributionContainer::class.java)
