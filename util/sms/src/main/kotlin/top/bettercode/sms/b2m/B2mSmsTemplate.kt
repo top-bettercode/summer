@@ -368,7 +368,7 @@ class B2mSmsTemplate(
     @JvmOverloads
     fun retrieveReport(
         startTime: LocalDateTime,
-        endTime: LocalDateTime,
+        endTime: LocalDateTime = startTime.plusMinutes(10),
         smsId: String = ""
     ): Boolean {
         //    格式：yyyyMMddHHmmss 14位
