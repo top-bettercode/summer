@@ -38,7 +38,6 @@ class B2mSmsTemplateTest extends BaseTest {
 
   @Test
   void retrieveReport() {
-    b2mTemplate.retrieveReport(LocalDateTime.of(2022, 1, 6, 17, 15),
-        LocalDateTime.of(2022, 1, 6, 17, 17));
+    b2mTemplate.retrieveReport(LocalDateTime.of(2022, 1, 6, 16,27));
   }
 }
