@@ -20,17 +20,6 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
 
     val isSimple: Boolean = properties.isSimple
 
-    fun requiredSign(handler: Any) =
-        handler is HandlerMethod && handler.bean !is ErrorController && properties.handlerTypePrefix.any {
-            handler.beanType.name.matches(
-                Regex(
-                    "^" + it.replace(".", "\\.").replace("*", ".+") + ".*$"
-                )
-            )
-        } && !handler.hasMethodAnnotation(ApiSignIgnore::class.java) && !handler.beanType.isAnnotationPresent(
-            ApiSignIgnore::class.java
-        )
-
     /**
      * 验证参数签名
 

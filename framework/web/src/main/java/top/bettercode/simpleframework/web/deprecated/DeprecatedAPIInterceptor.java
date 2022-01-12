@@ -3,18 +3,17 @@ package top.bettercode.simpleframework.web.deprecated;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.MessageSource;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import top.bettercode.logging.AnnotatedUtils;
+import top.bettercode.logging.servlet.NotErrorHandlerInterceptor;
 
 /**
  * 已弃用的接口检查
  *
  * @author Peter Wu
  */
-public class DeprecatedAPIInterceptor implements AsyncHandlerInterceptor {
+public class DeprecatedAPIInterceptor implements NotErrorHandlerInterceptor {
 
   private final MessageSource messageSource;
 
@@ -23,17 +22,12 @@ public class DeprecatedAPIInterceptor implements AsyncHandlerInterceptor {
   }
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-      Object handler) {
-    if (handler instanceof HandlerMethod) {
-      if (ErrorController.class.isAssignableFrom(((HandlerMethod) handler).getBeanType())) {
-        return true;
-      }
-      DeprecatedAPI annotation = AnnotatedUtils.getAnnotation((HandlerMethod) handler,
-          DeprecatedAPI.class);
-      if (annotation != null) {
-        throw new IllegalStateException(getText(request, annotation.message()));
-      }
+  public boolean preHandlerMethod(HttpServletRequest request, HttpServletResponse response,
+      HandlerMethod handler) {
+    DeprecatedAPI annotation = AnnotatedUtils.getAnnotation(handler,
+        DeprecatedAPI.class);
+    if (annotation != null) {
+      throw new IllegalStateException(getText(request, annotation.message()));
     }
     return true;
   }

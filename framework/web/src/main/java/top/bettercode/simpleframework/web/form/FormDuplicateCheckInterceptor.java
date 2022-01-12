@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,6 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import top.bettercode.lang.util.Sha512DigestUtils;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.logging.AnnotatedUtils;
@@ -23,13 +21,14 @@ import top.bettercode.logging.trace.TraceHttpServletRequestWrapper;
 import top.bettercode.logging.trace.TraceServletInputStream;
 import top.bettercode.simpleframework.exception.BusinessException;
 import top.bettercode.simpleframework.web.UserInfoHelper;
+import top.bettercode.logging.servlet.NotErrorHandlerInterceptor;
 
 /**
  * 表单重复检
  *
  * @author Peter Wu
  */
-public class FormDuplicateCheckInterceptor implements AsyncHandlerInterceptor {
+public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor {
 
   private final Logger log = LoggerFactory.getLogger(FormDuplicateCheckInterceptor.class);
   private final IFormkeyService formkeyService;
@@ -40,19 +39,13 @@ public class FormDuplicateCheckInterceptor implements AsyncHandlerInterceptor {
 
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-      Object handler) {
-    if (handler instanceof HandlerMethod && ErrorController.class
-        .isAssignableFrom(((HandlerMethod) handler).getBeanType())) {
-      return true;
-    }
-
+  public boolean preHandlerMethod(HttpServletRequest request, HttpServletResponse response,
+      HandlerMethod handler) {
     String method = request.getMethod();
     String formkey = request.getHeader("formkey");
-    if (("POST".equals(method) || "PUT".equals(method)) && handler instanceof HandlerMethod) {
+    if (("POST".equals(method) || "PUT".equals(method))) {
       boolean hasFormKey = StringUtils.hasText(formkey);
-      if (hasFormKey || AnnotatedUtils.hasAnnotation((HandlerMethod) handler,
-          FormDuplicateCheck.class)) {
+      if (hasFormKey || AnnotatedUtils.hasAnnotation(handler, FormDuplicateCheck.class)) {
         if (!hasFormKey) {
           ServletServerHttpRequest servletServerHttpRequest = new ServletServerHttpRequest(request);
           HttpHeaders httpHeaders = servletServerHttpRequest.getHeaders();

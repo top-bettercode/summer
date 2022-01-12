@@ -7,13 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.bettercode.autodoc.gen.Autodoc;
@@ -24,6 +22,7 @@ import top.bettercode.simpleframework.security.ClientAuthorize;
 import top.bettercode.simpleframework.security.SecurityParameterNames;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
+import top.bettercode.logging.servlet.NotErrorHandlerInterceptor;
 
 @ConditionalOnClass(Anonymous.class)
 @Configuration(proxyBeanMethods = false)
@@ -40,45 +39,38 @@ public class AutodocWebMvcConfigurer implements WebMvcConfigurer, AutoDocRequest
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(new AsyncHandlerInterceptor() {
+    registry.addInterceptor(new NotErrorHandlerInterceptor() {
 
       @Override
-      public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-          Object handler) {
-        if (handler instanceof HandlerMethod && ErrorController.class
-            .isAssignableFrom(((HandlerMethod) handler).getBeanType())) {
-          return true;
-        }
-
+      public boolean preHandlerMethod(HttpServletRequest request, HttpServletResponse response,
+          HandlerMethod handler) {
         Set<String> requiredHeaders = Autodoc.getRequiredHeaders();
-        if (handler instanceof HandlerMethod) {
-          String url = request.getServletPath();
-          //set required
-          if (!AnnotatedUtils.hasAnnotation((HandlerMethod) handler, Anonymous.class)
-              && !securityProperties.ignored(url) || AnnotatedUtils.hasAnnotation(
-              (HandlerMethod) handler, ClientAuthorize.class)) {
-            requiredHeaders = new HashSet<>(requiredHeaders);
-            if (securityProperties.getCompatibleAccessToken()) {
-              requiredHeaders.add(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
-            } else {
-              requiredHeaders.add(HttpHeaders.AUTHORIZATION);
-            }
-            Autodoc.requiredHeaders(requiredHeaders.toArray(new String[0]));
-            //set required end
-          } else if (request instanceof TraceHttpServletRequestWrapper
-              && ((TraceHttpServletRequestWrapper) request).getRequest() instanceof AutoDocHttpServletRequest) {
-            AutoDocHttpServletRequest autoRequest = (AutoDocHttpServletRequest) ((TraceHttpServletRequestWrapper) request).getRequest();
-            if (!requiredHeaders.contains(HttpHeaders.AUTHORIZATION) && !requiredHeaders.contains(
-                HttpHeaders.AUTHORIZATION.toLowerCase()
-            )
-            ) {
-              autoRequest.getExtHeaders().remove(HttpHeaders.AUTHORIZATION);
-            }
-            if (!requiredHeaders.contains(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN)
-                && !requiredHeaders.contains(
-                SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN.toLowerCase())) {
-              autoRequest.getExtHeaders().remove(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
-            }
+        String url = request.getServletPath();
+        //set required
+        if (!AnnotatedUtils.hasAnnotation(handler, Anonymous.class)
+            && !securityProperties.ignored(url) || AnnotatedUtils.hasAnnotation(
+            handler, ClientAuthorize.class)) {
+          requiredHeaders = new HashSet<>(requiredHeaders);
+          if (securityProperties.getCompatibleAccessToken()) {
+            requiredHeaders.add(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
+          } else {
+            requiredHeaders.add(HttpHeaders.AUTHORIZATION);
+          }
+          Autodoc.requiredHeaders(requiredHeaders.toArray(new String[0]));
+          //set required end
+        } else if (request instanceof TraceHttpServletRequestWrapper
+            && ((TraceHttpServletRequestWrapper) request).getRequest() instanceof AutoDocHttpServletRequest) {
+          AutoDocHttpServletRequest autoRequest = (AutoDocHttpServletRequest) ((TraceHttpServletRequestWrapper) request).getRequest();
+          if (!requiredHeaders.contains(HttpHeaders.AUTHORIZATION) && !requiredHeaders.contains(
+              HttpHeaders.AUTHORIZATION.toLowerCase()
+          )
+          ) {
+            autoRequest.getExtHeaders().remove(HttpHeaders.AUTHORIZATION);
+          }
+          if (!requiredHeaders.contains(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN)
+              && !requiredHeaders.contains(
+              SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN.toLowerCase())) {
+            autoRequest.getExtHeaders().remove(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
           }
         }
         return true;
