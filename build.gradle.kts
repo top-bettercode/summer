@@ -135,6 +135,12 @@ allprojects {
             options.encoding = "UTF-8"
             dependsOn("processResources")
         }
+        withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+                freeCompilerArgs = listOf("-Xjvm-default=enable")
+            }
+        }
     }
 
 }
