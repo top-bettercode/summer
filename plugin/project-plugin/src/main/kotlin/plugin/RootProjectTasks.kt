@@ -20,7 +20,7 @@ object RootProjectTasks {
             val jenkinsAuth = project.findProperty("jenkins.auth")?.toString()
             if (!jenkinsJobs.isNullOrEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
                 create("jenkins[All]") {
-                    it.group = "tool"
+                    it.group = "jenkins"
                     it.doLast {
                         jenkinsJobs.forEach { jobName ->
                             CLI._main(
@@ -44,7 +44,7 @@ object RootProjectTasks {
                         ""
                     )
                     create("jenkins[$jobTaskName]") {
-                        it.group = "tool"
+                        it.group = "jenkins"
                         it.doLast {
                             CLI._main(
                                 arrayOf(
