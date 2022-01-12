@@ -1,6 +1,6 @@
-# Summmer Framework
+# Summer Framework
 
-Summmer Framework is a simple framework that will help you to rapid development of java projects with Spring Boot.
+Summer Framework is a simple framework that will help you to rapid development of java projects with Spring Boot.
 
 ## Features
 
