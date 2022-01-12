@@ -19,7 +19,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import top.bettercode.logging.AnnotatedUtils;
+import top.bettercode.lang.AnnotatedUtils;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 
 /**

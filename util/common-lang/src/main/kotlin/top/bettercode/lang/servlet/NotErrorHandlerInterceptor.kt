@@ -1,4 +1,4 @@
-package top.bettercode.logging.servlet
+package top.bettercode.lang.servlet
 
 import org.springframework.web.servlet.AsyncHandlerInterceptor
 import org.springframework.boot.web.servlet.error.ErrorController

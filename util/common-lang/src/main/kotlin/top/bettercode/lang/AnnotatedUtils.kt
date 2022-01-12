@@ -1,4 +1,4 @@
-package top.bettercode.logging
+package top.bettercode.lang
 
 import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.web.method.HandlerMethod
