@@ -15,14 +15,14 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.bettercode.autodoc.gen.Autodoc;
-import top.bettercode.logging.AnnotatedUtils;
+import top.bettercode.lang.AnnotatedUtils;
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper;
 import top.bettercode.simpleframework.security.Anonymous;
 import top.bettercode.simpleframework.security.ClientAuthorize;
 import top.bettercode.simpleframework.security.SecurityParameterNames;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
-import top.bettercode.logging.servlet.NotErrorHandlerInterceptor;
+import top.bettercode.lang.servlet.NotErrorHandlerInterceptor;
 
 @ConditionalOnClass(Anonymous.class)
 @Configuration(proxyBeanMethods = false)

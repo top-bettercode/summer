@@ -16,12 +16,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import top.bettercode.lang.util.Sha512DigestUtils;
 import top.bettercode.lang.util.StringUtil;
-import top.bettercode.logging.AnnotatedUtils;
+import top.bettercode.lang.AnnotatedUtils;
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper;
 import top.bettercode.logging.trace.TraceServletInputStream;
 import top.bettercode.simpleframework.exception.BusinessException;
 import top.bettercode.simpleframework.web.UserInfoHelper;
-import top.bettercode.logging.servlet.NotErrorHandlerInterceptor;
+import top.bettercode.lang.servlet.NotErrorHandlerInterceptor;
 
 /**
  * 表单重复检
