@@ -66,6 +66,7 @@ import top.bettercode.simpleframework.support.packagescan.PackageScanClassResolv
 import top.bettercode.simpleframework.web.DefaultCaptchaServiceImpl;
 import top.bettercode.simpleframework.web.ICaptchaService;
 import top.bettercode.simpleframework.web.RespEntity;
+import top.bettercode.simpleframework.web.deprecated.DeprecatedAPIInterceptor;
 import top.bettercode.simpleframework.web.error.CustomErrorController;
 import top.bettercode.simpleframework.web.error.DataErrorHandler;
 import top.bettercode.simpleframework.web.error.DefaultErrorHandler;
@@ -394,15 +395,19 @@ public class FrameworkMvcConfiguration {
   protected static class WebMvcConfiguration implements WebMvcConfigurer {
 
     private final IFormkeyService formkeyService;
+    private final MessageSource messageSource;
 
-    public WebMvcConfiguration(IFormkeyService formkeyService) {
+    public WebMvcConfiguration(IFormkeyService formkeyService,
+        MessageSource messageSource) {
       this.formkeyService = formkeyService;
+      this.messageSource = messageSource;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
       registry.addInterceptor(new FormDuplicateCheckInterceptor(formkeyService))
           .order(Ordered.LOWEST_PRECEDENCE);
+      registry.addInterceptor(new DeprecatedAPIInterceptor(messageSource));
     }
 
     /**
