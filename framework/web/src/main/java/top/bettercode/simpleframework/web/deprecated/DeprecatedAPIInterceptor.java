@@ -25,16 +25,16 @@ public class DeprecatedAPIInterceptor implements AsyncHandlerInterceptor {
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
       Object handler) {
-    if (handler instanceof HandlerMethod && ErrorController.class
-        .isAssignableFrom(((HandlerMethod) handler).getBeanType())) {
-      return true;
+    if (handler instanceof HandlerMethod) {
+      if (ErrorController.class.isAssignableFrom(((HandlerMethod) handler).getBeanType())) {
+        return true;
+      }
+      DeprecatedAPI annotation = AnnotatedUtils.getAnnotation((HandlerMethod) handler,
+          DeprecatedAPI.class);
+      if (annotation != null) {
+        throw new IllegalStateException(getText(request, annotation.message()));
+      }
     }
-    DeprecatedAPI annotation = AnnotatedUtils.getAnnotation((HandlerMethod) handler,
-        DeprecatedAPI.class);
-    if (annotation != null) {
-      throw new IllegalStateException(getText(request, annotation.message()));
-    }
-
     return true;
   }
 
