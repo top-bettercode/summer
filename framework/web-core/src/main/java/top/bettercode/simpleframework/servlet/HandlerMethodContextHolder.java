@@ -27,17 +27,18 @@ public class HandlerMethodContextHolder {
 
   public static HandlerMethod getHandler(HttpServletRequest request) {
     try {
-      HandlerMethod handlerMethod = (HandlerMethod) request.getAttribute(
-          HandlerMethodContextHolder.HANDLER_METHOD);
-      if (handlerMethod != null) {
-        return handlerMethod;
-      }
+      HandlerMethod handlerMethod;
+//      handlerMethod = (HandlerMethod) request.getAttribute(
+//          HandlerMethodContextHolder.HANDLER_METHOD);
+//      if (handlerMethod != null) {
+//        return handlerMethod;
+//      }
       HandlerExecutionChain handlerExecutionChain = handlerMapping.getHandler(request);
       if (handlerExecutionChain != null) {
         Object handler = handlerExecutionChain.getHandler();
         if (handler instanceof HandlerMethod) {
           handlerMethod = (HandlerMethod) handler;
-          request.setAttribute(HandlerMethodContextHolder.HANDLER_METHOD, handlerMethod);
+//          request.setAttribute(HandlerMethodContextHolder.HANDLER_METHOD, handlerMethod);
           return handlerMethod;
         }
       }
