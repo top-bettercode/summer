@@ -55,6 +55,7 @@ object CoreProjectTasks {
                     if (!file.parentFile.exists()) {
                         file.parentFile.mkdirs()
                     }
+                    gen.printGenFileMsg(file)
                     file.writeText(serializationViews.formattedContent)
                 }
             }
@@ -108,16 +109,17 @@ object CoreProjectTasks {
                     val propertiesFile =
                         project.file("src/main/resources/default-dic-code.properties")
                     propertiesFile.parentFile.mkdirs()
+                    val gen = project.extensions.getByType(GeneratorExtension::class.java)
+                    gen.printGenFileMsg(propertiesFile)
                     propertiesFile.writeText("")
                     val codeTypes: MutableSet<String> = mutableSetOf()
                     //生成 properties
-                    val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     PumlConverter.reformat(gen)
                     gen.generators = arrayOf(DicCodeProperties(propertiesFile, codeTypes))
                     gen.tableNames = arrayOf()
                     Generators.call(gen)
                     //生成
-                    val dicCodeGen = DicCodeGen(project)
+                    val dicCodeGen = DicCodeGen(project, gen)
                     dicCodeGen.setUp()
                     dicCodeGen.genCode()
                     dicCodeGen.tearDown()
@@ -164,7 +166,9 @@ object CoreProjectTasks {
                                     }
                                 }
                             }
-                            project.rootProject.file("doc/业务相关错误码.adoc").printWriter()
+                            val docfile = project.rootProject.file("doc/业务相关错误码.adoc")
+                            gen.printGenFileMsg(docfile)
+                            docfile.printWriter()
                                 .use {
                                     it.println(
                                         """
@@ -182,6 +186,7 @@ object CoreProjectTasks {
                                     it.println("|===")
                                 }
                         }
+                        gen.printGenFileMsg(destFile)
                         destFile.writeText(clazz.formattedContent)
                     }
                 }

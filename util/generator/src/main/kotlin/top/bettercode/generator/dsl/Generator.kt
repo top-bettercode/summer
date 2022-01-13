@@ -463,10 +463,9 @@ abstract class Generator {
         }
         destFile.parentFile.mkdirs()
 
-        val msg = if (destFile.exists()) "覆盖" else "生成"
+        extension.printGenFileMsg(destFile)
         destFile.printWriter().use {
             output(it)
         }
-        println("$msg：${destFile.absolutePath.substringAfter((extension.rootPath ?: basePath).absolutePath + File.separator)}")
     }
 }
