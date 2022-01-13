@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.MessageSource;
 import org.springframework.web.method.HandlerMethod;
-import top.bettercode.lang.AnnotatedUtils;
-import top.bettercode.lang.servlet.NotErrorHandlerInterceptor;
+import top.bettercode.simpleframework.AnnotatedUtils;
+import top.bettercode.simpleframework.servlet.NotErrorHandlerInterceptor;
 
 /**
  * 已弃用的接口检查

@@ -19,7 +19,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import top.bettercode.lang.AnnotatedUtils;
+import top.bettercode.simpleframework.AnnotatedUtils;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 
 /**
@@ -30,7 +30,6 @@ import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 public class URLFilterInvocationSecurityMetadataSource implements
     FilterInvocationSecurityMetadataSource {
 
-  private static final List<AntPathRequestMatcher> clientAuthorizes = new ArrayList<>();
   private final Map<AntPathRequestMatcher, Set<ConfigAttribute>> defaultConfigAttributes = new HashMap<>();
   private Map<AntPathRequestMatcher, Set<ConfigAttribute>> requestMatcherConfigAttributes;
   private final IResourceService securityService;
@@ -70,30 +69,8 @@ public class URLFilterInvocationSecurityMetadataSource implements
           }
         }
       }
-      //ClientAuthorize
-      if (AnnotatedUtils.hasAnnotation(handlerMethod, ClientAuthorize.class)) {
-        for (String pattern : mappingInfo.getPatternsCondition().getPatterns()) {
-          Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
-          if (methods.isEmpty()) {
-            clientAuthorizes.add(new AntPathRequestMatcher(pattern));
-          } else {
-            for (RequestMethod requestMethod : methods) {
-              clientAuthorizes.add(new AntPathRequestMatcher(pattern, requestMethod.name()));
-            }
-          }
-        }
-      }
     });
     bindConfigAttributes();
-  }
-
-  public static boolean matchClientAuthorize(HttpServletRequest request) {
-    for (AntPathRequestMatcher clientAuthorize : clientAuthorizes) {
-      if (clientAuthorize.matches(request)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**

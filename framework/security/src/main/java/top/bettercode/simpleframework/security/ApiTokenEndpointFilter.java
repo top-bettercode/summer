@@ -23,10 +23,13 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.method.HandlerMethod;
+import top.bettercode.simpleframework.AnnotatedUtils;
 import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.exception.UnauthorizedException;
 import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
+import top.bettercode.simpleframework.servlet.HandlerMethodContextHolder;
 import top.bettercode.simpleframework.web.RespEntity;
 import top.bettercode.simpleframework.web.UserInfoHelper;
 
@@ -234,12 +237,22 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         } else {
           logger.warn("错误或过期的token:" + accessToken);
         }
-      } else if (URLFilterInvocationSecurityMetadataSource.matchClientAuthorize(request)) {
+      } else if (needClientAuthorize(request)) {
         authenticateBasic(request);
       }
       filterChain.doFilter(request, response);
     }
   }
+
+  public static boolean needClientAuthorize(HttpServletRequest request) {
+    //ClientAuthorize
+    HandlerMethod handler = HandlerMethodContextHolder.getHandler(request);
+    if (handler != null) {
+      return AnnotatedUtils.hasAnnotation(handler, ClientAuthorize.class);
+    }
+    return false;
+  }
+
 
   private void authenticateBasic(HttpServletRequest request) {
     if (this.basicCredentials == null) {

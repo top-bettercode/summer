@@ -16,6 +16,7 @@ include(":framework:security")
 //include(":framework:security-server")
 //include(":framework:security-resource")
 include(":framework:starter-logging")
+include(":framework:web-core")
 include(":framework:web")
 
 include(":plugin:autodoc-plugin")

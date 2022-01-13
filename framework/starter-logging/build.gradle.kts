@@ -2,6 +2,7 @@ plugins { `java-library` }
 
 dependencies {
     api(project(":util:common-lang"))
+    api(project(":framework:web-core"))
 
     api("org.springframework.boot:spring-boot-starter-logging")
     api("com.fasterxml.jackson.module:jackson-module-kotlin")
