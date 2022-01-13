@@ -20,7 +20,6 @@ class DicCodeProperties(
                 val codeType = dicCodes.type
                 if (!codeTypes.contains(codeType)) {
                     codeTypes.add(codeType)
-
                     val escapeTypeName = escape(dicCodes.name)
                     propertiesFile.appendText("#----------------------------------------------------------\n")
                     propertiesFile.appendText("#$escapeTypeName\n")

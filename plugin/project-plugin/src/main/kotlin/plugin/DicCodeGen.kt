@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import org.gradle.api.Project
 import top.bettercode.autodoc.core.Util
 import top.bettercode.autodoc.core.model.Field
+import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.InnerInterface
 import top.bettercode.generator.dom.java.element.JavaVisibility
@@ -19,7 +20,7 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-class DicCodeGen(private val project: Project) {
+class DicCodeGen(private val project: Project, private val extension: GeneratorExtension) {
 
 
     private fun codeTypes(): Map<String, DicCodes> {
@@ -309,7 +310,9 @@ class DicCodeGen(private val project: Project) {
             docText.appendln("|===")
             docText.appendln()
             enumFile.parentFile.mkdirs()
+            extension.printGenFileMsg(enumFile)
             enumFile.writeText(codeEnum.formattedContent)
+
         }
     }
 

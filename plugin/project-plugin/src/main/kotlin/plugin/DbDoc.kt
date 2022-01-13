@@ -15,10 +15,13 @@ class DbDoc(private val project: Project) : Generator() {
     private lateinit var file: File
 
     override fun setUp() {
-        this.file = project.rootProject.file("database/doc/${extension.applicationName}数据库设计说明书-${project.version}.adoc")
+        this.file =
+            project.rootProject.file("database/doc/${extension.applicationName}数据库设计说明书-${project.version}.adoc")
+        extension.printGenFileMsg(file)
         this.file.parentFile.mkdirs()
         this.file.writeText("= ${extension.applicationName}数据库设计说明书\n")
-        this.file.appendText("""JAVA小组
+        this.file.appendText(
+            """JAVA小组
 v${project.version}
 :doctype: book
 :icons: font
@@ -30,10 +33,13 @@ v${project.version}
 :sectlinks:
 :toclevels: 2
 :sectnums:
-""")
-        this.file.appendText("""
+"""
+        )
+        this.file.appendText(
+            """
 系统使用MYSQL5.7数据库
-""")
+"""
+        )
     }
 
     override fun doCall() {
@@ -62,7 +68,9 @@ v${project.version}
     }
 
     override fun tearDown() {
-        AsciidocGenerator.pdf(file, File(file.parent, "${file.nameWithoutExtension}.pdf"))
+        val outFile = File(file.parent, "${file.nameWithoutExtension}.pdf")
+        extension.printGenFileMsg(outFile)
+        AsciidocGenerator.pdf(file, outFile)
     }
 }
 
