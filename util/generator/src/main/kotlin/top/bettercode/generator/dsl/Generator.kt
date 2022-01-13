@@ -467,6 +467,6 @@ abstract class Generator {
         destFile.printWriter().use {
             output(it)
         }
-        println("$msg：${destFile.absolutePath.substringAfter(basePath.absolutePath + File.separator)}")
+        println("$msg：${destFile.absolutePath.substringAfter((extension.rootPath ?: basePath).absolutePath + File.separator)}")
     }
 }
