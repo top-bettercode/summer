@@ -85,7 +85,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         }
     }
 
-    fun pdf(inFile: File, outFile: File) {
+    fun pdf(inFile: File, outFile: File, prefixPath: File? = null) {
         if (inFile.exists()) {
             val optionsBuilder = Options.builder()
             optionsBuilder.toFile(outFile)
@@ -101,8 +101,15 @@ object AsciidocGenerator : AbstractbGenerator() {
             optionsBuilder.mkDirs(true)
             optionsBuilder.safe(SafeMode.UNSAFE)
             try {
+                println(
+                    "${if (outFile.exists()) "覆盖" else "生成"}：${
+                        if (prefixPath == null) outFile.path else
+                            outFile.absolutePath.substringAfter(
+                                prefixPath.absolutePath + File.separator
+                            )
+                    }"
+                )
                 asciidoctor.convertFile(inFile, optionsBuilder.build())
-                println("生成：$outFile")
             } catch (e: Exception) {
                 e.printStackTrace()
             }

@@ -78,6 +78,13 @@ object RootProjectTasks {
                         ?.forEach {
                             initBuilder.appendln(it.readText())
                         }
+                    println(
+                        "${if (destFile.exists()) "覆盖" else "生成"}：${
+                            destFile.absolutePath.substringAfter(
+                                project.rootDir.absolutePath + File.separator
+                            )
+                        }"
+                    )
                     destFile.writeText(initBuilder.toString())
                 }
             }

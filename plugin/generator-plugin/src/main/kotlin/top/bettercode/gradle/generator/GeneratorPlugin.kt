@@ -59,8 +59,8 @@ class GeneratorPlugin : Plugin<Project> {
             extension.replaceAll = (findProperty(project, "replaceAll"))?.toBoolean() ?: false
             extension.useForeignKey = (findProperty(project, "useForeignKey"))?.toBoolean() ?: false
             extension.sqlQuote = (findProperty(project, "sqlQuote"))?.toBoolean() ?: true
-            extension.rootPath = project.rootProject.file("./")
-            extension.basePath = project.file("./")
+            extension.rootPath = project.rootDir
+            extension.basePath = project.projectDir
             extension.dir = findProperty(project, "dir") ?: "src/main/java"
             extension.packageName = findProperty(project, "packageName")
                 ?: project.findProperty("app.packageName") as? String ?: ""

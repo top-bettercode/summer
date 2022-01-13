@@ -17,7 +17,13 @@ class DbDoc(private val project: Project) : Generator() {
     override fun setUp() {
         this.file =
             project.rootProject.file("database/doc/${extension.applicationName}数据库设计说明书-${project.version}.adoc")
-        extension.printGenFileMsg(file)
+        println(
+            "${if (file.exists()) "覆盖" else "生成"}：${
+                file.absolutePath.substringAfter(
+                    project.rootDir.absolutePath + File.separator
+                )
+            }"
+        )
         this.file.parentFile.mkdirs()
         this.file.writeText("= ${extension.applicationName}数据库设计说明书\n")
         this.file.appendText(
@@ -69,8 +75,7 @@ v${project.version}
 
     override fun tearDown() {
         val outFile = File(file.parent, "${file.nameWithoutExtension}.pdf")
-        extension.printGenFileMsg(outFile)
-        AsciidocGenerator.pdf(file, outFile)
+        AsciidocGenerator.pdf(file, outFile, project.rootDir)
     }
 }
 

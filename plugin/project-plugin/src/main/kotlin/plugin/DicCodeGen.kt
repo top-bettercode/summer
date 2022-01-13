@@ -310,7 +310,13 @@ class DicCodeGen(private val project: Project, private val extension: GeneratorE
             docText.appendln("|===")
             docText.appendln()
             enumFile.parentFile.mkdirs()
-            extension.printGenFileMsg(enumFile)
+            println(
+                "${if (enumFile.exists()) "覆盖" else "生成"}：${
+                    enumFile.absolutePath.substringAfter(
+                        project.rootDir.absolutePath + File.separator
+                    )
+                }"
+            )
             enumFile.writeText(codeEnum.formattedContent)
 
         }

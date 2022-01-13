@@ -30,7 +30,7 @@ class AutodocPlugin : Plugin<Project> {
             autodocExtension.source = if (path.startsWith("/")) {
                 autodocExtension.source
             } else
-                File(project.file("./"), path)
+                File(project.projectDir, path)
             autodocExtension.projectName = findProperty(project, "project-name")
                 ?: project.findProperty("application.name") as? String
                         ?: "${project.name}接口文档"
