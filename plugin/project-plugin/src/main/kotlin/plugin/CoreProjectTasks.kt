@@ -11,6 +11,7 @@ import top.bettercode.generator.dom.java.element.TopLevelClass
 import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.puml.PumlConverter
 import top.bettercode.gradle.generator.GeneratorPlugin
+import java.io.File
 import java.util.*
 
 
@@ -55,7 +56,13 @@ object CoreProjectTasks {
                     if (!file.parentFile.exists()) {
                         file.parentFile.mkdirs()
                     }
-                    gen.printGenFileMsg(file)
+                    println(
+                        "${if (file.exists()) "覆盖" else "生成"}：${
+                            file.absolutePath.substringAfter(
+                                project.rootDir.absolutePath + File.separator
+                            )
+                        }"
+                    )
                     file.writeText(serializationViews.formattedContent)
                 }
             }
@@ -110,7 +117,13 @@ object CoreProjectTasks {
                         project.file("src/main/resources/default-dic-code.properties")
                     propertiesFile.parentFile.mkdirs()
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                    gen.printGenFileMsg(propertiesFile)
+                    println(
+                        "${if (propertiesFile.exists()) "覆盖" else "生成"}：${
+                            propertiesFile.absolutePath.substringAfter(
+                                project.rootDir.absolutePath + File.separator
+                            )
+                        }"
+                    )
                     propertiesFile.writeText("")
                     val codeTypes: MutableSet<String> = mutableSetOf()
                     //生成 properties
@@ -167,7 +180,13 @@ object CoreProjectTasks {
                                 }
                             }
                             val docfile = project.rootProject.file("doc/业务相关错误码.adoc")
-                            gen.printGenFileMsg(docfile)
+                            println(
+                                "${if (docfile.exists()) "覆盖" else "生成"}：${
+                                    docfile.absolutePath.substringAfter(
+                                        project.rootDir.absolutePath + File.separator
+                                    )
+                                }"
+                            )
                             docfile.printWriter()
                                 .use {
                                     it.println(
@@ -186,7 +205,13 @@ object CoreProjectTasks {
                                     it.println("|===")
                                 }
                         }
-                        gen.printGenFileMsg(destFile)
+                        println(
+                            "${if (destFile.exists()) "覆盖" else "生成"}：${
+                                destFile.absolutePath.substringAfter(
+                                    project.rootDir.absolutePath + File.separator
+                                )
+                            }"
+                        )
                         destFile.writeText(clazz.formattedContent)
                     }
                 }

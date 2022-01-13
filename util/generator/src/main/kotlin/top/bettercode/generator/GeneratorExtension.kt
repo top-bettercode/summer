@@ -300,16 +300,6 @@ open class GeneratorExtension(
         return File(path, subfile)
     }
 
-    fun printGenFileMsg(file: File) {
-        println(
-            "${if (file.exists()) "覆盖" else "生成"}：${
-                file.absolutePath.substringAfter(
-                    (rootPath ?: basePath).absolutePath + File.separator
-                )
-            }"
-        )
-    }
-
     fun pumlSqlOutputFile(src: File, source: File): File {
         val dest = File(
             File(

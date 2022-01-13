@@ -463,7 +463,13 @@ abstract class Generator {
         }
         destFile.parentFile.mkdirs()
 
-        extension.printGenFileMsg(destFile)
+        println(
+            "${if (destFile.exists()) "覆盖" else "生成"}：${
+                destFile.absolutePath.substringAfter(
+                    (extension.rootPath ?: basePath).absolutePath + File.separator
+                )
+            }"
+        )
         destFile.printWriter().use {
             output(it)
         }

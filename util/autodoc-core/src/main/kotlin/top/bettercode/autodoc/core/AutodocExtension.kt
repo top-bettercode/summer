@@ -232,6 +232,6 @@ open class AutodocExtension(
     }
 
     private fun copy(path: String) {
-        AutodocExtension::class.java.getResourceAsStream("/$path").copyTo(File(outputFile, path).apply { parentFile.mkdirs() }.outputStream())
+        AutodocExtension::class.java.getResourceAsStream("/$path")?.copyTo(File(outputFile, path).apply { parentFile.mkdirs() }.outputStream())
     }
 }

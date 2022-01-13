@@ -23,6 +23,13 @@ class PlantUML(
 
     override fun setUp() {
         destFile.parentFile.mkdirs()
+        println(
+            "${if (destFile.exists()) "覆盖" else "生成"}：${
+                destFile.absolutePath.substringAfter(
+                    (extension.rootPath ?: basePath).absolutePath + File.separator
+                )
+            }"
+        )
         destFile.writeText(
             """PK
 FK
