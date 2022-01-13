@@ -9,7 +9,6 @@ import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.servlet.HandlerMapping
-import top.bettercode.logging.HandlerMethodHandlerInterceptor
 import top.bettercode.logging.RequestLoggingFilter
 import top.bettercode.logging.client.ClientHttpRequestWrapper
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper
@@ -23,7 +22,6 @@ import java.util.*
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.Part
-import kotlin.collections.ArrayList
 
 /**
  * A `RequestConverter` is used to convert an implementation-specific request into
@@ -55,7 +53,7 @@ object RequestConverter {
         val cookies = extractCookies(request, headers)
         val uri = URI.create(getRequestUri(request))
         val restUri =
-            (request.getAttribute(HandlerMethodHandlerInterceptor.BEST_MATCHING_PATTERN_ATTRIBUTE) as? String)
+            (request.getAttribute(RequestLoggingFilter.BEST_MATCHING_PATTERN_ATTRIBUTE) as? String)
                 ?: request.requestURI.substringAfter(request.contextPath)
 
         @Suppress("UNCHECKED_CAST")

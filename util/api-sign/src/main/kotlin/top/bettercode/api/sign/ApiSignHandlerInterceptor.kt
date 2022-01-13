@@ -1,9 +1,8 @@
 package top.bettercode.api.sign
 
-import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.core.Ordered
 import org.springframework.web.method.HandlerMethod
-import org.springframework.web.servlet.AsyncHandlerInterceptor
+import top.bettercode.simpleframework.servlet.NotErrorHandlerInterceptor
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -13,21 +12,17 @@ import javax.servlet.http.HttpServletResponse
  * @author Peter Wu
  */
 class ApiSignHandlerInterceptor(private var apiSignAlgorithm: ApiSignAlgorithm) :
-    AsyncHandlerInterceptor, Ordered {
+    NotErrorHandlerInterceptor, Ordered {
 
     override fun getOrder(): Int {
         return Ordered.HIGHEST_PRECEDENCE + 20
     }
 
-    override fun preHandle(
+    override fun preHandlerMethod(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        handler: Any
+        handler: HandlerMethod
     ): Boolean {
-        if (handler is HandlerMethod && ErrorController::class.java.isAssignableFrom(handler.beanType)) {
-            return true
-        }
-
         if (apiSignAlgorithm.properties.requiredSign(handler)) {
             apiSignAlgorithm.checkSign(request)
         }

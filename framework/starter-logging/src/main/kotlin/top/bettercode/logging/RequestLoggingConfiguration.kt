@@ -1,6 +1,5 @@
 package top.bettercode.logging
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -9,8 +8,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 /**
  * 自动增加请求日志过滤器
@@ -30,17 +27,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
     WebsocketProperties::class
 )
 class RequestLoggingConfiguration {
-
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    @Configuration(proxyBeanMethods = false)
-    class CustomWebMvcConfigurer : WebMvcConfigurer {
-        @Autowired
-        private lateinit var properties: RequestLoggingProperties
-
-        override fun addInterceptors(registry: InterceptorRegistry) {
-            registry.addInterceptor(HandlerMethodHandlerInterceptor(properties))
-        }
-    }
 
     @Bean
     fun requestLoggingFilter(

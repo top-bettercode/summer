@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":framework:web-core"))
     api("org.springframework.boot:spring-boot-starter-web")
     api("org.jetbrains.kotlin:kotlin-reflect")
 

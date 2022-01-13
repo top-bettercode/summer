@@ -15,8 +15,11 @@ data class RequestLoggingConfig(
      * 忽略超时
      */
     val ignoredTimeout: Boolean, val timeoutAlarmSeconds: Int,
-    val logMarker: String = RequestLoggingFilter.REQUEST_LOG_MARKER
+    val logMarker: String = RequestLoggingFilter.REQUEST_LOG_MARKER,
+    val collectionName: String = "",
+    val operationName: String = ""
 ) {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is RequestLoggingConfig) return false
@@ -30,6 +33,8 @@ data class RequestLoggingConfig(
         if (ignoredTimeout != other.ignoredTimeout) return false
         if (timeoutAlarmSeconds != other.timeoutAlarmSeconds) return false
         if (logMarker != other.logMarker) return false
+        if (collectionName != other.collectionName) return false
+        if (operationName != other.operationName) return false
 
         return true
     }
@@ -44,6 +49,8 @@ data class RequestLoggingConfig(
         result = 31 * result + ignoredTimeout.hashCode()
         result = 31 * result + timeoutAlarmSeconds
         result = 31 * result + logMarker.hashCode()
+        result = 31 * result + collectionName.hashCode()
+        result = 31 * result + operationName.hashCode()
         return result
     }
 }
