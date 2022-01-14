@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "summer.sms.b2m")
 public class B2mSmsProperties {
 
-  private String url="http://www.btom.cn:8080";
+  private String url = "http://www.btom.cn:8080";
   private String appId;
   private String secretKey;
   /**
@@ -24,7 +24,7 @@ public class B2mSmsProperties {
   /**
    * 请求有效时间(必填)[单位:秒]
    */
-  private int requestValidPeriod=60;
+  private int requestValidPeriod = 60 * 10;
 
   public String getUrl() {
     return url;
