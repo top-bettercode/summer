@@ -3,7 +3,6 @@ package top.bettercode.sms.b2m
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.google.common.collect.ImmutableMap
-import io.micrometer.core.instrument.util.JsonUtils
 import org.slf4j.LoggerFactory
 import org.springframework.http.*
 import org.springframework.http.converter.ByteArrayHttpMessageConverter
@@ -36,7 +35,7 @@ class B2mSmsTemplate(
     private val b2mProperties: B2mSmsProperties
 ) : SmsTemplate(
     "第三方接口", "亿美软通短信平台", LOG_MARKER_STR, b2mProperties.connectTimeout,
-    b2mProperties.readTimeout
+    b2mProperties.readTimeout, { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) }
 ) {
     private val log = LoggerFactory.getLogger(B2mSmsTemplate::class.java)
 
@@ -185,11 +184,6 @@ class B2mSmsTemplate(
         params["requestTime"] = System.currentTimeMillis()
         params["requestValidPeriod"] = b2mProperties.requestValidPeriod
         val json = json(params)
-        log.info(
-            LOG_MARKER,
-            "params:\n{}",
-            JsonUtils.prettyPrint(json.split("\n").joinToString("") { it.trim() })
-        )
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, b2mProperties.secretKey)
@@ -213,12 +207,6 @@ class B2mSmsTemplate(
                 var respData = entity.body
                 respData = decrypt(respData!!, b2mProperties.secretKey)
                 respData = ungzip(respData)
-                log.info(
-                    LOG_MARKER,
-                    "result:\n{}",
-                    JsonUtils.prettyPrint(
-                        String(respData).split("\n").joinToString("") { it.trim() })
-                )
                 val datas: List<B2mRespData> = readJson<MutableList<B2mRespData>>(
                     respData,
                     TypeFactory.defaultInstance().constructCollectionType(
@@ -312,11 +300,6 @@ class B2mSmsTemplate(
         params["requestTime"] = System.currentTimeMillis()
         params["requestValidPeriod"] = b2mProperties.requestValidPeriod
         val json = json(params)
-        log.info(
-            LOG_MARKER,
-            "params:\n{}",
-            JsonUtils.prettyPrint(json.split("\n").joinToString("") { it.trim() })
-        )
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, b2mProperties.secretKey)
@@ -340,12 +323,6 @@ class B2mSmsTemplate(
                 var respData = entity.body
                 respData = decrypt(respData!!, b2mProperties.secretKey)
                 respData = ungzip(respData)
-                log.info(
-                    LOG_MARKER,
-                    "result:\n{}",
-                    JsonUtils.prettyPrint(
-                        String(respData).split("\n").joinToString("") { it.trim() })
-                )
                 readJson<List<B2mSendReport>>(
                     respData,
                     TypeFactory.defaultInstance().constructCollectionType(

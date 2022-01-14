@@ -39,7 +39,7 @@ class AliSmsTemplate(
     private val aliSmsProperties: AliSmsProperties
 ) : SmsTemplate(
     "第三方接口", "阿里短信平台", LOG_MARKER_STR, aliSmsProperties.connectTimeout,
-    aliSmsProperties.readTimeout
+    aliSmsProperties.readTimeout, null
 ) {
     private val log = LoggerFactory.getLogger(AliSmsTemplate::class.java)
 

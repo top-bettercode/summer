@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.support.client;
 
 import java.io.IOException;
 import java.net.URI;
+import kotlin.jvm.functions.Function1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -21,20 +22,22 @@ public class ApiTemplate extends RestTemplate {
   private final String collectionName;
   private final String name;
   private final String logMarker;
+  private final Function1<byte[], byte[]> decrypt;
 
   public ApiTemplate(int connectTimeout, int readTimeout) {
-    this("", "", null, connectTimeout, readTimeout);
+    this("", "", null, connectTimeout, readTimeout, null);
   }
 
   public ApiTemplate(String collectionName, String name, int connectTimeout, int readTimeout) {
-    this(collectionName, name, null, connectTimeout, readTimeout);
+    this(collectionName, name, null, connectTimeout, readTimeout, null);
   }
 
   public ApiTemplate(String collectionName, String name, String logMarker, int connectTimeout,
-      int readTimeout) {
+      int readTimeout, Function1<byte[], byte[]> decrypt) {
     this.collectionName = collectionName;
     this.name = name;
     this.logMarker = logMarker;
+    this.decrypt = decrypt;
 
     SimpleClientHttpRequestFactory clientHttpRequestFactory = new SimpleClientHttpRequestFactory();
     //Connect timeout
@@ -48,7 +51,7 @@ public class ApiTemplate extends RestTemplate {
   protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
     if (log.isInfoEnabled()) {
       return new ClientHttpRequestWrapper(collectionName, name, logMarker,
-          super.createRequest(url, method));
+          super.createRequest(url, method), decrypt);
     } else {
       return super.createRequest(url, method);
     }
