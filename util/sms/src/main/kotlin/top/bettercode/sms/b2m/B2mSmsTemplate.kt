@@ -185,7 +185,11 @@ class B2mSmsTemplate(
         params["requestTime"] = System.currentTimeMillis()
         params["requestValidPeriod"] = b2mProperties.requestValidPeriod
         val json = json(params)
-        log.info(LOG_MARKER, "params:{}", json)
+        log.info(
+            LOG_MARKER,
+            "params:\n{}",
+            JsonUtils.prettyPrint(json.split("\n").joinToString("") { it.trim() })
+        )
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, b2mProperties.secretKey)
@@ -211,7 +215,7 @@ class B2mSmsTemplate(
                 respData = ungzip(respData)
                 log.info(
                     LOG_MARKER,
-                    "result:{}",
+                    "result:\n{}",
                     JsonUtils.prettyPrint(
                         String(respData).split("\n").joinToString("") { it.trim() })
                 )
@@ -308,7 +312,11 @@ class B2mSmsTemplate(
         params["requestTime"] = System.currentTimeMillis()
         params["requestValidPeriod"] = b2mProperties.requestValidPeriod
         val json = json(params)
-        log.info(LOG_MARKER, "params:{}", json)
+        log.info(
+            LOG_MARKER,
+            "params:\n{}",
+            JsonUtils.prettyPrint(json.split("\n").joinToString("") { it.trim() })
+        )
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, b2mProperties.secretKey)
@@ -334,7 +342,7 @@ class B2mSmsTemplate(
                 respData = ungzip(respData)
                 log.info(
                     LOG_MARKER,
-                    "result:{}",
+                    "result:\n{}",
                     JsonUtils.prettyPrint(
                         String(respData).split("\n").joinToString("") { it.trim() })
                 )
@@ -355,7 +363,7 @@ class B2mSmsTemplate(
 
     /**
      *
-     * 安全接口 获取状态报告接口
+     * 状态报告重新获取接口
      *
      *
      * 文档：http://www.b2m.cn/static/doc/sms/statusReport.html
