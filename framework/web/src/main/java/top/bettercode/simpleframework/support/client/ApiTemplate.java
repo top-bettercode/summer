@@ -33,6 +33,11 @@ public class ApiTemplate extends RestTemplate {
   }
 
   public ApiTemplate(String collectionName, String name, String logMarker, int connectTimeout,
+      int readTimeout) {
+    this(collectionName, name, logMarker, connectTimeout, readTimeout, null);
+  }
+
+  public ApiTemplate(String collectionName, String name, String logMarker, int connectTimeout,
       int readTimeout, Function1<byte[], byte[]> decrypt) {
     this.collectionName = collectionName;
     this.name = name;
