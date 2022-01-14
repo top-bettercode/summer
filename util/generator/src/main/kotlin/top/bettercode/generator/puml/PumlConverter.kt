@@ -226,10 +226,10 @@ object PumlConverter {
                 out.absolutePath,
                 if ("database.puml" == out.name) remarksProperties else null
             )
-            plantUML.setUp()
+            plantUML.setUp(extension)
             tables.forEach {
                 if (it is Table) {
-                    plantUML.call(extension, it)
+                    plantUML.call(it)
                 } else {
                     plantUML.appendlnText(it.toString())
                 }

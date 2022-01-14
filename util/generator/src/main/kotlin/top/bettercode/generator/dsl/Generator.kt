@@ -411,9 +411,8 @@ abstract class Generator {
     protected val pathName: String
         get() = table.pathName(extension)
 
-    fun call(extension: GeneratorExtension, table: Table): Any? {
+    fun call(table: Table): Any? {
         return if (table.primaryKeys.isNotEmpty() || "MQueryDsl" != this.javaClass.simpleName) {
-            this.extension = extension
             this.table = table
             if (extension.delete) {
                 if (destFile.delete()) {
@@ -442,12 +441,7 @@ abstract class Generator {
         setUp()
     }
 
-    fun tearDown(extension: GeneratorExtension) {
-        this.extension = extension
-        tearDown()
-    }
-
-    open fun setUp() {
+    protected open fun setUp() {
 
     }
 
