@@ -186,11 +186,11 @@ class GeneratorPlugin : Plugin<Project> {
                         extension.file(extension.pumlDatabase).absolutePath + "/database.puml",
                         null
                     )
-                    plantUML.setUp()
+                    plantUML.setUp(extension)
                     pumlTableNames.forEach { tableName ->
                         val table = tables.find { it.tableName.equals(tableName, true) }
                         if (table != null) {
-                            plantUML.call(extension, table)
+                            plantUML.call(table)
                         }
                     }
                     plantUML.tearDown()

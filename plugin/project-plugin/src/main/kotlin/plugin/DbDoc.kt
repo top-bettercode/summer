@@ -75,7 +75,8 @@ v${project.version}
 
     override fun tearDown() {
         val outFile = File(file.parent, "${file.nameWithoutExtension}.pdf")
-        AsciidocGenerator.pdf(file, outFile, project.rootDir)
+        if (setting("dbdoc-pdf") == "true")
+            AsciidocGenerator.pdf(file, outFile, project.rootDir)
     }
 }
 
