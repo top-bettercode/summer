@@ -16,7 +16,11 @@ import java.io.StringWriter
 object HttpOperation {
     private const val MULTIPART_BOUNDARY = "6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm"
 
-    fun toString(output: Operation, format: Boolean): String {
+    fun toString(
+        output: Operation,
+        format: Boolean,
+        decrypt: ((ByteArray) -> ByteArray)? = null
+    ): String {
         val stringBuilder = StringBuilder("")
         val separatorLine = "------------------------------------------------------------"
         val marginLine = "============================================================"
@@ -28,9 +32,9 @@ object HttpOperation {
         stringBuilder.appendln("RESPONSE   TIME : ${LocalDateTimeHelper.format(output.response.dateTime)}")
         stringBuilder.appendln("DURATION MILLIS : ${output.duration}")
         stringBuilder.appendln(separatorLine)
-        stringBuilder.append(toString(output.request, output.protocol, format))
+        stringBuilder.append(toString(output.request, output.protocol, format, decrypt))
         stringBuilder.appendln()
-        stringBuilder.append(toString(output.response, output.protocol, format))
+        stringBuilder.append(toString(output.response, output.protocol, format, decrypt))
         val stackTrace = output.response.stackTrace
         if (stackTrace.isNotBlank()) {
             stringBuilder.appendln(separatorLine)
@@ -42,19 +46,47 @@ object HttpOperation {
         return Operation.LINE_SEPARATOR + toString
     }
 
-    fun toString(request: OperationRequest, protocol: String, format: Boolean): String {
+    fun toString(
+        request: OperationRequest,
+        protocol: String,
+        format: Boolean,
+        decrypt: ((ByteArray) -> ByteArray)? = null
+    ): String {
         val stringBuilder = StringBuilder("")
         stringBuilder.appendln("${request.method} ${getPath(request)} $protocol")
         getHeaders(request).forEach { k, v -> stringBuilder.appendln("$k: ${v.joinToString()}") }
+        if (decrypt != null) {
+            request.content = decrypt(request.content)
+            stringBuilder.appendln()
+            stringBuilder.appendln("---- decrypted content ----")
+        }
         stringBuilder.appendln(getRequestBody(request, format))
+        if (decrypt != null) {
+            stringBuilder.appendln()
+            stringBuilder.appendln("---- decrypted content ----")
+        }
         return stringBuilder.toString()
     }
 
-    fun toString(response: OperationResponse, protocol: String, format: Boolean): String {
+    fun toString(
+        response: OperationResponse,
+        protocol: String,
+        format: Boolean,
+        decrypt: ((ByteArray) -> ByteArray)? = null
+    ): String {
         val stringBuilder = StringBuilder("")
         stringBuilder.appendln("$protocol ${response.statusCode} ${HttpStatus.valueOf(response.statusCode).reasonPhrase}")
         response.headers.forEach { k, v -> stringBuilder.appendln("$k: ${v.joinToString()}") }
+        if (decrypt != null) {
+            response.content = decrypt(response.content)
+            stringBuilder.appendln()
+            stringBuilder.appendln("---- decrypted content ----")
+        }
         stringBuilder.appendln(getResponseBody(response, format))
+        if (decrypt != null) {
+            stringBuilder.appendln()
+            stringBuilder.appendln("---- decrypted content ----")
+        }
         return stringBuilder.toString()
     }
 
@@ -129,7 +161,10 @@ object HttpOperation {
         return headers
     }
 
-    private fun getRequestBody(request: OperationRequest, format: Boolean): String {
+    private fun getRequestBody(
+        request: OperationRequest,
+        format: Boolean
+    ): String {
         val httpRequest = StringWriter()
         val writer = PrintWriter(httpRequest)
         val content = if (format) request.prettyContentAsString else request.contentAsString
@@ -214,7 +249,10 @@ object HttpOperation {
         ))
     }
 
-    private fun getResponseBody(response: OperationResponse, format: Boolean): String {
+    private fun getResponseBody(
+        response: OperationResponse,
+        format: Boolean
+    ): String {
         val content = if (format) response.prettyContentAsString else response.contentAsString
         return if (content.isEmpty()) content else String.format("%n%s", content)
     }

@@ -1,8 +1,8 @@
 package top.bettercode.logging.operation
 
-import top.bettercode.logging.RequestLoggingConfig
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.springframework.http.HttpHeaders
+import top.bettercode.logging.RequestLoggingConfig
 import java.time.temporal.ChronoUnit
 
 /**
@@ -49,7 +49,10 @@ open class Operation(
     open var response: OperationResponse = OperationResponse()
 ) {
 
-    fun toString(config: RequestLoggingConfig): String {
+    fun toString(
+        config: RequestLoggingConfig,
+        decrypt: ((ByteArray) -> ByteArray)? = null
+    ): String {
         val originHeaders = request.headers
         val originParameters = request.parameters
         val originParts = request.parts
@@ -114,7 +117,7 @@ open class Operation(
         response.stackTrace =
             if (config.includeTrace || originStackTrace.isBlank()) originStackTrace else "unrecorded"
 
-        val log = HttpOperation.toString(this, config.format)
+        val log = HttpOperation.toString(this, config.format, decrypt)
 
         request.headers = originHeaders
         request.parameters = originParameters
