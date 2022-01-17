@@ -207,10 +207,22 @@ open class GeneratorExtension(
     }
 
     val sqlDDLOutput: String
-        get() = "$sqlOutput/ddl"
+        get() {
+            val module = pumlSrc.substringAfter("puml/")
+            return if (module != "src") {
+                "$sqlOutput/ddl-$module"
+            } else
+                "$sqlOutput/ddl"
+        }
 
     private val sqlUpdateOutput: String
-        get() = sqlOutput
+        get() {
+            val module = pumlSrc.substringAfter("puml/")
+            return if (module != "src") {
+                "$sqlOutput/update-$module"
+            } else
+                "$sqlOutput/update"
+        }
 
     private fun findUpPath(file: File): File? {
         val parentFile = file.absoluteFile.parentFile
