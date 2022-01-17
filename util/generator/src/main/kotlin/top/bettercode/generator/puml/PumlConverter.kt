@@ -420,7 +420,7 @@ object PumlConverter {
         MysqlToDDL.useForeignKey = extension.useForeignKey
         OracleToDDL.useForeignKey = extension.useForeignKey
         extension.pumlSqlUpdateOutputFile().printWriter().use { pw ->
-            val deleteTablesWhenUpdate = extension.deleteTablesWhenUpdate
+            val deleteTablesWhenUpdate = extension.dropTablesWhenUpdate
             val databaseFile = extension.file(extension.pumlDatabase + "/database.puml")
 
             val allTables = mutableListOf<Table>()

@@ -97,7 +97,11 @@ open class GeneratorExtension(
     /**
      * 更新Sql时生成删除表语句
      */
-    var deleteTablesWhenUpdate: Boolean = false,
+    var dropTablesWhenUpdate: Boolean = false,
+    /**
+     * 更新Sql时生成删除字段语句
+     */
+    var dropColumnsWhenUpdate: Boolean = false,
     /**
      * SQL更新时，根据什么更新
      */
