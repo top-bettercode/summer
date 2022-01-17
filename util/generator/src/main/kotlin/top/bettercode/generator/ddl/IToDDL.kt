@@ -1,5 +1,6 @@
 package top.bettercode.generator.ddl
 
+import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Table
 import java.io.File
 import java.io.PrintWriter
@@ -29,7 +30,8 @@ interface IToDDL {
 
     fun toDDL(tables: List<Table>, out: File)
 
-    fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: PrintWriter, deleteTablesWhenUpdate: Boolean = false)
+    fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: PrintWriter,
+                    extension: GeneratorExtension)
 
     fun appendTable(table: Table, pw: PrintWriter)
 }

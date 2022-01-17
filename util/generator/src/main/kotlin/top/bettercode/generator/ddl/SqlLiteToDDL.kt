@@ -1,5 +1,6 @@
 package top.bettercode.generator.ddl
 
+import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.database.entity.Table
 import java.io.PrintWriter
@@ -12,7 +13,7 @@ object SqlLiteToDDL : ToDDL() {
         oldTables: List<Table>,
         tables: List<Table>,
         out: PrintWriter,
-        deleteTablesWhenUpdate: Boolean
+        extension: GeneratorExtension
     ) {
 
     }

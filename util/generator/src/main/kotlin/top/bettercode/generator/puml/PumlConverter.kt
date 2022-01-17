@@ -438,7 +438,7 @@ object PumlConverter {
                                     extension,
                                     databaseFile,
                                     tables.map { it.tableName }.toTypedArray()
-                                ), tables, pw, deleteTablesWhenUpdate
+                                ), tables, pw, extension
                             )
                             top.bettercode.generator.DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
                                 if (deleteTablesWhenUpdate) oldTables(
@@ -448,7 +448,7 @@ object PumlConverter {
                                     extension,
                                     databaseFile,
                                     tables.map { it.tableName }.toTypedArray()
-                                ), tables, pw, deleteTablesWhenUpdate
+                                ), tables, pw, extension
                             )
                             top.bettercode.generator.DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
                                 if (deleteTablesWhenUpdate) oldTables(
@@ -458,7 +458,7 @@ object PumlConverter {
                                     extension,
                                     databaseFile,
                                     tables.map { it.tableName }.toTypedArray()
-                                ), tables, pw, deleteTablesWhenUpdate
+                                ), tables, pw, extension
                             )
                             else -> {
                                 throw IllegalArgumentException("不支持的数据库")
@@ -479,7 +479,7 @@ object PumlConverter {
                                 extension,
                                 databaseFile,
                                 tables.map { it.tableName }.toTypedArray()
-                            ), tables, pw, deleteTablesWhenUpdate
+                            ), tables, pw, extension
                         )
                         top.bettercode.generator.DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
                             if (deleteTablesWhenUpdate) oldTables(
@@ -489,7 +489,7 @@ object PumlConverter {
                                 extension,
                                 databaseFile,
                                 tables.map { it.tableName }.toTypedArray()
-                            ), tables, pw, deleteTablesWhenUpdate
+                            ), tables, pw, extension
                         )
                         top.bettercode.generator.DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
                             if (deleteTablesWhenUpdate) oldTables(
@@ -499,7 +499,7 @@ object PumlConverter {
                                 extension,
                                 databaseFile,
                                 tables.map { it.tableName }.toTypedArray()
-                            ), tables, pw, deleteTablesWhenUpdate
+                            ), tables, pw, extension
                         )
                         else -> {
                             throw IllegalArgumentException("不支持的数据库")

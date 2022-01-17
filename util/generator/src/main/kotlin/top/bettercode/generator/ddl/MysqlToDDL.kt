@@ -1,5 +1,6 @@
 package top.bettercode.generator.ddl
 
+import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Table
 import java.io.PrintWriter
 
@@ -11,12 +12,12 @@ object MysqlToDDL : ToDDL() {
         oldTables: List<Table>,
         tables: List<Table>,
         out: PrintWriter,
-        deleteTablesWhenUpdate: Boolean
+        extension: GeneratorExtension
     ) {
         if (tables != oldTables) {
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
-            if (deleteTablesWhenUpdate)
+            if (extension.deleteTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).forEach {
                     out.println("$commentPrefix DROP $it")
                     out.println("DROP TABLE IF EXISTS $quote$it$quote;")
@@ -59,9 +60,10 @@ object MysqlToDDL : ToDDL() {
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames.toSet()
-                        dropColumnNames.forEach {
-                            lines.add("ALTER TABLE $quote$tableName$quote DROP COLUMN $quote$it$quote;")
-                        }
+                        if (extension.deleteTablesWhenUpdate)
+                            dropColumnNames.forEach {
+                                lines.add("ALTER TABLE $quote$tableName$quote DROP COLUMN $quote$it$quote;")
+                            }
                         dropFk(oldColumns, dropColumnNames, lines, tableName)
                         val newColumnNames = columnNames - oldColumnNames.toSet()
                         columns.forEach { column ->
@@ -91,7 +93,8 @@ object MysqlToDDL : ToDDL() {
                                 }
                             }
                         }
-                        updateIndexes(oldTable, table, lines, dropColumnNames)
+                        if (extension.queryIndex)
+                            updateIndexes(oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
                             out.println("$commentPrefix $tableName")
                             lines.forEach { out.println(it) }
