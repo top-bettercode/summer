@@ -17,7 +17,7 @@ object MysqlToDDL : ToDDL() {
         if (tables != oldTables) {
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
-            if (extension.deleteTablesWhenUpdate)
+            if (extension.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).forEach {
                     out.println("$commentPrefix DROP $it")
                     out.println("DROP TABLE IF EXISTS $quote$it$quote;")
@@ -60,7 +60,7 @@ object MysqlToDDL : ToDDL() {
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames.toSet()
-                        if (extension.deleteTablesWhenUpdate)
+                        if (extension.dropColumnsWhenUpdate)
                             dropColumnNames.forEach {
                                 lines.add("ALTER TABLE $quote$tableName$quote DROP COLUMN $quote$it$quote;")
                             }

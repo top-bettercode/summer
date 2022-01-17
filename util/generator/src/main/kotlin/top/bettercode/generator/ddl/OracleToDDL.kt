@@ -18,7 +18,7 @@ object OracleToDDL : ToDDL() {
         if (tables != oldTables) {
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
-            if (extension.deleteTablesWhenUpdate)
+            if (extension.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).forEach { tableName ->
                     out.println("$commentPrefix DROP $tableName")
                     if (oldTables.find { it.tableName == tableName }!!.sequenceStartWith != null)
@@ -52,7 +52,7 @@ object OracleToDDL : ToDDL() {
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames.toSet()
-                        if (extension.deleteTablesWhenUpdate) {
+                        if (extension.dropColumnsWhenUpdate) {
                             if (dropColumnNames.isNotEmpty()) {
                                 lines.add(
                                     "ALTER TABLE $quote$tableName$quote DROP (${

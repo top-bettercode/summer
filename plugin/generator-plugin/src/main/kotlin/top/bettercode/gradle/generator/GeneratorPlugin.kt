@@ -51,8 +51,11 @@ class GeneratorPlugin : Plugin<Project> {
             extension.debug = (findProperty(project, "debug"))?.toBoolean() ?: false
             extension.projectPackage = (findProperty(project, "project-package"))?.toBoolean()
                 ?: false
-            extension.deleteTablesWhenUpdate =
-                (findProperty(project, "deleteTablesWhenUpdate"))?.toBoolean()
+            extension.dropTablesWhenUpdate =
+                (findProperty(project, "dropTablesWhenUpdate"))?.toBoolean()
+                    ?: false
+            extension.dropColumnsWhenUpdate =
+                (findProperty(project, "dropColumnsWhenUpdate"))?.toBoolean()
                     ?: false
             extension.useJSR310Types =
                 (findProperty(project, "useJSR310Types"))?.toBoolean() ?: false
