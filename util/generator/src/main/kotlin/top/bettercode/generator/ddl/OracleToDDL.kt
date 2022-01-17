@@ -1,5 +1,6 @@
 package top.bettercode.generator.ddl
 
+import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.database.entity.Table
 import java.io.PrintWriter
@@ -12,12 +13,12 @@ object OracleToDDL : ToDDL() {
         oldTables: List<Table>,
         tables: List<Table>,
         out: PrintWriter,
-        deleteTablesWhenUpdate: Boolean
+        extension: GeneratorExtension
     ) {
         if (tables != oldTables) {
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
-            if (deleteTablesWhenUpdate)
+            if (extension.deleteTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).forEach { tableName ->
                     out.println("$commentPrefix DROP $tableName")
                     if (oldTables.find { it.tableName == tableName }!!.sequenceStartWith != null)
@@ -51,16 +52,18 @@ object OracleToDDL : ToDDL() {
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames.toSet()
-                        if (dropColumnNames.isNotEmpty()) {
-                            lines.add(
-                                "ALTER TABLE $quote$tableName$quote DROP (${
-                                    dropColumnNames.joinToString(
-                                        ","
-                                    ) { "$quote$it$quote" }
-                                });"
-                            )
+                        if (extension.deleteTablesWhenUpdate) {
+                            if (dropColumnNames.isNotEmpty()) {
+                                lines.add(
+                                    "ALTER TABLE $quote$tableName$quote DROP (${
+                                        dropColumnNames.joinToString(
+                                            ","
+                                        ) { "$quote$it$quote" }
+                                    });"
+                                )
+                            }
+                            dropFk(oldColumns, dropColumnNames, lines, tableName)
                         }
-                        dropFk(oldColumns, dropColumnNames, lines, tableName)
                         val newColumnNames = columnNames - oldColumnNames.toSet()
                         columns.forEach { column ->
                             val columnName = column.columnName
@@ -94,7 +97,8 @@ object OracleToDDL : ToDDL() {
                                 lines.add("ALTER TABLE $quote$tableName$quote ADD PRIMARY KEY(\"$quote${primaryKey.columnName}$quote\" )")
                         }
 
-                        updateIndexes(oldTable, table, lines, dropColumnNames)
+                        if (extension.queryIndex)
+                            updateIndexes(oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
                             out.println("$commentPrefix $tableName")
                             lines.forEach { out.println(it) }
