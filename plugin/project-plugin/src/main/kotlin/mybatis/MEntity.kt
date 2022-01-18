@@ -1,5 +1,6 @@
 import top.bettercode.generator.DataType
 import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.InnerInterface
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
 
@@ -155,6 +156,23 @@ class MEntity : MModuleJavaGenerator() {
                     +"    \"${if (i > 0) ", " else ""}${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
                 }
                 +"    '}';"
+            }
+
+            val innerInterface = InnerInterface(JavaType("${className}Columns"))
+            innerInterface(innerInterface)
+            innerInterface.apply {
+                visibility = JavaVisibility.PUBLIC
+                columns.forEach {
+                    field(it.javaName, JavaType.stringInstance, "\"${it.columnName}\"") {
+                        visibility = JavaVisibility.DEFAULT
+                        if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+                            javadoc {
+                                +"/**"
+                                +" * ${getRemark(it)}"
+                                +" */"
+                            }
+                    }
+                }
             }
         }
     }
