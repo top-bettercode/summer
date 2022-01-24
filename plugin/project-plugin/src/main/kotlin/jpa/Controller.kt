@@ -45,11 +45,12 @@ open class Controller : ModuleJavaGenerator() {
                     parameter {
                         type = JavaType("org.springframework.data.domain.Pageable")
                         name = "pageable"
+                        annotation("@org.springframework.data.web.PageableDefault${pageDefaultSort()}")
                     }
                     import("org.springframework.data.domain.Example")
                     import("org.springframework.data.domain.Page")
                     +"Example<${className}> example = Example.of(${entityName}); "
-                    +"Page<$className> results = ${projectEntityName}Service.findAll(example, pageable${sort()});"
+                    +"Page<$className> results = ${projectEntityName}Service.findAll(example, pageable);"
                     +"return ok(results);"
                 }
 
@@ -166,6 +167,7 @@ open class Controller : ModuleJavaGenerator() {
         }
     }
 
+    //, Sort.by(Direction.DESC, AcAreaProperties.createdDate, AcAreaProperties.areaId)
     private fun TopLevelClass.sort(): String {
         var sort = ""
         if (columns.any { it.javaName == "createdDate" } || !compositePrimaryKey) {
@@ -181,6 +183,26 @@ open class Controller : ModuleJavaGenerator() {
             } else if (!compositePrimaryKey) {
                 sort += "${className}Properties.${primaryKeyName})"
             }
+        }
+        return sort
+    }
+
+    //(sort = {AcAreaProperties.createdDate, AcAreaProperties.areaId}, direction = Direction.DESC)
+    private fun TopLevelClass.pageDefaultSort(): String {
+        var sort = ""
+        if (columns.any { it.javaName == "createdDate" } || !compositePrimaryKey) {
+            import(propertiesType)
+            import("org.springframework.data.domain.Sort.Direction")
+            sort = "(sort = {"
+            if (columns.any { it.javaName == "createdDate" }) {
+                sort += "${className}Properties.createdDate"
+                if (!compositePrimaryKey) {
+                    sort += ", ${className}Properties.${primaryKeyName}}"
+                }
+            } else if (!compositePrimaryKey) {
+                sort += "${className}Properties.${primaryKeyName}}"
+            }
+            sort += ", direction = Direction.DESC)"
         }
         return sort
     }

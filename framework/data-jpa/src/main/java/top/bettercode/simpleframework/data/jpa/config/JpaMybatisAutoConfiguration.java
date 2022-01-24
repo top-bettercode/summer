@@ -47,13 +47,14 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   private final Interceptor[] interceptors;
 
-  private final TypeHandler[] typeHandlers;
+  private final TypeHandler<?>[] typeHandlers;
 
   private final ResourceLoader resourceLoader;
 
   private final DatabaseIdProvider databaseIdProvider;
 
 
+  @SuppressWarnings("rawtypes")
   public JpaMybatisAutoConfiguration(
       MybatisProperties properties, ObjectProvider<Interceptor[]> interceptorsProvider,
       ObjectProvider<TypeHandler[]> typeHandlersProvider,
