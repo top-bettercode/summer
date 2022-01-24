@@ -28,6 +28,8 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
   @MybatisTemplate
   List<User> findByMybatis();
 
+  Page<User> findByMybatis(Pageable pageable);
+
   List<User> findByMybatis2(String firstname, String lastname);
 
   List<User> findByMybatis2(Map<String, String> param);

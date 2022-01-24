@@ -1,7 +1,5 @@
 package top.bettercode.simpleframework.data.test.test;
 
-import top.bettercode.simpleframework.data.test.domain.User;
-import top.bettercode.simpleframework.data.test.repository.UserRepository;
 import com.github.pagehelper.PageHelper;
 import java.util.HashMap;
 import java.util.List;
@@ -18,9 +16,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import top.bettercode.simpleframework.data.test.domain.User;
+import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -57,6 +58,22 @@ public class MybatisTest {
     List<User> users = repository.findByMybatis();
     System.err.println(users);
     org.junit.jupiter.api.Assertions.assertEquals(3, users.size());
+  }
+
+  @Test
+  public void findByPage() {
+    Page<User> users = repository.findAll(PageRequest.of(0, 1));
+//    Page<User> users = repository.findAll(Pageable.unpaged());
+    System.err.println("===========" + users.getTotalElements());
+    System.err.println("===========" + users.getContent().size());
+  }
+
+  @Test
+  public void findByMybatisPage() {
+//    Page<User> users = repository.findByMybatis(PageRequest.of(0, 1));
+    Page<User> users = repository.findByMybatis(Pageable.unpaged());
+    System.err.println("===========" + users.getTotalElements());
+    System.err.println("===========" + users.getContent().size());
   }
 
   @Test
