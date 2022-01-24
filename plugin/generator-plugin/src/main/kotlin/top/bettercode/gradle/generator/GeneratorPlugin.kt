@@ -58,7 +58,7 @@ class GeneratorPlugin : Plugin<Project> {
                 (findProperty(project, "dropColumnsWhenUpdate"))?.toBoolean()
                     ?: false
             extension.useJSR310Types =
-                (findProperty(project, "useJSR310Types"))?.toBoolean() ?: false
+                (findProperty(project, "useJSR310Types"))?.toBoolean() ?: true
             extension.replaceAll = (findProperty(project, "replaceAll"))?.toBoolean() ?: false
             extension.useForeignKey = (findProperty(project, "useForeignKey"))?.toBoolean() ?: false
             extension.sqlQuote = (findProperty(project, "sqlQuote"))?.toBoolean() ?: true
