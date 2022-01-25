@@ -87,6 +87,10 @@ class AutodocPlugin : Plugin<Project> {
             task.dependsOn("asciidoc")
             configInputOutput(task, group, autodoc, project)
             task.doLast {
+                AutodocPlugin::class.java.getResourceAsStream("/favicon.ico")?.copyTo(File(
+                    (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
+                    "/META-INF/resources/favicon.ico"
+                ).apply { parentFile.mkdirs() }.outputStream())
                 AsciidocGenerator.html(
                     project.extensions.findByType(
                         AutodocExtension::class.java
