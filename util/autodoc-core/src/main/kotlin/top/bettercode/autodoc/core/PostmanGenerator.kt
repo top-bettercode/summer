@@ -138,7 +138,14 @@ object PostmanGenerator : AbstractbGenerator() {
         when {
             request.contentExt.isNotEmpty() -> return Body(
                 "raw",
-                raw = request.prettyContentAsString
+                raw = request.prettyContentAsString,
+                options = when {
+                    MediaType.APPLICATION_JSON
+                        .isCompatibleWith(request.headers.contentType) -> Body.rawLanguage()
+                    MediaType.APPLICATION_XML
+                        .isCompatibleWith(request.headers.contentType) -> Body.rawLanguage("xml")
+                    else -> Body.rawLanguage("text")
+                }
             )
             request.partsExt.isNotEmpty() -> {
                 return Body(
