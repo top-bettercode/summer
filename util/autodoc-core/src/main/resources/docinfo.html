@@ -31,7 +31,6 @@
             }
         }
         const apiHost = window.location.href.substr(0, indexOf);
-        console.info(apiHost);
         [].slice.call(document.getElementsByTagName("td")).forEach(function (item) {
             item.setAttribute("title", item.innerText.replace("{{apiHost}}", apiHost));
         });
