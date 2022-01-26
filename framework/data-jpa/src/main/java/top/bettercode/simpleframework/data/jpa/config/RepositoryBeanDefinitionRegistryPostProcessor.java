@@ -66,7 +66,7 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
         //dataSource
         BaseDataSourceProperties properties = entry.getValue();
         boolean primary = "primary".equals(entry.getKey());
-        EnableJpaExtRepositories jpaExtRepositories = properties.getEnableJpaExtRepositoriesAnnotationConfiguration()
+        EnableJpaExtRepositories jpaExtRepositories = properties.getExtConfigClass()
             .getAnnotation(EnableJpaExtRepositories.class);
         String dataSourceBeanName = primary ? "dataSource" : entry.getKey() + "DataSource";
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
