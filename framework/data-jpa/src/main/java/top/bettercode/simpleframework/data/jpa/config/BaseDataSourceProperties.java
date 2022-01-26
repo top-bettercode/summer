@@ -22,7 +22,7 @@ public class BaseDataSourceProperties {
   /**
    * 配置 {@link EnableJpaExtRepositories @EnableJpaExtRepositories} 的类
    */
-  private Class<?> enableJpaExtRepositoriesAnnotationConfiguration;
+  private Class<?> extConfigClass;
 
   public String getUrl() {
     return url;
@@ -48,12 +48,12 @@ public class BaseDataSourceProperties {
     this.password = password;
   }
 
-  public Class<?> getEnableJpaExtRepositoriesAnnotationConfiguration() {
-    return enableJpaExtRepositoriesAnnotationConfiguration;
+  public Class<?> getExtConfigClass() {
+    return extConfigClass;
   }
 
-  public void setEnableJpaExtRepositoriesAnnotationConfiguration(
-      Class<?> enableJpaExtRepositoriesAnnotationConfiguration) {
-    this.enableJpaExtRepositoriesAnnotationConfiguration = enableJpaExtRepositoriesAnnotationConfiguration;
+  public void setExtConfigClass(
+      Class<?> extConfigClass) {
+    this.extConfigClass = extConfigClass;
   }
 }
