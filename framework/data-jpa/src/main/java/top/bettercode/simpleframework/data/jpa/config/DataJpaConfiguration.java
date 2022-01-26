@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.data.jpa.config;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.MessageSource;
@@ -16,6 +17,12 @@ import top.bettercode.simpleframework.data.jpa.IbatisErrorHandler;
  */
 @Configuration(proxyBeanMethods = false)
 public class DataJpaConfiguration {
+
+  @Bean
+  @ConditionalOnProperty(prefix = "spring.multiple-datasources", name = "enabled")
+  public RepositoryBeanDefinitionRegistryPostProcessor repositoryBeanDefinitionRegistryPostProcessor() {
+    return new RepositoryBeanDefinitionRegistryPostProcessor();
+  }
 
   @Bean("jpaExtProperties")
   @ConditionalOnMissingBean
