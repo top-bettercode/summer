@@ -1,0 +1,24 @@
+{
+  "groups": [
+    {
+      "name": "logging",
+      "type": "top.bettercode.logging.logback.Logback2LoggingSystem"
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.multiple-datasources.enabled",
+      "sourceType": "top.bettercode.simpleframework.data.jpa.config.DataJpaConfiguration",
+      "defaultValue": "false",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "name": "spring.datasources",
+      "type": "java.util.Map<java.lang.String,top.bettercode.simpleframework.data.jpa.config.BaseDataSourceProperties>",
+      "sourceType": "top.bettercode.simpleframework.data.jpa.config.RepositoryBeanDefinitionRegistryPostProcessor"
+    }
+  ],
+  "hints": [
+  ]
+}
+
