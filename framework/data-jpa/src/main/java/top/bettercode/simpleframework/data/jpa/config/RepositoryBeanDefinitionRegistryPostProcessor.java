@@ -2,14 +2,20 @@ package top.bettercode.simpleframework.data.jpa.config;
 
 import com.github.pagehelper.PageInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.hibernate.boot.model.naming.ImplicitNamingStrategy;
+import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
+import org.hibernate.cfg.AvailableSettings;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
@@ -17,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -25,8 +32,10 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
+import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -35,9 +44,11 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.EnableJpaExtRepositories;
+import org.springframework.orm.hibernate5.SpringBeanContainer;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -107,14 +118,32 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
               HibernateProperties hibernateProperties = beanFactory.getBean(
                   HibernateProperties.class);
               JpaProperties jpaProperties = beanFactory.getBean(JpaProperties.class);
+              List<String> mappingResourceList = jpaProperties.getMappingResources();
+              String[] mappingResources = (!ObjectUtils.isEmpty(mappingResourceList)
+                  ? StringUtils.toStringArray(mappingResourceList) : null);
 
-              return builder
-                  .dataSource(dataSource)
-                  .properties(new LinkedHashMap<>(hibernateProperties
+              ObjectProvider<PhysicalNamingStrategy> physicalNamingStrategy = beanFactory.getBeanProvider(
+                  PhysicalNamingStrategy.class);
+              ObjectProvider<ImplicitNamingStrategy> implicitNamingStrategy = beanFactory.getBeanProvider(
+                  ImplicitNamingStrategy.class);
+
+              List<HibernatePropertiesCustomizer> hibernatePropertiesCustomizers = determineHibernatePropertiesCustomizers(
+                  physicalNamingStrategy.getIfAvailable(), implicitNamingStrategy.getIfAvailable(),
+                  beanFactory,
+                  beanFactory.getBeanProvider(HibernatePropertiesCustomizer.class).orderedStream()
+                      .collect(Collectors.toList()));
+
+              LinkedHashMap<String, Object> vendorProperties = new LinkedHashMap<>(
+                  hibernateProperties
                       .determineHibernateProperties(jpaProperties.getProperties(),
                           new HibernateSettings()
-                      )))
+                              .hibernatePropertiesCustomizers(hibernatePropertiesCustomizers)
+                      ));
+              return builder
+                  .dataSource(dataSource)
+                  .properties(vendorProperties)
                   .packages(jpaExtRepositories.basePackages())
+                  .mappingResources(mappingResources)
                   .build();
             });
         if (primary) {
@@ -134,7 +163,13 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
               EntityManagerFactory entityManagerFactory = beanFactory.getBean(
                   entityManagerFactoryBeanName,
                   EntityManagerFactory.class);
-              return new JpaTransactionManager(entityManagerFactory);
+              JpaTransactionManager jpaTransactionManager = new JpaTransactionManager(
+                  entityManagerFactory);
+              ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers = beanFactory.getBeanProvider(
+                  TransactionManagerCustomizers.class);
+              transactionManagerCustomizers.ifAvailable(
+                  (customizers) -> customizers.customize(jpaTransactionManager));
+              return jpaTransactionManager;
             });
         if (primary) {
           beanDefinitionBuilder.setPrimary(primary);
@@ -191,6 +226,51 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
       }
     }
   }
+
+  private List<HibernatePropertiesCustomizer> determineHibernatePropertiesCustomizers(
+      PhysicalNamingStrategy physicalNamingStrategy, ImplicitNamingStrategy implicitNamingStrategy,
+      ConfigurableListableBeanFactory beanFactory,
+      List<HibernatePropertiesCustomizer> hibernatePropertiesCustomizers) {
+    List<HibernatePropertiesCustomizer> customizers = new ArrayList<>();
+    if (ClassUtils.isPresent("org.hibernate.resource.beans.container.spi.BeanContainer",
+        getClass().getClassLoader())) {
+      customizers.add((properties) -> properties.put(AvailableSettings.BEAN_CONTAINER,
+          new SpringBeanContainer(beanFactory)));
+    }
+    if (physicalNamingStrategy != null || implicitNamingStrategy != null) {
+      customizers.add(
+          new NamingStrategiesHibernatePropertiesCustomizer(physicalNamingStrategy,
+              implicitNamingStrategy));
+    }
+    customizers.addAll(hibernatePropertiesCustomizers);
+    return customizers;
+  }
+
+  private static class NamingStrategiesHibernatePropertiesCustomizer implements
+      HibernatePropertiesCustomizer {
+
+    private final PhysicalNamingStrategy physicalNamingStrategy;
+
+    private final ImplicitNamingStrategy implicitNamingStrategy;
+
+    NamingStrategiesHibernatePropertiesCustomizer(PhysicalNamingStrategy physicalNamingStrategy,
+        ImplicitNamingStrategy implicitNamingStrategy) {
+      this.physicalNamingStrategy = physicalNamingStrategy;
+      this.implicitNamingStrategy = implicitNamingStrategy;
+    }
+
+    @Override
+    public void customize(Map<String, Object> hibernateProperties) {
+      if (this.physicalNamingStrategy != null) {
+        hibernateProperties.put("hibernate.physical_naming_strategy", this.physicalNamingStrategy);
+      }
+      if (this.implicitNamingStrategy != null) {
+        hibernateProperties.put("hibernate.implicit_naming_strategy", this.implicitNamingStrategy);
+      }
+    }
+
+  }
+
 
   private SqlSessionFactory getSqlSessionFactory(DataSource dataSource,
       MybatisProperties properties,
