@@ -121,6 +121,7 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
           beanDefinitionBuilder.setPrimary(primary);
           factory.removeBeanDefinition(entityManagerFactoryBeanName);
         }
+        beanDefinitionBuilder.addDependsOn(dataSourceBeanName);
         beanDefinition = beanDefinitionBuilder.getBeanDefinition();
         beanDefinition.setSynthetic(true);
         beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
@@ -139,6 +140,7 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
           beanDefinitionBuilder.setPrimary(primary);
           factory.removeBeanDefinition(transactionManagerBeanName);
         }
+        beanDefinitionBuilder.addDependsOn(entityManagerFactoryBeanName);
         beanDefinition = beanDefinitionBuilder.getBeanDefinition();
         beanDefinition.setSynthetic(true);
         beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
@@ -159,6 +161,7 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
           beanDefinitionBuilder.setPrimary(primary);
           factory.removeBeanDefinition(sqlSessionFactoryBeanName);
         }
+        beanDefinitionBuilder.addDependsOn(dataSourceBeanName);
         beanDefinition = beanDefinitionBuilder.getBeanDefinition();
         beanDefinition.setSynthetic(true);
         beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
@@ -180,6 +183,7 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
           beanDefinitionBuilder.setPrimary(primary);
           factory.removeBeanDefinition(sqlSessionTemplateBeanName);
         }
+        beanDefinitionBuilder.addDependsOn(sqlSessionFactoryBeanName);
         beanDefinition = beanDefinitionBuilder.getBeanDefinition();
         beanDefinition.setSynthetic(true);
         beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
