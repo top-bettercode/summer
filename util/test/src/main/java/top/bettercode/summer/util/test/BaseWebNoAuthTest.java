@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.context.WebApplicationContext;
 import top.bettercode.autodoc.gen.Autodoc;
@@ -155,16 +157,20 @@ public abstract class BaseWebNoAuthTest {
   protected ObjectMapper objectMapper;
 
   @BeforeEach
-  public void setup() throws Exception{
+  public void setup() throws Exception {
     //--------------------------------------------
     requestLoggingProperties.setForceRecord(true);
     requestLoggingProperties.setIncludeRequestBody(true);
     requestLoggingProperties.setIncludeResponseBody(true);
     requestLoggingProperties.setFormat(true);
-    mockMvc = webAppContextSetup(context)
+    mockMvc = mockMvcBuilder().build();
+  }
+
+  @NotNull
+  protected DefaultMockMvcBuilder mockMvcBuilder() {
+    return webAppContextSetup(context)
         .addFilter(autoDocFilter)
-        .addFilter(requestLoggingFilter)
-        .build();
+        .addFilter(requestLoggingFilter);
   }
 
   private String getFileName(MvcResult result) throws UnsupportedEncodingException {
