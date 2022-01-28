@@ -49,8 +49,7 @@ open class Controller : ModuleJavaGenerator() {
                     }
                     import("org.springframework.data.domain.Example")
                     import("org.springframework.data.domain.Page")
-                    +"Example<${className}> example = Example.of(${entityName}); "
-                    +"Page<$className> results = ${projectEntityName}Service.findAll(example, pageable);"
+                    +"Page<$className> results = ${projectEntityName}Service.findAll(${entityName}.example(), pageable);"
                     +"return ok(results);"
                 }
 
