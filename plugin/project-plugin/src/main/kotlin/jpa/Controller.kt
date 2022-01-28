@@ -93,8 +93,7 @@ open class Controller : ModuleJavaGenerator() {
                             name = entityName
                         }
 
-                        +"Example<${className}> example = Example.of(${entityName}); "
-                        +"Iterable<$className> results = ${projectEntityName}Service.findAll(example${sort()});"
+                        +"Iterable<$className> results = ${projectEntityName}Service.findAll(${entityName}.example()${sort()});"
                         import("top.bettercode.util.excel.ExcelExport")
                         +"ExcelExport.export(request, response, \"$remarks\", excelExport -> excelExport.sheet(\"$remarks\").setData(results, excelFields));"
                     }
