@@ -34,20 +34,6 @@ class Entity : ModuleJavaGenerator() {
             }
             serialVersionUID()
 
-            //constructor no args
-            constructor {}
-
-            field("TABLE_NAME", JavaType.stringInstance, "\"${tableName}\"") {
-                visibility = JavaVisibility.PUBLIC
-                isStatic = true
-                isFinal = true
-                javadoc {
-                    +"/**"
-                    +" * 对应数据库表名"
-                    +" */"
-                }
-            }
-
             //创建实例
             method("of", entityType) {
                 this.isStatic = true
@@ -111,6 +97,20 @@ class Entity : ModuleJavaGenerator() {
                     +" */"
                 }
                 +"return Example.of(this, matcher);"
+            }
+
+            //constructor no args
+            constructor {}
+
+            field("TABLE_NAME", JavaType.stringInstance, "\"${tableName}\"") {
+                visibility = JavaVisibility.PUBLIC
+                isStatic = true
+                isFinal = true
+                javadoc {
+                    +"/**"
+                    +" * 对应数据库表名"
+                    +" */"
+                }
             }
 
             if (hasPrimaryKey) {
@@ -326,6 +326,19 @@ class Entity : ModuleJavaGenerator() {
                         }
                         +"return new ${className}Key();"
                     }
+                    primaryKeys.forEach {
+                        method(it.javaName, primaryKeyType, Parameter(it.javaName, it.javaType)) {
+                            javadoc {
+                                +"/**"
+                                +" * ${getParamRemark(it)}"
+                                +" * @return ${remarks}实例"
+                                +" */"
+                            }
+                            +"this.${it.javaName} = ${it.javaName};"
+                            +"return this;"
+                        }
+                    }
+
 
                     //constructor no args
                     constructor {}
@@ -344,18 +357,6 @@ class Entity : ModuleJavaGenerator() {
                         primaryKeys.forEach { column ->
                             parameter(column.javaType, column.javaName)
                             +"this.${column.javaName} = ${column.javaName};"
-                        }
-                    }
-                    primaryKeys.forEach {
-                        method(it.javaName, primaryKeyType, Parameter(it.javaName, it.javaType)) {
-                            javadoc {
-                                +"/**"
-                                +" * ${getParamRemark(it)}"
-                                +" * @return ${remarks}实例"
-                                +" */"
-                            }
-                            +"this.${it.javaName} = ${it.javaName};"
-                            +"return this;"
                         }
                     }
 
