@@ -7,13 +7,13 @@
   ],
   "properties": [
     {
-      "name": "spring.multiple-datasources.enabled",
+      "name": "summer.datasource.multi.enabled",
       "sourceType": "top.bettercode.simpleframework.data.jpa.config.DataJpaConfiguration",
       "defaultValue": "false",
       "type": "java.lang.Boolean"
     },
     {
-      "name": "spring.datasources",
+      "name": "summer.datasource.multi.datasources",
       "type": "java.util.Map<java.lang.String,top.bettercode.simpleframework.data.jpa.config.BaseDataSourceProperties>",
       "sourceType": "top.bettercode.simpleframework.data.jpa.config.RepositoryBeanDefinitionRegistryPostProcessor"
     }

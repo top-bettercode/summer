@@ -19,7 +19,7 @@ import top.bettercode.simpleframework.data.jpa.IbatisErrorHandler;
 public class DataJpaConfiguration {
 
   @Bean
-  @ConditionalOnProperty(prefix = "spring.multiple-datasources", name = "enabled")
+  @ConditionalOnProperty(prefix = "summer.datasource.multi", name = "enabled")
   public RepositoryBeanDefinitionRegistryPostProcessor repositoryBeanDefinitionRegistryPostProcessor() {
     return new RepositoryBeanDefinitionRegistryPostProcessor();
   }
