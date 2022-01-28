@@ -23,7 +23,12 @@ public class BaseDataSourceProperties {
    * 配置 {@link EnableJpaExtRepositories @EnableJpaExtRepositories} 的类
    */
   private Class<?> extConfigClass;
+  /**
+   * Locations of MyBatis mapper files.
+   */
+  private String[] mapperLocations;
 
+  //--------------------------------------------
   public String getUrl() {
     return url;
   }
@@ -55,5 +60,13 @@ public class BaseDataSourceProperties {
   public void setExtConfigClass(
       Class<?> extConfigClass) {
     this.extConfigClass = extConfigClass;
+  }
+
+  public String[] getMapperLocations() {
+    return mapperLocations;
+  }
+
+  public void setMapperLocations(String[] mapperLocations) {
+    this.mapperLocations = mapperLocations;
   }
 }
