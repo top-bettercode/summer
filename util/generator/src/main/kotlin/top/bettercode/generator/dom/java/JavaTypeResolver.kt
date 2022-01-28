@@ -183,7 +183,11 @@ object JavaTypeResolver {
     }
 
     fun calculateJavaType(column: Column): JavaType {
-        if (softDeleteAsBoolean && softDeleteColumnName != null && softDeleteColumnName == column.columnName) {
+        if (softDeleteAsBoolean && softDeleteColumnName != null && softDeleteColumnName.equals(
+                column.columnName,
+                true
+            )
+        ) {
             return JavaType("java.lang.Boolean")
         }
         var answer: JavaType

@@ -54,6 +54,7 @@ class Entity : ModuleJavaGenerator() {
                     +" * ExampleMatcher"
                     +" */"
                 }
+                annotation("@javax.persistence.Transient")
             }
 
             if (hasPrimaryKey) {
@@ -527,7 +528,36 @@ class Entity : ModuleJavaGenerator() {
             innerInterface(innerInterface)
             innerInterface.apply {
                 visibility = JavaVisibility.PUBLIC
-                columns.forEach {
+                if (hasPrimaryKey) {
+                    if (compositePrimaryKey) {
+                        primaryKeys.forEach {
+                            field(
+                                it.javaName,
+                                JavaType.stringInstance,
+                                "\"${primaryKeyName}.${it.javaName}\""
+                            ) {
+                                visibility = JavaVisibility.DEFAULT
+                                if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+                                    javadoc {
+                                        +"/**"
+                                        +" * ${getRemark(it)}"
+                                        +" */"
+                                    }
+                            }
+                        }
+                    } else {
+                        field(primaryKeyName, JavaType.stringInstance, "\"${primaryKeyName}\"") {
+                            visibility = JavaVisibility.DEFAULT
+                            if (primaryKey.remarks.isNotBlank() || !primaryKey.columnDef.isNullOrBlank())
+                                javadoc {
+                                    +"/**"
+                                    +" * ${getRemark(primaryKey)}"
+                                    +" */"
+                                }
+                        }
+                    }
+                }
+                otherColumns.forEach {
                     field(it.javaName, JavaType.stringInstance, "\"${it.javaName}\"") {
                         visibility = JavaVisibility.DEFAULT
                         if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
