@@ -46,16 +46,51 @@ class Entity : ModuleJavaGenerator() {
                 }
                 +"return new ${className}();"
             }
+
+            //field
+            field("matcher", JavaType("org.springframework.data.domain.ExampleMatcher")) {
+                javadoc {
+                    +"/**"
+                    +" * ExampleMatcher"
+                    +" */"
+                }
+            }
+
             if (hasPrimaryKey) {
                 method(primaryKeyName, entityType, Parameter(primaryKeyName, primaryKeyType)) {
                     javadoc {
                         +"/**"
                         +" * 设置主键"
                         +" *"
-                        +" * @param $primaryKeyName 主键}"
+                        +" * @param $primaryKeyName 主键"
                         +" * @return ${remarks}实例"
                         +" */"
                     }
+                    +"this.${primaryKeyName} = ${primaryKeyName};"
+                    +"return this;"
+                }
+                method(
+                    primaryKeyName,
+                    entityType,
+                    Parameter(primaryKeyName, primaryKeyType),
+                    Parameter(
+                        "genericPropertyMatcher",
+                        JavaType("org.springframework.data.domain.ExampleMatcher.GenericPropertyMatcher")
+                    )
+                ) {
+                    javadoc {
+                        +"/**"
+                        +" * 设置主键"
+                        +" *"
+                        +" * @param $primaryKeyName 主键"
+                        +" * @param genericPropertyMatcher PropertyMatcher"
+                        +" * @return ${remarks}实例"
+                        +" */"
+                    }
+                    +"if(this.matcher == null){"
+                    +"this.matcher = ExampleMatcher.matching();"
+                    +"}"
+                    +"this.matcher.withMatcher(\"${primaryKeyName}\", genericPropertyMatcher);"
                     +"this.${primaryKeyName} = ${primaryKeyName};"
                     +"return this;"
                 }
@@ -71,6 +106,29 @@ class Entity : ModuleJavaGenerator() {
                     +"this.${it.javaName} = ${it.javaName};"
                     +"return this;"
                 }
+                method(
+                    it.javaName,
+                    entityType,
+                    Parameter(it.javaName, it.javaType),
+                    Parameter(
+                        "genericPropertyMatcher",
+                        JavaType("org.springframework.data.domain.ExampleMatcher.GenericPropertyMatcher")
+                    )
+                ) {
+                    javadoc {
+                        +"/**"
+                        +" * ${getParamRemark(it)}"
+                        +" * @param genericPropertyMatcher PropertyMatcher"
+                        +" * @return ${remarks}实例"
+                        +" */"
+                    }
+                    +"if (this.matcher == null) {"
+                    +"this.matcher = ExampleMatcher.matching();"
+                    +"}"
+                    +"this.matcher.withMatcher(${className}Properties.${it.javaName}, genericPropertyMatcher);"
+                    +"this.${it.javaName} = ${it.javaName};"
+                    +"return this;"
+                }
             }
 
             //example
@@ -83,7 +141,11 @@ class Entity : ModuleJavaGenerator() {
                     +" * @return example实例"
                     +" */"
                 }
+                +"if (this.matcher == null) {"
                 +"return Example.of(this);"
+                +"} else {"
+                +"return Example.of(this, this.matcher);"
+                +"}"
             }
 
             method(
@@ -93,6 +155,7 @@ class Entity : ModuleJavaGenerator() {
             ) {
                 javadoc {
                     +"/**"
+                    +" * @param matcher ExampleMatcher"
                     +" * @return example实例"
                     +" */"
                 }
@@ -249,20 +312,25 @@ class Entity : ModuleJavaGenerator() {
                 +"if (${primaryKeyName} != that.get${primaryKeyName.capitalize()}()) {"
                 +"return false;"
                 +"}"
-                if (otherColumns.isEmpty()) {
+
+                val size = otherColumns.size
+                if (size == 0) {
                     +"return true;"
                 }
-                val size = otherColumns.size
-                otherColumns.forEachIndexed { index, column ->
-                    when (index) {
-                        0 -> {
-                            +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
-                        }
-                        size - 1 -> {
-                            +"    Objects.equals(${column.javaName}, that.${column.javaName});"
-                        }
-                        else -> {
-                            +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                if (size == 1) {
+                    +"return Objects.equals(${otherColumns[0].javaName}, that.${otherColumns[0].javaName});"
+                } else {
+                    otherColumns.forEachIndexed { index, column ->
+                        when (index) {
+                            0 -> {
+                                +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                            }
+                            size - 1 -> {
+                                +"    Objects.equals(${column.javaName}, that.${column.javaName});"
+                            }
+                            else -> {
+                                +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                            }
                         }
                     }
                 }
@@ -313,7 +381,6 @@ class Entity : ModuleJavaGenerator() {
                     }
                     serialVersionUID()
 
-
                     //创建实例
                     method("of", primaryKeyType) {
                         this.isStatic = true
@@ -326,6 +393,7 @@ class Entity : ModuleJavaGenerator() {
                         }
                         +"return new ${className}Key();"
                     }
+
                     primaryKeys.forEach {
                         method(it.javaName, primaryKeyType, Parameter(it.javaName, it.javaType)) {
                             javadoc {
