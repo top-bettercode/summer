@@ -184,6 +184,9 @@ class Entity : ModuleJavaGenerator() {
                 +"if (${primaryKeyName} != that.get${primaryKeyName.capitalize()}()) {"
                 +"return false;"
                 +"}"
+                if (otherColumns.isEmpty()) {
+                    +"return true;"
+                }
                 val size = otherColumns.size
                 otherColumns.forEachIndexed { index, column ->
                     when (index) {
@@ -203,7 +206,15 @@ class Entity : ModuleJavaGenerator() {
             //hashCode
             method("hashCode", JavaType.intPrimitiveInstance) {
                 annotation("@Override")
-                +"return Objects.hash(${columns.joinToString(", ") { it.javaName }});"
+                if (compositePrimaryKey) {
+                    +"return Objects.hash(${
+                        (listOf(primaryKeyName) + otherColumns.map { it.javaName }).joinToString(
+                            ", "
+                        )
+                    });"
+                } else {
+                    +"return Objects.hash(${columns.joinToString(", ") { it.javaName }});"
+                }
             }
 
             //toString
