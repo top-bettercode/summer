@@ -197,6 +197,15 @@ class Entity : ModuleJavaGenerator() {
                         if (primaryKey.autoIncrement) {
                             import("javax.persistence.GenerationType")
                             annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
+                        } else {
+                            val generatorStrategy = table.generatorStrategy
+                            if (generatorStrategy.isNotBlank()) {
+                                import("javax.persistence.GenerationType")
+                                val generator =
+                                    if ("top.bettercode.simpleframework.data.jpa.support.generator.SnowflakeIdGenerator" == generatorStrategy) "Snowflake" else generatorStrategy.capitalize()
+                                annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
+                                annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\")")
+                            }
                         }
                     } else {
                         javadoc {
