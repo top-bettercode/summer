@@ -36,6 +36,7 @@ object PumlConverter {
         var isField = false
         var isUml = false
         var moduleName: String? = null
+        var generatorStrategy = ""
         puml.readLines().forEach {
             if (it.isNotBlank()) {
                 val line = it.trim()
@@ -51,6 +52,11 @@ object PumlConverter {
                     else
                         remarks = line
                 } else if (isField) {
+                    //'GENERATOR_STRATEGY top.bettercode.simpleframework.data.jpa.support.generator.SnowflakeIdGenerator
+                    if (line.startsWith("'GENERATOR_STRATEGY")) {
+                        generatorStrategy = line.substringAfter("'GENERATOR_STRATEGY").trim()
+                    }
+
                     val uniqueMult = line.startsWith("'UNIQUE")
                     if (uniqueMult || line.startsWith("'INDEX")) {
                         val columnNames =
@@ -80,8 +86,8 @@ object PumlConverter {
                             indexes = indexes,
                             pumlColumns = pumlColumns,
                             sequenceStartWith = sequenceStartWith,
-                            moduleName = moduleName
-                                ?: ""
+                            moduleName = moduleName ?: "",
+                            generatorStrategy = generatorStrategy
                         )
                         call(table)
                         tables.add(table)
