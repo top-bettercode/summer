@@ -88,7 +88,7 @@ class GeneratorPlugin : Plugin<Project> {
                 (findProperty(project, "softDeleteAsBoolean"))?.toBoolean()
                     ?: true
             extension.idgenerator =
-                findProperty(project, "idgenerator") ?: "top.bettercode.simpleframework.data.jpa.support.generator.SnowflakeIdGenerator"
+                findProperty(project, "idgenerator") ?: "uuid2"
             extension.queryIndex = (findProperty(project, "queryIndex"))?.toBoolean() ?: true
             extension.dataType = DataType.valueOf(
                 (findProperty(project, "dataType")
