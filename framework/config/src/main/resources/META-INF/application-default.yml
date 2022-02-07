@@ -44,7 +44,7 @@ spring:
       pageable:
         one-indexed-parameters: true
   jpa:
-    open-in-view: true
+    open-in-view: false
     show-sql: true
   datasource:
     hikari:
