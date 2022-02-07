@@ -138,7 +138,7 @@ class RequestLoggingFilter(
                 }
 
                 val msg = operation.toString(config)
-                if (!config.ignoredTimeout && config.timeoutAlarmSeconds > 0 && handler != null && operation.duration > config.timeoutAlarmSeconds * 1000 && !include(
+                if (!config.ignoredTimeout && config.timeoutAlarmSeconds > 0 && handler != null && operation.duration / 1000 > config.timeoutAlarmSeconds && !include(
                         properties.ignoredTimeoutPath,
                         uri
                     )
