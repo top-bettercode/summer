@@ -130,10 +130,6 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
         if (operation.response.headers.contentType?.isCompatibleWith(MediaType.APPLICATION_JSON) == true) {
             exec.add("pm.test('验证返回json格式', function () {")
             exec.add("  pm.response.to.be.json;")
-            if (autodoc.wrapResponse || operation.request.restUri == autodoc.authUri)
-                exec.add("  var jsonData = pm.response.json();")
-            if (autodoc.wrapResponse)
-                exec.add("  pm.expect(jsonData.status).to.equal(\"200\");")
             if (operation.request.restUri == autodoc.authUri)
                 autodoc.authVariables.forEach {
                     exec.add("  pm.globals.set('${it.substringAfterLast('.')}', jsonData.$it);")
