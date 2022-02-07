@@ -68,8 +68,7 @@ class GeneratorPlugin : Plugin<Project> {
             extension.packageName = findProperty(project, "packageName")
                 ?: project.findProperty("app.packageName") as? String ?: ""
             extension.userModule = (findProperty(project, "userModule"))?.toBoolean() ?: true
-            extension.module = findProperty(project, "module") ?: ""
-            extension.moduleName = findProperty(project, "moduleName") ?: ""
+            extension.module = findProperty(project, "module") ?: "modules"
             extension.applicationName = project.findProperty("application.name") as? String
                 ?: project.rootProject.name
             extension.projectName = findProperty(project, "projectName") ?: project.name

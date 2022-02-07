@@ -19,9 +19,9 @@ abstract class JavaGenerator : Generator() {
             return field.ifBlank {
                 var packageName = field.ifBlank { basePackageName }
                 if (settings["no-modules"] == null)
-                    packageName = "$packageName.${settings["modules-name"] ?: "modules"}"
-                if (extension.userModule && module.isNotBlank()) {
-                    "$packageName.$module"
+                    packageName = "$packageName.${settings["modules-name"] ?: extension.module}"
+                if (extension.userModule && subModule.isNotBlank()) {
+                    "$packageName.$subModule"
                 } else {
                     packageName
                 }

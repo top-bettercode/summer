@@ -50,10 +50,6 @@ open class GeneratorExtension(
      */
     var dataType: DataType = DataType.DATABASE,
     /**
-     * PlantUML 脚本目录
-     */
-    var pumlSrc: String = "puml/src",
-    /**
      * pdm文件路径
      */
     var pdmSrc: String = "database/database.pdm",
@@ -107,13 +103,9 @@ open class GeneratorExtension(
      */
     var updateFromType: DataType = DataType.DATABASE,
     /**
-     * 子模块
+     * 模块
      */
-    var module: String = "",
-    /**
-     * 子模块名称
-     */
-    var moduleName: String = "",
+    var module: String = "modules",
 
     var applicationName: String = "",
 
@@ -188,6 +180,15 @@ open class GeneratorExtension(
     }
 
     /**
+     * PlantUML 脚本目录
+     */
+    var pumlSrc: String = "puml/src"
+        get() = if (defaultModule) field else "puml/$module"
+
+    val defaultModule: Boolean
+        get() = "modules" == module
+
+    /**
      * 根路径
      */
     var rootPath: File? = null
@@ -216,8 +217,7 @@ open class GeneratorExtension(
 
     val sqlDDLOutput: String
         get() {
-            val module = pumlSrc.substringAfter("puml/")
-            return if (module != "src") {
+            return if (!defaultModule) {
                 "$sqlOutput/ddl-$module"
             } else
                 "$sqlOutput/ddl"
@@ -225,8 +225,7 @@ open class GeneratorExtension(
 
     private val sqlUpdateOutput: String
         get() {
-            val module = pumlSrc.substringAfter("puml/")
-            return if (module != "src") {
+            return if (!defaultModule) {
                 "$sqlOutput/update-$module"
             } else
                 "$sqlOutput/update"

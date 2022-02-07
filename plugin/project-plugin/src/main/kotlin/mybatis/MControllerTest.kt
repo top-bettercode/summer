@@ -72,7 +72,7 @@ open class MControllerTest : MModuleJavaGenerator() {
                     annotation("@org.junit.jupiter.api.Order(0)")
                     exception(JavaType("Exception"))
                     +"$insertName();"
-                    +"mockMvc.perform(get(\"/$module/$pathName/list\")"
+                    +"mockMvc.perform(get(\"/$subModule/$pathName/list\")"
                     2 + ".param(\"page\", \"1\")"
                     2 + ".param(\"size\", \"5\")"
                     +").andExpect(status().isOk());"
@@ -88,7 +88,7 @@ open class MControllerTest : MModuleJavaGenerator() {
                     annotation("@org.junit.jupiter.api.Order(1)")
                     exception(JavaType("Exception"))
                     +"${primaryKeyType.shortName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
-                    +"mockMvc.perform(get(\"/$module/$pathName/info\")"
+                    +"mockMvc.perform(get(\"/$subModule/$pathName/info\")"
                     2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                     +").andExpect(status().isOk());"
                 }
@@ -102,7 +102,7 @@ open class MControllerTest : MModuleJavaGenerator() {
                     annotation("@org.junit.jupiter.api.Test")
                     annotation("@org.junit.jupiter.api.Order(2)")
                     exception(JavaType("Exception"))
-                    +"mockMvc.perform(post(\"/$module/$pathName/save\")"
+                    +"mockMvc.perform(post(\"/$subModule/$pathName/save\")"
                     columns.forEach {
                         if (it.isPrimary) {
 //                        2 + ".param(\"${it.javaName}\", \"1\")"
@@ -123,7 +123,7 @@ open class MControllerTest : MModuleJavaGenerator() {
                     annotation("@org.junit.jupiter.api.Order(3)")
                     exception(JavaType("Exception"))
                     +"${primaryKeyType.shortName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
-                    +"mockMvc.perform(post(\"/$module/$pathName/save\")"
+                    +"mockMvc.perform(post(\"/$subModule/$pathName/save\")"
                     2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                     columns.forEach {
                         if (!it.isPrimary && !it.jsonViewIgnored) {
@@ -144,7 +144,7 @@ open class MControllerTest : MModuleJavaGenerator() {
                     exception(JavaType("Exception"))
                     staticImport("org.junit.jupiter.api.Assertions.assertNull")
                     +"${primaryKeyType.shortName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
-                    +"mockMvc.perform(post(\"/$module/$pathName/delete\")"
+                    +"mockMvc.perform(post(\"/$subModule/$pathName/delete\")"
                     2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                     +").andExpect(status().isOk());"
                     +"assertNull(${projectEntityName}Service.selectById(${primaryKeyName}));"
