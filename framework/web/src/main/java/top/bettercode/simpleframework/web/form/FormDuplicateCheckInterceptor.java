@@ -21,7 +21,7 @@ import top.bettercode.logging.trace.TraceServletInputStream;
 import top.bettercode.simpleframework.AnnotatedUtils;
 import top.bettercode.simpleframework.exception.BusinessException;
 import top.bettercode.simpleframework.servlet.NotErrorHandlerInterceptor;
-import top.bettercode.simpleframework.web.UserInfoHelper;
+import top.bettercode.simpleframework.UserInfoHelper;
 
 /**
  * 表单重复检
