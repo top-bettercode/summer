@@ -34,7 +34,6 @@ data class Table(
      * 字段
      */
     var pumlColumns: List<Any>,
-    val generatorStrategy: String = "",
     val physicalOptions: String = "",
     var sequenceStartWith: Int? = null,
     val moduleName: String = "database"
