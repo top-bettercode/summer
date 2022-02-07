@@ -24,8 +24,8 @@ open class DaoXml : MModuleJavaGenerator() {
     override val dir: String
         get() = "src/main/resources/${settings["mapper-name"] ?: "mapper"}"
     override val name: String
-        get() = if (extension.userModule && module.isNotBlank()) {
-            "$module/$projectEntityName.xml"
+        get() = if (extension.userModule && subModule.isNotBlank()) {
+            "$subModule/$projectEntityName.xml"
         } else {
             "${projectEntityName}.xml"
         }

@@ -56,7 +56,7 @@ v${project.version}
             file.appendText("模型图如下:\n")
             file.appendText("\n")
             file.appendText("[plantuml]\n----\n")
-            file.appendText("${project.rootProject.file("puml/src/$module.puml").readText()}\n")
+            file.appendText("${project.rootProject.file("puml/src/$subModule.puml").readText()}\n")
             file.appendText("----\n")
             currentModuleName = moduleName
         }

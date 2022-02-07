@@ -80,7 +80,7 @@ object PumlConverter {
                             indexes = indexes,
                             pumlColumns = pumlColumns,
                             sequenceStartWith = sequenceStartWith,
-                            moduleName = moduleName ?: ""
+                            moduleName = moduleName ?: "database"
                         )
                         call(table)
                         tables.add(table)

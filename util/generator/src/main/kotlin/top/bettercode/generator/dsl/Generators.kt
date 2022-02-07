@@ -128,7 +128,7 @@ object Generators {
                 if (table != null) {
                     found = true
                     generators.forEach { generator ->
-                        generator.module = file.nameWithoutExtension
+                        generator.subModule = file.nameWithoutExtension
                         generator.call(table)
                     }
                     return@inner

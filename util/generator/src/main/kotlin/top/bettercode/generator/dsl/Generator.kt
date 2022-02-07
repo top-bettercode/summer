@@ -269,11 +269,10 @@ abstract class Generator {
             )
         }
 
-    open var module: String = ""
-        get() = extension.module.ifBlank { field }
+    open var subModule: String = ""
 
     open val moduleName: String
-        get() = table.moduleName.ifBlank { extension.moduleName }
+        get() = table.moduleName
 
     protected open val projectName: String
         get() = extension.projectName
