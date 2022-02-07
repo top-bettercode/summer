@@ -13,6 +13,7 @@ import top.bettercode.logging.RequestLoggingFilter
 import top.bettercode.logging.client.ClientHttpRequestWrapper
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper
 import top.bettercode.logging.trace.TracePart
+import top.bettercode.simpleframework.UserInfoHelper
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -78,6 +79,7 @@ object RequestConverter {
             headers,
             cookies,
             remoteUser,
+            UserInfoHelper.get(request)?.toString() ?: "Anonymous",
             parameters,
             parts,
             content,
@@ -108,6 +110,7 @@ object RequestConverter {
             headers,
             cookies,
             "",
+            "Anonymous",
             Parameters().getUniqueParameters(uri),
             listOf(),
             content,
