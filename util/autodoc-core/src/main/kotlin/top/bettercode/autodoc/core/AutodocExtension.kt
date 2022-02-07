@@ -21,7 +21,6 @@ open class AutodocExtension(
         var output: File? = null,
         var authUri: String = "/oauth/token",
         var signParam: String = "sign",
-        var wrapResponse: Boolean = true,
         var authVariables: Array<String> = arrayOf("token_type", "access_token", "refresh_token"),
         var properties: Map<Any, Any?> = emptyMap()) {
 

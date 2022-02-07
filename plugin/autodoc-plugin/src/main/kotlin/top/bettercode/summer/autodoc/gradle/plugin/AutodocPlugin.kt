@@ -52,8 +52,6 @@ class AutodocPlugin : Plugin<Project> {
                 (findProperty(project, "max-response-time") ?: "2000").toInt()
 
             autodocExtension.signParam = (findProperty(project, "sign-param") ?: "sign")
-            autodocExtension.wrapResponse =
-                (findProperty(project, "wrap-response") ?: "true").toBoolean()
 
             val authVariables = (findProperty(project, "auth-variables")
                 ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
