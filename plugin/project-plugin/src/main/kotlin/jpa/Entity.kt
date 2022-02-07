@@ -57,81 +57,6 @@ class Entity : ModuleJavaGenerator() {
                 annotation("@javax.persistence.Transient")
             }
 
-            if (hasPrimaryKey) {
-                method(primaryKeyName, entityType, Parameter(primaryKeyName, primaryKeyType)) {
-                    javadoc {
-                        +"/**"
-                        +" * 设置主键"
-                        +" *"
-                        +" * @param $primaryKeyName 主键"
-                        +" * @return ${remarks}实例"
-                        +" */"
-                    }
-                    +"this.${primaryKeyName} = ${primaryKeyName};"
-                    +"return this;"
-                }
-                method(
-                    primaryKeyName,
-                    entityType,
-                    Parameter(primaryKeyName, primaryKeyType),
-                    Parameter(
-                        "genericPropertyMatcher",
-                        JavaType("org.springframework.data.domain.ExampleMatcher.GenericPropertyMatcher")
-                    )
-                ) {
-                    javadoc {
-                        +"/**"
-                        +" * 设置主键"
-                        +" *"
-                        +" * @param $primaryKeyName 主键"
-                        +" * @param genericPropertyMatcher PropertyMatcher"
-                        +" * @return ${remarks}实例"
-                        +" */"
-                    }
-                    +"if(this.matcher == null){"
-                    +"this.matcher = ExampleMatcher.matching();"
-                    +"}"
-                    +"this.matcher.withMatcher(\"${primaryKeyName}\", genericPropertyMatcher);"
-                    +"this.${primaryKeyName} = ${primaryKeyName};"
-                    +"return this;"
-                }
-            }
-            otherColumns.forEach {
-                method(it.javaName, entityType, Parameter(it.javaName, it.javaType)) {
-                    javadoc {
-                        +"/**"
-                        +" * ${getParamRemark(it)}"
-                        +" * @return ${remarks}实例"
-                        +" */"
-                    }
-                    +"this.${it.javaName} = ${it.javaName};"
-                    +"return this;"
-                }
-                method(
-                    it.javaName,
-                    entityType,
-                    Parameter(it.javaName, it.javaType),
-                    Parameter(
-                        "genericPropertyMatcher",
-                        JavaType("org.springframework.data.domain.ExampleMatcher.GenericPropertyMatcher")
-                    )
-                ) {
-                    javadoc {
-                        +"/**"
-                        +" * ${getParamRemark(it)}"
-                        +" * @param genericPropertyMatcher PropertyMatcher"
-                        +" * @return ${remarks}实例"
-                        +" */"
-                    }
-                    +"if (this.matcher == null) {"
-                    +"this.matcher = ExampleMatcher.matching();"
-                    +"}"
-                    +"this.matcher.withMatcher(${className}Properties.${it.javaName}, genericPropertyMatcher);"
-                    +"this.${it.javaName} = ${it.javaName};"
-                    +"return this;"
-                }
-            }
-
             //example
             method(
                 "example",
@@ -226,17 +151,46 @@ class Entity : ModuleJavaGenerator() {
                     +"return ${primaryKeyName};"
                 }
                 //primaryKey setter
-                method("set${primaryKeyName.capitalize()}") {
+                method(
+                    "set${primaryKeyName.capitalize()}",
+                    entityType,
+                    Parameter(primaryKeyName, primaryKeyType)
+                ) {
                     javadoc {
                         +"/**"
-                        +" * ${remarks}主键"
+                        +" * 设置主键"
+                        +" *"
+                        +" * @param $primaryKeyName 主键"
+                        +" * @return ${remarks}实例"
                         +" */"
                     }
-                    parameter {
-                        type = primaryKeyType
-                        name = primaryKeyName
-                    }
                     +"this.${primaryKeyName} = ${primaryKeyName};"
+                    +"return this;"
+                }
+                method(
+                    "set${primaryKeyName.capitalize()}",
+                    entityType,
+                    Parameter(primaryKeyName, primaryKeyType),
+                    Parameter(
+                        "genericPropertyMatcher",
+                        JavaType("org.springframework.data.domain.ExampleMatcher.GenericPropertyMatcher")
+                    )
+                ) {
+                    javadoc {
+                        +"/**"
+                        +" * 设置主键"
+                        +" *"
+                        +" * @param $primaryKeyName 主键"
+                        +" * @param genericPropertyMatcher PropertyMatcher"
+                        +" * @return ${remarks}实例"
+                        +" */"
+                    }
+                    +"if(this.matcher == null){"
+                    +"this.matcher = ExampleMatcher.matching();"
+                    +"}"
+                    +"this.matcher.withMatcher(\"${primaryKeyName}\", genericPropertyMatcher);"
+                    +"this.${primaryKeyName} = ${primaryKeyName};"
+                    +"return this;"
                 }
             }
 
@@ -289,18 +243,42 @@ class Entity : ModuleJavaGenerator() {
                     +"return ${it.javaName};"
                 }
                 //setter
-                method("set${it.javaName.capitalize()}") {
-                    if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
-                        javadoc {
-                            +"/**"
-                            +" * ${getParamRemark(it)}"
-                            +" */"
-                        }
-                    parameter {
-                        type = it.javaType
-                        name = it.javaName
+                method(
+                    "set${it.javaName.capitalize()}",
+                    entityType,
+                    Parameter(it.javaName, it.javaType)
+                ) {
+                    javadoc {
+                        +"/**"
+                        +" * ${getParamRemark(it)}"
+                        +" * @return ${remarks}实例"
+                        +" */"
                     }
                     +"this.${it.javaName} = ${it.javaName};"
+                    +"return this;"
+                }
+                method(
+                    "set${it.javaName.capitalize()}",
+                    entityType,
+                    Parameter(it.javaName, it.javaType),
+                    Parameter(
+                        "genericPropertyMatcher",
+                        JavaType("org.springframework.data.domain.ExampleMatcher.GenericPropertyMatcher")
+                    )
+                ) {
+                    javadoc {
+                        +"/**"
+                        +" * ${getParamRemark(it)}"
+                        +" * @param genericPropertyMatcher PropertyMatcher"
+                        +" * @return ${remarks}实例"
+                        +" */"
+                    }
+                    +"if (this.matcher == null) {"
+                    +"this.matcher = ExampleMatcher.matching();"
+                    +"}"
+                    +"this.matcher.withMatcher(${className}Properties.${it.javaName}, genericPropertyMatcher);"
+                    +"this.${it.javaName} = ${it.javaName};"
+                    +"return this;"
                 }
             }
 
@@ -404,20 +382,6 @@ class Entity : ModuleJavaGenerator() {
                         +"return new ${className}Key();"
                     }
 
-                    primaryKeys.forEach {
-                        method(it.javaName, primaryKeyType, Parameter(it.javaName, it.javaType)) {
-                            javadoc {
-                                +"/**"
-                                +" * ${getParamRemark(it)}"
-                                +" * @return ${remarks}实例"
-                                +" */"
-                            }
-                            +"this.${it.javaName} = ${it.javaName};"
-                            +"return this;"
-                        }
-                    }
-
-
                     //constructor no args
                     constructor {}
                     //constructor with key String
@@ -474,11 +438,12 @@ class Entity : ModuleJavaGenerator() {
                             +"return ${it.javaName};"
                         }
                         //setter
-                        method("set${it.javaName.capitalize()}") {
+                        method("set${it.javaName.capitalize()}", primaryKeyType) {
                             if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                                 javadoc {
                                     +"/**"
                                     +" * ${getParamRemark(it)}"
+                                    +" * @return ${remarks}实例"
                                     +" */"
                                 }
                             parameter {
@@ -486,6 +451,7 @@ class Entity : ModuleJavaGenerator() {
                                 name = it.javaName
                             }
                             +"this.${it.javaName} = ${it.javaName};"
+                            +"return this;"
                         }
                     }
                     //equals
