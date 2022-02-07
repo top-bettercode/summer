@@ -141,7 +141,7 @@ open class GeneratorExtension(
     /**
      * jpa id generator
      */
-    var idgenerator:String ="",
+    var idgenerator: String = "",
     /**
      * 缩进
      */

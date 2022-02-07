@@ -123,13 +123,10 @@ class Entity : ModuleJavaGenerator() {
                             import("javax.persistence.GenerationType")
                             annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
                         } else if (primaryKey.idgenerator) {
-                            var generatorStrategy = extension.idgenerator
-                            if (generatorStrategy.isNotBlank()) {
-                                generatorStrategy = "uuid2"
-                            }
+                            val generatorStrategy = extension.idgenerator
                             import("javax.persistence.GenerationType")
-                            val generator =
-                                if ("top.bettercode.simpleframework.data.jpa.support.generator.SnowflakeIdGenerator" == generatorStrategy) "Snowflake" else generatorStrategy.capitalize()
+                            val generator = generatorStrategy.substringAfterLast(".")
+                                .substringBeforeLast("Generator").capitalize()
                             annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
                             annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\")")
                         }
