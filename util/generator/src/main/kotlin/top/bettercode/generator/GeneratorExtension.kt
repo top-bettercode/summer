@@ -139,6 +139,10 @@ open class GeneratorExtension(
      */
     var softDeleteAsBoolean: Boolean = true,
     /**
+     * jpa id generator
+     */
+    var idgenerator:String ="",
+    /**
      * 缩进
      */
     var indent: String = JavaElement.defaultIndent,

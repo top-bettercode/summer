@@ -54,6 +54,7 @@ data class Column(
     var pktableName: String? = null,
     var pkcolumnName: String? = null,
     var autoIncrement: Boolean = false,
+    val idgenerator: Boolean = false,
     var generatedColumn: Boolean = false
 ) {
     init {
@@ -153,6 +154,7 @@ data class Column(
         if (generatedColumn != other.generatedColumn) return false
         if (unsigned != other.unsigned) return false
         if (autoIncrement != other.autoIncrement) return false
+        if (idgenerator != other.idgenerator) return false
 
         return true
     }
@@ -186,6 +188,7 @@ data class Column(
         result = 31 * result + generatedColumn.hashCode()
         result = 31 * result + unsigned.hashCode()
         result = 31 * result + autoIncrement.hashCode()
+        result = 31 * result + idgenerator.hashCode()
         return result
     }
 }
