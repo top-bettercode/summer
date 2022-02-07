@@ -25,13 +25,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.HandlerMethod;
 import top.bettercode.simpleframework.AnnotatedUtils;
+import top.bettercode.simpleframework.UserInfoHelper;
 import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.exception.UnauthorizedException;
 import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 import top.bettercode.simpleframework.servlet.HandlerMethodContextHolder;
 import top.bettercode.simpleframework.web.RespEntity;
-import top.bettercode.simpleframework.web.UserInfoHelper;
 
 public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
@@ -209,7 +209,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authenticationResult);
             SecurityContextHolder.setContext(context);
-            UserInfoHelper.put(request, userDetails);
+            UserInfoHelper.put(request, userDetails.getUsername());
             if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
               if (revokeTokenService != null) {
                 revokeTokenService.revokeToken(userDetails);
