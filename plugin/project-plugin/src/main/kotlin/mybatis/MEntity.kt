@@ -18,11 +18,7 @@ class MEntity : MModuleJavaGenerator() {
             val tableName =
                 if (schema.isNullOrBlank() || schema == extension.datasource.schema) tableName else "$schema.$tableName"
             annotation("@com.baomidou.mybatisplus.annotations.TableName(\"$tableName\")")
-            if (enable(
-                    "keySequence",
-                    false
-                ) && extension.dataType != DataType.PUML || table.sequenceStartWith != null && isOracleDatasource
-            )
+            if (extension.dataType != DataType.PUML || table.sequenceStartWith != null && isOracleDatasource)
                 annotation("@com.baomidou.mybatisplus.annotations.KeySequence(\"${tableName}_S\")")
             javadoc {
                 +"/**"
