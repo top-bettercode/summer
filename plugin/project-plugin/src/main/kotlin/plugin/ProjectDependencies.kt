@@ -85,7 +85,14 @@ object ProjectDependencies {
 
                     dependency("top.bettercode.wechat:weixin-mp:0.9.7")
                     dependency("top.bettercode.wechat:weixin-app:0.9.7")
-                    dependency("com.oracle.database.jdbc:ojdbc8:21.4.0.0.1")
+
+                    val oracleJdbcVersion = "21.5.0.0"
+                    dependency("com.oracle.database.jdbc:ojdbc8:$oracleJdbcVersion")
+                    dependency("com.oracle.database.jdbc:ucp:$oracleJdbcVersion")
+                    dependency("com.oracle.database.security:oraclepki:$oracleJdbcVersion")
+                    dependency("com.oracle.database.security:osdt_core:$oracleJdbcVersion")
+                    dependency("com.oracle.database.security:osdt_cert:$oracleJdbcVersion")
+
                     dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
 
                     dependency("org.bouncycastle:bcpkix-jdk15on:1.70")
