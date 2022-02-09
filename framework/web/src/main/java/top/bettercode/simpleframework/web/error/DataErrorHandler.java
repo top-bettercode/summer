@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.web.error;
 
-import top.bettercode.simpleframework.web.RespEntity;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
@@ -9,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.util.StringUtils;
+import top.bettercode.simpleframework.web.RespEntity;
 
 /**
  * @author Peter Wu
@@ -69,7 +69,8 @@ public class DataErrorHandler extends AbstractErrorHandler {
         message = ((DataIntegrityViolationException) error).getRootCause().getMessage();
       }
     } else if (error instanceof UncategorizedSQLException) {
-      String detailMessage = ((UncategorizedSQLException) error).getSQLException().getMessage();
+      String detailMessage = ((UncategorizedSQLException) error).getSQLException().getMessage()
+          .trim();
       //Incorrect string value: '\xF0\x9F\x98\x84\xF0\x9F...' for column 'remark' at row 1
       if (detailMessage.matches("^Incorrect string value: '.*\\\\xF0.*$")) {
         message = "datasource.incorrect.emoji";
