@@ -85,7 +85,7 @@ allprojects {
             dependency("org.jsoup:jsoup:1.14.3")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
             dependency("mysql:mysql-connector-java:8.0.27")
-            dependency("com.oracle.database.jdbc:ojdbc8:21.4.0.0.1")
+            dependency("com.oracle.database.jdbc:ojdbc8:21.5.0.0")
 
             dependency("org.asciidoctor:asciidoctorj:2.5.2")
             dependency("org.asciidoctor:asciidoctorj-diagram:2.2.1")
