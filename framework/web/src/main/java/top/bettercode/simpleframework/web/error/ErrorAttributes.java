@@ -1,10 +1,5 @@
 package top.bettercode.simpleframework.web.error;
 
-import top.bettercode.lang.property.PropertiesSource;
-import top.bettercode.lang.property.Settings;
-import top.bettercode.simpleframework.config.SummerWebProperties;
-import top.bettercode.simpleframework.web.IRespEntity;
-import top.bettercode.simpleframework.web.RespEntity;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -28,6 +23,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.util.WebUtils;
+import top.bettercode.lang.property.PropertiesSource;
+import top.bettercode.lang.property.Settings;
+import top.bettercode.simpleframework.config.SummerWebProperties;
+import top.bettercode.simpleframework.web.IRespEntity;
+import top.bettercode.simpleframework.web.RespEntity;
 
 /**
  * ErrorAttributes 错误属性
@@ -142,7 +142,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
     setErrorInfo(webRequest, httpStatusCode, message, error);
 
     respEntity.setStatus(statusCode);
-    respEntity.setMessage(message);
+    respEntity.setMessage(message.trim());
     if (!errors.isEmpty()) {
       respEntity.setErrors(errors);
     }
