@@ -129,6 +129,10 @@ class Entity : ModuleJavaGenerator() {
                                 .substringBeforeLast("Generator").capitalize()
                             annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
                             annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\")")
+                        } else if (table.sequence.isNotBlank()) {
+                            import("javax.persistence.GenerationType")
+                            annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.SEQUENCE, generator = \"${entityName}Sequence\")")
+                            annotation("@javax.persistence.SequenceGenerator(name = \"${entityName}Sequence\", sequenceName = \"${table.sequence}\")")
                         }
                     } else {
                         javadoc {

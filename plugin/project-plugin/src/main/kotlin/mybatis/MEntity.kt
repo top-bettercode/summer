@@ -1,4 +1,3 @@
-import top.bettercode.generator.DataType
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.InnerInterface
 import top.bettercode.generator.dom.java.element.JavaVisibility
@@ -18,8 +17,8 @@ class MEntity : MModuleJavaGenerator() {
             val tableName =
                 if (schema.isNullOrBlank() || schema == extension.datasource.schema) tableName else "$schema.$tableName"
             annotation("@com.baomidou.mybatisplus.annotations.TableName(\"$tableName\")")
-            if (extension.dataType != DataType.PUML || table.sequenceStartWith != null && isOracleDatasource)
-                annotation("@com.baomidou.mybatisplus.annotations.KeySequence(\"${tableName}_S\")")
+            if (table.sequence.isNotBlank())
+                annotation("@com.baomidou.mybatisplus.annotations.KeySequence(\"${table.sequence}\")")
             javadoc {
                 +"/**"
                 +" * $remarks 对应数据库表名：$tableName"
@@ -54,8 +53,8 @@ class MEntity : MModuleJavaGenerator() {
                 import(it.javaType)
                 field(it.javaName, it.javaType) {
                     if (it.isPrimary) {
-                        if (enable("idWorkerStr", false))
-                            annotation("@com.baomidou.mybatisplus.annotations.TableId(value = \"${it.columnName}\", type = com.baomidou.mybatisplus.enums.IdType.ID_WORKER_STR)")
+                        if (table.sequence.isNotBlank())
+                            annotation("@com.baomidou.mybatisplus.annotations.TableId(value = \"${it.columnName}\", type = com.baomidou.mybatisplus.enums.IdType.INPUT)")
                         else
                             annotation("@com.baomidou.mybatisplus.annotations.TableId(\"${it.columnName}\")")
                     } else {

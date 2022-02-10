@@ -32,7 +32,8 @@ object PumlConverter {
         var indexes = mutableListOf<Indexed>()
         var pumlColumns = mutableListOf<Any>()
         var tableName = ""
-        var sequenceStartWith: Int? = null
+        var sequence = ""
+        var sequenceStartWith = 1
         var isField = false
         var isUml = false
         var moduleName: String? = null
@@ -79,6 +80,7 @@ object PumlConverter {
                             primaryKeyNames = primaryKeyNames,
                             indexes = indexes,
                             pumlColumns = pumlColumns,
+                            sequence = sequence,
                             sequenceStartWith = sequenceStartWith,
                             moduleName = moduleName ?: "database"
                         )
@@ -90,7 +92,8 @@ object PumlConverter {
                         pumlColumns = mutableListOf()
                         tableName = ""
                         remarks = ""
-                        sequenceStartWith = null
+                        sequence = ""
+                        sequenceStartWith = 1
                         isField = false
                     } else if (!line.startsWith("'")) {
                         val lineDef = line.trim().split("--")
@@ -103,16 +106,30 @@ object PumlConverter {
                         val (columnSize, decimalDigits) = parseType(type)
                         var defaultVal: String? = null
                         val unsigned = columnDef.contains("UNSIGNED", true)
-                        if (columnDef.contains("DEFAULT", true)) {
+                        //DEFAULT
+                        if (columnDef.contains("DEFAULT")) {
                             defaultVal =
                                 columnDef.substringAfter("DEFAULT").trim().substringBefore(" ")
                                     .trim('\'').trim()
                             extra = extra.replace(Regex(" DEFAULT +'?$defaultVal'?"), "")
                         }
+                        // SEQUENCE
+                        if (columnDef.contains("SEQUENCE")) {
+                            sequence =
+                                columnDef.substringAfter("SEQUENCE").trim().substringBefore(" ")
+                                    .trim()
+                            val regex = Regex(".* SEQUENCE +$sequence +(\\d+) .*")
+                            if (columnDef.matches(regex)) {
+                                sequenceStartWith = columnDef.replace(regex, "$1").toInt()
+                                extra = extra.replace(Regex(" SEQUENCE +$sequence +(\\d+)"), "")
+                            } else {
+                                extra = extra.replace(Regex(" SEQUENCE +$sequence"), "")
+                            }
+                        }
                         var fk = false
                         var refTable: String? = null
                         var refColumn: String? = null
-                        if (columnDef.contains("FK", true)) {//FK > docs.id
+                        if (columnDef.contains("FK")) {//FK > docs.id
                             val ref =
                                 columnDef.substringAfter("FK >").trim().substringBefore(" ").trim()
                             extra = extra.replace(Regex(" FK > +$ref"), "")
@@ -155,7 +172,7 @@ object PumlConverter {
                             pkcolumnName = refColumn,
                             autoIncrement = autoIncrement,
                             idgenerator = columnDef.contains(
-                                "idgenerator",
+                                "IDGENERATOR",
                                 true
                             ),
                             unsigned = unsigned
