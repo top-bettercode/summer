@@ -78,7 +78,7 @@ abstract class JavaGenerator : Generator() {
     }
 
     protected open fun getReturnRemark(it: Column): String {
-        val remark = getRemark(it)
+        val remark = getRemark(it).replace(Regex(" ?([:;/]) ?")," $1 ")
         return if (remark.isBlank()) "" else "@return $remark"
     }
 

@@ -60,9 +60,9 @@ class MEntity : MModuleJavaGenerator() {
                             annotation("@com.baomidou.mybatisplus.annotations.TableId(\"${it.columnName}\")")
                     } else {
                         if (it.javaName == "lastModifiedDate")
-                            annotation("@com.baomidou.mybatisplus.annotations.TableField(value = \"${it.columnName}\",el = \"${it.javaName},jdbcType=${it.jdbcType}\", update = \"${if (isOracleDatasource) "sysdate" else "now()"}\")")
+                            annotation("@com.baomidou.mybatisplus.annotations.TableField(value = \"${it.columnName}\", el = \"${it.javaName},jdbcType=${it.jdbcType}\", update = \"${if (isOracleDatasource) "sysdate" else "now()"}\")")
                         else
-                            annotation("@com.baomidou.mybatisplus.annotations.TableField(value = \"${it.columnName}\",el = \"${it.javaName},jdbcType=${it.jdbcType}\")")
+                            annotation("@com.baomidou.mybatisplus.annotations.TableField(value = \"${it.columnName}\", el = \"${it.javaName},jdbcType=${it.jdbcType}\")")
                     }
                     if (it.isSoftDelete) {
                         annotation("@com.baomidou.mybatisplus.annotations.TableLogic")
@@ -83,7 +83,7 @@ class MEntity : MModuleJavaGenerator() {
                     if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                         javadoc {
                             +"/**"
-                            +" * @return ${(it.remarks.ifBlank { "" })}${if (it.columnDef.isNullOrBlank()) "" else " 默认值：${it.columnDef}"}"
+                            +" * ${getReturnRemark(it)}"
                             +" */"
                         }
                     +"return ${it.javaName};"
@@ -93,7 +93,7 @@ class MEntity : MModuleJavaGenerator() {
                     if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                         javadoc {
                             +"/**"
-                            +" * @param  ${if (it.remarks.isBlank()) "" else "${it.javaName} ${it.remarks}"}${if (it.columnDef.isNullOrBlank()) "" else " 默认值：${it.columnDef}"}"
+                            +" * ${getParamRemark(it)}"
                             +" */"
                         }
                     parameter {
@@ -149,7 +149,7 @@ class MEntity : MModuleJavaGenerator() {
                     +"    \"${primaryKeyName}='\" + $primaryKeyName + '\\'' +"
                 }
                 otherColumns.forEachIndexed { i, it ->
-                    +"    \"${if (i > 0) ", " else ""}${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
+                    +"    \"${if (i > 0 || hasPrimaryKey) ", " else ""}${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
                 }
                 +"    '}';"
             }
