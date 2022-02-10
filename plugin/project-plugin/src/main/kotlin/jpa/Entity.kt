@@ -344,7 +344,7 @@ class Entity : ModuleJavaGenerator() {
                     +"    \"${primaryKeyName}='\" + $primaryKeyName + '\\'' +"
                 }
                 otherColumns.forEachIndexed { i, it ->
-                    +"    \"${if (i > 0) ", " else ""}${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
+                    +"    \"${if (i > 0 || hasPrimaryKey) ", " else ""}${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
                 }
                 +"    '}';"
             }
