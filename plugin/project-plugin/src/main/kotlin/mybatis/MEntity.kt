@@ -17,8 +17,12 @@ class MEntity : MModuleJavaGenerator() {
             val tableName =
                 if (schema.isNullOrBlank() || schema == extension.datasource.schema) tableName else "$schema.$tableName"
             annotation("@com.baomidou.mybatisplus.annotations.TableName(\"$tableName\")")
-            if (table.sequence.isNotBlank())
-                annotation("@com.baomidou.mybatisplus.annotations.KeySequence(\"${table.sequence}\")")
+            if (primaryKey.sequence.isNotBlank()) {
+                if (primaryKey.javaType != JavaType("java.lang.Long")) {
+                    annotation("@com.baomidou.mybatisplus.annotations.KeySequence(value = \"${primaryKey.sequence}\", clazz = ${primaryKey.javaType.shortName}.class)")
+                } else
+                    annotation("@com.baomidou.mybatisplus.annotations.KeySequence(\"${primaryKey.sequence}\")")
+            }
             javadoc {
                 +"/**"
                 +" * $remarks 对应数据库表名：$tableName"
@@ -53,9 +57,10 @@ class MEntity : MModuleJavaGenerator() {
                 import(it.javaType)
                 field(it.javaName, it.javaType) {
                     if (it.isPrimary) {
-                        if (table.sequence.isNotBlank())
-                            annotation("@com.baomidou.mybatisplus.annotations.TableId(value = \"${it.columnName}\", type = com.baomidou.mybatisplus.enums.IdType.INPUT)")
-                        else
+                        if (it.sequence.isNotBlank()) {
+                            import("com.baomidou.mybatisplus.enums.IdType")
+                            annotation("@com.baomidou.mybatisplus.annotations.TableId(value = \"${it.columnName}\", type = IdType.INPUT)")
+                        } else
                             annotation("@com.baomidou.mybatisplus.annotations.TableId(\"${it.columnName}\")")
                     } else {
                         if (it.javaName == "lastModifiedDate")

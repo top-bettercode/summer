@@ -35,8 +35,6 @@ data class Table(
      */
     var pumlColumns: List<Any>,
     val physicalOptions: String = "",
-    val sequence: String = "",
-    var sequenceStartWith: Int = 1,
     val moduleName: String = "database"
 ) {
 
@@ -68,6 +66,15 @@ data class Table(
         }
     }
 
+    val primaryKey: Column?
+        get() {
+            return if (primaryKeys.size == 1) {
+                primaryKeys[0]
+            } else {
+                null
+            }
+        }
+
     fun className(extension: GeneratorExtension): String = extension.className(tableName)
 
     fun entityName(extension: GeneratorExtension): String =
@@ -84,8 +91,6 @@ data class Table(
 
         if (tableName != other.tableName) return false
         if (remarks != other.remarks) return false
-        if (sequenceStartWith != other.sequenceStartWith) return false
-        if (sequence != other.sequence) return false
         if (physicalOptions != other.physicalOptions) return false
         if (primaryKeyNames.size != other.primaryKeyNames.size || (primaryKeyNames - other.primaryKeyNames.toSet()).isNotEmpty() || (other.primaryKeyNames - primaryKeyNames.toSet()).isNotEmpty()) return false
         if (indexes.size != other.indexes.size || (indexes - other.indexes.toSet()).isNotEmpty() || (other.indexes - indexes.toSet()).isNotEmpty()) return false
@@ -98,8 +103,6 @@ data class Table(
         var result = tableName.hashCode()
         result = 31 * result + remarks.hashCode()
         result = 31 * result + physicalOptions.hashCode()
-        result = 31 * result + sequence.hashCode()
-        result = 31 * result + (sequenceStartWith ?: 0)
         result = 31 * result + primaryKeyNames.hashCode()
         result = 31 * result + indexes.hashCode()
         result = 31 * result + pumlColumns.hashCode()

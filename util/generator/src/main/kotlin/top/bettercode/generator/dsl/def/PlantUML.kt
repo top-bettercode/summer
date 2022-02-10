@@ -64,7 +64,7 @@ INDEX
                     prettyRemarks = remarksProperties?.getProperty(it.columnName)?.trim() ?: ""
                 }
 
-                destFile.appendText("    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.idgenerator) " IDGENERATOR" else ""}${if (it.isPrimary && table.sequence.isNotBlank()) " SEQUENCE ${table.sequence}${if (table.sequenceStartWith != 1) " ${table.sequenceStartWith}" else ""}" else ""}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- $prettyRemarks\n")
+                destFile.appendText("    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.idgenerator) " IDGENERATOR" else ""}${if (it.isPrimary && it.sequence.isNotBlank()) " SEQUENCE ${it.sequence}${if (it.sequenceStartWith != 1) " ${it.sequenceStartWith}" else ""}" else ""}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- $prettyRemarks\n")
                 if (it.isForeignKey) {
                     fklines.add("${it.pktableName} ||--o{ $tableName")
                 }

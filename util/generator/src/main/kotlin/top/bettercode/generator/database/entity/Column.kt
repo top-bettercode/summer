@@ -55,6 +55,8 @@ data class Column(
     var pkcolumnName: String? = null,
     var autoIncrement: Boolean = false,
     val idgenerator: Boolean = false,
+    val sequence: String = "",
+    val sequenceStartWith: Int = 1,
     var generatedColumn: Boolean = false
 ) {
     init {
@@ -155,6 +157,8 @@ data class Column(
         if (unsigned != other.unsigned) return false
         if (autoIncrement != other.autoIncrement) return false
         if (idgenerator != other.idgenerator) return false
+        if (sequenceStartWith != other.sequenceStartWith) return false
+        if (sequence != other.sequence) return false
 
         return true
     }
@@ -189,6 +193,8 @@ data class Column(
         result = 31 * result + unsigned.hashCode()
         result = 31 * result + autoIncrement.hashCode()
         result = 31 * result + idgenerator.hashCode()
+        result = 31 * result + sequence.hashCode()
+        result = 31 * result + sequenceStartWith
         return result
     }
 }
