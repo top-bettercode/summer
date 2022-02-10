@@ -171,7 +171,7 @@ object OracleToDDL : ToDDL() {
         if (primaryKey?.sequence?.isNotBlank() == true) {
             pw.println("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
             pw.println(
-                "CREATE SEQUENCE $quote${primaryKey.sequence}$quote INCREMENT BY 1 START WITH ${primaryKey.sequenceStartWith} NOMAXVALUE CACHE 10;"
+                "CREATE SEQUENCE $quote${primaryKey.sequence}$quote INCREMENT BY 1 START WITH ${primaryKey.sequenceStartWith} NOMAXVALUE NOCYCLE CACHE 10;"
             )
         }
         pw.println()
