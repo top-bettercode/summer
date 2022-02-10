@@ -35,6 +35,8 @@ class PlantUML(
 FK
 UNIQUE
 INDEX
+IDGENERATOR
+SEQUENCE
 
 @startuml ${if (myModuleName.isNullOrBlank()) DataType.DATABASE.name else myModuleName}
 
