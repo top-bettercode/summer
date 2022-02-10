@@ -129,10 +129,10 @@ class Entity : ModuleJavaGenerator() {
                                 .substringBeforeLast("Generator").capitalize()
                             annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
                             annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\")")
-                        } else if (table.sequence.isNotBlank()) {
+                        } else if (primaryKey.sequence.isNotBlank()) {
                             import("javax.persistence.GenerationType")
                             annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.SEQUENCE, generator = \"${entityName}Sequence\")")
-                            annotation("@javax.persistence.SequenceGenerator(name = \"${entityName}Sequence\", sequenceName = \"${table.sequence}\")")
+                            annotation("@javax.persistence.SequenceGenerator(name = \"${entityName}Sequence\", sequenceName = \"${primaryKey.sequence}\")")
                         }
                     } else {
                         javadoc {
@@ -230,6 +230,22 @@ class Entity : ModuleJavaGenerator() {
                         }
                         if (it.isSoftDelete) {
                             annotation("@top.bettercode.simpleframework.data.jpa.SoftDelete")
+                        }
+
+                        if (it.autoIncrement) {
+                            import("javax.persistence.GenerationType")
+                            annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
+                        } else if (it.idgenerator) {
+                            val generatorStrategy = extension.idgenerator
+                            import("javax.persistence.GenerationType")
+                            val generator = generatorStrategy.substringAfterLast(".")
+                                .substringBeforeLast("Generator").capitalize()
+                            annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
+                            annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\")")
+                        } else if (it.sequence.isNotBlank()) {
+                            import("javax.persistence.GenerationType")
+                            annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.SEQUENCE, generator = \"${entityName}Sequence\")")
+                            annotation("@javax.persistence.SequenceGenerator(name = \"${entityName}Sequence\", sequenceName = \"${it.sequence}\")")
                         }
                     }
                 }

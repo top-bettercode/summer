@@ -21,8 +21,9 @@ object OracleToDDL : ToDDL() {
             if (extension.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).forEach { tableName ->
                     out.println("$commentPrefix DROP $tableName")
-                    if (oldTables.find { it.tableName == tableName }!!.sequenceStartWith != null)
-                        out.println("DROP SEQUENCE $quote${tableName}_S$quote;")
+                    val primaryKey = oldTables.find { it.tableName == tableName }!!.primaryKey
+                    if (primaryKey?.sequence?.isNotBlank() == true)
+                        out.println("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
                     out.println("DROP TABLE $quote$tableName$quote;")
                     out.println()
                 }
@@ -166,10 +167,11 @@ object OracleToDDL : ToDDL() {
     override fun appendTable(table: Table, pw: PrintWriter) {
         val tableName = table.tableName
         pw.println("$commentPrefix $tableName")
-        if (table.sequence.isNotBlank()) {
-            pw.println("DROP SEQUENCE $quote${table.sequence}$quote;")
+        val primaryKey = table.primaryKey
+        if (primaryKey?.sequence?.isNotBlank() == true) {
+            pw.println("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
             pw.println(
-                "CREATE SEQUENCE $quote${table.sequence}$quote INCREMENT BY 1 START WITH ${table.sequenceStartWith} NOMAXVALUE CACHE 10;"
+                "CREATE SEQUENCE $quote${primaryKey.sequence}$quote INCREMENT BY 1 START WITH ${primaryKey.sequenceStartWith} NOMAXVALUE CACHE 10;"
             )
         }
         pw.println()
