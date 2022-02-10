@@ -166,14 +166,10 @@ object OracleToDDL : ToDDL() {
     override fun appendTable(table: Table, pw: PrintWriter) {
         val tableName = table.tableName
         pw.println("$commentPrefix $tableName")
-        if (table.sequenceStartWith != null) {
-            pw.println("DROP SEQUENCE $quote${tableName}_S$quote;")
+        if (table.sequence.isNotBlank()) {
+            pw.println("DROP SEQUENCE $quote${table.sequence}$quote;")
             pw.println(
-                "CREATE SEQUENCE $quote${tableName}_S$quote INCREMENT BY 1 START WITH 1${
-                    fill(
-                        table.sequenceStartWith!!
-                    )
-                };"
+                "CREATE SEQUENCE $quote${table.sequence}$quote INCREMENT BY 1 START WITH ${table.sequenceStartWith} NOMAXVALUE CACHE 10;"
             )
         }
         pw.println()
@@ -202,13 +198,5 @@ object OracleToDDL : ToDDL() {
         pw.println()
     }
 
-
-    private fun fill(length: Int): String {
-        var str = ""
-        for (i in 1..length) {
-            str += "0"
-        }
-        return str
-    }
 
 }
