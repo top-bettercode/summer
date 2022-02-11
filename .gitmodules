@@ -1,0 +1,3 @@
+[submodule "wintrue"]
+	path = wintrue
+	url = git@gitee.com:top-bettercode/wintrue.git
