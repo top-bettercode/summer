@@ -37,3 +37,6 @@ include(":util:ueditor")
 include(":util:wechat")
 //include(":util:resources-processor")
 include(":util:sms")
+
+include(":wintrue:kk")
+

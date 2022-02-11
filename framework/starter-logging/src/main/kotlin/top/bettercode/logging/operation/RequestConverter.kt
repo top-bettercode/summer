@@ -90,8 +90,7 @@ object RequestConverter {
     fun convert(request: ClientHttpRequestWrapper, dateTime: LocalDateTime): OperationRequest {
         val headers = HttpHeaders()
         val cookies = request.headers[HttpHeaders.COOKIE]?.map {
-            val cookie = it.split(":")
-            RequestCookie(cookie[0], cookie[2])
+            RequestCookie(it.substringBefore("="), it.substringAfter("="))
         } ?: listOf()
 
         val uri = request.uri
