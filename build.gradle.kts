@@ -113,6 +113,7 @@ allprojects {
 
             dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
 
+            dependency("org.bouncycastle:bcprov-jdk15:1.46")
         }
     }
 
