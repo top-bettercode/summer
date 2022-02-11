@@ -57,7 +57,8 @@ data class Column(
     val idgenerator: Boolean = false,
     val sequence: String = "",
     val sequenceStartWith: Int = 1,
-    var generatedColumn: Boolean = false
+    var generatedColumn: Boolean = false,
+    var version: Boolean = false
 ) {
     init {
         if ("null".equals(columnDef, true)) {
@@ -157,6 +158,7 @@ data class Column(
         if (unsigned != other.unsigned) return false
         if (autoIncrement != other.autoIncrement) return false
         if (idgenerator != other.idgenerator) return false
+        if (version != other.version) return false
         if (sequenceStartWith != other.sequenceStartWith) return false
         if (sequence != other.sequence) return false
 
@@ -193,6 +195,7 @@ data class Column(
         result = 31 * result + unsigned.hashCode()
         result = 31 * result + autoIncrement.hashCode()
         result = 31 * result + idgenerator.hashCode()
+        result = 31 * result + version.hashCode()
         result = 31 * result + sequence.hashCode()
         result = 31 * result + sequenceStartWith
         return result

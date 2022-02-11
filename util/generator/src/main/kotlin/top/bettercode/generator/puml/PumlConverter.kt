@@ -172,6 +172,10 @@ object PumlConverter {
                                 "IDGENERATOR",
                                 true
                             ),
+                            version = columnDef.contains(
+                                "VERSION",
+                                true
+                            ),
                             sequence = sequence,
                             sequenceStartWith = sequenceStartWith
                         )
