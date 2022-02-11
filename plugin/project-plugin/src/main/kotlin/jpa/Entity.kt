@@ -225,7 +225,7 @@ class Entity : ModuleJavaGenerator() {
                         if (it.extra.contains("ON UPDATE CURRENT_TIMESTAMP")) {
                             annotation("@org.springframework.data.annotation.LastModifiedDate")
                         }
-                        if (it.javaName == "version") {
+                        if (it.version) {
                             annotation("@javax.persistence.Version")
                         }
                         if (it.isSoftDelete) {
