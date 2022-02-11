@@ -2,7 +2,7 @@
 ### wu template
 .gradle
 build/
-wintrue
+/wintrue
 
 ### IntelliJ IDEA ###
 .idea
