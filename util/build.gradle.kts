@@ -4,7 +4,9 @@ plugins {
 
 subprojects {
 
-
+    apply {
+        plugin("org.springframework.boot")
+    }
 
     if (arrayOf("excel", "wechat", "ueditor").contains(name)) {
         apply {
@@ -17,4 +19,13 @@ subprojects {
             plugin("summer.kotlin-publish")
         }
     }
+
+    tasks {
+        "jar"(Jar::class) {
+            enabled = true
+            archiveClassifier.convention("")
+        }
+        "bootJar" { enabled = false }
+    }
+
 }
