@@ -5,6 +5,7 @@ import needDoc
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.tasks.application.CreateStartScripts
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
@@ -77,6 +78,16 @@ object SubProjectTasks {
                 named("distZip", Zip::class.java) {
                     it.archiveFileName.set("${project.name}.zip")
                 }
+            } else {
+                named("jar", Jar::class.java) {
+                    it.enabled = true
+                    it.archiveClassifier.convention("")
+                }
+//                named("bootRunMainClassName") { it.enabled = false }
+                named("bootRun") { it.enabled = false }
+//                named("bootJarMainClassName") { it.enabled = false }
+                named("bootJar") { it.enabled = false }
+                named("bootBuildImage") { it.enabled = false }
             }
 
             if (project.needDoc && !project.isBoot) {

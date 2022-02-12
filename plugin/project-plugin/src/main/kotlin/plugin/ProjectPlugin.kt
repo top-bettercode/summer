@@ -60,6 +60,7 @@ class ProjectPlugin : Plugin<Project> {
             subProject.plugins.apply {
                 apply("summer.profile")
                 apply("summer.packageinfo")
+                apply("org.springframework.boot")
                 apply("io.spring.dependency-management")
             }
 
@@ -72,7 +73,6 @@ class ProjectPlugin : Plugin<Project> {
             if (subProject.isBoot) {
                 subProject.plugins.apply {
                     apply("application")
-                    apply("org.springframework.boot")
                     apply("summer.dist")
                 }
             }
