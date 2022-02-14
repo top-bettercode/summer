@@ -149,7 +149,7 @@ class RequestLoggingFilter(
                     )
                 ) {
                     val initialComment =
-                        "${operation.collectionName}/${operation.name}(${operation.request.uri}) 请求响应缓慢"
+                        "${operation.collectionName}/${operation.name}(${operation.request.uri}) 请求响应速度慢"
                     val timeoutMsg = "：${operation.duration / 1000}秒"
                     val marker = MarkerFactory.getDetachedMarker(ALARM_LOG_MARKER)
                     marker.add(AlarmMarker(initialComment, timeoutMsg))
