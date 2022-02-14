@@ -20,6 +20,7 @@ import top.bettercode.lang.util.StringUtil
 import top.bettercode.logging.annotation.NoRequestLogging
 import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.logging.logback.AlarmMarker
+import top.bettercode.logging.logback.Logback2LoggingSystem
 import top.bettercode.logging.operation.Operation
 import top.bettercode.logging.operation.RequestConverter
 import top.bettercode.logging.operation.ResponseConverter
@@ -58,6 +59,10 @@ class RequestLoggingFilter(
             RequestLoggingFilter::class.java.name + ".bestMatchingPattern"
         val REQUEST_LOGGING_USERNAME = RequestLoggingFilter::class.java.name + ".username"
         val REQUEST_DATE_TIME = RequestLoggingFilter::class.java.name + ".dateTime"
+    }
+
+    init {
+        Logback2LoggingSystem.defaultMarker(REQUEST_LOG_MARKER)
     }
 
     private val log = LoggerFactory.getLogger(RequestLoggingFilter::class.java)
