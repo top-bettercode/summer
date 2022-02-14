@@ -1,7 +1,5 @@
 summer:
   logging:
-    spilt-marker:
-      request: info
     spilt-level:
       - error
       - warn
