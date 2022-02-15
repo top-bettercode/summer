@@ -6,16 +6,18 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 回收
  *
- * @param <T> T
+ * @param <T>  T
  * @param <ID> ID
  * @author Peter Wu
  */
-public interface RecycleQueryByExampleExecutor<T, ID> {
+public interface RecycleExecutor<T, ID> {
 
   @Transactional
   void cleanRecycleBin();
@@ -43,4 +45,16 @@ public interface RecycleQueryByExampleExecutor<T, ID> {
   <S extends T> long countRecycleBin(Example<S> example);
 
   <S extends T> boolean existsInRecycleBin(Example<S> example);
+
+  Optional<T> findOneFromRecycleBin(@Nullable Specification<T> spec);
+
+  List<T> findAllFromRecycleBin(@Nullable Specification<T> spec);
+
+  Page<T> findAllFromRecycleBin(@Nullable Specification<T> spec, Pageable pageable);
+
+  List<T> findAllFromRecycleBin(@Nullable Specification<T> spec, Sort sort);
+
+  long countRecycleBin(@Nullable Specification<T> spec);
+
+  boolean existsInRecycleBin(Specification<T> spec);
 }

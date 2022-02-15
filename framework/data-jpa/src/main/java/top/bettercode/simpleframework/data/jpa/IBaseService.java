@@ -6,6 +6,8 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 
 /**
  * @author Peter Wu
@@ -66,6 +68,19 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   void deleteAll();
 
+  Optional<T> findOne(@Nullable Specification<T> spec);
+
+  List<T> findAll(@Nullable Specification<T> spec);
+
+  Page<T> findAll(@Nullable Specification<T> spec, Pageable pageable);
+
+  List<T> findAll(@Nullable Specification<T> spec, Sort sort);
+
+  long count(@Nullable Specification<T> spec);
+
+  boolean exists(Specification<T> spec);
+
+
   <S extends T> Optional<S> findOne(Example<S> example);
 
   <S extends T> Page<S> findAll(Example<S> example, Pageable pageable);
@@ -77,4 +92,6 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
   <S extends T> Page<S> findAll(Example<S> example, Pageable pageable, Sort sort);
 
   Page<T> findAll(Pageable pageable, Sort sort);
+
+
 }

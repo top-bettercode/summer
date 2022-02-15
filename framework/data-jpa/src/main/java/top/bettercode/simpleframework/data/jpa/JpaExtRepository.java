@@ -1,10 +1,12 @@
 package top.bettercode.simpleframework.data.jpa;
 
-import top.bettercode.simpleframework.data.jpa.query.RecycleQueryByExampleExecutor;
 import java.util.Optional;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
+import top.bettercode.simpleframework.data.jpa.query.RecycleExecutor;
 
 /**
  * @param <T>  T
@@ -13,7 +15,8 @@ import org.springframework.data.repository.query.QueryByExampleExecutor;
  */
 @NoRepositoryBean
 public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByExampleExecutor<T>,
-    RecycleQueryByExampleExecutor<T, ID> {
+    JpaSpecificationExecutor<T>,
+    RecycleExecutor<T, ID> {
 
   /**
    * 根据ID查询数据，包括已逻辑删除的数据
@@ -40,4 +43,6 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
    * @return 结果
    */
   <S extends T> S dynamicBSave(S s);
+
+  boolean exists(Specification<T> spec);
 }

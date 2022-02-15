@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -64,10 +65,23 @@ public class SimpleJpaExtRepository<T, ID> extends
     this.softDeleteSupport = new DefaultSoftDeleteSupport(jpaExtProperties, getDomainClass());
   }
 
+  private static <T> Collection<T> toCollection(Iterable<T> ts) {
+
+    if (ts instanceof Collection) {
+      return (Collection<T>) ts;
+    }
+
+    List<T> tCollection = new ArrayList<T>();
+    for (T t : ts) {
+      tCollection.add(t);
+    }
+    return tCollection;
+  }
+
+
   private <S extends T> Specification<S> getSoftDeleteSpecification(Object value) {
     return (root, query, builder) -> builder
-        .equal(root.get(softDeleteSupport.getPropertyName()),
-            value);
+        .equal(root.get(softDeleteSupport.getPropertyName()), value);
   }
 
   @Transactional
@@ -388,17 +402,20 @@ public class SimpleJpaExtRepository<T, ID> extends
         return results;
       }
 
+      Collection<ID> idCollection = toCollection(ids);
+
       ByIdsSpecification<T> specification = new ByIdsSpecification<>(entityInformation);
       Specification<T> spec = getSoftDeleteSpecification(softDeleteSupport.getFalseValue())
           .and(specification);
       TypedQuery<T> query = getQuery(spec, Sort.unsorted());
 
-      return query.setParameter(specification.parameter, ids).getResultList();
+      return query.setParameter(specification.parameter, idCollection).getResultList();
     } else {
       return super.findAllById(ids);
     }
   }
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
   private static final class ByIdsSpecification<T> implements Specification<T> {
 
     private static final long serialVersionUID = 1L;
@@ -406,7 +423,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     private final JpaEntityInformation<T, ?> entityInformation;
 
     @Nullable
-    ParameterExpression<Iterable> parameter;
+    ParameterExpression<Collection<?>> parameter;
 
     ByIdsSpecification(JpaEntityInformation<T, ?> entityInformation) {
       this.entityInformation = entityInformation;
@@ -416,13 +433,16 @@ public class SimpleJpaExtRepository<T, ID> extends
      * (non-Javadoc)
      * @see org.springframework.data.jpa.domain.Specification#toPredicate(javax.persistence.criteria.Root, javax.persistence.criteria.CriteriaQuery, javax.persistence.criteria.CriteriaBuilder)
      */
+    @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 
       Path<?> path = root.get(entityInformation.getIdAttribute());
-      parameter = cb.parameter(Iterable.class);
+      parameter = (ParameterExpression<Collection<?>>) (ParameterExpression) cb.parameter(
+          Collection.class);
       return path.in(parameter);
     }
   }
+
 
   @Override
   public List<T> findAll(Sort sort) {
@@ -440,6 +460,20 @@ public class SimpleJpaExtRepository<T, ID> extends
     } else {
       return super.findAll(pageable);
     }
+  }
+
+
+  @Override
+  public long count(Specification<T> spec) {
+    if (softDeleteSupport.support()) {
+      spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getFalseValue()));
+    }
+    return super.count(spec);
+  }
+
+  @Override
+  public boolean exists(Specification<T> spec) {
+    return count(spec) > 0;
   }
 
   @Override
@@ -492,10 +526,7 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Override
   public <S extends T> boolean exists(Example<S> example) {
-    if (softDeleteSupport.support()) {
-      softDeleteSupport.setUnSoftDeleted(example.getProbe());
-    }
-    return super.exists(example);
+    return count(example) > 0;
   }
 
   @Override
@@ -534,23 +565,6 @@ public class SimpleJpaExtRepository<T, ID> extends
           softDeleteSupport.getFalseValue()).getSingleResult();
     } else {
       return super.count();
-    }
-  }
-
-  @Override
-  public long count(Specification<T> spec) {
-    if (softDeleteSupport.support()) {
-      spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getFalseValue()));
-    }
-    return super.count(spec);
-  }
-
-  @Override
-  public long countRecycleBin() {
-    if (softDeleteSupport.support()) {
-      return super.count(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
-    } else {
-      return 0;
     }
   }
 
@@ -618,6 +632,15 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
+  public long countRecycleBin() {
+    if (softDeleteSupport.support()) {
+      return super.count(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
+    } else {
+      return 0;
+    }
+  }
+
+  @Override
   public <S extends T> long countRecycleBin(Example<S> example) {
     if (softDeleteSupport.support()) {
       softDeleteSupport.setSoftDeleted(example.getProbe());
@@ -635,5 +658,52 @@ public class SimpleJpaExtRepository<T, ID> extends
     } else {
       return false;
     }
+  }
+
+  @Override
+  public Optional<T> findOneFromRecycleBin(Specification<T> spec) {
+    if (softDeleteSupport.support()) {
+      spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
+      return super.findOne(spec);
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  @Override
+  public List<T> findAllFromRecycleBin(Specification<T> spec) {
+    if (softDeleteSupport.support()) {
+      spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
+    }
+    return super.findAll(spec);
+  }
+
+  @Override
+  public Page<T> findAllFromRecycleBin(Specification<T> spec, Pageable pageable) {
+    if (softDeleteSupport.support()) {
+      spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
+    }
+    return super.findAll(spec, pageable);
+  }
+
+  @Override
+  public List<T> findAllFromRecycleBin(Specification<T> spec, Sort sort) {
+    if (softDeleteSupport.support()) {
+      spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
+    }
+    return super.findAll(spec, sort);
+  }
+
+  @Override
+  public long countRecycleBin(Specification<T> spec) {
+    if (softDeleteSupport.support()) {
+      spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
+    }
+    return super.count(spec);
+  }
+
+  @Override
+  public boolean existsInRecycleBin(Specification<T> spec) {
+    return countRecycleBin(spec) > 0;
   }
 }
