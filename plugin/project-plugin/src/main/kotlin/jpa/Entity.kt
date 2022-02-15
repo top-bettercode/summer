@@ -34,62 +34,11 @@ class Entity : ModuleJavaGenerator() {
             }
             serialVersionUID()
 
-            //创建实例
-            method("of", entityType) {
-                this.isStatic = true
-                javadoc {
-                    +"/**"
-                    +" * 创建实例"
-                    +" *"
-                    +" * @return ${remarks}实例"
-                    +" */"
-                }
-                +"return new ${className}();"
-            }
-
-            //field
-            field("matcher", JavaType("org.springframework.data.domain.ExampleMatcher")) {
-                javadoc {
-                    +"/**"
-                    +" * ExampleMatcher"
-                    +" */"
-                }
-                annotation("@javax.persistence.Transient")
-            }
-
-            //example
-            method(
-                "example",
-                JavaType("org.springframework.data.domain.Example").typeArgument(entityType)
-            ) {
-                javadoc {
-                    +"/**"
-                    +" * @return example实例"
-                    +" */"
-                }
-                +"if (this.matcher == null) {"
-                +"return Example.of(this);"
-                +"} else {"
-                +"return Example.of(this, this.matcher);"
-                +"}"
-            }
-
-            method(
-                "example",
-                JavaType("org.springframework.data.domain.Example").typeArgument(entityType),
-                Parameter("matcher", JavaType("org.springframework.data.domain.ExampleMatcher"))
-            ) {
-                javadoc {
-                    +"/**"
-                    +" * @param matcher ExampleMatcher"
-                    +" * @return example实例"
-                    +" */"
-                }
-                +"return Example.of(this, matcher);"
-            }
-
             //constructor no args
-            constructor {}
+            constructor {
+                if (compositePrimaryKey)
+                    +"this.$primaryKeyName = new ${primaryKeyType.shortName}();"
+            }
 
             field("TABLE_NAME", JavaType.stringInstance, "\"${tableName}\"") {
                 visibility = JavaVisibility.PUBLIC
@@ -166,31 +115,6 @@ class Entity : ModuleJavaGenerator() {
                         +" * @return ${remarks}实例"
                         +" */"
                     }
-                    +"this.${primaryKeyName} = ${primaryKeyName};"
-                    +"return this;"
-                }
-                method(
-                    "set${primaryKeyName.capitalize()}",
-                    entityType,
-                    Parameter(primaryKeyName, primaryKeyType),
-                    Parameter(
-                        "genericPropertyMatcher",
-                        JavaType("org.springframework.data.domain.ExampleMatcher.GenericPropertyMatcher")
-                    )
-                ) {
-                    javadoc {
-                        +"/**"
-                        +" * 设置主键"
-                        +" *"
-                        +" * @param $primaryKeyName 主键"
-                        +" * @param genericPropertyMatcher PropertyMatcher"
-                        +" * @return ${remarks}实例"
-                        +" */"
-                    }
-                    +"if(this.matcher == null){"
-                    +"this.matcher = ExampleMatcher.matching();"
-                    +"}"
-                    +"this.matcher.withMatcher(\"${primaryKeyName}\", genericPropertyMatcher);"
                     +"this.${primaryKeyName} = ${primaryKeyName};"
                     +"return this;"
                 }
@@ -272,29 +196,6 @@ class Entity : ModuleJavaGenerator() {
                         +" * @return ${remarks}实例"
                         +" */"
                     }
-                    +"this.${it.javaName} = ${it.javaName};"
-                    +"return this;"
-                }
-                method(
-                    "set${it.javaName.capitalize()}",
-                    entityType,
-                    Parameter(it.javaName, it.javaType),
-                    Parameter(
-                        "genericPropertyMatcher",
-                        JavaType("org.springframework.data.domain.ExampleMatcher.GenericPropertyMatcher")
-                    )
-                ) {
-                    javadoc {
-                        +"/**"
-                        +" * ${getParamRemark(it)}"
-                        +" * @param genericPropertyMatcher PropertyMatcher"
-                        +" * @return ${remarks}实例"
-                        +" */"
-                    }
-                    +"if (this.matcher == null) {"
-                    +"this.matcher = ExampleMatcher.matching();"
-                    +"}"
-                    +"this.matcher.withMatcher(${className}Properties.${it.javaName}, genericPropertyMatcher);"
                     +"this.${it.javaName} = ${it.javaName};"
                     +"return this;"
                 }
@@ -387,38 +288,29 @@ class Entity : ModuleJavaGenerator() {
                     }
                     serialVersionUID()
 
-                    //创建实例
-                    method("of", primaryKeyType) {
-                        this.isStatic = true
-                        javadoc {
-                            +"/**"
-                            +" * 创建实例"
-                            +" *"
-                            +" * @return ${remarks}实例"
-                            +" */"
-                        }
-                        +"return new ${className}Key();"
-                    }
-
                     //constructor no args
-                    constructor {}
+                    constructor { }
                     //constructor with key String
                     import("org.springframework.util.Assert")
                     constructor(Parameter(primaryKeyName, JavaType.stringInstance)) {
                         +"Assert.hasText(${primaryKeyName},\"${primaryKeyName}不能为空\");"
                         +"String[] split = ${primaryKeyName}.split(\"${keySep}\");"
-                        +"Assert.isTrue(split.length==${primaryKeys.size},\"${primaryKeyName}格式不对\");"
                         primaryKeys.forEachIndexed { index, column ->
-                            +"this.${column.javaName} = ${column.setValue("split[${index}]")};"
+                            +"this.${column.javaName} = split.length > $index ? ${
+                                column.setValue(
+                                    "split[${index}]"
+                                )
+                            } : null;"
                         }
                     }
 
-                    constructor {
-                        primaryKeys.forEach { column ->
-                            parameter(column.javaType, column.javaName)
-                            +"this.${column.javaName} = ${column.javaName};"
+                    if (compositePrimaryKey)
+                        constructor {
+                            primaryKeys.forEach { column ->
+                                parameter(column.javaType, column.javaName)
+                                +"this.${column.javaName} = ${column.javaName};"
+                            }
                         }
-                    }
 
                     primaryKeys.forEach {
                         //field
@@ -512,7 +404,131 @@ class Entity : ModuleJavaGenerator() {
                     //toString
                     method("toString", JavaType.stringInstance) {
                         annotation("@Override")
-                        +"return ${primaryKeys.joinToString(" + \"${keySep}\" + ") { it.javaName }};"
+                        +"return ${primaryKeys.joinToString(" + \"${keySep}\" + ") { "(if(this.${it.javaName}==null) \"\" else this.${it.javaName})" }};"
+                    }
+                }
+            }
+
+            if (hasPrimaryKey) {
+                val specType =
+                    JavaType("top.bettercode.simpleframework.data.jpa.query.MatcherSpecification").typeArgument(
+                        entityType
+                    )
+                val specMatcherBaseType =
+                    JavaType("top.bettercode.simpleframework.data.jpa.query.DefaultSpecMatcher").typeArgument(
+                        entityType
+                    )
+                method("spec", specType) {
+                    javadoc {
+                        +"/**"
+                        +" * 创建 SpecMatcher 实例"
+                        +" *"
+                        +" * @return $remarks SpecMatcher 实例"
+                        +" */"
+                    }
+                    +"return spec(${className}SpecMatcher.matching());"
+                }
+                method("spec", specType, Parameter("specMatcher", specMatcherBaseType)) {
+                    javadoc {
+                        +"/**"
+                        +" * 创建 SpecMatcher 实例"
+                        +" *"
+                        +" * @param specMatcher specMatcher"
+                        +" * @return $remarks SpecMatcher 实例"
+                        +" */"
+                    }
+                    +"return new MatcherSpecification<>(specMatcher, this);"
+                }
+                val specMatcherType = JavaType("${className}SpecMatcher")
+                val innerClass = InnerClass(specMatcherType)
+                innerClass(innerClass)
+
+                innerClass.apply {
+                    visibility = JavaVisibility.PUBLIC
+                    isStatic = true
+
+                    javadoc {
+                        +"/**"
+                        +" * $remarks SpecMatcher"
+                        +" */"
+                    }
+
+                    superClass(specMatcherBaseType)
+
+                    val modeType =
+                        JavaType("top.bettercode.simpleframework.data.jpa.query.SpecMatcher.SpecMatcherMode")
+
+                    constructor(Parameter("mode", modeType)) {
+                        this.visibility = JavaVisibility.PRIVATE
+                        +"super(mode);"
+                    }
+
+
+                    //创建实例
+                    method("matching", specMatcherType) {
+                        this.isStatic = true
+                        javadoc {
+                            +"/**"
+                            +" * 创建 SpecMatcher 实例"
+                            +" *"
+                            +" * @return $remarks SpecMatcher 实例"
+                            +" */"
+                        }
+                        +"return matchingAll();"
+                    }
+
+                    method("matchingAll", specMatcherType) {
+                        this.isStatic = true
+                        javadoc {
+                            +"/**"
+                            +" * 创建 SpecMatcher 实例"
+                            +" *"
+                            +" * @return $remarks SpecMatcher 实例"
+                            +" */"
+                        }
+                        +"return new ${specMatcherType}(SpecMatcherMode.ALL);"
+                    }
+
+                    method("matchingAny", specMatcherType) {
+                        this.isStatic = true
+                        javadoc {
+                            +"/**"
+                            +" * 创建 SpecMatcher 实例"
+                            +" *"
+                            +" * @return $remarks SpecMatcher 实例"
+                            +" */"
+                        }
+                        +"return new ${specMatcherType}(SpecMatcherMode.ANY);"
+                    }
+
+                    val pathType =
+                        JavaType("top.bettercode.simpleframework.data.jpa.query.SpecPath").typeArgument(
+                            entityType
+                        )
+                    import("top.bettercode.simpleframework.data.jpa.query.DefaultSpecPath")
+                    if (hasPrimaryKey) {
+                        //primaryKey
+                        if (compositePrimaryKey) {
+                            primaryKeys.forEach {
+                                method(it.javaName, pathType) {
+                                    this.visibility = JavaVisibility.PUBLIC
+                                    +"return super.specPath(\"${primaryKeyName}.${it.javaName}\");"
+                                }
+                            }
+                        } else {
+                            method(primaryKeyName, pathType) {
+                                this.visibility = JavaVisibility.PUBLIC
+                                +"return super.specPath(\"${primaryKeyName}\");"
+                            }
+                        }
+
+                    }
+
+                    otherColumns.forEach {
+                        method(it.javaName, pathType) {
+                            this.visibility = JavaVisibility.PUBLIC
+                            +"return super.specPath(\"${it.javaName}\");"
+                        }
                     }
                 }
             }

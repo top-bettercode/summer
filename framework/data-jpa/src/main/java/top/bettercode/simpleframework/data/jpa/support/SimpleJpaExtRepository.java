@@ -214,9 +214,9 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Transactional
   @Override
-  public void deleteFromRecycleBin(Example<T> example) {
+  public void deleteFromRecycleBin(Specification<T> spec) {
     if (softDeleteSupport.support()) {
-      Iterable<T> allFromRecycleBin = findAllFromRecycleBin(example);
+      Iterable<T> allFromRecycleBin = findAllFromRecycleBin(spec);
       super.deleteInBatch(allFromRecycleBin);
     }
   }
@@ -591,45 +591,6 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
-  @Override
-  public <S extends T> Optional<S> findOneFromRecycleBin(Example<S> example) {
-    if (softDeleteSupport.support()) {
-      softDeleteSupport.setSoftDeleted(example.getProbe());
-      return super.findOne(example);
-    } else {
-      return Optional.empty();
-    }
-  }
-
-  @Override
-  public <S extends T> Iterable<S> findAllFromRecycleBin(Example<S> example) {
-    if (softDeleteSupport.support()) {
-      softDeleteSupport.setSoftDeleted(example.getProbe());
-      return super.findAll(example);
-    } else {
-      return Collections.emptyList();
-    }
-  }
-
-  @Override
-  public <S extends T> Iterable<S> findAllFromRecycleBin(Example<S> example, Sort sort) {
-    if (softDeleteSupport.support()) {
-      softDeleteSupport.setSoftDeleted(example.getProbe());
-      return super.findAll(example, sort);
-    } else {
-      return Collections.emptyList();
-    }
-  }
-
-  @Override
-  public <S extends T> Page<S> findAllFromRecycleBin(Example<S> example, Pageable pageable) {
-    if (softDeleteSupport.support()) {
-      softDeleteSupport.setSoftDeleted(example.getProbe());
-      return super.findAll(example, pageable);
-    } else {
-      return Page.empty();
-    }
-  }
 
   @Override
   public long countRecycleBin() {
@@ -640,25 +601,6 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
-  @Override
-  public <S extends T> long countRecycleBin(Example<S> example) {
-    if (softDeleteSupport.support()) {
-      softDeleteSupport.setSoftDeleted(example.getProbe());
-      return super.count(example);
-    } else {
-      return 0;
-    }
-  }
-
-  @Override
-  public <S extends T> boolean existsInRecycleBin(Example<S> example) {
-    if (softDeleteSupport.support()) {
-      softDeleteSupport.setSoftDeleted(example.getProbe());
-      return super.exists(example);
-    } else {
-      return false;
-    }
-  }
 
   @Override
   public Optional<T> findOneFromRecycleBin(Specification<T> spec) {

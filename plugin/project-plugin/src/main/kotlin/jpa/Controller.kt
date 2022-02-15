@@ -47,9 +47,8 @@ open class Controller : ModuleJavaGenerator() {
                         name = "pageable"
                         annotation("@org.springframework.data.web.PageableDefault${pageDefaultSort()}")
                     }
-                    import("org.springframework.data.domain.Example")
                     import("org.springframework.data.domain.Page")
-                    +"Page<$className> results = ${projectEntityName}Service.findAll(${entityName}.example(), pageable);"
+                    +"Page<$className> results = ${projectEntityName}Service.findAll(${entityName}.spec(), pageable);"
                     +"return ok(results);"
                 }
 
@@ -93,7 +92,7 @@ open class Controller : ModuleJavaGenerator() {
                             name = entityName
                         }
 
-                        +"Iterable<$className> results = ${projectEntityName}Service.findAll(${entityName}.example()${sort()});"
+                        +"Iterable<$className> results = ${projectEntityName}Service.findAll(${entityName}.spec()${sort()});"
                         import("top.bettercode.util.excel.ExcelExport")
                         +"ExcelExport.export(request, response, \"$remarks\", excelExport -> excelExport.sheet(\"$remarks\").setData(results, excelFields));"
                     }
