@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Peter Wu
@@ -121,6 +122,37 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   @Override
   public void deleteAll() {
     repository.deleteAll();
+  }
+
+
+  @Override
+  public Optional<T> findOne(Specification<T> spec) {
+    return repository.findOne(spec);
+  }
+
+  @Override
+  public List<T> findAll(Specification<T> spec) {
+    return repository.findAll(spec);
+  }
+
+  @Override
+  public Page<T> findAll(Specification<T> spec, Pageable pageable) {
+    return repository.findAll(spec, pageable);
+  }
+
+  @Override
+  public List<T> findAll(Specification<T> spec, Sort sort) {
+    return repository.findAll(spec, sort);
+  }
+
+  @Override
+  public long count(Specification<T> spec) {
+    return repository.count(spec);
+  }
+
+  @Override
+  public boolean exists(Specification<T> spec) {
+    return repository.exists(spec);
   }
 
   @Override
