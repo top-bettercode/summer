@@ -1,7 +1,5 @@
 package top.bettercode.simpleframework.data.test.support;
 
-import top.bettercode.simpleframework.data.test.domain.User;
-import top.bettercode.simpleframework.data.test.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +14,9 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import top.bettercode.simpleframework.data.jpa.query.DefaultSpecMatcher;
+import top.bettercode.simpleframework.data.test.domain.User;
+import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
 /**
  * @author Peter Wu
@@ -97,9 +98,8 @@ public class SimpleJpaExtRepositoryTest {
     Optional<User> optionalUser = repository.findByIdFromRecycleBin(carterId);
     optionalUser.ifPresent(System.out::println);
     org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
-    User user = new User();
-    user.setId(carterId);
-    repository.deleteFromRecycleBin(Example.of(user));
+    repository.deleteFromRecycleBin(
+        DefaultSpecMatcher.<User>matching().equal("id", carterId).spec());
     optionalUser = repository.findByIdFromRecycleBin(carterId);
     optionalUser.ifPresent(System.out::println);
     org.junit.jupiter.api.Assertions.assertFalse(optionalUser.isPresent());
@@ -243,7 +243,8 @@ public class SimpleJpaExtRepositoryTest {
   @Test
   public void countRecycle2() {
     org.junit.jupiter.api.Assertions
-        .assertEquals(1, repository.countRecycleBin(Example.of(new User("Dave", null))));
+        .assertEquals(1, repository.countRecycleBin(
+            DefaultSpecMatcher.<User>matching().equal("firstname", "Dave").spec()));
   }
 
   @Test
@@ -260,18 +261,21 @@ public class SimpleJpaExtRepositoryTest {
   @Test
   public void findRecycleOne() {
     org.junit.jupiter.api.Assertions.assertTrue(
-        repository.findOneFromRecycleBin(Example.of(new User("Dave", null))).isPresent());
+        repository.findOneFromRecycleBin(
+            DefaultSpecMatcher.<User>matching().equal("firstname", "Dave").spec()).isPresent());
   }
 
   @Test
   public void findRecycleAll1() {
     org.junit.jupiter.api.Assertions.assertTrue(
-        repository.findAllFromRecycleBin(Example.of(new User("Dave", null))).iterator().hasNext());
+        repository.findAllFromRecycleBin((root, query, builder) -> builder
+            .equal(root.get("firstname"), "Dave")).iterator().hasNext());
   }
 
   @Test
   public void existsRecycle() {
     org.junit.jupiter.api.Assertions
-        .assertTrue(repository.existsInRecycleBin(Example.of(new User("Dave", null))));
+        .assertTrue(repository.existsInRecycleBin((root, query, builder) -> builder
+            .equal(root.get("firstname"), "Dave")));
   }
 }
