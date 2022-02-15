@@ -71,7 +71,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       return (Collection<T>) ts;
     }
 
-    List<T> tCollection = new ArrayList<T>();
+    List<T> tCollection = new ArrayList<>();
     for (T t : ts) {
       tCollection.add(t);
     }
