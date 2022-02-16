@@ -120,6 +120,11 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
+  public void deleteAllById(Iterable<ID> ids) {
+    repository.deleteAllById(ids);
+  }
+
+  @Override
   public void deleteAll(Iterable<? extends T> iterable) {
     repository.deleteAll(iterable);
   }

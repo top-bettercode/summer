@@ -198,6 +198,11 @@ public class SimpleJpaExtRepository<T, ID> extends
     deleteInBatch(findAll(spec));
   }
 
+  @Transactional
+  @Override
+  public void deleteAllById(Iterable<ID> ids) {
+    deleteInBatch(findAllById(ids));
+  }
 
   @Transactional
   @Override
