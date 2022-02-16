@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
@@ -198,17 +198,17 @@ public class MatcherSpecification<T> implements Specification<T> {
         case NOT_LIKE:
           return criteriaBuilder.notLike(stringExpression, (String) value);
         case IN:
-          In<Object> in = criteriaBuilder.in(stringExpression);
           Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
-          Collection<?> col = (Collection) value;
-          for (Object o : col) {
-            if (ignoreCase) {
-              in.value(o.toString().toLowerCase());
-            } else {
-              in.value(o);
-            }
-          }
-          return in;
+          List<String> collect = ((Collection<?>) value).stream()
+              .map(s -> ignoreCase ? s.toString().toLowerCase() : s.toString())
+              .collect(Collectors.toList());
+          return stringExpression.in(collect);
+        case NOT_IN:
+          Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
+          List<String> notInCollect = ((Collection<?>) value).stream()
+              .map(s -> ignoreCase ? s.toString().toLowerCase() : s.toString())
+              .collect(Collectors.toList());
+          return criteriaBuilder.not(stringExpression.in(notInCollect));
       }
     } else {
       switch (matcher) {
@@ -217,13 +217,13 @@ public class MatcherSpecification<T> implements Specification<T> {
         case NE:
           return criteriaBuilder.notEqual(path, value);
         case IN:
-          In<Object> in = criteriaBuilder.in(path);
           Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
-          Collection<?> col = (Collection) value;
-          for (Object o : col) {
-            in.value(o);
-          }
-          return in;
+          Collection<?> collect = ((Collection<?>) value);
+          return path.in(collect);
+        case NOT_IN:
+          Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
+          Collection<?> notInCollect = ((Collection<?>) value);
+          return criteriaBuilder.not(path.in(notInCollect));
       }
     }
     return null;

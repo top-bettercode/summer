@@ -129,7 +129,7 @@ public class DefaultSpecMatcher<M extends SpecMatcher> implements SpecMatcher {
 
   @Override
   public M in(String propertyName, Object... value) {
-    return in(propertyName, Arrays.asList(value));
+    return withMatcher(propertyName, Arrays.asList(value), PathMatcher.IN);
   }
 
   @Override
@@ -137,5 +137,15 @@ public class DefaultSpecMatcher<M extends SpecMatcher> implements SpecMatcher {
     return withMatcher(propertyName, value, PathMatcher.IN);
   }
 
+
+  @Override
+  public M notIn(String propertyName, Object... value) {
+    return withMatcher(propertyName, Arrays.asList(value), PathMatcher.NOT_IN);
+  }
+
+  @Override
+  public M notIn(String propertyName, Collection<?> value) {
+    return withMatcher(propertyName, value, PathMatcher.NOT_IN);
+  }
 
 }

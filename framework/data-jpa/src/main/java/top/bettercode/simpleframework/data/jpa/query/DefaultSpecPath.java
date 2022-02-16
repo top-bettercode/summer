@@ -272,12 +272,22 @@ public class DefaultSpecPath<E extends SpecMatcher> implements SpecPath<E> {
 
   @Override
   public E in(Object... value) {
-    return in(Arrays.asList(value));
+    return withMatcher(Arrays.asList(value), PathMatcher.IN);
   }
 
   @Override
   public E in(Collection<?> value) {
     return withMatcher(value, PathMatcher.IN);
+  }
+
+  @Override
+  public E notIn(Object... value) {
+    return withMatcher(Arrays.asList(value), PathMatcher.NOT_IN);
+  }
+
+  @Override
+  public E notIn(Collection<?> value) {
+    return withMatcher(value, PathMatcher.NOT_IN);
   }
 
   static class BetweenValue<Y extends Comparable<? super Y>> {

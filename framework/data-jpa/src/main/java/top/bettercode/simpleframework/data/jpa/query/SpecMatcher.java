@@ -7,6 +7,10 @@ import java.util.Collection;
  */
 public interface SpecMatcher {
 
+  SpecMatcher notIn(String propertyName, Object... value);
+
+  SpecMatcher notIn(String propertyName, Collection<?> value);
+
   enum SpecMatcherMode {
     ALL, ANY
   }
