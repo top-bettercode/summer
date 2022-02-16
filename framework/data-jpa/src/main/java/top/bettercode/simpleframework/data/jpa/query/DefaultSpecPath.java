@@ -55,9 +55,9 @@ public class DefaultSpecPath<E extends SpecMatcher> implements SpecPath<E> {
   }
 
   @Override
-  public E setValue(Object value) {
+  public SpecPath<E> setValue(Object value) {
     this.value = value;
-    return this.specMatcher;
+    return this;
   }
 
   @Override

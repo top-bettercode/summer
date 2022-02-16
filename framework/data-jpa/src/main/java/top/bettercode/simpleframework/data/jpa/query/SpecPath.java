@@ -21,7 +21,7 @@ public interface SpecPath<E extends SpecMatcher> {
    */
   boolean isIgnoredPath();
 
-  E setValue(Object value);
+  SpecPath<E> setValue(Object value);
 
   E withMatcher(PathMatcher matcher);
 
