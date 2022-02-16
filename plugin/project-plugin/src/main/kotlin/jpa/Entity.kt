@@ -216,9 +216,12 @@ class Entity : ModuleJavaGenerator() {
                 +"return false;"
                 +"}"
                 +"$className that = (${className}) o;"
-                +"if (${primaryKeyName} != that.get${primaryKeyName.capitalize()}()) {"
-                +"return false;"
-                +"}"
+                if (hasPrimaryKey) {
+                    +"if (${primaryKeyName} != that.get${primaryKeyName.capitalize()}()) {"
+                    +"return false;"
+                    +"}"
+                }
+
 
                 val size = otherColumns.size
                 if (size == 0) {
