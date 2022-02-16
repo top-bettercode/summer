@@ -14,6 +14,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.query.MatcherSpecification;
 import top.bettercode.simpleframework.data.jpa.query.SpecMatcher;
 import top.bettercode.simpleframework.data.test.domain.User;
@@ -211,6 +212,15 @@ public class SimpleJpaExtRepositoryTest {
         .assertEquals(2, repository.findAll(PageRequest.of(0, 2)).getContent().size());
     org.junit.jupiter.api.Assertions
         .assertEquals(3, repository.findAll(PageRequest.of(0, 5)).getContent().size());
+  }
+
+  @Test
+  public void findAll34() {
+    MatcherSpecification<User> spec = SpecMatcher.defaultMatching().equal("id", carterId)
+        .equal("firstname", "Carter")
+        .desc("firstname").asc("lastname").spec();
+    List<User> all = repository.findAll(spec);
+    System.err.println(StringUtil.valueOf(all, true));
   }
 
   @Test
