@@ -414,7 +414,7 @@ class Entity : ModuleJavaGenerator() {
                     JavaType("top.bettercode.simpleframework.data.jpa.query.MatcherSpecification").typeArgument(
                         entityType
                     )
-                val specMatcherType = JavaType("${className}SpecMatcher")
+                val specMatcherType = JavaType("${className}Matcher")
                 val specMatcherBaseType =
                     JavaType("top.bettercode.simpleframework.data.jpa.query.DefaultSpecMatcher").typeArgument(
                         specMatcherType
@@ -427,7 +427,7 @@ class Entity : ModuleJavaGenerator() {
                         +" * @return $remarks SpecMatcher 实例"
                         +" */"
                     }
-                    +"return spec(${className}SpecMatcher.matching());"
+                    +"return spec(${className}Matcher.matching());"
                 }
                 method("spec", specType, Parameter("specMatcher", specMatcherType)) {
                     javadoc {
