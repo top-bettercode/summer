@@ -456,7 +456,7 @@ class Entity : ModuleJavaGenerator() {
                     superClass(specMatcherBaseType)
 
                     val modeType =
-                        JavaType("top.bettercode.simpleframework.data.jpa.query.SpecMatcher.SpecMatcherMode")
+                        JavaType("SpecMatcherMode")
 
                     constructor(Parameter("mode", modeType)) {
                         this.visibility = JavaVisibility.PRIVATE
@@ -505,7 +505,6 @@ class Entity : ModuleJavaGenerator() {
                         JavaType("top.bettercode.simpleframework.data.jpa.query.SpecPath").typeArgument(
                             specMatcherType
                         )
-                    import("top.bettercode.simpleframework.data.jpa.query.DefaultSpecPath")
                     if (hasPrimaryKey) {
                         //primaryKey
                         if (compositePrimaryKey) {
