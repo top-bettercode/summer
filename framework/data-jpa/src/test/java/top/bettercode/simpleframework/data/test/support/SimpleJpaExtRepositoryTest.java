@@ -217,7 +217,7 @@ public class SimpleJpaExtRepositoryTest {
   @Test
   public void findAll34() {
     MatcherSpecification<User> spec = SpecMatcher.defaultMatching().equal("id", carterId)
-        .equal("firstname", "Carter")
+        .containing("firstname", "Cart")
         .desc("firstname").asc("lastname").spec();
     List<User> all = repository.findAll(spec);
     System.err.println(StringUtil.valueOf(all, true));
