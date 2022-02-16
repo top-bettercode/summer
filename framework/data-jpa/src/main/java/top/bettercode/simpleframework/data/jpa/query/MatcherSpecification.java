@@ -18,6 +18,8 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.SingularAttribute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,6 +37,7 @@ import top.bettercode.simpleframework.data.jpa.query.SpecMatcher.SpecMatcherMode
  */
 public class MatcherSpecification<T> implements Specification<T> {
 
+  private final Logger log = LoggerFactory.getLogger(MatcherSpecification.class);
   private static final long serialVersionUID = 1L;
   private final SpecMatcher specMatcher;
   private final T probe;
@@ -58,8 +61,7 @@ public class MatcherSpecification<T> implements Specification<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query,
-      CriteriaBuilder criteriaBuilder) {
+  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
     if (probe != null) {
       setSpecPathDefaultValue("", root, root.getModel(), probe, probe.getClass(),
           new PathNode("root", null, probe));
@@ -69,13 +71,19 @@ public class MatcherSpecification<T> implements Specification<T> {
     for (SpecPath<?> specPath : specMatcher.getSpecPaths()) {
       Direction direction = specPath.getDirection();
       if (direction != null) {
-        Order order = Direction.DESC.equals(direction) ? criteriaBuilder.desc(
-            root.get(specPath.getPropertyName()))
-            : criteriaBuilder.asc(root.get(specPath.getPropertyName()));
-        orders.add(order);
+        Path<Object> path = null;
+        try {
+          path = root.get(specPath.getPropertyName());
+        } catch (IllegalArgumentException e) {
+          log.warn(e.getMessage());
+        }
+        if (path != null) {
+          Order order = Direction.DESC.equals(direction) ? cb.desc(path) : cb.asc(path);
+          orders.add(order);
+        }
       }
       if (!specPath.isIgnoredPath()) {
-        Predicate predicate = toPredicate(specPath, root, criteriaBuilder);
+        Predicate predicate = toPredicate(specPath, root, cb);
         if (predicate != null) {
           predicates.add(predicate);
         }
@@ -83,9 +91,9 @@ public class MatcherSpecification<T> implements Specification<T> {
     }
     query.orderBy(orders);
     Predicate[] restrictions = predicates.toArray(new Predicate[0]);
-    return specMatcher.getMatchMode().equals(SpecMatcherMode.ALL) ? criteriaBuilder.and(
+    return specMatcher.getMatchMode().equals(SpecMatcherMode.ALL) ? cb.and(
         restrictions)
-        : criteriaBuilder.or(restrictions);
+        : cb.or(restrictions);
   }
 
   @SuppressWarnings("rawtypes")
@@ -145,21 +153,39 @@ public class MatcherSpecification<T> implements Specification<T> {
     if (specPath.isIgnoredPath()) {
       return null;
     }
-    SingularAttribute attribute = root.getModel().getSingularAttribute(specPath.getPropertyName());
     PathMatcher matcher = specPath.getMatcher();
-    Path path = root.get(attribute);
     switch (matcher) {
       case IS_TRUE:
+        Path path = getPath(specPath, root);
+        if (path == null) {
+          return null;
+        }
         return criteriaBuilder.isTrue(path);
       case IS_FALSE:
+        path = getPath(specPath, root);
+        if (path == null) {
+          return null;
+        }
         return criteriaBuilder.isFalse(path);
       case IS_NULL:
+        path = getPath(specPath, root);
+        if (path == null) {
+          return null;
+        }
         return criteriaBuilder.isNull(path);
       case IS_NOT_NULL:
+        path = getPath(specPath, root);
+        if (path == null) {
+          return null;
+        }
         return criteriaBuilder.isNotNull(path);
     }
     Object value = specPath.getValue();
     if (value == null || "".equals(value)) {
+      return null;
+    }
+    Path path = getPath(specPath, root);
+    if (path == null) {
       return null;
     }
     switch (matcher) {
@@ -178,7 +204,7 @@ public class MatcherSpecification<T> implements Specification<T> {
       case LE:
         return criteriaBuilder.lessThanOrEqualTo(path, (Comparable) value);
     }
-    if (attribute.getJavaType().equals(String.class)) {
+    if (path.getJavaType().equals(String.class)) {
       Expression<String> stringExpression = path;
       boolean ignoreCase = specPath.isIgnoreCase();
       if (ignoreCase) {
@@ -238,6 +264,18 @@ public class MatcherSpecification<T> implements Specification<T> {
       }
     }
     return null;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private Path getPath(SpecPath specPath, Root<?> root) {
+    SingularAttribute attribute;
+    try {
+      attribute = root.getModel().getSingularAttribute(specPath.getPropertyName());
+    } catch (IllegalArgumentException e) {
+      log.warn(e.getMessage());
+      return null;
+    }
+    return root.get(attribute);
   }
 
   private static class PathNode {
