@@ -34,7 +34,7 @@ import top.bettercode.simpleframework.data.jpa.query.SpecMatcher.SpecMatcherMode
 public class MatcherSpecification<T> implements Specification<T> {
 
   private static final long serialVersionUID = 1L;
-  private final SpecMatcher<T> specMatcher;
+  private final SpecMatcher specMatcher;
   private final T probe;
   private static final Set<PersistentAttributeType> ASSOCIATION_TYPES;
 
@@ -45,14 +45,12 @@ public class MatcherSpecification<T> implements Specification<T> {
         PersistentAttributeType.ONE_TO_ONE);
   }
 
-  public MatcherSpecification(
-      top.bettercode.simpleframework.data.jpa.query.SpecMatcher<T> specMatcher) {
+  public MatcherSpecification(SpecMatcher specMatcher) {
     this.specMatcher = specMatcher;
     this.probe = null;
   }
 
-  public MatcherSpecification(
-      top.bettercode.simpleframework.data.jpa.query.SpecMatcher<T> specMatcher, T probe) {
+  public MatcherSpecification(SpecMatcher specMatcher, T probe) {
     this.specMatcher = specMatcher;
     this.probe = probe;
   }
@@ -61,11 +59,11 @@ public class MatcherSpecification<T> implements Specification<T> {
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query,
       CriteriaBuilder criteriaBuilder) {
     if (probe != null) {
-      setSpecPathDefaultValue("", criteriaBuilder, root, root.getModel(), probe, probe.getClass(),
+      setSpecPathDefaultValue("", root, root.getModel(), probe, probe.getClass(),
           new PathNode("root", null, probe));
     }
     List<Predicate> predicates = new ArrayList<>();
-    for (SpecPath<T> specPath : specMatcher.getSpecPaths()) {
+    for (SpecPath<?> specPath : specMatcher.getSpecPaths()) {
       if (!specPath.isIgnoredPath()) {
         Predicate predicate = toPredicate(specPath, root, criteriaBuilder);
         if (predicate != null) {
@@ -80,7 +78,7 @@ public class MatcherSpecification<T> implements Specification<T> {
   }
 
   @SuppressWarnings("rawtypes")
-  public void setSpecPathDefaultValue(String path, CriteriaBuilder cb, Path<?> from,
+  public void setSpecPathDefaultValue(String path, Path<?> from,
       ManagedType<?> type, Object value, Class<?> probeType, PathNode currentNode) {
     DirectFieldAccessFallbackBeanWrapper beanWrapper = new DirectFieldAccessFallbackBeanWrapper(
         value);
@@ -88,7 +86,7 @@ public class MatcherSpecification<T> implements Specification<T> {
       String currentPath =
           !StringUtils.hasText(path) ? attribute.getName() : path + "." + attribute.getName();
 
-      SpecPath<T> specPath = specMatcher.specPath(currentPath);
+      SpecPath<?> specPath = specMatcher.specPath(currentPath);
       if (specPath.isIgnoredPath()) {
         continue;
       }
@@ -101,7 +99,7 @@ public class MatcherSpecification<T> implements Specification<T> {
 
       if (attribute.getPersistentAttributeType().equals(PersistentAttributeType.EMBEDDED)
           || (isAssociation(attribute) && !(from instanceof From))) {
-        setSpecPathDefaultValue(currentPath, cb, from.get(attribute.getName()),
+        setSpecPathDefaultValue(currentPath, from.get(attribute.getName()),
             (ManagedType<?>) attribute.getType(), attributeValue, probeType, currentNode);
         continue;
       }
@@ -116,10 +114,8 @@ public class MatcherSpecification<T> implements Specification<T> {
                   ClassUtils.getShortName(probeType), node));
         }
 
-        setSpecPathDefaultValue(currentPath, cb,
-            ((From<?, ?>) from).join(attribute.getName()),
-            (ManagedType<?>) attribute.getType(), attributeValue, probeType,
-            node);
+        setSpecPathDefaultValue(currentPath, ((From<?, ?>) from).join(attribute.getName()),
+            (ManagedType<?>) attribute.getType(), attributeValue, probeType, node);
         continue;
       }
       if (specPath.getValue() == null) {
@@ -133,7 +129,7 @@ public class MatcherSpecification<T> implements Specification<T> {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private Predicate toPredicate(SpecPath<T> specPath, Root<?> root,
+  private Predicate toPredicate(SpecPath specPath, Root<?> root,
       CriteriaBuilder criteriaBuilder) {
     if (specPath.isIgnoredPath()) {
       return null;

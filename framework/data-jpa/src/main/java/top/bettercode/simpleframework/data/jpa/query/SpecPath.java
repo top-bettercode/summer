@@ -6,7 +6,7 @@ import java.util.Collection;
 /**
  * @author Peter Wu
  */
-public interface SpecPath<T> {
+public interface SpecPath<E extends SpecMatcher> {
 
   String getPropertyName();
 
@@ -16,30 +16,30 @@ public interface SpecPath<T> {
 
   Object getValue();
 
-  SpecMatcher<T> setValue(Object value);
-
   /**
    * @return return {@literal true} if path was set to be ignored.
    */
   boolean isIgnoredPath();
 
-  SpecMatcher<T> withMatcher(PathMatcher matcher);
+  E setValue(Object value);
 
-  SpecMatcher<T> withMatcher(Object value, PathMatcher matcher);
+  E withMatcher(PathMatcher matcher);
+
+  E withMatcher(Object value, PathMatcher matcher);
 
   /**
    * Create ignoreCase expression for a string.
    *
    * @return this
    */
-  SpecMatcher<T> withIgnoreCase();
+  E withIgnoreCase();
 
   /**
    * set path to be ignored.
    *
    * @return this
    */
-  SpecMatcher<T> ignoredPath();
+  E ignoredPath();
 
   //--------------------------------------------
 
@@ -51,14 +51,14 @@ public interface SpecPath<T> {
    *
    * @return this
    */
-  SpecMatcher<T> isTrue();
+  E isTrue();
 
   /**
    * Create a predicate testing for a false value.
    *
    * @return this
    */
-  SpecMatcher<T> isFalse();
+  E isFalse();
 
   //null tests:
 
@@ -67,42 +67,42 @@ public interface SpecPath<T> {
    *
    * @return this
    */
-  SpecMatcher<T> isNull();
+  E isNull();
 
   /**
    * Create a predicate to test whether the expression is not null.
    *
    * @return this
    */
-  SpecMatcher<T> isNotNull();
+  E isNotNull();
 
-  SpecMatcher<T> equal();
+  E equal();
 
-  SpecMatcher<T> notEqual();
+  E notEqual();
 
-  SpecMatcher<T> gt();
+  E gt();
 
-  SpecMatcher<T> ge();
+  E ge();
 
-  SpecMatcher<T> lt();
+  E lt();
 
-  SpecMatcher<T> le();
+  E le();
 
-  SpecMatcher<T> like();
+  E like();
 
-  SpecMatcher<T> starting();
+  E starting();
 
-  SpecMatcher<T> ending();
+  E ending();
 
-  SpecMatcher<T> containing();
+  E containing();
 
-  SpecMatcher<T> notStarting();
+  E notStarting();
 
-  SpecMatcher<T> notEnding();
+  E notEnding();
 
-  SpecMatcher<T> notContaining();
+  E notContaining();
 
-  SpecMatcher<T> notLike();
+  E notLike();
 
   //equality:
 
@@ -112,7 +112,7 @@ public interface SpecPath<T> {
    * @param value object
    * @return this
    */
-  SpecMatcher<T> equal(Object value);
+  E equal(Object value);
 
   /**
    * Create a predicate for testing the arguments for inequality.
@@ -120,57 +120,57 @@ public interface SpecPath<T> {
    * @param value object
    * @return this
    */
-  SpecMatcher<T> notEqual(Object value);
+  E notEqual(Object value);
 
   //comparisons for generic (non-numeric) operands:
 
   /**
    * Create a predicate for testing whether the first argument is greater than the second.
    *
-   * @param <Y> Y
-   * @param value   value
+   * @param <Y>   Y
+   * @param value value
    * @return this
    */
-  <Y extends Comparable<? super Y>> SpecMatcher<T> gt(Y value);
+  <Y extends Comparable<? super Y>> E gt(Y value);
 
   /**
    * Create a predicate for testing whether the first argument is greater than or equal to the
    * second.
    *
-   * @param <Y> Y
-   * @param value   value
+   * @param <Y>   Y
+   * @param value value
    * @return this
    */
-  <Y extends Comparable<? super Y>> SpecMatcher<T> ge(Y value);
+  <Y extends Comparable<? super Y>> E ge(Y value);
 
   /**
    * Create a predicate for testing whether the first argument is less than the second.
    *
-   * @param <Y> Y
-   * @param value   value
+   * @param <Y>   Y
+   * @param value value
    * @return this
    */
-  <Y extends Comparable<? super Y>> SpecMatcher<T> lt(Y value);
+  <Y extends Comparable<? super Y>> E lt(Y value);
 
   /**
    * Create a predicate for testing whether the first argument is less than or equal to the second.
    *
-   * @param <Y> Y
-   * @param value   value
+   * @param <Y>   Y
+   * @param value value
    * @return this
    */
-  <Y extends Comparable<? super Y>> SpecMatcher<T> le(Y value);
+  <Y extends Comparable<? super Y>> E le(Y value);
 
   /**
    * Create a predicate for testing whether the first argument is between the second and third
    * arguments in value.
    *
-   * @param <Y> Y
-   * @param first   value
-   * @param second   value
+   * @param <Y>    Y
+   * @param first  value
+   * @param second value
    * @return this
    */
-  <Y extends Comparable<? super Y>> SpecMatcher<T> between(Y first, Y second);
+  <Y extends Comparable<? super Y>> E between(Y first, Y second);
 
   //string functions:
 
@@ -180,7 +180,7 @@ public interface SpecPath<T> {
    * @param value string
    * @return this
    */
-  SpecMatcher<T> like(String value);
+  E like(String value);
 
   /**
    * Matches string starting with pattern.
@@ -188,7 +188,7 @@ public interface SpecPath<T> {
    * @param value string
    * @return this
    */
-  SpecMatcher<T> starting(String value);
+  E starting(String value);
 
   /**
    * Matches string ending with pattern.
@@ -196,7 +196,7 @@ public interface SpecPath<T> {
    * @param value string
    * @return this
    */
-  SpecMatcher<T> ending(String value);
+  E ending(String value);
 
   /**
    * Matches string containing with pattern.
@@ -204,7 +204,7 @@ public interface SpecPath<T> {
    * @param value string
    * @return this
    */
-  SpecMatcher<T> containing(String value);
+  E containing(String value);
 
   /**
    * Not Matches string starting with pattern.
@@ -212,7 +212,7 @@ public interface SpecPath<T> {
    * @param value string
    * @return this
    */
-  SpecMatcher<T> notStarting(String value);
+  E notStarting(String value);
 
   /**
    * Not Matches string ending with pattern.
@@ -220,7 +220,7 @@ public interface SpecPath<T> {
    * @param value string
    * @return this
    */
-  SpecMatcher<T> notEnding(String value);
+  E notEnding(String value);
 
   /**
    * Not Matches string containing with pattern.
@@ -228,7 +228,7 @@ public interface SpecPath<T> {
    * @param value string
    * @return this
    */
-  SpecMatcher<T> notContaining(String value);
+  E notContaining(String value);
 
   /**
    * Create a predicate for testing whether the expression does not satisfy the given pattern.
@@ -236,7 +236,7 @@ public interface SpecPath<T> {
    * @param value string
    * @return this
    */
-  SpecMatcher<T> notLike(String value);
+  E notLike(String value);
 
   //in builders:
 
@@ -246,7 +246,7 @@ public interface SpecPath<T> {
    * @param value list of values
    * @return this
    */
-  SpecMatcher<T> in(Object... value);
+  E in(Object... value);
 
   /**
    * Create predicate to test whether given expression is contained in a list of values.
@@ -254,7 +254,7 @@ public interface SpecPath<T> {
    * @param value list of values
    * @return this
    */
-  SpecMatcher<T> in(Collection<?> value);
+  E in(Collection<?> value);
 }
 
 

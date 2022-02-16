@@ -132,6 +132,7 @@ allprojects {
         }
         "compileJava"(JavaCompile::class) {
             options.compilerArgs.add("-Xlint:deprecation")
+            options.compilerArgs.add("-Xlint:unchecked")
             options.compilerArgs.add("-parameters")
             options.encoding = "UTF-8"
             dependsOn("processResources")
