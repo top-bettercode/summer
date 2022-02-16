@@ -66,6 +66,8 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   void delete(Specification<T> spec);
 
+  void deleteAllById(Iterable<ID> ids);
+
   void deleteAll(Iterable<? extends T> iterable);
 
   void deleteAll();
