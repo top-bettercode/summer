@@ -4,156 +4,139 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.util.Assert;
 import top.bettercode.simpleframework.data.jpa.query.DefaultSpecPath.BetweenValue;
 
 /**
  * @author Peter Wu
  */
-public class DefaultSpecMatcher<T> implements SpecMatcher<T> {
+public class DefaultSpecMatcher<M extends SpecMatcher> implements SpecMatcher {
 
-  private final SpecMatcherMode mode;
-  private final Map<String, SpecPath<T>> specPaths = new HashMap<>();
+  private final SpecMatcherMode matcherMode;
+  private final Map<String, SpecPath<? extends SpecMatcher>> specPaths = new HashMap<>();
+  private M typed;
 
-  /**
-   * 创建 SpecMatcher 实例
-   *
-   * @param <T> T
-   * @return 行政区划 SpecMatcher 实例
-   */
-  public static <T> DefaultSpecMatcher<T> matching() {
-    return matchingAll();
+
+  @SuppressWarnings("unchecked")
+  protected DefaultSpecMatcher(SpecMatcherMode matcherMode) {
+    this.matcherMode = matcherMode;
+    this.typed = (M) this;
   }
 
-  /**
-   * 创建 SpecMatcher 实例
-   *
-   * @param <T> T
-   * @return 行政区划 SpecMatcher 实例
-   */
-  public static <T> DefaultSpecMatcher<T> matchingAll() {
-    return new DefaultSpecMatcher<>(SpecMatcherMode.ALL);
-  }
-
-  /**
-   * 创建 SpecMatcher 实例
-   *
-   * @param <T> T
-   * @return 行政区划 SpecMatcher 实例
-   */
-  public static <T> DefaultSpecMatcher<T> matchingAny() {
-    return new DefaultSpecMatcher<>(SpecMatcherMode.ANY);
-  }
-
-  protected DefaultSpecMatcher(SpecMatcherMode mode) {
-    this.mode = mode;
+  public M setTyped(M typed) {
+    this.typed = typed;
+    return typed;
   }
 
   @Override
   public SpecMatcherMode getMatchMode() {
-    return this.mode;
+    return this.matcherMode;
   }
 
   @Override
-  public Collection<SpecPath<T>> getSpecPaths() {
+  public Collection<SpecPath<?>> getSpecPaths() {
     return specPaths.values();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public SpecPath<T> specPath(String propertyName) {
-    return specPaths.computeIfAbsent(propertyName, s -> new DefaultSpecPath<>(this, propertyName));
+  public SpecPath<M> specPath(String propertyName) {
+    Assert.hasText(propertyName, "propertyName can not be blank.");
+    return (SpecPath<M>) specPaths.computeIfAbsent(propertyName,
+        s -> new DefaultSpecPath<>(typed, propertyName));
   }
 
   @Override
-  public SpecMatcher<T> withMatcher(String propertyName, Object value, PathMatcher matcher) {
-    SpecPath<T> specPath = specPath(propertyName);
+  public M withMatcher(String propertyName, Object value, PathMatcher matcher) {
+    SpecPath<M> specPath = specPath(propertyName);
     specPath.setValue(value);
     specPath.withMatcher(matcher);
-    return this;
+    return typed;
   }
 
   @Override
-  public SpecMatcher<T> equal(String propertyName, Object value) {
+  public M equal(String propertyName, Object value) {
     return withMatcher(propertyName, value, PathMatcher.EQ);
   }
 
   @Override
-  public SpecMatcher<T> notEqual(String propertyName, Object value) {
+  public M notEqual(String propertyName, Object value) {
     return withMatcher(propertyName, value, PathMatcher.NE);
   }
 
   @Override
-  public <Y extends Comparable<? super Y>> SpecMatcher<T> gt(String propertyName, Y value) {
+  public <Y extends Comparable<? super Y>> M gt(String propertyName, Y value) {
     return withMatcher(propertyName, value, PathMatcher.GT);
   }
 
   @Override
-  public <Y extends Comparable<? super Y>> SpecMatcher<T> ge(String propertyName, Y value) {
+  public <Y extends Comparable<? super Y>> M ge(String propertyName, Y value) {
     return withMatcher(propertyName, value, PathMatcher.GE);
   }
 
   @Override
-  public <Y extends Comparable<? super Y>> SpecMatcher<T> lt(String propertyName, Y value) {
+  public <Y extends Comparable<? super Y>> M lt(String propertyName, Y value) {
     return withMatcher(propertyName, value, PathMatcher.LT);
   }
 
   @Override
-  public <Y extends Comparable<? super Y>> SpecMatcher<T> le(String propertyName, Y value) {
+  public <Y extends Comparable<? super Y>> M le(String propertyName, Y value) {
     return withMatcher(propertyName, value, PathMatcher.LE);
   }
 
   @Override
-  public <Y extends Comparable<? super Y>> SpecMatcher<T> between(String propertyName, Y first,
+  public <Y extends Comparable<? super Y>> M between(String propertyName, Y first,
       Y second) {
     return withMatcher(propertyName, new BetweenValue<>(first, second), PathMatcher.BETWEEN);
   }
 
   @Override
-  public SpecMatcher<T> like(String propertyName, String value) {
+  public M like(String propertyName, String value) {
     return withMatcher(propertyName, value, PathMatcher.LIKE);
   }
 
   @Override
-  public SpecMatcher<T> starting(String propertyName, String value) {
+  public M starting(String propertyName, String value) {
     return withMatcher(propertyName, value, PathMatcher.STARTING);
   }
 
   @Override
-  public SpecMatcher<T> ending(String propertyName, String value) {
+  public M ending(String propertyName, String value) {
     return withMatcher(propertyName, value, PathMatcher.ENDING);
   }
 
   @Override
-  public SpecMatcher<T> containing(String propertyName, String value) {
+  public M containing(String propertyName, String value) {
     return withMatcher(propertyName, value, PathMatcher.CONTAINING);
   }
 
   @Override
-  public SpecMatcher<T> notStarting(String propertyName, String value) {
+  public M notStarting(String propertyName, String value) {
     return withMatcher(propertyName, value, PathMatcher.NOT_STARTING);
   }
 
   @Override
-  public SpecMatcher<T> notEnding(String propertyName, String value) {
+  public M notEnding(String propertyName, String value) {
     return withMatcher(propertyName, value, PathMatcher.NOT_ENDING);
   }
 
   @Override
-  public SpecMatcher<T> notContaining(String propertyName, String value) {
+  public M notContaining(String propertyName, String value) {
     return withMatcher(propertyName, value, PathMatcher.NOT_CONTAINING);
   }
 
   @Override
-  public SpecMatcher<T> notLike(String propertyName, String value) {
+  public M notLike(String propertyName, String value) {
     return withMatcher(propertyName, value, PathMatcher.NOT_LIKE);
   }
 
   @Override
-  public SpecMatcher<T> in(String propertyName, Object... value) {
+  public M in(String propertyName, Object... value) {
     return in(propertyName, Arrays.asList(value));
   }
 
   @Override
-  public SpecMatcher<T> in(String propertyName, Collection<?> value) {
+  public M in(String propertyName, Collection<?> value) {
     return withMatcher(propertyName, value, PathMatcher.IN);
   }
 

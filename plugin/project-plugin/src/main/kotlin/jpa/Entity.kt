@@ -414,9 +414,10 @@ class Entity : ModuleJavaGenerator() {
                     JavaType("top.bettercode.simpleframework.data.jpa.query.MatcherSpecification").typeArgument(
                         entityType
                     )
+                val specMatcherType = JavaType("${className}SpecMatcher")
                 val specMatcherBaseType =
                     JavaType("top.bettercode.simpleframework.data.jpa.query.DefaultSpecMatcher").typeArgument(
-                        entityType
+                        specMatcherType
                     )
                 method("spec", specType) {
                     javadoc {
@@ -428,7 +429,7 @@ class Entity : ModuleJavaGenerator() {
                     }
                     +"return spec(${className}SpecMatcher.matching());"
                 }
-                method("spec", specType, Parameter("specMatcher", specMatcherBaseType)) {
+                method("spec", specType, Parameter("specMatcher", specMatcherType)) {
                     javadoc {
                         +"/**"
                         +" * 创建 SpecMatcher 实例"
@@ -439,11 +440,10 @@ class Entity : ModuleJavaGenerator() {
                     }
                     +"return new MatcherSpecification<>(specMatcher, this);"
                 }
-                val specMatcherType = JavaType("${className}SpecMatcher")
-                val innerClass = InnerClass(specMatcherType)
-                innerClass(innerClass)
+                val specMatcherClass = InnerClass(specMatcherType)
+                innerClass(specMatcherClass)
 
-                innerClass.apply {
+                specMatcherClass.apply {
                     visibility = JavaVisibility.PUBLIC
                     isStatic = true
 
@@ -503,7 +503,7 @@ class Entity : ModuleJavaGenerator() {
 
                     val pathType =
                         JavaType("top.bettercode.simpleframework.data.jpa.query.SpecPath").typeArgument(
-                            entityType
+                            specMatcherType
                         )
                     import("top.bettercode.simpleframework.data.jpa.query.DefaultSpecPath")
                     if (hasPrimaryKey) {

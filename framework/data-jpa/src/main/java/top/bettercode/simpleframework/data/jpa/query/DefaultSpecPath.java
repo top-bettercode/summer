@@ -7,9 +7,9 @@ import java.util.Collection;
 /**
  * @author Peter Wu
  */
-public class DefaultSpecPath<T> implements SpecPath<T> {
+public class DefaultSpecPath<E extends SpecMatcher> implements SpecPath<E> {
 
-  private final SpecMatcher<T> specMatcher;
+  private final E specMatcher;
   /**
    * name of the attribute
    */
@@ -24,7 +24,7 @@ public class DefaultSpecPath<T> implements SpecPath<T> {
   private Object value;
 
 
-  public DefaultSpecPath(SpecMatcher<T> specMatcher, String propertyName) {
+  public DefaultSpecPath(E specMatcher, String propertyName) {
     this.specMatcher = specMatcher;
     this.propertyName = propertyName;
   }
@@ -50,233 +50,233 @@ public class DefaultSpecPath<T> implements SpecPath<T> {
   }
 
   @Override
-  public SpecMatcher<T> setValue(Object value) {
-    this.value = value;
-    return this.specMatcher;
-  }
-
-  @Override
   public boolean isIgnoredPath() {
     return this.ignoredPath;
   }
 
   @Override
-  public SpecMatcher<T> withMatcher(PathMatcher matcher) {
+  public E setValue(Object value) {
+    this.value = value;
+    return this.specMatcher;
+  }
+
+  @Override
+  public E withMatcher(PathMatcher matcher) {
     this.matcher = matcher;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> withMatcher(Object value, PathMatcher matcher) {
+  public E withMatcher(Object value, PathMatcher matcher) {
     this.value = value;
     this.matcher = matcher;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> withIgnoreCase() {
+  public E withIgnoreCase() {
     ignoreCase = true;
     return this.specMatcher;
   }
 
 
   @Override
-  public SpecMatcher<T> ignoredPath() {
+  public E ignoredPath() {
     ignoredPath = true;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> isTrue() {
+  public E isTrue() {
     this.matcher = PathMatcher.IS_TRUE;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> isFalse() {
+  public E isFalse() {
     this.matcher = PathMatcher.IS_FALSE;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> isNull() {
+  public E isNull() {
     this.matcher = PathMatcher.IS_NULL;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> isNotNull() {
+  public E isNotNull() {
     this.matcher = PathMatcher.IS_NOT_NULL;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> equal() {
+  public E equal() {
     this.matcher = PathMatcher.EQ;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> notEqual() {
+  public E notEqual() {
     this.matcher = PathMatcher.NE;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> gt() {
+  public E gt() {
     this.matcher = PathMatcher.GT;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> ge() {
+  public E ge() {
     this.matcher = PathMatcher.GE;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> lt() {
+  public E lt() {
     this.matcher = PathMatcher.LT;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> le() {
+  public E le() {
     this.matcher = PathMatcher.LE;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> like() {
+  public E like() {
     this.matcher = PathMatcher.LIKE;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> starting() {
+  public E starting() {
     this.matcher = PathMatcher.STARTING;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> ending() {
+  public E ending() {
     this.matcher = PathMatcher.ENDING;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> containing() {
+  public E containing() {
     this.matcher = PathMatcher.CONTAINING;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> notStarting() {
+  public E notStarting() {
     this.matcher = PathMatcher.NOT_STARTING;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> notEnding() {
+  public E notEnding() {
     this.matcher = PathMatcher.NOT_ENDING;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> notContaining() {
+  public E notContaining() {
     this.matcher = PathMatcher.NOT_CONTAINING;
     return this.specMatcher;
   }
 
   @Override
-  public SpecMatcher<T> notLike() {
+  public E notLike() {
     this.matcher = PathMatcher.NOT_LIKE;
     return this.specMatcher;
   }
 
   //--------------------------------------------
   @Override
-  public SpecMatcher<T> equal(Object value) {
+  public E equal(Object value) {
     return withMatcher(value, PathMatcher.EQ);
   }
 
   @Override
-  public SpecMatcher<T> notEqual(Object value) {
+  public E notEqual(Object value) {
     return withMatcher(value, PathMatcher.NE);
   }
 
   @Override
-  public <Y extends Comparable<? super Y>> SpecMatcher<T> gt(Y value) {
+  public <Y extends Comparable<? super Y>> E gt(Y value) {
     return withMatcher(value, PathMatcher.GT);
   }
 
   @Override
-  public <Y extends Comparable<? super Y>> SpecMatcher<T> ge(Y value) {
+  public <Y extends Comparable<? super Y>> E ge(Y value) {
     return withMatcher(value, PathMatcher.GE);
   }
 
   @Override
-  public <Y extends Comparable<? super Y>> SpecMatcher<T> lt(Y value) {
+  public <Y extends Comparable<? super Y>> E lt(Y value) {
     return withMatcher(value, PathMatcher.LT);
   }
 
   @Override
-  public <Y extends Comparable<? super Y>> SpecMatcher<T> le(Y value) {
+  public <Y extends Comparable<? super Y>> E le(Y value) {
     return withMatcher(value, PathMatcher.LE);
   }
 
   @Override
-  public <Y extends Comparable<? super Y>> SpecMatcher<T> between(Y first, Y second) {
+  public <Y extends Comparable<? super Y>> E between(Y first, Y second) {
     return withMatcher(new BetweenValue<>(first, second), PathMatcher.BETWEEN);
   }
 
   @Override
-  public SpecMatcher<T> like(String value) {
+  public E like(String value) {
     return withMatcher(value, PathMatcher.LIKE);
   }
 
   @Override
-  public SpecMatcher<T> starting(String value) {
+  public E starting(String value) {
     return withMatcher(value, PathMatcher.STARTING);
   }
 
   @Override
-  public SpecMatcher<T> ending(String value) {
+  public E ending(String value) {
     return withMatcher(value, PathMatcher.ENDING);
   }
 
   @Override
-  public SpecMatcher<T> containing(String value) {
+  public E containing(String value) {
     return withMatcher(value, PathMatcher.CONTAINING);
   }
 
   @Override
-  public SpecMatcher<T> notStarting(String value) {
+  public E notStarting(String value) {
     return withMatcher(value, PathMatcher.NOT_STARTING);
   }
 
   @Override
-  public SpecMatcher<T> notEnding(String value) {
+  public E notEnding(String value) {
     return withMatcher(value, PathMatcher.NOT_ENDING);
   }
 
   @Override
-  public SpecMatcher<T> notContaining(String value) {
+  public E notContaining(String value) {
     return withMatcher(value, PathMatcher.NOT_CONTAINING);
   }
 
   @Override
-  public SpecMatcher<T> notLike(String value) {
+  public E notLike(String value) {
     return withMatcher(value, PathMatcher.NOT_LIKE);
   }
 
   @Override
-  public SpecMatcher<T> in(Object... value) {
+  public E in(Object... value) {
     return in(Arrays.asList(value));
   }
 
   @Override
-  public SpecMatcher<T> in(Collection<?> value) {
+  public E in(Collection<?> value) {
     return withMatcher(value, PathMatcher.IN);
   }
 

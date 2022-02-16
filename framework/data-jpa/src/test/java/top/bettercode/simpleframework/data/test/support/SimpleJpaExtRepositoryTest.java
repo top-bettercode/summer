@@ -14,7 +14,8 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import top.bettercode.simpleframework.data.jpa.query.DefaultSpecMatcher;
+import top.bettercode.simpleframework.data.jpa.query.MatcherSpecification;
+import top.bettercode.simpleframework.data.jpa.query.SpecMatcher;
 import top.bettercode.simpleframework.data.test.domain.User;
 import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
@@ -98,8 +99,8 @@ public class SimpleJpaExtRepositoryTest {
     Optional<User> optionalUser = repository.findByIdFromRecycleBin(carterId);
     optionalUser.ifPresent(System.out::println);
     org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
-    repository.deleteFromRecycleBin(
-        DefaultSpecMatcher.<User>matching().equal("id", carterId).spec());
+    MatcherSpecification<User> spec = SpecMatcher.defaultMatching().equal("id", carterId).spec();
+    repository.deleteFromRecycleBin(spec);
     optionalUser = repository.findByIdFromRecycleBin(carterId);
     optionalUser.ifPresent(System.out::println);
     org.junit.jupiter.api.Assertions.assertFalse(optionalUser.isPresent());
@@ -244,7 +245,7 @@ public class SimpleJpaExtRepositoryTest {
   public void countRecycle2() {
     org.junit.jupiter.api.Assertions
         .assertEquals(1, repository.countRecycleBin(
-            DefaultSpecMatcher.<User>matching().equal("firstname", "Dave").spec()));
+            SpecMatcher.defaultMatching().equal("firstname", "Dave").spec()));
   }
 
   @Test
@@ -262,7 +263,7 @@ public class SimpleJpaExtRepositoryTest {
   public void findRecycleOne() {
     org.junit.jupiter.api.Assertions.assertTrue(
         repository.findOneFromRecycleBin(
-            DefaultSpecMatcher.<User>matching().equal("firstname", "Dave").spec()).isPresent());
+            SpecMatcher.defaultMatching().equal("firstname", "Dave").spec()).isPresent());
   }
 
   @Test
