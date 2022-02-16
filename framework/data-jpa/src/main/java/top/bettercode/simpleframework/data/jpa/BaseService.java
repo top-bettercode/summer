@@ -115,6 +115,11 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
+  public void delete(Specification<T> spec) {
+    repository.delete(spec);
+  }
+
+  @Override
   public void deleteAll(Iterable<? extends T> iterable) {
     repository.deleteAll(iterable);
   }
