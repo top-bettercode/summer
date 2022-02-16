@@ -43,8 +43,7 @@ public class PageController extends BaseController {
       Collection<?> collection = (Collection<?>) object;
       int number = properties.getPageable().isOneIndexedParameters() ? 1 : 0;
       int size = collection.size();
-      return new PagedResources<>(collection,
-          new PageMetadata(size, number, size, 1));
+      return new PagedResources<>(new PageMetadata(number, size, 1, size), collection);
     } else {
       return object;
     }
@@ -54,10 +53,8 @@ public class PageController extends BaseController {
     int number =
         properties.getPageable().isOneIndexedParameters() ? object.getNumber() + 1
             : object.getNumber();
-    return new PagedResources<>(object.getContent(),
-        new PageMetadata(object.getSize(), number,
-            object.getTotalElements(), object
-            .getTotalPages()));
+    return new PagedResources<>(new PageMetadata(number, object.getSize(), object.getTotalPages(),
+        object.getTotalElements()), object.getContent());
   }
 
 }

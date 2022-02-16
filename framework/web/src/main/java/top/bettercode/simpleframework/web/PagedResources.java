@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.web;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.Collection;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.springframework.util.Assert;
 
@@ -15,8 +16,7 @@ public class PagedResources<T> {
   public PagedResources() {
   }
 
-  public PagedResources(Collection<T> content,
-      PageMetadata metadata) {
+  public PagedResources(PageMetadata metadata, Collection<T> content) {
     this.content = content;
     this.metadata = metadata;
   }
@@ -44,11 +44,11 @@ public class PagedResources<T> {
     @JsonView(Object.class)
     @XmlAttribute
     @JsonProperty
-    private long size;
+    private long number;
     @JsonView(Object.class)
     @XmlAttribute
     @JsonProperty
-    private long totalElements;
+    private long size;
     @JsonView(Object.class)
     @XmlAttribute
     @JsonProperty
@@ -56,28 +56,28 @@ public class PagedResources<T> {
     @JsonView(Object.class)
     @XmlAttribute
     @JsonProperty
-    private long number;
+    private long totalElements;
 
     public PageMetadata() {
 
     }
 
-    public PageMetadata(long size, long number, long totalElements, long totalPages) {
+    public PageMetadata(long number, long size, long totalPages, long totalElements) {
 
-      Assert.isTrue(size > -1, "Size must not be negative!");
       Assert.isTrue(number > -1, "Number must not be negative!");
+      Assert.isTrue(size > -1, "Size must not be negative!");
       Assert.isTrue(totalElements > -1, "Total elements must not be negative!");
       Assert.isTrue(totalPages > -1, "Total pages must not be negative!");
 
-      this.size = size;
       this.number = number;
-      this.totalElements = totalElements;
+      this.size = size;
       this.totalPages = totalPages;
+      this.totalElements = totalElements;
     }
 
-    public PageMetadata(long size, long number, long totalElements) {
-      this(size, number, totalElements,
-          size == 0 ? 0 : (long) Math.ceil((double) totalElements / (double) size));
+    public PageMetadata(long number, long size, long totalElements) {
+      this(number, size, size == 0 ? 0 : (long) Math.ceil((double) totalElements / (double) size),
+          totalElements);
     }
 
     public long getSize() {
@@ -120,32 +120,21 @@ public class PagedResources<T> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-
-      if (this == obj) {
+    public boolean equals(Object o) {
+      if (this == o) {
         return true;
       }
-
-      if (obj == null || !obj.getClass().equals(getClass())) {
+      if (!(o instanceof PageMetadata)) {
         return false;
       }
-
-      PageMetadata that = (PageMetadata) obj;
-
-      return this.number == that.number && this.size == that.size
-          && this.totalElements == that.totalElements
-          && this.totalPages == that.totalPages;
+      PageMetadata that = (PageMetadata) o;
+      return number == that.number && size == that.size && totalPages == that.totalPages
+          && totalElements == that.totalElements;
     }
 
     @Override
     public int hashCode() {
-
-      int result = 17;
-      result += 31 * (int) (this.number ^ this.number >>> 32);
-      result += 31 * (int) (this.size ^ this.size >>> 32);
-      result += 31 * (int) (this.totalElements ^ this.totalElements >>> 32);
-      result += 31 * (int) (this.totalPages ^ this.totalPages >>> 32);
-      return result;
+      return Objects.hash(number, size, totalPages, totalElements);
     }
   }
 }
