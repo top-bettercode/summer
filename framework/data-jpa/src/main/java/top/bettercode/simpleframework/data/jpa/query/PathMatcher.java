@@ -116,6 +116,10 @@ public enum PathMatcher {
    * Create predicate to test whether given expression is contained in a list of values.
    */
   IN,
+  /**
+   * Create predicate to test whether given expression is not contained in a list of values.
+   */
+  NOT_IN,
 
 }
 

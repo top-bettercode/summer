@@ -255,6 +255,10 @@ public interface SpecPath<E extends SpecMatcher> {
    * @return this
    */
   E in(Collection<?> value);
+
+  E notIn(Object... value);
+
+  E notIn(Collection<?> value);
 }
 
 
