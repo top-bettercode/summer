@@ -45,4 +45,6 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
   <S extends T> S dynamicBSave(S s);
 
   boolean exists(Specification<T> spec);
+
+  void delete(Specification<T> spec);
 }

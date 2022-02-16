@@ -180,6 +180,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @Transactional
   @Override
   public void delete(T entity) {
     if (softDeleteSupport.support()) {
@@ -189,6 +190,14 @@ public class SimpleJpaExtRepository<T, ID> extends
       super.delete(entity);
     }
   }
+
+
+  @Transactional
+  @Override
+  public void delete(Specification<T> spec) {
+    deleteInBatch(findAll(spec));
+  }
+
 
   @Transactional
   @Override
@@ -212,15 +221,16 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+
   @Transactional
   @Override
   public void deleteFromRecycleBin(Specification<T> spec) {
     if (softDeleteSupport.support()) {
-      Iterable<T> allFromRecycleBin = findAllFromRecycleBin(spec);
-      super.deleteInBatch(allFromRecycleBin);
+      super.deleteInBatch(findAllFromRecycleBin(spec));
     }
   }
 
+  @Transactional
   @Override
   public void deleteInBatch(Iterable<T> entities) {
     if (softDeleteSupport.support()) {
@@ -271,6 +281,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @Transactional
   @Override
   public void deleteAllInBatch() {
     if (softDeleteSupport.support()) {

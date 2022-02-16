@@ -64,6 +64,8 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   void delete(T t);
 
+  void delete(Specification<T> spec);
+
   void deleteAll(Iterable<? extends T> iterable);
 
   void deleteAll();
@@ -79,7 +81,6 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
   long count(@Nullable Specification<T> spec);
 
   boolean exists(Specification<T> spec);
-
 
   <S extends T> Optional<S> findOne(Example<S> example);
 
