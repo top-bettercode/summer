@@ -404,7 +404,7 @@ class Entity : ModuleJavaGenerator() {
                     //toString
                     method("toString", JavaType.stringInstance) {
                         annotation("@Override")
-                        +"return ${primaryKeys.joinToString(" + \"${keySep}\" + ") { "(if(this.${it.javaName}==null) \"\" else this.${it.javaName})" }};"
+                        +"return ${primaryKeys.joinToString(" + \"${keySep}\" + ") { "(this.${it.javaName} == null ? \"\" : ${if (it.javaType == JavaType.stringInstance) "this.${it.javaName}" else "String.valueOf(this.${it.javaName})"})" }};"
                     }
                 }
             }
@@ -505,6 +505,8 @@ class Entity : ModuleJavaGenerator() {
                         JavaType("top.bettercode.simpleframework.data.jpa.query.SpecPath").typeArgument(
                             specMatcherType
                         )
+                    val matcherType =
+                        JavaType("top.bettercode.simpleframework.data.jpa.query.PathMatcher")
                     if (hasPrimaryKey) {
                         //primaryKey
                         if (compositePrimaryKey) {
@@ -513,11 +515,55 @@ class Entity : ModuleJavaGenerator() {
                                     this.visibility = JavaVisibility.PUBLIC
                                     +"return super.specPath(\"${primaryKeyName}.${it.javaName}\");"
                                 }
+                                method(
+                                    it.javaName,
+                                    specMatcherType,
+                                    Parameter(it.javaName, it.javaType)
+                                ) {
+                                    this.visibility = JavaVisibility.PUBLIC
+                                    +"super.specPath(\"${primaryKeyName}.${it.javaName}\").setValue(${it.javaName});"
+                                    +"return this;"
+                                }
+                                method(
+                                    it.javaName,
+                                    specMatcherType,
+                                    Parameter(it.javaName, it.javaType),
+                                    Parameter(
+                                        "matcher",
+                                        matcherType
+                                    )
+                                ) {
+                                    this.visibility = JavaVisibility.PUBLIC
+                                    +"super.specPath(\"${primaryKeyName}.${it.javaName}\").setValue(${it.javaName}).withMatcher(matcher);"
+                                    +"return this;"
+                                }
                             }
                         } else {
                             method(primaryKeyName, pathType) {
                                 this.visibility = JavaVisibility.PUBLIC
                                 +"return super.specPath(\"${primaryKeyName}\");"
+                            }
+                            method(
+                                primaryKeyName,
+                                specMatcherType,
+                                Parameter(primaryKeyName, primaryKeyType)
+                            ) {
+                                this.visibility = JavaVisibility.PUBLIC
+                                +"super.specPath(\"${primaryKeyName}\").setValue(${primaryKeyName});"
+                                +"return this;"
+                            }
+                            method(
+                                primaryKeyName,
+                                specMatcherType,
+                                Parameter(primaryKeyName, primaryKeyType),
+                                Parameter(
+                                    "matcher",
+                                    matcherType
+                                )
+                            ) {
+                                this.visibility = JavaVisibility.PUBLIC
+                                +"super.specPath(\"${primaryKeyName}\").setValue(${primaryKeyName}).withMatcher(matcher);"
+                                +"return this;"
                             }
                         }
 
@@ -527,6 +573,22 @@ class Entity : ModuleJavaGenerator() {
                         method(it.javaName, pathType) {
                             this.visibility = JavaVisibility.PUBLIC
                             +"return super.specPath(\"${it.javaName}\");"
+                        }
+                        method(it.javaName, specMatcherType, Parameter(it.javaName, it.javaType)) {
+                            this.visibility = JavaVisibility.PUBLIC
+                            +"super.specPath(\"${it.javaName}\").setValue(${it.javaName});"
+                            +"return this;"
+                        }
+                        method(
+                            it.javaName, specMatcherType, Parameter(it.javaName, it.javaType),
+                            Parameter(
+                                "matcher",
+                                matcherType
+                            )
+                        ) {
+                            this.visibility = JavaVisibility.PUBLIC
+                            +"super.specPath(\"${it.javaName}\").setValue(${it.javaName}).withMatcher(matcher);"
+                            +"return this;"
                         }
                     }
                 }

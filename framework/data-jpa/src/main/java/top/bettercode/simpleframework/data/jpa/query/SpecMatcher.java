@@ -7,6 +7,11 @@ import java.util.Collection;
  */
 public interface SpecMatcher {
 
+  enum SpecMatcherMode {
+    ALL, ANY
+  }
+
+
   /**
    * 创建 SpecMatcher 实例
    *
@@ -32,6 +37,14 @@ public interface SpecMatcher {
    */
   static DefaultSpecMatcher<SpecMatcher> defaultMatchingAny() {
     return new DefaultSpecMatcher<>(SpecMatcherMode.ANY);
+  }
+
+  default <T> MatcherSpecification<T> spec() {
+    return new MatcherSpecification<>(this, null);
+  }
+
+  default <T> MatcherSpecification<T> spec(T probe) {
+    return new MatcherSpecification<>(this, probe);
   }
 
 
@@ -211,17 +224,5 @@ public interface SpecMatcher {
    * @return this
    */
   SpecMatcher in(String propertyName, Collection<?> value);
-
-  default <T> MatcherSpecification<T> spec() {
-    return new MatcherSpecification<>(this, null);
-  }
-
-  default <T> MatcherSpecification<T> spec(T probe) {
-    return new MatcherSpecification<>(this, probe);
-  }
-
-  enum SpecMatcherMode {
-    ALL, ANY
-  }
 
 }

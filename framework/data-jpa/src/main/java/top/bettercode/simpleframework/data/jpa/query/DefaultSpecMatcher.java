@@ -48,10 +48,7 @@ public class DefaultSpecMatcher<M extends SpecMatcher> implements SpecMatcher {
 
   @Override
   public M withMatcher(String propertyName, Object value, PathMatcher matcher) {
-    SpecPath<M> specPath = specPath(propertyName);
-    specPath.setValue(value);
-    specPath.withMatcher(matcher);
-    return typed;
+    return specPath(propertyName).setValue(value).withMatcher(matcher);
   }
 
   @Override
