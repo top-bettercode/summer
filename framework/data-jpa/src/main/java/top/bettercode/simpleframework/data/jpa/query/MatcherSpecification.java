@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -18,6 +19,7 @@ import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.SingularAttribute;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
 import org.springframework.lang.Nullable;
@@ -63,7 +65,15 @@ public class MatcherSpecification<T> implements Specification<T> {
           new PathNode("root", null, probe));
     }
     List<Predicate> predicates = new ArrayList<>();
+    List<Order> orders = new ArrayList<>();
     for (SpecPath<?> specPath : specMatcher.getSpecPaths()) {
+      Direction direction = specPath.getDirection();
+      if (direction != null) {
+        Order order = Direction.DESC.equals(direction) ? criteriaBuilder.desc(
+            root.get(specPath.getPropertyName()))
+            : criteriaBuilder.asc(root.get(specPath.getPropertyName()));
+        orders.add(order);
+      }
       if (!specPath.isIgnoredPath()) {
         Predicate predicate = toPredicate(specPath, root, criteriaBuilder);
         if (predicate != null) {
@@ -71,6 +81,7 @@ public class MatcherSpecification<T> implements Specification<T> {
         }
       }
     }
+    query.orderBy(orders);
     Predicate[] restrictions = predicates.toArray(new Predicate[0]);
     return specMatcher.getMatchMode().equals(SpecMatcherMode.ALL) ? criteriaBuilder.and(
         restrictions)

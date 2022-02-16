@@ -58,6 +58,10 @@ public interface SpecMatcher {
 
   SpecPath<? extends SpecMatcher> specPath(String propertyName);
 
+  SpecMatcher asc(String propertyName);
+
+  SpecMatcher desc(String propertyName);
+
   SpecMatcher withMatcher(String propertyName, Object value, PathMatcher matcher);
 
   //equality:

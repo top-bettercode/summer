@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.data.jpa.query;
 
 
 import java.util.Collection;
+import org.springframework.data.domain.Sort.Direction;
 
 /**
  * @author Peter Wu
@@ -21,7 +22,13 @@ public interface SpecPath<E extends SpecMatcher> {
    */
   boolean isIgnoredPath();
 
+  Direction getDirection();
+
   SpecPath<E> setValue(Object value);
+
+  E asc();
+
+  E desc();
 
   E withMatcher(PathMatcher matcher);
 
