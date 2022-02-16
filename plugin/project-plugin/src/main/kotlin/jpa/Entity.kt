@@ -511,12 +511,14 @@ class Entity : ModuleJavaGenerator() {
                         //primaryKey
                         if (compositePrimaryKey) {
                             primaryKeys.forEach {
-                                method(it.javaName, pathType) {
+                                val javaName =
+                                    if (it.javaName == "spec") "specField" else it.javaName
+                                method(javaName, pathType) {
                                     this.visibility = JavaVisibility.PUBLIC
                                     +"return super.specPath(\"${primaryKeyName}.${it.javaName}\");"
                                 }
                                 method(
-                                    it.javaName,
+                                    javaName,
                                     specMatcherType,
                                     Parameter(it.javaName, it.javaType)
                                 ) {
@@ -525,7 +527,7 @@ class Entity : ModuleJavaGenerator() {
                                     +"return this;"
                                 }
                                 method(
-                                    it.javaName,
+                                    javaName,
                                     specMatcherType,
                                     Parameter(it.javaName, it.javaType),
                                     Parameter(
@@ -539,12 +541,14 @@ class Entity : ModuleJavaGenerator() {
                                 }
                             }
                         } else {
-                            method(primaryKeyName, pathType) {
+                            val javaName =
+                                if (primaryKeyName == "spec") "specField" else primaryKeyName
+                            method(javaName, pathType) {
                                 this.visibility = JavaVisibility.PUBLIC
                                 +"return super.specPath(\"${primaryKeyName}\");"
                             }
                             method(
-                                primaryKeyName,
+                                javaName,
                                 specMatcherType,
                                 Parameter(primaryKeyName, primaryKeyType)
                             ) {
@@ -553,7 +557,7 @@ class Entity : ModuleJavaGenerator() {
                                 +"return this;"
                             }
                             method(
-                                primaryKeyName,
+                                javaName,
                                 specMatcherType,
                                 Parameter(primaryKeyName, primaryKeyType),
                                 Parameter(
@@ -570,17 +574,19 @@ class Entity : ModuleJavaGenerator() {
                     }
 
                     otherColumns.forEach {
-                        method(it.javaName, pathType) {
+                        val javaName =
+                            if (it.javaName == "spec") "specField" else it.javaName
+                        method(javaName, pathType) {
                             this.visibility = JavaVisibility.PUBLIC
                             +"return super.specPath(\"${it.javaName}\");"
                         }
-                        method(it.javaName, specMatcherType, Parameter(it.javaName, it.javaType)) {
+                        method(javaName, specMatcherType, Parameter(it.javaName, it.javaType)) {
                             this.visibility = JavaVisibility.PUBLIC
                             +"super.specPath(\"${it.javaName}\").setValue(${it.javaName});"
                             +"return this;"
                         }
                         method(
-                            it.javaName, specMatcherType, Parameter(it.javaName, it.javaType),
+                            javaName, specMatcherType, Parameter(it.javaName, it.javaType),
                             Parameter(
                                 "matcher",
                                 matcherType
