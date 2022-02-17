@@ -1,4 +1,6 @@
+import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.Interface
 
 /**
  * @author Peter Wu
@@ -17,25 +19,36 @@ class MethodInfo : ModuleJavaGenerator() {
                 +" * $remarks"
                 +" */"
             }
-            //primaryKey getter
-            method("get${primaryKeyName.capitalize()}", primaryKeyType) {
+            if (!isFullComposite) {
+                //primaryKey getter
+                method("get${primaryKeyName.capitalize()}", primaryKeyType) {
+                    javadoc {
+                        +"/**"
+                        +" * ${remarks}主键"
+                        +" */"
+                    }
+                }
+                otherColumns.forEach {
+                    //getter
+                    getter(this, it)
+                }
+            } else {
+                columns.forEach {
+                    //getter
+                    getter(this, it)
+                }
+            }
+        }
+    }
+
+    val getter: Interface.(Column) -> Unit = {
+        method("get${it.javaName.capitalize()}", it.javaType) {
+            if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                 javadoc {
                     +"/**"
-                    +" * ${remarks}主键"
+                    +" * ${getReturnRemark(it)}"
                     +" */"
                 }
-            }
-            otherColumns.forEach {
-                //getter
-                method("get${it.javaName.capitalize()}", it.javaType) {
-                    if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
-                        javadoc {
-                            +"/**"
-                            +" * ${getReturnRemark(it)}"
-                            +" */"
-                        }
-                }
-            }
         }
     }
 }

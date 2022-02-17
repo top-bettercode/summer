@@ -303,15 +303,23 @@ abstract class Generator {
     }
 
     protected open val className
-        get() = table.className(extension)
+        get() = if (otherColumns.isEmpty()) "${table.className(extension)}Entity" else table.className(
+            extension
+        )
 
     protected open val projectClassName
-        get() = if (enable("projectClassName", true)) className + projectName.substring(
+        get() = if (enable(
+                "projectClassName",
+                true
+            )
+        ) table.className(extension) + projectName.substring(
             0, if (projectName.length > 5) 5 else projectName.length
-        ).capitalize() else className
+        ).capitalize() else table.className(extension)
 
     protected val entityName
-        get() = table.entityName(extension)
+        get() = if (otherColumns.isEmpty()) "${table.entityName(extension)}Entity" else table.entityName(
+            extension
+        )
 
     protected val projectEntityName
         get() = projectClassName.decapitalize()
@@ -378,6 +386,10 @@ abstract class Generator {
         }
 
 
+    protected open val isFullComposite: Boolean
+        get() = otherColumns.isEmpty()
+
+
     /**
      * 是否组合主键
      */
@@ -440,10 +452,17 @@ abstract class Generator {
     }
 
     protected open fun doCall() {
+        if (filePre(destFile)) return
+        destFile.printWriter().use {
+            output(it)
+        }
+    }
+
+    protected fun filePre(destFile: File): Boolean {
         if (destFile.exists() && ((!extension.replaceAll && !cover) || destFile.readLines()
                 .any { it.contains("[[Don't cover]]") })
         ) {
-            return
+            return true
         }
         destFile.parentFile.mkdirs()
 
@@ -454,8 +473,6 @@ abstract class Generator {
                 )
             }"
         )
-        destFile.printWriter().use {
-            output(it)
-        }
+        return false
     }
 }

@@ -12,9 +12,11 @@ open class ModulePackageInfo : ModuleJavaGenerator() {
     }
 
     override fun output(printWriter: PrintWriter) {
-        printWriter.println("""/**
+        printWriter.println(
+            """/**
  * $moduleName
  */
-package ${type.packageName};""")
+package ${type.packageName};"""
+        )
     }
 }
