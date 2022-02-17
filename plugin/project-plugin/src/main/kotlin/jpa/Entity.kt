@@ -81,7 +81,7 @@ class Entity : ModuleJavaGenerator() {
                         } else if (primaryKey.sequence.isNotBlank()) {
                             import("javax.persistence.GenerationType")
                             annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.SEQUENCE, generator = \"${entityName}Sequence\")")
-                            annotation("@javax.persistence.SequenceGenerator(name = \"${entityName}Sequence\", sequenceName = \"${primaryKey.sequence}\")")
+                            annotation("@javax.persistence.SequenceGenerator(name = \"${entityName}Sequence\", sequenceName = \"${primaryKey.sequence}\", allocationSize = 1)")
                         }
                     } else {
                         javadoc {
