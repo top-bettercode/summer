@@ -45,7 +45,7 @@ open class Controller : ModuleJavaGenerator() {
                     parameter {
                         type = JavaType("org.springframework.data.domain.Pageable")
                         name = "pageable"
-                        annotation("@org.springframework.data.web.PageableDefault${pageDefaultSort()}")
+                        annotation("@org.springframework.data.web.PageableDefault${defaultSort()}")
                     }
                     import("org.springframework.data.domain.Page")
                     +"Page<$className> results = ${projectEntityName}Service.findAll(${entityName}.spec(), pageable);"
@@ -91,8 +91,13 @@ open class Controller : ModuleJavaGenerator() {
                             type = entityType
                             name = entityName
                         }
+                        parameter {
+                            type = JavaType("org.springframework.data.domain.Sort")
+                            name = "sort"
+                            annotation("@org.springframework.data.web.SortDefault${defaultSort()}")
+                        }
 
-                        +"Iterable<$className> results = ${projectEntityName}Service.findAll(${entityName}.spec()${sort()});"
+                        +"Iterable<$className> results = ${projectEntityName}Service.findAll(${entityName}.spec(), sort);"
                         import("top.bettercode.util.excel.ExcelExport")
                         +"ExcelExport.export(request, response, \"$remarks\", excelExport -> excelExport.sheet(\"$remarks\").setData(results, excelFields));"
                     }
@@ -164,28 +169,8 @@ open class Controller : ModuleJavaGenerator() {
         }
     }
 
-    //, Sort.by(Direction.DESC, AcAreaProperties.createdDate, AcAreaProperties.areaId)
-    private fun TopLevelClass.sort(): String {
-        var sort = ""
-        if (columns.any { it.javaName == "createdDate" } || !compositePrimaryKey) {
-            import(propertiesType)
-            import("org.springframework.data.domain.Sort.Direction")
-            import("org.springframework.data.domain.Sort")
-            sort = ", Sort.by(Direction.DESC, "
-            if (columns.any { it.javaName == "createdDate" }) {
-                sort += "${className}Properties.createdDate"
-                if (!compositePrimaryKey) {
-                    sort += ", ${className}Properties.${primaryKeyName})"
-                }
-            } else if (!compositePrimaryKey) {
-                sort += "${className}Properties.${primaryKeyName})"
-            }
-        }
-        return sort
-    }
-
     //(sort = {AcAreaProperties.createdDate, AcAreaProperties.areaId}, direction = Direction.DESC)
-    private fun TopLevelClass.pageDefaultSort(): String {
+    private fun TopLevelClass.defaultSort(): String {
         var sort = ""
         if (columns.any { it.javaName == "createdDate" } || !compositePrimaryKey) {
             import(propertiesType)
