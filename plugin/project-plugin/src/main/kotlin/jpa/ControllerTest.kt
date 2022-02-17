@@ -46,11 +46,6 @@ open class ControllerTest : ModuleJavaGenerator() {
             val insertName = "insert${pathName.capitalize()}"
             method(insertName, entityType, visibility = JavaVisibility.PRIVATE) {
                 import(entityType)
-                import(JavaType("java.util.Random"))
-                import(JavaType("java.math.BigDecimal"))
-                import(JavaType("java.util.Date"))
-                import(JavaType("java.sql.Timestamp"))
-                import(JavaType("java.sql.Time"))
                 +"$className $entityName = new $className();"
                 if (compositePrimaryKey || !primaryKey.autoIncrement) {
                     import(primaryKeyType)
