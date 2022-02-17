@@ -51,6 +51,22 @@ import java.util.*
 open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSystem(classLoader) {
 
     private val log: Logger = LoggerFactory.getLogger(Logback2LoggingSystem::class.java)
+    private val loggerContext: LoggerContext
+        get() {
+            val factory = StaticLoggerBinder.getSingleton().loggerFactory
+            Assert.isInstanceOf(
+                LoggerContext::class.java, factory,
+                String.format(
+                    "LoggerFactory is not a Logback LoggerContext but Logback is on "
+                            + "the classpath. Either remove Logback or the competing "
+                            + "implementation (%s loaded from %s). If you are using "
+                            + "WebLogic you will need to add 'org.slf4j' to "
+                            + "prefer-application-packages in WEB-INF/weblogic.xml",
+                    factory.javaClass, getLocation(factory)
+                )
+            )
+            return factory as LoggerContext
+        }
 
     override fun loadDefaults(
         initializationContext: LoggingInitializationContext,
@@ -84,7 +100,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             }
         }
 
-        filesProperties = if (existProperty(environment, "summer.logging.files.path"))
+        val filesProperties = if (existProperty(environment, "summer.logging.files.path"))
             Binder.get(environment).bind("summer.logging.files", FilesProperties::class.java)
                 .get() else FilesProperties()
 
@@ -180,12 +196,11 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         }
 
         //file log
-        hasFilesPath = existProperty(environment, "summer.logging.files.path")
-        if (hasFilesPath) {
-            fileLogPattern = environment.getProperty("logging.pattern.file", FILE_LOG_PATTERN)
-            markers = bind(environment, "summer.logging.spilt-marker")
+        if (existProperty(environment, "summer.logging.files.path")) {
+            val fileLogPattern = environment.getProperty("logging.pattern.file", FILE_LOG_PATTERN)
 
             val spilts = bind(environment, "summer.logging.spilt")
+            val markers = bind(environment, "summer.logging.spilt-marker")
             val levels = Binder.get(environment)
                 .bind("summer.logging.spilt-level", Bindable.setOf(String::class.java))
                 .orElseGet { setOf() }
@@ -194,10 +209,13 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             spilts.remove(rootName)
 
             if (filesProperties.isLogAll || logFile != null) {
-                setAllFileAppender(rootLevel, logFile)
+                setAllFileAppender(context, fileLogPattern, filesProperties, rootLevel, logFile)
             }
 
             setRootFileAppender(
+                context,
+                fileLogPattern,
+                filesProperties,
                 rootLevel,
                 spilts.keys,
                 markers.keys,
@@ -205,15 +223,15 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             )
 
             for ((key, value) in markers) {
-                setMarkerFileAppender(key, value)
+                setMarkerFileAppender(context, fileLogPattern, filesProperties, key, value)
             }
 
             for ((key, value) in spilts) {
-                setSpiltFileAppender(key, value)
+                setSpiltFileAppender(context, fileLogPattern, filesProperties, key, value)
             }
 
             for (level in levels) {
-                setLevelFileAppender(level)
+                setLevelFileAppender(context, fileLogPattern, filesProperties, level)
             }
         }
     }
@@ -227,9 +245,9 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     }
 
     private fun setAllFileAppender(
+        context: LoggerContext, fileLogPattern: String, filesProperties: FilesProperties,
         rootLevel: String?, logFile: LogFile?
     ) {
-        val context: LoggerContext = loggerContext
         val appender = RollingFileAppender<ILoggingEvent>()
         val encoder = PatternLayoutEncoder()
         encoder.charset = Charset.forName("utf-8")
@@ -255,9 +273,10 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     }
 
     private fun setRootFileAppender(
+        context: LoggerContext, fileLogPattern: String, filesProperties: FilesProperties,
         rootLevel: String?, spilts: Set<String>, markers: Set<String>, levels: Set<String>
     ) {
-        val context: LoggerContext = loggerContext
+
         val appender = RollingFileAppender<ILoggingEvent>()
         val encoder = PatternLayoutEncoder()
         encoder.charset = Charset.forName("utf-8")
@@ -322,10 +341,12 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     }
 
     private fun setLevelFileAppender(
+        context: LoggerContext,
+        fileLogPattern: String,
+        filesProperties: FilesProperties,
         level: String
     ) {
 
-        val context: LoggerContext = loggerContext
         val appender = RollingFileAppender<ILoggingEvent>()
         val encoder = PatternLayoutEncoder()
         encoder.charset = Charset.forName("utf-8")
@@ -356,12 +377,65 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         }
     }
 
+    private fun setMarkerFileAppender(
+        context: LoggerContext,
+        fileLogPattern: String,
+        filesProperties: FilesProperties,
+        marker: String,
+        level: String
+    ) {
+
+        val appender = RollingFileAppender<ILoggingEvent>()
+        val encoder = PatternLayoutEncoder()
+        encoder.charset = Charset.forName("utf-8")
+        encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
+        appender.encoder = encoder
+        start(context, encoder)
+
+        val logFile = filesProperties.path + File.separator + marker + File.separator + marker
+        appender.file = "$logFile.log"
+        setRollingPolicy(appender, context, filesProperties, logFile)
+
+        val filter = object : AbstractMatcherFilter<ILoggingEvent>() {
+
+            override fun decide(event: ILoggingEvent): FilterReply {
+                if (!isStarted) {
+                    return FilterReply.NEUTRAL
+                }
+                val eventMarker = event.marker ?: return onMismatch
+
+                return if (eventMarker.contains(marker)) {
+                    onMatch
+                } else {
+                    onMismatch
+                }
+            }
+        }
+        filter.onMatch = FilterReply.ACCEPT
+        filter.onMismatch = FilterReply.DENY
+        start(context, filter)
+        appender.addFilter(filter)
+
+        start(context, appender)
+
+        synchronized(context.configurationLock) {
+            val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
+            logger.level = Level.toLevel(level)
+            val asyncAppender = AsyncAppender()
+            asyncAppender.context = context
+            asyncAppender.addAppender(appender)
+            asyncAppender.start()
+            logger.addAppender(asyncAppender)
+        }
+    }
 
     private fun setSpiltFileAppender(
+        context: LoggerContext,
+        fileLogPattern: String,
+        filesProperties: FilesProperties,
         name: String,
         level: String
     ) {
-        val context: LoggerContext = loggerContext
         val appender = RollingFileAppender<ILoggingEvent>()
         val encoder = PatternLayoutEncoder()
         encoder.charset = Charset.forName("utf-8")
@@ -383,6 +457,27 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             asyncAppender.addAppender(appender)
             asyncAppender.start()
             logger.addAppender(asyncAppender)
+        }
+    }
+
+    private fun setRollingPolicy(
+        appender: RollingFileAppender<ILoggingEvent>,
+        context: LoggerContext, filesProperties: FilesProperties, logFile: String
+    ) {
+        if (filesProperties.isRolloverOnStart)
+            appender.rollingPolicy = StartAndSizeAndTimeBasedRollingPolicy<ILoggingEvent>().apply {
+                fileNamePattern = "$logFile-%d{yyyy-MM-dd}-%i.gz"
+                maxFileSize = FileSize.valueOf(filesProperties.maxFileSize)
+                maxHistory = filesProperties.maxHistory
+                setParent(appender)
+                start(context, this)
+            }
+        else appender.rollingPolicy = SizeAndTimeBasedRollingPolicy<ILoggingEvent>().apply {
+            fileNamePattern = "$logFile-%d{yyyy-MM-dd}-%i.gz"
+            setMaxFileSize(FileSize.valueOf(filesProperties.maxFileSize))
+            maxHistory = filesProperties.maxHistory
+            setParent(appender)
+            start(context, this)
         }
     }
 
@@ -514,137 +609,30 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         return appender
     }
 
+    private fun start(context: LoggerContext, lifeCycle: LifeCycle) {
+        if (lifeCycle is ContextAware) {
+            (lifeCycle as ContextAware).context = context
+        }
+        lifeCycle.start()
+    }
+
+    private fun getLocation(factory: ILoggerFactory): Any {
+        try {
+            val protectionDomain = factory.javaClass.protectionDomain
+            val codeSource = protectionDomain.codeSource
+            if (codeSource != null) {
+                return codeSource.location
+            }
+        } catch (ex: SecurityException) {
+            // Unable to determine location
+        }
+
+        return "unknown location"
+    }
 
     companion object {
         const val FILE_LOG_PATTERN =
             "%d{yyyy-MM-dd HH:mm:ss.SSS} " + "\${LOG_LEVEL_PATTERN:-%5p} \${PID:- } --- [%t] %-40.40logger{39} : %m%n\${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
-
-        private val loggerContext: LoggerContext
-            get() {
-                val factory = StaticLoggerBinder.getSingleton().loggerFactory
-                Assert.isInstanceOf(
-                    LoggerContext::class.java, factory,
-                    String.format(
-                        "LoggerFactory is not a Logback LoggerContext but Logback is on "
-                                + "the classpath. Either remove Logback or the competing "
-                                + "implementation (%s loaded from %s). If you are using "
-                                + "WebLogic you will need to add 'org.slf4j' to "
-                                + "prefer-application-packages in WEB-INF/weblogic.xml",
-                        factory.javaClass, getLocation(factory)
-                    )
-                )
-                return factory as LoggerContext
-            }
-
-
-        private lateinit var markers: Map<String, String>
-
-        private lateinit var filesProperties: FilesProperties
-
-        private lateinit var fileLogPattern: String
-
-        private var hasFilesPath: Boolean = false
-
-        fun defaultMarker(marker: String) {
-            if (hasFilesPath) {
-                if (!markers.contains(marker)) {
-                    setMarkerFileAppender(marker, "info")
-                }
-            }
-        }
-
-
-        fun getLocation(factory: ILoggerFactory): Any {
-            try {
-                val protectionDomain = factory.javaClass.protectionDomain
-                val codeSource = protectionDomain.codeSource
-                if (codeSource != null) {
-                    return codeSource.location
-                }
-            } catch (ex: SecurityException) {
-                // Unable to determine location
-            }
-
-            return "unknown location"
-        }
-
-        private fun setMarkerFileAppender(
-            marker: String,
-            level: String
-        ) {
-            val context: LoggerContext = loggerContext
-            val appender = RollingFileAppender<ILoggingEvent>()
-            val encoder = PatternLayoutEncoder()
-            encoder.charset = Charset.forName("utf-8")
-            encoder.pattern = OptionHelper.substVars(fileLogPattern, context)
-            appender.encoder = encoder
-            start(context, encoder)
-
-            val logFile = filesProperties.path + File.separator + marker + File.separator + marker
-            appender.file = "$logFile.log"
-            setRollingPolicy(appender, context, filesProperties, logFile)
-
-            val filter = object : AbstractMatcherFilter<ILoggingEvent>() {
-
-                override fun decide(event: ILoggingEvent): FilterReply {
-                    if (!isStarted) {
-                        return FilterReply.NEUTRAL
-                    }
-                    val eventMarker = event.marker ?: return onMismatch
-
-                    return if (eventMarker.contains(marker)) {
-                        onMatch
-                    } else {
-                        onMismatch
-                    }
-                }
-            }
-            filter.onMatch = FilterReply.ACCEPT
-            filter.onMismatch = FilterReply.DENY
-            start(context, filter)
-            appender.addFilter(filter)
-
-            start(context, appender)
-
-            synchronized(context.configurationLock) {
-                val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
-                logger.level = Level.toLevel(level)
-                val asyncAppender = AsyncAppender()
-                asyncAppender.context = context
-                asyncAppender.addAppender(appender)
-                asyncAppender.start()
-                logger.addAppender(asyncAppender)
-            }
-        }
-
-        private fun setRollingPolicy(
-            appender: RollingFileAppender<ILoggingEvent>,
-            context: LoggerContext, filesProperties: FilesProperties, logFile: String
-        ) {
-            if (filesProperties.isRolloverOnStart)
-                appender.rollingPolicy =
-                    StartAndSizeAndTimeBasedRollingPolicy<ILoggingEvent>().apply {
-                        fileNamePattern = "$logFile-%d{yyyy-MM-dd}-%i.gz"
-                        maxFileSize = FileSize.valueOf(filesProperties.maxFileSize)
-                        maxHistory = filesProperties.maxHistory
-                        setParent(appender)
-                        start(context, this)
-                    }
-            else appender.rollingPolicy = SizeAndTimeBasedRollingPolicy<ILoggingEvent>().apply {
-                fileNamePattern = "$logFile-%d{yyyy-MM-dd}-%i.gz"
-                setMaxFileSize(FileSize.valueOf(filesProperties.maxFileSize))
-                maxHistory = filesProperties.maxHistory
-                setParent(appender)
-                start(context, this)
-            }
-        }
-
-        private fun start(context: LoggerContext, lifeCycle: LifeCycle) {
-            if (lifeCycle is ContextAware) {
-                (lifeCycle as ContextAware).context = context
-            }
-            lifeCycle.start()
-        }
 
     }
 }

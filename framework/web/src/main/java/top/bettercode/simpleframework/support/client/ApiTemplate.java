@@ -10,7 +10,6 @@ import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import top.bettercode.logging.client.ClientHttpRequestWrapper;
-import top.bettercode.logging.logback.Logback2LoggingSystem;
 
 /**
  * zabbix请求模板
@@ -44,8 +43,6 @@ public class ApiTemplate extends RestTemplate {
     this.name = name;
     this.logMarker = logMarker;
     this.decrypt = decrypt;
-
-    Logback2LoggingSystem.Companion.defaultMarker(logMarker);
 
     SimpleClientHttpRequestFactory clientHttpRequestFactory = new SimpleClientHttpRequestFactory();
     //Connect timeout
