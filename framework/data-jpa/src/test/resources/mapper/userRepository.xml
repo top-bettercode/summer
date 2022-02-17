@@ -19,11 +19,11 @@
   </delete>
 
 
-  <select id="findByMybatis" resultType="top.bettercode.simpleframework.data.test.domain.User">
-    select *
-    from user
-    where deleted = 0
-  </select>
+<!--  <select id="findByMybatis" resultType="top.bettercode.simpleframework.data.test.domain.User">-->
+<!--    select *-->
+<!--    from user-->
+<!--    where deleted = 0-->
+<!--  </select>-->
   <select id="findByMybatis2" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user
