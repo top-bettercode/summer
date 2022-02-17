@@ -1,8 +1,10 @@
 package top.bettercode.simpleframework.data.jpa.query;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.util.Assert;
 import top.bettercode.simpleframework.data.jpa.query.DefaultSpecPath.BetweenValue;
@@ -13,6 +15,7 @@ import top.bettercode.simpleframework.data.jpa.query.DefaultSpecPath.BetweenValu
 public class DefaultSpecMatcher<M extends SpecMatcher> implements SpecMatcher {
 
   private final SpecMatcherMode matcherMode;
+  private final List<String> select = new ArrayList<>();
   private final Map<String, SpecPath<? extends SpecMatcher>> specPaths = new HashMap<>();
   private M typed;
 
@@ -34,6 +37,11 @@ public class DefaultSpecMatcher<M extends SpecMatcher> implements SpecMatcher {
   }
 
   @Override
+  public List<String> getSelect() {
+    return select;
+  }
+
+  @Override
   public Collection<SpecPath<?>> getSpecPaths() {
     return specPaths.values();
   }
@@ -44,6 +52,12 @@ public class DefaultSpecMatcher<M extends SpecMatcher> implements SpecMatcher {
     Assert.hasText(propertyName, "propertyName can not be blank.");
     return (SpecPath<M>) specPaths.computeIfAbsent(propertyName,
         s -> new DefaultSpecPath<>(typed, propertyName));
+  }
+
+  @Override
+  public M select(String propertyName) {
+    select.add(propertyName);
+    return typed;
   }
 
   @Override
