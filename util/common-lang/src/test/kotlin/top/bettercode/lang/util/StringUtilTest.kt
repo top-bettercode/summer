@@ -15,7 +15,13 @@ class StringUtilTest {
     @Test
     fun subString() {
         org.junit.jupiter.api.Assertions.assertEquals("123", StringUtil.subString("1234", 3))
-        org.junit.jupiter.api.Assertions.assertEquals("123", StringUtil.subStringWithEllipsis("1234", 3))
-        org.junit.jupiter.api.Assertions.assertEquals("1...", StringUtil.subStringWithEllipsis("123477", 4))
+        org.junit.jupiter.api.Assertions.assertEquals(
+            "123",
+            StringUtil.subStringWithEllipsis("1234", 3)
+        )
+        org.junit.jupiter.api.Assertions.assertEquals(
+            "1...",
+            StringUtil.subStringWithEllipsis("123477", 4)
+        )
     }
 }
