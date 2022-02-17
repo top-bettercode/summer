@@ -25,6 +25,13 @@ abstract class MModuleJavaGenerator : JavaGenerator() {
         }
     }
 
+    /**
+     * 是否有主键
+     */
+    protected val hasPrimaryKey: Boolean
+        get() = table.primaryKeys.isNotEmpty()
+
+
     override val primaryKeyType: JavaType
         get() {
             return if (primaryKeys.size == 1) {

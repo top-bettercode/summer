@@ -23,19 +23,17 @@ open class MixIn : ModuleJavaGenerator() {
                 ), methodInfoType, serializationViews
             )
 
-            if (hasPrimaryKey) {
-                //primaryKey getter
-                method("get${primaryKeyName.capitalize()}", primaryKeyType) {
-                    javadoc {
-                        +"/**"
-                        +" * ${remarks}主键"
-                        +" */"
-                    }
-                    annotation("@com.fasterxml.jackson.annotation.JsonView(Object.class)")
-                    if (compositePrimaryKey)
-                        annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonEmbeddedId")
-                    annotation("@Override")
+            //primaryKey getter
+            method("get${primaryKeyName.capitalize()}", primaryKeyType) {
+                javadoc {
+                    +"/**"
+                    +" * ${remarks}主键"
+                    +" */"
                 }
+                annotation("@com.fasterxml.jackson.annotation.JsonView(Object.class)")
+                if (compositePrimaryKey)
+                    annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonEmbeddedId")
+                annotation("@Override")
             }
             otherColumns.forEach {
                 //getter

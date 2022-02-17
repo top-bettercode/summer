@@ -358,7 +358,7 @@ abstract class Generator {
                 if (primaryKey != null) {
                     listOf(primaryKey)
                 } else {
-                    emptyList()
+                    columns
                 }
             } else {
                 primaryKeys
@@ -373,15 +373,10 @@ abstract class Generator {
             if (primaryKeys.size == 1) {
                 return primaryKeys[0]
             } else {
-                throw GeneratorException("$tableName:没有单主键，$primaryKeyNames")
+                throw GeneratorException("$tableName:没有单主键，${primaryKeys.joinToString()}")
             }
         }
 
-    /**
-     * 是否有主键
-     */
-    protected val hasPrimaryKey: Boolean
-        get() = primaryKeys.isNotEmpty()
 
     /**
      * 是否组合主键
@@ -404,27 +399,23 @@ abstract class Generator {
     protected val indexes: List<Indexed>
         get() = table.indexes
 
-    private val primaryKeyNames: List<String>
-        get() = table.primaryKeyNames
-
     protected val pathName: String
         get() = table.pathName(extension)
 
     fun call(table: Table): Any? {
-        return if (table.primaryKeys.isNotEmpty() || "MQueryDsl" != this.javaClass.simpleName) {
-            this.table = table
-            if (extension.delete) {
-                if (destFile.delete()) {
-                    println("删除：${destFile.absolutePath.substringAfter(basePath.absolutePath + File.separator)}")
-                }
-                null
-            } else {
-                if (supports())
-                    doCall()
-                else
-                    null
+        this.table = table
+        return if (extension.delete) {
+            if (destFile.delete()) {
+                println("删除：${destFile.absolutePath.substringAfter(basePath.absolutePath + File.separator)}")
             }
-        } else null
+            null
+        } else {
+            if (supports())
+                doCall()
+            else
+                null
+        }
+
     }
 
     protected open fun supports(): Boolean {

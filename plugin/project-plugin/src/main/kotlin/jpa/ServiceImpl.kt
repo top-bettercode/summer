@@ -17,17 +17,12 @@ open class ServiceImpl : ModuleJavaGenerator() {
                 +" * $remarks 服务层实现"
                 +" */"
             }
-            superClass = if (hasPrimaryKey) {
+            superClass =
                 JavaType("top.bettercode.simpleframework.data.jpa.BaseService").typeArgument(
                     entityType,
                     primaryKeyType,
                     repositoryType
                 )
-            }else{
-                JavaType("top.bettercode.simpleframework.data.jpa.BaseSimpleService").typeArgument(
-                    repositoryType
-                )
-            }
 
             implement(iserviceType)
 
