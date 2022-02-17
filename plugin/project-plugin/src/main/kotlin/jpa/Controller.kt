@@ -19,7 +19,6 @@ open class Controller : ModuleJavaGenerator() {
                 +" */"
             }
             import(entityType)
-            import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
 
             superClass("$basePackageName.support.AppController")
 
@@ -85,7 +84,7 @@ open class Controller : ModuleJavaGenerator() {
                         }\", $propertyGetter)${code}${if (i == size - 1) "" else ","}\n"
                     }
 
-                    initializationString += "  );"
+                    initializationString += "  )"
                 }
                 //export
                 method("export", JavaType.voidPrimitiveInstance) {
@@ -127,6 +126,8 @@ open class Controller : ModuleJavaGenerator() {
                         }
                     }
                     import("java.util.Optional")
+                    import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
+
                     +"$className $entityName = ${projectEntityName}Service.findById(${primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
                     +"return ok($entityName${if (isFullComposite) "get${primaryKeyClass}()" else ""});"
                 }
