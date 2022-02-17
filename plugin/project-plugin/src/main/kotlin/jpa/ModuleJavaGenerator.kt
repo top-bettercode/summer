@@ -10,9 +10,9 @@ abstract class ModuleJavaGenerator : JavaGenerator() {
     private fun modulePackage(name: String): String {
         val onePackage = enable("onePackage", true)
         return if (onePackage)
-            entityName.toLowerCase()
+            table.entityName(extension).toLowerCase()
         else when (name) {
-            "Entity", "Properties" -> "entity"
+            "Entity", "Properties", "Matcher" -> "entity"
             "MethodInfo" -> "info"
             "Form" -> "form"
             "MixIn" -> "response.mixin"
@@ -21,7 +21,7 @@ abstract class ModuleJavaGenerator : JavaGenerator() {
             "Service" -> "service"
             "ServiceImpl" -> "service.impl"
             "Repository" -> "repository"
-            else -> entityName.toLowerCase()
+            else -> table.entityName(extension).toLowerCase()
         }
     }
 
@@ -32,12 +32,33 @@ abstract class ModuleJavaGenerator : JavaGenerator() {
             return if (primaryKeys.size == 1) {
                 primaryKey.javaType
             } else {
-                JavaType("$packageName.${modulePackage("Entity")}.${className}.${className}Key")
+                JavaType(
+                    "$packageName.${modulePackage("Entity")}.${
+                        if (isFullComposite) table.className(extension)
+                        else "${
+                            table.className(extension)
+                        }Key"
+                    }"
+                )
             }
         }
-    protected val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.$className")
-    protected val propertiesType get() = JavaType("$packageName.${modulePackage("Properties")}.$className.${className}Properties")
-    protected val methodInfoType get() = JavaType("$packageName.${modulePackage("MethodInfo")}.${className}MethodInfo")
+    protected val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.${className}")
+    protected val propertiesType
+        get() = JavaType(
+            "$packageName.${modulePackage("Properties")}.${className}Properties"
+        )
+    protected val matcherType
+        get() = JavaType(
+            "$packageName.${modulePackage("Matcher")}.${className}Matcher"
+        )
+    protected val methodInfoType
+        get() = JavaType(
+            "$packageName.${modulePackage("MethodInfo")}.${
+                table.className(
+                    extension
+                )
+            }MethodInfo"
+        )
     protected val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
     protected val mixInType get() = JavaType("$packageName.${modulePackage("MixIn")}.${projectClassName}MixIn")
     protected val controllerType get() = JavaType("$packageName.${modulePackage("Controller")}.${projectClassName}Controller")

@@ -3,7 +3,7 @@ package top.bettercode.generator.dsl
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.*
-import java.io.PrintWriter
+import java.io.File
 
 /**
  *
@@ -46,10 +46,20 @@ abstract class JavaGenerator : Generator() {
             return if (primaryKeys.size == 1) {
                 primaryKey.javaType
             } else {
-                JavaType("$packageName.entity.${className}.${className}Key")
+                JavaType(
+                    "$packageName.entity.${className}.${
+                        if (otherColumns.isEmpty()) table.className(extension) else "${
+                            table.className(
+                                extension
+                            )
+                        }Key"
+                    }"
+                )
             }
         }
 
+    protected open val primaryKeyClass: String
+        get() = primaryKeyType.shortName
 
     /**
      * 主键
@@ -59,7 +69,10 @@ abstract class JavaGenerator : Generator() {
             return if (primaryKeys.size == 1) {
                 primaryKey.javaName
             } else {
-                "${entityName}Key"
+                if (otherColumns.isEmpty())
+                    table.entityName(extension)
+                else
+                    "${table.entityName(extension)}Key"
             }
         }
 
@@ -78,21 +91,40 @@ abstract class JavaGenerator : Generator() {
     }
 
     protected open fun getReturnRemark(it: Column): String {
-        val remark = getRemark(it).replace(Regex(" ?([:;/]) ?")," $1 ")
+        val remark = getRemark(it).replace(Regex(" ?([:;/]) ?"), " $1 ")
         return if (remark.isBlank()) "" else "@return $remark"
     }
 
-    override fun output(printWriter: PrintWriter) {
-        JavaElement.indent = extension.indent
-        compilationUnits.clear()
-        content()
-        compilationUnits.forEach {
-            printWriter.println(it.formattedContent)
+
+    override fun doCall() {
+        if (!resources && "package-info" != type.shortName) {
+            JavaElement.indent = extension.indent
+            compilationUnits.clear()
+            content()
+            compilationUnits.forEach { unit ->
+                val destFile = File(
+                    File(basePath, dir),
+                    "${
+                        unit.type.fullyQualifiedNameWithoutTypeParameters.replace(
+                            ".",
+                            File.separator
+                        )
+                    }.java"
+                )
+
+                if (filePre(destFile)) return
+                destFile.printWriter().use {
+                    it.println(unit.formattedContent)
+                }
+            }
+        } else {
+            super.doCall()
         }
     }
 
     protected fun interfaze(
         visibility: JavaVisibility = JavaVisibility.PUBLIC,
+        type: JavaType = this.type,
         interfaze: Interface.() -> Unit
     ) {
         val value = Interface(type)
@@ -103,6 +135,7 @@ abstract class JavaGenerator : Generator() {
 
     protected fun clazz(
         visibility: JavaVisibility = JavaVisibility.PUBLIC,
+        type: JavaType = this.type,
         clazz: TopLevelClass.() -> Unit
     ) {
         val value = TopLevelClass(type)
@@ -111,7 +144,10 @@ abstract class JavaGenerator : Generator() {
         compilationUnits.add(value)
     }
 
-    protected fun enum(enum: TopLevelEnumeration.() -> Unit) {
+    protected fun enum(
+        type: JavaType = this.type,
+        enum: TopLevelEnumeration.() -> Unit
+    ) {
         val value = TopLevelEnumeration(type)
         enum(value)
         compilationUnits.add(value)
