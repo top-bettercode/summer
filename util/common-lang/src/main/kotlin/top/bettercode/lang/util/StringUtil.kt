@@ -1,17 +1,17 @@
 package top.bettercode.lang.util
 
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.*
 import org.springframework.util.StringUtils
+import top.bettercode.lang.util.LocalDateTimeHelper.Companion.of
 import java.io.*
 import java.nio.charset.Charset
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
-import java.util.zip.DeflaterOutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
-import java.util.zip.InflaterInputStream
 
 
 /**
@@ -55,6 +55,34 @@ object StringUtil {
                 gen.writeNumber(LocalDateTimeHelper.of(value).toMillis())
             }
         })
+
+        module.addDeserializer(
+            LocalDate::class.java,
+            object : JsonDeserializer<LocalDate?>() {
+                override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
+                    val valueAsString = p.valueAsString
+                    return if (valueAsString.isNullOrBlank())
+                        null
+                    else
+                        of(valueAsString.toLong()).toLocalDate()
+                }
+            })
+
+        module.addDeserializer(
+            LocalDateTime::class.java,
+            object : JsonDeserializer<LocalDateTime?>() {
+                override fun deserialize(
+                    p: JsonParser,
+                    ctxt: DeserializationContext
+                ): LocalDateTime? {
+                    val valueAsString = p.valueAsString
+                    return if (valueAsString.isNullOrBlank())
+                        null
+                    else
+                        return of(p.valueAsString.toLong()).toLocalDateTime()
+                }
+            })
+
 
         OBJECT_MAPPER.registerModule(module)
         INDENT_OUTPUT_OBJECT_MAPPER.registerModule(module)
@@ -306,47 +334,6 @@ object StringUtil {
             list.add(str.substring(start, i))
         }
         return list.toTypedArray()
-    }
-
-    /**
-     * 压缩字符
-     *
-     * @param str 待压缩字符
-     * @return 压缩后字符
-     */
-    @JvmStatic
-    fun compress(str: String?): String? {
-        if (str == null || str.isEmpty()) {
-            return str
-        }
-        try {
-            val out = ByteArrayOutputStream()
-            val gzip = DeflaterOutputStream(out)
-            gzip.write(str.toByteArray())
-            gzip.close()
-            return String(out.toByteArray(), Charset.forName("ISO-8859-1"))
-        } catch (e: IOException) {
-            throw RuntimeException(e)
-        }
-
-    }
-
-
-    @JvmStatic
-    fun decompress(str: String?): String? {
-        if (str == null || str.isEmpty()) {
-            return str
-        }
-        try {
-            val byteArrayInputStream = ByteArrayInputStream(
-                str.toByteArray(charset("ISO-8859-1"))
-            )
-            val zipInputStream = InflaterInputStream(byteArrayInputStream)
-            return copyToString(zipInputStream, Charset.forName("ISO-8859-1"))
-        } catch (e: IOException) {
-            throw RuntimeException(e)
-        }
-
     }
 
     /**

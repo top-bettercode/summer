@@ -1,6 +1,9 @@
 package top.bettercode.simpleframework.config;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -181,6 +184,19 @@ public class FrameworkMvcConfiguration {
           gen.writeNumber(LocalDateTimeHelper.of(value).toMillis());
         }
       });
+      jacksonObjectMapperBuilder.deserializerByType(LocalDate.class,
+          new JsonDeserializer<LocalDate>() {
+            @Override
+            public LocalDate deserialize(JsonParser p, DeserializationContext ctxt)
+                throws IOException {
+              String asString = p.getValueAsString();
+              if (StringUtils.hasText(asString)) {
+                return LocalDateTimeHelper.of(Long.parseLong(asString)).toLocalDate();
+              } else {
+                return null;
+              }
+            }
+          });
       jacksonObjectMapperBuilder
           .serializerByType(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
             @Override
@@ -188,6 +204,19 @@ public class FrameworkMvcConfiguration {
                 SerializerProvider serializers)
                 throws IOException {
               gen.writeNumber(LocalDateTimeHelper.of(value).toMillis());
+            }
+          });
+      jacksonObjectMapperBuilder.deserializerByType(LocalDateTime.class,
+          new JsonDeserializer<LocalDateTime>() {
+            @Override
+            public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt)
+                throws IOException {
+              String asString = p.getValueAsString();
+              if (StringUtils.hasText(asString)) {
+                return LocalDateTimeHelper.of(Long.parseLong(asString)).toLocalDateTime();
+              } else {
+                return null;
+              }
             }
           });
     }
