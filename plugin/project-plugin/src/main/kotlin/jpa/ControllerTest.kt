@@ -87,6 +87,7 @@ open class ControllerTest : ModuleJavaGenerator() {
                     +"mockMvc.perform(get(\"/$pathName/list\")"
                     2 + ".param(\"page\", \"1\")"
                     2 + ".param(\"size\", \"5\")"
+                    2 + ".param(\"sort\", \"\")"
                     +").andExpect(status().isOk());"
                 }
 
@@ -104,6 +105,7 @@ open class ControllerTest : ModuleJavaGenerator() {
                         +"$insertName();"
                         import("org.springframework.test.web.servlet.ResultActions")
                         +"ResultActions actions = mockMvc.perform(get(\"/$pathName/export.xlsx\")"
+                        2 + ".param(\"sort\", \"\")"
                         +");"
                         +"download(actions);"
                     }
