@@ -71,7 +71,7 @@ public class MatcherSpecification<T> implements Specification<T> {
     for (SpecPath<?> specPath : specMatcher.getSpecPaths()) {
       Direction direction = specPath.getDirection();
       if (direction != null) {
-        Path<?> path = getPath(specPath, root);
+        Path<?> path = getPath(specPath.getPropertyName(), root);
         if (path != null) {
           Order order = Direction.DESC.equals(direction) ? cb.desc(path) : cb.asc(path);
           orders.add(order);
@@ -84,7 +84,12 @@ public class MatcherSpecification<T> implements Specification<T> {
         }
       }
     }
+    List<String> select = specMatcher.getSelect();
+    if (!select.isEmpty()) {
+      query.multiselect(select.stream().map(root::get).collect(Collectors.toList()));
+    }
     query.orderBy(orders);
+
     Predicate[] restrictions = predicates.toArray(new Predicate[0]);
     return specMatcher.getMatchMode().equals(SpecMatcherMode.ALL) ? cb.and(
         restrictions)
@@ -148,28 +153,29 @@ public class MatcherSpecification<T> implements Specification<T> {
     if (specPath.isIgnoredPath()) {
       return null;
     }
+    String propertyName = specPath.getPropertyName();
     PathMatcher matcher = specPath.getMatcher();
     switch (matcher) {
       case IS_TRUE:
-        Path path = getPath(specPath, root);
+        Path path = getPath(propertyName, root);
         if (path == null) {
           return null;
         }
         return criteriaBuilder.isTrue(path);
       case IS_FALSE:
-        path = getPath(specPath, root);
+        path = getPath(propertyName, root);
         if (path == null) {
           return null;
         }
         return criteriaBuilder.isFalse(path);
       case IS_NULL:
-        path = getPath(specPath, root);
+        path = getPath(propertyName, root);
         if (path == null) {
           return null;
         }
         return criteriaBuilder.isNull(path);
       case IS_NOT_NULL:
-        path = getPath(specPath, root);
+        path = getPath(propertyName, root);
         if (path == null) {
           return null;
         }
@@ -179,7 +185,7 @@ public class MatcherSpecification<T> implements Specification<T> {
     if (value == null || "".equals(value)) {
       return null;
     }
-    Path path = getPath(specPath, root);
+    Path path = getPath(propertyName, root);
     if (path == null) {
       return null;
     }
@@ -262,9 +268,9 @@ public class MatcherSpecification<T> implements Specification<T> {
   }
 
   @SuppressWarnings({"rawtypes"})
-  private Path getPath(SpecPath specPath, Root<?> root) {
+  private Path getPath(String propertyName, Root<?> root) {
     try {
-      return root.get(specPath.getPropertyName());
+      return root.get(propertyName);
     } catch (IllegalArgumentException e) {
       if (log.isDebugEnabled()) {
         log.debug(e.getMessage());
