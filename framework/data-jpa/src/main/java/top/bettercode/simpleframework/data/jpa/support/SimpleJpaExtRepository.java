@@ -39,7 +39,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
-import top.bettercode.simpleframework.exception.ResourceNotFoundException;
 
 /**
  * @author Peter Wu
@@ -98,7 +97,8 @@ public class SimpleJpaExtRepository<T, ID> extends
         copyPropertiesIfTargetPropertyNull(exist, s, true);
         return em.merge(s);
       } else {
-        throw new ResourceNotFoundException();
+        em.persist(s);
+        return s;
       }
     }
   }
@@ -118,7 +118,8 @@ public class SimpleJpaExtRepository<T, ID> extends
         copyPropertiesIfTargetPropertyNull(exist, s, false);
         return em.merge(s);
       } else {
-        throw new ResourceNotFoundException();
+        em.persist(s);
+        return s;
       }
     }
   }
