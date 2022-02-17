@@ -1,17 +1,18 @@
 package top.bettercode.simpleframework.data.test.repository;
 
-import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
-import top.bettercode.simpleframework.data.test.domain.User;
-import top.bettercode.simpleframework.data.jpa.querydsl.RecycleQuerydslPredicateExecutor;
 import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.query.mybatis.MybatisTemplate;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
+import top.bettercode.simpleframework.data.jpa.querydsl.RecycleQuerydslPredicateExecutor;
+import top.bettercode.simpleframework.data.test.domain.User;
 
 public interface UserRepository extends JpaExtRepository<User, Integer>,
     QuerydslPredicateExecutor<User>,
@@ -25,6 +26,7 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
   @Transactional
   void deleteByLastname(String lastname);
 
+  @Select("select * from user where deleted = 0")
   @MybatisTemplate
   List<User> findByMybatis();
 
