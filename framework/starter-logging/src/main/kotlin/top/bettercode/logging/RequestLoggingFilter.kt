@@ -61,10 +61,6 @@ class RequestLoggingFilter(
         val REQUEST_DATE_TIME = RequestLoggingFilter::class.java.name + ".dateTime"
     }
 
-    init {
-        Logback2LoggingSystem.defaultMarker(REQUEST_LOG_MARKER)
-    }
-
     private val log = LoggerFactory.getLogger(RequestLoggingFilter::class.java)
 
     @Throws(ServletException::class, IOException::class)
