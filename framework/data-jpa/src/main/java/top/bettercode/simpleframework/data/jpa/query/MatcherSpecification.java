@@ -71,12 +71,7 @@ public class MatcherSpecification<T> implements Specification<T> {
     for (SpecPath<?> specPath : specMatcher.getSpecPaths()) {
       Direction direction = specPath.getDirection();
       if (direction != null) {
-        Path<Object> path = null;
-        try {
-          path = root.get(specPath.getPropertyName());
-        } catch (IllegalArgumentException e) {
-          log.warn(e.getMessage());
-        }
+        Path<?> path = getPath(specPath, root);
         if (path != null) {
           Order order = Direction.DESC.equals(direction) ? cb.desc(path) : cb.asc(path);
           orders.add(order);
@@ -266,16 +261,16 @@ public class MatcherSpecification<T> implements Specification<T> {
     return null;
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
+  @SuppressWarnings({"rawtypes"})
   private Path getPath(SpecPath specPath, Root<?> root) {
-    SingularAttribute attribute;
     try {
-      attribute = root.getModel().getSingularAttribute(specPath.getPropertyName());
+      return root.get(specPath.getPropertyName());
     } catch (IllegalArgumentException e) {
-      log.warn(e.getMessage());
+      if (log.isDebugEnabled()) {
+        log.debug(e.getMessage());
+      }
       return null;
     }
-    return root.get(attribute);
   }
 
   private static class PathNode {
