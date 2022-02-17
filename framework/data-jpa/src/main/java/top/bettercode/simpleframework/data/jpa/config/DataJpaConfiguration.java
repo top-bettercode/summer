@@ -9,6 +9,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import top.bettercode.simpleframework.data.jpa.IbatisErrorHandler;
+import top.bettercode.simpleframework.data.jpa.support.EmbeddedIdConverter;
 
 /**
  * DataJpaConfiguration 配置
@@ -36,6 +37,13 @@ public class DataJpaConfiguration {
   public IbatisErrorHandler ibatisErrorHandler(MessageSource messageSource,
       HttpServletRequest request) {
     return new IbatisErrorHandler(messageSource, request);
+  }
+
+
+  @ConditionalOnWebApplication
+  @Bean
+  public EmbeddedIdConverter embeddedIdConverter() {
+    return new EmbeddedIdConverter();
   }
 
 }
