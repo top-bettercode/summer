@@ -13,6 +13,6 @@ public class UsernameSetRequestLoggingHandler implements RequestLoggingHandler {
 
   @Override
   public void handle(@NotNull Operation operation, @Nullable HandlerMethod handler) {
-    operation.getRequest().setUsername(AuthenticationHelper.getUsername());
+    operation.getRequest().setUsername(AuthenticationHelper.getUsername().orElse("Anonymous"));
   }
 }

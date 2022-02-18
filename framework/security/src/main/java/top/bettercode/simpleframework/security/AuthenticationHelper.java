@@ -1,6 +1,7 @@
 package top.bettercode.simpleframework.security;
 
 import java.util.Collection;
+import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,17 +33,17 @@ public final class AuthenticationHelper {
     return null;
   }
 
-  public static String getUsername() {
+  public static Optional<String> getUsername() {
     Authentication authentication = getAuthentication();
     if (authentication != null) {
       Object principal = authentication.getPrincipal();
       if (principal instanceof UserDetails) {
-        return ((UserDetails) principal).getUsername();
+        return Optional.of(((UserDetails) principal).getUsername());
       } else {
-        return principal == null ? "Anonymous" : String.valueOf(principal);
+        return principal == null ? Optional.empty() : Optional.of(String.valueOf(principal));
       }
     }
-    return "Anonymous";
+    return Optional.empty();
   }
 
   /**
