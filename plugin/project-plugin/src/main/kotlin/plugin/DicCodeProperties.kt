@@ -1,7 +1,7 @@
 package plugin
 
-import top.bettercode.generator.dsl.Generator
 import org.apache.tools.ant.util.Native2AsciiUtils
+import top.bettercode.generator.dsl.Generator
 import java.io.File
 
 /**
@@ -12,8 +12,7 @@ class DicCodeProperties(
     private val codeTypes: MutableSet<String>
 ) : Generator() {
 
-
-    override fun doCall() {
+    override fun call() {
         columns.forEach { col ->
             if (col.isCodeField) {
                 val dicCodes = col.dicCodes(extension)!!

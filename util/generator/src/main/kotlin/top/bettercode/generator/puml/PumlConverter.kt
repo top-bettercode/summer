@@ -251,7 +251,7 @@ object PumlConverter {
             plantUML.setUp(extension)
             tables.forEach {
                 if (it is Table) {
-                    plantUML.call(it)
+                    plantUML.run(it)
                 } else {
                     plantUML.appendlnText(it.toString())
                 }

@@ -1,3 +1,4 @@
+import jpa.unit.*
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
@@ -7,13 +8,9 @@ import top.bettercode.generator.dom.java.element.Parameter
  */
 class Entity : ModuleJavaGenerator() {
 
-    override var cover: Boolean = true
-    override val type: JavaType
-        get() = entityType
-
     override fun content() {
         //entityClass
-        clazz {
+        clazz(entityType, true) {
             import("java.util.Objects")
             import("org.springframework.data.jpa.domain.support.AuditingEntityListener")
             if (columns.any { it.autoIncrement || it.idgenerator || it.sequence.isNotBlank() }) {
@@ -37,8 +34,8 @@ class Entity : ModuleJavaGenerator() {
 
             //constructor no args
             constructor {
-                if (compositePrimaryKey)
-                    +"this.$primaryKeyName = new ${primaryKeyClass}();"
+                if (isCompositePrimaryKey)
+                    +"this.$primaryKeyName = new ${primaryKeyClassName}();"
             }
 
             field("TABLE_NAME", JavaType.stringInstance, "\"${tableName}\"") {
@@ -224,7 +221,7 @@ class Entity : ModuleJavaGenerator() {
             //hashCode
             method("hashCode", JavaType.intPrimitiveInstance) {
                 annotation("@Override")
-                if (compositePrimaryKey) {
+                if (isCompositePrimaryKey) {
                     +"return Objects.hash(${
                         (listOf(primaryKeyName) + otherColumns.map { it.javaName }).joinToString(
                             ", "
@@ -275,325 +272,36 @@ class Entity : ModuleJavaGenerator() {
         }
 
         //primaryKeyClass
-        if (compositePrimaryKey)
-            clazz(type = primaryKeyType) {
-                import("java.util.Objects")
-                import("javax.persistence.Embeddable")
-                import("top.bettercode.lang.util.StringUtil")
-                visibility = JavaVisibility.PUBLIC
-                annotation("@javax.persistence.Embeddable")
-                javadoc {
-                    +"/**"
-                    +" * $remarks 主键 对应表名：$tableName"
-                    +" */"
-                }
-                implement {
-                    +"java.io.Serializable"
-                }
-                serialVersionUID()
-
-                //constructor no args
-                constructor { }
-
-                if (compositePrimaryKey)
-                    constructor {
-                        primaryKeys.forEach { column ->
-                            parameter(column.javaType, column.javaName)
-                            +"this.${column.javaName} = ${column.javaName};"
-                        }
-                    }
-
-                primaryKeys.forEach {
-                    //field
-                    field(it.javaName, it.javaType) {
-                        if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
-                            javadoc {
-                                +"/**"
-                                +" * ${getRemark(it)}"
-                                +" */"
-                            }
-
-                        var columnAnnotation =
-                            "@javax.persistence.Column(name = \"${it.columnName}\", columnDefinition = \"${it.typeDesc}${it.defaultDesc}${if (it.extra.isBlank()) "" else " ${it.extra}"}\""
-                        if (it.columnSize > 0 && it.columnSize != 255 || !it.nullable) {
-                            if (it.columnSize > 0 && it.columnSize != 255) {
-                                columnAnnotation += ", length = ${it.columnSize}"
-                            }
-                            if (!it.nullable) {
-                                columnAnnotation += ", nullable = false"
-                            }
-                        }
-                        columnAnnotation += ")"
-                        annotation(columnAnnotation)
-                    }
-
-
-                    //getter
-                    method("get${it.javaName.capitalize()}", it.javaType) {
-                        if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
-                            javadoc {
-                                +"/**"
-                                +" * ${getReturnRemark(it)}"
-                                +" */"
-                            }
-                        +"return ${it.javaName};"
-                    }
-                    //setter
-                    method("set${it.javaName.capitalize()}", primaryKeyType) {
-                        if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
-                            javadoc {
-                                +"/**"
-                                +" * ${getParamRemark(it)}"
-                                +" * @return ${remarks}实例"
-                                +" */"
-                            }
-                        parameter {
-                            type = it.javaType
-                            name = it.javaName
-                        }
-                        +"this.${it.javaName} = ${it.javaName};"
-                        +"return this;"
-                    }
-                }
-                //equals
-                method(
-                    "equals",
-                    JavaType.booleanPrimitiveInstance,
-                    Parameter("o", JavaType.objectInstance)
-                ) {
-                    annotation("@Override")
-                    +"if (this == o) {"
-                    +"return true;"
-                    +"}"
-                    +"if (!(o instanceof ${primaryKeyClass})) {"
-                    +"return false;"
-                    +"}"
-                    +"${primaryKeyClass} that = (${primaryKeyClass}) o;"
-                    val size = primaryKeys.size
-                    primaryKeys.forEachIndexed { index, column ->
-                        when (index) {
-                            0 -> {
-                                +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
-                            }
-                            size - 1 -> {
-                                +"    Objects.equals(${column.javaName}, that.${column.javaName});"
-                            }
-                            else -> {
-                                +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
-                            }
-                        }
-                    }
-                }
-
-                //hashCode
-                method("hashCode", JavaType.intPrimitiveInstance) {
-                    annotation("@Override")
-                    +"return Objects.hash(${primaryKeys.joinToString(", ") { it.javaName }});"
-                }
-
-                //toString
-                method("toString", JavaType.stringInstance) {
-                    annotation("@Override")
-                    +"return StringUtil.json(this);"
-                }
-
+        if (isCompositePrimaryKey)
+            clazz(primaryKeyType, true) {
+                compositePrimaryKey(this)
             }
 
-        clazz(type = matcherType) {
-            javadoc {
-                +"/**"
-                +" * $remarks SpecMatcher"
-                +" */"
-            }
-
-            superClass(
-                JavaType("top.bettercode.simpleframework.data.jpa.query.DefaultSpecMatcher").typeArgument(
-                    type
-                )
-            )
-
-            val modeType = JavaType("SpecMatcherMode")
-
-            constructor(Parameter("mode", modeType)) {
-                this.visibility = JavaVisibility.PRIVATE
-                +"super(mode);"
-            }
-
-
-            //创建实例
-            method("matching", type) {
-                this.isStatic = true
-                javadoc {
-                    +"/**"
-                    +" * 创建 SpecMatcher 实例"
-                    +" *"
-                    +" * @return $remarks SpecMatcher 实例"
-                    +" */"
-                }
-                +"return matchingAll();"
-            }
-
-            method("matchingAll", type) {
-                this.isStatic = true
-                javadoc {
-                    +"/**"
-                    +" * 创建 SpecMatcher 实例"
-                    +" *"
-                    +" * @return $remarks SpecMatcher 实例"
-                    +" */"
-                }
-                +"return new ${type}(SpecMatcherMode.ALL);"
-            }
-
-            method("matchingAny", type) {
-                this.isStatic = true
-                javadoc {
-                    +"/**"
-                    +" * 创建 SpecMatcher 实例"
-                    +" *"
-                    +" * @return $remarks SpecMatcher 实例"
-                    +" */"
-                }
-                +"return new ${type}(SpecMatcherMode.ANY);"
-            }
-
-            val pathType =
-                JavaType("top.bettercode.simpleframework.data.jpa.query.SpecPath").typeArgument(
-                    type
-                )
-            val matcherType =
-                JavaType("top.bettercode.simpleframework.data.jpa.query.PathMatcher")
-            //primaryKey
-            if (compositePrimaryKey) {
-                primaryKeys.forEach {
-                    val javaName =
-                        if (it.javaName == "spec") "specField" else it.javaName
-                    method(javaName, pathType) {
-                        this.visibility = JavaVisibility.PUBLIC
-                        +"return super.specPath(\"${primaryKeyName}.${it.javaName}\");"
-                    }
-                    method(
-                        javaName,
-                        type,
-                        Parameter(it.javaName, it.javaType)
-                    ) {
-                        this.visibility = JavaVisibility.PUBLIC
-                        +"super.specPath(\"${primaryKeyName}.${it.javaName}\").setValue(${it.javaName});"
-                        +"return this;"
-                    }
-                    method(
-                        javaName,
-                        type,
-                        Parameter(it.javaName, it.javaType),
-                        Parameter(
-                            "matcher",
-                            matcherType
-                        )
-                    ) {
-                        this.visibility = JavaVisibility.PUBLIC
-                        +"super.specPath(\"${primaryKeyName}.${it.javaName}\").setValue(${it.javaName}).withMatcher(matcher);"
-                        +"return this;"
-                    }
-                }
-            } else {
-                val javaName =
-                    if (primaryKeyName == "spec") "specField" else primaryKeyName
-                method(javaName, pathType) {
-                    this.visibility = JavaVisibility.PUBLIC
-                    +"return super.specPath(\"${primaryKeyName}\");"
-                }
-                method(
-                    javaName,
-                    type,
-                    Parameter(primaryKeyName, primaryKeyType)
-                ) {
-                    this.visibility = JavaVisibility.PUBLIC
-                    +"super.specPath(\"${primaryKeyName}\").setValue(${primaryKeyName});"
-                    +"return this;"
-                }
-                method(
-                    javaName,
-                    type,
-                    Parameter(primaryKeyName, primaryKeyType),
-                    Parameter(
-                        "matcher",
-                        matcherType
-                    )
-                ) {
-                    this.visibility = JavaVisibility.PUBLIC
-                    +"super.specPath(\"${primaryKeyName}\").setValue(${primaryKeyName}).withMatcher(matcher);"
-                    +"return this;"
-                }
-            }
-
-
-            otherColumns.forEach {
-                val javaName =
-                    if (it.javaName == "spec") "specField" else it.javaName
-                method(javaName, pathType) {
-                    this.visibility = JavaVisibility.PUBLIC
-                    +"return super.specPath(\"${it.javaName}\");"
-                }
-                method(javaName, type, Parameter(it.javaName, it.javaType)) {
-                    this.visibility = JavaVisibility.PUBLIC
-                    +"super.specPath(\"${it.javaName}\").setValue(${it.javaName});"
-                    +"return this;"
-                }
-                method(
-                    javaName, type, Parameter(it.javaName, it.javaType),
-                    Parameter(
-                        "matcher",
-                        matcherType
-                    )
-                ) {
-                    this.visibility = JavaVisibility.PUBLIC
-                    +"super.specPath(\"${it.javaName}\").setValue(${it.javaName}).withMatcher(matcher);"
-                    +"return this;"
-                }
-            }
+        clazz(matcherType, true) {
+            matcher(this)
         }
 
         //propertiesInterface
-        interfaze(type = propertiesType) {
-            visibility = JavaVisibility.PUBLIC
-            if (compositePrimaryKey) {
-                primaryKeys.forEach {
-                    field(
-                        it.javaName,
-                        JavaType.stringInstance,
-                        "\"${primaryKeyName}.${it.javaName}\""
-                    ) {
-                        visibility = JavaVisibility.DEFAULT
-                        if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
-                            javadoc {
-                                +"/**"
-                                +" * ${getRemark(it)}"
-                                +" */"
-                            }
-                    }
-                }
-            } else {
-                field(primaryKeyName, JavaType.stringInstance, "\"${primaryKeyName}\"") {
-                    visibility = JavaVisibility.DEFAULT
-                    if (primaryKey.remarks.isNotBlank() || !primaryKey.columnDef.isNullOrBlank())
-                        javadoc {
-                            +"/**"
-                            +" * ${getRemark(primaryKey)}"
-                            +" */"
-                        }
-                }
-            }
-            otherColumns.forEach {
-                field(it.javaName, JavaType.stringInstance, "\"${it.javaName}\"") {
-                    visibility = JavaVisibility.DEFAULT
-                    if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
-                        javadoc {
-                            +"/**"
-                            +" * ${getRemark(it)}"
-                            +" */"
-                        }
-                }
-            }
+        interfaze(propertiesType, true) {
+            properties(this)
+        }
+
+        interfaze(methodInfoType, true) {
+            methodInfo(this)
+        }
+
+        selfOutput(
+            msgName,
+            isResourcesFile = true
+        ) {
+            msg(this)
+        }
+
+        packageInfo(modulePackageInfoType) {
+            modulePackageInfo(this)
+        }
+        packageInfo(packageInfoType) {
+            packageInfo(this)
         }
     }
 }

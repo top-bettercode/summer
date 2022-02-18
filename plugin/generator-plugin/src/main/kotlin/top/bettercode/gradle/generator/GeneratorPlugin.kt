@@ -194,7 +194,7 @@ class GeneratorPlugin : Plugin<Project> {
                     pumlTableNames.forEach { tableName ->
                         val table = tables.find { it.tableName.equals(tableName, true) }
                         if (table != null) {
-                            plantUML.call(table)
+                            plantUML.run(table)
                         }
                     }
                     plantUML.tearDown()

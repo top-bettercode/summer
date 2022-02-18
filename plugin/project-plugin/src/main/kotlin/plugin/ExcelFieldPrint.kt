@@ -6,10 +6,7 @@ import top.bettercode.generator.dsl.JavaGenerator
  * @author Peter Wu
  */
 open class ExcelFieldPrint : JavaGenerator() {
-    override fun content() {
-    }
-
-    override fun doCall() {
+    override fun call() {
         println("""private final ExcelField<$className, ?>[] excelFields = ArrayUtil.of(""")
         val cols = columns
         val size = cols.size

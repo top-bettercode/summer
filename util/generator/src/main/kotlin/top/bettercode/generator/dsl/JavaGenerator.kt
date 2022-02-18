@@ -2,17 +2,16 @@ package top.bettercode.generator.dsl
 
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
-import top.bettercode.generator.dom.java.element.*
-import java.io.File
+import top.bettercode.generator.dom.java.element.Interface
+import top.bettercode.generator.dom.java.element.JavaVisibility
+import top.bettercode.generator.dom.java.element.TopLevelClass
+import top.bettercode.generator.dom.java.element.TopLevelEnumeration
 
 /**
  *
  * @author Peter Wu
  */
 abstract class JavaGenerator : Generator() {
-    private val compilationUnits: MutableList<CompilationUnit> = mutableListOf()
-
-    protected abstract fun content()
 
     open var packageName: String = ""
         get() {
@@ -33,51 +32,7 @@ abstract class JavaGenerator : Generator() {
             return field.ifBlank { (if (extension.projectPackage) "${extension.packageName}.$projectName" else extension.packageName) }
         }
 
-    override val name: String
-        get() = type.fullyQualifiedNameWithoutTypeParameters
-
-    protected open val type: JavaType = JavaType(DEFAULT_NAME)
-
-    /**
-     * 主键
-     */
-    protected open val primaryKeyType: JavaType
-        get() {
-            return if (primaryKeys.size == 1) {
-                primaryKey.javaType
-            } else {
-                JavaType(
-                    "$packageName.entity.${className}.${
-                        if (otherColumns.isEmpty()) table.className(extension) else "${
-                            table.className(
-                                extension
-                            )
-                        }Key"
-                    }"
-                )
-            }
-        }
-
-    protected open val primaryKeyClass: String
-        get() = primaryKeyType.shortName
-
-    /**
-     * 主键
-     */
-    protected open val primaryKeyName: String
-        get() {
-            return if (primaryKeys.size == 1) {
-                primaryKey.javaName
-            } else {
-                if (otherColumns.isEmpty())
-                    table.entityName(extension)
-                else
-                    "${table.entityName(extension)}Key"
-            }
-        }
-
-
-    protected open fun getRemark(it: Column) =
+    open fun getRemark(it: Column) =
         "${
             (if (it.remarks.isBlank()) "" else (if (it.isSoftDelete) it.remarks.split(Regex("[:：,， (（]"))[0] else it.remarks.replace(
                 "@",
@@ -85,72 +40,54 @@ abstract class JavaGenerator : Generator() {
             )))
         }${if (it.columnDef.isNullOrBlank() || it.isSoftDelete) "" else " 默认值：${it.columnDef}"}"
 
-    protected open fun getParamRemark(it: Column): String {
+    open fun getParamRemark(it: Column): String {
         val remark = getRemark(it)
         return if (remark.isBlank()) "" else "@param ${it.javaName} $remark"
     }
 
-    protected open fun getReturnRemark(it: Column): String {
+    open fun getReturnRemark(it: Column): String {
         val remark = getRemark(it).replace(Regex(" ?([:;/]) ?"), " $1 ")
         return if (remark.isBlank()) "" else "@return $remark"
     }
 
-
-    override fun doCall() {
-        if (!resources && "package-info" != type.shortName) {
-            JavaElement.indent = extension.indent
-            compilationUnits.clear()
-            content()
-            compilationUnits.forEach { unit ->
-                val destFile = File(
-                    File(basePath, dir),
-                    "${
-                        unit.type.fullyQualifiedNameWithoutTypeParameters.replace(
-                            ".",
-                            File.separator
-                        )
-                    }.java"
-                )
-
-                if (filePre(destFile)) return
-                destFile.printWriter().use {
-                    it.println(unit.formattedContent)
-                }
-            }
-        } else {
-            super.doCall()
-        }
-    }
-
-    protected fun interfaze(
+    fun interfaze(
+        type: JavaType,
+        canCover: Boolean = false,
+        isResourcesFile: Boolean = false,
+        isTestFile: Boolean = false,
         visibility: JavaVisibility = JavaVisibility.PUBLIC,
-        type: JavaType = this.type,
         interfaze: Interface.() -> Unit
     ) {
-        val value = Interface(type)
+        val value = Interface(type, canCover, isResourcesFile, isTestFile)
         value.visibility = visibility
         interfaze(value)
-        compilationUnits.add(value)
+        addUnit(value)
     }
 
-    protected fun clazz(
+    fun clazz(
+        type: JavaType,
+        canCover: Boolean = false,
+        isResourcesFile: Boolean = false,
+        isTestFile: Boolean = false,
         visibility: JavaVisibility = JavaVisibility.PUBLIC,
-        type: JavaType = this.type,
         clazz: TopLevelClass.() -> Unit
     ) {
-        val value = TopLevelClass(type)
+        val value = TopLevelClass(type, canCover, isResourcesFile, isTestFile)
         value.visibility = visibility
         clazz(value)
-        compilationUnits.add(value)
+        addUnit(value)
     }
 
-    protected fun enum(
-        type: JavaType = this.type,
+    fun enum(
+        type: JavaType,
+        canCover: Boolean = false,
+        isResourcesFile: Boolean = false,
+        isTestFile: Boolean = false,
         enum: TopLevelEnumeration.() -> Unit
     ) {
-        val value = TopLevelEnumeration(type)
+        val value = TopLevelEnumeration(type, canCover, isResourcesFile, isTestFile)
         enum(value)
-        compilationUnits.add(value)
+        addUnit(value)
     }
 
 }

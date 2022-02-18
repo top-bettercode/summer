@@ -68,7 +68,7 @@ object Generators {
             val table = tables.find { it.tableName.equals(tableName, true) }
                 ?: throw RuntimeException("未在(${extension.tableNames})中找到${tableName}表")
             generators.forEach { generator ->
-                generator.call(table)
+                generator.run(table)
             }
         }
         generators.forEach { generator ->
@@ -95,7 +95,7 @@ object Generators {
                 val table = table(it)
                 if (table != null) {
                     generators.forEach { generator ->
-                        generator.call(table)
+                        generator.run(table)
                     }
                 }
             }
@@ -129,7 +129,7 @@ object Generators {
                     found = true
                     generators.forEach { generator ->
                         generator.subModule = file.nameWithoutExtension
-                        generator.call(table)
+                        generator.run(table)
                     }
                     return@inner
                 } else {

@@ -1,3 +1,5 @@
+import jpa.unit.mapperXml
+import jpa.unit.repository
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Parameter
 
@@ -5,11 +7,25 @@ import top.bettercode.generator.dom.java.element.Parameter
  * @author Peter Wu
  */
 open class Service : ModuleJavaGenerator() {
-    override val type: JavaType
-        get() = serviceType
+
 
     override fun content() {
-        clazz {
+        file(mapperXmlName, isResourcesFile = true) {
+            mapperXml(this)
+        }
+
+        packageInfo(modulePackageInfoType) {
+            modulePackageInfo(this)
+        }
+        packageInfo(packageInfoType) {
+            packageInfo(this)
+        }
+
+        interfaze(repositoryType) {
+            repository(this)
+        }
+
+        clazz(serviceType) {
             annotation("@org.springframework.stereotype.Service")
             javadoc {
                 +"/**"

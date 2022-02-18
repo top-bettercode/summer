@@ -60,7 +60,7 @@ class Mybatis : Generator() {
         }
     }
 
-    override fun doCall() {
+    override fun call() {
 
         jdbcConnectionConfiguration.apply {
             if (driverClass.isNullOrBlank())

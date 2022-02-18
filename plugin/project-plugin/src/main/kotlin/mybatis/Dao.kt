@@ -5,12 +5,8 @@ import top.bettercode.generator.dom.java.JavaType
  */
 open class Dao : MModuleJavaGenerator() {
 
-    override val type: JavaType
-        get() = daoType
-
-
     override fun content() {
-        interfaze {
+        interfaze(daoType) {
             javadoc {
                 +"/**"
                 +" * $remarks 数据层"

@@ -5,11 +5,8 @@ import top.bettercode.generator.dom.java.JavaType
  */
 open class MIService : MModuleJavaGenerator() {
 
-    override val type: JavaType
-        get() = iserviceType
-
     override fun content() {
-        interfaze {
+        interfaze(iserviceType) {
             javadoc {
                 +"/**"
                 +" * $remarks 服务层"

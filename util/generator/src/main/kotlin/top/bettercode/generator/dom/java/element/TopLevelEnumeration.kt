@@ -2,8 +2,12 @@ package top.bettercode.generator.dom.java.element
 
 import top.bettercode.generator.dom.java.JavaType
 
-class TopLevelEnumeration
-(type: JavaType) : InnerEnum(type), CompilationUnit {
+class TopLevelEnumeration(
+    type: JavaType,
+    override val canCover: Boolean = false,
+    override val isResourcesFile: Boolean = false,
+    override val isTestFile: Boolean = false
+) : InnerEnum(type), CompilationUnit {
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()
     override val staticImports: MutableSet<String> = mutableSetOf()
     override val fileCommentLines: MutableList<String> = mutableListOf()

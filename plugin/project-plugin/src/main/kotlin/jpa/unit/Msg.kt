@@ -1,22 +1,16 @@
+package jpa.unit
+
+import ModuleJavaGenerator
 import org.atteo.evo.inflector.English
-import top.bettercode.generator.dsl.Generator
+import top.bettercode.generator.dom.java.element.SelfOutputUnit
 import java.util.Properties
 
 /**
  * @author Peter Wu
  */
-open class Msg : Generator() {
-
-    override val resources: Boolean
-        get() = true
-
-    override val name: String
-        get() = "${if (projectName == "core") "core-" else ""}messages.properties"
-
-
-    override fun doCall() {
+val msg: ModuleJavaGenerator.(SelfOutputUnit) -> Unit = { unit ->
+    unit.apply {
         val properties = Properties()
-        val file = destFile
         if (!file.exists()) {
             file.createNewFile()
         }
@@ -37,6 +31,5 @@ open class Msg : Generator() {
             properties[English.plural(entityName + "Key")] = remarks + "ID"
         }
         properties.store(file.outputStream(), "国际化")
-
     }
 }
