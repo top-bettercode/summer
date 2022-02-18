@@ -1,12 +1,12 @@
 package plugin
 
-import ModuleJavaGenerator
+import ProjectGenerator
 import top.bettercode.generator.dom.java.JavaType
 
 /**
  * @author Peter Wu
  */
-open class MybatisWherePrint : ModuleJavaGenerator() {
+open class MybatisWherePrint : ProjectGenerator() {
     override fun call() {
 
         columns.forEach {

@@ -5,7 +5,7 @@ import top.bettercode.generator.dsl.Generator
  *
  * @author Peter Wu
  */
-abstract class MModuleJavaGenerator : Generator() {
+abstract class MProjectGenerator : Generator() {
 
     /**
      * 是否有主键

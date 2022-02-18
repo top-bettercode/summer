@@ -1,6 +1,6 @@
 package jpa.unit
 
-import ModuleJavaGenerator
+import ProjectGenerator
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
@@ -10,7 +10,7 @@ import top.bettercode.generator.dom.java.element.TopLevelClass
  *
  * @author Peter Wu
  */
-val matcher: ModuleJavaGenerator.(TopLevelClass) -> Unit = { unit ->
+val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         javadoc {
             +"/**"

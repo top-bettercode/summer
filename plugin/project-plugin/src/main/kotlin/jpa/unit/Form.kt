@@ -1,6 +1,6 @@
 package jpa.unit
 
-import ModuleJavaGenerator
+import ProjectGenerator
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Parameter
@@ -9,7 +9,7 @@ import top.bettercode.generator.dom.java.element.TopLevelClass
 /**
  * @author Peter Wu
  */
-val form: ModuleJavaGenerator.(TopLevelClass) -> Unit = { unit ->
+val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         javadoc {
             +"/**"
@@ -97,7 +97,7 @@ val form: ModuleJavaGenerator.(TopLevelClass) -> Unit = { unit ->
     }
 }
 
-private val getter: ModuleJavaGenerator.(TopLevelClass, Column) -> Unit = { clazz, it ->
+private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, it ->
     clazz.apply {
         //getter
         if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.isSoftDelete)
@@ -118,7 +118,7 @@ private val getter: ModuleJavaGenerator.(TopLevelClass, Column) -> Unit = { claz
     }
 }
 
-private val setter: ModuleJavaGenerator.(TopLevelClass, Column) -> Unit = { clazz, it ->
+private val setter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, it ->
     clazz.apply {
 
         if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.isSoftDelete)

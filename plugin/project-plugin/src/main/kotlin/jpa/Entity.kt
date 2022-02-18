@@ -6,7 +6,7 @@ import top.bettercode.generator.dom.java.element.Parameter
 /**
  * @author Peter Wu
  */
-class Entity : ModuleJavaGenerator() {
+class Entity : ProjectGenerator() {
 
     override fun content() {
         //entityClass

@@ -5,7 +5,7 @@ import top.bettercode.generator.dsl.Generator
  *
  * @author Peter Wu
  */
-abstract class ModuleJavaGenerator : Generator() {
+abstract class ProjectGenerator : Generator() {
 
     val msgName get() = "${if (projectName == "core") "core-" else ""}messages.properties"
     val mapperXmlName

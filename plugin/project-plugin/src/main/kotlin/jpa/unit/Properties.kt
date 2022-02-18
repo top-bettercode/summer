@@ -1,6 +1,6 @@
 package jpa.unit
 
-import ModuleJavaGenerator
+import ProjectGenerator
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Interface
 import top.bettercode.generator.dom.java.element.JavaVisibility
@@ -9,7 +9,7 @@ import top.bettercode.generator.dom.java.element.JavaVisibility
  *
  * @author Peter Wu
  */
-val properties: ModuleJavaGenerator.(Interface) -> Unit = { unit ->
+val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
     unit.apply {
         visibility = JavaVisibility.PUBLIC
         if (isCompositePrimaryKey) {

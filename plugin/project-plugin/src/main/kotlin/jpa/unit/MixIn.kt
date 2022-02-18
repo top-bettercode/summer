@@ -1,6 +1,6 @@
 package jpa.unit
 
-import ModuleJavaGenerator
+import ProjectGenerator
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Interface
@@ -8,7 +8,7 @@ import top.bettercode.generator.dom.java.element.Interface
 /**
  * @author Peter Wu
  */
-val mixIn: ModuleJavaGenerator.(Interface) -> Unit = { unit ->
+val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
     unit.apply {
         javadoc {
             +"/**"
@@ -47,7 +47,7 @@ val mixIn: ModuleJavaGenerator.(Interface) -> Unit = { unit ->
         }
     }
 }
-private val getter: ModuleJavaGenerator.(Interface, Column) -> Unit = { interfaze, it ->
+private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, it ->
     interfaze.apply {
         if (it.jsonViewIgnored)
             method("get${it.javaName.capitalize()}", it.javaType) {

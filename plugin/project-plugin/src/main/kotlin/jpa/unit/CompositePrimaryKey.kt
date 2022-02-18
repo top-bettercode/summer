@@ -1,6 +1,6 @@
 package jpa.unit
 
-import ModuleJavaGenerator
+import ProjectGenerator
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
@@ -10,7 +10,7 @@ import top.bettercode.generator.dom.java.element.TopLevelClass
  *
  * @author Peter Wu
  */
-val compositePrimaryKey: ModuleJavaGenerator.(TopLevelClass) -> Unit = { unit ->
+val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         import("java.util.Objects")
         import("javax.persistence.Embeddable")

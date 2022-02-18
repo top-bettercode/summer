@@ -1,11 +1,11 @@
 package plugin
 
-import ModuleJavaGenerator
+import ProjectGenerator
 
 /**
  * @author Peter Wu
  */
-open class MapperPrint : ModuleJavaGenerator() {
+open class MapperPrint : ProjectGenerator() {
 
     override fun call() {
         println("""<resultMap type="${entityType.fullyQualifiedNameWithoutTypeParameters}" id="${entityName}Map">""")

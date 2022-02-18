@@ -1,7 +1,7 @@
 /**
  * @author Peter Wu
  */
-class MMethodInfo : ModuleJavaGenerator() {
+class MMethodInfo : ProjectGenerator() {
 
     override fun content() {
         interfaze(methodInfoType, true) {

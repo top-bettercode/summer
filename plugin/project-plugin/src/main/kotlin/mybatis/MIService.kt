@@ -3,7 +3,7 @@ import top.bettercode.generator.dom.java.JavaType
 /**
  * @author Peter Wu
  */
-open class MIService : MModuleJavaGenerator() {
+open class MIService : MProjectGenerator() {
 
     override fun content() {
         interfaze(iserviceType) {

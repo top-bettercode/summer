@@ -4,7 +4,7 @@ import top.bettercode.generator.dom.java.element.JavaVisibility
 /**
  * @author Peter Wu
  */
-open class MControllerTest : MModuleJavaGenerator() {
+open class MControllerTest : MProjectGenerator() {
 
     override fun content() {
         clazz(controllerTestType, isTestFile = true) {

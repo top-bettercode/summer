@@ -6,7 +6,7 @@ import top.bettercode.generator.dom.java.element.Parameter
 /**
  * @author Peter Wu
  */
-open class Service : ModuleJavaGenerator() {
+open class Service : ProjectGenerator() {
 
     override fun content() {
         file(mapperXmlName, isResourcesFile = true) {

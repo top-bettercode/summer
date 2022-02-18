@@ -3,7 +3,7 @@ import top.bettercode.generator.dom.java.JavaType
 /**
  * @author Peter Wu
  */
-open class MServiceImpl : MModuleJavaGenerator() {
+open class MServiceImpl : MProjectGenerator() {
 
     override fun content() {
         clazz(serviceImplType) {

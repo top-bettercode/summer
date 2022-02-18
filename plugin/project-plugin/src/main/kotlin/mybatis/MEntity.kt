@@ -6,7 +6,7 @@ import top.bettercode.generator.dom.java.element.Parameter
 /**
  * @author Peter Wu
  */
-class MEntity : MModuleJavaGenerator() {
+class MEntity : MProjectGenerator() {
 
     override fun content() {
         clazz(entityType, canCover = true) {

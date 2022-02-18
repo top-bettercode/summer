@@ -9,7 +9,7 @@ import top.bettercode.generator.dom.java.element.TopLevelClass
 /**
  * @author Peter Wu
  */
-open class Controller : ModuleJavaGenerator() {
+open class Controller : ProjectGenerator() {
 
     override fun content() {
 
