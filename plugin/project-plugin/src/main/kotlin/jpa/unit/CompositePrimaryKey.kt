@@ -27,6 +27,18 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         serialVersionUID()
 
+        if (isFullComposite)
+            field("TABLE_NAME", JavaType.stringInstance, "\"${tableName}\"") {
+                visibility = JavaVisibility.PUBLIC
+                isStatic = true
+                isFinal = true
+                javadoc {
+                    +"/**"
+                    +" * 对应数据库表名"
+                    +" */"
+                }
+            }
+
         //constructor no args
         constructor { }
 
