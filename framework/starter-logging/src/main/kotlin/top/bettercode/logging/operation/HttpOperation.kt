@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.util.StringUtils
 import top.bettercode.lang.util.LocalDateTimeHelper
-import top.bettercode.simpleframework.UserInfoHelper
 import java.io.PrintWriter
 import java.io.StringWriter
 

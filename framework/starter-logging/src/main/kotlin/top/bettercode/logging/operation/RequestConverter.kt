@@ -13,7 +13,6 @@ import top.bettercode.logging.RequestLoggingFilter
 import top.bettercode.logging.client.ClientHttpRequestWrapper
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper
 import top.bettercode.logging.trace.TracePart
-import top.bettercode.simpleframework.UserInfoHelper
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -72,18 +71,17 @@ object RequestConverter {
                 "Request inputStream has been read.Can't record the original data.".toByteArray()
             }
         return OperationRequest(
-            uri,
-            restUri,
-            uriTemplateVariables,
-            HttpMethod.valueOf(request.method),
-            headers,
-            cookies,
-            remoteUser,
-            UserInfoHelper.get(request)?.toString() ?: "Anonymous",
-            parameters,
-            parts,
-            content,
-            dateTime
+            uri = uri,
+            restUri = restUri,
+            uriVariables = uriTemplateVariables,
+            method = HttpMethod.valueOf(request.method),
+            headers = headers,
+            cookies = cookies,
+            remoteUser = remoteUser,
+            parameters = parameters,
+            parts = parts,
+            content = content,
+            dateTime = dateTime
         )
     }
 
