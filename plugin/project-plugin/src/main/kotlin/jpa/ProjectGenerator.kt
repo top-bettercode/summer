@@ -22,11 +22,15 @@ abstract class ProjectGenerator : Generator() {
     val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.${className}")
     val propertiesType
         get() = JavaType(
-            "$packageName.${modulePackage("Properties")}.${className}Properties"
+            "$packageName.${modulePackage("Properties")}.${table.className(
+                extension
+            )}Properties"
         )
     val matcherType
         get() = JavaType(
-            "$packageName.${modulePackage("Matcher")}.${className}Matcher"
+            "$packageName.${modulePackage("Matcher")}.${table.className(
+                extension
+            )}Matcher"
         )
     val methodInfoType
         get() = JavaType(
