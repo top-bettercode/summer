@@ -1,6 +1,7 @@
 package top.bettercode.simpleframework.data.jpa;
 
 import java.util.Optional;
+import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -17,6 +18,10 @@ import top.bettercode.simpleframework.data.jpa.query.RecycleExecutor;
 public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByExampleExecutor<T>,
     JpaSpecificationExecutor<T>,
     RecycleExecutor<T, ID> {
+
+  Optional<T> findFirst(Specification<T> spec);
+
+  <S extends T> Optional<S> findFirst(Example<S> example);
 
   /**
    * 根据ID查询数据，包括已逻辑删除的数据

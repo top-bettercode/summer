@@ -31,6 +31,8 @@ public interface RecycleExecutor<T, ID> {
 
   Optional<T> findOneFromRecycleBin(@Nullable Specification<T> spec);
 
+  Optional<T> findFirstFromRecycleBin(Specification<T> spec);
+
   List<T> findAllFromRecycleBin(@Nullable Specification<T> spec);
 
   Page<T> findAllFromRecycleBin(@Nullable Specification<T> spec, Pageable pageable);

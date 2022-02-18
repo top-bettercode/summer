@@ -26,6 +26,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -494,6 +495,11 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
+  public Optional<T> findFirst(Specification<T> spec) {
+    return findAll(spec, PageRequest.of(0, 1)).stream().findFirst();
+  }
+
+  @Override
   public Optional<T> findOne(Specification<T> spec) {
     if (softDeleteSupport.support()) {
       spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getFalseValue()));
@@ -523,6 +529,11 @@ public class SimpleJpaExtRepository<T, ID> extends
       spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getFalseValue()));
     }
     return super.findAll(spec, sort);
+  }
+
+  @Override
+  public <S extends T> Optional<S> findFirst(Example<S> example) {
+    return findAll(example, PageRequest.of(0, 1)).stream().findFirst();
   }
 
   @Override
@@ -618,6 +629,10 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @Override
+  public Optional<T> findFirstFromRecycleBin(Specification<T> spec) {
+    return findAllFromRecycleBin(spec, PageRequest.of(0, 1)).stream().findFirst();
+  }
 
   @Override
   public Optional<T> findOneFromRecycleBin(Specification<T> spec) {
