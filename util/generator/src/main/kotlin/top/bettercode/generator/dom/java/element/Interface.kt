@@ -8,7 +8,12 @@ import top.bettercode.generator.dom.java.JavaType
  *
  * @author Jeff Butler
  */
-class Interface(type: JavaType) : InnerInterface(type), CompilationUnit {
+class Interface(
+    type: JavaType,
+    override val canCover: Boolean = false,
+    override val isResourcesFile: Boolean = false,
+    override val isTestFile: Boolean = false
+) : InnerInterface(type), CompilationUnit {
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()
     override val staticImports: MutableSet<String> = mutableSetOf()
     override val fileCommentLines: MutableList<String> = mutableListOf()

@@ -48,7 +48,7 @@ v${project.version}
         )
     }
 
-    override fun doCall() {
+    override fun call() {
         file.appendText("\n")
         if (moduleName != currentModuleName) {
             file.appendText("== ${moduleName}模块\n")

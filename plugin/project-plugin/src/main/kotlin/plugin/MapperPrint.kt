@@ -7,10 +7,7 @@ import ModuleJavaGenerator
  */
 open class MapperPrint : ModuleJavaGenerator() {
 
-    override fun content() {
-    }
-
-    override fun doCall() {
+    override fun call() {
         println("""<resultMap type="${entityType.fullyQualifiedNameWithoutTypeParameters}" id="${entityName}Map">""")
         columns.forEach {
             println("    <result property=\"${it.javaName}\" column=\"${it.columnName}\"/>")

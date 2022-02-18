@@ -8,12 +8,8 @@ import top.bettercode.generator.dom.java.element.Parameter
  */
 class MEntity : MModuleJavaGenerator() {
 
-    override var cover: Boolean = true
-    override val type: JavaType
-        get() = entityType
-
     override fun content() {
-        clazz {
+        clazz(entityType, canCover = true) {
             val tableName =
                 if (schema.isNullOrBlank() || schema == extension.datasource.schema) tableName else "$schema.$tableName"
             annotation("@com.baomidou.mybatisplus.annotations.TableName(\"$tableName\")")

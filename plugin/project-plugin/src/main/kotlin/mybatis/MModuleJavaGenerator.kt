@@ -28,11 +28,11 @@ abstract class MModuleJavaGenerator : JavaGenerator() {
     /**
      * 是否有主键
      */
-    protected val hasPrimaryKey: Boolean
+    val hasPrimaryKey: Boolean
         get() = table.primaryKeys.isNotEmpty()
 
 
-    override val primaryKeyType: JavaType
+    val primaryKeyType: JavaType
         get() {
             return if (primaryKeys.size == 1) {
                 primaryKey.javaType
@@ -41,21 +41,27 @@ abstract class MModuleJavaGenerator : JavaGenerator() {
             }
         }
 
+    val daoXml
+        get() = (if (extension.defaultModule) "mapper" else extension.module) + if (extension.userModule && subModule.isNotBlank()) {
+            "$subModule/$projectEntityName.xml"
+        } else {
+            "${projectEntityName}.xml"
+        }
 
-    protected val modulePackageInfoType get() = JavaType("$packageName.package-info")
-    protected val packageInfoType get() = JavaType("$packageName.${modulePackage("Entity")}.package-info")
-    protected val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.$className")
-    protected val queryDslType get() = JavaType("$packageName.${modulePackage("QueryDsl")}.Q$className")
-    protected val methodInfoType get() = JavaType("$packageName.${modulePackage("MethodInfo")}.${className}MethodInfo")
-    protected val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
-    protected val mixInType get() = JavaType("$packageName.${modulePackage("MixIn")}.${projectClassName}MixIn")
-    protected val controllerType get() = JavaType("$packageName.${modulePackage("Controller")}.${projectClassName}Controller")
-    protected val controllerTestType get() = JavaType("$packageName.${modulePackage("ControllerTest")}.${projectClassName}ControllerTest")
-    protected val iserviceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
-    protected val serviceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}Service")
-    protected val serviceImplType get() = JavaType("$packageName.${modulePackage("ServiceImpl")}.${projectClassName}ServiceImpl")
-    protected val repositoryType get() = JavaType("$packageName.${modulePackage("Repository")}.${projectClassName}Repository")
-    protected val daoType get() = JavaType("$packageName.${modulePackage("Dao")}.I${projectClassName}Dao")
+    val modulePackageInfoType get() = JavaType("$packageName.package-info")
+    val packageInfoType get() = JavaType("$packageName.${modulePackage("Entity")}.package-info")
+    val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.$className")
+    val queryDslType get() = JavaType("$packageName.${modulePackage("QueryDsl")}.Q$className")
+    val methodInfoType get() = JavaType("$packageName.${modulePackage("MethodInfo")}.${className}MethodInfo")
+    val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
+    val mixInType get() = JavaType("$packageName.${modulePackage("MixIn")}.${projectClassName}MixIn")
+    val controllerType get() = JavaType("$packageName.${modulePackage("Controller")}.${projectClassName}Controller")
+    val controllerTestType get() = JavaType("$packageName.${modulePackage("ControllerTest")}.${projectClassName}ControllerTest")
+    val iserviceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
+    val serviceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}Service")
+    val serviceImplType get() = JavaType("$packageName.${modulePackage("ServiceImpl")}.${projectClassName}ServiceImpl")
+    val repositoryType get() = JavaType("$packageName.${modulePackage("jpa.unit.Repository")}.${projectClassName}jpa.unit.Repository")
+    val daoType get() = JavaType("$packageName.${modulePackage("Dao")}.I${projectClassName}Dao")
 
 }
 

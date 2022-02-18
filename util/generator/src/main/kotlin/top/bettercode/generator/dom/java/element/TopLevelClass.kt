@@ -5,7 +5,12 @@ import top.bettercode.generator.dom.java.JavaType
 /**
  * The Class TopLevelClass.
  */
-class TopLevelClass(type: JavaType) : InnerClass(type), CompilationUnit {
+open class TopLevelClass(
+    type: JavaType,
+    override val canCover: Boolean = false,
+    override val isResourcesFile: Boolean = false,
+    override val isTestFile: Boolean = false
+) : InnerClass(type), CompilationUnit {
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()
     override val staticImports: MutableSet<String> = mutableSetOf()
     override val fileCommentLines: MutableList<String> = mutableListOf()

@@ -1,3 +1,7 @@
+
+import jpa.unit.controllerTest
+import jpa.unit.form
+import jpa.unit.mixIn
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelClass
@@ -7,12 +11,9 @@ import top.bettercode.generator.dom.java.element.TopLevelClass
  */
 open class Controller : ModuleJavaGenerator() {
 
-    override val type: JavaType
-        get() = controllerType
-
     override fun content() {
 
-        clazz {
+        clazz(controllerType) {
             javadoc {
                 +"/**"
                 +" * $remarks 接口"
@@ -50,7 +51,7 @@ open class Controller : ModuleJavaGenerator() {
                 if (isFullComposite) {
                     import("org.springframework.data.domain.PageImpl")
                     import("java.util.stream.Collectors")
-                    +"return ok(new PageImpl<>(results.getContent().stream().map($className::get$primaryKeyClass).collect(Collectors.toList()), pageable, results.getTotalElements()));"
+                    +"return ok(new PageImpl<>(results.getContent().stream().map($className::get$primaryKeyClassName).collect(Collectors.toList()), pageable, results.getTotalElements()));"
                 } else {
                     +"return ok(results);"
                 }
@@ -61,7 +62,7 @@ open class Controller : ModuleJavaGenerator() {
                 import("top.bettercode.lang.util.ArrayUtil")
                 field(
                     "excelFields",
-                    JavaType("top.bettercode.util.excel.ExcelField<${if (isFullComposite) primaryKeyClass else className}, ?>[]"),
+                    JavaType("top.bettercode.util.excel.ExcelField<${if (isFullComposite) primaryKeyClassName else className}, ?>[]"),
                     isFinal = true
                 ) {
                     initializationString = "ArrayUtil.of(\n"
@@ -74,7 +75,7 @@ open class Controller : ModuleJavaGenerator() {
                                 ""
                             }
                         val propertyGetter =
-                            if (it.isPrimary && compositePrimaryKey) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${primaryKeyName.capitalize()}().get${it.javaName.capitalize()}()" else "${if (isFullComposite) primaryKeyClass else className}::get${it.javaName.capitalize()}"
+                            if (it.isPrimary && isCompositePrimaryKey) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${primaryKeyName.capitalize()}().get${it.javaName.capitalize()}()" else "${if (isFullComposite) primaryKeyClassName else className}::get${it.javaName.capitalize()}"
                         initializationString += "      ExcelField.of(\"${
                             it.remarks.split(
                                 Regex(
@@ -106,7 +107,7 @@ open class Controller : ModuleJavaGenerator() {
                     +"ExcelExport.export(request, response, \"$remarks\", excelExport -> excelExport.sheet(\"$remarks\").setData(${
                         if (isFullComposite) {
                             import("com.google.common.collect.Streams")
-                            "Streams.stream(results).map($className::get$primaryKeyClass).collect(Collectors.toList())"
+                            "Streams.stream(results).map($className::get$primaryKeyClassName).collect(Collectors.toList())"
                         } else "results"
                     }, excelFields));"
                 }
@@ -129,7 +130,7 @@ open class Controller : ModuleJavaGenerator() {
                     import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
 
                     +"$className $entityName = ${projectEntityName}Service.findById(${primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
-                    +"return ok($entityName${if (isFullComposite) "get${primaryKeyClass}()" else ""});"
+                    +"return ok($entityName${if (isFullComposite) "get${primaryKeyClassName}()" else ""});"
                 }
 
             if (isFullComposite) {
@@ -195,22 +196,34 @@ open class Controller : ModuleJavaGenerator() {
                 +"return noContent();"
             }
         }
+
+        clazz(controllerTestType, isTestFile = true) {
+            controllerTest(this)
+        }
+
+        clazz(formType) {
+            form(this)
+        }
+
+        interfaze(mixInType) {
+            mixIn(this)
+        }
     }
 
     //(sort = {AcAreaProperties.createdDate, AcAreaProperties.areaId}, direction = Direction.DESC)
     private fun TopLevelClass.defaultSort(): String {
         var sort = ""
-        if (columns.any { it.javaName == "createdDate" } || !compositePrimaryKey) {
+        if (columns.any { it.javaName == "createdDate" } || !isCompositePrimaryKey) {
             import(propertiesType)
             import("org.springframework.data.domain.Sort.Direction")
             sort = "(sort = {"
             if (columns.any { it.javaName == "createdDate" }) {
                 sort += "${className}Properties.createdDate"
-                if (!compositePrimaryKey) {
+                if (!isCompositePrimaryKey) {
                     sort += ", ${className}Properties.${primaryKeyName}"
                 }
                 sort += "}"
-            } else if (!compositePrimaryKey) {
+            } else if (!isCompositePrimaryKey) {
                 sort += "${className}Properties.${primaryKeyName}}"
             }
             sort += ", direction = Direction.DESC)"

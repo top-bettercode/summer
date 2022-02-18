@@ -6,13 +6,8 @@ import top.bettercode.generator.dom.java.element.JavaVisibility
  */
 open class MControllerTest : MModuleJavaGenerator() {
 
-    override val test: Boolean = true
-    override val type: JavaType
-        get() = controllerTestType
-
     override fun content() {
-
-        clazz {
+        clazz(controllerTestType, isTestFile = true) {
             javadoc {
                 +"/**"
                 +" * $remarks 控制层测试"

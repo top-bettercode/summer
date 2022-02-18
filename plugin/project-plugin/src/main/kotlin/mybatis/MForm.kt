@@ -6,11 +6,8 @@ import top.bettercode.generator.dom.java.element.Parameter
  */
 class MForm : MModuleJavaGenerator() {
 
-    override val type: JavaType
-        get() = formType
-
     override fun content() {
-        clazz {
+        clazz(formType) {
             javadoc {
                 +"/**"
                 +" * $remarks 表单"

@@ -7,13 +7,10 @@ import ModuleJavaGenerator
  */
 open class SetterPrint(private val randomValue: Boolean) : ModuleJavaGenerator() {
 
-    override fun content() {
-    }
+    override fun call() {
 
-    override fun doCall() {
-
-        if (compositePrimaryKey || !primaryKey.autoIncrement) {
-            if (compositePrimaryKey) {
+        if (isCompositePrimaryKey || !primaryKey.autoIncrement) {
+            if (isCompositePrimaryKey) {
                 println("${primaryKeyType.shortName} $primaryKeyName = new ${primaryKeyType.shortName}();")
                 primaryKeys.forEach {
                     println("$primaryKeyName.set${it.javaName.capitalize()}(${if (randomValue) it.randomValueToSet else ""});")

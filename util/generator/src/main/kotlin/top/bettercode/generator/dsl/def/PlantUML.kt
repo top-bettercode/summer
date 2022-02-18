@@ -12,13 +12,13 @@ import java.util.*
  * @since 0.0.41
  */
 class PlantUML(
-    private val myModuleName: String?,
+    private val umlModuleName: String?,
     private val output: String,
     private val remarksProperties: Properties?
 ) : Generator() {
 
     private val fklines = mutableListOf<String>()
-    override val destFile: File
+    private val destFile: File
         get() = File(output)
 
     override fun setUp() {
@@ -26,7 +26,7 @@ class PlantUML(
         println(
             "${if (destFile.exists()) "覆盖" else "生成"}：${
                 destFile.absolutePath.substringAfter(
-                    (extension.rootPath ?: basePath).absolutePath + File.separator
+                    (extension.rootPath ?: extension.basePath).absolutePath + File.separator
                 )
             }"
         )
@@ -38,13 +38,13 @@ INDEX
 IDGENERATOR
 SEQUENCE
 
-@startuml ${if (myModuleName.isNullOrBlank()) DataType.DATABASE.name else myModuleName}
+@startuml ${if (umlModuleName.isNullOrBlank()) DataType.DATABASE.name else umlModuleName}
 
 """
         )
     }
 
-    override fun doCall() {
+    override fun call() {
         if (tableName.length > 32) {
             println("数据库对象的命名最好不要超过 32 个字符")
         }

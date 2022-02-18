@@ -7,16 +7,14 @@ import top.bettercode.generator.database.entity.Indexed
 import top.bettercode.generator.database.entity.Table
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.PrimitiveTypeWrapper
+import top.bettercode.generator.dom.java.element.*
 import java.io.File
-import java.io.PrintWriter
 
 /**
  * 模板基类
  */
 abstract class Generator {
     companion object {
-        const val DEFAULT_NAME = "generated"
-
         fun toBoolean(obj: Any?): Boolean {
             when (obj) {
                 is Boolean -> return obj
@@ -104,6 +102,8 @@ abstract class Generator {
         }
 
     }
+
+    private val units: MutableList<GenUnit> = mutableListOf()
 
     fun Column.dicCodes(extension: GeneratorExtension): DicCodes? {
         return if (isCodeField) {
@@ -231,83 +231,53 @@ abstract class Generator {
         }
     }
 
-    protected val Column.defaultRemarks: String
+    val Column.defaultRemarks: String
         get() = defaultDesc.replace("DEFAULT ", "默认值：")
-    protected lateinit var table: Table
-    protected lateinit var extension: GeneratorExtension
-    protected val isOracleDatasource
+
+    lateinit var table: Table
+    lateinit var extension: GeneratorExtension
+    val isOracleDatasource
         get() = extension.datasource.isOracle
-
-    open var cover: Boolean = false
-    protected open val test: Boolean = false
-    protected open val resources: Boolean = false
-
-    protected open val dir: String
-        get() {
-            val dir = if (test) extension.dir.replace("src/main/", "src/test/") else extension.dir
-            return if (resources) dir.replace("java", "resources") else dir
-        }
-
-    protected val basePath: File
-        get() = extension.basePath
-
-    /**
-     * 文件名称
-     */
-    protected open val name: String = DEFAULT_NAME
-
-    protected open val destFile: File
-        get() {
-            return File(
-                File(basePath, dir),
-                if (this is JavaGenerator && !resources) "${
-                    name.replace(
-                        ".",
-                        File.separator
-                    )
-                }.java" else name
-            )
-        }
 
     open var subModule: String = ""
 
     open val moduleName: String
         get() = table.moduleName
 
-    protected open val projectName: String
+    open val projectName: String
         get() = extension.projectName
 
-    protected open val applicationName: String
+    open val applicationName: String
         get() = extension.applicationName
 
-    protected val settings: Map<String, String>
+    val settings: Map<String, String>
         get() = extension.settings
 
-    protected open val Column.jsonViewIgnored: Boolean
+    open val Column.jsonViewIgnored: Boolean
         get() = jsonViewIgnored(extension)
 
-    protected open val Column.isSoftDelete: Boolean
+    open val Column.isSoftDelete: Boolean
         get() = isSoftDelete(extension)
 
-    protected open val Table.supportSoftDelete: Boolean
+    open val Table.supportSoftDelete: Boolean
         get() = supportSoftDelete(extension)
 
-    protected fun setting(key: String): Any? = settings[key]
+    fun setting(key: String): Any? = settings[key]
 
-    protected fun setting(key: String, default: String): String {
+    fun setting(key: String, default: String): String {
         return settings[key] ?: return default
     }
 
-    protected fun enable(key: String, default: Boolean = true): Boolean {
+    fun enable(key: String, default: Boolean = true): Boolean {
         return setting(key, default.toString()) == "true"
     }
 
-    protected open val className
+    open val className
         get() = if (otherColumns.isEmpty()) "${table.className(extension)}Entity" else table.className(
             extension
         )
 
-    protected open val projectClassName
+    open val projectClassName
         get() = if (enable(
                 "projectClassName",
                 true
@@ -316,36 +286,36 @@ abstract class Generator {
             0, if (projectName.length > 5) 5 else projectName.length
         ).capitalize() else table.className(extension)
 
-    protected val entityName
+    val entityName
         get() = if (otherColumns.isEmpty()) "${table.entityName(extension)}Entity" else table.entityName(
             extension
         )
 
-    protected val projectEntityName
+    val projectEntityName
         get() = projectClassName.decapitalize()
 
     /**
      * 表名
      */
-    protected val tableName: String
+    val tableName: String
         get() = table.tableName
 
-    protected val catalog: String?
+    val catalog: String?
         get() = table.catalog
 
-    protected val schema: String?
+    val schema: String?
         get() = table.schema
 
     /**
      * 表类型
      */
-    protected val tableType: String
+    val tableType: String
         get() = table.tableType
 
     /**
      * 注释说明
      */
-    protected val remarks: String
+    val remarks: String
         get() {
             val comment = table.remarks
             return comment.ifBlank {
@@ -356,7 +326,7 @@ abstract class Generator {
     /**
      * 主键
      */
-    protected val primaryKeys: List<Column>
+    val primaryKeys: List<Column>
         get() {
             val primaryKeys = table.primaryKeys
             return if (primaryKeys.isEmpty()) {
@@ -376,7 +346,7 @@ abstract class Generator {
     /**
      * 主键
      */
-    protected val primaryKey: Column
+    val primaryKey: Column
         get() {
             if (primaryKeys.size == 1) {
                 return primaryKeys[0]
@@ -385,57 +355,139 @@ abstract class Generator {
             }
         }
 
+    open val primaryKeyClassName: String
+        get() = primaryKeyName.capitalize()
 
-    protected open val isFullComposite: Boolean
+    /**
+     * 主键
+     */
+    open val primaryKeyName: String
+        get() {
+            return if (primaryKeys.size == 1) {
+                primaryKey.javaName
+            } else {
+                if (otherColumns.isEmpty())
+                    table.entityName(extension)
+                else
+                    "${table.entityName(extension)}Key"
+            }
+        }
+
+
+    open val isFullComposite: Boolean
         get() = otherColumns.isEmpty()
 
 
     /**
      * 是否组合主键
      */
-    protected val compositePrimaryKey: Boolean
+    val isCompositePrimaryKey: Boolean
         get() = primaryKeys.size > 1
 
     /**
      * 非主键字段
      */
-    protected val otherColumns: List<Column>
+    val otherColumns: List<Column>
         get() = columns.filter { !primaryKeys.contains(it) }
 
     /**
      * 字段
      */
-    protected val columns: List<Column>
+    val columns: List<Column>
         get() = table.columns
 
-    protected val indexes: List<Indexed>
+    val indexes: List<Indexed>
         get() = table.indexes
 
-    protected val pathName: String
+    val pathName: String
         get() = table.pathName(extension)
 
-    fun call(table: Table): Any? {
-        this.table = table
-        return if (extension.delete) {
-            if (destFile.delete()) {
-                println("删除：${destFile.absolutePath.substringAfter(basePath.absolutePath + File.separator)}")
-            }
-            null
-        } else {
-            if (supports())
-                doCall()
-            else
-                null
+    fun addUnit(unit: GenUnit) {
+        units.add(unit)
+    }
+
+    val GenUnit.file: File
+        get() {
+            var dir =
+                if (isTestFile) extension.dir.replace("src/main/", "src/test/") else extension.dir
+            dir = if (isResourcesFile) dir.replace("java", "resources") else dir
+            val file = File(name)
+            return if (file.isAbsolute) file else File(
+                File(extension.basePath, dir),
+                name
+            )
         }
 
+    fun selfOutput(
+        name: String,
+        canCover: Boolean = false,
+        isResourcesFile: Boolean = false,
+        isTestFile: Boolean = false,
+        unit: SelfOutputUnit.() -> Unit
+    ) {
+        val value = SelfOutputUnit(name, canCover, isResourcesFile, isTestFile)
+        unit(value)
+        addUnit(value)
     }
 
-    protected open fun supports(): Boolean {
-        return true
+    fun file(
+        name: String,
+        canCover: Boolean = false,
+        isResourcesFile: Boolean = false,
+        isTestFile: Boolean = false,
+        unit: FileUnit.() -> Unit
+    ) {
+        val value = FileUnit(name, canCover, isResourcesFile, isTestFile)
+        unit(value)
+        addUnit(value)
     }
 
-    protected open fun output(printWriter: PrintWriter) {
+    fun packageInfo(
+        type: JavaType,
+        canCover: Boolean = false,
+        isResourcesFile: Boolean = false,
+        isTestFile: Boolean = false,
+        unit: PackageInfo.() -> Unit
+    ) {
+        val value = PackageInfo(type, canCover, isResourcesFile, isTestFile)
+        unit(value)
+        addUnit(value)
+    }
 
+    open fun content() {}
+
+    open fun call() {
+        JavaElement.indent = extension.indent
+        units.clear()
+        content()
+        units.filter { it !is SelfOutputUnit }.forEach { unit ->
+            val destFile = unit.file
+
+            if (extension.delete)
+                if (destFile.delete()) {
+                    println("删除：${destFile.absolutePath.substringAfter(extension.basePath.absolutePath + File.separator)}")
+                }
+
+            if (!destFile.exists() || !((!extension.replaceAll && !unit.canCover) || destFile.readLines()
+                    .any { it.contains("[[Don't cover]]") })
+            ) {
+                destFile.parentFile.mkdirs()
+
+                println(
+                    "${if (destFile.exists()) "覆盖" else "生成"}：${
+                        destFile.absolutePath.substringAfter(
+                            (extension.rootPath ?: extension.basePath).absolutePath + File.separator
+                        )
+                    }"
+                )
+                unit.output(destFile.printWriter())
+            }
+        }
+    }
+
+    fun run(table: Table) {
+        this.table = table
+        this.call()
     }
 
     fun setUp(extension: GeneratorExtension) {
@@ -443,36 +495,11 @@ abstract class Generator {
         setUp()
     }
 
-    protected open fun setUp() {
+    open fun setUp() {
 
     }
 
     open fun tearDown() {
 
-    }
-
-    protected open fun doCall() {
-        if (filePre(destFile)) return
-        destFile.printWriter().use {
-            output(it)
-        }
-    }
-
-    protected fun filePre(destFile: File): Boolean {
-        if (destFile.exists() && ((!extension.replaceAll && !cover) || destFile.readLines()
-                .any { it.contains("[[Don't cover]]") })
-        ) {
-            return true
-        }
-        destFile.parentFile.mkdirs()
-
-        println(
-            "${if (destFile.exists()) "覆盖" else "生成"}：${
-                destFile.absolutePath.substringAfter(
-                    (extension.rootPath ?: basePath).absolutePath + File.separator
-                )
-            }"
-        )
-        return false
     }
 }

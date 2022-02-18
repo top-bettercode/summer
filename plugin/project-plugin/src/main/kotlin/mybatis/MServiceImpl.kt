@@ -5,11 +5,8 @@ import top.bettercode.generator.dom.java.JavaType
  */
 open class MServiceImpl : MModuleJavaGenerator() {
 
-    override val type: JavaType
-        get() = serviceImplType
-
     override fun content() {
-        clazz {
+        clazz(serviceImplType) {
             annotation("@org.springframework.stereotype.Service")
             javadoc {
                 +"/**"

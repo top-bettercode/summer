@@ -6,12 +6,8 @@ import top.bettercode.generator.dom.java.element.Parameter
  */
 open class MController : MModuleJavaGenerator() {
 
-    override val type: JavaType
-        get() = controllerType
-
     override fun content() {
-
-        clazz {
+        clazz(controllerType) {
             javadoc {
                 +"/**"
                 +" * $remarks 接口"
@@ -72,7 +68,7 @@ open class MController : MModuleJavaGenerator() {
                                     ""
                                 }
                             val propertyGetter =
-                                if (it.isPrimary && compositePrimaryKey) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${primaryKeyName.capitalize()}().get${it.javaName.capitalize()}()" else "$className::get${it.javaName.capitalize()}"
+                                if (it.isPrimary && isCompositePrimaryKey) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${primaryKeyName.capitalize()}().get${it.javaName.capitalize()}()" else "$className::get${it.javaName.capitalize()}"
                             initializationString += "      ExcelField.of(\"${
                                 it.remarks.split(
                                     Regex(

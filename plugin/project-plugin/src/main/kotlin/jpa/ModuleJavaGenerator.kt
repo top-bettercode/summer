@@ -20,14 +20,12 @@ abstract class ModuleJavaGenerator : JavaGenerator() {
             "IService" -> "service"
             "Service" -> "service"
             "ServiceImpl" -> "service.impl"
-            "Repository" -> "repository"
+            "jpa.unit.Repository" -> "repository"
             else -> table.entityName(extension).toLowerCase()
         }
     }
 
-    protected val modulePackageInfoType get() = JavaType("$packageName.package-info")
-    protected val packageInfoType get() = JavaType("$packageName.${modulePackage("Entity")}.package-info")
-    override val primaryKeyType: JavaType
+    val primaryKeyType: JavaType
         get() {
             return if (primaryKeys.size == 1) {
                 primaryKey.javaType
@@ -35,23 +33,33 @@ abstract class ModuleJavaGenerator : JavaGenerator() {
                 JavaType(
                     "$packageName.${modulePackage("Entity")}.${
                         if (isFullComposite) table.className(extension)
-                        else "${
-                            table.className(extension)
-                        }Key"
+                        else "${table.className(extension)}Key"
                     }"
                 )
             }
         }
-    protected val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.${className}")
-    protected val propertiesType
+    val msgName get() = "${if (projectName == "core") "core-" else ""}messages.properties"
+    val mapperXmlName
+        get() = "${
+            repositoryType.fullyQualifiedNameWithoutTypeParameters.replace(
+                ".",
+                "/"
+            )
+        }.xml"
+
+    val modulePackageInfoType get() = JavaType("$packageName.package-info")
+    val packageInfoType get() = JavaType("$packageName.${modulePackage("Entity")}.package-info")
+
+    val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.${className}")
+    val propertiesType
         get() = JavaType(
             "$packageName.${modulePackage("Properties")}.${className}Properties"
         )
-    protected val matcherType
+    val matcherType
         get() = JavaType(
             "$packageName.${modulePackage("Matcher")}.${className}Matcher"
         )
-    protected val methodInfoType
+    val methodInfoType
         get() = JavaType(
             "$packageName.${modulePackage("MethodInfo")}.${
                 table.className(
@@ -59,14 +67,14 @@ abstract class ModuleJavaGenerator : JavaGenerator() {
                 )
             }MethodInfo"
         )
-    protected val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
-    protected val mixInType get() = JavaType("$packageName.${modulePackage("MixIn")}.${projectClassName}MixIn")
-    protected val controllerType get() = JavaType("$packageName.${modulePackage("Controller")}.${projectClassName}Controller")
-    protected val controllerTestType get() = JavaType("$packageName.${modulePackage("ControllerTest")}.${projectClassName}ControllerTest")
-    protected val iserviceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
-    protected val serviceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}Service")
-    protected val serviceImplType get() = JavaType("$packageName.${modulePackage("ServiceImpl")}.${projectClassName}ServiceImpl")
-    protected val repositoryType get() = JavaType("$packageName.${modulePackage("Repository")}.${projectClassName}Repository")
+    val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
+    val mixInType get() = JavaType("$packageName.${modulePackage("MixIn")}.${projectClassName}MixIn")
+    val controllerType get() = JavaType("$packageName.${modulePackage("Controller")}.${projectClassName}Controller")
+    val controllerTestType get() = JavaType("$packageName.${modulePackage("ControllerTest")}.${projectClassName}ControllerTest")
+    val iserviceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
+    val serviceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}Service")
+    val serviceImplType get() = JavaType("$packageName.${modulePackage("ServiceImpl")}.${projectClassName}ServiceImpl")
+    val repositoryType get() = JavaType("$packageName.${modulePackage("jpa.unit.Repository")}.${projectClassName}jpa.unit.Repository")
 
 
 }

@@ -4,13 +4,22 @@ import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.JavaTypeOperator
 import top.bettercode.generator.dom.java.StringOperator
 import top.bettercode.generator.dom.java.StringOperator1
+import java.io.File
+import java.io.PrintWriter
 
 /**
  * This interface describes methods common to all Java compilation units (Java
  * classes, interfaces, and enums).
  *
  */
-interface CompilationUnit {
+interface CompilationUnit : GenUnit {
+
+
+    override val name: String
+        get() = "${type.fullyQualifiedNameWithoutTypeParameters.replace(".", File.separator)}.java"
+
+    override val output: PrintWriter.() -> Unit
+        get() = { println(formattedContent) }
 
     val formattedContent: String
 
@@ -54,7 +63,8 @@ interface CompilationUnit {
     }
 
     fun import(vararg fullTypeSpecification: String) {
-        importedTypes.addAll(fullTypeSpecification.map { JavaType(it) }.filter { it.isExplicitlyImported && it.packageName != type.packageName })
+        importedTypes.addAll(fullTypeSpecification.map { JavaType(it) }
+            .filter { it.isExplicitlyImported && it.packageName != type.packageName })
     }
 
     fun import(vararg importedType: JavaType) {

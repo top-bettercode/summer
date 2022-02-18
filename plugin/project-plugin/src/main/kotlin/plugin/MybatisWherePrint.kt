@@ -7,11 +7,7 @@ import top.bettercode.generator.dom.java.JavaType
  * @author Peter Wu
  */
 open class MybatisWherePrint : ModuleJavaGenerator() {
-
-    override fun content() {
-    }
-
-    override fun doCall() {
+    override fun call() {
 
         columns.forEach {
             println("""    <if test="${it.javaName} != null${if (it.javaType == JavaType.stringInstance) " and ${it.javaName} != ''" else ""}">

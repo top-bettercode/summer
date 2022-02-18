@@ -5,19 +5,19 @@ import top.bettercode.generator.dom.java.JavaType
  */
 open class MMixIn : MModuleJavaGenerator() {
 
-    override val type: JavaType
-        get() = mixInType
-
-
     override fun content() {
-        interfaze {
+        interfaze(mixInType) {
             javadoc {
                 +"/**"
                 +" * $remarks"
                 +" */"
             }
             val serializationViews = JavaType("$basePackageName.web.SerializationViews")
-            implement(JavaType("top.bettercode.simpleframework.web.serializer.MixIn").typeArgument(entityType), methodInfoType, serializationViews)
+            implement(
+                JavaType("top.bettercode.simpleframework.web.serializer.MixIn").typeArgument(
+                    entityType
+                ), methodInfoType, serializationViews
+            )
 
             columns.forEach {
                 //getter
