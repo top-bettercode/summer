@@ -1,16 +1,13 @@
 package top.bettercode.util.excel;
 
-import top.bettercode.lang.util.ArrayUtil;
-import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.support.code.ICodeService;
-import top.bettercode.simpleframework.web.serializer.CodeSerializer;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import top.bettercode.lang.util.ArrayUtil;
+import top.bettercode.lang.util.StringUtil;
 
 /**
  * @author Peter Wu
@@ -20,17 +17,7 @@ public class ExcelTest {
 
   @BeforeEach
   public void setUp() {
-    CodeSerializer.setCodeService(new ICodeService() {
-      @Override
-      public String getName(String codeType, Serializable code) {
-        return "codeName";
-      }
 
-      @Override
-      public Serializable getCode(String codeType, String name) {
-        return 123;
-      }
-    });
   }
 
   private final ExcelField<DataBean, ?>[] excelFields = ArrayUtil.of(

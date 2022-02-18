@@ -1,13 +1,11 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.simpleframework.support.code.ICodeService;
-import top.bettercode.simpleframework.web.DataDicBean;
-import top.bettercode.simpleframework.web.serializer.annotation.JsonCode;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.Serializable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import top.bettercode.simpleframework.web.DataDicBean;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonCode;
 
 /**
  * @author Peter Wu
@@ -17,18 +15,6 @@ public class CodeSerializerTest {
 
   @BeforeEach
   public void setUp() {
-    CodeSerializer.setCodeService(new ICodeService() {
-      @Override
-      public String getName(String codeType, Serializable code) {
-        return "codeName";
-      }
-
-      @Override
-      public Serializable getCode(String codeType, String name) {
-        return 123;
-      }
-    });
-
   }
 
   @Test
@@ -46,7 +32,7 @@ public class CodeSerializerTest {
     dicBean.setIntCode(123);
     String str2 = objectMapper.writeValueAsString(dicBean);
     org.junit.jupiter.api.Assertions
-        .assertEquals("{\"name\":\"张三\",\"intCode\":123,\"intCodeName\":\"codeName\"}", str2);
+        .assertEquals("{\"name\":\"张三\",\"intCode\":123,\"intCodeName\":\"123\"}", str2);
   }
 
   @Test
@@ -64,7 +50,7 @@ public class CodeSerializerTest {
     dicBean.setCode("123");
     String str2 = objectMapper.writeValueAsString(dicBean);
     org.junit.jupiter.api.Assertions
-        .assertEquals("{\"name\":\"张三\",\"code\":\"123\",\"codeName\":\"codeName\"}", str2);
+        .assertEquals("{\"name\":\"张三\",\"code\":\"123\",\"codeName\":\"123\"}", str2);
   }
 
   interface DataDicBeanMin {

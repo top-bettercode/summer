@@ -3,7 +3,6 @@ package top.bettercode.simpleframework.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,9 +13,7 @@ import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConve
 import org.springframework.util.ClassUtils;
 import top.bettercode.lang.property.Settings;
 import top.bettercode.simpleframework.support.code.CodeService;
-import top.bettercode.simpleframework.support.code.CodeTypes;
 import top.bettercode.simpleframework.support.code.ICodeService;
-import top.bettercode.simpleframework.web.serializer.CodeSerializer;
 import top.bettercode.simpleframework.web.serializer.CustomNullSerializerModifier;
 import top.bettercode.simpleframework.web.serializer.UrlSerializer;
 
@@ -58,20 +55,11 @@ public class SerializerConfiguration {
     }
   }
 
-  @ConditionalOnMissingBean
-  @Bean
-  public ICodeService codeService() {
+  public static final String CODE_SERVICE_BEAN_NAME = "defaultCodeService";
+
+  @Bean(CODE_SERVICE_BEAN_NAME)
+  public ICodeService defaultCodeService() {
     return new CodeService(Settings.getDicCode());
-  }
-
-  @Configuration(proxyBeanMethods = false)
-  @ConditionalOnWebApplication
-  protected static class CodeSerializerConfiguration {
-
-    public CodeSerializerConfiguration(ICodeService codeService) {
-      CodeSerializer.setCodeService(codeService);
-      CodeTypes.setCodeService(codeService);
-    }
   }
 
 }

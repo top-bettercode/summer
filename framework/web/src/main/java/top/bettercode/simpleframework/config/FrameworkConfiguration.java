@@ -1,11 +1,12 @@
 package top.bettercode.simpleframework.config;
 
-import top.bettercode.simpleframework.support.packagescan.PackageScanClassResolver;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import top.bettercode.simpleframework.support.ApplicationContextHolder;
+import top.bettercode.simpleframework.support.packagescan.PackageScanClassResolver;
 
 /**
  * @author Peter Wu
@@ -18,5 +19,10 @@ public class FrameworkConfiguration {
   @Bean
   public PackageScanClassResolver packageScanClassResolver(ApplicationContext applicationContext) {
     return new PackageScanClassResolver(applicationContext.getClassLoader());
+  }
+
+  @Bean
+  public ApplicationContextHolder applicationContextHolder() {
+    return new ApplicationContextHolder();
   }
 }

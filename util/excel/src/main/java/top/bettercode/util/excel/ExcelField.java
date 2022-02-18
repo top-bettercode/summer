@@ -1,10 +1,5 @@
 package top.bettercode.util.excel;
 
-import top.bettercode.lang.util.BooleanUtil;
-import top.bettercode.lang.util.LocalDateTimeHelper;
-import top.bettercode.lang.util.MoneyUtil;
-import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.web.serializer.CodeSerializer;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Array;
@@ -32,6 +27,13 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
+import top.bettercode.lang.util.BooleanUtil;
+import top.bettercode.lang.util.LocalDateTimeHelper;
+import top.bettercode.lang.util.MoneyUtil;
+import top.bettercode.lang.util.StringUtil;
+import top.bettercode.simpleframework.config.SerializerConfiguration;
+import top.bettercode.simpleframework.support.ApplicationContextHolder;
+import top.bettercode.simpleframework.support.code.ICodeService;
 
 /**
  * Excel字段描述
@@ -242,39 +244,47 @@ public class ExcelField<T, P> {
   }
 
   public ExcelField<T, P> code(String codeType) {
+    return code(SerializerConfiguration.CODE_SERVICE_BEAN_NAME, codeType);
+  }
+
+  public ExcelField<T, P> code(String codeServiceRef, String codeType) {
     return cell((property) -> {
+      ICodeService codeService = ApplicationContextHolder.getBean(codeServiceRef,
+          ICodeService.class);
       if (property instanceof String) {
         String code = String.valueOf(property);
         if (code.contains(",")) {
           String[] split = code.split(",");
           return StringUtils.arrayToCommaDelimitedString(
-              Arrays.stream(split).map(s -> CodeSerializer.getName(codeType, s.trim()))
+              Arrays.stream(split).map(s -> codeService.getName(codeType, s.trim()))
                   .toArray());
         } else {
-          return CodeSerializer.getName(codeType, code);
+          return codeService.getName(codeType, code);
         }
       } else {
-        return CodeSerializer.getName(codeType, (Serializable) property);
+        return codeService.getName(codeType, (Serializable) property);
       }
-    }).property((cellValue) -> getCode(codeType, String.valueOf(cellValue)));
+    }).property((cellValue) -> getCode(codeServiceRef, codeType, String.valueOf(cellValue)));
   }
 
   //--------------------------------------------
 
-  private Object getCode(String codeType, String cellValue) {
+  private Object getCode(String codeServiceRef, String codeType, String cellValue) {
+    ICodeService codeService = ApplicationContextHolder.getBean(codeServiceRef,
+        ICodeService.class);
     if (cellValue.contains(",")) {
       String[] split = cellValue.split(",");
       return StringUtils.arrayToCommaDelimitedString(
           Arrays.stream(split).map(s -> {
-            Serializable code = CodeSerializer.getCode(codeType, s.trim());
-            if (code == null) {
-              throw new IllegalArgumentException("无\"" + s + "\"对应的类型");
-            }
-            return code;
-          })
+                Serializable code = codeService.getCode(codeType, s.trim());
+                if (code == null) {
+                  throw new IllegalArgumentException("无\"" + s + "\"对应的类型");
+                }
+                return code;
+              })
               .toArray());
     } else {
-      Serializable code = CodeSerializer.getCode(codeType, cellValue);
+      Serializable code = codeService.getCode(codeType, cellValue);
       if (code == null) {
         throw new IllegalArgumentException("无\"" + cellValue + "\"对应的类型");
       }

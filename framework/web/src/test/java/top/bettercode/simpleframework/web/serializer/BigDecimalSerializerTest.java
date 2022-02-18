@@ -3,12 +3,10 @@ package top.bettercode.simpleframework.web.serializer;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import top.bettercode.logging.operation.PrettyPrintingContentModifier;
-import top.bettercode.simpleframework.support.code.ICodeService;
 import top.bettercode.simpleframework.web.DataDicBean;
 
 /**
@@ -19,18 +17,6 @@ public class BigDecimalSerializerTest {
 
   @BeforeEach
   public void setUp() {
-    CodeSerializer.setCodeService(new ICodeService() {
-      @Override
-      public String getName(String codeType, Serializable code) {
-        return "codeName";
-      }
-
-      @Override
-      public Serializable getCode(String codeType, String name) {
-        return 123;
-      }
-    });
-
   }
 
   @Test
