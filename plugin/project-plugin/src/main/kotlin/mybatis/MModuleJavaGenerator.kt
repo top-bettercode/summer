@@ -1,29 +1,11 @@
 import top.bettercode.generator.dom.java.JavaType
-import top.bettercode.generator.dsl.JavaGenerator
+import top.bettercode.generator.dsl.Generator
 
 /**
  *
  * @author Peter Wu
  */
-abstract class MModuleJavaGenerator : JavaGenerator() {
-
-    private fun modulePackage(name: String): String {
-        val onePackage = enable("onePackage", true)
-        return if (onePackage)
-            entityName.toLowerCase()
-        else when (name) {
-            "Entity" -> "domain"
-            "QueryDsl" -> "querydsl"
-            "MethodInfo" -> "info"
-            "Form" -> "form"
-            "MixIn" -> "response.mixin"
-            "Controller", "ControllerTest" -> "controller"
-            "Service" -> "service"
-            "ServiceImpl" -> "service.impl"
-            "Dao" -> "dao"
-            else -> entityName.toLowerCase()
-        }
-    }
+abstract class MModuleJavaGenerator : Generator() {
 
     /**
      * 是否有主键
@@ -32,13 +14,9 @@ abstract class MModuleJavaGenerator : JavaGenerator() {
         get() = table.primaryKeys.isNotEmpty()
 
 
-    val primaryKeyType: JavaType
+    override val primaryKeyType: JavaType
         get() {
-            return if (primaryKeys.size == 1) {
-                primaryKey.javaType
-            } else {
-                JavaType("$packageName.domain.${className}.${className}Key")
-            }
+            return primaryKey.javaType
         }
 
     val daoXml
@@ -49,7 +27,6 @@ abstract class MModuleJavaGenerator : JavaGenerator() {
         }
 
     val modulePackageInfoType get() = JavaType("$packageName.package-info")
-    val packageInfoType get() = JavaType("$packageName.${modulePackage("Entity")}.package-info")
     val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.$className")
     val queryDslType get() = JavaType("$packageName.${modulePackage("QueryDsl")}.Q$className")
     val methodInfoType get() = JavaType("$packageName.${modulePackage("MethodInfo")}.${className}MethodInfo")
@@ -60,7 +37,6 @@ abstract class MModuleJavaGenerator : JavaGenerator() {
     val iserviceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
     val serviceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}Service")
     val serviceImplType get() = JavaType("$packageName.${modulePackage("ServiceImpl")}.${projectClassName}ServiceImpl")
-    val repositoryType get() = JavaType("$packageName.${modulePackage("jpa.unit.Repository")}.${projectClassName}jpa.unit.Repository")
     val daoType get() = JavaType("$packageName.${modulePackage("Dao")}.I${projectClassName}Dao")
 
 }

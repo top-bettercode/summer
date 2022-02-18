@@ -8,7 +8,6 @@ import top.bettercode.generator.dom.java.element.Parameter
  */
 open class Service : ModuleJavaGenerator() {
 
-
     override fun content() {
         file(mapperXmlName, isResourcesFile = true) {
             mapperXml(this)
