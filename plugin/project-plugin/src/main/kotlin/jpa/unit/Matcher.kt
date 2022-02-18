@@ -54,7 +54,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +" * @return $remarks SpecMatcher 实例"
                 +" */"
             }
-            +"return new ${type}(SpecMatcherMode.ALL);"
+            +"return new ${type.shortName}(SpecMatcherMode.ALL);"
         }
 
         method("matchingAny", type) {
@@ -66,7 +66,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +" * @return $remarks SpecMatcher 实例"
                 +" */"
             }
-            +"return new ${type}(SpecMatcherMode.ANY);"
+            +"return new ${type.shortName}(SpecMatcherMode.ANY);"
         }
 
         val pathType =
