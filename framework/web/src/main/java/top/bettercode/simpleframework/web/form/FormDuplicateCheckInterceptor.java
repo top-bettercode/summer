@@ -21,7 +21,6 @@ import top.bettercode.logging.trace.TraceServletInputStream;
 import top.bettercode.simpleframework.AnnotatedUtils;
 import top.bettercode.simpleframework.exception.BusinessException;
 import top.bettercode.simpleframework.servlet.NotErrorHandlerInterceptor;
-import top.bettercode.simpleframework.UserInfoHelper;
 
 /**
  * 表单重复检
@@ -70,12 +69,10 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
             return true;
           }
         }
-        Object userInfo = UserInfoHelper.get(request);
-        String userKey = StringUtil.valueOf(userInfo);
 
         String servletPath = request.getServletPath();
 
-        formkey = Sha512DigestUtils.shaHex(userKey + servletPath + formkey);
+        formkey = Sha512DigestUtils.shaHex(servletPath + formkey);
 
         if (formkeyService.exist(formkey)) {
           throw new BusinessException(String.valueOf(HttpStatus.BAD_GATEWAY.value()),

@@ -32,6 +32,19 @@ public final class AuthenticationHelper {
     return null;
   }
 
+  public static String getUsername() {
+    Authentication authentication = getAuthentication();
+    if (authentication != null) {
+      Object principal = authentication.getPrincipal();
+      if (principal instanceof UserDetails) {
+        return ((UserDetails) principal).getUsername();
+      } else {
+        return principal == null ? "Anonymous" : String.valueOf(principal);
+      }
+    }
+    return "Anonymous";
+  }
+
   /**
    * @param authentication 授权信息
    * @param authority      权限
