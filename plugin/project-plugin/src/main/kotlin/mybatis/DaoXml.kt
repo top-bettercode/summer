@@ -1,7 +1,7 @@
 /**
  * @author Peter Wu
  */
-open class DaoXml : MModuleJavaGenerator() {
+open class DaoXml : MProjectGenerator() {
 
     override fun content() {
         file(daoXml, isResourcesFile = true) {

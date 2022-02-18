@@ -1,13 +1,13 @@
 package jpa.unit
 
-import ModuleJavaGenerator
+import ProjectGenerator
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Interface
 
 /**
  * @author Peter Wu
  */
-val repository: ModuleJavaGenerator.(Interface) -> Unit = { unit ->
+val repository: ProjectGenerator.(Interface) -> Unit = { unit ->
     unit.apply {
         javadoc {
             +"/**"

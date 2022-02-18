@@ -1,13 +1,13 @@
 package jpa.unit
 
-import ModuleJavaGenerator
+import ProjectGenerator
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.element.Interface
 
 /**
  * @author Peter Wu
  */
-val methodInfo: ModuleJavaGenerator.(Interface) -> Unit = { unit ->
+val methodInfo: ProjectGenerator.(Interface) -> Unit = { unit ->
     unit.apply {
         javadoc {
             +"/**"
@@ -38,7 +38,7 @@ val methodInfo: ModuleJavaGenerator.(Interface) -> Unit = { unit ->
 
 }
 
-private val getter: ModuleJavaGenerator.(Interface, Column) -> Unit = { interfaze, it ->
+private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, it ->
     interfaze.apply {
         method("get${it.javaName.capitalize()}", it.javaType) {
             if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())

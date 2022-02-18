@@ -1,6 +1,6 @@
 package jpa.unit
 
-import ModuleJavaGenerator
+import ProjectGenerator
 import org.atteo.evo.inflector.English
 import top.bettercode.generator.dom.java.element.SelfOutputUnit
 import java.util.Properties
@@ -8,7 +8,7 @@ import java.util.Properties
 /**
  * @author Peter Wu
  */
-val msg: ModuleJavaGenerator.(SelfOutputUnit) -> Unit = { unit ->
+val msg: ProjectGenerator.(SelfOutputUnit) -> Unit = { unit ->
     unit.apply {
         val properties = Properties()
         if (!file.exists()) {

@@ -3,7 +3,7 @@ import top.bettercode.generator.dom.java.JavaType
 /**
  * @author Peter Wu
  */
-open class Dao : MModuleJavaGenerator() {
+open class Dao : MProjectGenerator() {
 
     override fun content() {
         interfaze(daoType) {

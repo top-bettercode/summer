@@ -1,11 +1,11 @@
 package plugin
 
-import ModuleJavaGenerator
+import ProjectGenerator
 
 /**
  * @author Peter Wu
  */
-open class SetterPrint(private val randomValue: Boolean) : ModuleJavaGenerator() {
+open class SetterPrint(private val randomValue: Boolean) : ProjectGenerator() {
 
     override fun call() {
 

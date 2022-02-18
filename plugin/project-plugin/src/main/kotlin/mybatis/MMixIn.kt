@@ -3,7 +3,7 @@ import top.bettercode.generator.dom.java.JavaType
 /**
  * @author Peter Wu
  */
-open class MMixIn : MModuleJavaGenerator() {
+open class MMixIn : MProjectGenerator() {
 
     override fun content() {
         interfaze(mixInType) {

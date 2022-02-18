@@ -4,7 +4,7 @@ import top.bettercode.generator.dom.java.element.JavaVisibility
 /**
  * @author Peter Wu
  */
-class MQueryDsl : MModuleJavaGenerator() {
+class MQueryDsl : MProjectGenerator() {
 
     override fun content() {
         clazz(queryDslType, true) {

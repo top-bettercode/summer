@@ -4,7 +4,7 @@ import top.bettercode.generator.dom.java.element.Parameter
 /**
  * @author Peter Wu
  */
-class MForm : MModuleJavaGenerator() {
+class MForm : MProjectGenerator() {
 
     override fun content() {
         clazz(formType) {

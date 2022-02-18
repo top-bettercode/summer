@@ -4,7 +4,7 @@ import top.bettercode.generator.dom.java.element.Parameter
 /**
  * @author Peter Wu
  */
-open class MController : MModuleJavaGenerator() {
+open class MController : MProjectGenerator() {
 
     override fun content() {
         clazz(controllerType) {
