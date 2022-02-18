@@ -13,5 +13,5 @@ interface GenUnit {
     val canCover: Boolean
     val isTestFile: Boolean
     val isResourcesFile: Boolean
-    val output: PrintWriter.()->Unit
+    val output: PrintWriter.() -> Unit
 }

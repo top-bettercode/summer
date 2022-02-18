@@ -1,11 +1,11 @@
 package plugin
 
-import top.bettercode.generator.dsl.JavaGenerator
+import top.bettercode.generator.dsl.Generator
 
 /**
  * @author Peter Wu
  */
-open class ExcelFieldPrint : JavaGenerator() {
+open class ExcelFieldPrint : Generator() {
     override fun call() {
         println("""private final ExcelField<$className, ?>[] excelFields = ArrayUtil.of(""")
         val cols = columns
