@@ -208,37 +208,6 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Transactional
   @Override
-  public void cleanRecycleBin() {
-    if (softDeleteSupport.support()) {
-      String softDeleteName = softDeleteSupport.getPropertyName();
-      em.createQuery(String
-          .format("delete from %s x where x.%s = :%s", entityInformation.getEntityName(),
-              softDeleteName,
-              softDeleteName)).setParameter(softDeleteName,
-          softDeleteSupport.getTrueValue()).executeUpdate();
-    }
-  }
-
-  @Transactional
-  @Override
-  public void deleteFromRecycleBin(ID id) {
-    if (softDeleteSupport.support()) {
-      Optional<T> entity = findByIdFromRecycleBin(id);
-      entity.ifPresent(super::delete);
-    }
-  }
-
-
-  @Transactional
-  @Override
-  public void deleteFromRecycleBin(Specification<T> spec) {
-    if (softDeleteSupport.support()) {
-      super.deleteInBatch(findAllFromRecycleBin(spec));
-    }
-  }
-
-  @Transactional
-  @Override
   public void deleteInBatch(Iterable<T> entities) {
     if (softDeleteSupport.support()) {
       Assert.notNull(entities, "The given Iterable of entities not be null!");
@@ -402,32 +371,7 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Override
   public List<T> findAllById(Iterable<ID> ids) {
     if (softDeleteSupport.support()) {
-
-      Assert.notNull(ids, "The given Iterable of Id's must not be null!");
-
-      if (!ids.iterator().hasNext()) {
-        return Collections.emptyList();
-      }
-
-      if (entityInformation.hasCompositeId()) {
-
-        List<T> results = new ArrayList<>();
-
-        for (ID id : ids) {
-          findById(id).ifPresent(results::add);
-        }
-
-        return results;
-      }
-
-      Collection<ID> idCollection = toCollection(ids);
-
-      ByIdsSpecification<T> specification = new ByIdsSpecification<>(entityInformation);
-      Specification<T> spec = getSoftDeleteSpecification(softDeleteSupport.getFalseValue())
-          .and(specification);
-      TypedQuery<T> query = getQuery(spec, Sort.unsorted());
-
-      return query.setParameter(specification.parameter, idCollection).getResultList();
+      return getAllByIdSupportSoftDelete(ids, softDeleteSupport.getFalseValue());
     } else {
       return super.findAllById(ids);
     }
@@ -480,6 +424,16 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @Override
+  public List<T> findAll(int size) {
+    return new PageableList<>(findAll(PageRequest.of(0, size)));
+  }
+
+
+  @Override
+  public List<T> findAll(int size, Sort sort) {
+    return new PageableList<>(findAll(PageRequest.of(0, size, sort)));
+  }
 
   @Override
   public long count(Specification<T> spec) {
@@ -513,6 +467,16 @@ public class SimpleJpaExtRepository<T, ID> extends
       spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getFalseValue()));
     }
     return super.findAll(spec);
+  }
+
+  @Override
+  public List<T> findAll(Specification<T> spec, int size) {
+    return new PageableList<>(findAll(spec, PageRequest.of(0, size)));
+  }
+
+  @Override
+  public List<T> findAll(Specification<T> spec, int size, Sort sort) {
+    return new PageableList<>(findAll(spec, PageRequest.of(0, size, sort)));
   }
 
   @Override
@@ -565,6 +529,19 @@ public class SimpleJpaExtRepository<T, ID> extends
     return super.findAll(example);
   }
 
+
+  @Override
+  public <S extends T> List<S> findAll(Example<S> example, int size) {
+    return new PageableList<>(findAll(example, PageRequest.of(0, size)));
+  }
+
+
+  @Override
+  public <S extends T> List<S> findAll(Example<S> example, int size, Sort sort) {
+    return new PageableList<>(findAll(example, PageRequest.of(0, size, sort)));
+  }
+
+
   @Override
   public <S extends T> List<S> findAll(Example<S> example, Sort sort) {
     if (softDeleteSupport.support()) {
@@ -596,14 +573,64 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+
+  @Transactional
   @Override
-  public List<T> findAllFromRecycleBin() {
+  public void cleanRecycleBin() {
     if (softDeleteSupport.support()) {
-      return super.findAll(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
-    } else {
-      return Collections.emptyList();
+      String softDeleteName = softDeleteSupport.getPropertyName();
+      em.createQuery(String
+          .format("delete from %s x where x.%s = :%s", entityInformation.getEntityName(),
+              softDeleteName,
+              softDeleteName)).setParameter(softDeleteName,
+          softDeleteSupport.getTrueValue()).executeUpdate();
     }
   }
+
+  @Transactional
+  @Override
+  public void deleteFromRecycleBin(ID id) {
+    if (softDeleteSupport.support()) {
+      Optional<T> entity = findByIdFromRecycleBin(id);
+      entity.ifPresent(super::delete);
+    }
+  }
+
+  @Override
+  public void deleteAllByIdFromRecycleBin(Iterable<ID> ids) {
+    super.deleteInBatch(findAllByIdFromRecycleBin(ids));
+  }
+
+  @Transactional
+  @Override
+  public void deleteFromRecycleBin(Specification<T> spec) {
+    if (softDeleteSupport.support()) {
+      super.deleteInBatch(findAllFromRecycleBin(spec));
+    }
+  }
+
+  @Override
+  public long countRecycleBin() {
+    if (softDeleteSupport.support()) {
+      return super.count(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
+    } else {
+      return 0;
+    }
+  }
+
+  @Override
+  public long countRecycleBin(Specification<T> spec) {
+    if (softDeleteSupport.support()) {
+      spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
+    }
+    return super.count(spec);
+  }
+
+  @Override
+  public boolean existsInRecycleBin(Specification<T> spec) {
+    return countRecycleBin(spec) > 0;
+  }
+
 
   @Override
   public Optional<T> findByIdFromRecycleBin(ID id) {
@@ -619,20 +646,44 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
-
   @Override
-  public long countRecycleBin() {
+  public List<T> findAllByIdFromRecycleBin(Iterable<ID> ids) {
     if (softDeleteSupport.support()) {
-      return super.count(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
+      Object softDeleteSupportValue = softDeleteSupport.getTrueValue();
+      return getAllByIdSupportSoftDelete(ids, softDeleteSupportValue);
     } else {
-      return 0;
+      return Collections.emptyList();
     }
   }
 
-  @Override
-  public Optional<T> findFirstFromRecycleBin(Specification<T> spec) {
-    return findAllFromRecycleBin(spec, PageRequest.of(0, 1)).stream().findFirst();
+  private List<T> getAllByIdSupportSoftDelete(Iterable<ID> ids, Object softDeleteSupportValue) {
+    Assert.notNull(ids, "The given Iterable of Id's must not be null!");
+
+    if (!ids.iterator().hasNext()) {
+      return Collections.emptyList();
+    }
+
+    if (entityInformation.hasCompositeId()) {
+
+      List<T> results = new ArrayList<>();
+
+      for (ID id : ids) {
+        findById(id).ifPresent(results::add);
+      }
+
+      return results;
+    }
+
+    Collection<ID> idCollection = toCollection(ids);
+
+    ByIdsSpecification<T> specification = new ByIdsSpecification<>(entityInformation);
+    Specification<T> spec = getSoftDeleteSpecification(softDeleteSupportValue)
+        .and(specification);
+    TypedQuery<T> query = getQuery(spec, Sort.unsorted());
+
+    return query.setParameter(specification.parameter, idCollection).getResultList();
   }
+
 
   @Override
   public Optional<T> findOneFromRecycleBin(Specification<T> spec) {
@@ -645,11 +696,68 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
+  public Optional<T> findFirstFromRecycleBin(Specification<T> spec) {
+    return findAllFromRecycleBin(spec, PageRequest.of(0, 1)).stream().findFirst();
+  }
+
+
+  @Override
+  public List<T> findAllFromRecycleBin() {
+    if (softDeleteSupport.support()) {
+      return super.findAll(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  @Override
+  public Page<T> findAllFromRecycleBin(int size) {
+    return new PageableList<>(findAllFromRecycleBin(PageRequest.of(0, size)));
+  }
+
+
+  @Override
+  public Page<T> findAllFromRecycleBin(int size, Sort sort) {
+    return new PageableList<>(findAllFromRecycleBin(PageRequest.of(0, size, sort)));
+  }
+
+  @Override
+  public Page<T> findAllFromRecycleBin(Pageable pageable) {
+    if (softDeleteSupport.support()) {
+      return super.findAll(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()), pageable);
+    } else {
+      return Page.empty(pageable);
+    }
+  }
+
+
+  @Override
+  public List<T> findAllFromRecycleBin(Sort sort) {
+    if (softDeleteSupport.support()) {
+      return super.findAll(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()), sort);
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+
+  @Override
   public List<T> findAllFromRecycleBin(Specification<T> spec) {
     if (softDeleteSupport.support()) {
       spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
     }
     return super.findAll(spec);
+  }
+
+
+  @Override
+  public List<T> findAllFromRecycleBin(Specification<T> spec, int size) {
+    return new PageableList<>(findAllFromRecycleBin(spec, PageRequest.of(0, size)));
+  }
+
+  @Override
+  public List<T> findAllFromRecycleBin(Specification<T> spec, int size, Sort sort) {
+    return new PageableList<>(findAllFromRecycleBin(spec, PageRequest.of(0, size, sort)));
   }
 
   @Override
@@ -668,16 +776,4 @@ public class SimpleJpaExtRepository<T, ID> extends
     return super.findAll(spec, sort);
   }
 
-  @Override
-  public long countRecycleBin(Specification<T> spec) {
-    if (softDeleteSupport.support()) {
-      spec = spec.and(getSoftDeleteSpecification(softDeleteSupport.getTrueValue()));
-    }
-    return super.count(spec);
-  }
-
-  @Override
-  public boolean existsInRecycleBin(Specification<T> spec) {
-    return countRecycleBin(spec) > 0;
-  }
 }
