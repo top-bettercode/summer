@@ -1,7 +1,6 @@
 package top.bettercode.simpleframework.data.jpa.query;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Peter Wu
@@ -55,13 +54,13 @@ public interface SpecMatcher {
 
   SpecMatcherMode getMatchMode();
 
-  List<String> getSelect();
+//  List<String> getSelect();
 
   Collection<SpecPath<?>> getSpecPaths();
 
   SpecPath<? extends SpecMatcher> specPath(String propertyName);
 
-  SpecMatcher select(String propertyName);
+//  SpecMatcher select(String propertyName);
 
   SpecMatcher asc(String propertyName);
 

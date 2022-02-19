@@ -36,10 +36,10 @@ public class DefaultSpecMatcher<M extends SpecMatcher> implements SpecMatcher {
     return this.matcherMode;
   }
 
-  @Override
-  public List<String> getSelect() {
-    return select;
-  }
+//  @Override
+//  public List<String> getSelect() {
+//    return select;
+//  }
 
   @Override
   public Collection<SpecPath<?>> getSpecPaths() {
@@ -54,11 +54,11 @@ public class DefaultSpecMatcher<M extends SpecMatcher> implements SpecMatcher {
         s -> new DefaultSpecPath<>(typed, propertyName));
   }
 
-  @Override
-  public M select(String propertyName) {
-    select.add(propertyName);
-    return typed;
-  }
+//  @Override
+//  public M select(String propertyName) {
+//    select.add(propertyName);
+//    return typed;
+//  }
 
   @Override
   public M asc(String propertyName) {
