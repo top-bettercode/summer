@@ -227,7 +227,7 @@ class DicCodeGen(private val project: Project, private val extension: GeneratorE
                     +"return code;"
                 }
 
-                import("top.bettercode.simpleframework.support.code.CodeTypes")
+                import("top.bettercode.simpleframework.support.code.CodeServiceHolder")
                 method("nameOf", JavaType.stringInstance) {
                     javadoc {
                         +"/**"
@@ -286,7 +286,7 @@ class DicCodeGen(private val project: Project, private val extension: GeneratorE
                     +"if (code == null) {"
                     +"return null;"
                     +"}"
-                    +"return CodeTypes.getCodeService().getName(ENUM_NAME, code);"
+                    +"return CodeServiceHolder.getDefault().getName(ENUM_NAME, code);"
                 }
                 method("codeOf", fieldType2, Parameter("name", JavaType.stringInstance)) {
                     javadoc {
@@ -302,9 +302,9 @@ class DicCodeGen(private val project: Project, private val extension: GeneratorE
                     +"return null;"
                     +"}"
                     if (isIntCode)
-                        +"return (Integer) CodeTypes.getCodeService().getCode(ENUM_NAME, name);"
+                        +"return (Integer) CodeServiceHolder.getDefault().getCode(ENUM_NAME, name);"
                     else
-                        +"return (String) CodeTypes.getCodeService().getCode(ENUM_NAME, name);"
+                        +"return (String) CodeServiceHolder.getDefault().getCode(ENUM_NAME, name);"
                 }
             }
             docText.appendln("|===")
