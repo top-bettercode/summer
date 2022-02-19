@@ -45,6 +45,8 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
 
   boolean exists(Specification<T> spec);
 
+  Optional<T> findFirst(Sort sort);
+
   Optional<T> findFirst(Specification<T> spec);
 
   <S extends T> Optional<S> findFirst(Example<S> example);
