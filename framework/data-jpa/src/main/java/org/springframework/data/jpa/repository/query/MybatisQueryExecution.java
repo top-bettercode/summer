@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter;
 import org.springframework.data.repository.core.support.SurroundingTransactionDetectorMethodInterceptor;
 import org.springframework.util.StringUtils;
-import top.bettercode.simpleframework.data.jpa.support.PageableList;
 
 public abstract class MybatisQueryExecution extends JpaQueryExecution {
 
@@ -28,7 +27,7 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
   protected abstract Object doMybatisExecute(MybatisQuery mybatisQuery,
       JpaParametersParameterAccessor accessor);
 
-  static class CollectionExecution extends PagedExecution {
+  static class CollectionExecution extends MybatisQueryExecution {
 
     @Override
     protected Object doMybatisExecute(MybatisQuery query, JpaParametersParameterAccessor accessor) {
@@ -38,27 +37,26 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
         return query.getSqlSessionTemplate().selectList(statement);
       }
       JpaParameters parameters = query.getQueryMethod().getParameters();
+      if (parameters.hasPageableParameter()) {
+        throw new IllegalArgumentException(
+            "当包含org.springframework.data.domain.Pageable参数时返回类型必须为org.springframework.data.domain.Page");
+      }
 
       Object params = getMybatisParameters(parameters, values);
 
       String sort = MybatisQueryExecution.getSort(parameters, values);
-
-      if (parameters.hasPageableParameter()) {
-        PageImpl<?> page = (PageImpl<?>) super.doMybatisExecute(query, accessor);
-        return new PageableList<>(page);
+      if (StringUtils.hasText(sort)) {
+        PageHelper.orderBy(sort);
+        Page<Object> localPage = PageHelper.getLocalPage();
+        localPage.setCount(false);
+        return localPage
+            .doSelectPage(() -> query.getSqlSessionTemplate().selectList(statement, params))
+            .getResult();
       } else {
-        if (StringUtils.hasText(sort)) {
-          PageHelper.orderBy(sort);
-          Page<Object> localPage = PageHelper.getLocalPage();
-          localPage.setCount(false);
-          return localPage
-              .doSelectPage(() -> query.getSqlSessionTemplate().selectList(statement, params))
-              .getResult();
-        } else {
-          return query.getSqlSessionTemplate().selectList(statement, params);
-        }
+        return query.getSqlSessionTemplate().selectList(statement, params);
       }
     }
+
   }
 
   static class PagedExecution extends MybatisQueryExecution {
