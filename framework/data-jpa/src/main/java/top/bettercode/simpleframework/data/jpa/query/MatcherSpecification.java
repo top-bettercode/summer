@@ -84,10 +84,11 @@ public class MatcherSpecification<T> implements Specification<T> {
         }
       }
     }
-    List<String> select = specMatcher.getSelect();
-    if (!select.isEmpty()) {
-      query.multiselect(select.stream().map(root::get).collect(Collectors.toList()));
-    }
+//   findAll not support multiselect
+//    List<String> select = specMatcher.getSelect();
+//    if (!select.isEmpty()) {
+//      query.multiselect(select.stream().map(root::get).collect(Collectors.toList()));
+//    }
     query.orderBy(orders);
 
     Predicate[] restrictions = predicates.toArray(new Predicate[0]);
