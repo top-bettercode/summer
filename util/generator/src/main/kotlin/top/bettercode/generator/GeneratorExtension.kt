@@ -249,12 +249,16 @@ open class GeneratorExtension(
     }
 
     fun <T> use(metaData: DatabaseMetaData.() -> T): T {
-        Class.forName(datasource.driverClass).getConstructor().newInstance()
-        val databaseMetaData = DatabaseMetaData(datasource, debug, queryIndex)
-        try {
-            return metaData(databaseMetaData)
-        } finally {
-            databaseMetaData.close()
+        if (datasource.available) {
+            Class.forName(datasource.driverClass).getConstructor().newInstance()
+            val databaseMetaData = DatabaseMetaData(datasource, debug, queryIndex)
+            try {
+                return metaData(databaseMetaData)
+            } finally {
+                databaseMetaData.close()
+            }
+        } else {
+            throw RuntimeException("数据库未配置")
         }
     }
 
@@ -361,6 +365,9 @@ class JDBCConnectionConfiguration(
         set("password", "root")
     }
 ) {
+    val available: Boolean
+        get() = url.isNotBlank()
+
     var schema: String? = null
         get() {
             return if (field.isNullOrBlank()) {

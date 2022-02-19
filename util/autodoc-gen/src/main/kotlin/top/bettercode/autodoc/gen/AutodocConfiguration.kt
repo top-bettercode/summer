@@ -46,7 +46,7 @@ class AutodocConfiguration {
                         ?: ""
             }
         } catch (e: Exception) {
-            log.warn("determine determine fail: {}", e.message)
+            log.info("autodoc determine determine fail: {}", e.message)
         }
         requestLoggingProperties.isFormat = true
         requestLoggingProperties.isForceRecord = true
