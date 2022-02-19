@@ -344,7 +344,7 @@ open class GeneratorExtension(
     val pumlAllSources: Sequence<File>
         get() {
             return file(pumlSrc).walkTopDown()
-                .filter { it.isFile && it.extension == "puml" } + file(pumlDatabase).walkTopDown()
+                .filter { it.isFile && it.extension == "puml" } + file(pumlDatabase).parentFile.walkTopDown()
                 .filter { it.isFile && it.extension == "puml" }
         }
 }

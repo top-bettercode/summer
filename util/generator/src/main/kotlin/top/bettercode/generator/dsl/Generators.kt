@@ -31,7 +31,7 @@ object Generators {
         }
     }
 
-    fun tableNames(extension: GeneratorExtension): List<String> {
+    fun tableNames(extension: GeneratorExtension, all: Boolean = false): List<String> {
         JavaTypeResolver.softDeleteColumnName = extension.softDeleteColumnName
         JavaTypeResolver.softDeleteAsBoolean = extension.softDeleteAsBoolean
         return when (extension.dataType) {
@@ -39,7 +39,11 @@ object Generators {
                 tableNames()
             }
             DataType.PUML -> {
-                extension.pumlSrcSources.map { PumlConverter.toTables(it) }.flatten()
+                (if (all) extension.pumlAllSources else extension.pumlSrcSources).map {
+                    PumlConverter.toTables(
+                        it
+                    )
+                }.flatten()
                     .map { it.tableName }.distinct().sortedBy { it }.toList()
             }
             DataType.PDM -> {
