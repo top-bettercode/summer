@@ -449,6 +449,11 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
+  public Optional<T> findFirst(Sort sort) {
+    return findAll(sort).stream().findFirst();
+  }
+
+  @Override
   public Optional<T> findFirst(Specification<T> spec) {
     return findAll(spec, PageRequest.of(0, 1)).stream().findFirst();
   }

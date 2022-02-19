@@ -59,6 +59,8 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   Optional<T> findById(ID id);
 
+  Optional<T> findFirst(Sort sort);
+
   boolean existsById(ID id);
 
   List<T> findAll();

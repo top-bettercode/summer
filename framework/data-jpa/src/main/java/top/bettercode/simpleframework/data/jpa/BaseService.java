@@ -151,6 +151,11 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
+  public Optional<T> findFirst(Sort sort) {
+    return repository.findFirst(sort);
+  }
+
+  @Override
   public boolean existsById(ID id) {
     return repository.existsById(id);
   }
