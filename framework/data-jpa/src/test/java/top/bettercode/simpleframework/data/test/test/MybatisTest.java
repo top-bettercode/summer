@@ -7,19 +7,19 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.data.jpa.support.PageableList;
 import top.bettercode.simpleframework.data.test.domain.User;
 import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
@@ -170,18 +170,13 @@ public class MybatisTest {
 
   @Test
   public void findByMybatis22122() {
-    User user = new User("Carter", null);
-    List<User> users = repository
-        .findByMybatis222(user, PageRequest.of(0, 1, Sort.by(Direction.DESC, "lastname")));
+    Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> {
+          User user = new User("Carter", null);
+          repository
+              .findByMybatis222(user, PageRequest.of(0, 1, Sort.by(Direction.ASC, "lastname")));
+        },
+        "当包含org.springframework.data.domain.Pageable参数时返回类型必须为org.springframework.data.domain.Page");
 
-    System.err.println(StringUtil.valueOf(users, true));
-
-    org.junit.jupiter.api.Assertions.assertTrue(users instanceof PageableList);
-    PageableList<?> list = (PageableList<?>) users;
-    org.junit.jupiter.api.Assertions.assertEquals(2, list.getTotalElements());
-    org.junit.jupiter.api.Assertions.assertEquals(1, list.getContent().size());
-    org.junit.jupiter.api.Assertions
-        .assertEquals("Beauford2", users.get(0).getLastname());
   }
 
   @Test
