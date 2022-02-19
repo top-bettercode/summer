@@ -1,7 +1,9 @@
 package top.bettercode.simpleframework.data.jpa;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -20,6 +22,10 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
     RecycleExecutor<T, ID> {
 
   Optional<T> findFirst(Specification<T> spec);
+
+  List<T> findAll(Specification<T> spec, int size);
+
+  List<T> findAll(Specification<T> spec, int size, Sort sort);
 
   <S extends T> Optional<S> findFirst(Example<S> example);
 
@@ -49,9 +55,18 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
    */
   <S extends T> S dynamicBSave(S s);
 
+  List<T> findAll(int size);
+
+  List<T> findAll(int size, Sort sort);
+
   boolean exists(Specification<T> spec);
 
   void delete(Specification<T> spec);
 
   void deleteAllById(Iterable<ID> ids);
+
+  <S extends T> List<S> findAll(Example<S> example, int size);
+
+  <S extends T> List<S> findAll(Example<S> example, int size, Sort sort);
+
 }

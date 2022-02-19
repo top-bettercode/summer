@@ -21,25 +21,41 @@ public interface RecycleExecutor<T, ID> {
 
   void deleteFromRecycleBin(ID id);
 
+  void deleteAllByIdFromRecycleBin(Iterable<ID> ids);
+
   void deleteFromRecycleBin(Specification<T> spec);
 
   long countRecycleBin();
 
-  List<T> findAllFromRecycleBin();
+  long countRecycleBin(@Nullable Specification<T> spec);
+
+  boolean existsInRecycleBin(Specification<T> spec);
 
   Optional<T> findByIdFromRecycleBin(ID id);
+
+  List<T> findAllByIdFromRecycleBin(Iterable<ID> ids);
 
   Optional<T> findOneFromRecycleBin(@Nullable Specification<T> spec);
 
   Optional<T> findFirstFromRecycleBin(Specification<T> spec);
 
+  List<T> findAllFromRecycleBin();
+
+  Page<T> findAllFromRecycleBin(int size);
+
+  Page<T> findAllFromRecycleBin(int size, Sort sort);
+
+  Page<T> findAllFromRecycleBin(Pageable pageable);
+
+  List<T> findAllFromRecycleBin(Sort sort);
+
   List<T> findAllFromRecycleBin(@Nullable Specification<T> spec);
+
+  List<T> findAllFromRecycleBin(Specification<T> spec, int size);
+
+  List<T> findAllFromRecycleBin(Specification<T> spec, int size, Sort sort);
 
   Page<T> findAllFromRecycleBin(@Nullable Specification<T> spec, Pageable pageable);
 
   List<T> findAllFromRecycleBin(@Nullable Specification<T> spec, Sort sort);
-
-  long countRecycleBin(@Nullable Specification<T> spec);
-
-  boolean existsInRecycleBin(Specification<T> spec);
 }
