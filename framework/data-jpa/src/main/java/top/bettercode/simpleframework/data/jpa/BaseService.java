@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,6 +26,73 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   @Override
   public M getRepository() {
     return repository;
+  }
+
+
+  @Override
+  public <S extends T> S dynamicSave(S s) {
+    return repository.dynamicSave(s);
+  }
+
+  @Override
+  public <S extends T> S dynamicBSave(S s) {
+    return repository.dynamicBSave(s);
+  }
+
+  @Override
+  public void delete(Specification<T> spec) {
+    repository.delete(spec);
+  }
+
+  @Override
+  public void deleteAllById(Iterable<ID> ids) {
+    repository.deleteAllById(ids);
+  }
+
+  @Override
+  public boolean exists(Specification<T> spec) {
+    return repository.exists(spec);
+  }
+
+  @Override
+  public Optional<T> findFirst(Specification<T> spec) {
+    return repository.findFirst(spec);
+  }
+
+  @Override
+  public <S extends T> Optional<S> findFirst(Example<S> example) {
+    return repository.findFirst(example);
+  }
+
+  @Override
+  public List<T> findAll(int size) {
+    return repository.findAll(size);
+  }
+
+  @Override
+  public List<T> findAll(int size, Sort sort) {
+    return repository.findAll(size, sort);
+  }
+
+  @Override
+  public List<T> findAll(Specification<T> spec, int size) {
+    return repository.findAll(spec, size);
+  }
+
+  @Override
+  public List<T> findAll(Specification<T> spec, int size, Sort sort) {
+    return repository.findAll(spec, size, sort);
+  }
+
+  @Override
+  public <S extends T> List<S> findAll(Example<S> example, int size) {
+    return repository.findAll(example, size);
+  }
+
+  @Override
+  public <S extends T> List<S> findAll(Example<S> example, int size,
+      Sort sort) {
+    return repository.findAll(example, size, sort);
   }
 
   @Override
@@ -75,18 +141,8 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
-  public <S extends T> S save(S s) {
-    return repository.save(s);
-  }
-
-  @Override
-  public <S extends T> S dynamicSave(S s) {
-    return repository.dynamicSave(s);
-  }
-
-  @Override
-  public <S extends T> S dynamicBSave(S s) {
-    return repository.dynamicBSave(s);
+  public <S extends T> S save(S entity) {
+    return repository.save(entity);
   }
 
   @Override
@@ -110,23 +166,13 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
-  public void delete(T t) {
-    repository.delete(t);
+  public void delete(T entity) {
+    repository.delete(entity);
   }
 
   @Override
-  public void delete(Specification<T> spec) {
-    repository.delete(spec);
-  }
-
-  @Override
-  public void deleteAllById(Iterable<ID> ids) {
-    repository.deleteAllById(ids);
-  }
-
-  @Override
-  public void deleteAll(Iterable<? extends T> iterable) {
-    repository.deleteAll(iterable);
+  public void deleteAll(Iterable<? extends T> entities) {
+    repository.deleteAll(entities);
   }
 
   @Override
@@ -134,6 +180,26 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
     repository.deleteAll();
   }
 
+  @Override
+  public <S extends T> Optional<S> findOne(Example<S> example) {
+    return repository.findOne(example);
+  }
+
+  @Override
+  public <S extends T> Page<S> findAll(Example<S> example,
+      Pageable pageable) {
+    return repository.findAll(example, pageable);
+  }
+
+  @Override
+  public <S extends T> long count(Example<S> example) {
+    return repository.count(example);
+  }
+
+  @Override
+  public <S extends T> boolean exists(Example<S> example) {
+    return repository.exists(example);
+  }
 
   @Override
   public Optional<T> findOne(Specification<T> spec) {
@@ -159,44 +225,4 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   public long count(Specification<T> spec) {
     return repository.count(spec);
   }
-
-  @Override
-  public boolean exists(Specification<T> spec) {
-    return repository.exists(spec);
-  }
-
-  @Override
-  public <S extends T> Optional<S> findOne(Example<S> example) {
-    return repository.findOne(example);
-  }
-
-  @Override
-  public <S extends T> Page<S> findAll(Example<S> example, Pageable pageable) {
-    return repository.findAll(example, pageable);
-  }
-
-  @Override
-  public <S extends T> long count(Example<S> example) {
-    return repository.count(example);
-  }
-
-  @Override
-  public <S extends T> boolean exists(Example<S> example) {
-    return repository.exists(example);
-  }
-
-  @Override
-  public <S extends T> Page<S> findAll(Example<S> example, Pageable pageable, Sort sort) {
-    return repository
-        .findAll(example, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-            pageable.getSortOr(sort)));
-  }
-
-  @Override
-  public Page<T> findAll(Pageable pageable, Sort sort) {
-    return repository
-        .findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-            pageable.getSortOr(sort)));
-  }
-
 }
