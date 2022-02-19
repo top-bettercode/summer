@@ -21,22 +21,6 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
     JpaSpecificationExecutor<T>,
     RecycleExecutor<T, ID> {
 
-  Optional<T> findFirst(Specification<T> spec);
-
-  List<T> findAll(Specification<T> spec, int size);
-
-  List<T> findAll(Specification<T> spec, int size, Sort sort);
-
-  <S extends T> Optional<S> findFirst(Example<S> example);
-
-  /**
-   * 根据ID查询数据，包括已逻辑删除的数据
-   *
-   * @param id ID
-   * @return 结果
-   */
-  Optional<T> findHardById(ID id);
-
   /**
    * 动态更新，只更新非Null字段
    *
@@ -55,18 +39,33 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
    */
   <S extends T> S dynamicBSave(S s);
 
-  List<T> findAll(int size);
-
-  List<T> findAll(int size, Sort sort);
-
-  boolean exists(Specification<T> spec);
-
   void delete(Specification<T> spec);
 
   void deleteAllById(Iterable<ID> ids);
 
+  boolean exists(Specification<T> spec);
+
+  Optional<T> findFirst(Specification<T> spec);
+
+  <S extends T> Optional<S> findFirst(Example<S> example);
+
+  /**
+   * 根据ID查询数据，包括已逻辑删除的数据
+   *
+   * @param id ID
+   * @return 结果
+   */
+  Optional<T> findHardById(ID id);
+
+  List<T> findAll(int size);
+
+  List<T> findAll(int size, Sort sort);
+
+  List<T> findAll(Specification<T> spec, int size);
+
+  List<T> findAll(Specification<T> spec, int size, Sort sort);
+
   <S extends T> List<S> findAll(Example<S> example, int size);
 
   <S extends T> List<S> findAll(Example<S> example, int size, Sort sort);
-
 }

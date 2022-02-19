@@ -127,7 +127,7 @@ public class SimpleJpaExtRepository<T, ID> extends
 
 
   private static void copyPropertiesIfTargetPropertyNull(Object source, Object target,
-      boolean allowBlank)
+      boolean allowEmpty)
       throws BeansException {
 
     Assert.notNull(source, "Source must not be null");
@@ -147,7 +147,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       try {
         Object invoke = targetPdReadMethod.invoke(target);
-        if (invoke != null && (allowBlank || !"".equals(invoke))) {
+        if (invoke != null && (allowEmpty || !"".equals(invoke))) {
           continue;
         }
       } catch (IllegalAccessException | InvocationTargetException e) {

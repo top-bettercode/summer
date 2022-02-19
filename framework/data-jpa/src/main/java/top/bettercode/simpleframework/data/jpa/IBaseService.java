@@ -16,34 +16,8 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   M getRepository();
 
-  List<T> findAll();
-
-  List<T> findAll(Sort sort);
-
-  List<T> findAllById(Iterable<ID> ids);
-
-  <S extends T> List<S> saveAll(Iterable<S> entities);
-
-  void deleteInBatch(Iterable<T> entities);
-
-  void deleteAllInBatch();
-
-  <S extends T> List<S> findAll(Example<S> example);
-
-  <S extends T> List<S> findAll(Example<S> example, Sort sort);
-
-  Page<T> findAll(Pageable pageable);
 
   <S extends T> S save(S s);
-
-  /**
-   * 动态更新，只更新非Null字段
-   *
-   * @param s   对象
-   * @param <S> 类型
-   * @return 结果
-   */
-  <S extends T> S dynamicSave(S s);
 
   /**
    * 动态更新，只更新非Null 及 非空（""）字段
@@ -54,15 +28,20 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
    */
   <S extends T> S dynamicBSave(S s);
 
-  Optional<T> findById(ID id);
+  /**
+   * 动态更新，只更新非Null字段
+   *
+   * @param s   对象
+   * @param <S> 类型
+   * @return 结果
+   */
+  <S extends T> S dynamicSave(S s);
 
-  boolean existsById(ID id);
-
-  long count();
-
-  void deleteById(ID id);
+  <S extends T> List<S> saveAll(Iterable<S> entities);
 
   void delete(T t);
+
+  void deleteById(ID id);
 
   void delete(Specification<T> spec);
 
@@ -72,29 +51,61 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   void deleteAll();
 
-  Optional<T> findOne(@Nullable Specification<T> spec);
+  void deleteInBatch(Iterable<T> entities);
 
-  List<T> findAll(@Nullable Specification<T> spec);
+  void deleteAllInBatch();
 
-  Page<T> findAll(@Nullable Specification<T> spec, Pageable pageable);
+  long count();
 
-  List<T> findAll(@Nullable Specification<T> spec, Sort sort);
+  Optional<T> findById(ID id);
+
+  boolean existsById(ID id);
+
+  List<T> findAll();
+
+  List<T> findAllById(Iterable<ID> ids);
+
+  List<T> findAll(int size);
+
+  List<T> findAll(int size, Sort sort);
+
+  Page<T> findAll(Pageable pageable);
+
+  List<T> findAll(Sort sort);
 
   long count(@Nullable Specification<T> spec);
 
   boolean exists(Specification<T> spec);
 
-  <S extends T> Optional<S> findOne(Example<S> example);
+  Optional<T> findOne(@Nullable Specification<T> spec);
 
-  <S extends T> Page<S> findAll(Example<S> example, Pageable pageable);
+  Optional<T> findFirst(Specification<T> spec);
+
+  List<T> findAll(@Nullable Specification<T> spec);
+
+  List<T> findAll(Specification<T> spec, int size);
+
+  List<T> findAll(Specification<T> spec, int size, Sort sort);
+
+  Page<T> findAll(@Nullable Specification<T> spec, Pageable pageable);
+
+  List<T> findAll(@Nullable Specification<T> spec, Sort sort);
 
   <S extends T> long count(Example<S> example);
 
   <S extends T> boolean exists(Example<S> example);
 
-  <S extends T> Page<S> findAll(Example<S> example, Pageable pageable, Sort sort);
+  <S extends T> Optional<S> findOne(Example<S> example);
 
-  Page<T> findAll(Pageable pageable, Sort sort);
+  <S extends T> Optional<S> findFirst(Example<S> example);
 
+  <S extends T> List<S> findAll(Example<S> example);
 
+  <S extends T> List<S> findAll(Example<S> example, int size);
+
+  <S extends T> List<S> findAll(Example<S> example, int size, Sort sort);
+
+  <S extends T> Page<S> findAll(Example<S> example, Pageable pageable);
+
+  <S extends T> List<S> findAll(Example<S> example, Sort sort);
 }
