@@ -89,7 +89,9 @@ public class MatcherSpecification<T> implements Specification<T> {
 //    if (!select.isEmpty()) {
 //      query.multiselect(select.stream().map(root::get).collect(Collectors.toList()));
 //    }
-    query.orderBy(orders);
+    if (!orders.isEmpty()) {
+      query.orderBy(orders);
+    }
 
     Predicate[] restrictions = predicates.toArray(new Predicate[0]);
     return specMatcher.getMatchMode().equals(SpecMatcherMode.ALL) ? cb.and(
