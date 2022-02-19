@@ -31,8 +31,7 @@ import top.bettercode.lang.util.BooleanUtil;
 import top.bettercode.lang.util.LocalDateTimeHelper;
 import top.bettercode.lang.util.MoneyUtil;
 import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.config.SerializerConfiguration;
-import top.bettercode.simpleframework.support.ApplicationContextHolder;
+import top.bettercode.simpleframework.support.code.CodeServiceHolder;
 import top.bettercode.simpleframework.support.code.ICodeService;
 
 /**
@@ -244,13 +243,12 @@ public class ExcelField<T, P> {
   }
 
   public ExcelField<T, P> code(String codeType) {
-    return code(SerializerConfiguration.CODE_SERVICE_BEAN_NAME, codeType);
+    return code("", codeType);
   }
 
   public ExcelField<T, P> code(String codeServiceRef, String codeType) {
     return cell((property) -> {
-      ICodeService codeService = ApplicationContextHolder.getBean(codeServiceRef,
-          ICodeService.class);
+      ICodeService codeService = CodeServiceHolder.get(codeServiceRef);
       if (property instanceof String) {
         String code = String.valueOf(property);
         if (code.contains(",")) {
@@ -270,8 +268,7 @@ public class ExcelField<T, P> {
   //--------------------------------------------
 
   private Object getCode(String codeServiceRef, String codeType, String cellValue) {
-    ICodeService codeService = ApplicationContextHolder.getBean(codeServiceRef,
-        ICodeService.class);
+    ICodeService codeService = CodeServiceHolder.get(codeServiceRef);
     if (cellValue.contains(",")) {
       String[] split = cellValue.split(",");
       return StringUtils.arrayToCommaDelimitedString(

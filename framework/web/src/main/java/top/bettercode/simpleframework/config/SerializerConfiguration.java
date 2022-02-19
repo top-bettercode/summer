@@ -11,8 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.util.ClassUtils;
-import top.bettercode.lang.property.Settings;
-import top.bettercode.simpleframework.support.code.CodeService;
+import top.bettercode.simpleframework.support.code.CodeServiceHolder;
 import top.bettercode.simpleframework.support.code.ICodeService;
 import top.bettercode.simpleframework.web.serializer.CustomNullSerializerModifier;
 import top.bettercode.simpleframework.web.serializer.UrlSerializer;
@@ -55,11 +54,10 @@ public class SerializerConfiguration {
     }
   }
 
-  public static final String CODE_SERVICE_BEAN_NAME = "defaultCodeService";
 
-  @Bean(CODE_SERVICE_BEAN_NAME)
+  @Bean("defaultCodeService")
   public ICodeService defaultCodeService() {
-    return new CodeService(Settings.getDicCode());
+    return CodeServiceHolder.PROPERTIES_CODESERVICE;
   }
 
 }

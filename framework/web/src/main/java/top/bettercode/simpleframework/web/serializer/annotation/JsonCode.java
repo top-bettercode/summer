@@ -7,7 +7,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import top.bettercode.simpleframework.config.SerializerConfiguration;
 import top.bettercode.simpleframework.web.serializer.CodeSerializer;
 
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
@@ -27,5 +26,8 @@ public @interface JsonCode {
    */
   boolean extended() default true;
 
-  String codeServiceRef() default SerializerConfiguration.CODE_SERVICE_BEAN_NAME;
+  /**
+   * @return codeService beanName default: {@link top.bettercode.simpleframework.support.code.CodeServiceHolder#getDefault()}
+   */
+  String codeServiceRef() default "";
 }
