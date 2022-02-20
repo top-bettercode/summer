@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.data.jpa.config;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.data.jpa.repository.EnableJpaExtRepositories;
 
 public class BaseDataSourceProperties {
@@ -27,6 +28,8 @@ public class BaseDataSourceProperties {
    * Locations of MyBatis mapper files.
    */
   private String[] mapperLocations;
+
+  private HikariDataSource hikari;
 
   //--------------------------------------------
   public String getUrl() {
@@ -68,5 +71,13 @@ public class BaseDataSourceProperties {
 
   public void setMapperLocations(String[] mapperLocations) {
     this.mapperLocations = mapperLocations;
+  }
+
+  public HikariDataSource getHikari() {
+    return hikari;
+  }
+
+  public void setHikari(HikariDataSource hikari) {
+    this.hikari = hikari;
   }
 }
