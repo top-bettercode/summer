@@ -85,10 +85,11 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
       for (Entry<String, BaseDataSourceProperties> entry : dataSources.entrySet()) {
         //dataSource
         BaseDataSourceProperties properties = entry.getValue();
-        boolean primary = "primary".equals(entry.getKey());
+        String key = entry.getKey();
+        boolean primary = "primary".equals(key);
         EnableJpaExtRepositories jpaExtRepositories = properties.getExtConfigClass()
             .getAnnotation(EnableJpaExtRepositories.class);
-        String dataSourceBeanName = primary ? "dataSource" : entry.getKey() + "DataSource";
+        String dataSourceBeanName = primary ? "dataSource" : key + "DataSource";
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
             HikariDataSource.class, () -> {
               DataSourceProperties dataSourceProperties = new DataSourceProperties();
@@ -102,8 +103,15 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
                 dataSource.setPoolName(dataSourceProperties.getName());
               }
 
-              Binder.get(environment)
-                  .bind("spring.datasource.hikari", Bindable.ofInstance(dataSource));
+              HikariDataSource hikari = properties.getHikari();
+              String hikariConfigKey = "summer.datasource.multi.datasources." + key + ".hikari";
+              if (hikari != null) {
+                Binder.get(environment)
+                    .bind(hikariConfigKey, Bindable.ofInstance(dataSource));
+              } else {
+                Binder.get(environment)
+                    .bind("spring.datasource.hikari", Bindable.ofInstance(dataSource));
+              }
               return dataSource;
             });
         if (primary) {
@@ -192,7 +200,7 @@ public class RepositoryBeanDefinitionRegistryPostProcessor implements
 
         //sqlSessionFactory
         String sqlSessionFactoryBeanName =
-            primary ? "sqlSessionFactory" : entry.getKey() + "SqlSessionFactory";
+            primary ? "sqlSessionFactory" : key + "SqlSessionFactory";
         beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
             SqlSessionFactory.class, () ->
                 getSqlSessionFactory(
