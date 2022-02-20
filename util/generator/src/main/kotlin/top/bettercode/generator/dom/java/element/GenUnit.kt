@@ -9,9 +9,8 @@ import java.io.PrintWriter
 interface GenUnit {
 
     val name: String
-
     val canCover: Boolean
-    val isTestFile: Boolean
     val isResourcesFile: Boolean
+    val isTestFile: Boolean
     val output: PrintWriter.() -> Unit
 }

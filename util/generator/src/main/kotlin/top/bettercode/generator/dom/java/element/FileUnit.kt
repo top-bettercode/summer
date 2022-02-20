@@ -10,8 +10,8 @@ import java.io.StringWriter
 open class FileUnit(
     override val name: String,
     override val canCover: Boolean = false,
-    override val isTestFile: Boolean = false,
-    override val isResourcesFile: Boolean = false
+    override val isResourcesFile: Boolean = false,
+    override val isTestFile: Boolean = false
 ) : GenUnit {
 
     private val stringWriter = StringWriter()

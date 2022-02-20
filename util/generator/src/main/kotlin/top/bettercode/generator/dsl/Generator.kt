@@ -509,7 +509,12 @@ open class Generator {
         isTestFile: Boolean = false,
         unit: SelfOutputUnit.() -> Unit
     ) {
-        val value = SelfOutputUnit(name, canCover, isResourcesFile, isTestFile)
+        val value = SelfOutputUnit(
+            name = name,
+            canCover = canCover,
+            isResourcesFile = isResourcesFile,
+            isTestFile = isTestFile
+        )
         unit(value)
         addUnit(value)
     }
@@ -521,7 +526,12 @@ open class Generator {
         isTestFile: Boolean = false,
         unit: FileUnit.() -> Unit
     ) {
-        val value = FileUnit(name, canCover, isResourcesFile, isTestFile)
+        val value = FileUnit(
+            name = name,
+            canCover = canCover,
+            isResourcesFile = isResourcesFile,
+            isTestFile = isTestFile
+        )
         unit(value)
         addUnit(value)
     }
@@ -533,7 +543,12 @@ open class Generator {
         isTestFile: Boolean = false,
         unit: PackageInfo.() -> Unit
     ) {
-        val value = PackageInfo(type, canCover, isResourcesFile, isTestFile)
+        val value = PackageInfo(
+            type = type,
+            canCover = canCover,
+            isResourcesFile = isResourcesFile,
+            isTestFile = isTestFile
+        )
         unit(value)
         addUnit(value)
     }
@@ -547,7 +562,12 @@ open class Generator {
         visibility: JavaVisibility = JavaVisibility.PUBLIC,
         interfaze: Interface.() -> Unit
     ) {
-        val value = Interface(type, canCover, isResourcesFile, isTestFile)
+        val value = Interface(
+            type = type,
+            canCover = canCover,
+            isResourcesFile = isResourcesFile,
+            isTestFile = isTestFile
+        )
         value.visibility = visibility
         interfaze(value)
         addUnit(value)
@@ -561,7 +581,12 @@ open class Generator {
         visibility: JavaVisibility = JavaVisibility.PUBLIC,
         clazz: TopLevelClass.() -> Unit
     ) {
-        val value = TopLevelClass(type, canCover, isResourcesFile, isTestFile)
+        val value = TopLevelClass(
+            type = type,
+            canCover = canCover,
+            isResourcesFile = isResourcesFile,
+            isTestFile = isTestFile
+        )
         value.visibility = visibility
         clazz(value)
         addUnit(value)
@@ -574,7 +599,12 @@ open class Generator {
         isTestFile: Boolean = false,
         enum: TopLevelEnumeration.() -> Unit
     ) {
-        val value = TopLevelEnumeration(type, canCover, isResourcesFile, isTestFile)
+        val value = TopLevelEnumeration(
+            type = type,
+            canCover = canCover,
+            isResourcesFile = isResourcesFile,
+            isTestFile = isTestFile
+        )
         enum(value)
         addUnit(value)
     }
