@@ -207,11 +207,14 @@ object InitField {
         }
         fields.addAll(fields.map { Field(English.plural(it.name), "Array", it.description) })
         fields.add(Field(entityName(extension), "Object", remarks))
-        if (primaryKeys.size == 0)
-            fields.add(Field(entityName(extension) + "Entity", "Object", remarks))
         fields.add(Field(pathName(extension), "Array", remarks))
-        if (primaryKeys.size != 1) {
-            fields.add(Field(entityName(extension) + "Key", "String", remarks + "主键"))
+        if (primaryKeys.size == 0) {
+            fields.add(Field(entityName(extension) + "Entity", "Object", remarks))
+        } else {
+            if (primaryKeys.size > 1) {
+                fields.add(Field(entityName(extension) + "Key", "String", remarks + "主键"))
+                fields.add(Field(English.plural(entityName(extension) + "Key"), "String", remarks + "主键"))
+            }
         }
         return fields
     }
