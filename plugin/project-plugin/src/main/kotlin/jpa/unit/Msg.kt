@@ -3,7 +3,7 @@ package jpa.unit
 import ProjectGenerator
 import org.atteo.evo.inflector.English
 import top.bettercode.generator.dom.java.element.SelfOutputUnit
-import java.util.Properties
+import java.util.*
 
 /**
  * @author Peter Wu
@@ -16,6 +16,9 @@ val msg: ProjectGenerator.(SelfOutputUnit) -> Unit = { unit ->
         }
         properties.load(file.inputStream())
         properties[entityName] = remarks
+        if (primaryKeys.size == 0) {
+            properties[entityName + "Entity"] = remarks
+        }
         properties[pathName] = remarks
         columns.forEach {
             if (it.remarks.isNotBlank()) {
@@ -26,7 +29,7 @@ val msg: ProjectGenerator.(SelfOutputUnit) -> Unit = { unit ->
                 properties[it.columnName] = remark
             }
         }
-        if (primaryKeys.size > 1) {
+        if (primaryKeys.size != 1) {
             properties[entityName + "Key"] = remarks + "ID"
             properties[English.plural(entityName + "Key")] = remarks + "ID"
         }
