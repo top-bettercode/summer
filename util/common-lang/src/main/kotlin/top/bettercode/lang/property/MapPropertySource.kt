@@ -1,6 +1,6 @@
 package top.bettercode.lang.property
 
-import java.util.*
+import java.io.Serializable
 
 /**
  * @author Peter Wu
@@ -25,6 +25,21 @@ open class MapPropertySource(protected val source: MutableMap<String, String>) :
             val prefix = "$name."
             if (k.startsWith(prefix)) {
                 map[k.substring(prefix.length)] = v
+            }
+        }
+        return map
+    }
+
+    override fun mapOf(name: String, isInt: Boolean): Map<Serializable, String> {
+        val map: MutableMap<Serializable, String> = HashMap()
+        source.forEach { (k: String, v: String) ->
+            val prefix = "$name."
+            if (k.startsWith(prefix)) {
+                val key = k.substring(prefix.length)
+                if (isInt)
+                    map[key.toInt()] = v
+                else
+                    map[key] = v
             }
         }
         return map
