@@ -220,7 +220,7 @@ open class Generator {
 
 
     fun Column.setValue(value: String): String {
-        return when (javaType.shortName) {
+        return "\"null\".equals($value) ? null : " + when (javaType.shortName) {
             "Boolean" -> "Boolean.valueOf($value)"
             "Integer" -> "Integer.valueOf($value)"
             "Long" -> "Long.valueOf($value)"
