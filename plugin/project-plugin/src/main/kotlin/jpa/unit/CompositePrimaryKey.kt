@@ -14,7 +14,6 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         import("java.util.Objects")
         import("javax.persistence.Embeddable")
-        import("top.bettercode.lang.util.StringUtil")
         visibility = JavaVisibility.PUBLIC
         annotation("@javax.persistence.Embeddable")
         javadoc {
