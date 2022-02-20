@@ -1,5 +1,7 @@
 package top.bettercode.lang.property
 
+import java.io.Serializable
+
 /**
  * @author Peter Wu
  */
@@ -46,6 +48,8 @@ interface PropertySource {
     fun doRemove(key: String): String?
 
     fun mapOf(name: String): Map<String, String>
+
+    fun mapOf(name: String, isInt: Boolean): Map<Serializable, String>
 
     fun all(): Map<String, String>
 
