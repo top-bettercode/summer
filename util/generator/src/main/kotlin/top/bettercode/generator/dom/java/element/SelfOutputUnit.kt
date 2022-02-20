@@ -9,8 +9,8 @@ import java.io.PrintWriter
 class SelfOutputUnit(
     override val name: String,
     override val canCover: Boolean = false,
-    override val isTestFile: Boolean = false,
-    override val isResourcesFile: Boolean = false
+    override val isResourcesFile: Boolean = false,
+    override val isTestFile: Boolean = false
 ) : GenUnit {
 
     override val output: PrintWriter.() -> Unit
