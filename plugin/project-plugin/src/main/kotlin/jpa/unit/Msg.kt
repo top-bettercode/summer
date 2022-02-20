@@ -17,10 +17,10 @@ val msg: ProjectGenerator.(SelfOutputUnit) -> Unit = { unit ->
         properties.load(file.inputStream())
         properties[entityName] = remarks
         properties[pathName] = remarks
-        if (primaryKeys.isEmpty()) {
+        if (isFullComposite) {
             properties[entityName + "Entity"] = remarks
         } else {
-            if (primaryKeys.size > 1) {
+            if (isCompositePrimaryKey) {
                 properties[entityName + "Key"] = remarks + "ID"
                 properties[English.plural(entityName + "Key")] = remarks + "ID"
             }
