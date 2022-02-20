@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 
 /**
  * @author Peter Wu
@@ -24,8 +24,9 @@ public class EmbeddedIdDeserializer extends JsonDeserializer<Serializable> {
       String currentName = p.getCurrentName();
       Class<?> targetType = currentValue.getClass().getDeclaredField(currentName).getType();
       String valueAsString = p.getValueAsString();
-      return (Serializable) targetType.getConstructor(String.class).newInstance(valueAsString);
-    } catch (NoSuchFieldException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+      return (Serializable) BeanUtils.instantiateClass(targetType.getConstructor(String.class),
+          valueAsString);
+    } catch (NoSuchFieldException | NoSuchMethodException e) {
       log.warn("反序列化失败", e);
     }
     return null;

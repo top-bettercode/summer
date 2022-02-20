@@ -1,4 +1,3 @@
-
 import jpa.unit.controllerTest
 import jpa.unit.form
 import jpa.unit.mixIn
@@ -113,13 +112,15 @@ open class Controller : ProjectGenerator() {
                 }
             }
 
-            //info
-            if (!isFullComposite)
+            if (!isFullComposite) {
+
+                //info
                 method("info", JavaType.objectInstance) {
                     annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/info\", name = \"详情\")")
                     parameter {
                         name = primaryKeyName
-                        type = primaryKeyType
+                        type =
+                            if (isCompositePrimaryKey) JavaType.stringInstance else primaryKeyType
                         if (JavaType.stringInstance == type) {
                             annotation("@javax.validation.constraints.NotBlank")
                         } else {
@@ -129,26 +130,10 @@ open class Controller : ProjectGenerator() {
                     import("java.util.Optional")
                     import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
 
-                    +"$className $entityName = ${projectEntityName}Service.findById(${primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
+                    +"$className $entityName = ${projectEntityName}Service.findById(${if (isCompositePrimaryKey) "new ${primaryKeyType.shortName}($primaryKeyName)" else primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
                     +"return ok($entityName${if (isFullComposite) "get${primaryKeyClassName}()" else ""});"
                 }
 
-            if (isFullComposite) {
-                //save
-                import("javax.validation.groups.Default")
-                method("create", JavaType.objectInstance) {
-                    annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", name = \"新增\")")
-                    parameter {
-                        import("top.bettercode.simpleframework.web.validator.CreateConstraint")
-                        annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
-                        name = "${projectEntityName}Form"
-                        type = formType
-                    }
-                    +"$className $entityName = ${if (isFullComposite) "new $className(${projectEntityName}Form.getEntity())" else "${projectEntityName}Form.getEntity()"};"
-                    +"${projectEntityName}Service.save($entityName);"
-                    +"return noContent();"
-                }
-            } else {
                 //create
                 import("javax.validation.groups.Default")
                 method("create", JavaType.objectInstance) {
@@ -177,23 +162,22 @@ open class Controller : ProjectGenerator() {
                     +"${projectEntityName}Service.dynamicSave($entityName);"
                     +"return noContent();"
                 }
-            }
 
-
-            //delete
-            method("delete", JavaType.objectInstance) {
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/delete\", name = \"删除\")")
-                parameter {
-                    name = primaryKeyName
-                    type = primaryKeyType
-                    if (JavaType.stringInstance == type) {
-                        annotation("@javax.validation.constraints.NotBlank")
-                    } else {
-                        annotation("@javax.validation.constraints.NotNull")
+                method("delete", JavaType.objectInstance) {
+                    annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/delete\", name = \"删除\")")
+                    parameter {
+                        name = primaryKeyName
+                        type =
+                            if (isCompositePrimaryKey) JavaType.stringInstance else primaryKeyType
+                        if (JavaType.stringInstance == type) {
+                            annotation("@javax.validation.constraints.NotBlank")
+                        } else {
+                            annotation("@javax.validation.constraints.NotNull")
+                        }
                     }
+                    +"${projectEntityName}Service.deleteById(${if (isCompositePrimaryKey) "new ${primaryKeyType.shortName}($primaryKeyName)" else primaryKeyName});"
+                    +"return noContent();"
                 }
-                +"${projectEntityName}Service.deleteById(${primaryKeyName});"
-                +"return noContent();"
             }
         }
 
@@ -218,13 +202,13 @@ open class Controller : ProjectGenerator() {
             import("org.springframework.data.domain.Sort.Direction")
             sort = "(sort = {"
             if (columns.any { it.javaName == "createdDate" }) {
-                sort += "${className}Properties.createdDate"
+                sort += "${propertiesType.shortName}.createdDate"
                 if (!isCompositePrimaryKey) {
-                    sort += ", ${className}Properties.${primaryKeyName}"
+                    sort += ", ${propertiesType.shortName}.${primaryKeyName}"
                 }
                 sort += "}"
             } else if (!isCompositePrimaryKey) {
-                sort += "${className}Properties.${primaryKeyName}}"
+                sort += "${propertiesType.shortName}.${primaryKeyName}}"
             }
             sort += ", direction = Direction.DESC)"
         }

@@ -102,8 +102,8 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
         }
 
-        //info
-        if (!isFullComposite)
+        if (!isFullComposite) {
+            //info
             method("info", JavaType.voidPrimitiveInstance) {
                 javadoc {
                     +"// ${remarks}详情"
@@ -118,50 +118,48 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +").andExpect(status().isOk());"
             }
 
-        //create
-        method("create", JavaType.voidPrimitiveInstance) {
-            javadoc {
-                +"// ${remarks}新增"
-            }
+            //create
+            method("create", JavaType.voidPrimitiveInstance) {
+                javadoc {
+                    +"// ${remarks}新增"
+                }
 //                annotation("@org.junit.jupiter.api.DisplayName(\"新增\")")
-            annotation("@org.junit.jupiter.api.Test")
-            annotation("@org.junit.jupiter.api.Order(3)")
-            exception(JavaType("Exception"))
-            if (isCompositePrimaryKey && !isFullComposite) {
-                import(primaryKeyType)
-                +"${primaryKeyClassName} $primaryKeyName = new ${primaryKeyClassName}();"
-                primaryKeys.forEach {
-                    +"$primaryKeyName.set${it.javaName.capitalize()}(${it.randomValueToSet});"
-                }
-            }
-            +"mockMvc.perform(post(\"/$pathName/save\")"
-            if (isFullComposite) {
-                columns.forEach {
-                    if (!it.jsonViewIgnored && it.javaName != "createdDate") {
-                        2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
-                    }
-                }
-            } else {
-                if (isCompositePrimaryKey || !primaryKey.autoIncrement) {
+                annotation("@org.junit.jupiter.api.Test")
+                annotation("@org.junit.jupiter.api.Order(3)")
+                exception(JavaType("Exception"))
+                if (isCompositePrimaryKey && !isFullComposite) {
                     import(primaryKeyType)
-                    if (isCompositePrimaryKey) {
-                        2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
-                    } else {
-                        2 + ".param(\"${primaryKeyName}\", \"${primaryKey.randomValue}\")"
+                    +"${primaryKeyClassName} $primaryKeyName = new ${primaryKeyClassName}();"
+                    primaryKeys.forEach {
+                        +"$primaryKeyName.set${it.javaName.capitalize()}(${it.randomValueToSet});"
                     }
                 }
-                otherColumns.forEach {
-                    if (!it.jsonViewIgnored && it.javaName != "createdDate") {
-                        2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
+                +"mockMvc.perform(post(\"/$pathName/save\")"
+                if (isFullComposite) {
+                    columns.forEach {
+                        if (!it.jsonViewIgnored && it.javaName != "createdDate") {
+                            2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
+                        }
+                    }
+                } else {
+                    if (isCompositePrimaryKey || !primaryKey.autoIncrement) {
+                        import(primaryKeyType)
+                        if (isCompositePrimaryKey) {
+                            2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
+                        } else {
+                            2 + ".param(\"${primaryKeyName}\", \"${primaryKey.randomValue}\")"
+                        }
+                    }
+                    otherColumns.forEach {
+                        if (!it.jsonViewIgnored && it.javaName != "createdDate") {
+                            2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
+                        }
                     }
                 }
+                +").andExpect(status().isOk());"
             }
-            +").andExpect(status().isOk());"
-        }
 
-
-        //update
-        if (!isFullComposite)
+            //update
             method("update", JavaType.voidPrimitiveInstance) {
                 javadoc {
                     +"// ${remarks}编辑"
@@ -190,20 +188,21 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +").andExpect(status().isOk());"
             }
 
-        //delete
-        method("delete", JavaType.voidPrimitiveInstance) {
-            javadoc {
-                +"// ${remarks}删除"
-            }
+            //delete
+            method("delete", JavaType.voidPrimitiveInstance) {
+                javadoc {
+                    +"// ${remarks}删除"
+                }
 //                annotation("@org.junit.jupiter.api.DisplayName(\"删除\")")
-            annotation("@org.junit.jupiter.api.Test")
-            annotation("@org.junit.jupiter.api.Order(5)")
-            exception(JavaType("Exception"))
-            +"${primaryKeyClassName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
-            +"mockMvc.perform(post(\"/$pathName/delete\")"
-            2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
-            +").andExpect(status().isOk());"
-            +"assertFalse(${projectEntityName}Service.findById(${primaryKeyName}).isPresent());"
+                annotation("@org.junit.jupiter.api.Test")
+                annotation("@org.junit.jupiter.api.Order(5)")
+                exception(JavaType("Exception"))
+                +"${primaryKeyClassName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
+                +"mockMvc.perform(post(\"/$pathName/delete\")"
+                2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
+                +").andExpect(status().isOk());"
+                +"assertFalse(${projectEntityName}Service.findById(${primaryKeyName}).isPresent());"
+            }
         }
     }
 }
