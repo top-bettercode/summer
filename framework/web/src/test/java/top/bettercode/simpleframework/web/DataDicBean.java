@@ -1,11 +1,15 @@
 package top.bettercode.simpleframework.web;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.Arrays;
+import java.util.Objects;
 import top.bettercode.simpleframework.web.resolver.Cent;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 import java.math.BigDecimal;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DataDicBean {
 
   private BigDecimal number1;
@@ -153,5 +157,52 @@ public class DataDicBean {
 
   public void setDesc(String desc) {
     this.desc = desc;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof DataDicBean)) {
+      return false;
+    }
+    DataDicBean that = (DataDicBean) o;
+    return Objects.equals(number1, that.number1) && Objects.equals(number2,
+        that.number2) && Objects.equals(number22, that.number22)
+        && Objects.equals(number3, that.number3) && Objects.equals(number4,
+        that.number4) && Objects.equals(name, that.name) && Objects.equals(code,
+        that.code) && Objects.equals(intCode, that.intCode) && Objects.equals(
+        price, that.price) && Objects.equals(path, that.path) && Objects.equals(
+        path1, that.path1) && Objects.equals(desc, that.desc) && Objects.equals(
+        paths, that.paths) && Arrays.equals(pathArray, that.pathArray);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Objects.hash(number1, number2, number22, number3, number4, name, code, intCode,
+        price, path, path1, desc, paths);
+    result = 31 * result + Arrays.hashCode(pathArray);
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return "DataDicBean{" +
+        "number1=" + number1 +
+        ", number2=" + number2 +
+        ", number22=" + number22 +
+        ", number3=" + number3 +
+        ", number4=" + number4 +
+        ", name='" + name + '\'' +
+        ", code='" + code + '\'' +
+        ", intCode=" + intCode +
+        ", price=" + price +
+        ", path='" + path + '\'' +
+        ", path1='" + path1 + '\'' +
+        ", desc='" + desc + '\'' +
+        ", paths=" + paths +
+        ", pathArray=" + Arrays.toString(pathArray) +
+        '}';
   }
 }

@@ -48,17 +48,10 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
         }
 
-        val keySep = "_"
-        if (!isFullComposite) {
-            import("org.springframework.util.Assert")
-            constructor(Parameter(primaryKeyName, JavaType.stringInstance)) {
-                +"Assert.hasText(${primaryKeyName}, \"${primaryKeyName}不能为空\");"
-                +"String[] split = ${primaryKeyName}.split(\"${keySep}\");"
-                +"Assert.isTrue(split.length == ${primaryKeys.size}, \"${primaryKeyName}格式不对\");"
-                primaryKeys.forEachIndexed { index, column ->
-                    +"this.${column.javaName} = ${column.setValue("split[${index}]")};"
-                }
-            }
+        import("top.bettercode.simpleframework.support.EmbeddedIdConverter")
+        method("of", type, Parameter(primaryKeyName, JavaType.stringInstance)) {
+            isStatic = true
+            +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, ${type.shortName}.class);"
         }
 
         primaryKeys.forEach {
@@ -150,19 +143,13 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         //toString
-        if (isFullComposite)
-            method("toString", JavaType.stringInstance) {
-                annotation("@Override")
-                +"return \"${className}{\" +"
-                primaryKeys.forEachIndexed { _, it ->
-                    +"    \"${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
-                }
-                +"    '}';"
+        method("toString", JavaType.stringInstance) {
+            annotation("@Override")
+            +"return \"${className}{\" +"
+            primaryKeys.forEachIndexed { _, it ->
+                +"    \"${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
             }
-        else
-            method("toString", JavaType.stringInstance) {
-                annotation("@Override")
-                +"return ${primaryKeys.joinToString(" + \"${keySep}\" + ") { it.javaName }};"
-            }
+            +"    '}';"
+        }
     }
 }
