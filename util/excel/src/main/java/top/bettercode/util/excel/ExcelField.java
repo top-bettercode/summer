@@ -259,13 +259,13 @@ public class ExcelField<T, P> {
         if (code.contains(",")) {
           String[] split = code.split(",");
           return StringUtils.arrayToCommaDelimitedString(
-              Arrays.stream(split).map(s -> codeService.getName(codeType, s.trim()))
+              Arrays.stream(split).map(s -> codeService.getDicCodes(codeType).getName(s.trim()))
                   .toArray());
         } else {
-          return codeService.getName(codeType, code);
+          return codeService.getDicCodes(codeType).getName(code);
         }
       } else {
-        return codeService.getName(codeType, (Serializable) property);
+        return codeService.getDicCodes(codeType).getName((Serializable) property);
       }
     }).property((cellValue) -> getCode(codeServiceRef, codeType, String.valueOf(cellValue)));
   }
@@ -278,7 +278,7 @@ public class ExcelField<T, P> {
       String[] split = cellValue.split(",");
       return StringUtils.arrayToCommaDelimitedString(
           Arrays.stream(split).map(s -> {
-                Serializable code = codeService.getCode(codeType, s.trim());
+                Serializable code = codeService.getDicCodes(codeType).getCode(s.trim());
                 if (code == null) {
                   throw new IllegalArgumentException("无\"" + s + "\"对应的类型");
                 }
@@ -286,7 +286,7 @@ public class ExcelField<T, P> {
               })
               .toArray());
     } else {
-      Serializable code = codeService.getCode(codeType, cellValue);
+      Serializable code = codeService.getDicCodes(codeType).getCode(cellValue);
       if (code == null) {
         throw new IllegalArgumentException("无\"" + cellValue + "\"对应的类型");
       }

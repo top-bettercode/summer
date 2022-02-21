@@ -77,7 +77,7 @@ public class CodeSerializer extends StdScalarSerializer<Serializable> implements
   }
 
   private String getName(String codeType, Serializable code) {
-    return this.codeService.getName(codeType, code);
+    return this.codeService.getDicCodes(codeType).getName(code);
   }
 
   private String getCodeType(String fieldName) {
