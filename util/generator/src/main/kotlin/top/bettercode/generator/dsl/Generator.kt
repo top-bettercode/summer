@@ -408,7 +408,7 @@ open class Generator {
     open val primaryKeyType: JavaType
         get() {
             return if (primaryKeys.size == 1) {
-                primaryKey.javaType
+                if (primaryKey.sequence.isNotBlank()) JavaType("java.lang.Long") else primaryKey.javaType
             } else {
                 JavaType(
                     "$packageName.${modulePackage("Entity")}.${
