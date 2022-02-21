@@ -273,7 +273,12 @@ public class MatcherSpecification<T> implements Specification<T> {
   @SuppressWarnings({"rawtypes"})
   private Path getPath(String propertyName, Root<?> root) {
     try {
-      return root.get(propertyName);
+      String[] split = propertyName.split("\\.");
+      Path path = null;
+      for (String s : split) {
+        path = path == null ? root.get(s) : path.get(s);
+      }
+      return path;
     } catch (IllegalArgumentException e) {
       if (log.isDebugEnabled()) {
         log.debug(e.getMessage());
