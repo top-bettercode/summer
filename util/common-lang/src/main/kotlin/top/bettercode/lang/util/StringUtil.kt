@@ -10,8 +10,10 @@ import java.nio.charset.Charset
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import java.util.zip.DeflaterOutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
+import java.util.zip.InflaterOutputStream
 
 
 /**
@@ -169,6 +171,16 @@ object StringUtil {
             INDENT_OUTPUT_OBJECT_MAPPER.writeValueAsString(`object`)
         } else {
             OBJECT_MAPPER.writeValueAsString(`object`)
+        }
+    }
+
+    @JvmOverloads
+    @JvmStatic
+    fun jsonBytes(`object`: Any?, format: Boolean = false): ByteArray {
+        return if (format) {
+            INDENT_OUTPUT_OBJECT_MAPPER.writeValueAsBytes(`object`)
+        } else {
+            OBJECT_MAPPER.writeValueAsBytes(`object`)
         }
     }
 
@@ -337,6 +349,30 @@ object StringUtil {
     }
 
     /**
+     * 解压字符串,默认utf-8
+     */
+    @JvmStatic
+    fun inflater(data: ByteArray): ByteArray {
+        val os = ByteArrayOutputStream()
+        InflaterOutputStream(os).use { output -> output.write(data) }
+        return os.toByteArray()
+    }
+
+    /**
+     * 压缩字符串,默认梳utf-8
+     * @param data 待压缩
+     * @return 压缩后
+     */
+    @JvmStatic
+    fun deflater(data: ByteArray): ByteArray {
+        val out = ByteArrayOutputStream()
+        DeflaterOutputStream(out).use { output ->
+            output.write(data)
+        }
+        return out.toByteArray()
+    }
+
+    /**
      * 压缩字符
      *
      * @param data 待压缩
@@ -348,9 +384,9 @@ object StringUtil {
             return data
         }
         val out = ByteArrayOutputStream()
-        val gzip = GZIPOutputStream(out)
-        gzip.write(data)
-        gzip.close()
+        GZIPOutputStream(out).use { output ->
+            output.write(data)
+        }
         return out.toByteArray()
     }
 
@@ -359,9 +395,7 @@ object StringUtil {
         if (data.isEmpty()) {
             return data
         }
-        val byteArrayInputStream = ByteArrayInputStream(data)
-        val zipInputStream = GZIPInputStream(byteArrayInputStream)
-        return zipInputStream.readBytes()
+        return GZIPInputStream(ByteArrayInputStream(data)).readBytes()
     }
 
     @Throws(IOException::class)
