@@ -138,6 +138,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     PropertyDescriptor[] targetPds = BeanUtils.getPropertyDescriptors(actualEditable);
 
     for (PropertyDescriptor targetPd : targetPds) {
+      if ("class".equals(targetPd.getName())) {
+        continue;
+      }
       Method targetPdReadMethod = targetPd.getReadMethod();
       if (targetPdReadMethod == null) {
         continue;
