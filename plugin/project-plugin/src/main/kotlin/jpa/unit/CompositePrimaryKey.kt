@@ -48,10 +48,12 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
         }
 
-        import("top.bettercode.simpleframework.support.EmbeddedIdConverter")
-        method("of", type, Parameter(primaryKeyName, JavaType.stringInstance)) {
-            isStatic = true
-            +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, ${type.shortName}.class);"
+        if (!isFullComposite) {
+            import("top.bettercode.simpleframework.support.EmbeddedIdConverter")
+            method("of", type, Parameter(primaryKeyName, JavaType.stringInstance)) {
+                isStatic = true
+                +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, ${type.shortName}.class);"
+            }
         }
 
         primaryKeys.forEach {
