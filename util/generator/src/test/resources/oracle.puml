@@ -2,39 +2,107 @@ PK
 FK
 UNIQUE
 INDEX
+IDGENERATOR
+SEQUENCE
 
-@startuml 基础
+@startuml 业务
 
-class NHR_DICS <<(T,#DDDDD3)>> {
-    数据字典
+entity PU_APP_SMS_WHITELIST {
+    APP发货短信白名单
     ==
-    DIC_ID : NUMBER(20) PK -- 主键ID
-    DIC_CODE : VARCHAR2(50) NULL UNIQUE -- 字典编码
-    DIC_NAME : VARCHAR2(50) NULL -- 字典名
+    CUST_ID : VARCHAR2(20) PK NOT NULL -- 客户ID(客户编号)
+    CREATED_DATE : DATE DEFAULT SYSDATE NOT NULL -- 创建时间
 }
 
-class NHR_DICITEM <<(T,#DDDDD4)>> {
-    数据字典条目
+entity PU_APP_LOGIN_WHITELIST {
+    APP客户登录白名单
     ==
-    DIC_ITEM_ID : NUMBER(20) PK -- 主键ID
-    DIC_CODE : VARCHAR2(50) FK > NHR_DICS.DIC_CODE NULL -- 字典编码
-    DIC_ITEM_CODE : VARCHAR2(50) NULL -- 子项编码
-    DIC_ITEM_NAME : VARCHAR2(100) NULL -- 子项名
-    SEQ : NUMBER(4,0) DEFAULT 0 NULL -- 顺序
-    'UNIQUE DIC_CODE,DIC_ITEM_CODE
+    CUST_ID : VARCHAR2(20) PK NOT NULL -- 客户ID(客户编号)
+    CREATED_DATE : DATE DEFAULT SYSDATE NOT NULL -- 创建时间
 }
 
-NHR_DICS "1" -- "0..*" NHR_DICITEM
-
-class NHR_SYS_SETTING <<(T,#DDDDDD)>> {
-    系统配置
+entity PU_PICKUP {
+    提货管理
     ==
-    SETTING_ID : NUMBER(20) PK -- 配置主键ID
-    SETTING_TYPE : VARCHAR2(64) NULL -- 配置类型
-    SETTING_KEY : VARCHAR2(200) NULL -- 键
-    SETTING_VALUE : VARCHAR2(200) NULL -- 值
-    SETTING_DESC : VARCHAR2(200) NULL -- 说明备注
-    IS_DEL :  NUMBER(1) DEFAULT 0 NOT NULL -- 是否删除（1：标记删除；0：正常）
+    PICKUP_ID : VARCHAR2(64) PK IDGENERATOR NOT NULL -- 主键
+    CUST_NAME : VARCHAR2(200) NULL -- 客户名称
+    SAP_NO : VARCHAR2(100) NULL -- SAP编号
+    CUST_ID : VARCHAR2(20) NULL -- 客户ID(客户编号)
+    CONTACTS : VARCHAR2(100) NULL -- 客户联系人
+    CUST_TEL : VARCHAR2(20) NULL -- 客户手机号
+    SALESMAN : VARCHAR2(100) NULL -- 所属业务员
+    REGION : VARCHAR2(200) NULL -- 所属大区
+    DEPART : VARCHAR2(200) NULL -- 所属部门
+    SALESMAN_TEL : VARCHAR2(20) NULL -- 所属业务员手机号
+    STATUS : NUMBER(6) DEFAULT 0 NOT NULL -- 提货状态(1:已开票;0:待处理;-1:已驳回;-2:已撤销;2:部分开票)
+    REASON : VARCHAR2(800) NULL -- 驳回原因
+    NOTE : CLOB NULL -- 提货备注
+    CREATED_TIME : NUMBER(20) NOT NULL -- 申请时间
+    INVOICE_TIME : NUMBER(20) NULL -- 开票时间
+    SYS_USER_ID : VARCHAR2(64) NULL -- 系统内务人员ID
+    USERNAME : VARCHAR2(20) NULL -- 系统内务人员名称
+}
+
+entity PU_PICKUP_INVOICE {
+    提货管理部分开票信息
+    ==
+    INVOICE_ID : VARCHAR2(64) PK IDGENERATOR NOT NULL -- 开票信息主键
+    PICKUP_ID : VARCHAR2(64) NULL -- 提货主键
+    INVOICE_NOTE : VARCHAR2(1000) NULL -- 开票备注
+    INVOICE_TIME : DATE NULL -- 开票时间
+    INVOICE_STATUS : NUMBER(6) DEFAULT 0 NOT NULL -- 状态(0:正常;1:已撤销)
+    SYS_USER_ID : VARCHAR2(64) NULL -- 系统内务人员ID
+    USERNAME : VARCHAR2(20) NULL -- 系统内务人员名称
+}
+
+entity PU_PRODUCTION_PLAN {
+    生产计划报备
+    ==
+    PLAN_ID : VARCHAR2(64) PK IDGENERATOR NOT NULL -- 生产计划报备主键
+    PLAN_NO : VARCHAR2(64) NULL -- 计划报备编号，周计划:W+年份（IsoFields.WEEK_BASED_YEAR）+周数(IsoFields.WEEK_OF_WEEK_BASED_YEAR)例子,W20191，月计划,M+年份（ChronoField.YEAR）+月分（ChronoField.MONTH_OF_YEAR）,例子：M201902
+    PLAN_TYPE : NUMBER(11) NULL -- 提报类型(0:周计划;1:月计划)
+    CREATED_TIME : NUMBER(20) NULL -- 提报日期
+    STATUS : NUMBER(6) DEFAULT 0 NULL -- 计划报备状态(0:正常;1:作废)
+    NOTE : VARCHAR2(800) NULL -- 提货备注
+    CUST_ID : VARCHAR2(20) NULL -- 客户ID(客户编号)
+    SAP_NO : VARCHAR2(100) NULL -- SAP编号
+    CUST_NAME : VARCHAR2(200) NULL -- 客户名称
+    REGION : VARCHAR2(200) NULL -- 所属大区
+    DEPART : VARCHAR2(200) NULL -- 所属部门
+    SALESMAN : VARCHAR2(100) NULL -- 所属业务员
+    QTY : NUMBER(15,4) NULL -- 总吨数
+    CANCELL_TIME : NUMBER(20) NULL -- 作废时间
+    SYS_USER_ID : VARCHAR2(64) NULL -- 系统内务人员ID
+    USERNAME : VARCHAR2(20) NULL -- 系统内务人员名称
+}
+
+entity PU_PRODUCTION_PLAN_ITEM {
+    生产计划报备明细
+    ==
+    PLAN_ITEM_ID : VARCHAR2(64) PK IDGENERATOR NOT NULL -- 报备明细主键
+    PLAN_ID : VARCHAR2(64) NULL -- 生产计划报备主键
+    FACTORY_ID : VARCHAR2(20) NULL -- 工厂ID
+    FACTORY_NAME : VARCHAR2(300) NULL -- 工厂名称
+    PIC_URL : VARCHAR2(100) NULL -- 图片
+    MATERIAL_ID : VARCHAR2(20) NULL -- 物料ID
+    MATERIAL_NAME : VARCHAR2(300) NULL -- 产品名称
+    CATEGORY : VARCHAR2(50) NULL -- 品类
+    BIG_CLASS : VARCHAR2(100) NULL -- 大类
+    QTY : NUMBER(15,4) NULL -- 吨数
+    SEQ : NUMBER(11) NULL -- 排序
+}
+
+entity PU_ORG_SUBORDINATE {
+    配置下级
+    ==
+    SUB_ID : VARCHAR2(64) PK IDGENERATOR NOT NULL -- 主键ID
+    EMP_NO : VARCHAR2(50) NULL -- 上级员工工号
+    SUB_EMP_NO : VARCHAR2(50) NULL -- 下级员工工号
+    LOGIN_NAME : VARCHAR2(160) NULL -- 下级登录名称
+    CUST_NAME : VARCHAR2(160) NULL -- 下级员工名称
+    UPDATE_NAME : VARCHAR2(160) NULL -- 修改人
+    UPDATE_TIME : DATE NULL -- 修改时间
+    'UNIQUE EMP_NO,SUB_EMP_NO
 }
 
 @enduml

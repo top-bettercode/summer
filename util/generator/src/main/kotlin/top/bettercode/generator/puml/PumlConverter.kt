@@ -108,7 +108,7 @@ object PumlConverter {
                             extra = extra.replace(Regex(" DEFAULT +'?$defaultVal'?"), "")
                         }
                         // SEQUENCE
-                        var sequence: String = ""
+                        var sequence = ""
                         var sequenceStartWith = 1
                         if (columnDef.contains("SEQUENCE")) {
                             sequence =
@@ -148,7 +148,9 @@ object PumlConverter {
                         extra = extra.replace(" AUTOINCREMENT", "", true)
                         extra = extra.replace(" NOT NULL", "", true)
                         extra = extra.replace(" NULL", "", true)
-                        extra = extra.replace(" PK", "", true).trim()
+                        extra = extra.replace(" PK", "", true)
+                        extra = extra.replace(" IDGENERATOR", "", true)
+                        extra = extra.replace(" VERSION", "", true).trim()
                         val column = Column(
                             tableCat = null,
                             columnName = columnName,

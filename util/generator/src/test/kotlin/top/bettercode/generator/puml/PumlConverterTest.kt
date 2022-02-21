@@ -47,9 +47,11 @@ class PumlConverterTest {
 
     @Test
     fun toOracleDLL() {
+        val out = File("build/gen/puml/oracle.sql")
+        out.parentFile.mkdirs()
         OracleToDDL.toDDL(
             PumlConverter.toTables(File(PumlConverterTest::class.java.getResource("/oracle.puml").file)),
-            File("build/gen/puml/oracle.sql")
+            out
         )
     }
 
