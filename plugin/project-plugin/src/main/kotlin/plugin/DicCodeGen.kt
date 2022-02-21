@@ -286,7 +286,7 @@ class DicCodeGen(private val project: Project) {
                     +"if (code == null) {"
                     +"return null;"
                     +"}"
-                    +"return CodeServiceHolder.getDefault().getName(ENUM_NAME, code);"
+                    +"return CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getName(code);"
                 }
                 method("codeOf", fieldType2, Parameter("name", JavaType.stringInstance)) {
                     javadoc {
@@ -302,9 +302,9 @@ class DicCodeGen(private val project: Project) {
                     +"return null;"
                     +"}"
                     if (isIntCode)
-                        +"return (Integer) CodeServiceHolder.getDefault().getCode(ENUM_NAME, name);"
+                        +"return (Integer) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
                     else
-                        +"return (String) CodeServiceHolder.getDefault().getCode(ENUM_NAME, name);"
+                        +"return (String) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
                 }
             }
             docText.appendln("|===")
