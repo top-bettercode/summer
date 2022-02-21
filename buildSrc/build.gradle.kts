@@ -1,9 +1,7 @@
 import java.util.*
 
-configurations {
-    all {
-        resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)
-    }
+plugins {
+    `embedded-kotlin`
 }
 
 repositories {
@@ -20,13 +18,20 @@ dependencies {
     properties.load(project.file("../gradle.properties").inputStream())
     val springVersion = properties.getProperty("spring.version")
     val kotlinVersion = properties.getProperty("kotlin.version")
-    val summerVersion = properties.getProperty("version")
+    val kotlinCoroutinesVersion = properties.getProperty("kotlin-coroutines.version")
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
 
     implementation("org.springframework.boot:spring-boot-gradle-plugin:${springVersion}")
 
-    implementation("top.bettercode.summer:publish-plugin:0.0.14-SNAPSHOT")
-//    implementation("top.bettercode.summer:publish-plugin:$summerVersion")
+    //--------------------------------------------
+    //publish plugin dependencies
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinCoroutinesVersion}")
+//    implementation("org.jetbrains.dokka:kotlin-as-java-plugin")
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:0.10.1")
+    implementation("com.gradle.publish:plugin-publish-plugin:0.15.0")
+    implementation("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0") {
+        exclude("org.jetbrains.kotlin")
+    }
 }

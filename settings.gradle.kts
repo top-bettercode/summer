@@ -23,7 +23,7 @@ include(":plugin:autodoc-plugin")
 include(":plugin:dist-plugin")
 include(":plugin:generator-plugin")
 include(":plugin:profile-plugin")
-include(":plugin:publish-plugin")
+//include(":plugin:publish-plugin")
 include(":plugin:project-plugin")
 
 include(":util:common-lang")
