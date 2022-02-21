@@ -242,6 +242,11 @@ public class ExcelField<T, P> {
     return code(propertyName);
   }
 
+  public ExcelField<T, P> codeServiceRef(String codeServiceRef) {
+    Assert.hasText(propertyName, "属性名称未设置");
+    return code(codeServiceRef, propertyName);
+  }
+
   public ExcelField<T, P> code(String codeType) {
     return code("", codeType);
   }
