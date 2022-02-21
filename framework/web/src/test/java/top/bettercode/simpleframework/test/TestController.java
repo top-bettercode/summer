@@ -1,7 +1,6 @@
 package top.bettercode.simpleframework.test;
 
 
-import java.io.Serializable;
 import java.util.Date;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.bettercode.lang.property.Settings;
 import top.bettercode.lang.util.StringUtil;
+import top.bettercode.simpleframework.support.code.CodeService;
 import top.bettercode.simpleframework.support.code.ICodeService;
 import top.bettercode.simpleframework.web.BaseController;
 import top.bettercode.simpleframework.web.DataDicBean;
@@ -54,17 +55,7 @@ public class TestController extends BaseController {
 
     @Bean
     public ICodeService codeNumberService() {
-      return new ICodeService() {
-        @Override
-        public String getName(String codeType, Serializable code) {
-          return "name";
-        }
-
-        @Override
-        public Number getCode(String codeType, String name) {
-          return 1;
-        }
-      };
+      return new CodeService(Settings.getDicCode());
     }
 
 

@@ -1,11 +1,7 @@
 package top.bettercode.simpleframework.support.code;
 
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Map.Entry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import top.bettercode.lang.property.PropertiesSource;
 
 /**
@@ -13,40 +9,17 @@ import top.bettercode.lang.property.PropertiesSource;
  */
 public class CodeService implements ICodeService {
 
-  private final Logger log = LoggerFactory.getLogger(CodeService.class);
   private final PropertiesSource propertiesSource;
+  private final ConcurrentMap<String, DicCodes> cache = new ConcurrentHashMap<>();
 
   public CodeService(PropertiesSource propertiesSource) {
     this.propertiesSource = propertiesSource;
   }
 
   @Override
-  public String getName(String codeType) {
-    return propertiesSource.getOrDefault(codeType, codeType);
-  }
-
-  @Override
-  public String getName(String codeType, Serializable code) {
-    return propertiesSource.getOrDefault(codeType + "." + code, String.valueOf(code));
-  }
-
-  @Override
-  public Serializable getCode(String codeType, String name) {
-    Assert.notNull(name, "name不能为空");
-    String type = propertiesSource.get(codeType + "|TYPE");
-    Map<Serializable, String> codes = propertiesSource.mapOf(codeType, "Int".equals(type));
-    for (Entry<Serializable, String> entry : codes.entrySet()) {
-      if (name.equals(entry.getValue())) {
-        return entry.getKey();
-      }
-    }
-    return null;
-  }
-
-  @Override
   public DicCodes getDicCodes(String codeType) {
-    String type = propertiesSource.get(codeType + "|TYPE");
-    Map<Serializable, String> codes = propertiesSource.mapOf(codeType, "Int".equals(type));
-    return new DicCodes(codeType, propertiesSource.get(codeType), codes);
+    return cache.computeIfAbsent(codeType,
+        ctype -> new DicCodes(ctype, propertiesSource.get(ctype),
+            propertiesSource.mapOf(ctype, "Int".equals(propertiesSource.get(ctype + "|TYPE")))));
   }
 }
