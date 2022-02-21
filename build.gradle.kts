@@ -63,13 +63,13 @@ allprojects {
 //            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
             dependency("org.jetbrains.dokka:dokka-gradle-plugin:0.10.1")
             dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlin-coroutines.version")}")
+            dependency("com.gradle.publish:plugin-publish-plugin:0.15.0")
+            dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
             dependency("org.springframework.boot:spring-boot-gradle-plugin:${property("spring.version")}")
             dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
 
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
-            dependency("com.gradle.publish:plugin-publish-plugin:0.15.0")
-            dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
             dependency("top.bettercode.wechat:weixin-mp:0.9.7")
             dependency("top.bettercode.wechat:weixin-app:0.9.7")
