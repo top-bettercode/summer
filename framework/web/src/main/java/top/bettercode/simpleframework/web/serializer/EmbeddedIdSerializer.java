@@ -22,6 +22,11 @@ public class EmbeddedIdSerializer extends StdScalarSerializer<Object> implements
   private static final long serialVersionUID = 1759139980737771L;
   private final String delimiter;
 
+
+  public EmbeddedIdSerializer() {
+    this(EmbeddedIdConverter.DELIMITER);
+  }
+
   public EmbeddedIdSerializer(String delimiter) {
     super(Object.class);
     this.delimiter = delimiter;

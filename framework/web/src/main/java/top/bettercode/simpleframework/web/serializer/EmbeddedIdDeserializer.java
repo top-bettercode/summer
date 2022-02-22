@@ -21,6 +21,11 @@ public class EmbeddedIdDeserializer extends JsonDeserializer<Object> implements
   private final Logger log = LoggerFactory.getLogger(EmbeddedIdDeserializer.class);
   private final String delimiter;
 
+
+  public EmbeddedIdDeserializer() {
+    this(EmbeddedIdConverter.DELIMITER);
+  }
+
   public EmbeddedIdDeserializer(String delimiter) {
     this.delimiter = delimiter;
   }
