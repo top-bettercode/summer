@@ -25,5 +25,4 @@ public class EmbeddedIdConverterTest {
     Assertions.assertEquals(embeddedIdBean, embeddedId);
   }
 
-
 }
