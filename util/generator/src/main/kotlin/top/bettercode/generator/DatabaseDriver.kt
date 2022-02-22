@@ -221,7 +221,7 @@ enum class DatabaseDriver(private val productName: String?,
         /**
          * Find a [DatabaseDriver] for the given URL.
          * @param url the JDBC URL
-         * @return the database driver or [UNKNOWN] if not found
+         * @return the database driver or UNKNOWN if not found
          */
         fun fromJdbcUrl(url: String): DatabaseDriver {
             if (url.isNotBlank()) {
@@ -248,7 +248,7 @@ enum class DatabaseDriver(private val productName: String?,
         /**
          * Find a [DatabaseDriver] for the given product name.
          * @param productName product name
-         * @return the database driver or [UNKNOWN] if not found
+         * @return the database driver or UNKNOWN if not found
          */
         fun fromProductName(productName: String): DatabaseDriver {
             if (productName.isNotBlank()) {

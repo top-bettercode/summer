@@ -29,7 +29,7 @@ open class Operation(
      * HTTP servlets, the value returned is the same as the value of the CGI
      * variable <code>SERVER_PROTOCOL</code>.
      *
-     * @return a <code>String</code> containing the protocol name and version
+     * a <code>String</code> containing the protocol name and version
      *         number
      */
     var protocol: String = "",
