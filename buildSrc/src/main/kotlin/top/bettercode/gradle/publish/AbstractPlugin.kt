@@ -247,13 +247,18 @@ abstract class AbstractPlugin : Plugin<Project> {
                 )
             }
         }
+        project.tasks.named("publishToMavenLocal") {
+            it.doLast {
+                println("${project.name}:${project.version} published to: MavenLocal")
+            }
+        }
         project.tasks.named("publish") {
             it.doLast {
                 project.extensions.getByType(PublishingExtension::class.java).repositories.forEach { repository ->
                     if (repository is MavenArtifactRepository) {
-                        println("${project.name} published to: ${repository.url}")
+                        println("${project.name}:${project.version} published to: ${repository.url}")
                     } else {
-                        println("${project.name} published to: ${repository.name}")
+                        println("${project.name}:${project.version} published to: ${repository.name}")
                     }
                 }
 
