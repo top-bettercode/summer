@@ -236,7 +236,7 @@ class Entity : ProjectGenerator() {
             import("top.bettercode.lang.util.StringUtil")
             method("toString", JavaType.stringInstance) {
                 annotation("@Override")
-                +"return StringUtil.valueOf(this);"
+                +"return StringUtil.json(this);"
             }
 
             val specType =
