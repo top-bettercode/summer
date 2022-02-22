@@ -130,7 +130,7 @@ open class Controller : ProjectGenerator() {
                     import("java.util.Optional")
                     import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
 
-                    +"$className $entityName = ${projectEntityName}Service.findById(${if (isCompositePrimaryKey) "new ${primaryKeyType.shortName}($primaryKeyName)" else primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
+                    +"$className $entityName = ${projectEntityName}Service.findById(${if (isCompositePrimaryKey) "${primaryKeyType.shortName}.of($primaryKeyName)" else primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
                     +"return ok($entityName${if (isFullComposite) "get${primaryKeyClassName}()" else ""});"
                 }
 
@@ -175,7 +175,7 @@ open class Controller : ProjectGenerator() {
                             annotation("@javax.validation.constraints.NotNull")
                         }
                     }
-                    +"${projectEntityName}Service.deleteById(${if (isCompositePrimaryKey) "new ${primaryKeyType.shortName}($primaryKeyName)" else primaryKeyName});"
+                    +"${projectEntityName}Service.deleteById(${if (isCompositePrimaryKey) "${primaryKeyType.shortName}.of($primaryKeyName)" else primaryKeyName});"
                     +"return noContent();"
                 }
             }

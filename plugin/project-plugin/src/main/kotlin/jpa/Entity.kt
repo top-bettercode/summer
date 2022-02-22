@@ -233,14 +233,10 @@ class Entity : ProjectGenerator() {
             }
 
             //toString
+            import("top.bettercode.lang.util.StringUtil")
             method("toString", JavaType.stringInstance) {
                 annotation("@Override")
-                +"return \"${className}{\" +"
-                +"    \"${primaryKeyName}='\" + $primaryKeyName + '\\'' +"
-                otherColumns.forEachIndexed { _, it ->
-                    +"    \", ${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
-                }
-                +"    '}';"
+                +"return StringUtil.valueOf(this);"
             }
 
             val specType =

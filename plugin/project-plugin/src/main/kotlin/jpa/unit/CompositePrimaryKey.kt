@@ -54,6 +54,10 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 isStatic = true
                 +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, ${type.shortName}.class);"
             }
+            method("of", type, Parameter(primaryKeyName, JavaType.stringInstance), Parameter("delimiter", JavaType.stringInstance)) {
+                isStatic = true
+                +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, delimiter, ${type.shortName}.class);"
+            }
         }
 
         primaryKeys.forEach {
@@ -145,13 +149,10 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         //toString
+        import("top.bettercode.lang.util.StringUtil")
         method("toString", JavaType.stringInstance) {
             annotation("@Override")
-            +"return \"${className}{\" +"
-            primaryKeys.forEachIndexed { _, it ->
-                +"    \"${it.javaName}=${if (it.javaType == JavaType.stringInstance) "'" else ""}\" + ${it.javaName} ${if (it.javaType == JavaType.stringInstance) "+ '\\'' " else ""}+"
-            }
-            +"    '}';"
+            +"return StringUtil.valueOf(this);"
         }
     }
 }
