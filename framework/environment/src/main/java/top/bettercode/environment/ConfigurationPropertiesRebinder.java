@@ -73,7 +73,6 @@ public class ConfigurationPropertiesRebinder
 					bean = ProxyUtils.getTargetObject(bean);
 				}
 				if (bean != null) {
-					// TODO: determine a more general approach to fix this.
 					// see https://github.com/spring-cloud/spring-cloud-commons/issues/571
 					if (getNeverRefreshable().contains(bean.getClass().getName())) {
 						return false; // ignore

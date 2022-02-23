@@ -51,22 +51,21 @@ import java.util.*
 open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSystem(classLoader) {
 
     private val log: Logger = LoggerFactory.getLogger(Logback2LoggingSystem::class.java)
-    private val loggerContext: LoggerContext
-        get() {
-            val factory = StaticLoggerBinder.getSingleton().loggerFactory
-            Assert.isInstanceOf(
-                LoggerContext::class.java, factory,
-                String.format(
-                    "LoggerFactory is not a Logback LoggerContext but Logback is on "
-                            + "the classpath. Either remove Logback or the competing "
-                            + "implementation (%s loaded from %s). If you are using "
-                            + "WebLogic you will need to add 'org.slf4j' to "
-                            + "prefer-application-packages in WEB-INF/weblogic.xml",
-                    factory.javaClass, getLocation(factory)
-                )
+    private val loggerContext: LoggerContext by lazy {
+        val factory = StaticLoggerBinder.getSingleton().loggerFactory
+        Assert.isInstanceOf(
+            LoggerContext::class.java, factory,
+            String.format(
+                "LoggerFactory is not a Logback LoggerContext but Logback is on "
+                        + "the classpath. Either remove Logback or the competing "
+                        + "implementation (%s loaded from %s). If you are using "
+                        + "WebLogic you will need to add 'org.slf4j' to "
+                        + "prefer-application-packages in WEB-INF/weblogic.xml",
+                factory.javaClass, getLocation(factory)
             )
-            return factory as LoggerContext
-        }
+        )
+        factory as LoggerContext
+    }
 
     override fun loadDefaults(
         initializationContext: LoggingInitializationContext,

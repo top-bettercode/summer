@@ -10,11 +10,21 @@ public interface ICodeService {
   }
 
   default String getName(String codeType, Serializable code) {
-    return (code == null) ? null : String.valueOf(code);
+    if (code == null) {
+      return null;
+    } else {
+      DicCodes dicCodes = getDicCodes(codeType);
+      return dicCodes == null ? String.valueOf(code) : dicCodes.getName(code);
+    }
   }
 
   default Serializable getCode(String codeType, String name) {
-    return null;
+    if (name == null) {
+      return null;
+    } else {
+      DicCodes dicCodes = getDicCodes(codeType);
+      return dicCodes == null ? null : dicCodes.getCode(name);
+    }
   }
 
   default DicCodes getDicCodes(String codeType) {
