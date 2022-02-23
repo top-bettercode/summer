@@ -31,7 +31,6 @@ object InitField {
     fun init(
         operation: DocOperation,
         extension: GeneratorExtension,
-        allTables: Boolean,
         wrap: Boolean,
         defaultValueHeaders: Map<String, String>,
         defaultValueParams: Map<String, String>
@@ -47,7 +46,7 @@ object InitField {
         var resHeadNeedFix = response.headersExt.blankField()
         var resContentNeedFix = response.contentExt.blankField()
         if (uriNeedFix.isNotEmpty() || reqHeadNeedFix.isNotEmpty() || paramNeedFix.isNotEmpty() || partNeedFix.isNotEmpty() || reqContentNeedFix.isNotEmpty() || resHeadNeedFix.isNotEmpty() || resContentNeedFix.isNotEmpty()) {
-            extension.fixFields(allTables) { fields, onlyDesc ->
+            extension.fixFields { fields, onlyDesc ->
                 fields.fix(needFixFields = uriNeedFix, onlyDesc = onlyDesc)
                 fields.fix(needFixFields = reqHeadNeedFix, onlyDesc = onlyDesc)
                 fields.fix(needFixFields = paramNeedFix, onlyDesc = onlyDesc)
@@ -125,66 +124,68 @@ object InitField {
     }
 
     private fun GeneratorExtension.fixFields(
-        allTables: Boolean,
         fn: (Set<Field>, Boolean) -> Boolean
     ) {
-        this.datasource.schema = Autodoc.schema
+        if (fn(messageFields, true)) return
 
-        when (this.dataType) {
-            DataType.DATABASE -> {
-                try {
-                    val ext = this
-                    use {
+        val ext = this
+
+        val fixFields =
+            { sources: Map<String, List<File>>, toTables: (file: File, module: String) -> List<Table> ->
+                sources.forEach all@{ (module, files) ->
+                    files.forEach { file ->
+                        val tables = toTables(file, module)
                         for (tableName in Autodoc.tableNames) {
-                            val table = table(tableName)
+                            val table = tables.find { it.tableName == tableName }
                             if (table != null) {
-                                if (fn(table.fields(extension = ext), false)) break
+                                if (fn(table.fields(extension = ext), false)) {
+                                    return@all
+                                }
                             }
                         }
-                        fn(messageFields, true)
-                        if (allTables) {
-                            val tableNames =
-                                tableNames().filter { !Autodoc.tableNames.contains(it) }
-                            for (tableName in tableNames) {
-                                val table = table(tableName)
-                                if (table != null) {
-                                    if (fn(table.fields(extension = ext), false)) break
+                        for (table in tables.filter { !Autodoc.tableNames.contains(it.tableName) }) {
+                            if (fn(table.fields(extension = ext), false)) {
+                                return@all
+                            }
+                        }
+                    }
+                }
+            }
+        when (dataType) {
+            DataType.DATABASE -> {
+                datasources.forEach { (_, jdbc) ->
+                    jdbc.schema = Autodoc.schema
+                    jdbc.use {
+                        Autodoc.tableNames.forEach { tableName ->
+                            val table = table(tableName)
+                            if (table != null) {
+                                if (fn(table.fields(extension = ext), false)) {
+                                    return
+                                }
+                            }
+                        }
+                        val tableNames = tableNames().toMutableList()
+                        tableNames.removeAll(Autodoc.tableNames)
+                        tableNames.forEach { tableName ->
+                            val table = table(tableName)
+                            if (table != null) {
+                                if (fn(table.fields(extension = ext), false)) {
+                                    return
                                 }
                             }
                         }
                     }
-                } catch (ignore: ClassNotFoundException) {
                 }
             }
             DataType.PUML -> {
-                val tables = this.pumlAllSources.map { PumlConverter.toTables(it) }.flatten()
-                this.fixFields(allTables, tables, fn)
+                fixFields(pumlSources) { file, module ->
+                    PumlConverter.toTables(file, module)
+                }
             }
             DataType.PDM -> {
-                val tables = PdmReader.read(this.file(this.pdmSrc)).asSequence()
-                this.fixFields(allTables, tables, fn)
-            }
-        }
-    }
-
-    private fun GeneratorExtension.fixFields(
-        allTables: Boolean,
-        tables: Sequence<Table>,
-        fn: (Set<Field>, Boolean) -> Boolean
-    ) {
-        for (tableName in Autodoc.tableNames) {
-            val table = tables.find { it.tableName == tableName }
-                ?: throw RuntimeException("未在(${tables.joinToString(",") { it.tableName }})中找到${tableName}表")
-
-            if (fn(table.fields(this), false)) break
-        }
-
-        fn(messageFields, true)
-
-        if (allTables) {
-            val needTables = tables.filter { !Autodoc.tableNames.contains(it.tableName) }
-            for (table in needTables) {
-                if (fn(table.fields(this), false)) break
+                fixFields(pdmSources) { file, module ->
+                    PdmReader.read(file, module)
+                }
             }
         }
     }
@@ -213,7 +214,13 @@ object InitField {
         } else {
             if (primaryKeys.size > 1) {
                 fields.add(Field(entityName(extension) + "Key", "String", remarks + "主键"))
-                fields.add(Field(English.plural(entityName(extension) + "Key"), "String", remarks + "主键"))
+                fields.add(
+                    Field(
+                        English.plural(entityName(extension) + "Key"),
+                        "String",
+                        remarks + "主键"
+                    )
+                )
             }
         }
         return fields

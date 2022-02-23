@@ -18,8 +18,7 @@ class Interface(
     override val staticImports: MutableSet<String> = mutableSetOf()
     override val fileCommentLines: MutableList<String> = mutableListOf()
 
-    override val formattedContent: String
-        get() = getFormattedContent(0, this)
+    override val formattedContent: String by lazy { getFormattedContent(0, this) }
 
 
     override fun getFormattedContent(indentLevel: Int, compilationUnit: CompilationUnit): String {

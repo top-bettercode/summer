@@ -5,22 +5,24 @@ import java.util.*
 /**
  * Enumeration of common database drivers.
  */
-enum class DatabaseDriver(private val productName: String?,
-                          /**
-                           * Return the driver class name.
-                           * @return the class name or `null`
-                           */
-                          val driverClassName: String?,
-                          /**
-                           * Return the XA driver source class name.
-                           * @return the class name or `null`
-                           */
-                          val xaDataSourceClassName: String? = null,
-                          /**
-                           * Return the validation query.
-                           * @return the validation query or `null`
-                           */
-                          val validationQuery: String? = null) {
+enum class DatabaseDriver(
+    private val productName: String?,
+    /**
+     * Return the driver class name.
+     * @return the class name or `null`
+     */
+    val driverClassName: String?,
+    /**
+     * Return the XA driver source class name.
+     * @return the class name or `null`
+     */
+    val xaDataSourceClassName: String? = null,
+    /**
+     * Return the validation query.
+     * @return the validation query or `null`
+     */
+    val validationQuery: String? = null
+) {
 
     /**
      * Unknown type.
@@ -71,8 +73,7 @@ enum class DatabaseDriver(private val productName: String?,
         "SELECT 1"
     ) {
 
-        override val id: String
-            get() = "mysql"
+        override val id: String = "mysql"
     },
 
     /**
@@ -104,8 +105,7 @@ enum class DatabaseDriver(private val productName: String?,
         "HDB", "com.sap.db.jdbc.Driver", "com.sap.db.jdbcext.XADataSourceSAP",
         "SELECT 1 FROM SYS.DUMMY"
     ) {
-        override val urlPrefixes: Collection<String>
-            get() = setOf("sap")
+        override val urlPrefixes: Collection<String> = setOf("sap")
     },
 
     /**
@@ -140,8 +140,7 @@ enum class DatabaseDriver(private val productName: String?,
         "org.firebirdsql.ds.FBXADataSource", "SELECT 1 FROM RDB\$DATABASE"
     ) {
 
-        override val urlPrefixes: Collection<String>
-            get() = setOf("firebirdsql")
+        override val urlPrefixes: Collection<String> = setOf("firebirdsql")
 
         override fun matchProductName(productName: String): Boolean {
             return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH)
@@ -172,11 +171,9 @@ enum class DatabaseDriver(private val productName: String?,
         "SELECT 1 FROM SYSIBM.SYSDUMMY1"
     ) {
 
-        override val id: String
-            get() = "db2"
+        override val id: String = "db2"
 
-        override val urlPrefixes: Collection<String>
-            get() = setOf("as400")
+        override val urlPrefixes: Collection<String> = setOf("as400")
 
         override fun matchProductName(productName: String): Boolean {
             return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH)
@@ -197,8 +194,7 @@ enum class DatabaseDriver(private val productName: String?,
         "select count(*) from systables"
     ) {
 
-        override val urlPrefixes: Collection<String>
-            get() = listOf("informix-sqli", "informix-direct")
+        override val urlPrefixes: Collection<String> = listOf("informix-sqli", "informix-direct")
 
     };
 
@@ -206,11 +202,13 @@ enum class DatabaseDriver(private val productName: String?,
      * Return the identifier of this driver.
      * @return the identifier
      */
-    open val id: String
-        get() = name.toLowerCase(Locale.ENGLISH)
+    open val id: String by lazy {
+        name.toLowerCase(Locale.ENGLISH)
+    }
 
-    protected open val urlPrefixes: Collection<String>
-        get() = setOf(this.name.toLowerCase(Locale.ENGLISH))
+    protected open val urlPrefixes: Collection<String> by lazy {
+        setOf(this.name.toLowerCase(Locale.ENGLISH))
+    }
 
     protected open fun matchProductName(productName: String): Boolean {
         return this.productName != null && this.productName.equals(productName, ignoreCase = true)

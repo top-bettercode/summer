@@ -127,12 +127,11 @@ object CoreProjectTasks {
                     propertiesFile.writeText("")
                     val codeTypes: MutableSet<String> = mutableSetOf()
                     //生成 properties
-                    PumlConverter.reformat(gen)
+                    gen.tableNames= emptyArray()
                     gen.generators = arrayOf(DicCodeProperties(propertiesFile, codeTypes))
-                    gen.tableNames = Generators.tableNames(gen, true).toTypedArray()
                     Generators.call(gen)
                     //生成
-                    val dicCodeGen = DicCodeGen(project, gen)
+                    val dicCodeGen = DicCodeGen(project)
                     dicCodeGen.setUp()
                     dicCodeGen.genCode()
                     dicCodeGen.tearDown()

@@ -18,6 +18,9 @@ enum class DataType {
     PDM
 }
 
+const val defaultModuleName = "modules"
+
+
 /**
  * @author Peter Wu
  */
@@ -25,12 +28,11 @@ open class GeneratorExtension(
     /**
      * JDBC连接配置
      */
-    val datasource: JDBCConnectionConfiguration = JDBCConnectionConfiguration(),
+    var datasources: Map<String, JDBCConnectionConfiguration> = mapOf(),
     /**
-     * 单数据源
+     * 子项目共用数据源
      */
-    var singleDatasource: Boolean = true,
-    var debug: Boolean = false,
+    var unitedDatasource: Boolean = true,
     /**
      * 包名是否自动加项目名区分
      */
@@ -52,9 +54,7 @@ open class GeneratorExtension(
     /**
      * pdm文件路径
      */
-    var pdmSrc: String = "database/database.pdm",
-    var pumlDatabaseDriver: DatabaseDriver = datasource.databaseDriver,
-    var pumlDatabase: String = "puml/database",
+    var pdmSrc: String = "pdm",
     /**
      * PlantUML 图片类型
      */
@@ -63,10 +63,6 @@ open class GeneratorExtension(
      * SQL 脚本目录
      */
     var sqlOutput: String = "database",
-    /**
-     * 升级SQL脚本文件名称
-     */
-    var updateSqlOutput: String = "update.sql",
     var sqlQuote: Boolean = true,
     /**
      * 覆盖所有已生成文件
@@ -102,10 +98,6 @@ open class GeneratorExtension(
      * SQL更新时，根据什么更新
      */
     var updateFromType: DataType = DataType.DATABASE,
-    /**
-     * 模块
-     */
-    var module: String = "modules",
 
     var applicationName: String = "",
 
@@ -151,11 +143,6 @@ open class GeneratorExtension(
      * 相关数据表
      */
     var tableNames: Array<String> = arrayOf(),
-    var pumlTableNames: Array<String> = arrayOf(),
-    /**
-     * 生成PUML时是否查询index，查询较耗时
-     */
-    var queryIndex: Boolean = true,
     /**
      * 额外设置
      */
@@ -179,14 +166,12 @@ open class GeneratorExtension(
 
     }
 
+    val defaultDatasource: JDBCConnectionConfiguration by lazy { datasources[defaultModuleName]!! }
+
     /**
      * PlantUML 脚本目录
      */
-    var pumlSrc: String = "puml/src"
-        get() = if (defaultModule) field else "puml/$module"
-
-    val defaultModule: Boolean
-        get() = "modules" == module
+    var pumlSrc: String = "puml"
 
     /**
      * 根路径
@@ -196,12 +181,11 @@ open class GeneratorExtension(
             findUpPath(basePath)
         } else field
 
-    private val path: File?
-        get() {
-            return if (File(basePath, pumlSrc).exists())
-                basePath
-            else rootPath
-        }
+    private val path: File? by lazy {
+        if (File(basePath, pumlSrc).exists())
+            basePath
+        else rootPath
+    }
 
     /**
      * json 序列化过滤字段
@@ -214,22 +198,6 @@ open class GeneratorExtension(
     var className: (String) -> String = { str ->
         javaName(str.substringAfter(tablePrefixes.find { str.startsWith(it) } ?: ""), true)
     }
-
-    val sqlDDLOutput: String
-        get() {
-            return if (!defaultModule) {
-                "$sqlOutput/ddl-$module"
-            } else
-                "$sqlOutput/ddl"
-        }
-
-    private val sqlUpdateOutput: String
-        get() {
-            return if (!defaultModule) {
-                "$sqlOutput/update-$module"
-            } else
-                "$sqlOutput/update"
-        }
 
     private fun findUpPath(file: File): File? {
         val parentFile = file.absoluteFile.parentFile
@@ -248,10 +216,110 @@ open class GeneratorExtension(
             null
     }
 
-    fun <T> use(metaData: DatabaseMetaData.() -> T): T {
-        if (datasource.available) {
-            Class.forName(datasource.driverClass).getConstructor().newInstance()
-            val databaseMetaData = DatabaseMetaData(datasource, debug, queryIndex)
+
+    fun file(subfile: String): File {
+        val file = File(subfile)
+        if (file.isAbsolute)
+            return file
+        return File(path, subfile)
+    }
+
+    fun isDefaultModule(moduleName: String): Boolean {
+        return "modules" == moduleName
+    }
+
+    val pumlSources: Map<String, List<File>> by lazy {
+        file(pumlSrc).listFiles()?.filter { it.isDirectory && "database" != it.name }
+            ?.associateBy(
+                {
+                    if ("src" == it.name) {
+                        defaultModuleName
+                    } else it.name
+                }
+            ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
+            ?: emptyMap()
+    }
+
+    val pdmSources: Map<String, List<File>> by lazy {
+        file(pdmSrc).listFiles()?.filter { it.isDirectory && "database" != it.name }
+            ?.associateBy(
+                { if ("src" == it.name) "modules" else it.name }
+            ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "pdm" }.toList() }
+            ?: emptyMap()
+    }
+
+    val pumlDatabaseSources: Map<String, List<File>> by lazy {
+        file(pumlSrc).listFiles()?.filter { "database" == it.name }
+            ?.associateBy(
+                {
+                    if ("src" == it.name) {
+                        defaultModuleName
+                    } else it.name
+                }
+            ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
+            ?: emptyMap()
+    }
+}
+
+class JDBCConnectionConfiguration(
+    var url: String = "",
+    var catalog: String? = null,
+    val properties: Properties = Properties().apply {
+        set("remarksReporting", "true") //oracle 读取表注释
+        set("useInformationSchema", "true")//mysql 读取表注释
+        set("nullCatalogMeansCurrent", "true")//mysql 读取表
+        set("characterEncoding", "utf8")
+        set("user", "root")
+        set("password", "root")
+    }
+) {
+    val available: Boolean by lazy { url.isNotBlank() }
+
+    var schema: String? = null
+        get() {
+            return if (field.isNullOrBlank()) {
+                when {
+                    isOracle -> username.toUpperCase(Locale.getDefault())
+                    databaseDriver == DatabaseDriver.H2 -> "PUBLIC"
+                    else -> field
+                }
+            } else {
+                field
+            }
+        }
+
+    val isOracle by lazy { databaseDriver == DatabaseDriver.ORACLE}
+
+    val databaseDriver by lazy {DatabaseDriver.fromJdbcUrl(url)}
+
+    var driverClass: String = ""
+        get() {
+            return if (field.isBlank() && url.isNotBlank()) {
+                databaseDriver.driverClassName ?: ""
+            } else {
+                field
+            }
+
+        }
+
+    var module: String = defaultModuleName
+
+    var username: String
+        set(value) = properties.set("user", value)
+        get() = properties.getProperty("user")
+    var password: String by properties
+
+    var debug: Boolean = false
+
+    /**
+     * 生成PUML时是否查询index，查询较耗时
+     */
+    var queryIndex: Boolean = true
+
+    inline fun <T> use(metaData: DatabaseMetaData.() -> T): T {
+        if (available) {
+            Class.forName(driverClass).getConstructor().newInstance()
+            val databaseMetaData = DatabaseMetaData(module, this, debug, queryIndex)
             try {
                 return metaData(databaseMetaData)
             } finally {
@@ -263,12 +331,18 @@ open class GeneratorExtension(
     }
 
     fun <T> run(connectionFun: Connection.() -> T): T {
-        Class.forName(datasource.driverClass).getConstructor().newInstance()
-        val connection = DriverManager.getConnection(datasource.url, datasource.properties)
+        Class.forName(driverClass).getConstructor().newInstance()
+        val connection = DriverManager.getConnection(url, properties)
         try {
             return connectionFun(connection)
         } finally {
             connection.close()
+        }
+    }
+
+    fun tableNames(): List<String> {
+        return use {
+            tableNames()
         }
     }
 
@@ -316,89 +390,4 @@ open class GeneratorExtension(
         return tableNames.mapNotNull { resultMap[it] }.toList()
     }
 
-    fun file(subfile: String): File {
-        val file = File(subfile)
-        if (file.isAbsolute)
-            return file
-        return File(path, subfile)
-    }
-
-    fun pumlSqlOutputFile(src: File, source: File): File {
-        val dest = File(
-            File(
-                file(sqlDDLOutput),
-                src.parentFile.absolutePath.replace(source.absolutePath, "")
-            ), src.nameWithoutExtension + ".sql"
-        )
-        dest.parentFile.mkdirs()
-        return dest
-    }
-
-    fun pumlSqlUpdateOutputFile(): File {
-        val dest = File(file(sqlUpdateOutput), updateSqlOutput)
-        dest.parentFile.mkdirs()
-        return dest
-    }
-
-    val pumlSrcSources: Sequence<File>
-        get() {
-            return file(pumlSrc).walkTopDown().filter { it.isFile && it.extension == "puml" }
-        }
-
-    val pumlAllSources: Sequence<File>
-        get() {
-            return file(pumlSrc).walkTopDown()
-                .filter { it.isFile && it.extension == "puml" } + file(pumlDatabase).parentFile.walkTopDown()
-                .filter { it.isFile && it.extension == "puml" }
-        }
-}
-
-class JDBCConnectionConfiguration(
-    var url: String = "",
-    var catalog: String? = null,
-    val properties: Properties = Properties().apply {
-        set("remarksReporting", "true") //oracle 读取表注释
-        set("useInformationSchema", "true")//mysql 读取表注释
-        set("nullCatalogMeansCurrent", "true")//mysql 读取表
-        set("characterEncoding", "utf8")
-        set("user", "root")
-        set("password", "root")
-    }
-) {
-    val available: Boolean
-        get() = url.isNotBlank()
-
-    var schema: String? = null
-        get() {
-            return if (field.isNullOrBlank()) {
-                when {
-                    isOracle -> username.toUpperCase(Locale.getDefault())
-                    databaseDriver == DatabaseDriver.H2 -> "PUBLIC"
-                    else -> field
-                }
-            } else {
-                field
-            }
-        }
-
-    val isOracle
-        get() = databaseDriver == DatabaseDriver.ORACLE
-
-    val databaseDriver
-        get() = DatabaseDriver.fromJdbcUrl(url)
-
-    var driverClass: String = ""
-        get() {
-            return if (field.isBlank() && url.isNotBlank()) {
-                databaseDriver.driverClassName ?: ""
-            } else {
-                field
-            }
-
-        }
-
-    var username: String
-        set(value) = properties.set("user", value)
-        get() = properties.getProperty("user")
-    var password: String by properties
 }

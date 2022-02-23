@@ -60,7 +60,7 @@ class Entity : ProjectGenerator() {
                     if (primaryKey.remarks.isNotBlank() || !primaryKey.columnDef.isNullOrBlank())
                         javadoc {
                             +"/**"
-                            +" * ${getRemark(primaryKey)}"
+                            +" * ${primaryKey.docRemark}"
                             +" */"
                         }
 
@@ -119,7 +119,7 @@ class Entity : ProjectGenerator() {
                     if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                         javadoc {
                             +"/**"
-                            +" * ${getRemark(it)}"
+                            +" * ${it.docRemark}"
                             +" */"
                         }
 
@@ -154,7 +154,7 @@ class Entity : ProjectGenerator() {
                     if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                         javadoc {
                             +"/**"
-                            +" * ${getReturnRemark(it)}"
+                            +" * ${it.returnRemark}"
                             +" */"
                         }
                     +"return ${it.javaName};"
@@ -167,7 +167,7 @@ class Entity : ProjectGenerator() {
                 ) {
                     javadoc {
                         +"/**"
-                        +" * ${getParamRemark(it)}"
+                        +" * ${it.paramRemark}"
                         +" * @return ${remarks}实例"
                         +" */"
                     }

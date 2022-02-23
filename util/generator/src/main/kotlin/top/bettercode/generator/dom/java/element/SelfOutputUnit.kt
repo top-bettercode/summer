@@ -13,7 +13,6 @@ class SelfOutputUnit(
     override val isTestFile: Boolean = false
 ) : GenUnit {
 
-    override val output: PrintWriter.() -> Unit
-        get() = { }
+    override val output: PrintWriter.() -> Unit = { }
 
 }

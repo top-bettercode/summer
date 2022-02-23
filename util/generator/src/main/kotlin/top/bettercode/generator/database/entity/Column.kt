@@ -66,59 +66,58 @@ data class Column(
         }
     }
 
-    private val codeRemarks: String
-        get() =
-            remarks.replace('（', '(').replace('）', ')').replace('：', ':')
-                .replace(Regex(" *: *"), ":").replace(Regex(" +"), " ")
-                .replace('；', ';').replace(' ', ';').replace(Regex(";+"), ";")
+    private val codeRemarks: String by lazy {
+        remarks.replace('（', '(').replace('）', ')').replace('：', ':')
+            .replace(Regex(" *: *"), ":").replace(Regex(" +"), " ")
+            .replace('；', ';').replace(' ', ';').replace(Regex(";+"), ";")
+    }
 
-    private val oldCodeRemarks: String
-        get() = codeRemarks.replace('，', ',')
+    private val oldCodeRemarks: String by lazy {
+        codeRemarks.replace('，', ',')
             .replace(Regex(",+"), ",")
+    }
 
 
-    val prettyRemarks: String
-        get() {
-            return when {
-                oldCodeRemarks.matches(Regex(".*\\((.*:.*[, ]?)+\\).*")) && !oldCodeRemarks.contains(
-                    ";"
-                ) -> {
-                    oldCodeRemarks.replace(",", ";")
-                }
-                isCodeField -> {
-                    codeRemarks
-                }
-                else -> {
-                    remarks
-                }
+    val prettyRemarks: String by lazy {
+        when {
+            oldCodeRemarks.matches(Regex(".*\\((.*:.*[, ]?)+\\).*")) && !oldCodeRemarks.contains(
+                ";"
+            ) -> {
+                oldCodeRemarks.replace(",", ";")
+            }
+            isCodeField -> {
+                codeRemarks
+            }
+            else -> {
+                remarks
             }
         }
+    }
 
-    val isCodeField: Boolean
-        get() = codeRemarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
-
+    val isCodeField: Boolean by lazy {
+        codeRemarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
+    }
 
     val javaType: JavaType
-        get() = JavaTypeResolver.calculateJavaType(this)
+            by lazy { JavaTypeResolver.calculateJavaType(this) }
     val jdbcType: String
-        get() = JavaTypeResolver.calculateJdbcTypeName(this)
+            by lazy { JavaTypeResolver.calculateJdbcTypeName(this) }
     val javaName: String = GeneratorExtension.javaName(this.columnName)
     val typeDesc: String
-        get() = "$typeName${if (containsSize) "($columnSize${if (decimalDigits > 0) ",$decimalDigits" else ""})" else ""}"
-    val defaultDesc: String
-        get() {
-            val isString = typeName.startsWith("VARCHAR", true) || typeName.startsWith(
-                "TEXT",
-                true
-            ) || typeName.startsWith("TINYTEXT", true) || typeName.startsWith("MEDIUMTEXT", true)
-            return if (columnDef == null) "" else {
-                val qt = if (isString) "'" else ""
-                (" DEFAULT $qt$columnDef$qt")
-            }
+            by lazy { "$typeName${if (containsSize) "($columnSize${if (decimalDigits > 0) ",$decimalDigits" else ""})" else ""}" }
+    val defaultDesc: String by lazy {
+        val isString = typeName.startsWith("VARCHAR", true) || typeName.startsWith(
+            "TEXT",
+            true
+        ) || typeName.startsWith("TINYTEXT", true) || typeName.startsWith("MEDIUMTEXT", true)
+        if (columnDef == null) "" else {
+            val qt = if (isString) "'" else ""
+            (" DEFAULT $qt$columnDef$qt")
         }
+    }
 
-    val containsSize: Boolean
-        get() = columnSize > 0 && !arrayOf(
+    val containsSize: Boolean by lazy {
+        columnSize > 0 && !arrayOf(
             java.lang.Object::class.java.name,
             "byte[]",
             java.util.Date::class.java.name,
@@ -134,6 +133,7 @@ data class Column(
             "CLOB",
             "NCLOB"
         ).contains(typeName.toUpperCase(Locale.getDefault()))
+    }
 
     fun isSoftDelete(extension: GeneratorExtension): Boolean =
         javaName == extension.softDeleteColumnName

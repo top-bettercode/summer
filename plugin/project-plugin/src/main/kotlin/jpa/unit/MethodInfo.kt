@@ -44,7 +44,7 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
             if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                 javadoc {
                     +"/**"
-                    +" * ${getReturnRemark(it)}"
+                    +" * ${it.returnRemark}"
                     +" */"
                 }
         }

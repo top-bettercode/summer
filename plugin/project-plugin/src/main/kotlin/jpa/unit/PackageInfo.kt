@@ -6,7 +6,7 @@ import top.bettercode.generator.dom.java.element.PackageInfo
 val modulePackageInfo: ProjectGenerator.(PackageInfo) -> Unit = { unit ->
     unit.apply {
         +"""/**
- * $moduleName
+ * ${table.subModuleName}
  */
 package ${type.packageName};"""
     }

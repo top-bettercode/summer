@@ -3,13 +3,13 @@ package top.bettercode.gradle.generator
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceFileReader
-import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import top.bettercode.generator.DataType
-import top.bettercode.generator.GeneratorExtension
-import top.bettercode.generator.JDBCConnectionConfiguration
+import top.bettercode.generator.*
 import top.bettercode.generator.database.entity.Table
+import top.bettercode.generator.ddl.MysqlToDDL
+import top.bettercode.generator.ddl.OracleToDDL
+import top.bettercode.generator.ddl.SqlLiteToDDL
 import top.bettercode.generator.dsl.Generator
 import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.dsl.def.PlantUML
@@ -34,21 +34,37 @@ class GeneratorPlugin : Plugin<Project> {
         project.extensions.create("generator", GeneratorExtension::class.java)
         project.extensions.configure(GeneratorExtension::class.java) { extension ->
 
-            extension.datasource(Action {
-                it.url = findDatasourceProperty(project, "url") ?: ""
-                it.catalog = findDatasourceProperty(project, "catalog")
-                it.schema = findDatasourceProperty(project, "schema")
-                it.username = findDatasourceProperty(project, "username") ?: "root"
-                it.password = findDatasourceProperty(project, "password") ?: "root"
-                it.driverClass = findDatasourceProperty(project, "driverClass") ?: ""
-                if (it.isOracle) {
-                    it.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
+            val entries = project.properties.filter { it.key.startsWith("datasource.") }.entries
+            extension.datasources =
+                (mapOf(defaultModuleName to (entries.filter { it.key.split('.').size == 2 }
+                    .associateBy({ it.key.substringAfter("datasource.") }, { it.value })
+                        )
+                ) + entries.filter { it.key.split('.').size == 3 }.groupBy {
+                    it.key.substringAfter("datasource.").substringBefore(".")
+                }.mapValues { entry ->
+                    entry.value.groupBy({ it.key.substringAfter("datasource.${entry.key}.") },
+                        { it.value }).mapValues { it.value.last() }
+                }).mapValues { (module, properties) ->
+                    val configuration = JDBCConnectionConfiguration()
+                    configuration.module = module
+                    configuration.url = properties["url"] as? String ?: ""
+                    configuration.catalog = properties["catalog"] as? String ?: ""
+                    configuration.schema = properties["schema"] as? String ?: ""
+                    configuration.username = properties["username"] as? String ?: "root"
+                    configuration.password = properties["password"] as? String ?: "root"
+                    configuration.driverClass = properties["driverClass"] as? String ?: ""
+                    configuration.debug = (properties["debug"] as? String ?: "false").toBoolean()
+                    configuration.queryIndex =
+                        (properties["queryIndex"] as? String ?: "true").toBoolean()
+                    if (configuration.isOracle) {
+                        configuration.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
+                    }
+                    configuration
                 }
-            })
-            extension.singleDatasource = (findProperty(project, "singleDatasource"))?.toBoolean()
+
+            extension.unitedDatasource = (findProperty(project, "singleDatasource"))?.toBoolean()
                 ?: true
             extension.delete = (findProperty(project, "delete"))?.toBoolean() ?: false
-            extension.debug = (findProperty(project, "debug"))?.toBoolean() ?: false
             extension.projectPackage = (findProperty(project, "project-package"))?.toBoolean()
                 ?: false
             extension.dropTablesWhenUpdate =
@@ -68,7 +84,6 @@ class GeneratorPlugin : Plugin<Project> {
             extension.packageName = findProperty(project, "packageName")
                 ?: project.findProperty("app.packageName") as? String ?: ""
             extension.userModule = (findProperty(project, "userModule"))?.toBoolean() ?: true
-            extension.module = findProperty(project, "module") ?: "modules"
             extension.applicationName = project.findProperty("application.name") as? String
                 ?: project.rootProject.name
             extension.projectName = findProperty(project, "projectName") ?: project.name
@@ -88,7 +103,6 @@ class GeneratorPlugin : Plugin<Project> {
                     ?: true
             extension.idgenerator =
                 findProperty(project, "idgenerator") ?: "uuid2"
-            extension.queryIndex = (findProperty(project, "queryIndex"))?.toBoolean() ?: true
             extension.dataType = DataType.valueOf(
                 (findProperty(project, "dataType")
                     ?: DataType.DATABASE.name).toUpperCase()
@@ -98,16 +112,9 @@ class GeneratorPlugin : Plugin<Project> {
                     ?: DataType.DATABASE.name).toUpperCase()
             )
             //puml
-            extension.pumlSrc = findProperty(project, "puml.src") ?: "puml/src"
-            val pumlDatabaseDriver = findProperty(project, "puml.databaseDriver")
-                ?: extension.datasource.databaseDriver.id
-            extension.pumlDatabaseDriver =
-                top.bettercode.generator.DatabaseDriver.fromProductName(pumlDatabaseDriver)
-            extension.pumlDatabase = findProperty(project, "puml.database") ?: "puml/database"
+            extension.pumlSrc = findProperty(project, "puml.src") ?: "puml"
             extension.pumlDiagramFormat = findProperty(project, "puml.diagramFormat") ?: "PNG"
             extension.sqlOutput = findProperty(project, "sqlOutput") ?: "database"
-            extension.updateSqlOutput =
-                findProperty(project, "updateSqlOutput") ?: "v${project.version}.sql"
 
             val settings = mutableMapOf<String, String>()
             project.properties.forEach { (t, any) ->
@@ -125,10 +132,6 @@ class GeneratorPlugin : Plugin<Project> {
                     ?: "deleted,lastModifiedDate").split(",").asSequence()
                     .filter { it.isNotBlank() }.map { it.trim() }.sortedBy { it }.toList()
                     .toTypedArray()
-            extension.pumlTableNames = (findProperty(project, "puml.tableNames")
-                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
-                .sortedBy { it }.toList()
-                .toTypedArray()
 
             extension.generators = (findProperty(project, "generators")
                 ?: "").split(",").asSequence().filter { it.isNotBlank() }
@@ -145,7 +148,7 @@ class GeneratorPlugin : Plugin<Project> {
         }
 
         val extension = project.extensions.getByType(GeneratorExtension::class.java)
-        if (extension.singleDatasource) {
+        if (extension.unitedDatasource) {
             if (!project.rootProject.tasks.names.contains("printTableNames"))
                 configPuml(project.rootProject, extension)
         } else {
@@ -157,47 +160,80 @@ class GeneratorPlugin : Plugin<Project> {
         project.tasks.create("printTableNames") { task ->
             task.group = taskGroup
             task.doLast {
-                print(Generators.tableNames(extension).joinToString(","))
+                val tableNames = Generators.tableNames(extension)
+                print(tableNames.joinToString(","))
             }
         }
 
         project.tasks.create("toPuml") { task ->
             task.group = taskGroup
             task.doLast { _ ->
-                var pumlTableNames = extension.pumlTableNames
-                val tables: List<Table>
-                when (extension.dataType) {
-                    DataType.PDM -> {
-                        tables = PdmReader.read(extension.file(extension.pdmSrc))
-                        if (pumlTableNames.isEmpty()) {
-                            pumlTableNames = tables.map { it.tableName }.toTypedArray()
-                        }
-                        println("tableNames:${pumlTableNames.joinToString()}")
-
-                    }
-                    else -> {
-                        if (pumlTableNames.isEmpty()) {
-                            extension.use {
-                                pumlTableNames = tableNames().toTypedArray()
-                            }
-                        }
-                        tables = extension.tables(pumlTableNames)
+                val all = extension.tableNames.isEmpty()
+                val tableNames = extension.tableNames.toMutableList()
+                val toTables = { toTables: (tableNames: MutableList<String>) -> List<Table> ->
+                    if (all) {
+                        toTables(tableNames)
+                    } else {
+                        if (tableNames.isNotEmpty()) {
+                            val tables = toTables(tableNames)
+                            tableNames.removeAll(tables.map { it.tableName })
+                            tables
+                        } else
+                            emptyList()
                     }
                 }
-                if (tables.isNotEmpty()) {
+                when (extension.dataType) {
+                    DataType.PDM -> {
+                        extension.pdmSources.map { (module, files) ->
+                            files.associateBy({ it.nameWithoutExtension }, { file ->
+                                toTables {
+                                    PdmReader.read(
+                                        file,
+                                        module
+                                    )
+                                }
+                            }).entries
+                        }.flatten().associateBy({ it.key }, { it.value })
+                    }
+                    else -> {
+                        extension.datasources.mapValues { (_, jdbc) ->
+                            toTables {
+                                if (all) {
+                                    jdbc.tables(jdbc.tableNames().toTypedArray())
+                                } else {
+                                    jdbc.tables(it.toTypedArray())
+                                }
+                            }
+                        }
+                    }
+                }.filter { it.value.isNotEmpty() }.forEach { (m, tables) ->
                     val plantUML = PlantUML(
-                        tables[0].moduleName,
-                        extension.file(extension.pumlDatabase).absolutePath + "/database.puml",
+                        tables[0].subModule,
+                        File(
+                            extension.file(extension.pumlSrc),
+                            "database/${m}.puml"
+                        ),
                         null
                     )
                     plantUML.setUp(extension)
-                    pumlTableNames.forEach { tableName ->
-                        val table = tables.find { it.tableName.equals(tableName, true) }
-                        if (table != null) {
+                    if (all) {
+                        tables.forEach { table ->
                             plantUML.run(table)
+                        }
+                    } else {
+                        tableNames.iterator().forEach { tableName ->
+                            val table =
+                                tables.find { it.tableName.equals(tableName, true) }
+                            if (table != null) {
+                                tableNames.remove(tableName)
+                                plantUML.run(table)
+                            }
                         }
                     }
                     plantUML.tearDown()
+                    if (!all && tableNames.isEmpty()) {
+                        return@forEach
+                    }
                 }
             }
         }
@@ -214,28 +250,31 @@ class GeneratorPlugin : Plugin<Project> {
                 project.rootProject.file("gradle.properties")
             )
             val src = extension.file(extension.pumlSrc)
-            val out = File(
-                extension.file(extension.pumlSrc).parent,
-                extension.pumlDiagramFormat.toLowerCase()
-            )
             if (src.exists())
                 task.inputs.dir(src)
+            val out = File(project.rootProject.buildDir, extension.pumlSrc)
             if (out.exists())
                 task.outputs.dir(out)
             task.doLast { _ ->
-                extension.pumlSrcSources.forEach {
-                    val sourceFileReader = SourceFileReader(it, out, "UTF-8")
-                    sourceFileReader.setFileFormatOption(
-                        FileFormatOption(
-                            FileFormat.valueOf(
-                                extension.pumlDiagramFormat
+                extension.pumlSources.forEach { (module, files) ->
+                    files.forEach {
+                        val sourceFileReader = SourceFileReader(
+                            it,
+                            File(out, module + "/" + extension.pumlDiagramFormat.toLowerCase()),
+                            "UTF-8"
+                        )
+                        sourceFileReader.setFileFormatOption(
+                            FileFormatOption(
+                                FileFormat.valueOf(
+                                    extension.pumlDiagramFormat
+                                )
                             )
                         )
-                    )
-                    try {
-                        sourceFileReader.generatedImages
-                    } catch (e: Exception) {
-                        println("${e.javaClass.name}:${e.message}")
+                        try {
+                            sourceFileReader.generatedImages
+                        } catch (e: Exception) {
+                            println("${e.javaClass.name}:${e.message}")
+                        }
                     }
                 }
             }
@@ -248,7 +287,7 @@ class GeneratorPlugin : Plugin<Project> {
             )
             val src = extension.file(extension.pumlSrc)
             val pdm = extension.file(extension.pdmSrc)
-            val out = extension.file(extension.sqlDDLOutput)
+            val out = extension.file(extension.sqlOutput)
             if (src.exists())
                 task.inputs.dir(src)
             if (pdm.exists())
@@ -256,18 +295,149 @@ class GeneratorPlugin : Plugin<Project> {
             if (out.exists())
                 task.outputs.dir(out)
             task.doLast {
-                PumlConverter.toDDL(extension)
+                MysqlToDDL.useQuote = extension.sqlQuote
+                OracleToDDL.useQuote = extension.sqlQuote
+                MysqlToDDL.useForeignKey = extension.useForeignKey
+                OracleToDDL.useForeignKey = extension.useForeignKey
+                val toDDl = { m: String, file: File, toTables: (file: File) -> List<Table> ->
+                    val outputFile = File(
+                        out,
+                        "${if (extension.isDefaultModule(m)) "ddl" else "ddl-${m}"}/${file.name}"
+                    )
+                    val jdbc = extension.datasources[m]
+                        ?: throw IllegalStateException("未配置${m}模块数据库信息")
+                    when (jdbc.databaseDriver) {
+                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
+                            toTables(file),
+                            outputFile
+                        )
+                        DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
+                            toTables(file),
+                            outputFile
+                        )
+                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
+                            toTables(file),
+                            outputFile
+                        )
+                        else -> {
+                            throw IllegalArgumentException("不支持的数据库")
+                        }
+                    }
+                }
+                when (extension.dataType) {
+                    DataType.PUML -> {
+                        extension.pumlSources.forEach { (module, files) ->
+                            files.forEach { file ->
+                                toDDl(module, file) {
+                                    PumlConverter.toTables(
+                                        it,
+                                        module
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    DataType.PDM -> {
+                        extension.pdmSources.forEach { (module, files) ->
+                            files.forEach { file ->
+                                toDDl(module, file) {
+                                    PdmReader.read(it, module)
+                                }
+                            }
+                        }
+                    }
+                    else -> {
+                        throw IllegalArgumentException("不支持数据结构源")
+                    }
+                }
             }
         }
         project.tasks.create("toDDLUpdate") { task ->
             task.group = taskGroup
             task.doLast {
-                PumlConverter.toDDLUpdate(extension)
+                MysqlToDDL.useQuote = extension.sqlQuote
+                OracleToDDL.useQuote = extension.sqlQuote
+                MysqlToDDL.useForeignKey = extension.useForeignKey
+                OracleToDDL.useForeignKey = extension.useForeignKey
+                val deleteTablesWhenUpdate = extension.dropTablesWhenUpdate
+
+                val databasePumlDir = extension.file(extension.pumlSrc + "/database")
+                val out = extension.file(extension.sqlOutput)
+
+                val toDDLUpdate =
+                    { module: String, files: List<File>, toTables: (file: File) -> List<Table> ->
+                        val databaseFile = File(databasePumlDir, "${module}.puml")
+                        val updateFile = File(
+                            out,
+                            "${if (extension.isDefaultModule(module)) "update" else "update-${module}"}/v${project.version}.sql"
+                        )
+                        val allTables = mutableListOf<Table>()
+                        updateFile.printWriter().use { pw ->
+                            val tables = files.map { file ->
+                                toTables(file)
+                            }.flatMap { it.asIterable() }
+
+                            allTables.addAll(tables)
+                            val jdbc = extension.datasources[module]
+                                ?: throw IllegalStateException("未配置${module}模块数据库信息")
+                            val tableNames = tables.map { it.tableName }.toTypedArray()
+                            val oldTables =
+                                if (deleteTablesWhenUpdate) {
+                                    if (DataType.PUML == extension.updateFromType && databaseFile.exists()) {
+                                        PumlConverter.toTables(databaseFile, module)
+                                    } else {
+                                        jdbc.tables(jdbc.tableNames().toTypedArray())
+                                    }
+                                } else {
+                                    if (DataType.PUML == extension.updateFromType && databaseFile.exists()) {
+                                        PumlConverter.toTables(databaseFile, module)
+                                    } else {
+                                        jdbc.tables(tableNames)
+                                    }
+                                }
+                            when (jdbc.databaseDriver) {
+                                DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
+                                    module, oldTables, tables, pw, extension
+                                )
+                                DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
+                                    module, oldTables, tables, pw, extension
+                                )
+                                DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
+                                    module, oldTables, tables, pw, extension
+                                )
+                                else -> {
+                                    throw IllegalArgumentException("不支持的数据库")
+                                }
+                            }
+                        }
+                        if (DataType.PUML == extension.updateFromType)
+                            PumlConverter.compile(extension, allTables, databasePumlDir)
+                    }
+                when (extension.dataType) {
+                    DataType.PUML -> {
+                        extension.pumlSources.forEach { (module, files) ->
+                            toDDLUpdate(module, files) {
+                                PumlConverter.toTables(it, module)
+                            }
+                        }
+                    }
+                    DataType.PDM -> {
+                        extension.pdmSources.forEach { (module, files) ->
+                            toDDLUpdate(module, files) {
+                                PdmReader.read(it, module)
+                            }
+                        }
+                    }
+                    else -> {
+                        throw IllegalArgumentException("不支持数据结构源")
+                    }
+                }
+
             }
         }
         project.tasks.create("pumlBuild") {
             it.group = taskGroup
-            it.dependsOn("toDDLUpdate", "toDDL", "pumlToDiagram")
+            it.dependsOn("toDDLUpdate", "toDDL")
         }
     }
 
@@ -275,16 +445,4 @@ class GeneratorPlugin : Plugin<Project> {
         (project.findProperty("generator.${project.name}.$key") as? String
             ?: project.findProperty("generator.$key") as? String)
 
-
-    private fun findDatasourceProperty(project: Project, key: String): String? {
-        return project.findProperty("generator.${project.name}.datasource.$key") as? String
-            ?: project.findProperty("generator.datasource.$key") as? String
-            ?: project.findProperty("datasource.${project.name}.$key") as? String
-            ?: project.findProperty("datasource.$key") as? String
-    }
-
-}
-
-fun GeneratorExtension.datasource(closure: Action<JDBCConnectionConfiguration>) {
-    closure.execute(this.datasource)
 }

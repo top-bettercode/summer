@@ -15,55 +15,47 @@ import java.util.*
  *
  * @author Peter Wu
  */
-fun ResultSet.each(rs: ResultSet.() -> Unit) {
+fun <T> ResultSet.map(rs: ResultSet.() -> T): List<T> {
     try {
+        val list = mutableListOf<T>()
         while (next()) {
-            rs(this)
+            list.add(rs(this))
         }
+        return list
     } finally {
         close()
     }
 }
 
 class DatabaseMetaData(
+    private val module: String,
     private val datasource: JDBCConnectionConfiguration,
     private val debug: Boolean = false,
     private val queryIndex: Boolean = true
 ) : AutoCloseable {
 
-    private var metaData: java.sql.DatabaseMetaData
+    private var databaseMetaData: java.sql.DatabaseMetaData
     private val catalog: String?
     private var canReadIndexed = true
 
     init {
         val connection = DriverManager.getConnection(datasource.url, datasource.properties)
-        this.metaData = connection.metaData
+        this.databaseMetaData = connection.metaData
         catalog = datasource.catalog
     }
 
     private fun reConnect() {
         close()
         val connection = DriverManager.getConnection(datasource.url, datasource.properties)
-        this.metaData = connection.metaData
+        this.databaseMetaData = connection.metaData
     }
 
     override fun close() {
         try {
-            metaData.connection.close()
+            databaseMetaData.connection.close()
         } catch (e: Exception) {
             System.err.println("关闭数据库连接出错:${e.message}")
         }
-    }
-
-    /**
-     * 所有数据表
-     * @return 数据表名
-     */
-    fun tableNames(): List<String> {
-        val tableNames = mutableListOf<String>()
-        metaData.getTables(datasource.catalog, datasource.schema, null, null)
-            .each { tableNames.add(getString("TABLE_NAME")) }
-        return tableNames.sortedBy { it }
     }
 
 
@@ -80,6 +72,23 @@ class DatabaseMetaData(
 
     /**
      * 所有数据表
+     * @return 数据表名
+     */
+    fun tableNames(): List<String> {
+        return databaseMetaData.getTables(datasource.catalog, datasource.schema, null, null)
+            .map { getString("TABLE_NAME") }.sortedBy { it }
+    }
+
+    /**
+     * 所有数据表
+     * @return 数据表
+     */
+    fun tables(): List<Table> {
+        return databaseMetaData.getTables(datasource.catalog, datasource.schema, null, null)
+            .toTables()
+    }
+
+    /**
      * @param tableName 表名
      * @return 数据表
      */
@@ -87,18 +96,31 @@ class DatabaseMetaData(
         println("查询：$tableName 表数据结构")
         var table: Table? = null
 
-        val databaseProductName = metaData.databaseProductName
+        val databaseProductName = databaseMetaData.databaseProductName
         tableName.current { curentSchema, curentTableName ->
-            val columns = columns(tableName)
-            fixImportedKeys(curentSchema, curentTableName, columns)
-            fixColumns(tableName, columns)
+            val tables = databaseMetaData.getTables(catalog, curentSchema, curentTableName, null)
+            table = tables.toTables().firstOrNull()
+        }
+        if (table == null) {
+            System.err.println("未在${databaseProductName}数据库(${tableNames().joinToString()})中找到${tableName}表")
+        }
+        return table
+    }
+
+    private fun ResultSet.toTables(): List<Table> {
+        return map {
+            val schema = getString("TABLE_SCHEM")
+            val name = getString("TABLE_NAME")
+            val columns = columns(name)
+            fixImportedKeys(schema, name, columns)
+            fixColumns(name, columns)
             var primaryKeyNames: MutableList<String>
             var indexes: MutableList<Indexed>
             if (canReadIndexed) {
                 try {
-                    primaryKeyNames = primaryKeyNames(tableName)
+                    primaryKeyNames = primaryKeyNames(name)
                     indexes = if (queryIndex)
-                        indexes(tableName)
+                        indexes(name)
                     else
                         mutableListOf()
                 } catch (e: Exception) {
@@ -112,29 +134,26 @@ class DatabaseMetaData(
                 primaryKeyNames = mutableListOf()
                 indexes = mutableListOf()
             }
-            metaData.getTables(catalog, curentSchema, curentTableName, null).each {
-                table = Table(
-                    productName = databaseProductName,
-                    catalog = catalog,
-                    schema = curentSchema,
-                    tableName = getString("TABLE_NAME"),
-                    tableType = getString("TABLE_TYPE"),
-                    remarks = getString("REMARKS")?.trim()
-                        ?: "",
-                    primaryKeyNames = primaryKeyNames,
-                    indexes = indexes,
-                    pumlColumns = columns.toMutableList()
-                )
-            }
+            Table(
+                productName = databaseMetaData.databaseProductName,
+                catalog = getString("TABLE_CAT") ?: catalog,
+                schema = schema,
+                tableName = name,
+                tableType = getString("TABLE_TYPE"),
+                remarks = getString("REMARKS")?.trim()
+                    ?: "",
+                primaryKeyNames = primaryKeyNames,
+                indexes = indexes,
+                pumlColumns = columns.toMutableList(),
+                module = module
+            )
         }
-        if (table == null) {
-            System.err.println("未在${databaseProductName}数据库(${tableNames().joinToString()})中找到${tableName}表")
-        }
-        return table
     }
 
+
     private fun fixColumns(tableName: String, columns: MutableList<Column>) {
-        val databaseDriver = top.bettercode.generator.DatabaseDriver.fromJdbcUrl(metaData.url)
+        val databaseDriver =
+            top.bettercode.generator.DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
         if (arrayOf(
                 top.bettercode.generator.DatabaseDriver.MYSQL,
                 top.bettercode.generator.DatabaseDriver.MARIADB,
@@ -145,9 +164,9 @@ class DatabaseMetaData(
         ) {
             try {
                 val prepareStatement =
-                    metaData.connection.prepareStatement("SHOW COLUMNS FROM $tableName")
+                    databaseMetaData.connection.prepareStatement("SHOW COLUMNS FROM $tableName")
                 prepareStatement.queryTimeout = 5
-                prepareStatement.executeQuery().each {
+                prepareStatement.executeQuery().map {
                     val find = columns.find { it.columnName == getString(1) }
                     if (find != null) {
                         if (debug)
@@ -183,12 +202,12 @@ class DatabaseMetaData(
         val columns = mutableListOf<Column>()
         tableName.current { curentSchema, curentTableName ->
             if (columnNames.isEmpty()) {
-                metaData.getColumns(catalog, curentSchema, curentTableName, null).each {
+                databaseMetaData.getColumns(catalog, curentSchema, curentTableName, null).map {
                     fillColumn(columns)
                 }
             } else {
                 columnNames.forEach {
-                    metaData.getColumns(catalog, curentSchema, curentTableName, it).each {
+                    databaseMetaData.getColumns(catalog, curentSchema, curentTableName, it).map {
                         fillColumn(columns)
                     }
                 }
@@ -202,7 +221,7 @@ class DatabaseMetaData(
         curentTableName: String,
         columns: MutableList<Column>
     ) {
-        metaData.getImportedKeys(catalog, curentSchema, curentTableName).each {
+        databaseMetaData.getImportedKeys(catalog, curentSchema, curentTableName).map {
             val find = columns.find { it.columnName == getString("FKCOLUMN_NAME") }!!
             find.isForeignKey = true
             find.pktableName = getString("PKTABLE_NAME")
@@ -276,7 +295,7 @@ class DatabaseMetaData(
     private fun primaryKeyNames(tableName: String): MutableList<String> {
         val primaryKeys = mutableListOf<String>()
         tableName.current { curentSchema, curentTableName ->
-            metaData.getPrimaryKeys(catalog, curentSchema, curentTableName).each {
+            databaseMetaData.getPrimaryKeys(catalog, curentSchema, curentTableName).map {
                 primaryKeys.add(getString("COLUMN_NAME"))
             }
         }
@@ -287,17 +306,18 @@ class DatabaseMetaData(
     private fun indexes(tableName: String): MutableList<Indexed> {
         val indexes = mutableListOf<Indexed>()
         tableName.current { curentSchema, curentTableName ->
-            metaData.getIndexInfo(catalog, curentSchema, curentTableName, false, false).each {
-                val indexName = getString("INDEX_NAME")
-                if (!indexName.isNullOrBlank() && !"PRIMARY".equals(indexName, true)) {
-                    var indexed = indexes.find { it.name == indexName }
-                    if (indexed == null) {
-                        indexed = Indexed(indexName, !getBoolean("NON_UNIQUE"))
-                        indexes.add(indexed)
+            databaseMetaData.getIndexInfo(catalog, curentSchema, curentTableName, false, false)
+                .map {
+                    val indexName = getString("INDEX_NAME")
+                    if (!indexName.isNullOrBlank() && !"PRIMARY".equals(indexName, true)) {
+                        var indexed = indexes.find { it.name == indexName }
+                        if (indexed == null) {
+                            indexed = Indexed(indexName, !getBoolean("NON_UNIQUE"))
+                            indexes.add(indexed)
+                        }
+                        indexed.columnName.add(getString("COLUMN_NAME"))
                     }
-                    indexed.columnName.add(getString("COLUMN_NAME"))
                 }
-            }
         }
         return indexes
     }

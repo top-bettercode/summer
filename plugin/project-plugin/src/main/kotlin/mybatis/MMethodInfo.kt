@@ -16,7 +16,7 @@ class MMethodInfo : ProjectGenerator() {
                     if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                         javadoc {
                             +"/**"
-                            +" * ${getReturnRemark(it)}"
+                            +" * ${it.returnRemark}"
                             +" */"
                         }
                 }

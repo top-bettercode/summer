@@ -26,7 +26,6 @@ class PumlGeneratorsTest {
     fun gen() {
         extension.generators = arrayOf(
         )
-        extension.pumlSrc = PumlConverterTest::class.java.getResource("/database.puml").file
         Generators.call(extension)
     }
 }

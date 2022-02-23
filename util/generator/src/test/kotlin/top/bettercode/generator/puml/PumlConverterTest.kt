@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.ddl.MysqlToDDL
 import top.bettercode.generator.ddl.OracleToDDL
+import top.bettercode.generator.defaultModuleName
 import java.io.File
 
 /**
@@ -11,10 +12,26 @@ import java.io.File
  * @since 0.0.45
  */
 class PumlConverterTest {
+    val oraclePuml = File(
+        PumlConverterTest::class.java.getResource("/puml/src/oracle.puml")?.file
+            ?: throw IllegalStateException()
+    )
+    val newOraclePuml = File(
+        PumlConverterTest::class.java.getResource("/puml/src/neworacle.puml")?.file
+            ?: throw IllegalStateException()
+    )
+    val mysqlPuml = File(
+        PumlConverterTest::class.java.getResource("/puml/src/mysql.puml")?.file
+            ?: throw IllegalStateException()
+    )
+    val newMysqlPuml = File(
+        PumlConverterTest::class.java.getResource("/puml/src/newmysql.puml")?.file
+            ?: throw IllegalStateException()
+    )
 
     @Test
     fun convert() {
-        val tables = PumlConverter.toTables(File("build/gen/puml/db.puml"))
+        val tables = PumlConverter.toTables(oraclePuml, defaultModuleName)
         println(tables)
     }
 
@@ -22,7 +39,8 @@ class PumlConverterTest {
     fun compile() {
         PumlConverter.compile(
             GeneratorExtension(),
-            File(PumlConverterTest::class.java.getResource("/oracle.puml").file),
+            defaultModuleName,
+            oraclePuml,
             File("build/gen/puml/database.puml")
         )
     }
@@ -31,7 +49,8 @@ class PumlConverterTest {
     fun toMysql() {
         PumlConverter.toMysql(
             GeneratorExtension(),
-            File(PumlConverterTest::class.java.getResource("/oracle.puml").file),
+            defaultModuleName,
+            oraclePuml,
             File("build/gen/puml/database.puml")
         )
     }
@@ -40,7 +59,8 @@ class PumlConverterTest {
     fun toOracle() {
         PumlConverter.toOracle(
             GeneratorExtension(),
-            File(PumlConverterTest::class.java.getResource("/mysql.puml").file),
+            defaultModuleName,
+            mysqlPuml,
             File("build/gen/puml/database.puml")
         )
     }
@@ -50,7 +70,7 @@ class PumlConverterTest {
         val out = File("build/gen/puml/oracle.sql")
         out.parentFile.mkdirs()
         OracleToDDL.toDDL(
-            PumlConverter.toTables(File(PumlConverterTest::class.java.getResource("/oracle.puml").file)),
+            PumlConverter.toTables(oraclePuml, defaultModuleName),
             out
         )
     }
@@ -58,7 +78,7 @@ class PumlConverterTest {
     @Test
     fun toMySqlDLL() {
         MysqlToDDL.toDDL(
-            PumlConverter.toTables(File(PumlConverterTest::class.java.getResource("/mysql.puml").file)),
+            PumlConverter.toTables(oraclePuml, defaultModuleName),
             File("build/gen/puml/mysql.sql")
         )
     }
@@ -67,14 +87,9 @@ class PumlConverterTest {
     fun toOracleUpdate() {
         File("build/gen/puml/oracleUpdate.sql").printWriter().use {
             OracleToDDL.toDDLUpdate(
-                PumlConverter.toTables(
-                    File(
-                        PumlConverterTest::class.java.getResource(
-                            "/oracle.puml"
-                        ).file
-                    )
-                ),
-                PumlConverter.toTables(File(PumlConverterTest::class.java.getResource("/newOracle.puml").file)),
+                defaultModuleName,
+                PumlConverter.toTables(oraclePuml, defaultModuleName),
+                PumlConverter.toTables(newOraclePuml, defaultModuleName),
                 it,
                 GeneratorExtension()
             )
@@ -85,14 +100,11 @@ class PumlConverterTest {
     fun toMysqlUpdate() {
         File("build/gen/puml/mysqlUpdate.sql").printWriter().use {
             MysqlToDDL.toDDLUpdate(
+                defaultModuleName,
                 PumlConverter.toTables(
-                    File(
-                        PumlConverterTest::class.java.getResource(
-                            "/mysql.puml"
-                        ).file
-                    )
+                    mysqlPuml, defaultModuleName
                 ),
-                PumlConverter.toTables(File(PumlConverterTest::class.java.getResource("/newMysql.puml").file)),
+                PumlConverter.toTables(newMysqlPuml, defaultModuleName),
                 it,
                 GeneratorExtension()
             )

@@ -20,7 +20,7 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-class DicCodeGen(private val project: Project, private val extension: GeneratorExtension) {
+class DicCodeGen(private val project: Project) {
 
 
     private fun codeTypes(): Map<String, DicCodes> {

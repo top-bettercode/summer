@@ -1,16 +1,13 @@
 package top.bettercode.generator.puml
 
 import top.bettercode.generator.DataType
+import top.bettercode.generator.DatabaseDriver
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.database.entity.Indexed
 import top.bettercode.generator.database.entity.Table
-import top.bettercode.generator.ddl.MysqlToDDL
-import top.bettercode.generator.ddl.OracleToDDL
-import top.bettercode.generator.ddl.SqlLiteToDDL
 import top.bettercode.generator.dom.java.JavaTypeResolver
 import top.bettercode.generator.dsl.def.PlantUML
-import top.bettercode.generator.powerdesigner.PdmReader
 import java.io.File
 import java.util.*
 
@@ -20,12 +17,19 @@ import java.util.*
  */
 object PumlConverter {
 
-    fun toTables(puml: File, call: (Table) -> Unit = {}): List<Table> {
-        return toTableOrAnys(puml, call).asSequence().filter { it is Table }.map { it as Table }
-            .toList()
+    fun toTables(
+        puml: File,
+        module: String,
+        call: (Table) -> Unit = {}
+    ): List<Table> {
+        return toTableOrAnys(puml, module, call).filterIsInstance<Table>().toList()
     }
 
-    private fun toTableOrAnys(puml: File, call: (Table) -> Unit = {}): List<Any> {
+    private fun toTableOrAnys(
+        pumlFile: File,
+        module: String,
+        call: (Table) -> Unit = {}
+    ): List<Any> {
         val tables = mutableListOf<Any>()
         var remarks = ""
         var primaryKeyNames = mutableListOf<String>()
@@ -34,12 +38,12 @@ object PumlConverter {
         var tableName = ""
         var isField = false
         var isUml = false
-        var moduleName: String? = null
-        puml.readLines().forEach {
+        var subModuleName: String? = null
+        pumlFile.readLines().forEach {
             if (it.isNotBlank()) {
                 val line = it.trim()
                 if (line.startsWith("@startuml")) {
-                    moduleName = line.substringAfter("@startuml").trim()
+                    subModuleName = line.substringAfter("@startuml").trim()
                     isUml = true
                 } else if (line.startsWith("entity ")) {
                     val fieldDef = line.split(" ")
@@ -78,7 +82,9 @@ object PumlConverter {
                             primaryKeyNames = primaryKeyNames,
                             indexes = indexes,
                             pumlColumns = pumlColumns,
-                            moduleName = moduleName ?: "database"
+                            module = module,
+                            subModule = pumlFile.nameWithoutExtension,
+                            subModuleName = subModuleName ?: "database"
                         )
                         call(table)
                         tables.add(table)
@@ -237,7 +243,7 @@ object PumlConverter {
         return Pair(columnSize, decimalDigits)
     }
 
-    private fun compile(
+    fun compile(
         extension: GeneratorExtension,
         tables: List<Any>,
         out: File,
@@ -246,9 +252,9 @@ object PumlConverter {
         if (tables.isNotEmpty()) {
             val any = tables[0]
             val plantUML = PlantUML(
-                if (any is Table) any.moduleName else null,
-                out.absolutePath,
-                if ("database.puml" == out.name) remarksProperties else null
+                if (any is Table) any.subModule else null,
+                out,
+                if ("database" == out.parent) remarksProperties else null
             )
             plantUML.setUp(extension)
             tables.forEach {
@@ -268,41 +274,54 @@ object PumlConverter {
         if (remarksFile.exists()) {
             remarksProperties.load(remarksFile.inputStream())
         }
-        (extension.pumlSrcSources + extension.file(extension.pumlDatabase + "/database.puml")).forEach {
-            if (it.exists()) {
-                when (extension.pumlDatabaseDriver) {
-                    top.bettercode.generator.DatabaseDriver.MYSQL -> toMysql(
+        (extension.pumlSources + extension.pumlDatabaseSources).forEach { (module, files) ->
+            files.forEach { file ->
+                val driver = extension.datasources[module]
+                    ?.databaseDriver ?: DatabaseDriver.UNKNOWN
+                when (driver) {
+                    DatabaseDriver.MYSQL -> toMysql(
                         extension,
-                        it,
-                        it,
+                        module,
+                        file,
+                        file,
                         remarksProperties
                     )
-                    top.bettercode.generator.DatabaseDriver.ORACLE -> toOracle(
+                    DatabaseDriver.ORACLE -> toOracle(
                         extension,
-                        it,
-                        it,
+                        module,
+                        file,
+                        file,
                         remarksProperties
                     )
-                    else -> compile(extension, it, it, remarksProperties)
+                    else -> compile(extension, module, file, file, remarksProperties)
                 }
             }
+
         }
     }
 
     fun compile(
         extension: GeneratorExtension,
+        module: String,
         src: File,
         out: File,
         remarksProperties: Properties? = null
     ) {
-        compile(extension, toTableOrAnys(src), out, remarksProperties)
+        compile(
+            extension,
+            toTableOrAnys(src, module),
+            out,
+            remarksProperties
+        )
     }
 
     fun toMysql(
-        extension: GeneratorExtension, src: File, out: File,
+        extension: GeneratorExtension,
+        module: String,
+        src: File, out: File,
         remarksProperties: Properties? = null
     ) {
-        val tables = toTableOrAnys(src)
+        val tables = toTableOrAnys(src, module)
         tables.forEach { t ->
             if (t is Table) {
                 t.pumlColumns.forEach {
@@ -344,10 +363,12 @@ object PumlConverter {
     }
 
     fun toOracle(
-        extension: GeneratorExtension, src: File, out: File,
+        extension: GeneratorExtension,
+        module: String,
+        src: File, out: File,
         remarksProperties: Properties? = null
     ) {
-        val tables = toTableOrAnys(src)
+        val tables = toTableOrAnys(src, module)
         tables.forEach { t ->
             if (t is Table) {
                 t.pumlColumns.forEach {
@@ -385,171 +406,5 @@ object PumlConverter {
         compile(extension, tables, out, remarksProperties)
     }
 
-    fun toDDL(extension: GeneratorExtension) {
-        MysqlToDDL.useQuote = extension.sqlQuote
-        OracleToDDL.useQuote = extension.sqlQuote
-        MysqlToDDL.useForeignKey = extension.useForeignKey
-        OracleToDDL.useForeignKey = extension.useForeignKey
-        when (extension.dataType) {
-            DataType.PUML -> {
-                extension.pumlSrcSources.forEach {
-                    when (extension.pumlDatabaseDriver) {
-                        top.bettercode.generator.DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
-                            toTables(it),
-                            extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc))
-                        )
-                        top.bettercode.generator.DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
-                            toTables(it),
-                            extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc))
-                        )
-                        top.bettercode.generator.DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
-                            toTables(it),
-                            extension.pumlSqlOutputFile(it, extension.file(extension.pumlSrc))
-                        )
-                        else -> {
-                            throw IllegalArgumentException("不支持的数据库")
-                        }
-                    }
-                }
-            }
-            DataType.PDM -> {
-                val pdmFile = extension.file(extension.pdmSrc)
-                when (extension.pumlDatabaseDriver) {
-                    top.bettercode.generator.DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
-                        PdmReader.read(pdmFile),
-                        extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile)
-                    )
-                    top.bettercode.generator.DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
-                        PdmReader.read(pdmFile),
-                        extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile)
-                    )
-                    top.bettercode.generator.DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
-                        PdmReader.read(pdmFile),
-                        extension.pumlSqlOutputFile(pdmFile, pdmFile.parentFile)
-                    )
-                    else -> {
-                        throw IllegalArgumentException("不支持的数据库")
-                    }
-                }
-            }
-            else -> {
-                throw IllegalArgumentException("不支持数据结构源")
-            }
-        }
-    }
-
-    fun toDDLUpdate(extension: GeneratorExtension) {
-        MysqlToDDL.useQuote = extension.sqlQuote
-        OracleToDDL.useQuote = extension.sqlQuote
-        MysqlToDDL.useForeignKey = extension.useForeignKey
-        OracleToDDL.useForeignKey = extension.useForeignKey
-        extension.pumlSqlUpdateOutputFile().printWriter().use { pw ->
-            val deleteTablesWhenUpdate = extension.dropTablesWhenUpdate
-            val databaseFile = extension.file(extension.pumlDatabase + "/database.puml")
-
-            val allTables = mutableListOf<Table>()
-            when (extension.dataType) {
-                DataType.PUML -> {
-                    extension.pumlSrcSources.forEach { file ->
-                        val tables = toTables(file)
-                        allTables.addAll(tables)
-                        when (extension.pumlDatabaseDriver) {
-                            top.bettercode.generator.DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
-                                if (deleteTablesWhenUpdate) oldTables(
-                                    extension,
-                                    databaseFile
-                                ) else oldTables(
-                                    extension,
-                                    databaseFile,
-                                    tables.map { it.tableName }.toTypedArray()
-                                ), tables, pw, extension
-                            )
-                            top.bettercode.generator.DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
-                                if (deleteTablesWhenUpdate) oldTables(
-                                    extension,
-                                    databaseFile
-                                ) else oldTables(
-                                    extension,
-                                    databaseFile,
-                                    tables.map { it.tableName }.toTypedArray()
-                                ), tables, pw, extension
-                            )
-                            top.bettercode.generator.DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
-                                if (deleteTablesWhenUpdate) oldTables(
-                                    extension,
-                                    databaseFile
-                                ) else oldTables(
-                                    extension,
-                                    databaseFile,
-                                    tables.map { it.tableName }.toTypedArray()
-                                ), tables, pw, extension
-                            )
-                            else -> {
-                                throw IllegalArgumentException("不支持的数据库")
-                            }
-                        }
-                    }
-                }
-                DataType.PDM -> {
-                    val pdmFile = extension.file(extension.pdmSrc)
-                    val tables = PdmReader.read(pdmFile)
-                    allTables.addAll(tables)
-                    when (extension.pumlDatabaseDriver) {
-                        top.bettercode.generator.DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
-                            if (deleteTablesWhenUpdate) oldTables(
-                                extension,
-                                databaseFile
-                            ) else oldTables(
-                                extension,
-                                databaseFile,
-                                tables.map { it.tableName }.toTypedArray()
-                            ), tables, pw, extension
-                        )
-                        top.bettercode.generator.DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
-                            if (deleteTablesWhenUpdate) oldTables(
-                                extension,
-                                databaseFile
-                            ) else oldTables(
-                                extension,
-                                databaseFile,
-                                tables.map { it.tableName }.toTypedArray()
-                            ), tables, pw, extension
-                        )
-                        top.bettercode.generator.DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
-                            if (deleteTablesWhenUpdate) oldTables(
-                                extension,
-                                databaseFile
-                            ) else oldTables(
-                                extension,
-                                databaseFile,
-                                tables.map { it.tableName }.toTypedArray()
-                            ), tables, pw, extension
-                        )
-                        else -> {
-                            throw IllegalArgumentException("不支持的数据库")
-                        }
-                    }
-                }
-                else -> {
-                    throw IllegalArgumentException("不支持数据结构源")
-                }
-            }
-            if (DataType.PUML == extension.updateFromType)
-                compile(extension, allTables, databaseFile)
-        }
-
-    }
-
-    private fun oldTables(
-        extension: GeneratorExtension,
-        databaseFile: File,
-        tableNameList: Array<String>? = null
-    ): List<Table> {
-        return if (DataType.PUML == extension.updateFromType && databaseFile.exists()) {
-            toTables(databaseFile)
-        } else {
-            extension.use { extension.tables(tableNameList ?: tableNames().toTypedArray()) }
-        }
-    }
 
 }

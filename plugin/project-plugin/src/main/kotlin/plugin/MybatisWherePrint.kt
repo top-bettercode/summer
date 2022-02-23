@@ -11,7 +11,7 @@ open class MybatisWherePrint : ProjectGenerator() {
 
         columns.forEach {
             println("""    <if test="${it.javaName} != null${if (it.javaType == JavaType.stringInstance) " and ${it.javaName} != ''" else ""}">
-        and t.${it.columnName} ${if (it.javaType == JavaType.stringInstance) "like ${if (extension.datasource.isOracle) "'%' || '\${${it.javaName}}' || '%'" else "concat('%', #{${it.javaName}}, '%')"}" else "= #{${it.javaName}}"}
+        and t.${it.columnName} ${if (it.javaType == JavaType.stringInstance) "like ${if (datasource.isOracle) "'%' || '\${${it.javaName}}' || '%'" else "concat('%', #{${it.javaName}}, '%')"}" else "= #{${it.javaName}}"}
     </if>""")
         }
     }

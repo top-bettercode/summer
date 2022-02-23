@@ -25,8 +25,6 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         staticImport("org.springframework.test.web.servlet.result.MockMvcResultMatchers.status")
 
         annotation("@org.junit.jupiter.api.TestMethodOrder(org.junit.jupiter.api.MethodOrderer.OrderAnnotation.class)")
-        val tableName =
-            if (schema.isNullOrBlank() || schema == extension.datasource.schema) tableName else "$schema.$tableName"
 
         field("${projectEntityName}Service", serviceType) {
             annotation("@org.springframework.beans.factory.annotation.Autowired")
