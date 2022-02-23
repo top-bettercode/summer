@@ -113,21 +113,10 @@ object CoreProjectTasks {
             create("genDicCode") {
                 it.group = GeneratorPlugin.taskGroup
                 it.doLast {
-                    val propertiesFile =
-                        project.file("src/main/resources/default-dic-code.properties")
-                    propertiesFile.parentFile.mkdirs()
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                    println(
-                        "${if (propertiesFile.exists()) "覆盖" else "生成"}：${
-                            propertiesFile.absolutePath.substringAfter(
-                                project.rootDir.absolutePath + File.separator
-                            )
-                        }"
-                    )
-                    propertiesFile.writeText("")
                     //生成 properties
                     gen.tableNames= emptyArray()
-                    gen.generators = arrayOf(DicCodeProperties(propertiesFile))
+                    gen.generators = arrayOf(DicCodeProperties())
                     Generators.call(gen)
                     //生成
                     val dicCodeGen = DicCodeGen(project)

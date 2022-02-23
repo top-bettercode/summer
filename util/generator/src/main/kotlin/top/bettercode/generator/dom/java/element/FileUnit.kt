@@ -11,7 +11,9 @@ open class FileUnit(
     override val name: String,
     override val canCover: Boolean = false,
     override val isResourcesFile: Boolean = false,
-    override val isTestFile: Boolean = false
+    override val isTestFile: Boolean = false,
+    override val isRootFile: Boolean= false,
+    override val isProjectFile: Boolean= false
 ) : GenUnit {
 
     private val stringWriter = StringWriter()

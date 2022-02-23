@@ -41,7 +41,7 @@ val methodInfo: ProjectGenerator.(Interface) -> Unit = { unit ->
 private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, it ->
     interfaze.apply {
         method("get${it.javaName.capitalize()}", it.javaType) {
-            if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+            if (it.remarks.isNotBlank() || it.columnDef != null)
                 javadoc {
                     +"/**"
                     +" * ${it.returnRemark}"

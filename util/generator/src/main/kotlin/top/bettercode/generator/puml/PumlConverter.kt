@@ -110,7 +110,7 @@ object PumlConverter {
                         if (columnDef.contains("DEFAULT")) {
                             defaultVal =
                                 columnDef.substringAfter("DEFAULT").trim().substringBefore(" ")
-                                    .trim('\'').trim()
+                                    .trim('\'')
                             extra = extra.replace(Regex(" DEFAULT +'?$defaultVal'?"), "")
                         }
                         // SEQUENCE
@@ -252,7 +252,7 @@ object PumlConverter {
         if (tables.isNotEmpty()) {
             val any = tables[0]
             val plantUML = PlantUML(
-                if (any is Table) any.subModule else null,
+                if (any is Table) any.subModuleName else null,
                 out,
                 if ("database" == out.parent) remarksProperties else null
             )

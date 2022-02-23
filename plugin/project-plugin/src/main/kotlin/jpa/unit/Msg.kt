@@ -2,20 +2,14 @@ package jpa.unit
 
 import ProjectGenerator
 import org.atteo.evo.inflector.English
-import top.bettercode.generator.SortedProperties
-import top.bettercode.generator.dom.java.element.SelfOutputUnit
+import top.bettercode.generator.dom.java.element.ManualUnit
 import java.util.*
 
 /**
  * @author Peter Wu
  */
-val msg: ProjectGenerator.(SelfOutputUnit) -> Unit = { unit ->
+val msg: ProjectGenerator.(msgProperties: Properties, ManualUnit) -> Unit = { properties, unit ->
     unit.apply {
-        val properties = SortedProperties()
-        if (!file.exists()) {
-            file.createNewFile()
-        }
-        properties.load(file.inputStream())
         properties[entityName] = remarks
         properties[pathName] = remarks
         if (isFullComposite) {
@@ -36,6 +30,5 @@ val msg: ProjectGenerator.(SelfOutputUnit) -> Unit = { unit ->
                 properties[it.columnName] = remark
             }
         }
-        properties.store(file.outputStream(), "国际化")
     }
 }

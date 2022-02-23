@@ -1,7 +1,7 @@
 package plugin
 
+import top.bettercode.generator.dom.java.element.FileUnit
 import top.bettercode.generator.dsl.Generator
-import java.io.File
 
 /**
  * <pre>
@@ -18,40 +18,44 @@ default-character-set = utf8mb4
  * @author Peter Wu
  */
 class ChangeCharacterSet : Generator() {
-    private val destFile: File by lazy {
-        File(
-            extension.basePath.parentFile,
-            "database/change_character_set.sql"
+    private val file: FileUnit by lazy {
+        FileUnit(
+            "database/change_character_set.sql",
+            canCover = true,
+            isRootFile = true
         )
     }
 
     override fun setUp() {
-        destFile.parentFile.mkdirs()
-        destFile.writeText("# 修改数据库表及字段字符集\n")
-        appendln(
-            "ALTER DATABASE ${
+        file.apply {
+            +"# 修改数据库表及字段字符集\n"
+            +"ALTER DATABASE ${
                 datasource.url.replace(
                     Regex(".*/(.+?)\\?.*"),
                     "$1"
                 )
             } CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;"
-        )
-        appendln("")
+            +""
+        }
+    }
+
+    override fun tearDown() {
+        file.write()
     }
 
     override fun call() {
-        appendln("ALTER TABLE $tableName CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-        appendln("")
-        columns.forEach {
-            if (it.typeName == "VARCHAR" || it.typeName == "TEXT") {
-                appendln("ALTER TABLE $tableName CHANGE ${it.columnName} ${it.columnName} ${it.typeName}${if (it.columnSize > 0) "(${it.columnSize}${if (it.decimalDigits > 0) ",${it.decimalDigits}" else ""})" else ""} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-                appendln("")
+        file.apply {
+            +"ALTER TABLE $tableName CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+            +""
+            columns.forEach {
+                if (it.typeName == "VARCHAR" || it.typeName == "TEXT") {
+                    +"ALTER TABLE $tableName CHANGE ${it.columnName} ${it.columnName} ${it.typeName}${if (it.columnSize > 0) "(${it.columnSize}${if (it.decimalDigits > 0) ",${it.decimalDigits}" else ""})" else ""} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+                    +""
+                }
             }
         }
     }
 
-    private fun appendln(text: String) {
-        destFile.appendText("$text\n")
-    }
+
 }
 

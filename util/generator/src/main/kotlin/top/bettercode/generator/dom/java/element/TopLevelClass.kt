@@ -9,7 +9,9 @@ open class TopLevelClass(
     type: JavaType,
     override val canCover: Boolean = false,
     override val isResourcesFile: Boolean = false,
-    override val isTestFile: Boolean = false
+    override val isTestFile: Boolean = false,
+    override val isRootFile: Boolean = false,
+    override val isProjectFile: Boolean = false
 ) : InnerClass(type), CompilationUnit {
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()
     override val staticImports: MutableSet<String> = mutableSetOf()

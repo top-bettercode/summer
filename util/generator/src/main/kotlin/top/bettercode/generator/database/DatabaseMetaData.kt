@@ -250,7 +250,9 @@ class DatabaseMetaData(
         val dataType = getInt("DATA_TYPE")
         val nullable = getInt("NULLABLE") == 1
         val decimalDigits = getInt("DECIMAL_DIGITS")
-        val columnDef = getString("COLUMN_DEF")?.trim()?.trim('\'')?.trim()
+        val def = getString("COLUMN_DEF")
+        val columnDef =
+            if (def.isNotEmpty() && def.isBlank()) " " else def?.trim('\'')?.trim()?.trim()
         val columnSize = getInt("COLUMN_SIZE")
         val remarks = getString("REMARKS")?.replace("[\t\n\r]", "")?.trim()
             ?: ""

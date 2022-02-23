@@ -205,7 +205,7 @@ class GeneratorPlugin : Plugin<Project> {
                     }
                 }.filter { it.value.isNotEmpty() }.forEach { (module, tables) ->
                     val plantUML = PlantUML(
-                        tables[0].subModule,
+                        tables[0].subModuleName,
                         File(
                             extension.file(extension.pumlSrc),
                             "database/${module}.puml"
