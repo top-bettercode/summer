@@ -170,12 +170,12 @@ class GeneratorPlugin : Plugin<Project> {
             task.doLast { _ ->
                 val all = extension.tableNames.isEmpty()
                 val tableNames = extension.tableNames.toMutableList()
-                val toTables = { toTables: (tableNames: MutableList<String>) -> List<Table> ->
+                val toTables = { toTables: () -> List<Table> ->
                     if (all) {
-                        toTables(tableNames)
+                        toTables()
                     } else {
                         if (tableNames.isNotEmpty()) {
-                            val tables = toTables(tableNames)
+                            val tables = toTables()
                             tableNames.removeAll(tables.map { it.tableName })
                             tables
                         } else
@@ -199,7 +199,7 @@ class GeneratorPlugin : Plugin<Project> {
                             if (all) {
                                 jdbc.tables(jdbc.tableNames())
                             } else {
-                                jdbc.tables(it)
+                                jdbc.tables(tableNames)
                             }
                         }
                     }
@@ -213,7 +213,7 @@ class GeneratorPlugin : Plugin<Project> {
                         null
                     )
                     plantUML.setUp(extension)
-                    tables.forEach { table ->
+                    tables.sortedBy { it.tableName }.forEach { table ->
                         plantUML.run(table)
                     }
                     plantUML.tearDown()

@@ -68,7 +68,7 @@ object PdmReader {
                 tables.add(readTable(module, it, aNamespace, cNamespace, oNamespace))
             }
         }
-        return tables
+        return tables.sortedBy { it.tableName }
     }
 
     private fun readTable(

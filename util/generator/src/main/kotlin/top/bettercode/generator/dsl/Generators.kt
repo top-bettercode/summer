@@ -43,7 +43,7 @@ object Generators {
                     }
                 }.flatten()
             }
-        }.flatten()
+        }.flatten().sortedBy { it }
     }
 
     /**
@@ -116,7 +116,7 @@ object Generators {
                 }.flatten()
             }
         }.flatten()
-        tables.forEach { table ->
+        tables.sortedBy { it.tableName }.forEach { table ->
             generators.forEach { generator ->
                 generator.run(table)
             }
