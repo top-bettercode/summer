@@ -13,13 +13,11 @@ import java.util.*
  */
 class PlantUML(
     private val umlModuleName: String?,
-    private val output: String,
+    private val destFile: File,
     private val remarksProperties: Properties?
 ) : Generator() {
 
     private val fklines = mutableListOf<String>()
-    private val destFile: File
-        get() = File(output)
 
     override fun setUp() {
         destFile.parentFile.mkdirs()
@@ -49,7 +47,7 @@ SEQUENCE
             println("数据库对象的命名最好不要超过 32 个字符")
         }
         destFile.appendText(
-            """entity ${if (catalog.isNullOrBlank()) "" else "$catalog."}${tableName} {
+            """entity ${if (table.catalog.isNullOrBlank()) "" else "${table.catalog}."}${tableName} {
     $remarks
     ==
 """
@@ -75,7 +73,7 @@ SEQUENCE
             }
 
         }
-        indexes.filter { it.columnName.size > 1 }.forEach {
+        table.indexes.filter { it.columnName.size > 1 }.forEach {
             destFile.appendText(
                 "    '${if (it.unique) "UNIQUE" else "INDEX"} ${
                     it.columnName.joinToString(

@@ -12,14 +12,11 @@ open class InnerInterface(type: JavaType) : InnerUnit(type) {
     protected val innerInterfaces: MutableList<InnerInterface> = mutableListOf()
 
     // interfaces do not have superclasses
-    val superClass: JavaType?
-        get() = null
+    val superClass: JavaType? = null
 
-    val isJavaInterface: Boolean
-        get() = true
+    val isJavaInterface: Boolean = true
 
-    val isJavaEnumeration: Boolean
-        get() = false
+    val isJavaEnumeration: Boolean = false
 
 
     /**

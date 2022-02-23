@@ -34,8 +34,10 @@ data class Table(
      * 字段
      */
     var pumlColumns: List<Any>,
-    val physicalOptions: String = "",
-    val moduleName: String = "database"
+    val module: String,
+    val subModule: String = "database",
+    val subModuleName: String = "database",
+    val physicalOptions: String = ""
 ) {
 
 
@@ -66,14 +68,13 @@ data class Table(
         }
     }
 
-    val primaryKey: Column?
-        get() {
-            return if (primaryKeys.size == 1) {
-                primaryKeys[0]
-            } else {
-                null
-            }
+    val primaryKey: Column? by lazy {
+        if (primaryKeys.size == 1) {
+            primaryKeys[0]
+        } else {
+            null
         }
+    }
 
     fun className(extension: GeneratorExtension): String = extension.className(tableName)
 

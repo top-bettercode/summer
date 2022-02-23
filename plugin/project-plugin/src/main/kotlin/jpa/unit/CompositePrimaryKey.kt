@@ -66,7 +66,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                     javadoc {
                         +"/**"
-                        +" * ${getRemark(it)}"
+                        +" * ${it.docRemark}"
                         +" */"
                     }
 
@@ -90,7 +90,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                     javadoc {
                         +"/**"
-                        +" * ${getReturnRemark(it)}"
+                        +" * ${it.returnRemark}"
                         +" */"
                     }
                 +"return ${it.javaName};"
@@ -100,7 +100,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                     javadoc {
                         +"/**"
-                        +" * ${getParamRemark(it)}"
+                        +" * ${it.paramRemark}"
                         +" * @return ${remarks}实例"
                         +" */"
                     }

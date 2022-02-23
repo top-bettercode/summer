@@ -21,7 +21,7 @@ open class MController : MProjectGenerator() {
             annotation("@org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication")
             annotation("@org.springframework.validation.annotation.Validated")
             annotation("@org.springframework.web.bind.annotation.RestController")
-            annotation("@org.springframework.web.bind.annotation.RequestMapping(value = \"/$subModule/$pathName\", name = \"$remarks\")")
+            annotation("@org.springframework.web.bind.annotation.RequestMapping(value = \"/${table.subModule}/$pathName\", name = \"$remarks\")")
 
             val fieldType = serviceType
             field("${projectEntityName}Service", fieldType, isFinal = true)

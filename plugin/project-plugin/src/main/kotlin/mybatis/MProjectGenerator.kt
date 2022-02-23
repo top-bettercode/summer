@@ -20,11 +20,12 @@ abstract class MProjectGenerator : Generator() {
         }
 
     val daoXml
-        get() = (if (extension.defaultModule) "mapper" else extension.module) + if (extension.userModule && subModule.isNotBlank()) {
-            "$subModule/$projectEntityName.xml"
-        } else {
-            "${projectEntityName}.xml"
-        }
+        get() =
+            (table.module) + if (extension.userModule && table.subModule.isNotBlank()) {
+                "${table.subModule}/$projectEntityName.xml"
+            } else {
+                "${projectEntityName}.xml"
+            }
 
     val modulePackageInfoType get() = JavaType("$packageName.package-info")
     val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.$className")

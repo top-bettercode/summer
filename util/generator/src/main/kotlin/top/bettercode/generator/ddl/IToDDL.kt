@@ -30,8 +30,11 @@ interface IToDDL {
 
     fun toDDL(tables: List<Table>, out: File)
 
-    fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: PrintWriter,
-                    extension: GeneratorExtension)
+    fun toDDLUpdate(
+        module: String, oldTables: List<Table>, tables: List<Table>,
+        out: PrintWriter,
+        extension: GeneratorExtension
+    )
 
     fun appendTable(table: Table, pw: PrintWriter)
 }

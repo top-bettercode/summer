@@ -10,6 +10,7 @@ object SqlLiteToDDL : ToDDL() {
     override val commentPrefix: String = "--"
 
     override fun toDDLUpdate(
+        module: String,
         oldTables: List<Table>,
         tables: List<Table>,
         out: PrintWriter,
@@ -53,7 +54,6 @@ object SqlLiteToDDL : ToDDL() {
             )
         }
 
-//        appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
         pw.println(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""};")
 
         appendIndexes(table, pw, quote)

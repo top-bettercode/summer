@@ -18,6 +18,7 @@ import top.bettercode.autodoc.core.operation.DocOperationResponse
 import top.bettercode.autodoc.core.singleValueMap
 import top.bettercode.autodoc.core.toMap
 import top.bettercode.generator.GeneratorExtension
+import top.bettercode.generator.JDBCConnectionConfiguration
 import top.bettercode.logging.RequestLoggingHandler
 import top.bettercode.logging.operation.Operation
 import top.bettercode.simpleframework.config.SummerWebProperties
@@ -31,6 +32,7 @@ import javax.annotation.PreDestroy
  * @author Peter Wu
  */
 class AutodocHandler(
+    private val datasources: Map<String, JDBCConnectionConfiguration>,
     private val genProperties: GenProperties,
     private val signProperties: ApiSignProperties,
     private val summerWebProperties: SummerWebProperties
@@ -154,7 +156,7 @@ class AutodocHandler(
 
                 //field
                 val extension = GeneratorExtension(
-                    datasource = genProperties.datasource,
+                    datasources = datasources,
                     dataType = genProperties.dataType,
                     tablePrefixes = genProperties.tablePrefixes
                 )
@@ -193,7 +195,6 @@ class AutodocHandler(
                 InitField.init(
                     docOperation,
                     extension,
-                    genProperties.allTables,
                     summerWebProperties.wrapEnable,
                     defaultValueHeaders,
                     defaultValueParams

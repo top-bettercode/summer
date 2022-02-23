@@ -10,6 +10,7 @@ object OracleToDDL : ToDDL() {
     override val commentPrefix: String = "--"
 
     override fun toDDLUpdate(
+        module: String,
         oldTables: List<Table>,
         tables: List<Table>,
         out: PrintWriter,
@@ -98,7 +99,7 @@ object OracleToDDL : ToDDL() {
                                 lines.add("ALTER TABLE $quote$tableName$quote ADD PRIMARY KEY(\"$quote${primaryKey.columnName}$quote\" )")
                         }
 
-                        if (extension.queryIndex)
+                        if (extension.datasources[module]?.queryIndex == true)
                             updateIndexes(oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
                             out.println("$commentPrefix $tableName")

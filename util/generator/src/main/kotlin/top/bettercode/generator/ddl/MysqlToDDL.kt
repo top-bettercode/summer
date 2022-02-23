@@ -9,6 +9,7 @@ object MysqlToDDL : ToDDL() {
     override val commentPrefix: String = "#"
 
     override fun toDDLUpdate(
+        module: String,
         oldTables: List<Table>,
         tables: List<Table>,
         out: PrintWriter,
@@ -93,7 +94,7 @@ object MysqlToDDL : ToDDL() {
                                 }
                             }
                         }
-                        if (extension.queryIndex)
+                        if (extension.datasources[module]?.queryIndex == true)
                             updateIndexes(oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
                             out.println("$commentPrefix $tableName")

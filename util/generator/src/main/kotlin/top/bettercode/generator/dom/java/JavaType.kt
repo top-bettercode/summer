@@ -44,48 +44,52 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
 
     private var extendsBoundedWildcard: Boolean = false
 
+    init {
+        typeArguments = ArrayList()
+        parse(fullTypeSpecification)
+    }
+
     /**
      * Returns the fully qualified name - including any generic type parameters.
      *
      * @return Returns the fullyQualifiedName.
      */
-    val fullyQualifiedName: String
-        get() {
-            val sb = StringBuilder()
-            if (wildcardType) {
-                sb.append('?')
-                if (boundedWildcard) {
-                    if (extendsBoundedWildcard) {
-                        sb.append(" extends ")
-                    } else {
-                        sb.append(" super ")
-                    }
-
-                    sb.append(fullyQualifiedNameWithoutTypeParameters)
+    val fullyQualifiedName: String by lazy {
+        val sb = StringBuilder()
+        if (wildcardType) {
+            sb.append('?')
+            if (boundedWildcard) {
+                if (extendsBoundedWildcard) {
+                    sb.append(" extends ")
+                } else {
+                    sb.append(" super ")
                 }
-            } else {
+
                 sb.append(fullyQualifiedNameWithoutTypeParameters)
             }
-
-            if (typeArguments.size > 0) {
-                var first = true
-                sb.append('<')
-                for (fqjt in typeArguments) {
-                    if (first) {
-                        first = false
-                    } else {
-                        sb.append(", ")
-                    }
-                    sb.append(fqjt.fullyQualifiedName)
-
-                }
-                sb.append('>')
-            }
-            if (isArray) {
-                sb.append("[]")
-            }
-            return sb.toString()
+        } else {
+            sb.append(fullyQualifiedNameWithoutTypeParameters)
         }
+
+        if (typeArguments.size > 0) {
+            var first = true
+            sb.append('<')
+            for (fqjt in typeArguments) {
+                if (first) {
+                    first = false
+                } else {
+                    sb.append(", ")
+                }
+                sb.append(fqjt.fullyQualifiedName)
+
+            }
+            sb.append('>')
+        }
+        if (isArray) {
+            sb.append("[]")
+        }
+        sb.toString()
+    }
 
     private fun isAssignableFrom(className: String): Boolean {
         return try {
@@ -118,82 +122,75 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
      */
     // an inner class is specified, only import the top
     // level class
-    val importList: List<String>
-        get() {
-            val answer = ArrayList<String>()
-            if (isExplicitlyImported) {
-                val index = shortNameWithoutTypeArguments.indexOf('.')
-                if (index == -1) {
-                    answer.add(calculateActualImport(fullyQualifiedNameWithoutTypeParameters))
-                } else {
-                    val sb = StringBuilder()
-                    sb.append(packageName)
-                    sb.append('.')
-                    sb.append(
-                        calculateActualImport(
-                            shortNameWithoutTypeArguments.substring(
-                                0,
-                                index
-                            )
+    val importList: List<String> by lazy {
+        val answer = ArrayList<String>()
+        if (isExplicitlyImported) {
+            val index = shortNameWithoutTypeArguments.indexOf('.')
+            if (index == -1) {
+                answer.add(calculateActualImport(fullyQualifiedNameWithoutTypeParameters))
+            } else {
+                val sb = StringBuilder()
+                sb.append(packageName)
+                sb.append('.')
+                sb.append(
+                    calculateActualImport(
+                        shortNameWithoutTypeArguments.substring(
+                            0,
+                            index
                         )
                     )
-                    answer.add(sb.toString())
-                }
+                )
+                answer.add(sb.toString())
             }
-
-            for (fqjt in typeArguments) {
-                answer.addAll(fqjt.importList)
-            }
-
-            return answer
         }
+
+        for (fqjt in typeArguments) {
+            answer.addAll(fqjt.importList)
+        }
+
+        answer
+    }
 
     /**
      * Gets the short name.
      *
      * @return Returns the shortName - including any type arguments.
      */
-    val shortName: String
-        get() {
-            val sb = StringBuilder()
-            if (wildcardType) {
-                sb.append('?')
-                if (boundedWildcard) {
-                    if (extendsBoundedWildcard) {
-                        sb.append(" extends ")
-                    } else {
-                        sb.append(" super ")
-                    }
-
-                    sb.append(shortNameWithoutTypeArguments)
+    val shortName: String by lazy {
+        val sb = StringBuilder()
+        if (wildcardType) {
+            sb.append('?')
+            if (boundedWildcard) {
+                if (extendsBoundedWildcard) {
+                    sb.append(" extends ")
+                } else {
+                    sb.append(" super ")
                 }
-            } else {
+
                 sb.append(shortNameWithoutTypeArguments)
             }
-
-            if (typeArguments.size > 0) {
-                var first = true
-                sb.append('<')
-                for (fqjt in typeArguments) {
-                    if (first) {
-                        first = false
-                    } else {
-                        sb.append(", ")
-                    }
-                    sb.append(fqjt.shortName)
-
-                }
-                sb.append('>')
-            }
-            if (isArray) {
-                sb.append("[]")
-            }
-            return sb.toString()
+        } else {
+            sb.append(shortNameWithoutTypeArguments)
         }
 
-    init {
-        typeArguments = ArrayList()
-        parse(fullTypeSpecification)
+        if (typeArguments.size > 0) {
+            var first = true
+            sb.append('<')
+            for (fqjt in typeArguments) {
+                if (first) {
+                    first = false
+                } else {
+                    sb.append(", ")
+                }
+                sb.append(fqjt.shortName)
+
+            }
+            sb.append('>')
+        }
+        if (isArray) {
+            sb.append("[]")
+        }
+        sb.toString()
     }
 
     private fun calculateActualImport(name: String): String {
@@ -389,50 +386,45 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
 
         private const val JAVA_LANG = "java.lang"
 
-        val voidPrimitiveInstance: JavaType = JavaType("void")
-        val intPrimitiveInstance: JavaType = JavaType("int")
-        val longPrimitiveInstance: JavaType = JavaType("long")
-        val booleanPrimitiveInstance: JavaType = JavaType("boolean")
-        val charPrimitiveInstance: JavaType = JavaType("char")
-        val bytePrimitiveInstance: JavaType = JavaType("byte")
-        val shortPrimitiveInstance: JavaType = JavaType("short")
-        val floatPrimitiveInstance: JavaType = JavaType("float")
-        val doublePrimitiveInstance: JavaType = JavaType("double")
+        val voidPrimitiveInstance: JavaType by lazy { JavaType("void") }
+        val intPrimitiveInstance: JavaType by lazy { JavaType("int") }
+        val longPrimitiveInstance: JavaType by lazy { JavaType("long") }
+        val booleanPrimitiveInstance: JavaType by lazy { JavaType("boolean") }
+        val charPrimitiveInstance: JavaType by lazy { JavaType("char") }
+        val bytePrimitiveInstance: JavaType by lazy { JavaType("byte") }
+        val shortPrimitiveInstance: JavaType by lazy { JavaType("short") }
+        val floatPrimitiveInstance: JavaType by lazy { JavaType("float") }
+        val doublePrimitiveInstance: JavaType by lazy { JavaType("double") }
 
         // always return a new instance because the type may be parameterized
 
-        val mapInstance: JavaType
-            get() = JavaType("java.util.Map")
+        val mapInstance: JavaType by lazy { JavaType("java.util.Map") }
 
         // always return a new instance because the type may be parameterized
 
-        val listInstance: JavaType
-            get() = JavaType("java.util.List")
+        val listInstance: JavaType by lazy { JavaType("java.util.List") }
 
         // always return a new instance because the type may be parameterized
 
-        val hashMapInstance: JavaType
-            get() = JavaType("java.util.HashMap")
+        val hashMapInstance: JavaType by lazy { JavaType("java.util.HashMap") }
 
         // always return a new instance because the type may be parameterized
 
-        val arrayListInstance: JavaType
-            get() = JavaType("java.util.ArrayList")
+        val arrayListInstance: JavaType by lazy { JavaType("java.util.ArrayList") }
 
         // always return a new instance because the type may be parameterized
-        val iteratorInstance: JavaType
-            get() = JavaType("java.util.Iterator")
+        val iteratorInstance: JavaType by lazy { JavaType("java.util.Iterator") }
 
-        val stringInstance: JavaType = JavaType("java.lang.String")
+        val stringInstance: JavaType by lazy { JavaType("java.lang.String") }
 
 
-        val objectInstance: JavaType = JavaType("java.lang.Object")
+        val objectInstance: JavaType by lazy { JavaType("java.lang.Object") }
 
-        val dateInstance: JavaType = JavaType("java.util.Date")
+        val dateInstance: JavaType by lazy { JavaType("java.util.Date") }
 
-        val criteriaInstance: JavaType = JavaType("Criteria")
+        val criteriaInstance: JavaType by lazy { JavaType("Criteria") }
 
-        val generatedCriteriaInstance: JavaType = JavaType("GeneratedCriteria")
+        val generatedCriteriaInstance: JavaType by lazy { JavaType("GeneratedCriteria") }
 
     }
 }

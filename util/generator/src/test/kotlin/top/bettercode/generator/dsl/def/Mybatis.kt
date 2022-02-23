@@ -1,11 +1,10 @@
 package top.bettercode.generator.dsl.def
 
-import top.bettercode.generator.dsl.Generator
 import org.mybatis.generator.api.MyBatisGenerator
 import org.mybatis.generator.config.*
 import org.mybatis.generator.internal.DefaultShellCallback
+import top.bettercode.generator.dsl.Generator
 import java.io.File
-import java.util.*
 
 /**
  * MybatisGenerator
@@ -64,13 +63,13 @@ class Mybatis : Generator() {
 
         jdbcConnectionConfiguration.apply {
             if (driverClass.isNullOrBlank())
-                driverClass = extension.datasource.driverClass
+                driverClass = datasource.driverClass
             if (connectionURL.isNullOrBlank())
-                connectionURL = extension.datasource.url
+                connectionURL = datasource.url
             if (userId.isNullOrBlank())
-                userId = extension.datasource.username
+                userId = datasource.username
             if (password.isNullOrBlank())
-                password = extension.datasource.password
+                password = datasource.password
         }
         javaModelGeneratorConfiguration.apply {
             if (targetPackage.isNullOrBlank())
@@ -92,7 +91,11 @@ class Mybatis : Generator() {
             if (targetPackage.isNullOrBlank())
                 targetPackage = "mybatis"
             if (targetProject.isNullOrBlank())
-                targetProject = if (extension.dir.isBlank()) "src/main/resources" else extension.dir.replace("java", "resources")
+                targetProject =
+                    if (extension.dir.isBlank()) "src/main/resources" else extension.dir.replace(
+                        "java",
+                        "resources"
+                    )
             mkdir(targetProject, targetPackage)
         }
 

@@ -1,8 +1,8 @@
 package top.bettercode.autodoc.core
 
-import top.bettercode.autodoc.core.model.DocModule
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
+import top.bettercode.autodoc.core.model.DocModule
 import java.io.File
 
 
@@ -10,37 +10,39 @@ import java.io.File
  * @author Peter Wu
  */
 open class AutodocExtension(
-        var author: String = "autodoc",
-        var version: String = "v1.0",
-        var toclevels: Int = 2,
-        /**
-         * 最大响应时间(单位毫秒)
-         */
-        var maxResponseTime: Int = 2000,
-        var source: File = File("src/doc"),
-        var output: File? = null,
-        var authUri: String = "/oauth/token",
-        var signParam: String = "sign",
-        var authVariables: Array<String> = arrayOf("token_type", "access_token", "refresh_token"),
-        var properties: Map<Any, Any?> = emptyMap()) {
+    var author: String = "autodoc",
+    var version: String = "v1.0",
+    var toclevels: Int = 2,
+    /**
+     * 最大响应时间(单位毫秒)
+     */
+    var maxResponseTime: Int = 2000,
+    var source: File = File("src/doc"),
+    var output: File? = null,
+    var authUri: String = "/oauth/token",
+    var signParam: String = "sign",
+    var authVariables: Array<String> = arrayOf("token_type", "access_token", "refresh_token"),
+    var properties: Map<Any, Any?> = emptyMap()
+) {
 
     var projectName: String = ""
         get() = field.ifBlank { "接口文档" }
 
 
-    val outputFile: File
-        get() = if (output == null) this.source else output!!
+    val outputFile: File by lazy { if (output == null) this.source else output!! }
 
     val readme: File
-        get() {
-            val file = File(source, "README.adoc")
-            if (!file.exists() && rootSource != null) {
-                val readme = File(rootSource, "README.adoc")
-                if (readme.exists())
-                    return readme
+            by lazy {
+                val file = File(source, "README.adoc")
+                if (!file.exists() && rootSource != null) {
+                    val readme = File(rootSource, "README.adoc")
+                    if (readme.exists())
+                        readme
+                    else
+                        file
+                } else
+                    file
             }
-            return file
-        }
 
     fun propertiesFile(module: DocModule): File {
         val file = module.moduleFile { File(it, "properties.adoc") }
@@ -90,14 +92,24 @@ open class AutodocExtension(
     }
 
     private fun listAdoc(dic: File, includeReadme: Boolean): List<File> =
-            dic.listFiles { file -> file.isFile && file.extension == "adoc" && file.name != "properties.adoc" && (includeReadme || file.name != "README.adoc") }?.toList()
-                    ?: emptyList()
+        dic.listFiles { file -> file.isFile && file.extension == "adoc" && file.name != "properties.adoc" && (includeReadme || file.name != "README.adoc") }
+            ?.toList()
+            ?: emptyList()
 
 
     fun adocFile(moduleName: String) = File(outputFile, "$projectName-$moduleName.adoc")
     fun htmlFile(modulePyName: String) = File(outputFile, "$modulePyName.html")
     fun pdfFile(moduleName: String) = File(outputFile, "$projectName-$moduleName.pdf")
-    fun postmanFile(modulePyName: String) = File(outputFile, "${PinyinHelper.convertToPinyinString(projectName, "", PinyinFormat.WITHOUT_TONE)}-$modulePyName.postman_collection.json")
+    fun postmanFile(modulePyName: String) = File(
+        outputFile,
+        "${
+            PinyinHelper.convertToPinyinString(
+                projectName,
+                "",
+                PinyinFormat.WITHOUT_TONE
+            )
+        }-$modulePyName.postman_collection.json"
+    )
 
     private fun listFileMap(): Map<String, Pair<File?, File?>> {
         val sourceFile = source
@@ -231,6 +243,7 @@ open class AutodocExtension(
     }
 
     private fun copy(path: String) {
-        AutodocExtension::class.java.getResourceAsStream("/$path")?.copyTo(File(outputFile, path).apply { parentFile.mkdirs() }.outputStream())
+        AutodocExtension::class.java.getResourceAsStream("/$path")
+            ?.copyTo(File(outputFile, path).apply { parentFile.mkdirs() }.outputStream())
     }
 }

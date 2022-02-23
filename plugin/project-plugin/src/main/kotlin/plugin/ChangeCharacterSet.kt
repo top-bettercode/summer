@@ -18,16 +18,19 @@ default-character-set = utf8mb4
  * @author Peter Wu
  */
 class ChangeCharacterSet : Generator() {
-    private val destFile: File
-        get() = File(extension.basePath.parentFile, "database/change_character_set.sql")
+    private val destFile: File by lazy {
+        File(
+            extension.basePath.parentFile,
+            "database/change_character_set.sql"
+        )
+    }
 
     override fun setUp() {
-        System.err.println(destFile)
         destFile.parentFile.mkdirs()
         destFile.writeText("# 修改数据库表及字段字符集\n")
         appendln(
             "ALTER DATABASE ${
-                extension.datasource.url.replace(
+                datasource.url.replace(
                     Regex(".*/(.+?)\\?.*"),
                     "$1"
                 )

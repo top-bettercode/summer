@@ -2,6 +2,7 @@ package top.bettercode.generator.dsl
 
 import top.bettercode.generator.DataType
 import top.bettercode.generator.GeneratorExtension
+import top.bettercode.generator.database.entity.Table
 import top.bettercode.generator.dom.java.JavaTypeResolver
 import top.bettercode.generator.powerdesigner.PdmReader
 import top.bettercode.generator.puml.PumlConverter
@@ -13,6 +14,38 @@ import top.bettercode.generator.puml.PumlConverter
  */
 object Generators {
 
+    fun tableNames(extension: GeneratorExtension): List<String> {
+        JavaTypeResolver.softDeleteColumnName = extension.softDeleteColumnName
+        JavaTypeResolver.softDeleteAsBoolean = extension.softDeleteAsBoolean
+        return when (extension.dataType) {
+            DataType.DATABASE -> {
+                extension.datasources.map { (_, jdbc) ->
+                    jdbc.tableNames()
+                }
+            }
+            DataType.PUML -> {
+                extension.pumlSources.map { (module, files) ->
+                    files.map { file ->
+                        PumlConverter.toTables(
+                            file,
+                            module
+                        ).map { it.tableName }
+                    }.flatten()
+                }
+            }
+            DataType.PDM -> {
+                extension.pdmSources.map { (module, files) ->
+                    files.map { file ->
+                        PdmReader.read(
+                            file,
+                            module
+                        ).map { it.tableName }
+                    }
+                }.flatten()
+            }
+        }.flatten()
+    }
+
     /**
      * @param extension 配置
      */
@@ -21,40 +54,6 @@ object Generators {
         JavaTypeResolver.softDeleteAsBoolean = extension.softDeleteAsBoolean
         JavaTypeResolver.useJSR310Types = extension.useJSR310Types
 
-        if (extension.generators.isEmpty()) {
-            return
-        }
-        when (extension.dataType) {
-            DataType.DATABASE -> database(extension)
-            DataType.PUML -> puml(extension)
-            DataType.PDM -> pdm(extension)
-        }
-    }
-
-    fun tableNames(extension: GeneratorExtension, all: Boolean = false): List<String> {
-        JavaTypeResolver.softDeleteColumnName = extension.softDeleteColumnName
-        JavaTypeResolver.softDeleteAsBoolean = extension.softDeleteAsBoolean
-        return when (extension.dataType) {
-            DataType.DATABASE -> extension.use {
-                tableNames()
-            }
-            DataType.PUML -> {
-                (if (all) extension.pumlAllSources else extension.pumlSrcSources).map {
-                    PumlConverter.toTables(
-                        it
-                    )
-                }.flatten()
-                    .map { it.tableName }.distinct().sortedBy { it }.toList()
-            }
-            DataType.PDM -> {
-                PdmReader.read(extension.file(extension.pdmSrc)).map { it.tableName }.distinct()
-                    .sortedBy { it }
-                    .toList()
-            }
-        }
-    }
-
-    fun pdm(extension: GeneratorExtension) {
         val generators = extension.generators
         if (generators.isEmpty()) {
             return
@@ -62,15 +61,52 @@ object Generators {
         generators.forEach { generator ->
             generator.setUp(extension)
         }
-
-        val tables = PdmReader.read(extension.file(extension.pdmSrc))
-        if (extension.tableNames.isEmpty()) {
-            extension.tableNames = tables.map { it.tableName }.toTypedArray()
+        val all = extension.tableNames.isEmpty()
+        val tableNames = extension.tableNames.toMutableList()
+        val toTables = { toTables: (tableNames: MutableList<String>) -> List<Table> ->
+            if (all) {
+                toTables(tableNames)
+            } else {
+                if (tableNames.isNotEmpty()) {
+                    val tables = toTables(tableNames)
+                    tableNames.removeAll(tables.map { it.tableName })
+                    tables
+                } else
+                    emptyList()
+            }
         }
-
-        extension.tableNames.forEach { tableName ->
-            val table = tables.find { it.tableName.equals(tableName, true) }
-                ?: throw RuntimeException("未在(${extension.tableNames})中找到${tableName}表")
+        val tables = when (extension.dataType) {
+            DataType.DATABASE -> {
+                extension.datasources.mapValues { (_, jdbc) ->
+                    toTables {
+                        if (all) {
+                            jdbc.tables(jdbc.tableNames().toTypedArray())
+                        } else {
+                            jdbc.tables(it.toTypedArray())
+                        }
+                    }
+                }.values
+            }
+            DataType.PUML -> {
+                extension.pumlSources.map { (module, files) ->
+                    files.map { file ->
+                        toTables {
+                            PumlConverter.toTables(file, module)
+                        }
+                    }
+                }.flatten()
+            }
+            DataType.PDM -> {
+                extension.pdmSources.map { (module, files) ->
+                    files.map { file ->
+                        toTables {
+                            PdmReader.read(file, module)
+                        }
+                    }
+                }.flatten()
+            }
+        }.flatten()
+        tables.forEach { table ->
             generators.forEach { generator ->
                 generator.run(table)
             }
@@ -79,74 +115,4 @@ object Generators {
             generator.tearDown()
         }
     }
-
-    fun database(extension: GeneratorExtension) {
-        val generators = extension.generators
-        if (generators.isEmpty()) {
-            return
-        }
-        generators.forEach { generator ->
-            generator.setUp(extension)
-        }
-
-        extension.use {
-            if (extension.tableNames.isEmpty()) {
-                extension.use {
-                    extension.tableNames = tableNames().toTypedArray()
-                }
-            }
-            extension.tableNames.forEach {
-                val table = table(it)
-                if (table != null) {
-                    generators.forEach { generator ->
-                        generator.run(table)
-                    }
-                }
-            }
-        }
-        generators.forEach { generator ->
-            generator.tearDown()
-        }
-    }
-
-    fun puml(extension: GeneratorExtension) {
-        val generators = extension.generators
-        if (generators.isEmpty()) {
-            return
-        }
-        generators.forEach { generator ->
-            generator.setUp(extension)
-        }
-
-        var tableNames = extension.tableNames
-        if (tableNames.isEmpty())
-            tableNames = tableNames(extension).toTypedArray()
-
-
-        tableNames.forEach inner@{ tableName ->
-            var found = false
-            val allTableNames = mutableSetOf<String>()
-            extension.pumlAllSources.forEach { file ->
-                val tables = PumlConverter.toTables(file)
-                val table = tables.find { it.tableName.equals(tableName, true) }
-                if (table != null) {
-                    found = true
-                    generators.forEach { generator ->
-                        generator.subModule = file.nameWithoutExtension
-                        generator.run(table)
-                    }
-                    return@inner
-                } else {
-                    allTableNames.addAll(tables.map { it.tableName })
-                }
-            }
-            if (!found)
-                throw RuntimeException("未在($allTableNames)中找到${tableName}表")
-        }
-
-        generators.forEach { generator ->
-            generator.tearDown()
-        }
-    }
-
 }

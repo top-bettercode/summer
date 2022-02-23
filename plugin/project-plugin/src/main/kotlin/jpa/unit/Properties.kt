@@ -23,7 +23,7 @@ val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
                     if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                         javadoc {
                             +"/**"
-                            +" * ${getRemark(it)}"
+                            +" * ${it.docRemark}"
                             +" */"
                         }
                 }
@@ -34,7 +34,7 @@ val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
                 if (primaryKey.remarks.isNotBlank() || !primaryKey.columnDef.isNullOrBlank())
                     javadoc {
                         +"/**"
-                        +" * ${getRemark(primaryKey)}"
+                        +" * ${primaryKey.docRemark}"
                         +" */"
                     }
             }
@@ -45,7 +45,7 @@ val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
                 if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                     javadoc {
                         +"/**"
-                        +" * ${getRemark(it)}"
+                        +" * ${it.docRemark}"
                         +" */"
                     }
             }

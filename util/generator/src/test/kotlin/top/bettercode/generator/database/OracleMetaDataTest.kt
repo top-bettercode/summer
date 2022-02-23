@@ -3,6 +3,8 @@ package top.bettercode.generator.database
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import top.bettercode.generator.GeneratorExtension
+import top.bettercode.generator.JDBCConnectionConfiguration
+import top.bettercode.generator.defaultModuleName
 import java.io.File
 
 /**
@@ -10,7 +12,6 @@ import java.io.File
  */
 class OracleMetaDataTest {
     private val extension = GeneratorExtension(
-        debug = true,
         basePath = File("build"),
         dir = "src/test/resources",
         packageName = "com.bettercode.test",
@@ -18,9 +19,13 @@ class OracleMetaDataTest {
     )
 
     init {
-        extension.datasource.url = "jdbc:oracle:thin:@10.0.1.101:1521:hollycrm"
-        extension.datasource.username = "yuntudev"
-        extension.datasource.password = "yuntudev"
+        val configuration = JDBCConnectionConfiguration()
+        configuration.debug = true
+        configuration.url =
+            "jdbc:oracle:thin:@10.0.1.101:1521:hollycrm"
+        configuration.username = "yuntudev"
+        configuration.password = "yuntudev"
+        extension.datasources = mapOf(defaultModuleName to configuration)
     }
 
     @BeforeEach
@@ -29,14 +34,14 @@ class OracleMetaDataTest {
 
     @Test
     fun tableNames() {
-        println(extension.use { tableNames() })
+        println(extension.defaultDatasource.use { tableNames() })
     }
 
 
     @Test
     fun table() {
         extension.tableNames.forEach {
-            val table = extension.use { table(it) }
+            val table = extension.defaultDatasource.use { table(it) }
             println(table)
             println(table?.indexes?.joinToString("\n\n"))
         }

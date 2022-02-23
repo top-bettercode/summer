@@ -16,8 +16,7 @@ open class FileUnit(
 
     private val stringWriter = StringWriter()
 
-    override val output: PrintWriter.() -> Unit
-        get() = { use { println(stringWriter.toString()) } }
+    override val output: PrintWriter.() -> Unit = { use { println(stringWriter.toString()) } }
 
     operator fun String.unaryPlus() {
         stringWriter.appendln(this)

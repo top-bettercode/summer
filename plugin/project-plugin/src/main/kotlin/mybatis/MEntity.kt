@@ -10,8 +10,6 @@ class MEntity : MProjectGenerator() {
 
     override fun content() {
         clazz(entityType, canCover = true) {
-            val tableName =
-                if (schema.isNullOrBlank() || schema == extension.datasource.schema) tableName else "$schema.$tableName"
             annotation("@com.baomidou.mybatisplus.annotations.TableName(\"$tableName\")")
             if (primaryKey.sequence.isNotBlank()) {
                 if (primaryKey.javaType != JavaType("java.lang.Long")) {
@@ -60,7 +58,7 @@ class MEntity : MProjectGenerator() {
                             annotation("@com.baomidou.mybatisplus.annotations.TableId(\"${it.columnName}\")")
                     } else {
                         if (it.javaName == "lastModifiedDate")
-                            annotation("@com.baomidou.mybatisplus.annotations.TableField(value = \"${it.columnName}\", el = \"${it.javaName},jdbcType=${it.jdbcType}\", update = \"${if (isOracleDatasource) "sysdate" else "now()"}\")")
+                            annotation("@com.baomidou.mybatisplus.annotations.TableField(value = \"${it.columnName}\", el = \"${it.javaName},jdbcType=${it.jdbcType}\", update = \"${if (datasource.isOracle) "sysdate" else "now()"}\")")
                         else
                             annotation("@com.baomidou.mybatisplus.annotations.TableField(value = \"${it.columnName}\", el = \"${it.javaName},jdbcType=${it.jdbcType}\")")
                     }
@@ -83,7 +81,7 @@ class MEntity : MProjectGenerator() {
                     if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                         javadoc {
                             +"/**"
-                            +" * ${getReturnRemark(it)}"
+                            +" * ${it.returnRemark}"
                             +" */"
                         }
                     +"return ${it.javaName};"
@@ -93,7 +91,7 @@ class MEntity : MProjectGenerator() {
                     if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                         javadoc {
                             +"/**"
-                            +" * ${getParamRemark(it)}"
+                            +" * ${it.paramRemark}"
                             +" */"
                         }
                     parameter {
@@ -164,7 +162,7 @@ class MEntity : MProjectGenerator() {
                         if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
                             javadoc {
                                 +"/**"
-                                +" * ${getRemark(it)}"
+                                +" * ${it.docRemark}"
                                 +" */"
                             }
                     }

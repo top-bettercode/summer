@@ -50,15 +50,15 @@ v${project.version}
 
     override fun call() {
         file.appendText("\n")
-        if (moduleName != currentModuleName) {
-            file.appendText("== ${moduleName}模块\n")
+        if (table.subModuleName != currentModuleName) {
+            file.appendText("== ${table.subModuleName}模块\n")
             file.appendText("\n")
             file.appendText("模型图如下:\n")
             file.appendText("\n")
             file.appendText("[plantuml]\n----\n")
-            file.appendText("${project.rootProject.file("puml/src/$subModule.puml").readText()}\n")
+            file.appendText("${project.rootProject.file("puml/src/${table.subModule}.puml").readText()}\n")
             file.appendText("----\n")
-            currentModuleName = moduleName
+            currentModuleName = table.subModuleName
         }
         file.appendText("\n")
         val tableName = tableName
