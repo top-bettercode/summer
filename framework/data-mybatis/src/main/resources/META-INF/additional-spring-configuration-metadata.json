@@ -1,8 +1,0 @@
-{
-  "properties": [{
-      "name": "summer.data.mybatis.binding.query-dsl.base-packages",
-      "type": "java.lang.String[]",
-      "description": "specifying the packages to scan for query-dsl."
-    }
-  ]
-}
