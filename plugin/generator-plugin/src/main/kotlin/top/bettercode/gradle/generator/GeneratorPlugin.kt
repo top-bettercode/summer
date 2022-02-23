@@ -182,27 +182,24 @@ class GeneratorPlugin : Plugin<Project> {
                             emptyList()
                     }
                 }
-                when (extension.dataType) {
-                    DataType.PDM -> {
-                        extension.pdmSources.map { (module, files) ->
-                            files.associateBy({ it.nameWithoutExtension }, { file ->
-                                toTables {
-                                    PdmReader.read(
-                                        file,
-                                        module
-                                    )
-                                }
-                            }).entries
-                        }.flatten().associateBy({ it.key }, { it.value })
-                    }
-                    else -> {
-                        extension.datasources.mapValues { (_, jdbc) ->
+                if (extension.pdmSources.isNotEmpty()) {
+                    extension.pdmSources.map { (module, files) ->
+                        files.associateBy({ it.nameWithoutExtension }, { file ->
                             toTables {
-                                if (all) {
-                                    jdbc.tables(jdbc.tableNames().toTypedArray())
-                                } else {
-                                    jdbc.tables(it.toTypedArray())
-                                }
+                                PdmReader.read(
+                                    file,
+                                    module
+                                )
+                            }
+                        }).entries
+                    }.flatten().associateBy({ it.key }, { it.value })
+                } else {
+                    extension.datasources.mapValues { (_, jdbc) ->
+                        toTables {
+                            if (all) {
+                                jdbc.tables(jdbc.tableNames().toTypedArray())
+                            } else {
+                                jdbc.tables(it.toTypedArray())
                             }
                         }
                     }
