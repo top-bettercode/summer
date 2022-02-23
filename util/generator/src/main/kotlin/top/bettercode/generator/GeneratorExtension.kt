@@ -346,7 +346,7 @@ class JDBCConnectionConfiguration(
         }
     }
 
-    fun tables(tableNames: Array<String>): List<Table> {
+    fun tables(tableNames: List<String>): List<Table> {
         val size = tableNames.size
         println("$size:${tableNames.joinToString()}")
         val resultMap = ConcurrentHashMap<String, Table>()

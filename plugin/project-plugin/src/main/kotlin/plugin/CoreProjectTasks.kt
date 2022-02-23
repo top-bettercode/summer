@@ -106,7 +106,7 @@ object CoreProjectTasks {
                     val dbDoc = DbDoc(project)
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     gen.generators = arrayOf(dbDoc)
-                    gen.tableNames = arrayOf()
+                    gen.tableNames = emptyArray()
                     Generators.call(gen)
                 }
             }

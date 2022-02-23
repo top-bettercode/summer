@@ -80,9 +80,9 @@ object Generators {
                 extension.datasources.mapValues { (_, jdbc) ->
                     toTables {
                         if (all) {
-                            jdbc.tables(jdbc.tableNames().toTypedArray())
+                            jdbc.tables(jdbc.tableNames())
                         } else {
-                            jdbc.tables(it.toTypedArray())
+                            jdbc.tables(it)
                         }
                     }
                 }.values
