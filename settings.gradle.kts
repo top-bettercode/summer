@@ -10,7 +10,6 @@ pluginManagement {
 include(":framework:environment")
 include(":framework:config")
 include(":framework:data-jpa")
-include(":framework:data-mybatis")
 include(":framework:security")
 include(":framework:starter-logging")
 include(":framework:web-core")

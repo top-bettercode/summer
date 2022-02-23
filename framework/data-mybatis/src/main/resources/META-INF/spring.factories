@@ -1,4 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-top.bettercode.simpleframework.data.config.MybatisPlusConfiguration,\
-top.bettercode.simpleframework.data.config.MybatisConfiguration
