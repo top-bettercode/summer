@@ -18,89 +18,98 @@ class LocalDateTimeHelper private constructor(
      *
      * @return LocalDateHelper
      */
-    val firstDayOfMonth: LocalDateTimeHelper
-        get() = of(localDateTime.with(TemporalAdjusters.firstDayOfMonth()))
+    val firstDayOfMonth: LocalDateTimeHelper by lazy {
+        of(localDateTime.with(TemporalAdjusters.firstDayOfMonth()))
             .zoneOffset(zoneOffset)
+    }
 
     /**
      * 取得下月第一天
      *
      * @return LocalDateHelper
      */
-    val firstDayOfNextMonth: LocalDateTimeHelper
-        get() = of(localDateTime.with(TemporalAdjusters.firstDayOfNextMonth()))
+    val firstDayOfNextMonth: LocalDateTimeHelper by lazy {
+        of(localDateTime.with(TemporalAdjusters.firstDayOfNextMonth()))
             .zoneOffset(zoneOffset)
+    }
 
     /**
      * 取得当月最后一天
      *
      * @return LocalDateHelper
      */
-    val lastDayOfMonth: LocalDateTimeHelper
-        get() = of(localDateTime.with(TemporalAdjusters.lastDayOfMonth()))
+    val lastDayOfMonth: LocalDateTimeHelper by lazy {
+        of(localDateTime.with(TemporalAdjusters.lastDayOfMonth()))
             .zoneOffset(zoneOffset)
+    }
 
     /**
      * 取得当季度第一天
      *
      * @return LocalDateHelper
      */
-    val firstDayOfQuarter: LocalDateTimeHelper
-        get() = of(
+    val firstDayOfQuarter: LocalDateTimeHelper by lazy {
+        of(
             localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().value)
                 .with(TemporalAdjusters.firstDayOfMonth())
         ).zoneOffset(zoneOffset)
+    }
 
     /**
      * 取得下季度第一天
      *
      * @return LocalDateHelper
      */
-    val firstDayOfNextQuarter: LocalDateTimeHelper
-        get() = of(
+    val firstDayOfNextQuarter: LocalDateTimeHelper by lazy {
+        of(
             localDateTime
                 .withMonth(localDateTime.month.firstMonthOfQuarter().plus(3).value)
                 .with(TemporalAdjusters.firstDayOfMonth())
         ).zoneOffset(zoneOffset)
+    }
 
     /**
      * 取得当季度最后一天
      *
      * @return LocalDateHelper
      */
-    val lastDayOfQuarter: LocalDateTimeHelper
-        get() = of(
+    val lastDayOfQuarter: LocalDateTimeHelper by lazy {
+        of(
             localDateTime
                 .withMonth(localDateTime.month.firstMonthOfQuarter().plus(2).value)
                 .with(TemporalAdjusters.lastDayOfMonth())
         ).zoneOffset(zoneOffset)
+    }
 
     /**
      * 获取当年的第一天
      *
      * @return LocalDateHelper
      */
-    val firstDayOfYear: LocalDateTimeHelper
-        get() = of(localDateTime.with(TemporalAdjusters.firstDayOfYear()))
+    val firstDayOfYear: LocalDateTimeHelper by lazy {
+        of(localDateTime.with(TemporalAdjusters.firstDayOfYear()))
             .zoneOffset(zoneOffset)
+    }
 
     /**
      * 获取下年的第一天
      *
      * @return LocalDateHelper
      */
-    val firstDayOfNextYear: LocalDateTimeHelper
-        get() = of(localDateTime.with(TemporalAdjusters.firstDayOfNextYear()))
+    val firstDayOfNextYear: LocalDateTimeHelper by lazy {
+        of(localDateTime.with(TemporalAdjusters.firstDayOfNextYear()))
             .zoneOffset(zoneOffset)
+    }
 
     /**
      * 获取当年的最后一天
      *
      * @return LocalDateHelper
      */
-    val lastDayOfYear: LocalDateTimeHelper
-        get() = of(localDateTime.with(TemporalAdjusters.lastDayOfYear()))
+    val lastDayOfYear: LocalDateTimeHelper by lazy {
+        of(localDateTime.with(TemporalAdjusters.lastDayOfYear()))
             .zoneOffset(zoneOffset)
+    }
 
     //--------------------------------------------
     fun toMillis(): Long {

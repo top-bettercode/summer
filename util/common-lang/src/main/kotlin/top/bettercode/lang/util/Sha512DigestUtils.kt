@@ -1,9 +1,8 @@
 package top.bettercode.lang.util
 
 import top.bettercode.lang.util.Hex.encode
-import java.security.NoSuchAlgorithmException
-import java.lang.RuntimeException
 import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 
 object Sha512DigestUtils {
     /**
@@ -12,12 +11,13 @@ object Sha512DigestUtils {
      * @throws RuntimeException when a [java.security.NoSuchAlgorithmException] is
      * caught.
      */
-    private val sha512Digest: MessageDigest
-        get() = try {
+    private val sha512Digest: MessageDigest by lazy {
+        try {
             MessageDigest.getInstance("SHA-512")
         } catch (ex: NoSuchAlgorithmException) {
             throw RuntimeException(ex.message)
         }
+    }
 
     /**
      * Calculates the SHA digest and returns the value as a `byte[]`.
