@@ -124,17 +124,17 @@ class GeneratorPlugin : Plugin<Project> {
             extension.settings = settings
 
             extension.tableNames = (findProperty(project, "tableNames")
-                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.distinct()
                 .sortedBy { it }.toList()
                 .toTypedArray()
             extension.jsonViewIgnoredFieldNames =
                 (findProperty(project, "jsonViewIgnoredFieldNames")
                     ?: "deleted,lastModifiedDate").split(",").asSequence()
-                    .filter { it.isNotBlank() }.map { it.trim() }.sortedBy { it }.toList()
+                    .filter { it.isNotBlank() }.map { it.trim() }.distinct().sortedBy { it }.toList()
                     .toTypedArray()
 
             extension.generators = (findProperty(project, "generators")
-                ?: "").split(",").asSequence().filter { it.isNotBlank() }
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.distinct()
                 .map {
                     Class.forName(it.trim()).getDeclaredConstructor().newInstance() as Generator
                 }.toList().toTypedArray()
@@ -197,40 +197,26 @@ class GeneratorPlugin : Plugin<Project> {
                     extension.datasources.mapValues { (_, jdbc) ->
                         toTables {
                             if (all) {
-                                jdbc.tables(jdbc.tableNames().toTypedArray())
+                                jdbc.tables(jdbc.tableNames())
                             } else {
-                                jdbc.tables(it.toTypedArray())
+                                jdbc.tables(it)
                             }
                         }
                     }
-                }.filter { it.value.isNotEmpty() }.forEach { (m, tables) ->
+                }.filter { it.value.isNotEmpty() }.forEach { (module, tables) ->
                     val plantUML = PlantUML(
                         tables[0].subModule,
                         File(
                             extension.file(extension.pumlSrc),
-                            "database/${m}.puml"
+                            "database/${module}.puml"
                         ),
                         null
                     )
                     plantUML.setUp(extension)
-                    if (all) {
-                        tables.forEach { table ->
-                            plantUML.run(table)
-                        }
-                    } else {
-                        tableNames.iterator().forEach { tableName ->
-                            val table =
-                                tables.find { it.tableName.equals(tableName, true) }
-                            if (table != null) {
-                                tableNames.remove(tableName)
-                                plantUML.run(table)
-                            }
-                        }
+                    tables.forEach { table ->
+                        plantUML.run(table)
                     }
                     plantUML.tearDown()
-                    if (!all && tableNames.isEmpty()) {
-                        return@forEach
-                    }
                 }
             }
         }
@@ -377,13 +363,13 @@ class GeneratorPlugin : Plugin<Project> {
                             allTables.addAll(tables)
                             val jdbc = extension.datasources[module]
                                 ?: throw IllegalStateException("未配置${module}模块数据库信息")
-                            val tableNames = tables.map { it.tableName }.toTypedArray()
+                            val tableNames = tables.map { it.tableName }
                             val oldTables =
                                 if (deleteTablesWhenUpdate) {
                                     if (DataType.PUML == extension.updateFromType && databaseFile.exists()) {
                                         PumlConverter.toTables(databaseFile, module)
                                     } else {
-                                        jdbc.tables(jdbc.tableNames().toTypedArray())
+                                        jdbc.tables(jdbc.tableNames())
                                     }
                                 } else {
                                     if (DataType.PUML == extension.updateFromType && databaseFile.exists()) {
