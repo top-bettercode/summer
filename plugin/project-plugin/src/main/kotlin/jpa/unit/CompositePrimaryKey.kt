@@ -63,7 +63,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         primaryKeys.forEach {
             //field
             field(it.javaName, it.javaType) {
-                if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+                if (it.remarks.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"
                         +" * ${it.docRemark}"
@@ -87,7 +87,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //getter
             method("get${it.javaName.capitalize()}", it.javaType) {
-                if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+                if (it.remarks.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"
                         +" * ${it.returnRemark}"
@@ -97,7 +97,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
             //setter
             method("set${it.javaName.capitalize()}", primaryKeyType) {
-                if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+                if (it.remarks.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"
                         +" * ${it.paramRemark}"

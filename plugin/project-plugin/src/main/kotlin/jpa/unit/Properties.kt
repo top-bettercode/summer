@@ -20,7 +20,7 @@ val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
                     "\"${primaryKeyName}.${it.javaName}\""
                 ) {
                     visibility = JavaVisibility.DEFAULT
-                    if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+                    if (it.remarks.isNotBlank() || it.columnDef != null)
                         javadoc {
                             +"/**"
                             +" * ${it.docRemark}"
@@ -31,7 +31,7 @@ val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
         } else {
             field(primaryKeyName, JavaType.stringInstance, "\"${primaryKeyName}\"") {
                 visibility = JavaVisibility.DEFAULT
-                if (primaryKey.remarks.isNotBlank() || !primaryKey.columnDef.isNullOrBlank())
+                if (primaryKey.remarks.isNotBlank() || primaryKey.columnDef != null)
                     javadoc {
                         +"/**"
                         +" * ${primaryKey.docRemark}"
@@ -42,7 +42,7 @@ val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
         otherColumns.forEach {
             field(it.javaName, JavaType.stringInstance, "\"${it.javaName}\"") {
                 visibility = JavaVisibility.DEFAULT
-                if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+                if (it.remarks.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"
                         +" * ${it.docRemark}"

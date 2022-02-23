@@ -12,7 +12,9 @@ class Interface(
     type: JavaType,
     override val canCover: Boolean = false,
     override val isResourcesFile: Boolean = false,
-    override val isTestFile: Boolean = false
+    override val isTestFile: Boolean = false,
+    override val isRootFile: Boolean= false,
+    override val isProjectFile: Boolean= false
 ) : InnerInterface(type), CompilationUnit {
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()
     override val staticImports: MutableSet<String> = mutableSetOf()

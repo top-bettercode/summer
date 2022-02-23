@@ -8,7 +8,6 @@ import ProjectGenerator
 open class SetterPrint(private val randomValue: Boolean) : ProjectGenerator() {
 
     override fun call() {
-
         if (isCompositePrimaryKey || !primaryKey.autoIncrement) {
             if (isCompositePrimaryKey) {
                 println("${primaryKeyType.shortName} $primaryKeyName = new ${primaryKeyType.shortName}();")

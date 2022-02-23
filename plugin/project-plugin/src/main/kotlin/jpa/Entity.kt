@@ -1,12 +1,29 @@
 import jpa.unit.*
+import top.bettercode.generator.SortedProperties
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.JavaVisibility
+import top.bettercode.generator.dom.java.element.ManualUnit
 import top.bettercode.generator.dom.java.element.Parameter
 
 /**
  * @author Peter Wu
  */
 class Entity : ProjectGenerator() {
+    private lateinit var msgProperties: SortedProperties
+    private lateinit var msgUnit: ManualUnit
+
+    override fun setUp() {
+        msgProperties = SortedProperties()
+        msgUnit = ManualUnit(msgName, isResourcesFile = true)
+        if (!msgUnit.file.exists()) {
+            msgUnit.file.createNewFile()
+        }
+        msgProperties.load(msgUnit.file.inputStream())
+    }
+
+    override fun tearDown() {
+        msgProperties.store(msgUnit.file.outputStream(), "国际化")
+    }
 
     override fun content() {
         //entityClass
@@ -57,7 +74,7 @@ class Entity : ProjectGenerator() {
             //primaryKey
             field(primaryKeyName, primaryKeyType) {
                 if (primaryKeys.size == 1) {
-                    if (primaryKey.remarks.isNotBlank() || !primaryKey.columnDef.isNullOrBlank())
+                    if (primaryKey.remarks.isNotBlank() || primaryKey.columnDef != null)
                         javadoc {
                             +"/**"
                             +" * ${primaryKey.docRemark}"
@@ -116,7 +133,7 @@ class Entity : ProjectGenerator() {
             otherColumns.forEach {
                 //field
                 field(it.javaName, it.javaType) {
-                    if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+                    if (it.remarks.isNotBlank() || it.columnDef != null)
                         javadoc {
                             +"/**"
                             +" * ${it.docRemark}"
@@ -151,7 +168,7 @@ class Entity : ProjectGenerator() {
 
                 //getter
                 method("get${it.javaName.capitalize()}", it.javaType) {
-                    if (it.remarks.isNotBlank() || !it.columnDef.isNullOrBlank())
+                    if (it.remarks.isNotBlank() || it.columnDef != null)
                         javadoc {
                             +"/**"
                             +" * ${it.returnRemark}"
@@ -286,12 +303,8 @@ class Entity : ProjectGenerator() {
             methodInfo(this)
         }
 
-        selfOutput(
-            msgName,
-            isResourcesFile = true
-        ) {
-            msg(this)
-        }
+
+        msg(msgProperties, msgUnit)
 
         packageInfo(modulePackageInfoType) {
             modulePackageInfo(this)

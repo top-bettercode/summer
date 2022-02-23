@@ -35,7 +35,7 @@ open class Generator {
                 "@",
                 "\\@"
             )))
-        }${if (columnDef.isNullOrBlank() || isSoftDelete) "" else " 默认值：${columnDef}"}"
+        }${if (columnDef == null || isSoftDelete) "" else " 默认值：${if (columnDef!!.isBlank()) "'$columnDef'" else columnDef}"}"
 
     val Column.paramRemark: String
         get() = if (docRemark.isBlank()) "" else "@param $javaName $docRemark"
@@ -258,29 +258,13 @@ open class Generator {
             var dir =
                 if (isTestFile) extension.dir.replace("src/main/", "src/test/") else extension.dir
             dir = if (isResourcesFile) dir.replace("java", "resources") else dir
+            dir = if (isProjectFile || isRootFile) "" else dir
             val file = File(name)
             return if (file.isAbsolute) file else File(
-                File(extension.basePath, dir),
+                File(if (isRootFile) extension.basePath.parentFile else extension.basePath, dir),
                 name
             )
         }
-
-    fun selfOutput(
-        name: String,
-        canCover: Boolean = false,
-        isResourcesFile: Boolean = false,
-        isTestFile: Boolean = false,
-        unit: SelfOutputUnit.() -> Unit
-    ) {
-        val value = SelfOutputUnit(
-            name = name,
-            canCover = canCover,
-            isResourcesFile = isResourcesFile,
-            isTestFile = isTestFile
-        )
-        unit(value)
-        addUnit(value)
-    }
 
     fun file(
         name: String,
@@ -376,31 +360,33 @@ open class Generator {
     open fun content() {}
 
     open fun call() {
-        JavaElement.indent = extension.indent
         units.clear()
         content()
-        units.filter { it !is SelfOutputUnit }.forEach { unit ->
-            val destFile = unit.file
+        units.forEach { unit ->
+            unit.write()
+        }
+    }
 
-            if (extension.delete)
-                if (destFile.delete()) {
-                    println("删除：${destFile.absolutePath.substringAfter(extension.basePath.absolutePath + File.separator)}")
-                }
-
-            if (!destFile.exists() || !((!extension.replaceAll && !unit.canCover) || destFile.readLines()
-                    .any { it.contains("[[Don't cover]]") })
-            ) {
-                destFile.parentFile.mkdirs()
-
-                println(
-                    "${if (destFile.exists()) "覆盖" else "生成"}：${
-                        destFile.absolutePath.substringAfter(
-                            (extension.rootPath ?: extension.basePath).absolutePath + File.separator
-                        )
-                    }"
-                )
-                unit.output(destFile.printWriter())
+    fun GenUnit.write() {
+        val destFile = file
+        if (extension.delete)
+            if (destFile.delete()) {
+                println("删除：${destFile.absolutePath.substringAfter(extension.basePath.absolutePath + File.separator)}")
             }
+
+        if (!destFile.exists() || !((!extension.replaceAll && !canCover) || destFile.readLines()
+                .any { it.contains("[[Don't cover]]") })
+        ) {
+            destFile.parentFile.mkdirs()
+
+            println(
+                "${if (destFile.exists()) "覆盖" else "生成"}：${
+                    destFile.absolutePath.substringAfter(
+                        (extension.rootPath ?: extension.basePath).absolutePath + File.separator
+                    )
+                }"
+            )
+            output(destFile.printWriter())
         }
     }
 
@@ -411,6 +397,7 @@ open class Generator {
 
     fun setUp(extension: GeneratorExtension) {
         this.extension = extension
+        JavaElement.indent = extension.indent
         setUp()
     }
 
@@ -455,7 +442,7 @@ open class Generator {
 
     val Column.randomValue: Any
         get() = when {
-            columnDef.isNullOrBlank() || "CURRENT_TIMESTAMP".equals(columnDef, true) ->
+            columnDef == null || "CURRENT_TIMESTAMP".equals(columnDef, true) ->
                 when {
                     isCodeField -> dicCodes(extension)!!.codes.keys.first()
                     else ->
@@ -522,7 +509,7 @@ open class Generator {
         }
 
     private val Column.initializationString
-        get() = if (!columnDef.isNullOrBlank()) {
+        get() = if (columnDef != null) {
             when (javaType.shortName) {
                 "Boolean" -> toBoolean(columnDef).toString()
                 "Long" -> "${columnDef}L"

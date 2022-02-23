@@ -130,7 +130,7 @@ object PdmReader {
                 ?: 0
             val cComment = columnEle.element(QName("Comment", aNamespace))?.textTrim
             val cDefaultValue =
-                columnEle.element(QName("DefaultValue", aNamespace))?.textTrim?.trim('\'')?.trim()
+                columnEle.element(QName("DefaultValue", aNamespace))?.textTrim?.trim()?.trim('\'')
             val nullable = columnEle.element(QName("Column.Mandatory", aNamespace))?.textTrim
             val identity = columnEle.element(QName("Identity", aNamespace))?.textTrim == "1"
 
