@@ -32,7 +32,11 @@ data class Field(
     var canCover: Boolean = true,
     var partType: String = "",
     var children: LinkedHashSet<Field> = LinkedHashSet()
-) {
+) : Comparable<Field> {
+
+    override fun compareTo(other: Field): Int {
+        return name.compareTo(other.name)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

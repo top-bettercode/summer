@@ -44,7 +44,7 @@ class DicCodeGen(private val project: Project) {
 
     private fun addFields(filePath: String, props: Properties, collectionType: CollectionType?) {
         val file = project.rootProject.file(filePath)
-        val fields: LinkedHashSet<Field> = linkedSetOf()
+        val fields: SortedSet<Field> = TreeSet()
         convert(props).values.forEach { t ->
             val field = Field()
             field.name = t.type
@@ -58,8 +58,8 @@ class DicCodeGen(private val project: Project) {
     }
 
     private fun convert(properties: Properties): MutableMap<String, DicCodes> {
-        val map = mutableMapOf<String, DicCodes>()
-        val keys = properties.keys.toList().sortedBy {
+        val map = TreeMap<String, DicCodes>()
+        val keys = properties.keys.sortedBy {
             if (it.toString().contains(".")) {
                 val s = it.toString().split(".")[1]
                 s.toIntOrNull() ?: s.hashCode()

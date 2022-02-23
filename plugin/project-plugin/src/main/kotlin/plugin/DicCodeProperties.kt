@@ -8,17 +8,18 @@ import java.io.File
  * @author Peter Wu
  */
 class DicCodeProperties(
-    private val propertiesFile: File,
-    private val codeTypes: MutableSet<String>
+    private val propertiesFile: File
 ) : Generator() {
+    private val codeTypes: MutableMap<String, Int> = mutableMapOf()
 
     override fun call() {
         columns.forEach { col ->
             if (col.isCodeField) {
                 val dicCodes = col.dicCodes(extension)!!
                 val codeType = dicCodes.type
-                if (!codeTypes.contains(codeType)) {
-                    codeTypes.add(codeType)
+                val size = dicCodes.codes.size
+                if (!codeTypes.contains(codeType) || (codeTypes[codeType] ?: 0) > size) {
+                    codeTypes[codeType] = size
                     val escapeTypeName = escape(dicCodes.name)
                     propertiesFile.appendText("#----------------------------------------------------------\n")
                     propertiesFile.appendText("#$escapeTypeName\n")

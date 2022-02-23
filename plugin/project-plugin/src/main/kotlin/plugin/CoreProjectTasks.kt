@@ -125,10 +125,9 @@ object CoreProjectTasks {
                         }"
                     )
                     propertiesFile.writeText("")
-                    val codeTypes: MutableSet<String> = mutableSetOf()
                     //生成 properties
                     gen.tableNames= emptyArray()
-                    gen.generators = arrayOf(DicCodeProperties(propertiesFile, codeTypes))
+                    gen.generators = arrayOf(DicCodeProperties(propertiesFile))
                     Generators.call(gen)
                     //生成
                     val dicCodeGen = DicCodeGen(project)

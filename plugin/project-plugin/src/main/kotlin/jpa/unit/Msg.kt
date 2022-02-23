@@ -2,6 +2,7 @@ package jpa.unit
 
 import ProjectGenerator
 import org.atteo.evo.inflector.English
+import top.bettercode.generator.SortedProperties
 import top.bettercode.generator.dom.java.element.SelfOutputUnit
 import java.util.*
 
@@ -10,7 +11,7 @@ import java.util.*
  */
 val msg: ProjectGenerator.(SelfOutputUnit) -> Unit = { unit ->
     unit.apply {
-        val properties = Properties()
+        val properties = SortedProperties()
         if (!file.exists()) {
             file.createNewFile()
         }
