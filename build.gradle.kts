@@ -57,12 +57,14 @@ allprojects {
 
         dependencies {
             val kotlinVersion = property("kotlin.version")
+
             dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             dependency("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
             dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlin-coroutines.version")}")
+
 //            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
             dependency("org.jetbrains.dokka:dokka-gradle-plugin:0.10.1")
-            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlin-coroutines.version")}")
             dependency("com.gradle.publish:plugin-publish-plugin:0.15.0")
             dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
@@ -81,9 +83,10 @@ allprojects {
             dependency("org.dom4j:dom4j:2.1.3")
             dependency("org.atteo:evo-inflector:1.3")
             dependency("net.sourceforge.plantuml:plantuml:1.2021.8")
-
             dependency("org.jsoup:jsoup:1.14.3")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
+            dependency("com.github.axet:kaptcha:0.0.9")
+
             dependency("mysql:mysql-connector-java:8.0.27")
             dependency("com.oracle.database.jdbc:ojdbc8:21.5.0.0")
 
@@ -94,22 +97,15 @@ allprojects {
 
             dependency("net.logstash.logback:logstash-logback-encoder:7.0.1")
             dependency("javax.mail:mail:1.4.7")
-            dependency("com.github.axet:kaptcha:0.0.9")
 
             dependency("org.dhatim:fastexcel:0.12.12")
             dependency("org.dhatim:fastexcel-reader:0.12.12")
 
             dependency("org.mybatis:mybatis:3.5.9")
             dependency("org.mybatis:mybatis-spring:2.0.6")
-            dependency("org.mybatis.generator:mybatis-generator-core:1.4.0")
-            dependency("com.baomidou:mybatis-plus:2.3.3") {
-                exclude("com.baomidou:mybatis-plus-generate")
-            }
-            dependency("com.baomidou:mybatisplus-spring-boot-starter:1.0.5") {
-                exclude("org.springframework.boot:spring-boot-configuration-processor")
-            }
-
             dependency("com.github.pagehelper:pagehelper:5.3.0")
+
+            dependency("org.mybatis.generator:mybatis-generator-core:1.4.0")
 
             dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
 
