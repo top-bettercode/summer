@@ -289,6 +289,7 @@ class GeneratorPlugin : Plugin<Project> {
                         out,
                         "${if (extension.isDefaultModule(m)) "ddl" else "ddl-${m}"}/${file.nameWithoutExtension}.sql"
                     )
+                    outputFile.parentFile.mkdirs()
                     val jdbc = extension.datasources[m]
                         ?: throw IllegalStateException("未配置${m}模块数据库信息")
                     when (jdbc.databaseDriver) {
