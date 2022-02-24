@@ -55,7 +55,7 @@ open class OperationRequest(
      */
     headers: HttpHeaders = HttpHeaders(),
     /**
-     * Returns the [cookies][RequestCookie] sent with the request. If no cookies were
+     * Returns the cookies RequestCookie sent with the request. If no cookies were
      * sent an empty collection is returned.
      *
      * the cookies, never `null`

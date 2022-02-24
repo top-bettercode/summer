@@ -13,7 +13,7 @@ object QueryStringParser {
 
     /**
      * Parses the query string of the given `uri` and returns the resulting
-     * [Parameters].
+     * Parameters.
      *
      * @param uri the uri to parse
      * @return the parameters parsed from the query string
