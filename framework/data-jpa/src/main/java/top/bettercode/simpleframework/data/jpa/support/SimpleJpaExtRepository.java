@@ -34,6 +34,7 @@ import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -84,22 +85,48 @@ public class SimpleJpaExtRepository<T, ID> extends
         .equal(root.get(softDeleteSupport.getPropertyName()), value);
   }
 
+
+  private <S extends T> boolean isNew(S entity) {
+    if (String.class.equals(entityInformation.getIdType())) {
+      String id = (String) entityInformation.getId(entity);
+      if ("".equals(id)) {
+        new DirectFieldAccessFallbackBeanWrapper(entity).setPropertyValue(
+            entityInformation.getIdAttribute().getName(), null);
+        return true;
+      } else {
+        return id == null;
+      }
+    } else {
+      return entityInformation.isNew(entity);
+    }
+  }
+
+  @Override
+  public <S extends T> S save(S entity) {
+    if (isNew(entity)) {
+      em.persist(entity);
+      return entity;
+    } else {
+      return em.merge(entity);
+    }
+  }
+
   @Transactional
   @Override
-  public <S extends T> S dynamicSave(S s) {
-    if (entityInformation.isNew(s)) {
-      em.persist(s);
-      return s;
+  public <S extends T> S dynamicSave(S entity) {
+    if (isNew(entity)) {
+      em.persist(entity);
+      return entity;
     } else {
       @SuppressWarnings("unchecked")
-      Optional<T> optional = findById((ID) entityInformation.getId(s));
+      Optional<T> optional = findById((ID) entityInformation.getId(entity));
       if (optional.isPresent()) {
         T exist = optional.get();
-        copyPropertiesIfTargetPropertyNull(exist, s, true);
-        return em.merge(s);
+        copyPropertiesIfTargetPropertyNull(exist, entity, true);
+        return em.merge(entity);
       } else {
-        em.persist(s);
-        return s;
+        em.persist(entity);
+        return entity;
       }
     }
   }
@@ -107,20 +134,20 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Transactional
   @Override
-  public <S extends T> S dynamicBSave(S s) {
-    if (entityInformation.isNew(s)) {
-      em.persist(s);
-      return s;
+  public <S extends T> S dynamicBSave(S entity) {
+    if (isNew(entity)) {
+      em.persist(entity);
+      return entity;
     } else {
       @SuppressWarnings("unchecked")
-      Optional<T> optional = findById((ID) entityInformation.getId(s));
+      Optional<T> optional = findById((ID) entityInformation.getId(entity));
       if (optional.isPresent()) {
         T exist = optional.get();
-        copyPropertiesIfTargetPropertyNull(exist, s, false);
-        return em.merge(s);
+        copyPropertiesIfTargetPropertyNull(exist, entity, false);
+        return em.merge(entity);
       } else {
-        em.persist(s);
-        return s;
+        em.persist(entity);
+        return entity;
       }
     }
   }
