@@ -28,7 +28,7 @@ abstract class MProjectGenerator : Generator() {
             }
 
     val modulePackageInfoType get() = JavaType("$packageName.package-info")
-    val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.$className")
+    val entityType get() = JavaType("$packageName.${modulePackage("Domain")}.$className")
     val queryDslType get() = JavaType("$packageName.${modulePackage("QueryDsl")}.Q$className")
     val methodInfoType get() = JavaType("$packageName.${modulePackage("MethodInfo")}.${className}MethodInfo")
     val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
