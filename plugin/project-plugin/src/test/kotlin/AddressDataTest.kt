@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.util.Properties
+import java.util.*
 
 /**
  *
@@ -11,10 +11,17 @@ import java.util.Properties
 class AddressDataTest {
 
     @Test
+    fun testtrim() {
+        val trim = "??. M: F:; O:?".replace("?", "").trim('.').trim()
+        System.err.println("[$trim]")
+    }
+
+    @Test
     fun test() {
 
         val tableName = "ac_area"
-        val dest = File(AddressDataTest::class.java.classLoader.getResource("build/ac_area.sql").file)
+        val dest =
+            File(AddressDataTest::class.java.classLoader.getResource("build/ac_area.sql").file)
         dest.printWriter().use { p ->
             p.println("delete from $tableName;")
             val addressData = Properties()

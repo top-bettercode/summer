@@ -55,7 +55,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         //primaryKey
         field(primaryKeyName, primaryKeyType) {
             if (primaryKeys.size == 1) {
-                if (primaryKey.remarks.isNotBlank() || primaryKey.columnDef != null)
+                if (primaryKey.remark.isNotBlank() || primaryKey.columnDef != null)
                     javadoc {
                         +"/**"
                         +" * ${primaryKey.docRemark}"
@@ -114,7 +114,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         otherColumns.forEach {
             //field
             field(it.javaName, it.javaType) {
-                if (it.remarks.isNotBlank() || it.columnDef != null)
+                if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"
                         +" * ${it.docRemark}"
@@ -149,7 +149,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //getter
             method("get${it.javaName.capitalize()}", it.javaType) {
-                if (it.remarks.isNotBlank() || it.columnDef != null)
+                if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"
                         +" * ${it.returnRemark}"
