@@ -30,13 +30,8 @@ interface GenUnit {
 
     fun writeTo(directory: File) {
         val destFile = trueFile(directory)
-        if (replaceable)
-            if (destFile.delete()) {
-                println("删除：${file.path}")
-            }
-
         if (!destFile.exists() || !destFile.readLines().any { it.contains("[[Don't cover]]") }) {
-            destFile.createNewFile()
+            destFile.parentFile.mkdirs()
             println(
                 "${if (destFile.exists()) "覆盖" else "生成"}：${file.path}"
             )

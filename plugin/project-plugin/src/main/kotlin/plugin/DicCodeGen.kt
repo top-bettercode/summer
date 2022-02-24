@@ -109,7 +109,7 @@ class DicCodeGen(private val project: Project) {
 
             codeTypes().forEach { (codeType, v) ->
                 val codeTypeName = v.name
-                +("|$codeType|$codeTypeName\n")
+                +"|$codeType|$codeTypeName\n"
                 docText.appendln(".$codeTypeName($codeType)")
                 docText.appendln(
                     """|===
@@ -292,9 +292,9 @@ class DicCodeGen(private val project: Project) {
                 codeEnum.writeTo(project.projectDir)
             }
 
-            +("|===\n")
-            +("\n\n")
-            +(docText.toString())
+            +"|===\n"
+            +"\n\n"
+            +docText.toString()
         }
     }
 

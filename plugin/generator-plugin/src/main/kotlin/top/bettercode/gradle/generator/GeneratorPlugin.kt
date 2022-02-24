@@ -48,8 +48,8 @@ class GeneratorPlugin : Plugin<Project> {
                     val configuration = JDBCConnectionConfiguration()
                     configuration.module = module
                     configuration.url = properties["url"] as? String ?: ""
-                    configuration.catalog = properties["catalog"] as? String ?: ""
-                    configuration.schema = properties["schema"] as? String ?: ""
+                    configuration.catalog = properties["catalog"] as? String ?
+                    configuration.schema = properties["schema"] as? String ?
                     configuration.username = properties["username"] as? String ?: "root"
                     configuration.password = properties["password"] as? String ?: "root"
                     configuration.driverClass = properties["driverClass"] as? String ?: ""
@@ -124,13 +124,15 @@ class GeneratorPlugin : Plugin<Project> {
             extension.settings = settings
 
             extension.tableNames = (findProperty(project, "tableNames")
-                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.distinct()
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
+                .distinct()
                 .sortedBy { it }.toList()
                 .toTypedArray()
             extension.jsonViewIgnoredFieldNames =
                 (findProperty(project, "jsonViewIgnoredFieldNames")
                     ?: "deleted,lastModifiedDate").split(",").asSequence()
-                    .filter { it.isNotBlank() }.map { it.trim() }.distinct().sortedBy { it }.toList()
+                    .filter { it.isNotBlank() }.map { it.trim() }.distinct().sortedBy { it }
+                    .toList()
                     .toTypedArray()
 
             extension.generators = (findProperty(project, "generators")
@@ -161,7 +163,7 @@ class GeneratorPlugin : Plugin<Project> {
             task.group = taskGroup
             task.doLast {
                 val tableNames = Generators.tableNames(extension)
-                print(tableNames.joinToString(","))
+                print("数据表:${tableNames}")
             }
         }
 
@@ -285,7 +287,7 @@ class GeneratorPlugin : Plugin<Project> {
                 val toDDl = { m: String, file: File, toTables: (file: File) -> List<Table> ->
                     val outputFile = File(
                         out,
-                        "${if (extension.isDefaultModule(m)) "ddl" else "ddl-${m}"}/${file.name}"
+                        "${if (extension.isDefaultModule(m)) "ddl" else "ddl-${m}"}/${file.nameWithoutExtension}.sql"
                     )
                     val jdbc = extension.datasources[m]
                         ?: throw IllegalStateException("未配置${m}模块数据库信息")
@@ -354,6 +356,7 @@ class GeneratorPlugin : Plugin<Project> {
                             out,
                             "${if (extension.isDefaultModule(module)) "update" else "update-${module}"}/v${project.version}.sql"
                         )
+                        updateFile.parentFile.mkdirs()
                         val allTables = mutableListOf<Table>()
                         updateFile.printWriter().use { pw ->
                             val tables = files.map { file ->

@@ -11,12 +11,8 @@ open class PropertiesUnit(
     override val name: String,
     override var replaceable: Boolean = false,
     override val sourceSet: SourceSet = SourceSet.MAIN,
-    override val directorySet: DirectorySet = DirectorySet.RESOURCES,
-    apply: PropertiesUnit.() -> Unit = { }
+    override val directorySet: DirectorySet = DirectorySet.RESOURCES
 ) : GenUnit {
-    init {
-        this.apply(apply)
-    }
 
     private val properties: SortedProperties = SortedProperties()
     override var write: File.() -> Unit = { properties.store(this.outputStream(), null) }
@@ -29,6 +25,9 @@ open class PropertiesUnit(
      * @param directory 基础目录
      */
     fun load(directory: File) {
-        properties.load(trueFile(directory).inputStream())
+        val trueFile = trueFile(directory)
+        if (trueFile.exists()) {
+            properties.load(trueFile.inputStream())
+        }
     }
 }

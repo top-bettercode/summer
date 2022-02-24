@@ -319,7 +319,7 @@ class JDBCConnectionConfiguration(
     inline fun <T> use(metaData: DatabaseMetaData.() -> T): T {
         if (available) {
             Class.forName(driverClass).getConstructor().newInstance()
-            val databaseMetaData = DatabaseMetaData(module, this, debug, queryIndex)
+            val databaseMetaData = DatabaseMetaData(module, this)
             try {
                 return metaData(databaseMetaData)
             } finally {
@@ -348,7 +348,7 @@ class JDBCConnectionConfiguration(
 
     fun tables(tableNames: List<String>): List<Table> {
         val size = tableNames.size
-        println("$size:${tableNames.joinToString()}")
+        println("数据表（$size）:${tableNames}")
         val resultMap = ConcurrentHashMap<String, Table>()
         val map = mutableMapOf<Int, MutableList<String>>()
         var i = 1

@@ -6,13 +6,8 @@ import top.bettercode.generator.dom.unit.SourceSet
 class TopLevelEnumeration(
     type: JavaType,
     override var replaceable: Boolean = false,
-    override val sourceSet: SourceSet = SourceSet.MAIN,
-    apply: TopLevelEnumeration.() -> Unit = { }
+    override val sourceSet: SourceSet = SourceSet.MAIN
 ) : InnerEnum(type), CompilationUnit {
-
-    init {
-        this.apply(apply)
-    }
 
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()
     override val staticImports: MutableSet<String> = mutableSetOf()

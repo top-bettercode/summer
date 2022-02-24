@@ -47,7 +47,7 @@ SEQUENCE
             println("数据库对象的命名最好不要超过 32 个字符")
         }
         destFile.appendText(
-            """entity ${if (table.catalog.isNullOrBlank()) "" else "${table.catalog}."}${tableName} {
+            """entity $tableName {
     $remarks
     ==
 """

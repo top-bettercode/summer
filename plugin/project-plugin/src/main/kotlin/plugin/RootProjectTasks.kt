@@ -3,6 +3,7 @@ package plugin
 import hudson.cli.CLI
 import org.gradle.api.Project
 import top.bettercode.generator.dom.unit.FileUnit
+import top.bettercode.generator.dom.unit.SourceSet
 import top.bettercode.gradle.generator.GeneratorPlugin
 
 
@@ -66,17 +67,21 @@ object RootProjectTasks {
             create("genDbScript") { t ->
                 t.group = GeneratorPlugin.taskGroup
                 t.doLast {
-                    val destFile = FileUnit("database/init.sql")
+                    val destFile = FileUnit(
+                        name = "database/init.sql",
+                        replaceable = true,
+                        sourceSet = SourceSet.ROOT
+                    )
                     destFile.apply {
-                        +("SET NAMES 'utf8';")
-//                    +(project.rootProject.file("database/database.sql").readText())
+                        +"SET NAMES 'utf8';"
+//                    +project.rootProject.file("database/database.sql").readText()
                         project.rootProject.file("database/ddl").listFiles()?.filter { it.isFile }
                             ?.forEach {
-                                +(it.readText())
+                                +it.readText()
                             }
                         project.rootProject.file("database/init").listFiles()?.filter { it.isFile }
                             ?.forEach {
-                                +(it.readText())
+                                +it.readText()
                             }
                     }
                     destFile.writeTo(project.rootDir)
