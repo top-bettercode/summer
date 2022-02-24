@@ -108,8 +108,7 @@ open class Generator {
      * 表名
      */
     val tableName: String
-        get() =
-            if (table.schema.isNullOrBlank() || table.schema == datasource.schema) table.tableName else "${table.schema}.${table.tableName}"
+        get() = "${if (table.catalog.isNullOrBlank() || datasource.catalog.isNullOrBlank() || table.catalog == datasource.catalog) "" else "${table.catalog}."}${if (table.schema.isNullOrBlank() || datasource.schema.isNullOrBlank() || table.schema == datasource.schema) "" else "${table.schema}."}${table.tableName}"
 
 
     /**
@@ -274,9 +273,8 @@ open class Generator {
             name = name,
             replaceable = replaceable,
             sourceSet = sourceSet,
-            directorySet = directorySet,
-            apply = apply
-        )
+            directorySet = directorySet
+        ).apply(apply)
     }
 
     fun properties(
@@ -290,25 +288,23 @@ open class Generator {
             name = name,
             replaceable = replaceable,
             sourceSet = sourceSet,
-            directorySet = directorySet,
-            apply = apply
-        )
+            directorySet = directorySet
+        ).apply(apply)
     }
 
     fun packageInfo(
         type: JavaType,
         replaceable: Boolean = false,
         sourceSet: SourceSet = SourceSet.MAIN,
-        directorySet: DirectorySet = DirectorySet.RESOURCES,
+        directorySet: DirectorySet = DirectorySet.JAVA,
         apply: PackageInfo.() -> Unit = { }
     ): PackageInfo {
         return PackageInfo(
             type = type,
             replaceable = replaceable,
             sourceSet = sourceSet,
-            directorySet = directorySet,
-            apply = apply
-        )
+            directorySet = directorySet
+        ).apply(apply)
     }
 
 
@@ -323,9 +319,8 @@ open class Generator {
             type = type,
             replaceable = replaceable,
             sourceSet = sourceSet,
-            visibility = visibility,
-            apply = apply
-        )
+            visibility = visibility
+        ).apply(apply)
     }
 
     fun clazz(
@@ -339,9 +334,8 @@ open class Generator {
             type = type,
             replaceable = replaceable,
             sourceSet = sourceSet,
-            visibility = visibility,
-            apply = apply
-        )
+            visibility = visibility
+        ).apply(apply)
     }
 
 
@@ -354,9 +348,8 @@ open class Generator {
         return TopLevelEnumeration(
             type = type,
             replaceable = replaceable,
-            sourceSet = sourceSet,
-            apply = apply
-        )
+            sourceSet = sourceSet
+        ).apply(apply)
     }
 
     open fun content() {}
@@ -366,7 +359,7 @@ open class Generator {
         content()
         units.forEach { unit ->
             if (ext.replaceAll) unit.replaceable = true
-            unit.write(ext.projectDir)
+            unit.writeTo(ext.projectDir)
         }
     }
 
@@ -387,7 +380,7 @@ open class Generator {
 
     fun preTearDown() {
         projectUnits.forEach { unit ->
-            unit.write(ext.projectDir)
+            unit.writeTo(ext.projectDir)
         }
     }
 

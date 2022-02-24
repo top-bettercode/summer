@@ -7,22 +7,22 @@ import jpa.unit.repository
 open class Service : ProjectGenerator() {
 
     override fun content() {
-        file(mapperXmlName) {
+        +file(mapperXmlName) {
             mapperXml(this)
         }
 
-        packageInfo(modulePackageInfoType) {
+        +packageInfo(modulePackageInfoType) {
             modulePackageInfo(this)
         }
-        packageInfo(packageInfoType) {
+        +packageInfo(packageInfoType) {
             packageInfo(this)
         }
 
-        interfaze(repositoryType) {
+        +interfaze(repositoryType) {
             repository(this)
         }
 
-        clazz(serviceType) {
+        +clazz(serviceType) {
             service(this)
         }
     }

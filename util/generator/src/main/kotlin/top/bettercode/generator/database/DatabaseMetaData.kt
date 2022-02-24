@@ -29,19 +29,15 @@ fun <T> ResultSet.map(rs: ResultSet.() -> T): List<T> {
 
 class DatabaseMetaData(
     private val module: String,
-    private val datasource: JDBCConnectionConfiguration,
-    private val debug: Boolean = false,
-    private val queryIndex: Boolean = true
+    private val datasource: JDBCConnectionConfiguration
 ) : AutoCloseable {
 
     private var databaseMetaData: java.sql.DatabaseMetaData
-    private val catalog: String?
     private var canReadIndexed = true
 
     init {
         val connection = DriverManager.getConnection(datasource.url, datasource.properties)
         this.databaseMetaData = connection.metaData
-        catalog = datasource.catalog
     }
 
     private fun reConnect() {
@@ -98,7 +94,8 @@ class DatabaseMetaData(
 
         val databaseProductName = databaseMetaData.databaseProductName
         tableName.current { curentSchema, curentTableName ->
-            val tables = databaseMetaData.getTables(catalog, curentSchema, curentTableName, null)
+            val tables =
+                databaseMetaData.getTables(datasource.catalog, curentSchema, curentTableName, null)
             table = tables.toTables().firstOrNull()
         }
         if (table == null) {
@@ -119,7 +116,7 @@ class DatabaseMetaData(
             if (canReadIndexed) {
                 try {
                     primaryKeyNames = primaryKeyNames(name)
-                    indexes = if (queryIndex)
+                    indexes = if (datasource.queryIndex)
                         indexes(name)
                     else
                         mutableListOf()
@@ -136,7 +133,7 @@ class DatabaseMetaData(
             }
             Table(
                 productName = databaseMetaData.databaseProductName,
-                catalog = getString("TABLE_CAT") ?: catalog,
+                catalog = getString("TABLE_CAT") ?: datasource.catalog,
                 schema = schema,
                 tableName = name,
                 tableType = getString("TABLE_TYPE"),
@@ -169,7 +166,7 @@ class DatabaseMetaData(
                 prepareStatement.executeQuery().map {
                     val find = columns.find { it.columnName == getString(1) }
                     if (find != null) {
-                        if (debug)
+                        if (datasource.debug)
                             debug("column", this.metaData)
                         try {
                             find.extra = getString(6)
@@ -202,12 +199,18 @@ class DatabaseMetaData(
         val columns = mutableListOf<Column>()
         tableName.current { curentSchema, curentTableName ->
             if (columnNames.isEmpty()) {
-                databaseMetaData.getColumns(catalog, curentSchema, curentTableName, null).map {
-                    fillColumn(columns)
-                }
+                databaseMetaData.getColumns(datasource.catalog, curentSchema, curentTableName, null)
+                    .map {
+                        fillColumn(columns)
+                    }
             } else {
                 columnNames.forEach {
-                    databaseMetaData.getColumns(catalog, curentSchema, curentTableName, it).map {
+                    databaseMetaData.getColumns(
+                        datasource.catalog,
+                        curentSchema,
+                        curentTableName,
+                        it
+                    ).map {
                         fillColumn(columns)
                     }
                 }
@@ -221,7 +224,7 @@ class DatabaseMetaData(
         curentTableName: String,
         columns: MutableList<Column>
     ) {
-        databaseMetaData.getImportedKeys(catalog, curentSchema, curentTableName).map {
+        databaseMetaData.getImportedKeys(datasource.catalog, curentSchema, curentTableName).map {
             val find = columns.find { it.columnName == getString("FKCOLUMN_NAME") }!!
             find.isForeignKey = true
             find.pktableName = getString("PKTABLE_NAME")
@@ -243,7 +246,7 @@ class DatabaseMetaData(
                 supportsIsGeneratedColumn = true
             }
         }
-        if (debug)
+        if (datasource.debug)
             debug("column", rsmd)
         val columnName = getString("COLUMN_NAME")
         val typeName = getString("TYPE_NAME").substringBefore("(")
@@ -252,7 +255,8 @@ class DatabaseMetaData(
         val decimalDigits = getInt("DECIMAL_DIGITS")
         val def = getString("COLUMN_DEF")
         val columnDef =
-            if (def.isNotEmpty() && def.isBlank()) " " else def?.trim('\'')?.trim()?.trim()
+            if (def != null && def.isNotEmpty() && def.isBlank()) " " else def?.trim('\'')?.trim()
+                ?.trim()
         val columnSize = getInt("COLUMN_SIZE")
         val remarks = getString("REMARKS")?.replace("[\t\n\r]", "")?.trim()
             ?: ""
@@ -297,7 +301,7 @@ class DatabaseMetaData(
     private fun primaryKeyNames(tableName: String): MutableList<String> {
         val primaryKeys = mutableListOf<String>()
         tableName.current { curentSchema, curentTableName ->
-            databaseMetaData.getPrimaryKeys(catalog, curentSchema, curentTableName).map {
+            databaseMetaData.getPrimaryKeys(datasource.catalog, curentSchema, curentTableName).map {
                 primaryKeys.add(getString("COLUMN_NAME"))
             }
         }
@@ -308,7 +312,13 @@ class DatabaseMetaData(
     private fun indexes(tableName: String): MutableList<Indexed> {
         val indexes = mutableListOf<Indexed>()
         tableName.current { curentSchema, curentTableName ->
-            databaseMetaData.getIndexInfo(catalog, curentSchema, curentTableName, false, false)
+            databaseMetaData.getIndexInfo(
+                datasource.catalog,
+                curentSchema,
+                curentTableName,
+                false,
+                false
+            )
                 .map {
                     val indexName = getString("INDEX_NAME")
                     if (!indexName.isNullOrBlank() && !"PRIMARY".equals(indexName, true)) {

@@ -16,7 +16,7 @@ class DbDoc(private val project: Project) : Generator() {
 
     private var currentModuleName: String? = null
 
-    private val name = "database/doc/${ext.applicationName}数据库设计说明书-${project.version}.adoc"
+    private val name get() = "database/doc/${ext.applicationName}数据库设计说明书-${project.version}.adoc"
 
     override fun setUp() {
         add(

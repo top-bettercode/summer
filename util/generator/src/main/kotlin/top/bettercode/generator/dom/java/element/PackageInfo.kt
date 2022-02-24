@@ -17,13 +17,8 @@ class PackageInfo(
     val type: JavaType,
     override var replaceable: Boolean = false,
     override val sourceSet: SourceSet = SourceSet.MAIN,
-    override val directorySet: DirectorySet = DirectorySet.JAVA,
-    apply: PackageInfo.() -> Unit = { }
+    override val directorySet: DirectorySet = DirectorySet.JAVA
 ) : GenUnit {
-
-    init {
-        this.apply(apply)
-    }
 
     override val name: String
         get() = "${type.fullyQualifiedNameWithoutTypeParameters.replace(".", File.separator)}.java"
@@ -37,8 +32,8 @@ class PackageInfo(
             printWriter().use {
                 val sb = StringBuilder()
                 addFormattedJavadoc(sb, 0)
-                println(sb.toString())
-                println("package ${type.packageName};")
+                it.print(sb.toString())
+                it.println("package ${type.packageName};")
             }
         }
 

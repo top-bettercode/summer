@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
+import top.bettercode.generator.dom.unit.FileUnit
 import java.io.File
 
 /**
@@ -25,6 +26,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
                         val srcPath = file.absolutePath + File.separator
                         file.walkTopDown().filter { it.isDirectory }.forEach { file1 ->
                             val packageInfoFile = File(file1, "package-info.java")
+                            var opName = "生成"
                             if (packageInfoFile.exists() && (packageInfoFile.readLines().size == 1 || packageInfoFile.readText()
                                     .replace(
                                         """/**
@@ -34,10 +36,11 @@ class GenPackageinfoPlugin : Plugin<Project> {
                                     ).startsWith("package"))
                             ) {
                                 packageInfoFile.delete()
+                                opName = "覆盖"
                             }
                             val listFiles = file1.listFiles()
                             if (!packageInfoFile.exists() && listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
-                                println("生成：${packageInfoFile.absolutePath.substringAfter(p.rootDir.absolutePath + File.separator)}")
+                                println("$opName：${packageInfoFile.absolutePath.substringAfter(p.rootDir.absolutePath + File.separator)}")
                                 val packageinfo = file1.absolutePath.replace(srcPath, "")
                                     .replace(File.separator, ".")
                                 packageInfoFile.writeText(
@@ -53,6 +56,7 @@ package ${packageinfo};"""
                     val srcPath = file.absolutePath + File.separator
                     file.walkTopDown().filter { it.isDirectory }.forEach { file1 ->
                         val packageInfoFile = File(file1, "package-info.kt")
+                        var opName = "生成"
                         if (packageInfoFile.exists() && (packageInfoFile.readLines().size == 1 || packageInfoFile.readText()
                                 .replace(
                                     """/**
@@ -62,10 +66,11 @@ package ${packageinfo};"""
                                 ).startsWith("package"))
                         ) {
                             packageInfoFile.delete()
+                            opName = "覆盖"
                         }
                         val listFiles = file1.listFiles()
                         if (!packageInfoFile.exists() && listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
-                            println("生成：${packageInfoFile.absolutePath.substringAfter(p.rootDir.absolutePath + File.separator)}")
+                            println("$opName：${packageInfoFile.absolutePath.substringAfter(p.rootDir.absolutePath + File.separator)}")
                             val packageinfo =
                                 file1.absolutePath.replace(srcPath, "").replace(File.separator, ".")
                             packageInfoFile.writeText(
@@ -85,24 +90,17 @@ package $packageinfo""".trimIndent()
             task.doLast { _ ->
                 val regex = Regex(".*/\\*\\*(.*)\\*/.*", RegexOption.DOT_MATCHES_ALL)
                 val pregex = Regex("package ([^;]*);?")
-                val dest = project.file("doc/项目目录及包目录说明.adoc")
-                if (!dest.parentFile.exists()) {
-                    dest.parentFile.mkdirs()
-                }
-                println(
-                    "${if (dest.exists()) "覆盖" else "生成"}：${
-                        dest.absolutePath.substringAfter(
-                            project.rootDir.absolutePath + File.separator
-                        )
-                    }"
+                val dest = FileUnit(
+                    name = "doc/项目目录及包目录说明.adoc",
+                    replaceable = true,
+                    sourceSet = top.bettercode.generator.dom.unit.SourceSet.ROOT
                 )
-                dest.printWriter().use { pw ->
+                dest.apply {
                     val projects = project.allprojects.filter { p ->
                         p.file("src/main").walkTopDown().filter { it.isFile }.count() > 0
                     }
-                    pw.println("= 项目目录及包目录说明")
-                    pw.println(
-                        """:doctype: book
+                    +"= 项目目录及包目录说明"
+                    +""":doctype: book
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
@@ -111,27 +109,24 @@ package $packageinfo""".trimIndent()
 :table-caption!:
 :sectnums:
 :sectlinks:"""
-                    )
-                    pw.println()
-                    pw.println("== 项目目录说明")
-                    pw.println()
-                    pw.println("|===")
-                    pw.println("| 项目目录 | 描述")
+                    +""
+                    +"== 项目目录说明"
+                    +""
+                    +"|==="
+                    +"| 项目目录 | 描述"
                     project.projectDir.walkTopDown()
                         .filter { it.isFile && ("README.md" == it.name) }
                         .sortedBy { it.parentFile.absolutePath.substringAfter(project.projectDir.absolutePath + "/") }
                         .forEach {
-                            pw.println(
-                                "| ${it.parentFile.absolutePath.substringAfter(project.projectDir.absolutePath + "/")} | ${
-                                    it.readText().trim()
-                                }"
-                            )
+                            +"| ${it.parentFile.absolutePath.substringAfter(project.projectDir.absolutePath + "/")} | ${
+                                it.readText().trim()
+                            }"
                         }
-                    pw.println("|===")
-                    pw.println()
+                    +"|==="
+                    +""
 
-                    pw.println("== 包目录说明")
-                    pw.println()
+                    +"== 包目录说明"
+                    +""
 
                     projects.forEach { p ->
                         val files = p.projectDir.walkTopDown()
@@ -147,25 +142,24 @@ package $packageinfo""".trimIndent()
                                     }(${p.path})" else p.path
                                 }子项目"
                             }
-                            pw.println("=== ${projectPath}包目录说明")
-                            pw.println()
-                            pw.println("|===")
-                            pw.println("| 包目录 | 描述")
+                            +"=== ${projectPath}包目录说明"
+                            +""
+                            +"|==="
+                            +"| 包目录 | 描述"
                             files.forEach { file ->
-                                pw.println(
-                                    "| ${
-                                        file.readLines().find { it.matches(pregex) }!!
-                                            .replace(pregex, "$1")
-                                    } | ${
-                                        file.readText().replace(regex, "$1").replace("*", "").trim()
-                                    }"
-                                )
+                                +"| ${
+                                    file.readLines().find { it.matches(pregex) }!!
+                                        .replace(pregex, "$1")
+                                } | ${
+                                    file.readText().replace(regex, "$1").replace("*", "").trim()
+                                }"
                             }
-                            pw.println("|===")
-                            pw.println()
+                            +"|==="
+                            +""
                         }
                     }
                 }
+                dest.writeTo(project.projectDir)
             }
         }
     }

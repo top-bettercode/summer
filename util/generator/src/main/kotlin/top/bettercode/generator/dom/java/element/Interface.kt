@@ -13,12 +13,8 @@ class Interface(
     type: JavaType,
     override var replaceable: Boolean = false,
     override val sourceSet: SourceSet = SourceSet.MAIN,
-    override var visibility: JavaVisibility = JavaVisibility.PUBLIC,
-    apply: Interface.() -> Unit = { }
+    override var visibility: JavaVisibility = JavaVisibility.PUBLIC
 ) : InnerInterface(type), CompilationUnit {
-    init {
-        this.apply(apply)
-    }
 
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()
     override val staticImports: MutableSet<String> = mutableSetOf()

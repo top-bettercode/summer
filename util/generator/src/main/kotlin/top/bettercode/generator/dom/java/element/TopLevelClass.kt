@@ -10,13 +10,8 @@ open class TopLevelClass(
     type: JavaType,
     override var replaceable: Boolean = false,
     override val sourceSet: SourceSet = SourceSet.MAIN,
-    override var visibility: JavaVisibility = JavaVisibility.PUBLIC,
-    apply: TopLevelClass.() -> Unit = { }
+    override var visibility: JavaVisibility = JavaVisibility.PUBLIC
 ) : InnerClass(type), CompilationUnit {
-
-    init {
-        this.apply(apply)
-    }
 
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()
     override val staticImports: MutableSet<String> = mutableSetOf()
