@@ -19,7 +19,7 @@ interface CompilationUnit : GenUnit {
         get() = "${type.fullyQualifiedNameWithoutTypeParameters.replace(".", File.separator)}.java"
 
     override val write: File.() -> Unit
-        get()= { printWriter().use { it.println(formattedContent) } }
+        get()= { printWriter().use { it.print(formattedContent) } }
 
     val formattedContent: String
 

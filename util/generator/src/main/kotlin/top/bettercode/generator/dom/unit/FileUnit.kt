@@ -15,7 +15,7 @@ open class FileUnit(
 ) : GenUnit {
 
     private val stringWriter = StringWriter()
-    override val write: File.() -> Unit = { printWriter().use { it.println(stringWriter.toString()) } }
+    override val write: File.() -> Unit = { printWriter().use { it.print(stringWriter.toString()) } }
 
     operator fun String.unaryPlus() {
         stringWriter.appendln(this)
