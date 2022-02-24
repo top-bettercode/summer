@@ -30,9 +30,12 @@ open class Generator {
     val Column.defaultRemarks: String
         get() = defaultDesc.replace("DEFAULT ", "默认值：")
 
+    val Column.remark: String
+        get() = remarks.replace('?', ' ').trim('.').trim()
+
     val Column.docRemark: String
         get() = "${
-            (if (remarks.isBlank()) "" else (if (isSoftDelete) remarks.split(Regex("[:：,， (（]"))[0] else remarks.replace(
+            (if (remark.isBlank()) "" else (if (isSoftDelete) remark.split(Regex("[:：,， (（]"))[0] else remark.replace(
                 "@",
                 "\\@"
             )))
@@ -116,7 +119,7 @@ open class Generator {
      */
     val remarks: String
         get() {
-            val comment = table.remarks
+            val comment = table.remarks.replace('?', ' ').trim('.').trim()
             return comment.ifBlank {
                 ext.remarks
             }
@@ -132,7 +135,7 @@ open class Generator {
             return if (primaryKeys.isEmpty()) {
                 val primaryKey =
                     columns.find { it.columnName.equals(ext.primaryKeyName, true) }
-                        ?: columns.find { it.remarks.contains("主键") }
+                        ?: columns.find { it.remark.contains("主键") }
                 if (primaryKey != null) {
                     listOf(primaryKey)
                 } else {
@@ -437,7 +440,7 @@ open class Generator {
                             PrimitiveTypeWrapper.doubleInstance -> 1.0
                             PrimitiveTypeWrapper.longInstance -> 1L
                             PrimitiveTypeWrapper.integerInstance -> 1
-                            JavaType.stringInstance -> remarks.replace("\"", "\\\"")
+                            JavaType.stringInstance -> remark.replace("\"", "\\\"")
                             else -> 1
                         }
                 }
@@ -471,7 +474,7 @@ open class Generator {
                             PrimitiveTypeWrapper.shortInstance -> "new Short(\"1\")"
                             PrimitiveTypeWrapper.byteInstance -> "new Byte(\"1\")"
                             JavaType("byte[]") -> "new byte[0]"
-                            JavaType.stringInstance -> "\"${remarks.replace("\"", "\\\"")}\""
+                            JavaType.stringInstance -> "\"${remark.replace("\"", "\\\"")}\""
                             else -> "1"
                         }
                     }

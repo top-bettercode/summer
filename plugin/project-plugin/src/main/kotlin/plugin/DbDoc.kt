@@ -68,7 +68,7 @@ v${project.version}
             +"|名称|类型|描述|备注"
             +""
             columns.forEach {
-                +"| ${it.columnName} | ${it.typeDesc} | ${it.remarks} | ${if (it.isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.nullable) "" else " NOT NULL"}"
+                +"| ${it.columnName} | ${it.typeDesc} | ${it.remark} | ${if (it.isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.nullable) "" else " NOT NULL"}"
             }
             +"|==="
             +""

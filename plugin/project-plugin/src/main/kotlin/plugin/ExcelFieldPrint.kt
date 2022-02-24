@@ -20,7 +20,7 @@ open class ExcelFieldPrint : Generator() {
                 }
             val propertyGetter =
                 if (it.isPrimary && primaryKeys.size > 1) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${primaryKeyName.capitalize()}().get${it.javaName.capitalize()}()" else "$className::get${it.javaName.capitalize()}"
-            println("      ExcelField.of(\"${it.remarks.split(Regex("[:：,， (（]"))[0]}\", $propertyGetter)${code}${if (i == size - 1) "" else ","}")
+            println("      ExcelField.of(\"${it.remark.split(Regex("[:：,， (（]"))[0]}\", $propertyGetter)${code}${if (i == size - 1) "" else ","}")
         }
         println("""  );""")
     }

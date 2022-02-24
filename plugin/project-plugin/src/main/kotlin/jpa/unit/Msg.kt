@@ -9,7 +9,7 @@ import top.bettercode.generator.dom.unit.PropertiesUnit
  */
 val msg: ProjectGenerator.(PropertiesUnit) -> Unit = { unit ->
     unit.apply {
-        if (remarks.trim('?', '.').trim().isNotBlank()) {
+        if (remarks.isNotBlank()) {
             this[entityName] = remarks
             this[pathName] = remarks
             if (isFullComposite) {
@@ -23,8 +23,8 @@ val msg: ProjectGenerator.(PropertiesUnit) -> Unit = { unit ->
         }
 
         columns.forEach {
-            if (it.remarks.trim('?', '.').trim().isNotBlank()) {
-                val remark = it.remarks.split(Regex("[;:：,， (（]"))[0]
+            if (it.remark.isNotBlank()) {
+                val remark = it.remark.split(Regex("[;:：,， (（]"))[0]
                 this[it.javaName] = remark
                 if (it.isPrimary)
                     this[English.plural(it.javaName)] = remark

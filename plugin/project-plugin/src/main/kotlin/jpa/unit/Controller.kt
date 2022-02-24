@@ -88,7 +88,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     val propertyGetter =
                         if (it.isPrimary && isCompositePrimaryKey) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${primaryKeyName.capitalize()}().get${it.javaName.capitalize()}()" else "${if (isFullComposite) primaryKeyClassName else className}::get${it.javaName.capitalize()}"
                     initializationString += "      ExcelField.of(\"${
-                        it.remarks.split(
+                        it.remark.split(
                             Regex(
                                 "[:：,， (（]"
                             )
