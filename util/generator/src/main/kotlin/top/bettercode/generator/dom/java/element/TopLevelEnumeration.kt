@@ -1,15 +1,19 @@
 package top.bettercode.generator.dom.java.element
 
 import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.unit.SourceSet
 
 class TopLevelEnumeration(
     type: JavaType,
-    override val canCover: Boolean = false,
-    override val isResourcesFile: Boolean = false,
-    override val isTestFile: Boolean = false,
-    override val isRootFile: Boolean = false,
-    override val isProjectFile: Boolean = false
+    override var replaceable: Boolean = false,
+    override val sourceSet: SourceSet = SourceSet.MAIN,
+    apply: TopLevelEnumeration.() -> Unit = { }
 ) : InnerEnum(type), CompilationUnit {
+
+    init {
+        this.apply(apply)
+    }
+
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()
     override val staticImports: MutableSet<String> = mutableSetOf()
     override val fileCommentLines: MutableList<String> = mutableListOf()

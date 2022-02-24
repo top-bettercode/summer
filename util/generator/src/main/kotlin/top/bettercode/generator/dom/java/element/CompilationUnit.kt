@@ -4,6 +4,7 @@ import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.JavaTypeOperator
 import top.bettercode.generator.dom.java.StringOperator
 import top.bettercode.generator.dom.java.StringOperator1
+import top.bettercode.generator.dom.unit.GenUnit
 import java.io.File
 import java.io.PrintWriter
 
@@ -14,12 +15,11 @@ import java.io.PrintWriter
  */
 interface CompilationUnit : GenUnit {
 
-
     override val name: String
         get() = "${type.fullyQualifiedNameWithoutTypeParameters.replace(".", File.separator)}.java"
 
-    override val output: PrintWriter.() -> Unit
-        get() = { this.use { println(formattedContent) } }
+    override val write: File.() -> Unit
+        get()= { printWriter().use { println(formattedContent) } }
 
     val formattedContent: String
 

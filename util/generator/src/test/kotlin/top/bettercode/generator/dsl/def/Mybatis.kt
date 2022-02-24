@@ -73,18 +73,18 @@ class Mybatis : Generator() {
         }
         javaModelGeneratorConfiguration.apply {
             if (targetPackage.isNullOrBlank())
-                targetPackage = "${extension.packageName}.domain"
+                targetPackage = "${ext.packageName}.domain"
             if (targetProject.isNullOrBlank())
-                targetProject = extension.dir
+                targetProject = ext.dir
             mkdir(targetProject, targetPackage)
         }
         javaClientGeneratorConfiguration.apply {
             if (configurationType.isNullOrBlank())
                 configurationType = "ANNOTATEDMAPPER"
             if (targetPackage.isNullOrBlank())
-                targetPackage = "${extension.packageName}.dao.crud"
+                targetPackage = "${ext.packageName}.dao.crud"
             if (targetProject.isNullOrBlank())
-                targetProject = extension.dir
+                targetProject = ext.dir
             mkdir(targetProject, targetPackage)
         }
         sqlMapGeneratorConfiguration.apply {
@@ -92,7 +92,7 @@ class Mybatis : Generator() {
                 targetPackage = "mybatis"
             if (targetProject.isNullOrBlank())
                 targetProject =
-                    if (extension.dir.isBlank()) "src/main/resources" else extension.dir.replace(
+                    if (ext.dir.isBlank()) "src/main/resources" else ext.dir.replace(
                         "java",
                         "resources"
                     )

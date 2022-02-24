@@ -19,7 +19,7 @@ import java.io.FileReader
  */
 class GeneratorsTest {
     private val extension = GeneratorExtension(
-        basePath = File("build/resources/test/"),
+        projectDir = File("build/resources/test/"),
         dir = "gen/java",
         packageName = "com.bettercode.test",
         replaceAll = true,

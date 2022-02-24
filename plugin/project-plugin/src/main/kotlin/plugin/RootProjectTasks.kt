@@ -2,8 +2,8 @@ package plugin
 
 import hudson.cli.CLI
 import org.gradle.api.Project
+import top.bettercode.generator.dom.unit.FileUnit
 import top.bettercode.gradle.generator.GeneratorPlugin
-import java.io.File
 
 
 /**
@@ -66,26 +66,20 @@ object RootProjectTasks {
             create("genDbScript") { t ->
                 t.group = GeneratorPlugin.taskGroup
                 t.doLast {
-                    val destFile: File = project.rootProject.file("database/init.sql")
-                    val initBuilder = StringBuilder()
-                    initBuilder.appendln("SET NAMES 'utf8';")
-//                    initBuilder.appendln(project.rootProject.file("database/database.sql").readText())
-                    project.rootProject.file("database/ddl").listFiles()?.filter { it.isFile }
-                        ?.forEach {
-                            initBuilder.appendln(it.readText())
-                        }
-                    project.rootProject.file("database/init").listFiles()?.filter { it.isFile }
-                        ?.forEach {
-                            initBuilder.appendln(it.readText())
-                        }
-                    println(
-                        "${if (destFile.exists()) "覆盖" else "生成"}：${
-                            destFile.absolutePath.substringAfter(
-                                project.rootDir.absolutePath + File.separator
-                            )
-                        }"
-                    )
-                    destFile.writeText(initBuilder.toString())
+                    val destFile = FileUnit("database/init.sql")
+                    destFile.apply {
+                        +("SET NAMES 'utf8';")
+//                    +(project.rootProject.file("database/database.sql").readText())
+                        project.rootProject.file("database/ddl").listFiles()?.filter { it.isFile }
+                            ?.forEach {
+                                +(it.readText())
+                            }
+                        project.rootProject.file("database/init").listFiles()?.filter { it.isFile }
+                            ?.forEach {
+                                +(it.readText())
+                            }
+                    }
+                    destFile.writeTo(project.rootDir)
                 }
             }
 

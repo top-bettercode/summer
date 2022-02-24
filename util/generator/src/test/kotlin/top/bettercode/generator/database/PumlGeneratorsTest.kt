@@ -3,7 +3,6 @@ package top.bettercode.generator.database
 import top.bettercode.generator.DataType
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.dsl.Generators
-import top.bettercode.generator.puml.PumlConverterTest
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -13,7 +12,7 @@ import java.io.File
  */
 class PumlGeneratorsTest {
     private val extension = GeneratorExtension(
-        basePath = File("build"),
+        projectDir = File("build"),
         dir = "gen/java",
         packageName = "com.bettercode.test",
         replaceAll = true,

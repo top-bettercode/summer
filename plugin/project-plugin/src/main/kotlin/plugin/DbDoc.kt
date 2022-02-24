@@ -3,7 +3,8 @@ package plugin
 import org.gradle.api.Project
 import top.bettercode.autodoc.core.AsciidocGenerator
 import top.bettercode.generator.defaultModuleName
-import top.bettercode.generator.dom.java.element.FileUnit
+import top.bettercode.generator.dom.unit.FileUnit
+import top.bettercode.generator.dom.unit.SourceSet
 import top.bettercode.generator.dsl.Generator
 import java.io.File
 
@@ -14,17 +15,18 @@ import java.io.File
 class DbDoc(private val project: Project) : Generator() {
 
     private var currentModuleName: String? = null
-    private val file: FileUnit by lazy {
-        FileUnit(
-            "database/doc/${extension.applicationName}数据库设计说明书-${project.version}.adoc",
-            canCover = true,
-            isRootFile = true
-        )
-    }
+
+    private val name = "database/doc/${ext.applicationName}数据库设计说明书-${project.version}.adoc"
 
     override fun setUp() {
-        file.apply {
-            +"= ${extension.applicationName}数据库设计说明书"
+        add(
+            file(
+                name,
+                replaceable = true,
+                sourceSet = SourceSet.ROOT
+            )
+        ).apply {
+            +"= ${ext.applicationName}数据库设计说明书"
             +"""JAVA小组
 v${project.version}
 :doctype: book
@@ -45,7 +47,7 @@ v${project.version}
     }
 
     override fun call() {
-        file.apply {
+        (this[name] as FileUnit).apply {
             +""
             if (table.subModuleName != currentModuleName) {
                 +"== ${table.subModuleName}模块"
@@ -74,10 +76,10 @@ v${project.version}
     }
 
     override fun tearDown() {
-        file.write()
-        val outFile = File(file.file.parent, "${file.file.nameWithoutExtension}.pdf")
+        val fileUnit = this[name] as FileUnit
+        val outFile = File(fileUnit.file.parent, "${fileUnit.file.nameWithoutExtension}.pdf")
         if (setting("dbdoc-pdf") == "true")
-            AsciidocGenerator.pdf(file.file, outFile, project.rootDir)
+            AsciidocGenerator.pdf(fileUnit.file, outFile, project.rootDir)
     }
 }
 

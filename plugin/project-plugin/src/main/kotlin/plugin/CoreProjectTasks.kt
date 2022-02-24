@@ -9,7 +9,6 @@ import top.bettercode.generator.dom.java.element.Interface
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.TopLevelClass
 import top.bettercode.generator.dsl.Generators
-import top.bettercode.generator.puml.PumlConverter
 import top.bettercode.gradle.generator.GeneratorPlugin
 import java.io.File
 import java.util.*
@@ -30,40 +29,24 @@ object CoreProjectTasks {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     val tableNames =
                         (Generators.tableNames(gen) + gen.tableNames).sortedBy { it }.distinct()
-                    val type =
-                        JavaType("${if (gen.projectPackage) "${gen.packageName}.${gen.projectName}" else gen.packageName}.web.CoreSerializationViews")
-                    val serializationViews = Interface(type).apply {
-                        javadoc {
-                            +"/**"
-                            +" * 模型属性 json SerializationViews"
-                            +" */"
+                    val serializationViews =
+                        Interface(
+                            type = JavaType("${if (gen.projectPackage) "${gen.packageName}.${gen.projectName}" else gen.packageName}.web.CoreSerializationViews"),
+                            replaceable = true
+                        ).apply {
+                            javadoc {
+                                +"/**"
+                                +" * 模型属性 json SerializationViews"
+                                +" */"
+                            }
+                            this.visibility = JavaVisibility.PUBLIC
+                            tableNames.forEach {
+                                val pathName = English.plural(gen.className(it))
+                                innerInterface(InnerInterface(JavaType("Get${pathName}List")))
+                                innerInterface(InnerInterface(JavaType("Get${pathName}Info")))
+                            }
                         }
-                        this.visibility = JavaVisibility.PUBLIC
-                        tableNames.forEach {
-                            val pathName = English.plural(gen.className(it))
-                            innerInterface(InnerInterface(JavaType("Get${pathName}List")))
-                            innerInterface(InnerInterface(JavaType("Get${pathName}Info")))
-                        }
-                    }
-                    val file = project.file(
-                        "src/main/java/${
-                            type.fullyQualifiedName.replace(
-                                '.',
-                                '/'
-                            )
-                        }.java"
-                    )
-                    if (!file.parentFile.exists()) {
-                        file.parentFile.mkdirs()
-                    }
-                    println(
-                        "${if (file.exists()) "覆盖" else "生成"}：${
-                            file.absolutePath.substringAfter(
-                                project.rootDir.absolutePath + File.separator
-                            )
-                        }"
-                    )
-                    file.writeText(serializationViews.formattedContent)
+                    serializationViews.writeTo(project.projectDir)
                 }
             }
             create("printMapper") {
@@ -115,14 +98,11 @@ object CoreProjectTasks {
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     //生成 properties
-                    gen.tableNames= emptyArray()
+                    gen.tableNames = emptyArray()
                     gen.generators = arrayOf(DicCodeProperties())
                     Generators.call(gen)
                     //生成
-                    val dicCodeGen = DicCodeGen(project)
-                    dicCodeGen.setUp()
-                    dicCodeGen.genCode()
-                    dicCodeGen.tearDown()
+                    DicCodeGen(project).run()
                 }
             }
             create("genErrorCode") { t ->
@@ -131,15 +111,7 @@ object CoreProjectTasks {
                     val file = project.file("src/main/resources/error-code.properties")
                     if (file.exists()) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                        val destFile = project.file(
-                            "src/main/java/${
-                                gen.packageName.replace(
-                                    '.',
-                                    '/'
-                                )
-                            }/support/ErrorCode.java"
-                        )
-                        val clazz = TopLevelClass(JavaType("${gen.packageName}.support.ErrorCode"))
+                        val clazz = TopLevelClass(type = JavaType("${gen.packageName}.support.ErrorCode"), replaceable = true)
 
                         clazz.visibility = JavaVisibility.PUBLIC
                         clazz.apply {
@@ -192,14 +164,7 @@ object CoreProjectTasks {
                                     it.println("|===")
                                 }
                         }
-                        println(
-                            "${if (destFile.exists()) "覆盖" else "生成"}：${
-                                destFile.absolutePath.substringAfter(
-                                    project.rootDir.absolutePath + File.separator
-                                )
-                            }"
-                        )
-                        destFile.writeText(clazz.formattedContent)
+                        clazz.writeTo(project.projectDir)
                     }
                 }
             }

@@ -122,6 +122,7 @@ object Generators {
             }
         }
         generators.forEach { generator ->
+            generator.preTearDown()
             generator.tearDown()
         }
     }

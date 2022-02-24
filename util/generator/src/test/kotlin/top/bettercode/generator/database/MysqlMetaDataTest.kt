@@ -12,7 +12,7 @@ import java.io.File
  */
 class MysqlMetaDataTest {
     private val extension = GeneratorExtension(
-        basePath = File("build"),
+        projectDir = File("build"),
         dir = "src/test/resources",
         packageName = "com.bettercode.test",
         tableNames = arrayOf("ob_chat_msg")

@@ -60,10 +60,10 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
         //code
         if (!it.jsonViewIgnored && it.isCodeField) {
             method("get${it.javaName.capitalize()}", it.javaType) {
-                if (it.columnName.contains("_") || extension.softDeleteColumnName == it.columnName)
+                if (it.columnName.contains("_") || ext.softDeleteColumnName == it.columnName)
                     annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonCode")
                 else {
-                    import("${(extension.packageName + ".support.dic." + className + it.javaName.capitalize())}Enum")
+                    import("${(ext.packageName + ".support.dic." + className + it.javaName.capitalize())}Enum")
                     annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonCode(${(className + it.javaName.capitalize())}Enum.ENUM_NAME)")
                 }
                 annotation("@Override")

@@ -2,32 +2,31 @@ package jpa.unit
 
 import ProjectGenerator
 import org.atteo.evo.inflector.English
-import top.bettercode.generator.dom.java.element.ManualUnit
-import java.util.*
+import top.bettercode.generator.dom.unit.PropertiesUnit
 
 /**
  * @author Peter Wu
  */
-val msg: ProjectGenerator.(msgProperties: Properties, ManualUnit) -> Unit = { properties, unit ->
+val msg: ProjectGenerator.(PropertiesUnit) -> Unit = { unit ->
     unit.apply {
-        properties[entityName] = remarks
-        properties[pathName] = remarks
+        this[entityName] = remarks
+        this[pathName] = remarks
         if (isFullComposite) {
-            properties[entityName + "Entity"] = remarks
+            this[entityName + "Entity"] = remarks
         } else {
             if (isCompositePrimaryKey) {
-                properties[entityName + "Key"] = remarks + "ID"
-                properties[English.plural(entityName + "Key")] = remarks + "ID"
+                this[entityName + "Key"] = remarks + "ID"
+                this[English.plural(entityName + "Key")] = remarks + "ID"
             }
         }
 
         columns.forEach {
             if (it.remarks.isNotBlank()) {
                 val remark = it.remarks.split(Regex("[;:：,， (（]"))[0]
-                properties[it.javaName] = remark
+                this[it.javaName] = remark
                 if (it.isPrimary)
-                    properties[English.plural(it.javaName)] = remark
-                properties[it.columnName] = remark
+                    this[English.plural(it.javaName)] = remark
+                this[it.columnName] = remark
             }
         }
     }

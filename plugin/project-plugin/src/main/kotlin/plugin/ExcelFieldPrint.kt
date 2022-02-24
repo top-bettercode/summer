@@ -6,6 +6,7 @@ import top.bettercode.generator.dsl.Generator
  * @author Peter Wu
  */
 open class ExcelFieldPrint : Generator() {
+
     override fun call() {
         println("""private final ExcelField<$className, ?>[] excelFields = ArrayUtil.of(""")
         val cols = columns
@@ -13,7 +14,7 @@ open class ExcelFieldPrint : Generator() {
         cols.forEachIndexed { i, it ->
             val code =
                 if (it.isCodeField) {
-                    if (it.columnName.contains("_") || extension.softDeleteColumnName == it.columnName) ".code()" else ".code(${(className + it.javaName.capitalize())}Enum.ENUM_NAME)"
+                    if (it.columnName.contains("_") || ext.softDeleteColumnName == it.columnName) ".code()" else ".code(${(className + it.javaName.capitalize())}Enum.ENUM_NAME)"
                 } else {
                     ""
                 }
