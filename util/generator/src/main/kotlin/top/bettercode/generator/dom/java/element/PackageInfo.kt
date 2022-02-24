@@ -33,7 +33,7 @@ class PackageInfo(
                 val sb = StringBuilder()
                 addFormattedJavadoc(sb, 0)
                 it.print(sb.toString())
-                it.println("package ${type.packageName};")
+                it.print("package ${type.packageName};")
             }
         }
 
