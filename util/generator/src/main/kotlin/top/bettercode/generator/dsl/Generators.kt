@@ -91,7 +91,12 @@ object Generators {
                 extension.pumlSources.map { (module, files) ->
                     files.map { file ->
                         toTables {
-                            PumlConverter.toTables(file, module).filter { tableNames.contains(it.tableName) }
+                            val tables = PumlConverter.toTables(file, module)
+                            if (all) {
+                                tables
+                            } else {
+                                tables.filter { tableNames.contains(it.tableName) }
+                            }
                         }
                     }
                 }.flatten()
@@ -100,7 +105,12 @@ object Generators {
                 extension.pdmSources.map { (module, files) ->
                     files.map { file ->
                         toTables {
-                            PdmReader.read(file, module).filter { tableNames.contains(it.tableName) }
+                            val tables = PdmReader.read(file, module)
+                            if (all) {
+                                tables
+                            } else {
+                                tables.filter { tableNames.contains(it.tableName) }
+                            }
                         }
                     }
                 }.flatten()
