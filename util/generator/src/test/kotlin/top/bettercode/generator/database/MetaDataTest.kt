@@ -14,7 +14,7 @@ import java.io.FileReader
  * @author Peter Wu
  */
 class MetaDataTest {
-    private val extension = GeneratorExtension(basePath = File("build"), dir = "src/test/resources", packageName = "com.bettercode.test", tableNames = arrayOf("OAUTH_CLIENT_DETAILS", "OAUTH_CLIENT_TOKEN"))
+    private val extension = GeneratorExtension(projectDir = File("build"), dir = "src/test/resources", packageName = "com.bettercode.test", tableNames = arrayOf("OAUTH_CLIENT_DETAILS", "OAUTH_CLIENT_TOKEN"))
 
     init {
         val configuration = JDBCConnectionConfiguration()

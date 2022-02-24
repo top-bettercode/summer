@@ -5,18 +5,20 @@ import top.bettercode.generator.dom.java.element.PackageInfo
  */
 val modulePackageInfo: ProjectGenerator.(PackageInfo) -> Unit = { unit ->
     unit.apply {
-        +"""/**
- * ${table.subModuleName}
- */
-package ${type.packageName};"""
+        javadoc {
+            +"/**"
+            +" * ${table.subModuleName}"
+            +" */"
+        }
     }
 }
 
 val packageInfo: ProjectGenerator.(PackageInfo) -> Unit = { unit ->
     unit.apply {
-        +"""/**
- * $remarks
- */
-package ${type.packageName};"""
+        javadoc {
+            +"/**"
+            +" * $remarks"
+            +" */"
+        }
     }
 }

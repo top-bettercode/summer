@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import org.gradle.api.Project
 import top.bettercode.autodoc.core.Util
 import top.bettercode.autodoc.core.model.Field
-import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.InnerInterface
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelEnumeration
+import top.bettercode.generator.dom.unit.FileUnit
+import top.bettercode.generator.dom.unit.SourceSet
 import top.bettercode.generator.dsl.DicCodes
-import java.io.File
 import java.io.Serializable
 import java.util.*
 
@@ -89,236 +89,212 @@ class DicCodeGen(private val project: Project) {
         return map
     }
 
-    private lateinit var docFile: File
+    private lateinit var docFile: FileUnit
     private val docText = StringBuilder()
 
     private lateinit var packageName: String
 
 
-    fun setUp() {
-        docFile = project.rootProject.file("doc/v1.0/编码类型.adoc")
-        if (!docFile.parentFile.exists())
-            docFile.parentFile.mkdirs()
+    fun run() {
+        docFile = FileUnit(name = "doc/v1.0/编码类型.adoc", replaceable = true,sourceSet = SourceSet.ROOT)
+
         packageName = project.rootProject.property("app.packageName") as String
 
-        docFile.printWriter().use { pw ->
-            pw.println("== 编码类型")
-            pw.println("")
-            pw.println(
-                """|===
+        docFile.apply {
+            +"== 编码类型"
+            +""
+            +"""|===
 | 编码 | 说明
 """
-            )
-        }
-    }
 
-    fun tearDown() {
-        docFile.appendText("|===\n")
-        docFile.appendText("\n\n")
-        docFile.appendText(docText.toString())
-    }
-
-    fun genCode() {
-        codeTypes().forEach { (codeType, v) ->
-            val codeTypeName = v.name
-            docFile.appendText("|$codeType|$codeTypeName\n")
-            docText.appendln(".$codeTypeName($codeType)")
-            docText.appendln(
-                """|===
+            codeTypes().forEach { (codeType, v) ->
+                val codeTypeName = v.name
+                +("|$codeType|$codeTypeName\n")
+                docText.appendln(".$codeTypeName($codeType)")
+                docText.appendln(
+                    """|===
 | 编码 | 说明
 """
-            )
-            val className = codeType.split("_").joinToString("") {
-                if (codeType.matches(Regex(".*[a-z].*")))
-                    it.capitalize()
-                else
-                    it.toLowerCase().capitalize()
-            }
-
-            val isIntCode = v.isInt
-            val fieldType =
-                if (isIntCode) JavaType.intPrimitiveInstance else JavaType.stringInstance
-            val fieldType2 =
-                if (isIntCode) JavaType("java.lang.Integer") else JavaType.stringInstance
-
-            //
-            val enumFile = project.file(
-                "src/main/java/${
-                    packageName.replace(
-                        '.',
-                        '/'
-                    )
-                }/support/dic/${className}Enum.java"
-            )
-            val enumType = JavaType("$packageName.support.dic.${className}Enum")
-            val codeEnum = TopLevelEnumeration(enumType)
-            codeEnum.visibility = JavaVisibility.PUBLIC
-            codeEnum.apply {
-                javadoc {
-                    +"/**"
-                    +" * ${codeTypeName.replace("@", "\\@")}"
-                    +" */"
+                )
+                val className = codeType.split("_").joinToString("") {
+                    if (codeType.matches(Regex(".*[a-z].*")))
+                        it.capitalize()
+                    else
+                        it.toLowerCase().capitalize()
                 }
-                val innerInterface = InnerInterface(JavaType("${className}Const"))
-                innerInterface(innerInterface)
-                v.codes.forEach { (code, name) ->
-                    docText.appendln("|$code|$name")
 
-                    val codeFieldName = underscoreName(
-                        if (code is Int || code.toString()
-                                .startsWith("0") && code.toString().length > 1
-                        ) {
-                            "CODE_${code.toString().replace("-", "MINUS_")}"
-                        } else if (code.toString().isBlank()) {
-                            "BLANK"
-                        } else {
-                            code as String
+                val isIntCode = v.isInt
+                val fieldType =
+                    if (isIntCode) JavaType.intPrimitiveInstance else JavaType.stringInstance
+                val fieldType2 =
+                    if (isIntCode) JavaType("java.lang.Integer") else JavaType.stringInstance
+
+                //
+                val enumType = JavaType("$packageName.support.dic.${className}Enum")
+                val codeEnum = TopLevelEnumeration(enumType)
+                codeEnum.visibility = JavaVisibility.PUBLIC
+                codeEnum.apply {
+                    javadoc {
+                        +"/**"
+                        +" * ${codeTypeName.replace("@", "\\@")}"
+                        +" */"
+                    }
+                    val innerInterface = InnerInterface(JavaType("${className}Const"))
+                    innerInterface(innerInterface)
+                    v.codes.forEach { (code, name) ->
+                        docText.appendln("|$code|$name")
+
+                        val codeFieldName = underscoreName(
+                            if (code is Int || code.toString()
+                                    .startsWith("0") && code.toString().length > 1
+                            ) {
+                                "CODE_${code.toString().replace("-", "MINUS_")}"
+                            } else if (code.toString().isBlank()) {
+                                "BLANK"
+                            } else {
+                                code as String
+                            }
+                        )
+                        innerInterface.apply {
+                            visibility = JavaVisibility.PUBLIC
+                            val initializationString = if (isIntCode) code.toString() else "\"$code\""
+                            field(
+                                codeFieldName,
+                                fieldType,
+                                initializationString
+                            ) {
+                                visibility = JavaVisibility.DEFAULT
+                                javadoc {
+                                    +"/**"
+                                    +" * ${name.replace("@", "\\@")}"
+                                    +" */"
+                                }
+                            }
                         }
-                    )
-                    innerInterface.apply {
-                        visibility = JavaVisibility.PUBLIC
-                        val initializationString = if (isIntCode) code.toString() else "\"$code\""
-                        field(
-                            codeFieldName,
-                            fieldType,
-                            initializationString
-                        ) {
-                            visibility = JavaVisibility.DEFAULT
+
+                        enumConstant("${codeFieldName}(${className}Const.${codeFieldName})") {
                             javadoc {
                                 +"/**"
                                 +" * ${name.replace("@", "\\@")}"
                                 +" */"
                             }
                         }
+
                     }
 
-                    enumConstant("${codeFieldName}(${className}Const.${codeFieldName})") {
+                    field(
+                        "ENUM_NAME",
+                        JavaType.stringInstance,
+                        "\"$codeType\"",
+                        true,
+                        JavaVisibility.PUBLIC
+                    ) {
+                        isStatic = true
                         javadoc {
                             +"/**"
-                            +" * ${name.replace("@", "\\@")}"
+                            +" * ${codeTypeName.replace("@", "\\@")}"
                             +" */"
                         }
                     }
 
-                }
+                    this.constructor(visibility = JavaVisibility.DEFAULT) {
+                        parameter(fieldType, "code")
+                        +"this.code = code;"
+                    }
 
-                field(
-                    "ENUM_NAME",
-                    JavaType.stringInstance,
-                    "\"$codeType\"",
-                    true,
-                    JavaVisibility.PUBLIC
-                ) {
-                    isStatic = true
-                    javadoc {
-                        +"/**"
-                        +" * ${codeTypeName.replace("@", "\\@")}"
-                        +" */"
+                    field("code", fieldType, visibility = JavaVisibility.PRIVATE, isFinal = true)
+                    method("code", fieldType) {
+                        +"return code;"
                     }
-                }
 
-                this.constructor(visibility = JavaVisibility.DEFAULT) {
-                    parameter(fieldType, "code")
-                    +"this.code = code;"
-                }
-
-                field("code", fieldType, visibility = JavaVisibility.PRIVATE, isFinal = true)
-                method("code", fieldType) {
-                    +"return code;"
-                }
-
-                import("top.bettercode.simpleframework.support.code.CodeServiceHolder")
-                method("nameOf", JavaType.stringInstance) {
-                    javadoc {
-                        +"/**"
-                        +" * 对应名称"
-                        +" *"
-                        +" * @return 对应名称"
-                        +" */"
+                    import("top.bettercode.simpleframework.support.code.CodeServiceHolder")
+                    method("nameOf", JavaType.stringInstance) {
+                        javadoc {
+                            +"/**"
+                            +" * 对应名称"
+                            +" *"
+                            +" * @return 对应名称"
+                            +" */"
+                        }
+                        +"return nameOf(code);"
                     }
-                    +"return nameOf(code);"
-                }
-                method("equals", JavaType.booleanPrimitiveInstance, Parameter("code", fieldType2)) {
-                    javadoc {
-                        +"/**"
-                        +" * @param code 码"
-                        +" * @return code 是否相等"
-                        +" */"
+                    method("equals", JavaType.booleanPrimitiveInstance, Parameter("code", fieldType2)) {
+                        javadoc {
+                            +"/**"
+                            +" * @param code 码"
+                            +" * @return code 是否相等"
+                            +" */"
+                        }
+                        if (isIntCode)
+                            +"return code != null && this.code == code;"
+                        else
+                            +"return this.code.equals(code);"
                     }
-                    if (isIntCode)
-                        +"return code != null && this.code == code;"
-                    else
-                        +"return this.code.equals(code);"
-                }
-                method("enumOf", enumType, Parameter("code", fieldType2)) {
-                    javadoc {
-                        +"/**"
-                        +" * 根据标识码查询对应枚举"
-                        +" *"
-                        +" * @param code 标识码"
-                        +" * @return 对应枚举"
-                        +" */"
+                    method("enumOf", enumType, Parameter("code", fieldType2)) {
+                        javadoc {
+                            +"/**"
+                            +" * 根据标识码查询对应枚举"
+                            +" *"
+                            +" * @param code 标识码"
+                            +" * @return 对应枚举"
+                            +" */"
+                        }
+                        isStatic = true
+                        +"if (code == null) {"
+                        +"return null;"
+                        +"}"
+                        +"for (${className}Enum ${className.decapitalize()}Enum : values()) {"
+                        if (isIntCode)
+                            +"if (${className.decapitalize()}Enum.code == code) {"
+                        else
+                            +"if (${className.decapitalize()}Enum.code.equals(code)) {"
+                        +"return ${className.decapitalize()}Enum;"
+                        +"}"
+                        +"}"
+                        +"return null;"
                     }
-                    isStatic = true
-                    +"if (code == null) {"
-                    +"return null;"
-                    +"}"
-                    +"for (${className}Enum ${className.decapitalize()}Enum : values()) {"
-                    if (isIntCode)
-                        +"if (${className.decapitalize()}Enum.code == code) {"
-                    else
-                        +"if (${className.decapitalize()}Enum.code.equals(code)) {"
-                    +"return ${className.decapitalize()}Enum;"
-                    +"}"
-                    +"}"
-                    +"return null;"
-                }
-                method("nameOf", JavaType.stringInstance, Parameter("code", fieldType2)) {
-                    javadoc {
-                        +"/**"
-                        +" * 根据标识码查询对应名称"
-                        +" *"
-                        +" * @param code 标识码"
-                        +" * @return 对应名称"
-                        +" */"
+                    method("nameOf", JavaType.stringInstance, Parameter("code", fieldType2)) {
+                        javadoc {
+                            +"/**"
+                            +" * 根据标识码查询对应名称"
+                            +" *"
+                            +" * @param code 标识码"
+                            +" * @return 对应名称"
+                            +" */"
+                        }
+                        isStatic = true
+                        +"if (code == null) {"
+                        +"return null;"
+                        +"}"
+                        +"return CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getName(code);"
                     }
-                    isStatic = true
-                    +"if (code == null) {"
-                    +"return null;"
-                    +"}"
-                    +"return CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getName(code);"
-                }
-                method("codeOf", fieldType2, Parameter("name", JavaType.stringInstance)) {
-                    javadoc {
-                        +"/**"
-                        +" * 根据标识码名称查询对应标识码"
-                        +" *"
-                        +" * @param name 名称"
-                        +" * @return 标识码"
-                        +" */"
+                    method("codeOf", fieldType2, Parameter("name", JavaType.stringInstance)) {
+                        javadoc {
+                            +"/**"
+                            +" * 根据标识码名称查询对应标识码"
+                            +" *"
+                            +" * @param name 名称"
+                            +" * @return 标识码"
+                            +" */"
+                        }
+                        isStatic = true
+                        +"if (name == null) {"
+                        +"return null;"
+                        +"}"
+                        if (isIntCode)
+                            +"return (Integer) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
+                        else
+                            +"return (String) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
                     }
-                    isStatic = true
-                    +"if (name == null) {"
-                    +"return null;"
-                    +"}"
-                    if (isIntCode)
-                        +"return (Integer) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
-                    else
-                        +"return (String) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
                 }
+                docText.appendln("|===")
+                docText.appendln()
+                codeEnum.writeTo(project.projectDir)
             }
-            docText.appendln("|===")
-            docText.appendln()
-            enumFile.parentFile.mkdirs()
-            println(
-                "${if (enumFile.exists()) "覆盖" else "生成"}：${
-                    enumFile.absolutePath.substringAfter(
-                        project.rootDir.absolutePath + File.separator
-                    )
-                }"
-            )
-            enumFile.writeText(codeEnum.formattedContent)
 
+            +("|===\n")
+            +("\n\n")
+            +(docText.toString())
         }
     }
 

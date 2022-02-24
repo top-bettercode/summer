@@ -8,23 +8,24 @@ import top.bettercode.generator.database.entity.Table
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.PrimitiveTypeWrapper
 import top.bettercode.generator.dom.java.element.*
-import java.io.File
+import top.bettercode.generator.dom.unit.*
 
 /**
  * 模板基类
  */
 open class Generator {
 
+    private val projectUnits: MutableList<GenUnit> = mutableListOf()
     private val units: MutableList<GenUnit> = mutableListOf()
 
     val Table.supportSoftDelete: Boolean
-        get() = supportSoftDelete(extension)
+        get() = supportSoftDelete(ext)
 
     val Column.jsonViewIgnored: Boolean
-        get() = jsonViewIgnored(extension)
+        get() = jsonViewIgnored(ext)
 
     val Column.isSoftDelete: Boolean
-        get() = isSoftDelete(extension)
+        get() = isSoftDelete(ext)
 
     val Column.defaultRemarks: String
         get() = defaultDesc.replace("DEFAULT ", "默认值：")
@@ -49,18 +50,18 @@ open class Generator {
 
 
     lateinit var table: Table
-    lateinit var extension: GeneratorExtension
+    lateinit var ext: GeneratorExtension
 
-    val settings: Map<String, String> get() = extension.settings
+    val settings: Map<String, String> get() = ext.settings
 
-    val datasource: JDBCConnectionConfiguration get() = extension.datasources[table.module]!!
+    val datasource: JDBCConnectionConfiguration get() = ext.datasources[table.module]!!
 
-    val projectName: String get() = extension.projectName
+    val projectName: String get() = ext.projectName
 
 
     val basePackageName: String
         get() =
-            (if (extension.projectPackage) "${extension.packageName}.$projectName" else extension.packageName)
+            (if (ext.projectPackage) "${ext.packageName}.$projectName" else ext.packageName)
 
 
     val packageName: String
@@ -68,7 +69,7 @@ open class Generator {
             var packageName = basePackageName
             if (settings["no-modules"] == null)
                 packageName = "$packageName.${table.module}"
-            return if (extension.userModule && table.subModule.isNotBlank()) {
+            return if (ext.userModule && table.subModule.isNotBlank()) {
                 "$packageName.${table.subModule}"
             } else {
                 packageName
@@ -78,8 +79,8 @@ open class Generator {
 
     val className
         get() =
-            if (otherColumns.isEmpty()) "${table.className(extension)}Entity" else table.className(
-                extension
+            if (otherColumns.isEmpty()) "${table.className(ext)}Entity" else table.className(
+                ext
             )
 
 
@@ -89,15 +90,15 @@ open class Generator {
                     "projectClassName",
                     true
                 )
-            ) table.className(extension) + projectName.substring(
+            ) table.className(ext) + projectName.substring(
                 0, if (projectName.length > 5) 5 else projectName.length
-            ).capitalize() else table.className(extension)
+            ).capitalize() else table.className(ext)
 
 
     val entityName
         get() =
-            if (otherColumns.isEmpty()) "${table.entityName(extension)}Entity" else table.entityName(
-                extension
+            if (otherColumns.isEmpty()) "${table.entityName(ext)}Entity" else table.entityName(
+                ext
             )
 
 
@@ -118,7 +119,7 @@ open class Generator {
         get() {
             val comment = table.remarks
             return comment.ifBlank {
-                extension.remarks
+                ext.remarks
             }
         }
 
@@ -131,7 +132,7 @@ open class Generator {
             val primaryKeys = table.primaryKeys
             return if (primaryKeys.isEmpty()) {
                 val primaryKey =
-                    columns.find { it.columnName.equals(extension.primaryKeyName, true) }
+                    columns.find { it.columnName.equals(ext.primaryKeyName, true) }
                         ?: columns.find { it.remarks.contains("主键") }
                 if (primaryKey != null) {
                     listOf(primaryKey)
@@ -160,9 +161,9 @@ open class Generator {
             return if (primaryKeys.size == 1) {
                 primaryKey.javaType.shortName
             } else {
-                if (otherColumns.isEmpty()) table.className(extension) else "${
+                if (otherColumns.isEmpty()) table.className(ext) else "${
                     table.className(
-                        extension
+                        ext
                     )
                 }Key"
             }
@@ -177,9 +178,9 @@ open class Generator {
                 primaryKey.javaName
             } else {
                 if (otherColumns.isEmpty())
-                    table.entityName(extension)
+                    table.entityName(ext)
                 else
-                    "${table.entityName(extension)}Key"
+                    "${table.entityName(ext)}Key"
             }
 
 
@@ -190,8 +191,8 @@ open class Generator {
             } else {
                 JavaType(
                     "$packageName.${modulePackage("Entity")}.${
-                        if (isFullComposite) table.className(extension)
-                        else "${table.className(extension)}Key"
+                        if (isFullComposite) table.className(ext)
+                        else "${table.className(ext)}Key"
                     }"
                 )
             }
@@ -215,7 +216,7 @@ open class Generator {
      */
     val columns: List<Column> get() = table.columns
 
-    val pathName: String get() = table.pathName(extension)
+    val pathName: String get() = table.pathName(ext)
 
     fun setting(key: String): Any? = settings[key]
 
@@ -230,7 +231,7 @@ open class Generator {
     fun modulePackage(name: String): String {
         val onePackage = enable("onePackage", true)
         return if (onePackage)
-            table.entityName(extension).toLowerCase()
+            table.entityName(ext).toLowerCase()
         else when (name) {
             "Domain" -> "domain"
             "QueryDsl" -> "querydsl"
@@ -245,117 +246,118 @@ open class Generator {
             "Service" -> "service"
             "ServiceImpl" -> "service.impl"
             "Repository" -> "repository"
-            else -> table.entityName(extension).toLowerCase()
+            else -> table.entityName(ext).toLowerCase()
         }
     }
 
-    fun addUnit(unit: GenUnit) {
-        units.add(unit)
+    operator fun GenUnit.unaryPlus() {
+        units.add(this)
     }
 
-    val GenUnit.file: File
-        get() {
-            var dir =
-                if (isTestFile) extension.dir.replace("src/main/", "src/test/") else extension.dir
-            dir = if (isResourcesFile) dir.replace("java", "resources") else dir
-            dir = if (isProjectFile || isRootFile) "" else dir
-            val file = File(name)
-            return if (file.isAbsolute) file else File(
-                File(if (isRootFile) extension.basePath.parentFile else extension.basePath, dir),
-                name
-            )
-        }
+    fun <T : GenUnit> add(unit: T): T {
+        projectUnits.add(unit)
+        return unit
+    }
+
+    operator fun get(name: String): GenUnit? {
+        return projectUnits.find { it.name == name }
+    }
 
     fun file(
         name: String,
-        canCover: Boolean = false,
-        isResourcesFile: Boolean = false,
-        isTestFile: Boolean = false,
-        unit: FileUnit.() -> Unit
-    ) {
-        val value = FileUnit(
+        replaceable: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
+        directorySet: DirectorySet = DirectorySet.RESOURCES,
+        apply: FileUnit.() -> Unit = { }
+    ): FileUnit {
+        return FileUnit(
             name = name,
-            canCover = canCover,
-            isResourcesFile = isResourcesFile,
-            isTestFile = isTestFile
+            replaceable = replaceable,
+            sourceSet = sourceSet,
+            directorySet = directorySet,
+            apply = apply
         )
-        unit(value)
-        addUnit(value)
+    }
+
+    fun properties(
+        name: String,
+        replaceable: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
+        directorySet: DirectorySet = DirectorySet.RESOURCES,
+        apply: PropertiesUnit.() -> Unit = { }
+    ): PropertiesUnit {
+        return PropertiesUnit(
+            name = name,
+            replaceable = replaceable,
+            sourceSet = sourceSet,
+            directorySet = directorySet,
+            apply = apply
+        )
     }
 
     fun packageInfo(
         type: JavaType,
-        canCover: Boolean = false,
-        isResourcesFile: Boolean = false,
-        isTestFile: Boolean = false,
-        unit: PackageInfo.() -> Unit
-    ) {
-        val value = PackageInfo(
+        replaceable: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
+        directorySet: DirectorySet = DirectorySet.RESOURCES,
+        apply: PackageInfo.() -> Unit = { }
+    ): PackageInfo {
+        return PackageInfo(
             type = type,
-            canCover = canCover,
-            isResourcesFile = isResourcesFile,
-            isTestFile = isTestFile
+            replaceable = replaceable,
+            sourceSet = sourceSet,
+            directorySet = directorySet,
+            apply = apply
         )
-        unit(value)
-        addUnit(value)
     }
 
 
     fun interfaze(
         type: JavaType,
-        canCover: Boolean = false,
-        isResourcesFile: Boolean = false,
-        isTestFile: Boolean = false,
+        replaceable: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
         visibility: JavaVisibility = JavaVisibility.PUBLIC,
-        interfaze: Interface.() -> Unit
-    ) {
-        val value = Interface(
+        apply: Interface.() -> Unit = { }
+    ): Interface {
+        return Interface(
             type = type,
-            canCover = canCover,
-            isResourcesFile = isResourcesFile,
-            isTestFile = isTestFile
+            replaceable = replaceable,
+            sourceSet = sourceSet,
+            visibility = visibility,
+            apply = apply
         )
-        value.visibility = visibility
-        interfaze(value)
-        addUnit(value)
     }
 
     fun clazz(
         type: JavaType,
-        canCover: Boolean = false,
-        isResourcesFile: Boolean = false,
-        isTestFile: Boolean = false,
+        replaceable: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
         visibility: JavaVisibility = JavaVisibility.PUBLIC,
-        clazz: TopLevelClass.() -> Unit
-    ) {
-        val value = TopLevelClass(
+        apply: TopLevelClass.() -> Unit = { }
+    ): TopLevelClass {
+        return TopLevelClass(
             type = type,
-            canCover = canCover,
-            isResourcesFile = isResourcesFile,
-            isTestFile = isTestFile
+            replaceable = replaceable,
+            sourceSet = sourceSet,
+            visibility = visibility,
+            apply = apply
         )
-        value.visibility = visibility
-        clazz(value)
-        addUnit(value)
     }
+
 
     fun enum(
         type: JavaType,
-        canCover: Boolean = false,
-        isResourcesFile: Boolean = false,
-        isTestFile: Boolean = false,
-        enum: TopLevelEnumeration.() -> Unit
-    ) {
-        val value = TopLevelEnumeration(
+        replaceable: Boolean = false,
+        sourceSet: SourceSet = SourceSet.MAIN,
+        apply: TopLevelEnumeration.() -> Unit = { }
+    ): TopLevelEnumeration {
+        return TopLevelEnumeration(
             type = type,
-            canCover = canCover,
-            isResourcesFile = isResourcesFile,
-            isTestFile = isTestFile
+            replaceable = replaceable,
+            sourceSet = sourceSet,
+            apply = apply
         )
-        enum(value)
-        addUnit(value)
     }
-
 
     open fun content() {}
 
@@ -363,30 +365,8 @@ open class Generator {
         units.clear()
         content()
         units.forEach { unit ->
-            unit.write()
-        }
-    }
-
-    fun GenUnit.write() {
-        val destFile = file
-        if (extension.delete)
-            if (destFile.delete()) {
-                println("删除：${destFile.absolutePath.substringAfter(extension.basePath.absolutePath + File.separator)}")
-            }
-
-        if (!destFile.exists() || !((!extension.replaceAll && !canCover) || destFile.readLines()
-                .any { it.contains("[[Don't cover]]") })
-        ) {
-            destFile.parentFile.mkdirs()
-
-            println(
-                "${if (destFile.exists()) "覆盖" else "生成"}：${
-                    destFile.absolutePath.substringAfter(
-                        (extension.rootPath ?: extension.basePath).absolutePath + File.separator
-                    )
-                }"
-            )
-            output(destFile.printWriter())
+            if (ext.replaceAll) unit.replaceable = true
+            unit.write(ext.projectDir)
         }
     }
 
@@ -395,9 +375,9 @@ open class Generator {
         this.call()
     }
 
-    fun setUp(extension: GeneratorExtension) {
-        this.extension = extension
-        JavaElement.indent = extension.indent
+    fun setUp(ext: GeneratorExtension) {
+        this.ext = ext
+        JavaElement.indent = ext.indent
         setUp()
     }
 
@@ -405,14 +385,20 @@ open class Generator {
 
     }
 
+    fun preTearDown() {
+        projectUnits.forEach { unit ->
+            unit.write(ext.projectDir)
+        }
+    }
+
     open fun tearDown() {
 
     }
 
 
-    fun Column.dicCodes(extension: GeneratorExtension): DicCodes? {
+    fun Column.dicCodes(ext: GeneratorExtension): DicCodes? {
         return if (isCodeField) {
-            val codeType = if (columnName.contains("_") || extension.commonCodeTypes.any {
+            val codeType = if (columnName.contains("_") || ext.commonCodeTypes.any {
                     it.equals(
                         columnName,
                         true
@@ -444,7 +430,7 @@ open class Generator {
         get() = when {
             columnDef == null || "CURRENT_TIMESTAMP".equals(columnDef, true) ->
                 when {
-                    isCodeField -> dicCodes(extension)!!.codes.keys.first()
+                    isCodeField -> dicCodes(ext)!!.codes.keys.first()
                     else ->
                         when (javaType) {
                             JavaType("java.math.BigDecimal") -> java.math.BigDecimal("1.0")
@@ -474,7 +460,7 @@ open class Generator {
                 ) -> {
                     when {
                         isCodeField -> {
-                            val value = dicCodes(extension)!!.codes.keys.first()
+                            val value = dicCodes(ext)!!.codes.keys.first()
                             if (JavaType.stringInstance == javaType) "\"$value\"" else "$value"
                         }
                         else -> when (javaType) {

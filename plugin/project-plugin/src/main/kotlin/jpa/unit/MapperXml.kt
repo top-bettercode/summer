@@ -1,7 +1,7 @@
 package jpa.unit
 
 import ProjectGenerator
-import top.bettercode.generator.dom.java.element.FileUnit
+import top.bettercode.generator.dom.unit.FileUnit
 
 /**
  * @author Peter Wu

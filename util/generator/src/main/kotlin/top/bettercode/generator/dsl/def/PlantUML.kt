@@ -24,7 +24,7 @@ class PlantUML(
         println(
             "${if (destFile.exists()) "覆盖" else "生成"}：${
                 destFile.absolutePath.substringAfter(
-                    (extension.rootPath ?: extension.basePath).absolutePath + File.separator
+                    (ext.rootPath ?: ext.projectDir).absolutePath + File.separator
                 )
             }"
         )

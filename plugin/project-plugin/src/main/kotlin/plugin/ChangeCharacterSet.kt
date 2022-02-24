@@ -1,6 +1,7 @@
 package plugin
 
-import top.bettercode.generator.dom.java.element.FileUnit
+import top.bettercode.generator.dom.unit.FileUnit
+import top.bettercode.generator.dom.unit.SourceSet
 import top.bettercode.generator.dsl.Generator
 
 /**
@@ -18,16 +19,11 @@ default-character-set = utf8mb4
  * @author Peter Wu
  */
 class ChangeCharacterSet : Generator() {
-    private val file: FileUnit by lazy {
-        FileUnit(
-            "database/change_character_set.sql",
-            canCover = true,
-            isRootFile = true
-        )
-    }
+
+    private val name = "database/change_character_set.sql"
 
     override fun setUp() {
-        file.apply {
+        add(file(name, sourceSet = SourceSet.ROOT)).apply {
             +"# 修改数据库表及字段字符集\n"
             +"ALTER DATABASE ${
                 datasource.url.replace(
@@ -39,12 +35,8 @@ class ChangeCharacterSet : Generator() {
         }
     }
 
-    override fun tearDown() {
-        file.write()
-    }
-
     override fun call() {
-        file.apply {
+        (this[name] as FileUnit).apply {
             +"ALTER TABLE $tableName CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
             +""
             columns.forEach {

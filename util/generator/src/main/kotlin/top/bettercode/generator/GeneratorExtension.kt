@@ -41,7 +41,7 @@ open class GeneratorExtension(
     /**
      * 生成文件基础路径,项目路径
      */
-    var basePath: File = File("").absoluteFile,
+    var projectDir: File = File("").absoluteFile,
     /**
      * 基础路径下相对路径
      */
@@ -178,12 +178,12 @@ open class GeneratorExtension(
      */
     var rootPath: File? = null
         get() = if (field == null) {
-            findUpPath(basePath)
+            findUpPath(projectDir)
         } else field
 
     private val path: File? by lazy {
-        if (File(basePath, pumlSrc).exists())
-            basePath
+        if (File(projectDir, pumlSrc).exists())
+            projectDir
         else rootPath
     }
 
