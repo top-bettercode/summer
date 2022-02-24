@@ -91,9 +91,7 @@ package $packageinfo""".trimIndent()
                 val regex = Regex(".*/\\*\\*(.*)\\*/.*", RegexOption.DOT_MATCHES_ALL)
                 val pregex = Regex("package ([^;]*);?")
                 val dest = FileUnit(
-                    name = "doc/项目目录及包目录说明.adoc",
-                    replaceable = true,
-                    sourceSet = top.bettercode.generator.dom.unit.SourceSet.ROOT
+                    name = "doc/项目目录及包目录说明.adoc"
                 )
                 dest.apply {
                     val projects = project.allprojects.filter { p ->

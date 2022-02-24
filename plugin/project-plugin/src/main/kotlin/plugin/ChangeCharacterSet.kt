@@ -23,7 +23,7 @@ class ChangeCharacterSet : Generator() {
     private val name = "database/change_character_set.sql"
 
     override fun setUp() {
-        add(file(name, sourceSet = SourceSet.ROOT)).apply {
+        add(file(name)).apply {
             +"# 修改数据库表及字段字符集\n"
             +"ALTER DATABASE ${
                 datasource.url.replace(

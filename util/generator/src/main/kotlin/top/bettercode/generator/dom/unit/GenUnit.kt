@@ -8,7 +8,7 @@ import java.io.File
  */
 interface GenUnit {
     val name: String
-    var replaceable: Boolean
+    var overwrite: Boolean
     val sourceSet: SourceSet
         get() = SourceSet.MAIN
     val directorySet: DirectorySet
@@ -24,12 +24,12 @@ interface GenUnit {
             }
         }
 
-    fun trueFile(directory: File): File {
-        return if (file.isAbsolute) file else File(directory, file.path)
+    fun outputFile(directory: File? = null): File {
+        return if (directory == null || file.isAbsolute) file else File(directory, file.path)
     }
 
-    fun writeTo(directory: File) {
-        val destFile = trueFile(directory)
+    fun writeTo(directory: File? = null) {
+        val destFile = outputFile(directory)
         if (!destFile.exists() || !destFile.readLines().any { it.contains("[[Don't cover]]") }) {
             destFile.parentFile.mkdirs()
             println(

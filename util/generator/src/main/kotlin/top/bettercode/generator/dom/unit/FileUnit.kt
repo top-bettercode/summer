@@ -9,13 +9,21 @@ import java.io.StringWriter
  */
 open class FileUnit(
     override val name: String,
-    override var replaceable: Boolean = false,
-    override val sourceSet: SourceSet = SourceSet.MAIN,
+    override var overwrite: Boolean = true,
+    override val sourceSet: SourceSet = SourceSet.ROOT,
     override val directorySet: DirectorySet = DirectorySet.RESOURCES
 ) : GenUnit {
 
+    constructor(
+        file: File,
+        overwrite: Boolean = true,
+        sourceSet: SourceSet = SourceSet.ROOT,
+        directorySet: DirectorySet = DirectorySet.RESOURCES
+    ) : this(file.path, overwrite, sourceSet, directorySet)
+
     private val stringWriter = StringWriter()
-    override val write: File.() -> Unit = { printWriter().use { it.print(stringWriter.toString()) } }
+    override val write: File.() -> Unit =
+        { printWriter().use { it.print(stringWriter.toString()) } }
 
     operator fun String.unaryPlus() {
         stringWriter.appendln(this)

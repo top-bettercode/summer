@@ -1,5 +1,6 @@
 import jpa.unit.mapperXml
 import jpa.unit.repository
+import top.bettercode.generator.dom.unit.SourceSet
 
 /**
  * @author Peter Wu
@@ -7,7 +8,7 @@ import jpa.unit.repository
 open class Service : ProjectGenerator() {
 
     override fun content() {
-        +file(mapperXmlName) {
+        +file(mapperXmlName, overwrite = false, sourceSet = SourceSet.MAIN) {
             mapperXml(this)
         }
 

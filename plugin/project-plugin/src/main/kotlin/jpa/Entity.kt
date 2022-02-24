@@ -7,7 +7,7 @@ import top.bettercode.generator.dom.unit.PropertiesUnit
 class Entity : ProjectGenerator() {
 
     override fun setUp() {
-        add(properties(msgName, replaceable = true) { load(ext.projectDir) })
+        add(properties(msgName, overwrite = true) { load(ext.projectDir) })
     }
 
     override fun content() {

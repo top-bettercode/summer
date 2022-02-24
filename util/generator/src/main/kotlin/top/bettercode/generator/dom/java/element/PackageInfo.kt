@@ -15,7 +15,7 @@ import java.io.File
  */
 class PackageInfo(
     val type: JavaType,
-    override var replaceable: Boolean = false,
+    override var overwrite: Boolean = false,
     override val sourceSet: SourceSet = SourceSet.MAIN,
     override val directorySet: DirectorySet = DirectorySet.JAVA
 ) : GenUnit {

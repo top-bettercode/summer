@@ -8,7 +8,7 @@ import top.bettercode.generator.dom.unit.SourceSet
  */
 open class TopLevelClass(
     type: JavaType,
-    override var replaceable: Boolean = false,
+    override var overwrite: Boolean = false,
     override val sourceSet: SourceSet = SourceSet.MAIN,
     override var visibility: JavaVisibility = JavaVisibility.PUBLIC
 ) : InnerClass(type), CompilationUnit {
