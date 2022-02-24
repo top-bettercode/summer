@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse
 
 /**
  * A `ResponseConverter` is used to convert an implementation-specific response into
- * an [OperationResponse].
+ * an OperationResponse.
  *
  * @param <R> The implementation-specific response type
  * @since 2.0.7

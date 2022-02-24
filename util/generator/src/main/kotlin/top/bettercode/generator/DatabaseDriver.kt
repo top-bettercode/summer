@@ -217,7 +217,7 @@ enum class DatabaseDriver(
     companion object {
 
         /**
-         * Find a [DatabaseDriver] for the given URL.
+         * Find a DatabaseDriver for the given URL.
          * @param url the JDBC URL
          * @return the database driver or UNKNOWN if not found
          */
@@ -244,7 +244,7 @@ enum class DatabaseDriver(
         }
 
         /**
-         * Find a [DatabaseDriver] for the given product name.
+         * Find a DatabaseDriver for the given product name.
          * @param productName product name
          * @return the database driver or UNKNOWN if not found
          */

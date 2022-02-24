@@ -25,7 +25,7 @@ import javax.servlet.http.Part
 
 /**
  * A `RequestConverter` is used to convert an implementation-specific request into
- * an [OperationRequest].
+ * an OperationRequest.
  *
  * @since 2.0.7
 </R> */
