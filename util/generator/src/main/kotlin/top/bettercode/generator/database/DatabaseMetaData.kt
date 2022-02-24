@@ -134,7 +134,7 @@ class DatabaseMetaData(
             Table(
                 productName = databaseMetaData.databaseProductName,
                 catalog = getString("TABLE_CAT") ?: datasource.catalog,
-                schema = schema,
+                schema = schema ?: datasource.schema,
                 tableName = name,
                 tableType = getString("TABLE_TYPE"),
                 remarks = getString("REMARKS")?.trim()
@@ -260,8 +260,8 @@ class DatabaseMetaData(
         val columnSize = getInt("COLUMN_SIZE")
         val remarks = getString("REMARKS")?.replace("[\t\n\r]", "")?.trim()
             ?: ""
-        val tableCat = getString("TABLE_CAT")
-        val tableSchem = getString("TABLE_SCHEM")
+        val tableCat = getString("TABLE_CAT") ?: datasource.catalog
+        val tableSchem = getString("TABLE_SCHEM") ?: datasource.schema
         val column = Column(
             tableCat = tableCat,
             tableSchem = tableSchem,
