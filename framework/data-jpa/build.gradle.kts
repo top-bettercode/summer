@@ -5,6 +5,7 @@ dependencies {
 
     //data
     api("org.springframework.boot:spring-boot-starter-data-jpa")
+
     api("org.mybatis:mybatis")
     api("org.mybatis:mybatis-spring")
     api("com.github.pagehelper:pagehelper")

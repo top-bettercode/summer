@@ -78,7 +78,6 @@ object ProjectDependencies {
 
                     dependency("top.bettercode.summer:web:$summerVersion")
                     dependency("top.bettercode.summer:data-jpa:$summerVersion")
-                    dependency("top.bettercode.summer:data-mybatis:$summerVersion")
                     dependency("top.bettercode.summer:security:$summerVersion")
 
                     dependency("top.bettercode.summer:kk:$summerVersion")
@@ -98,8 +97,11 @@ object ProjectDependencies {
 
                     dependency("org.bouncycastle:bcpkix-jdk15on:1.70")
                     dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
+
                     dependency("com.github.axet:kaptcha:0.0.9")
+
                     dependency("net.sf.ehcache:ehcache:2.10.9.2")
+
                     dependency("org.dhatim:fastexcel-reader:0.12.12")
                     dependency("org.apache.poi:poi-ooxml:5.1.0")
                     dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
@@ -107,10 +109,6 @@ object ProjectDependencies {
                     dependency("org.apache.logging.log4j:log4j-api:2.17.1")
                     dependency("org.apache.logging.log4j:log4j-core:2.17.1")
                     dependency("org.apache.logging.log4j:log4j-to-slf4j:2.17.1")
-
-                    dependency("com.alipay.sdk:alipay-sdk-java:4.13.58.ALL")
-                    dependency("com.aliyun:aliyun-java-sdk-core:4.5.20")
-                    dependency("com.aliyun:aliyun-java-sdk-dysmsapi:2.1.0")
                 }
             }
         }
