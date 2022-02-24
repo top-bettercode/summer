@@ -10,7 +10,7 @@ class DicCodeProperties : Generator() {
     private val codeTypes: MutableMap<String, Int> = mutableMapOf()
     private val name = "default-dic-code.properties"
     override fun setUp() {
-        add(properties(name, replaceable = true))
+        add(properties(name, overwrite = true))
     }
 
     override fun call() {

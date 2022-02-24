@@ -11,7 +11,6 @@ import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelEnumeration
 import top.bettercode.generator.dom.unit.FileUnit
-import top.bettercode.generator.dom.unit.SourceSet
 import top.bettercode.generator.dsl.DicCodes
 import java.io.Serializable
 import java.util.*
@@ -96,7 +95,7 @@ class DicCodeGen(private val project: Project) {
 
 
     fun run() {
-        docFile = FileUnit(name = "doc/v1.0/编码类型.adoc", replaceable = true,sourceSet = SourceSet.ROOT)
+        docFile = FileUnit("doc/v1.0/编码类型.adoc")
 
         packageName = project.rootProject.property("app.packageName") as String
 
@@ -157,7 +156,8 @@ class DicCodeGen(private val project: Project) {
                         )
                         innerInterface.apply {
                             visibility = JavaVisibility.PUBLIC
-                            val initializationString = if (isIntCode) code.toString() else "\"$code\""
+                            val initializationString =
+                                if (isIntCode) code.toString() else "\"$code\""
                             field(
                                 codeFieldName,
                                 fieldType,
@@ -218,7 +218,11 @@ class DicCodeGen(private val project: Project) {
                         }
                         +"return nameOf(code);"
                     }
-                    method("equals", JavaType.booleanPrimitiveInstance, Parameter("code", fieldType2)) {
+                    method(
+                        "equals",
+                        JavaType.booleanPrimitiveInstance,
+                        Parameter("code", fieldType2)
+                    ) {
                         javadoc {
                             +"/**"
                             +" * @param code 码"

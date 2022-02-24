@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import top.bettercode.autodoc.core.AsciidocGenerator
 import top.bettercode.generator.defaultModuleName
 import top.bettercode.generator.dom.unit.FileUnit
-import top.bettercode.generator.dom.unit.SourceSet
 import top.bettercode.generator.dsl.Generator
 import java.io.File
 
@@ -19,13 +18,7 @@ class DbDoc(private val project: Project) : Generator() {
     private val name get() = "database/doc/${ext.applicationName}数据库设计说明书-${project.version}.adoc"
 
     override fun setUp() {
-        add(
-            file(
-                name,
-                replaceable = true,
-                sourceSet = SourceSet.ROOT
-            )
-        ).apply {
+        add(file(name)).apply {
             +"= ${ext.applicationName}数据库设计说明书"
             +"""JAVA小组
 v${project.version}

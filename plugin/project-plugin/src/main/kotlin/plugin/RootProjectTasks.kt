@@ -68,9 +68,7 @@ object RootProjectTasks {
                 t.group = GeneratorPlugin.taskGroup
                 t.doLast {
                     val destFile = FileUnit(
-                        name = "database/init.sql",
-                        replaceable = true,
-                        sourceSet = SourceSet.ROOT
+                        "database/init.sql"
                     )
                     destFile.apply {
                         +"SET NAMES 'utf8';"

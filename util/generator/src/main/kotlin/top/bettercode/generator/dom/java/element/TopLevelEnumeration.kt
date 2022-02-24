@@ -5,7 +5,7 @@ import top.bettercode.generator.dom.unit.SourceSet
 
 class TopLevelEnumeration(
     type: JavaType,
-    override var replaceable: Boolean = false,
+    override var overwrite: Boolean = false,
     override val sourceSet: SourceSet = SourceSet.MAIN
 ) : InnerEnum(type), CompilationUnit {
 

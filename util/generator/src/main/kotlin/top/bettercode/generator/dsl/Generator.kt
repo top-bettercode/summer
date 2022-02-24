@@ -267,14 +267,14 @@ open class Generator {
 
     fun file(
         name: String,
-        replaceable: Boolean = false,
-        sourceSet: SourceSet = SourceSet.MAIN,
+        overwrite: Boolean = true,
+        sourceSet: SourceSet = SourceSet.ROOT,
         directorySet: DirectorySet = DirectorySet.RESOURCES,
         apply: FileUnit.() -> Unit = { }
     ): FileUnit {
         return FileUnit(
             name = name,
-            replaceable = replaceable,
+            overwrite = overwrite,
             sourceSet = sourceSet,
             directorySet = directorySet
         ).apply(apply)
@@ -282,14 +282,14 @@ open class Generator {
 
     fun properties(
         name: String,
-        replaceable: Boolean = false,
+        overwrite: Boolean = false,
         sourceSet: SourceSet = SourceSet.MAIN,
         directorySet: DirectorySet = DirectorySet.RESOURCES,
         apply: PropertiesUnit.() -> Unit = { }
     ): PropertiesUnit {
         return PropertiesUnit(
             name = name,
-            replaceable = replaceable,
+            overwrite = overwrite,
             sourceSet = sourceSet,
             directorySet = directorySet
         ).apply(apply)
@@ -297,14 +297,14 @@ open class Generator {
 
     fun packageInfo(
         type: JavaType,
-        replaceable: Boolean = false,
+        overwrite: Boolean = false,
         sourceSet: SourceSet = SourceSet.MAIN,
         directorySet: DirectorySet = DirectorySet.JAVA,
         apply: PackageInfo.() -> Unit = { }
     ): PackageInfo {
         return PackageInfo(
             type = type,
-            replaceable = replaceable,
+            overwrite = overwrite,
             sourceSet = sourceSet,
             directorySet = directorySet
         ).apply(apply)
@@ -313,14 +313,14 @@ open class Generator {
 
     fun interfaze(
         type: JavaType,
-        replaceable: Boolean = false,
+        overwrite: Boolean = false,
         sourceSet: SourceSet = SourceSet.MAIN,
         visibility: JavaVisibility = JavaVisibility.PUBLIC,
         apply: Interface.() -> Unit = { }
     ): Interface {
         return Interface(
             type = type,
-            replaceable = replaceable,
+            overwrite = overwrite,
             sourceSet = sourceSet,
             visibility = visibility
         ).apply(apply)
@@ -328,14 +328,14 @@ open class Generator {
 
     fun clazz(
         type: JavaType,
-        replaceable: Boolean = false,
+        overwrite: Boolean = false,
         sourceSet: SourceSet = SourceSet.MAIN,
         visibility: JavaVisibility = JavaVisibility.PUBLIC,
         apply: TopLevelClass.() -> Unit = { }
     ): TopLevelClass {
         return TopLevelClass(
             type = type,
-            replaceable = replaceable,
+            overwrite = overwrite,
             sourceSet = sourceSet,
             visibility = visibility
         ).apply(apply)
@@ -344,13 +344,13 @@ open class Generator {
 
     fun enum(
         type: JavaType,
-        replaceable: Boolean = false,
+        overwrite: Boolean = false,
         sourceSet: SourceSet = SourceSet.MAIN,
         apply: TopLevelEnumeration.() -> Unit = { }
     ): TopLevelEnumeration {
         return TopLevelEnumeration(
             type = type,
-            replaceable = replaceable,
+            overwrite = overwrite,
             sourceSet = sourceSet
         ).apply(apply)
     }
@@ -361,7 +361,7 @@ open class Generator {
         units.clear()
         content()
         units.forEach { unit ->
-            if (ext.replaceAll) unit.replaceable = true
+            if (ext.replaceAll) unit.overwrite = true
             unit.writeTo(ext.projectDir)
         }
     }
@@ -383,6 +383,7 @@ open class Generator {
 
     fun preTearDown() {
         projectUnits.forEach { unit ->
+            if (ext.replaceAll) unit.overwrite = true
             unit.writeTo(ext.projectDir)
         }
     }

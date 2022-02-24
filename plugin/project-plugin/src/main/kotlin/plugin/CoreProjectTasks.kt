@@ -32,7 +32,7 @@ object CoreProjectTasks {
                     val serializationViews =
                         Interface(
                             type = JavaType("${if (gen.projectPackage) "${gen.packageName}.${gen.projectName}" else gen.packageName}.web.CoreSerializationViews"),
-                            replaceable = true
+                            overwrite = true
                         ).apply {
                             javadoc {
                                 +"/**"
@@ -111,7 +111,7 @@ object CoreProjectTasks {
                     val file = project.file("src/main/resources/error-code.properties")
                     if (file.exists()) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                        val clazz = TopLevelClass(type = JavaType("${gen.packageName}.support.ErrorCode"), replaceable = true)
+                        val clazz = TopLevelClass(type = JavaType("${gen.packageName}.support.ErrorCode"), overwrite = true)
 
                         clazz.visibility = JavaVisibility.PUBLIC
                         clazz.apply {
