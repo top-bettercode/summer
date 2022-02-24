@@ -405,7 +405,7 @@ open class Generator {
                 codeTypeName,
                 JavaType.stringInstance != javaType
             )
-            prettyRemarks.substringAfter('(').substringBeforeLast(')')
+            prettyRemarks.substringAfter('(').substringBeforeLast(')').trim('?', '.')
                 .split(";").filter { it.isNotBlank() }
                 .forEach { item: String ->
                     val code = item.substringBefore(":").trim().trim(',', '，').trim()

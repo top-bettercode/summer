@@ -9,19 +9,21 @@ import top.bettercode.generator.dom.unit.PropertiesUnit
  */
 val msg: ProjectGenerator.(PropertiesUnit) -> Unit = { unit ->
     unit.apply {
-        this[entityName] = remarks
-        this[pathName] = remarks
-        if (isFullComposite) {
-            this[entityName + "Entity"] = remarks
-        } else {
-            if (isCompositePrimaryKey) {
-                this[entityName + "Key"] = remarks + "ID"
-                this[English.plural(entityName + "Key")] = remarks + "ID"
+        if (remarks.trim('?', '.').trim().isNotBlank()) {
+            this[entityName] = remarks
+            this[pathName] = remarks
+            if (isFullComposite) {
+                this[entityName + "Entity"] = remarks
+            } else {
+                if (isCompositePrimaryKey) {
+                    this[entityName + "Key"] = remarks + "ID"
+                    this[English.plural(entityName + "Key")] = remarks + "ID"
+                }
             }
         }
 
         columns.forEach {
-            if (it.remarks.isNotBlank()) {
+            if (it.remarks.trim('?', '.').trim().isNotBlank()) {
                 val remark = it.remarks.split(Regex("[;:：,， (（]"))[0]
                 this[it.javaName] = remark
                 if (it.isPrimary)
