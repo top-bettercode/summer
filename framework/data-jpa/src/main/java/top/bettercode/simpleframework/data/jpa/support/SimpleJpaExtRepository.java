@@ -3,9 +3,6 @@ package top.bettercode.simpleframework.data.jpa.support;
 import static org.springframework.data.jpa.repository.query.QueryUtils.COUNT_QUERY_STRING;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,9 +18,9 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import org.springframework.beans.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +35,6 @@ import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 
@@ -48,6 +44,7 @@ import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 public class SimpleJpaExtRepository<T, ID> extends
     SimpleJpaRepository<T, ID> implements JpaExtRepository<T, ID> {
 
+  private final Logger log = LoggerFactory.getLogger(SimpleJpaExtRepository.class);
   public static final String SOFT_DELETE_ALL_QUERY_STRING = "update %s e set e.%s = :%s";
   private static final String EQUALS_CONDITION_STRING = "%s.%s = :%s";
 
@@ -153,61 +150,32 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
 
-  private static void copyPropertiesIfTargetPropertyNull(Object source, Object target,
+  private void copyPropertiesIfTargetPropertyNull(Object source, Object target,
       boolean allowEmpty)
       throws BeansException {
 
     Assert.notNull(source, "Source must not be null");
     Assert.notNull(target, "Target must not be null");
 
-    Class<?> actualEditable = target.getClass();
-
-    PropertyDescriptor[] targetPds = BeanUtils.getPropertyDescriptors(actualEditable);
+    DirectFieldAccessFallbackBeanWrapper sourceWrapper = new DirectFieldAccessFallbackBeanWrapper(
+        source);
+    DirectFieldAccessFallbackBeanWrapper targetWrapper = new DirectFieldAccessFallbackBeanWrapper(
+        target);
+    PropertyDescriptor[] targetPds = targetWrapper.getPropertyDescriptors();
 
     for (PropertyDescriptor targetPd : targetPds) {
-      if ("class".equals(targetPd.getName())) {
+      String propertyName = targetPd.getName();
+      if ("class".equals(propertyName)) {
         continue;
-      }
-      Method targetPdReadMethod = targetPd.getReadMethod();
-      if (targetPdReadMethod == null) {
-        continue;
-      }
-      if (!Modifier.isPublic(targetPdReadMethod.getDeclaringClass().getModifiers())) {
-        targetPdReadMethod.setAccessible(true);
       }
       try {
-        Object invoke = targetPdReadMethod.invoke(target);
-        if (invoke != null && (allowEmpty || !"".equals(invoke))) {
+        Object propertyValue = targetWrapper.getPropertyValue(propertyName);
+        if (propertyValue != null && (allowEmpty || !"".equals(propertyValue))) {
           continue;
         }
-      } catch (IllegalAccessException | InvocationTargetException e) {
-        throw new FatalBeanException(
-            "Could not copy property '" + targetPd.getName() + "' from source to target", e);
-      }
-      Method writeMethod = targetPd.getWriteMethod();
-      if (writeMethod != null) {
-        PropertyDescriptor sourcePd = BeanUtils
-            .getPropertyDescriptor(source.getClass(), targetPd.getName());
-        if (sourcePd != null) {
-          Method readMethod = sourcePd.getReadMethod();
-          if (readMethod != null &&
-              ClassUtils
-                  .isAssignable(writeMethod.getParameterTypes()[0], readMethod.getReturnType())) {
-            try {
-              if (!Modifier.isPublic(readMethod.getDeclaringClass().getModifiers())) {
-                readMethod.setAccessible(true);
-              }
-              Object value = readMethod.invoke(source);
-              if (!Modifier.isPublic(writeMethod.getDeclaringClass().getModifiers())) {
-                writeMethod.setAccessible(true);
-              }
-              writeMethod.invoke(target, value);
-            } catch (Throwable ex) {
-              throw new FatalBeanException(
-                  "Could not copy property '" + targetPd.getName() + "' from source to target", ex);
-            }
-          }
-        }
+        targetWrapper.setPropertyValue(propertyName, sourceWrapper.getPropertyValue(propertyName));
+      } catch (Exception e) {
+        log.warn("Could not get or set " + target.getClass() + "." + propertyName, e);
       }
     }
   }
