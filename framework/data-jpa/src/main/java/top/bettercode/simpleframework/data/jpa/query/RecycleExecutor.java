@@ -41,9 +41,9 @@ public interface RecycleExecutor<T, ID> {
 
   List<T> findAllFromRecycleBin();
 
-  Page<T> findAllFromRecycleBin(int size);
+  List<T> findAllFromRecycleBin(int size);
 
-  Page<T> findAllFromRecycleBin(int size, Sort sort);
+  List<T> findAllFromRecycleBin(int size, Sort sort);
 
   Page<T> findAllFromRecycleBin(Pageable pageable);
 
