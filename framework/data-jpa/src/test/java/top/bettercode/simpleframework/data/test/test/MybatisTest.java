@@ -45,10 +45,12 @@ public class MybatisTest {
     repository.save(carter);
     carterId = carter.getId();
     repository.delete(dave);
+    System.err.println("--------------------------------------------------------");
   }
 
   @AfterEach
   public void tearDown() {
+    System.err.println("--------------------------------------------------------");
     repository.deleteAll();
     repository.cleanRecycleBin();
   }

@@ -53,7 +53,7 @@ public class SoftDeleteTest {
 
     repository.delete(dave);
     carterId = carter.getId();
-
+    System.err.println("--------------------------------------------------------");
   }
 
   @Test
@@ -63,6 +63,7 @@ public class SoftDeleteTest {
 
   @AfterEach
   public void tearDown() {
+    System.err.println("--------------------------------------------------------");
     repository.deleteAll();
     repository.cleanRecycleBin();
     hardUserRepository.deleteAll();
