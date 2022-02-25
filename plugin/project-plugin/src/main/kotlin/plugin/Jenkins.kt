@@ -6,7 +6,6 @@ import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 import org.springframework.web.client.getForObject
-import java.net.URLEncoder
 
 /**
  *
@@ -23,18 +22,13 @@ class Jenkins(private val url: String, auth: String) {
         }).build()
     }
 
+
     fun description(job: String): String {
-        return restTemplate.getForObject(
-            "$url/job/${URLEncoder.encode(job, "UTF-8")}/description"
-        )
+        return restTemplate.getForObject("$url/job/${job}/description")
     }
 
     fun build(job: String) {
-        restTemplate.postForEntity(
-            "$url/job/${URLEncoder.encode(job, "UTF-8")}/build",
-            null,
-            String::class.java
-        )
+        restTemplate.postForEntity("$url/job/${job}/build", null, String::class.java)
         println("已发送build请求...")
         val description = description(job)
         if (description.isNotBlank()) {
@@ -54,9 +48,8 @@ class Jenkins(private val url: String, auth: String) {
     fun buildInfo(job: String, id: String = "lastBuild", startIndex: Int = 0) {
         //X-Text-Size: 2565
         //X-More-Data: true
-        val entity = restTemplate.getForEntity<String>(
-            "$url/job/${URLEncoder.encode(job, "UTF-8")}/$id/logText/progressiveText"
-        )
+        val entity =
+            restTemplate.getForEntity<String>("$url/job/${job}/$id/logText/progressiveText")
         val body = entity.body ?: ""
         val message = body.substring(startIndex)
         if (message.isNotBlank())

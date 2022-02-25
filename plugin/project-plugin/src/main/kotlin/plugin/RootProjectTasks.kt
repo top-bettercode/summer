@@ -47,7 +47,8 @@ object RootProjectTasks {
                     create("description[$jobTaskName]") {
                         it.group = "jenkins"
                         it.doLast {
-                            jenkins.description(jobName)
+                            val description = jenkins.description(jobName)
+                            println("job 描述信息：${if (description.isNotBlank()) "\n$description" else "无"}")
                         }
                     }
                 }

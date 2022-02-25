@@ -12,7 +12,7 @@ internal class JenkinsTest {
 
     @Test
     fun description() {
-        val description = jenkins.description("test-futures-front")
+        val description = jenkins.description("运营后台接口")
         System.err.println(description)
     }
 
