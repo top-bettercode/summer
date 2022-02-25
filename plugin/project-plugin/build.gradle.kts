@@ -15,7 +15,6 @@ dependencies {
     }
     api("mysql:mysql-connector-java")
     api("com.oracle.database.jdbc:ojdbc8")
-    api(fileTree(mapOf("dir" to "libs")))
 }
 
 tasks {
