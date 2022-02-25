@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.IRevokeTokenService;
 import top.bettercode.simpleframework.security.authorization.RedisApiAuthorizationService;
 
@@ -26,12 +25,6 @@ public class TestSecurityConfiguration {
 //    return new JdbcApiAuthorizationService(dataSource);
 //  }
 
-
-  @Bean
-  public IResourceService resourceService() {
-    return new IResourceService() {
-    };
-  }
 
   @Bean
   public IRevokeTokenService revokeTokenService() {

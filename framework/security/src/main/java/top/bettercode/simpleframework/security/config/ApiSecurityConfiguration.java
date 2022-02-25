@@ -35,6 +35,13 @@ public class ApiSecurityConfiguration {
     this.securityProperties = securityProperties;
   }
 
+  @ConditionalOnMissingBean(IResourceService.class)
+  @Bean
+  public IResourceService resourceService() {
+    return new IResourceService() {
+    };
+  }
+
   @Bean
   public UsernameSetRequestLoggingHandler usernameSetRequestLoggingHandler() {
     return new UsernameSetRequestLoggingHandler();
