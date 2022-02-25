@@ -165,25 +165,17 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
       return null;
     } else if (paramCount == 1) {
       JpaParameter parameter = parameters.getParameter(0);
-      Class<?> type = parameter.getType();
       int index = parameter.getIndex();
-      Object value = values[index];
-      if (type.getClassLoader() != null || Map.class.isAssignableFrom(type)) {
-        return value;
-      } else {
-        final Map<String, Object> params = new ParamMap<>();
-        String defaultParamName = GENERIC_NAME_PREFIX + 1;
-        params.put(parameter.getName().orElse(defaultParamName), value);
-        params.put(defaultParamName, value);
-        return params;
-      }
+      return values[index];
     } else {
       final Map<String, Object> params = new ParamMap<>();
       for (JpaParameter parameter : parameters) {
-        String otherName = GENERIC_NAME_PREFIX + (parameter.getIndex() + 1);
-        Object value = values[parameter.getIndex()];
+        int parameterIndex = parameter.getIndex();
+        String otherName = GENERIC_NAME_PREFIX + (parameterIndex + 1);
+        Object value = values[parameterIndex];
         params.put(parameter.getName().orElse(otherName), value);
         params.put(otherName, value);
+        params.put(String.valueOf(parameterIndex), value);
       }
       return params;
     }

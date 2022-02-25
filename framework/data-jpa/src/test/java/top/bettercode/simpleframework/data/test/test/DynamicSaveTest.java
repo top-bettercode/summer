@@ -1,17 +1,18 @@
 package top.bettercode.simpleframework.data.test.test;
 
-import top.bettercode.simpleframework.data.test.domain.StaticUser;
-import top.bettercode.simpleframework.data.test.domain.User;
-import top.bettercode.simpleframework.data.test.repository.StaticUserRepository;
-import top.bettercode.simpleframework.data.test.repository.UserRepository;
 import java.util.Optional;
 import javax.sql.DataSource;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import top.bettercode.simpleframework.data.test.domain.StaticUser;
+import top.bettercode.simpleframework.data.test.domain.User;
+import top.bettercode.simpleframework.data.test.repository.StaticUserRepository;
+import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -28,11 +29,13 @@ public class DynamicSaveTest {
   public void setUp() {
 //    RunScript.execute(dataSource.getConnection(),
 //        new FileReader(new ClassPathResource("data.sql").getFile()));
+    System.err.println("--------------------------------------------------------");
   }
 
-  @Test
-  public void name() {
 
+  @AfterEach
+  public void tearDown() {
+    System.err.println("--------------------------------------------------------");
   }
 
   @Test
