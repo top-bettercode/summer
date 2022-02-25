@@ -1,6 +1,7 @@
 package top.bettercode.simpleframework.data.jpa.support;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,10 @@ public class PageableList<T> extends PageImpl<T> implements List<T> {
 
   public PageableList(Page<T> page) {
     this(page.getContent(), page.getPageable(), page.getTotalElements());
+  }
+
+  public PageableList(Pageable pageable) {
+    this(Collections.emptyList(), pageable, 0);
   }
 
   public int size() {
