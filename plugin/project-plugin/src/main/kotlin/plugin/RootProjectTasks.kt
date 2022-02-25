@@ -1,9 +1,7 @@
 package plugin
 
-import hudson.cli.CLI
 import org.gradle.api.Project
 import top.bettercode.generator.dom.unit.FileUnit
-import top.bettercode.generator.dom.unit.SourceSet
 import top.bettercode.gradle.generator.GeneratorPlugin
 
 
@@ -20,22 +18,12 @@ object RootProjectTasks {
             val jenkinsServer = project.findProperty("jenkins.server")?.toString()
             val jenkinsAuth = project.findProperty("jenkins.auth")?.toString()
             if (!jenkinsJobs.isNullOrEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
-                create("jenkins[All]") {
+                val jenkins = Jenkins(jenkinsServer, jenkinsAuth)
+                create("build[All]") {
                     it.group = "jenkins"
                     it.doLast {
                         jenkinsJobs.forEach { jobName ->
-                            CLI._main(
-                                arrayOf(
-                                    "-s",
-                                    jenkinsServer,
-                                    "-auth",
-                                    jenkinsAuth,
-                                    "build",
-                                    jobName,
-                                    "-s",
-                                    "-v"
-                                )
-                            )
+                            jenkins.build(jobName)
                         }
                     }
                 }
@@ -44,21 +32,22 @@ object RootProjectTasks {
                         "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
                         ""
                     )
-                    create("jenkins[$jobTaskName]") {
+                    create("build[$jobTaskName]") {
                         it.group = "jenkins"
                         it.doLast {
-                            CLI._main(
-                                arrayOf(
-                                    "-s",
-                                    jenkinsServer,
-                                    "-auth",
-                                    jenkinsAuth,
-                                    "build",
-                                    jobName,
-                                    "-s",
-                                    "-v"
-                                )
-                            )
+                            jenkins.build(jobName)
+                        }
+                    }
+                    create("lastBuildInfo[$jobTaskName]") {
+                        it.group = "jenkins"
+                        it.doLast {
+                            jenkins.buildInfo(jobName)
+                        }
+                    }
+                    create("description[$jobTaskName]") {
+                        it.group = "jenkins"
+                        it.doLast {
+                            jenkins.description(jobName)
                         }
                     }
                 }

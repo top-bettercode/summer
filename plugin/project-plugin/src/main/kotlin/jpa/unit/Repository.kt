@@ -15,7 +15,7 @@ val repository: ProjectGenerator.(Interface) -> Unit = { unit ->
             +" * <p>"
             +" * mybatis 模板方法建议统一使用注解{@link org.springframework.data.jpa.repository.query.mybatis.MybatisTemplate}"
             +" * <p>"
-            +" * mybatis 查询方法名注意避免使用以下关键字："
+            +" * mybatis 查询方法名注意避免使用以下JPA方法名查询（https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repository-query-keywords）关键字："
             +" * <p>"
             +" * find…By, read…By, get…By, query…By, search…By, stream…By"
             +" * <p>"
@@ -29,8 +29,6 @@ val repository: ProjectGenerator.(Interface) -> Unit = { unit ->
             +" * <p>"
             +" * …Distinct…"
             +" * <p>"
-            +" * also see: https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repository-query-keywords"
-            +" *"
             +" * </p>"
             +" */"
         }
