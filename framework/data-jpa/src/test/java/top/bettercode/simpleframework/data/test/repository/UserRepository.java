@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.query.mybatis.MybatisTemplate;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
 import top.bettercode.simpleframework.data.jpa.querydsl.RecycleQuerydslPredicateExecutor;
+import top.bettercode.simpleframework.data.jpa.support.Size;
 import top.bettercode.simpleframework.data.test.domain.User;
 
 public interface UserRepository extends JpaExtRepository<User, Integer>,
@@ -26,11 +27,13 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
   @Transactional
   void deleteByLastname(String lastname);
 
-  @Select("select * from user where deleted = 0")
   @MybatisTemplate
   List<User> findByMybatis();
 
   Page<User> findByMybatis(Pageable pageable);
+
+  @Select("select * from user where deleted = 0")
+  List<User> findByMybatisSize(Size size);
 
   List<User> findByMybatis2(String firstname, String lastname);
 

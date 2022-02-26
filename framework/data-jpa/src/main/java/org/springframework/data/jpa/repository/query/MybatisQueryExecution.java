@@ -2,9 +2,10 @@ package org.springframework.data.jpa.repository.query;
 
 import com.github.pagehelper.ISelect;
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageMethod;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.PageImpl;
@@ -13,7 +14,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter;
 import org.springframework.data.repository.core.support.SurroundingTransactionDetectorMethodInterceptor;
-import org.springframework.util.StringUtils;
+import top.bettercode.simpleframework.data.jpa.support.Size;
 
 public abstract class MybatisQueryExecution extends JpaQueryExecution {
 
@@ -37,24 +38,12 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
         return query.getSqlSessionTemplate().selectList(statement);
       }
       JpaParameters parameters = query.getQueryMethod().getParameters();
-      if (parameters.hasPageableParameter()) {
-        throw new IllegalArgumentException(
-            "当包含org.springframework.data.domain.Pageable参数时返回类型必须为org.springframework.data.domain.Page");
-      }
-
-      Object params = getMybatisParameters(parameters, values);
-
-      String sort = MybatisQueryExecution.getSort(parameters, values);
-      if (StringUtils.hasText(sort)) {
-        PageHelper.orderBy(sort);
-        Page<Object> localPage = PageHelper.getLocalPage();
-        localPage.setCount(false);
-        return localPage
-            .doSelectPage(() -> query.getSqlSessionTemplate().selectList(statement, params))
-            .getResult();
-      } else {
-        return query.getSqlSessionTemplate().selectList(statement, params);
-      }
+      MybatisParameters mybatisParameters = getParameters(parameters, values);
+      Object params = mybatisParameters.parameters;
+      Optional<Page<Object>> page = mybatisParameters.getPage();
+      return page.<Object>map(objects -> LocalPage.doSelectList(objects,
+              () -> query.getSqlSessionTemplate().selectList(statement, params)))
+          .orElseGet(() -> query.getSqlSessionTemplate().selectList(statement, params));
     }
 
   }
@@ -67,36 +56,19 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
       String statement = query.getQueryMethod().getStatement();
 
       JpaParameters parameters = query.getQueryMethod().getParameters();
-      Object params = getMybatisParameters(parameters, values);
-
-      Pageable pageable = null;
-      if (parameters.hasPageableParameter()) {
-        pageable = (Pageable) values[parameters.getPageableIndex()];
+      MybatisParameters mybatisParameters = getParameters(parameters, values);
+      Object params = mybatisParameters.parameters;
+      Optional<Page<Object>> page = mybatisParameters.getPage();
+      Pageable pageable = mybatisParameters.getPageable();
+      if (page.isPresent()) {
+        Page<Object> pageResult = LocalPage.doSelectPage(page.get(),
+            () -> query.getSqlSessionTemplate().selectList(statement, params));
+        return new PageImpl<>(pageResult.getResult(), pageable, pageResult.getTotal());
+      } else {
+        List<Object> result = query.getSqlSessionTemplate().selectList(statement, params);
+        return new PageImpl<>(result, pageable, result.size());
       }
-      String sort = MybatisQueryExecution.getSort(parameters, values);
-      if (StringUtils.hasText(sort)) {
-        PageHelper.orderBy(sort);
-      }
-      List<Object> result;
-      ISelect iSelect = () -> query.getSqlSessionTemplate().selectList(statement, params);
-      if (null == pageable || pageable == Pageable.unpaged()) {
-        if (StringUtils.hasText(sort)) {
-          Page<Object> page = PageHelper.getLocalPage().doSelectPage(iSelect);
-          result = page.getResult();
-        } else {
-          result = query.getSqlSessionTemplate().selectList(statement, params);
-        }
-        return new PageImpl<>(result, pageable, null == result ? 0 : result.size());
-      }
-
-      int pageSize = pageable.getPageSize();
-      int pageNumber = pageable.getPageNumber();
-
-      Page<Object> page = PageHelper.startPage(pageNumber + 1, pageSize).doSelectPage(iSelect);
-
-      return new PageImpl<>(page.getResult(), pageable, page.getTotal());
     }
-
   }
 
   static class SlicedExecution extends PagedExecution {
@@ -140,7 +112,7 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
 
       return query.getSqlSessionTemplate()
           .selectOne(query.getQueryMethod().getStatement(),
-              getMybatisParameters(query.getQueryMethod().getParameters(), values));
+              getParameters(query.getQueryMethod().getParameters(), values).parameters);
     }
 
   }
@@ -152,45 +124,108 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
       Object[] values = accessor.getValues();
       return query.getSqlSessionTemplate()
           .update(query.getQueryMethod().getStatement(),
-              getMybatisParameters(query.getQueryMethod().getParameters(), values));
+              getParameters(query.getQueryMethod().getParameters(), values).parameters);
     }
 
   }
 
-  private static Object getMybatisParameters(JpaParameters parameters, Object[] values) {
-    parameters = parameters.getBindableParameters();
-
-    int paramCount = parameters.getNumberOfParameters();
-    if (values == null || paramCount == 0) {
-      return null;
-    } else if (paramCount == 1) {
-      JpaParameter parameter = parameters.getParameter(0);
-      int index = parameter.getIndex();
-      return values[index];
-    } else {
-      final Map<String, Object> params = new ParamMap<>();
-      for (JpaParameter parameter : parameters) {
-        int parameterIndex = parameter.getIndex();
-        String otherName = GENERIC_NAME_PREFIX + (parameterIndex + 1);
-        Object value = values[parameterIndex];
-        params.put(parameter.getName().orElse(otherName), value);
-        params.put(otherName, value);
-        params.put(String.valueOf(parameterIndex), value);
+  private static MybatisParameters getParameters(JpaParameters parameters, Object[] values) {
+    Page<Object> page = null;
+    Pageable pageable = null;
+    int bindableSize = 0;
+    final Map<String, Object> paramMap = new ParamMap<>();
+    for (JpaParameter parameter : parameters) {
+      Class<?> parameterType = parameter.getType();
+      int parameterIndex = parameter.getIndex();
+      Object value = values[parameterIndex];
+      if (Pageable.class.isAssignableFrom(parameterType)) {
+        pageable = (Pageable) value;
+        if (pageable != Pageable.unpaged()) {
+          page = new Page<>();
+          page.setPageNum(pageable.getPageNumber() + 1);
+          page.setPageSize(pageable.getPageSize());
+          Sort sort = pageable.getSort();
+          String orderBy = null != sort && sort.isSorted() ? sort.toString() : null;
+          page.setOrderBy(orderBy);
+        }
+      } else if (Size.class.isAssignableFrom(parameterType)) {
+        Size size = (Size) value;
+        page = new Page<>();
+        page.setPageNum(1);
+        page.setPageSize(size.getSize());
+        page.setCount(false);
+        Sort sort = size.getSort();
+        String orderBy = null != sort && sort.isSorted() ? sort.toString() : null;
+        page.setOrderBy(orderBy);
+      } else if (Sort.class.isAssignableFrom(parameterType)) {
+        Sort sort = (Sort) value;
+        String orderBy = null != sort && sort.isSorted() ? sort.toString() : null;
+        page = new Page<>();
+        page.setCount(false);
+        page.setOrderByOnly(true);
+        page.setOrderBy(orderBy);
+      } else {
+        String otherName = GENERIC_NAME_PREFIX + (bindableSize + 1);
+        Optional<String> name = parameter.getName();
+        name.ifPresent(s -> paramMap.put(s, value));
+        paramMap.put(otherName, value);
+        paramMap.put(String.valueOf(bindableSize), value);
+        bindableSize++;
       }
-      return params;
     }
+    Object params =
+        bindableSize == 0 ? null : (bindableSize == 1 ? paramMap.get("0") : paramMap);
+    return new MybatisParameters(params, page, pageable);
   }
 
-  private static String getSort(JpaParameters parameters, Object[] values) {
-    if (parameters.hasSortParameter()) {
-      Sort sort = (Sort) values[parameters.getSortIndex()];
-      return null != sort && sort.isSorted() ? sort.toString().replace(":", "") : null;
+  private static class MybatisParameters {
+
+    private final Object parameters;
+
+    private final Page<Object> page;
+
+    private final Pageable pageable;
+
+    public MybatisParameters(Object parameters, Page<Object> page, Pageable pageable) {
+      this.parameters = parameters;
+      this.page = page;
+      this.pageable = pageable;
     }
-    if (parameters.hasPageableParameter()) {
-      Pageable pageable = (Pageable) values[parameters.getPageableIndex()];
-      Sort sort = pageable.getSort();
-      return null != sort && sort.isSorted() ? sort.toString().replace(":", "") : null;
+
+    public Optional<Page<Object>> getPage() {
+      return Optional.ofNullable(this.page);
     }
-    return null;
+
+    public Pageable getPageable() {
+      return pageable == null ? Pageable.unpaged() : pageable;
+    }
+
+  }
+
+  private static class LocalPage extends PageMethod {
+
+    public static <E> List<E> doSelectList(Page<E> page, ISelect select) {
+      page.setCount(false);
+      setLocalPage(page);
+      try {
+        select.doSelect();
+      } finally {
+        clearPage();
+      }
+      return page.getResult();
+    }
+
+    public static <E> Page<E> doSelectPage(Page<E> page, ISelect select) {
+      setLocalPage(page);
+      try {
+        select.doSelect();
+      } finally {
+        clearPage();
+      }
+      if (!page.isCount()) {
+        page.setTotal(page.getResult().size());
+      }
+      return page;
+    }
   }
 }
