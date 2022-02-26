@@ -23,11 +23,11 @@ public class QHardUser extends EntityPathBase<HardUser> {
 
     public final BooleanPath deleted = createBoolean("deleted");
 
-    public final StringPath firstname = createString("firstname");
+    public final StringPath firstName = createString("firstName");
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
-    public final StringPath lastname = createString("lastname");
+    public final StringPath lastName = createString("lastName");
 
     public QHardUser(String variable) {
         super(HardUser.class, forVariable(variable));

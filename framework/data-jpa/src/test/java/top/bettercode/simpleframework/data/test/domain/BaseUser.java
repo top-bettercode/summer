@@ -14,17 +14,18 @@ public class BaseUser {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
   @Column(name = "first_name")
-  private String firstname;
-  private String lastname;
+  private String firstName;
+  @Column(name = "last_name")
+  private String lastName;
   @SoftDelete
   private boolean deleted;
 
   public BaseUser() {
   }
 
-  public BaseUser(String firstname, String lastname) {
-    this.firstname = firstname;
-    this.lastname = lastname;
+  public BaseUser(String firstName, String lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
   }
 
   public Integer getId() {
@@ -35,20 +36,20 @@ public class BaseUser {
     this.id = id;
   }
 
-  public String getFirstname() {
-    return firstname;
+  public String getFirstName() {
+    return firstName;
   }
 
-  public void setFirstname(String firstname) {
-    this.firstname = firstname;
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
   }
 
-  public String getLastname() {
-    return lastname;
+  public String getLastName() {
+    return lastName;
   }
 
-  public void setLastname(String lastname) {
-    this.lastname = lastname;
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   public boolean isDeleted() {
@@ -63,8 +64,8 @@ public class BaseUser {
   public String toString() {
     return "BaseUser{" +
         "id=" + id +
-        ", firstname='" + firstname + '\'' +
-        ", lastname='" + lastname + '\'' +
+        ", firstName='" + firstName + '\'' +
+        ", lastName='" + lastName + '\'' +
         ", deleted=" + deleted +
         '}';
   }

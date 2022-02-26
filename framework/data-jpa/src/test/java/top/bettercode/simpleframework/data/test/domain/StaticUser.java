@@ -10,8 +10,8 @@ public class StaticUser extends BaseUser{
   public StaticUser() {
   }
 
-  public StaticUser(String firstname, String lastname) {
-    super(firstname, lastname);
+  public StaticUser(String firstName, String lastName) {
+    super(firstName, lastName);
   }
 
 }

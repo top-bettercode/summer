@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface StaticUserRepository extends JpaExtRepository<StaticUser, Integer> {
 
-  List<StaticUser> findByLastname(String lastname);
+  List<StaticUser> findByLastName(String lastName);
 }

@@ -35,9 +35,6 @@ public class SoftDeleteTest {
 
   @BeforeEach
   public void setUp() {
-//    RunScript.execute(dataSource.getConnection(),
-//        new FileReader(new ClassPathResource("import.sql").getFile()));
-
     User dave = new User("Dave", "Matthews");
     repository.save(dave);
     User dave1 = new User("Dave", "Matthews");
@@ -58,7 +55,7 @@ public class SoftDeleteTest {
 
   @Test
   public void name() {
-    System.err.println(repository.findAll(QUser.user.firstname.contains("D")));
+    System.err.println(repository.findAll(QUser.user.firstName.contains("D")));
   }
 
   @AfterEach
@@ -84,11 +81,11 @@ public class SoftDeleteTest {
   public void methdQuery() {
     repository.deleteInBatch(batch);
 
-    List<User> users = repository.findByLastname("Matthews");
+    List<User> users = repository.findByLastName("Matthews");
     System.err.println(users);
     org.junit.jupiter.api.Assertions.assertEquals(0, users.size());
 
-    users = repository.findByLastname("Beauford");
+    users = repository.findByLastName("Beauford");
     System.err.println(users);
     org.junit.jupiter.api.Assertions.assertEquals(2, users.size());
 
@@ -100,13 +97,13 @@ public class SoftDeleteTest {
 
   @Test
   public void methdDelete() {
-    repository.deleteByLastname("Matthews");
+    repository.deleteByLastName("Matthews");
 
-    List<User> users = repository.findByLastname("Matthews");
+    List<User> users = repository.findByLastName("Matthews");
     System.err.println(users);
     org.junit.jupiter.api.Assertions.assertEquals(0, users.size());
 
-    users = repository.findByLastname("Beauford");
+    users = repository.findByLastName("Beauford");
     System.err.println(users);
     org.junit.jupiter.api.Assertions.assertEquals(2, users.size());
 

@@ -27,13 +27,13 @@ public class QStaticUser extends EntityPathBase<StaticUser> {
     public final BooleanPath deleted = _super.deleted;
 
     //inherited
-    public final StringPath firstname = _super.firstname;
+    public final StringPath firstName = _super.firstName;
 
     //inherited
     public final NumberPath<Integer> id = _super.id;
 
     //inherited
-    public final StringPath lastname = _super.lastname;
+    public final StringPath lastName = _super.lastName;
 
     public QStaticUser(String variable) {
         super(StaticUser.class, forVariable(variable));

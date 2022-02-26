@@ -27,13 +27,13 @@ public class QUser extends EntityPathBase<User> {
     public final BooleanPath deleted = _super.deleted;
 
     //inherited
-    public final StringPath firstname = _super.firstname;
+    public final StringPath firstName = _super.firstName;
 
     //inherited
     public final NumberPath<Integer> id = _super.id;
 
     //inherited
-    public final StringPath lastname = _super.lastname;
+    public final StringPath lastName = _super.lastName;
 
     public QUser(String variable) {
         super(User.class, forVariable(variable));
