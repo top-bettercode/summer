@@ -19,6 +19,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.jpa.repository.query.MybatisQueryExecution;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 import top.bettercode.simpleframework.data.test.domain.User;
@@ -92,6 +94,14 @@ public class MybatisTest {
     }
     System.err.println("===========" + users.getTotalElements());
     System.err.println("===========" + users.getContent().size());
+  }
+
+  @Test
+  void testSort() {
+    Sort sort = Sort.by(Order.by("firstname"), Order.desc("lastName"));
+    System.err.println(sort);
+    String orderBy = MybatisQueryExecution.convertOrderBy(sort);
+    System.err.println(orderBy);
   }
 
   @Test

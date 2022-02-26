@@ -3,7 +3,10 @@ package top.bettercode.simpleframework.data.test.support;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.metamodel.Metamodel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,6 +65,15 @@ public class SimpleJpaExtRepositoryTest {
     System.err.println("--------------------------------------------------------");
     repository.deleteAll();
     repository.cleanRecycleBin();
+  }
+
+  @Autowired
+  EntityManager entityManager;
+  @Test
+  void testem() {
+    Metamodel metamodel = entityManager.getMetamodel();
+    Map<String, Object> properties = entityManager.getProperties();
+    System.err.println("--");
   }
 
   @Test
