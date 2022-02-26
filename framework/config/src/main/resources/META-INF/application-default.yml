@@ -42,6 +42,7 @@ spring:
       pageable:
         one-indexed-parameters: true
   jpa:
+    hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     open-in-view: false
     show-sql: true
   datasource:
