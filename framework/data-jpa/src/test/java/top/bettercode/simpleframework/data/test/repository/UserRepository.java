@@ -19,13 +19,13 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
     QuerydslPredicateExecutor<User>,
     RecycleQuerydslPredicateExecutor<User> {
 
-  List<User> findByLastname(String lastname);
+  List<User> findByLastName(String lastName);
 
-  Page<User> findByFirstname(String lastname, Pageable pageable);
+  Page<User> findByFirstName(String lastName, Pageable pageable);
 
   @Modifying
   @Transactional
-  void deleteByLastname(String lastname);
+  void deleteByLastName(String lastName);
 
   @MybatisTemplate
   List<User> findByMybatis();
@@ -35,7 +35,7 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
   @Select("select * from user where deleted = 0")
   List<User> findByMybatisSize(Size size);
 
-  List<User> findByMybatis2(String firstname, String lastname);
+  List<User> findByMybatis257(String firstName, String lastName);
 
   List<User> findByMybatis2(Map<String, String> param);
 
@@ -47,17 +47,17 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 
   List<User> findByMybatis222(User user, Pageable pageable);
 
-  List<User> findByMybatis3(String firstname, Sort sort);
+  List<User> findByMybatis3(String firstName, Sort sort);
 
-  Page<User> findByMybatis3(String firstname, Pageable pageable);
+  Page<User> findByMybatis3(String firstName, Pageable pageable);
 
-  User findOneByMybatis(String firstname);
-
-  @Modifying
-  int insert(String firstname, String lastname);
+  User findOneByMybatis(String firstName);
 
   @Modifying
-  int update(Integer id, String lastname);
+  int insert(String firstName, String lastName);
+
+  @Modifying
+  int update(Integer id, String lastName);
 
   @Modifying
   int deleteBy(Integer id);

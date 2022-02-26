@@ -8,7 +8,7 @@ public class UUser extends User {
   public UUser() {
   }
 
-  public UUser(String firstname, String lastname) {
-    super(firstname, lastname);
+  public UUser(String firstName, String lastName) {
+    super(firstName, lastName);
   }
 }

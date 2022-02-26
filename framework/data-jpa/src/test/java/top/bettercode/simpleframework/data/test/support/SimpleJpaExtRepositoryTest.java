@@ -83,7 +83,7 @@ public class SimpleJpaExtRepositoryTest {
     Integer id = dave.getId();
     User update=new User();
     update.setId(id);
-    update.setFirstname("Dave22");
+    update.setFirstName("Dave22");
     repository.dynamicSave(update);
     Optional<User> optionalUser = repository.findById(id);
     optionalUser.ifPresent(System.err::println);
@@ -220,9 +220,9 @@ public class SimpleJpaExtRepositoryTest {
   @Test
   public void findAll1() {
     Assertions
-        .assertEquals("Dave", repository.findAll(Sort.by("id")).get(0).getFirstname());
+        .assertEquals("Dave", repository.findAll(Sort.by("id")).get(0).getFirstName());
     Assertions
-        .assertEquals("Carter", repository.findAll(Sort.by("firstname")).get(0).getFirstname());
+        .assertEquals("Carter", repository.findAll(Sort.by("firstName")).get(0).getFirstName());
   }
 
   @Test
@@ -239,8 +239,8 @@ public class SimpleJpaExtRepositoryTest {
   @Test
   public void findAll34() {
     MatcherSpecification<User> spec = SpecMatcher.defaultMatching().equal("id", carterId)
-        .containing("firstname", "Cart")
-        .desc("firstname").asc("lastname").spec();
+        .containing("firstName", "Cart")
+        .desc("firstName").asc("lastName").spec();
     List<User> all = repository.findAll(spec);
     System.err.println(StringUtil.valueOf(all, true));
   }
@@ -277,7 +277,7 @@ public class SimpleJpaExtRepositoryTest {
   public void countRecycle2() {
     Assertions
         .assertEquals(1, repository.countRecycleBin(
-            SpecMatcher.defaultMatching().equal("firstname", "Dave").spec()));
+            SpecMatcher.defaultMatching().equal("firstName", "Dave").spec()));
   }
 
   @Test
@@ -295,20 +295,20 @@ public class SimpleJpaExtRepositoryTest {
   public void findRecycleOne() {
     Assertions.assertTrue(
         repository.findOneFromRecycleBin(
-            SpecMatcher.defaultMatching().equal("firstname", "Dave").spec()).isPresent());
+            SpecMatcher.defaultMatching().equal("firstName", "Dave").spec()).isPresent());
   }
 
   @Test
   public void findRecycleAll1() {
     Assertions.assertTrue(
         repository.findAllFromRecycleBin((root, query, builder) -> builder
-            .equal(root.get("firstname"), "Dave")).iterator().hasNext());
+            .equal(root.get("firstName"), "Dave")).iterator().hasNext());
   }
 
   @Test
   public void existsRecycle() {
     Assertions
         .assertTrue(repository.existsInRecycleBin((root, query, builder) -> builder
-            .equal(root.get("firstname"), "Dave")));
+            .equal(root.get("firstName"), "Dave")));
   }
 }

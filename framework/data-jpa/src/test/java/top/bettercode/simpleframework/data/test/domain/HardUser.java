@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.data.test.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,16 +14,18 @@ public class HardUser {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
-  private String firstname;
-  private String lastname;
+  @Column(name = "first_name")
+  private String firstName;
+  @Column(name = "last_name")
+  private String lastName;
   private boolean deleted;
 
   public HardUser() {
   }
 
-  public HardUser(String firstname, String lastname) {
-    this.firstname = firstname;
-    this.lastname = lastname;
+  public HardUser(String firstName, String lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
   }
 
   public Integer getId() {
@@ -33,20 +36,20 @@ public class HardUser {
     this.id = id;
   }
 
-  public String getFirstname() {
-    return firstname;
+  public String getFirstName() {
+    return firstName;
   }
 
-  public void setFirstname(String firstname) {
-    this.firstname = firstname;
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
   }
 
-  public String getLastname() {
-    return lastname;
+  public String getLastName() {
+    return lastName;
   }
 
-  public void setLastname(String lastname) {
-    this.lastname = lastname;
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   public boolean isDeleted() {
@@ -61,8 +64,8 @@ public class HardUser {
   public String toString() {
     return "BaseUser{" +
         "id=" + id +
-        ", firstname='" + firstname + '\'' +
-        ", lastname='" + lastname + '\'' +
+        ", firstName='" + firstName + '\'' +
+        ", lastName='" + lastName + '\'' +
         ", deleted=" + deleted +
         '}';
   }

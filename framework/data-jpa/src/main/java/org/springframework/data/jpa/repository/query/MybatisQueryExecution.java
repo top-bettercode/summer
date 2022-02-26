@@ -63,6 +63,8 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
       Optional<Page<Object>> page = mybatisParameters.getPage();
       Pageable pageable = mybatisParameters.getPageable();
       if (page.isPresent()) {
+        System.err.println(page.get().getPageSize());
+        System.err.println(page.get().getPageNum());
         Page<Object> pageResult = LocalPage.doSelectPage(page.get(),
             () -> query.getSqlSessionTemplate().selectList(statement, params));
         return new PageImpl<>(pageResult.getResult(), pageable, pageResult.getTotal());
@@ -143,18 +145,13 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
       if (Pageable.class.isAssignableFrom(parameterType)) {
         pageable = (Pageable) value;
         if (pageable != Pageable.unpaged()) {
-          page = new Page<>();
-          page.setPageNum(pageable.getPageNumber() + 1);
-          page.setPageSize(pageable.getPageSize());
+          page = new Page<>(pageable.getPageNumber() + 1, pageable.getPageSize(), true);
           Sort sort = pageable.getSort();
           page.setOrderBy(convertOrderBy(sort));
         }
       } else if (Size.class.isAssignableFrom(parameterType)) {
         Size size = (Size) value;
-        page = new Page<>();
-        page.setPageNum(1);
-        page.setPageSize(size.getSize());
-        page.setCount(false);
+        page = new Page<>(1, size.getSize(), false);
         Sort sort = size.getSort();
         page.setOrderBy(convertOrderBy(sort));
       } else if (Sort.class.isAssignableFrom(parameterType)) {

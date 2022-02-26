@@ -47,16 +47,16 @@ public class DynamicSaveTest {
     org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
     optionalUser.ifPresent(user -> {
           System.err.println(user);
-          org.junit.jupiter.api.Assertions.assertEquals("wu", user.getFirstname());
+          org.junit.jupiter.api.Assertions.assertEquals("wu", user.getFirstName());
         }
     );
-    dave.setLastname("MM");
+    dave.setLastName("MM");
     repository.dynamicSave(dave);
     optionalUser = repository.findById(dave.getId());
     org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
     optionalUser.ifPresent(user -> {
           System.err.println(user);
-          org.junit.jupiter.api.Assertions.assertEquals("wu", user.getFirstname());
+          org.junit.jupiter.api.Assertions.assertEquals("wu", user.getFirstName());
         }
     );
   }
@@ -70,7 +70,7 @@ public class DynamicSaveTest {
     org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
     optionalUser.ifPresent(user -> {
           System.err.println(user);
-          org.junit.jupiter.api.Assertions.assertNull(user.getFirstname());
+          org.junit.jupiter.api.Assertions.assertNull(user.getFirstName());
         }
     );
   }
