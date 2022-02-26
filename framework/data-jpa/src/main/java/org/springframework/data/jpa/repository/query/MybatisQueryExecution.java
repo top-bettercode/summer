@@ -6,6 +6,7 @@ import com.github.pagehelper.page.PageMethod;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.PageImpl;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter;
 import org.springframework.data.repository.core.support.SurroundingTransactionDetectorMethodInterceptor;
+import org.springframework.data.util.ParsingUtils;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 
 public abstract class MybatisQueryExecution extends JpaQueryExecution {
@@ -145,8 +147,7 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
           page.setPageNum(pageable.getPageNumber() + 1);
           page.setPageSize(pageable.getPageSize());
           Sort sort = pageable.getSort();
-          String orderBy = null != sort && sort.isSorted() ? sort.toString() : null;
-          page.setOrderBy(orderBy);
+          page.setOrderBy(convertOrderBy(sort));
         }
       } else if (Size.class.isAssignableFrom(parameterType)) {
         Size size = (Size) value;
@@ -155,15 +156,13 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
         page.setPageSize(size.getSize());
         page.setCount(false);
         Sort sort = size.getSort();
-        String orderBy = null != sort && sort.isSorted() ? sort.toString() : null;
-        page.setOrderBy(orderBy);
+        page.setOrderBy(convertOrderBy(sort));
       } else if (Sort.class.isAssignableFrom(parameterType)) {
         Sort sort = (Sort) value;
-        String orderBy = null != sort && sort.isSorted() ? sort.toString() : null;
         page = new Page<>();
         page.setCount(false);
         page.setOrderByOnly(true);
-        page.setOrderBy(orderBy);
+        page.setOrderBy(convertOrderBy(sort));
       } else {
         String otherName = GENERIC_NAME_PREFIX + (bindableSize + 1);
         Optional<String> name = parameter.getName();
@@ -176,6 +175,16 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
     Object params =
         bindableSize == 0 ? null : (bindableSize == 1 ? paramMap.get("0") : paramMap);
     return new MybatisParameters(params, page, pageable);
+  }
+
+  public static String convertOrderBy(Sort sort) {
+    if (sort == null || !sort.isSorted()) {
+      return null;
+    }
+    return sort.stream().map(
+            o -> ParsingUtils.reconcatenateCamelCase(o.getProperty(), "_") + " " + o.getDirection())
+        .collect(
+            Collectors.joining(","));
   }
 
   private static class MybatisParameters {

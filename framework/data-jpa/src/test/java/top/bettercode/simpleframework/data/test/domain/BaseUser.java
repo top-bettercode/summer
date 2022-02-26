@@ -1,10 +1,11 @@
 package top.bettercode.simpleframework.data.test.domain;
 
-import top.bettercode.simpleframework.data.jpa.SoftDelete;
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import top.bettercode.simpleframework.data.jpa.SoftDelete;
 
 @MappedSuperclass
 public class BaseUser {
@@ -12,6 +13,7 @@ public class BaseUser {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
+  @Column(name = "first_name")
   private String firstname;
   private String lastname;
   @SoftDelete

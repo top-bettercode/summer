@@ -4,7 +4,7 @@ drop table if exists user;
 create table if not exists user
 (
   id       integer not null,
-  firstname varchar(255) default 'wu',
+  first_name varchar(255) default 'wu',
   lastname  varchar(255),
   deleted   tinyint      default 0,
   primary key (id)
