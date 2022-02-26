@@ -109,6 +109,7 @@ public class MybatisTest {
       System.err.println(user);
     }
     System.err.println("===========" + users.size());
+    org.junit.jupiter.api.Assertions.assertEquals(2, users.size());
   }
 
   @Test
