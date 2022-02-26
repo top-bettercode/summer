@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import top.bettercode.simpleframework.data.jpa.support.Size;
 import top.bettercode.simpleframework.data.test.domain.User;
 import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
@@ -66,16 +67,40 @@ public class MybatisTest {
   public void findByPage() {
     Page<User> users = repository.findAll(PageRequest.of(0, 1));
 //    Page<User> users = repository.findAll(Pageable.unpaged());
+    for (User user : users) {
+      System.err.println(user);
+    }
     System.err.println("===========" + users.getTotalElements());
     System.err.println("===========" + users.getContent().size());
   }
 
   @Test
   public void findByMybatisPage() {
-//    Page<User> users = repository.findByMybatis(PageRequest.of(0, 1));
-    Page<User> users = repository.findByMybatis(Pageable.unpaged());
+    Page<User> users = repository.findByMybatis(PageRequest.of(0, 1));
+    for (User user : users) {
+      System.err.println(user);
+    }
     System.err.println("===========" + users.getTotalElements());
     System.err.println("===========" + users.getContent().size());
+  }
+
+  @Test
+  public void findByMybatisPage1() {
+    Page<User> users = repository.findByMybatis(Pageable.unpaged());
+    for (User user : users) {
+      System.err.println(user);
+    }
+    System.err.println("===========" + users.getTotalElements());
+    System.err.println("===========" + users.getContent().size());
+  }
+
+  @Test
+  public void findByMybatisPage2() {
+    List<User> users = repository.findByMybatisSize(Size.of(2));
+    for (User user : users) {
+      System.err.println(user);
+    }
+    System.err.println("===========" + users.size());
   }
 
   @Test
