@@ -5,9 +5,12 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.page.PageMethod;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
+import org.apache.ibatis.reflection.ParamNameResolver;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -63,8 +66,6 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
       Optional<Page<Object>> page = mybatisParameters.getPage();
       Pageable pageable = mybatisParameters.getPageable();
       if (page.isPresent()) {
-        System.err.println(page.get().getPageSize());
-        System.err.println(page.get().getPageNum());
         Page<Object> pageResult = LocalPage.doSelectPage(page.get(),
             () -> query.getSqlSessionTemplate().selectList(statement, params));
         return new PageImpl<>(pageResult.getResult(), pageable, pageResult.getTotal());
@@ -138,6 +139,9 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
     Pageable pageable = null;
     int bindableSize = 0;
     final Map<String, Object> paramMap = new ParamMap<>();
+    Set<String> names = parameters.stream().map(p -> p.getName().orElse(null))
+        .filter(Objects::nonNull).collect(Collectors.toSet());
+    Object params = null;
     for (JpaParameter parameter : parameters) {
       Class<?> parameterType = parameter.getType();
       int parameterIndex = parameter.getIndex();
@@ -161,16 +165,22 @@ public abstract class MybatisQueryExecution extends JpaQueryExecution {
         page.setOrderByOnly(true);
         page.setOrderBy(convertOrderBy(sort));
       } else {
-        String otherName = GENERIC_NAME_PREFIX + (bindableSize + 1);
         Optional<String> name = parameter.getName();
         name.ifPresent(s -> paramMap.put(s, value));
-        paramMap.put(otherName, value);
-        paramMap.put(String.valueOf(bindableSize), value);
+
+        String otherName = GENERIC_NAME_PREFIX + (bindableSize + 1);
+        if (!names.contains(otherName)) {
+          paramMap.put(otherName, value);
+        }
+
+        if (bindableSize == 0) {
+          params = ParamNameResolver.wrapToMapIfCollection(value, name.orElse(null));
+        }
+
         bindableSize++;
       }
     }
-    Object params =
-        bindableSize == 0 ? null : (bindableSize == 1 ? paramMap.get("0") : paramMap);
+    params = bindableSize > 1 ? paramMap : params;
     return new MybatisParameters(params, page, pageable);
   }
 
