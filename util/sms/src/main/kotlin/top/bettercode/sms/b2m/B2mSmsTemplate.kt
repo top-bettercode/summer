@@ -37,7 +37,6 @@ class B2mSmsTemplate(
     "第三方接口", "亿美软通短信平台", LOG_MARKER_STR, b2mProperties.connectTimeout,
     b2mProperties.readTimeout, { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) }
 ) {
-    private val log = LoggerFactory.getLogger(B2mSmsTemplate::class.java)
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
