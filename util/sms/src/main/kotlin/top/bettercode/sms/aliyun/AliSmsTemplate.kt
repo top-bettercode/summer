@@ -41,7 +41,6 @@ class AliSmsTemplate(
     "第三方接口", "阿里短信平台", LOG_MARKER_STR, aliSmsProperties.connectTimeout,
     aliSmsProperties.readTimeout, null
 ) {
-    private val log = LoggerFactory.getLogger(AliSmsTemplate::class.java)
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
