@@ -18,10 +18,10 @@ import top.bettercode.logging.client.ClientHttpRequestWrapper;
  */
 public class ApiTemplate extends RestTemplate {
 
-  private final Logger log = LoggerFactory.getLogger(this.getClass());
+  protected final Logger log = LoggerFactory.getLogger(this.getClass());
   private final String collectionName;
   private final String name;
-  private final String logMarker;
+  protected final String logMarker;
   private final Function1<byte[], byte[]> decrypt;
 
   public ApiTemplate(int connectTimeout, int readTimeout) {
