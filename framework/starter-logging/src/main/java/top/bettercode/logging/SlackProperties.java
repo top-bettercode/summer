@@ -16,6 +16,7 @@ public class SlackProperties {
   private String channel;
   private String timeoutChannel = "timeout";
   private Long cacheSeconds = 5 * 60L;
+  private Long timeoutCacheSeconds = 2 * 60 * 60L;
   private Integer cyclicBufferSize = 20;
 
   public String[] getLogger() {
@@ -65,6 +66,14 @@ public class SlackProperties {
   public SlackProperties setCacheSeconds(Long cacheSeconds) {
     this.cacheSeconds = cacheSeconds;
     return this;
+  }
+
+  public Long getTimeoutCacheSeconds() {
+    return timeoutCacheSeconds;
+  }
+
+  public void setTimeoutCacheSeconds(Long timeoutCacheSeconds) {
+    this.timeoutCacheSeconds = timeoutCacheSeconds;
   }
 
   public Integer getCyclicBufferSize() {

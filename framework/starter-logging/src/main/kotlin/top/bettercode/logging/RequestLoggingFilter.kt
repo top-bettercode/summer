@@ -20,7 +20,6 @@ import top.bettercode.lang.util.StringUtil
 import top.bettercode.logging.annotation.NoRequestLogging
 import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.logging.logback.AlarmMarker
-import top.bettercode.logging.logback.Logback2LoggingSystem
 import top.bettercode.logging.operation.Operation
 import top.bettercode.logging.operation.RequestConverter
 import top.bettercode.logging.operation.ResponseConverter
@@ -167,7 +166,7 @@ class RequestLoggingFilter(
                 if (error == null || error is ClientAbortException) {
                     log.info(marker, msg)
                 } else {
-                    if (!properties.ignoredErrorStatusCode.contains(httpStatusCode)) {
+                    if (log.isDebugEnabled || httpStatusCode >= 500) {
                         val initialComment = "$httpStatusCode ${error.javaClass.name}:${
                             error.message ?: getMessage(requestAttributes) ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                         }"

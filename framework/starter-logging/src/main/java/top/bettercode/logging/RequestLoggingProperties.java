@@ -63,11 +63,6 @@ public class RequestLoggingProperties {
    * 加密请求头名
    */
   private String[] encryptHeaders = new String[0];
-  /**
-   * 过滤不记录为ERROR日志的状态码
-   */
-  private Integer[] ignoredErrorStatusCode = {400, 401, 403, 404, 405, 406, 409,
-      422};
   //--------------------------------------------
 
   private final AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -185,11 +180,4 @@ public class RequestLoggingProperties {
     this.encryptHeaders = encryptHeaders;
   }
 
-  public Integer[] getIgnoredErrorStatusCode() {
-    return ignoredErrorStatusCode;
-  }
-
-  public void setIgnoredErrorStatusCode(Integer[] ignoredErrorStatusCode) {
-    this.ignoredErrorStatusCode = ignoredErrorStatusCode;
-  }
 }

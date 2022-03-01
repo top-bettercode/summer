@@ -53,6 +53,7 @@ public class IbatisErrorHandler extends AbstractErrorHandler {
       if (error.getMessage()
           .contains("Cause: org.springframework.jdbc.CannotGetJdbcConnectionException")) {
         message = getText("datasource.request.timeout");
+        respEntity.setHttpStatusCode(HttpStatus.REQUEST_TIMEOUT.value());
       }
     }
     if (StringUtils.hasText(message)) {

@@ -13,7 +13,6 @@ import ch.qos.logback.core.helpers.CyclicBuffer
 import ch.qos.logback.core.sift.DefaultDiscriminator
 import ch.qos.logback.core.spi.CyclicBufferTracker
 import ch.qos.logback.core.util.OptionHelper
-import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import org.slf4j.Marker
 import org.springframework.web.util.WebUtils
@@ -25,8 +24,8 @@ import java.util.concurrent.TimeUnit
 abstract class AlarmAppender(
     private val cyclicBufferSize: Int,
     private val cacheSeconds: Long,
-    private val ignoredWarnLogger: Array<String>,
-    protected val logAll: Boolean
+    private val timeoutCacheSeconds: Long,
+    private val ignoredWarnLogger: Array<String>
 ) : AppenderBase<ILoggingEvent>() {
 
     companion object {
@@ -34,6 +33,7 @@ abstract class AlarmAppender(
     }
 
     private lateinit var cacheMap: ConcurrentMap<String, Int>
+    private lateinit var timeoutCacheMap: ConcurrentMap<String, Int>
     private var eventEvaluator: EventEvaluator<ILoggingEvent>? = null
     private val discriminator = DefaultDiscriminator<ILoggingEvent>()
     private var cbTracker: CyclicBufferTracker<ILoggingEvent>? = null
@@ -46,10 +46,11 @@ abstract class AlarmAppender(
     private var asynchronousSending = true
 
     override fun start() {
-        val cache: Cache<String, Int> =
-            CacheBuilder.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS)
-                .maximumSize(1000).build()
-        cacheMap = cache.asMap()
+        cacheMap = CacheBuilder.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS)
+            .maximumSize(1000).build<String, Int>().asMap()
+        timeoutCacheMap =
+            CacheBuilder.newBuilder().expireAfterWrite(timeoutCacheSeconds, TimeUnit.SECONDS)
+                .maximumSize(1000).build<String, Int>().asMap()
 
         val alarmEvaluator = object : EventEvaluatorBase<ILoggingEvent>() {
             override fun evaluate(event: ILoggingEvent): Boolean {
@@ -159,23 +160,28 @@ abstract class AlarmAppender(
         val timeStamp = event.timeStamp
         if (alarmMarker == null)
             alarmMarker = findAlarmMarker(event.marker)
-        if (cacheSeconds > 0) {
+        val needSend = if (cacheSeconds > 0) {
             if (!cacheMap.containsKey(initialComment)) {
                 cacheMap[initialComment] = 1
-                val timeoutMsg = alarmMarker?.timeoutMsg
-                val timeout = !timeoutMsg.isNullOrBlank()
-                if (timeout) {
-                    initialComment += timeoutMsg
-                }
-                send(timeStamp, initialComment, message, timeout)
+                true
+            } else {
+                false
             }
         } else {
+            true
+        }
+        if (needSend) {
             val timeoutMsg = alarmMarker?.timeoutMsg
             val timeout = !timeoutMsg.isNullOrBlank()
             if (timeout) {
                 initialComment += timeoutMsg
+                if (!timeoutCacheMap.containsKey(initialComment)) {
+                    timeoutCacheMap[initialComment] = 1
+                    send(timeStamp, initialComment, message, true)
+                }
+            } else {
+                send(timeStamp, initialComment, message, false)
             }
-            send(timeStamp, initialComment, message, timeout)
         }
     }
 

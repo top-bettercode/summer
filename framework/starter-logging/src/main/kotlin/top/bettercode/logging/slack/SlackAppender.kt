@@ -17,8 +17,8 @@ open class SlackAppender(
 ) : AlarmAppender(
     properties.cyclicBufferSize,
     properties.cacheSeconds,
-    properties.ignoredWarnLogger,
-    logAll
+    properties.timeoutCacheSeconds,
+    properties.ignoredWarnLogger
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
