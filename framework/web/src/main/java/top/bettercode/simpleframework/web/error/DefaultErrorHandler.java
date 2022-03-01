@@ -1,8 +1,5 @@
 package top.bettercode.simpleframework.web.error;
 
-import top.bettercode.simpleframework.exception.BusinessException;
-import top.bettercode.simpleframework.web.RespEntity;
-import top.bettercode.simpleframework.web.validator.NoPropertyPath;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +15,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import top.bettercode.simpleframework.exception.BusinessException;
+import top.bettercode.simpleframework.web.RespEntity;
+import top.bettercode.simpleframework.web.validator.NoPropertyPath;
 
 /**
  * @author Peter Wu
@@ -60,6 +60,7 @@ public class DefaultErrorHandler extends AbstractErrorHandler {
         message = "request.timeout";
       }
     } else if (error instanceof BusinessException) {
+      respEntity.setHttpStatusCode(HttpStatus.OK.value());
       respEntity.setStatus(((BusinessException) error).getCode());
       respEntity.setErrors(((BusinessException) error).getData());
     }
