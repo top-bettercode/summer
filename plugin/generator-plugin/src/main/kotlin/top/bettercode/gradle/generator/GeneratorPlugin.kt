@@ -189,7 +189,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 PdmReader.read(
                                     file,
                                     module
-                                )
+                                ).filter { tableNames.contains(it.tableName) }
                             }
                         }).entries
                     }.flatten().associateBy({ it.key }, { it.value })
