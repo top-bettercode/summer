@@ -74,6 +74,7 @@ object ProjectDependencies {
                     dependency("top.bettercode.summer:excel:$summerVersion")
                     dependency("top.bettercode.summer:ueditor:$summerVersion")
                     dependency("top.bettercode.summer:wechat:$summerVersion")
+                    dependency("top.bettercode.summer:weixin:$summerVersion")
                     dependency("top.bettercode.summer:sms:$summerVersion")
 
                     dependency("top.bettercode.summer:web:$summerVersion")
