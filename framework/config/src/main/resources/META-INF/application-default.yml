@@ -115,6 +115,7 @@ logging:
     com.baomidou: warn
     org.apache: warn
     org.hibernate: warn
+    org.hibernate.SQL: debug
     org.mybatis: warn
     com.netflix: warn
     com.sun: warn
