@@ -1,5 +1,6 @@
 package top.bettercode.logging
 
+import ch.qos.logback.classic.Level
 import net.logstash.logback.marker.Markers
 import org.apache.catalina.connector.ClientAbortException
 import org.slf4j.LoggerFactory
@@ -61,6 +62,8 @@ class RequestLoggingFilter(
     }
 
     private val log = LoggerFactory.getLogger(RequestLoggingFilter::class.java)
+
+    private val isDebugEnabled: Boolean by lazy { Level.toLevel(environment.getProperty("logging.level.root")) == Level.DEBUG }
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
@@ -166,7 +169,7 @@ class RequestLoggingFilter(
                 if (error == null || error is ClientAbortException) {
                     log.info(marker, msg)
                 } else {
-                    if (log.isDebugEnabled || httpStatusCode >= 500) {
+                    if (isDebugEnabled || httpStatusCode >= 500) {
                         val initialComment = "$httpStatusCode ${error.javaClass.name}:${
                             error.message ?: getMessage(requestAttributes) ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                         }"
@@ -265,7 +268,7 @@ class RequestLoggingFilter(
                         it
                     )
                 })
-            else false
+            else true
         } else {
             false
         }
