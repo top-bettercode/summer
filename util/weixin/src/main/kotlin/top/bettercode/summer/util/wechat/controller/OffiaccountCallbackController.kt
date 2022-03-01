@@ -10,6 +10,7 @@ import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.simpleframework.web.BaseController
 import top.bettercode.summer.util.wechat.support.IWechatService
 import top.bettercode.summer.util.wechat.support.offiaccount.OffiaccountClient
+import javax.validation.constraints.NotBlank
 
 @ConditionalOnWebApplication
 @Controller
@@ -18,19 +19,20 @@ class OffiaccountCallbackController(
     private val wechatService: IWechatService,
     private val offiaccountClient: OffiaccountClient
 ) : BaseController() {
+
     /*
    * 公众号OAuth回调接口
    */
     @RequestLogging(ignoredTimeout = true)
     @GetMapping(value = ["/oauth"], name = "OAuth回调接口")
-    fun oauth(code: String, state: String): String {
-        log.debug("code:{}, state:{}", code, state)
+    fun oauth(code: String?, state: String?): String {
         plainTextError()
         var openId: String? = null
         var token: String? = null
         try {
-            val accessToken = offiaccountClient.getWebPageAccessToken(code)
-            openId = if (accessToken.isOk) accessToken.openid else null
+            val accessToken =
+                if (code.isNullOrBlank()) null else offiaccountClient.getWebPageAccessToken(code)
+            openId = if (accessToken?.isOk == true) accessToken.openid else null
             log.info("openId:{}", openId)
             token = if (openId != null) wechatService.oauth(openId) else null
         } catch (e: Exception) {
@@ -44,17 +46,13 @@ class OffiaccountCallbackController(
    */
     @ResponseBody
     @GetMapping(value = ["/jsSign"], name = "js签名")
-    fun jsSignUrl(url: String): Any {
+    fun jsSignUrl(@NotBlank url: String): Any {
         return ok(offiaccountClient.jsSignUrl(url))
     }
 
     @ResponseBody
     @GetMapping(name = "验证回调")
     fun access(signature: String?, echostr: String?, timestamp: String?, nonce: String?): Any? {
-        log.debug(
-            "signature={}, timestamp={}, nonce={}, echostr={}", signature, timestamp, nonce,
-            echostr
-        )
         if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || offiaccountClient
                 .shaHex(offiaccountClient.properties.token, timestamp, nonce) != signature
         ) {

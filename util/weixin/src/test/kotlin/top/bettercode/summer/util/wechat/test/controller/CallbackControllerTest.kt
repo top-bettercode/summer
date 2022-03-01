@@ -18,7 +18,7 @@ class CallbackControllerTest : BaseWebNoAuthTest() {
     fun miniOauth() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/wechat/miniOauth")
-                .param("code", "xxx")
+//                .param("code", "xxx")
         ).andExpect(MockMvcResultMatchers.status().isOk)
     }
 

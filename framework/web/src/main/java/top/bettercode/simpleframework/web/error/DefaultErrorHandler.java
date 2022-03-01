@@ -34,7 +34,13 @@ public class DefaultErrorHandler extends AbstractErrorHandler {
   public void handlerException(Throwable error, RespEntity<?> respEntity,
       Map<String, String> errors, String separator) {
     String message = null;
-    if (error instanceof BindException) {//参数错误
+    if (error instanceof IllegalArgumentException) {
+      String regex = "Parameter specified as non-null is null: .*parameter (.*)";
+      if (error.getMessage().matches(regex)) {
+        String paramName = error.getMessage().replaceAll(regex, "$1");
+        message = getText(paramName) + "不能为空";
+      }
+    } else if (error instanceof BindException) {//参数错误
       BindException er = (BindException) error;
       List<FieldError> fieldErrors = er.getFieldErrors();
       message = handleFieldError(errors, fieldErrors, separator);
