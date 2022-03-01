@@ -60,7 +60,7 @@ open class WeixinClient<T : WexinProperties>(
         setMessageConverters(messageConverters)
     }
 
-    fun getBaseAccessToken(retries: Int = 0): String {
+    fun getBaseAccessToken(retries: Int = 1): String {
         val cachedValue = cache.getIfPresent(baseAccessTokenKey)
         return if (cachedValue == null || cachedValue.expired) {
             val accessToken = getForObject<BasicAccessToken>(
