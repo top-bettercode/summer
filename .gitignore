@@ -11,3 +11,4 @@ build/
 out
 classes
 
+util/weixin/src/test/resources/application.yml
