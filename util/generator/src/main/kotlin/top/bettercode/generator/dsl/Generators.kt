@@ -63,12 +63,12 @@ object Generators {
         }
         val all = extension.tableNames.isEmpty()
         val tableNames = extension.tableNames.toMutableList()
-        val toTables = { toTables: (tableNames: MutableList<String>) -> List<Table> ->
+        val toTables = { toTables: () -> List<Table> ->
             if (all) {
-                toTables(tableNames)
+                toTables()
             } else {
                 if (tableNames.isNotEmpty()) {
-                    val tables = toTables(tableNames)
+                    val tables = toTables()
                     tableNames.removeAll(tables.map { it.tableName })
                     tables
                 } else
@@ -82,7 +82,7 @@ object Generators {
                         if (all) {
                             jdbc.tables(jdbc.tableNames())
                         } else {
-                            jdbc.tables(it)
+                            jdbc.tables(tableNames)
                         }
                     }
                 }.values
@@ -91,7 +91,7 @@ object Generators {
                 extension.pumlSources.map { (module, files) ->
                     files.map { file ->
                         toTables {
-                            PumlConverter.toTables(file, module)
+                            PumlConverter.toTables(file, module).filter { tableNames.contains(it.tableName) }
                         }
                     }
                 }.flatten()
@@ -100,7 +100,7 @@ object Generators {
                 extension.pdmSources.map { (module, files) ->
                     files.map { file ->
                         toTables {
-                            PdmReader.read(file, module)
+                            PdmReader.read(file, module).filter { tableNames.contains(it.tableName) }
                         }
                     }
                 }.flatten()
