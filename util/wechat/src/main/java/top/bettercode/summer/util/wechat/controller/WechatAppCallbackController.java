@@ -1,9 +1,5 @@
 package top.bettercode.summer.util.wechat.controller;
 
-import top.bettercode.logging.annotation.RequestLogging;
-import top.bettercode.simpleframework.web.BaseController;
-import top.bettercode.summer.util.wechat.config.WechatMiniAppProperties;
-import top.bettercode.summer.util.wechat.support.IWechatService;
 import com.riversoft.weixin.app.user.SessionKey;
 import com.riversoft.weixin.app.user.Users;
 import com.riversoft.weixin.common.exception.WxRuntimeException;
@@ -11,10 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import top.bettercode.logging.annotation.RequestLogging;
+import top.bettercode.simpleframework.web.BaseController;
+import top.bettercode.summer.util.wechat.config.WechatMiniAppProperties;
+import top.bettercode.summer.util.wechat.support.IWechatService;
 
 @ConditionalOnWebApplication
 @Controller
@@ -32,7 +31,6 @@ public class WechatAppCallbackController extends BaseController {
 
   @RequestLogging(ignoredTimeout = true)
   @ResponseBody
-  @Transactional
   @PostMapping(value = "/miniOauth", name = "小程序code2Session授权接口")
   public Object miniOauth(String code) {
     log.debug("code:{}", code);
