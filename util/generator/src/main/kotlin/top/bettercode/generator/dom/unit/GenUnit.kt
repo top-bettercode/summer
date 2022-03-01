@@ -30,12 +30,19 @@ interface GenUnit {
 
     fun writeTo(directory: File? = null) {
         val destFile = outputFile(directory)
-        if (!destFile.exists() || !destFile.readLines().any { it.contains("[[Don't cover]]") }) {
+        val exists = destFile.exists()
+        if (!exists ||
+            (overwrite && !destFile.readLines().any { it.contains("[[Don't cover]]") })
+        ) {
             destFile.parentFile.mkdirs()
-            println(
-                "${if (destFile.exists()) "覆盖" else "生成"}：${file.path}"
-            )
+            val oldContent = if (exists) destFile.readBytes() else null
             destFile.write()
+            if (exists) {
+                if (!destFile.readBytes().contentEquals(oldContent!!))
+                    println("覆盖：${file.path}")
+            } else {
+                println("生成：${file.path}")
+            }
         }
     }
 
