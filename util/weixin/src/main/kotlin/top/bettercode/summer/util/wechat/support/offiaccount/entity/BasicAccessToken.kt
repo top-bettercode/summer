@@ -1,7 +1,7 @@
 package top.bettercode.summer.util.wechat.support.offiaccount.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import top.bettercode.summer.util.wechat.support.Response
+import top.bettercode.summer.util.wechat.support.WeixinResponse
 
 data class BasicAccessToken(
 
@@ -10,4 +10,4 @@ data class BasicAccessToken(
 
 	@field:JsonProperty("expires_in")
 	val expiresIn: Int? = null
-): Response()
+): WeixinResponse()

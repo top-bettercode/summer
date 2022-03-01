@@ -2,7 +2,7 @@ package top.bettercode.summer.util.wechat.support
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 
-open class Response(
+open class WeixinResponse(
     val errcode: Int? = null,
     val errmsg: String? = null
 ) {

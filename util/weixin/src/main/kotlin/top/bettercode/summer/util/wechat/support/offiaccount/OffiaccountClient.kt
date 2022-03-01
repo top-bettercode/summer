@@ -1,57 +1,34 @@
 package top.bettercode.summer.util.wechat.support.offiaccount
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.google.common.cache.CacheBuilder
 import org.slf4j.MarkerFactory
-import org.springframework.http.MediaType
-import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.getForObject
+import org.springframework.web.client.postForObject
 import top.bettercode.lang.util.Sha1DigestUtil
-import top.bettercode.simpleframework.support.client.ApiTemplate
 import top.bettercode.summer.util.wechat.config.OffiaccountProperties
+import top.bettercode.summer.util.wechat.support.WeixinClient
 import top.bettercode.summer.util.wechat.support.offiaccount.entity.*
 import java.net.URLEncoder
 import java.time.LocalDateTime
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 /**
  * 公众号接口
  *
  * @author Peter Wu
  */
-class OffiaccountClient(val properties: OffiaccountProperties) :
-    ApiTemplate("第三方接口", "微信公众号", "wexin-offiaccount", properties.connectTimeout, properties.readTimeout) {
-
-    private val cache =
-        CacheBuilder.newBuilder().expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
-            .maximumSize(1000).build<String, CachedValue>()
-
-    private val maxRetries = 3
+class OffiaccountClient(properties: OffiaccountProperties) :
+    WeixinClient<OffiaccountProperties>(
+        properties,
+        "第三方接口",
+        "微信公众号",
+        "wexin-offiaccount"
+    ) {
 
     companion object {
-        const val baseAccessTokenKey: String = "access_token"
         const val jsapiTicketKey: String = "jsapi_ticket"
     }
 
     init {
-        val messageConverter: MappingJackson2HttpMessageConverter =
-            object : MappingJackson2HttpMessageConverter() {
-                override fun canRead(mediaType: MediaType?): Boolean {
-                    return true
-                }
-
-                override fun canWrite(clazz: Class<*>?, mediaType: MediaType?): Boolean {
-                    return true
-                }
-            }
-        val objectMapper = messageConverter.objectMapper
-        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-        val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
-        messageConverters.add(messageConverter)
-        setMessageConverters(messageConverters)
-
         try {
             val url =
                 "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s#wechat_redirect"
@@ -67,32 +44,6 @@ class OffiaccountClient(val properties: OffiaccountProperties) :
         }
     }
 
-    fun getBaseAccessToken(retries: Int = 0): String {
-        val cachedValue = cache.getIfPresent(baseAccessTokenKey)
-        return if (cachedValue == null || cachedValue.expired) {
-            val accessToken = getForObject<BasicAccessToken>(
-                "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}",
-                properties.appId,
-                properties.secret
-            )
-            if (accessToken.isOk) {
-                cache.put(
-                    baseAccessTokenKey,
-                    CachedValue(
-                        accessToken.accessToken!!,
-                        LocalDateTime.now().plusSeconds(accessToken.expiresIn!!.toLong())
-                    )
-                )
-                accessToken.accessToken
-            } else if (retries < maxRetries) {
-                getBaseAccessToken(retries + 1)
-            } else {
-                throw RuntimeException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")
-            }
-        } else {
-            cachedValue.value
-        }
-    }
 
     fun getJsapiTicket(retries: Int = 0): String {
         val cachedValue = cache.getIfPresent(jsapiTicketKey)
@@ -126,6 +77,14 @@ class OffiaccountClient(val properties: OffiaccountProperties) :
             properties.appId,
             properties.secret,
             code
+        )
+    }
+
+    fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult {
+        return postForObject(
+            "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
+            request,
+            getBaseAccessToken()
         )
     }
 

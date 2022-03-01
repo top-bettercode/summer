@@ -1,44 +1,24 @@
 package top.bettercode.summer.util.wechat.support.miniprogram
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import org.springframework.http.MediaType
-import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.getForObject
-import top.bettercode.simpleframework.support.client.ApiTemplate
+import org.springframework.web.client.postForObject
 import top.bettercode.summer.util.wechat.config.MiniprogramProperties
+import top.bettercode.summer.util.wechat.support.WeixinClient
+import top.bettercode.summer.util.wechat.support.WeixinResponse
 import top.bettercode.summer.util.wechat.support.miniprogram.entity.JsSession
+import top.bettercode.summer.util.wechat.support.miniprogram.entity.SubscribeMsgRequest
 
 /**
  *
  * @author Peter Wu
  */
-class MiniprogramClient(val properties: MiniprogramProperties) :
-    ApiTemplate(
+class MiniprogramClient(properties: MiniprogramProperties) :
+    WeixinClient<MiniprogramProperties>(
+        properties,
         "第三方接口",
-        "微信小程序",
-        "wexin-miniprogram",
-        properties.connectTimeout,
-        properties.readTimeout
+        "微信公众号",
+        "wexin-offiaccount"
     ) {
-
-    init {
-        val messageConverter: MappingJackson2HttpMessageConverter =
-            object : MappingJackson2HttpMessageConverter() {
-                override fun canRead(mediaType: MediaType?): Boolean {
-                    return true
-                }
-
-                override fun canWrite(clazz: Class<*>?, mediaType: MediaType?): Boolean {
-                    return true
-                }
-            }
-        val objectMapper = messageConverter.objectMapper
-        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-        val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
-        messageConverters.add(messageConverter)
-        setMessageConverters(messageConverters)
-    }
 
     fun code2Session(code: String): JsSession {
         return getForObject(
@@ -46,6 +26,14 @@ class MiniprogramClient(val properties: MiniprogramProperties) :
             properties.appId,
             properties.secret,
             code
+        )
+    }
+
+    fun sendSubscribeMsg(request: SubscribeMsgRequest): WeixinResponse {
+        return postForObject(
+            "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={0}",
+            request,
+            getBaseAccessToken()
         )
     }
 
