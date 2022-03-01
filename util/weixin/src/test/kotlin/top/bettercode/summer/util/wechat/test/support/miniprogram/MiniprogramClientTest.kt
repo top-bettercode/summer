@@ -26,7 +26,7 @@ internal class MiniprogramClientTest : BaseTest() {
     }
 
     @Test
-    internal fun sendSubscribeMsg() {
+    fun sendSubscribeMsg() {
         val request = SubscribeMsgRequest(
             "",
             "",

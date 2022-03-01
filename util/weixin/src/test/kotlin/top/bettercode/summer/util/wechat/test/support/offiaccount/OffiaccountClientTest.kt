@@ -45,7 +45,7 @@ internal class OffiaccountClientTest : BaseTest() {
     }
 
     @Test
-    internal fun sendTemplateMessage() {
+    fun sendTemplateMsg() {
         val request = TemplateMsgRequest(
             "",
             "",

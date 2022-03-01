@@ -45,7 +45,7 @@ class OffiaccountClient(properties: OffiaccountProperties) :
     }
 
 
-    fun getJsapiTicket(retries: Int = 0): String {
+    fun getJsapiTicket(retries: Int = 1): String {
         val cachedValue = cache.getIfPresent(jsapiTicketKey)
         return if (cachedValue == null || cachedValue.expired) {
             val jsapiTicket = getForObject<JsapiTicket>(
