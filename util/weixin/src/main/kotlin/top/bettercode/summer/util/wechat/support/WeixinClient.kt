@@ -57,9 +57,10 @@ open class WeixinClient<T : WexinProperties>(
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
-        setMessageConverters(messageConverters)
+        super.setMessageConverters(messageConverters)
     }
 
+    @JvmOverloads
     fun getBaseAccessToken(retries: Int = 1): String {
         val cachedValue = cache.getIfPresent(baseAccessTokenKey)
         return if (cachedValue == null || cachedValue.expired) {
