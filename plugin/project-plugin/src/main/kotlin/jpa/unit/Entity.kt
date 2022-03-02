@@ -248,28 +248,5 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             annotation("@Override")
             +"return StringUtil.json(this);"
         }
-
-
-        method("matching", matcherType) {
-            javadoc {
-                +"/**"
-                +" * 创建 SpecMatcher 实例"
-                +" *"
-                +" * @return $remarks SpecMatcher 实例"
-                +" */"
-            }
-            +"return ${matcherType.shortName}.matching(this);"
-        }
-
-        method("matchingAny", matcherType) {
-            javadoc {
-                +"/**"
-                +" * 创建 SpecMatcher 实例"
-                +" *"
-                +" * @return $remarks SpecMatcher 实例"
-                +" */"
-            }
-            +"return ${matcherType.shortName}.matchingAny(this);"
-        }
     }
 }
