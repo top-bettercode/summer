@@ -19,16 +19,16 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         superClass(
-            JavaType("top.bettercode.simpleframework.data.jpa.query.DefaultSpecMatcher").typeArgument(
-                type
+            JavaType("top.bettercode.simpleframework.data.jpa.query.SpecMatcher").typeArgument(
+                entityType, type
             )
         )
 
-        val modeType = JavaType("SpecMatcherMode")
+        val modeType = JavaType("top.bettercode.simpleframework.data.jpa.query.SpecMatcherMode")
 
-        constructor(Parameter("mode", modeType)) {
+        constructor(Parameter("mode", modeType), Parameter("probe", entityType)) {
             this.visibility = JavaVisibility.PRIVATE
-            +"super(mode);"
+            +"super(mode, probe);"
         }
 
 
@@ -42,10 +42,10 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +" * @return $remarks SpecMatcher 实例"
                 +" */"
             }
-            +"return matchingAll();"
+            +"return new ${type.shortName}(SpecMatcherMode.ALL, null);"
         }
 
-        method("matchingAll", type) {
+        method("matching", type, Parameter("probe", entityType)) {
             this.isStatic = true
             javadoc {
                 +"/**"
@@ -54,7 +54,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +" * @return $remarks SpecMatcher 实例"
                 +" */"
             }
-            +"return new ${type.shortName}(SpecMatcherMode.ALL);"
+            +"return new ${type.shortName}(SpecMatcherMode.ALL, probe);"
         }
 
         method("matchingAny", type) {
@@ -66,12 +66,24 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +" * @return $remarks SpecMatcher 实例"
                 +" */"
             }
-            +"return new ${type.shortName}(SpecMatcherMode.ANY);"
+            +"return new ${type.shortName}(SpecMatcherMode.ANY, null);"
+        }
+
+        method("matchingAny", type, Parameter("probe", entityType)) {
+            this.isStatic = true
+            javadoc {
+                +"/**"
+                +" * 创建 SpecMatcher 实例"
+                +" *"
+                +" * @return $remarks SpecMatcher 实例"
+                +" */"
+            }
+            +"return new ${type.shortName}(SpecMatcherMode.ANY, probe);"
         }
 
         val pathType =
             JavaType("top.bettercode.simpleframework.data.jpa.query.SpecPath").typeArgument(
-                type
+                entityType, type
             )
         val matcherType =
             JavaType("top.bettercode.simpleframework.data.jpa.query.PathMatcher")
@@ -109,7 +121,12 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
         } else {
             val javaName =
-                if (primaryKeyName == "spec") "specField" else primaryKeyName
+                if (primaryKeyName in arrayOf(
+                        "asc",
+                        "desc",
+                        "specPath"
+                    )
+                ) "${primaryKeyName}Field" else primaryKeyName
             method(javaName, pathType) {
                 this.visibility = JavaVisibility.PUBLIC
                 +"return super.specPath(\"${primaryKeyName}\");"
@@ -141,7 +158,12 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         otherColumns.forEach {
             val javaName =
-                if (it.javaName == "spec") "specField" else it.javaName
+                if (it.javaName in arrayOf(
+                        "asc",
+                        "desc",
+                        "specPath"
+                    )
+                ) "${it.javaName}Field" else it.javaName
             method(javaName, pathType) {
                 this.visibility = JavaVisibility.PUBLIC
                 +"return super.specPath(\"${it.javaName}\");"
