@@ -188,10 +188,12 @@ class GeneratorPlugin : Plugin<Project> {
                     extension.pdmSources.map { (module, files) ->
                         files.associateBy({ it.nameWithoutExtension }, { file ->
                             toTables {
-                                PdmReader.read(
-                                    file,
-                                    module
-                                ).filter { tableNames.contains(it.tableName) }
+                                val tables = PdmReader.read(file, module)
+                                if (all) {
+                                    tables
+                                } else {
+                                    tables.filter { tableNames.contains(it.tableName) }
+                                }
                             }
                         }).entries
                     }.flatten().associateBy({ it.key }, { it.value })

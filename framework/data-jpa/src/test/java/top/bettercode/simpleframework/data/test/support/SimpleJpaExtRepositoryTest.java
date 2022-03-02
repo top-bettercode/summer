@@ -19,8 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.data.jpa.query.MatcherSpecification;
-import top.bettercode.simpleframework.data.jpa.query.SpecMatcher;
+import top.bettercode.simpleframework.data.jpa.query.DefaultSpecMatcher;
 import top.bettercode.simpleframework.data.test.domain.User;
 import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
@@ -119,8 +118,7 @@ public class SimpleJpaExtRepositoryTest {
     Optional<User> optionalUser = repository.findByIdFromRecycleBin(carterId);
     optionalUser.ifPresent(System.out::println);
     Assertions.assertTrue(optionalUser.isPresent());
-    MatcherSpecification<User> spec = SpecMatcher.defaultMatching().equal("id", carterId).spec();
-    repository.deleteFromRecycleBin(spec);
+    repository.deleteFromRecycleBin(DefaultSpecMatcher.<User>matching().equal("id", carterId));
     optionalUser = repository.findByIdFromRecycleBin(carterId);
     optionalUser.ifPresent(System.out::println);
     Assertions.assertFalse(optionalUser.isPresent());
@@ -238,9 +236,9 @@ public class SimpleJpaExtRepositoryTest {
 
   @Test
   public void findAll34() {
-    MatcherSpecification<User> spec = SpecMatcher.defaultMatching().equal("id", carterId)
+    DefaultSpecMatcher<User> spec = DefaultSpecMatcher.<User>matching().equal("id", carterId)
         .containing("firstName", "Cart")
-        .desc("firstName").asc("lastName").spec();
+        .desc("firstName").asc("lastName");
     List<User> all = repository.findAll(spec);
     System.err.println(StringUtil.valueOf(all, true));
   }
@@ -276,8 +274,7 @@ public class SimpleJpaExtRepositoryTest {
   @Test
   public void countRecycle2() {
     Assertions
-        .assertEquals(1, repository.countRecycleBin(
-            SpecMatcher.defaultMatching().equal("firstName", "Dave").spec()));
+        .assertEquals(1, repository.countRecycleBin(DefaultSpecMatcher.<User>matching().equal("firstName", "Dave")));
   }
 
   @Test
@@ -295,7 +292,7 @@ public class SimpleJpaExtRepositoryTest {
   public void findRecycleOne() {
     Assertions.assertTrue(
         repository.findOneFromRecycleBin(
-            SpecMatcher.defaultMatching().equal("firstName", "Dave").spec()).isPresent());
+            DefaultSpecMatcher.<User>matching().equal("firstName", "Dave")).isPresent());
   }
 
   @Test

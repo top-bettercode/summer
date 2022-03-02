@@ -249,12 +249,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return StringUtil.json(this);"
         }
 
-        val specType =
-            JavaType("top.bettercode.simpleframework.data.jpa.query.MatcherSpecification").typeArgument(
-                entityType
-            )
-        val specMatcherType = matcherType
-        method("spec", specType) {
+
+        method("matching", matcherType) {
             javadoc {
                 +"/**"
                 +" * 创建 SpecMatcher 实例"
@@ -262,18 +258,18 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +" * @return $remarks SpecMatcher 实例"
                 +" */"
             }
-            +"return spec(${matcherType.shortName}.matching());"
+            +"return ${matcherType.shortName}.matching(this);"
         }
-        method("spec", specType, Parameter("specMatcher", specMatcherType)) {
+
+        method("matchingAny", matcherType) {
             javadoc {
                 +"/**"
                 +" * 创建 SpecMatcher 实例"
                 +" *"
-                +" * @param specMatcher specMatcher"
                 +" * @return $remarks SpecMatcher 实例"
                 +" */"
             }
-            +"return new MatcherSpecification<>(specMatcher, this);"
+            +"return ${matcherType.shortName}.matchingAny(this);"
         }
     }
 }
