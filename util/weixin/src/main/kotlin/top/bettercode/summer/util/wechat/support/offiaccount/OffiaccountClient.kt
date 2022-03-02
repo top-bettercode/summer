@@ -29,19 +29,15 @@ class OffiaccountClient(properties: OffiaccountProperties) :
     }
 
     init {
-        try {
-            val url =
-                "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s#wechat_redirect"
-            val authenticationUrl = String.format(
-                url,
-                properties.appId,
-                URLEncoder.encode(properties.oauthUrl, "UTF-8"),
-                "snsapi_userinfo"
-            )
-            log.info(MarkerFactory.getMarker(logMarker), "authenticationUrl:{}", authenticationUrl)
-        } catch (e: Exception) {
-            log.error(e.message, e)
-        }
+        val url =
+            "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s#wechat_redirect"
+        val authenticationUrl = String.format(
+            url,
+            properties.appId,
+            URLEncoder.encode(properties.oauthUrl, "UTF-8"),
+            "snsapi_userinfo"
+        )
+        log.info(MarkerFactory.getMarker(logMarker), "authenticationUrl:{}", authenticationUrl)
     }
 
     @JvmOverloads
