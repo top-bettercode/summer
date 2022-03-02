@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.util.StringUtils;
@@ -71,9 +72,22 @@ public class DataErrorHandler extends AbstractErrorHandler {
     } else if (error instanceof UncategorizedSQLException) {
       String detailMessage = ((UncategorizedSQLException) error).getSQLException().getMessage()
           .trim();
+      String regex = ".*ORA-12899: .*\\..*\\.\"(.*?)\" 的值太大 \\(实际值: \\d+, 最大值: (\\d+)\\)";
+      //ORA-12899: value too large for column "YUNTUDEV"."PU_DELIVERY_ORDER"."LICENSE" (actual: 47, maximum: 30)
+      String regex1 = ".*ORA-12899: value too large for column .*\\..*\\.\"(.*?)\" \\(actual: \\d+, maximum: (\\d+)\\)";
       //Incorrect string value: '\xF0\x9F\x98\x84\xF0\x9F...' for column 'remark' at row 1
       if (detailMessage.matches("^Incorrect string value: '.*\\\\xF0.*$")) {
         message = "datasource.incorrect.emoji";
+      } else if (message.matches(regex)) {
+        String field = message.replaceAll(regex, "$1");
+        String maxLeng = message.replaceAll(regex, "$2");
+        message = getText(field) + "长度不能大于" + maxLeng;
+        respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
+      } else if (message.matches(regex1)) {
+        String field = message.replaceAll(regex1, "$1");
+        String maxLeng = message.replaceAll(regex1, "$2");
+        message = getText(field) + "长度不能大于" + maxLeng;
+        respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
       } else {
         message = detailMessage;
       }
