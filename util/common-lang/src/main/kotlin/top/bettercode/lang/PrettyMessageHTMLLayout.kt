@@ -16,7 +16,9 @@ import java.util.*
 class PrettyMessageHTMLLayout : HTMLLayout() {
 
     companion object {
-        fun anchor(msg: String): String = msg.substringBefore(" ---").replace(" ", "-").toLowerCase()
+        fun anchor(msg: String): String =
+            msg.substringBefore(" ---").split(' ').filter { it.isNotBlank() }.joinToString("-")
+                .toLowerCase()
     }
 
     init {
