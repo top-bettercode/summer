@@ -58,7 +58,8 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.springframework.data.web.PageableDefault${defaultSort}")
             }
             import("org.springframework.data.domain.Page")
-            +"Page<$className> results = ${projectEntityName}Service.findAll(${entityName}.matching(), pageable);"
+            import(matcherType)
+            +"Page<$className> results = ${projectEntityName}Service.findAll(${matcherType.shortName}.matching(${entityName}), pageable);"
             if (isFullComposite) {
                 import("org.springframework.data.domain.PageImpl")
                 import("java.util.stream.Collectors")
@@ -113,7 +114,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     annotation("@org.springframework.data.web.SortDefault${defaultSort}")
                 }
 
-                +"Iterable<$className> results = ${projectEntityName}Service.findAll(${entityName}.matching(), sort);"
+                +"Iterable<$className> results = ${projectEntityName}Service.findAll(${matcherType.shortName}.matching(${entityName}), sort);"
                 import("top.bettercode.util.excel.ExcelExport")
                 +"ExcelExport.export(request, response, \"$remarks\", excelExport -> excelExport.sheet(\"$remarks\").setData(${
                     if (isFullComposite) {
