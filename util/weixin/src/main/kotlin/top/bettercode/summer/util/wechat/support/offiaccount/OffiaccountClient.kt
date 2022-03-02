@@ -44,7 +44,7 @@ class OffiaccountClient(properties: OffiaccountProperties) :
         }
     }
 
-
+    @JvmOverloads
     fun getJsapiTicket(retries: Int = 1): String {
         val cachedValue = cache.getIfPresent(jsapiTicketKey)
         return if (cachedValue == null || cachedValue.expired) {
@@ -61,6 +61,9 @@ class OffiaccountClient(properties: OffiaccountProperties) :
                     )
                 )
                 jsapiTicket.ticket
+            } else if (40001 == jsapiTicket.errcode) {
+                cache.invalidate(baseAccessTokenKey)
+                getJsapiTicket(retries)
             } else if (retries < maxRetries) {
                 getJsapiTicket(retries + 1)
             } else {
@@ -80,12 +83,23 @@ class OffiaccountClient(properties: OffiaccountProperties) :
         )
     }
 
-    fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult {
-        return postForObject(
+    @JvmOverloads
+    fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int = 1): MsgResult {
+        val result = postForObject<MsgResult>(
             "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
             request,
             getBaseAccessToken()
         )
+        return if (result.isOk) {
+            result
+        } else if (40001 == result.errcode) {
+            cache.invalidate(baseAccessTokenKey)
+            sendTemplateMsg(request, retries)
+        } else if (retries < maxRetries) {
+            sendTemplateMsg(request, retries + 1)
+        } else {
+            throw RuntimeException("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+        }
     }
 
     //--------------------------------------------

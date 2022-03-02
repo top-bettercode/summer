@@ -29,12 +29,23 @@ class MiniprogramClient(properties: MiniprogramProperties) :
         )
     }
 
-    fun sendSubscribeMsg(request: SubscribeMsgRequest): WeixinResponse {
-        return postForObject(
+    @JvmOverloads
+    fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int = 1): WeixinResponse {
+        val result = postForObject<WeixinResponse>(
             "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={0}",
             request,
             getBaseAccessToken()
         )
+        return if (result.isOk) {
+            result
+        } else if (40001 == result.errcode) {
+            cache.invalidate(baseAccessTokenKey)
+            sendSubscribeMsg(request, retries)
+        } else if (retries < maxRetries) {
+            sendSubscribeMsg(request, retries + 1)
+        } else {
+            throw RuntimeException("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+        }
     }
 
 }

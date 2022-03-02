@@ -2,7 +2,7 @@ package top.bettercode.summer.util.wechat.support.offiaccount.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class TemplateMsgRequest(
+data class TemplateMsgRequest @JvmOverloads constructor(
 
     @field:JsonProperty("touser")
     val touser: String,
