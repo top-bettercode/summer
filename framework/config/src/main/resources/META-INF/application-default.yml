@@ -43,7 +43,6 @@ spring:
         one-indexed-parameters: true
   jpa:
     open-in-view: false
-    show-sql: true
   datasource:
     hikari:
       connection-timeout: 60000
