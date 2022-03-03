@@ -62,7 +62,7 @@ object RequestConverter {
                 ?: mapOf()
         val remoteUser =
             (request.getAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME) as? String)
-                ?: request.remoteUser ?: "anonymousUser"
+                ?: request.remoteUser ?: "Anonymous"
 
         val content = (request as? TraceHttpServletRequestWrapper)?.contentAsByteArray
             ?: try {
@@ -100,17 +100,17 @@ object RequestConverter {
         val restUri = uri.toString()
         val content = request.record.toByteArray()
         return OperationRequest(
-            uri,
-            restUri,
-            mapOf(),
-            request.method,
-            headers,
-            cookies,
-            "",
-            Parameters().getUniqueParameters(uri),
-            listOf(),
-            content,
-            dateTime
+            uri = uri,
+            restUri = restUri,
+            uriVariables = mapOf(),
+            method = request.method,
+            headers = headers,
+            cookies = cookies,
+            remoteUser = "NonSpecificUser",
+            parameters = Parameters().getUniqueParameters(uri),
+            parts = listOf(),
+            content = content,
+            dateTime = dateTime
         )
     }
 
