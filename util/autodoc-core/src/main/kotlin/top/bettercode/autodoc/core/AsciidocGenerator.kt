@@ -4,6 +4,8 @@ import org.asciidoctor.Asciidoctor
 import org.asciidoctor.Attributes
 import org.asciidoctor.Options
 import org.asciidoctor.SafeMode
+import top.bettercode.autodoc.core.Util.checkBlank
+import top.bettercode.autodoc.core.Util.pyname
 import top.bettercode.autodoc.core.model.Field
 import top.bettercode.autodoc.core.operation.DocOperationRequest
 import top.bettercode.autodoc.core.operation.DocOperationResponse

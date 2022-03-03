@@ -14,6 +14,8 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
+import top.bettercode.gradle.dist.DistExtension.Companion.findDistProperty
+import top.bettercode.gradle.dist.DistExtension.Companion.jvmArgs
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest

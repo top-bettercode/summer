@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import top.bettercode.api.sign.ApiSignProperties
+import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.generator.JDBCConnectionConfiguration
-import top.bettercode.generator.defaultModuleName
 import top.bettercode.logging.RequestLoggingConfiguration
 import top.bettercode.logging.RequestLoggingProperties
 import top.bettercode.simpleframework.config.SummerWebProperties

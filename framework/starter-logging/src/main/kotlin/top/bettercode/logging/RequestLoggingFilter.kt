@@ -158,12 +158,12 @@ class RequestLoggingFilter(
                 if (config.logMarker != REQUEST_LOG_MARKER) {
                     marker.add(MarkerFactory.getMarker(config.logMarker))
                 }
-                if (existProperty(environment, "summer.logging.logstash.destinations[0]")) {
+                if (Util.existProperty(environment, "summer.logging.logstash.destinations[0]")) {
                     marker.add(
                         Markers.appendRaw(
                             OPERATION_MARKER,
                             operation.toString(config.copy(format = false))
-                        ).and(Markers.append("title", warnSubject(environment)))
+                        ).and(Markers.append("title", Util.warnSubject(environment)))
                     )
                     marker.add(Markers.append(IS_OPERATION_MARKER, true))
                 }

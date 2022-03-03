@@ -15,17 +15,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
-fun <T> ResultSet.map(rs: ResultSet.() -> T): List<T> {
-    try {
-        val list = mutableListOf<T>()
-        while (next()) {
-            list.add(rs(this))
-        }
-        return list
-    } finally {
-        close()
-    }
-}
+
 
 class DatabaseMetaData(
     private val module: String,
@@ -64,6 +54,18 @@ class DatabaseMetaData(
             curentTableName = names[1]
         }
         call(curentSchema, curentTableName)
+    }
+
+    fun <T> ResultSet.map(rs: ResultSet.() -> T): List<T> {
+        try {
+            val list = mutableListOf<T>()
+            while (next()) {
+                list.add(rs(this))
+            }
+            return list
+        } finally {
+            close()
+        }
     }
 
     /**

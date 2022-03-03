@@ -6,8 +6,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import top.bettercode.generator.DataType
 import top.bettercode.generator.GeneratorExtension
+import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.generator.JDBCConnectionConfiguration
-import top.bettercode.generator.defaultModuleName
 import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.dsl.def.PlantUML
 import java.io.File

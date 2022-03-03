@@ -5,8 +5,8 @@ import org.h2.jdbcx.JdbcDataSource
 import org.h2.tools.RunScript
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.generator.JDBCConnectionConfiguration
-import top.bettercode.generator.defaultModuleName
 import java.io.File
 import java.io.FileReader
 

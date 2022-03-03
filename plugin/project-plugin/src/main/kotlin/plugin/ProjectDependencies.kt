@@ -1,7 +1,7 @@
 package plugin
 
+import ProjectUtil.isCloud
 import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
-import isCloud
 import org.gradle.api.Project
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -60,10 +60,10 @@ object ProjectDependencies {
                     val summerVersion =
                         ProjectPlugin::class.java.`package`.implementationVersion
 
-                    dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
                     dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
                     dependency("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion")
                     dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+                    dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 
                     dependency("top.bettercode.summer:config:$summerVersion")
                     dependency("top.bettercode.summer:environment:$summerVersion")
@@ -94,15 +94,10 @@ object ProjectDependencies {
                     dependency("com.oracle.database.security:osdt_core:$oracleJdbcVersion")
                     dependency("com.oracle.database.security:osdt_cert:$oracleJdbcVersion")
 
-                    dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
-
                     dependency("org.bouncycastle:bcpkix-jdk15on:1.70")
                     dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
-
-                    dependency("com.github.axet:kaptcha:0.0.9")
-
                     dependency("net.sf.ehcache:ehcache:2.10.9.2")
-
+                    dependency("com.github.axet:kaptcha:0.0.9")
                     dependency("org.dhatim:fastexcel-reader:0.12.12")
                     dependency("org.apache.poi:poi-ooxml:5.1.0")
                     dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")

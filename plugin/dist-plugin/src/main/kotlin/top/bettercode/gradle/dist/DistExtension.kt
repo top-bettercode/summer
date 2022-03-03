@@ -2,7 +2,7 @@ package top.bettercode.gradle.dist
 
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Project
-import profilesActive
+import top.bettercode.gradle.profile.ProfileExtension.Companion.profilesActive
 
 
 /**
@@ -41,35 +41,42 @@ open class DistExtension(
             "META-INF/additional-spring-configuration-metadata.json",
             "META-INF/spring.factories"
         )
-)
+) {
+    companion object {
 
-val Project.jvmArgs: Set<String>
-    get() {
-        val jvmArgs =
-            (findDistProperty("jvm-args") ?: "").split(" +".toRegex()).filter { it.isNotBlank() }
-                .toMutableSet()
-        val encoding = "-Dfile.encoding=UTF-8"
-        jvmArgs += encoding
-        if (Os.isFamily(Os.FAMILY_UNIX) && (findDistProperty("urandom") ?: "false").toBoolean()) {
-            jvmArgs += "-Djava.security.egd=file:/dev/urandom"
-        }
-        if (project.extensions.findByName("profile") != null) {
-            jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
-        }
-        if (project.file(nativePath).exists()) {
-            jvmArgs += nativeLibArgs
-        }
-        return jvmArgs
+        val Project.jvmArgs: Set<String>
+            get() {
+                val jvmArgs =
+                    (findDistProperty("jvm-args") ?: "").split(" +".toRegex())
+                        .filter { it.isNotBlank() }
+                        .toMutableSet()
+                val encoding = "-Dfile.encoding=UTF-8"
+                jvmArgs += encoding
+                if (Os.isFamily(Os.FAMILY_UNIX) && (findDistProperty("urandom")
+                        ?: "false").toBoolean()
+                ) {
+                    jvmArgs += "-Djava.security.egd=file:/dev/urandom"
+                }
+                if (project.extensions.findByName("profile") != null) {
+                    jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
+                }
+                if (project.file(nativePath).exists()) {
+                    jvmArgs += nativeLibArgs
+                }
+                return jvmArgs
+            }
+
+
+        fun Project.findDistProperty(key: String) =
+            (findProperty("dist.${name}.$key") as? String ?: findProperty("dist.$key") as? String)
+
+        private val Project.nativePath: String
+            get() = findDistProperty("native-path") ?: "native"
+
+        internal val Project.nativeLibArgs: String
+            get() {
+                return "-Djava.library.path=${this.file(nativePath).absolutePath}"
+            }
+
     }
-
-
-fun Project.findDistProperty(key: String) =
-    (findProperty("dist.${name}.$key") as? String ?: findProperty("dist.$key") as? String)
-
-private val Project.nativePath: String
-    get() = findDistProperty("native-path") ?: "native"
-
-internal val Project.nativeLibArgs: String
-    get() {
-        return "-Djava.library.path=${this.file(nativePath).absolutePath}"
-    }
+}

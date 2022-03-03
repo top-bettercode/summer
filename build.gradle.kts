@@ -63,10 +63,6 @@ allprojects {
             dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
             dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlin-coroutines.version")}")
 
-//            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
-            dependency("org.jetbrains.dokka:dokka-gradle-plugin:0.10.1")
-            dependency("com.gradle.publish:plugin-publish-plugin:0.15.0")
-            dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
             dependency("org.springframework.boot:spring-boot-gradle-plugin:${property("spring.version")}")
             dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
@@ -81,11 +77,11 @@ allprojects {
             dependency("org.javassist:javassist:3.28.0-GA")
             dependency("com.google.guava:guava:31.0.1-jre")
             dependency("org.dom4j:dom4j:2.1.3")
-            dependency("org.atteo:evo-inflector:1.3")
-            dependency("net.sourceforge.plantuml:plantuml:1.2021.8")
             dependency("org.jsoup:jsoup:1.14.3")
-            dependency("com.github.stuxuhai:jpinyin:1.1.8")
+            dependency("org.atteo:evo-inflector:1.3")
             dependency("com.github.axet:kaptcha:0.0.9")
+            dependency("com.github.stuxuhai:jpinyin:1.1.8")
+            dependency("net.sourceforge.plantuml:plantuml:1.2021.8")
 
             dependency("mysql:mysql-connector-java:8.0.27")
             dependency("com.oracle.database.jdbc:ojdbc8:21.5.0.0")
@@ -93,7 +89,6 @@ allprojects {
             dependency("org.asciidoctor:asciidoctorj:2.5.2")
             dependency("org.asciidoctor:asciidoctorj-diagram:2.2.1")
             dependency("org.asciidoctor:asciidoctorj-pdf:1.6.0")
-
 
             dependency("net.logstash.logback:logstash-logback-encoder:7.0.1")
             dependency("javax.mail:mail:1.4.7")
@@ -106,8 +101,6 @@ allprojects {
             dependency("com.github.pagehelper:pagehelper:5.3.0")
 
             dependency("org.mybatis.generator:mybatis-generator-core:1.4.0")
-
-            dependency("jakarta.persistence:jakarta.persistence-api:2.2.3")
 
             dependency("org.bouncycastle:bcprov-jdk15:1.46")
         }

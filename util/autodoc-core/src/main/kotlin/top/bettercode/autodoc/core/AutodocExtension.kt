@@ -2,6 +2,7 @@ package top.bettercode.autodoc.core
 
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
+import top.bettercode.autodoc.core.Util.pyname
 import top.bettercode.autodoc.core.model.DocModule
 import java.io.File
 

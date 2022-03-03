@@ -1,10 +1,10 @@
 package plugin
 
-import isBoot
+import ProjectUtil.isBoot
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import profileProperties
+import top.bettercode.gradle.profile.ProfileExtension.Companion.profileProperties
 import java.io.File
 import java.util.*
 

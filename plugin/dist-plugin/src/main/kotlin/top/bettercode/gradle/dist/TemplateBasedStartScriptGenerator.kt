@@ -14,6 +14,7 @@ import org.gradle.internal.io.IoUtils
 import org.gradle.jvm.application.scripts.JavaAppStartScriptGenerationDetails
 import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
 import org.gradle.util.TextUtil
+import top.bettercode.gradle.dist.DistExtension.Companion.nativeLibArgs
 import java.io.*
 
 class TemplateBasedStartScriptGenerator(

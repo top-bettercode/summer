@@ -10,13 +10,14 @@ import org.springframework.web.method.HandlerMethod
 import top.bettercode.api.sign.ApiSignProperties
 import top.bettercode.autodoc.core.PostmanGenerator
 import top.bettercode.autodoc.core.Util
+import top.bettercode.autodoc.core.Util.singleValueMap
+import top.bettercode.autodoc.core.Util.toMap
 import top.bettercode.autodoc.core.model.DocModule
 import top.bettercode.autodoc.core.model.Field
 import top.bettercode.autodoc.core.operation.DocOperation
 import top.bettercode.autodoc.core.operation.DocOperationRequest
 import top.bettercode.autodoc.core.operation.DocOperationResponse
-import top.bettercode.autodoc.core.singleValueMap
-import top.bettercode.autodoc.core.toMap
+import top.bettercode.autodoc.gen.InitField.toFields
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.JDBCConnectionConfiguration
 import top.bettercode.logging.RequestLoggingHandler
@@ -286,33 +287,39 @@ class AutodocHandler(
     }
 
 
-}
+    companion object {
 
-/**
- * @param operation operation
- */
-internal fun prerequestExec(operation: Operation, signProperties: ApiSignProperties): List<String> {
-    val exec = mutableListOf<String>()
-    operation.request.apply {
-        operation.request.uriVariables.forEach { (t, u) ->
-            exec.add("pm.globals.set('$t', '$u');")
+        /**
+         * @param operation operation
+         */
+        internal fun prerequestExec(
+            operation: Operation,
+            signProperties: ApiSignProperties
+        ): List<String> {
+            val exec = mutableListOf<String>()
+            operation.request.apply {
+                operation.request.uriVariables.forEach { (t, u) ->
+                    exec.add("pm.globals.set('$t', '$u');")
+                }
+            }
+            exec.addAll(
+                StreamUtils.copyToString(
+                    AutodocHandler::class.java.getResourceAsStream("/sign.js"),
+                    charset("UTF-8")
+                ).lines()
+            )
+            exec.add("signClient({")
+            exec.add("    clientSecret: '${signProperties.clientSecret}'")
+            exec.add("});")
+            exec.add("var params;")
+            exec.add("if (pm.request.method === 'GET' || pm.request.method === 'DELETE') {")
+            exec.add("    params = pm.request.url.getQueryString();")
+            exec.add("} else {")
+            exec.add("    params = pm.request.body.urlencoded.map(function (it) { return it.key + '=' + it.value }).join('&');")
+            exec.add("}")
+            exec.add("pm.globals.set('sign', signClient.sign(params));")
+            return exec
         }
     }
-    exec.addAll(
-        StreamUtils.copyToString(
-            AutodocHandler::class.java.getResourceAsStream("/sign.js"),
-            charset("UTF-8")
-        ).lines()
-    )
-    exec.add("signClient({")
-    exec.add("    clientSecret: '${signProperties.clientSecret}'")
-    exec.add("});")
-    exec.add("var params;")
-    exec.add("if (pm.request.method === 'GET' || pm.request.method === 'DELETE') {")
-    exec.add("    params = pm.request.url.getQueryString();")
-    exec.add("} else {")
-    exec.add("    params = pm.request.body.urlencoded.map(function (it) { return it.key + '=' + it.value }).join('&');")
-    exec.add("}")
-    exec.add("pm.globals.set('sign', signClient.sign(params));")
-    return exec
 }
+

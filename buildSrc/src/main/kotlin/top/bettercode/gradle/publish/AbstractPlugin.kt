@@ -1,6 +1,6 @@
 package top.bettercode.gradle.publish
 
-import groovy.lang.Closure
+//import org.jetbrains.dokka.DokkaVersion
 import groovy.util.Node
 import groovy.util.NodeList
 import io.codearte.gradle.nexus.NexusStagingExtension
@@ -17,7 +17,6 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
 import org.gradle.plugins.signing.SigningExtension
-//import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URI
 
@@ -28,45 +27,19 @@ import java.net.URI
 /**
  * 获取单一节点
  */
-fun Node.getAt(name: String): Node? {
-    val nodeList = get(name) as NodeList
-    return if (nodeList.size > 0)
-        nodeList[0] as Node
-    else null
-}
 
-/**
- * 配置工具类
- */
-class KotlinClosure1<in T : Any, V : Any>(
-    /**
-     *
-     */
-    private val function: T.() -> V?,
-    owner: Any? = null,
-    thisObject: Any? = null
-) : Closure<V?>(owner, thisObject) {
-    /**
-     * 实际调用方法
-     */
-    @Suppress("unused") // to be called dynamically by Groovy
-    fun doCall(it: T): V? = it.function()
-
-    companion object {
-        private const val serialVersionUID: Long = 1L
-    }
-}
-
-/**
- * 配置工具类
- */
-fun <T : Any> Any.closureOf(action: T.() -> Unit): Closure<Any?> =
-    KotlinClosure1(action, this, this)
 
 /**
  * 抽象类
  */
 abstract class AbstractPlugin : Plugin<Project> {
+
+    private fun Node.getAt(name: String): Node? {
+        val nodeList = get(name) as NodeList
+        return if (nodeList.size > 0)
+            nodeList[0] as Node
+        else null
+    }
 
     /**
      * 配置dokkaDoc
