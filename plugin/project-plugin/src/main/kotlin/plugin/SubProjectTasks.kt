@@ -1,7 +1,7 @@
 package plugin
 
-import isBoot
-import needDoc
+import ProjectUtil.isBoot
+import ProjectUtil.needDoc
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.tasks.application.CreateStartScripts
@@ -11,7 +11,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
-import top.bettercode.gradle.dist.jvmArgs
+import top.bettercode.gradle.dist.DistExtension.Companion.jvmArgs
 
 
 /**

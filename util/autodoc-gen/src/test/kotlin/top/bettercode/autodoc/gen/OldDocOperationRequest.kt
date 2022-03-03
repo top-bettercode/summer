@@ -3,8 +3,8 @@ package top.bettercode.autodoc.gen
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import top.bettercode.autodoc.core.singleValueMap
-import top.bettercode.autodoc.core.toMap
+import top.bettercode.autodoc.core.Util.singleValueMap
+import top.bettercode.autodoc.core.Util.toMap
 import top.bettercode.logging.operation.OperationRequest
 
 /**

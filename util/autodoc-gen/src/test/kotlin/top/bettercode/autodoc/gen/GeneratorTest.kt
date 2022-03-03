@@ -6,6 +6,10 @@ import top.bettercode.autodoc.core.model.DocCollections
 import top.bettercode.autodoc.core.model.Field
 import top.bettercode.autodoc.core.operation.*
 import org.junit.jupiter.api.Test
+import top.bettercode.autodoc.core.Util.parseList
+import top.bettercode.autodoc.core.Util.singleValueMap
+import top.bettercode.autodoc.core.Util.toMap
+import top.bettercode.autodoc.gen.InitField.toFields
 import java.io.File
 
 /**

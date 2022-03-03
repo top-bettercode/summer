@@ -1,8 +1,8 @@
 package top.bettercode.generator.powerdesigner
 
 import org.junit.jupiter.api.Test
+import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.generator.ddl.MysqlToDDL
-import top.bettercode.generator.defaultModuleName
 import java.io.File
 
 /**

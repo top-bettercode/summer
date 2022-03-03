@@ -4,10 +4,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.language.jvm.tasks.ProcessResources
-import profileProperties
 import top.bettercode.autodoc.core.AsciidocGenerator
 import top.bettercode.autodoc.core.AutodocExtension
 import top.bettercode.autodoc.core.PostmanGenerator
+import top.bettercode.gradle.profile.ProfileExtension.Companion.profileProperties
 import top.bettercode.gradle.profile.ProfilePlugin
 import java.io.File
 import java.util.*

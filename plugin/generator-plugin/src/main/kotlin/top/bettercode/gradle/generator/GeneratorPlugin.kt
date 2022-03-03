@@ -6,6 +6,7 @@ import net.sourceforge.plantuml.SourceFileReader
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import top.bettercode.generator.*
+import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.generator.database.entity.Table
 import top.bettercode.generator.ddl.MysqlToDDL
 import top.bettercode.generator.ddl.OracleToDDL

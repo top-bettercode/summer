@@ -37,6 +37,7 @@ import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import top.bettercode.lang.PrettyMessageHTMLLayout
 import top.bettercode.logging.*
+import top.bettercode.logging.Util.existProperty
 import top.bettercode.logging.slack.SlackAppender
 import top.bettercode.logging.websocket.WebSocketAppender
 import java.io.File
@@ -76,7 +77,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         context.getLogger("org.springframework.core.env.PropertySourcesPropertyResolver").level =
             Level.WARN
         val environment = initializationContext.environment
-        val warnSubject = warnSubject(environment)
+        val warnSubject = Util.warnSubject(environment)
         //smtp log
         if (existProperty(environment, "summer.logging.smtp.host")) {
             synchronized(context.configurationLock) {

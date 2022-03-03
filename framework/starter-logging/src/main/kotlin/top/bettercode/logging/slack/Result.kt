@@ -13,24 +13,9 @@ open class Result {
     override fun toString(): String {
         return "Result(ok=$ok, error=$error, ts=$ts)"
     }
-
-
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class ChannelResult(
-        val channel: Channel? = null
-) : Result() {
-    override fun toString(): String {
-        return "ChannelResult(channel=$channel)"
-    }
-}
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class ChannelsResult(
-        val channels: List<Channel>? = null
-) : Result() {
-    override fun toString(): String {
-        return "ChannelsResult(channels=$channels)"
-    }
-}
+
+
+

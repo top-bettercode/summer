@@ -5,9 +5,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.language.jvm.tasks.ProcessResources
-import profileProperties
-import profilesActive
-import profilesActiveName
+import top.bettercode.gradle.profile.ProfileExtension.Companion.profileFiles
+import top.bettercode.gradle.profile.ProfileExtension.Companion.profileProperties
+import top.bettercode.gradle.profile.ProfileExtension.Companion.profilesActive
+import top.bettercode.gradle.profile.ProfileExtension.Companion.profilesActiveName
 import java.util.*
 
 /**

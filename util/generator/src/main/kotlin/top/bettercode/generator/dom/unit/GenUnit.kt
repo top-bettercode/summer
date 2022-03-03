@@ -48,10 +48,6 @@ interface GenUnit {
 
 }
 
-enum class SourceSet {
-    MAIN, TEST, ROOT
-}
 
-enum class DirectorySet {
-    JAVA, KOTLIN, RESOURCES
-}
+
+

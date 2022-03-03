@@ -2,7 +2,7 @@ package plugin
 
 import org.gradle.api.Project
 import top.bettercode.autodoc.core.AsciidocGenerator
-import top.bettercode.generator.defaultModuleName
+import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.generator.dom.unit.FileUnit
 import top.bettercode.generator.dsl.Generator
 import java.io.File

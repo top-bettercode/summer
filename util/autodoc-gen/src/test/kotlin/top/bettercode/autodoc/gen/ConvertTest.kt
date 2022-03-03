@@ -4,6 +4,7 @@ import top.bettercode.api.sign.ApiSignProperties
 import top.bettercode.autodoc.core.Util
 import top.bettercode.autodoc.core.operation.DocOperation
 import org.junit.jupiter.api.Test
+import top.bettercode.autodoc.gen.AutodocHandler.Companion.prerequestExec
 import java.io.File
 
 /**

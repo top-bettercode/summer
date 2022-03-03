@@ -20,9 +20,3 @@ class StringOperator(private val collections: MutableCollection<String>) {
     }
 }
 
-class StringOperator1(private val collections: MutableCollection<String>) {
-
-    operator fun String.unaryPlus() {
-        collections.add(this)
-    }
-}

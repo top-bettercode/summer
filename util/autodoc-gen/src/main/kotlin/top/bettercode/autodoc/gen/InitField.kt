@@ -2,6 +2,12 @@ package top.bettercode.autodoc.gen
 
 import org.atteo.evo.inflector.English
 import top.bettercode.autodoc.core.*
+import top.bettercode.autodoc.core.Util.checkBlank
+import top.bettercode.autodoc.core.Util.convert
+import top.bettercode.autodoc.core.Util.parseList
+import top.bettercode.autodoc.core.Util.toJsonString
+import top.bettercode.autodoc.core.Util.toMap
+import top.bettercode.autodoc.core.Util.type
 import top.bettercode.autodoc.core.model.Field
 import top.bettercode.autodoc.core.operation.DocOperation
 import top.bettercode.autodoc.core.operation.DocOperationRequest
@@ -328,120 +334,129 @@ object InitField {
         }
         return findField
     }
-}
 
-fun Map<String, Any?>.toFields(fields: Set<Field>, expand: Boolean = false): LinkedHashSet<Field> {
-    return this.mapTo(LinkedHashSet()) { (k, v) ->
-        val field = fields.field(k, v)
-        if (expand) {
-            val expandValue = field.value.toMap()
-            if (expandValue != null) {
-                field.children = expandValue.toFields(field.children + fields, expand)
-            } else {
-                field.children = LinkedHashSet()
+
+    private fun Set<Field>.blankField(canConver: Boolean = true): Set<Field> {
+        return filter {
+            it.description.isBlank() || canConver && it.canCover || it.children.anyblank(
+                canConver
+            )
+        }.toSet()
+    }
+
+
+    private fun Set<Field>.noneBlank(): Boolean {
+        return all { it.description.isNotBlank() && it.children.noneBlank() }
+    }
+
+
+    private fun Set<Field>.anyblank(canConver: Boolean): Boolean {
+        return any {
+            it.description.isBlank() || canConver && it.canCover || it.children.anyblank(
+                canConver
+            )
+        }
+    }
+
+
+    fun Map<String, Any?>.toFields(
+        fields: Set<Field>,
+        expand: Boolean = false
+    ): LinkedHashSet<Field> {
+        return this.mapTo(LinkedHashSet()) { (k, v) ->
+            val field = fields.field(k, v)
+            if (expand) {
+                val expandValue = field.value.toMap()
+                if (expandValue != null) {
+                    field.children = expandValue.toFields(field.children + fields, expand)
+                } else {
+                    field.children = LinkedHashSet()
+                }
+            }
+            field
+        }
+    }
+
+    fun Collection<OperationRequestPart>.toFields(fields: Set<Field>): LinkedHashSet<Field> {
+        return this.mapTo(
+            LinkedHashSet()
+        ) {
+            fields.field(it.name, it.contentAsString)
+                .apply { partType = if (it.submittedFileName == null) "text" else "file" }
+        }
+    }
+
+
+    private fun Set<Field>.field(name: String, value: Any?): Field {
+        val type = (value?.type ?: "String")
+        val field = findPossibleField(name, type) ?: Field(name = name, type = type)
+
+        var tempVal = value
+        if (tempVal == null || "" == tempVal) {
+            tempVal = field.defaultVal
+        }
+
+        field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
+
+        return field
+    }
+
+    private fun Set<Field>.findPossibleField(
+        name: String,
+        type: String,
+        hasDesc: Boolean = false
+    ): Field? {
+        return this.findField(name, type, hasDesc) ?: this.findFuzzyField(name, type, hasDesc)
+    }
+
+
+    private fun Set<Field>.findFuzzyField(
+        name: String,
+        type: String,
+        hasDesc: Boolean = false
+    ): Field? {
+        val newName = when {
+            name.endsWith("Name") -> name.substringBeforeLast("Name")
+            name.endsWith("Url") -> name.substringBeforeLast("Url")
+            name.endsWith("Urls") -> name.substringBeforeLast("Urls")
+            name.endsWith("Path") -> name.substringBeforeLast("Path")
+            name.startsWith("start") -> name.substringAfter("start").decapitalize()
+            name.endsWith("Start") -> name.substringBeforeLast("Start")
+            name.startsWith("end") -> name.substringAfter("end").decapitalize()
+            name.endsWith("End") -> name.substringBeforeLast("End")
+            name.endsWith("Pct") -> name.substringBeforeLast("Pct")
+            else -> {
+                return null
             }
         }
-        field
-    }
-}
-
-fun Collection<OperationRequestPart>.toFields(fields: Set<Field>): LinkedHashSet<Field> {
-    return this.mapTo(
-        LinkedHashSet()
-    ) {
-        fields.field(it.name, it.contentAsString)
-            .apply { partType = if (it.submittedFileName == null) "text" else "file" }
-    }
-}
-
-private fun Set<Field>.blankField(canConver: Boolean = true): Set<Field> {
-    return filter {
-        it.description.isBlank() || canConver && it.canCover || it.children.anyblank(
-            canConver
-        )
-    }.toSet()
-}
-
-private fun Set<Field>.noneBlank(): Boolean {
-    return all { it.description.isNotBlank() && it.children.noneBlank() }
-}
-
-private fun Set<Field>.anyblank(canConver: Boolean): Boolean {
-    return any {
-        it.description.isBlank() || canConver && it.canCover || it.children.anyblank(
-            canConver
-        )
-    }
-}
-
-private fun Set<Field>.field(name: String, value: Any?): Field {
-    val type = (value?.type ?: "String")
-    val field = findPossibleField(name, type) ?: Field(name = name, type = type)
-
-    var tempVal = value
-    if (tempVal == null || "" == tempVal) {
-        tempVal = field.defaultVal
-    }
-
-    field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
-
-    return field
-}
-
-
-private fun Set<Field>.findPossibleField(
-    name: String,
-    type: String,
-    hasDesc: Boolean = false
-): Field? {
-    return this.findField(name, type, hasDesc) ?: this.findFuzzyField(name, type, hasDesc)
-}
-
-private fun Set<Field>.findFuzzyField(
-    name: String,
-    type: String,
-    hasDesc: Boolean = false
-): Field? {
-    val newName = when {
-        name.endsWith("Name") -> name.substringBeforeLast("Name")
-        name.endsWith("Url") -> name.substringBeforeLast("Url")
-        name.endsWith("Urls") -> name.substringBeforeLast("Urls")
-        name.endsWith("Path") -> name.substringBeforeLast("Path")
-        name.startsWith("start") -> name.substringAfter("start").decapitalize()
-        name.endsWith("Start") -> name.substringBeforeLast("Start")
-        name.startsWith("end") -> name.substringAfter("end").decapitalize()
-        name.endsWith("End") -> name.substringBeforeLast("End")
-        name.endsWith("Pct") -> name.substringBeforeLast("Pct")
-        else -> {
-            return null
+        val field = this.findField(newName, type, hasDesc)
+        if (field != null) {
+            field.name = name
+            field.type = "String"
+            field.defaultVal = ""
+            field.description = field.description.split(Regex("[（(,:，：]"))[0]
+            if (name.startsWith("start") || name.endsWith("Start"))
+                field.description = "开始" + field.description
+            if (name.startsWith("end") || name.endsWith("End"))
+                field.description = "结束" + field.description
         }
+        return field
     }
-    val field = this.findField(newName, type, hasDesc)
-    if (field != null) {
-        field.name = name
-        field.type = "String"
-        field.defaultVal = ""
-        field.description = field.description.split(Regex("[（(,:，：]"))[0]
-        if (name.startsWith("start") || name.endsWith("Start"))
-            field.description = "开始" + field.description
-        if (name.startsWith("end") || name.endsWith("End"))
-            field.description = "结束" + field.description
+
+    private fun Set<Field>.findField(name: String, type: String, hasDesc: Boolean = false): Field? {
+        val set = (if (hasDesc) this.filter { it.description.isNotBlank() } else this)
+        val field = (set.find { it.name == name && it.type.substringBefore("(") == type }?.copy()
+            ?: (set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }
+                ?.copy()
+                ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(") == type }
+                    ?.copy())
+            ?: set.find {
+                it.name.equals(name, true) && it.type.substringBefore("(").equals(type, true)
+            }?.copy())
+            ?: set.find { it.name == name }?.copy()
+            ?: set.find { it.name.equals(name, true) }?.copy()
+        return field?.apply { this.name = name }
     }
-    return field
-}
 
-private fun Set<Field>.findField(name: String, type: String, hasDesc: Boolean = false): Field? {
-    val set = (if (hasDesc) this.filter { it.description.isNotBlank() } else this)
-    val field = (set.find { it.name == name && it.type.substringBefore("(") == type }?.copy()
-        ?: (set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }?.copy()
-            ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(") == type }
-                ?.copy())
-        ?: set.find {
-            it.name.equals(name, true) && it.type.substringBefore("(").equals(type, true)
-        }?.copy())
-        ?: set.find { it.name == name }?.copy()
-        ?: set.find { it.name.equals(name, true) }?.copy()
-    return field?.apply { this.name = name }
 }
-
 
