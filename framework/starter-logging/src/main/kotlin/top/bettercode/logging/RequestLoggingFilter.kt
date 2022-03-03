@@ -57,6 +57,7 @@ class RequestLoggingFilter(
 
         val BEST_MATCHING_PATTERN_ATTRIBUTE =
             RequestLoggingFilter::class.java.name + ".bestMatchingPattern"
+
         @JvmField
         val REQUEST_LOGGING_USERNAME = RequestLoggingFilter::class.java.name + ".username"
         val REQUEST_DATE_TIME = RequestLoggingFilter::class.java.name + ".dateTime"
@@ -170,7 +171,9 @@ class RequestLoggingFilter(
                 if (error == null || error is ClientAbortException) {
                     log.info(marker, msg)
                 } else {
-                    if (isDebugEnabled || httpStatusCode >= 500) {
+                    if (isDebugEnabled && !properties.ignoredErrorStatusCode.contains(httpStatusCode)
+                        || httpStatusCode >= 500
+                    ) {
                         val initialComment = "$httpStatusCode ${error.javaClass.name}:${
                             error.message ?: getMessage(requestAttributes) ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                         }"
