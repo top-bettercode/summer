@@ -280,15 +280,5 @@ open class ProfileExtension(
                     findActive
             }
 
-        fun Project.profileClosure(closure: Project.(ProfileExtension) -> Unit) {
-            val profile = project.extensions.getByType(ProfileExtension::class.java)
-            profile.closure.add(closure)
-        }
-
-        fun Project.profileClosure(active: String, closure: Project.(ProfileExtension) -> Unit) {
-            val profile = project.extensions.getByType(ProfileExtension::class.java)
-            profile.profileClosure.computeIfAbsent(active) { mutableSetOf() }.add(closure)
-        }
-
     }
 }
