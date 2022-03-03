@@ -57,6 +57,7 @@ class RequestLoggingFilter(
 
         val BEST_MATCHING_PATTERN_ATTRIBUTE =
             RequestLoggingFilter::class.java.name + ".bestMatchingPattern"
+        @JvmField
         val REQUEST_LOGGING_USERNAME = RequestLoggingFilter::class.java.name + ".username"
         val REQUEST_DATE_TIME = RequestLoggingFilter::class.java.name + ".dateTime"
     }

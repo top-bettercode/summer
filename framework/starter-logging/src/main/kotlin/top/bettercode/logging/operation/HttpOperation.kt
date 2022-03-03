@@ -28,7 +28,7 @@ object HttpOperation {
         if (output.collectionName.isNotBlank() || output.name.isNotBlank()) {
             stringBuilder.appendln("${output.collectionName}/${output.name}")
         }
-        stringBuilder.appendln("USERNAME        : ${output.request.username}")
+        stringBuilder.appendln("USERNAME        : ${output.request.remoteUser}")
         stringBuilder.appendln("REQUEST    TIME : ${LocalDateTimeHelper.format(output.request.dateTime)}")
         stringBuilder.appendln("RESPONSE   TIME : ${LocalDateTimeHelper.format(output.response.dateTime)}")
         stringBuilder.appendln("DURATION MILLIS : ${output.duration}")

@@ -20,7 +20,6 @@ import top.bettercode.logging.operation.OperationRequest
     "headers",
     "cookies",
     "remoteUser",
-    "username",
     "requiredParameters",
     "parameters",
     "parts",
@@ -45,7 +44,6 @@ class OldDocOperationRequest(
     operationRequest.headers,
     operationRequest.cookies,
     operationRequest.remoteUser,
-    operationRequest.username,
     operationRequest.parameters,
     operationRequest.parts.onEach {
         it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)

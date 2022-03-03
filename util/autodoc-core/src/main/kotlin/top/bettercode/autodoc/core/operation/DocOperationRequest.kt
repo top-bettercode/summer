@@ -54,7 +54,6 @@ class DocOperationRequest(
     operationRequest.headers,
     operationRequest.cookies,
     operationRequest.remoteUser,
-    operationRequest.username,
     operationRequest.parameters,
     operationRequest.parts.onEach {
         it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)

@@ -19,7 +19,6 @@ import top.bettercode.simpleframework.security.ApiSecurityErrorHandler;
 import top.bettercode.simpleframework.security.ApiTokenService;
 import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
-import top.bettercode.simpleframework.security.UsernameSetRequestLoggingHandler;
 import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
 import top.bettercode.simpleframework.security.authorization.InMemoryApiAuthorizationService;
 
@@ -40,11 +39,6 @@ public class ApiSecurityConfiguration {
   public IResourceService resourceService() {
     return new IResourceService() {
     };
-  }
-
-  @Bean
-  public UsernameSetRequestLoggingHandler usernameSetRequestLoggingHandler() {
-    return new UsernameSetRequestLoggingHandler();
   }
 
   @Bean

@@ -17,7 +17,6 @@ import java.time.LocalDateTime
     "headers",
     "cookies",
     "remoteUser",
-    "username",
     "parameters",
     "parts",
     "contentAsString",
@@ -66,10 +65,6 @@ open class OperationRequest(
      * 请求操作用户
      */
     var remoteUser: String = "",
-    /**
-     * 当前用户
-     */
-    var username: String = "Anonymous",
     /**
      * Returns the request's parameters. For a `GET` request, the parameters are
      * derived from the query string. For a `POST` request, the parameters are
