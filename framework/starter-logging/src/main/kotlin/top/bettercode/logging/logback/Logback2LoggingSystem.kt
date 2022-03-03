@@ -254,8 +254,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val logFilePath = logFile?.toString() ?: (filesProperties.path + File.separator + "all.log")
-        appender.file = logFilePath
+        val logFilePath = logFile?.toString() ?: (filesProperties.path + File.separator + "all")
+        appender.file = "$logFilePath.log"
         setRollingPolicy(appender, context, filesProperties, logFilePath)
         start(context, appender)
         synchronized(context.configurationLock) {

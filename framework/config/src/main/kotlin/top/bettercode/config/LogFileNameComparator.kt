@@ -15,8 +15,8 @@ class LogFileNameComparator : Comparator<File> {
                 o1.name.compareTo(o2.name)
             } else {
                 try {
-                    val name1 = o1.name.split('-', ':', '.')
-                    val name2 = o2.name.split('-', ':', '.')
+                    val name1 = o1.nameWithoutExtension.split('-', ':', '.')
+                    val name2 = o2.nameWithoutExtension.split('-', ':', '.')
                     val size1 = name1.size
                     val size2 = name2.size
                     if (size1 > size2)
