@@ -107,7 +107,6 @@ object RequestConverter {
             headers,
             cookies,
             "",
-            "Anonymous",
             Parameters().getUniqueParameters(uri),
             listOf(),
             content,

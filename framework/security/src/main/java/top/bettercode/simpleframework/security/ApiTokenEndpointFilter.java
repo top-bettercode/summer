@@ -24,6 +24,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.HandlerMethod;
+import top.bettercode.logging.RequestLoggingFilter;
 import top.bettercode.simpleframework.AnnotatedUtils;
 import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.exception.UnauthorizedException;
@@ -207,6 +208,8 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
                 new UserDetailsAuthenticationToken(userDetails));
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authenticationResult);
+            request.setAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME,
+                userDetails.getUsername());
             SecurityContextHolder.setContext(context);
             if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
               if (revokeTokenService != null) {
