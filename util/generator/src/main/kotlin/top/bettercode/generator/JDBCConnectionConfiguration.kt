@@ -8,7 +8,8 @@ import top.bettercode.generator.database.entity.Table
 import java.sql.Connection
 import java.sql.DriverManager
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.ConcurrentSkipListSet
 
 class JDBCConnectionConfiguration(
     var url: String = "",
@@ -21,7 +22,7 @@ class JDBCConnectionConfiguration(
         set("user", "root")
         set("password", "root")
     }
-) {
+) : TableHolder {
     val available: Boolean by lazy { url.isNotBlank() }
 
     var schema: String? = null
@@ -89,17 +90,18 @@ class JDBCConnectionConfiguration(
         }
     }
 
-    fun tableNames(): List<String> {
+    override fun tableNames(): List<String> {
         return use {
             tableNames()
         }
     }
 
-    fun tables(tableNames: List<String>): List<Table> {
-        val names = tableNames.distinct()
-        val size = names.size
+    override fun tables(vararg tableName: String): List<Table> {
+        val size = tableName.size
+        val set = ConcurrentSkipListSet(tableName.toSet())
+        val names = if (tableName.isEmpty()) tableNames() else tableName.distinct()
         println("数据表（$size）:${names}")
-        val resultMap = ConcurrentHashMap<String, Table>()
+        val result = ConcurrentLinkedDeque<Table>()
         val map = mutableMapOf<Int, MutableList<String>>()
         var i = 1
         names.forEach {
@@ -116,7 +118,13 @@ class JDBCConnectionConfiguration(
                     use {
                         it.map {
                             try {
-                                table(it)
+                                val table = table(it)
+                                if (table != null) {
+                                    set.remove(table.tableName)
+                                    table
+                                } else {
+                                    null
+                                }
                             } catch (e: Exception) {
                                 e.printStackTrace()
                                 null
@@ -125,19 +133,12 @@ class JDBCConnectionConfiguration(
                     }
                 }
             }
-            resultMap.putAll(
-                deferred.flatMap { it.await() }.filterNotNull().associateBy { it.tableName })
+            result.addAll(deferred.flatMap { it.await() }.filterNotNull())
         }
-        if (resultMap.size != size) {
-            System.err.println(
-                "未找到${
-                    (names.filter {
-                        !resultMap.keys().toList().contains(it)
-                    })
-                }表"
-            )
+        if (set.isNotEmpty()) {
+            System.err.println("未找到${set}表")
         }
-        return names.mapNotNull { resultMap[it] }.toList()
+        return result.sortedBy { it.tableName }
     }
 
 }
