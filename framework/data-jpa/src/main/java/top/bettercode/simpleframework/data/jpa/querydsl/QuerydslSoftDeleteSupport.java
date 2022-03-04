@@ -1,12 +1,12 @@
 package top.bettercode.simpleframework.data.jpa.querydsl;
 
-import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
-import top.bettercode.simpleframework.data.jpa.support.DefaultSoftDeleteSupport;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.SimplePath;
 import org.springframework.beans.BeansException;
+import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
+import top.bettercode.simpleframework.data.jpa.support.DefaultSoftDeleteSupport;
 
 /**
  * @author Peter Wu

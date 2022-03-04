@@ -2,7 +2,6 @@ package top.bettercode.generator.dom.java.element
 
 import top.bettercode.generator.dom.java.JavaDomUtils
 import top.bettercode.generator.dom.java.JavaType
-import java.util.*
 
 class TypeParameter @JvmOverloads constructor(
         /**

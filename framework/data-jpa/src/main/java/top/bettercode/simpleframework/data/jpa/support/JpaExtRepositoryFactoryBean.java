@@ -1,7 +1,5 @@
 package top.bettercode.simpleframework.data.jpa.support;
 
-import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
-import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 import java.io.Serializable;
 import javax.persistence.EntityManager;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -9,6 +7,8 @@ import org.springframework.data.jpa.repository.support.JpaExtRepositoryFactory;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.util.Assert;
+import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
+import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 
 /**
  * {@link JpaRepositoryFactoryBean} to return a custom repository base class.

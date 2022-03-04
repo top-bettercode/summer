@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.simpleframework.web.serializer.annotation.JsonStringReplace;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -11,6 +10,7 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
 import java.io.IOException;
 import org.springframework.util.StringUtils;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonStringReplace;
 
 /**
  * @author Peter Wu

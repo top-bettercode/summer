@@ -1,7 +1,7 @@
 package top.bettercode.logging;
 
-import top.bettercode.lang.util.RandomUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import top.bettercode.lang.util.RandomUtil;
 
 /**
  * RequestLogging 配置

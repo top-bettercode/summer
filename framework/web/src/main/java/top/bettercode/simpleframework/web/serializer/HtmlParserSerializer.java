@@ -1,7 +1,5 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.lang.util.HtmlUtil;
-import top.bettercode.simpleframework.web.serializer.annotation.JsonHtmlParser;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -13,6 +11,8 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
 import java.io.IOException;
 import org.springframework.util.StringUtils;
+import top.bettercode.lang.util.HtmlUtil;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonHtmlParser;
 
 /**
  * @author Peter Wu

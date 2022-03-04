@@ -2,9 +2,6 @@ package top.bettercode.simpleframework.data.test.support;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import top.bettercode.simpleframework.data.test.domain.QUser;
-import top.bettercode.simpleframework.data.test.domain.User;
-import top.bettercode.simpleframework.data.test.repository.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import top.bettercode.simpleframework.data.test.domain.QUser;
+import top.bettercode.simpleframework.data.test.domain.User;
+import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
 /**
  * @author Peter Wu

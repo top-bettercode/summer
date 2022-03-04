@@ -1,8 +1,8 @@
 package top.bettercode.simpleframework.data.jpa.querydsl;
 
-import top.bettercode.simpleframework.data.jpa.BaseRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
+import top.bettercode.simpleframework.data.jpa.BaseRepository;
 
 /**
  * @param <T>  T

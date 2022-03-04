@@ -1,12 +1,12 @@
 package top.bettercode.simpleframework.web.resolver.multipart;
 
-import top.bettercode.lang.util.FileUtil;
-import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.File;
 import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.bettercode.lang.util.FileUtil;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 
 /**
  * @author Peter Wu

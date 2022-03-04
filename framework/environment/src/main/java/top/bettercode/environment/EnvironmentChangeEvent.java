@@ -1,7 +1,6 @@
 package top.bettercode.environment;
 
 import java.util.Set;
-
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.env.Environment;
 

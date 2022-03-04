@@ -1,9 +1,5 @@
 package top.bettercode.summer.util.wechat.controller;
 
-import top.bettercode.logging.annotation.RequestLogging;
-import top.bettercode.simpleframework.web.BaseController;
-import top.bettercode.summer.util.wechat.support.IWechatService;
-import top.bettercode.summer.util.wechat.config.WechatProperties;
 import com.riversoft.weixin.common.decrypt.AesException;
 import com.riversoft.weixin.common.decrypt.SHA1;
 import com.riversoft.weixin.common.jsapi.JsAPISignature;
@@ -16,6 +12,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import top.bettercode.logging.annotation.RequestLogging;
+import top.bettercode.simpleframework.web.BaseController;
+import top.bettercode.summer.util.wechat.config.WechatProperties;
+import top.bettercode.summer.util.wechat.support.IWechatService;
 
 @ConditionalOnWebApplication
 @Controller

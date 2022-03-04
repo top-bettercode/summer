@@ -3,8 +3,6 @@ package top.bettercode.simpleframework.security.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
-import top.bettercode.simpleframework.security.impl.TestApplication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
+import top.bettercode.simpleframework.security.impl.TestApplication;
 
 /**
  * @author Peter Wu

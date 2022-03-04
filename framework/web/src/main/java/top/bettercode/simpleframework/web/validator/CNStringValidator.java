@@ -1,8 +1,8 @@
 package top.bettercode.simpleframework.web.validator;
 
-import top.bettercode.lang.util.CharUtil;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import top.bettercode.lang.util.CharUtil;
 
 /**
  * {@code ChinaCell} 验证器

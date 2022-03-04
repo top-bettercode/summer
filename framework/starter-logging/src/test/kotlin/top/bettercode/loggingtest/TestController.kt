@@ -1,8 +1,5 @@
 package top.bettercode.loggingtest
 
-import top.bettercode.logging.RequestLoggingFilter
-import top.bettercode.logging.annotation.NoRequestLogging
-import top.bettercode.logging.annotation.RequestLogging
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
@@ -14,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import top.bettercode.logging.RequestLoggingFilter
+import top.bettercode.logging.annotation.NoRequestLogging
+import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.logging.logback.AlarmMarker
 
 /**

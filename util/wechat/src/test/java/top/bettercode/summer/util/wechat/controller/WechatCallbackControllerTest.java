@@ -4,11 +4,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import top.bettercode.autodoc.gen.Autodoc;
-import top.bettercode.summer.util.test.BaseWebNoAuthTest;
 import com.cdwintech.test.wechat.TestApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import top.bettercode.autodoc.gen.Autodoc;
+import top.bettercode.summer.util.test.BaseWebNoAuthTest;
 
 /**
  * @author Peter Wu

@@ -1,6 +1,5 @@
 package org.springframework.data.jpa.repository.query;
 
-import top.bettercode.simpleframework.data.jpa.support.SoftDeleteSupport;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
@@ -9,6 +8,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.ReturnedType;
 import org.springframework.data.repository.query.parser.PartTree;
+import top.bettercode.simpleframework.data.jpa.support.SoftDeleteSupport;
 
 /**
  * @author Peter Wu

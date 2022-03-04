@@ -1,12 +1,12 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.web.serializer.annotation.JsonEmbeddedId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.Serializable;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
+import top.bettercode.lang.util.StringUtil;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonEmbeddedId;
 
 /**
  * @author Peter Wu

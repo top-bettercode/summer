@@ -1,12 +1,12 @@
 package top.bettercode.simpleframework.data.jpa.querydsl;
 
-import top.bettercode.simpleframework.data.jpa.IBaseService;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import top.bettercode.simpleframework.data.jpa.IBaseService;
 
 /**
  * @author Peter Wu

@@ -1,7 +1,7 @@
 package top.bettercode.simpleframework.web.error;
 
-import top.bettercode.simpleframework.web.RespEntity;
 import java.util.Map;
+import top.bettercode.simpleframework.web.RespEntity;
 
 /**
  * @author Peter Wu

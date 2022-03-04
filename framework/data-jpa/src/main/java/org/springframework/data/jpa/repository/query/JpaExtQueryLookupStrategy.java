@@ -1,6 +1,5 @@
 package org.springframework.data.jpa.repository.query;
 
-import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 import java.lang.reflect.Method;
 import javax.persistence.EntityManager;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -17,6 +16,7 @@ import org.springframework.data.repository.query.QueryMethodEvaluationContextPro
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 
 /**
  * Query lookup strategy to execute finders.

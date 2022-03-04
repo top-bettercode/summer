@@ -1,7 +1,5 @@
 package top.bettercode.loggingtest
 
-import top.bettercode.logging.RequestLoggingFilter
-import top.bettercode.logging.RequestLoggingProperties
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,6 +9,8 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
 import org.springframework.web.context.WebApplicationContext
+import top.bettercode.logging.RequestLoggingFilter
+import top.bettercode.logging.RequestLoggingProperties
 
 /**
  * mockMvc 基础测试类

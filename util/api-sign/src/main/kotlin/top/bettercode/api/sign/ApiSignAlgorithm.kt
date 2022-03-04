@@ -1,14 +1,12 @@
 package top.bettercode.api.sign
 
 import org.slf4j.LoggerFactory
-import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.http.HttpHeaders
 import org.springframework.util.DigestUtils
 import org.springframework.util.MultiValueMap
 import org.springframework.util.StringUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import org.springframework.web.method.HandlerMethod
 import javax.servlet.http.HttpServletRequest
 
 /**

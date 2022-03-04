@@ -1,9 +1,9 @@
 package top.bettercode.generator.database
 
+import org.junit.jupiter.api.Test
 import top.bettercode.generator.DataType
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.dsl.Generators
-import org.junit.jupiter.api.Test
 import java.io.File
 
 /**

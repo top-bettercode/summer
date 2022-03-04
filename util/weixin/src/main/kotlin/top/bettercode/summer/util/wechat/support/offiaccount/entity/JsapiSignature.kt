@@ -1,8 +1,6 @@
 package top.bettercode.summer.util.wechat.support.offiaccount.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import javax.annotation.Generated
-import java.io.Serializable
 
 data class JsapiSignature(
 

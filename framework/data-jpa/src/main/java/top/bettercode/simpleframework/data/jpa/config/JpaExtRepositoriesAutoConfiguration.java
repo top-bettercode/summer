@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.data.jpa.config;
 
-import top.bettercode.simpleframework.data.jpa.support.JpaExtRepositoryFactoryBean;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -20,6 +19,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.data.jpa.repository.JpaRepository;
+import top.bettercode.simpleframework.data.jpa.support.JpaExtRepositoryFactoryBean;
 
 /**
  * DataJpaConfiguration 配置

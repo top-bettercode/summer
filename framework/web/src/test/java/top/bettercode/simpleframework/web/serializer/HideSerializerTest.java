@@ -1,10 +1,10 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.lang.util.StringUtil;
-import top.bettercode.simpleframework.web.serializer.annotation.JsonHide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import top.bettercode.lang.util.StringUtil;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonHide;
 
 /**
  * @author Peter Wu

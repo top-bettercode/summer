@@ -1,13 +1,13 @@
 package top.bettercode.simpleframework.web;
 
-import top.bettercode.lang.util.LocalDateTimeHelper;
-import top.bettercode.simpleframework.web.kaptcha.KaptchaProperties;
 import com.google.code.kaptcha.Constants;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
+import top.bettercode.lang.util.LocalDateTimeHelper;
+import top.bettercode.simpleframework.web.kaptcha.KaptchaProperties;
 
 /**
  * @author Peter Wu

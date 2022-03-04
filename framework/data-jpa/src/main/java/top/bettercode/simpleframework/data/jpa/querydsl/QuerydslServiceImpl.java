@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.data.jpa.querydsl;
 
-import top.bettercode.simpleframework.data.jpa.BaseService;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import java.util.Optional;
@@ -11,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QSort;
+import top.bettercode.simpleframework.data.jpa.BaseService;
 
 /**
  * @author Peter Wu

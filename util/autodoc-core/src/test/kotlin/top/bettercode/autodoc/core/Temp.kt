@@ -1,9 +1,9 @@
 package top.bettercode.autodoc.core
 
-import top.bettercode.autodoc.core.model.Field
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.junit.jupiter.api.Test
+import top.bettercode.autodoc.core.model.Field
 import java.io.File
 import java.util.*
 
