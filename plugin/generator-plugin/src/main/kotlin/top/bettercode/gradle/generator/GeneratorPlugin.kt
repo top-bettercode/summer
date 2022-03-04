@@ -162,7 +162,7 @@ class GeneratorPlugin : Plugin<Project> {
 
         extension.run { module, tableHolder ->
             val prefix = if (defaultModuleName == module) "" else module.capitalize()
-            project.tasks.create("print${prefix}TableNames") { task ->
+            project.tasks.create("print[TableNames][${prefix}]") { task ->
                 task.group = taskGroup
                 task.doLast {
                     val tableNames = tableHolder.tableNames()
@@ -172,7 +172,7 @@ class GeneratorPlugin : Plugin<Project> {
         }
         extension.run(if (extension.pdmSources.isNotEmpty()) DataType.PDM else DataType.DATABASE) { module, tableHolder ->
             val prefix = if (defaultModuleName == module) "" else module.capitalize()
-            project.tasks.create("to${prefix}Puml") { task ->
+            project.tasks.create("toPuml[${prefix}]") { task ->
                 task.group = taskGroup
                 task.doLast { _ ->
                     val tables = tableHolder.tables(*extension.tableNames)
@@ -239,7 +239,7 @@ class GeneratorPlugin : Plugin<Project> {
         if (extension.dataType != DataType.DATABASE)
             extension.run { module, tableHolder ->
                 val prefix = if (defaultModuleName == module) "" else module.capitalize()
-                project.tasks.create("to${prefix}DDL") { task ->
+                project.tasks.create("ddl[${prefix}]") { task ->
                     task.group = taskGroup
                     task.inputs.files(
                         File(project.gradle.gradleUserHomeDir, "gradle.properties"),
@@ -283,7 +283,7 @@ class GeneratorPlugin : Plugin<Project> {
                         output.writeTo(project.rootDir)
                     }
                 }
-                project.tasks.create("to${prefix}DDLUpdate") { task ->
+                project.tasks.create("ddlUpdate[${prefix}]") { task ->
                     task.group = taskGroup
                     task.doLast {
                         MysqlToDDL.useQuote = extension.sqlQuote
@@ -336,9 +336,9 @@ class GeneratorPlugin : Plugin<Project> {
                         unit.writeTo(project.rootDir)
                     }
                 }
-                project.tasks.create("pumlBuild$prefix") {
+                project.tasks.create("ddlBuild[$prefix]") {
                     it.group = taskGroup
-                    it.dependsOn("to${prefix}DDLUpdate", "to${prefix}DDL")
+                    it.dependsOn("ddlUpdate[$prefix]", "ddl${prefix}")
                 }
             }
     }

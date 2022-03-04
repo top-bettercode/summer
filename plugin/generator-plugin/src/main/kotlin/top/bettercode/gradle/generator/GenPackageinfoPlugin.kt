@@ -16,7 +16,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
 
-        project.tasks.create("genPackageInfo") { task ->
+        project.tasks.create("gen[PackageInfo]") { task ->
             task.group = GeneratorPlugin.taskGroup
             task.doLast { _ ->
                 project.allprojects { p ->
@@ -85,7 +85,7 @@ package $packageinfo""".trimIndent()
             }
         }
 
-        project.tasks.create("genPackageInfoDoc") { task ->
+        project.tasks.create("gen[PackageInfoDoc]") { task ->
             task.group = GeneratorPlugin.taskGroup
             task.doLast { _ ->
                 val regex = Regex(".*/\\*\\*(.*)\\*/.*", RegexOption.DOT_MATCHES_ALL)
