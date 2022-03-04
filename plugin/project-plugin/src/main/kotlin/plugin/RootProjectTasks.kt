@@ -54,7 +54,7 @@ object RootProjectTasks {
                 }
             }
 
-            create("genDbScript") { t ->
+            create("gen[DbScript]") { t ->
                 t.group = GeneratorPlugin.taskGroup
                 t.doLast {
                     val destFile = FileUnit(
