@@ -49,8 +49,8 @@ class GeneratorPlugin : Plugin<Project> {
                     val configuration = JDBCConnectionConfiguration()
                     configuration.module = module
                     configuration.url = properties["url"] as? String ?: ""
-                    configuration.catalog = properties["catalog"] as? String ?
-                    configuration.schema = properties["schema"] as? String ?
+                    configuration.catalog = properties["catalog"] as? String?
+                    configuration.schema = properties["schema"] as? String?
                     configuration.username = properties["username"] as? String ?: "root"
                     configuration.password = properties["password"] as? String ?: "root"
                     configuration.driverClass = properties["driverClass"] as? String ?: ""
@@ -106,10 +106,6 @@ class GeneratorPlugin : Plugin<Project> {
                 findProperty(project, "idgenerator") ?: "uuid2"
             extension.dataType = DataType.valueOf(
                 (findProperty(project, "dataType")
-                    ?: DataType.DATABASE.name).toUpperCase()
-            )
-            extension.updateFromType = DataType.valueOf(
-                (findProperty(project, "updateFromType")
                     ?: DataType.DATABASE.name).toUpperCase()
             )
             //puml
@@ -373,13 +369,13 @@ class GeneratorPlugin : Plugin<Project> {
                             val tableNames = tables.map { it.tableName }
                             val oldTables =
                                 if (deleteTablesWhenUpdate) {
-                                    if (DataType.PUML == extension.updateFromType && databaseFile.exists()) {
+                                    if (databaseFile.exists()) {
                                         PumlConverter.toTables(databaseFile, module)
                                     } else {
                                         jdbc.tables(jdbc.tableNames())
                                     }
                                 } else {
-                                    if (DataType.PUML == extension.updateFromType && databaseFile.exists()) {
+                                    if (databaseFile.exists()) {
                                         PumlConverter.toTables(databaseFile, module)
                                     } else {
                                         jdbc.tables(tableNames)
@@ -400,8 +396,6 @@ class GeneratorPlugin : Plugin<Project> {
                                 }
                             }
                         }
-                        if (DataType.PUML == extension.updateFromType)
-                            PumlConverter.compile(extension, allTables, databasePumlDir)
                     }
                 when (extension.dataType) {
                     DataType.PUML -> {

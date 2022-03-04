@@ -78,10 +78,6 @@ open class GeneratorExtension(
      * 更新Sql时生成删除字段语句
      */
     var dropColumnsWhenUpdate: Boolean = false,
-    /**
-     * SQL更新时，根据什么更新
-     */
-    var updateFromType: DataType = DataType.DATABASE,
 
     var applicationName: String = "",
 
