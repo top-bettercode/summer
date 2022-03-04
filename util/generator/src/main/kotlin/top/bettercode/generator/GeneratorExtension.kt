@@ -3,6 +3,7 @@ package top.bettercode.generator
 import top.bettercode.generator.dom.java.element.JavaElement
 import top.bettercode.generator.dsl.Generator
 import java.io.File
+import java.util.*
 
 
 /**
@@ -208,7 +209,7 @@ open class GeneratorExtension(
     }
 
     fun isDefaultModule(moduleName: String): Boolean {
-        return "modules" == moduleName
+        return defaultModuleName == moduleName
     }
 
     val pumlSources: Map<String, List<File>> by lazy {
@@ -228,19 +229,39 @@ open class GeneratorExtension(
             ?.associateBy(
                 { if ("src" == it.name) "modules" else it.name }
             ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "pdm" }.toList() }
-            ?: emptyMap()
+            ?.toSortedMap(Comparator { o1, o2 -> o1.compareTo(o2) })
+            ?: TreeMap()
     }
 
     val pumlDatabaseSources: Map<String, List<File>> by lazy {
         file(pumlSrc).listFiles()?.filter { "database" == it.name }
-            ?.associateBy(
-                {
-                    if ("src" == it.name) {
-                        defaultModuleName
-                    } else it.name
-                }
+            ?.associateBy({
+                if ("src" == it.name) {
+                    defaultModuleName
+                } else it.name
+            }
             ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
-            ?: emptyMap()
+            ?.toSortedMap(Comparator { o1, o2 -> o1.compareTo(o2) })
+            ?: TreeMap()
     }
 
+    fun <T> run(dataType: DataType = this.dataType, function: (String, TableHolder) -> T): List<T> {
+        return when (dataType) {
+            DataType.DATABASE -> {
+                datasources.map { (module, jdbc) ->
+                    function(module, jdbc)
+                }
+            }
+            DataType.PUML -> {
+                pumlSources.map { (module, files) ->
+                    function(module, PumlTableHolder(module, files))
+                }
+            }
+            DataType.PDM -> {
+                pdmSources.map { (module, files) ->
+                    function(module, PdmTableHolder(module, files))
+                }
+            }
+        }
+    }
 }

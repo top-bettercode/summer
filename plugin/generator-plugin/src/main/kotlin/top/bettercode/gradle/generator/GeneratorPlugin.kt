@@ -18,7 +18,6 @@ import top.bettercode.generator.dom.unit.FileUnit
 import top.bettercode.generator.dsl.Generator
 import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.dsl.def.PlantUML
-import top.bettercode.generator.powerdesigner.PdmReader
 import top.bettercode.generator.puml.PumlConverter
 import java.io.File
 
@@ -65,7 +64,7 @@ class GeneratorPlugin : Plugin<Project> {
                         configuration.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
                     }
                     configuration
-                }
+                }.toSortedMap(Comparator { o1, o2 -> o1.compareTo(o2) })
 
             extension.unitedDatasource = (findProperty(project, "singleDatasource"))?.toBoolean()
                 ?: true
@@ -160,55 +159,23 @@ class GeneratorPlugin : Plugin<Project> {
     }
 
     private fun configPuml(project: Project, extension: GeneratorExtension) {
-        project.tasks.create("printTableNames") { task ->
-            task.group = taskGroup
-            task.doLast {
-                val tableNames = Generators.tableNames(extension)
-                print("数据表:${tableNames}")
+
+        extension.run { module, tableHolder ->
+            val prefix = if (defaultModuleName == module) "" else module.capitalize()
+            project.tasks.create("print${prefix}TableNames") { task ->
+                task.group = taskGroup
+                task.doLast {
+                    val tableNames = tableHolder.tableNames()
+                    print("${module}数据表:${tableNames}")
+                }
             }
         }
-
-        project.tasks.create("toPuml") { task ->
-            task.group = taskGroup
-            task.doLast { _ ->
-                val all = extension.tableNames.isEmpty()
-                val tableNames = extension.tableNames.toMutableList()
-                val toTables = { toTables: () -> List<Table> ->
-                    if (all) {
-                        toTables()
-                    } else {
-                        if (tableNames.isNotEmpty()) {
-                            val tables = toTables()
-                            tableNames.removeAll(tables.map { it.tableName })
-                            tables
-                        } else
-                            emptyList()
-                    }
-                }
-                if (extension.pdmSources.isNotEmpty()) {
-                    extension.pdmSources.map { (module, files) ->
-                        files.associateBy({ it.nameWithoutExtension }, { file ->
-                            toTables {
-                                val tables = PdmReader.read(file, module)
-                                if (all) {
-                                    tables
-                                } else {
-                                    tables.filter { tableNames.contains(it.tableName) }
-                                }
-                            }
-                        }).entries
-                    }.flatten().associateBy({ it.key }, { it.value })
-                } else {
-                    extension.datasources.mapValues { (_, jdbc) ->
-                        toTables {
-                            if (all) {
-                                jdbc.tables(jdbc.tableNames())
-                            } else {
-                                jdbc.tables(tableNames)
-                            }
-                        }
-                    }
-                }.filter { it.value.isNotEmpty() }.forEach { (module, tables) ->
+        extension.run(if (extension.pdmSources.isNotEmpty()) DataType.PDM else DataType.DATABASE) { module, tableHolder ->
+            val prefix = if (defaultModuleName == module) "" else module.capitalize()
+            project.tasks.create("to${prefix}Puml") { task ->
+                task.group = taskGroup
+                task.doLast { _ ->
+                    val tables = tableHolder.tables(*extension.tableNames)
                     val plantUML = PlantUML(
                         tables[0].subModuleName,
                         File(
@@ -225,12 +192,14 @@ class GeneratorPlugin : Plugin<Project> {
                 }
             }
         }
+
         project.tasks.create("pumlReformat") { task ->
             task.group = taskGroup
             task.doLast {
                 PumlConverter.reformat(extension)
             }
         }
+
         project.tasks.create("pumlToDiagram") { task ->
             task.group = taskGroup
             task.inputs.files(
@@ -267,119 +236,88 @@ class GeneratorPlugin : Plugin<Project> {
                 }
             }
         }
-        project.tasks.create("toDDL") { task ->
-            task.group = taskGroup
-            task.inputs.files(
-                File(project.gradle.gradleUserHomeDir, "gradle.properties"),
-                project.rootProject.file("gradle.properties")
-            )
-            val src = extension.file(extension.pumlSrc)
-            val pdm = extension.file(extension.pdmSrc)
-            val out = project.rootProject.file(extension.sqlOutput)
-            if (src.exists())
-                task.inputs.dir(src)
-            if (pdm.exists())
-                task.inputs.file(pdm)
-            if (out.exists())
-                task.outputs.dir(out)
-            task.doLast {
-                MysqlToDDL.useQuote = extension.sqlQuote
-                OracleToDDL.useQuote = extension.sqlQuote
-                MysqlToDDL.useForeignKey = extension.useForeignKey
-                OracleToDDL.useForeignKey = extension.useForeignKey
-                val toDDl = { m: String, file: File, toTables: (file: File) -> List<Table> ->
-                    val output = FileUnit(
-                        "${extension.sqlOutput}/${if (extension.isDefaultModule(m)) "ddl" else "ddl-${m}"}/${file.nameWithoutExtension}.sql"
+        if (extension.dataType != DataType.DATABASE)
+            extension.run { module, tableHolder ->
+                val prefix = if (defaultModuleName == module) "" else module.capitalize()
+                project.tasks.create("to${prefix}DDL") { task ->
+                    task.group = taskGroup
+                    task.inputs.files(
+                        File(project.gradle.gradleUserHomeDir, "gradle.properties"),
+                        project.rootProject.file("gradle.properties")
                     )
-                    val jdbc = extension.datasources[m]
-                        ?: throw IllegalStateException("未配置${m}模块数据库信息")
-                    when (jdbc.databaseDriver) {
-                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
-                            toTables(file),
-                            output
-                        )
-                        DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
-                            toTables(file),
-                            output
-                        )
-                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
-                            toTables(file),
-                            output
-                        )
-                        else -> {
-                            throw IllegalArgumentException("不支持的数据库")
-                        }
-                    }
-                    output.writeTo(project.rootDir)
-                }
-                when (extension.dataType) {
-                    DataType.PUML -> {
-                        extension.pumlSources.forEach { (module, files) ->
-                            files.forEach { file ->
-                                toDDl(module, file) {
-                                    PumlConverter.toTables(
-                                        it,
-                                        module
-                                    )
-                                }
+                    val src = extension.file(extension.pumlSrc)
+                    val pdm = extension.file(extension.pdmSrc)
+                    val out = project.rootProject.file("${extension.sqlOutput}/ddl")
+                    if (src.exists())
+                        task.inputs.dir(src)
+                    if (pdm.exists())
+                        task.inputs.file(pdm)
+                    if (out.exists())
+                        task.outputs.dir(out)
+                    task.doLast {
+                        MysqlToDDL.useQuote = extension.sqlQuote
+                        OracleToDDL.useQuote = extension.sqlQuote
+                        MysqlToDDL.useForeignKey = extension.useForeignKey
+                        OracleToDDL.useForeignKey = extension.useForeignKey
+                        val output = FileUnit("${extension.sqlOutput}/ddl/$module.sql")
+                        val jdbc = extension.datasources[module]
+                            ?: throw IllegalStateException("未配置${module}模块数据库信息")
+                        val tables = tableHolder.tables(*extension.tableNames)
+                        when (jdbc.databaseDriver) {
+                            DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
+                                tables,
+                                output
+                            )
+                            DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
+                                tables,
+                                output
+                            )
+                            DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
+                                tables,
+                                output
+                            )
+                            else -> {
+                                throw IllegalArgumentException("不支持的数据库")
                             }
                         }
-                    }
-                    DataType.PDM -> {
-                        extension.pdmSources.forEach { (module, files) ->
-                            files.forEach { file ->
-                                toDDl(module, file) {
-                                    PdmReader.read(it, module)
-                                }
-                            }
-                        }
-                    }
-                    else -> {
-                        throw IllegalArgumentException("不支持数据结构源")
+                        output.writeTo(project.rootDir)
                     }
                 }
-            }
-        }
-        project.tasks.create("toDDLUpdate") { task ->
-            task.group = taskGroup
-            task.doLast {
-                MysqlToDDL.useQuote = extension.sqlQuote
-                OracleToDDL.useQuote = extension.sqlQuote
-                MysqlToDDL.useForeignKey = extension.useForeignKey
-                OracleToDDL.useForeignKey = extension.useForeignKey
-                val deleteTablesWhenUpdate = extension.dropTablesWhenUpdate
+                project.tasks.create("to${prefix}DDLUpdate") { task ->
+                    task.group = taskGroup
+                    task.doLast {
+                        MysqlToDDL.useQuote = extension.sqlQuote
+                        OracleToDDL.useQuote = extension.sqlQuote
+                        MysqlToDDL.useForeignKey = extension.useForeignKey
+                        OracleToDDL.useForeignKey = extension.useForeignKey
+                        val deleteTablesWhenUpdate = extension.dropTablesWhenUpdate
 
-                val databasePumlDir = extension.file(extension.pumlSrc + "/database")
-
-                val toDDLUpdate =
-                    { module: String, files: List<File>, toTables: (file: File) -> List<Table> ->
+                        val databasePumlDir = extension.file(extension.pumlSrc + "/database")
                         val databaseFile = File(databasePumlDir, "${module}.puml")
                         val unit =
-                            FileUnit("${extension.sqlOutput}/${if (extension.isDefaultModule(module)) "update" else "update-${module}"}/v${project.version}.sql")
+                            FileUnit(
+                                "${extension.sqlOutput}/${
+                                    if (extension.isDefaultModule(
+                                            module
+                                        )
+                                    ) "update" else "update-${module}"
+                                }/v${project.version}.sql"
+                            )
                         val allTables = mutableListOf<Table>()
                         unit.use { pw ->
-                            val tables = files.map { file ->
-                                toTables(file)
-                            }.flatMap { it.asIterable() }
-
+                            val tables = tableHolder.tables(*extension.tableNames)
                             allTables.addAll(tables)
                             val jdbc = extension.datasources[module]
                                 ?: throw IllegalStateException("未配置${module}模块数据库信息")
                             val tableNames = tables.map { it.tableName }
-                            val oldTables =
-                                if (deleteTablesWhenUpdate) {
-                                    if (databaseFile.exists()) {
-                                        PumlConverter.toTables(databaseFile, module)
-                                    } else {
-                                        jdbc.tables(jdbc.tableNames())
-                                    }
-                                } else {
-                                    if (databaseFile.exists()) {
-                                        PumlConverter.toTables(databaseFile, module)
-                                    } else {
-                                        jdbc.tables(tableNames)
-                                    }
-                                }
+                            val oldTables = if (databaseFile.exists()) {
+                                PumlConverter.toTables(databaseFile, module)
+                            } else {
+                                jdbc.tables(
+                                    *(if (deleteTablesWhenUpdate) jdbc.tableNames()
+                                    else tableNames).toTypedArray()
+                                )
+                            }
                             when (jdbc.databaseDriver) {
                                 DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
                                     module, oldTables, tables, pw, extension
@@ -397,32 +335,12 @@ class GeneratorPlugin : Plugin<Project> {
                         }
                         unit.writeTo(project.rootDir)
                     }
-                when (extension.dataType) {
-                    DataType.PUML -> {
-                        extension.pumlSources.forEach { (module, files) ->
-                            toDDLUpdate(module, files) {
-                                PumlConverter.toTables(it, module)
-                            }
-                        }
-                    }
-                    DataType.PDM -> {
-                        extension.pdmSources.forEach { (module, files) ->
-                            toDDLUpdate(module, files) {
-                                PdmReader.read(it, module)
-                            }
-                        }
-                    }
-                    else -> {
-                        throw IllegalArgumentException("不支持数据结构源")
-                    }
                 }
-
+                project.tasks.create("pumlBuild$prefix") {
+                    it.group = taskGroup
+                    it.dependsOn("to${prefix}DDLUpdate", "to${prefix}DDL")
+                }
             }
-        }
-        project.tasks.create("pumlBuild") {
-            it.group = taskGroup
-            it.dependsOn("toDDLUpdate", "toDDL")
-        }
     }
 
     private fun findProperty(project: Project, key: String) =
