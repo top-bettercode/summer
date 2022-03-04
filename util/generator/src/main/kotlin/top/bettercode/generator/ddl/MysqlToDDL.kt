@@ -3,6 +3,7 @@ package top.bettercode.generator.ddl
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Table
 import java.io.PrintWriter
+import java.io.Writer
 
 object MysqlToDDL : ToDDL() {
     override val quoteMark: String = "`"
@@ -12,7 +13,7 @@ object MysqlToDDL : ToDDL() {
         module: String,
         oldTables: List<Table>,
         tables: List<Table>,
-        out: PrintWriter,
+        out: Writer,
         extension: GeneratorExtension
     ) {
         if (tables != oldTables) {
@@ -20,9 +21,9 @@ object MysqlToDDL : ToDDL() {
             val oldTableNames = oldTables.map { it.tableName }
             if (extension.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).forEach {
-                    out.println("$commentPrefix DROP $it")
-                    out.println("DROP TABLE IF EXISTS $quote$it$quote;")
-                    out.println()
+                    out.appendln("$commentPrefix DROP $it")
+                    out.appendln("DROP TABLE IF EXISTS $quote$it$quote;")
+                    out.appendln()
                 }
             val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
@@ -97,9 +98,9 @@ object MysqlToDDL : ToDDL() {
                         if (extension.datasources[module]?.queryIndex == true)
                             updateIndexes(oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
-                            out.println("$commentPrefix $tableName")
-                            lines.forEach { out.println(it) }
-                            out.println()
+                            out.appendln("$commentPrefix $tableName")
+                            lines.forEach { out.appendln(it) }
+                            out.appendln()
                         }
                     }
                 }
@@ -116,15 +117,15 @@ object MysqlToDDL : ToDDL() {
             )
         };"
 
-    override fun appendTable(table: Table, pw: PrintWriter) {
+    override fun appendTable(table: Table, pw: Writer) {
         val tableName = table.tableName
-        pw.println("$commentPrefix $tableName")
-        pw.println("DROP TABLE IF EXISTS $quote$tableName$quote;")
-        pw.println("CREATE TABLE $quote$tableName$quote (")
+        pw.appendln("$commentPrefix $tableName")
+        pw.appendln("DROP TABLE IF EXISTS $quote$tableName$quote;")
+        pw.appendln("CREATE TABLE $quote$tableName$quote (")
         val hasPrimary = table.primaryKeyNames.isNotEmpty()
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
-            pw.println(
+            pw.appendln(
                 "  ${
                     columnDef(
                         column,
@@ -135,10 +136,10 @@ object MysqlToDDL : ToDDL() {
         }
 
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
-        pw.println(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${table.remarks}';")
+        pw.appendln(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${table.remarks}';")
 
         appendIndexes(table, pw, quote)
 
-        pw.println()
+        pw.appendln()
     }
 }

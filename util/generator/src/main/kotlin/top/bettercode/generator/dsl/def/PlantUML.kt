@@ -101,6 +101,6 @@ SEQUENCE
     }
 
     fun appendlnText(text: String) {
-        destFile.appendText(text + "\n\n")
+        destFile.appendText(text + "\n")
     }
 }

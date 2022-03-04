@@ -7,12 +7,12 @@ import java.io.StringWriter
  *
  * @author Peter Wu
  */
-open class FileUnit(
+class FileUnit(
     override val name: String,
     override var overwrite: Boolean = true,
     override val sourceSet: SourceSet = SourceSet.ROOT,
     override val directorySet: DirectorySet = DirectorySet.RESOURCES
-) : GenUnit {
+) : StringWriter(), GenUnit {
 
     constructor(
         file: File,
@@ -21,11 +21,19 @@ open class FileUnit(
         directorySet: DirectorySet = DirectorySet.RESOURCES
     ) : this(file.path, overwrite, sourceSet, directorySet)
 
-    private val stringWriter = StringWriter()
-    override val write: File.() -> Unit =
-        { printWriter().use { it.print(stringWriter.toString()) } }
+    override val write: File.(String) -> Boolean =
+        {
+            val content = this@FileUnit.toString()
+            if (content!=it) {
+                printWriter().use { writer -> writer.print(content) }
+                true
+            } else {
+                false
+            }
+        }
 
     operator fun String.unaryPlus() {
-        stringWriter.appendln(this)
+        appendln(this)
     }
+
 }

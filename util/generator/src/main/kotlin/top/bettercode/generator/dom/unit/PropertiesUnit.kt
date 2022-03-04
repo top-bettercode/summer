@@ -14,7 +14,14 @@ open class PropertiesUnit(
     override val directorySet: DirectorySet = DirectorySet.RESOURCES
 ) : GenUnit {
     private val properties: SortedProperties = SortedProperties(true)
-    override var write: File.() -> Unit = { properties.store(this.outputStream(), null) }
+    override var write: File.(String) -> Boolean = {
+        if (!properties.isEmpty || it.isNotBlank()) {
+            properties.store(this.outputStream(), null)
+            readText() != it
+        } else {
+            false
+        }
+    }
 
     operator fun set(key: String, value: String) {
         properties[key] = value

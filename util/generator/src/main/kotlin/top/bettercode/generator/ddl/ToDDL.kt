@@ -2,8 +2,9 @@ package top.bettercode.generator.ddl
 
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.database.entity.Table
+import top.bettercode.generator.dom.unit.FileUnit
 import java.io.File
-import java.io.PrintWriter
+import java.io.Writer
 
 /**
  *
@@ -37,19 +38,19 @@ abstract class ToDDL : IToDDL {
     protected open fun appendKeys(
         table: Table,
         hasPrimary: Boolean,
-        pw: PrintWriter,
+        pw: Writer,
         quote: String,
         tableName: String,
         useForeignKey: Boolean = false
     ) {
         val fks = table.columns.filter { it.isForeignKey }
         if (hasPrimary)
-            pw.println("  PRIMARY KEY (${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }})${if (useForeignKey && fks.isNotEmpty()) "," else ""}")
+            pw.appendln("  PRIMARY KEY (${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }})${if (useForeignKey && fks.isNotEmpty()) "," else ""}")
         if (useForeignKey) {
             val lastFksIndex = fks.size - 1
             fks.forEachIndexed { index, column ->
                 val columnName = column.columnName
-                pw.println(
+                pw.appendln(
                     "  CONSTRAINT ${
                         foreignKeyName(
                             tableName,
@@ -67,11 +68,11 @@ abstract class ToDDL : IToDDL {
         }$quote"
 
 
-    protected fun appendIndexes(table: Table, pw: PrintWriter, quote: String) {
+    protected fun appendIndexes(table: Table, pw: Writer, quote: String) {
         val tableName = table.tableName
         table.indexes.forEach { t ->
             if (t.unique) {
-                pw.println(
+                pw.appendln(
                     "CREATE UNIQUE INDEX ${t.name} ON $quote$tableName$quote (${
                         t.columnName.joinToString(
                             ","
@@ -79,7 +80,7 @@ abstract class ToDDL : IToDDL {
                     });"
                 )
             } else {
-                pw.println(
+                pw.appendln(
                     "CREATE INDEX ${t.name} ON $quote$tableName$quote (${
                         t.columnName.joinToString(
                             ","
@@ -189,10 +190,10 @@ abstract class ToDDL : IToDDL {
             )
         };"
 
-    override fun toDDL(tables: List<Table>, out: File) {
+    override fun toDDL(tables: List<Table>, out: FileUnit) {
         if (tables.isNotEmpty()) {
-            out.printWriter().use { pw ->
-                pw.println("$commentPrefix ${tables[0].subModule}")
+            out.use { pw ->
+                pw.appendln("$commentPrefix ${tables[0].subModule}")
                 tables.forEach { table ->
                     appendTable(table, pw)
                 }

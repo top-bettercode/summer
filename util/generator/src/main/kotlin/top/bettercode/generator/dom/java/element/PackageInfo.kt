@@ -27,13 +27,17 @@ class PackageInfo(
     private val javaDocLines: MutableList<String> = mutableListOf()
 
 
-    override val write: File.() -> Unit
+    override val write: File.(String) -> Boolean
         get() = {
-            printWriter().use {
-                val sb = StringBuilder()
-                addFormattedJavadoc(sb, 0)
-                it.print(sb.toString())
-                it.print("package ${type.packageName};")
+            val sb = StringBuilder()
+            addFormattedJavadoc(sb, 0)
+            sb.append("package ${type.packageName};")
+            val content = sb.toString()
+            if (content != it) {
+                printWriter().use { writer -> writer.print(content) }
+                true
+            } else {
+                false
             }
         }
 

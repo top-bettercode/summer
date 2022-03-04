@@ -5,12 +5,16 @@ import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.SourceFileReader
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import top.bettercode.generator.*
+import top.bettercode.generator.DataType
+import top.bettercode.generator.DatabaseDriver
+import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.generator.JDBCConnectionConfiguration
 import top.bettercode.generator.database.entity.Table
 import top.bettercode.generator.ddl.MysqlToDDL
 import top.bettercode.generator.ddl.OracleToDDL
 import top.bettercode.generator.ddl.SqlLiteToDDL
+import top.bettercode.generator.dom.unit.FileUnit
 import top.bettercode.generator.dsl.Generator
 import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.dsl.def.PlantUML
@@ -271,7 +275,7 @@ class GeneratorPlugin : Plugin<Project> {
             )
             val src = extension.file(extension.pumlSrc)
             val pdm = extension.file(extension.pdmSrc)
-            val out = extension.file(extension.sqlOutput)
+            val out = project.rootProject.file(extension.sqlOutput)
             if (src.exists())
                 task.inputs.dir(src)
             if (pdm.exists())
@@ -284,30 +288,29 @@ class GeneratorPlugin : Plugin<Project> {
                 MysqlToDDL.useForeignKey = extension.useForeignKey
                 OracleToDDL.useForeignKey = extension.useForeignKey
                 val toDDl = { m: String, file: File, toTables: (file: File) -> List<Table> ->
-                    val outputFile = File(
-                        out,
-                        "${if (extension.isDefaultModule(m)) "ddl" else "ddl-${m}"}/${file.nameWithoutExtension}.sql"
+                    val output = FileUnit(
+                        "${extension.sqlOutput}/${if (extension.isDefaultModule(m)) "ddl" else "ddl-${m}"}/${file.nameWithoutExtension}.sql"
                     )
-                    outputFile.parentFile.mkdirs()
                     val jdbc = extension.datasources[m]
                         ?: throw IllegalStateException("未配置${m}模块数据库信息")
                     when (jdbc.databaseDriver) {
                         DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
                             toTables(file),
-                            outputFile
+                            output
                         )
                         DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
                             toTables(file),
-                            outputFile
+                            output
                         )
                         DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
                             toTables(file),
-                            outputFile
+                            output
                         )
                         else -> {
                             throw IllegalArgumentException("不支持的数据库")
                         }
                     }
+                    output.writeTo(project.rootDir)
                 }
                 when (extension.dataType) {
                     DataType.PUML -> {
@@ -347,18 +350,14 @@ class GeneratorPlugin : Plugin<Project> {
                 val deleteTablesWhenUpdate = extension.dropTablesWhenUpdate
 
                 val databasePumlDir = extension.file(extension.pumlSrc + "/database")
-                val out = extension.file(extension.sqlOutput)
 
                 val toDDLUpdate =
                     { module: String, files: List<File>, toTables: (file: File) -> List<Table> ->
                         val databaseFile = File(databasePumlDir, "${module}.puml")
-                        val updateFile = File(
-                            out,
-                            "${if (extension.isDefaultModule(module)) "update" else "update-${module}"}/v${project.version}.sql"
-                        )
-                        updateFile.parentFile.mkdirs()
+                        val unit =
+                            FileUnit("${extension.sqlOutput}/${if (extension.isDefaultModule(module)) "update" else "update-${module}"}/v${project.version}.sql")
                         val allTables = mutableListOf<Table>()
-                        updateFile.printWriter().use { pw ->
+                        unit.use { pw ->
                             val tables = files.map { file ->
                                 toTables(file)
                             }.flatMap { it.asIterable() }
@@ -396,6 +395,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 }
                             }
                         }
+                        unit.writeTo(project.rootDir)
                     }
                 when (extension.dataType) {
                     DataType.PUML -> {

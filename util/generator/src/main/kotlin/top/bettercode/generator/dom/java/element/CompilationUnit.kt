@@ -6,7 +6,6 @@ import top.bettercode.generator.dom.java.StringOperator
 import top.bettercode.generator.dom.java.StringOperator1
 import top.bettercode.generator.dom.unit.GenUnit
 import java.io.File
-import java.io.PrintWriter
 
 /**
  * This interface describes methods common to all Java compilation units (Java
@@ -18,8 +17,16 @@ interface CompilationUnit : GenUnit {
     override val name: String
         get() = "${type.fullyQualifiedNameWithoutTypeParameters.replace(".", File.separator)}.java"
 
-    override val write: File.() -> Unit
-        get()= { printWriter().use { it.print(formattedContent) } }
+    override val write: File.(String?) -> Boolean
+        get() = {
+            val content = formattedContent
+            if (content != it) {
+                printWriter().use { writer -> writer.print(content) }
+                true
+            } else {
+                false
+            }
+        }
 
     val formattedContent: String
 
