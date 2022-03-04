@@ -142,22 +142,23 @@ class RequestLoggingFilter(
                     }
                 }
 
-                val msg = operation.toString(config)
-                if (!config.ignoredTimeout && config.timeoutAlarmSeconds > 0 && handler != null && operation.duration / 1000 > config.timeoutAlarmSeconds && !include(
+                var msg = operation.toString(config)
+                val marker = MarkerFactory.getDetachedMarker(REQUEST_LOG_MARKER)
+                if (config.logMarker != REQUEST_LOG_MARKER) {
+                    marker.add(MarkerFactory.getDetachedMarker(config.logMarker))
+                }
+                val requestTimeout =
+                    !config.ignoredTimeout && config.timeoutAlarmSeconds > 0 && handler != null && operation.duration / 1000 > config.timeoutAlarmSeconds && !include(
                         properties.ignoredTimeoutPath,
                         uri
                     )
-                ) {
+                if (requestTimeout) {
                     val initialComment =
                         "${operation.collectionName}/${operation.name}(${operation.request.uri}) 请求响应速度慢"
                     val timeoutMsg = "：${operation.duration / 1000}秒"
-                    val marker = MarkerFactory.getDetachedMarker(ALARM_LOG_MARKER)
+                    marker.add(MarkerFactory.getDetachedMarker(ALARM_LOG_MARKER))
                     marker.add(AlarmMarker(initialComment, timeoutMsg))
-                    log.warn(marker, "$initialComment${timeoutMsg}\n$msg")
-                }
-                val marker = MarkerFactory.getDetachedMarker(REQUEST_LOG_MARKER)
-                if (config.logMarker != REQUEST_LOG_MARKER) {
-                    marker.add(MarkerFactory.getMarker(config.logMarker))
+                    msg = "$initialComment${timeoutMsg}\n$msg"
                 }
                 if (Util.existProperty(environment, "summer.logging.logstash.destinations[0]")) {
                     marker.add(
@@ -168,11 +169,14 @@ class RequestLoggingFilter(
                     )
                     marker.add(Markers.append(IS_OPERATION_MARKER, true))
                 }
-                if (error == null || error is ClientAbortException) {
+                if ((error == null || error is ClientAbortException) && !requestTimeout) {
                     log.info(marker, msg)
                 } else {
-                    if (isDebugEnabled && !properties.ignoredErrorStatusCode.contains(httpStatusCode)
-                        || httpStatusCode >= 500
+                    if (error != null &&
+                        (isDebugEnabled && !properties.ignoredErrorStatusCode.contains(
+                            httpStatusCode
+                        )
+                                || httpStatusCode >= 500)
                     ) {
                         val initialComment = "$httpStatusCode ${error.javaClass.name}:${
                             error.message ?: getMessage(requestAttributes) ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
