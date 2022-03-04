@@ -3,7 +3,6 @@ package top.bettercode.generator.ddl
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.database.entity.Table
 import top.bettercode.generator.dom.unit.FileUnit
-import java.io.File
 import java.io.Writer
 
 /**

@@ -1,7 +1,5 @@
 package top.bettercode.autodoc.core
 
-import java.util.*
-
 internal object PrimitiveTypeMap {
     private val map = HashMap<String, String>(9)
 

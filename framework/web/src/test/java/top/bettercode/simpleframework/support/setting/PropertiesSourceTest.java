@@ -1,8 +1,8 @@
 package top.bettercode.simpleframework.support.setting;
 
-import top.bettercode.lang.property.PropertiesSource;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import top.bettercode.lang.property.PropertiesSource;
 
 /**
  * @author Peter Wu

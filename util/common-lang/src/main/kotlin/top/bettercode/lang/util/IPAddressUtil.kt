@@ -4,7 +4,9 @@ import org.springframework.util.StringUtils
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.LineNumberReader
-import java.net.*
+import java.net.Inet4Address
+import java.net.NetworkInterface
+import java.net.SocketException
 import javax.servlet.http.HttpServletRequest
 
 /**

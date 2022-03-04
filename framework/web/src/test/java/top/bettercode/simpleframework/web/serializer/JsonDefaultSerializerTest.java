@@ -2,13 +2,13 @@ package top.bettercode.simpleframework.web.serializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import top.bettercode.simpleframework.config.JacksonExtProperties;
-import top.bettercode.simpleframework.web.DataDicBean;
-import top.bettercode.simpleframework.web.serializer.annotation.JsonDefault;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import top.bettercode.simpleframework.config.JacksonExtProperties;
+import top.bettercode.simpleframework.web.DataDicBean;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonDefault;
 
 /**
  * @author Peter Wu

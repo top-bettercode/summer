@@ -2,9 +2,6 @@ package org.springframework.data.jpa.repository.support;
 
 import static org.springframework.data.querydsl.QuerydslUtils.QUERY_DSL_PRESENT;
 
-import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
-import top.bettercode.simpleframework.data.jpa.querydsl.QuerydslJpaExtPredicateExecutor;
-import top.bettercode.simpleframework.data.jpa.support.SimpleJpaExtRepository;
 import java.io.Serializable;
 import java.util.Optional;
 import javax.persistence.EntityManager;
@@ -37,6 +34,9 @@ import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 import org.springframework.data.repository.query.ReturnedType;
 import org.springframework.util.Assert;
+import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
+import top.bettercode.simpleframework.data.jpa.querydsl.QuerydslJpaExtPredicateExecutor;
+import top.bettercode.simpleframework.data.jpa.support.SimpleJpaExtRepository;
 
 /**
  * implementation of a custom {@link JpaRepositoryFactory} to use a custom repository base class.

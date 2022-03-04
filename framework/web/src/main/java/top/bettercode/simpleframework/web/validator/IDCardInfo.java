@@ -1,8 +1,8 @@
 package top.bettercode.simpleframework.web.validator;
 
-import top.bettercode.lang.property.PropertiesSource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import top.bettercode.lang.property.PropertiesSource;
 import top.bettercode.lang.property.Settings;
 
 public class IDCardInfo {

@@ -1,10 +1,10 @@
 package top.bettercode.generator.database
 
-import top.bettercode.generator.GeneratorExtension
 import org.h2.jdbcx.JdbcDataSource
 import org.h2.tools.RunScript
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.generator.JDBCConnectionConfiguration
 import java.io.File

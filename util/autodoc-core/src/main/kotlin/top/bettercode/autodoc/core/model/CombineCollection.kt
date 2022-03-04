@@ -1,7 +1,7 @@
 package top.bettercode.autodoc.core.model
 
-import top.bettercode.autodoc.core.operation.DocOperation
 import com.fasterxml.jackson.annotation.JsonIgnore
+import top.bettercode.autodoc.core.operation.DocOperation
 
 data class CombineCollection(private val rootCollection: DocCollection, var projectCollection: DocCollection?) : ICollection {
 

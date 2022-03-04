@@ -1,7 +1,6 @@
 package plugin
 
 import top.bettercode.generator.dom.unit.FileUnit
-import top.bettercode.generator.dom.unit.SourceSet
 import top.bettercode.generator.dsl.Generator
 
 /**

@@ -151,7 +151,7 @@ class GeneratorPlugin : Plugin<Project> {
 
         val extension = project.extensions.getByType(GeneratorExtension::class.java)
         if (extension.unitedDatasource) {
-            if (!project.rootProject.tasks.names.contains("printTableNames"))
+            if (!project.rootProject.tasks.names.contains("print[TableNames]"))
                 configPuml(project.rootProject, extension)
         } else {
             configPuml(project, extension)
@@ -161,8 +161,8 @@ class GeneratorPlugin : Plugin<Project> {
     private fun configPuml(project: Project, extension: GeneratorExtension) {
 
         extension.run { module, tableHolder ->
-            val prefix = if (defaultModuleName == module) "" else module.capitalize()
-            project.tasks.create("print[TableNames][${prefix}]") { task ->
+            val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
+            project.tasks.create("print[TableNames]${prefix}") { task ->
                 task.group = taskGroup
                 task.doLast {
                     val tableNames = tableHolder.tableNames()
@@ -172,7 +172,7 @@ class GeneratorPlugin : Plugin<Project> {
         }
         extension.run(if (extension.pdmSources.isNotEmpty()) DataType.PDM else DataType.DATABASE) { module, tableHolder ->
             val prefix = if (defaultModuleName == module) "" else module.capitalize()
-            project.tasks.create("toPuml[${prefix}]") { task ->
+            project.tasks.create("toPuml${prefix}") { task ->
                 task.group = taskGroup
                 task.doLast { _ ->
                     val tables = tableHolder.tables(*extension.tableNames)
@@ -239,7 +239,7 @@ class GeneratorPlugin : Plugin<Project> {
         if (extension.dataType != DataType.DATABASE)
             extension.run { module, tableHolder ->
                 val prefix = if (defaultModuleName == module) "" else module.capitalize()
-                project.tasks.create("ddl[${prefix}]") { task ->
+                project.tasks.create("ddl${prefix}") { task ->
                     task.group = taskGroup
                     task.inputs.files(
                         File(project.gradle.gradleUserHomeDir, "gradle.properties"),
@@ -283,7 +283,7 @@ class GeneratorPlugin : Plugin<Project> {
                         output.writeTo(project.rootDir)
                     }
                 }
-                project.tasks.create("ddlUpdate[${prefix}]") { task ->
+                project.tasks.create("ddlUpdate${prefix}") { task ->
                     task.group = taskGroup
                     task.doLast {
                         MysqlToDDL.useQuote = extension.sqlQuote
@@ -336,9 +336,9 @@ class GeneratorPlugin : Plugin<Project> {
                         unit.writeTo(project.rootDir)
                     }
                 }
-                project.tasks.create("ddlBuild[$prefix]") {
+                project.tasks.create("ddlBuild${prefix}") {
                     it.group = taskGroup
-                    it.dependsOn("ddlUpdate[$prefix]", "ddl${prefix}")
+                    it.dependsOn("ddlUpdate${prefix}", "ddl${prefix}")
                 }
             }
     }

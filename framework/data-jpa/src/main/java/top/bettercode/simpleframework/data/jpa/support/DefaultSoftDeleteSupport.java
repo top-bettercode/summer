@@ -1,7 +1,5 @@
 package top.bettercode.simpleframework.data.jpa.support;
 
-import top.bettercode.simpleframework.data.jpa.SoftDelete;
-import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +9,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
+import top.bettercode.simpleframework.data.jpa.SoftDelete;
+import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 
 /**
  * @author Peter Wu

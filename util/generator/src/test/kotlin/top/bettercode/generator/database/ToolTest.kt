@@ -1,8 +1,8 @@
 package top.bettercode.generator.database
 
+import org.junit.jupiter.api.Test
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.dom.java.Annotations
-import org.junit.jupiter.api.Test
 
 /**
  *

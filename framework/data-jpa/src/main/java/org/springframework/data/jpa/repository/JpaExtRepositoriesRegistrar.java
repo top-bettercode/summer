@@ -1,9 +1,9 @@
 package org.springframework.data.jpa.repository;
 
-import top.bettercode.simpleframework.data.jpa.config.JpaExtRepositoryConfigExtension;
 import java.lang.annotation.Annotation;
 import org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
+import top.bettercode.simpleframework.data.jpa.config.JpaExtRepositoryConfigExtension;
 
 class JpaExtRepositoriesRegistrar extends RepositoryBeanDefinitionRegistrarSupport {
 

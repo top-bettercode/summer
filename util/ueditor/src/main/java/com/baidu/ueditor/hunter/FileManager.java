@@ -1,7 +1,5 @@
 package com.baidu.ueditor.hunter;
 
-import top.bettercode.lang.util.ArrayUtil;
-import top.bettercode.lang.util.FileUtil;
 import com.baidu.ueditor.PathFormat;
 import com.baidu.ueditor.define.AppInfo;
 import com.baidu.ueditor.define.BaseState;
@@ -11,6 +9,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import top.bettercode.lang.util.ArrayUtil;
+import top.bettercode.lang.util.FileUtil;
 
 public class FileManager {
 

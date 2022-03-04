@@ -1,9 +1,9 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.simpleframework.web.serializer.annotation.JsonRawValuePlus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.Test;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonRawValuePlus;
 
 /**
  * @author Peter Wu

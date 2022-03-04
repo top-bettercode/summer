@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.web.filter;
 
-import top.bettercode.simpleframework.config.SummerWebProperties;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -8,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.OncePerRequestFilter;
+import top.bettercode.simpleframework.config.SummerWebProperties;
 
 /**
  * 支持PUT DELETE form提交

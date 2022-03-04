@@ -15,8 +15,6 @@
  */
 package top.bettercode.generator.dom.java
 
-import java.util.*
-
 /**
  * This class contains a list of Java reserved words.
  *

@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.simpleframework.web.serializer.annotation.JsonHide;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -12,6 +11,7 @@ import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
 import java.io.IOException;
 import java.util.Arrays;
 import org.springframework.util.StringUtils;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonHide;
 
 /**
  * JSON 序列化电话号码自动隐藏

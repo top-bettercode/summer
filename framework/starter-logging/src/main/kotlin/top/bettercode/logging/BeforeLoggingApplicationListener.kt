@@ -1,6 +1,5 @@
 package top.bettercode.logging
 
-import top.bettercode.logging.logback.Logback2LoggingSystem
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.context.event.ApplicationStartingEvent
 import org.springframework.boot.context.logging.LoggingApplicationListener
@@ -9,6 +8,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.event.GenericApplicationListener
 import org.springframework.core.ResolvableType
+import top.bettercode.logging.logback.Logback2LoggingSystem
 
 /**
  * 用于配置日志系统的 ApplicationListener

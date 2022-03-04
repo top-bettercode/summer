@@ -1,13 +1,13 @@
 package top.bettercode.simpleframework.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import top.bettercode.simpleframework.web.resolver.Cent;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
-import java.math.BigDecimal;
-import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DataDicBean {

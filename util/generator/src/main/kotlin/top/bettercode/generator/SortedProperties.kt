@@ -1,6 +1,9 @@
 package top.bettercode.generator
 
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.OutputStream
+import java.io.StringWriter
+import java.io.Writer
 import java.nio.charset.StandardCharsets
 import java.util.*
 

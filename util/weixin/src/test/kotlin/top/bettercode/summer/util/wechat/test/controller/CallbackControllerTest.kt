@@ -1,11 +1,10 @@
 package top.bettercode.summer.util.wechat.test.controller
 
 import org.junit.jupiter.api.Test
-import top.bettercode.autodoc.gen.Autodoc.description
 import org.springframework.boot.test.context.SpringBootTest
-import top.bettercode.summer.util.test.BaseWebNoAuthTest
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import top.bettercode.summer.util.test.BaseWebNoAuthTest
 import top.bettercode.summer.util.wechat.test.TestApplication
 
 /**

@@ -1,9 +1,9 @@
 package org.springframework.data.jpa.repository.query;
 
-import top.bettercode.simpleframework.data.jpa.support.SoftDeleteSupport;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import top.bettercode.simpleframework.data.jpa.support.SoftDeleteSupport;
 
 /**
  * {@link JpaQueryExecution} removing entities matching the query.

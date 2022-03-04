@@ -1,7 +1,5 @@
 package top.bettercode.generator.dom.java
 
-import java.util.*
-
 internal object PrimitiveTypeMap {
     private val map = HashMap<String, Class<*>>(9)
 

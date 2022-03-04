@@ -1,12 +1,12 @@
 package top.bettercode.simpleframework.web.serializer;
 
-import top.bettercode.simpleframework.support.KilogramUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
 import com.fasterxml.jackson.databind.ser.std.NumberSerializer;
 import java.io.IOException;
 import java.math.BigDecimal;
+import top.bettercode.simpleframework.support.KilogramUtil;
 
 @JacksonStdImpl
 public class KilogramSerializer extends NumberSerializer {

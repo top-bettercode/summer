@@ -1,10 +1,5 @@
 package top.bettercode.simpleframework.data.test.test;
 
-import top.bettercode.simpleframework.data.test.domain.HardUser;
-import top.bettercode.simpleframework.data.test.domain.QUser;
-import top.bettercode.simpleframework.data.test.domain.User;
-import top.bettercode.simpleframework.data.test.repository.HardUserRepository;
-import top.bettercode.simpleframework.data.test.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import top.bettercode.simpleframework.data.test.domain.HardUser;
+import top.bettercode.simpleframework.data.test.domain.QUser;
+import top.bettercode.simpleframework.data.test.domain.User;
+import top.bettercode.simpleframework.data.test.repository.HardUserRepository;
+import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest

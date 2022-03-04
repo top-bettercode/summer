@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.web;
 
-import top.bettercode.simpleframework.exception.BusinessException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -8,6 +7,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
+import top.bettercode.simpleframework.exception.BusinessException;
 
 /**
  * @author Peter Wu

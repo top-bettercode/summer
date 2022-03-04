@@ -1,17 +1,17 @@
 package top.bettercode.autodoc.core.model
 
-import top.bettercode.autodoc.core.Util
-import top.bettercode.autodoc.core.operation.DocOperation
-import top.bettercode.autodoc.core.operation.DocOperationRequest
-import top.bettercode.autodoc.core.operation.DocOperationResponse
-import top.bettercode.logging.operation.OperationRequestPart
-import top.bettercode.logging.operation.Parameters
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import top.bettercode.autodoc.core.Util
+import top.bettercode.autodoc.core.operation.DocOperation
+import top.bettercode.autodoc.core.operation.DocOperationRequest
+import top.bettercode.autodoc.core.operation.DocOperationResponse
+import top.bettercode.logging.operation.OperationRequestPart
+import top.bettercode.logging.operation.Parameters
 import java.io.File
 import java.net.URI
 

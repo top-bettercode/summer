@@ -1,7 +1,6 @@
 package top.bettercode.autodoc.gen
 
 import org.atteo.evo.inflector.English
-import top.bettercode.autodoc.core.*
 import top.bettercode.autodoc.core.Util.checkBlank
 import top.bettercode.autodoc.core.Util.convert
 import top.bettercode.autodoc.core.Util.parseList
