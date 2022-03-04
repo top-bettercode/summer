@@ -48,7 +48,7 @@ object CoreProjectTasks {
                     serializationViews.writeTo(project.projectDir)
                 }
             }
-            create("printMapper") {
+            create("print[Mapper]") {
                 it.group = GeneratorPlugin.taskGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -56,7 +56,7 @@ object CoreProjectTasks {
                     Generators.call(gen)
                 }
             }
-            create("printMybatisWhere") {
+            create("print[MybatisWhere]") {
                 it.group = GeneratorPlugin.taskGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -65,7 +65,7 @@ object CoreProjectTasks {
                 }
             }
 
-            create("printSetter") {
+            create("print[Setter]") {
                 it.group = GeneratorPlugin.taskGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -74,7 +74,7 @@ object CoreProjectTasks {
                 }
             }
 
-            create("printExcelField") {
+            create("print[ExcelField]") {
                 it.group = GeneratorPlugin.taskGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
