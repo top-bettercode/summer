@@ -3,7 +3,7 @@ package top.bettercode.generator.ddl
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.database.entity.Table
-import java.io.PrintWriter
+import java.io.Writer
 
 object OracleToDDL : ToDDL() {
     override val quoteMark: String = "\""
@@ -13,7 +13,7 @@ object OracleToDDL : ToDDL() {
         module: String,
         oldTables: List<Table>,
         tables: List<Table>,
-        out: PrintWriter,
+        out: Writer,
         extension: GeneratorExtension
     ) {
         if (tables != oldTables) {
@@ -21,12 +21,12 @@ object OracleToDDL : ToDDL() {
             val oldTableNames = oldTables.map { it.tableName }
             if (extension.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).forEach { tableName ->
-                    out.println("$commentPrefix DROP $tableName")
+                    out.appendln("$commentPrefix DROP $tableName")
                     val primaryKey = oldTables.find { it.tableName == tableName }!!.primaryKey
                     if (primaryKey?.sequence?.isNotBlank() == true)
-                        out.println("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
-                    out.println("DROP TABLE $quote$tableName$quote;")
-                    out.println()
+                        out.appendln("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
+                    out.appendln("DROP TABLE $quote$tableName$quote;")
+                    out.appendln()
                 }
             val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
@@ -102,9 +102,9 @@ object OracleToDDL : ToDDL() {
                         if (extension.datasources[module]?.queryIndex == true)
                             updateIndexes(oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
-                            out.println("$commentPrefix $tableName")
-                            lines.forEach { out.println(it) }
-                            out.println()
+                            out.appendln("$commentPrefix $tableName")
+                            lines.forEach { out.appendln(it) }
+                            out.appendln()
                         }
                     }
                 }
@@ -165,23 +165,23 @@ object OracleToDDL : ToDDL() {
         }
     }
 
-    override fun appendTable(table: Table, pw: PrintWriter) {
+    override fun appendTable(table: Table, pw: Writer) {
         val tableName = table.tableName
-        pw.println("$commentPrefix $tableName")
+        pw.appendln("$commentPrefix $tableName")
         val primaryKey = table.primaryKey
         if (primaryKey?.sequence?.isNotBlank() == true) {
-            pw.println("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
-            pw.println(
+            pw.appendln("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
+            pw.appendln(
                 "CREATE SEQUENCE $quote${primaryKey.sequence}$quote INCREMENT BY 1 START WITH ${primaryKey.sequenceStartWith} NOMAXVALUE NOCYCLE CACHE 10;"
             )
         }
-        pw.println()
-        pw.println("DROP TABLE $quote$tableName$quote;")
-        pw.println("CREATE TABLE $quote$tableName$quote (")
+        pw.appendln()
+        pw.appendln("DROP TABLE $quote$tableName$quote;")
+        pw.appendln("CREATE TABLE $quote$tableName$quote (")
         val hasPrimary = table.primaryKeyNames.isNotEmpty()
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
-            pw.println(
+            pw.appendln(
                 "  ${
                     columnDef(
                         column,
@@ -191,14 +191,14 @@ object OracleToDDL : ToDDL() {
             )
         }
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
-        pw.println(");")
+        pw.appendln(");")
         appendIndexes(table, pw, quote)
 
-        pw.println("COMMENT ON TABLE $quote$tableName$quote IS '${table.remarks}';")
+        pw.appendln("COMMENT ON TABLE $quote$tableName$quote IS '${table.remarks}';")
         table.columns.forEach {
-            pw.println("COMMENT ON COLUMN $quote$tableName$quote.$quote${it.columnName}$quote IS '${it.remarks}';")
+            pw.appendln("COMMENT ON COLUMN $quote$tableName$quote.$quote${it.columnName}$quote IS '${it.remarks}';")
         }
-        pw.println()
+        pw.appendln()
     }
 
 

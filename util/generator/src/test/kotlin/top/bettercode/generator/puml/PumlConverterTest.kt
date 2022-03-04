@@ -5,6 +5,7 @@ import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.generator.ddl.MysqlToDDL
 import top.bettercode.generator.ddl.OracleToDDL
+import top.bettercode.generator.dom.unit.FileUnit
 import java.io.File
 
 /**
@@ -67,20 +68,22 @@ class PumlConverterTest {
 
     @Test
     fun toOracleDLL() {
-        val out = File("build/gen/puml/oracle.sql")
-        out.parentFile.mkdirs()
+        val out = FileUnit("build/gen/puml/oracle.sql")
         OracleToDDL.toDDL(
             PumlConverter.toTables(oraclePuml, defaultModuleName),
             out
         )
+        out.writeTo()
     }
 
     @Test
     fun toMySqlDLL() {
+        val out = FileUnit("build/gen/puml/mysql.sql")
         MysqlToDDL.toDDL(
             PumlConverter.toTables(oraclePuml, defaultModuleName),
-            File("build/gen/puml/mysql.sql")
+            out
         )
+        out.writeTo()
     }
 
     @Test

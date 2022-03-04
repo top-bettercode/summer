@@ -2,8 +2,9 @@ package top.bettercode.generator.ddl
 
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Table
+import top.bettercode.generator.dom.unit.FileUnit
 import java.io.File
-import java.io.PrintWriter
+import java.io.Writer
 
 /**
  *
@@ -28,13 +29,13 @@ interface IToDDL {
      */
     val commentPrefix: String
 
-    fun toDDL(tables: List<Table>, out: File)
+    fun toDDL(tables: List<Table>, out: FileUnit)
 
     fun toDDLUpdate(
         module: String, oldTables: List<Table>, tables: List<Table>,
-        out: PrintWriter,
+        out: Writer,
         extension: GeneratorExtension
     )
 
-    fun appendTable(table: Table, pw: PrintWriter)
+    fun appendTable(table: Table, pw: Writer)
 }

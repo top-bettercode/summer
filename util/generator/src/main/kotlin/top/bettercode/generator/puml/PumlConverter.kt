@@ -22,7 +22,8 @@ object PumlConverter {
         module: String,
         call: (Table) -> Unit = {}
     ): List<Table> {
-        return toTableOrAnys(puml, module, call).filterIsInstance<Table>().sortedBy { it.tableName }.toList()
+        return toTableOrAnys(puml, module, call).filterIsInstance<Table>().sortedBy { it.tableName }
+            .toList()
     }
 
     private fun toTableOrAnys(
@@ -257,7 +258,7 @@ object PumlConverter {
                 if ("database" == out.parent) remarksProperties else null
             )
             plantUML.setUp(extension)
-            tables.forEach {
+            tables.distinctBy { if (it is Table) it.tableName else it }.forEach {
                 if (it is Table) {
                     plantUML.run(it)
                 } else {

@@ -13,8 +13,8 @@ interface GenUnit {
         get() = SourceSet.MAIN
     val directorySet: DirectorySet
         get() = DirectorySet.JAVA
-    val write: File.() -> Unit
-        get() = {}
+    val write: File.(String) -> Boolean
+        get() = { false }
 
     val file: File
         get() {
@@ -35,13 +35,14 @@ interface GenUnit {
             (overwrite && !destFile.readLines().any { it.contains("[[Don't cover]]") })
         ) {
             destFile.parentFile.mkdirs()
-            val oldContent = if (exists) destFile.readBytes() else null
-            destFile.write()
-            if (exists) {
-                if (!destFile.readBytes().contentEquals(oldContent!!))
+            val oldContent = if (exists) destFile.readText() else ""
+            val writed = destFile.write(oldContent)
+            if (writed) {
+                if (exists) {
                     println("覆盖：${file.path}")
-            } else {
-                println("生成：${file.path}")
+                } else {
+                    println("生成：${file.path}")
+                }
             }
         }
     }

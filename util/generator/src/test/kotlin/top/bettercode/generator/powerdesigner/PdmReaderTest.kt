@@ -3,6 +3,7 @@ package top.bettercode.generator.powerdesigner
 import org.junit.jupiter.api.Test
 import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.generator.ddl.MysqlToDDL
+import top.bettercode.generator.dom.unit.FileUnit
 import java.io.File
 
 /**
@@ -26,11 +27,13 @@ class PdmReaderTest {
 
     @Test
     fun toDDL() {
+        val out = FileUnit("build/gen/puml/mysql.sql")
         MysqlToDDL.toDDL(
             PdmReader.read(
                 pdmFile,
                 defaultModuleName
-            ), File("build/gen/puml/mysql.sql")
+            ), out
         )
+        out.writeTo()
     }
 }

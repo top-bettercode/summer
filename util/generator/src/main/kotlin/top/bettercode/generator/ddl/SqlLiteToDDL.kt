@@ -3,7 +3,7 @@ package top.bettercode.generator.ddl
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.database.entity.Table
-import java.io.PrintWriter
+import java.io.Writer
 
 object SqlLiteToDDL : ToDDL() {
     override val quoteMark: String = "`"
@@ -13,7 +13,7 @@ object SqlLiteToDDL : ToDDL() {
         module: String,
         oldTables: List<Table>,
         tables: List<Table>,
-        out: PrintWriter,
+        out: Writer,
         extension: GeneratorExtension
     ) {
 
@@ -37,14 +37,14 @@ object SqlLiteToDDL : ToDDL() {
         return "$quote${it.columnName}$quote ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.isPrimary) " PRIMARY KEY" else ""}${if (it.autoIncrement) " AUTOINCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}"
     }
 
-    override fun appendTable(table: Table, pw: PrintWriter) {
+    override fun appendTable(table: Table, pw: Writer) {
         val tableName = table.tableName
-        pw.println("$commentPrefix $tableName")
-        pw.println("DROP TABLE IF EXISTS $quote$tableName$quote;")
-        pw.println("CREATE TABLE $quote$tableName$quote ( -- '${table.remarks}'")
+        pw.appendln("$commentPrefix $tableName")
+        pw.appendln("DROP TABLE IF EXISTS $quote$tableName$quote;")
+        pw.appendln("CREATE TABLE $quote$tableName$quote ( -- '${table.remarks}'")
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
-            pw.println(
+            pw.appendln(
                 "  ${
                     columnDef(
                         column,
@@ -54,10 +54,10 @@ object SqlLiteToDDL : ToDDL() {
             )
         }
 
-        pw.println(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""};")
+        pw.appendln(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""};")
 
         appendIndexes(table, pw, quote)
 
-        pw.println()
+        pw.appendln()
     }
 }

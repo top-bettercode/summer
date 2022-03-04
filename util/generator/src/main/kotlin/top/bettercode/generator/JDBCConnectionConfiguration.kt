@@ -96,12 +96,13 @@ class JDBCConnectionConfiguration(
     }
 
     fun tables(tableNames: List<String>): List<Table> {
-        val size = tableNames.size
-        println("数据表（$size）:${tableNames}")
+        val names = tableNames.distinct()
+        val size = names.size
+        println("数据表（$size）:${names}")
         val resultMap = ConcurrentHashMap<String, Table>()
         val map = mutableMapOf<Int, MutableList<String>>()
         var i = 1
-        tableNames.forEach {
+        names.forEach {
             if (i > 10) {
                 i = 1
             }
@@ -130,13 +131,13 @@ class JDBCConnectionConfiguration(
         if (resultMap.size != size) {
             System.err.println(
                 "未找到${
-                    (tableNames.filter {
+                    (names.filter {
                         !resultMap.keys().toList().contains(it)
                     })
                 }表"
             )
         }
-        return tableNames.mapNotNull { resultMap[it] }.toList()
+        return names.mapNotNull { resultMap[it] }.toList()
     }
 
 }
