@@ -171,7 +171,7 @@ class GeneratorPlugin : Plugin<Project> {
             }
         }
         extension.run(if (extension.pdmSources.isNotEmpty()) DataType.PDM else DataType.DATABASE) { module, tableHolder ->
-            val prefix = if (defaultModuleName == module) "" else module.capitalize()
+            val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
             project.tasks.create("toPuml${prefix}") { task ->
                 task.group = taskGroup
                 task.doLast { _ ->
@@ -238,8 +238,8 @@ class GeneratorPlugin : Plugin<Project> {
         }
         if (extension.dataType != DataType.DATABASE)
             extension.run { module, tableHolder ->
-                val prefix = if (defaultModuleName == module) "" else module.capitalize()
-                project.tasks.create("ddl${prefix}") { task ->
+                val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
+                project.tasks.create("toDDL${prefix}") { task ->
                     task.group = taskGroup
                     task.inputs.files(
                         File(project.gradle.gradleUserHomeDir, "gradle.properties"),
@@ -283,7 +283,7 @@ class GeneratorPlugin : Plugin<Project> {
                         output.writeTo(project.rootDir)
                     }
                 }
-                project.tasks.create("ddlUpdate${prefix}") { task ->
+                project.tasks.create("toDDLUpdate${prefix}") { task ->
                     task.group = taskGroup
                     task.doLast {
                         MysqlToDDL.useQuote = extension.sqlQuote
@@ -336,9 +336,9 @@ class GeneratorPlugin : Plugin<Project> {
                         unit.writeTo(project.rootDir)
                     }
                 }
-                project.tasks.create("ddlBuild${prefix}") {
+                project.tasks.create("toDDLBuild${prefix}") {
                     it.group = taskGroup
-                    it.dependsOn("ddlUpdate${prefix}", "ddl${prefix}")
+                    it.dependsOn("toDDLUpdate${prefix}", "toDDL${prefix}")
                 }
             }
     }
