@@ -41,7 +41,7 @@ object CoreProjectTasks {
                             }
                             this.visibility = JavaVisibility.PUBLIC
                             tableNames.forEach {
-                                val pathName = English.plural(gen.className(it))
+                                val pathName = gen.className(it)
                                 innerInterface(InnerInterface(JavaType("Get${pathName}List")))
                                 innerInterface(InnerInterface(JavaType("Get${pathName}Info")))
                             }
