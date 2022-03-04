@@ -45,7 +45,7 @@ summer:
         - password
       ignored-error-status-code: 401, 403, 404, 405, 406,422
       force-record: true
-      timeout-alarm-seconds: 0
+      timeout-alarm-seconds: 2
     spilt-marker:
       request: debug
     files:
