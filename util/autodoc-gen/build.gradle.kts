@@ -10,6 +10,7 @@ dependencies {
     //util
     api(project(":util:api-sign"))
     api(project(":util:generator"))
+    api("org.atteo:evo-inflector")
 
     //test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

@@ -1,6 +1,5 @@
 package top.bettercode.generator.database.entity
 
-import org.atteo.evo.inflector.English
 import top.bettercode.generator.GeneratorExtension
 
 /**
@@ -81,7 +80,7 @@ data class Table(
     fun entityName(extension: GeneratorExtension): String =
         className(extension).decapitalize()
 
-    fun pathName(extension: GeneratorExtension): String = English.plural(entityName(extension))
+    fun pathName(extension: GeneratorExtension): String = entityName(extension)
 
     fun supportSoftDelete(extension: GeneratorExtension): Boolean =
         columns.find { it.isSoftDelete(extension) } != null
