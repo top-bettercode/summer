@@ -238,108 +238,112 @@ class GeneratorPlugin : Plugin<Project> {
                 }
             }
         }
-        if (extension.dataType != DataType.DATABASE)
+        if (extension.dataType != DataType.DATABASE) {
+            val datasourceModules = extension.datasources.keys
             extension.run { module, tableHolder ->
-                val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
-                project.tasks.create("toDDL${prefix}") { task ->
-                    task.group = pumlGroup
-                    task.inputs.files(
-                        File(project.gradle.gradleUserHomeDir, "gradle.properties"),
-                        project.rootProject.file("gradle.properties")
-                    )
-                    val src = extension.file(extension.pumlSrc)
-                    val pdm = extension.file(extension.pdmSrc)
-                    val out = project.rootProject.file("${extension.sqlOutput}/ddl")
-                    if (src.exists())
-                        task.inputs.dir(src)
-                    if (pdm.exists())
-                        task.inputs.file(pdm)
-                    if (out.exists())
-                        task.outputs.dir(out)
-                    task.doLast {
-                        MysqlToDDL.useQuote = extension.sqlQuote
-                        OracleToDDL.useQuote = extension.sqlQuote
-                        MysqlToDDL.useForeignKey = extension.useForeignKey
-                        OracleToDDL.useForeignKey = extension.useForeignKey
-                        val output = FileUnit("${extension.sqlOutput}/ddl/$module.sql")
-                        val jdbc = extension.datasources[module]
-                            ?: throw IllegalStateException("未配置${module}模块数据库信息")
-                        val tables = tableHolder.tables(*extension.tableNames)
-                        when (jdbc.databaseDriver) {
-                            DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
-                                tables,
-                                output
-                            )
-                            DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
-                                tables,
-                                output
-                            )
-                            DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
-                                tables,
-                                output
-                            )
-                            else -> {
-                                throw IllegalArgumentException("不支持的数据库")
-                            }
-                        }
-                        output.writeTo(project.rootDir)
-                    }
-                }
-                project.tasks.create("toDDLUpdate${prefix}") { task ->
-                    task.group = pumlGroup
-                    task.doLast {
-                        MysqlToDDL.useQuote = extension.sqlQuote
-                        OracleToDDL.useQuote = extension.sqlQuote
-                        MysqlToDDL.useForeignKey = extension.useForeignKey
-                        OracleToDDL.useForeignKey = extension.useForeignKey
-                        val deleteTablesWhenUpdate = extension.dropTablesWhenUpdate
-
-                        val databasePumlDir = extension.file(extension.pumlSrc + "/database")
-                        val databaseFile = File(databasePumlDir, "${module}.puml")
-                        val unit =
-                            FileUnit(
-                                "${extension.sqlOutput}/update/v${project.version}${
-                                    if (extension.isDefaultModule(module)) "" else "-${module}"
-                                }.sql"
-                            )
-                        val allTables = mutableListOf<Table>()
-                        unit.use { pw ->
-                            val tables = tableHolder.tables(*extension.tableNames)
-                            allTables.addAll(tables)
+                if (datasourceModules.contains(module)) {
+                    val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
+                    project.tasks.create("toDDL${prefix}") { task ->
+                        task.group = pumlGroup
+                        task.inputs.files(
+                            File(project.gradle.gradleUserHomeDir, "gradle.properties"),
+                            project.rootProject.file("gradle.properties")
+                        )
+                        val src = extension.file(extension.pumlSrc)
+                        val pdm = extension.file(extension.pdmSrc)
+                        val out = project.rootProject.file("${extension.sqlOutput}/ddl")
+                        if (src.exists())
+                            task.inputs.dir(src)
+                        if (pdm.exists())
+                            task.inputs.file(pdm)
+                        if (out.exists())
+                            task.outputs.dir(out)
+                        task.doLast {
+                            MysqlToDDL.useQuote = extension.sqlQuote
+                            OracleToDDL.useQuote = extension.sqlQuote
+                            MysqlToDDL.useForeignKey = extension.useForeignKey
+                            OracleToDDL.useForeignKey = extension.useForeignKey
+                            val output = FileUnit("${extension.sqlOutput}/ddl/$module.sql")
                             val jdbc = extension.datasources[module]
                                 ?: throw IllegalStateException("未配置${module}模块数据库信息")
-                            val tableNames = tables.map { it.tableName }
-                            val oldTables = if (databaseFile.exists()) {
-                                PumlConverter.toTables(databaseFile, module)
-                            } else {
-                                jdbc.tables(
-                                    *(if (deleteTablesWhenUpdate) jdbc.tableNames()
-                                    else tableNames).toTypedArray()
-                                )
-                            }
+                            val tables = tableHolder.tables(*extension.tableNames)
                             when (jdbc.databaseDriver) {
-                                DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
-                                    module, oldTables, tables, pw, extension
+                                DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
+                                    tables,
+                                    output
                                 )
-                                DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
-                                    module, oldTables, tables, pw, extension
+                                DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
+                                    tables,
+                                    output
                                 )
-                                DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
-                                    module, oldTables, tables, pw, extension
+                                DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
+                                    tables,
+                                    output
                                 )
                                 else -> {
                                     throw IllegalArgumentException("不支持的数据库")
                                 }
                             }
+                            output.writeTo(project.rootDir)
                         }
-                        unit.writeTo(project.rootDir)
+                    }
+                    project.tasks.create("toDDLUpdate${prefix}") { task ->
+                        task.group = pumlGroup
+                        task.doLast {
+                            MysqlToDDL.useQuote = extension.sqlQuote
+                            OracleToDDL.useQuote = extension.sqlQuote
+                            MysqlToDDL.useForeignKey = extension.useForeignKey
+                            OracleToDDL.useForeignKey = extension.useForeignKey
+                            val deleteTablesWhenUpdate = extension.dropTablesWhenUpdate
+
+                            val databasePumlDir = extension.file(extension.pumlSrc + "/database")
+                            val databaseFile = File(databasePumlDir, "${module}.puml")
+                            val unit =
+                                FileUnit(
+                                    "${extension.sqlOutput}/update/v${project.version}${
+                                        if (extension.isDefaultModule(module)) "" else "-${module}"
+                                    }.sql"
+                                )
+                            val allTables = mutableListOf<Table>()
+                            unit.use { pw ->
+                                val tables = tableHolder.tables(*extension.tableNames)
+                                allTables.addAll(tables)
+                                val jdbc = extension.datasources[module]
+                                    ?: throw IllegalStateException("未配置${module}模块数据库信息")
+                                val tableNames = tables.map { it.tableName }
+                                val oldTables = if (databaseFile.exists()) {
+                                    PumlConverter.toTables(databaseFile, module)
+                                } else {
+                                    jdbc.tables(
+                                        *(if (deleteTablesWhenUpdate) jdbc.tableNames()
+                                        else tableNames).toTypedArray()
+                                    )
+                                }
+                                when (jdbc.databaseDriver) {
+                                    DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
+                                        module, oldTables, tables, pw, extension
+                                    )
+                                    DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
+                                        module, oldTables, tables, pw, extension
+                                    )
+                                    DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
+                                        module, oldTables, tables, pw, extension
+                                    )
+                                    else -> {
+                                        throw IllegalArgumentException("不支持的数据库")
+                                    }
+                                }
+                            }
+                            unit.writeTo(project.rootDir)
+                        }
+                    }
+                    project.tasks.create("pumlBuild${prefix}") {
+                        it.group = pumlGroup
+                        it.dependsOn("toDDLUpdate${prefix}", "toDDL${prefix}")
                     }
                 }
-                project.tasks.create("pumlBuild${prefix}") {
-                    it.group = pumlGroup
-                    it.dependsOn("toDDLUpdate${prefix}", "toDDL${prefix}")
-                }
             }
+        }
     }
 
     private fun findProperty(project: Project, key: String) =
