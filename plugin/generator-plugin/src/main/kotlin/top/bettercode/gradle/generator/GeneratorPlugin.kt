@@ -31,7 +31,9 @@ import java.io.File
 class GeneratorPlugin : Plugin<Project> {
 
     companion object {
-        const val taskGroup = "gen"
+        const val genGroup = "gen"
+        const val printGroup = "print"
+        const val pumlGroup = "puml"
     }
 
     override fun apply(project: Project) {
@@ -143,7 +145,7 @@ class GeneratorPlugin : Plugin<Project> {
         }
 
         project.tasks.create("gen") { task ->
-            task.group = taskGroup
+            task.group = genGroup
             task.doLast {
                 Generators.call(project.extensions.getByType(GeneratorExtension::class.java))
             }
@@ -163,7 +165,7 @@ class GeneratorPlugin : Plugin<Project> {
         extension.run { module, tableHolder ->
             val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
             project.tasks.create("print[TableNames]${prefix}") { task ->
-                task.group = taskGroup
+                task.group = printGroup
                 task.doLast {
                     val tableNames = tableHolder.tableNames()
                     print("${module}数据表:${tableNames}")
@@ -173,7 +175,7 @@ class GeneratorPlugin : Plugin<Project> {
         extension.run(if (extension.pdmSources.isNotEmpty()) DataType.PDM else DataType.DATABASE) { module, tableHolder ->
             val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
             project.tasks.create("toPuml${prefix}") { task ->
-                task.group = taskGroup
+                task.group = pumlGroup
                 task.doLast { _ ->
                     val tables = tableHolder.tables(*extension.tableNames)
                     val plantUML = PlantUML(
@@ -194,14 +196,14 @@ class GeneratorPlugin : Plugin<Project> {
         }
 
         project.tasks.create("pumlReformat") { task ->
-            task.group = taskGroup
+            task.group = pumlGroup
             task.doLast {
                 PumlConverter.reformat(extension)
             }
         }
 
         project.tasks.create("pumlToDiagram") { task ->
-            task.group = taskGroup
+            task.group = pumlGroup
             task.inputs.files(
                 File(project.gradle.gradleUserHomeDir, "gradle.properties"),
                 project.rootProject.file("gradle.properties")
@@ -240,7 +242,7 @@ class GeneratorPlugin : Plugin<Project> {
             extension.run { module, tableHolder ->
                 val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
                 project.tasks.create("toDDL${prefix}") { task ->
-                    task.group = taskGroup
+                    task.group = pumlGroup
                     task.inputs.files(
                         File(project.gradle.gradleUserHomeDir, "gradle.properties"),
                         project.rootProject.file("gradle.properties")
@@ -284,7 +286,7 @@ class GeneratorPlugin : Plugin<Project> {
                     }
                 }
                 project.tasks.create("toDDLUpdate${prefix}") { task ->
-                    task.group = taskGroup
+                    task.group = pumlGroup
                     task.doLast {
                         MysqlToDDL.useQuote = extension.sqlQuote
                         OracleToDDL.useQuote = extension.sqlQuote
@@ -336,8 +338,8 @@ class GeneratorPlugin : Plugin<Project> {
                         unit.writeTo(project.rootDir)
                     }
                 }
-                project.tasks.create("toDDLBuild${prefix}") {
-                    it.group = taskGroup
+                project.tasks.create("pumlBuild${prefix}") {
+                    it.group = pumlGroup
                     it.dependsOn("toDDLUpdate${prefix}", "toDDL${prefix}")
                 }
             }

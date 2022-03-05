@@ -23,7 +23,7 @@ object CoreProjectTasks {
 
         project.tasks.apply {
             create("gen[SerializationViews]") { t ->
-                t.group = GeneratorPlugin.taskGroup
+                t.group = GeneratorPlugin.genGroup
                 t.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     val tableNames =
@@ -49,7 +49,7 @@ object CoreProjectTasks {
                 }
             }
             create("print[Mapper]") {
-                it.group = GeneratorPlugin.taskGroup
+                it.group = GeneratorPlugin.printGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     gen.generators = arrayOf(MapperPrint())
@@ -57,7 +57,7 @@ object CoreProjectTasks {
                 }
             }
             create("print[MybatisWhere]") {
-                it.group = GeneratorPlugin.taskGroup
+                it.group = GeneratorPlugin.printGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     gen.generators = arrayOf(MybatisWherePrint())
@@ -66,7 +66,7 @@ object CoreProjectTasks {
             }
 
             create("print[Setter]") {
-                it.group = GeneratorPlugin.taskGroup
+                it.group = GeneratorPlugin.printGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     gen.generators = arrayOf(SetterPrint(true))
@@ -75,7 +75,7 @@ object CoreProjectTasks {
             }
 
             create("print[ExcelField]") {
-                it.group = GeneratorPlugin.taskGroup
+                it.group = GeneratorPlugin.printGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     gen.generators = arrayOf(ExcelFieldPrint())
@@ -83,7 +83,7 @@ object CoreProjectTasks {
                 }
             }
             create("gen[DbDoc]") {
-                it.group = GeneratorPlugin.taskGroup
+                it.group = GeneratorPlugin.genGroup
                 it.doLast {
                     val dbDoc = DbDoc(project)
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -93,7 +93,7 @@ object CoreProjectTasks {
                 }
             }
             create("gen[DicCode]") {
-                it.group = GeneratorPlugin.taskGroup
+                it.group = GeneratorPlugin.genGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     //生成 properties
@@ -105,7 +105,7 @@ object CoreProjectTasks {
                 }
             }
             create("gen[ErrorCode]") { t ->
-                t.group = GeneratorPlugin.taskGroup
+                t.group = GeneratorPlugin.genGroup
                 t.doLast {
                     val file = project.file("src/main/resources/error-code.properties")
                     if (file.exists()) {
