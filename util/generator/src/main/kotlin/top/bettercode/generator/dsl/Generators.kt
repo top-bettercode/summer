@@ -32,7 +32,7 @@ object Generators {
             generator.setUp(extension)
         }
 
-        extension.run { module, tableHolder ->
+        extension.run { _, tableHolder ->
             tableHolder.tables(*extension.tableNames).forEach { table ->
                 generators.forEach { generator ->
                     generator.run(table)
