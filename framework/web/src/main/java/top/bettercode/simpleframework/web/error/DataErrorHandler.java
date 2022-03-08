@@ -78,14 +78,14 @@ public class DataErrorHandler extends AbstractErrorHandler {
       //Incorrect string value: '\xF0\x9F\x98\x84\xF0\x9F...' for column 'remark' at row 1
       if (detailMessage.matches("^Incorrect string value: '.*\\\\xF0.*$")) {
         message = "datasource.incorrect.emoji";
-      } else if (message.matches(regex)) {
-        String field = message.replaceAll(regex, "$1");
-        String maxLeng = message.replaceAll(regex, "$2");
+      } else if (detailMessage.matches(regex)) {
+        String field = detailMessage.replaceAll(regex, "$1");
+        String maxLeng = detailMessage.replaceAll(regex, "$2");
         message = getText(field) + "长度不能大于" + maxLeng;
         respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
-      } else if (message.matches(regex1)) {
-        String field = message.replaceAll(regex1, "$1");
-        String maxLeng = message.replaceAll(regex1, "$2");
+      } else if (detailMessage.matches(regex1)) {
+        String field = detailMessage.replaceAll(regex1, "$1");
+        String maxLeng = detailMessage.replaceAll(regex1, "$2");
         message = getText(field) + "长度不能大于" + maxLeng;
         respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
       } else {
