@@ -113,6 +113,7 @@ logging:
     org.hibernate: warn
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
+    org.hibernate.type.descriptor.sql.BasicExtractor: trace
     org.mybatis: warn
     com.netflix: warn
     com.sun: warn
