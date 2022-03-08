@@ -40,38 +40,32 @@ public class MocTestErrorLoggingHandler implements RequestLoggingHandler {
     OperationResponse response = operation.getResponse();
     String stackTrace = response.getStackTrace();
     if (StringUtils.hasText(stackTrace)) {
-      try {
-        Map<String, Object> errorAttributes = this.errorAttributes
-            .getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
-        if (response.getContent().length == 0) {
-          try {
-            Boolean isPlainText = (Boolean) webRequest
-                .getAttribute(ErrorAttributes.IS_PLAIN_TEXT_ERROR,
-                    RequestAttributes.SCOPE_REQUEST);
-            if (isPlainText != null && isPlainText) {
-              String msg = (String) errorAttributes.get(RespEntity.KEY_MESSAGE);
-              if (msg == null) {
-                msg = "";
-              }
-              response.setContent(msg.getBytes(
-                  StandardCharsets.UTF_8));
-            } else {
-              response.setContent(
-                  StringUtil.getINDENT_OUTPUT_OBJECT_MAPPER().writeValueAsBytes(errorAttributes));
+      Map<String, Object> errorAttributes = this.errorAttributes
+          .getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
+      if (response.getContent().length == 0) {
+        try {
+          Boolean isPlainText = (Boolean) webRequest
+              .getAttribute(ErrorAttributes.IS_PLAIN_TEXT_ERROR,
+                  RequestAttributes.SCOPE_REQUEST);
+          if (isPlainText != null && isPlainText) {
+            String msg = (String) errorAttributes.get(RespEntity.KEY_MESSAGE);
+            if (msg == null) {
+              msg = "";
             }
-
-          } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
+            response.setContent(msg.getBytes(
+                StandardCharsets.UTF_8));
+          } else {
+            response.setContent(
+                StringUtil.getINDENT_OUTPUT_OBJECT_MAPPER().writeValueAsBytes(errorAttributes));
           }
-        } else {
-          log.error("异常:{}", StringUtil.valueOf(errorAttributes, true));
+
+        } catch (JsonProcessingException e) {
+          log.error(e.getMessage(), e);
         }
-        response.setStackTrace("");
-      } catch (Exception e) {
-        if (!e.getMessage().contains("No thread-bound request found")) {
-          throw e;
-        }
+      } else {
+        log.error("异常:{}", StringUtil.valueOf(errorAttributes, true));
       }
+      response.setStackTrace("");
     }
   }
 }
