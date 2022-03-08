@@ -92,9 +92,6 @@ public class DataErrorHandler extends AbstractErrorHandler {
       } else {
         message = detailMessage;
       }
-      if (detailMessage.contains("ORA-01502")) {
-        respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
-      }
     }
     if (StringUtils.hasText(message)) {
       respEntity.setMessage(message);
