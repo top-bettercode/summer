@@ -111,9 +111,9 @@ logging:
     com.baomidou: warn
     org.apache: warn
     org.hibernate: warn
-    org.hibernate.SQL: ${logging.level.root:debug}
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
-    org.hibernate.type.descriptor.sql.BasicExtractor: ${logging.level.org.hibernate.type.descriptor.sql.BasicBinder:trace}
+    org.hibernate.SQL: ${logging.level.root:warn}
+    org.hibernate.type.descriptor.sql.BasicBinder: warn
+    org.hibernate.type.descriptor.sql.BasicExtractor: ${logging.level.org.hibernate.type.descriptor.sql.BasicBinder:warn}
     org.mybatis: warn
     com.netflix: warn
     com.sun: warn
