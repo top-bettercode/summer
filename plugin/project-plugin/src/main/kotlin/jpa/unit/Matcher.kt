@@ -24,6 +24,8 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             )
         )
 
+        serialVersionUID()
+
         val modeType = JavaType("top.bettercode.simpleframework.data.jpa.query.SpecMatcherMode")
 
         constructor(Parameter("mode", modeType), Parameter("probe", entityType)) {
