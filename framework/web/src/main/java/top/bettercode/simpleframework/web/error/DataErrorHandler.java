@@ -78,6 +78,7 @@ public class DataErrorHandler extends AbstractErrorHandler {
       //Incorrect string value: '\xF0\x9F\x98\x84\xF0\x9F...' for column 'remark' at row 1
       if (detailMessage.matches("^Incorrect string value: '.*\\\\xF0.*$")) {
         message = "datasource.incorrect.emoji";
+        respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
       } else if (detailMessage.matches(regex)) {
         String field = detailMessage.replaceAll(regex, "$1");
         String maxLeng = detailMessage.replaceAll(regex, "$2");
@@ -90,6 +91,9 @@ public class DataErrorHandler extends AbstractErrorHandler {
         respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
       } else {
         message = detailMessage;
+      }
+      if (detailMessage.contains("ORA-01502")) {
+        respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
       }
     }
     if (StringUtils.hasText(message)) {
