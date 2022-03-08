@@ -105,6 +105,11 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
+  public EntityManager getEntityManager() {
+    return em;
+  }
+
+  @Override
   public <S extends T> S save(S entity) {
     if (isNew(entity)) {
       em.persist(entity);

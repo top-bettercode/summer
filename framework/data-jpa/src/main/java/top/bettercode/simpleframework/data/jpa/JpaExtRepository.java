@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.data.jpa;
 
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,6 +21,8 @@ import top.bettercode.simpleframework.data.jpa.query.RecycleExecutor;
 public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByExampleExecutor<T>,
     JpaSpecificationExecutor<T>,
     RecycleExecutor<T, ID> {
+
+  EntityManager getEntityManager();
 
   /**
    * 动态更新，只更新非Null字段
