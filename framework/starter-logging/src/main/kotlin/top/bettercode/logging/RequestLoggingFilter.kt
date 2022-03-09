@@ -178,8 +178,10 @@ class RequestLoggingFilter(
                         )
                                 || httpStatusCode >= 500)
                     ) {
-                        val initialComment = "$httpStatusCode ${error.javaClass.name}:${
-                            error.message ?: getMessage(requestAttributes) ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
+                        val initialComment = "$httpStatusCode ${
+                            getMessage(requestAttributes) ?: "${error.javaClass.name}:${
+                                error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
+                            }"
                         }"
                         marker.add(AlarmMarker(initialComment))
                         if (config.includeTrace)

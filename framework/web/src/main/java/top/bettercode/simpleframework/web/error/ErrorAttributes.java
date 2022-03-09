@@ -137,12 +137,12 @@ public class ErrorAttributes extends DefaultErrorAttributes {
         message = "";
       }
     }
-    message = getText(webRequest, message);
+    message = getText(webRequest, message).trim();
 
     setErrorInfo(webRequest, httpStatusCode, message, error);
 
     respEntity.setStatus(statusCode);
-    respEntity.setMessage(message.trim());
+    respEntity.setMessage(message);
     if (!errors.isEmpty()) {
       respEntity.setErrors(errors);
     }
