@@ -6,6 +6,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.PackageInfo
+import top.bettercode.generator.dom.unit.DirectorySet
 import top.bettercode.generator.dom.unit.FileUnit
 import java.io.File
 
@@ -71,7 +72,8 @@ class GenPackageinfoPlugin : Plugin<Project> {
                                     .replace(File.separator, ".")
                             val file = File(packageDir, "package-info.kt")
                             val packageInfoFile = PackageInfo(
-                                JavaType("$packageinfo.package-info"),
+                                type = JavaType("$packageinfo.package-info"),
+                                directorySet = DirectorySet.KOTLIN,
                                 overwrite = file.exists() && (file.readLines().size == 1 || file.readText()
                                     .replace(
                                         """/**
