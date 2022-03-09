@@ -90,12 +90,13 @@ class SlackClient(
         if (hasFilesPath && message.isNotEmpty()) {
             File(logsPath, fileName).writeText(message.joinToString(""))
         }
-        if (!hasFilesPath || RequestLoggingFilter.API_HOST == null) {
+        val apiHost = RequestLoggingFilter.API_HOST
+        if (!hasFilesPath || apiHost == null) {
             return filesUpload(channel, timeStamp, title, initialComment, message)
         } else {
             params["text"] = "$title:\n$initialComment"
 
-            val logUrl = RequestLoggingFilter.API_HOST + managementPath
+            val logUrl = apiHost + managementPath
             if (message.isNotEmpty()) {
                 if (logAll) {
                     params["attachments"] = arrayOf(
