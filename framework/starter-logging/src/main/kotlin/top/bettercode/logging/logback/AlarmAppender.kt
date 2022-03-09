@@ -15,7 +15,6 @@ import ch.qos.logback.core.spi.CyclicBufferTracker
 import ch.qos.logback.core.util.OptionHelper
 import com.google.common.cache.CacheBuilder
 import org.slf4j.Marker
-import org.springframework.web.util.WebUtils
 import top.bettercode.logging.RequestLoggingFilter
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.TimeUnit
@@ -153,7 +152,7 @@ abstract class AlarmAppender(
                     alarmMarker = marker
                 initialComment = marker?.name
                     ?: (if (tp != null) "${tp.className}:${tp.message}" else e.formattedMessage)
-                            ?: e.mdcPropertyMap[WebUtils.ERROR_MESSAGE_ATTRIBUTE] ?: ""
+                            ?: ""
             }
         }
 
