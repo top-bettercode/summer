@@ -4,6 +4,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
+import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.PackageInfo
 import top.bettercode.generator.dom.unit.FileUnit
 import java.io.File
 
@@ -19,66 +21,73 @@ class GenPackageinfoPlugin : Plugin<Project> {
         project.tasks.create("gen[PackageInfo]") { task ->
             task.group = GeneratorPlugin.genGroup
             task.doLast { _ ->
-                project.allprojects { p ->
-                    p.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(
+                project.allprojects { subProject ->
+                    subProject.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(
                         SourceSet.MAIN_SOURCE_SET_NAME
-                    ).java.srcDirs.forEach { file ->
-                        val srcPath = file.absolutePath + File.separator
-                        file.walkTopDown().filter { it.isDirectory }.forEach { file1 ->
-                            val packageInfoFile = File(file1, "package-info.java")
-                            var opName = "生成"
-                            if (packageInfoFile.exists() && (packageInfoFile.readLines().size == 1 || packageInfoFile.readText()
+                    ).java.srcDirs.forEach { srcDir ->
+                        srcDir.walkTopDown().filter { it.isDirectory }.forEach { packageDir ->
+                            val listFiles =
+                                packageDir.listFiles()?.filter { it.name != "package-info.java" }
+                            if (listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
+                                val packageinfo =
+                                    packageDir.absolutePath.replace(
+                                        srcDir.absolutePath + File.separator,
+                                        ""
+                                    )
+                                        .replace(File.separator, ".")
+                                val file = File(packageDir, "package-info.java")
+                                val packageInfoFile = PackageInfo(
+                                    JavaType("$packageinfo.package-info"),
+                                    overwrite = file.exists() && (file.readLines().size == 1 || file.readText()
+                                        .replace(
+                                            """/**
+ * 
+ */
+""", ""
+                                        ).startsWith("package"))
+                                )
+                                packageInfoFile.apply {
+                                    javadoc {
+                                        +"/**"
+                                        +" * ${defaultComment(packageinfo)}"
+                                        +" */"
+                                    }
+                                }
+                                packageInfoFile.writeTo(subProject.projectDir)
+                            }
+                        }
+                    }
+
+                    val srcDir = subProject.file("src/main/kotlin")
+                    srcDir.walkTopDown().filter { it.isDirectory }.forEach { packageDir ->
+                        val listFiles =
+                            packageDir.listFiles()?.filter { it.name != "package-info.java" }
+                        if (listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
+                            val packageinfo =
+                                packageDir.absolutePath.replace(
+                                    srcDir.absolutePath + File.separator,
+                                    ""
+                                )
+                                    .replace(File.separator, ".")
+                            val file = File(packageDir, "package-info.kt")
+                            val packageInfoFile = PackageInfo(
+                                JavaType("$packageinfo.package-info"),
+                                overwrite = file.exists() && (file.readLines().size == 1 || file.readText()
                                     .replace(
                                         """/**
  * 
  */
 """, ""
                                     ).startsWith("package"))
-                            ) {
-                                packageInfoFile.delete()
-                                opName = "覆盖"
-                            }
-                            val listFiles = file1.listFiles()
-                            if (!packageInfoFile.exists() && listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
-                                println("$opName：${packageInfoFile.absolutePath.substringAfter(p.rootDir.absolutePath + File.separator)}")
-                                val packageinfo = file1.absolutePath.replace(srcPath, "")
-                                    .replace(File.separator, ".")
-                                packageInfoFile.writeText(
-                                    """/**
- * ${defaultComment(packageinfo)}
- */
-package ${packageinfo};"""
-                                )
-                            }
-                        }
-                    }
-                    val file = p.file("src/main/kotlin")
-                    val srcPath = file.absolutePath + File.separator
-                    file.walkTopDown().filter { it.isDirectory }.forEach { file1 ->
-                        val packageInfoFile = File(file1, "package-info.kt")
-                        var opName = "生成"
-                        if (packageInfoFile.exists() && (packageInfoFile.readLines().size == 1 || packageInfoFile.readText()
-                                .replace(
-                                    """/**
- * 
- */
-""", ""
-                                ).startsWith("package"))
-                        ) {
-                            packageInfoFile.delete()
-                            opName = "覆盖"
-                        }
-                        val listFiles = file1.listFiles()
-                        if (!packageInfoFile.exists() && listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
-                            println("$opName：${packageInfoFile.absolutePath.substringAfter(p.rootDir.absolutePath + File.separator)}")
-                            val packageinfo =
-                                file1.absolutePath.replace(srcPath, "").replace(File.separator, ".")
-                            packageInfoFile.writeText(
-                                """/**
- * ${defaultComment(packageinfo)}
- */
-package $packageinfo""".trimIndent()
                             )
+                            packageInfoFile.apply {
+                                javadoc {
+                                    +"/**"
+                                    +" * ${defaultComment(packageinfo)}"
+                                    +" */"
+                                }
+                            }
+                            packageInfoFile.writeTo(subProject.projectDir)
                         }
                     }
                 }
