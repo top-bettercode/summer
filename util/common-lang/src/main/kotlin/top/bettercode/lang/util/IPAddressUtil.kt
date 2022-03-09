@@ -6,7 +6,6 @@ import java.io.InputStreamReader
 import java.io.LineNumberReader
 import java.net.Inet4Address
 import java.net.NetworkInterface
-import java.net.SocketException
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -21,30 +20,13 @@ object IPAddressUtil {
      * @return ip
      */
     @JvmStatic
-    // filters out 127.0.0.1 and inactive interfaces
     val inet4Address: String
         get() {
-            try {
-                val interfaces = NetworkInterface.getNetworkInterfaces()
-                while (interfaces.hasMoreElements()) {
-                    val iface = interfaces.nextElement()
-                    if (iface.isLoopback || !iface.isUp) {
-                        continue
-                    }
-
-                    val addresses = iface.inetAddresses
-                    while (addresses.hasMoreElements()) {
-                        val addr = addresses.nextElement()
-                        if (addr is Inet4Address) {
-                            return addr.getHostAddress()
-                        }
-                    }
-                }
-            } catch (e: SocketException) {
-                throw RuntimeException(e)
-            }
-
-            return "127.0.0.1"
+            val interfaces = NetworkInterface.getNetworkInterfaces()
+            return interfaces.toList().filter { !it.isLoopback && it.isUp && !it.isVirtual }
+                .minBy { it.index }?.inetAddresses?.toList()
+                ?.filterIsInstance<Inet4Address>()?.firstOrNull()?.let { return it.hostAddress }
+                ?: "127.0.0.1"
         }
 
     /**
@@ -89,9 +71,11 @@ object IPAddressUtil {
         if (!StringUtils.hasText(ipAddress)) {
             throw IllegalArgumentException("ipAddress 不能为空")
         }
-        return !ipAddress.matches(("(127\\.0\\.0\\.1)|" + "(localhost)|" + "(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|"
-                + "(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})|"
-                + "(192\\.168\\.\\d{1,3}\\.\\d{1,3})").toRegex())
+        return !ipAddress.matches(
+            ("(127\\.0\\.0\\.1)|" + "(localhost)|" + "(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|"
+                    + "(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})|"
+                    + "(192\\.168\\.\\d{1,3}\\.\\d{1,3})").toRegex()
+        )
     }
 
     /**
@@ -129,7 +113,7 @@ object IPAddressUtil {
             6,
             8
         ) + ":"
-            + strMAC.substring(9, 11) + ":" + strMAC.substring(12, 14) + ":" + strMAC
+                + strMAC.substring(9, 11) + ":" + strMAC.substring(12, 14) + ":" + strMAC
             .substring(15, 17))
     }
 
