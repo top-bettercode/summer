@@ -21,7 +21,7 @@ class PackageInfo(
 ) : GenUnit {
 
     override val name: String
-        get() = "${type.fullyQualifiedNameWithoutTypeParameters.replace(".", File.separator)}.java"
+        get() = "${type.fullyQualifiedNameWithoutTypeParameters.replace(".", File.separator)}.${if (DirectorySet.JAVA == directorySet) "java" else "kt"}"
 
 
     private val javaDocLines: MutableList<String> = mutableListOf()
@@ -31,7 +31,7 @@ class PackageInfo(
         get() = {
             val sb = StringBuilder()
             addFormattedJavadoc(sb, 0)
-            sb.append("package ${type.packageName};")
+            sb.append("package ${type.packageName}${if (DirectorySet.JAVA == directorySet) ";" else ""}")
             val content = sb.toString()
             if (content != it) {
                 printWriter().use { writer -> writer.print(content) }
