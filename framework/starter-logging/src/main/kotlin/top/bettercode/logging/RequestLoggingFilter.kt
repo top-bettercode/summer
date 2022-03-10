@@ -178,7 +178,7 @@ class RequestLoggingFilter(
                         )
                                 || httpStatusCode >= 500)
                     ) {
-                        val initialComment = "$httpStatusCode ${
+                        val initialComment = "${operation.collectionName}/${operation.name}：$httpStatusCode|${
                             getMessage(requestAttributes) ?: "${error.javaClass.name}:${
                                 error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                             }"
