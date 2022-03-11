@@ -11,8 +11,10 @@ import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import top.bettercode.autodoc.gen.Autodoc;
+import top.bettercode.logging.RequestLoggingFilter;
 import top.bettercode.simpleframework.AnnotatedUtils;
 import top.bettercode.simpleframework.security.Anonymous;
+import top.bettercode.simpleframework.security.AuthenticationHelper;
 import top.bettercode.simpleframework.security.ClientAuthorize;
 import top.bettercode.simpleframework.security.SecurityParameterNames;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
@@ -35,6 +37,8 @@ public class AutodocWebMvcConfigurer implements AutoDocRequestHandler {
   public void handle(AutoDocHttpServletRequest request) {
     HandlerMethod handler = HandlerMethodContextHolder.getHandler(request);
     if (handler != null) {
+      request.setAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME,
+          AuthenticationHelper.getUsername().orElse("Anonymous"));
       Set<String> requiredHeaders = Autodoc.getRequiredHeaders();
       String url = request.getServletPath();
       boolean needAuth = false;

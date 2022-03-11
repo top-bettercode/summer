@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -35,6 +36,9 @@ import top.bettercode.logging.RequestLoggingProperties;
  */
 @ExtendWith(value = {SpringExtension.class, AutodocSetting.class})
 @SpringBootTest
+@TestPropertySource(properties = {
+    "summer.security.enabled=false"
+})
 public abstract class BaseWebNoAuthTest {
 
   @Autowired

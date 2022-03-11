@@ -22,7 +22,8 @@ spring:
       enabled: false
   autoconfigure:
     exclude:
-      - top.bettercode.simpleframework.security.config.SecurityConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
       - top.bettercode.environment.WritableEnvironmentEndpointAutoConfiguration
       - top.bettercode.simpleframework.config.CorsConfiguration
       - top.bettercode.logging.websocket.WebsocketConfiguration
