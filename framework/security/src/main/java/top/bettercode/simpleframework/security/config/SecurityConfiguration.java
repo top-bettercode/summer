@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.util.StringUtils;
 import top.bettercode.simpleframework.config.CorsProperties;
 import top.bettercode.simpleframework.config.SummerWebProperties;
@@ -39,6 +40,7 @@ import top.bettercode.simpleframework.security.authorization.ApiAuthorizationSer
 @EnableWebSecurity
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
 @ConditionalOnWebApplication
+@ConditionalOnProperty(prefix = "summer.security", name = "enabled", matchIfMissing = true)
 @EnableConfigurationProperties({ApiSecurityProperties.class, CorsProperties.class})
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -94,7 +96,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         summerWebProperties, revokeTokenService, securityProperties, objectMapper);
 
     http.authenticationProvider(new UserDetailsAuthenticationProvider());
-    http.addFilterBefore(apiTokenEndpointFilter, UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(apiTokenEndpointFilter, LogoutFilter.class);
 
     http
         .sessionManagement().sessionCreationPolicy(securityProperties.getSessionCreationPolicy())
