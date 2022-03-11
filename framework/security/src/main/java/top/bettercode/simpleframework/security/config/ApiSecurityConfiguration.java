@@ -13,6 +13,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import top.bettercode.simpleframework.security.ApiAuthenticationToken;
 import top.bettercode.simpleframework.security.ApiSecurityErrorHandler;
@@ -41,6 +43,12 @@ public class ApiSecurityConfiguration {
     };
   }
 
+  @ConditionalOnMissingBean(PasswordEncoder.class)
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
   @Bean
   public URLFilterInvocationSecurityMetadataSource securityMetadataSource(
       IResourceService resourceService,
@@ -64,7 +72,7 @@ public class ApiSecurityConfiguration {
   @ConditionalOnMissingBean(ApiAuthorizationService.class)
   @Bean
   public ApiAuthorizationService apiAuthorizationService() {
-    Cache<String, ApiAuthenticationToken> build = CacheBuilder.newBuilder()
+    Cache<String, ApiAuthenticationToken> cache = CacheBuilder.newBuilder()
         .expireAfterWrite(Math.max(securityProperties.getAccessTokenValiditySeconds(),
             securityProperties.getRefreshTokenValiditySeconds()), TimeUnit.SECONDS)
         .maximumSize(10000).build();
@@ -75,7 +83,7 @@ public class ApiSecurityConfiguration {
         .expireAfterWrite(
             securityProperties.getRefreshTokenValiditySeconds(), TimeUnit.SECONDS)
         .maximumSize(10000).build();
-    return new InMemoryApiAuthorizationService(build.asMap(), accessTokenBuild.asMap(),
+    return new InMemoryApiAuthorizationService(cache.asMap(), accessTokenBuild.asMap(),
         refreshTokenBuild.asMap());
   }
 
