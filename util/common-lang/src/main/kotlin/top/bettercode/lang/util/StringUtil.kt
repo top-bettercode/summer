@@ -45,7 +45,7 @@ object StringUtil {
                     gen: JsonGenerator,
                     serializers: SerializerProvider
                 ) {
-                    gen.writeNumber(LocalDateTimeHelper.of(value).toMillis())
+                    gen.writeNumber(of(value).toMillis())
                 }
             })
         module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
@@ -54,7 +54,7 @@ object StringUtil {
                 value: LocalDateTime, gen: JsonGenerator,
                 serializers: SerializerProvider?
             ) {
-                gen.writeNumber(LocalDateTimeHelper.of(value).toMillis())
+                gen.writeNumber(of(value).toMillis())
             }
         })
 
@@ -162,6 +162,69 @@ object StringUtil {
         } catch (e: Exception) {
             `object`.toString()
         }
+    }
+
+
+    @JvmOverloads
+    @JvmStatic
+    fun prettyJson(json: String?, indentWidth: Int = 2): String? {
+        if (json == null) {
+            return null
+        }
+        val chars = json.toCharArray()
+        val newline = System.lineSeparator()
+        val ret = java.lang.StringBuilder()
+        var beginQuotes = false
+        var i = 0
+        var indent = 0
+        loop@ while (i < chars.size) {
+            val c = chars[i]
+            if (c == '\"') {
+                ret.append(c)
+                beginQuotes = !beginQuotes
+                i++
+                continue
+            }
+            if (!beginQuotes) {
+                when (c) {
+                    '{', '[' -> {
+                        ret.append(c).append(newline)
+                            .append(String.format("%" + indentWidth.let { indent += it; indent } + "s",
+                                ""))
+                        i++
+                        continue@loop
+                    }
+                    '}', ']' -> {
+                        ret.append(newline)
+                            .append(if (indentWidth.let { indent -= it; indent } > 0) String.format(
+                                "%" + indent + "s",
+                                ""
+                            ) else "")
+                            .append(c)
+                        i++
+                        continue@loop
+                    }
+                    ':' -> {
+                        ret.append(c).append(" ")
+                        i++
+                        continue@loop
+                    }
+                    ',' -> {
+                        ret.append(c).append(newline)
+                            .append(if (indent > 0) String.format("%" + indent + "s", "") else "")
+                        i++
+                        continue@loop
+                    }
+                    else -> if (Character.isWhitespace(c)) {
+                        i++
+                        continue@loop
+                    }
+                }
+            }
+            ret.append(c).append(if (c == '\\') "" + chars[++i] else "")
+            i++
+        }
+        return ret.toString()
     }
 
     @JvmOverloads
