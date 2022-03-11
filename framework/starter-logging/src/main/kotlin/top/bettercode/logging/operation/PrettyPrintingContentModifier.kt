@@ -1,7 +1,6 @@
 package top.bettercode.logging.operation
 
 import com.sun.org.apache.xml.internal.utils.DefaultErrorHandler
-import io.micrometer.core.instrument.util.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.xml.sax.InputSource
@@ -88,8 +87,7 @@ object PrettyPrintingContentModifier {
         @Throws(IOException::class)
         override fun prettyPrint(content: ByteArray): ByteArray {
             StringUtil.OBJECT_MAPPER.readTree(content)
-            return JsonUtils.prettyPrint(String(content).split("\n").joinToString("") { it.trim() })
-                .toByteArray()
+            return StringUtil.prettyJson(String(content))!!.toByteArray()
         }
 
     }

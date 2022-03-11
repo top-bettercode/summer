@@ -1,7 +1,7 @@
 package top.bettercode.logging
 
-import io.micrometer.core.instrument.util.JsonUtils
 import org.junit.jupiter.api.Test
+import top.bettercode.lang.util.StringUtil
 
 /**
  * @author Peter Wu
@@ -9,21 +9,15 @@ import org.junit.jupiter.api.Test
 class JsonPrettyPrinterTest {
     @Test
     fun print() {
-        val json = """{
-  "libId":"lib00000184D5",
-  "orderMaterialLibVos":[
-    {
-      "unit":"TO",
-      "factoryId":"1090,1150",
-      "qty":"3",
-      "materialId":"000000000020101839"
-    }
-  ]
-}
-"""
-        val unformattedJsonString = json.split("\n").joinToString("") { it.trim() }
+        val unformattedJsonString = StringUtil.json(Data(data = StringUtil.json(Data())))
         System.err.println(unformattedJsonString)
-        val prettyPrint = JsonUtils.prettyPrint(unformattedJsonString)
-        System.err.println(prettyPrint)
+        System.err.println("--------------------------------")
+        System.err.println(StringUtil.prettyJson(unformattedJsonString))
     }
+
+    data class Data(
+        var name: String? = "a",
+        var age: Int? = 11,
+        var data: String? = null
+    )
 }
