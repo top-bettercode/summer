@@ -3,12 +3,24 @@ package top.bettercode.simpleframework.data.jpa.query;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.util.Assert;
 
 /**
  * @author Peter Wu
  */
 public class SpecPath<T, M extends SpecMatcher<T, M>> {
+
+  private final Logger log = LoggerFactory.getLogger(SpecPath.class);
 
   private final M specMatcher;
   /**
@@ -31,6 +43,145 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
     this.specMatcher = specMatcher;
     this.propertyName = propertyName;
   }
+
+  //--------------------------------------------
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public Predicate toPredicate(Root<T> root, CriteriaBuilder criteriaBuilder) {
+    if (this.isIgnoredPath()) {
+      return null;
+    }
+    PathMatcher matcher = this.getMatcher();
+    switch (matcher) {
+      case IS_TRUE:
+        Path path = this.toPath(root);
+        if (path == null) {
+          return null;
+        }
+        return criteriaBuilder.isTrue(path);
+      case IS_FALSE:
+        path = this.toPath(root);
+        if (path == null) {
+          return null;
+        }
+        return criteriaBuilder.isFalse(path);
+      case IS_NULL:
+        path = this.toPath(root);
+        if (path == null) {
+          return null;
+        }
+        return criteriaBuilder.isNull(path);
+      case IS_NOT_NULL:
+        path = this.toPath(root);
+        if (path == null) {
+          return null;
+        }
+        return criteriaBuilder.isNotNull(path);
+    }
+    Object value = this.getValue();
+    if (value == null || "".equals(value)) {
+      return null;
+    }
+    Path path = this.toPath(root);
+    if (path == null) {
+      return null;
+    }
+    switch (matcher) {
+      case BETWEEN:
+        Assert.isTrue(value instanceof SpecPath.BetweenValue,
+            "BETWEEN matcher with wrong value");
+        BetweenValue betweenValue = (BetweenValue) value;
+        return criteriaBuilder.between(path, betweenValue.getFirst(),
+            betweenValue.getSecond());
+      case GT:
+        return criteriaBuilder.greaterThan(path, (Comparable) value);
+      case GE:
+        return criteriaBuilder.greaterThanOrEqualTo(path, (Comparable) value);
+      case LT:
+        return criteriaBuilder.lessThan(path, (Comparable) value);
+      case LE:
+        return criteriaBuilder.lessThanOrEqualTo(path, (Comparable) value);
+    }
+    if (path.getJavaType().equals(String.class)) {
+      Expression<String> stringExpression = path;
+      boolean ignoreCase = this.isIgnoreCase();
+      if (ignoreCase) {
+        stringExpression = criteriaBuilder.lower(stringExpression);
+        if (value instanceof String) {
+          value = value.toString().toLowerCase();
+        }
+      }
+      switch (matcher) {
+        case EQ:
+          return criteriaBuilder.equal(stringExpression, value);
+        case NE:
+          return criteriaBuilder.notEqual(stringExpression, value);
+        case LIKE:
+          return criteriaBuilder.like(stringExpression, (String) value);
+        case STARTING:
+          return criteriaBuilder.like(stringExpression, value + "%");
+        case ENDING:
+          return criteriaBuilder.like(stringExpression, "%" + value);
+        case CONTAINING:
+          return criteriaBuilder.like(stringExpression, "%" + value + "%");
+        case NOT_STARTING:
+          return criteriaBuilder.notLike(stringExpression, value + "%");
+        case NOT_ENDING:
+          return criteriaBuilder.notLike(stringExpression, "%" + value);
+        case NOT_CONTAINING:
+          return criteriaBuilder.notLike(stringExpression, "%" + value + "%");
+        case NOT_LIKE:
+          return criteriaBuilder.notLike(stringExpression, (String) value);
+        case IN:
+          Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
+          List<String> collect = ((Collection<?>) value).stream()
+              .map(s -> ignoreCase ? s.toString().toLowerCase() : s.toString())
+              .collect(Collectors.toList());
+          return stringExpression.in(collect);
+        case NOT_IN:
+          Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
+          List<String> notInCollect = ((Collection<?>) value).stream()
+              .map(s -> ignoreCase ? s.toString().toLowerCase() : s.toString())
+              .collect(Collectors.toList());
+          return criteriaBuilder.not(stringExpression.in(notInCollect));
+      }
+    } else {
+      switch (matcher) {
+        case EQ:
+          return criteriaBuilder.equal(path, value);
+        case NE:
+          return criteriaBuilder.notEqual(path, value);
+        case IN:
+          Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
+          Collection<?> collect = ((Collection<?>) value);
+          return path.in(collect);
+        case NOT_IN:
+          Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
+          Collection<?> notInCollect = ((Collection<?>) value);
+          return criteriaBuilder.not(path.in(notInCollect));
+      }
+    }
+    return null;
+  }
+
+  @SuppressWarnings({"rawtypes"})
+  public Path toPath(Root<?> root) {
+    try {
+      String[] split = this.propertyName.split("\\.");
+      Path path = null;
+      for (String s : split) {
+        path = path == null ? root.get(s) : path.get(s);
+      }
+      return path;
+    } catch (IllegalArgumentException e) {
+      if (log.isDebugEnabled()) {
+        log.debug(e.getMessage());
+      }
+      return null;
+    }
+  }
+
+  //--------------------------------------------
 
   public String getPropertyName() {
     return this.propertyName;

@@ -8,10 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
@@ -76,14 +74,14 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
     for (SpecPath<T, M> specPath : getSpecPaths()) {
       Direction direction = specPath.getDirection();
       if (direction != null) {
-        Path<?> path = getPath(specPath.getPropertyName(), root);
+        Path<?> path = specPath.toPath(root);
         if (path != null) {
           Order order = Direction.DESC.equals(direction) ? cb.desc(path) : cb.asc(path);
           orders.add(order);
         }
       }
       if (!specPath.isIgnoredPath()) {
-        Predicate predicate = toPredicate(specPath, root, cb);
+        Predicate predicate = specPath.toPredicate(root, cb);
         if (predicate != null) {
           predicates.add(predicate);
         }
@@ -153,143 +151,6 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
 
   private static boolean isAssociation(Attribute<?, ?> attribute) {
     return ASSOCIATION_TYPES.contains(attribute.getPersistentAttributeType());
-  }
-
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  private Predicate toPredicate(SpecPath specPath, Root<?> root,
-      CriteriaBuilder criteriaBuilder) {
-    if (specPath.isIgnoredPath()) {
-      return null;
-    }
-    String propertyName = specPath.getPropertyName();
-    PathMatcher matcher = specPath.getMatcher();
-    switch (matcher) {
-      case IS_TRUE:
-        Path path = getPath(propertyName, root);
-        if (path == null) {
-          return null;
-        }
-        return criteriaBuilder.isTrue(path);
-      case IS_FALSE:
-        path = getPath(propertyName, root);
-        if (path == null) {
-          return null;
-        }
-        return criteriaBuilder.isFalse(path);
-      case IS_NULL:
-        path = getPath(propertyName, root);
-        if (path == null) {
-          return null;
-        }
-        return criteriaBuilder.isNull(path);
-      case IS_NOT_NULL:
-        path = getPath(propertyName, root);
-        if (path == null) {
-          return null;
-        }
-        return criteriaBuilder.isNotNull(path);
-    }
-    Object value = specPath.getValue();
-    if (value == null || "".equals(value)) {
-      return null;
-    }
-    Path path = getPath(propertyName, root);
-    if (path == null) {
-      return null;
-    }
-    switch (matcher) {
-      case BETWEEN:
-        Assert.isTrue(value instanceof SpecPath.BetweenValue,
-            "BETWEEN matcher with wrong value");
-        BetweenValue betweenValue = (BetweenValue) value;
-        return criteriaBuilder.between(path, betweenValue.getFirst(),
-            betweenValue.getSecond());
-      case GT:
-        return criteriaBuilder.greaterThan(path, (Comparable) value);
-      case GE:
-        return criteriaBuilder.greaterThanOrEqualTo(path, (Comparable) value);
-      case LT:
-        return criteriaBuilder.lessThan(path, (Comparable) value);
-      case LE:
-        return criteriaBuilder.lessThanOrEqualTo(path, (Comparable) value);
-    }
-    if (path.getJavaType().equals(String.class)) {
-      Expression<String> stringExpression = path;
-      boolean ignoreCase = specPath.isIgnoreCase();
-      if (ignoreCase) {
-        stringExpression = criteriaBuilder.lower(stringExpression);
-        if (value instanceof String) {
-          value = value.toString().toLowerCase();
-        }
-      }
-      switch (matcher) {
-        case EQ:
-          return criteriaBuilder.equal(stringExpression, value);
-        case NE:
-          return criteriaBuilder.notEqual(stringExpression, value);
-        case LIKE:
-          return criteriaBuilder.like(stringExpression, (String) value);
-        case STARTING:
-          return criteriaBuilder.like(stringExpression, value + "%");
-        case ENDING:
-          return criteriaBuilder.like(stringExpression, "%" + value);
-        case CONTAINING:
-          return criteriaBuilder.like(stringExpression, "%" + value + "%");
-        case NOT_STARTING:
-          return criteriaBuilder.notLike(stringExpression, value + "%");
-        case NOT_ENDING:
-          return criteriaBuilder.notLike(stringExpression, "%" + value);
-        case NOT_CONTAINING:
-          return criteriaBuilder.notLike(stringExpression, "%" + value + "%");
-        case NOT_LIKE:
-          return criteriaBuilder.notLike(stringExpression, (String) value);
-        case IN:
-          Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
-          List<String> collect = ((Collection<?>) value).stream()
-              .map(s -> ignoreCase ? s.toString().toLowerCase() : s.toString())
-              .collect(Collectors.toList());
-          return stringExpression.in(collect);
-        case NOT_IN:
-          Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
-          List<String> notInCollect = ((Collection<?>) value).stream()
-              .map(s -> ignoreCase ? s.toString().toLowerCase() : s.toString())
-              .collect(Collectors.toList());
-          return criteriaBuilder.not(stringExpression.in(notInCollect));
-      }
-    } else {
-      switch (matcher) {
-        case EQ:
-          return criteriaBuilder.equal(path, value);
-        case NE:
-          return criteriaBuilder.notEqual(path, value);
-        case IN:
-          Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
-          Collection<?> collect = ((Collection<?>) value);
-          return path.in(collect);
-        case NOT_IN:
-          Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
-          Collection<?> notInCollect = ((Collection<?>) value);
-          return criteriaBuilder.not(path.in(notInCollect));
-      }
-    }
-    return null;
-  }
-
-  @SuppressWarnings({"rawtypes"})
-  private Path getPath(String propertyName, Root<?> root) {
-    try {
-      String[] split = propertyName.split("\\.");
-      Path path = null;
-      for (String s : split) {
-        path = path == null ? root.get(s) : path.get(s);
-      }
-      return path;
-    } catch (IllegalArgumentException e) {
-      if (log.isDebugEnabled()) {
-        log.debug(e.getMessage());
-      }
-      return null;
-    }
   }
 
   //--------------------------------------------
