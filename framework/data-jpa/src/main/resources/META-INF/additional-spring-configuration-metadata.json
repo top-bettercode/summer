@@ -15,7 +15,7 @@
     {
       "name": "summer.datasource.multi.datasources",
       "type": "java.util.Map<java.lang.String,top.bettercode.simpleframework.data.jpa.config.BaseDataSourceProperties>",
-      "sourceType": "top.bettercode.simpleframework.data.jpa.config.RepositoryBeanDefinitionRegistryPostProcessor"
+      "sourceType": "top.bettercode.simpleframework.data.jpa.config.MultiDatasourcesBeanDefinitionRegistryPostProcessor"
     }
   ],
   "hints": [

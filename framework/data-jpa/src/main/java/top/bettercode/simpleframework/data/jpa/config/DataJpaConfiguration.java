@@ -20,8 +20,8 @@ public class DataJpaConfiguration {
 
   @Bean
   @ConditionalOnProperty(prefix = "summer.datasource.multi", name = "enabled")
-  public RepositoryBeanDefinitionRegistryPostProcessor repositoryBeanDefinitionRegistryPostProcessor() {
-    return new RepositoryBeanDefinitionRegistryPostProcessor();
+  public MultiDatasourcesBeanDefinitionRegistryPostProcessor repositoryBeanDefinitionRegistryPostProcessor() {
+    return new MultiDatasourcesBeanDefinitionRegistryPostProcessor();
   }
 
   @Bean("jpaExtProperties")

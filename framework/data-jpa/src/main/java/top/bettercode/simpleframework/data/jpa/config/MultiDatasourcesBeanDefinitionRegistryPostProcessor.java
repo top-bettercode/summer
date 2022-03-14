@@ -62,11 +62,11 @@ import top.bettercode.lang.util.ArrayUtil;
 /**
  *
  */
-public class RepositoryBeanDefinitionRegistryPostProcessor implements
+public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
     BeanDefinitionRegistryPostProcessor, ResourceLoaderAware, EnvironmentAware {
 
   private static final Logger logger = LoggerFactory.getLogger(
-      RepositoryBeanDefinitionRegistryPostProcessor.class);
+      MultiDatasourcesBeanDefinitionRegistryPostProcessor.class);
 
   private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
