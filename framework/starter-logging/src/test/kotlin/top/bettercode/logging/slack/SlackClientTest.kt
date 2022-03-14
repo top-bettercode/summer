@@ -67,9 +67,9 @@ class SlackClientTest {
                 slackClient.filesUpload(
                     "dev",
                     System.currentTimeMillis(),
-                    "test",
-                    "test",
-                    listOf("123testtest")
+                    "title",
+                    "initialComment",
+                    listOf("message")
                 ), true
             )
         )
