@@ -46,6 +46,20 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
 
   //--------------------------------------------
 
+  public static String containing(Object value) {
+    return "%" + value + "%";
+  }
+
+  public static String ending(Object value) {
+    return "%" + value;
+  }
+
+  public static String starting(Object value) {
+    return value + "%";
+  }
+
+  //--------------------------------------------
+
   @SuppressWarnings({"rawtypes", "unchecked"})
   public Predicate toPredicate(Root<T> root, CriteriaBuilder criteriaBuilder) {
     if (this.isIgnoredPath()) {
@@ -119,17 +133,17 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
         case LIKE:
           return criteriaBuilder.like(stringExpression, (String) value);
         case STARTING:
-          return criteriaBuilder.like(stringExpression, value + "%");
+          return criteriaBuilder.like(stringExpression, starting(value));
         case ENDING:
-          return criteriaBuilder.like(stringExpression, "%" + value);
+          return criteriaBuilder.like(stringExpression, ending(value));
         case CONTAINING:
-          return criteriaBuilder.like(stringExpression, "%" + value + "%");
+          return criteriaBuilder.like(stringExpression, containing(value));
         case NOT_STARTING:
-          return criteriaBuilder.notLike(stringExpression, value + "%");
+          return criteriaBuilder.notLike(stringExpression, starting(value));
         case NOT_ENDING:
-          return criteriaBuilder.notLike(stringExpression, "%" + value);
+          return criteriaBuilder.notLike(stringExpression, ending(value));
         case NOT_CONTAINING:
-          return criteriaBuilder.notLike(stringExpression, "%" + value + "%");
+          return criteriaBuilder.notLike(stringExpression, containing(value));
         case NOT_LIKE:
           return criteriaBuilder.notLike(stringExpression, (String) value);
         case IN:
@@ -164,11 +178,10 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
     return null;
   }
 
-  @SuppressWarnings({"rawtypes"})
-  public Path toPath(Root<?> root) {
+  public Path<?> toPath(Root<T> root) {
     try {
       String[] split = this.propertyName.split("\\.");
-      Path path = null;
+      Path<?> path = null;
       for (String s : split) {
         path = path == null ? root.get(s) : path.get(s);
       }
