@@ -7,8 +7,6 @@ import java.lang.reflect.Method;
 import javax.persistence.MappedSuperclass;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 import top.bettercode.simpleframework.data.jpa.SoftDelete;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 
@@ -17,7 +15,6 @@ import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
  */
 public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
 
-  private static final ConversionService CONVERSION_SERVICE = new DefaultConversionService();
 
   /**
    * 是否支持逻辑删除
@@ -79,14 +76,14 @@ public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
       } else {
         this.trueValue = softDelete.getTrueValue();
       }
-      this.trueValue = CONVERSION_SERVICE.convert(this.trueValue, propertyType);
+      this.trueValue = JpaUtil.CONVERSION_SERVICE.convert(this.trueValue, propertyType);
       String falseValue = annotation.falseValue();
       if (!"".equals(falseValue)) {
         this.falseValue = falseValue;
       } else {
         this.falseValue = softDelete.getFalseValue();
       }
-      this.falseValue = CONVERSION_SERVICE.convert(this.falseValue, propertyType);
+      this.falseValue = JpaUtil.CONVERSION_SERVICE.convert(this.falseValue, propertyType);
     }
   }
 

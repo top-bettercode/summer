@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
 import javax.persistence.metamodel.Metamodel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -16,12 +17,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.query.DefaultSpecMatcher;
 import top.bettercode.simpleframework.data.test.domain.User;
+import top.bettercode.simpleframework.data.test.repository.Service;
 import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
 /**
@@ -33,6 +36,8 @@ import top.bettercode.simpleframework.data.test.repository.UserRepository;
 public class SimpleJpaExtRepositoryTest {
 
 
+  @Autowired
+  Service service;
   @Autowired
   UserRepository repository;
   final List<User> batch = new ArrayList<>();
@@ -74,6 +79,11 @@ public class SimpleJpaExtRepositoryTest {
     Metamodel metamodel = entityManager.getMetamodel();
     Map<String, Object> properties = entityManager.getProperties();
     System.err.println("--");
+  }
+
+  @Test
+  void testService() {
+    service.testService();
   }
 
   @Test
@@ -236,6 +246,11 @@ public class SimpleJpaExtRepositoryTest {
   }
 
   @Test
+  void findBy22() {
+    repository.findBy22("Carter", PageRequest.of(0, 2)).getContent().forEach(System.out::println);
+  }
+
+  @Test
   public void findAll34() {
     DefaultSpecMatcher<User> spec = DefaultSpecMatcher.<User>matching().equal("id", carterId)
         .containing("firstName", "Cart")
@@ -313,11 +328,12 @@ public class SimpleJpaExtRepositoryTest {
   @Test
   void nativeQuery() {
     Query query = repository.getEntityManager().createNativeQuery(
-        "select * from user where first_name = ? AND first_name = ? and last_name = ?", User.class);
+        "select first_name,last_name from user where first_name = ? AND first_name = ? and last_name = ?",
+        Tuple.class);
     query.setParameter(1, "Carter");
     query.setParameter(2, "Carter");
     query.setParameter(3, "Beauford");
-    List<User> resultList = query.getResultList();
+    List resultList = query.getResultList();
     System.err.println(StringUtil.valueOf(resultList, true));
   }
 }

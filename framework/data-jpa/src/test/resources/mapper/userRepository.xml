@@ -3,10 +3,46 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="top.bettercode.simpleframework.data.test.repository.UserRepository">
+
+  <resultMap id="userResultMap" type="top.bettercode.simpleframework.data.test.resp.CUser">
+    <result property="firstName" column="first_name"/>
+    <collection property="lastName" javaType="java.util.List"
+      ofType="java.lang.String">
+      <result column="last_name"/>
+    </collection>
+  </resultMap>
+
+  <resultMap id="userResultMap1" type="top.bettercode.simpleframework.data.test.resp.CUsers">
+    <result property="firstName" column="first_name"/>
+    <collection property="lastName" javaType="java.util.List"
+      ofType="top.bettercode.simpleframework.data.test.resp.LastName">
+      <result property="lastName" column="last_name"/>
+    </collection>
+  </resultMap>
+
+  <select id="findByMybatis22" resultMap="userResultMap"
+    parameterType="top.bettercode.simpleframework.data.test.domain.User">
+    select *
+    from user
+    where first_name = #{firstName}
+    <if test="lastName!=null">
+      and last_name = #{lastName}
+    </if>
+  </select>
+
+  <select id="findByMybatis22s" resultMap="userResultMap1"
+    parameterType="top.bettercode.simpleframework.data.test.domain.User">
+    select *
+    from user
+    where first_name = #{firstName}
+    <if test="lastName!=null">
+      and last_name = #{lastName}
+    </if>
+  </select>
+
   <insert id="insert">
     insert into user (first_name, last_name,id) values (#{firstName},#{lastName},100)
   </insert>
-
   <update id="update">
     update user
     set last_name=#{lastName}
@@ -51,15 +87,6 @@
     from user
     where deleted = 0
       and first_name = #{a}
-  </select>
-  <select id="findByMybatis22" resultType="top.bettercode.simpleframework.data.test.domain.User"
-    parameterType="top.bettercode.simpleframework.data.test.domain.User">
-    select *
-    from user
-    where first_name = #{firstName}
-    <if test="lastName!=null">
-      and last_name = #{lastName}
-    </if>
   </select>
   <select id="findByMybatis222"
     resultType="top.bettercode.simpleframework.data.test.domain.User">
