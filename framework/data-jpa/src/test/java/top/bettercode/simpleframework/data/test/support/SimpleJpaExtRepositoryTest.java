@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.metamodel.Metamodel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -307,5 +308,16 @@ public class SimpleJpaExtRepositoryTest {
     Assertions
         .assertTrue(repository.existsInRecycleBin((root, query, builder) -> builder
             .equal(root.get("firstName"), "Dave")));
+  }
+
+  @Test
+  void nativeQuery() {
+    Query query = repository.getEntityManager().createNativeQuery(
+        "select * from user where first_name = ? AND first_name = ? and last_name = ?", User.class);
+    query.setParameter(1, "Carter");
+    query.setParameter(2, "Carter");
+    query.setParameter(3, "Beauford");
+    List<User> resultList = query.getResultList();
+    System.err.println(StringUtil.valueOf(resultList, true));
   }
 }
