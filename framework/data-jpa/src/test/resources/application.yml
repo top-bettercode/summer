@@ -21,6 +21,5 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create-drop
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     open-in-view: false

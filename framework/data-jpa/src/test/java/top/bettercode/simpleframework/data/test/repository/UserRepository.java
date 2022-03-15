@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.mybatis.MybatisTemplate;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
@@ -27,6 +28,9 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
   @Transactional
   void deleteByLastName(String lastName);
 
+  List<User> findByMybatis22(User user);
+
+
   @MybatisTemplate
   List<User> findByMybatis();
 
@@ -41,9 +45,11 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 
   Page<User> findByMybatis2(Pageable pageable, Map<String, String> param);
 
-  List<User> findByMybatis22(User user);
 
   Page<User> findByMybatis22(User user, Pageable pageable);
+
+  @Query(value = "select * from user where first_name = ?1", nativeQuery = true)
+  Page<User> findBy22(String first_name, Pageable pageable);
 
   List<User> findByMybatis222(User user, Pageable pageable);
 

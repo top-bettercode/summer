@@ -20,14 +20,13 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.repository.query.MybatisQueryExecution;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 import top.bettercode.simpleframework.data.test.domain.User;
 import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class MybatisTest {
+public class JpaMybatisTest {
 
   @Autowired
   UserRepository repository;
@@ -58,20 +57,10 @@ public class MybatisTest {
   }
 
   @Test
-  public void findByMybatis22() {
-    List<Object> objects = sqlSession
-        .selectList(UserRepository.class.getName() + ".findByMybatis22",
-            new User("Carter", null));
-    System.err.println(objects.size());
-    System.err.println(StringUtil.valueOf(objects,true));
-  }
-
-  @Test
   public void findByMybatis() {
-    List<Object> objects = sqlSession
-        .selectList(UserRepository.class.getName() + ".findByMybatis");
-    System.err.println(objects);
-    org.junit.jupiter.api.Assertions.assertEquals(3, objects.size());
+    List<User> users = repository.findByMybatis();
+    System.err.println(users);
+    org.junit.jupiter.api.Assertions.assertEquals(3, users.size());
   }
 
   @Test
@@ -188,8 +177,12 @@ public class MybatisTest {
     org.junit.jupiter.api.Assertions.assertEquals("Beauford1", users2.get(0).getLastName());
   }
 
-
-
+  @Test
+  public void findByMybatis22() {
+    List<User> users = repository.findByMybatis22(new User("Carter", "Beauford1"));
+    System.err.println(users);
+    org.junit.jupiter.api.Assertions.assertEquals(1, users.size());
+  }
 
 
   @Test
