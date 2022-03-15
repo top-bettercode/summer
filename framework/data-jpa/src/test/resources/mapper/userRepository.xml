@@ -27,7 +27,7 @@
   <select id="findByMybatis257" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user
-    where first_name = #{firstName}
+    where first_name = #{firstName} AND first_name = #{firstName}
     <if test="lastName!=null or param2!=null">
       and last_name = #{param2}
     </if>
