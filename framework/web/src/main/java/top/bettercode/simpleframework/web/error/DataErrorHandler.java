@@ -4,6 +4,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.UncategorizedSQLException;
@@ -91,6 +92,10 @@ public class DataErrorHandler extends AbstractErrorHandler {
         respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
       } else {
         message = detailMessage;
+      }
+    }else if(error instanceof DataAccessResourceFailureException){
+      if(error.getMessage().contains("Socket read timed out")){
+        message = "datasource.request.timeout";
       }
     }
     if (StringUtils.hasText(message)) {
