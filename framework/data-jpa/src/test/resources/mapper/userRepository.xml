@@ -29,7 +29,7 @@
     from user
     where first_name = #{firstName}
     <if test="lastName!=null or param2!=null">
-      and last_name = #{1}
+      and last_name = #{param2}
     </if>
   </select>
   <select id="findByMybatis2" resultType="top.bettercode.simpleframework.data.test.domain.User">

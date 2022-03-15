@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,8 +19,6 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.SingularAttribute;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,10 +35,8 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
 
   private static final long serialVersionUID = 1L;
 
-  private final Logger log = LoggerFactory.getLogger(SpecMatcher.class);
   private final SpecMatcherMode matcherMode;
-  //  private final List<String> select = new ArrayList<>();
-  private final Map<String, SpecPath<T, M>> specPaths = new HashMap<>();
+  private final Map<String, SpecPath<T, M>> specPaths = new LinkedHashMap<>();
   private final M typed;
   private final T probe;
   private static final Set<PersistentAttributeType> ASSOCIATION_TYPES;
@@ -87,19 +83,12 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
         }
       }
     }
-//   findAll not support multiselect
-//    List<String> select = specMatcher.getSelect();
-//    if (!select.isEmpty()) {
-//      query.multiselect(select.stream().map(root::get).collect(Collectors.toList()));
-//    }
     if (!orders.isEmpty()) {
       query.orderBy(orders);
     }
 
     Predicate[] restrictions = predicates.toArray(new Predicate[0]);
-    return getMatchMode().equals(SpecMatcherMode.ALL) ? cb.and(
-        restrictions)
-        : cb.or(restrictions);
+    return getMatchMode().equals(SpecMatcherMode.ALL) ? cb.and(restrictions) : cb.or(restrictions);
   }
 
   @SuppressWarnings("rawtypes")
@@ -159,10 +148,6 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
     return this.matcherMode;
   }
 
-//  public List<String> getSelect() {
-//    return select;
-//  }
-
   public Collection<SpecPath<T, M>> getSpecPaths() {
     return specPaths.values();
   }
@@ -172,11 +157,6 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
     return specPaths.computeIfAbsent(propertyName,
         s -> new SpecPath<>(typed, propertyName));
   }
-
-//  public M select(String propertyName) {
-//    select.add(propertyName);
-//    return typed;
-//  }
 
   //--------------------------------------------
 
