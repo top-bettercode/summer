@@ -50,24 +50,20 @@ public class TuplesWrapper {
     }
   }
 
-  public Tuple getTuple() {
-    return tuple;
-  }
-
   public Object get(String alias) {
     return tuple.get(alias);
   }
 
-  public Class<?> getJavaType(String alias) {
-    return javaTypeMap.get(alias);
-  }
-
   public <X> X get(String alias, Class<X> type) {
-    return JpaUtil.convert(tuple.get(alias), type);
+    return JpaUtil.convert(this.get(alias), type);
   }
 
   public List<String> getColumnNames() {
     return this.columnNames;
+  }
+
+  public Class<?> getJavaType(String alias) {
+    return javaTypeMap.get(alias);
   }
 
   public List<Class<?>> getJavaTypes() {

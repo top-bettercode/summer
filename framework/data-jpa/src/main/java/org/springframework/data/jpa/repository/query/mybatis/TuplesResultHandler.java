@@ -12,11 +12,9 @@ import java.util.Map;
 import java.util.Set;
 import javax.persistence.Tuple;
 import org.apache.ibatis.annotations.AutomapConstructor;
-import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.ExecutorException;
-import org.apache.ibatis.executor.loader.ResultLoaderMap;
 import org.apache.ibatis.executor.result.DefaultResultContext;
 import org.apache.ibatis.executor.result.DefaultResultHandler;
 import org.apache.ibatis.executor.result.ResultMapException;
@@ -258,8 +256,7 @@ public class TuplesResultHandler {
   //
 
   private Object getRowValue(TuplesWrapper rsw, ResultMap resultMap, String columnPrefix) {
-    final ResultLoaderMap lazyLoader = new ResultLoaderMap();
-    Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
+    Object rowValue = createResultObject(rsw, resultMap, columnPrefix);
     if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
       final MetaObject metaObject = configuration.newMetaObject(rowValue);
       boolean foundValues = this.useConstructorMappings;
@@ -267,9 +264,8 @@ public class TuplesResultHandler {
         foundValues =
             applyAutomaticMappings(rsw, resultMap, metaObject, columnPrefix) || foundValues;
       }
-      foundValues = applyPropertyMappings(rsw, resultMap, metaObject, lazyLoader, columnPrefix)
+      foundValues = applyPropertyMappings(rsw, resultMap, metaObject, columnPrefix)
           || foundValues;
-      foundValues = lazyLoader.size() > 0 || foundValues;
       rowValue = foundValues || configuration.isReturnInstanceForEmptyRow() ? rowValue : null;
     }
     return rowValue;
@@ -289,8 +285,7 @@ public class TuplesResultHandler {
       applyNestedResultMappings(rsw, resultMap, metaObject, columnPrefix, combinedKey, false);
       ancestorObjects.remove(resultMapId);
     } else {
-      final ResultLoaderMap lazyLoader = new ResultLoaderMap();
-      rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
+      rowValue = createResultObject(rsw, resultMap, columnPrefix);
       if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
         final MetaObject metaObject = configuration.newMetaObject(rowValue);
         boolean foundValues = this.useConstructorMappings;
@@ -298,14 +293,13 @@ public class TuplesResultHandler {
           foundValues =
               applyAutomaticMappings(rsw, resultMap, metaObject, columnPrefix) || foundValues;
         }
-        foundValues = applyPropertyMappings(rsw, resultMap, metaObject, lazyLoader, columnPrefix)
+        foundValues = applyPropertyMappings(rsw, resultMap, metaObject, columnPrefix)
             || foundValues;
         putAncestor(rowValue, resultMapId);
         foundValues =
             applyNestedResultMappings(rsw, resultMap, metaObject, columnPrefix, combinedKey, true)
                 || foundValues;
         ancestorObjects.remove(resultMapId);
-        foundValues = lazyLoader.size() > 0 || foundValues;
         rowValue = foundValues || configuration.isReturnInstanceForEmptyRow() ? rowValue : null;
       }
       if (combinedKey != CacheKey.NULL_CACHE_KEY) {
@@ -336,7 +330,7 @@ public class TuplesResultHandler {
   //
 
   private boolean applyPropertyMappings(TuplesWrapper rsw, ResultMap resultMap,
-      MetaObject metaObject, ResultLoaderMap lazyLoader, String columnPrefix) {
+      MetaObject metaObject, String columnPrefix) {
     final List<String> mappedColumnNames = rsw.getMappedColumnNames(resultMap, columnPrefix);
     boolean foundValues = false;
     final List<ResultMapping> propertyMappings = resultMap.getPropertyResultMappings();
@@ -349,8 +343,7 @@ public class TuplesResultHandler {
       if (propertyMapping.isCompositeResult()
           || (column != null && mappedColumnNames.contains(column.toUpperCase(Locale.ENGLISH)))
           || propertyMapping.getResultSet() != null) {
-        Object value = getPropertyMappingValue(rsw, metaObject, propertyMapping,
-            lazyLoader, columnPrefix);
+        Object value = getPropertyMappingValue(rsw, metaObject, propertyMapping, columnPrefix);
         // issue #541 make property optional
         final String property = propertyMapping.getProperty();
         if (property == null) {
@@ -373,7 +366,7 @@ public class TuplesResultHandler {
   }
 
   private Object getPropertyMappingValue(TuplesWrapper rs, MetaObject metaResultObject,
-      ResultMapping propertyMapping, ResultLoaderMap lazyLoader, String columnPrefix) {
+      ResultMapping propertyMapping, String columnPrefix) {
     if (propertyMapping.getNestedQueryId() != null) {
       throw new UnsupportedOperationException();
     } else if (propertyMapping.getResultSet() != null) {
@@ -410,8 +403,7 @@ public class TuplesResultHandler {
             continue;
           }
           final Class<?> propertyType = metaObject.getSetterType(property);
-          Class<?> javaType = rsw.getJavaType(columnName);
-          if (javaType.equals(Object.class) || propertyType.equals(javaType)) {
+          if (typeHandlerRegistry.hasTypeHandler(propertyType)) {
             autoMapping.add(new UnMappedColumnAutoMapping(columnName, property, propertyType,
                 propertyType.isPrimitive()));
           } else {
@@ -507,8 +499,7 @@ public class TuplesResultHandler {
   // INSTANTIATION & CONSTRUCTOR MAPPING
   //
 
-  private Object createResultObject(TuplesWrapper rsw, ResultMap resultMap,
-      ResultLoaderMap lazyLoader, String columnPrefix) {
+  private Object createResultObject(TuplesWrapper rsw, ResultMap resultMap, String columnPrefix) {
     this.useConstructorMappings = false; // reset previous mapping result
     final List<Class<?>> constructorArgTypes = new ArrayList<>();
     final List<Object> constructorArgs = new ArrayList<>();
@@ -519,10 +510,7 @@ public class TuplesResultHandler {
       for (ResultMapping propertyMapping : propertyMappings) {
         // issue gcode #109 && issue #149
         if (propertyMapping.getNestedQueryId() != null && propertyMapping.isLazy()) {
-          resultObject = configuration.getProxyFactory()
-              .createProxy(resultObject, lazyLoader, configuration, objectFactory,
-                  constructorArgTypes, constructorArgs);
-          break;
+          throw new UnsupportedOperationException();
         }
       }
     }
@@ -634,9 +622,8 @@ public class TuplesResultHandler {
     if (parameterTypes.length != jdbcTypes.size()) {
       return false;
     }
-    for (int i = 0; i < parameterTypes.length; i++) {
-      Class<?> aClass = jdbcTypes.get(i);
-      if (!aClass.equals(Object.class) && !parameterTypes[i].equals(aClass)) {
+    for (Class<?> parameterType : parameterTypes) {
+      if (!typeHandlerRegistry.hasTypeHandler(parameterType)) {
         return false;
       }
     }
@@ -655,39 +642,6 @@ public class TuplesResultHandler {
       columnName = rsw.getColumnNames().get(0);
     }
     return rsw.get(columnName, resultType);
-  }
-
-  private Object prepareSimpleKeyParameter(TuplesWrapper rs, ResultMapping resultMapping,
-      Class<?> parameterType, String columnPrefix) {
-    return rs.get(prependPrefix(resultMapping.getColumn(), columnPrefix), parameterType);
-  }
-
-  private Object prepareCompositeKeyParameter(TuplesWrapper rs, ResultMapping resultMapping,
-      Class<?> parameterType, String columnPrefix) {
-    final Object parameterObject = instantiateParameterObject(parameterType);
-    final MetaObject metaObject = configuration.newMetaObject(parameterObject);
-    boolean foundValues = false;
-    for (ResultMapping innerResultMapping : resultMapping.getComposites()) {
-      final Class<?> propType = metaObject.getSetterType(innerResultMapping.getProperty());
-      final Object propValue = rs.get(prependPrefix(innerResultMapping.getColumn(), columnPrefix),
-          propType);
-      // issue #353 & #560 do not execute nested query if key is null
-      if (propValue != null) {
-        metaObject.setValue(innerResultMapping.getProperty(), propValue);
-        foundValues = true;
-      }
-    }
-    return foundValues ? parameterObject : null;
-  }
-
-  private Object instantiateParameterObject(Class<?> parameterType) {
-    if (parameterType == null) {
-      return new HashMap<>();
-    } else if (ParamMap.class.equals(parameterType)) {
-      return new HashMap<>(); // issue #649
-    } else {
-      return objectFactory.create(parameterType);
-    }
   }
 
   //
