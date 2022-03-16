@@ -21,7 +21,6 @@ import org.springframework.data.jpa.repository.query.mybatis.MybatisParam;
 import org.springframework.data.jpa.repository.query.mybatis.TuplesResultHandler;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.data.util.ParsingUtils;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.util.Assert;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.support.JpaUtil;
@@ -30,16 +29,24 @@ import top.bettercode.simpleframework.data.jpa.support.Size;
 public class MybatisJpaQuery extends AbstractJpaQuery {
 
   private final Logger sqlLog = LoggerFactory.getLogger("org.hibernate.SQL");
-  private static final SpelExpressionParser PARSER = new SpelExpressionParser();
   private final QueryParameterSetter.QueryMetadataCache metadataCache = new QueryParameterSetter.QueryMetadataCache();
   private final MappedStatement mappedStatement;
+  private final MappedStatement countMappedStatement;
   private final TuplesResultHandler tuplesResultHandler;
   protected CountSqlParser countSqlParser = new CountSqlParser();
 
 
   public MybatisJpaQuery(JpaQueryMethod method, EntityManager em, MappedStatement mappedStatement) {
     super(method, em);
+    MappedStatement countMappedStatement;
     this.mappedStatement = mappedStatement;
+    try {
+      countMappedStatement = MybatisJpaQuery.this.mappedStatement.getConfiguration()
+          .getMappedStatement(MybatisJpaQuery.this.mappedStatement.getId() + "_COUNT");
+    } catch (Exception ignored) {
+      countMappedStatement = null;
+    }
+    this.countMappedStatement = countMappedStatement;
     this.tuplesResultHandler = new TuplesResultHandler(mappedStatement);
     String nestedResultMap = this.tuplesResultHandler.findNestedResultMap();
     if (method.isPageQuery() && nestedResultMap != null) {
@@ -166,16 +173,11 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             JpaQueryMethod method = getQueryMethod();
             String countQueryString = method.getCountQuery();
             MybatisParam mybatisParam = mybatisQuery.getMybatisParam();
-            if (countQueryString == null) {
-              try {
-                MappedStatement countMappedStatement = MybatisJpaQuery.this.mappedStatement.getConfiguration()
-                    .getMappedStatement(MybatisJpaQuery.this.mappedStatement.getId() + "_COUNT");
-                BoundSql boundSql = countMappedStatement.getBoundSql(
-                    mybatisParam.getParameterObject());
-                countQueryString = sqlLog.isDebugEnabled() ? StringUtil.trimLn(boundSql.getSql())
-                    : boundSql.getSql();
-              } catch (Exception ignored) {
-              }
+            if (countQueryString == null && countMappedStatement != null) {
+              BoundSql boundSql = countMappedStatement.getBoundSql(
+                  mybatisParam.getParameterObject());
+              countQueryString = sqlLog.isDebugEnabled() ? StringUtil.trimLn(boundSql.getSql())
+                  : boundSql.getSql();
             }
             String queryString =
                 countQueryString != null ? countQueryString : countSqlParser.getSmartCountSql(
