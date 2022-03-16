@@ -171,9 +171,9 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
           List<Tuple> resultList;
           if (accessor.getPageable().isPaged()) {
             JpaQueryMethod method = getQueryMethod();
-            String countQueryString = method.getCountQuery();
+            String countQueryString = null;
             MybatisParam mybatisParam = mybatisQuery.getMybatisParam();
-            if (countQueryString == null && countMappedStatement != null) {
+            if (countMappedStatement != null) {
               BoundSql boundSql = countMappedStatement.getBoundSql(
                   mybatisParam.getParameterObject());
               countQueryString = sqlLog.isDebugEnabled() ? StringUtil.trimLn(boundSql.getSql())
