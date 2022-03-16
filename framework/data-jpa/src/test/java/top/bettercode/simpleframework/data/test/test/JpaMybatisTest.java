@@ -80,12 +80,12 @@ public class JpaMybatisTest {
   @Test
   public void selectResultMap2() {
     List<CUsers> users = repository.selectResultMap2(new User("Carter", null));
-    System.err.println(StringUtil.valueOf(users,true));
+    System.err.println(StringUtil.valueOf(users, true));
     Assertions.assertEquals(1, users.size());
     List<Object> users1 = sqlSession
         .selectList(UserRepository.class.getName() + ".selectResultMap2",
             new User("Carter", null));
-    System.err.println(StringUtil.valueOf(users1,true));
+    System.err.println(StringUtil.valueOf(users1, true));
     Assertions.assertEquals(1, users1.size());
     Assertions.assertIterableEquals(users, users1);
   }
@@ -151,6 +151,14 @@ public class JpaMybatisTest {
     System.err.println(users1);
     Assertions.assertIterableEquals(users, users1);
     Assertions.assertEquals(1, users.size());
+    users = repository.selectMybatisIfParam("Carter", null);
+    System.err.println(users);
+    users1 = sqlSession
+        .selectList(UserRepository.class.getName() + ".selectMybatisIfParam",
+            ImmutableMap.of("firstName", "Carter"));
+    System.err.println(users1);
+    Assertions.assertIterableEquals(users, users1);
+    Assertions.assertEquals(3, users.size());
   }
 
   @Test
