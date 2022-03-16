@@ -84,12 +84,9 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
     String queryString =
         sqlLog.isDebugEnabled() ? StringUtil.trimLn(boundSql.getSql()) : boundSql.getSql();
 
-    JpaQueryMethod method = getQueryMethod();
-    DeclaredQuery declaredQuery = new ExpressionBasedStringQuery(queryString,
-        method.getEntityInformation(), PARSER);
     Sort sort = accessor.getSort();
     Size size = mybatisParam.getSize();
-    String sortedQueryString = applySorting(declaredQuery.getQueryString(),
+    String sortedQueryString = applySorting(queryString,
         sort.isUnsorted() && size != null ? size.getSort() : sort);
     Query query = getEntityManager().createNativeQuery(sortedQueryString, Tuple.class);
     QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata(sortedQueryString,
@@ -97,7 +94,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
 
     // it is ok to reuse the binding contained in the ParameterBinder although we create a new query String because the
     // parameters in the query do not change.
-    return parameterBinder.bindAndPrepare(new MybatisQuery(declaredQuery, query, mybatisParam),
+    return parameterBinder.bindAndPrepare(new MybatisQuery(queryString, query, mybatisParam),
         metadata,
         accessor, mybatisParam);
   }
@@ -173,19 +170,16 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
               try {
                 MappedStatement countMappedStatement = MybatisJpaQuery.this.mappedStatement.getConfiguration()
                     .getMappedStatement(MybatisJpaQuery.this.mappedStatement.getId() + "_COUNT");
-                countQueryString = countMappedStatement.getBoundSql(
-                    mybatisParam.getParameterObject()).getSql();
+                BoundSql boundSql = countMappedStatement.getBoundSql(
+                    mybatisParam.getParameterObject());
+                countQueryString = sqlLog.isDebugEnabled() ? StringUtil.trimLn(boundSql.getSql())
+                    : boundSql.getSql();
               } catch (Exception ignored) {
               }
             }
-            DeclaredQuery deriveCountQuery = DeclaredQuery.of(
+            String queryString =
                 countQueryString != null ? countQueryString : countSqlParser.getSmartCountSql(
-                    mybatisQuery.getDeclaredQuery().getQueryString()));
-
-            deriveCountQuery = ExpressionBasedStringQuery.from(deriveCountQuery,
-                method.getEntityInformation(), PARSER);
-
-            String queryString = deriveCountQuery.getQueryString();
+                    mybatisQuery.getQueryString());
             EntityManager em = getEntityManager();
 
             Query countQuery = em.createNativeQuery(queryString);

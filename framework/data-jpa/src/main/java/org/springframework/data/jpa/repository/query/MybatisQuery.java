@@ -19,20 +19,20 @@ import org.springframework.data.jpa.repository.query.mybatis.MybatisParam;
 @SuppressWarnings("rawtypes")
 public class MybatisQuery implements Query {
 
-  private final DeclaredQuery declaredQuery;
+  private final String queryString;
   private final Query query;
   private final MybatisParam mybatisParam;
 
-  public MybatisQuery(DeclaredQuery declaredQuery,
+  public MybatisQuery(String queryString,
       Query query,
       MybatisParam mybatisParam) {
-    this.declaredQuery = declaredQuery;
+    this.queryString = queryString;
     this.query = query;
     this.mybatisParam = mybatisParam;
   }
 
-  public DeclaredQuery getDeclaredQuery() {
-    return declaredQuery;
+  public String getQueryString() {
+    return queryString;
   }
 
   public Query getQuery() {
