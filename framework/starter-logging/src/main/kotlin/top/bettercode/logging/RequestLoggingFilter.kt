@@ -178,11 +178,12 @@ class RequestLoggingFilter(
                         )
                                 || httpStatusCode >= 500)
                     ) {
-                        val initialComment = "${operation.collectionName}/${operation.name}(${operation.request.restUri})：$httpStatusCode|${
-                            getMessage(requestAttributes) ?: "${error.javaClass.name}:${
-                                error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
+                        val initialComment =
+                            "${operation.collectionName}/${operation.name}(${operation.request.restUri})：$httpStatusCode|${
+                                getMessage(requestAttributes) ?: "${error.javaClass.name}:${
+                                    error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
+                                }"
                             }"
-                        }"
                         marker.add(AlarmMarker(initialComment))
                         if (config.includeTrace)
                             log.error(marker, msg)
@@ -199,9 +200,15 @@ class RequestLoggingFilter(
         request: HttpServletRequest,
         handler: HandlerMethod?
     ): RequestLoggingConfig {
+        var bestPattern = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE)
+        if ((environment.getProperty("server.error.path") ?: environment.getProperty("error.path")
+            ?: "/error") == bestPattern
+        ) {
+            bestPattern = null
+        }
         request.setAttribute(
             BEST_MATCHING_PATTERN_ATTRIBUTE,
-            request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE)
+            bestPattern
         )
 
         return if (handler != null) {
