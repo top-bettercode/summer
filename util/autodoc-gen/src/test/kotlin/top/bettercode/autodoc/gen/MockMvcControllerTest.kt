@@ -21,7 +21,7 @@ import javax.sql.DataSource
  *
  * @author Peter Wu
  */
-@ExtendWith(value = [SpringExtension::class, AutodocSetting::class])
+@ExtendWith(value = [SpringExtension::class])
 @WebMvcTest(ClientTokenController::class)
 @DisplayName("token")
 class MockMvcControllerTest {

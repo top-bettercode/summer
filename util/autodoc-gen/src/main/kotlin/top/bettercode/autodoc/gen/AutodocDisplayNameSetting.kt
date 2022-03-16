@@ -8,7 +8,8 @@ import org.junit.jupiter.api.extension.ExtensionContext
  *
  * @author Peter Wu
  */
-class AutodocSetting : BeforeTestExecutionCallback {
+class AutodocDisplayNameSetting : BeforeTestExecutionCallback {
+
     override fun beforeTestExecution(context: ExtensionContext) {
         if (context.parent.get().testClass.get().isAnnotationPresent(DisplayName::class.java)) {
             Autodoc.collectionName = context.parent.get().displayName

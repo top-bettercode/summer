@@ -15,7 +15,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +" * $remarks 控制层测试"
             +" */"
         }
-//            annotation("@org.junit.jupiter.api.DisplayName(\"${remarks}\")")
+        annotation("@org.junit.jupiter.api.DisplayName(\"${remarks}\")")
         annotation("@org.springframework.transaction.annotation.Transactional")
         superClass("$basePackageName.support.BaseWebTest")
 

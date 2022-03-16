@@ -4,14 +4,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import top.bettercode.autodoc.gen.AutodocSetting;
 
 /**
  * 基础测试类
  *
  * @author Peter Wu
  */
-@ExtendWith(value = {SpringExtension.class, AutodocSetting.class})
+@ExtendWith(value = {SpringExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestPropertySource(properties = {
     "summer.security.enabled=false"
