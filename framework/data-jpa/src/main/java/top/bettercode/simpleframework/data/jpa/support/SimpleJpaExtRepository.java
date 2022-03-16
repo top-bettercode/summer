@@ -202,14 +202,12 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
-  //todo 优化
   @Transactional
   @Override
   public void delete(Specification<T> spec) {
     deleteInBatch(findAll(spec));
   }
 
-  //todo 优化
   @Transactional
   @Override
   public void deleteAllById(Iterable<ID> ids) {
