@@ -25,7 +25,6 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.context.WebApplicationContext;
 import top.bettercode.autodoc.gen.Autodoc;
-import top.bettercode.autodoc.gen.AutodocSetting;
 import top.bettercode.logging.RequestLoggingFilter;
 import top.bettercode.logging.RequestLoggingProperties;
 
@@ -34,7 +33,7 @@ import top.bettercode.logging.RequestLoggingProperties;
  *
  * @author Peter Wu
  */
-@ExtendWith(value = {SpringExtension.class, AutodocSetting.class})
+@ExtendWith(value = {SpringExtension.class})
 @SpringBootTest
 @TestPropertySource(properties = {
     "summer.security.enabled=false"
