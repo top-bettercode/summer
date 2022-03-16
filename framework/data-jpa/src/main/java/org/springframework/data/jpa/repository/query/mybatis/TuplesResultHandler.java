@@ -992,10 +992,6 @@ public class TuplesResultHandler {
   }
 
   private boolean hasTypeHandlerForResultObject(TuplesWrapper rsw, Class<?> resultType) {
-    if (rsw.getColumnNames().size() == 1) {
-      Class<?> javaType = rsw.getJavaType(rsw.getColumnNames().get(0));
-      return javaType.equals(Object.class) || resultType.equals(javaType);
-    }
     return typeHandlerRegistry.hasTypeHandler(resultType);
   }
 
