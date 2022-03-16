@@ -168,6 +168,16 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
           if (accessor.getPageable().isPaged()) {
             JpaQueryMethod method = getQueryMethod();
             String countQueryString = method.getCountQuery();
+            MybatisParam mybatisParam = mybatisQuery.getMybatisParam();
+            if (countQueryString == null) {
+              try {
+                MappedStatement countMappedStatement = MybatisJpaQuery.this.mappedStatement.getConfiguration()
+                    .getMappedStatement(MybatisJpaQuery.this.mappedStatement.getId() + "_COUNT");
+                countQueryString = countMappedStatement.getBoundSql(
+                    mybatisParam.getParameterObject()).getSql();
+              } catch (Exception ignored) {
+              }
+            }
             DeclaredQuery deriveCountQuery = DeclaredQuery.of(
                 countQueryString != null ? countQueryString : countSqlParser.getSmartCountSql(
                     mybatisQuery.getDeclaredQuery().getQueryString()));
@@ -184,7 +194,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
                 countQuery);
 
             ((MybatisParameterBinder) parameterBinder.get()).bind(metadata.withQuery(countQuery),
-                mybatisQuery.getMybatisParam());
+                mybatisParam);
 
             countQuery =
                 method.applyHintsToCountQuery() ? applyHints(countQuery, method) : countQuery;
