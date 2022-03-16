@@ -85,5 +85,15 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
   @MybatisTemplate
   @Modifying
   @Transactional
+  void updateNoReturn(Integer id, String lastName);
+
+  @MybatisTemplate
+  @Modifying
+  @Transactional
   int deleteMybatis(Integer id);
+
+  @MybatisTemplate
+  @Modifying
+  @Transactional
+  void deleteMybatisNoResturn(Integer id);
 }

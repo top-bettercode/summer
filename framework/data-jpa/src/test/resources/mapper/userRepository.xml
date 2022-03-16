@@ -49,12 +49,21 @@
     set last_name=#{lastName}
     where id = #{id}
   </update>
+  <update id="updateNoReturn">
+    update user
+    set last_name=#{lastName}
+    where id = #{id}
+  </update>
   <delete id="deleteMybatis">
     delete
     from user
     where id = #{id}
   </delete>
-
+  <delete id="deleteMybatisNoResturn">
+    delete
+    from user
+    where id = #{id}
+  </delete>
 
   <select id="selectMybatisAll" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select first_name as firstName, last_name
