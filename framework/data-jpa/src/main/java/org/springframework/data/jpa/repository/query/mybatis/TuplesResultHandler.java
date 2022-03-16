@@ -27,17 +27,19 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.session.AutoMappingBehavior;
-import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.util.MapUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 public class TuplesResultHandler {
 
+  private final Logger log = LoggerFactory.getLogger(TuplesResultHandler.class);
   private static final Object DEFERRED = new Object();
 
   private final Configuration configuration;
@@ -99,8 +101,6 @@ public class TuplesResultHandler {
     this.objectFactory = configuration.getObjectFactory();
     this.reflectorFactory = configuration.getReflectorFactory();
     this.resultHandler = resultHandler;
-    this.configuration.setAutoMappingUnknownColumnBehavior(
-        AutoMappingUnknownColumnBehavior.WARNING);
   }
 
   public String findNestedResultMap() {
@@ -160,6 +160,11 @@ public class TuplesResultHandler {
   }
 
 
+  private boolean isResultOrdered() {
+    return mappedStatement.isResultOrdered();
+  }
+
+
   private void cleanUpAfterHandlingResultSet() {
     nestedResultObjects.clear();
   }
@@ -213,7 +218,7 @@ public class TuplesResultHandler {
 
   protected void checkResultHandler() {
     if (resultHandler != null && configuration.isSafeResultHandlerEnabled()
-        && !mappedStatement.isResultOrdered()) {
+        && !isResultOrdered()) {
       throw new ExecutorException(
           "Mapped Statements with nested result mappings cannot be safely used with a custom ResultHandler. "
               + "Use safeResultHandlerEnabled=false setting to bypass this check "
@@ -410,8 +415,11 @@ public class TuplesResultHandler {
             autoMapping.add(new UnMappedColumnAutoMapping(columnName, property, propertyType,
                 propertyType.isPrimitive()));
           } else if (propertyType != null) {
-            configuration.getAutoMappingUnknownColumnBehavior()
-                .doAction(mappedStatement, columnName, property, propertyType);
+            String message = "Unknown column is detected on '" + mappedStatement.getId()
+                + "' auto-mapping. Mapping parameters are " + "["
+                + "columnName=" + columnName + "," + "propertyName=" + property + ","
+                + "propertyType=" + (propertyType != null ? propertyType.getName() : null) + "]";
+            log.warn(message);
           }
         }
       }
@@ -697,7 +705,7 @@ public class TuplesResultHandler {
       final CacheKey rowKey = createRowKey(discriminatedResultMap, rsw, null);
       Object partialObject = nestedResultObjects.get(rowKey);
       // issue #577 && #542
-      if (mappedStatement.isResultOrdered()) {
+      if (isResultOrdered()) {
         if (partialObject == null && rowValue != null) {
           nestedResultObjects.clear();
           storeObject(resultHandler, resultContext, rowValue, parentMapping, rsw);
@@ -710,7 +718,7 @@ public class TuplesResultHandler {
         }
       }
     }
-    if (rowValue != null && mappedStatement.isResultOrdered() && shouldProcessMoreRows(
+    if (rowValue != null && isResultOrdered() && shouldProcessMoreRows(
         resultContext, rowBounds)) {
       storeObject(resultHandler, resultContext, rowValue, parentMapping, rsw);
       previousRowValue = null;
