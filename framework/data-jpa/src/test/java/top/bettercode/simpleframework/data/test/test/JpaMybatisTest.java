@@ -303,11 +303,28 @@ public class JpaMybatisTest {
   }
 
   @Test
-  public void deleteBy() {
+  public void updateNoReturn() {
+    repository.updateNoReturn(carterId, "Peter");
+    Optional<User> userOptional = repository.findById(carterId);
+    Assertions.assertTrue(userOptional.isPresent());
+    User peter = userOptional.get();
+    System.err.println(peter);
+    Assertions.assertEquals("Peter", peter.getLastName());
+  }
+
+  @Test
+  public void deleteMybatis() {
     int delete = repository.deleteMybatis(carterId);
     Optional<User> userOptional = repository.findById(carterId);
     Assertions.assertFalse(userOptional.isPresent());
     Assertions.assertEquals(1, delete);
+  }
+
+  @Test
+  public void deleteMybatisNoResturn() {
+    repository.deleteMybatisNoResturn(carterId);
+    Optional<User> userOptional = repository.findById(carterId);
+    Assertions.assertFalse(userOptional.isPresent());
   }
 
 
