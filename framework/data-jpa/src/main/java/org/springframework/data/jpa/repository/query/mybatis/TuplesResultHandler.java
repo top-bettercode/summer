@@ -413,10 +413,6 @@ public class TuplesResultHandler {
             configuration.getAutoMappingUnknownColumnBehavior()
                 .doAction(mappedStatement, columnName, property, propertyType);
           }
-        } else {
-          configuration.getAutoMappingUnknownColumnBehavior()
-              .doAction(mappedStatement, columnName, (property != null) ? property : propertyName,
-                  null);
         }
       }
       autoMappingsCache.put(mapKey, autoMapping);
