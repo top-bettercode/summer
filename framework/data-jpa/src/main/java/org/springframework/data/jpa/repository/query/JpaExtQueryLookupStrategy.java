@@ -202,9 +202,6 @@ public final class JpaExtQueryLookupStrategy {
         try {
           return createStrategy.resolveQuery(method, em, namedQueries);
         } catch (Exception e1) {
-          if (log.isDebugEnabled()) {
-            log.debug(e1.getMessage(), e1);
-          }
           return new MybatisJpaQuery(method, em,
               lookupStrategy.getConfiguration().getMappedStatement(method.getStatement()));
         }
