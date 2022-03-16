@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.data.jpa.config;
 
-import com.github.pagehelper.PageInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -207,7 +206,6 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
                     beanFactory.getBean(dataSourceBeanName, DataSource.class),
                     beanFactory.getBean(MybatisProperties.class),
                     resourceLoader,
-                    beanFactory.getBean(PageHelperProperties.class),
                     properties
                 ));
         if (primary) {
@@ -292,7 +290,7 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
 
   private SqlSessionFactory getSqlSessionFactory(DataSource dataSource,
       MybatisProperties properties,
-      ResourceLoader resourceLoader, PageHelperProperties pageHelperProperties,
+      ResourceLoader resourceLoader,
       BaseDataSourceProperties dataSourceProperties) {
     SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
     factory.setDataSource(dataSource);
@@ -305,9 +303,6 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
     if (propertiesConfiguration != null) {
       BeanUtils.copyProperties(propertiesConfiguration, configuration);
     }
-    PageInterceptor interceptor = new PageInterceptor();
-    interceptor.setProperties(pageHelperProperties.getProperties());
-    configuration.addInterceptor(interceptor);
     factory.setConfiguration(configuration);
     if (properties.getConfigurationProperties() != null) {
       factory.setConfigurationProperties(properties.getConfigurationProperties());

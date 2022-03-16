@@ -17,4 +17,5 @@ public class User extends BaseUser{
   public User(String firstName, String lastName) {
     super(firstName, lastName);
   }
+
 }
