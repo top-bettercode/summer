@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.data.jpa.config;
 
-import com.github.pagehelper.PageInterceptor;
 import javax.sql.DataSource;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
@@ -36,7 +35,7 @@ import org.springframework.util.StringUtils;
 @org.springframework.context.annotation.Configuration
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
 @ConditionalOnSingleCandidate(DataSource.class)
-@EnableConfigurationProperties({MybatisProperties.class, PageHelperProperties.class})
+@EnableConfigurationProperties({MybatisProperties.class})
 @AutoConfigureAfter({DataSourceAutoConfiguration.class})
 public class JpaMybatisAutoConfiguration implements InitializingBean {
 
@@ -83,8 +82,7 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   @Bean
   @ConditionalOnMissingBean
-  public SqlSessionFactory sqlSessionFactory(DataSource dataSource,
-      PageHelperProperties pageHelperProperties) throws Exception {
+  public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
     SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
     factory.setDataSource(dataSource);
 //    factory.setVfs(SpringBootVFS.class);
@@ -96,9 +94,6 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
     if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
       configuration = new Configuration();
     }
-    PageInterceptor interceptor = new PageInterceptor();
-    interceptor.setProperties(pageHelperProperties.getProperties());
-    configuration.addInterceptor(interceptor);
     factory.setConfiguration(configuration);
     if (this.properties.getConfigurationProperties() != null) {
       factory.setConfigurationProperties(this.properties.getConfigurationProperties());

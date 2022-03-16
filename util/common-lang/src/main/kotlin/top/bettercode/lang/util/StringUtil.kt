@@ -608,4 +608,9 @@ object StringUtil {
         return 0
     }
 
+    @JvmStatic
+    fun trimLn(str: String): String {
+       return str.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.map { it.trim() }.toTypedArray().joinToString(" ")
+    }
+
 }

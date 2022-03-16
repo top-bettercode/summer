@@ -5,7 +5,7 @@ import static org.springframework.data.querydsl.QuerydslUtils.QUERY_DSL_PRESENT;
 import java.io.Serializable;
 import java.util.Optional;
 import javax.persistence.EntityManager;
-import org.mybatis.spring.SqlSessionTemplate;
+import org.apache.ibatis.session.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -47,14 +47,14 @@ public class JpaExtRepositoryFactory extends RepositoryFactorySupport {
 
   private final JpaExtProperties jpaExtProperties;
   private final EntityManager entityManager;
-  private final SqlSessionTemplate sqlSessionTemplate;
+  private final Configuration configuration;
   private final QueryExtractor extractor;
   private final CrudMethodMetadataPostProcessor crudMethodMetadataPostProcessor;
   private EntityPathResolver entityPathResolver;
   private EscapeCharacter escapeCharacter = EscapeCharacter.DEFAULT;
 
   public JpaExtRepositoryFactory(EntityManager entityManager,
-      SqlSessionTemplate sqlSessionTemplate, JpaExtProperties jpaExtProperties) {
+      Configuration configuration, JpaExtProperties jpaExtProperties) {
     Assert.notNull(entityManager, "EntityManager must not be null!");
 
     this.entityManager = entityManager;
@@ -69,7 +69,7 @@ public class JpaExtRepositoryFactory extends RepositoryFactorySupport {
     }
 
     addRepositoryProxyPostProcessor(crudMethodMetadataPostProcessor);
-    this.sqlSessionTemplate = sqlSessionTemplate;
+    this.configuration = configuration;
     this.jpaExtProperties = jpaExtProperties;
   }
 
@@ -132,7 +132,7 @@ public class JpaExtRepositoryFactory extends RepositoryFactorySupport {
       QueryMethodEvaluationContextProvider evaluationContextProvider) {
     return Optional.of(
         JpaExtQueryLookupStrategy
-            .create(entityManager, sqlSessionTemplate, key, extractor, evaluationContextProvider,
+            .create(entityManager, configuration, key, extractor, evaluationContextProvider,
                 escapeCharacter,
                 jpaExtProperties));
   }
@@ -186,9 +186,6 @@ public class JpaExtRepositoryFactory extends RepositoryFactorySupport {
     private boolean warningLogged = false;
 
     /**
-     * Creates a new {@link EclipseLinkProjectionQueryCreationListener} for the given {@link
-     * EntityManager}.
-     *
      * @param em must not be {@literal null}.
      */
     public EclipseLinkProjectionQueryCreationListener(EntityManager em) {

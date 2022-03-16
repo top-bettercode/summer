@@ -76,14 +76,14 @@ public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
       } else {
         this.trueValue = softDelete.getTrueValue();
       }
-      this.trueValue = JpaUtil.CONVERSION_SERVICE.convert(this.trueValue, propertyType);
+      this.trueValue = JpaUtil.convert(this.trueValue, propertyType);
       String falseValue = annotation.falseValue();
       if (!"".equals(falseValue)) {
         this.falseValue = falseValue;
       } else {
         this.falseValue = softDelete.getFalseValue();
       }
-      this.falseValue = JpaUtil.CONVERSION_SERVICE.convert(this.falseValue, propertyType);
+      this.falseValue = JpaUtil.convert(this.falseValue, propertyType);
     }
   }
 

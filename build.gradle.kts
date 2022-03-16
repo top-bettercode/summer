@@ -98,7 +98,6 @@ allprojects {
 
             dependency("org.mybatis:mybatis:3.5.9")
             dependency("org.mybatis:mybatis-spring:2.0.6")
-            dependency("com.github.pagehelper:pagehelper:5.3.0")
 
             dependency("org.mybatis.generator:mybatis-generator-core:1.4.0")
 

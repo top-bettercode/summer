@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.data.test.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -58,6 +59,25 @@ public class HardUser {
 
   public void setDeleted(boolean deleted) {
     this.deleted = deleted;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof HardUser)) {
+      return false;
+    }
+    HardUser hardUser = (HardUser) o;
+    return deleted == hardUser.deleted && Objects.equals(id, hardUser.id)
+        && Objects.equals(firstName, hardUser.firstName) && Objects.equals(
+        lastName, hardUser.lastName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, firstName, lastName, deleted);
   }
 
   @Override

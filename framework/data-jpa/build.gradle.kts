@@ -8,13 +8,13 @@ dependencies {
 
     api("org.mybatis:mybatis")
     api("org.mybatis:mybatis-spring")
-    api("com.github.pagehelper:pagehelper")
 
     compileOnly("com.querydsl:querydsl-jpa")
     testImplementation("com.querydsl:querydsl-jpa")
 //    testAnnotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa")
 //    testAnnotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
+    testImplementation(project(":util:test"))
     testImplementation("com.h2database:h2")
 }
 

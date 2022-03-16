@@ -2,8 +2,9 @@ package org.springframework.data.jpa.repository.query;
 
 import java.lang.reflect.Method;
 import javax.persistence.EntityManager;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.data.jpa.provider.PersistenceProvider;
+import org.apache.ibatis.session.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.provider.QueryExtractor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.mybatis.JpaExtQueryMethod;
@@ -45,9 +46,6 @@ public final class JpaExtQueryLookupStrategy {
     private final EntityManager em;
     private final QueryExtractor provider;
 
-    /**
-     * Creates a new {@link AbstractQueryLookupStrategy}.
-     */
     public AbstractQueryLookupStrategy(EntityManager em, QueryExtractor extractor) {
 
       this.em = em;
@@ -62,8 +60,8 @@ public final class JpaExtQueryLookupStrategy {
     public final RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata,
         ProjectionFactory factory,
         NamedQueries namedQueries) {
-      return resolveQuery(new JpaExtQueryMethod(method, metadata, factory, provider), em,
-          namedQueries);
+      return resolveQuery(
+          new JpaExtQueryMethod(method, metadata, factory, provider), em, namedQueries);
     }
 
     protected abstract RepositoryQuery resolveQuery(JpaExtQueryMethod method, EntityManager em,
@@ -78,7 +76,6 @@ public final class JpaExtQueryLookupStrategy {
    */
   private static class CreateQueryLookupStrategy extends AbstractQueryLookupStrategy {
 
-    private final PersistenceProvider persistenceProvider;
     private final EscapeCharacter escape;
     private final JpaExtProperties jpaExtProperties;
 
@@ -87,7 +84,6 @@ public final class JpaExtQueryLookupStrategy {
         JpaExtProperties jpaExtProperties) {
 
       super(em, extractor);
-      this.persistenceProvider = PersistenceProvider.fromEntityManager(em);
       this.escape = escape;
       this.jpaExtProperties = jpaExtProperties;
     }
@@ -95,7 +91,7 @@ public final class JpaExtQueryLookupStrategy {
     @Override
     protected RepositoryQuery resolveQuery(JpaExtQueryMethod method, EntityManager em,
         NamedQueries namedQueries) {
-      return new PartTreeJpaExtQuery(method, em, persistenceProvider, escape, jpaExtProperties);
+      return new PartTreeJpaExtQuery(method, em, escape, jpaExtProperties);
     }
   }
 
@@ -109,22 +105,19 @@ public final class JpaExtQueryLookupStrategy {
   private static class DeclaredQueryLookupStrategy extends AbstractQueryLookupStrategy {
 
     private final QueryMethodEvaluationContextProvider evaluationContextProvider;
-    private final SqlSessionTemplate sqlSessionTemplate;
+    private final Configuration configuration;
 
-    /**
-     * Creates a new {@link DeclaredQueryLookupStrategy}.
-     */
-    public DeclaredQueryLookupStrategy(EntityManager em, SqlSessionTemplate sqlSessionTemplate,
+    public DeclaredQueryLookupStrategy(EntityManager em, Configuration configuration,
         QueryExtractor extractor,
         QueryMethodEvaluationContextProvider evaluationContextProvider) {
 
       super(em, extractor);
       this.evaluationContextProvider = evaluationContextProvider;
-      this.sqlSessionTemplate = sqlSessionTemplate;
+      this.configuration = configuration;
     }
 
-    public SqlSessionTemplate getSqlSessionTemplate() {
-      return sqlSessionTemplate;
+    public Configuration getConfiguration() {
+      return configuration;
     }
 
     /*
@@ -136,7 +129,8 @@ public final class JpaExtQueryLookupStrategy {
         NamedQueries namedQueries) {
 
       if (method.isMybatisQuery()) {
-        return new MybatisQuery(method, em, sqlSessionTemplate);
+        return new MybatisJpaQuery(method, em,
+            configuration.getMappedStatement(method.getStatement()));
       }
 
       RepositoryQuery query = JpaQueryFactory.INSTANCE
@@ -181,12 +175,10 @@ public final class JpaExtQueryLookupStrategy {
    */
   private static class CreateIfNotFoundQueryLookupStrategy extends AbstractQueryLookupStrategy {
 
+    private final Logger log = LoggerFactory.getLogger(CreateIfNotFoundQueryLookupStrategy.class);
     private final DeclaredQueryLookupStrategy lookupStrategy;
     private final CreateQueryLookupStrategy createStrategy;
 
-    /**
-     * Creates a new {@link CreateIfNotFoundQueryLookupStrategy}.
-     */
     public CreateIfNotFoundQueryLookupStrategy(EntityManager em, QueryExtractor extractor,
         CreateQueryLookupStrategy createStrategy, DeclaredQueryLookupStrategy lookupStrategy) {
 
@@ -210,7 +202,11 @@ public final class JpaExtQueryLookupStrategy {
         try {
           return createStrategy.resolveQuery(method, em, namedQueries);
         } catch (Exception e1) {
-          return new MybatisQuery(method, em, lookupStrategy.getSqlSessionTemplate());
+          if (log.isDebugEnabled()) {
+            log.debug(e1.getMessage(), e1);
+          }
+          return new MybatisJpaQuery(method, em,
+              lookupStrategy.getConfiguration().getMappedStatement(method.getStatement()));
         }
       }
     }
@@ -219,16 +215,16 @@ public final class JpaExtQueryLookupStrategy {
   /**
    * Creates a {@link QueryLookupStrategy} for the given {@link EntityManager} and {@link Key}.
    *
-   * @param em must not be {@literal null}.
-   * @param key may be {@literal null}.
-   * @param extractor must not be {@literal null}.
+   * @param em                        must not be {@literal null}.
+   * @param key                       may be {@literal null}.
+   * @param extractor                 must not be {@literal null}.
    * @param evaluationContextProvider must not be {@literal null}.
-   * @param escape escape
-   * @param jpaExtProperties jpaExtProperties
-   * @param sqlSessionTemplate sqlSessionTemplate
+   * @param escape                    escape
+   * @param jpaExtProperties          jpaExtProperties
+   * @param configuration             configuration
    * @return QueryLookupStrategy
    */
-  public static QueryLookupStrategy create(EntityManager em, SqlSessionTemplate sqlSessionTemplate,
+  public static QueryLookupStrategy create(EntityManager em, Configuration configuration,
       @Nullable Key key,
       QueryExtractor extractor,
       QueryMethodEvaluationContextProvider evaluationContextProvider,
@@ -243,12 +239,12 @@ public final class JpaExtQueryLookupStrategy {
       case CREATE:
         return new CreateQueryLookupStrategy(em, extractor, escape, jpaExtProperties);
       case USE_DECLARED_QUERY:
-        return new DeclaredQueryLookupStrategy(em, sqlSessionTemplate, extractor,
+        return new DeclaredQueryLookupStrategy(em, configuration, extractor,
             evaluationContextProvider);
       case CREATE_IF_NOT_FOUND:
         return new CreateIfNotFoundQueryLookupStrategy(em, extractor,
             new CreateQueryLookupStrategy(em, extractor, escape, jpaExtProperties),
-            new DeclaredQueryLookupStrategy(em, sqlSessionTemplate, extractor,
+            new DeclaredQueryLookupStrategy(em, configuration, extractor,
                 evaluationContextProvider));
       default:
         throw new IllegalArgumentException(

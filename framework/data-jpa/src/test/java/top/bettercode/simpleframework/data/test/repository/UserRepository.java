@@ -15,6 +15,8 @@ import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
 import top.bettercode.simpleframework.data.jpa.querydsl.RecycleQuerydslPredicateExecutor;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 import top.bettercode.simpleframework.data.test.domain.User;
+import top.bettercode.simpleframework.data.test.resp.CUser;
+import top.bettercode.simpleframework.data.test.resp.CUsers;
 
 public interface UserRepository extends JpaExtRepository<User, Integer>,
     QuerydslPredicateExecutor<User>,
@@ -24,47 +26,64 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 
   Page<User> findByFirstName(String lastName, Pageable pageable);
 
+  @Query(value = "select * from user where first_name = ?1", nativeQuery = true)
+  Page<User> selectNativeSql(String first_name, Pageable pageable);
+
+
   @Modifying
   @Transactional
   void deleteByLastName(String lastName);
 
-  List<User> findByMybatis22(User user);
-
+  //--------------------------------------------
 
   @MybatisTemplate
-  List<User> findByMybatis();
+  List<CUser> selectResultMap(User user);
 
-  Page<User> findByMybatis(Pageable pageable);
+  @MybatisTemplate
+  List<CUsers> selectResultMap2(User user);
 
+  @MybatisTemplate
+  List<User> selectMybatisAll();
+
+  @MybatisTemplate
+  Page<User> selectMybatisAll(Pageable pageable);
+
+  @MybatisTemplate
   @Select("select * from user where deleted = 0")
-  List<User> findByMybatisSize(Size size);
+  List<User> selectByMybatisSize(Size size);
 
-  List<User> findByMybatis257(String firstName, String lastName);
+  List<User> selectMybatisIfParam(String firstName, String lastName);
 
-  List<User> findByMybatis2(Map<String, String> param);
+  @MybatisTemplate
+  List<User> selectByMybatisMap(Map<String, String> param);
 
-  Page<User> findByMybatis2(Pageable pageable, Map<String, String> param);
+  @MybatisTemplate
+  Page<User> selectByMybatisMap(Pageable pageable, Map<String, String> param);
 
+  @MybatisTemplate
+  List<User> selectByMybatisEntity(User user, Pageable pageable);
 
-  Page<User> findByMybatis22(User user, Pageable pageable);
+  @MybatisTemplate
+  List<User> selectByMybatisSort(String firstName, Sort sort);
 
-  @Query(value = "select * from user where first_name = ?1", nativeQuery = true)
-  Page<User> findBy22(String first_name, Pageable pageable);
+  @MybatisTemplate
+  Page<User> selectByMybatisSort(String firstName, Pageable pageable);
 
-  List<User> findByMybatis222(User user, Pageable pageable);
+  @MybatisTemplate
+  User selectOneByMybatis(String firstName);
 
-  List<User> findByMybatis3(String firstName, Sort sort);
-
-  Page<User> findByMybatis3(String firstName, Pageable pageable);
-
-  User findOneByMybatis(String firstName);
-
+  @MybatisTemplate
   @Modifying
+  @Transactional
   int insert(String firstName, String lastName);
 
+  @MybatisTemplate
   @Modifying
+  @Transactional
   int update(Integer id, String lastName);
 
+  @MybatisTemplate
   @Modifying
-  int deleteBy(Integer id);
+  @Transactional
+  int deleteMybatis(Integer id);
 }

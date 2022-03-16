@@ -44,7 +44,7 @@ public class JpaExtRepositoryFactoryBean<T extends JpaExtRepository<Object, Seri
   protected RepositoryFactorySupport createRepositoryFactory(EntityManager em) {
     Assert.notNull(sqlSessionTemplate, "sqlSessionTemplate must not be null");
     Assert.notNull(jpaExtProperties, "jpaExtProperties must not be null");
-    return new JpaExtRepositoryFactory(em, sqlSessionTemplate, jpaExtProperties);
+    return new JpaExtRepositoryFactory(em, sqlSessionTemplate.getConfiguration(), jpaExtProperties);
   }
 
 }

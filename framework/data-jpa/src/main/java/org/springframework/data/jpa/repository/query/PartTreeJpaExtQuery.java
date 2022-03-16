@@ -7,12 +7,16 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.provider.PersistenceProvider;
+import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter;
+import org.springframework.data.jpa.repository.query.JpaQueryExecution.DeleteExecution;
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.ExistsExecution;
 import org.springframework.data.jpa.repository.query.ParameterMetadataProvider.ParameterMetadata;
 import org.springframework.data.repository.query.ResultProcessor;
 import org.springframework.data.repository.query.ReturnedType;
+import org.springframework.data.repository.query.parser.Part;
+import org.springframework.data.repository.query.parser.Part.Type;
 import org.springframework.data.repository.query.parser.PartTree;
+import org.springframework.data.util.Streamable;
 import org.springframework.lang.Nullable;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 import top.bettercode.simpleframework.data.jpa.support.DefaultSoftDeleteSupport;
@@ -32,17 +36,7 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
   private final EscapeCharacter escape;
   private final SoftDeleteSupport softDeleteSupport;
 
-  /**
-   * Creates a new {@link PartTreeJpaQuery}.
-   *
-   * @param method              must not be {@literal null}.
-   * @param em                  must not be {@literal null}.
-   * @param persistenceProvider must not be {@literal null}.
-   * @param escape              escape
-   */
-  PartTreeJpaExtQuery(JpaQueryMethod method, EntityManager em,
-      PersistenceProvider persistenceProvider, EscapeCharacter escape,
-      JpaExtProperties jpaExtProperties) {
+  PartTreeJpaExtQuery(JpaQueryMethod method, EntityManager em, EscapeCharacter escape, JpaExtProperties jpaExtProperties) {
 
     super(method, em);
 
@@ -52,12 +46,12 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     this.softDeleteSupport = new DefaultSoftDeleteSupport(jpaExtProperties, domainClass);
     this.parameters = method.getParameters();
 
-    boolean recreationRequired =
-        parameters.hasDynamicProjection() || parameters.potentiallySortsDynamically();
+    boolean recreationRequired = parameters.hasDynamicProjection() || parameters.potentiallySortsDynamically();
 
     try {
 
       this.tree = new PartTree(method.getName(), domainClass);
+      validate(tree, parameters, method.toString());
       this.countQuery = new CountQueryPreparer(recreationRequired);
       this.query = tree.isCountProjection() ? countQuery : new QueryPreparer(recreationRequired);
 
@@ -65,22 +59,7 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
       throw new IllegalArgumentException(
           String.format("Failed to create query for method %s! %s", method, o_O.getMessage()), o_O);
     }
-  }
 
-  /*
-   * (non-Javadoc)
-   * @see org.springframework.data.jpa.repository.query.AbstractJpaQuery#getExecution()
-   */
-  @Override
-  protected JpaQueryExecution getExecution() {
-
-    if (this.tree.isDelete()) {
-      return new SoftDeleteExecution(em, softDeleteSupport);
-    } else if (this.tree.isExistsProjection()) {
-      return new ExistsExecution();
-    }
-
-    return super.getExecution();
   }
 
   /*
@@ -102,6 +81,104 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     return (TypedQuery<Long>) countQuery.createQuery(accessor);
   }
 
+  /*
+   * (non-Javadoc)
+   * @see org.springframework.data.jpa.repository.query.AbstractJpaQuery#getExecution()
+   */
+  @Override
+  protected JpaQueryExecution getExecution() {
+
+    if (this.tree.isDelete()) {
+      return new DeleteExecution(em) {
+        @Override
+        protected Object doExecute(AbstractJpaQuery jpaQuery,
+            JpaParametersParameterAccessor accessor) {
+          Query query = jpaQuery.createQuery(accessor);
+          List<?> resultList = query.getResultList();
+
+          if (softDeleteSupport.support()) {
+            for (Object o : resultList) {
+              softDeleteSupport.setSoftDeleted(o);
+              em.merge(o);
+            }
+          } else {
+            for (Object o : resultList) {
+              em.remove(o);
+            }
+          }
+
+          return jpaQuery.getQueryMethod().isCollectionQuery() ? resultList : resultList.size();
+        }
+      };
+    } else if (this.tree.isExistsProjection()) {
+      return new ExistsExecution();
+    }
+
+    return super.getExecution();
+  }
+
+  private static void validate(PartTree tree, JpaParameters parameters, String methodName) {
+
+    int argCount = 0;
+
+    Iterable<Part> parts = () -> tree.stream().flatMap(Streamable::stream).iterator();
+
+    for (Part part : parts) {
+
+      int numberOfArguments = part.getNumberOfArguments();
+
+      for (int i = 0; i < numberOfArguments; i++) {
+
+        throwExceptionOnArgumentMismatch(methodName, part, parameters, argCount);
+
+        argCount++;
+      }
+    }
+  }
+
+  private static void throwExceptionOnArgumentMismatch(String methodName, Part part, JpaParameters parameters,
+      int index) {
+
+    Type type = part.getType();
+    String property = part.getProperty().toDotPath();
+
+    if (!parameters.getBindableParameters().hasParameterAt(index)) {
+      throw new IllegalStateException(String.format(
+          "Method %s expects at least %d arguments but only found %d. This leaves an operator of type %s for property %s unbound.",
+          methodName, index + 1, index, type.name(), property));
+    }
+
+    JpaParameter parameter = parameters.getBindableParameter(index);
+
+    if (expectsCollection(type) && !parameterIsCollectionLike(parameter)) {
+      throw new IllegalStateException(wrongParameterTypeMessage(methodName, property, type, "Collection", parameter));
+    } else if (!expectsCollection(type) && !parameterIsScalarLike(parameter)) {
+      throw new IllegalStateException(wrongParameterTypeMessage(methodName, property, type, "scalar", parameter));
+    }
+  }
+
+  private static String wrongParameterTypeMessage(String methodName, String property, Type operatorType,
+      String expectedArgumentType, JpaParameter parameter) {
+
+    return String.format("Operator %s on %s requires a %s argument, found %s in method %s.", operatorType.name(),
+        property, expectedArgumentType, parameter.getType(), methodName);
+  }
+
+  private static boolean parameterIsCollectionLike(JpaParameter parameter) {
+    return Iterable.class.isAssignableFrom(parameter.getType()) || parameter.getType().isArray();
+  }
+
+  /**
+   * Arrays are may be treated as collection like or in the case of binary data as scalar
+   */
+  private static boolean parameterIsScalarLike(JpaParameter parameter) {
+    return !Iterable.class.isAssignableFrom(parameter.getType());
+  }
+
+  private static boolean expectsCollection(Type type) {
+    return type == Type.IN || type == Type.NOT_IN;
+  }
+
   /**
    * Query preparer to create {@link CriteriaQuery} instances and potentially cache them.
    *
@@ -110,10 +187,8 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
    */
   private class QueryPreparer {
 
-    private final @Nullable
-    CriteriaQuery<?> cachedCriteriaQuery;
-    private final @Nullable
-    ParameterBinder cachedParameterBinder;
+    private final @Nullable CriteriaQuery<?> cachedCriteriaQuery;
+    private final @Nullable ParameterBinder cachedParameterBinder;
     private final QueryParameterSetter.QueryMetadataCache metadataCache = new QueryParameterSetter.QueryMetadataCache();
 
     QueryPreparer(boolean recreateQueries) {
@@ -150,13 +225,12 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
 
       TypedQuery<?> query = createQuery(criteriaQuery);
 
-      return restrictMaxResultsIfNecessary(
-          invokeBinding(parameterBinder, query, accessor, this.metadataCache));
+      return restrictMaxResultsIfNecessary(invokeBinding(parameterBinder, query, accessor, this.metadataCache));
     }
 
     /**
-     * Restricts the max results of the given {@link Query} if the current {@code tree} marks this
-     * {@code query} as limited.
+     * Restricts the max results of the given {@link Query} if the current {@code tree} marks this {@code query} as
+     * limited.
      */
     @SuppressWarnings("ConstantConditions")
     private Query restrictMaxResultsIfNecessary(Query query) {
@@ -171,8 +245,7 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
            * - AND the requested page size was bigger than the derived result limitation via the First/Top keyword.
            */
           if (query.getMaxResults() > tree.getMaxResults() && query.getFirstResult() > 0) {
-            query.setFirstResult(
-                query.getFirstResult() - (query.getMaxResults() - tree.getMaxResults()));
+            query.setFirstResult(query.getFirstResult() - (query.getMaxResults() - tree.getMaxResults()));
           }
         }
 
@@ -187,10 +260,9 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     }
 
     /**
-     * Checks whether we are working with a cached {@link CriteriaQuery} and synchronizes the
-     * creation of a {@link TypedQuery} instance from it. This is due to non-thread-safety in the
-     * {@link CriteriaQuery} implementation of some persistence providers (i.e. Hibernate in this
-     * case), see DATAJPA-396.
+     * Checks whether we are working with a cached {@link CriteriaQuery} and synchronizes the creation of a
+     * {@link TypedQuery} instance from it. This is due to non-thread-safety in the {@link CriteriaQuery} implementation
+     * of some persistence providers (i.e. Hibernate in this case), see DATAJPA-396.
      *
      * @param criteriaQuery must not be {@literal null}.
      */
@@ -229,8 +301,7 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     /**
      * Invokes parameter binding on the given {@link TypedQuery}.
      */
-    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query,
-        JpaParametersParameterAccessor accessor,
+    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, JpaParametersParameterAccessor accessor,
         QueryParameterSetter.QueryMetadataCache metadataCache) {
 
       QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata("query", query);
@@ -285,8 +356,7 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
      * Customizes binding by skipping the pagination.
      */
     @Override
-    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query,
-        JpaParametersParameterAccessor accessor,
+    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, JpaParametersParameterAccessor accessor,
         QueryParameterSetter.QueryMetadataCache metadataCache) {
 
       QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata("countquery", query);
