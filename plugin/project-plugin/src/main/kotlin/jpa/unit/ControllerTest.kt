@@ -65,10 +65,10 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         //list
         method("list", JavaType.voidPrimitiveInstance) {
-            javadoc {
-                +"// ${remarks}列表"
-            }
-//                annotation("@org.junit.jupiter.api.DisplayName(\"列表\")")
+//            javadoc {
+//                +"// ${remarks}列表"
+//            }
+            annotation("@org.junit.jupiter.api.DisplayName(\"列表\")")
             annotation("@org.junit.jupiter.api.Test")
             annotation("@org.junit.jupiter.api.Order(0)")
             exception(JavaType("Exception"))
@@ -84,10 +84,10 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         if (excel) {
             //export
             method("export", JavaType.voidPrimitiveInstance) {
-                javadoc {
-                    +"// ${remarks}导出"
-                }
-//                annotation("@org.junit.jupiter.api.DisplayName(\"导出\")")
+//                javadoc {
+//                    +"// ${remarks}导出"
+//                }
+                annotation("@org.junit.jupiter.api.DisplayName(\"导出\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(1)")
                 exception(JavaType("Exception"))
@@ -103,10 +103,10 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         if (!isFullComposite) {
             //info
             method("info", JavaType.voidPrimitiveInstance) {
-                javadoc {
-                    +"// ${remarks}详情"
-                }
-//                annotation("@org.junit.jupiter.api.DisplayName(\"详情\")")
+//                javadoc {
+//                    +"// ${remarks}详情"
+//                }
+                annotation("@org.junit.jupiter.api.DisplayName(\"详情\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(2)")
                 exception(JavaType("Exception"))
@@ -118,10 +118,10 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //create
             method("create", JavaType.voidPrimitiveInstance) {
-                javadoc {
-                    +"// ${remarks}新增"
-                }
-//                annotation("@org.junit.jupiter.api.DisplayName(\"新增\")")
+//                javadoc {
+//                    +"// ${remarks}新增"
+//                }
+                annotation("@org.junit.jupiter.api.DisplayName(\"新增\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(3)")
                 exception(JavaType("Exception"))
@@ -159,10 +159,10 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //update
             method("update", JavaType.voidPrimitiveInstance) {
-                javadoc {
-                    +"// ${remarks}编辑"
-                }
-//                annotation("@org.junit.jupiter.api.DisplayName(\"编辑\")")
+//                javadoc {
+//                    +"// ${remarks}编辑"
+//                }
+                annotation("@org.junit.jupiter.api.DisplayName(\"编辑\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(4)")
                 exception(JavaType("Exception"))
@@ -188,10 +188,10 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //delete
             method("delete", JavaType.voidPrimitiveInstance) {
-                javadoc {
-                    +"// ${remarks}删除"
-                }
-//                annotation("@org.junit.jupiter.api.DisplayName(\"删除\")")
+//                javadoc {
+//                    +"// ${remarks}删除"
+//                }
+                annotation("@org.junit.jupiter.api.DisplayName(\"删除\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(5)")
                 exception(JavaType("Exception"))
