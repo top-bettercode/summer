@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.query.mybatis.CountSqlParser;
 import org.springframework.data.jpa.repository.query.mybatis.MybatisParam;
 import org.springframework.data.jpa.repository.query.mybatis.TuplesResultHandler;
 import org.springframework.data.repository.support.PageableExecutionUtils;
@@ -33,6 +34,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
   private final QueryParameterSetter.QueryMetadataCache metadataCache = new QueryParameterSetter.QueryMetadataCache();
   private final MappedStatement mappedStatement;
   private final TuplesResultHandler tuplesResultHandler;
+  protected CountSqlParser countSqlParser = new CountSqlParser();
 
 
   public MybatisJpaQuery(JpaQueryMethod method, EntityManager em, MappedStatement mappedStatement) {
@@ -165,8 +167,11 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
           List<Tuple> resultList;
           if (accessor.getPageable().isPaged()) {
             JpaQueryMethod method = getQueryMethod();
-            DeclaredQuery deriveCountQuery = mybatisQuery.getDeclaredQuery()
-                .deriveCountQuery(method.getCountQuery(), method.getCountQueryProjection());
+            String countQueryString = method.getCountQuery();
+            DeclaredQuery deriveCountQuery = DeclaredQuery.of(
+                countQueryString != null ? countQueryString : countSqlParser.getSmartCountSql(
+                    mybatisQuery.getDeclaredQuery().getQueryString()));
+
             deriveCountQuery = ExpressionBasedStringQuery.from(deriveCountQuery,
                 method.getEntityInformation(), PARSER);
 

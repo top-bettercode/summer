@@ -1,6 +1,9 @@
 package top.bettercode.simpleframework.data.jpa.support;
 
-import org.springframework.core.convert.ConversionService;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 /**
@@ -8,7 +11,22 @@ import org.springframework.core.convert.support.DefaultConversionService;
  */
 public class JpaUtil {
 
-  private static final ConversionService CONVERSION_SERVICE = new DefaultConversionService();
+  private static final DefaultConversionService CONVERSION_SERVICE = new DefaultConversionService();
+
+  static {
+    CONVERSION_SERVICE.addConverter(new Converter<Timestamp, LocalDate>() {
+      @Override
+      public LocalDate convert(Timestamp timestamp) {
+        return timestamp.toLocalDateTime().toLocalDate();
+      }
+    });
+    CONVERSION_SERVICE.addConverter(new Converter<Timestamp, LocalDateTime>() {
+      @Override
+      public LocalDateTime convert(Timestamp timestamp) {
+        return timestamp.toLocalDateTime();
+      }
+    });
+  }
 
   @SuppressWarnings("unchecked")
   public static <T> T convert(Object source, Class<T> targetType) {
@@ -26,4 +44,7 @@ public class JpaUtil {
     }
   }
 
+  public static boolean canConvert(Class<?> sourceType, Class<?> targetType) {
+    return CONVERSION_SERVICE.canConvert(sourceType, targetType);
+  }
 }

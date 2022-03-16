@@ -82,6 +82,7 @@ allprojects {
             dependency("com.github.axet:kaptcha:0.0.9")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
             dependency("net.sourceforge.plantuml:plantuml:1.2021.8")
+            dependency("com.github.jsqlparser:jsqlparser:4.3")
 
             dependency("mysql:mysql-connector-java:8.0.27")
             dependency("com.oracle.database.jdbc:ojdbc8:21.5.0.0")

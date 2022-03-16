@@ -8,6 +8,7 @@ dependencies {
 
     api("org.mybatis:mybatis")
     api("org.mybatis:mybatis-spring")
+    api("com.github.jsqlparser:jsqlparser")
 
     compileOnly("com.querydsl:querydsl-jpa")
     testImplementation("com.querydsl:querydsl-jpa")
