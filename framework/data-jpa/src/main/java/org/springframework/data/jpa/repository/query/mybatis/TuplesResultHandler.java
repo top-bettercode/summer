@@ -409,7 +409,7 @@ public class TuplesResultHandler {
           if (typeHandlerRegistry.hasTypeHandler(propertyType)) {
             autoMapping.add(new UnMappedColumnAutoMapping(columnName, property, propertyType,
                 propertyType.isPrimitive()));
-          } else {
+          } else if (propertyType != null) {
             configuration.getAutoMappingUnknownColumnBehavior()
                 .doAction(mappedStatement, columnName, property, propertyType);
           }
