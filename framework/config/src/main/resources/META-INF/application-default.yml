@@ -43,6 +43,8 @@ spring:
         one-indexed-parameters: true
   jpa:
     open-in-view: false
+    properties:
+      hibernate.format_sql: true
 
 mybatis:
   configuration:
