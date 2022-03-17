@@ -34,7 +34,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
   private final MappedStatement mappedStatement;
   private final MappedStatement countMappedStatement;
   private final TuplesResultHandler tuplesResultHandler;
-  protected CountSqlParser countSqlParser = new CountSqlParser();
+  private final CountSqlParser countSqlParser = new CountSqlParser();
 
 
   public MybatisJpaQuery(JpaExtQueryMethod method, EntityManager em) {
