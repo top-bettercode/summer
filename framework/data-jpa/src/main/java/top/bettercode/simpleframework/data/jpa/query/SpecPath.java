@@ -20,7 +20,7 @@ import org.springframework.util.Assert;
  */
 public class SpecPath<T, M extends SpecMatcher<T, M>> {
 
-  private final Logger log = LoggerFactory.getLogger(SpecPath.class);
+  private static final Logger log = LoggerFactory.getLogger(SpecPath.class);
 
   private final M specMatcher;
   /**
@@ -58,7 +58,26 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
     return value + "%";
   }
 
+  public static <T> Path<?> toPath(Root<T> root, String propertyName) {
+    try {
+      String[] split = propertyName.split("\\.");
+      Path<?> path = null;
+      for (String s : split) {
+        path = path == null ? root.get(s) : path.get(s);
+      }
+      return path;
+    } catch (IllegalArgumentException e) {
+      if (log.isDebugEnabled()) {
+        log.debug(e.getMessage());
+      }
+      return null;
+    }
+  }
   //--------------------------------------------
+
+  public Path<?> toPath(Root<T> root) {
+    return toPath(root, this.propertyName);
+  }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   public Predicate toPredicate(Root<T> root, CriteriaBuilder criteriaBuilder) {
@@ -176,22 +195,6 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
       }
     }
     return null;
-  }
-
-  public Path<?> toPath(Root<T> root) {
-    try {
-      String[] split = this.propertyName.split("\\.");
-      Path<?> path = null;
-      for (String s : split) {
-        path = path == null ? root.get(s) : path.get(s);
-      }
-      return path;
-    } catch (IllegalArgumentException e) {
-      if (log.isDebugEnabled()) {
-        log.debug(e.getMessage());
-      }
-      return null;
-    }
   }
 
   //--------------------------------------------
