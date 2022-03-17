@@ -106,6 +106,13 @@ public class TuplesResultHandler {
   public String findNestedResultMap() {
     for (ResultMap resultMap : mappedStatement.getResultMaps()) {
       if (resultMap.hasNestedResultMaps()) {
+        for (ResultMapping resultMapping : resultMap.getResultMappings()) {
+          String nestedResultMapId = resultMapping.getNestedResultMapId();
+          if (nestedResultMapId != null && nestedResultMapId.contains("_collection")) {
+            throw new UnsupportedOperationException(
+                nestedResultMapId + " collection resultmap not support page query");
+          }
+        }
         return resultMap.getId();
       }
     }

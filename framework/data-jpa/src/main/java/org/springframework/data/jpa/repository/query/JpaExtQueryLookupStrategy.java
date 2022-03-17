@@ -45,11 +45,17 @@ public final class JpaExtQueryLookupStrategy {
 
     private final EntityManager em;
     private final QueryExtractor provider;
+    private final Configuration configuration;
 
-    public AbstractQueryLookupStrategy(EntityManager em, QueryExtractor extractor) {
-
+    public AbstractQueryLookupStrategy(EntityManager em, QueryExtractor extractor,
+        Configuration configuration) {
       this.em = em;
       this.provider = extractor;
+      this.configuration = configuration;
+    }
+
+    public Configuration getConfiguration() {
+      return configuration;
     }
 
     /*
@@ -61,7 +67,8 @@ public final class JpaExtQueryLookupStrategy {
         ProjectionFactory factory,
         NamedQueries namedQueries) {
       return resolveQuery(
-          new JpaExtQueryMethod(method, metadata, factory, provider), em, namedQueries);
+          new JpaExtQueryMethod(method, metadata, factory, provider, configuration), em,
+          namedQueries);
     }
 
     protected abstract RepositoryQuery resolveQuery(JpaExtQueryMethod method, EntityManager em,
@@ -81,9 +88,8 @@ public final class JpaExtQueryLookupStrategy {
 
     public CreateQueryLookupStrategy(EntityManager em, QueryExtractor extractor,
         EscapeCharacter escape,
-        JpaExtProperties jpaExtProperties) {
-
-      super(em, extractor);
+        JpaExtProperties jpaExtProperties, Configuration configuration) {
+      super(em, extractor, configuration);
       this.escape = escape;
       this.jpaExtProperties = jpaExtProperties;
     }
@@ -105,19 +111,13 @@ public final class JpaExtQueryLookupStrategy {
   private static class DeclaredQueryLookupStrategy extends AbstractQueryLookupStrategy {
 
     private final QueryMethodEvaluationContextProvider evaluationContextProvider;
-    private final Configuration configuration;
 
-    public DeclaredQueryLookupStrategy(EntityManager em, Configuration configuration,
+    public DeclaredQueryLookupStrategy(EntityManager em,
         QueryExtractor extractor,
-        QueryMethodEvaluationContextProvider evaluationContextProvider) {
-
-      super(em, extractor);
+        QueryMethodEvaluationContextProvider evaluationContextProvider,
+        Configuration configuration) {
+      super(em, extractor, configuration);
       this.evaluationContextProvider = evaluationContextProvider;
-      this.configuration = configuration;
-    }
-
-    public Configuration getConfiguration() {
-      return configuration;
     }
 
     /*
@@ -128,9 +128,8 @@ public final class JpaExtQueryLookupStrategy {
     protected RepositoryQuery resolveQuery(JpaExtQueryMethod method, EntityManager em,
         NamedQueries namedQueries) {
 
-      if (method.isMybatisQuery()) {
-        return new MybatisJpaQuery(method, em,
-            configuration.getMappedStatement(method.getStatement()));
+      if (method.isUseMybatisQuery()) {
+        return new MybatisJpaQuery(method, em);
       }
 
       RepositoryQuery query = JpaQueryFactory.INSTANCE
@@ -182,7 +181,7 @@ public final class JpaExtQueryLookupStrategy {
     public CreateIfNotFoundQueryLookupStrategy(EntityManager em, QueryExtractor extractor,
         CreateQueryLookupStrategy createStrategy, DeclaredQueryLookupStrategy lookupStrategy) {
 
-      super(em, extractor);
+      super(em, extractor, lookupStrategy.getConfiguration());
 
       this.createStrategy = createStrategy;
       this.lookupStrategy = lookupStrategy;
@@ -199,11 +198,10 @@ public final class JpaExtQueryLookupStrategy {
       try {
         return lookupStrategy.resolveQuery(method, em, namedQueries);
       } catch (IllegalStateException e) {
-        try {
+        if (method.getMappedStatement() != null) {
+          return new MybatisJpaQuery(method, em);
+        } else {
           return createStrategy.resolveQuery(method, em, namedQueries);
-        } catch (Exception e1) {
-          return new MybatisJpaQuery(method, em,
-              lookupStrategy.getConfiguration().getMappedStatement(method.getStatement()));
         }
       }
     }
@@ -234,15 +232,16 @@ public final class JpaExtQueryLookupStrategy {
 
     switch (key != null ? key : Key.CREATE_IF_NOT_FOUND) {
       case CREATE:
-        return new CreateQueryLookupStrategy(em, extractor, escape, jpaExtProperties);
+        return new CreateQueryLookupStrategy(em, extractor, escape, jpaExtProperties,
+            configuration);
       case USE_DECLARED_QUERY:
-        return new DeclaredQueryLookupStrategy(em, configuration, extractor,
-            evaluationContextProvider);
+        return new DeclaredQueryLookupStrategy(em, extractor, evaluationContextProvider,
+            configuration);
       case CREATE_IF_NOT_FOUND:
         return new CreateIfNotFoundQueryLookupStrategy(em, extractor,
-            new CreateQueryLookupStrategy(em, extractor, escape, jpaExtProperties),
-            new DeclaredQueryLookupStrategy(em, configuration, extractor,
-                evaluationContextProvider));
+            new CreateQueryLookupStrategy(em, extractor, escape, jpaExtProperties, configuration),
+            new DeclaredQueryLookupStrategy(em, extractor, evaluationContextProvider,
+                configuration));
       default:
         throw new IllegalArgumentException(
             String.format("Unsupported query lookup strategy %s!", key));

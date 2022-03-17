@@ -24,6 +24,7 @@ import top.bettercode.simpleframework.data.jpa.support.Size;
 import top.bettercode.simpleframework.data.test.domain.User;
 import top.bettercode.simpleframework.data.test.repository.Service;
 import top.bettercode.simpleframework.data.test.repository.UserRepository;
+import top.bettercode.simpleframework.data.test.resp.AUser;
 import top.bettercode.simpleframework.data.test.resp.CUser;
 import top.bettercode.simpleframework.data.test.resp.CUsers;
 
@@ -87,6 +88,33 @@ public class JpaMybatisTest {
             new User("Carter", null));
     System.err.println(StringUtil.valueOf(users1, true));
     Assertions.assertEquals(1, users1.size());
+    Assertions.assertIterableEquals(users, users1);
+  }
+
+  @Test
+  public void selectResultMap3() {
+    List<AUser> users = repository.selectResultMap3(new User("Carter", null));
+    System.err.println(StringUtil.valueOf(users, true));
+    Assertions.assertEquals(3, users.size());
+    List<Object> users1 = sqlSession
+        .selectList(UserRepository.class.getName() + ".selectResultMap3",
+            new User("Carter", null));
+    System.err.println(StringUtil.valueOf(users1, true));
+    Assertions.assertEquals(3, users1.size());
+    Assertions.assertIterableEquals(users, users1);
+  }
+
+  @Test
+  public void selectResultMap3Page() {
+    Page<AUser> users = repository.selectResultMap3(new User("Carter", null),
+        PageRequest.of(0, 10));
+    System.err.println(StringUtil.valueOf(users, true));
+    Assertions.assertEquals(3, users.getTotalElements());
+    List<Object> users1 = sqlSession
+        .selectList(UserRepository.class.getName() + ".selectResultMap3",
+            new User("Carter", null));
+    System.err.println(StringUtil.valueOf(users1, true));
+    Assertions.assertEquals(3, users1.size());
     Assertions.assertIterableEquals(users, users1);
   }
 
