@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.mybatis.CountSqlParser;
+import org.springframework.data.jpa.repository.query.mybatis.JpaExtQueryMethod;
 import org.springframework.data.jpa.repository.query.mybatis.MybatisParam;
 import org.springframework.data.jpa.repository.query.mybatis.TuplesResultHandler;
 import org.springframework.data.repository.support.PageableExecutionUtils;
@@ -36,23 +37,27 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
   protected CountSqlParser countSqlParser = new CountSqlParser();
 
 
-  public MybatisJpaQuery(JpaQueryMethod method, EntityManager em, MappedStatement mappedStatement) {
+  public MybatisJpaQuery(JpaExtQueryMethod method, EntityManager em) {
     super(method, em);
     MappedStatement countMappedStatement;
-    this.mappedStatement = mappedStatement;
-    try {
-      countMappedStatement = MybatisJpaQuery.this.mappedStatement.getConfiguration()
-          .getMappedStatement(MybatisJpaQuery.this.mappedStatement.getId() + "_COUNT");
-    } catch (Exception ignored) {
-      countMappedStatement = null;
-    }
-    this.countMappedStatement = countMappedStatement;
+    this.mappedStatement = method.getMappedStatement();
     this.tuplesResultHandler = new TuplesResultHandler(mappedStatement);
-    String nestedResultMap = this.tuplesResultHandler.findNestedResultMap();
-    if (method.isPageQuery() && nestedResultMap != null) {
-      sqlLog.warn(
-          "{} may return incorrect paginated data. Please check result maps definition {}.",
-          mappedStatement.getId(), nestedResultMap);
+    if (method.isPageQuery()) {
+      String nestedResultMap = this.tuplesResultHandler.findNestedResultMap();
+      if (method.isPageQuery() && nestedResultMap != null) {
+        sqlLog.warn(
+            "{} may return incorrect paginated data. Please check result maps definition {}.",
+            mappedStatement.getId(), nestedResultMap);
+      }
+      try {
+        countMappedStatement = this.mappedStatement.getConfiguration()
+            .getMappedStatement(this.mappedStatement.getId() + "_COUNT");
+      } catch (Exception ignored) {
+        countMappedStatement = null;
+      }
+      this.countMappedStatement = countMappedStatement;
+    } else {
+      this.countMappedStatement = null;
     }
   }
 

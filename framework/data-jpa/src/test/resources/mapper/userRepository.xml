@@ -12,13 +12,22 @@
     </collection>
   </resultMap>
 
-  <resultMap id="userResultMap1" type="top.bettercode.simpleframework.data.test.resp.CUsers">
+  <resultMap id="userResultMap2" type="top.bettercode.simpleframework.data.test.resp.CUsers">
     <result property="firstName" column="first_name"/>
     <collection property="lastName" javaType="java.util.List"
       ofType="top.bettercode.simpleframework.data.test.resp.LastName">
       <result property="lastName" column="last_name"/>
       <result property="deleted" column="deleted"/>
     </collection>
+  </resultMap>
+
+  <resultMap id="userResultMap3" type="top.bettercode.simpleframework.data.test.resp.AUser">
+    <result property="id" column="id"/>
+    <result property="firstName" column="first_name"/>
+    <association property="lastName" javaType="top.bettercode.simpleframework.data.test.resp.LastName">
+      <result property="lastName" column="last_name"/>
+      <result property="deleted" column="deleted"/>
+    </association>
   </resultMap>
 
   <select id="selectResultMap" resultMap="userResultMap"
@@ -31,7 +40,17 @@
     </if>
   </select>
 
-  <select id="selectResultMap2" resultMap="userResultMap1"
+  <select id="selectResultMap2" resultMap="userResultMap2"
+    parameterType="top.bettercode.simpleframework.data.test.domain.User">
+    select *
+    from user
+    where first_name = #{firstName}
+    <if test="lastName!=null">
+      and last_name = #{lastName}
+    </if>
+  </select>
+
+  <select id="selectResultMap3" resultMap="userResultMap3"
     parameterType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user

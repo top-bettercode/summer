@@ -15,6 +15,7 @@ import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
 import top.bettercode.simpleframework.data.jpa.querydsl.RecycleQuerydslPredicateExecutor;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 import top.bettercode.simpleframework.data.test.domain.User;
+import top.bettercode.simpleframework.data.test.resp.AUser;
 import top.bettercode.simpleframework.data.test.resp.CUser;
 import top.bettercode.simpleframework.data.test.resp.CUsers;
 
@@ -41,6 +42,12 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 
   @MybatisTemplate
   List<CUsers> selectResultMap2(User user);
+
+//  Page<CUsers> selectResultMap2(User user, Pageable pageable);
+
+  List<AUser> selectResultMap3(User user);
+
+  Page<AUser> selectResultMap3(User user, Pageable pageable);
 
   @MybatisTemplate
   List<User> selectMybatisAll();

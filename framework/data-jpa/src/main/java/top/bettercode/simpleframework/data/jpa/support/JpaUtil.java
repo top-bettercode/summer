@@ -33,9 +33,9 @@ public class JpaUtil {
     if (source != null && !source.getClass().equals(targetType)) {
       if (boolean.class.equals(targetType) || Boolean.class.equals(targetType)) {
         if ("1".equals(String.valueOf(source))) {
-          source = true;
+          return (T) Boolean.TRUE;
         } else if ("0".equals(String.valueOf(source))) {
-          source = false;
+          return (T) Boolean.FALSE;
         }
       }
       return JpaUtil.CONVERSION_SERVICE.convert(source, targetType);
