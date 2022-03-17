@@ -93,9 +93,10 @@ public class DataErrorHandler extends AbstractErrorHandler {
       } else {
         message = detailMessage;
       }
-    }else if(error instanceof DataAccessResourceFailureException){
-      if(error.getMessage().contains("Socket read timed out")){
+    } else if (error instanceof DataAccessResourceFailureException) {
+      if (error.getMessage().contains("Socket read timed out")) {
         message = "datasource.request.timeout";
+        respEntity.setHttpStatusCode(HttpStatus.REQUEST_TIMEOUT.value());
       }
     }
     if (StringUtils.hasText(message)) {
