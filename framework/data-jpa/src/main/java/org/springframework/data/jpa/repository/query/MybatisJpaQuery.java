@@ -23,6 +23,7 @@ import org.springframework.data.jpa.repository.query.mybatis.TuplesResultHandler
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.data.util.ParsingUtils;
 import org.springframework.util.Assert;
+import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.support.JpaUtil;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 
@@ -92,7 +93,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
     MybatisParameterBinder parameterBinder = (MybatisParameterBinder) this.parameterBinder.get();
     MybatisParam mybatisParam = parameterBinder.bindParameterObject(accessor);
     BoundSql boundSql = mybatisParam.getBoundSql();
-    String queryString = boundSql.getSql();
+    String queryString = StringUtil.trimLn(boundSql.getSql());
 
     Sort sort = accessor.getSort();
     Size size = mybatisParam.getSize();
@@ -179,7 +180,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             if (countMappedStatement != null) {
               BoundSql boundSql = countMappedStatement.getBoundSql(
                   mybatisParam.getParameterObject());
-              countQueryString = boundSql.getSql();
+              countQueryString = StringUtil.trimLn(boundSql.getSql());
             }
             String queryString =
                 countQueryString != null ? countQueryString : countSqlParser.getSmartCountSql(
