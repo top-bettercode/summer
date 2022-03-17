@@ -179,14 +179,38 @@ public class JpaMybatisTest {
     System.err.println(users1);
     Assertions.assertIterableEquals(users, users1);
     Assertions.assertEquals(1, users.size());
-    users = repository.selectMybatisIfParam("Carter", null);
-    System.err.println(users);
-    users1 = sqlSession
-        .selectList(UserRepository.class.getName() + ".selectMybatisIfParam",
-            ImmutableMap.of("firstName", "Carter"));
-    System.err.println(users1);
-    Assertions.assertIterableEquals(users, users1);
-    Assertions.assertEquals(3, users.size());
+  }
+
+
+  @Test
+  public void selectMybatisIfParamAsynchronous() throws Exception {
+    for (int i = 0; i < 100; i++) {
+      Thread thread = new Thread(() -> {
+        List<User> users = repository.selectMybatisIfParam("Carter", "Beauford1");
+        System.err.println(users);
+        List<Object> users1 = sqlSession
+            .selectList(UserRepository.class.getName() + ".selectMybatisIfParam",
+                ImmutableMap.of("firstName", "Carter", "lastName", "Beauford1", "param2",
+                    "Beauford1"));
+        System.err.println(users1);
+        Assertions.assertIterableEquals(users, users1);
+        Assertions.assertEquals(1, users.size());
+      });
+      thread.start();
+      thread.join();
+      Thread thread1 = new Thread(() -> {
+        List<User> users2 = repository.selectMybatisIfParam("Carter", null);
+        System.err.println(users2);
+        List<Object> users21 = sqlSession
+            .selectList(UserRepository.class.getName() + ".selectMybatisIfParam",
+                ImmutableMap.of("firstName", "Carter"));
+        System.err.println(users21);
+        Assertions.assertIterableEquals(users2, users21);
+        Assertions.assertEquals(3, users2.size());
+      });
+      thread1.start();
+      thread1.join();
+    }
   }
 
   @Test
