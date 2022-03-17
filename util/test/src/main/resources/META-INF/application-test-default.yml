@@ -17,6 +17,10 @@ logging:
 spring:
   jackson:
     default-property-inclusion: ALWAYS
+  jpa:
+    properties:
+      hibernate.highlight_sql: true
+
   cloud:
     refresh:
       enabled: false
