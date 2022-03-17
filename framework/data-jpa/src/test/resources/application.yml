@@ -4,6 +4,8 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
     top.bettercode.simpleframework.data: debug
+  file:
+    path: build/logs/
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
@@ -26,3 +28,5 @@ spring:
     open-in-view: false
     properties:
       hibernate.format_sql: true
+      hibernate.highlight_sql: true
+      hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 5000
