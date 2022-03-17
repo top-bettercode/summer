@@ -10,7 +10,6 @@ import top.bettercode.generator.dom.java.element.Interface
 val repository: ProjectGenerator.(Interface) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            import("org.springframework.data.jpa.repository.query.mybatis.MybatisTemplate")
             +"/**"
             +" * $remarks 数据层"
             +" */"
