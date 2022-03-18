@@ -33,5 +33,5 @@ include(":util:wechat")
 include(":util:weixin")
 include(":util:sms")
 
-include(":wintrue:kk")
+//include(":wintrue:kk")
 
