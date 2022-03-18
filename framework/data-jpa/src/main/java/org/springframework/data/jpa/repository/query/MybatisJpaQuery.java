@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.Tuple;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.query.JpaQueryExecution.StreamExecution;
 import org.springframework.data.jpa.repository.query.mybatis.CountSqlParser;
 import org.springframework.data.jpa.repository.query.mybatis.JpaExtQueryMethod;
 import org.springframework.data.jpa.repository.query.mybatis.MybatisParam;
@@ -23,7 +25,6 @@ import org.springframework.data.jpa.repository.query.mybatis.TuplesResultHandler
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.data.util.ParsingUtils;
 import org.springframework.util.Assert;
-import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.support.JpaUtil;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 
@@ -93,7 +94,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
     MybatisParameterBinder parameterBinder = (MybatisParameterBinder) this.parameterBinder.get();
     MybatisParam mybatisParam = parameterBinder.bindParameterObject(accessor);
     BoundSql boundSql = mybatisParam.getBoundSql();
-    String queryString = StringUtil.trimLn(boundSql.getSql());
+    String queryString = boundSql.getSql();
 
     Sort sort = accessor.getSort();
     Size size = mybatisParam.getSize();
@@ -125,7 +126,14 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
   protected JpaQueryExecution getExecution() {
     JpaQueryMethod method = getQueryMethod();
     if (method.isStreamQuery()) {
-      throw new UnsupportedOperationException("Mybatis StreamExecution is not supported.");
+      return new StreamExecution() {
+        @Override
+        protected Object doExecute(AbstractJpaQuery query,
+            JpaParametersParameterAccessor accessor) {
+          return ((Stream<Tuple>) super.doExecute(query, accessor)).map(
+              tuplesResultHandler::handleTuple);
+        }
+      };
     } else if (method.isProcedureQuery()) {
       throw new UnsupportedOperationException("Mybatis ProcedureExecution is not supported.");
     } else if (method.isCollectionQuery()) {
@@ -180,7 +188,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             if (countMappedStatement != null) {
               BoundSql boundSql = countMappedStatement.getBoundSql(
                   mybatisParam.getParameterObject());
-              countQueryString = StringUtil.trimLn(boundSql.getSql());
+              countQueryString = boundSql.getSql();
             }
             String queryString =
                 countQueryString != null ? countQueryString : countSqlParser.getSmartCountSql(
