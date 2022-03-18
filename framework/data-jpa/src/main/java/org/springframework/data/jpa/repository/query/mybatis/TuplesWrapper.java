@@ -21,8 +21,6 @@ public class TuplesWrapper {
   private final List<Tuple> tuples;
   private final List<String> columnNames = new ArrayList<>();
   private final List<String> classNames = new ArrayList<>();
-  private final List<Class<?>> javaTypes = new ArrayList<>();
-  private final Map<String, Class<?>> javaTypeMap = new HashMap<>();
   private final Map<String, List<String>> mappedColumnNamesMap = new HashMap<>();
   private final Map<String, List<String>> unMappedColumnNamesMap = new HashMap<>();
 
@@ -34,12 +32,13 @@ public class TuplesWrapper {
       String alias = element.getAlias();
       columnNames.add(alias);
       Class<?> javaType = element.getJavaType();
-      javaTypeMap.put(alias, javaType);
-      javaTypes.add(javaType);
       classNames.add(javaType.getName());
     }
   }
 
+  public int size(){
+    return tuples.size();
+  }
 
   public boolean next() {
     if (index < tuples.size()) {
@@ -60,14 +59,6 @@ public class TuplesWrapper {
 
   public List<String> getColumnNames() {
     return this.columnNames;
-  }
-
-  public Class<?> getJavaType(String alias) {
-    return javaTypeMap.get(alias);
-  }
-
-  public List<Class<?>> getJavaTypes() {
-    return javaTypes;
   }
 
   public List<String> getClassNames() {

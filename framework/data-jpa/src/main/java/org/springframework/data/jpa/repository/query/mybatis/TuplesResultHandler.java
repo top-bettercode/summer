@@ -591,7 +591,7 @@ public class TuplesResultHandler {
           defaultConstructor);
     } else {
       for (Constructor<?> constructor : constructors) {
-        if (allowedConstructorUsingTypeHandlers(constructor, rsw.getJavaTypes())) {
+        if (allowedConstructorUsingTypeHandlers(constructor, rsw)) {
           return createUsingConstructor(rsw, resultType, constructorArgTypes, constructorArgs,
               constructor);
         }
@@ -631,9 +631,9 @@ public class TuplesResultHandler {
   }
 
   private boolean allowedConstructorUsingTypeHandlers(final Constructor<?> constructor,
-      final List<Class<?>> jdbcTypes) {
+      final TuplesWrapper tw) {
     final Class<?>[] parameterTypes = constructor.getParameterTypes();
-    if (parameterTypes.length != jdbcTypes.size()) {
+    if (parameterTypes.length != tw.size()) {
       return false;
     }
     for (Class<?> parameterType : parameterTypes) {
