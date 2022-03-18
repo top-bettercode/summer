@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.SqlLobValue;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import top.bettercode.simpleframework.security.ApiAuthenticationToken;
 
@@ -33,6 +34,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
     this.jdbcTemplate = new JdbcTemplate(dataSource);
   }
 
+  @Transactional
   @Override
   public void save(ApiAuthenticationToken authorization) {
     String scope = authorization.getScope();
