@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.data.test.repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.data.domain.Page;
@@ -60,6 +61,8 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
   List<User> selectByMybatisSize(Size size);
 
   List<User> selectMybatisIfParam(String firstName, String lastName);
+
+  Stream<User> selectMybatisStream(String firstName, String lastName);
 
   @MybatisTemplate
   List<User> selectByMybatisMap(Map<String, String> param);
