@@ -43,4 +43,5 @@ public class Service {
     Assert.isTrue(size2 == users1.size() + 1, "查询结果一致");
 
   }
+
 }

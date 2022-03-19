@@ -24,7 +24,8 @@
   <resultMap id="userResultMap3" type="top.bettercode.simpleframework.data.test.resp.AUser">
     <result property="id" column="id"/>
     <result property="firstName" column="first_name"/>
-    <association property="lastName" javaType="top.bettercode.simpleframework.data.test.resp.LastName">
+    <association property="lastName"
+      javaType="top.bettercode.simpleframework.data.test.resp.LastName">
       <result property="lastName" column="last_name"/>
       <result property="deleted" column="deleted"/>
     </association>
@@ -61,7 +62,8 @@
   </select>
 
   <insert id="insert">
-    insert into user (first_name, last_name,id) values (#{firstName},#{lastName},100)
+    insert into user (first_name, last_name, id)
+    values (#{firstName}, #{lastName}, 100)
   </insert>
   <update id="update">
     update user
@@ -94,7 +96,17 @@
     from user
     where deleted = 0
   </select>
-  <select id="selectMybatisIfParam" resultType="top.bettercode.simpleframework.data.test.domain.User">
+  <select id="selectMybatisIfParam"
+    resultType="top.bettercode.simpleframework.data.test.domain.User">
+    select *
+    from user
+    where first_name = #{firstName} AND first_name = #{firstName}
+    <if test="lastName!=null or param2!=null">
+      and last_name = #{param2}
+    </if>
+  </select>
+  <select id="selectMybatisStream"
+    resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user
     where first_name = #{firstName} AND first_name = #{firstName}
@@ -110,7 +122,8 @@
       and last_name = #{lastName}
     </if>
   </select>
-  <select id="selectByMybatisSort" resultType="top.bettercode.simpleframework.data.test.domain.User">
+  <select id="selectByMybatisSort"
+    resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
     from user
     where first_name = #{firstName}

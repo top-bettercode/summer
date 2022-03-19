@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 import top.bettercode.simpleframework.data.test.domain.User;
@@ -181,6 +183,13 @@ public class JpaMybatisTest {
     Assertions.assertEquals(1, users.size());
   }
 
+  @Test
+  @Transactional(readOnly = true)
+  public void selectMybatisStream() {
+    try (Stream<User> users = repository.selectMybatisStream("Carter", null)) {
+      users.forEach(System.err::println);
+    }
+  }
 
   @Test
   public void selectMybatisIfParamAsynchronous() throws Exception {
