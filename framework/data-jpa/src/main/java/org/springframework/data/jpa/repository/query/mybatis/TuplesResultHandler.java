@@ -103,14 +103,15 @@ public class TuplesResultHandler {
     this.resultHandler = resultHandler;
   }
 
-  public String findNestedResultMap() {
+  public String findNestedResultMap(boolean pageQuery) {
     for (ResultMap resultMap : mappedStatement.getResultMaps()) {
       if (resultMap.hasNestedResultMaps()) {
         for (ResultMapping resultMapping : resultMap.getResultMappings()) {
           String nestedResultMapId = resultMapping.getNestedResultMapId();
           if (nestedResultMapId != null && nestedResultMapId.contains("_collection")) {
             throw new UnsupportedOperationException(
-                nestedResultMapId + " collection resultmap not support page query");
+                nestedResultMapId + " collection resultmap not support " + (pageQuery ? "page"
+                    : "stream") + " query");
           }
         }
         return resultMap.getId();
