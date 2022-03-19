@@ -44,14 +44,16 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
     this.mappedStatement = method.getMappedStatement();
     this.tuplesResultHandler = new TuplesResultHandler(mappedStatement);
     boolean pageQuery = method.isPageQuery();
-    if (pageQuery) {
-      String nestedResultMap = this.tuplesResultHandler.findNestedResultMap();
-      if ((pageQuery || method.isStreamQuery()) && nestedResultMap != null) {
+    if (pageQuery || method.isStreamQuery()) {
+      String nestedResultMap = this.tuplesResultHandler.findNestedResultMap(pageQuery);
+      if (nestedResultMap != null) {
         sqlLog.warn(
             "{} may return incorrect " + (pageQuery ? "paginated" : "streamed")
                 + " data. Please check result maps definition {}.",
             mappedStatement.getId(), nestedResultMap);
       }
+    }
+    if (pageQuery) {
       try {
         countMappedStatement = this.mappedStatement.getConfiguration()
             .getMappedStatement(this.mappedStatement.getId() + "_COUNT");
