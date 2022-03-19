@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.Tuple;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.transform.Transformers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -357,11 +358,11 @@ public class SimpleJpaExtRepositoryTest {
   @Test
   void nativeQuery() {
     Query query = repository.getEntityManager().createNativeQuery(
-        "select first_name,last_name from user where first_name = ? AND first_name = ? and last_name = ?",
-        Tuple.class);
+        "select first_name,last_name from user where first_name = ? AND first_name = ? and last_name = ?");
     query.setParameter(1, "Carter");
     query.setParameter(2, "Carter");
     query.setParameter(3, "Beauford1");
+    query.unwrap(NativeQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
     List resultList = query.getResultList();
     System.err.println(StringUtil.valueOf(resultList, true));
   }
