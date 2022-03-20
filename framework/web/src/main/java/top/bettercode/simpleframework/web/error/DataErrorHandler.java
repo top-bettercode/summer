@@ -94,9 +94,14 @@ public class DataErrorHandler extends AbstractErrorHandler {
         message = detailMessage;
       }
     } else if (error instanceof DataAccessResourceFailureException) {
-      if (error.getMessage().contains("Socket read timed out")) {
-        message = "datasource.request.timeout";
-        respEntity.setHttpStatusCode(HttpStatus.REQUEST_TIMEOUT.value());
+      String errorMessage = error.getMessage();
+      if (errorMessage != null) {
+        if (errorMessage.contains("Socket read timed out")) {
+          message = "datasource.request.timeout";
+        }
+        if (errorMessage.contains("Unable to acquire JDBC Connection")) {
+          message = "Unable to acquire JDBC Connection";
+        }
       }
     }
     if (StringUtils.hasText(message)) {
