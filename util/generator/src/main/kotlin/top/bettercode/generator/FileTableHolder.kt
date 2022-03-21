@@ -24,6 +24,10 @@ abstract class FileTableHolder(val module: String, val files: List<File>) : Tabl
                 }
             }
         }
+        val notFound = tableNames.filter { name -> result.none { it.tableName == name } }
+        if (notFound.isNotEmpty()) {
+            System.err.println("未找到${notFound}表")
+        }
         return result
     }
 
