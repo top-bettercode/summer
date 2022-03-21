@@ -40,10 +40,11 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
 
   public MybatisJpaQuery(JpaExtQueryMethod method, EntityManager em) {
     super(method, em);
-    MappedStatement countMappedStatement;
     this.mappedStatement = method.getMappedStatement();
     this.tuplesResultHandler = new TuplesResultHandler(mappedStatement);
+
     boolean pageQuery = method.isPageQuery();
+
     if (pageQuery || method.isStreamQuery()) {
       String nestedResultMap = this.tuplesResultHandler.findNestedResultMap(pageQuery);
       if (nestedResultMap != null) {
@@ -53,6 +54,8 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             mappedStatement.getId(), nestedResultMap);
       }
     }
+
+    MappedStatement countMappedStatement;
     if (pageQuery) {
       try {
         countMappedStatement = this.mappedStatement.getConfiguration()
