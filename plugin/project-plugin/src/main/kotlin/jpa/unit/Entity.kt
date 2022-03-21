@@ -11,7 +11,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         import("java.util.Objects")
         import("org.springframework.data.jpa.domain.support.AuditingEntityListener")
-        if (columns.any { it.autoIncrement || it.idgenerator || it.sequence.isNotBlank() }) {
+        if (columns.any { it.autoIncrement || it.idgenerator.isNotBlank() || it.sequence.isNotBlank() }) {
             import("javax.persistence.GenerationType")
         }
         annotation("@org.hibernate.annotations.DynamicInsert")
@@ -65,8 +65,9 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@javax.persistence.Id")
                 if (primaryKey.autoIncrement) {
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
-                } else if (primaryKey.idgenerator) {
-                    val generatorStrategy = ext.idgenerator
+                } else if (primaryKey.idgenerator.isNotBlank()) {
+                    val generatorStrategy =
+                        (setting(primaryKey.idgenerator.toLowerCase()) as? String) ?: "uuid2"
                     val generator = generatorStrategy.substringAfterLast(".")
                         .substringBeforeLast("Generator").capitalize()
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
