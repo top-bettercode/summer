@@ -8,7 +8,7 @@ import top.bettercode.generator.database.entity.Table
  */
 interface TableHolder {
 
-    fun tables(vararg tableName: String): List<Table>
+    fun tables(checkFound: Boolean = true, vararg tableName: String): List<Table>
 
     fun tableNames(): List<String>
 }

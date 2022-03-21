@@ -107,8 +107,6 @@ class GeneratorPlugin : Plugin<Project> {
             extension.softDeleteAsBoolean =
                 (findProperty(project, "softDeleteAsBoolean"))?.toBoolean()
                     ?: true
-            extension.idgenerator =
-                findProperty(project, "idgenerator") ?: "uuid2"
             extension.dataType = DataType.valueOf(
                 (findProperty(project, "dataType")
                     ?: DataType.DATABASE.name).toUpperCase()
@@ -177,7 +175,8 @@ class GeneratorPlugin : Plugin<Project> {
             project.tasks.create("toPuml${prefix}") { task ->
                 task.group = pumlGroup
                 task.doLast { _ ->
-                    val tables = tableHolder.tables(*extension.tableNames)
+                    val tables =
+                        tableHolder.tables(tableName = *extension.tableNames)
                     val plantUML = PlantUML(
                         tables[0].subModuleName,
                         File(
@@ -266,7 +265,7 @@ class GeneratorPlugin : Plugin<Project> {
                             val output = FileUnit("${extension.sqlOutput}/ddl/$module.sql")
                             val jdbc = extension.datasources[module]
                                 ?: throw IllegalStateException("未配置${module}模块数据库信息")
-                            val tables = tableHolder.tables(*extension.tableNames)
+                            val tables = tableHolder.tables(tableName = *extension.tableNames)
                             when (jdbc.databaseDriver) {
                                 DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
                                     tables,
@@ -306,7 +305,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 )
                             val allTables = mutableListOf<Table>()
                             unit.use { pw ->
-                                val tables = tableHolder.tables(*extension.tableNames)
+                                val tables = tableHolder.tables(tableName = *extension.tableNames)
                                 allTables.addAll(tables)
                                 val jdbc = extension.datasources[module]
                                     ?: throw IllegalStateException("未配置${module}模块数据库信息")
@@ -315,6 +314,7 @@ class GeneratorPlugin : Plugin<Project> {
                                     PumlConverter.toTables(databaseFile, module)
                                 } else {
                                     jdbc.tables(
+                                        tableName =
                                         *(if (deleteTablesWhenUpdate) jdbc.tableNames()
                                         else tableNames).toTypedArray()
                                     )

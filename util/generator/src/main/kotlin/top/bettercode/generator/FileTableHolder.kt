@@ -9,7 +9,7 @@ import java.io.File
  */
 abstract class FileTableHolder(val module: String, val files: List<File>) : TableHolder {
 
-    override fun tables(vararg tableName: String): List<Table> {
+    override fun tables(checkFound: Boolean, vararg tableName: String): List<Table> {
         val tableNames = tableName.distinct()
         val all = tableNames.isEmpty()
         val result = mutableListOf<Table>()
@@ -24,9 +24,11 @@ abstract class FileTableHolder(val module: String, val files: List<File>) : Tabl
                 }
             }
         }
-        val notFound = tableNames.filter { name -> result.none { it.tableName == name } }
-        if (notFound.isNotEmpty()) {
-            System.err.println("未找到${notFound}表")
+        if (checkFound) {
+            val notFound = tableNames.filter { name -> result.none { it.tableName == name } }
+            if (notFound.isNotEmpty()) {
+                System.err.println("未找到${notFound}表")
+            }
         }
         return result
     }

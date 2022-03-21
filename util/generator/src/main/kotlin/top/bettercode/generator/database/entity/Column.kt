@@ -54,7 +54,7 @@ data class Column(
     var pktableName: String? = null,
     var pkcolumnName: String? = null,
     var autoIncrement: Boolean = false,
-    val idgenerator: Boolean = false,
+    val idgenerator: String = "",
     val sequence: String = "",
     val sequenceStartWith: Int = 1,
     var generatedColumn: Boolean = false,

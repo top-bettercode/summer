@@ -156,8 +156,9 @@ object PumlConverter {
                         extra = extra.replace(" NOT NULL", "", true)
                         extra = extra.replace(" NULL", "", true)
                         extra = extra.replace(" PK", "", true)
-                        extra = extra.replace(" IDGENERATOR", "", true)
+                        extra = extra.replace(" IDGENERATOR\\d?".toRegex(), "")
                         extra = extra.replace(" VERSION", "", true).trim()
+                        val idgeneratorRegex = ".*(IDGENERATOR\\d?).*".toRegex()
                         val column = Column(
                             tableCat = null,
                             columnName = columnName,
@@ -177,10 +178,10 @@ object PumlConverter {
                             pktableName = refTable,
                             pkcolumnName = refColumn,
                             autoIncrement = autoIncrement,
-                            idgenerator = columnDef.contains(
-                                "IDGENERATOR",
-                                true
-                            ),
+                            idgenerator = if (columnDef.matches(idgeneratorRegex)) columnDef.replace(
+                                idgeneratorRegex,
+                                "$1"
+                            ) else "",
                             version = columnDef.contains(
                                 "VERSION",
                                 true

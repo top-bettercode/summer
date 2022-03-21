@@ -96,7 +96,7 @@ class JDBCConnectionConfiguration(
         }
     }
 
-    override fun tables(vararg tableName: String): List<Table> {
+    override fun tables(checkFound: Boolean, vararg tableName: String): List<Table> {
         val size = tableName.size
         val set = ConcurrentSkipListSet(tableName.toSet())
         val names = if (tableName.isEmpty()) tableNames() else tableName.distinct()
@@ -135,7 +135,7 @@ class JDBCConnectionConfiguration(
             }
             result.addAll(deferred.flatMap { it.await() }.filterNotNull())
         }
-        if (set.isNotEmpty()) {
+        if (checkFound && set.isNotEmpty()) {
             System.err.println("未找到${set}表")
         }
         return result.sortedBy { it.tableName }

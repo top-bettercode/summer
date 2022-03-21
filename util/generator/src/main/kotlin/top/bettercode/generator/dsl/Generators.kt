@@ -1,5 +1,6 @@
 package top.bettercode.generator.dsl
 
+import top.bettercode.generator.DataType
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.dom.java.JavaTypeResolver
 
@@ -33,7 +34,19 @@ object Generators {
         }
 
         extension.run { _, tableHolder ->
-            tableHolder.tables(*extension.tableNames).forEach { table ->
+            tableHolder.tables(
+                checkFound = when (extension.dataType) {
+                    DataType.DATABASE -> {
+                        extension.datasources.size <= 1
+                    }
+                    DataType.PUML -> {
+                        extension.pumlSources.size <= 1
+                    }
+                    DataType.PDM -> {
+                        extension.pdmSources.size <= 1
+                    }
+                }, tableName = *extension.tableNames
+            ).forEach { table ->
                 generators.forEach { generator ->
                     generator.run(table)
                 }
