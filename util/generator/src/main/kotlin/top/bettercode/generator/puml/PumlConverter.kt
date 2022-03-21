@@ -158,7 +158,7 @@ object PumlConverter {
                         extra = extra.replace(" PK", "", true)
                         extra = extra.replace(" IDGENERATOR\\d?".toRegex(), "")
                         extra = extra.replace(" VERSION", "", true).trim()
-                        val idgeneratorRegex = ".*(IDGENERATOR\\d?).*".toRegex()
+                        val idgeneratorRegex = ".* (IDGENERATOR\\d?) .*".toRegex()
                         val column = Column(
                             tableCat = null,
                             columnName = columnName,
