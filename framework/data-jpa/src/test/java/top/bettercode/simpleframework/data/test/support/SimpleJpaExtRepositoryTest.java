@@ -355,6 +355,7 @@ public class SimpleJpaExtRepositoryTest {
             .equal(root.get("firstName"), "Dave")));
   }
 
+  @SuppressWarnings({"deprecation", "rawtypes"})
   @Test
   void nativeQuery() {
     Query query = repository.getEntityManager().createNativeQuery(
