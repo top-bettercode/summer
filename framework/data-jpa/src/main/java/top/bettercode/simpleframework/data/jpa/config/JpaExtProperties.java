@@ -20,25 +20,25 @@ public class JpaExtProperties {
     /**
      * 默认逻辑删除值.
      */
-    private String trueValue = "true";
+    private Object trueValue = 1;
     /**
      * 默认逻辑未删除值.
      */
-    private String falseValue = "false";
+    private Object falseValue = 0;
 
-    public String getTrueValue() {
+    public Object getTrueValue() {
       return trueValue;
     }
 
-    public void setTrueValue(String trueValue) {
+    public void setTrueValue(Object trueValue) {
       this.trueValue = trueValue;
     }
 
-    public String getFalseValue() {
+    public Object getFalseValue() {
       return falseValue;
     }
 
-    public void setFalseValue(String falseValue) {
+    public void setFalseValue(Object falseValue) {
       this.falseValue = falseValue;
     }
   }
