@@ -36,7 +36,7 @@ public class TuplesWrapper {
     }
   }
 
-  public int size(){
+  public int size() {
     return tuples.size();
   }
 
@@ -54,7 +54,11 @@ public class TuplesWrapper {
   }
 
   public <X> X get(String alias, Class<X> type) {
-    return JpaUtil.convert(this.get(alias), type);
+    try {
+      return JpaUtil.convert(this.get(alias), type);
+    } catch (Exception e) {
+      throw new RuntimeException(alias + ":" + e.getMessage(), e);
+    }
   }
 
   public List<String> getColumnNames() {

@@ -16,14 +16,20 @@ public class JpaUtil {
   static {
     CONVERSION_SERVICE.addConverter(new Converter<Timestamp, LocalDate>() {
       @Override
-      public LocalDate convert(Timestamp timestamp) {
-        return timestamp.toLocalDateTime().toLocalDate();
+      public LocalDate convert(Timestamp source) {
+        return source.toLocalDateTime().toLocalDate();
       }
     });
     CONVERSION_SERVICE.addConverter(new Converter<Timestamp, LocalDateTime>() {
       @Override
-      public LocalDateTime convert(Timestamp timestamp) {
-        return timestamp.toLocalDateTime();
+      public LocalDateTime convert(Timestamp source) {
+        return source.toLocalDateTime();
+      }
+    });
+    CONVERSION_SERVICE.addConverter(new Converter<Boolean, Integer>() {
+      @Override
+      public Integer convert(Boolean source) {
+        return source ? 1 : 0;
       }
     });
   }
