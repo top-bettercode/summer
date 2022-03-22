@@ -53,10 +53,19 @@ public class TuplesWrapper {
     return tuple.get(alias);
   }
 
+  @SuppressWarnings("unchecked")
   public <X> X get(String alias, Class<X> type) {
+    Object source = this.get(alias);
     try {
-      return JpaUtil.convert(this.get(alias), type);
+      return JpaUtil.convert(source, type);
     } catch (Exception e) {
+      if (boolean.class.equals(type) || Boolean.class.equals(type)) {
+        if ("1".equals(String.valueOf(source))) {
+          return (X) Boolean.TRUE;
+        } else if ("0".equals(String.valueOf(source))) {
+          return (X) Boolean.FALSE;
+        }
+      }
       throw new RuntimeException(alias + ":" + e.getMessage(), e);
     }
   }
