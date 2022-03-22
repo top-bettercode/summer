@@ -11,10 +11,6 @@ class SlackClientTest {
 
     private val slackClient = SlackClient("", true, "/actuator")
 
-    init {
-        RequestLoggingFilter.API_HOST = "http://localhost:8080"
-    }
-
     @Test
     fun errorToken() {
         println(StringUtil.valueOf(SlackClient("xoxb-", true, "/actuator").channelsList(), true))

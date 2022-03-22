@@ -15,6 +15,7 @@ import top.bettercode.logging.RequestLoggingFilter
 import top.bettercode.logging.annotation.NoRequestLogging
 import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.logging.logback.AlarmMarker
+import top.bettercode.logging.operation.RequestConverter
 
 /**
  * @author Peter Wu
@@ -75,4 +76,5 @@ class TestController {
 
 fun main() {
     SpringApplication.run(TestController::class.java)
+    System.err.println(RequestConverter.apiHost)
 }

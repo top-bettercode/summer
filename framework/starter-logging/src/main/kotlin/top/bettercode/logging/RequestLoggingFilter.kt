@@ -53,8 +53,6 @@ class RequestLoggingFilter(
         const val OPERATION_MARKER = "operation"
         const val IS_OPERATION_MARKER = "is_operation"
 
-        var API_HOST: String? = null
-
         val BEST_MATCHING_PATTERN_ATTRIBUTE =
             RequestLoggingFilter::class.java.name + ".bestMatchingPattern"
 
@@ -72,10 +70,6 @@ class RequestLoggingFilter(
         request: HttpServletRequest, response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        if (API_HOST.isNullOrBlank()) {
-            API_HOST = RequestConverter.getRequestPath(request)
-        }
-
 //        ignored
         val uri = request.servletPath
         if (properties.matchIgnored(uri)) {

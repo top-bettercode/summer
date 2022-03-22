@@ -11,7 +11,7 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import top.bettercode.lang.PrettyMessageHTMLLayout
 import top.bettercode.lang.util.LocalDateTimeHelper
-import top.bettercode.logging.RequestLoggingFilter
+import top.bettercode.logging.operation.RequestConverter
 import java.io.File
 
 /**
@@ -90,8 +90,8 @@ class SlackClient(
         if (hasFilesPath && message.isNotEmpty()) {
             File(logsPath, fileName).writeText(message.joinToString(""))
         }
-        val apiHost = RequestLoggingFilter.API_HOST
-        if (!hasFilesPath || apiHost == null) {
+        val apiHost = RequestConverter.apiHost
+        if (!hasFilesPath) {
             return filesUpload(channel, timeStamp, title, initialComment, message)
         } else {
             params["text"] = "$title:\n$initialComment"

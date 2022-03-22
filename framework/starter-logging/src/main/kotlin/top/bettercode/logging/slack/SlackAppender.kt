@@ -6,6 +6,7 @@ import org.slf4j.MarkerFactory
 import top.bettercode.logging.RequestLoggingFilter
 import top.bettercode.logging.SlackProperties
 import top.bettercode.logging.logback.AlarmAppender
+import top.bettercode.logging.operation.RequestConverter
 import java.io.File
 
 open class SlackAppender(
@@ -44,7 +45,7 @@ open class SlackAppender(
     ): Boolean {
         return try {
             val title =
-                "$warnSubject${if (!RequestLoggingFilter.API_HOST.isNullOrBlank()) "(${RequestLoggingFilter.API_HOST})" else ""}"
+                "$warnSubject(${RequestConverter.apiHost})"
             slackClient.postMessage(
                 if (timeout) properties.timeoutChannel else properties.channel,
                 timeStamp,

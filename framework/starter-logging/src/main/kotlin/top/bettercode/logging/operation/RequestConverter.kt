@@ -1,5 +1,6 @@
 package top.bettercode.logging.operation
 
+import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.convert.ConversionException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -9,10 +10,12 @@ import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.servlet.HandlerMapping
+import top.bettercode.lang.util.IPAddressUtil
 import top.bettercode.logging.RequestLoggingFilter
 import top.bettercode.logging.client.ClientHttpRequestWrapper
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper
 import top.bettercode.logging.trace.TracePart
+import top.bettercode.simpleframework.support.ApplicationContextHolder
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -241,8 +244,11 @@ object RequestConverter {
         return headers
     }
 
-    private fun isNonStandardPort(request: HttpServletRequest): Boolean {
-        return (((SCHEME_HTTP == request.scheme && request.serverPort != STANDARD_PORT_HTTP)) || ((SCHEME_HTTPS == request.scheme && request.serverPort != STANDARD_PORT_HTTPS)))
+    private fun isNonStandardPort(
+        request: HttpServletRequest,
+        serverPort: Int = request.serverPort
+    ): Boolean {
+        return (((SCHEME_HTTP == request.scheme && serverPort != STANDARD_PORT_HTTP)) || ((SCHEME_HTTPS == request.scheme && serverPort != STANDARD_PORT_HTTPS)))
     }
 
     private fun getRequestUri(request: HttpServletRequest): String {
@@ -269,5 +275,20 @@ object RequestConverter {
         if ("/" != request.contextPath)
             printer.print(request.contextPath)
         return uriWriter.toString()
+    }
+
+    val apiHost: String by lazy {
+        val uriWriter = StringWriter()
+        val printer = PrintWriter(uriWriter)
+        val serverProperties = ApplicationContextHolder.getBean(ServerProperties::class.java)
+        val serverPort = serverProperties.port ?: 8080
+        printer.printf("%s://%s", SCHEME_HTTP, IPAddressUtil.inet4Address)
+        if (serverPort != STANDARD_PORT_HTTP) {
+            printer.printf(":%d", serverPort)
+        }
+        val contextPath = serverProperties.servlet.contextPath
+        if ("/" != contextPath)
+            printer.print(contextPath)
+        uriWriter.toString()
     }
 }
