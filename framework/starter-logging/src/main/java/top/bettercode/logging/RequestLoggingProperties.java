@@ -66,7 +66,7 @@ public class RequestLoggingProperties {
   /**
    * 过滤不记录为ERROR日志的状态码
    */
-  private Integer[] ignoredErrorStatusCode = {400, 401, 403, 404, 405, 406, 409};
+  private Integer[] ignoredErrorStatusCode = {401, 403, 404, 405, 406};
 
   //--------------------------------------------
 
