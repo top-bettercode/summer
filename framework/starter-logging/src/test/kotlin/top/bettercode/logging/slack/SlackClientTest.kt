@@ -50,7 +50,7 @@ class SlackClientTest {
                     "test",
                     "test",
                     listOf("123testtest"),
-                    null
+                    "build"
                 ), true
             )
         )

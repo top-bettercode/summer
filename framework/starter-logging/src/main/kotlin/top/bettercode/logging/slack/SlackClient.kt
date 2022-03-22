@@ -3,6 +3,9 @@ package top.bettercode.logging.slack
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -44,10 +47,26 @@ class SlackClient(
         restTemplate.messageConverters = messageConverters
     }
 
+    private fun <T> request(
+        url: String,
+        responseType: Class<T>,
+        body: Any? = null,
+        method: HttpMethod = HttpMethod.POST
+    ): T? {
+        val headers = HttpHeaders()
+        headers.add("Authorization", "Bearer $authToken")
+        val requestEntity = HttpEntity(body, headers)
+        val response = restTemplate.exchange(api + url, method, requestEntity, responseType)
+        return response.body
+    }
+
     fun channelsList(): List<Channel>? {
-        val result = restTemplate.getForObject(
-            "${api}conversations.list?token=$authToken&types=public_channel,private_channel&exclude_archived=true",
-            ChannelsResult::class.java
+        val headers = HttpHeaders()
+        headers.setBearerAuth(authToken)
+        val result = request(
+            "conversations.list?types=public_channel,private_channel&exclude_archived=true",
+            ChannelsResult::class.java,
+            HttpMethod.GET
         )
         if (result?.ok != true) {
             log.error("slack api request fail:{}", result?.error)
@@ -88,7 +107,11 @@ class SlackClient(
         val fileName = "alarm/${anchor}.log"
         val linkTitle = "${fileName}#last"
         if (hasFilesPath && message.isNotEmpty()) {
-            File(logsPath, fileName).writeText(message.joinToString(""))
+            val file = File(logsPath, fileName)
+            if (!file.parentFile.exists()) {
+                file.parentFile.mkdirs()
+            }
+            file.writeText(message.joinToString(""))
         }
         val apiHost = RequestConverter.apiHost
         if (!hasFilesPath) {
@@ -133,8 +156,7 @@ class SlackClient(
                 log.debug("slack params:{}", params)
             }
 
-            val result =
-                restTemplate.postForObject("${api}chat.postMessage", params, Result::class.java)
+            val result = request("chat.postMessage", Result::class.java, params)
             if (log.isDebugEnabled) {
                 log.debug("slack result:{}", result)
             }
@@ -159,7 +181,7 @@ class SlackClient(
             params.add("title", "$title-${LocalDateTimeHelper.format(timeStamp)}")
         }
         params.add("initial_comment", "$title:\n$initialComment")
-        val result = restTemplate.postForObject("${api}files.upload", params, Result::class.java)
+        val result = request("files.upload", Result::class.java, params)
         if (log.isDebugEnabled) {
             log.debug("slack result:{}", result)
         }
