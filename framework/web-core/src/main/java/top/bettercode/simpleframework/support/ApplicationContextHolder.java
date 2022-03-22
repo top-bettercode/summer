@@ -5,7 +5,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.NoSuchMessageException;
-import org.springframework.lang.Nullable;
 
 /**
  * @author Peter Wu
@@ -36,7 +35,6 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     return applicationContext == null ? null : applicationContext.getMessage(s, objects, locale);
   }
 
-  @Nullable
   public static String getProperty(String key) {
     return applicationContext == null ? null : applicationContext.getEnvironment().getProperty(key);
   }
@@ -48,7 +46,6 @@ public class ApplicationContextHolder implements ApplicationContextAware {
   }
 
 
-  @Nullable
   public static <T> T getProperty(String key, Class<T> targetType) {
     return applicationContext == null ? null
         : applicationContext.getEnvironment().getProperty(key, targetType);
