@@ -168,9 +168,9 @@ class RequestLoggingFilter(
                     log.info(marker, msg)
                 } else {
                     if (error != null &&
-                        (isDebugEnabled && !properties.ignoredErrorStatusCode.contains(
+                        ((isDebugEnabled && !properties.ignoredErrorStatusCode.contains(
                             httpStatusCode
-                        )
+                        ))
                                 || httpStatusCode >= 500)
                     ) {
                         val initialComment =
