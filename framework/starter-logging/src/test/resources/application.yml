@@ -1,29 +1,8 @@
 logging:
   level:
     root: debug
-    org.springframework.boot.web.servlet.support.ErrorPageFilter: off
-    org.mybatis.spring.mapper.ClassPathMapperScanner: error
-    org.springframework.security.oauth2.provider.endpoint.TokenEndpoint: off
-    io.lettuce: warn
-    org.thymeleaf: warn
-    top.bettercode: info
-    javax.management: warn
-    org.quartz: warn
-    io.netty: warn
-    com.alibaba: warn
-    com.zaxxer.hikari: info
-    springfox: warn
-    com.baomidou: warn
-    org.springframework: warn
-    org.apache: warn
-    org.hibernate: warn
-    org.mybatis: warn
-    com.netflix: warn
-    org.jboss: warn
-    com.sun: warn
-    javax.xml: warn
-    net.sf: warn
-    javax.activation: warn
+    org: warn
+    com: warn
 summer:
   logging:
     #  smtp:
@@ -53,7 +32,6 @@ summer:
       rollover-on-start: true
     warn-subject: 日志测试系统异常
     slack:
-      auth-token:
       channel: dev
 #  socket:
 #    queue-size: 1
@@ -64,3 +42,6 @@ server:
   servlet:
     context-path: /npk
 #      - 10.13.3.119:4560
+spring:
+  profiles:
+    active: test
