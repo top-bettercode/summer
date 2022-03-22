@@ -36,14 +36,7 @@ public class JpaUtil {
 
   @SuppressWarnings("unchecked")
   public static <T> T convert(Object source, Class<T> targetType) {
-    if (source != null && !source.getClass().equals(targetType)) {
-      if (boolean.class.equals(targetType) || Boolean.class.equals(targetType)) {
-        if ("1".equals(String.valueOf(source))) {
-          return (T) Boolean.TRUE;
-        } else if ("0".equals(String.valueOf(source))) {
-          return (T) Boolean.FALSE;
-        }
-      }
+    if (source != null && !targetType.isInstance(source)) {
       return JpaUtil.CONVERSION_SERVICE.convert(source, targetType);
     } else {
       return (T) source;
