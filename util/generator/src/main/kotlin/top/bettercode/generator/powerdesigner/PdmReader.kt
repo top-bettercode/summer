@@ -19,7 +19,7 @@ object PdmReader {
 
     fun read(
         pdmFile: File,
-        module: String
+        call: (Table) -> Unit = {}
     ): List<Table> {
         val saxReader = SAXReader()
         val document = saxReader.read(pdmFile)
@@ -48,11 +48,11 @@ object PdmReader {
                     tableElement.forEach {
                         tables.add(
                             readTable(
-                                module,
                                 it,
                                 aNamespace,
                                 cNamespace,
-                                oNamespace
+                                oNamespace,
+                                call
                             )
                         )
                     }
@@ -65,15 +65,18 @@ object PdmReader {
         if (tablesEle != null) {
             val elements = tablesEle.elements(QName("Table", oNamespace))
             elements.forEach {
-                tables.add(readTable(module, it, aNamespace, cNamespace, oNamespace))
+                tables.add(readTable(it, aNamespace, cNamespace, oNamespace, call))
             }
         }
         return tables.sortedBy { it.tableName }
     }
 
     private fun readTable(
-        module: String,
-        tableElement: Element, aNamespace: Namespace, cNamespace: Namespace, oNamespace: Namespace
+        tableElement: Element,
+        aNamespace: Namespace,
+        cNamespace: Namespace,
+        oNamespace: Namespace,
+        call: (Table) -> Unit = {}
     ): Table {
         val name = tableElement.element(QName("Name", aNamespace))?.textTrim ?: ""
         val code = tableElement.element(QName("Code", aNamespace))?.textTrim
@@ -167,7 +170,7 @@ object PdmReader {
             columns.add(column)
         }
 
-        return Table(
+        val table = Table(
             productName = DataType.PUML.name,
             catalog = null,
             schema = null,
@@ -177,8 +180,9 @@ object PdmReader {
             primaryKeyNames = primaryKeyNames,
             indexes = indexes,
             pumlColumns = columns,
-            physicalOptions = physicalOptions,
-            module = module
+            physicalOptions = physicalOptions
         )
+        call(table)
+        return table
     }
 }

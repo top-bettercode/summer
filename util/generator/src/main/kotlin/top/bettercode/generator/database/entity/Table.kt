@@ -1,6 +1,7 @@
 package top.bettercode.generator.database.entity
 
 import top.bettercode.generator.GeneratorExtension
+import top.bettercode.generator.JDBCConnectionConfiguration
 
 /**
  *
@@ -33,16 +34,21 @@ data class Table(
      * 字段
      */
     var pumlColumns: List<Any>,
-    val module: String,
     val subModule: String = "database",
     val subModuleName: String = "database",
     val physicalOptions: String = ""
 ) {
 
+    lateinit var module: String
+    lateinit var ext: GeneratorExtension
 
     val primaryKeys: MutableList<Column>
     val columns: MutableList<Column> =
-        pumlColumns.asSequence().filter { it is Column }.map { it as Column }.toMutableList()
+        pumlColumns.asSequence().filter { it is Column }.map {
+            val col = it as Column
+            col.table = this
+            col
+        }.toMutableList()
 
     init {
         val iterator = indexes.iterator()
@@ -67,6 +73,11 @@ data class Table(
         }
     }
 
+    var datasource: JDBCConnectionConfiguration? = null
+
+    val supportSoftDelete: Boolean
+        get() = columns.find { it.isSoftDelete } != null
+
     val primaryKey: Column? by lazy {
         if (primaryKeys.size == 1) {
             primaryKeys[0]
@@ -81,9 +92,6 @@ data class Table(
         className(extension).decapitalize()
 
     fun pathName(extension: GeneratorExtension): String = entityName(extension)
-
-    fun supportSoftDelete(extension: GeneratorExtension): Boolean =
-        columns.find { it.isSoftDelete(extension) } != null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -108,4 +116,10 @@ data class Table(
         result = 31 * result + pumlColumns.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "Table(productName='$productName', catalog=$catalog, schema=$schema, tableName='$tableName', tableType='$tableType', remarks='$remarks', primaryKeyNames=$primaryKeyNames, indexes=$indexes, pumlColumns=$pumlColumns, subModule='$subModule', subModuleName='$subModuleName', physicalOptions='$physicalOptions', primaryKeys=$primaryKeys, columns=$columns, primaryKey=$primaryKey)"
+    }
+
+
 }

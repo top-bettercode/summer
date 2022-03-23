@@ -19,16 +19,14 @@ object PumlConverter {
 
     fun toTables(
         puml: File,
-        module: String,
         call: (Table) -> Unit = {}
     ): List<Table> {
-        return toTableOrAnys(puml, module, call).filterIsInstance<Table>().sortedBy { it.tableName }
+        return toTableOrAnys(puml, call).filterIsInstance<Table>().sortedBy { it.tableName }
             .toList()
     }
 
     private fun toTableOrAnys(
         pumlFile: File,
-        module: String,
         call: (Table) -> Unit = {}
     ): List<Any> {
         val tables = mutableListOf<Any>()
@@ -83,7 +81,6 @@ object PumlConverter {
                             primaryKeyNames = primaryKeyNames,
                             indexes = indexes,
                             pumlColumns = pumlColumns,
-                            module = module,
                             subModule = pumlFile.nameWithoutExtension,
                             subModuleName = subModuleName ?: "database"
                         )
@@ -311,7 +308,7 @@ object PumlConverter {
     ) {
         compile(
             extension,
-            toTableOrAnys(src, module),
+            toTableOrAnys(src){it.module=module},
             out,
             remarksProperties
         )
@@ -323,7 +320,7 @@ object PumlConverter {
         src: File, out: File,
         remarksProperties: Properties? = null
     ) {
-        val tables = toTableOrAnys(src, module)
+        val tables = toTableOrAnys(src){it.module=module}
         tables.forEach { t ->
             if (t is Table) {
                 t.pumlColumns.forEach {
@@ -370,7 +367,7 @@ object PumlConverter {
         src: File, out: File,
         remarksProperties: Properties? = null
     ) {
-        val tables = toTableOrAnys(src, module)
+        val tables = toTableOrAnys(src){it.module=module}
         tables.forEach { t ->
             if (t is Table) {
                 t.pumlColumns.forEach {

@@ -157,10 +157,11 @@ class AutodocHandler(
 
                 //field
                 val extension = GeneratorExtension(
-                    datasources = datasources,
                     dataType = genProperties.dataType,
                     tablePrefixes = genProperties.tablePrefixes
                 )
+                extension.datasources = datasources
+
 
                 request.uriVariablesExt = request.uriVariables.toFields(request.uriVariablesExt)
                 request.headersExt = request.headers.singleValueMap.toFields(request.headersExt)

@@ -18,7 +18,6 @@ import java.util.*
 
 
 class DatabaseMetaData(
-    private val module: String,
     private val datasource: JDBCConnectionConfiguration
 ) : AutoCloseable {
 
@@ -81,16 +80,16 @@ class DatabaseMetaData(
      * 所有数据表
      * @return 数据表
      */
-    fun tables(): List<Table> {
+    fun tables(call: (Table) -> Unit = {}): List<Table> {
         return databaseMetaData.getTables(datasource.catalog, datasource.schema, null, null)
-            .toTables()
+            .toTables(call)
     }
 
     /**
      * @param tableName 表名
      * @return 数据表
      */
-    fun table(tableName: String): Table? {
+    fun table(tableName: String, call: (Table) -> Unit = {}): Table? {
         println("查询：$tableName 表数据结构")
         var table: Table? = null
 
@@ -98,7 +97,7 @@ class DatabaseMetaData(
         tableName.current { curentSchema, curentTableName ->
             val tables =
                 databaseMetaData.getTables(datasource.catalog, curentSchema, curentTableName, null)
-            table = tables.toTables().firstOrNull()
+            table = tables.toTables(call).firstOrNull()
         }
         if (table == null) {
             System.err.println("未在${databaseProductName}数据库(${tableNames().joinToString()})中找到${tableName}表")
@@ -106,7 +105,7 @@ class DatabaseMetaData(
         return table
     }
 
-    private fun ResultSet.toTables(): List<Table> {
+    private fun ResultSet.toTables(call: (Table) -> Unit = {}): List<Table> {
         return map {
             val schema = getString("TABLE_SCHEM")
             val name = getString("TABLE_NAME")
@@ -133,7 +132,7 @@ class DatabaseMetaData(
                 primaryKeyNames = mutableListOf()
                 indexes = mutableListOf()
             }
-            Table(
+            val table = Table(
                 productName = databaseMetaData.databaseProductName,
                 catalog = getString("TABLE_CAT") ?: datasource.catalog,
                 schema = schema ?: datasource.schema,
@@ -143,9 +142,10 @@ class DatabaseMetaData(
                     ?: "",
                 primaryKeyNames = primaryKeyNames,
                 indexes = indexes,
-                pumlColumns = columns.toMutableList(),
-                module = module
+                pumlColumns = columns.toMutableList()
             )
+            call(table)
+            table
         }
     }
 

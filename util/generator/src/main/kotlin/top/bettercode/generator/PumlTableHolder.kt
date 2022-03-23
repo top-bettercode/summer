@@ -1,5 +1,6 @@
 package top.bettercode.generator
 
+import top.bettercode.generator.database.entity.Table
 import top.bettercode.generator.puml.PumlConverter
 import java.io.File
 
@@ -7,7 +8,12 @@ import java.io.File
  *
  * @author Peter Wu
  */
-class PumlTableHolder(module: String, files: List<File>) : FileTableHolder(module, files) {
+class PumlTableHolder(
+    ext: GeneratorExtension,
+    module: String,
+    files: List<File>
+) : FileTableHolder(ext, module, files) {
 
-    override fun getTables(file: File) = PumlConverter.toTables(file, module)
+    override fun getTables(file: File, call: (Table) -> Unit) = PumlConverter.toTables(file, call)
+
 }

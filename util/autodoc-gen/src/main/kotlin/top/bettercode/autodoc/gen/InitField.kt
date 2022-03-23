@@ -158,11 +158,15 @@ object InitField {
             }
         when (dataType) {
             DataType.DATABASE -> {
-                datasources.forEach { (_, jdbc) ->
+                datasources.forEach { (module, jdbc) ->
                     jdbc.schema = Autodoc.schema
                     jdbc.use {
                         Autodoc.tableNames.forEach { tableName ->
-                            val table = table(tableName)
+                            val table = table(tableName) {
+                                it.ext = ext
+                                it.datasource = jdbc
+                                it.module = module
+                            }
                             if (table != null) {
                                 if (fn(table.fields(extension = ext), false)) {
                                     return
@@ -172,7 +176,11 @@ object InitField {
                         val tableNames = tableNames().toMutableList()
                         tableNames.removeAll(Autodoc.tableNames)
                         tableNames.forEach { tableName ->
-                            val table = table(tableName)
+                            val table = table(tableName) {
+                                it.ext = ext
+                                it.datasource = jdbc
+                                it.module = module
+                            }
                             if (table != null) {
                                 if (fn(table.fields(extension = ext), false)) {
                                     return
@@ -184,12 +192,20 @@ object InitField {
             }
             DataType.PUML -> {
                 fixFields(pumlSources) { file, module ->
-                    PumlConverter.toTables(file, module)
+                    PumlConverter.toTables(file) {
+                        it.ext = ext
+                        it.module = module
+                        it.datasource = ext.datasources[module]
+                    }
                 }
             }
             DataType.PDM -> {
                 fixFields(pdmSources) { file, module ->
-                    PdmReader.read(file, module)
+                    PdmReader.read(file) {
+                        it.ext = ext
+                        it.module = module
+                        it.datasource = ext.datasources[module]
+                    }
                 }
             }
         }

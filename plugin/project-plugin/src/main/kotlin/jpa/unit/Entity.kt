@@ -157,9 +157,9 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 if (it.isSoftDelete) {
                     annotation("@top.bettercode.simpleframework.data.jpa.SoftDelete")
-                    if (ext.softDeleteAsBoolean) {
-                        annotation("@org.hibernate.annotations.Type(type = \"org.hibernate.type.NumericBooleanType\")")
-                    }
+                }
+                if (it.tinyInt1isBit || it.numericSoftDelete) {
+                    annotation("@org.hibernate.annotations.Type(type = \"org.hibernate.type.NumericBooleanType\")")
                 }
             }
 

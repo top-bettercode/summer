@@ -14,7 +14,7 @@ open class ExcelFieldPrint : Generator() {
         cols.forEachIndexed { i, it ->
             val code =
                 if (it.isCodeField) {
-                    if (it.columnName.contains("_") || ext.softDeleteColumnName == it.columnName) ".code()" else ".code(${(className + it.javaName.capitalize())}Enum.ENUM_NAME)"
+                    if (it.columnName.contains("_") || it.isSoftDelete) ".code()" else ".code(${(className + it.javaName.capitalize())}Enum.ENUM_NAME)"
                 } else {
                     ""
                 }

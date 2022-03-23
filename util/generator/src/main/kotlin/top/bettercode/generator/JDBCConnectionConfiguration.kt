@@ -21,9 +21,12 @@ class JDBCConnectionConfiguration(
         set("characterEncoding", "utf8")
         set("user", "root")
         set("password", "root")
+        set("tinyInt1isBit", "false")
     }
 ) : TableHolder {
     val available: Boolean by lazy { url.isNotBlank() }
+
+    lateinit var ext: GeneratorExtension
 
     var schema: String? = null
         get() {
@@ -66,10 +69,14 @@ class JDBCConnectionConfiguration(
      */
     var queryIndex: Boolean = true
 
+    var tinyInt1isBit: Boolean
+        set(value) = properties.set("tinyInt1isBit", value.toString())
+        get() = properties.getProperty("tinyInt1isBit")?.toBoolean() ?: false
+
     inline fun <T> use(metaData: DatabaseMetaData.() -> T): T {
         if (available) {
             Class.forName(driverClass).getConstructor().newInstance()
-            val databaseMetaData = DatabaseMetaData(module, this)
+            val databaseMetaData = DatabaseMetaData(this)
             try {
                 return metaData(databaseMetaData)
             } finally {
@@ -118,7 +125,11 @@ class JDBCConnectionConfiguration(
                     use {
                         it.map {
                             try {
-                                val table = table(it)
+                                val table = table(it) { table ->
+                                    table.ext = ext
+                                    table.datasource = this@JDBCConnectionConfiguration
+                                    table.module = module
+                                }
                                 if (table != null) {
                                     set.remove(table.tableName)
                                     table
