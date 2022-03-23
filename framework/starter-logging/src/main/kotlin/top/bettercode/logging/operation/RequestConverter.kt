@@ -23,7 +23,9 @@ import java.net.URI
 import java.time.LocalDateTime
 import java.util.*
 import javax.servlet.ServletException
+import javax.servlet.ServletRequest
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletRequestWrapper
 import javax.servlet.http.Part
 
 /**
@@ -134,17 +136,24 @@ object RequestConverter {
 
     @Throws(IOException::class, ServletException::class)
     private fun extractParts(servletRequest: HttpServletRequest): List<OperationRequestPart> {
+        val request: ServletRequest = unwrap(servletRequest)
+
         val parts = ArrayList<OperationRequestPart>()
-        if (servletRequest.contentType?.toLowerCase(Locale.getDefault())
+        if (request is HttpServletRequest && request.contentType?.toLowerCase(Locale.getDefault())
                 ?.startsWith("multipart/") == true
         )
-            parts.addAll(extractServletRequestParts(servletRequest))
-        if (servletRequest is MultipartHttpServletRequest) {
-            parts.addAll(extractMultipartRequestParts(servletRequest))
-        } else if (servletRequest is TraceHttpServletRequestWrapper && servletRequest.request is MultipartHttpServletRequest) {
-            parts.addAll(extractMultipartRequestParts(servletRequest.request))
+            parts.addAll(extractServletRequestParts(request))
+        if (request is MultipartHttpServletRequest) {
+            parts.addAll(extractMultipartRequestParts(request))
         }
         return parts
+    }
+
+    private fun unwrap(servletRequest: ServletRequest): ServletRequest {
+        return if (servletRequest is HttpServletRequestWrapper) {
+            unwrap(servletRequest.request)
+        } else
+            servletRequest
     }
 
     @Throws(IOException::class, ServletException::class)
