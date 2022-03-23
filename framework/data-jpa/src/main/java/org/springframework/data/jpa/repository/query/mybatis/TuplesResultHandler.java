@@ -125,11 +125,11 @@ public class TuplesResultHandler {
   }
 
   public List<Object> handleTuples(List<Tuple> tuples) {
-    ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
     if (CollectionUtils.isEmpty(tuples)) {
-      return Collections.emptyList();
+      return new ArrayList<>();
     }
 
+    ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
     final List<Object> multipleResults = new ArrayList<>();
 
     int resultSetCount = 0;
