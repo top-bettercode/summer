@@ -44,13 +44,13 @@ public class JpaMybatisTest {
 
   @BeforeEach
   public void setUp() {
+    User carter = new User(null, null);
+    repository.save(carter);
     User dave = new User("Dave2", "Matthews");
     repository.save(dave);
     User dave1 = new User("Dave", "Matthews");
     repository.save(dave1);
-    User carter = new User("Carter", "Beauford1");
-    repository.save(carter);
-    carter = new User("Carter", null);
+    carter = new User("Carter", "Beauford1");
     repository.save(carter);
     carter = new User("Carter", "Beauford2");
     repository.save(carter);
@@ -97,12 +97,12 @@ public class JpaMybatisTest {
   public void selectResultMap3() {
     List<AUser> users = repository.selectResultMap3(new User("Carter", null));
     System.err.println(StringUtil.valueOf(users, true));
-    Assertions.assertEquals(3, users.size());
+    Assertions.assertEquals(2, users.size());
     List<Object> users1 = sqlSession
         .selectList(UserRepository.class.getName() + ".selectResultMap3",
             new User("Carter", null));
     System.err.println(StringUtil.valueOf(users1, true));
-    Assertions.assertEquals(3, users1.size());
+    Assertions.assertEquals(2, users1.size());
     Assertions.assertIterableEquals(users, users1);
   }
 
@@ -111,24 +111,45 @@ public class JpaMybatisTest {
     Page<AUser> users = repository.selectResultMap3(new User("Carter", null),
         PageRequest.of(0, 10));
     System.err.println(StringUtil.valueOf(users, true));
-    Assertions.assertEquals(3, users.getTotalElements());
+    Assertions.assertEquals(2, users.getTotalElements());
     List<Object> users1 = sqlSession
         .selectList(UserRepository.class.getName() + ".selectResultMap3",
             new User("Carter", null));
     System.err.println(StringUtil.valueOf(users1, true));
-    Assertions.assertEquals(3, users1.size());
+    Assertions.assertEquals(2, users1.size());
     Assertions.assertIterableEquals(users, users1);
   }
 
   @Test
   public void selectMybatisAll() {
     List<User> users = repository.selectMybatisAll();
-    System.err.println(users);
+    System.err.println(StringUtil.valueOf(users, true));
     List<Object> users1 = sqlSession
         .selectList(UserRepository.class.getName() + ".selectMybatisAll");
-    System.err.println(users1);
+    System.err.println(StringUtil.valueOf(users1, true));
     Assertions.assertIterableEquals(users, users1);
     Assertions.assertEquals(4, users.size());
+  }
+
+  @Test
+  public void selectMybatisMapList() {
+    List<Map<String, String>> users = repository.selectMybatisMapList();
+    System.err.println(StringUtil.valueOf(users, true));
+    List<Object> users1 = sqlSession
+        .selectList(UserRepository.class.getName() + ".selectMybatisMapList");
+    System.err.println(StringUtil.valueOf(users1, true));
+    Assertions.assertIterableEquals(users, users1);
+    Assertions.assertEquals(4, users.size());
+  }
+
+  @Test
+  public void selectMybatisMap() {
+    Map<String, String> users = repository.selectMybatisMap();
+    System.err.println(StringUtil.valueOf(users, true));
+    Object users1 = sqlSession
+        .selectOne(UserRepository.class.getName() + ".selectMybatisMap");
+    System.err.println(StringUtil.valueOf(users1, true));
+    Assertions.assertEquals(users, users1);
   }
 
   @Test
@@ -247,16 +268,16 @@ public class JpaMybatisTest {
     List<Object> users1 = sqlSession
         .selectList(UserRepository.class.getName() + ".selectByMybatisMap", params);
     System.err.println(StringUtil.valueOf(users1, true));
-    Assertions.assertEquals(3, users.getTotalElements());
+    Assertions.assertEquals(2, users.getTotalElements());
     List<User> userList = users.getContent();
     Assertions.assertEquals(2, userList.size());
-    Assertions.assertNull(userList.get(0).getLastName());
+    Assertions.assertEquals(userList.get(0).getLastName(), "Beauford1");
     Assertions.assertEquals("Beauford2", repository
         .selectByMybatisMap(PageRequest.of(0, 2, Sort.by(Direction.DESC, "lastName")), params)
         .getContent().get(0).getLastName());
     List<User> users2 = repository.selectByMybatisMap(params);
     System.err.println(users2);
-    Assertions.assertEquals(3, users2.size());
+    Assertions.assertEquals(2, users2.size());
     Assertions.assertEquals("Beauford1", users2.get(0).getLastName());
   }
 
@@ -265,12 +286,12 @@ public class JpaMybatisTest {
     List<User> users = repository.selectByMybatisEntity(new User("Carter", null),
         Pageable.unpaged());
     System.err.println(users);
-    Assertions.assertEquals(3, users.size());
+    Assertions.assertEquals(2, users.size());
     List<Object> users1 = sqlSession
         .selectList(UserRepository.class.getName() + ".selectByMybatisEntity",
             new User("Carter", null));
     System.err.println(users1);
-    Assertions.assertEquals(3, users1.size());
+    Assertions.assertEquals(2, users1.size());
     Assertions.assertIterableEquals(users, users1);
   }
 
@@ -279,11 +300,11 @@ public class JpaMybatisTest {
   public void selectByMybatisSort() {
     List<User> users = repository.selectByMybatisSort("Carter", Sort.by(Direction.ASC, "lastName"));
     System.err.println(users);
-    Assertions.assertEquals(3, users.size());
-    Assertions.assertNull(users.get(0).getLastName());
+    Assertions.assertEquals(2, users.size());
+    Assertions.assertEquals(users.get(0).getLastName(), "Beauford1");
     users = repository.selectByMybatisSort("Carter", Sort.by(Direction.DESC, "lastName"));
     System.err.println(users);
-    Assertions.assertEquals(3, users.size());
+    Assertions.assertEquals(2, users.size());
     Assertions.assertEquals("Beauford2", users.get(0).getLastName());
   }
 
@@ -294,27 +315,27 @@ public class JpaMybatisTest {
         .selectByMybatisSort("Carter", PageRequest.of(1, 1, Sort.by(Direction.DESC, "lastName")));
     System.err.println(users);
     System.err.println(users.getContent());
-    Assertions.assertEquals(3, users.getTotalElements());
+    Assertions.assertEquals(2, users.getTotalElements());
     Assertions.assertEquals(1, users.getContent().size());
     Assertions
         .assertEquals("Beauford1", users.getContent().get(0).getLastName());
     users = repository
         .selectByMybatisSort("Carter", PageRequest.of(0, 1, Sort.by(Direction.ASC, "lastName")));
     System.err.println(users);
-    Assertions.assertEquals(3, users.getTotalElements());
+    Assertions.assertEquals(2, users.getTotalElements());
     Assertions.assertEquals(1, users.getContent().size());
-    Assertions.assertNull(users.getContent().get(0).getLastName());
+    Assertions.assertEquals(users.getContent().get(0).getLastName(), "Beauford1");
     users = repository
         .selectByMybatisSort("Carter", PageRequest.of(0, 1, Sort.by(Direction.DESC, "lastName")));
     System.err.println(users);
-    Assertions.assertEquals(3, users.getTotalElements());
+    Assertions.assertEquals(2, users.getTotalElements());
     Assertions.assertEquals(1, users.getContent().size());
     Assertions
         .assertEquals("Beauford2", users.getContent().get(0).getLastName());
     users = repository
         .selectByMybatisSort("Carter", PageRequest.of(1, 1, Sort.by(Direction.DESC, "lastName")));
     System.err.println(users.getContent());
-    Assertions.assertEquals(3, users.getTotalElements());
+    Assertions.assertEquals(2, users.getTotalElements());
     Assertions.assertEquals(1, users.getContent().size());
     Assertions
         .assertEquals("Beauford1", users.getContent().get(0).getLastName());

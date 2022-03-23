@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import top.bettercode.lang.util.StringUtil;
 
 @Entity
 @Table(name = "User")
@@ -82,11 +83,6 @@ public class HardUser {
 
   @Override
   public String toString() {
-    return "BaseUser{" +
-        "id=" + id +
-        ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        ", deleted=" + deleted +
-        '}';
+    return StringUtil.json(this);
   }
 }
