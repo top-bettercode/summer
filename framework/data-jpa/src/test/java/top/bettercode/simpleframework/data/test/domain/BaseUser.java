@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import org.hibernate.annotations.Type;
+import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.SoftDelete;
 
 @MappedSuperclass
@@ -84,11 +85,6 @@ public class BaseUser {
 
   @Override
   public String toString() {
-    return "BaseUser{" +
-        "id=" + id +
-        ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        ", deleted=" + deleted +
-        '}';
+    return StringUtil.json(this);
   }
 }

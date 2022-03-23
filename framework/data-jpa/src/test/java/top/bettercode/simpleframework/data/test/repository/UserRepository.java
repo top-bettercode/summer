@@ -53,6 +53,10 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
   @MybatisTemplate
   List<User> selectMybatisAll();
 
+  List<Map<String, String>> selectMybatisMapList();
+
+  Map<String, String> selectMybatisMap();
+
   @MybatisTemplate
   Page<User> selectMybatisAll(Pageable pageable);
 
