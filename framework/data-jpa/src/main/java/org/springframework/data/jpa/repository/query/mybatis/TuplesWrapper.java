@@ -13,7 +13,9 @@ import javax.persistence.TupleElement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MarkerFactory;
 import org.springframework.util.Assert;
+import top.bettercode.logging.RequestLoggingFilter;
 import top.bettercode.simpleframework.data.jpa.support.JpaUtil;
 
 public class TuplesWrapper {
@@ -64,7 +66,7 @@ public class TuplesWrapper {
       return JpaUtil.convert(source, type);
     } catch (Exception e) {
       if (String.class.equals(type)) {
-        log.warn(alias
+        log.warn(MarkerFactory.getMarker(RequestLoggingFilter.ALARM_LOG_MARKER), alias
             + "automatic conversion String failed，use toString() enforce cast, please consider receiving with the correct type");
         return (X) source.toString();
       }
