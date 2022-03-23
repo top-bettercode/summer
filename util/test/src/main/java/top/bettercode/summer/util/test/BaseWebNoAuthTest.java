@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -90,6 +93,12 @@ public abstract class BaseWebNoAuthTest {
       }
     } catch (Exception ignored) {
     }
+  }
+
+  protected MockMultipartFile file(String name, String classPath) throws IOException {
+    ClassPathResource classPathResource = new ClassPathResource(classPath);
+    return new MockMultipartFile(name, classPathResource.getFilename(), null,
+        classPathResource.getInputStream());
   }
 
   protected String json(Object object) throws JsonProcessingException {
