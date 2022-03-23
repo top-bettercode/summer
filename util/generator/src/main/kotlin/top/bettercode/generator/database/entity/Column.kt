@@ -67,8 +67,6 @@ data class Column(
         }
     }
 
-    lateinit var table: Table
-
     private val codeRemarks: String by lazy {
         remarks.replace('（', '(').replace('）', ')').replace('：', ':')
             .replace(Regex(" *: *"), ":").replace(Regex(" +"), " ")
@@ -103,40 +101,8 @@ data class Column(
     val originJavaType: JavaType
             by lazy { JavaTypeResolver.calculateJavaType(this) }
 
-    val javaType: JavaType
-            by lazy {
-                if (this.tinyInt1isBit || (table.ext.softDeleteAsBoolean && this.isSoftDelete)) {
-                    JavaType("java.lang.Boolean")
-                } else
-                    this.originJavaType
-            }
-
-    val tinyInt1isBit: Boolean
-            by lazy { (table.datasource?.tinyInt1isBit == true) && this.dataType == Types.TINYINT && this.columnSize == 1 }
-
-    val numericSoftDelete: Boolean
-            by lazy {
-                this.isSoftDelete && (
-                        JavaType(java.lang.Integer::class.java.name) == this.originJavaType
-                                || JavaType(java.lang.Short::class.java.name) == this.originJavaType
-                                || JavaType(java.lang.Byte::class.java.name) == this.originJavaType)
-            }
-
-    val isSoftDelete: Boolean
-            by lazy { this.columnName.equals(table.ext.softDeleteColumnName, true) }
 
     val javaName: String = GeneratorExtension.javaName(this.columnName)
-
-    val jsonViewIgnored: Boolean by lazy {
-        this.table.ext.jsonViewIgnoredFieldNames.contains(this.javaName)
-    }
-
-
-    val jdbcType: String
-            by lazy { JavaTypeResolver.calculateJdbcTypeName(this) }
-
-    val typeDesc: String
-            by lazy { "$typeName${if (containsSize) "($columnSize${if (decimalDigits > 0) ",$decimalDigits" else ""})" else ""}" }
 
     val defaultDesc: String by lazy {
         val isString = typeName.startsWith("VARCHAR", true) || typeName.startsWith(
@@ -147,25 +113,6 @@ data class Column(
             val qt = if (isString) "'" else ""
             (" DEFAULT $qt$columnDef$qt")
         }
-    }
-
-    val containsSize: Boolean by lazy {
-        columnSize > 0 && !arrayOf(
-            java.lang.Object::class.java.name,
-            "byte[]",
-            java.util.Date::class.java.name,
-            "java.time.OffsetTime",
-            "java.time.OffsetDateTime",
-            "java.time.LocalDate",
-            "java.time.LocalTime",
-            "java.time.LocalDateTime"
-        ).contains(javaType.fullyQualifiedName) && !arrayOf(
-            "TINYTEXT",
-            "MEDIUMTEXT",
-            "TEXT",
-            "CLOB",
-            "NCLOB"
-        ).contains(typeName.toUpperCase(Locale.getDefault()))
     }
 
     override fun equals(other: Any?): Boolean {
@@ -222,6 +169,63 @@ data class Column(
 
     override fun toString(): String {
         return "Column(tableCat=$tableCat, tableSchem=$tableSchem, columnName='$columnName', typeName='$typeName', dataType=$dataType, decimalDigits=$decimalDigits, columnSize=$columnSize, remarks='$remarks', nullable=$nullable, columnDef=$columnDef, extra='$extra', unique=$unique, indexed=$indexed, isPrimary=$isPrimary, unsigned=$unsigned, isForeignKey=$isForeignKey, pktableName=$pktableName, pkcolumnName=$pkcolumnName, autoIncrement=$autoIncrement, idgenerator='$idgenerator', sequence='$sequence', sequenceStartWith=$sequenceStartWith, generatedColumn=$generatedColumn, version=$version, table=$table, originJavaType=$originJavaType, javaName='$javaName', jdbcType='$jdbcType')"
+    }
+
+    //--------------------------------------------
+
+    lateinit var table: Table
+
+    val javaType: JavaType
+            by lazy {
+                if (this.tinyInt1isBit || (table.ext.softDeleteAsBoolean && this.isSoftDelete)) {
+                    JavaType("java.lang.Boolean")
+                } else
+                    this.originJavaType
+            }
+
+    val tinyInt1isBit: Boolean
+            by lazy { (table.datasource?.tinyInt1isBit == true) && this.dataType == Types.TINYINT && this.columnSize == 1 }
+
+    val numericSoftDelete: Boolean
+            by lazy {
+                this.isSoftDelete && (
+                        JavaType(java.lang.Integer::class.java.name) == this.originJavaType
+                                || JavaType(java.lang.Short::class.java.name) == this.originJavaType
+                                || JavaType(java.lang.Byte::class.java.name) == this.originJavaType)
+            }
+
+    val isSoftDelete: Boolean
+            by lazy { this.columnName.equals(table.ext.softDeleteColumnName, true) }
+
+
+    val jsonViewIgnored: Boolean by lazy {
+        this.table.ext.jsonViewIgnoredFieldNames.contains(this.javaName)
+    }
+
+
+    val jdbcType: String
+            by lazy { JavaTypeResolver.calculateJdbcTypeName(this) }
+
+    val typeDesc: String
+            by lazy { "$typeName${if (containsSize) "($columnSize${if (decimalDigits > 0) ",$decimalDigits" else ""})" else ""}" }
+
+    val containsSize: Boolean by lazy {
+        columnSize > 0 && !arrayOf(
+            java.lang.Object::class.java.name,
+            "byte[]",
+            java.util.Date::class.java.name,
+            "java.time.OffsetTime",
+            "java.time.OffsetDateTime",
+            "java.time.LocalDate",
+            "java.time.LocalTime",
+            "java.time.LocalDateTime"
+        ).contains(javaType.fullyQualifiedName) && !arrayOf(
+            "TINYTEXT",
+            "MEDIUMTEXT",
+            "TEXT",
+            "CLOB",
+            "NCLOB"
+        ).contains(typeName.toUpperCase(Locale.getDefault()))
     }
 
 

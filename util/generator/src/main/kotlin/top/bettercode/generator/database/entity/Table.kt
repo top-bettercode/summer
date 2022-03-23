@@ -39,9 +39,6 @@ data class Table(
     val physicalOptions: String = ""
 ) {
 
-    lateinit var module: String
-    lateinit var ext: GeneratorExtension
-
     val primaryKeys: MutableList<Column>
     val columns: MutableList<Column> =
         pumlColumns.asSequence().filter { it is Column }.map {
@@ -73,11 +70,6 @@ data class Table(
         }
     }
 
-    var datasource: JDBCConnectionConfiguration? = null
-
-    val supportSoftDelete: Boolean
-        get() = columns.find { it.isSoftDelete } != null
-
     val primaryKey: Column? by lazy {
         if (primaryKeys.size == 1) {
             primaryKeys[0]
@@ -85,13 +77,6 @@ data class Table(
             null
         }
     }
-
-    fun className(extension: GeneratorExtension): String = extension.className(tableName)
-
-    fun entityName(extension: GeneratorExtension): String =
-        className(extension).decapitalize()
-
-    fun pathName(extension: GeneratorExtension): String = entityName(extension)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -121,5 +106,20 @@ data class Table(
         return "Table(productName='$productName', catalog=$catalog, schema=$schema, tableName='$tableName', tableType='$tableType', remarks='$remarks', primaryKeyNames=$primaryKeyNames, indexes=$indexes, pumlColumns=$pumlColumns, subModule='$subModule', subModuleName='$subModuleName', physicalOptions='$physicalOptions', primaryKeys=$primaryKeys, columns=$columns, primaryKey=$primaryKey)"
     }
 
+    //--------------------------------------------
+
+    lateinit var module: String
+    lateinit var ext: GeneratorExtension
+    var datasource: JDBCConnectionConfiguration? = null
+
+    val supportSoftDelete: Boolean
+        get() = columns.find { it.isSoftDelete } != null
+
+    fun className(extension: GeneratorExtension): String = extension.className(tableName)
+
+    fun entityName(extension: GeneratorExtension): String =
+        className(extension).decapitalize()
+
+    fun pathName(extension: GeneratorExtension): String = entityName(extension)
 
 }
