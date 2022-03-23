@@ -6,12 +6,6 @@
     }
   ],
   "properties": [
-    {
-      "name": "summer.web.project-name",
-      "type": "java.lang.String",
-      "description": "项目名称.",
-      "sourceType": "top.bettercode.logging.UtilKt"
-    }
   ],
   "hints": [
     {
