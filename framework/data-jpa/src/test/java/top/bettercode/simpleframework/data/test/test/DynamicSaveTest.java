@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.data.test.test;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +48,7 @@ public class DynamicSaveTest {
     org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
     optionalUser.ifPresent(user -> {
           System.err.println(user);
-          org.junit.jupiter.api.Assertions.assertEquals("wu", user.getFirstName());
+      Assertions.assertNull(user.getFirstName());
         }
     );
     dave.setLastName("MM");
@@ -56,7 +57,7 @@ public class DynamicSaveTest {
     org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
     optionalUser.ifPresent(user -> {
           System.err.println(user);
-          org.junit.jupiter.api.Assertions.assertEquals("wu", user.getFirstName());
+      Assertions.assertNull(user.getFirstName());
         }
     );
   }

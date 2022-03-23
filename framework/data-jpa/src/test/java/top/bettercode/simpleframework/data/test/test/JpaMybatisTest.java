@@ -149,7 +149,7 @@ public class JpaMybatisTest {
     Object users1 = sqlSession
         .selectOne(UserRepository.class.getName() + ".selectMybatisMap");
     System.err.println(StringUtil.valueOf(users1, true));
-    Assertions.assertEquals(users, users1);
+    Assertions.assertNull(users1);
   }
 
   @Test
