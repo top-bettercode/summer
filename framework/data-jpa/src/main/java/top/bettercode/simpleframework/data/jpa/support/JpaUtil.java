@@ -14,13 +14,17 @@ public class JpaUtil {
   private static final JavaTypeDescriptorRegistry TYPE_DESCRIPTOR_REGISTRY = new TypeConfiguration().getJavaTypeDescriptorRegistry();
   private static final DefaultConversionService CONVERSION_SERVICE = new DefaultConversionService();
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked","deprecation"})
   public static <T> T convert(Object source, Class<T> targetType) {
     if (source != null && !targetType.isInstance(source)) {
       JavaTypeDescriptor<T> descriptor = (JavaTypeDescriptor<T>) TYPE_DESCRIPTOR_REGISTRY.getDescriptor(
           ClassUtils.resolvePrimitiveIfNecessary(targetType));
       try {
-        return descriptor.wrap(source, null);
+        if (descriptor instanceof org.hibernate.type.descriptor.java.JavaTypeDescriptorRegistry.FallbackJavaTypeDescriptor) {
+          return CONVERSION_SERVICE.convert(source, targetType);
+        } else {
+          return descriptor.wrap(source, null);
+        }
       } catch (Exception e) {
         return CONVERSION_SERVICE.convert(source, targetType);
       }
