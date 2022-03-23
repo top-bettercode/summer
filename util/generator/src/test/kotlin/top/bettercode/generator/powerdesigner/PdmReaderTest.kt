@@ -18,8 +18,7 @@ class PdmReaderTest {
     @Test
     fun read() {
         for (table in PdmReader.read(
-            pdmFile,
-            defaultModuleName
+            pdmFile
         )) {
             println(table)
         }
@@ -30,8 +29,7 @@ class PdmReaderTest {
         val out = FileUnit("build/gen/puml/mysql.sql")
         MysqlToDDL.toDDL(
             PdmReader.read(
-                pdmFile,
-                defaultModuleName
+                pdmFile
             ), out
         )
         out.writeTo()

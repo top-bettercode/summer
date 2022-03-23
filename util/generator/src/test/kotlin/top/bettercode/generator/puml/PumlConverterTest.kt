@@ -32,7 +32,7 @@ class PumlConverterTest {
 
     @Test
     fun convert() {
-        val tables = PumlConverter.toTables(oraclePuml, defaultModuleName)
+        val tables = PumlConverter.toTables(oraclePuml)
         println(tables)
     }
 
@@ -70,7 +70,7 @@ class PumlConverterTest {
     fun toOracleDLL() {
         val out = FileUnit("build/gen/puml/oracle.sql")
         OracleToDDL.toDDL(
-            PumlConverter.toTables(oraclePuml, defaultModuleName),
+            PumlConverter.toTables(oraclePuml ),
             out
         )
         out.writeTo()
@@ -80,7 +80,7 @@ class PumlConverterTest {
     fun toMySqlDLL() {
         val out = FileUnit("build/gen/puml/mysql.sql")
         MysqlToDDL.toDDL(
-            PumlConverter.toTables(oraclePuml, defaultModuleName),
+            PumlConverter.toTables(oraclePuml),
             out
         )
         out.writeTo()
@@ -91,8 +91,8 @@ class PumlConverterTest {
         File("build/gen/puml/oracleUpdate.sql").printWriter().use {
             OracleToDDL.toDDLUpdate(
                 defaultModuleName,
-                PumlConverter.toTables(oraclePuml, defaultModuleName),
-                PumlConverter.toTables(newOraclePuml, defaultModuleName),
+                PumlConverter.toTables(oraclePuml),
+                PumlConverter.toTables(newOraclePuml),
                 it,
                 GeneratorExtension()
             )
@@ -105,9 +105,9 @@ class PumlConverterTest {
             MysqlToDDL.toDDLUpdate(
                 defaultModuleName,
                 PumlConverter.toTables(
-                    mysqlPuml, defaultModuleName
+                    mysqlPuml
                 ),
-                PumlConverter.toTables(newMysqlPuml, defaultModuleName),
+                PumlConverter.toTables(newMysqlPuml),
                 it,
                 GeneratorExtension()
             )

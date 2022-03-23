@@ -7,7 +7,11 @@ import java.io.File
  *
  * @author Peter Wu
  */
-abstract class FileTableHolder(val module: String, val files: List<File>) : TableHolder {
+abstract class FileTableHolder(
+    val ext: GeneratorExtension,
+    val module: String,
+    val files: List<File>
+) : TableHolder {
 
     override fun tables(checkFound: Boolean, vararg tableName: String): List<Table> {
         val tableNames = tableName.distinct()
@@ -39,5 +43,11 @@ abstract class FileTableHolder(val module: String, val files: List<File>) : Tabl
         }.flatten().sortedBy { it }
     }
 
-    abstract fun getTables(file: File): List<Table>
+    abstract fun getTables(
+        file: File, call: (Table) -> Unit = {
+            it.ext = ext
+            it.module = module
+            it.datasource = ext.datasources[module]
+        }
+    ): List<Table>
 }

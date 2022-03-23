@@ -21,10 +21,6 @@ object Generators {
      * @param extension 配置
      */
     fun call(extension: GeneratorExtension) {
-        JavaTypeResolver.softDeleteColumnName = extension.softDeleteColumnName
-        JavaTypeResolver.softDeleteAsBoolean = extension.softDeleteAsBoolean
-        JavaTypeResolver.useJSR310Types = extension.useJSR310Types
-
         val generators = extension.generators
         if (generators.isEmpty()) {
             return

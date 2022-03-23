@@ -1,5 +1,6 @@
 package top.bettercode.generator
 
+import top.bettercode.generator.dom.java.JavaTypeResolver
 import top.bettercode.generator.dom.java.element.JavaElement
 import top.bettercode.generator.dsl.Generator
 import java.io.File
@@ -10,10 +11,6 @@ import java.util.*
  * @author Peter Wu
  */
 open class GeneratorExtension(
-    /**
-     * JDBC连接配置
-     */
-    var datasources: Map<String, JDBCConnectionConfiguration> = mapOf(),
     /**
      * 子项目共用数据源
      */
@@ -54,7 +51,6 @@ open class GeneratorExtension(
      */
     var replaceAll: Boolean = true,
 
-    var useJSR310Types: Boolean = true,
     /**
      * 删除模式，为true时不生成文件，删除已生成的文件
      */
@@ -126,6 +122,17 @@ open class GeneratorExtension(
     var settings: MutableMap<String, String> = mutableMapOf()
 ) {
 
+    /**
+     * JDBC连接配置
+     */
+    var datasources: Map<String, JDBCConnectionConfiguration> = mapOf()
+        set(value) {
+            field = value
+            value.values.forEach {
+                it.ext = this
+            }
+        }
+
     companion object {
 
         const val defaultModuleName = "modules"
@@ -145,6 +152,24 @@ open class GeneratorExtension(
         }
 
     }
+
+    var useJSR310Types: Boolean = true
+        set(value) {
+            field = value
+            JavaTypeResolver.useJSR310Types = value
+        }
+
+    var forceIntegers: Boolean = true
+        set(value) {
+            field = value
+            JavaTypeResolver.forceIntegers = value
+        }
+
+    var forceBigDecimals: Boolean = false
+        set(value) {
+            field = value
+            JavaTypeResolver.forceBigDecimals = value
+        }
 
     val defaultDatasource: JDBCConnectionConfiguration by lazy { datasources[defaultModuleName]!! }
 
@@ -250,12 +275,12 @@ open class GeneratorExtension(
             }
             DataType.PUML -> {
                 pumlSources.map { (module, files) ->
-                    function(module, PumlTableHolder(module, files))
+                    function(module, PumlTableHolder(this, module, files))
                 }
             }
             DataType.PDM -> {
                 pdmSources.map { (module, files) ->
-                    function(module, PdmTableHolder(module, files))
+                    function(module, PdmTableHolder(this, module, files))
                 }
             }
         }

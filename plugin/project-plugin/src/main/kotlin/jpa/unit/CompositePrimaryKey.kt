@@ -54,7 +54,12 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 isStatic = true
                 +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, ${type.shortName}.class);"
             }
-            method("of", type, Parameter(primaryKeyName, JavaType.stringInstance), Parameter("delimiter", JavaType.stringInstance)) {
+            method(
+                "of",
+                type,
+                Parameter(primaryKeyName, JavaType.stringInstance),
+                Parameter("delimiter", JavaType.stringInstance)
+            ) {
                 isStatic = true
                 +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, delimiter, ${type.shortName}.class);"
             }
@@ -82,6 +87,9 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 columnAnnotation += ")"
                 annotation(columnAnnotation)
+                if (it.tinyInt1isBit) {
+                    annotation("@org.hibernate.annotations.Type(type = \"org.hibernate.type.NumericBooleanType\")")
+                }
             }
 
 

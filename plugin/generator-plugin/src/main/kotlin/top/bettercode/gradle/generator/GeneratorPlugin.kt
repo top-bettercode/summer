@@ -62,6 +62,8 @@ class GeneratorPlugin : Plugin<Project> {
                     configuration.debug = (properties["debug"] as? String ?: "false").toBoolean()
                     configuration.queryIndex =
                         (properties["queryIndex"] as? String ?: "true").toBoolean()
+                    configuration.tinyInt1isBit =
+                        (properties["tinyInt1isBit"] as? String ?: "false").toBoolean()
                     if (configuration.isOracle) {
                         configuration.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
                     }
@@ -81,6 +83,11 @@ class GeneratorPlugin : Plugin<Project> {
                     ?: false
             extension.useJSR310Types =
                 (findProperty(project, "useJSR310Types"))?.toBoolean() ?: true
+            extension.forceIntegers =
+                (findProperty(project, "forceIntegers"))?.toBoolean() ?: true
+            extension.forceBigDecimals =
+                (findProperty(project, "forceBigDecimals"))?.toBoolean() ?: false
+
             extension.replaceAll = (findProperty(project, "replaceAll"))?.toBoolean() ?: false
             extension.useForeignKey = (findProperty(project, "useForeignKey"))?.toBoolean() ?: false
             extension.sqlQuote = (findProperty(project, "sqlQuote"))?.toBoolean() ?: true
@@ -311,7 +318,11 @@ class GeneratorPlugin : Plugin<Project> {
                                     ?: throw IllegalStateException("未配置${module}模块数据库信息")
                                 val tableNames = tables.map { it.tableName }
                                 val oldTables = if (databaseFile.exists()) {
-                                    PumlConverter.toTables(databaseFile, module)
+                                    PumlConverter.toTables(databaseFile) {
+                                        it.ext = extension
+                                        it.module = module
+                                        it.datasource = extension.datasources[module]
+                                    }
                                 } else {
                                     jdbc.tables(
                                         tableName =

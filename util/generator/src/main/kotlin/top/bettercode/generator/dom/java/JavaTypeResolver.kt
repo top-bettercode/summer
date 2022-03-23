@@ -11,11 +11,9 @@ import java.util.*
  */
 object JavaTypeResolver {
 
-    private var forceBigDecimals: Boolean = false
-    private var forceIntegers: Boolean = true
+    var forceBigDecimals: Boolean = false
+    var forceIntegers: Boolean = true
     var useJSR310Types: Boolean = true
-    var softDeleteAsBoolean: Boolean = false
-    var softDeleteColumnName: String? = null
 
     private val typeMap: MutableMap<Int, JdbcTypeInformation> = HashMap()
     private val typeNameMap: MutableMap<String, Int> = HashMap()
@@ -183,13 +181,6 @@ object JavaTypeResolver {
     }
 
     fun calculateJavaType(column: Column): JavaType {
-        if (softDeleteAsBoolean && softDeleteColumnName != null && softDeleteColumnName.equals(
-                column.columnName,
-                true
-            )
-        ) {
-            return JavaType("java.lang.Boolean")
-        }
         var answer: JavaType
         val information = calculateJdbcTypeInformation(column)
         answer = information.javaType
@@ -219,9 +210,9 @@ object JavaTypeResolver {
 
         when (calculateDataType(column)) {
             Types.BIT -> answer = calculateBitReplacement(column, defaultType)
-            Types.DATE -> answer = calculateDateType(defaultType)
             Types.DECIMAL, Types.NUMERIC -> answer =
                 calculateBigDecimalReplacement(column, defaultType)
+            Types.DATE -> answer = calculateDateType(defaultType)
             Types.TIME -> answer = calculateTimeType(defaultType)
             Types.TIMESTAMP -> answer = calculateTimestampType(defaultType)
             else -> {

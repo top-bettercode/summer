@@ -9,6 +9,7 @@ import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.PrimitiveTypeWrapper
 import top.bettercode.generator.dom.java.element.*
 import top.bettercode.generator.dom.unit.*
+import java.sql.Types
 
 /**
  * 模板基类
@@ -17,15 +18,6 @@ open class Generator {
 
     private val projectUnits: MutableList<GenUnit> = mutableListOf()
     private val units: MutableList<GenUnit> = mutableListOf()
-
-    val Table.supportSoftDelete: Boolean
-        get() = supportSoftDelete(ext)
-
-    val Column.jsonViewIgnored: Boolean
-        get() = jsonViewIgnored(ext)
-
-    val Column.isSoftDelete: Boolean
-        get() = isSoftDelete(ext)
 
     val Column.defaultRemarks: String
         get() = defaultDesc.replace("DEFAULT ", "默认值：")

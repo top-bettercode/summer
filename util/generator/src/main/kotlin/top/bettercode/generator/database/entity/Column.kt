@@ -3,6 +3,7 @@ package top.bettercode.generator.database.entity
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.JavaTypeResolver
+import java.sql.Types
 import java.util.*
 
 /**
@@ -66,6 +67,8 @@ data class Column(
         }
     }
 
+    lateinit var table: Table
+
     private val codeRemarks: String by lazy {
         remarks.replace('（', '(').replace('）', ')').replace('：', ':')
             .replace(Regex(" *: *"), ":").replace(Regex(" +"), " ")
@@ -76,7 +79,6 @@ data class Column(
         codeRemarks.replace('，', ',')
             .replace(Regex(",+"), ",")
     }
-
 
     val prettyRemarks: String by lazy {
         when {
@@ -98,13 +100,44 @@ data class Column(
         codeRemarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
     }
 
-    val javaType: JavaType
+    val originJavaType: JavaType
             by lazy { JavaTypeResolver.calculateJavaType(this) }
+
+    val javaType: JavaType
+            by lazy {
+                if (this.tinyInt1isBit || (table.ext.softDeleteAsBoolean && this.isSoftDelete)) {
+                    JavaType("java.lang.Boolean")
+                } else
+                    this.originJavaType
+            }
+
+    val tinyInt1isBit: Boolean
+            by lazy { (table.datasource?.tinyInt1isBit == true) && this.dataType == Types.TINYINT && this.columnSize == 1 }
+
+    val numericSoftDelete: Boolean
+            by lazy {
+                this.isSoftDelete && (
+                        JavaType(java.lang.Integer::class.java.name) == this.originJavaType
+                                || JavaType(java.lang.Short::class.java.name) == this.originJavaType
+                                || JavaType(java.lang.Byte::class.java.name) == this.originJavaType)
+            }
+
+    val isSoftDelete: Boolean
+            by lazy { this.columnName.equals(table.ext.softDeleteColumnName, true) }
+
+    val javaName: String = GeneratorExtension.javaName(this.columnName)
+
+    val jsonViewIgnored: Boolean by lazy {
+        this.table.ext.jsonViewIgnoredFieldNames.contains(this.javaName)
+    }
+
+
     val jdbcType: String
             by lazy { JavaTypeResolver.calculateJdbcTypeName(this) }
-    val javaName: String = GeneratorExtension.javaName(this.columnName)
+
     val typeDesc: String
             by lazy { "$typeName${if (containsSize) "($columnSize${if (decimalDigits > 0) ",$decimalDigits" else ""})" else ""}" }
+
     val defaultDesc: String by lazy {
         val isString = typeName.startsWith("VARCHAR", true) || typeName.startsWith(
             "TEXT",
@@ -134,12 +167,6 @@ data class Column(
             "NCLOB"
         ).contains(typeName.toUpperCase(Locale.getDefault()))
     }
-
-    fun isSoftDelete(extension: GeneratorExtension): Boolean =
-        javaName == extension.softDeleteColumnName
-
-    fun jsonViewIgnored(extension: GeneratorExtension): Boolean =
-        extension.jsonViewIgnoredFieldNames.contains(javaName)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -192,4 +219,10 @@ data class Column(
         result = 31 * result + autoIncrement.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "Column(tableCat=$tableCat, tableSchem=$tableSchem, columnName='$columnName', typeName='$typeName', dataType=$dataType, decimalDigits=$decimalDigits, columnSize=$columnSize, remarks='$remarks', nullable=$nullable, columnDef=$columnDef, extra='$extra', unique=$unique, indexed=$indexed, isPrimary=$isPrimary, unsigned=$unsigned, isForeignKey=$isForeignKey, pktableName=$pktableName, pkcolumnName=$pkcolumnName, autoIncrement=$autoIncrement, idgenerator='$idgenerator', sequence='$sequence', sequenceStartWith=$sequenceStartWith, generatedColumn=$generatedColumn, version=$version, table=$table, originJavaType=$originJavaType, javaName='$javaName', jdbcType='$jdbcType')"
+    }
+
+
 }
