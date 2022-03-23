@@ -197,9 +197,7 @@ class LocalDateTimeHelper private constructor(
 
         @JvmStatic
         fun of(date: Date): LocalDateTimeHelper {
-            val calendar = Calendar.getInstance()
-            calendar.time = date
-            return of(calendar)
+            return of(date.time)
         }
 
         @JvmStatic
@@ -210,12 +208,7 @@ class LocalDateTimeHelper private constructor(
         @JvmStatic
         fun of(calendar: Calendar): LocalDateTimeHelper {
             return LocalDateTimeHelper(
-                LocalDateTime.of(
-                    calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1,
-                    calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND),
-                    calendar.get(Calendar.MILLISECOND) * 1000000
-                ),
+                LocalDateTime.ofInstant(calendar.toInstant(), calendar.timeZone.toZoneId()),
                 DEFAULT_ZONE_OFFSET
             )
         }
