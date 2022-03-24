@@ -3,11 +3,8 @@ package org.springframework.data.jpa.repository.query;
 import java.lang.reflect.Method;
 import javax.persistence.EntityManager;
 import org.apache.ibatis.session.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.provider.QueryExtractor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.query.mybatis.JpaExtQueryMethod;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -18,6 +15,7 @@ import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
+import top.bettercode.simpleframework.data.jpa.query.mybatis.JpaExtQueryMethod;
 
 /**
  * Query lookup strategy to execute finders.
@@ -174,7 +172,6 @@ public final class JpaExtQueryLookupStrategy {
    */
   private static class CreateIfNotFoundQueryLookupStrategy extends AbstractQueryLookupStrategy {
 
-    private final Logger log = LoggerFactory.getLogger(CreateIfNotFoundQueryLookupStrategy.class);
     private final DeclaredQueryLookupStrategy lookupStrategy;
     private final CreateQueryLookupStrategy createStrategy;
 

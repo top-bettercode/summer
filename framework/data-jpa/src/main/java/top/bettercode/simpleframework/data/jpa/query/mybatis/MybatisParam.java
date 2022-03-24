@@ -1,4 +1,4 @@
-package org.springframework.data.jpa.repository.query.mybatis;
+package top.bettercode.simpleframework.data.jpa.query.mybatis;
 
 import org.apache.ibatis.mapping.BoundSql;
 import top.bettercode.simpleframework.data.jpa.support.Size;

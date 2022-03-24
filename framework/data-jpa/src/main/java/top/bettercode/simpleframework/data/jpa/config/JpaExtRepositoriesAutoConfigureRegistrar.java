@@ -5,7 +5,6 @@ import java.util.Locale;
 import org.springframework.boot.autoconfigure.data.AbstractRepositoryConfigurationSourceSupport;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.Environment;
-import org.springframework.data.jpa.repository.EnableJpaExtRepositories;
 import org.springframework.data.repository.config.BootstrapMode;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.util.StringUtils;

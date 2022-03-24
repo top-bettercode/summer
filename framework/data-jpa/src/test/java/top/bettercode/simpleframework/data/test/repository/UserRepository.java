@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.query.mybatis.MybatisTemplate;
+import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisTemplate;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
 import top.bettercode.simpleframework.data.jpa.querydsl.RecycleQuerydslPredicateExecutor;

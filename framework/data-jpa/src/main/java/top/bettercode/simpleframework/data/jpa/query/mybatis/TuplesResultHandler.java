@@ -1,4 +1,4 @@
-package org.springframework.data.jpa.repository.query.mybatis;
+package top.bettercode.simpleframework.data.jpa.query.mybatis;
 
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;

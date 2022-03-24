@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter;
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.DeleteExecution;
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.ExistsExecution;
 import org.springframework.data.jpa.repository.query.ParameterMetadataProvider.ParameterMetadata;
+import org.springframework.data.jpa.repository.query.QueryParameterSetter.QueryMetadata;
+import org.springframework.data.jpa.repository.query.QueryParameterSetter.QueryMetadataCache;
 import org.springframework.data.repository.query.ResultProcessor;
 import org.springframework.data.repository.query.ReturnedType;
 import org.springframework.data.repository.query.parser.Part;
@@ -188,8 +190,9 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
   private class QueryPreparer {
 
     private final @Nullable CriteriaQuery<?> cachedCriteriaQuery;
-    private final @Nullable ParameterBinder cachedParameterBinder;
-    private final QueryParameterSetter.QueryMetadataCache metadataCache = new QueryParameterSetter.QueryMetadataCache();
+    private final @Nullable
+    ParameterBinder cachedParameterBinder;
+    private final QueryMetadataCache metadataCache = new QueryMetadataCache();
 
     QueryPreparer(boolean recreateQueries) {
 
@@ -302,9 +305,9 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
      * Invokes parameter binding on the given {@link TypedQuery}.
      */
     protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, JpaParametersParameterAccessor accessor,
-        QueryParameterSetter.QueryMetadataCache metadataCache) {
+        QueryMetadataCache metadataCache) {
 
-      QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata("query", query);
+      QueryMetadata metadata = metadataCache.getMetadata("query", query);
 
       return binder.bindAndPrepare(query, metadata, accessor);
     }
@@ -357,9 +360,9 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
      */
     @Override
     protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, JpaParametersParameterAccessor accessor,
-        QueryParameterSetter.QueryMetadataCache metadataCache) {
+        QueryMetadataCache metadataCache) {
 
-      QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata("countquery", query);
+      QueryMetadata metadata = metadataCache.getMetadata("countquery", query);
 
       return binder.bind(query, metadata, accessor);
     }
