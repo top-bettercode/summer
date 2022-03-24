@@ -24,6 +24,8 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
 
   EntityManager getEntityManager();
 
+  <S extends T> int save(S s, Specification<T> spec);
+
   /**
    * 动态更新，只更新非Null字段
    *
@@ -34,17 +36,18 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
   <S extends T> S dynamicSave(S s);
 
   /**
-   * 动态更新，只更新非Null 及 非空（""）字段
+   * 动态更新
    *
-   * @param s   对象
-   * @param <S> 类型
+   * @param s           对象
+   * @param ignoreEmpty 是否不更新空字符字段
+   * @param <S>         类型
    * @return 结果
    */
-  <S extends T> S dynamicBSave(S s);
+  <S extends T> S dynamicSave(S s, boolean ignoreEmpty);
 
-  void delete(Specification<T> spec);
+  int delete(Specification<T> spec);
 
-  void deleteAllById(Iterable<ID> ids);
+  int deleteAllById(Iterable<ID> ids);
 
   boolean exists(Specification<T> spec);
 

@@ -20,9 +20,11 @@ public class BaseUser {
   private String firstName;
   @Column(name = "last_name")
   private String lastName;
+
+  @Column(name = "deleted", columnDefinition = "TINYINT(1) DEFAULT 0", length = 1, nullable = false)
   @SoftDelete
   @Type(type = "org.hibernate.type.NumericBooleanType")
-  private boolean deleted;
+  private Boolean deleted;
 
   public BaseUser() {
   }
@@ -30,6 +32,7 @@ public class BaseUser {
   public BaseUser(String firstName, String lastName) {
     this.firstName = firstName;
     this.lastName = lastName;
+    this.deleted = false;
   }
 
   public Integer getId() {
@@ -56,11 +59,11 @@ public class BaseUser {
     this.lastName = lastName;
   }
 
-  public boolean isDeleted() {
+  public Boolean getDeleted() {
     return deleted;
   }
 
-  public void setDeleted(boolean deleted) {
+  public void setDeleted(Boolean deleted) {
     this.deleted = deleted;
   }
 

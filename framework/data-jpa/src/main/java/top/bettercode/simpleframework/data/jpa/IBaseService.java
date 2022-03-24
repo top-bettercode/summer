@@ -16,17 +16,9 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   M getRepository();
 
-
   <S extends T> S save(S s);
 
-  /**
-   * 动态更新，只更新非Null 及 非空（""）字段
-   *
-   * @param s   对象
-   * @param <S> 类型
-   * @return 结果
-   */
-  <S extends T> S dynamicBSave(S s);
+  <S extends T> int save(S s, Specification<T> spec);
 
   /**
    * 动态更新，只更新非Null字段
@@ -37,15 +29,25 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
    */
   <S extends T> S dynamicSave(S s);
 
+  /**
+   * 动态更新
+   *
+   * @param s           对象
+   * @param ignoreEmpty 是否不更新空字符字段
+   * @param <S>         类型
+   * @return 结果
+   */
+  <S extends T> S dynamicSave(S s, boolean ignoreEmpty);
+
   <S extends T> List<S> saveAll(Iterable<S> entities);
 
   void delete(T t);
 
   void deleteById(ID id);
 
-  void delete(Specification<T> spec);
+  int delete(Specification<T> spec);
 
-  void deleteAllById(Iterable<ID> ids);
+  int deleteAllById(Iterable<ID> ids);
 
   void deleteAll(Iterable<? extends T> iterable);
 

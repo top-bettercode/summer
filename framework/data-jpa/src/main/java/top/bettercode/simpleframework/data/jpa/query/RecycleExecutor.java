@@ -17,7 +17,7 @@ import org.springframework.lang.Nullable;
  */
 public interface RecycleExecutor<T, ID> {
 
-  void cleanRecycleBin();
+  int cleanRecycleBin();
 
   void deleteFromRecycleBin(ID id);
 
