@@ -45,7 +45,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     SimpleJpaRepository<T, ID> implements JpaExtRepository<T, ID> {
 
   private final Logger sqlLog = LoggerFactory.getLogger("org.hibernate.SQL");
-  public static final String SOFT_DELETE_ALL_QUERY_STRING = "update %s e set e.%s = :%s";
+  public static final String SOFT_DELETE_ALL_QUERY_STRING = "update %s e set e.%s = :%s where e.%s = :%s";
   private static final String EQUALS_CONDITION_STRING = "%s.%s = :%s";
 
   private final JpaEntityInformation<T, ?> entityInformation;
@@ -153,11 +153,10 @@ public class SimpleJpaExtRepository<T, ID> extends
     Class<T> domainClass = getDomainClass();
     CriteriaUpdate<T> criteriaUpdate = builder.createCriteriaUpdate(domainClass);
     Root<T> root = criteriaUpdate.from(domainClass);
-    if (spec != null) {
-      Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
-      if (predicate != null) {
-        criteriaUpdate.where(predicate);
-      }
+    spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+    Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
+    if (predicate != null) {
+      criteriaUpdate.where(predicate);
     }
     DirectFieldAccessFallbackBeanWrapper beanWrapper = new DirectFieldAccessFallbackBeanWrapper(s);
     for (SingularAttribute<? super T, ?> attribute : root.getModel().getSingularAttributes()) {
@@ -237,11 +236,10 @@ public class SimpleJpaExtRepository<T, ID> extends
       Class<T> domainClass = getDomainClass();
       CriteriaUpdate<T> criteriaUpdate = builder.createCriteriaUpdate(domainClass);
       Root<T> root = criteriaUpdate.from(domainClass);
-      if (spec != null) {
-        Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
-        if (predicate != null) {
-          criteriaUpdate.where(predicate);
-        }
+      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+      Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
+      if (predicate != null) {
+        criteriaUpdate.where(predicate);
       }
       criteriaUpdate.set(root.get(softDelete.getPropertyName()), deleted);
       int affected = em.createQuery(criteriaUpdate).executeUpdate();
@@ -292,17 +290,18 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
 
       String softDeleteName = softDelete.getPropertyName();
+      String oldName = "old" + softDeleteName;
       String queryString = String
           .format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.getEntityName(),
               softDeleteName,
-              softDeleteName);
+              softDeleteName, softDeleteName, oldName);
 
       Iterator<T> iterator = entities.iterator();
 
       if (iterator.hasNext()) {
         String alias = "e";
         StringBuilder builder = new StringBuilder(queryString);
-        builder.append(" where");
+        builder.append(" and (");
 
         int i = 0;
 
@@ -316,13 +315,13 @@ public class SimpleJpaExtRepository<T, ID> extends
             builder.append(" or");
           }
         }
-
+        builder.append(" )");
         Query query = em.createQuery(builder.toString());
 
         iterator = entities.iterator();
         i = 0;
-        query.setParameter(softDeleteName,
-            deleted);
+        query.setParameter(softDeleteName, deleted);
+        query.setParameter(oldName, notDeleted);
         while (iterator.hasNext()) {
           query.setParameter(++i, iterator.next());
         }
@@ -341,10 +340,13 @@ public class SimpleJpaExtRepository<T, ID> extends
   public void deleteAllInBatch() {
     if (softDelete.support()) {
       String softDeleteName = softDelete.getPropertyName();
+      String oldName = "old" + softDeleteName;
       int affected = em.createQuery(String
-          .format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.getEntityName(),
-              softDeleteName, softDeleteName)).setParameter(softDeleteName,
-          deleted).executeUpdate();
+              .format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.getEntityName(),
+                  softDeleteName, softDeleteName, softDeleteName, oldName))
+          .setParameter(softDeleteName, deleted)
+          .setParameter(oldName, notDeleted)
+          .executeUpdate();
       if (sqlLog.isDebugEnabled()) {
         sqlLog.debug("{} row affected", affected);
       }
