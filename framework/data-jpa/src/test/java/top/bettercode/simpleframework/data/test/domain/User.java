@@ -1,14 +1,13 @@
 package top.bettercode.simpleframework.data.test.domain;
 
 import javax.persistence.Entity;
-import org.hibernate.annotations.DynamicInsert;
+import javax.persistence.EntityListeners;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SelectBeforeUpdate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@SelectBeforeUpdate
-@DynamicInsert
 @DynamicUpdate
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class User extends BaseUser{
 
   public User() {

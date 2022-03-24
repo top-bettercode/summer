@@ -3,15 +3,11 @@ package top.bettercode.simpleframework.data.test.domain;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.SoftDelete;
 
-@SelectBeforeUpdate
-@DynamicInsert
 @DynamicUpdate
 @Entity
 public class Employee {

@@ -28,6 +28,10 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
     return repository;
   }
 
+  @Override
+  public <S extends T> int save(S s, Specification<T> spec) {
+    return repository.save(s, spec);
+  }
 
   @Override
   public <S extends T> S dynamicSave(S s) {
@@ -35,18 +39,18 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
-  public <S extends T> S dynamicBSave(S s) {
-    return repository.dynamicBSave(s);
+  public <S extends T> S dynamicSave(S s, boolean ignoreEmpty) {
+    return repository.dynamicSave(s, ignoreEmpty);
   }
 
   @Override
-  public void delete(Specification<T> spec) {
-    repository.delete(spec);
+  public int delete(Specification<T> spec) {
+    return repository.delete(spec);
   }
 
   @Override
-  public void deleteAllById(Iterable<ID> ids) {
-    repository.deleteAllById(ids);
+  public int deleteAllById(Iterable<ID> ids) {
+    return repository.deleteAllById(ids);
   }
 
   @Override

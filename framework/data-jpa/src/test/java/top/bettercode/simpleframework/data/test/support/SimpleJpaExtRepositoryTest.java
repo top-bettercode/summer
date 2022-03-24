@@ -104,6 +104,36 @@ public class SimpleJpaExtRepositoryTest {
         .forEach(System.out::println);
   }
 
+  @Test
+  public void saveSpec() {
+    User update = new User();
+    update.setLastName("newName");
+    DefaultSpecMatcher<User> spec = DefaultSpecMatcher.<User>matching()
+        .equal("firstName", "Carter");
+    List<User> all = repository.findAll(spec);
+    System.err.println(StringUtil.valueOf(all, true));
+    repository.save(update, spec);
+    all = repository.findAll(spec);
+    System.err.println(StringUtil.valueOf(all, true));
+    for (User user : all) {
+      Assertions.assertEquals("newName", user.getLastName());
+    }
+  }
+
+  @Test
+  public void save1() {
+    User dave = new User("Dave", "Matthews");
+    repository.save(dave);
+    Integer id = dave.getId();
+    User update = new User();
+    update.setId(id);
+    update.setFirstName("Dave22");
+    update.setDeleted(false);
+    repository.save(update);
+    Optional<User> optionalUser = repository.findById(id);
+    optionalUser.ifPresent(System.err::println);
+    Assertions.assertTrue(optionalUser.isPresent());
+  }
 
   @Test
   public void save() {
@@ -187,7 +217,7 @@ public class SimpleJpaExtRepositoryTest {
     repository.deleteAllInBatch();
 
     List<User> recycleAll = repository.findAllFromRecycleBin();
-    System.err.println(recycleAll);
+    System.err.println(StringUtil.valueOf(recycleAll, true));
     Assertions.assertEquals(4, recycleAll.size());
     recycleAll = repository.findAll();
     System.err.println(recycleAll);
