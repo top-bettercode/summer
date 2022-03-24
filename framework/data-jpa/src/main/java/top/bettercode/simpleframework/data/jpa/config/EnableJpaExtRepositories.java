@@ -1,4 +1,4 @@
-package org.springframework.data.jpa.repository;
+package top.bettercode.simpleframework.data.jpa.config;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -17,7 +17,6 @@ import org.springframework.data.repository.config.DefaultRepositoryBaseClass;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 import org.springframework.transaction.PlatformTransactionManager;
-import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 import top.bettercode.simpleframework.data.jpa.support.JpaExtRepositoryFactoryBean;
 
 /**

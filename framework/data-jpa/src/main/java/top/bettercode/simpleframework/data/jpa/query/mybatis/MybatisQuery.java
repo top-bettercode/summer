@@ -1,4 +1,4 @@
-package org.springframework.data.jpa.repository.query;
+package top.bettercode.simpleframework.data.jpa.query.mybatis;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -11,7 +11,6 @@ import javax.persistence.LockModeType;
 import javax.persistence.Parameter;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
-import org.springframework.data.jpa.repository.query.mybatis.MybatisParam;
 
 /**
  * @author Peter Wu

@@ -23,7 +23,7 @@ import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter;
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.BindableQuery;
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.ErrorHandling;
 import org.springframework.data.jpa.repository.query.QueryParameterSetter.QueryMetadata;
-import org.springframework.data.jpa.repository.query.mybatis.MybatisParam;
+import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisParam;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 
 /**

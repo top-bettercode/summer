@@ -1,7 +1,6 @@
 package top.bettercode.simpleframework.data.jpa.config;
 
 import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.data.jpa.repository.EnableJpaExtRepositories;
 
 public class BaseDataSourceProperties {
 
