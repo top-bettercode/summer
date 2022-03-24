@@ -186,6 +186,9 @@ data class Column(
     val tinyInt1isBit: Boolean
             by lazy { (table.datasource?.tinyInt1isBit == true) && this.dataType == Types.TINYINT && this.columnSize == 1 }
 
+    val asBoolean: Boolean
+            by lazy { this.tinyInt1isBit || (table.ext.softDeleteAsBoolean && this.isSoftDelete) }
+
     val numericSoftDelete: Boolean
             by lazy {
                 this.isSoftDelete && (

@@ -9,7 +9,6 @@ import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.PrimitiveTypeWrapper
 import top.bettercode.generator.dom.java.element.*
 import top.bettercode.generator.dom.unit.*
-import java.sql.Types
 
 /**
  * 模板基类
@@ -419,7 +418,7 @@ open class Generator {
         get() = when {
             columnDef == null || "CURRENT_TIMESTAMP".equals(columnDef, true) ->
                 when {
-                    isCodeField -> dicCodes(ext)!!.codes.keys.first()
+                    isCodeField && !asBoolean -> dicCodes(ext)!!.codes.keys.first()
                     else ->
                         when (javaType) {
                             JavaType("java.math.BigDecimal") -> java.math.BigDecimal("1.0")
@@ -429,7 +428,7 @@ open class Generator {
                             JavaType("java.sql.Time") -> (System.currentTimeMillis())
                             JavaType("java.time.LocalDate") -> (System.currentTimeMillis())
                             JavaType("java.time.LocalDateTime") -> (System.currentTimeMillis())
-                            PrimitiveTypeWrapper.booleanInstance -> true
+                            PrimitiveTypeWrapper.booleanInstance -> false
                             PrimitiveTypeWrapper.doubleInstance -> 1.0
                             PrimitiveTypeWrapper.longInstance -> 1L
                             PrimitiveTypeWrapper.integerInstance -> 1
@@ -448,7 +447,7 @@ open class Generator {
                     true
                 ) -> {
                     when {
-                        isCodeField -> {
+                        isCodeField && !asBoolean -> {
                             val value = dicCodes(ext)!!.codes.keys.first()
                             if (JavaType.stringInstance == javaType) "\"$value\"" else "$value"
                         }
@@ -460,7 +459,7 @@ open class Generator {
                             JavaType("java.sql.Time") -> "new java.sql.Time(System.currentTimeMillis())"
                             JavaType("java.time.LocalDate") -> "java.time.LocalDate.now()"
                             JavaType("java.time.LocalDateTime") -> "java.time.LocalDateTime.now()"
-                            PrimitiveTypeWrapper.booleanInstance -> "true"
+                            PrimitiveTypeWrapper.booleanInstance -> "false"
                             PrimitiveTypeWrapper.doubleInstance -> "1.0"
                             PrimitiveTypeWrapper.longInstance -> "1L"
                             PrimitiveTypeWrapper.integerInstance -> "1"
