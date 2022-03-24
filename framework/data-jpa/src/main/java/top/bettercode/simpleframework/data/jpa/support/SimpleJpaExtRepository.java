@@ -13,9 +13,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Path;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.jetbrains.annotations.NotNull;
@@ -30,11 +29,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.repository.query.EscapeCharacter;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
-import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
@@ -205,13 +202,46 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Transactional
   @Override
   public void delete(Specification<T> spec) {
-    deleteInBatch(findAll(spec));
+    if (softDelete.support()) {
+      CriteriaBuilder builder = em.getCriteriaBuilder();
+      Class<T> domainClass = getDomainClass();
+      CriteriaUpdate<T> criteriaUpdate = builder.createCriteriaUpdate(domainClass);
+      Root<T> root = criteriaUpdate.from(domainClass);
+      if (spec != null) {
+        Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
+        if (predicate != null) {
+          criteriaUpdate.where(predicate);
+        }
+      }
+      criteriaUpdate.set(root.get(softDelete.getPropertyName()), softDelete.getTrueValue());
+      em.createQuery(criteriaUpdate).executeUpdate();
+      em.flush();
+    } else {
+      doDelete(spec);
+    }
+  }
+
+  private void doDelete(Specification<T> spec) {
+    CriteriaBuilder builder = em.getCriteriaBuilder();
+    Class<T> domainClass = getDomainClass();
+
+    CriteriaDelete<T> criteriaDelete = builder.createCriteriaDelete(domainClass);
+    Root<T> root = criteriaDelete.from(domainClass);
+    if (spec != null) {
+      Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
+      if (predicate != null) {
+        criteriaDelete.where(predicate);
+      }
+    }
+    em.createQuery(criteriaDelete).executeUpdate();
+    em.flush();
   }
 
   @Transactional
   @Override
   public void deleteAllById(Iterable<ID> ids) {
-    deleteInBatch(findAllById(ids));
+    delete((root, query, builder) ->
+        root.get(entityInformation.getIdAttribute()).in(toCollection(ids)));
   }
 
   @Transactional
@@ -281,15 +311,13 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Override
   public Optional<T> findById(ID id) {
-    Optional<T> optional = super.findById(id);
     if (softDelete.support()) {
-      if (optional.isPresent() && softDelete.isSoftDeleted(optional.get())) {
-        return Optional.empty();
-      } else {
-        return optional;
-      }
+      Specification<T> spec = (root, query, builder) -> builder.equal(
+          root.get(entityInformation.getIdAttribute()), id);
+      spec = spec.and(notDeletedSpec);
+      return findOne(spec);
     } else {
-      return optional;
+      return super.findById(id);
     }
   }
 
@@ -315,50 +343,10 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Override
   public boolean existsById(ID id) {
     if (softDelete.support()) {
-      Assert.notNull(id, "The given id must not be null!");
-
-      if (entityInformation.getIdAttribute() == null) {
-        return findById(id).isPresent();
-      }
-
-      String softDeleteName = softDelete.getPropertyName();
-
-      String placeholder = provider.getCountQueryPlaceholder();
-      String entityName = entityInformation.getEntityName();
-      Iterable<String> idAttributeNames = entityInformation.getIdAttributeNames();
-      String existsQuery =
-          QueryUtils.getExistsQueryString(entityName, placeholder, idAttributeNames) + " AND "
-              + String.format(EQUALS_CONDITION_STRING, "x", softDeleteName, softDeleteName);
-
-      TypedQuery<Long> query = em.createQuery(existsQuery, Long.class);
-
-      if (!entityInformation.hasCompositeId()) {
-        query.setParameter(idAttributeNames.iterator().next(), id);
-        query.setParameter(softDeleteName, notDeleted);
-
-        return query.getSingleResult() == 1L;
-      }
-
-      for (String idAttributeName : idAttributeNames) {
-
-        Object idAttributeValue = entityInformation
-            .getCompositeIdAttributeValue(id, idAttributeName);
-
-        boolean complexIdParameterValueDiscovered = idAttributeValue != null
-            && !query.getParameter(idAttributeName).getParameterType()
-            .isAssignableFrom(idAttributeValue.getClass());
-
-        if (complexIdParameterValueDiscovered) {
-
-          // fall-back to findById(id) which does the proper mapping for the parameter.
-          return findById(id).isPresent();
-        }
-
-        query.setParameter(idAttributeName, idAttributeValue);
-      }
-      query.setParameter(softDeleteName, notDeleted);
-
-      return query.getSingleResult() == 1L;
+      Specification<T> spec = (root, query, builder) -> builder.equal(
+          root.get(entityInformation.getIdAttribute()), id);
+      spec = spec.and(notDeletedSpec);
+      return count(spec) > 0;
     } else {
       return super.existsById(id);
     }
@@ -375,41 +363,13 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Override
   public List<T> findAllById(Iterable<ID> ids) {
+    Specification<T> spec = (root, query, builder) ->
+        root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
     if (softDelete.support()) {
-      return getAllByIdSupportSoftDelete(ids, notDeleted);
-    } else {
-      return super.findAllById(ids);
+      spec = spec.and(notDeletedSpec);
     }
+    return super.findAll(spec);
   }
-
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  private static final class ByIdsSpecification<T> implements Specification<T> {
-
-    private static final long serialVersionUID = 1L;
-
-    private final JpaEntityInformation<T, ?> entityInformation;
-
-    @Nullable
-    ParameterExpression<Collection<?>> parameter;
-
-    ByIdsSpecification(JpaEntityInformation<T, ?> entityInformation) {
-      this.entityInformation = entityInformation;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.jpa.domain.Specification#toPredicate(javax.persistence.criteria.Root, javax.persistence.criteria.CriteriaQuery, javax.persistence.criteria.CriteriaBuilder)
-     */
-    @Override
-    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-
-      Path<?> path = root.get(entityInformation.getIdAttribute());
-      parameter = (ParameterExpression<Collection<?>>) (ParameterExpression) cb.parameter(
-          Collection.class);
-      return path.in(parameter);
-    }
-  }
-
 
   @Override
   public List<T> findAll(Sort sort) {
@@ -656,7 +616,10 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Override
   public void deleteAllByIdFromRecycleBin(Iterable<ID> ids) {
     if (softDelete.support()) {
-      super.deleteInBatch(findAllByIdFromRecycleBin(ids));
+      Specification<T> spec = (root, query, builder) ->
+          root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
+      spec = spec.and(deletedSpec);
+      doDelete(spec);
     }
   }
 
@@ -664,9 +627,11 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Override
   public void deleteFromRecycleBin(Specification<T> spec) {
     if (softDelete.support()) {
-      super.deleteInBatch(findAllFromRecycleBin(spec));
+      spec = spec == null ? deletedSpec : spec.and(deletedSpec);
+      doDelete(spec);
     }
   }
+
 
   @Override
   public long countRecycleBin() {
@@ -708,40 +673,14 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Override
   public List<T> findAllByIdFromRecycleBin(Iterable<ID> ids) {
     if (softDelete.support()) {
-      return getAllByIdSupportSoftDelete(ids, deleted);
+      Specification<T> spec = (root, query, builder) ->
+          root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
+      spec = spec.and(deletedSpec);
+      return super.findAll(spec);
     } else {
       return Collections.emptyList();
     }
   }
-
-  private List<T> getAllByIdSupportSoftDelete(Iterable<ID> ids, Object softDeleteValue) {
-    Assert.notNull(ids, "The given Iterable of Id's must not be null!");
-
-    if (!ids.iterator().hasNext()) {
-      return Collections.emptyList();
-    }
-
-    if (entityInformation.hasCompositeId()) {
-
-      List<T> results = new ArrayList<>();
-
-      for (ID id : ids) {
-        findById(id).ifPresent(results::add);
-      }
-
-      return results;
-    }
-
-    Collection<ID> idCollection = toCollection(ids);
-
-    ByIdsSpecification<T> specification = new ByIdsSpecification<>(entityInformation);
-    Specification<T> spec = specification.and((root, query, builder) -> builder.equal(
-        root.get(softDelete.getPropertyName()), softDeleteValue));
-    TypedQuery<T> query = getQuery(spec, Sort.unsorted());
-
-    return query.setParameter(specification.parameter, idCollection).getResultList();
-  }
-
 
   @Override
   public Optional<T> findOneFromRecycleBin(Specification<T> spec) {

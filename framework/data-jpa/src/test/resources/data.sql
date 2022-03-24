@@ -3,9 +3,20 @@ create sequence if not exists HIBERNATE_SEQUENCE;
 drop table if exists user;
 create table if not exists user
 (
-  id       integer not null,
-  first_name varchar(255),
-  last_name  varchar(255),
-  deleted   tinyint      default 0,
-  primary key (id)
-)
+    id         integer not null,
+    first_name varchar(255),
+    last_name  varchar(255),
+    deleted    tinyint default 0,
+    primary key (id)
+);
+
+drop table if exists employee;
+create table if not exists employee
+(
+    id         integer not null,
+    id2        integer not null,
+    first_name varchar(255),
+    last_name  varchar(255),
+    deleted    tinyint default 0,
+    primary key (id, id2)
+);
