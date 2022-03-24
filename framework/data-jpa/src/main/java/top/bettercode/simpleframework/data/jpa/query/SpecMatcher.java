@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
@@ -20,6 +21,7 @@ import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.SingularAttribute;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
@@ -37,10 +39,10 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
 
   private final SpecMatcherMode matcherMode;
   private final Map<String, SpecPath<T, M>> specPaths = new LinkedHashMap<>();
+  private final List<Sort.Order> orders = new ArrayList<>();
   private final M typed;
   private final T probe;
   private static final Set<PersistentAttributeType> ASSOCIATION_TYPES;
-
 
   //--------------------------------------------
   @SuppressWarnings("unchecked")
@@ -66,16 +68,7 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
           new PathNode("root", null, probe));
     }
     List<Predicate> predicates = new ArrayList<>();
-    List<Order> orders = new ArrayList<>();
     for (SpecPath<T, M> specPath : getSpecPaths()) {
-      Direction direction = specPath.getDirection();
-      if (direction != null) {
-        Path<?> path = specPath.toPath(root);
-        if (path != null) {
-          Order order = Direction.DESC.equals(direction) ? cb.desc(path) : cb.asc(path);
-          orders.add(order);
-        }
-      }
       if (!specPath.isIgnoredPath()) {
         Predicate predicate = specPath.toPredicate(root, cb);
         if (predicate != null) {
@@ -83,7 +76,11 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
         }
       }
     }
-    if (!orders.isEmpty()) {
+    if (!this.orders.isEmpty()) {
+      List<Order> orders = this.orders.stream().map(o -> {
+        Path<Object> path = root.get(o.getProperty());
+        return o.getDirection().isDescending() ? cb.desc(path) : cb.asc(path);
+      }).collect(Collectors.toList());
       query.orderBy(orders);
     }
 
@@ -160,12 +157,19 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
 
   //--------------------------------------------
 
-  public M asc(String propertyName) {
-    return specPath(propertyName).asc();
+  public M sortBy(Direction direction, String... propertyName) {
+    this.orders.addAll(Arrays.stream(propertyName)//
+        .map(it -> new Sort.Order(direction, it))//
+        .collect(Collectors.toList()));
+    return this.typed;
   }
 
-  public M desc(String propertyName) {
-    return specPath(propertyName).desc();
+  public M asc(String... propertyName) {
+    return this.sortBy(Direction.ASC, propertyName);
+  }
+
+  public M desc(String... propertyName) {
+    return this.sortBy(Direction.DESC, propertyName);
   }
 
   public M withMatcher(String propertyName, Object value, PathMatcher matcher) {

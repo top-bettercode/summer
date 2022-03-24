@@ -36,9 +36,6 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
 
   private Object value;
 
-  private Direction direction = null;
-
-
   public SpecPath(M specMatcher, String propertyName) {
     this.specMatcher = specMatcher;
     this.propertyName = propertyName;
@@ -219,23 +216,22 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
     return this.ignoredPath;
   }
 
-  public Direction getDirection() {
-    return direction;
-  }
-
   public SpecPath<T, M> setValue(Object value) {
     this.value = value;
     return this;
   }
 
-  public M asc() {
-    this.direction = Direction.ASC;
+  public M sortBy(Direction direction) {
+    this.specMatcher.sortBy(direction, this.propertyName);
     return this.specMatcher;
   }
 
+  public M asc() {
+    return this.sortBy(Direction.ASC);
+  }
+
   public M desc() {
-    this.direction = Direction.DESC;
-    return this.specMatcher;
+    return this.sortBy(Direction.DESC);
   }
 
   public M withMatcher(PathMatcher matcher) {
