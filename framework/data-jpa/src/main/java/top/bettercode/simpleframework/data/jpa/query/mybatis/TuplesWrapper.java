@@ -11,10 +11,14 @@ import java.util.Set;
 import javax.persistence.Tuple;
 import javax.persistence.TupleElement;
 import org.apache.ibatis.mapping.ResultMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import top.bettercode.simpleframework.data.jpa.support.JpaUtil;
 
 public class TuplesWrapper {
+
+  private final Logger log = LoggerFactory.getLogger(TuplesWrapper.class);
 
   private int index = 0;
   private Tuple tuple;
@@ -58,7 +62,8 @@ public class TuplesWrapper {
     try {
       return JpaUtil.convert(source, type);
     } catch (Exception e) {
-      throw new RuntimeException(alias + " : " + e.getMessage(), e);
+      log.error(alias + " : " + e.getMessage(), e);
+      return null;
     }
   }
 
