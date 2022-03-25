@@ -18,14 +18,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.StreamExecution;
-import top.bettercode.simpleframework.data.jpa.query.mybatis.CountSqlParser;
-import top.bettercode.simpleframework.data.jpa.query.mybatis.JpaExtQueryMethod;
-import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisParam;
-import top.bettercode.simpleframework.data.jpa.query.mybatis.TuplesResultHandler;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.data.util.ParsingUtils;
 import org.springframework.util.Assert;
+import top.bettercode.simpleframework.data.jpa.query.mybatis.CountSqlParser;
+import top.bettercode.simpleframework.data.jpa.query.mybatis.JpaExtQueryMethod;
+import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisParam;
 import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisQuery;
+import top.bettercode.simpleframework.data.jpa.query.mybatis.TuplesResultHandler;
 import top.bettercode.simpleframework.data.jpa.support.JpaUtil;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 
@@ -220,7 +220,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             if (sqlLog.isDebugEnabled()) {
               sqlLog.debug("total: {} rows", total);
             }
-            if (total > 0) {
+            if (total > 0 && total > accessor.getPageable().getOffset()) {
               resultList = mybatisQuery.getResultList();
               if (sqlLog.isDebugEnabled()) {
                 sqlLog.debug("{} rows retrieved", resultList.size());
