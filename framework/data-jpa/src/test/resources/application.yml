@@ -6,15 +6,18 @@ logging:
     top.bettercode.simpleframework.data: debug
   file:
     path: build/logs/
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-  mapper-locations: classpath*:/mapper/*.xml
+
+
 spring:
   data:
     jpa:
       repositories:
         bootstrap-mode: default
+      mybatis:
+        configuration:
+          map-underscore-to-camel-case: true
+        mapper-locations: classpath*:/mapper/*.xml
+
   datasource:
     name: scratchdb
   h2:
@@ -30,3 +33,5 @@ spring:
       hibernate.format_sql: true
       hibernate.highlight_sql: true
       hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 5000
+
+

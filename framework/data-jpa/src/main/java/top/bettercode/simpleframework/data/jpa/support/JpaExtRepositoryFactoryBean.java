@@ -2,7 +2,7 @@ package top.bettercode.simpleframework.data.jpa.support;
 
 import java.io.Serializable;
 import javax.persistence.EntityManager;
-import org.mybatis.spring.SqlSessionTemplate;
+import org.apache.ibatis.session.Configuration;
 import org.springframework.data.jpa.repository.support.JpaExtRepositoryFactory;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
@@ -19,7 +19,7 @@ public class JpaExtRepositoryFactoryBean<T extends JpaExtRepository<Object, Seri
     extends JpaRepositoryFactoryBean<T, Object, Serializable> {
 
   private JpaExtProperties jpaExtProperties;
-  private SqlSessionTemplate sqlSessionTemplate;
+  private Configuration mybatisConfiguration;
 
   public JpaExtRepositoryFactoryBean(Class<? extends T> repositoryInterface) {
     super(repositoryInterface);
@@ -30,8 +30,8 @@ public class JpaExtRepositoryFactoryBean<T extends JpaExtRepository<Object, Seri
     this.jpaExtProperties = jpaExtProperties;
   }
 
-  public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
-    this.sqlSessionTemplate = sqlSessionTemplate;
+  public void setMybatisConfiguration(Configuration mybatisConfiguration) {
+    this.mybatisConfiguration = mybatisConfiguration;
   }
 
   /*
@@ -42,9 +42,9 @@ public class JpaExtRepositoryFactoryBean<T extends JpaExtRepository<Object, Seri
    */
   @Override
   protected RepositoryFactorySupport createRepositoryFactory(EntityManager em) {
-    Assert.notNull(sqlSessionTemplate, "sqlSessionTemplate must not be null");
+    Assert.notNull(mybatisConfiguration, "mybatisConfiguration must not be null");
     Assert.notNull(jpaExtProperties, "jpaExtProperties must not be null");
-    return new JpaExtRepositoryFactory(em, sqlSessionTemplate.getConfiguration(), jpaExtProperties);
+    return new JpaExtRepositoryFactory(em, mybatisConfiguration, jpaExtProperties);
   }
 
 }

@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
-import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.type.TypeHandler;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
@@ -22,7 +21,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 @ConfigurationProperties(prefix = MybatisProperties.MYBATIS_PREFIX)
 public class MybatisProperties {
 
-  public static final String MYBATIS_PREFIX = "mybatis";
+  public static final String MYBATIS_PREFIX = "spring.data.jpa.mybatis";
 
   private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
@@ -41,31 +40,26 @@ public class MybatisProperties {
    */
   private String typeAliasesPackage;
 
+  private Class<?>[] typeAliases;
+
   /**
    * The super class for filtering type alias. If this not specifies, the MyBatis deal as type alias all classes that
    * searched from typeAliasesPackage.
    */
   private Class<?> typeAliasesSuperType;
 
+
   /**
    * Packages to search for type handlers. (Package delimiters are ",; \t\n")
    */
   private String typeHandlersPackage;
 
+  private TypeHandler<?>[] typeHandlers;
+
   /**
    * Indicates whether perform presence check of the MyBatis xml config file.
    */
   private boolean checkConfigLocation = false;
-
-  /**
-   * Execution mode for {@link org.mybatis.spring.SqlSessionTemplate}.
-   */
-  private ExecutorType executorType;
-
-  /**
-   * The default scripting language driver class. (Available when use together with mybatis-spring 2.0.2+)
-   */
-  private Class<? extends LanguageDriver> defaultScriptingLanguageDriver;
 
   /**
    * Externalized properties for MyBatis configuration.
@@ -103,12 +97,28 @@ public class MybatisProperties {
     this.typeHandlersPackage = typeHandlersPackage;
   }
 
+  public TypeHandler<?>[] getTypeHandlers() {
+    return typeHandlers;
+  }
+
+  public void setTypeHandlers(TypeHandler<?>[] typeHandlers) {
+    this.typeHandlers = typeHandlers;
+  }
+
   public String getTypeAliasesPackage() {
     return this.typeAliasesPackage;
   }
 
   public void setTypeAliasesPackage(String typeAliasesPackage) {
     this.typeAliasesPackage = typeAliasesPackage;
+  }
+
+  public Class<?>[] getTypeAliases() {
+    return typeAliases;
+  }
+
+  public void setTypeAliases(Class<?>[] typeAliases) {
+    this.typeAliases = typeAliases;
   }
 
   public Class<?> getTypeAliasesSuperType() {
@@ -125,23 +135,6 @@ public class MybatisProperties {
 
   public void setCheckConfigLocation(boolean checkConfigLocation) {
     this.checkConfigLocation = checkConfigLocation;
-  }
-
-  public ExecutorType getExecutorType() {
-    return this.executorType;
-  }
-
-  public void setExecutorType(ExecutorType executorType) {
-    this.executorType = executorType;
-  }
-
-  public Class<? extends LanguageDriver> getDefaultScriptingLanguageDriver() {
-    return defaultScriptingLanguageDriver;
-  }
-
-  public void setDefaultScriptingLanguageDriver(
-      Class<? extends LanguageDriver> defaultScriptingLanguageDriver) {
-    this.defaultScriptingLanguageDriver = defaultScriptingLanguageDriver;
   }
 
   public Properties getConfigurationProperties() {
