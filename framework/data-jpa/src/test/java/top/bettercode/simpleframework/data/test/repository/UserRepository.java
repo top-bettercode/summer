@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisTemplate;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
 import top.bettercode.simpleframework.data.jpa.querydsl.RecycleQuerydslPredicateExecutor;
@@ -38,10 +37,8 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 
   //--------------------------------------------
 
-  @MybatisTemplate
   List<CUser> selectResultMap(User user);
 
-  @MybatisTemplate
   List<CUsers> selectResultMap2(User user);
 
 //  Page<CUsers> selectResultMap2(User user, Pageable pageable);
@@ -50,17 +47,14 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 
   Page<AUser> selectResultMap3(User user, Pageable pageable);
 
-  @MybatisTemplate
   List<User> selectMybatisAll();
 
   List<Map<String, String>> selectMybatisMapList();
 
   Map<String, String> selectMybatisMap();
 
-  @MybatisTemplate
   Page<User> selectMybatisAll(Pageable pageable);
 
-  @MybatisTemplate
   @Select("select * from user where deleted = 0")
   List<User> selectByMybatisSize(Size size);
 
@@ -68,45 +62,34 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 
   Stream<User> selectMybatisStream(String firstName, String lastName);
 
-  @MybatisTemplate
   List<User> selectByMybatisMap(Map<String, String> param);
 
-  @MybatisTemplate
   Page<User> selectByMybatisMap(Pageable pageable, Map<String, String> param);
 
-  @MybatisTemplate
   List<User> selectByMybatisEntity(User user, Pageable pageable);
 
-  @MybatisTemplate
   List<User> selectByMybatisSort(String firstName, Sort sort);
 
-  @MybatisTemplate
   Page<User> selectByMybatisSort(String firstName, Pageable pageable);
 
-  @MybatisTemplate
   User selectOneByMybatis(String firstName);
 
-  @MybatisTemplate
   @Modifying
   @Transactional
   int insert(String firstName, String lastName);
 
-  @MybatisTemplate
   @Modifying
   @Transactional
   int update(Integer id, String lastName);
 
-  @MybatisTemplate
   @Modifying
   @Transactional
   void updateNoReturn(Integer id, String lastName);
 
-  @MybatisTemplate
   @Modifying
   @Transactional
   int deleteMybatis(Integer id);
 
-  @MybatisTemplate
   @Modifying
   @Transactional
   void deleteMybatisNoResturn(Integer id);

@@ -14,6 +14,7 @@ import org.hibernate.boot.model.naming.ImplicitNamingStrategy;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.cfg.AvailableSettings;
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -178,9 +179,15 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
         beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
             Configuration.class, () -> {
               try {
-                return JpaMybatisAutoConfiguration.mybatisConfiguration(
-                    beanFactory.getBean(MybatisProperties.class), resourceLoader,
-                    properties.getMapperLocations());
+                MybatisProperties mybatisProperties = beanFactory.getBean(MybatisProperties.class);
+                Configuration configuration = mybatisProperties.getConfiguration();
+                if (configuration != null) {
+                  Configuration newConfiguration = new Configuration();
+                  BeanUtils.copyProperties(configuration, newConfiguration);
+                  configuration = newConfiguration;
+                }
+                return JpaMybatisAutoConfiguration.mybatisConfiguration(configuration,
+                    mybatisProperties, resourceLoader, properties.getMapperLocations());
               } catch (Exception e) {
                 throw new RuntimeException(e);
               }
