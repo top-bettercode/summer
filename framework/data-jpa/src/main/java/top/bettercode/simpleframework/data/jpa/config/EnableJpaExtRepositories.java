@@ -7,7 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import javax.persistence.EntityManagerFactory;
-import org.mybatis.spring.SqlSessionTemplate;
+import org.apache.ibatis.session.Configuration;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Import;
@@ -173,13 +173,12 @@ public @interface EnableJpaExtRepositories {
    */
   char escapeCharacter() default '\\';
 
-
   /**
-   * @return Configures the name of the {@link SqlSessionTemplate} bean definition to be used to
+   * @return Configures the name of the {@link Configuration} bean definition to be used to
    * create repositories discovered through this annotation. Defaults to {@code
-   * sqlSessionTemplate}.
+   * mybatisConfiguration}.
    */
-  String sqlSessionTemplateRef() default "sqlSessionTemplate";
+  String mybatisConfigurationRef() default "mybatisConfiguration";
 
   /**
    * @return Configures the name of the {@link JpaExtProperties} bean definition to be used to

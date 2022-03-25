@@ -41,6 +41,11 @@ spring:
     web:
       pageable:
         one-indexed-parameters: true
+    jpa:
+      mybatis:
+        configuration:
+          map-underscore-to-camel-case: true
+
   jpa:
     open-in-view: false
     properties:
@@ -50,11 +55,6 @@ spring:
     hikari:
       data-source-properties:
         tinyInt1isBit: false
-
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-
 
 server:
   compression:

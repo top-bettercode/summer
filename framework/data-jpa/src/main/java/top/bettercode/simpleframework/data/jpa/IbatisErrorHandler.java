@@ -3,7 +3,6 @@ package top.bettercode.simpleframework.data.jpa;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.ibatis.exceptions.PersistenceException;
-import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -47,12 +46,6 @@ public class IbatisErrorHandler extends AbstractErrorHandler {
             respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
           }
         }
-      }
-    } else if (error instanceof MyBatisSystemException) {
-      if (error.getMessage()
-          .contains("Cause: org.springframework.jdbc.CannotGetJdbcConnectionException")) {
-        message = "datasource.request.timeout";
-        respEntity.setHttpStatusCode(HttpStatus.REQUEST_TIMEOUT.value());
       }
     }
     if (StringUtils.hasText(message)) {

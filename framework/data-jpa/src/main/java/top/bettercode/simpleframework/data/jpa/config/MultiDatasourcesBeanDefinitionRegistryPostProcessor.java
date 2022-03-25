@@ -1,29 +1,19 @@
 package top.bettercode.simpleframework.data.jpa.config;
 
 import com.zaxxer.hikari.HikariDataSource;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.hibernate.boot.model.naming.ImplicitNamingStrategy;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.cfg.AvailableSettings;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -44,10 +34,7 @@ import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.orm.hibernate5.SpringBeanContainer;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -55,22 +42,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import top.bettercode.lang.util.ArrayUtil;
 
-/**
- *
- */
 public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
     BeanDefinitionRegistryPostProcessor, ResourceLoaderAware, EnvironmentAware {
 
-  private static final Logger logger = LoggerFactory.getLogger(
-      MultiDatasourcesBeanDefinitionRegistryPostProcessor.class);
-
-  private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
-
   private ResourceLoader resourceLoader;
   private Environment environment;
-
 
   @Override
   public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
@@ -196,48 +173,27 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
         beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
         factory.registerBeanDefinition(transactionManagerBeanName, beanDefinition);
 
-        //sqlSessionFactory
-        String sqlSessionFactoryBeanName =
-            primary ? "sqlSessionFactory" : key + "SqlSessionFactory";
+        // mybatisConfiguration
+        String mybatisConfigurationRef = jpaExtRepositories.mybatisConfigurationRef();
         beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
-            SqlSessionFactory.class, () ->
-                getSqlSessionFactory(
-                    beanFactory.getBean(dataSourceBeanName, DataSource.class),
-                    beanFactory.getBean(MybatisProperties.class),
-                    resourceLoader,
-                    properties
-                ));
-        if (primary) {
-          beanDefinitionBuilder.setPrimary(primary);
-          factory.removeBeanDefinition(sqlSessionFactoryBeanName);
-        }
-        beanDefinitionBuilder.addDependsOn(dataSourceBeanName);
-        beanDefinition = beanDefinitionBuilder.getBeanDefinition();
-        beanDefinition.setSynthetic(true);
-        beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
-        factory.registerBeanDefinition(sqlSessionFactoryBeanName, beanDefinition);
-
-        // sqlSessionTemplate
-        String sqlSessionTemplateBeanName = jpaExtRepositories.sqlSessionTemplateRef();
-        beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
-            SqlSessionTemplate.class, () -> {
-              SqlSessionFactory sqlSessionFactory = beanFactory.getBean(sqlSessionFactoryBeanName,
-                  SqlSessionFactory.class);
-              ExecutorType executorType = beanFactory.getBean(MybatisProperties.class)
-                  .getExecutorType();
-              return executorType != null ? new SqlSessionTemplate(sqlSessionFactory, executorType)
-                  : new SqlSessionTemplate(sqlSessionFactory);
+            Configuration.class, () -> {
+              try {
+                return JpaMybatisAutoConfiguration.mybatisConfiguration(
+                    beanFactory.getBean(MybatisProperties.class), resourceLoader,
+                    properties.getMapperLocations());
+              } catch (Exception e) {
+                throw new RuntimeException(e);
+              }
             }
         );
         if (primary) {
           beanDefinitionBuilder.setPrimary(primary);
-          factory.removeBeanDefinition(sqlSessionTemplateBeanName);
+          factory.removeBeanDefinition(mybatisConfigurationRef);
         }
-        beanDefinitionBuilder.addDependsOn(sqlSessionFactoryBeanName);
         beanDefinition = beanDefinitionBuilder.getBeanDefinition();
         beanDefinition.setSynthetic(true);
         beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
-        factory.registerBeanDefinition(sqlSessionTemplateBeanName, beanDefinition);
+        factory.registerBeanDefinition(mybatisConfigurationRef, beanDefinition);
       }
     }
   }
@@ -287,72 +243,9 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
   }
 
 
-  private SqlSessionFactory getSqlSessionFactory(DataSource dataSource,
-      MybatisProperties properties,
-      ResourceLoader resourceLoader,
-      BaseDataSourceProperties dataSourceProperties) {
-    SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
-    factory.setDataSource(dataSource);
-    if (StringUtils.hasText(properties.getConfigLocation())) {
-      factory
-          .setConfigLocation(resourceLoader.getResource(properties.getConfigLocation()));
-    }
-    Configuration configuration = new Configuration();
-    Configuration propertiesConfiguration = properties.getConfiguration();
-    if (propertiesConfiguration != null) {
-      BeanUtils.copyProperties(propertiesConfiguration, configuration);
-    }
-    factory.setConfiguration(configuration);
-    if (properties.getConfigurationProperties() != null) {
-      factory.setConfigurationProperties(properties.getConfigurationProperties());
-    }
-
-    if (StringUtils.hasLength(properties.getTypeAliasesPackage())) {
-      factory.setTypeAliasesPackage(properties.getTypeAliasesPackage());
-    }
-    if (properties.getTypeAliasesSuperType() != null) {
-      factory.setTypeAliasesSuperType(properties.getTypeAliasesSuperType());
-    }
-    if (StringUtils.hasLength(properties.getTypeHandlersPackage())) {
-      factory.setTypeHandlersPackage(properties.getTypeHandlersPackage());
-    }
-
-    String[] mapperLocations = dataSourceProperties.getMapperLocations();
-    if (ArrayUtil.isNotEmpty(mapperLocations)) {
-      Resource[] resources = resolveMapperLocations(mapperLocations);
-      if (!ObjectUtils.isEmpty(resources)) {
-        factory.setMapperLocations(resources);
-      }
-    } else {
-      Resource[] resources = properties.resolveMapperLocations();
-      if (!ObjectUtils.isEmpty(resources)) {
-        factory.setMapperLocations(resources);
-      }
-    }
-    try {
-      return factory.getObject();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private Resource[] resolveMapperLocations(String[] mapperLocations) {
-    return Stream.of(Optional.ofNullable(mapperLocations).orElse(new String[0]))
-        .flatMap(location -> Stream.of(getResources(location))).toArray(Resource[]::new);
-  }
-
-  private Resource[] getResources(String location) {
-    try {
-      return resourceResolver.getResources(location);
-    } catch (IOException e) {
-      return new Resource[0];
-    }
-  }
-
   @Override
   public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)
       throws BeansException {
-
   }
 
   @Override
