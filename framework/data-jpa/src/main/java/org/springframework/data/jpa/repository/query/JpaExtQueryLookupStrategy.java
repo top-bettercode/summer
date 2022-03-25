@@ -125,11 +125,6 @@ public final class JpaExtQueryLookupStrategy {
     @Override
     protected RepositoryQuery resolveQuery(JpaExtQueryMethod method, EntityManager em,
         NamedQueries namedQueries) {
-
-      if (method.isUseMybatisQuery()) {
-        return new MybatisJpaQuery(method, em);
-      }
-
       RepositoryQuery query = JpaQueryFactory.INSTANCE
           .fromQueryAnnotation(method, em, evaluationContextProvider);
 
