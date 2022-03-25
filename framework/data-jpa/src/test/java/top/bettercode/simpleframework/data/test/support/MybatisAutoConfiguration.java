@@ -20,13 +20,13 @@ import top.bettercode.simpleframework.data.jpa.config.MybatisProperties;
 
 @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter({DataSourceAutoConfiguration.class})
-public class JpaMybatisTemplateAutoConfiguration implements InitializingBean {
+public class MybatisAutoConfiguration implements InitializingBean {
 
   private final MybatisProperties properties;
   private final ResourceLoader resourceLoader;
 
 
-  public JpaMybatisTemplateAutoConfiguration(MybatisProperties properties,
+  public MybatisAutoConfiguration(MybatisProperties properties,
       ResourceLoader resourceLoader) {
     this.properties = properties;
     this.resourceLoader = resourceLoader;

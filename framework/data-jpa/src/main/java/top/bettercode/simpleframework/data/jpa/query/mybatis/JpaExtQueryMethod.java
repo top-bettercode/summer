@@ -14,7 +14,6 @@ import org.springframework.data.repository.core.RepositoryMetadata;
 public class JpaExtQueryMethod extends JpaQueryMethod {
 
   private final String statementId;
-  private final boolean useMybatisQuery;
   private final MappedStatement mappedStatement;
 
 
@@ -23,17 +22,12 @@ public class JpaExtQueryMethod extends JpaQueryMethod {
       ProjectionFactory factory,
       QueryExtractor extractor, Configuration configuration) {
     super(method, metadata, factory, extractor);
-    this.useMybatisQuery = method.isAnnotationPresent(MybatisTemplate.class);
     this.statementId = method.getDeclaringClass().getName() + "." + method.getName();
     MappedStatement mappedStatement;
-    if (useMybatisQuery) {
+    try {
       mappedStatement = configuration.getMappedStatement(this.statementId);
-    } else {
-      try {
-        mappedStatement = configuration.getMappedStatement(this.statementId);
-      } catch (Exception e) {
-        mappedStatement = null;
-      }
+    } catch (Exception e) {
+      mappedStatement = null;
     }
     this.mappedStatement = mappedStatement;
   }
@@ -44,10 +38,6 @@ public class JpaExtQueryMethod extends JpaQueryMethod {
 
   public String getStatementId() {
     return statementId;
-  }
-
-  public boolean isUseMybatisQuery() {
-    return useMybatisQuery;
   }
 
 }
