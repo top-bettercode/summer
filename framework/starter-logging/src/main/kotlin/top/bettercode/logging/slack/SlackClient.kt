@@ -113,8 +113,12 @@ class SlackClient(
             }
             file.writeText(message.joinToString(""))
         }
-        val apiHost = RequestConverter.apiHost
-        if (!hasFilesPath) {
+        val apiHost = try {
+            RequestConverter.apiHost
+        } catch (e: Exception) {
+            null
+        }
+        if (!hasFilesPath || apiHost == null) {
             return filesUpload(channel, timeStamp, title, initialComment, message)
         } else {
             params["text"] = "$title:\n$initialComment"

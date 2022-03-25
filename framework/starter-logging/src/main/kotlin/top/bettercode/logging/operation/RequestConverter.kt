@@ -5,6 +5,7 @@ import org.springframework.core.convert.ConversionException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import org.springframework.util.Assert
 import org.springframework.util.FileCopyUtils
 import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
@@ -286,16 +287,17 @@ object RequestConverter {
         return uriWriter.toString()
     }
 
-    val apiHost: String by lazy {
+    val apiHost: String? by lazy {
         val uriWriter = StringWriter()
         val printer = PrintWriter(uriWriter)
         val serverProperties = ApplicationContextHolder.getBean(ServerProperties::class.java)
-        val serverPort = serverProperties?.port ?: 8080
+        Assert.notNull(serverProperties, "serverProperties must not be null")
+        val serverPort = serverProperties.port ?: 8080
         printer.printf("%s://%s", SCHEME_HTTP, IPAddressUtil.inet4Address)
         if (serverPort != STANDARD_PORT_HTTP) {
             printer.printf(":%d", serverPort)
         }
-        val contextPath = serverProperties?.servlet?.contextPath ?: "/"
+        val contextPath = serverProperties.servlet?.contextPath ?: "/"
         if ("/" != contextPath)
             printer.print(contextPath)
         uriWriter.toString()
