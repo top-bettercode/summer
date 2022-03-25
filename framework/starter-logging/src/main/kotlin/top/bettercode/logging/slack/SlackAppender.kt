@@ -45,7 +45,13 @@ open class SlackAppender(
     ): Boolean {
         return try {
             val title =
-                "$warnSubject(${RequestConverter.apiHost})"
+                "$warnSubject${
+                    try {
+                        "(${RequestConverter.apiHost})"
+                    } catch (e: Exception) {
+                        ""
+                    }
+                }"
             slackClient.postMessage(
                 if (timeout) properties.timeoutChannel else properties.channel,
                 timeStamp,

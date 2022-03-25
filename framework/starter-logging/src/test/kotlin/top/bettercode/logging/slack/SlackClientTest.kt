@@ -2,7 +2,7 @@ package top.bettercode.logging.slack
 
 import org.junit.jupiter.api.Test
 import top.bettercode.lang.util.StringUtil
-import top.bettercode.logging.RequestLoggingFilter
+import top.bettercode.logging.operation.RequestConverter
 
 /**
  * @author Peter Wu
@@ -10,6 +10,17 @@ import top.bettercode.logging.RequestLoggingFilter
 class SlackClientTest {
 
     private val slackClient = SlackClient("", true, "/actuator")
+
+    @Test
+    fun apiHost() {
+        try {
+            System.err.println(RequestConverter.apiHost)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            System.err.println("------------------------------------")
+            System.err.println(RequestConverter.apiHost)
+        }
+    }
 
     @Test
     fun errorToken() {
