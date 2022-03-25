@@ -121,6 +121,19 @@ public class JpaMybatisTest {
   }
 
   @Test
+  public void selectResultMap3Page2() {
+    Page<AUser> users = repository.selectResultMap3(new User("Carter", null),
+        PageRequest.of(0, 2));
+    System.err.println(StringUtil.valueOf(users.getContent(), true));
+    Assertions.assertEquals(2, users.getTotalElements());
+    PageRequest pageable = PageRequest.of(1, 2);
+    System.err.println(pageable.getOffset());
+    users = repository.selectResultMap3(new User("Carter", null),
+        pageable);
+    System.err.println(StringUtil.valueOf(users.getContent(), true));
+  }
+
+  @Test
   public void selectMybatisAll() {
     List<User> users = repository.selectMybatisAll();
     System.err.println(StringUtil.valueOf(users, true));
