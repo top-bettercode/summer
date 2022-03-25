@@ -79,19 +79,17 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   public static Configuration mybatisConfiguration(MybatisProperties properties,
       ResourceLoader resourceLoader, String[] mapperLocations) throws Exception {
-    Properties configurationProperties = null;
-    if (properties.getConfigurationProperties() != null) {
-      configurationProperties = (properties.getConfigurationProperties());
-    }
+    Properties configurationProperties = properties.getConfigurationProperties();
+
     Configuration configuration = properties.getConfiguration();
     XMLConfigBuilder xmlConfigBuilder = null;
-    Resource configLocation = null;
+    Resource configResource = null;
     if (configuration == null) {
-      if (StringUtils.hasText(properties.getConfigLocation())) {
-        configLocation = resourceLoader.getResource(
-            properties.getConfigLocation());
-        xmlConfigBuilder = new XMLConfigBuilder(configLocation.getInputStream(),
-            null, configurationProperties);
+      String configLocation = properties.getConfigLocation();
+      if (StringUtils.hasText(configLocation)) {
+        configResource = resourceLoader.getResource(configLocation);
+        xmlConfigBuilder = new XMLConfigBuilder(configResource.getInputStream(), null,
+            configurationProperties);
         configuration = xmlConfigBuilder.getConfiguration();
       } else {
         if (log.isDebugEnabled()) {
@@ -142,22 +140,20 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
       try {
         xmlConfigBuilder.parse();
         if (log.isDebugEnabled()) {
-          log.debug("Parsed configuration file: '" + configLocation + "'");
+          log.debug("Parsed configuration file: '" + configResource + "'");
         }
       } catch (Exception ex) {
-        throw new NestedIOException("Failed to parse config resource: " + configLocation, ex);
+        throw new NestedIOException("Failed to parse config resource: " + configResource, ex);
       } finally {
         ErrorContext.instance().reset();
       }
     }
 
-    Resource[] mapperResources;
-    if (ArrayUtil.isNotEmpty(mapperLocations)) {
-      mapperResources = Stream.of(Optional.ofNullable(mapperLocations).orElse(new String[0]))
-          .flatMap(location -> Stream.of(getResources(location))).toArray(Resource[]::new);
-    } else {
-      mapperResources = properties.resolveMapperLocations();
+    if (ArrayUtil.isEmpty(mapperLocations)) {
+      mapperLocations = properties.getMapperLocations();
     }
+
+    Resource[] mapperResources = resolveMapperLocations(mapperLocations);
 
     if (configuration.getVariables() == null) {
       configuration.setVariables(configurationProperties);
@@ -199,6 +195,12 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
     }
 
     return configuration;
+  }
+
+  public static Resource[] resolveMapperLocations(String[] mapperLocations) {
+    return Stream.of(
+            Optional.ofNullable(mapperLocations).orElse(new String[0]))
+        .flatMap(location -> Stream.of(getResources(location))).toArray(Resource[]::new);
   }
 
   private static Resource[] getResources(String location) {

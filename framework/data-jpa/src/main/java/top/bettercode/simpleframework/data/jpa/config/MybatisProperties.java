@@ -1,16 +1,10 @@
 package top.bettercode.simpleframework.data.jpa.config;
 
-import java.io.IOException;
-import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Stream;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
 /**
  * Configuration properties for MyBatis.
@@ -22,8 +16,6 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 public class MybatisProperties {
 
   public static final String MYBATIS_PREFIX = "spring.data.jpa.mybatis";
-
-  private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
   /**
    * Location of MyBatis xml config file.
@@ -43,8 +35,8 @@ public class MybatisProperties {
   private Class<?>[] typeAliases;
 
   /**
-   * The super class for filtering type alias. If this not specifies, the MyBatis deal as type alias all classes that
-   * searched from typeAliasesPackage.
+   * The super class for filtering type alias. If this not specifies, the MyBatis deal as type alias
+   * all classes that searched from typeAliasesPackage.
    */
   private Class<?> typeAliasesSuperType;
 
@@ -67,8 +59,8 @@ public class MybatisProperties {
   private Properties configurationProperties;
 
   /**
-   * A Configuration object for customize default settings. If {@link #configLocation} is specified, this property is
-   * not used.
+   * A Configuration object for customize default settings. If {@link #configLocation} is specified,
+   * this property is not used.
    */
   @NestedConfigurationProperty
   private Configuration configuration;
@@ -151,19 +143,6 @@ public class MybatisProperties {
 
   public void setConfiguration(Configuration configuration) {
     this.configuration = configuration;
-  }
-
-  public Resource[] resolveMapperLocations() {
-    return Stream.of(Optional.ofNullable(this.mapperLocations).orElse(new String[0]))
-        .flatMap(location -> Stream.of(getResources(location))).toArray(Resource[]::new);
-  }
-
-  private Resource[] getResources(String location) {
-    try {
-      return resourceResolver.getResources(location);
-    } catch (IOException e) {
-      return new Resource[0];
-    }
   }
 
 }
