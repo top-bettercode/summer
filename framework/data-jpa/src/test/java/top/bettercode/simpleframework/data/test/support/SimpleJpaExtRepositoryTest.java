@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
 import org.hibernate.query.NativeQuery;
-import org.hibernate.transform.Transformers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -389,11 +389,20 @@ public class SimpleJpaExtRepositoryTest {
   @Test
   void nativeQuery() {
     Query query = repository.getEntityManager().createNativeQuery(
-        "select first_name,last_name from user where first_name = ? AND first_name = ? and last_name = ?");
+        "select first_name,last_name, '2022-03-23 16:45:37' as date from user where first_name = ? AND first_name = ? and last_name = ?",
+        Tuple.class);
     query.setParameter(1, "Carter");
     query.setParameter(2, "Carter");
     query.setParameter(3, "Beauford1");
-    query.unwrap(NativeQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+    NativeQuery nativeQuery = query.unwrap(NativeQuery.class);
+//    nativeQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+//    nativeQuery.addScalar("first_name", StringType.INSTANCE);
+//    nativeQuery.addScalar("last_name", StringType.INSTANCE);
+//    nativeQuery.addScalar("date", TimestampType.INSTANCE);
+//    nativeQuery.addScalar("date1", TimestampType.INSTANCE);
+//    nativeQuery.stream().forEach(o -> {
+//      System.err.println(StringUtil.valueOf(o, true));
+//    });
     List resultList = query.getResultList();
     System.err.println(StringUtil.valueOf(resultList, true));
   }
