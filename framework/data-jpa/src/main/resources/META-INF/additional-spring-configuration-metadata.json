@@ -8,7 +8,7 @@
   "properties": [
     {
       "name": "summer.datasource.multi.enabled",
-      "sourceType": "top.bettercode.simpleframework.data.jpa.config.DataJpaConfiguration",
+      "sourceType": "top.bettercode.simpleframework.data.jpa.config.DataJpaAutoConfiguration",
       "defaultValue": "false",
       "type": "java.lang.Boolean"
     },

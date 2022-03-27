@@ -16,7 +16,7 @@ import top.bettercode.simpleframework.data.jpa.IbatisErrorHandler;
  * @author Peter Wu
  */
 @Configuration(proxyBeanMethods = false)
-public class DataJpaConfiguration {
+public class DataJpaAutoConfiguration {
 
   @Bean
   @ConditionalOnProperty(prefix = "summer.datasource.multi", name = "enabled")

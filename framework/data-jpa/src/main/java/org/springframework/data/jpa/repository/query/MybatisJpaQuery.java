@@ -6,17 +6,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.Tuple;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.hibernate.query.NativeQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.query.JpaQueryExecution.ProcedureExecution;
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.StreamExecution;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.data.util.ParsingUtils;
@@ -25,7 +25,9 @@ import top.bettercode.simpleframework.data.jpa.query.mybatis.CountSqlParser;
 import top.bettercode.simpleframework.data.jpa.query.mybatis.JpaExtQueryMethod;
 import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisParam;
 import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisQuery;
-import top.bettercode.simpleframework.data.jpa.query.mybatis.TuplesResultHandler;
+import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisResultSetHandler;
+import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisResultTransformer;
+import top.bettercode.simpleframework.data.jpa.query.mybatis.NestedResultMapType;
 import top.bettercode.simpleframework.data.jpa.support.JpaUtil;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 
@@ -35,25 +37,30 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
   private final QueryParameterSetter.QueryMetadataCache metadataCache = new QueryParameterSetter.QueryMetadataCache();
   private final MappedStatement mappedStatement;
   private final MappedStatement countMappedStatement;
-  private final TuplesResultHandler tuplesResultHandler;
   private final CountSqlParser countSqlParser = new CountSqlParser();
-
+  private final NestedResultMapType nestedResultMapType;
+  private final MybatisResultTransformer resultTransformer;
 
   public MybatisJpaQuery(JpaExtQueryMethod method, EntityManager em) {
     super(method, em);
     this.mappedStatement = method.getMappedStatement();
-    this.tuplesResultHandler = new TuplesResultHandler(mappedStatement);
+    MybatisResultSetHandler mybatisResultSetHandler = new MybatisResultSetHandler(mappedStatement);
+    resultTransformer = new MybatisResultTransformer(mybatisResultSetHandler);
 
     boolean pageQuery = method.isPageQuery();
 
-    if (pageQuery || method.isStreamQuery()) {
-      String nestedResultMap = this.tuplesResultHandler.findNestedResultMap(pageQuery);
-      if (nestedResultMap != null) {
+    if (pageQuery) {
+      String nestedResultMapId = mybatisResultSetHandler.findNestedResultMap();
+      if (nestedResultMapId != null) {
         sqlLog.warn(
-            "{} may return incorrect " + (pageQuery ? "paginated" : "streamed")
-                + " data. Please check result maps definition {}.",
-            mappedStatement.getId(), nestedResultMap);
+            "{} may return incorrect paginated data. Please check result maps definition {}.",
+            mappedStatement.getId(), nestedResultMapId);
       }
+    }
+    if (method.isSliceQuery()) {
+      nestedResultMapType = mybatisResultSetHandler.findNestedResultMapType();
+    } else {
+      nestedResultMapType = null;
     }
 
     MappedStatement countMappedStatement;
@@ -97,6 +104,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
     return builder.toString();
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public Query doCreateQuery(JpaParametersParameterAccessor accessor) {
     MybatisParameterBinder parameterBinder = (MybatisParameterBinder) this.parameterBinder.get();
@@ -108,10 +116,10 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
     Size size = mybatisParam.getSize();
     String sortedQueryString = applySorting(queryString,
         sort.isUnsorted() && size != null ? size.getSort() : sort);
-    Query query = getEntityManager().createNativeQuery(sortedQueryString, Tuple.class);
+    Query query = getEntityManager().createNativeQuery(sortedQueryString);
+    query.unwrap(NativeQuery.class).setResultTransformer(resultTransformer);
     QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata(sortedQueryString,
         query);
-
     // it is ok to reuse the binding contained in the ParameterBinder although we create a new query String because the
     // parameters in the query do not change.
     return parameterBinder.bindAndPrepare(new MybatisQuery(queryString, query, mybatisParam),
@@ -129,32 +137,23 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
     return new MybatisParameterBinder(getQueryMethod().getParameters(), mappedStatement);
   }
 
-  @SuppressWarnings({"unchecked"})
   @Override
   protected JpaQueryExecution getExecution() {
     JpaQueryMethod method = getQueryMethod();
     if (method.isStreamQuery()) {
-      return new StreamExecution() {
-        @Override
-        protected Object doExecute(AbstractJpaQuery query,
-            JpaParametersParameterAccessor accessor) {
-          return ((Stream<Tuple>) super.doExecute(query, accessor)).map(
-              tuplesResultHandler::handleTuple);
-        }
-      };
+      return new StreamExecution();
     } else if (method.isProcedureQuery()) {
-      throw new UnsupportedOperationException("Mybatis ProcedureExecution is not supported.");
+      return new ProcedureExecution();
     } else if (method.isCollectionQuery()) {
       return new JpaQueryExecution.CollectionExecution() {
         @Override
         protected Object doExecute(AbstractJpaQuery query,
             JpaParametersParameterAccessor accessor) {
-          Object result = super.doExecute(query, accessor);
-          List<Tuple> tuples = (List<Tuple>) result;
+          List<?> result = (List<?>) super.doExecute(query, accessor);
           if (sqlLog.isDebugEnabled()) {
-            sqlLog.debug("{} rows retrieved", tuples.size());
+            sqlLog.debug("{} rows retrieved", result.size());
           }
-          return tuplesResultHandler.handleTuples(tuples);
+          return result;
         }
       };
     } else if (method.isSliceQuery()) {
@@ -163,22 +162,22 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         protected Object doExecute(AbstractJpaQuery query,
             JpaParametersParameterAccessor accessor) {
           Pageable pageable = accessor.getPageable();
-          Query createQuery = query.createQuery(accessor);
-
-          int pageSize = 0;
-          if (pageable.isPaged()) {
-            pageSize = pageable.getPageSize();
-            createQuery.setMaxResults(pageSize + 1);
+          if (pageable.isPaged() && nestedResultMapType != null) {
+            if (nestedResultMapType.isCollection()) {
+              throw new UnsupportedOperationException(nestedResultMapType.getNestedResultMapId()
+                  + " collection resultmap not support page query");
+            } else {
+              sqlLog.warn(
+                  "{} may return incorrect paginated data. Please check result maps definition {}.",
+                  mappedStatement.getId(), nestedResultMapType.getNestedResultMapId());
+            }
           }
-
-          List<Tuple> resultList = createQuery.getResultList();
+          SliceImpl<?> result = (SliceImpl<?>) super.doExecute(query, accessor);
           if (sqlLog.isDebugEnabled()) {
-            sqlLog.debug("{} rows retrieved", resultList.size());
+            sqlLog.debug("total: {} rows", result.getNumberOfElements());
+            sqlLog.debug("{} rows retrieved", result.getSize());
           }
-          boolean hasNext = pageable.isPaged() && resultList.size() > pageSize;
-          List<Object> objects = tuplesResultHandler.handleTuples(resultList);
-          return new SliceImpl<>(hasNext ? objects.subList(0, pageSize) : objects, pageable,
-              hasNext);
+          return result;
         }
       };
     } else if (method.isPageQuery()) {
@@ -188,7 +187,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             JpaParametersParameterAccessor accessor) {
           MybatisQuery mybatisQuery = (MybatisQuery) repositoryQuery.createQuery(accessor);
           long total;
-          List<Tuple> resultList;
+          List<?> resultList;
           if (accessor.getPageable().isPaged()) {
             JpaQueryMethod method = getQueryMethod();
             String countQueryString = null;
@@ -236,9 +235,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             total = resultList.size();
           }
 
-          return PageableExecutionUtils.getPage(
-              tuplesResultHandler.handleTuples(resultList), accessor.getPageable(),
-              () -> total);
+          return PageableExecutionUtils.getPage(resultList, accessor.getPageable(), () -> total);
         }
       };
     } else if (method.isModifyingQuery()) {
@@ -258,11 +255,11 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         @Override
         protected Object doExecute(AbstractJpaQuery query,
             JpaParametersParameterAccessor accessor) {
-          Tuple tuple = (Tuple) super.doExecute(query, accessor);
+          Object result = super.doExecute(query, accessor);
           if (sqlLog.isDebugEnabled()) {
-            sqlLog.debug("{} rows retrieved", tuple == null ? 0 : 1);
+            sqlLog.debug("{} rows retrieved", result == null ? 0 : 1);
           }
-          return tuplesResultHandler.handleTuple(tuple);
+          return result;
         }
       };
     }
