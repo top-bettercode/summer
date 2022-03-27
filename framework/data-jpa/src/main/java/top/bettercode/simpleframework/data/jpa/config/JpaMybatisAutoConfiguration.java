@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
-import javax.sql.DataSource;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.executor.ErrorContext;
@@ -17,11 +16,8 @@ import org.apache.ibatis.type.TypeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -43,8 +39,7 @@ import top.bettercode.lang.util.ArrayUtil;
  */
 @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({MybatisProperties.class})
-@ConditionalOnSingleCandidate(DataSource.class)
-@AutoConfigureAfter({DataSourceAutoConfiguration.class})
+@ConditionalOnMissingBean(Configuration.class)
 public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   private final static Logger log = LoggerFactory.getLogger(JpaMybatisAutoConfiguration.class);
@@ -78,7 +73,6 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
   }
 
   @Bean
-  @ConditionalOnMissingBean
   public Configuration mybatisConfiguration() throws Exception {
     return mybatisConfiguration(properties.getConfiguration(), this.properties, this.resourceLoader,
         null);
