@@ -47,8 +47,6 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
 
   int delete(Specification<T> spec);
 
-  int deleteAllById(Iterable<ID> ids);
-
   boolean exists(Specification<T> spec);
 
   Optional<T> findFirst(Sort sort);

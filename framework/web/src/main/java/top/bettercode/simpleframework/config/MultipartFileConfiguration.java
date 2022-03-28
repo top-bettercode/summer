@@ -6,7 +6,8 @@ import kotlin.collections.ArraysKt;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties.Resources;
 import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -33,9 +34,10 @@ public class MultipartFileConfiguration implements WebMvcConfigurer {
 
   public MultipartFileConfiguration(
       MultipartProperties multipartProperties,
-      ResourceProperties resourceProperties) {
+      WebProperties webProperties) {
 
-    resourceProperties.setStaticLocations(ArraysKt.plus(resourceProperties.getStaticLocations(),
+    Resources resources = webProperties.getResources();
+    resources.setStaticLocations(ArraysKt.plus(resources.getStaticLocations(),
         multipartProperties.getStaticLocations()));
   }
 

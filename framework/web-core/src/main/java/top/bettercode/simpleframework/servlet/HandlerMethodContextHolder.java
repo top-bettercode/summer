@@ -4,9 +4,12 @@ import java.lang.annotation.Annotation;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.util.ServletRequestPathUtils;
 import top.bettercode.simpleframework.AnnotatedUtils;
 
 /**
@@ -27,18 +30,28 @@ public class HandlerMethodContextHolder {
 
   public static HandlerMethod getHandler(HttpServletRequest request) {
     try {
+      Object handler = request.getAttribute(HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE);
+      if (handler instanceof HandlerMethod && !ErrorController.class.isAssignableFrom(
+          ((HandlerMethod) handler).getBeanType())) {
+        return (HandlerMethod) handler;
+      }
       HandlerMethod handlerMethod;
-//      handlerMethod = (HandlerMethod) request.getAttribute(
-//          HandlerMethodContextHolder.HANDLER_METHOD);
-//      if (handlerMethod != null) {
-//        return handlerMethod;
-//      }
+      handlerMethod = (HandlerMethod) request.getAttribute(
+          HandlerMethodContextHolder.HANDLER_METHOD);
+      if (handlerMethod != null) {
+        return handlerMethod;
+      }
+
+      if (!ServletRequestPathUtils.hasParsedRequestPath(request)) {
+        ServletRequestPathUtils.parseAndCache(request);
+      }
       HandlerExecutionChain handlerExecutionChain = handlerMapping.getHandler(request);
       if (handlerExecutionChain != null) {
-        Object handler = handlerExecutionChain.getHandler();
-        if (handler instanceof HandlerMethod) {
+        handler = handlerExecutionChain.getHandler();
+        if (handler instanceof HandlerMethod && !ErrorController.class.isAssignableFrom(
+            ((HandlerMethod) handler).getBeanType())) {
           handlerMethod = (HandlerMethod) handler;
-//          request.setAttribute(HandlerMethodContextHolder.HANDLER_METHOD, handlerMethod);
+          request.setAttribute(HandlerMethodContextHolder.HANDLER_METHOD, handlerMethod);
           return handlerMethod;
         }
       }

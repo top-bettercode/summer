@@ -62,8 +62,8 @@
   </select>
 
   <insert id="insert">
-    insert into user (first_name, last_name, id)
-    values (#{firstName}, #{lastName}, 100)
+    insert into user (first_name, last_name, id, deleted)
+    values (#{firstName}, #{lastName}, 100, 0)
   </insert>
   <update id="update">
     update user

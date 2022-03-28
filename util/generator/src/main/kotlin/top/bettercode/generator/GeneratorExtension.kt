@@ -145,10 +145,11 @@ open class GeneratorExtension(
         }
 
         private fun javaName(str: String, capitalize: Boolean = false): String {
-            val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") {
-                it.toLowerCase().capitalize()
+            val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") { s ->
+                s.lowercase(Locale.getDefault())
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             }
-            return if (capitalize) s else s.decapitalize()
+            return if (capitalize) s else s.replaceFirstChar { it.lowercase(Locale.getDefault()) }
         }
 
     }
@@ -250,7 +251,7 @@ open class GeneratorExtension(
             ?.associateBy(
                 { if ("src" == it.name) "modules" else it.name }
             ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "pdm" }.toList() }
-            ?.toSortedMap(Comparator { o1, o2 -> o1.compareTo(o2) })
+            ?.toSortedMap { o1, o2 -> o1.compareTo(o2) }
             ?: TreeMap()
     }
 
@@ -262,7 +263,7 @@ open class GeneratorExtension(
                 } else it.name
             }
             ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
-            ?.toSortedMap(Comparator { o1, o2 -> o1.compareTo(o2) })
+            ?.toSortedMap { o1, o2 -> o1.compareTo(o2) }
             ?: TreeMap()
     }
 

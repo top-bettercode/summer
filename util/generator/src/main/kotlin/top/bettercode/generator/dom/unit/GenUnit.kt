@@ -1,6 +1,7 @@
 package top.bettercode.generator.dom.unit
 
 import java.io.File
+import java.util.*
 
 /**
  *
@@ -20,7 +21,12 @@ interface GenUnit {
         get() {
             val file = File(name)
             return if (file.isAbsolute || SourceSet.ROOT == sourceSet) file else {
-                File("src/${sourceSet.name.toLowerCase()}/${directorySet.name.toLowerCase()}/$name")
+                File(
+                    "src/${sourceSet.name.lowercase(Locale.getDefault())}/${
+                        directorySet.name.lowercase(
+                            Locale.getDefault()
+                        )
+                    }/$name")
             }
         }
 

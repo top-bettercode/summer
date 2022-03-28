@@ -7,7 +7,6 @@ interface IWechatService {
 
     fun oauth(openId: String): String?
 
-    @JvmDefault
     fun receive(
         timestamp: String,
         nonce: String,

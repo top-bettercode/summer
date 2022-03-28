@@ -32,7 +32,7 @@ class JDBCConnectionConfiguration(
         get() {
             return if (field.isNullOrBlank()) {
                 when {
-                    isOracle -> username.toUpperCase(Locale.getDefault())
+                    isOracle -> username.uppercase(Locale.getDefault())
                     databaseDriver == DatabaseDriver.H2 -> "PUBLIC"
                     else -> field
                 }

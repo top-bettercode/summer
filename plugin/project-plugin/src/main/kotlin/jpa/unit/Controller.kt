@@ -1,6 +1,7 @@
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelClass
+import java.util.*
 
 /**
  * @author Peter Wu
@@ -82,12 +83,36 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 columns.forEachIndexed { i, it ->
                     val code =
                         if (it.isCodeField) {
-                            if (it.columnName.contains("_") ||it.isSoftDelete) ".code()" else ".code(${(className + it.javaName.capitalize())}Enum.ENUM_NAME)"
+                            if (it.columnName.contains("_") ||it.isSoftDelete) ".code()" else ".code(${
+                                (className + it.javaName.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase(
+                                        Locale.getDefault()
+                                    ) else it.toString()
+                                })
+                            }Enum.ENUM_NAME)"
                         } else {
                             ""
                         }
                     val propertyGetter =
-                        if (it.isPrimary && isCompositePrimaryKey) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${primaryKeyName.capitalize()}().get${it.javaName.capitalize()}()" else "${if (isFullComposite) primaryKeyClassName else className}::get${it.javaName.capitalize()}"
+                        if (it.isPrimary && isCompositePrimaryKey) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${
+                            primaryKeyName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            }
+                        }().get${
+                            it.javaName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            }
+                        }()" else "${if (isFullComposite) primaryKeyClassName else className}::get${
+                            it.javaName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            }
+                        }"
                     initializationString += "      ExcelField.of(\"${
                         it.remark.split(
                             Regex(

@@ -269,8 +269,8 @@ class RequestLoggingFilter(
             include(properties.includePath, uri)
             || includeError(error) || !HttpStatus.valueOf(httpStatusCode).is2xxSuccessful
         ) {
-            if (handler != null)
-                (!AnnotatedUtils.hasAnnotation(
+            if (handler != null) {
+                handler::class.java.simpleName != "WebMvcEndpointHandlerMethod" && (!AnnotatedUtils.hasAnnotation(
                     handler,
                     NoRequestLogging::class.java
                 )) && useAnnotationMethodHandler(
@@ -280,7 +280,7 @@ class RequestLoggingFilter(
                         it
                     )
                 })
-            else true
+            } else true
         } else {
             false
         }

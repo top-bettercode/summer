@@ -3,6 +3,8 @@ package org.springframework.data.jpa.repository.query;
 import java.lang.reflect.Method;
 import javax.persistence.EntityManager;
 import org.apache.ibatis.session.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.provider.QueryExtractor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.projection.ProjectionFactory;
@@ -14,8 +16,8 @@ import org.springframework.data.repository.query.QueryMethodEvaluationContextPro
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
-import top.bettercode.simpleframework.data.jpa.query.mybatis.JpaExtQueryMethod;
 
 /**
  * Query lookup strategy to execute finders.
@@ -25,6 +27,8 @@ import top.bettercode.simpleframework.data.jpa.query.mybatis.JpaExtQueryMethod;
  * @author Mark Paluch
  */
 public final class JpaExtQueryLookupStrategy {
+
+  private static final Logger LOG = LoggerFactory.getLogger(JpaQueryLookupStrategy.class);
 
   /**
    * Private constructor to prevent instantiation.
@@ -97,7 +101,10 @@ public final class JpaExtQueryLookupStrategy {
         NamedQueries namedQueries) {
       return new PartTreeJpaExtQuery(method, em, escape, jpaExtProperties);
     }
+
   }
+
+
 
   /**
    * {@link QueryLookupStrategy} that tries to detect a declared query declared via {@link Query}
@@ -118,42 +125,65 @@ public final class JpaExtQueryLookupStrategy {
       this.evaluationContextProvider = evaluationContextProvider;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy.AbstractQueryLookupStrategy#resolveQuery(org.springframework.data.jpa.repository.query.JpaQueryMethod, javax.persistence.EntityManager, org.springframework.data.repository.core.NamedQueries)
-     */
     @Override
     protected RepositoryQuery resolveQuery(JpaExtQueryMethod method, EntityManager em,
         NamedQueries namedQueries) {
-      RepositoryQuery query = JpaQueryFactory.INSTANCE
-          .fromQueryAnnotation(method, em, evaluationContextProvider);
-
-      if (null != query) {
-        return query;
+      if (method.isProcedureQuery()) {
+        return JpaQueryFactory.INSTANCE.fromProcedureAnnotation(method, em);
       }
 
-      query = JpaQueryFactory.INSTANCE.fromProcedureAnnotation(method, em);
+      if (StringUtils.hasText(method.getAnnotatedQuery())) {
 
-      if (null != query) {
-        return query;
+        if (method.hasAnnotatedQueryName()) {
+          LOG.warn(String.format(
+              "Query method %s is annotated with both, a query and a query name. Using the declared query.", method));
+        }
+
+        return JpaQueryFactory.INSTANCE.fromMethodWithQueryString(method, em, method.getRequiredAnnotatedQuery(),
+            getCountQuery(method, namedQueries, em),
+            evaluationContextProvider);
       }
 
       String name = method.getNamedQueryName();
       if (namedQueries.hasQuery(name)) {
-        return JpaQueryFactory.INSTANCE
-            .fromMethodWithQueryString(method, em, namedQueries.getQuery(name),
-                evaluationContextProvider);
+        return JpaQueryFactory.INSTANCE.fromMethodWithQueryString(method, em, namedQueries.getQuery(name), getCountQuery(method, namedQueries, em),
+            evaluationContextProvider);
       }
 
-      query = NamedQuery.lookupFrom(method, em);
+      RepositoryQuery query = NamedQuery.lookupFrom(method, em);
 
       if (null != query) {
         return query;
       }
 
       throw new IllegalStateException(
-          String.format("Did neither find a NamedQuery nor an annotated query for method %s!",
-              method));
+          String.format("Did neither find a NamedQuery nor an annotated query for method %s!", method));
+    }
+
+    @Nullable
+    private String getCountQuery(JpaQueryMethod method, NamedQueries namedQueries, EntityManager em) {
+
+      if (StringUtils.hasText(method.getCountQuery())) {
+        return method.getCountQuery();
+      }
+
+      String queryName = method.getNamedCountQueryName();
+
+      if (!StringUtils.hasText(queryName)) {
+        return method.getCountQuery();
+      }
+
+      if (namedQueries.hasQuery(queryName)) {
+        return namedQueries.getQuery(queryName);
+      }
+
+      boolean namedQuery = NamedQuery.hasNamedQuery(em, queryName);
+
+      if (namedQuery) {
+        return method.getQueryExtractor().extractQueryString(em.createNamedQuery(queryName));
+      }
+
+      return null;
     }
   }
 

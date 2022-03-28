@@ -2,6 +2,7 @@ package top.bettercode.generator.database.entity
 
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.JDBCConnectionConfiguration
+import java.util.*
 
 /**
  *
@@ -118,7 +119,7 @@ data class Table(
     fun className(extension: GeneratorExtension): String = extension.className(tableName)
 
     fun entityName(extension: GeneratorExtension): String =
-        className(extension).decapitalize()
+        className(extension).replaceFirstChar { it.lowercase(Locale.getDefault()) }
 
     fun pathName(extension: GeneratorExtension): String = entityName(extension)
 

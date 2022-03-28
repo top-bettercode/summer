@@ -1,10 +1,9 @@
-package top.bettercode.simpleframework.data.jpa.query.mybatis;
+package org.springframework.data.jpa.repository.query;
 
 import java.lang.reflect.Method;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.springframework.data.jpa.provider.QueryExtractor;
-import org.springframework.data.jpa.repository.query.JpaQueryMethod;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 

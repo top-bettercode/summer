@@ -1,6 +1,6 @@
 logging:
   level:
-    org.springframework.data.jpa.repository: debug
+#    org.springframework.data.jpa.repository: debug
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
     top.bettercode.simpleframework.data: debug

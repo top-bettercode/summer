@@ -12,7 +12,6 @@ import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelEnumeration
 import top.bettercode.generator.dom.unit.FileUnit
 import top.bettercode.generator.dsl.DicCodes
-import java.io.Serializable
 import java.util.*
 
 
@@ -81,7 +80,7 @@ class DicCodeGen(private val project: Project) {
                 }
                 val codeKey =
                     if (code.startsWith("0") && code.length > 1) code else (code.toIntOrNull()
-                        ?: code) as Serializable
+                        ?: code)
                 dicCode.codes[codeKey] = properties.getProperty(key)
             }
         }
@@ -109,17 +108,18 @@ class DicCodeGen(private val project: Project) {
             codeTypes().forEach { (codeType, v) ->
                 val codeTypeName = v.name
                 +"|$codeType|$codeTypeName\n"
-                docText.appendln(".$codeTypeName($codeType)")
-                docText.appendln(
+                docText.appendLine(".$codeTypeName($codeType)")
+                docText.appendLine(
                     """|===
-| 编码 | 说明
-"""
+            | 编码 | 说明
+            """
                 )
                 val className = codeType.split("_").joinToString("") {
                     if (codeType.matches(Regex(".*[a-z].*")))
-                        it.capitalize()
+                        it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                     else
-                        it.toLowerCase().capitalize()
+                        it.lowercase(Locale.getDefault())
+                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                 }
 
                 val isIntCode = v.isInt
@@ -141,7 +141,7 @@ class DicCodeGen(private val project: Project) {
                     val innerInterface = InnerInterface(JavaType("${className}Const"))
                     innerInterface(innerInterface)
                     v.codes.forEach { (code, name) ->
-                        docText.appendln("|$code|$name")
+                        docText.appendLine("|$code|$name")
 
                         val codeFieldName = underscoreName(
                             if (code is Int || code.toString()
@@ -247,12 +247,12 @@ class DicCodeGen(private val project: Project) {
                         +"if (code == null) {"
                         +"return null;"
                         +"}"
-                        +"for (${className}Enum ${className.decapitalize()}Enum : values()) {"
+                        +"for (${className}Enum ${className.replaceFirstChar { it.lowercase(Locale.getDefault()) }}Enum : values()) {"
                         if (isIntCode)
-                            +"if (${className.decapitalize()}Enum.code == code) {"
+                            +"if (${className.replaceFirstChar { it.lowercase(Locale.getDefault()) }}Enum.code == code) {"
                         else
-                            +"if (${className.decapitalize()}Enum.code.equals(code)) {"
-                        +"return ${className.decapitalize()}Enum;"
+                            +"if (${className.replaceFirstChar { it.lowercase(Locale.getDefault()) }}Enum.code.equals(code)) {"
+                        +"return ${className.replaceFirstChar { it.lowercase(Locale.getDefault()) }}Enum;"
                         +"}"
                         +"}"
                         +"return null;"
@@ -291,8 +291,8 @@ class DicCodeGen(private val project: Project) {
                             +"return (String) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
                     }
                 }
-                docText.appendln("|===")
-                docText.appendln()
+                docText.appendLine("|===")
+                docText.appendLine()
                 codeEnum.writeTo(project.projectDir)
             }
 
@@ -309,16 +309,16 @@ class DicCodeGen(private val project: Project) {
                 val result = StringBuilder()
                 if (name.isNotEmpty()) {
                     // 将第一个字符处理成大写
-                    result.append(name.substring(0, 1).toUpperCase())
+                    result.append(name.substring(0, 1).uppercase(Locale.getDefault()))
                     // 循环处理其余字符
                     for (i in 1 until name.length) {
                         val s = name.substring(i, i + 1)
                         // 在大写字母前添加下划线
-                        if (s == s.toUpperCase() && !Character.isDigit(s[0]) && s[0] != '_') {
+                        if (s == s.uppercase(Locale.getDefault()) && !Character.isDigit(s[0]) && s[0] != '_') {
                             result.append("_")
                         }
                         // 其他字符直接转成大写
-                        result.append(s.toUpperCase())
+                        result.append(s.uppercase(Locale.getDefault()))
                     }
                 }
                 return result.toString()

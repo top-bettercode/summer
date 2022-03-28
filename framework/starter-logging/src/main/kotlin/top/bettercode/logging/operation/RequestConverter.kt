@@ -60,7 +60,9 @@ object RequestConverter {
         val uri = URI.create(getRequestUri(request))
         val restUri =
             (request.getAttribute(RequestLoggingFilter.BEST_MATCHING_PATTERN_ATTRIBUTE) as? String)
-                ?: request.requestURI.substringAfter(request.contextPath)
+                ?: if ("/" == request.contextPath) request.requestURI else request.requestURI.substringAfter(
+                    request.contextPath
+                )
 
         @Suppress("UNCHECKED_CAST")
         val uriTemplateVariables =
@@ -140,7 +142,7 @@ object RequestConverter {
         val request: ServletRequest = unwrap(servletRequest)
 
         val parts = ArrayList<OperationRequestPart>()
-        if (request is HttpServletRequest && request.contentType?.toLowerCase(Locale.getDefault())
+        if (request is HttpServletRequest && request.contentType?.lowercase(Locale.getDefault())
                 ?.startsWith("multipart/") == true
         )
             parts.addAll(extractServletRequestParts(request))

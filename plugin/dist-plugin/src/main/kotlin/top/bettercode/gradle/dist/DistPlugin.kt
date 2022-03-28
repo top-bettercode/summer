@@ -1,13 +1,15 @@
 package top.bettercode.gradle.dist
 
 import com.github.alexeylisyutenko.windowsserviceplugin.*
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.distribution.plugins.DistributionPlugin.TASK_INSTALL_NAME
 import org.gradle.api.internal.GradleInternal
-import org.gradle.api.plugins.ApplicationPluginConvention
+import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.plugins.JavaPlugin.PROCESS_RESOURCES_TASK_NAME
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Zip
@@ -248,11 +250,11 @@ class DistPlugin : Plugin<Project> {
                         if (extension.unwrapResources) {
                             val gradle = project.gradle as GradleInternal
                             val needUnwrapTask =
-                                gradle.startParameter.taskNames.map {
+                                gradle.startParameter.taskNames.mapNotNull {
                                     gradle.defaultProject.tasks.findByPath(
                                         it
                                     )
-                                }.filterNotNull().firstOrNull {
+                                }.firstOrNull {
                                     it.group == "distribution" ||
                                             CREATE_WINDOWS_SERVICE_TASK_NAME == it.name
                                 }
@@ -296,24 +298,26 @@ class DistPlugin : Plugin<Project> {
                                         false
                                     }
                                 }
-                                task.doLast {
-                                    if (resources.isNotEmpty()) {
-                                        p.copy { spec ->
-                                            resources.forEach { (filePath, to) ->
-                                                spec.from(filePath) {
-                                                    if (to.isNotBlank())
-                                                        it.into(to)
+                                task.doLast(object : Action<Task> {
+                                    override fun execute(it: Task) {
+                                        if (resources.isNotEmpty()) {
+                                            p.copy { spec ->
+                                                resources.forEach { (filePath, to) ->
+                                                    spec.from(filePath) {
+                                                        if (to.isNotBlank())
+                                                            it.into(to)
+                                                    }
                                                 }
+                                                spec.into(
+                                                    File(
+                                                        needUnwrapTask.project.buildDir,
+                                                        "conf"
+                                                    ).absolutePath
+                                                )
                                             }
-                                            spec.into(
-                                                File(
-                                                    needUnwrapTask.project.buildDir,
-                                                    "conf"
-                                                ).absolutePath
-                                            )
                                         }
                                     }
-                                }
+                                })
                             }
                         }
                         task.manifest {
@@ -394,7 +398,7 @@ class DistPlugin : Plugin<Project> {
         }
         val jvmArgs = project.jvmArgs
 
-        val application = project.convention.findPlugin(ApplicationPluginConvention::class.java)
+        val application = project.extensions.findByType(JavaApplication::class.java)
 
         if (application != null) {
             val dist = project.extensions.getByType(DistExtension::class.java)
@@ -404,20 +408,20 @@ class DistPlugin : Plugin<Project> {
 
             project.tasks.getByName("startScripts") { task ->
                 task as CreateStartScripts
-
                 task.unixStartScriptGenerator =
                     StartScript.startScriptGenerator(project, dist, false)
                 task.windowsStartScriptGenerator =
                     StartScript.startScriptGenerator(project, dist, true)
 
                 task.inputs.file(project.rootProject.file("gradle.properties"))
-                if (task.mainClassName.isNullOrBlank()) {
-                    task.mainClassName = project.findDistProperty("main-class-name")
+                if (!task.mainClass.isPresent) {
+                    task.mainClass.set(project.findDistProperty("main-class-name"))
                 }
-                task.doLast {
-                    //run.sh
-                    writeServiceFile(
-                        project, "run.sh", """
+                task.doLast(object : Action<Task> {
+                    override fun execute(it: Task) {
+                        //run.sh
+                        writeServiceFile(
+                            project, "run.sh", """
 #!/usr/bin/env sh
 
 # Attempt to set APP_HOME
@@ -441,11 +445,11 @@ cd ${'$'}APP_HOME
 mkdir -p "${'$'}APP_HOME/logs"
 ${'$'}APP_HOME/bin/${project.name}
 """
-                    )
+                        )
 
-                    //startup.sh
-                    writeServiceFile(
-                        project, "startup.sh", """
+                        //startup.sh
+                        writeServiceFile(
+                            project, "startup.sh", """
 #!/usr/bin/env sh
 
 # Attempt to set APP_HOME
@@ -470,11 +474,11 @@ mkdir -p "${'$'}APP_HOME/logs"
 nohup "${'$'}APP_HOME/bin/${project.name}" 1>/dev/null 2>"${'$'}APP_HOME/logs/error.log" &
 ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'
 """
-                    )
+                        )
 
-                    //shutdown.sh
-                    writeServiceFile(
-                        project, "shutdown.sh", """
+                        //shutdown.sh
+                        writeServiceFile(
+                            project, "shutdown.sh", """
 #!/usr/bin/env sh
 
 # Attempt to set APP_HOME
@@ -504,10 +508,10 @@ then
     done
 fi
 """
-                    )
-                    //${project.name}-install
-                    writeServiceFile(
-                        project, "${project.name}-install", """
+                        )
+                        //${project.name}-install
+                        writeServiceFile(
+                            project, "${project.name}-install", """
 #!/usr/bin/env sh
 
 # Attempt to set APP_HOME
@@ -562,10 +566,10 @@ EOF
   sudo chmod +x /etc/init.d/${project.name}
   sudo chkconfig ${project.name} on
   ${
-                            if (dist.autoStart) """
+                                if (dist.autoStart) """
   sudo service ${project.name} start
   """.trimIndent() else ""
-                        }
+                            }
 else
   (
     cat <<EOF
@@ -587,17 +591,17 @@ EOF
   sudo systemctl daemon-reload
   sudo systemctl enable ${project.name}.service
   ${
-                            if (dist.autoStart) """
+                                if (dist.autoStart) """
   sudo systemctl start ${project.name}.service
   """.trimIndent() else ""
-                        }
+                            }
 fi
 """
-                    )
+                        )
 
-                    //${project.name}-uninstall
-                    writeServiceFile(
-                        project, "${project.name}-uninstall", """
+                        //${project.name}-uninstall
+                        writeServiceFile(
+                            project, "${project.name}-uninstall", """
 #!/usr/bin/env sh
 
 if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
@@ -610,8 +614,9 @@ else
   sudo rm -f /etc/systemd/system/${project.name}.service
 fi
 """
-                    )
-                }
+                        )
+                    }
+                })
             }
         }
 

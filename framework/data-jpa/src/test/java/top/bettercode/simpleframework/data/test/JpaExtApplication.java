@@ -2,9 +2,9 @@ package top.bettercode.simpleframework.data.test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import top.bettercode.simpleframework.data.jpa.config.EnableJpaExtRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import top.bettercode.simpleframework.data.jpa.config.EnableJpaExtRepositories;
 
 @EnableJpaExtRepositories
 @SpringBootApplication

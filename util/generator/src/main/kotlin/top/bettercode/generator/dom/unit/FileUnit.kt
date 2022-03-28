@@ -24,7 +24,7 @@ class FileUnit(
     override val write: File.(String) -> Boolean =
         {
             val content = this@FileUnit.toString()
-            if (content!=it) {
+            if (content != it) {
                 printWriter().use { writer -> writer.print(content) }
                 true
             } else {
@@ -33,7 +33,7 @@ class FileUnit(
         }
 
     operator fun String.unaryPlus() {
-        appendln(this)
+        appendLine(this)
     }
 
 }

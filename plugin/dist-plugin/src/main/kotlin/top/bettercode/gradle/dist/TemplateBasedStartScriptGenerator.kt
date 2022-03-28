@@ -4,7 +4,7 @@ import groovy.text.SimpleTemplateEngine
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Project
 import org.gradle.api.Transformer
-import org.gradle.api.internal.file.TmpDirTemporaryFileProvider
+import org.gradle.api.internal.file.temp.GradleUserHomeTemporaryFileProvider
 import org.gradle.api.internal.plugins.DefaultJavaAppStartScriptGenerationDetails
 import org.gradle.api.internal.plugins.StartScriptTemplateBindingFactory
 import org.gradle.api.internal.plugins.UnixStartScriptGenerator
@@ -13,7 +13,7 @@ import org.gradle.api.resources.TextResource
 import org.gradle.internal.io.IoUtils
 import org.gradle.jvm.application.scripts.JavaAppStartScriptGenerationDetails
 import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
-import org.gradle.util.TextUtil
+import org.gradle.util.internal.TextUtil
 import top.bettercode.gradle.dist.DistExtension.Companion.nativeLibArgs
 import java.io.*
 
@@ -123,14 +123,24 @@ class TemplateBasedStartScriptGenerator(
                     "\r\n\r\n@rem Set JAVA_HOME.\r\nset JAVA_HOME=%APP_HOME%\\\\jre"
                 ).toString()
             } else {
-                val location = "APP_BASE_NAME=`basename \"\\\$0\"`"
+                val location = "APP_BASE_NAME=\\\${0##*/}"
                 StringBuilder(text).insert(
                     text.indexOf(location) + location.length,
                     "\n\n# Set JAVA_HOME.\nJAVA_HOME=\"\\\$APP_HOME/jre\""
                 ).toString()
             }
         }
-        return StringBackedTextResource(TmpDirTemporaryFileProvider(), text)
+        if (!windows) {
+            text = StringBuilder(text).insert(
+                text.indexOf("# Use the maximum available") - 1,
+                "DEFAULT_JVM_OPTS=`eval echo \\\$DEFAULT_JVM_OPTS`\n"
+            ).toString()
+        }
+
+        return StringBackedTextResource(
+            GradleUserHomeTemporaryFileProvider { project.gradle.gradleUserHomeDir },
+            text
+        )
     }
 
 }

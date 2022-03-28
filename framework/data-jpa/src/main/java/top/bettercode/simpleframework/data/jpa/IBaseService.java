@@ -47,13 +47,13 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   int delete(Specification<T> spec);
 
-  int deleteAllById(Iterable<ID> ids);
+  void deleteAllById(Iterable<? extends ID> ids);
 
-  void deleteAll(Iterable<? extends T> iterable);
+  void deleteAll(Iterable<? extends T> entities);
 
   void deleteAll();
 
-  void deleteInBatch(Iterable<T> entities);
+  void deleteAllInBatch(Iterable<T> entities);
 
   void deleteAllInBatch();
 

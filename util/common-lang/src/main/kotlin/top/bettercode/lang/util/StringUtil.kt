@@ -134,7 +134,7 @@ object StringUtil {
             }
             i++
         }
-        return buf.toString().toLowerCase(Locale.ROOT)
+        return buf.toString().lowercase(Locale.ROOT)
     }
 
     /**
@@ -582,11 +582,11 @@ object StringUtil {
                 return 1
             var v2 = toIntOrNull2
                 ?: versionTails.indexOf(
-                    version2s[i].replace(versionTailRegex, "$1").toUpperCase(Locale.getDefault())
+                    version2s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
                 )
             var v1 = toIntOrNull1
                 ?: versionTails.indexOf(
-                    version1s[i].replace(versionTailRegex, "$1").toUpperCase(Locale.getDefault())
+                    version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
                 )
             if (v1 != -1 && v1 == v2 && toIntOrNull1 == null && toIntOrNull2 == null) {
                 v2 = version2s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0

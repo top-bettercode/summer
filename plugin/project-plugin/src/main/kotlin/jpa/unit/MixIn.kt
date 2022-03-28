@@ -4,6 +4,7 @@ import ProjectGenerator
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Interface
+import java.util.*
 
 /**
  * @author Peter Wu
@@ -24,7 +25,7 @@ val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
 
         if (!isFullComposite) {
             //primaryKey getter
-            method("get${primaryKeyName.capitalize()}", primaryKeyType) {
+            method("get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", primaryKeyType) {
                 javadoc {
                     +"/**"
                     +" * ${remarks}主键"
@@ -50,7 +51,7 @@ val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
 private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, it ->
     interfaze.apply {
         if (it.jsonViewIgnored)
-            method("get${it.javaName.capitalize()}", it.javaType) {
+            method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
                 if (it.jsonViewIgnored)
                     annotation("@com.fasterxml.jackson.annotation.JsonIgnore")
 
@@ -59,12 +60,24 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
 
         //code
         if (!it.jsonViewIgnored && it.isCodeField) {
-            method("get${it.javaName.capitalize()}", it.javaType) {
+            method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
                 if (it.columnName.contains("_") || it.isSoftDelete)
                     annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonCode")
                 else {
-                    import("${(ext.packageName + ".support.dic." + className + it.javaName.capitalize())}Enum")
-                    annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonCode(${(className + it.javaName.capitalize())}Enum.ENUM_NAME)")
+                    import("${
+                        (ext.packageName + ".support.dic." + className + it.javaName.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.getDefault()
+                            ) else it.toString()
+                        })
+                    }Enum")
+                    annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonCode(${
+                        (className + it.javaName.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.getDefault()
+                            ) else it.toString()
+                        })
+                    }Enum.ENUM_NAME)")
                 }
                 annotation("@Override")
             }

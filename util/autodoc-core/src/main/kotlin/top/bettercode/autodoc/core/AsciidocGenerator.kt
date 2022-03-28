@@ -130,9 +130,9 @@ object AsciidocGenerator : AbstractbGenerator() {
         val pw = StringBuilder()
         autodoc.listModuleNames { name, pyname ->
             if (name != currentName) {
-                pw.appendln()
-                pw.appendln("[[_${pynames.pyname(name)}]]")
-                pw.appendln("== link:$pyname.html[$name]")
+                pw.appendLine()
+                pw.appendLine("[[_${pynames.pyname(name)}]]")
+                pw.appendLine("== link:$pyname.html[$name]")
             }
         }
         return pw.toString()
@@ -232,11 +232,11 @@ object AsciidocGenerator : AbstractbGenerator() {
                     }
                 }
                 val properties = autodoc.properties
-                (commonAdocs + autodoc.commonAdocs(module)).sortedWith(kotlin.Comparator { o1, o2 ->
+                (commonAdocs + autodoc.commonAdocs(module)).sortedWith { o1, o2 ->
                     if (o1.name == "README.adoc") -1 else o1.name.compareTo(
                         o2.name
                     )
-                }).forEach {
+                }.forEach {
                     out.println()
                     var pre = ""
                     it.readLines().forEach { l ->
@@ -491,7 +491,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         )
 
         out.append("|${str(if (field.children.isNotEmpty()) "" else field.value)}")
-        out.appendln()
+        out.appendLine()
         var size = 1
         field.children.forEach {
             size += writeResp(out, it, depth + 1)
@@ -512,7 +512,7 @@ object AsciidocGenerator : AbstractbGenerator() {
         out.append("|${str(field.description, true)}")
         out.append("|${str(field.defaultVal)}")
         out.append("|${str(field.value)}")
-        out.appendln()
+        out.appendLine()
         var size = 1
         field.children.forEach {
             size += writeParam(out, it, depth + 1)

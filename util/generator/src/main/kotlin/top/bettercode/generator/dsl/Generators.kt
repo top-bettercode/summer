@@ -2,7 +2,6 @@ package top.bettercode.generator.dsl
 
 import top.bettercode.generator.DataType
 import top.bettercode.generator.GeneratorExtension
-import top.bettercode.generator.dom.java.JavaTypeResolver
 
 /**
  * 模板脚本
@@ -41,7 +40,7 @@ object Generators {
                     DataType.PDM -> {
                         extension.pdmSources.size <= 1
                     }
-                }, tableName = *extension.tableNames
+                }, tableName = extension.tableNames
             ).forEach { table ->
                 generators.forEach { generator ->
                     generator.run(table)

@@ -4,6 +4,7 @@ import ProjectGenerator
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.TopLevelClass
+import java.util.*
 
 /**
  * @author Peter Wu
@@ -38,7 +39,8 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         //insert
-        val insertName = "insert${pathName.capitalize()}"
+        val insertName =
+            "insert${pathName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
         method(insertName, entityType, visibility = JavaVisibility.PRIVATE) {
             import(entityType)
             +"$className $entityName = new $className();"
@@ -47,17 +49,41 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (isCompositePrimaryKey) {
                     +"${primaryKeyClassName} $primaryKeyName = new ${primaryKeyClassName}();"
                     primaryKeys.forEach {
-                        +"$primaryKeyName.set${it.javaName.capitalize()}(${it.randomValueToSet});"
+                        +"$primaryKeyName.set${
+                            it.javaName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            }
+                        }(${it.randomValueToSet});"
                     }
-                    +"$entityName.set${primaryKeyName.capitalize()}(${primaryKeyName});"
+                    +"$entityName.set${
+                        primaryKeyName.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.getDefault()
+                            ) else it.toString()
+                        }
+                    }(${primaryKeyName});"
                 } else
                     primaryKeys.forEach {
-                        +"$entityName.set${it.javaName.capitalize()}(${it.randomValueToSet});"
+                        +"$entityName.set${
+                            it.javaName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            }
+                        }(${it.randomValueToSet});"
                     }
             }
             otherColumns.forEach {
 //                    if (!it.jsonViewIgnored)
-                +"$entityName.set${it.javaName.capitalize()}(${it.randomValueToSet});"
+                +"$entityName.set${
+                    it.javaName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                }(${it.randomValueToSet});"
             }
             +"${projectEntityName}Service.save($entityName);"
             +"return $entityName;"
@@ -110,7 +136,13 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(2)")
                 exception(JavaType("Exception"))
-                +"${primaryKeyClassName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
+                +"${primaryKeyClassName} $primaryKeyName = $insertName().get${
+                    primaryKeyName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                }();"
                 +"mockMvc.perform(get(\"/$pathName/info\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 +").andExpect(status().isOk());"
@@ -129,7 +161,13 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     import(primaryKeyType)
                     +"${primaryKeyClassName} $primaryKeyName = new ${primaryKeyClassName}();"
                     primaryKeys.forEach {
-                        +"$primaryKeyName.set${it.javaName.capitalize()}(${it.randomValueToSet});"
+                        +"$primaryKeyName.set${
+                            it.javaName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            }
+                        }(${it.randomValueToSet});"
                     }
                 }
                 +"mockMvc.perform(post(\"/$pathName/save\")"
@@ -174,7 +212,13 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         }
                     }
                 } else {
-                    +"${primaryKeyClassName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
+                    +"${primaryKeyClassName} $primaryKeyName = $insertName().get${
+                        primaryKeyName.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.getDefault()
+                            ) else it.toString()
+                        }
+                    }();"
                     +"mockMvc.perform(post(\"/$pathName/save\")"
                     2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                     otherColumns.forEach {
@@ -195,7 +239,13 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(5)")
                 exception(JavaType("Exception"))
-                +"${primaryKeyClassName} $primaryKeyName = $insertName().get${primaryKeyName.capitalize()}();"
+                +"${primaryKeyClassName} $primaryKeyName = $insertName().get${
+                    primaryKeyName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                }();"
                 +"mockMvc.perform(post(\"/$pathName/delete\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 +").andExpect(status().isOk());"

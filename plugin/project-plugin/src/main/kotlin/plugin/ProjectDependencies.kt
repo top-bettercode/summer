@@ -98,13 +98,13 @@ object ProjectDependencies {
                     dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
                     dependency("net.sf.ehcache:ehcache:2.10.9.2")
                     dependency("com.github.axet:kaptcha:0.0.9")
-                    dependency("org.dhatim:fastexcel-reader:0.12.12")
-                    dependency("org.apache.poi:poi-ooxml:5.1.0")
+                    dependency("org.dhatim:fastexcel-reader:0.12.14")
+                    dependency("org.apache.poi:poi-ooxml:5.2.2")
                     dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
 
-                    dependency("org.apache.logging.log4j:log4j-api:2.17.1")
-                    dependency("org.apache.logging.log4j:log4j-core:2.17.1")
-                    dependency("org.apache.logging.log4j:log4j-to-slf4j:2.17.1")
+                    dependency("org.apache.logging.log4j:log4j-api:2.17.2")
+                    dependency("org.apache.logging.log4j:log4j-core:2.17.2")
+                    dependency("org.apache.logging.log4j:log4j-to-slf4j:2.17.2")
                 }
             }
         }

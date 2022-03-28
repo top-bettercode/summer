@@ -2,6 +2,7 @@ package top.bettercode.gradle.generator
 
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
+import net.sourceforge.plantuml.ISourceFileReader
 import net.sourceforge.plantuml.SourceFileReader
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -20,6 +21,7 @@ import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.dsl.def.PlantUML
 import top.bettercode.generator.puml.PumlConverter
 import java.io.File
+import java.util.*
 
 
 /**
@@ -68,7 +70,7 @@ class GeneratorPlugin : Plugin<Project> {
                         configuration.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
                     }
                     configuration
-                }.toSortedMap(Comparator { o1, o2 -> o1.compareTo(o2) })
+                }.toSortedMap { o1, o2 -> o1.compareTo(o2) }
 
             extension.unitedDatasource = (findProperty(project, "singleDatasource"))?.toBoolean()
                 ?: true
@@ -116,7 +118,7 @@ class GeneratorPlugin : Plugin<Project> {
                     ?: true
             extension.dataType = DataType.valueOf(
                 (findProperty(project, "dataType")
-                    ?: DataType.DATABASE.name).toUpperCase()
+                                ?: DataType.DATABASE.name).uppercase(Locale.getDefault())
             )
             //puml
             extension.pumlSrc = findProperty(project, "puml.src") ?: "puml"
@@ -168,7 +170,13 @@ class GeneratorPlugin : Plugin<Project> {
     private fun configPuml(project: Project, extension: GeneratorExtension) {
 
         extension.run { module, tableHolder ->
-            val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
+            val prefix = if (defaultModuleName == module) "" else "[${
+                module.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
+            }]"
             project.tasks.create("print[TableNames]${prefix}") { task ->
                 task.group = printGroup
                 task.doLast {
@@ -178,12 +186,18 @@ class GeneratorPlugin : Plugin<Project> {
             }
         }
         extension.run(if (extension.pdmSources.isNotEmpty()) DataType.PDM else DataType.DATABASE) { module, tableHolder ->
-            val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
+            val prefix = if (defaultModuleName == module) "" else "[${
+                module.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
+            }]"
             project.tasks.create("toPuml${prefix}") { task ->
                 task.group = pumlGroup
                 task.doLast { _ ->
                     val tables =
-                        tableHolder.tables(tableName = *extension.tableNames)
+                        tableHolder.tables(tableName = extension.tableNames)
                     val plantUML = PlantUML(
                         tables[0].subModuleName,
                         File(
@@ -223,9 +237,12 @@ class GeneratorPlugin : Plugin<Project> {
             task.doLast { _ ->
                 extension.pumlSources.forEach { (module, files) ->
                     files.forEach {
-                        val sourceFileReader = SourceFileReader(
+                        val sourceFileReader: ISourceFileReader = SourceFileReader(
                             it,
-                            File(out, module + "/" + extension.pumlDiagramFormat.toLowerCase()),
+                            File(
+                                out,
+                                module + "/" + extension.pumlDiagramFormat.lowercase(Locale.getDefault())
+                            ),
                             "UTF-8"
                         )
                         sourceFileReader.setFileFormatOption(
@@ -248,7 +265,13 @@ class GeneratorPlugin : Plugin<Project> {
             val datasourceModules = extension.datasources.keys
             extension.run { module, tableHolder ->
                 if (datasourceModules.contains(module)) {
-                    val prefix = if (defaultModuleName == module) "" else "[${module.capitalize()}]"
+                    val prefix = if (defaultModuleName == module) "" else "[${
+                        module.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.getDefault()
+                            ) else it.toString()
+                        }
+                    }]"
                     project.tasks.create("toDDL${prefix}") { task ->
                         task.group = pumlGroup
                         task.inputs.files(
@@ -272,7 +295,7 @@ class GeneratorPlugin : Plugin<Project> {
                             val output = FileUnit("${extension.sqlOutput}/ddl/$module.sql")
                             val jdbc = extension.datasources[module]
                                 ?: throw IllegalStateException("未配置${module}模块数据库信息")
-                            val tables = tableHolder.tables(tableName = *extension.tableNames)
+                            val tables = tableHolder.tables(tableName = extension.tableNames)
                             when (jdbc.databaseDriver) {
                                 DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
                                     tables,
@@ -312,7 +335,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 )
                             val allTables = mutableListOf<Table>()
                             unit.use { pw ->
-                                val tables = tableHolder.tables(tableName = *extension.tableNames)
+                                val tables = tableHolder.tables(tableName = extension.tableNames)
                                 allTables.addAll(tables)
                                 val jdbc = extension.datasources[module]
                                     ?: throw IllegalStateException("未配置${module}模块数据库信息")
@@ -326,7 +349,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 } else {
                                     jdbc.tables(
                                         tableName =
-                                        *(if (deleteTablesWhenUpdate) jdbc.tableNames()
+                                        (if (deleteTablesWhenUpdate) jdbc.tableNames()
                                         else tableNames).toTypedArray()
                                     )
                                 }
