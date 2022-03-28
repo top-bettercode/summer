@@ -20,16 +20,12 @@ public class MybatisResultTransformer extends NativeQueryTupleTransformer {
     this.mybatisResultSetHandler = mybatisResultSetHandler;
   }
 
-  public MybatisResultSetHandler getMybatisResultSetHandler() {
-    return mybatisResultSetHandler;
-  }
-
   public Object transform(ResultSet resultSet) throws SQLException {
-    return this.transformList(resultSet).get(0);
+    return this.transformList(resultSet, 1).get(0);
   }
 
-  public List<?> transformList(ResultSet resultSet) throws SQLException {
+  public List<?> transformList(ResultSet resultSet, int maxRows) throws SQLException {
     Statement statement = resultSet.getStatement();
-    return mybatisResultSetHandler.handleResultSets(statement);
+    return mybatisResultSetHandler.handleResultSets(statement, maxRows);
   }
 }

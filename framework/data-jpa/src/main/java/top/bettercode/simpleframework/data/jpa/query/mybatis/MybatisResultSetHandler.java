@@ -50,7 +50,6 @@ public class MybatisResultSetHandler {
 
   private final Configuration configuration;
   private final MappedStatement mappedStatement;
-  private final RowBounds rowBounds;
   private final ResultHandler<?> resultHandler;
   private final TypeHandlerRegistry typeHandlerRegistry;
   private final ObjectFactory objectFactory;
@@ -94,15 +93,13 @@ public class MybatisResultSetHandler {
   }
 
   public MybatisResultSetHandler(MappedStatement mappedStatement) {
-    this(mappedStatement, null, RowBounds.DEFAULT);
+    this(mappedStatement, null);
   }
 
   public MybatisResultSetHandler(MappedStatement mappedStatement,
-      ResultHandler<?> resultHandler,
-      RowBounds rowBounds) {
+      ResultHandler<?> resultHandler) {
     this.configuration = mappedStatement.getConfiguration();
     this.mappedStatement = mappedStatement;
-    this.rowBounds = rowBounds;
     this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
     this.objectFactory = configuration.getObjectFactory();
     this.reflectorFactory = configuration.getReflectorFactory();
@@ -144,7 +141,7 @@ public class MybatisResultSetHandler {
   //
   // HANDLE RESULT SETS
   //
-  public List<Object> handleResultSets(Statement stmt) throws SQLException {
+  public List<Object> handleResultSets(Statement stmt, int maxRows) throws SQLException {
     ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
 
     final List<Object> multipleResults = new ArrayList<>();
@@ -152,12 +149,13 @@ public class MybatisResultSetHandler {
     int resultSetCount = 0;
     ResultSetWrapper rsw = getFirstResultSet(stmt);
 
+    RowBounds rowBounds = new RowBounds(0, maxRows);
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
     int resultMapCount = resultMaps.size();
     validateResultMapsCount(rsw, resultMapCount);
     while (rsw != null && resultMapCount > resultSetCount) {
       ResultMap resultMap = resultMaps.get(resultSetCount);
-      handleResultSet(rsw, resultMap, multipleResults, null);
+      handleResultSet(rsw, resultMap, multipleResults, null, rowBounds);
       rsw = getNextResultSet(stmt);
       cleanUpAfterHandlingResultSet();
       resultSetCount++;
@@ -170,7 +168,7 @@ public class MybatisResultSetHandler {
         if (parentMapping != null) {
           String nestedResultMapId = parentMapping.getNestedResultMapId();
           ResultMap resultMap = configuration.getResultMap(nestedResultMapId);
-          handleResultSet(rsw, resultMap, null, parentMapping);
+          handleResultSet(rsw, resultMap, null, parentMapping, rowBounds);
         }
         rsw = getNextResultSet(stmt);
         cleanUpAfterHandlingResultSet();
@@ -242,7 +240,8 @@ public class MybatisResultSetHandler {
   }
 
   private void handleResultSet(ResultSetWrapper rsw, ResultMap resultMap,
-      List<Object> multipleResults, ResultMapping parentMapping) throws SQLException {
+      List<Object> multipleResults, ResultMapping parentMapping, RowBounds rowBounds)
+      throws SQLException {
     try {
       if (parentMapping != null) {
         handleRowValues(rsw, resultMap, null, RowBounds.DEFAULT, parentMapping);
@@ -274,7 +273,7 @@ public class MybatisResultSetHandler {
       ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping)
       throws SQLException {
     if (resultMap.hasNestedResultMaps()) {
-      ensureNoRowBounds();
+      ensureNoRowBounds(rowBounds);
       checkResultHandler();
       handleRowValuesForNestedResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
     } else {
@@ -282,7 +281,7 @@ public class MybatisResultSetHandler {
     }
   }
 
-  private void ensureNoRowBounds() {
+  private void ensureNoRowBounds(RowBounds rowBounds) {
     if (configuration.isSafeRowBoundsEnabled() && rowBounds != null && (
         rowBounds.getLimit() < RowBounds.NO_ROW_LIMIT
             || rowBounds.getOffset() > RowBounds.NO_ROW_OFFSET)) {

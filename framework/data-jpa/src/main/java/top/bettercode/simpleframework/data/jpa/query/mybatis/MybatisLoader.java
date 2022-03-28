@@ -18,8 +18,7 @@ import org.hibernate.transform.ResultTransformer;
  */
 public class MybatisLoader extends CustomLoader {
 
-  public MybatisLoader(CustomQuery customQuery,
-      SessionFactoryImplementor factory) {
+  public MybatisLoader(CustomQuery customQuery, SessionFactoryImplementor factory) {
     super(customQuery, factory);
   }
 
@@ -55,7 +54,7 @@ public class MybatisLoader extends CustomLoader {
       List<AfterLoadAction> afterLoadActions) throws SQLException {
     ResultTransformer resultTransformer = queryParameters.getResultTransformer();
     if (resultTransformer instanceof MybatisResultTransformer) {
-      return ((MybatisResultTransformer) resultTransformer).transformList(rs);
+      return ((MybatisResultTransformer) resultTransformer).transformList(rs, maxRows);
     } else {
       return super.processResultSet(rs, queryParameters, session, returnProxies,
           forcedResultTransformer, maxRows, afterLoadActions);
