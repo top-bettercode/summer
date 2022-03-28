@@ -49,12 +49,12 @@ class Mybatis : Generator() {
                 id = "context"
                 commentGeneratorConfiguration = this@Mybatis.commentGeneratorConfiguration
                 javaTypeResolverConfiguration = this@Mybatis.javaTypeResolverConfiguration
-                jdbcConnectionConfiguration = this@Mybatis.jdbcConnectionConfiguration
+                setJdbcConnectionConfiguration( this@Mybatis.jdbcConnectionConfiguration)
                 javaModelGeneratorConfiguration = this@Mybatis.javaModelGeneratorConfiguration
                 javaClientGeneratorConfiguration = this@Mybatis.javaClientGeneratorConfiguration
                 sqlMapGeneratorConfiguration = this@Mybatis.sqlMapGeneratorConfiguration
 
-                tableConfigurations.add(tableConfiguration)
+                addTableConfiguration(tableConfiguration)
             })
         }
     }

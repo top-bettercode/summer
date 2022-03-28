@@ -59,9 +59,9 @@ object Util {
             return this
         }
         return if (prettyPrint) {
-            Util.objectMapper.enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(this)
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(this)
         } else {
-            Util.objectMapper.disable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(this)
+            objectMapper.disable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(this)
         }
     }
 
@@ -71,7 +71,7 @@ object Util {
                 val
                         collectionType = TypeFactory.defaultInstance()
                     .constructCollectionType(LinkedHashSet::class.java, clazz)
-                val set = Util.yamlMapper.readValue<LinkedHashSet<T>>(this, collectionType)
+                val set = yamlMapper.readValue<LinkedHashSet<T>>(this, collectionType)
                     .filterNot { it == null }
                 LinkedHashSet(set)
             } catch (e: Exception) {
@@ -150,10 +150,10 @@ object Util {
                 this
             } else {
                 try {
-                    Util.objectMapper.readValue(this, Map::class.java)
+                    objectMapper.readValue(this, Map::class.java)
                 } catch (ignore: Exception) {
                     try {
-                        Util.objectMapper.readValue(this, List::class.java).convert(unwrapped)
+                        objectMapper.readValue(this, List::class.java).convert(unwrapped)
                     } catch (e: Exception) {
                         return this
                     }
@@ -167,7 +167,7 @@ object Util {
         value == null || (value is Collection<*> && value.isEmpty()) || (value is Array<*> && value.isEmpty())
 
     internal fun File.readCollections(): LinkedHashSet<DocCollection> {
-        return if (exists() && length() > 0) Util.yamlMapper.readValue(
+        return if (exists() && length() > 0) yamlMapper.readValue(
             this.inputStream(),
             DocCollections::class.java
         ).mapTo(linkedSetOf()) { (k, v) ->
@@ -188,13 +188,13 @@ object Util {
     fun MutableMap<String, Int>.pyname(name: String): String {
         var pyname =
             PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE)
-                .toLowerCase(Locale.getDefault())
+                .lowercase(Locale.getDefault())
                 .replace("[^\\x00-\\xff]|[()\\[\\]{}|/]|\\s*|\t|\r|\n".toRegex(), "")
         val no = this[pyname]
         if (no != null) {
             val i = no + 1
             this[pyname] = i
-            pyname += "_${RandomUtil.nextString(2).toLowerCase(Locale.getDefault())}_$i"
+            pyname += "_${RandomUtil.nextString(2).lowercase(Locale.getDefault())}_$i"
         } else
             this[pyname] = 0
         return pyname

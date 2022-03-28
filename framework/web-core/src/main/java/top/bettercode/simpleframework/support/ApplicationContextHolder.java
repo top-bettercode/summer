@@ -5,6 +5,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 /**
  * @author Peter Wu
@@ -57,5 +59,8 @@ public class ApplicationContextHolder implements ApplicationContextAware {
         : applicationContext.getEnvironment().getProperty(key, targetType, defaultValue);
   }
 
+  public static ConversionService getConversionService() {
+    return applicationContext == null ? new DefaultConversionService() : applicationContext.getBean(ConversionService.class);
+  }
 
 }

@@ -7,7 +7,7 @@ import ProjectUtil.needDoc
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 
 /**
@@ -33,13 +33,13 @@ class ProjectPlugin : Plugin<Project> {
                     it.inheritOutputDirs = false
                     it.isDownloadJavadoc = false
                     it.isDownloadSources = true
-                    val convention = subProject.convention.getPlugin(
-                        JavaPluginConvention::class.java
+                    val convention = subProject.extensions.getByType(
+                        JavaPluginExtension::class.java
                     )
                     it.outputDir = convention.sourceSets
-                        .getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.outputDir
+                        .getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.classesDirectory.get().asFile
                     it.testOutputDir = convention.sourceSets
-                        .getByName(SourceSet.TEST_SOURCE_SET_NAME).java.outputDir
+                        .getByName(SourceSet.TEST_SOURCE_SET_NAME).java.classesDirectory.get().asFile
                 }
             }
 

@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -32,6 +33,7 @@ import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.repository.query.EscapeCharacter;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -232,28 +234,32 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Override
   public int delete(Specification<T> spec) {
     if (softDelete.support()) {
-      CriteriaBuilder builder = em.getCriteriaBuilder();
-      Class<T> domainClass = getDomainClass();
-      CriteriaUpdate<T> criteriaUpdate = builder.createCriteriaUpdate(domainClass);
-      Root<T> root = criteriaUpdate.from(domainClass);
-      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
-      Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
-      if (predicate != null) {
-        criteriaUpdate.where(predicate);
-      }
-      criteriaUpdate.set(root.get(softDelete.getPropertyName()), deleted);
-      int affected = em.createQuery(criteriaUpdate).executeUpdate();
-      if (sqlLog.isDebugEnabled()) {
-        sqlLog.debug("{} row affected", affected);
-      }
-      em.flush();
-      return affected;
+      return softDelete(spec);
     } else {
-      return doDelete(spec);
+      return hardDelete(spec);
     }
   }
 
-  private int doDelete(Specification<T> spec) {
+  private int softDelete(Specification<T> spec) {
+    CriteriaBuilder builder = em.getCriteriaBuilder();
+    Class<T> domainClass = getDomainClass();
+    CriteriaUpdate<T> criteriaUpdate = builder.createCriteriaUpdate(domainClass);
+    Root<T> root = criteriaUpdate.from(domainClass);
+    spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+    Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
+    if (predicate != null) {
+      criteriaUpdate.where(predicate);
+    }
+    criteriaUpdate.set(root.get(softDelete.getPropertyName()), deleted);
+    int affected = em.createQuery(criteriaUpdate).executeUpdate();
+    if (sqlLog.isDebugEnabled()) {
+      sqlLog.debug("{} row affected", affected);
+    }
+    em.flush();
+    return affected;
+  }
+
+  private int hardDelete(Specification<T> spec) {
     CriteriaBuilder builder = em.getCriteriaBuilder();
     Class<T> domainClass = getDomainClass();
 
@@ -275,14 +281,24 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Transactional
   @Override
-  public int deleteAllById(Iterable<ID> ids) {
-    return delete((root, query, builder) ->
+  public void deleteAllById(Iterable<? extends ID> ids) {
+    delete((root, query, builder) ->
         root.get(entityInformation.getIdAttribute()).in(toCollection(ids)));
+  }
+
+  @Override
+  public void deleteAllByIdInBatch(Iterable<ID> ids) {
+    if (softDelete.support()) {
+      softDelete((root, query, builder) ->
+          root.get(entityInformation.getIdAttribute()).in(toCollection(ids)));
+    } else {
+      super.deleteAllByIdInBatch(ids);
+    }
   }
 
   @Transactional
   @Override
-  public void deleteInBatch(Iterable<T> entities) {
+  public void deleteAllInBatch(Iterable<T> entities) {
     if (softDelete.support()) {
       Assert.notNull(entities, "The given Iterable of entities not be null!");
       if (!entities.iterator().hasNext()) {
@@ -331,7 +347,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         }
       }
     } else {
-      super.deleteInBatch(entities);
+      super.deleteAllInBatch(entities);
     }
   }
 
@@ -372,15 +388,22 @@ public class SimpleJpaExtRepository<T, ID> extends
     return super.findById(id);
   }
 
+  @SuppressWarnings("deprecation")
+  @Deprecated
   @Override
   public T getOne(ID id) {
+    return getById(id);
+  }
+
+  @Override
+  public T getById(ID id) {
     if (softDelete.support()) {
       Specification<T> spec = (root, query, builder) -> builder.equal(
           root.get(entityInformation.getIdAttribute()), id);
       spec = spec.and(notDeletedSpec);
       return super.findOne(spec).orElse(null);
     } else {
-      return super.getOne(id);
+      return super.getById(id);
     }
   }
 
@@ -596,6 +619,15 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
+  public <S extends T, R> R findBy(Example<S> example,
+      Function<FetchableFluentQuery<S>, R> queryFunction) {
+    if (softDelete.support()) {
+      softDelete.setUnSoftDeleted(example.getProbe());
+    }
+    return super.findBy(example, queryFunction);
+  }
+
+  @Override
   public <S extends T> long count(Example<S> example) {
     if (softDelete.support()) {
       softDelete.setUnSoftDeleted(example.getProbe());
@@ -734,7 +766,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       Specification<T> spec = (root, query, builder) ->
           root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
       spec = spec.and(deletedSpec);
-      doDelete(spec);
+      hardDelete(spec);
     } else {
       if (sqlLog.isDebugEnabled()) {
         sqlLog.debug("{} rows affected", 0);
@@ -747,7 +779,7 @@ public class SimpleJpaExtRepository<T, ID> extends
   public void deleteFromRecycleBin(Specification<T> spec) {
     if (softDelete.support()) {
       spec = spec == null ? deletedSpec : spec.and(deletedSpec);
-      doDelete(spec);
+      hardDelete(spec);
     } else {
       if (sqlLog.isDebugEnabled()) {
         sqlLog.debug("{} rows affected", 0);

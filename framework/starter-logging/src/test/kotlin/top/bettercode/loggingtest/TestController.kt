@@ -50,8 +50,8 @@ class TestController {
 //        log.error("日志错误", RuntimeException("abc"))
 //        log.error("日志错误", RuntimeException("abc"))
 //        Thread.sleep(3*1000)
-//        throw RuntimeException("abc")
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail")
+        throw RuntimeException("abc")
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail")
     }
 
     @RequestLogging(encryptHeaders = ["token"], encryptParameters = ["password"])

@@ -18,7 +18,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
     companion object {
         fun anchor(msg: String): String =
             msg.substringBefore(" ---").split(' ').filter { it.isNotBlank() }.joinToString("-")
-                .toLowerCase()
+                .lowercase(Locale.getDefault())
     }
 
     init {
@@ -60,7 +60,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
             odd = false
         }
 
-        val level = event.level.toString().toLowerCase(Locale.getDefault())
+        val level = event.level.toString().lowercase(Locale.getDefault())
 
         buf.append(LINE_SEPARATOR)
         buf.append("<tr class=\"")

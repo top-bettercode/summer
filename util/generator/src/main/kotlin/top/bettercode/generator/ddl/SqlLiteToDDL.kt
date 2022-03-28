@@ -39,12 +39,12 @@ object SqlLiteToDDL : ToDDL() {
 
     override fun appendTable(table: Table, pw: Writer) {
         val tableName = table.tableName
-        pw.appendln("$commentPrefix $tableName")
-        pw.appendln("DROP TABLE IF EXISTS $quote$tableName$quote;")
-        pw.appendln("CREATE TABLE $quote$tableName$quote ( -- '${table.remarks}'")
+        pw.appendLine("$commentPrefix $tableName")
+        pw.appendLine("DROP TABLE IF EXISTS $quote$tableName$quote;")
+        pw.appendLine("CREATE TABLE $quote$tableName$quote ( -- '${table.remarks}'")
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
-            pw.appendln(
+            pw.appendLine(
                 "  ${
                     columnDef(
                         column,
@@ -54,10 +54,10 @@ object SqlLiteToDDL : ToDDL() {
             )
         }
 
-        pw.appendln(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""};")
+        pw.appendLine(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""};")
 
         appendIndexes(table, pw, quote)
 
-        pw.appendln()
+        pw.appendLine()
     }
 }

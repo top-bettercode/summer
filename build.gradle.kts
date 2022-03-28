@@ -18,8 +18,8 @@ allprojects {
             inheritOutputDirs = false
             isDownloadJavadoc = false
             isDownloadSources = true
-            outputDir = the<SourceSetContainer>()["main"].java.outputDir
-            testOutputDir = the<SourceSetContainer>()["test"].java.outputDir
+            outputDir = the<SourceSetContainer>()["main"].java.classesDirectory.get().asFile
+            testOutputDir = the<SourceSetContainer>()["test"].java.classesDirectory.get().asFile
         }
     }
 
@@ -73,36 +73,38 @@ allprojects {
             dependency("top.bettercode.wechat:weixin-app:0.9.7")
 
             dependency("commons-codec:commons-codec:1.15")
-            dependency("org.json:json:20211205")
+            dependency("org.json:json:20220320")
             dependency("org.javassist:javassist:3.28.0-GA")
-            dependency("com.google.guava:guava:31.0.1-jre")
+            dependency("com.google.guava:guava:31.1-jre")
             dependency("org.dom4j:dom4j:2.1.3")
             dependency("org.jsoup:jsoup:1.14.3")
             dependency("org.atteo:evo-inflector:1.3")
             dependency("com.github.axet:kaptcha:0.0.9")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
-            dependency("net.sourceforge.plantuml:plantuml:1.2021.8")
+            dependency("net.sourceforge.plantuml:plantuml:1.2022.2")
             dependency("com.github.jsqlparser:jsqlparser:4.3")
 
-            dependency("mysql:mysql-connector-java:8.0.27")
+            dependency("mysql:mysql-connector-java:8.0.28")
             dependency("com.oracle.database.jdbc:ojdbc8:21.5.0.0")
 
-            dependency("org.asciidoctor:asciidoctorj:2.5.2")
+            dependency("org.asciidoctor:asciidoctorj:2.5.3")
             dependency("org.asciidoctor:asciidoctorj-diagram:2.2.1")
-            dependency("org.asciidoctor:asciidoctorj-pdf:1.6.0")
+            dependency("org.asciidoctor:asciidoctorj-pdf:1.6.2")
 
             dependency("net.logstash.logback:logstash-logback-encoder:7.0.1")
             dependency("javax.mail:mail:1.4.7")
 
             dependency("org.dhatim:fastexcel:0.12.12")
-            dependency("org.dhatim:fastexcel-reader:0.12.12")
+            dependency("org.dhatim:fastexcel-reader:0.12.14")
 
             dependency("org.mybatis:mybatis:3.5.9")
-            dependency("org.mybatis:mybatis-spring:2.0.6")
+            dependency("org.mybatis:mybatis-spring:2.0.7")
 
-            dependency("org.mybatis.generator:mybatis-generator-core:1.4.0")
+            dependency("org.mybatis.generator:mybatis-generator-core:1.4.1")
 
             dependency("org.bouncycastle:bcprov-jdk15:1.46")
+
+            dependency("xerces:xercesImpl:2.12.2")
         }
     }
 
@@ -129,7 +131,7 @@ allprojects {
         withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
             kotlinOptions {
                 jvmTarget = "1.8"
-                freeCompilerArgs = listOf("-Xjvm-default=enable")
+                freeCompilerArgs = listOf("-Xjvm-default=all")
             }
         }
     }

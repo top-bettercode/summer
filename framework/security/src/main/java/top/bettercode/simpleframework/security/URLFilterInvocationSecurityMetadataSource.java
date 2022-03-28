@@ -19,6 +19,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.util.pattern.PathPattern;
 import top.bettercode.simpleframework.AnnotatedUtils;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 
@@ -45,7 +46,8 @@ public class URLFilterInvocationSecurityMetadataSource implements
     handlerMapping.getHandlerMethods().forEach((mappingInfo, handlerMethod) -> {
       //非匿名权限
       if (!AnnotatedUtils.hasAnnotation(handlerMethod, Anonymous.class)) {
-        for (String pattern : mappingInfo.getPatternsCondition().getPatterns()) {
+        for (PathPattern pathPattern : mappingInfo.getPathPatternsCondition().getPatterns()) {
+          String pattern = pathPattern.getPatternString();
           if (!securityProperties.ignored(pattern)) {
             Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
             ConfigAuthority authority = AnnotatedUtils

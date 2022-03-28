@@ -196,13 +196,13 @@ public class SimpleJpaExtRepositoryTest {
 
   @Test
   public void deleteInBatch() {
-    repository.deleteInBatch(batch);
+    repository.deleteAllInBatch(batch);
 
     List<User> recycleAll = repository.findAllFromRecycleBin();
     System.err.println(recycleAll);
     Assertions.assertEquals(2, recycleAll.size());
 
-    repository.deleteInBatch(Collections.emptyList());
+    repository.deleteAllInBatch(Collections.emptyList());
 
     recycleAll = repository.findAllFromRecycleBin();
     System.err.println(recycleAll);
@@ -277,9 +277,9 @@ public class SimpleJpaExtRepositoryTest {
 
   @Test
   public void getById() {
-    User optionalUser = repository.getOne(carterId);
+    User optionalUser = repository.getById(carterId);
     Assertions.assertNotNull(optionalUser);
-    optionalUser = repository.getOne(daveId);
+    optionalUser = repository.getById(daveId);
     Assertions.assertNull(optionalUser);
   }
 
@@ -385,7 +385,7 @@ public class SimpleJpaExtRepositoryTest {
             .equal(root.get("firstName"), "Dave")));
   }
 
-  @SuppressWarnings({"deprecation", "rawtypes"})
+  @SuppressWarnings({"rawtypes"})
   @Test
   void nativeQuery() {
     Query query = repository.getEntityManager().createNativeQuery(

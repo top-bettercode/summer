@@ -2,6 +2,7 @@ import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelClass
+import java.util.*
 
 /**
  * @author Peter Wu
@@ -68,9 +69,10 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
                 } else if (primaryKey.idgenerator.isNotBlank()) {
                     val generatorStrategy =
-                        (setting(primaryKey.idgenerator.toLowerCase()) as? String) ?: "uuid2"
+                        (setting(primaryKey.idgenerator.lowercase(Locale.getDefault())) as? String) ?: "uuid2"
                     val generator = generatorStrategy.substringAfterLast(".")
-                        .substringBeforeLast("Generator").capitalize()
+                                        .substringBeforeLast("Generator")
+                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
                     annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\")")
                 } else if (primaryKey.sequence.isNotBlank()) {
@@ -99,7 +101,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
         }
         //primaryKey getter
-        method("get${primaryKeyName.capitalize()}", primaryKeyType) {
+        method("get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", primaryKeyType) {
             javadoc {
                 +"/**"
                 +" * ${remarks}主键"
@@ -109,7 +111,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         //primaryKey setter
         method(
-            "set${primaryKeyName.capitalize()}",
+            "set${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
             entityType,
             Parameter(primaryKeyName, primaryKeyType)
         ) {
@@ -165,7 +167,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             //getter
-            method("get${it.javaName.capitalize()}", it.javaType) {
+            method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
                 if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"
@@ -176,7 +178,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
             //setter
             method(
-                "set${it.javaName.capitalize()}",
+                "set${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
                 entityType,
                 Parameter(it.javaName, it.javaType)
             ) {
@@ -205,7 +207,13 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return false;"
             +"}"
             +"$className that = (${className}) o;"
-            +"if (${primaryKeyName} != that.get${primaryKeyName.capitalize()}()) {"
+            +"if (${primaryKeyName} != that.get${
+                primaryKeyName.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
+            }()) {"
             +"return false;"
             +"}"
 

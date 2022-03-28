@@ -1,8 +1,10 @@
 package top.bettercode.gradle.profile
 
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import top.bettercode.gradle.profile.ProfileExtension.Companion.profileFiles
@@ -45,16 +47,18 @@ class ProfilePlugin : Plugin<Project> {
             val k = t.toString()
             hashtable[k] = u.toString()
         }
-        project.tasks.getByName("processTestResources") {
+        project.tasks.getByName(JavaPlugin.PROCESS_TEST_RESOURCES_TASK_NAME) {
             it as ProcessResources
             doFilter(it, project, hashtable)
             it.mustRunAfter("clean")
         }
 
-        project.tasks.getByName("processResources") {
-            it.doFirst {
-                println("$profilesActiveName:${project.profilesActive}")
-            }
+        project.tasks.getByName(JavaPlugin.PROCESS_RESOURCES_TASK_NAME) {
+            it.doFirst(object : Action<Task> {
+                override fun execute(it: Task) {
+                    println("$profilesActiveName:${project.profilesActive}")
+                }
+            })
             it as ProcessResources
             doFilter(it, project, hashtable)
             it.mustRunAfter("clean")
@@ -65,11 +69,15 @@ class ProfilePlugin : Plugin<Project> {
         it.inputs.property(profilesActiveName, project.profilesActive)
         it.inputs.files(*project.profileFiles)
         val profile = project.extensions.getByType(ProfileExtension::class.java)
-        it.doFirst {
-            if (profile.extraVersion)
-                project.version =
-                    (if ("unspecified" == project.version) project.rootProject.version else project.version).toString() + "." + project.profilesActive.toUpperCase()
-        }
+        it.doFirst(object : Action<Task> {
+            override fun execute(it: Task) {
+                if (profile.extraVersion)
+                    project.version =
+                        (if ("unspecified" == project.version) project.rootProject.version else project.version).toString() + "." + project.profilesActive.uppercase(
+                            Locale.getDefault()
+                        )
+            }
+        })
 
         it.filesMatching(profile.matchFiles) {
             it.filter(
@@ -86,11 +94,13 @@ class ProfilePlugin : Plugin<Project> {
                     f.exclude()
                 }
             }
-        it.doLast {
-            profile.closure.forEach { it(project, profile) }
-            profile.profileClosure.filter { project.profilesActive == it.key }.values.flatten()
-                .forEach { it(project, profile) }
-        }
+        it.doLast(object : Action<Task> {
+            override fun execute(it: Task) {
+                profile.closure.forEach { it(project, profile) }
+                profile.profileClosure.filter { project.profilesActive == it.key }.values.flatten()
+                    .forEach { it(project, profile) }
+            }
+        })
     }
 
 }

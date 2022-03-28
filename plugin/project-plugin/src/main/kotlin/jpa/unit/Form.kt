@@ -5,6 +5,7 @@ import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelClass
+import java.util.*
 
 /**
  * @author Peter Wu
@@ -28,7 +29,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         //constructor with entity
-        val entityName = entityType.shortName.decapitalize()
+        val entityName = entityType.shortName.replaceFirstChar { it.lowercase(Locale.getDefault()) }
         constructor(Parameter(entityName, entityType)) {
             +"this.entity = $entityName;"
         }
@@ -46,7 +47,10 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             //primaryKey getter
-            method("get${primaryKeyName.capitalize()}", primaryKeyType) {
+            method(
+                "get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                primaryKeyType
+            ) {
                 javadoc {
                     +"/**"
                     +" * ${remarks}主键"
@@ -58,7 +62,13 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 } else {
                     annotation("@javax.validation.constraints.NotNull(groups = UpdateConstraint.class)")
                 }
-                +"return this.entity.get${primaryKeyName.capitalize()}();"
+                +"return this.entity.get${
+                    primaryKeyName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                }();"
             }
 
             otherColumns.forEach {
@@ -67,7 +77,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             //primaryKey setter
-            method("set${primaryKeyName.capitalize()}") {
+            method("set${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
                 javadoc {
                     +"/**"
                     +" * ${remarks}主键"
@@ -77,7 +87,13 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     type = primaryKeyType
                     name = primaryKeyName
                 }
-                +"this.entity.set${primaryKeyName.capitalize()}(${primaryKeyName});"
+                +"this.entity.set${
+                    primaryKeyName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                }(${primaryKeyName});"
             }
             otherColumns.forEach {
                 //setter
@@ -101,7 +117,7 @@ private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
     clazz.apply {
         //getter
         if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.isSoftDelete)
-            method("get${it.javaName.capitalize()}", it.javaType) {
+            method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
                 if (it.columnSize > 0 && it.javaType == JavaType.stringInstance) {
                     annotation("@org.hibernate.validator.constraints.Length(max = ${it.columnSize}, groups = Default.class)")
                 }
@@ -113,7 +129,13 @@ private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
                         annotation("@javax.validation.constraints.NotNull(groups = CreateConstraint.class)")
                     }
                 }
-                +"return this.entity.get${it.javaName.capitalize()}();"
+                +"return this.entity.get${
+                    it.javaName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                }();"
             }
     }
 }
@@ -122,12 +144,18 @@ private val setter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
     clazz.apply {
 
         if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.isSoftDelete)
-            method("set${it.javaName.capitalize()}") {
+            method("set${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
                 parameter {
                     type = it.javaType
                     name = it.javaName
                 }
-                +"this.entity.set${it.javaName.capitalize()}(${it.javaName});"
+                +"this.entity.set${
+                    it.javaName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                }(${it.javaName});"
             }
     }
 }

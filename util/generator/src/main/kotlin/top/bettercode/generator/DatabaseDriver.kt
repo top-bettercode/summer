@@ -143,7 +143,7 @@ enum class DatabaseDriver(
         override val urlPrefixes: Collection<String> = setOf("firebirdsql")
 
         override fun matchProductName(productName: String): Boolean {
-            return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH)
+            return super.matchProductName(productName) || productName.lowercase(Locale.ENGLISH)
                 .startsWith("firebird")
         }
     },
@@ -157,7 +157,7 @@ enum class DatabaseDriver(
     ) {
 
         override fun matchProductName(productName: String): Boolean {
-            return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH)
+            return super.matchProductName(productName) || productName.lowercase(Locale.ENGLISH)
                 .startsWith("db2/")
         }
     },
@@ -176,7 +176,7 @@ enum class DatabaseDriver(
         override val urlPrefixes: Collection<String> = setOf("as400")
 
         override fun matchProductName(productName: String): Boolean {
-            return super.matchProductName(productName) || productName.toLowerCase(Locale.ENGLISH)
+            return super.matchProductName(productName) || productName.lowercase(Locale.ENGLISH)
                 .contains("as/400")
         }
     },
@@ -203,11 +203,11 @@ enum class DatabaseDriver(
      * @return the identifier
      */
     open val id: String by lazy {
-        name.toLowerCase(Locale.ENGLISH)
+        name.lowercase(Locale.ENGLISH)
     }
 
     protected open val urlPrefixes: Collection<String> by lazy {
-        setOf(this.name.toLowerCase(Locale.ENGLISH))
+        setOf(this.name.lowercase(Locale.ENGLISH))
     }
 
     protected open fun matchProductName(productName: String): Boolean {
@@ -227,7 +227,7 @@ enum class DatabaseDriver(
                     throw IllegalArgumentException("URL must start with 'jdbc'")
                 }
                 val urlWithoutPrefix = url.substring("jdbc".length)
-                    .toLowerCase(Locale.ENGLISH)
+                    .lowercase(Locale.ENGLISH)
                 for (driver in values()) {
                     for (urlPrefix in driver.urlPrefixes) {
                         val prefix = ":$urlPrefix:"

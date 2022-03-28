@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Objects;
 import top.bettercode.simpleframework.web.resolver.Cent;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonDefault;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DataDicBean {
 
+  @JsonDefault("0")
   private BigDecimal number1;
   @JsonBigDecimal(scale = 3)
   private BigDecimal number2;

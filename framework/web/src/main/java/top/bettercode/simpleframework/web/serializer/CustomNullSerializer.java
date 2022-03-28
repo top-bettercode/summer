@@ -12,12 +12,9 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.StringUtils;
 import top.bettercode.simpleframework.config.JacksonExtProperties;
+import top.bettercode.simpleframework.support.ApplicationContextHolder;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonCode;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
@@ -28,14 +25,12 @@ import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 public class CustomNullSerializer extends StdSerializer<Object> {
 
   private static final long serialVersionUID = 1L;
-  private final Logger log = LoggerFactory.getLogger(CustomNullSerializer.class);
   private final Class<?> type;
   private final String defaultValue;
   private final String extendedValue;
   private final JacksonExtProperties jacksonExtProperties;
   private final boolean isArray;
   private final BeanPropertyWriter writer;
-  private static final ConversionService CONVERSION_SERVICE = new DefaultConversionService();
 
   public CustomNullSerializer(BeanPropertyWriter writer, String defaultValue,
       String extendedValue, JacksonExtProperties jacksonExtProperties) {
@@ -76,7 +71,7 @@ public class CustomNullSerializer extends StdSerializer<Object> {
           gen.writeString(defaultValue);
           return;
         }
-        Object val = CONVERSION_SERVICE.convert(defaultValue, type);
+        Object val = ApplicationContextHolder.getConversionService().convert(defaultValue, type);
         if (jsonBigDecimal != null) {
           new BigDecimalSerializer(jsonBigDecimal.scale(), jsonBigDecimal.roundingMode(),
               jsonBigDecimal.toPlainString(),

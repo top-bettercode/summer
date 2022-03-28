@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -20,7 +18,6 @@ import org.springframework.util.ReflectionUtils;
  */
 public class EmbeddedIdConverter {
 
-  private static final ConversionService CONVERSION_SERVICE = new DefaultConversionService();
   private static final ConcurrentMap<Class<?>, List<PropertyDescriptor>> cache = new ConcurrentHashMap<>();
   public static String DELIMITER = ",";
 
@@ -31,7 +28,7 @@ public class EmbeddedIdConverter {
   public static <T> String toString(T embeddedId, String delimiter) {
     Class<?> clazz = embeddedId.getClass();
     return getPropertyDescriptors(clazz).stream()
-        .map(o -> CONVERSION_SERVICE.convert(
+        .map(o -> ApplicationContextHolder.getConversionService().convert(
             ReflectionUtils.invokeMethod(o.getReadMethod(), embeddedId), String.class))
         .collect(Collectors.joining(delimiter));
   }
@@ -56,7 +53,7 @@ public class EmbeddedIdConverter {
       PropertyDescriptor descriptor = descriptors.get(i);
       ReflectionUtils.invokeMethod(
           descriptor.getWriteMethod(), result,
-          CONVERSION_SERVICE.convert(values[i], descriptor.getPropertyType()));
+          ApplicationContextHolder.getConversionService().convert(values[i], descriptor.getPropertyType()));
     }
     return result;
   }

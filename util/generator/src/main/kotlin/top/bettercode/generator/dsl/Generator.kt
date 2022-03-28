@@ -9,6 +9,7 @@ import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.PrimitiveTypeWrapper
 import top.bettercode.generator.dom.java.element.*
 import top.bettercode.generator.dom.unit.*
+import java.util.*
 
 /**
  * 模板基类
@@ -86,7 +87,10 @@ open class Generator {
                 )
             ) table.className(ext) + projectName.substring(
                 0, if (projectName.length > 5) 5 else projectName.length
-            ).capitalize() else table.className(ext)
+            )
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } else table.className(
+                ext
+            )
 
 
     val entityName
@@ -96,7 +100,7 @@ open class Generator {
             )
 
 
-    val projectEntityName get() = projectClassName.decapitalize()
+    val projectEntityName get() = projectClassName.replaceFirstChar { it.lowercase(Locale.getDefault()) }
 
     /**
      * 表名
@@ -224,7 +228,7 @@ open class Generator {
     fun modulePackage(name: String): String {
         val onePackage = enable("onePackage", true)
         return if (onePackage)
-            table.entityName(ext).toLowerCase()
+            table.entityName(ext).lowercase(Locale.getDefault())
         else when (name) {
             "Domain" -> "domain"
             "QueryDsl" -> "querydsl"
@@ -239,7 +243,7 @@ open class Generator {
             "Service" -> "service"
             "ServiceImpl" -> "service.impl"
             "Repository" -> "repository"
-            else -> table.entityName(ext).toLowerCase()
+            else -> table.entityName(ext).lowercase(Locale.getDefault())
         }
     }
 
@@ -391,7 +395,11 @@ open class Generator {
                         columnName,
                         true
                     )
-                }) javaName else (className + javaName.capitalize()).decapitalize()
+                }) javaName else (className + javaName.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.getDefault()
+                            ) else it.toString()
+                        }).replaceFirstChar { it.lowercase(Locale.getDefault()) }
             val prettyRemarks = prettyRemarks
             val codeTypeName = prettyRemarks.substringBefore('(')
 

@@ -181,7 +181,7 @@ class DatabaseMetaData(
                         }
                         val type = getString(2)
                         val (columnSize, decimalDigits) = PumlConverter.parseType(type)
-                        find.typeName = type.substringBefore('(').toUpperCase(Locale.getDefault())
+                        find.typeName = type.substringBefore('(').uppercase(Locale.getDefault())
                         find.columnSize = columnSize
                         find.decimalDigits = decimalDigits
                     }

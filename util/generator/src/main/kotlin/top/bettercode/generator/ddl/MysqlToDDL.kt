@@ -20,9 +20,9 @@ object MysqlToDDL : ToDDL() {
             val oldTableNames = oldTables.map { it.tableName }
             if (extension.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).forEach {
-                    out.appendln("$commentPrefix DROP $it")
-                    out.appendln("DROP TABLE IF EXISTS $quote$it$quote;")
-                    out.appendln()
+                    out.appendLine("$commentPrefix DROP $it")
+                    out.appendLine("DROP TABLE IF EXISTS $quote$it$quote;")
+                    out.appendLine()
                 }
             val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
@@ -97,9 +97,9 @@ object MysqlToDDL : ToDDL() {
                         if (extension.datasources[module]?.queryIndex == true)
                             updateIndexes(oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
-                            out.appendln("$commentPrefix $tableName")
-                            lines.forEach { out.appendln(it) }
-                            out.appendln()
+                            out.appendLine("$commentPrefix $tableName")
+                            lines.forEach { out.appendLine(it) }
+                            out.appendLine()
                         }
                     }
                 }
@@ -118,13 +118,13 @@ object MysqlToDDL : ToDDL() {
 
     override fun appendTable(table: Table, pw: Writer) {
         val tableName = table.tableName
-        pw.appendln("$commentPrefix $tableName")
-        pw.appendln("DROP TABLE IF EXISTS $quote$tableName$quote;")
-        pw.appendln("CREATE TABLE $quote$tableName$quote (")
+        pw.appendLine("$commentPrefix $tableName")
+        pw.appendLine("DROP TABLE IF EXISTS $quote$tableName$quote;")
+        pw.appendLine("CREATE TABLE $quote$tableName$quote (")
         val hasPrimary = table.primaryKeyNames.isNotEmpty()
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
-            pw.appendln(
+            pw.appendLine(
                 "  ${
                     columnDef(
                         column,
@@ -135,10 +135,10 @@ object MysqlToDDL : ToDDL() {
         }
 
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
-        pw.appendln(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${table.remarks}';")
+        pw.appendLine(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${table.remarks}';")
 
         appendIndexes(table, pw, quote)
 
-        pw.appendln()
+        pw.appendLine()
     }
 }

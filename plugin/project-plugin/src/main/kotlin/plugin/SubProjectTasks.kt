@@ -3,12 +3,12 @@ package plugin
 import ProjectUtil.isBoot
 import ProjectUtil.needDoc
 import org.gradle.api.Project
-import org.gradle.api.plugins.ApplicationPluginConvention
-import org.gradle.api.tasks.application.CreateStartScripts
+import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
+import org.gradle.jvm.application.tasks.CreateStartScripts
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 import top.bettercode.gradle.dist.DistExtension.Companion.jvmArgs
@@ -25,7 +25,7 @@ object SubProjectTasks {
             val jvmArgs = project.jvmArgs
 
             val application =
-                project.convention.findPlugin(ApplicationPluginConvention::class.java)
+                project.extensions.findByType(JavaApplication::class.java)
             if (application != null) {
                 application.applicationDefaultJvmArgs += jvmArgs
                 application.applicationDefaultJvmArgs =
@@ -52,20 +52,20 @@ object SubProjectTasks {
 
             if (project.isBoot) {
                 create("resolveMainClass") {
-                    it.mustRunAfter("classes")
+                    it.dependsOn("bootJarMainClassName")
                     it.doLast {
                         project.tasks.findByName("startScripts").apply {
                             this as CreateStartScripts
-                            if (mainClassName.isNullOrBlank()) {
+                            if (!mainClass.isPresent) {
                                 val bootJar = project.tasks.getByName("bootJar")
                                 bootJar as BootJar
-                                mainClassName = bootJar.mainClassName
+                                mainClass.set(bootJar.mainClass)
                             }
                         }
                     }
                 }
-                named("startScripts", CreateStartScripts::class.java) { scripts ->
-                    scripts.dependsOn("resolveMainClass")
+                named("startScripts") { task ->
+                    task.dependsOn("resolveMainClass")
                 }
                 named("bootRun", BootRun::class.java) {
                     System.getProperties().forEach { t, u ->
@@ -83,9 +83,9 @@ object SubProjectTasks {
                     it.enabled = true
                     it.archiveClassifier.convention("")
                 }
-//                named("bootRunMainClassName") { it.enabled = false }
+                named("bootRunMainClassName") { it.enabled = false }
                 named("bootRun") { it.enabled = false }
-//                named("bootJarMainClassName") { it.enabled = false }
+                named("bootJarMainClassName") { it.enabled = false }
                 named("bootJar") { it.enabled = false }
                 named("bootBuildImage") { it.enabled = false }
             }
@@ -94,6 +94,8 @@ object SubProjectTasks {
                 named("asciidoc") { it.enabled = false }
                 named("htmldoc") { it.enabled = false }
                 named("postman") { it.enabled = false }
+            } else {
+                named("bootJarMainClassName") { it.dependsOn("asciidoc", "htmldoc", "postman") }
             }
         }
     }

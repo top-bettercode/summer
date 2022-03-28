@@ -19,7 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @ConditionalOnWebApplication
 @Conditional(ApiSignConfiguration.ApiSignCondition::class)
 @EnableConfigurationProperties(ApiSignProperties::class)
-class ApiSignConfiguration : WebMvcConfigurer {
+class ApiSignConfiguration {
 
     @Autowired
     lateinit var properties: ApiSignProperties
@@ -33,18 +33,26 @@ class ApiSignConfiguration : WebMvcConfigurer {
         return ApiSignAlgorithm(properties)
     }
 
-    @Autowired
-    lateinit var apiSignAlgorithm: ApiSignAlgorithm
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnWebApplication
+    @Conditional(ApiSignCondition::class)
+    class ApiSignWebMvcConfigurer : WebMvcConfigurer {
+        @Autowired
+        lateinit var apiSignAlgorithm: ApiSignAlgorithm
 
-
-    override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(ApiSignHandlerInterceptor(apiSignAlgorithm))
+        override fun addInterceptors(registry: InterceptorRegistry) {
+            registry.addInterceptor(ApiSignHandlerInterceptor(apiSignAlgorithm))
+        }
     }
 
     internal class ApiSignCondition : Condition {
 
         override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
-            return (StringUtils.hasText(context.environment.getProperty("summer.sign.client-secret")) || StringUtils.hasText(context.environment.getProperty("summer.sign.clientSecret"))) && (StringUtils.hasText(context.environment.getProperty("summer.sign.handler-type-prefix")) || StringUtils.hasText(context.environment.getProperty("summer.sign.handlerTypePrefix")))
+            return (StringUtils.hasText(context.environment.getProperty("summer.sign.client-secret")) || StringUtils.hasText(
+                context.environment.getProperty("summer.sign.clientSecret")
+            )) && (StringUtils.hasText(context.environment.getProperty("summer.sign.handler-type-prefix")) || StringUtils.hasText(
+                context.environment.getProperty("summer.sign.handlerTypePrefix")
+            ))
         }
     }
 }

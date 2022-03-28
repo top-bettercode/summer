@@ -1,5 +1,6 @@
 package top.bettercode.summer.autodoc.gradle.plugin
 
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -75,44 +76,54 @@ class AutodocPlugin : Plugin<Project> {
             task.dependsOn("processResources")
             task.mustRunAfter("clean", "processResources")
             configInputOutput(task, group, autodoc, project)
-            task.doLast {
-                val extension = project.extensions.findByType(AutodocExtension::class.java)!!
-                extension.properties = project.profileProperties
-                AsciidocGenerator.asciidoc(extension)
-            }
+            task.doLast(object : Action<Task> {
+                override fun execute(it: Task) {
+                    val extension = project.extensions.findByType(AutodocExtension::class.java)!!
+                    extension.properties = project.profileProperties
+                    AsciidocGenerator.asciidoc(extension)
+                }
+            })
         }
         project.tasks.create("htmldoc") { task ->
             task.dependsOn("asciidoc")
             configInputOutput(task, group, autodoc, project)
-            task.doLast {
-                AutodocPlugin::class.java.getResourceAsStream("/favicon.ico")?.copyTo(File(
-                    (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
-                    "/META-INF/resources/favicon.ico"
-                ).apply { parentFile.mkdirs() }.outputStream())
-                AsciidocGenerator.html(
-                    project.extensions.findByType(
-                        AutodocExtension::class.java
-                    )!!
-                )
-            }
+            task.doLast(object : Action<Task> {
+                override fun execute(it: Task) {
+                    AutodocPlugin::class.java.getResourceAsStream("/favicon.ico")?.copyTo(
+                        File(
+                            (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
+                            "/META-INF/resources/favicon.ico"
+                        ).apply { parentFile.mkdirs() }.outputStream()
+                    )
+                    AsciidocGenerator.html(
+                        project.extensions.findByType(
+                            AutodocExtension::class.java
+                        )!!
+                    )
+                }
+            })
         }
         project.tasks.create("pdfdoc") { task ->
             task.dependsOn("asciidoc")
             configInputOutput(task, group, autodoc, project)
-            task.doLast {
-                AsciidocGenerator.pdf(
-                    project.extensions.findByType(
-                        AutodocExtension::class.java
-                    )!!
-                )
-            }
+            task.doLast(object : Action<Task> {
+                override fun execute(it: Task) {
+                    AsciidocGenerator.pdf(
+                        project.extensions.findByType(
+                            AutodocExtension::class.java
+                        )!!
+                    )
+                }
+            })
         }
         project.tasks.create("postman") { task ->
             task.mustRunAfter("clean", "processResources")
             configInputOutput(task, group, autodoc, project)
-            task.doLast {
-                PostmanGenerator.postman(project.extensions.findByType(AutodocExtension::class.java)!!)
-            }
+            task.doLast(object : Action<Task> {
+                override fun execute(it: Task) {
+                    PostmanGenerator.postman(project.extensions.findByType(AutodocExtension::class.java)!!)
+                }
+            })
         }
         project.tasks.create("setDefaultDesc") { task ->
             task.group = group

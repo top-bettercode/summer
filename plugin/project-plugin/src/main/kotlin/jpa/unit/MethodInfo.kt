@@ -3,6 +3,7 @@ package jpa.unit
 import ProjectGenerator
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.element.Interface
+import java.util.*
 
 /**
  * @author Peter Wu
@@ -16,7 +17,7 @@ val methodInfo: ProjectGenerator.(Interface) -> Unit = { unit ->
         }
         if (!isFullComposite) {
             //primaryKey getter
-            method("get${primaryKeyName.capitalize()}", primaryKeyType) {
+            method("get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", primaryKeyType) {
                 javadoc {
                     +"/**"
                     +" * ${remarks}主键"
@@ -40,7 +41,7 @@ val methodInfo: ProjectGenerator.(Interface) -> Unit = { unit ->
 
 private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, it ->
     interfaze.apply {
-        method("get${it.javaName.capitalize()}", it.javaType) {
+        method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
             if (it.remark.isNotBlank() || it.columnDef != null)
                 javadoc {
                     +"/**"
