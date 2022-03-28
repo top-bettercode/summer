@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.NestedIOException;
@@ -38,8 +37,7 @@ import top.bettercode.lang.util.ArrayUtil;
  * {@link EnableAutoConfiguration Auto-Configuration} for Mybatis.
  */
 @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({MybatisProperties.class})
-@ConditionalOnMissingBean(Configuration.class)
+@ConditionalOnMissingBean(MultiDatasourcesBeanDefinitionRegistryPostProcessor.class)
 public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   private final static Logger log = LoggerFactory.getLogger(JpaMybatisAutoConfiguration.class);
