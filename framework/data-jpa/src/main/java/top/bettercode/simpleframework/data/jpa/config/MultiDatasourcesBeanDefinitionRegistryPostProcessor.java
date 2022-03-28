@@ -92,7 +92,9 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
             });
         if (primary) {
           beanDefinitionBuilder.setPrimary(primary);
-          factory.removeBeanDefinition(dataSourceBeanName);
+          if (factory.containsBeanDefinition(dataSourceBeanName)) {
+            factory.removeBeanDefinition(dataSourceBeanName);
+          }
         }
         AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
         beanDefinition.setSynthetic(true);
@@ -141,7 +143,9 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
             });
         if (primary) {
           beanDefinitionBuilder.setPrimary(primary);
-          factory.removeBeanDefinition(entityManagerFactoryBeanName);
+          if (factory.containsBeanDefinition(entityManagerFactoryBeanName)) {
+            factory.removeBeanDefinition(entityManagerFactoryBeanName);
+          }
         }
         beanDefinitionBuilder.addDependsOn(dataSourceBeanName);
         beanDefinition = beanDefinitionBuilder.getBeanDefinition();
@@ -166,7 +170,9 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
             });
         if (primary) {
           beanDefinitionBuilder.setPrimary(primary);
-          factory.removeBeanDefinition(transactionManagerBeanName);
+          if (factory.containsBeanDefinition(transactionManagerBeanName)) {
+            factory.removeBeanDefinition(transactionManagerBeanName);
+          }
         }
         beanDefinitionBuilder.addDependsOn(entityManagerFactoryBeanName);
         beanDefinition = beanDefinitionBuilder.getBeanDefinition();
@@ -195,7 +201,9 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
         );
         if (primary) {
           beanDefinitionBuilder.setPrimary(primary);
-          factory.removeBeanDefinition(mybatisConfigurationRef);
+          if (factory.containsBeanDefinition(mybatisConfigurationRef)) {
+            factory.removeBeanDefinition(mybatisConfigurationRef);
+          }
         }
         beanDefinition = beanDefinitionBuilder.getBeanDefinition();
         beanDefinition.setSynthetic(true);
