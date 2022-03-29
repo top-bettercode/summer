@@ -18,6 +18,8 @@ import org.hibernate.transform.ResultTransformer;
  */
 public class MybatisLoader extends CustomLoader {
 
+  private boolean mybatisQuery;
+
   public MybatisLoader(CustomQuery customQuery, SessionFactoryImplementor factory) {
     super(customQuery, factory);
   }
@@ -25,7 +27,7 @@ public class MybatisLoader extends CustomLoader {
   @Override
   protected List<?> getResultList(List results, ResultTransformer resultTransformer)
       throws QueryException {
-    if (resultTransformer instanceof MybatisResultTransformer) {
+    if (mybatisQuery) {
       return results;
     } else {
       return super.getResultList(results, resultTransformer);
@@ -35,10 +37,10 @@ public class MybatisLoader extends CustomLoader {
   @Override
   public Object loadSingleRow(ResultSet resultSet, SharedSessionContractImplementor session,
       QueryParameters queryParameters, boolean returnProxies) throws HibernateException {
-    ResultTransformer resultTransformer = queryParameters.getResultTransformer();
-    if (resultTransformer instanceof MybatisResultTransformer) {
+    if (mybatisQuery) {
       try {
-        return ((MybatisResultTransformer) resultTransformer).transform(resultSet);
+        return ((MybatisResultTransformer) queryParameters.getResultTransformer()).transform(
+            resultSet);
       } catch (SQLException e) {
         throw new HibernateException(e);
       }
@@ -52,12 +54,28 @@ public class MybatisLoader extends CustomLoader {
       SharedSessionContractImplementor session, boolean returnProxies,
       ResultTransformer forcedResultTransformer, int maxRows,
       List<AfterLoadAction> afterLoadActions) throws SQLException {
-    ResultTransformer resultTransformer = queryParameters.getResultTransformer();
-    if (resultTransformer instanceof MybatisResultTransformer) {
-      return ((MybatisResultTransformer) resultTransformer).transformList(rs, maxRows);
+    if (mybatisQuery) {
+      return ((MybatisResultTransformer) queryParameters.getResultTransformer()).transformList(rs,
+          maxRows);
     } else {
       return super.processResultSet(rs, queryParameters, session, returnProxies,
           forcedResultTransformer, maxRows, afterLoadActions);
     }
   }
+
+  @Override
+  protected SqlStatementWrapper executeQueryStatement(QueryParameters queryParameters,
+      boolean scroll, List<AfterLoadAction> afterLoadActions,
+      SharedSessionContractImplementor session) throws SQLException {
+    mybatisQuery = queryParameters.getResultTransformer() instanceof MybatisResultTransformer;
+    return super.executeQueryStatement(queryParameters, scroll, afterLoadActions, session);
+  }
+
+  @Override
+  protected void autoDiscoverTypes(ResultSet rs) {
+    if (!mybatisQuery) {
+      super.autoDiscoverTypes(rs);
+    }
+  }
+
 }
