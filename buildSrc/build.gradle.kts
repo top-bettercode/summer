@@ -1,7 +1,5 @@
-import java.util.*
-
 plugins {
-    `embedded-kotlin`
+    kotlin("jvm").version("1.6.10")
 }
 
 repositories {
@@ -14,24 +12,34 @@ repositories {
 }
 
 dependencies {
-    val properties = Properties()
-    properties.load(project.file("../gradle.properties").inputStream())
-    val springVersion = properties.getProperty("spring.version")
-    val kotlinVersion = properties.getProperty("kotlin.version")
-    val kotlinCoroutinesVersion = properties.getProperty("kotlin-coroutines.version")
+    val springBootVersion = property("spring-boot.version")
+    val kotlinVersion = property("kotlin.version")
+    val kotlinxCoroutinesVersion = property("kotlinx-coroutines.version")
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
 
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:${springVersion}")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 
     //--------------------------------------------
     //publish plugin dependencies
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinCoroutinesVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
     implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.10")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.6.10")
     implementation("com.gradle.publish:plugin-publish-plugin:0.20.0")
 //    implementation("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0") {
 //        exclude("org.jetbrains.kotlin")
 //    }
+}
+
+tasks {
+    "processResources"(ProcessResources::class) {
+        outputs.upToDateWhen { false }
+        filesMatching(setOf("**/*.properties")) {
+            filter(
+                mapOf("tokens" to project.properties.filter { it.key.endsWith("version") }),
+                org.apache.tools.ant.filters.ReplaceTokens::class.java
+            )
+        }
+    }
 }
