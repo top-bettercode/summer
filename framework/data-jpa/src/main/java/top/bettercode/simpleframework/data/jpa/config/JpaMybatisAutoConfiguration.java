@@ -162,8 +162,8 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
     if (mapperResources != null) {
       if (mapperResources.length == 0) {
-        if (log.isWarnEnabled()) {
-          log.warn(
+        if (log.isInfoEnabled()) {
+          log.info(
               "Property 'mapperLocations' was specified but matching resources are not found.");
         }
       } else {
