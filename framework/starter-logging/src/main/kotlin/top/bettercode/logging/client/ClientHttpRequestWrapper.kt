@@ -27,7 +27,8 @@ class ClientHttpRequestWrapper(
     private val name: String,
     private val logMarker: String?,
     private val request: ClientHttpRequest,
-    private val decrypt: ((ByteArray) -> ByteArray)?
+    private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
+    private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
 ) : ClientHttpRequest {
     private val log = LoggerFactory.getLogger(ClientHttpRequestWrapper::class.java)
     val record = ByteArrayOutputStream()
@@ -73,7 +74,8 @@ class ClientHttpRequestWrapper(
                         ignoredTimeout = true,
                         timeoutAlarmSeconds = -1
                     ),
-                    decrypt
+                    requestDecrypt,
+                    responseDecrypt
                 )
                 val hasException = stackTrace.isNotBlank()
                 if (logMarker.isNullOrBlank()) {

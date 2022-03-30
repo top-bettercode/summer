@@ -51,7 +51,8 @@ open class Operation(
 
     fun toString(
         config: RequestLoggingConfig,
-        decrypt: ((ByteArray) -> ByteArray)? = null
+        requestDecrypt: ((ByteArray) -> ByteArray)? = null,
+        responseDecrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val originHeaders = request.headers
         val originParameters = request.parameters
@@ -117,7 +118,7 @@ open class Operation(
         response.stackTrace =
             if (config.includeTrace || originStackTrace.isBlank()) originStackTrace else "unrecorded"
 
-        val log = HttpOperation.toString(this, config.format, decrypt)
+        val log = HttpOperation.toString(this, config.format, requestDecrypt, responseDecrypt)
 
         request.headers = originHeaders
         request.parameters = originParameters

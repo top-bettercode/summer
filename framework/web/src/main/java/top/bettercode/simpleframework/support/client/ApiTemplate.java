@@ -22,27 +22,30 @@ public class ApiTemplate extends RestTemplate {
   private final String collectionName;
   private final String name;
   protected final String logMarker;
-  private final Function1<byte[], byte[]> decrypt;
+  private final Function1<byte[], byte[]> requestDecrypt;
+  private final Function1<byte[], byte[]> responseDecrypt;
 
   public ApiTemplate(int connectTimeout, int readTimeout) {
-    this("", "", null, connectTimeout, readTimeout, null);
+    this("", "", connectTimeout, readTimeout);
   }
 
   public ApiTemplate(String collectionName, String name, int connectTimeout, int readTimeout) {
-    this(collectionName, name, null, connectTimeout, readTimeout, null);
+    this(collectionName, name, null, connectTimeout, readTimeout);
   }
 
   public ApiTemplate(String collectionName, String name, String logMarker, int connectTimeout,
       int readTimeout) {
-    this(collectionName, name, logMarker, connectTimeout, readTimeout, null);
+    this(collectionName, name, logMarker, connectTimeout, readTimeout, null, null);
   }
 
   public ApiTemplate(String collectionName, String name, String logMarker, int connectTimeout,
-      int readTimeout, Function1<byte[], byte[]> decrypt) {
+      int readTimeout, Function1<byte[], byte[]> requestDecrypt,
+      Function1<byte[], byte[]> responseDecrypt) {
     this.collectionName = collectionName;
     this.name = name;
     this.logMarker = logMarker;
-    this.decrypt = decrypt;
+    this.requestDecrypt = requestDecrypt;
+    this.responseDecrypt = responseDecrypt;
 
     SimpleClientHttpRequestFactory clientHttpRequestFactory = new SimpleClientHttpRequestFactory();
     //Connect timeout
@@ -56,7 +59,7 @@ public class ApiTemplate extends RestTemplate {
   protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
     if (log.isInfoEnabled()) {
       return new ClientHttpRequestWrapper(collectionName, name, logMarker,
-          super.createRequest(url, method), decrypt);
+          super.createRequest(url, method), requestDecrypt, responseDecrypt);
     } else {
       return super.createRequest(url, method);
     }

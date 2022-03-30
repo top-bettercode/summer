@@ -19,7 +19,8 @@ object HttpOperation {
     fun toString(
         output: Operation,
         format: Boolean,
-        decrypt: ((ByteArray) -> ByteArray)? = null
+        requestDecrypt: ((ByteArray) -> ByteArray)? = null,
+        responseDecrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val stringBuilder = StringBuilder("")
         val separatorLine = "------------------------------------------------------------"
@@ -33,9 +34,9 @@ object HttpOperation {
         stringBuilder.appendLine("RESPONSE   TIME : ${LocalDateTimeHelper.format(output.response.dateTime)}")
         stringBuilder.appendLine("DURATION MILLIS : ${output.duration}")
         stringBuilder.appendLine(separatorLine)
-        stringBuilder.append(toString(output.request, output.protocol, format, decrypt))
+        stringBuilder.append(toString(output.request, output.protocol, format, requestDecrypt))
         stringBuilder.appendLine()
-        stringBuilder.append(toString(output.response, output.protocol, format, decrypt))
+        stringBuilder.append(toString(output.response, output.protocol, format, responseDecrypt))
         val stackTrace = output.response.stackTrace
         if (stackTrace.isNotBlank()) {
             stringBuilder.appendLine(separatorLine)
