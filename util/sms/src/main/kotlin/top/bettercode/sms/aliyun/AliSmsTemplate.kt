@@ -137,7 +137,7 @@ class AliSmsTemplate(
                 aliSmsProperties.url,
                 HttpMethod.POST,
                 requestCallback,
-                responseEntityExtractor<AliSmsResponse>(AliSmsResponse::class.java)
+                responseEntityExtractor(AliSmsResponse::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)
@@ -200,7 +200,7 @@ class AliSmsTemplate(
                 aliSmsProperties.url,
                 HttpMethod.POST,
                 requestCallback,
-                responseEntityExtractor<AliSendReportResponse>(
+                responseEntityExtractor(
                     AliSendReportResponse::class.java
                 )
             )

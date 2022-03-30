@@ -8,10 +8,6 @@ public interface SecurityParameterNames {
   String GRANT_TYPE = "grant_type";
 
   /**
-   * {@code scope} - used in Authorization Request, Authorization Response, Access Token
-   * Request and Access Token Response.
-   */
-  /**
    * {@code scope} - used in Authorization Request, Authorization Response, Access Token Request and
    * Access Token Response.
    */

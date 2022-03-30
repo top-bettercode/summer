@@ -143,7 +143,8 @@ open class ProfileExtension(
                 props["summer.web.version"] = "v${version}"
                 props["summer.web.version-no"] = String.format(
                     "%-9s",
-                    version.toString().split(".").map { String.format("%03d", it.toInt()) }.joinToString("")
+                    version.toString().split(".")
+                        .joinToString("") { String.format("%03d", it.toInt()) }
                 ).replace(" ", "0").trimStart('0')
                 val gradleProperties = rootProject.file("gradle.properties")
                 if (gradleProperties.exists()) {

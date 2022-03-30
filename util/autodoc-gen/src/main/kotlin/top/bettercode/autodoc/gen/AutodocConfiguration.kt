@@ -78,7 +78,7 @@ class AutodocConfiguration {
                 environment
             ).bind<Map<String, JDBCConnectionConfiguration>>(
                 "summer.datasource.multi.datasources", Bindable
-                    .mapOf<String, JDBCConnectionConfiguration>(
+                    .mapOf(
                         String::class.java,
                         JDBCConnectionConfiguration::class.java
                     )

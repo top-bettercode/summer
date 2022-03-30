@@ -13,3 +13,4 @@ classes
 
 util/weixin/src/test/resources/application.yml
 framework/starter-logging/src/test/resources/application-test.yml
+util/sms/src/test/resources/application.yml
