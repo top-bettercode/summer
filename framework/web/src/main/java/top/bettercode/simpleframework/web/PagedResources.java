@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.Collection;
 import java.util.Objects;
-import javax.xml.bind.annotation.XmlAttribute;
 import org.springframework.util.Assert;
 
 public class PagedResources<T> {
@@ -42,19 +41,15 @@ public class PagedResources<T> {
   public static class PageMetadata {
 
     @JsonView(Object.class)
-    @XmlAttribute
     @JsonProperty
     private long number;
     @JsonView(Object.class)
-    @XmlAttribute
     @JsonProperty
     private long size;
     @JsonView(Object.class)
-    @XmlAttribute
     @JsonProperty
     private long totalPages;
     @JsonView(Object.class)
-    @XmlAttribute
     @JsonProperty
     private long totalElements;
 

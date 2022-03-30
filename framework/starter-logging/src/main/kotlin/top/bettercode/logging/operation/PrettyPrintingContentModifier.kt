@@ -1,10 +1,11 @@
 package top.bettercode.logging.operation
 
-import com.sun.org.apache.xml.internal.utils.DefaultErrorHandler
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.xml.sax.ErrorHandler
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
+import org.xml.sax.SAXParseException
 import top.bettercode.lang.util.StringUtil
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -12,7 +13,9 @@ import java.io.IOException
 import java.util.*
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParserFactory
+import javax.xml.transform.ErrorListener
 import javax.xml.transform.OutputKeys
+import javax.xml.transform.TransformerException
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.sax.SAXSource
 import javax.xml.transform.stream.StreamResult
@@ -55,6 +58,31 @@ object PrettyPrintingContentModifier {
 
         private val transformerFactory = TransformerFactory.newInstance()
         private val parserFactory = SAXParserFactory.newInstance()
+        private val errorListener = object : ErrorListener, ErrorHandler {
+            override fun warning(e: TransformerException) {
+                log.warn("XML parsing warning: ${e.message}")
+            }
+
+            override fun fatalError(e: TransformerException) {
+                throw e
+            }
+
+            override fun error(e: TransformerException) {
+                throw e
+            }
+
+            override fun warning(e: SAXParseException) {
+                log.warn("XML parsing warning: ${e.message}")
+            }
+
+            override fun error(e: SAXParseException) {
+                throw e
+            }
+
+            override fun fatalError(e: SAXParseException) {
+                throw e
+            }
+        }
 
         @Throws(Exception::class)
         override fun prettyPrint(content: ByteArray): ByteArray {
@@ -66,7 +94,7 @@ object PrettyPrintingContentModifier {
             )
             transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
             val transformed = ByteArrayOutputStream()
-            transformer.errorListener = DefaultErrorHandler()
+            transformer.errorListener = errorListener
             transformer.transform(createSaxSource(content), StreamResult(transformed))
 
             return transformed.toByteArray()
@@ -76,7 +104,7 @@ object PrettyPrintingContentModifier {
         private fun createSaxSource(original: ByteArray): SAXSource {
             val parser = parserFactory.newSAXParser()
             val xmlReader = parser.xmlReader
-            xmlReader.errorHandler = DefaultErrorHandler()
+            xmlReader.errorHandler = errorListener
             return SAXSource(xmlReader, InputSource(ByteArrayInputStream(original)))
         }
 
