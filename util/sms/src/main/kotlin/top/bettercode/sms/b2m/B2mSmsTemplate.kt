@@ -193,7 +193,7 @@ class B2mSmsTemplate(
             execute(
                 b2mProperties.url + "/inter/sendPersonalityAllSMS", HttpMethod.POST,
                 requestCallback,
-                responseEntityExtractor<ByteArray>(ByteArray::class.java)
+                responseEntityExtractor(ByteArray::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)
@@ -245,7 +245,7 @@ class B2mSmsTemplate(
                 StandardCharsets.UTF_8
             )
         )
-        params["number"] = number.toString();
+        params["number"] = number.toString()
         val javaType = TypeFactory.defaultInstance().constructParametricType(
             B2mResponse::class.java, B2mSendReport::class.java
         )
@@ -309,7 +309,7 @@ class B2mSmsTemplate(
             execute(
                 b2mProperties.url + "/inter/getReport", HttpMethod.POST,
                 requestCallback,
-                responseEntityExtractor<ByteArray>(ByteArray::class.java)
+                responseEntityExtractor(ByteArray::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)
@@ -366,9 +366,9 @@ class B2mSmsTemplate(
                 StandardCharsets.UTF_8
             )
         )
-        params["startTime"] = startTime.format(timeFormatter);
-        params["endTime"] = endTime.format(timeFormatter);
-        params["smsId"] = smsId;
+        params["startTime"] = startTime.format(timeFormatter)
+        params["endTime"] = endTime.format(timeFormatter)
+        params["smsId"] = smsId
         val requestCallback = httpEntityCallback<Any>(
             HttpEntity(params, null),
             String::class.java
@@ -377,7 +377,7 @@ class B2mSmsTemplate(
             execute(
                 b2mProperties.url + "/report/retrieveReport", HttpMethod.POST,
                 requestCallback,
-                responseEntityExtractor<String>(String::class.java)
+                responseEntityExtractor(String::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)

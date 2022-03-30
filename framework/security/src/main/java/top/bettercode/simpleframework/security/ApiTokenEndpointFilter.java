@@ -24,7 +24,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.util.ServletRequestPathUtils;
 import top.bettercode.logging.RequestLoggingFilter;
 import top.bettercode.simpleframework.AnnotatedUtils;
 import top.bettercode.simpleframework.config.SummerWebProperties;
