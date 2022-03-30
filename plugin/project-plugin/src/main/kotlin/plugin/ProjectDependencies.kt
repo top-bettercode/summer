@@ -12,10 +12,12 @@ import java.util.concurrent.TimeUnit
  */
 object ProjectDependencies {
 
-    private val kotlinVersionConfig: ResourceBundle = ResourceBundle.getBundle("kotlin-version")
-    private val kotlinVersion =
-        kotlinVersionConfig.getString("kotlin.version")
-    private val kotlinCoroutinesVersion = kotlinVersionConfig.getString("kotlin-coroutines.version")
+    private val summerVersion = ProjectPlugin::class.java.`package`.implementationVersion
+    private val summerVersionConfig = ResourceBundle.getBundle("summer-version")
+    private val kotlinVersion = summerVersionConfig.getString("kotlin.version")
+    private val kotlinxCoroutinesVersion =
+        summerVersionConfig.getString("kotlinx-coroutines.version")
+    private val oracleJdbcVersion = summerVersionConfig.getString("oracle-jdbc.version")
 
     fun config(project: Project) {
         project.configurations.apply {
@@ -49,21 +51,19 @@ object ProjectDependencies {
             ext.imports {
                 it.mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
                 if (project.isCloud) {
-                    it.mavenBom("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2.2.7.RELEASE")
-                    it.mavenBom("org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12")
+                    it.mavenBom("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.1.0")
+                    it.mavenBom("org.springframework.cloud:spring-cloud-dependencies:2021.0.1")
                 }
             }
 
 
             ext.dependencies {
                 it.apply {
-                    val summerVersion =
-                        ProjectPlugin::class.java.`package`.implementationVersion
 
                     dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
                     dependency("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion")
                     dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-                    dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+                    dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
 
                     dependency("top.bettercode.summer:config:$summerVersion")
                     dependency("top.bettercode.summer:environment:$summerVersion")
@@ -87,7 +87,6 @@ object ProjectDependencies {
                     dependency("top.bettercode.wechat:weixin-mp:0.9.7")
                     dependency("top.bettercode.wechat:weixin-app:0.9.7")
 
-                    val oracleJdbcVersion = "21.5.0.0"
                     dependency("com.oracle.database.jdbc:ojdbc8:$oracleJdbcVersion")
                     dependency("com.oracle.database.jdbc:ucp:$oracleJdbcVersion")
                     dependency("com.oracle.database.security:oraclepki:$oracleJdbcVersion")

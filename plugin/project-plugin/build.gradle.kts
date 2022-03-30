@@ -1,4 +1,4 @@
-import java.util.stream.Collectors
+import top.bettercode.gradle.publish.versionConfig
 
 plugins {
     `java-library`
@@ -19,15 +19,11 @@ dependencies {
 }
 
 tasks {
-    "jar"(Jar::class) {
-        from(fileTree(mapOf("dir" to "libs")).files.stream().map { zipTree(it) }
-            .collect(Collectors.toList()))
-    }
     "processResources"(ProcessResources::class) {
         outputs.upToDateWhen { false }
         filesMatching(setOf("**/*.properties")) {
             filter(
-                mapOf("tokens" to project.properties.filter { it.key.endsWith("version") }),
+                mapOf("tokens" to project.versionConfig),
                 org.apache.tools.ant.filters.ReplaceTokens::class.java
             )
         }

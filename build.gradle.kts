@@ -1,3 +1,5 @@
+import top.bettercode.gradle.publish.*
+
 plugins {
     `java-library`
     idea
@@ -5,7 +7,7 @@ plugins {
 
 allprojects {
     group = "top.bettercode.summer"
-    version = properties["version"] as String
+    version = summerVersion
 
     apply {
         plugin("java")
@@ -56,15 +58,14 @@ allprojects {
         }
 
         dependencies {
-            val kotlinVersion = property("kotlin.version")
 
             dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             dependency("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
             dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlin-coroutines.version")}")
+            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
 
 
-            dependency("org.springframework.boot:spring-boot-gradle-plugin:${property("spring.version")}")
+            dependency("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
             dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
 
             dependency("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0")
@@ -85,7 +86,7 @@ allprojects {
             dependency("com.github.jsqlparser:jsqlparser:4.3")
 
             dependency("mysql:mysql-connector-java:8.0.28")
-            dependency("com.oracle.database.jdbc:ojdbc8:21.5.0.0")
+            dependency("com.oracle.database.jdbc:ojdbc8:$oracleJdbcVersion")
 
             dependency("org.asciidoctor:asciidoctorj:2.5.3")
             dependency("org.asciidoctor:asciidoctorj-diagram:2.2.1")
