@@ -44,6 +44,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
     super(method, em);
     this.mappedStatement = method.getMappedStatement();
     MybatisResultSetHandler mybatisResultSetHandler = new MybatisResultSetHandler(mappedStatement);
+    mybatisResultSetHandler.validateResultMaps();
     resultTransformer = new MybatisResultTransformer(mybatisResultSetHandler);
 
     boolean pageQuery = method.isPageQuery();
