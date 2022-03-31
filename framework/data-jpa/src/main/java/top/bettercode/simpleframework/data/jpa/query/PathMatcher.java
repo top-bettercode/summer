@@ -31,6 +31,14 @@ public enum PathMatcher {
    */
   IS_NOT_NULL,
 
+  IS_EMPTY,
+
+  IS_NOT_EMPTY,
+
+  IS_NULL_OR_EMPTY,
+
+  IS_NOT_NULL_OR_EMPTY,
+
   //equality:
 
   /**
