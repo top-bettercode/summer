@@ -3,7 +3,6 @@ package top.bettercode.simpleframework.data.jpa.query.mybatis;
 import java.lang.reflect.Constructor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -141,13 +140,13 @@ public class MybatisResultSetHandler {
   //
   // HANDLE RESULT SETS
   //
-  public List<Object> handleResultSets(Statement stmt, int maxRows) throws SQLException {
+  public List<Object> handleResultSets(ResultSet resultSet, int maxRows) throws SQLException {
     ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
 
     final List<Object> multipleResults = new ArrayList<>();
 
     int resultSetCount = 0;
-    ResultSetWrapper rsw = getFirstResultSet(stmt);
+    ResultSetWrapper rsw = getResultSet(resultSet);
 
     RowBounds rowBounds = new RowBounds(0, maxRows);
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
@@ -156,7 +155,6 @@ public class MybatisResultSetHandler {
     while (rsw != null && resultMapCount > resultSetCount) {
       ResultMap resultMap = resultMaps.get(resultSetCount);
       handleResultSet(rsw, resultMap, multipleResults, null, rowBounds);
-      rsw = getNextResultSet(stmt);
       cleanUpAfterHandlingResultSet();
       resultSetCount++;
     }
@@ -170,7 +168,6 @@ public class MybatisResultSetHandler {
           ResultMap resultMap = configuration.getResultMap(nestedResultMapId);
           handleResultSet(rsw, resultMap, null, parentMapping, rowBounds);
         }
-        rsw = getNextResultSet(stmt);
         cleanUpAfterHandlingResultSet();
         resultSetCount++;
       }
@@ -179,41 +176,8 @@ public class MybatisResultSetHandler {
     return collapseSingleResultList(multipleResults);
   }
 
-  private ResultSetWrapper getFirstResultSet(Statement stmt) throws SQLException {
-    ResultSet rs = stmt.getResultSet();
-    while (rs == null) {
-      // move forward to get the first resultset in case the driver
-      // doesn't return the resultset as the first result (HSQLDB 2.1)
-      if (stmt.getMoreResults()) {
-        rs = stmt.getResultSet();
-      } else {
-        if (stmt.getUpdateCount() == -1) {
-          // no more results. Must be no resultset
-          break;
-        }
-      }
-    }
+  private ResultSetWrapper getResultSet(ResultSet rs) throws SQLException {
     return rs != null ? new ResultSetWrapper(rs, configuration) : null;
-  }
-
-  private ResultSetWrapper getNextResultSet(Statement stmt) {
-    // Making this method tolerant of bad JDBC drivers
-    try {
-      if (stmt.getConnection().getMetaData().supportsMultipleResultSets()) {
-        // Crazy Standard JDBC way of determining if there are more results
-        if (!(!stmt.getMoreResults() && stmt.getUpdateCount() == -1)) {
-          ResultSet rs = stmt.getResultSet();
-          if (rs == null) {
-            return getNextResultSet(stmt);
-          } else {
-            return new ResultSetWrapper(rs, configuration);
-          }
-        }
-      }
-    } catch (Exception e) {
-      // Intentionally ignored.
-    }
-    return null;
   }
 
   private void closeResultSet(ResultSet rs) {

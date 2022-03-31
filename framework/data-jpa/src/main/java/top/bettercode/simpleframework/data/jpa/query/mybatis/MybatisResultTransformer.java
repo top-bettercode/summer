@@ -25,7 +25,6 @@ public class MybatisResultTransformer extends NativeQueryTupleTransformer {
   }
 
   public List<?> transformList(ResultSet resultSet, int maxRows) throws SQLException {
-    Statement statement = resultSet.getStatement();
-    return mybatisResultSetHandler.handleResultSets(statement, maxRows);
+    return mybatisResultSetHandler.handleResultSets(resultSet, maxRows);
   }
 }
