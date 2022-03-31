@@ -19,13 +19,6 @@ class GroovyPublishPlugin : AbstractPlugin() {
     override fun apply(project: Project) {
         beforeConfigigure(project)
 
-        project.tasks.withType(Groovydoc::class.java) {
-            it.source(
-                project.extensions.getByType(JavaPluginExtension::class.java).sourceSets.getByName(
-                    SourceSet.MAIN_SOURCE_SET_NAME
-                ).allSource
-            )
-        }
         project.tasks.create("javadocJar", Jar::class.java) {
             it.archiveClassifier.set("javadoc")
             it.from(project.tasks.getByName("groovydoc").outputs)

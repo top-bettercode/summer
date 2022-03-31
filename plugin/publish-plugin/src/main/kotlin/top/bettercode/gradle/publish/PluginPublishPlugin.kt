@@ -122,7 +122,7 @@ class PluginPublishPlugin : AbstractPlugin() {
         projectUrl: String?,
         projectVcsUrl: String?
     ) {
-        val gradlePlugin = project.findProperty("gradlePlugin.plugins.${project.name}") as? String
+        val gradlePlugin = project.findProperty("gradlePlugin.${project.name}.plugins") as? String
             ?: project.findProperty("gradlePlugin.plugins") as? String
         gradlePlugin?.split(",")?.forEach { plugin ->
             val pluginId = project.findProperty("gradlePlugin.plugins.$plugin.id") as String

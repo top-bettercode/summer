@@ -1,5 +1,3 @@
-import top.bettercode.gradle.publish.versionConfig
-
 plugins {
     `java-library`
 }

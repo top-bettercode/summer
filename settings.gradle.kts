@@ -20,6 +20,7 @@ include(":plugin:dist-plugin")
 include(":plugin:generator-plugin")
 include(":plugin:profile-plugin")
 include(":plugin:project-plugin")
+include(":plugin:publish-plugin")
 
 include(":util:common-lang")
 include(":util:api-sign")

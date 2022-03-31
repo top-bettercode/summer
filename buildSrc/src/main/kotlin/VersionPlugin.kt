@@ -1,5 +1,3 @@
-package top.bettercode.gradle.publish
-
 import org.gradle.api.Project
 import java.util.*
 
