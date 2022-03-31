@@ -1,6 +1,6 @@
 plugins { `java-library` }
 
 dependencies {
-    api("gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin")
+    api("com.github.alexeylisyutenko:windows-service-plugin")
     compileOnly(project(":plugin:profile-plugin"))
 }

@@ -11,6 +11,8 @@ build/
 out
 classes
 
+buildSrc/src/main/kotlin/top
+buildSrc/src/main/resources/META-INF
 util/weixin/src/test/resources/application.yml
 framework/starter-logging/src/test/resources/application-test.yml
 util/sms/src/test/resources/application.yml
