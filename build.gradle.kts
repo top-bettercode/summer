@@ -65,6 +65,7 @@ allprojects {
             dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
             dependency("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
             dependency("com.gradle.publish:plugin-publish-plugin:0.20.0")
+            dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
             dependency("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
             dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
