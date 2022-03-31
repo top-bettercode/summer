@@ -130,7 +130,7 @@ class DicCodeGen(private val project: Project) {
 
                 //
                 val enumType = JavaType("$packageName.support.dic.${className}Enum")
-                val codeEnum = TopLevelEnumeration(enumType)
+                val codeEnum = TopLevelEnumeration(type = enumType, overwrite = true)
                 codeEnum.visibility = JavaVisibility.PUBLIC
                 codeEnum.apply {
                     javadoc {
