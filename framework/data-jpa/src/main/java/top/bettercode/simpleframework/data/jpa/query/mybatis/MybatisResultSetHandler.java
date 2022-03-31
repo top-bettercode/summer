@@ -124,11 +124,6 @@ public class MybatisResultSetHandler {
 
   public NestedResultMapType findNestedResultMapType() {
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
-    validateResultMapsCount(resultMaps.size());
-    String[] resultSets = mappedStatement.getResultSets();
-    if (resultSets != null && resultSets.length > 0) {
-      throw new UnsupportedOperationException("mybatis resultSets not supported");
-    }
     for (ResultMap resultMap : resultMaps) {
       if (resultMap.hasNestedResultMaps()) {
         for (ResultMapping resultMapping : resultMap.getResultMappings()) {
@@ -143,6 +138,18 @@ public class MybatisResultSetHandler {
     return null;
   }
 
+  public void validateResultMaps() {
+    List<ResultMap> resultMaps = mappedStatement.getResultMaps();
+    if (resultMaps.size() > 1) {
+      throw new ExecutorException("Multiples resultMaps  not supported");
+    }
+
+    String[] resultSets = mappedStatement.getResultSets();
+    if (resultSets != null && resultSets.length > 0) {
+      throw new UnsupportedOperationException("mybatis resultSets not supported");
+    }
+  }
+
   //
   // HANDLE RESULT SETS
   //
@@ -155,6 +162,12 @@ public class MybatisResultSetHandler {
 
     RowBounds rowBounds = new RowBounds(0, maxRows);
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
+    if (resultMaps.size() < 1) {
+      throw new ExecutorException(
+          "A query was run and no Result Maps were found for the Mapped Statement '"
+              + mappedStatement.getId()
+              + "'.  It's likely that neither a Result Type nor a Result Map was specified.");
+    }
     ResultMap resultMap = resultMaps.get(0);
     handleResultSet(rsw, resultMap, multipleResults, null, rowBounds);
     cleanUpAfterHandlingResultSet();
@@ -178,18 +191,6 @@ public class MybatisResultSetHandler {
 
   private void cleanUpAfterHandlingResultSet() {
     nestedResultObjects.clear();
-  }
-
-  private void validateResultMapsCount(int resultMapCount) {
-    if (resultMapCount < 1) {
-      throw new ExecutorException(
-          "A query was run and no Result Maps were found for the Mapped Statement '"
-              + mappedStatement.getId()
-              + "'.  It's likely that neither a Result Type nor a Result Map was specified.");
-    }
-    if (resultMapCount > 1) {
-      throw new ExecutorException("Multiples resultMaps  not supported");
-    }
   }
 
   private void handleResultSet(ResultSetWrapper rsw, ResultMap resultMap,
