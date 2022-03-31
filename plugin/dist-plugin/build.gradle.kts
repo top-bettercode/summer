@@ -1,6 +1,6 @@
 plugins { `java-library` }
 
 dependencies {
-    api("com.github.alexeylisyutenko:windows-service-plugin")
+    api("top.bettercode.summer:windows-service-plugin")
     compileOnly(project(":plugin:profile-plugin"))
 }

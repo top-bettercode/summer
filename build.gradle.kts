@@ -69,7 +69,7 @@ allprojects {
             dependency("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
             dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
 
-            dependency("com.github.alexeylisyutenko:windows-service-plugin:1.2.0")
+            dependency("top.bettercode.summer:windows-service-plugin:1.2.0-SNAPSHOT")
 
             dependency("top.bettercode.wechat:weixin-mp:0.9.7")
             dependency("top.bettercode.wechat:weixin-app:0.9.7")
