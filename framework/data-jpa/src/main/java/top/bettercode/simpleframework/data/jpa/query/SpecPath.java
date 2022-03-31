@@ -107,6 +107,36 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
           return null;
         }
         return criteriaBuilder.isNotNull(path);
+      case IS_EMPTY:
+        path = this.toPath(root);
+        if (path == null || !path.getJavaType().equals(String.class)) {
+          return null;
+        }
+        Expression<String> stringExpression = path;
+        return criteriaBuilder.equal(stringExpression, "");
+      case IS_NOT_EMPTY:
+        path = this.toPath(root);
+        if (path == null || !path.getJavaType().equals(String.class)) {
+          return null;
+        }
+        stringExpression = path;
+        return criteriaBuilder.notEqual(stringExpression, "");
+      case IS_NULL_OR_EMPTY:
+        path = this.toPath(root);
+        if (path == null || !path.getJavaType().equals(String.class)) {
+          return null;
+        }
+        stringExpression = path;
+        return criteriaBuilder.or(criteriaBuilder.isNull(path),
+            criteriaBuilder.equal(stringExpression, ""));
+      case IS_NOT_NULL_OR_EMPTY:
+        path = this.toPath(root);
+        if (path == null || !path.getJavaType().equals(String.class)) {
+          return null;
+        }
+        stringExpression = path;
+        return criteriaBuilder.and(criteriaBuilder.isNotNull(path),
+            criteriaBuilder.notEqual(stringExpression, ""));
     }
     Object value = this.getValue();
     if (value == null || "".equals(value)) {
@@ -273,6 +303,26 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
 
   public M isNotNull() {
     this.matcher = PathMatcher.IS_NOT_NULL;
+    return this.specMatcher;
+  }
+
+  public M isEmpty() {
+    this.matcher = PathMatcher.IS_EMPTY;
+    return this.specMatcher;
+  }
+
+  public M isNotEmpty() {
+    this.matcher = PathMatcher.IS_NOT_EMPTY;
+    return this.specMatcher;
+  }
+
+  public M isNullOrEmpty() {
+    this.matcher = PathMatcher.IS_NULL_OR_EMPTY;
+    return this.specMatcher;
+  }
+
+  public M isNotNullOrEmpty() {
+    this.matcher = PathMatcher.IS_NOT_NULL_OR_EMPTY;
     return this.specMatcher;
   }
 
