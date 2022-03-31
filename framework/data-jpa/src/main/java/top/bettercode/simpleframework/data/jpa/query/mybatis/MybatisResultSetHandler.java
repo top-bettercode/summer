@@ -123,7 +123,13 @@ public class MybatisResultSetHandler {
   }
 
   public NestedResultMapType findNestedResultMapType() {
-    for (ResultMap resultMap : mappedStatement.getResultMaps()) {
+    List<ResultMap> resultMaps = mappedStatement.getResultMaps();
+    validateResultMapsCount(resultMaps.size());
+    String[] resultSets = mappedStatement.getResultSets();
+    if (resultSets != null && resultSets.length > 0) {
+      throw new UnsupportedOperationException("mybatis resultSets not supported");
+    }
+    for (ResultMap resultMap : resultMaps) {
       if (resultMap.hasNestedResultMaps()) {
         for (ResultMapping resultMapping : resultMap.getResultMappings()) {
           String nestedResultMapId = resultMapping.getNestedResultMapId();
@@ -145,33 +151,13 @@ public class MybatisResultSetHandler {
 
     final List<Object> multipleResults = new ArrayList<>();
 
-    int resultSetCount = 0;
     ResultSetWrapper rsw = getResultSet(resultSet);
 
     RowBounds rowBounds = new RowBounds(0, maxRows);
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
-    int resultMapCount = resultMaps.size();
-    validateResultMapsCount(rsw, resultMapCount);
-    while (rsw != null && resultMapCount > resultSetCount) {
-      ResultMap resultMap = resultMaps.get(resultSetCount);
-      handleResultSet(rsw, resultMap, multipleResults, null, rowBounds);
-      cleanUpAfterHandlingResultSet();
-      resultSetCount++;
-    }
-
-    String[] resultSets = mappedStatement.getResultSets();
-    if (resultSets != null) {
-      while (rsw != null && resultSetCount < resultSets.length) {
-        ResultMapping parentMapping = nextResultMaps.get(resultSets[resultSetCount]);
-        if (parentMapping != null) {
-          String nestedResultMapId = parentMapping.getNestedResultMapId();
-          ResultMap resultMap = configuration.getResultMap(nestedResultMapId);
-          handleResultSet(rsw, resultMap, null, parentMapping, rowBounds);
-        }
-        cleanUpAfterHandlingResultSet();
-        resultSetCount++;
-      }
-    }
+    ResultMap resultMap = resultMaps.get(0);
+    handleResultSet(rsw, resultMap, multipleResults, null, rowBounds);
+    cleanUpAfterHandlingResultSet();
 
     return collapseSingleResultList(multipleResults);
   }
@@ -194,12 +180,15 @@ public class MybatisResultSetHandler {
     nestedResultObjects.clear();
   }
 
-  private void validateResultMapsCount(ResultSetWrapper rsw, int resultMapCount) {
-    if (rsw != null && resultMapCount < 1) {
+  private void validateResultMapsCount(int resultMapCount) {
+    if (resultMapCount < 1) {
       throw new ExecutorException(
           "A query was run and no Result Maps were found for the Mapped Statement '"
               + mappedStatement.getId()
               + "'.  It's likely that neither a Result Type nor a Result Map was specified.");
+    }
+    if (resultMapCount > 1) {
+      throw new ExecutorException("Multiples resultMaps  not supported");
     }
   }
 
