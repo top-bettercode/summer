@@ -21,6 +21,10 @@ public class DefaultSpecMatcher<T> extends SpecMatcher<T, DefaultSpecMatcher<T>>
     return new DefaultSpecMatcher<>(SpecMatcherMode.ALL, null);
   }
 
+  public static <T> SpecMatcher<T, DefaultSpecMatcher<T>> matching(T probe) {
+    return new DefaultSpecMatcher<>(SpecMatcherMode.ALL, probe);
+  }
+
   /**
    * 创建 SpecMatcher 实例
    *
@@ -29,6 +33,10 @@ public class DefaultSpecMatcher<T> extends SpecMatcher<T, DefaultSpecMatcher<T>>
    */
   public static <T> SpecMatcher<T, DefaultSpecMatcher<T>> matchingAny() {
     return new DefaultSpecMatcher<>(SpecMatcherMode.ANY, null);
+  }
+
+  public static <T> SpecMatcher<T, DefaultSpecMatcher<T>> matchingAny(T probe) {
+    return new DefaultSpecMatcher<>(SpecMatcherMode.ANY, probe);
   }
 
 }

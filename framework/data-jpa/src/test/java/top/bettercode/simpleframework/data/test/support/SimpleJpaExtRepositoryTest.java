@@ -24,6 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.query.DefaultSpecMatcher;
+import top.bettercode.simpleframework.data.jpa.query.SpecMatcher;
 import top.bettercode.simpleframework.data.test.domain.User;
 import top.bettercode.simpleframework.data.test.repository.UserRepository;
 
@@ -308,15 +309,36 @@ public class SimpleJpaExtRepositoryTest {
     Assertions.assertEquals(3, repository.findAll(5).size());
   }
 
-
   @Test
-  public void findAll34() {
-    DefaultSpecMatcher<User> spec = DefaultSpecMatcher.<User>matching().equal("id", carterId)
-        .containing("firstName", "Cart")
+  public void findAll33() {
+    DefaultSpecMatcher<User> spec = DefaultSpecMatcher.<User>matching()
         .desc("firstName").asc("lastName");
     List<User> all = repository.findAll(spec);
     System.err.println(StringUtil.valueOf(all, true));
   }
+
+  @Test
+  public void findAll34() {
+    DefaultSpecMatcher<User> spec = DefaultSpecMatcher.<User>matching().equal("id", carterId)
+        .containing("firstName", " Cart ").specPath("firstName").trim()
+        .desc("firstName").asc("lastName");
+    List<User> all = repository.findAll(spec);
+    System.err.println(StringUtil.valueOf(all, true));
+  }
+
+
+  @Test
+  public void findAll35() {
+    SpecMatcher<User, DefaultSpecMatcher<User>> matcher = DefaultSpecMatcher.<User>matching()
+        .specPath("lastName").containing("Beauford")
+        .or(specMatcher ->
+            specMatcher.equal("id", carterId)
+            .containing("firstName", " Cart ").specPath("firstName").trim())
+        .desc("firstName").asc("lastName");
+    List<User> all = repository.findAll(matcher);
+    System.err.println(StringUtil.valueOf(all, true));
+  }
+
 
   @Test
   public void findOne() {
