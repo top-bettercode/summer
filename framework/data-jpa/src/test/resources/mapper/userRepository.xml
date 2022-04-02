@@ -92,10 +92,13 @@
     where deleted = 0
   </select>
   <select id="selectMybatisAll" resultType="top.bettercode.simpleframework.data.test.domain.User">
-    select first_name, last_name
+    select  <include refid="name"/>
     from user
     where deleted = 0
   </select>
+  <sql id="name">
+    first_name, last_name
+  </sql>
   <select id="selectMybatisIfParam"
     resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
