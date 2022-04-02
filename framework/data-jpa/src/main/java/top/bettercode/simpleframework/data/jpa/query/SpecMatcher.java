@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.data.jpa.query;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -33,12 +36,13 @@ import top.bettercode.simpleframework.data.jpa.query.SpecPath.BetweenValue;
 /**
  * @author Peter Wu
  */
-public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specification<T> {
+public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specification<T>,
+    SpecPredicate<T, M> {
 
   private static final long serialVersionUID = 1L;
 
   private final SpecMatcherMode matcherMode;
-  private final Map<String, SpecPath<T, M>> specPaths = new LinkedHashMap<>();
+  private final Map<String, SpecPredicate<T, M>> specPredicates = new LinkedHashMap<>();
   private final List<Sort.Order> orders = new ArrayList<>();
   private final M typed;
   private final T probe;
@@ -63,19 +67,6 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-    if (probe != null) {
-      setSpecPathDefaultValue("", root, root.getModel(), probe, probe.getClass(),
-          new PathNode("root", null, probe));
-    }
-    List<Predicate> predicates = new ArrayList<>();
-    for (SpecPath<T, M> specPath : getSpecPaths()) {
-      if (!specPath.isIgnoredPath()) {
-        Predicate predicate = specPath.toPredicate(root, cb);
-        if (predicate != null) {
-          predicates.add(predicate);
-        }
-      }
-    }
     if (!this.orders.isEmpty()) {
       List<Order> orders = this.orders.stream().map(o -> {
         Path<Object> path = root.get(o.getProperty());
@@ -84,9 +75,29 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
       query.orderBy(orders);
     }
 
+    return this.toPredicate(root, cb);
+  }
+
+  @Override
+  public Predicate toPredicate(Root<T> root, CriteriaBuilder cb) {
+    if (probe != null) {
+      setSpecPathDefaultValue("", root, root.getModel(), probe, probe.getClass(),
+          new PathNode("root", null, probe));
+    }
+    List<Predicate> predicates = new ArrayList<>();
+    for (SpecPredicate<T, M> specPredicate : this.specPredicates.values()) {
+      Predicate predicate = specPredicate.toPredicate(root, cb);
+      if (predicate != null) {
+        predicates.add(predicate);
+      }
+    }
+    if (predicates.isEmpty()) {
+      return null;
+    }
     Predicate[] restrictions = predicates.toArray(new Predicate[0]);
     return getMatchMode().equals(SpecMatcherMode.ALL) ? cb.and(restrictions) : cb.or(restrictions);
   }
+
 
   @SuppressWarnings("rawtypes")
   public void setSpecPathDefaultValue(String path, Path<?> from,
@@ -129,7 +140,7 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
             (ManagedType<?>) attribute.getType(), attributeValue, probeType, node);
         continue;
       }
-      if (specPath.getValue() == null) {
+      if (!specPath.isSetValue()) {
         specPath.setValue(attributeValue);
       }
     }
@@ -145,16 +156,50 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
     return this.matcherMode;
   }
 
-  public Collection<SpecPath<T, M>> getSpecPaths() {
-    return specPaths.values();
-  }
-
   public SpecPath<T, M> specPath(String propertyName) {
     Assert.hasText(propertyName, "propertyName can not be blank.");
-    return specPaths.computeIfAbsent(propertyName,
+    return (SpecPath<T, M>) this.specPredicates.computeIfAbsent(propertyName,
         s -> new SpecPath<>(typed, propertyName));
   }
 
+  //--------------------------------------------
+  public M and(Consumer<M> consumer) {
+    return this.and(null, consumer);
+  }
+
+  @SuppressWarnings("unchecked")
+  public M and(T other, Consumer<M> consumer) {
+    try {
+      M otherMatcher = other == null ?
+          (M) this.typed.getClass().getMethod("matching").invoke(null)
+          : (M) this.typed.getClass().getMethod("matching", other.getClass())
+              .invoke(null, other);
+      consumer.accept(otherMatcher);
+      this.specPredicates.put(UUID.randomUUID().toString(), otherMatcher);
+      return this.typed;
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public M or(Consumer<M> consumer) {
+    return this.or(null, consumer);
+  }
+
+  @SuppressWarnings("unchecked")
+  public M or(T other, Consumer<M> consumer) {
+    try {
+      M otherMatcher = other == null ?
+          (M) this.typed.getClass().getMethod("matchingAny").invoke(null)
+          : (M) this.typed.getClass().getMethod("matchingAny", other.getClass())
+              .invoke(null, other);
+      consumer.accept(otherMatcher);
+      this.specPredicates.put(UUID.randomUUID().toString(), otherMatcher);
+      return this.typed;
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+      throw new RuntimeException(e);
+    }
+  }
   //--------------------------------------------
 
   public M sortBy(Direction direction, String... propertyName) {

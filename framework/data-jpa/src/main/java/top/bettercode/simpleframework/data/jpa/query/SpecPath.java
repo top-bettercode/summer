@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.Trimspec;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -14,11 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Peter Wu
  */
-public class SpecPath<T, M extends SpecMatcher<T, M>> {
+public class SpecPath<T, M extends SpecMatcher<T, M>> implements SpecPredicate<T, M> {
 
   private static final Logger log = LoggerFactory.getLogger(SpecPath.class);
 
@@ -32,9 +34,13 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
 
   private boolean ignoredPath = false;
 
+  private Trimspec trimspec = null;
+
   private PathMatcher matcher = PathMatcher.EQ;
 
   private Object value;
+
+  private boolean setValue = false;
 
   public SpecPath(M specMatcher, String propertyName) {
     this.specMatcher = specMatcher;
@@ -77,121 +83,92 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
+  @Override
   public Predicate toPredicate(Root<T> root, CriteriaBuilder criteriaBuilder) {
     if (this.isIgnoredPath()) {
-      return null;
-    }
-    PathMatcher matcher = this.getMatcher();
-    switch (matcher) {
-      case IS_TRUE:
-        Path path = this.toPath(root);
-        if (path == null) {
-          return null;
-        }
-        return criteriaBuilder.isTrue(path);
-      case IS_FALSE:
-        path = this.toPath(root);
-        if (path == null) {
-          return null;
-        }
-        return criteriaBuilder.isFalse(path);
-      case IS_NULL:
-        path = this.toPath(root);
-        if (path == null) {
-          return null;
-        }
-        return criteriaBuilder.isNull(path);
-      case IS_NOT_NULL:
-        path = this.toPath(root);
-        if (path == null) {
-          return null;
-        }
-        return criteriaBuilder.isNotNull(path);
-      case IS_EMPTY:
-        path = this.toPath(root);
-        if (path == null || !path.getJavaType().equals(String.class)) {
-          return null;
-        }
-        Expression<String> stringExpression = path;
-        return criteriaBuilder.equal(stringExpression, "");
-      case IS_NOT_EMPTY:
-        path = this.toPath(root);
-        if (path == null || !path.getJavaType().equals(String.class)) {
-          return null;
-        }
-        stringExpression = path;
-        return criteriaBuilder.notEqual(stringExpression, "");
-      case IS_NULL_OR_EMPTY:
-        path = this.toPath(root);
-        if (path == null || !path.getJavaType().equals(String.class)) {
-          return null;
-        }
-        stringExpression = path;
-        return criteriaBuilder.or(criteriaBuilder.isNull(path),
-            criteriaBuilder.equal(stringExpression, ""));
-      case IS_NOT_NULL_OR_EMPTY:
-        path = this.toPath(root);
-        if (path == null || !path.getJavaType().equals(String.class)) {
-          return null;
-        }
-        stringExpression = path;
-        return criteriaBuilder.and(criteriaBuilder.isNotNull(path),
-            criteriaBuilder.notEqual(stringExpression, ""));
-    }
-    Object value = this.getValue();
-    if (value == null || "".equals(value)) {
       return null;
     }
     Path path = this.toPath(root);
     if (path == null) {
       return null;
     }
+    PathMatcher matcher = this.matcher;
+    Class pathJavaType = path.getJavaType();
     switch (matcher) {
-      case BETWEEN:
-        Assert.isTrue(value instanceof SpecPath.BetweenValue,
-            "BETWEEN matcher with wrong value");
-        BetweenValue betweenValue = (BetweenValue) value;
-        return criteriaBuilder.between(path, betweenValue.getFirst(),
-            betweenValue.getSecond());
-      case GT:
-        return criteriaBuilder.greaterThan(path, (Comparable) value);
-      case GE:
-        return criteriaBuilder.greaterThanOrEqualTo(path, (Comparable) value);
-      case LT:
-        return criteriaBuilder.lessThan(path, (Comparable) value);
-      case LE:
-        return criteriaBuilder.lessThanOrEqualTo(path, (Comparable) value);
+      case IS_TRUE:
+        return criteriaBuilder.isTrue(path);
+      case IS_FALSE:
+        return criteriaBuilder.isFalse(path);
+      case IS_NULL:
+        return criteriaBuilder.isNull(path);
+      case IS_NOT_NULL:
+        return criteriaBuilder.isNotNull(path);
     }
-    if (path.getJavaType().equals(String.class)) {
+    if (pathJavaType.equals(String.class)) {
+      switch (matcher) {
+        case IS_EMPTY:
+          return criteriaBuilder.equal(path, "");
+        case IS_NOT_EMPTY:
+          return criteriaBuilder.notEqual(path, "");
+        case IS_NULL_OR_EMPTY:
+          return criteriaBuilder.or(criteriaBuilder.isNull(path),
+              criteriaBuilder.equal(path, ""));
+        case IS_NOT_NULL_OR_EMPTY:
+          return criteriaBuilder.and(criteriaBuilder.isNotNull(path),
+              criteriaBuilder.notEqual(path, ""));
+      }
+    }
+    if (!setValue) {
+      return null;
+    }
+    Object value = this.value;
+    if (value != null) {
+      switch (matcher) {
+        case BETWEEN:
+          Assert.isTrue(value instanceof SpecPath.BetweenValue,
+              "BETWEEN matcher with wrong value");
+          BetweenValue betweenValue = (BetweenValue) value;
+          return criteriaBuilder.between(path, betweenValue.getFirst(),
+              betweenValue.getSecond());
+        case GT:
+          return criteriaBuilder.greaterThan(path, (Comparable) value);
+        case GE:
+          return criteriaBuilder.greaterThanOrEqualTo(path, (Comparable) value);
+        case LT:
+          return criteriaBuilder.lessThan(path, (Comparable) value);
+        case LE:
+          return criteriaBuilder.lessThanOrEqualTo(path, (Comparable) value);
+      }
+    }
+
+    if (pathJavaType.equals(String.class)) {
       Expression<String> stringExpression = path;
-      boolean ignoreCase = this.isIgnoreCase();
+      boolean ignoreCase = this.ignoreCase;
       if (ignoreCase) {
         stringExpression = criteriaBuilder.lower(stringExpression);
         if (value instanceof String) {
           value = value.toString().toLowerCase();
         }
       }
+      if (trimspec != null && value instanceof String) {
+        switch (trimspec) {
+          case LEADING:
+            value = StringUtils.trimLeadingWhitespace((String) value);
+            break;
+          case TRAILING:
+            value = StringUtils.trimTrailingWhitespace((String) value);
+            break;
+          case BOTH:
+            value = StringUtils.trimWhitespace((String) value);
+            break;
+        }
+      }
+
       switch (matcher) {
         case EQ:
           return criteriaBuilder.equal(stringExpression, value);
         case NE:
           return criteriaBuilder.notEqual(stringExpression, value);
-        case LIKE:
-          return criteriaBuilder.like(stringExpression, (String) value);
-        case STARTING:
-          return criteriaBuilder.like(stringExpression, starting(value));
-        case ENDING:
-          return criteriaBuilder.like(stringExpression, ending(value));
-        case CONTAINING:
-          return criteriaBuilder.like(stringExpression, containing(value));
-        case NOT_STARTING:
-          return criteriaBuilder.notLike(stringExpression, starting(value));
-        case NOT_ENDING:
-          return criteriaBuilder.notLike(stringExpression, ending(value));
-        case NOT_CONTAINING:
-          return criteriaBuilder.notLike(stringExpression, containing(value));
-        case NOT_LIKE:
-          return criteriaBuilder.notLike(stringExpression, (String) value);
         case IN:
           Assert.isTrue(value instanceof Collection, "IN matcher with wrong value");
           List<String> collect = ((Collection<?>) value).stream()
@@ -204,6 +181,26 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
               .map(s -> ignoreCase ? s.toString().toLowerCase() : s.toString())
               .collect(Collectors.toList());
           return criteriaBuilder.not(stringExpression.in(notInCollect));
+      }
+      if (value != null) {
+        switch (matcher) {
+          case LIKE:
+            return criteriaBuilder.like(stringExpression, (String) value);
+          case NOT_LIKE:
+            return criteriaBuilder.notLike(stringExpression, (String) value);
+          case STARTING:
+            return criteriaBuilder.like(stringExpression, starting(value));
+          case NOT_STARTING:
+            return criteriaBuilder.notLike(stringExpression, starting(value));
+          case ENDING:
+            return criteriaBuilder.like(stringExpression, ending(value));
+          case NOT_ENDING:
+            return criteriaBuilder.notLike(stringExpression, ending(value));
+          case CONTAINING:
+            return criteriaBuilder.like(stringExpression, containing(value));
+          case NOT_CONTAINING:
+            return criteriaBuilder.notLike(stringExpression, containing(value));
+        }
       }
     } else {
       switch (matcher) {
@@ -226,20 +223,9 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
 
   //--------------------------------------------
 
-  public String getPropertyName() {
-    return this.propertyName;
-  }
 
-  public boolean isIgnoreCase() {
-    return ignoreCase;
-  }
-
-  public PathMatcher getMatcher() {
-    return matcher;
-  }
-
-  public Object getValue() {
-    return this.value;
+  public boolean isSetValue() {
+    return setValue;
   }
 
   public boolean isIgnoredPath() {
@@ -248,6 +234,7 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
 
   public SpecPath<T, M> setValue(Object value) {
     this.value = value;
+    this.setValue = true;
     return this;
   }
 
@@ -264,136 +251,121 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> {
     return this.sortBy(Direction.DESC);
   }
 
-  public M withMatcher(PathMatcher matcher) {
-    this.matcher = matcher;
-    return this.specMatcher;
-  }
-
-  public M withMatcher(Object value, PathMatcher matcher) {
-    this.value = value;
-    this.matcher = matcher;
-    return this.specMatcher;
-  }
-
-  public M withIgnoreCase() {
+  public M ignoreCase() {
     ignoreCase = true;
     return this.specMatcher;
   }
 
+  public M trim(Trimspec trimspec) {
+    this.trimspec = trimspec;
+    return this.specMatcher;
+  }
+
+  public M trim() {
+    return this.trim(Trimspec.BOTH);
+  }
 
   public M ignoredPath() {
     ignoredPath = true;
     return this.specMatcher;
   }
 
-  public M isTrue() {
-    this.matcher = PathMatcher.IS_TRUE;
+  public M withMatcher(PathMatcher matcher) {
+    this.matcher = matcher;
     return this.specMatcher;
+  }
+
+  public M withMatcher(Object value, PathMatcher matcher) {
+    this.setValue(value);
+    return this.withMatcher(matcher);
+  }
+
+  public M isTrue() {
+    return this.withMatcher(PathMatcher.IS_TRUE);
   }
 
   public M isFalse() {
-    this.matcher = PathMatcher.IS_FALSE;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.IS_FALSE);
   }
 
   public M isNull() {
-    this.matcher = PathMatcher.IS_NULL;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.IS_NULL);
   }
 
   public M isNotNull() {
-    this.matcher = PathMatcher.IS_NOT_NULL;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.IS_NOT_NULL);
   }
 
   public M isEmpty() {
-    this.matcher = PathMatcher.IS_EMPTY;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.IS_EMPTY);
   }
 
   public M isNotEmpty() {
-    this.matcher = PathMatcher.IS_NOT_EMPTY;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.IS_NOT_EMPTY);
   }
 
   public M isNullOrEmpty() {
-    this.matcher = PathMatcher.IS_NULL_OR_EMPTY;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.IS_NULL_OR_EMPTY);
   }
 
   public M isNotNullOrEmpty() {
-    this.matcher = PathMatcher.IS_NOT_NULL_OR_EMPTY;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.IS_NOT_NULL_OR_EMPTY);
   }
 
   public M equal() {
-    this.matcher = PathMatcher.EQ;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.EQ);
   }
 
   public M notEqual() {
-    this.matcher = PathMatcher.NE;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.NE);
   }
 
   public M gt() {
-    this.matcher = PathMatcher.GT;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.GT);
   }
 
   public M ge() {
-    this.matcher = PathMatcher.GE;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.GE);
   }
 
   public M lt() {
-    this.matcher = PathMatcher.LT;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.LT);
   }
 
   public M le() {
-    this.matcher = PathMatcher.LE;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.LE);
   }
 
   public M like() {
-    this.matcher = PathMatcher.LIKE;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.LIKE);
   }
 
   public M starting() {
-    this.matcher = PathMatcher.STARTING;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.STARTING);
   }
 
   public M ending() {
-    this.matcher = PathMatcher.ENDING;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.ENDING);
   }
 
   public M containing() {
-    this.matcher = PathMatcher.CONTAINING;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.CONTAINING);
   }
 
   public M notStarting() {
-    this.matcher = PathMatcher.NOT_STARTING;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.NOT_STARTING);
   }
 
   public M notEnding() {
-    this.matcher = PathMatcher.NOT_ENDING;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.NOT_ENDING);
   }
 
   public M notContaining() {
-    this.matcher = PathMatcher.NOT_CONTAINING;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.NOT_CONTAINING);
   }
 
   public M notLike() {
-    this.matcher = PathMatcher.NOT_LIKE;
-    return this.specMatcher;
+    return this.withMatcher(PathMatcher.NOT_LIKE);
   }
 
   //--------------------------------------------
