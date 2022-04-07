@@ -163,12 +163,12 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
   }
 
   //--------------------------------------------
-  public M and(Consumer<M> consumer) {
-    return this.and(null, consumer);
+  public M all(Consumer<M> consumer) {
+    return this.all(null, consumer);
   }
 
   @SuppressWarnings("unchecked")
-  public M and(T other, Consumer<M> consumer) {
+  public M all(T other, Consumer<M> consumer) {
     try {
       M otherMatcher = other == null ?
           (M) this.typed.getClass().getMethod("matching").invoke(null)
@@ -182,12 +182,12 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
     }
   }
 
-  public M or(Consumer<M> consumer) {
-    return this.or(null, consumer);
+  public M any(Consumer<M> consumer) {
+    return this.any(null, consumer);
   }
 
   @SuppressWarnings("unchecked")
-  public M or(T other, Consumer<M> consumer) {
+  public M any(T other, Consumer<M> consumer) {
     try {
       M otherMatcher = other == null ?
           (M) this.typed.getClass().getMethod("matchingAny").invoke(null)
