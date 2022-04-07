@@ -331,7 +331,7 @@ public class SimpleJpaExtRepositoryTest {
   public void findAll35() {
     SpecMatcher<User, DefaultSpecMatcher<User>> matcher = DefaultSpecMatcher.<User>matching()
         .specPath("lastName").containing("Beauford")
-        .or(specMatcher ->
+        .any(specMatcher ->
             specMatcher.equal("id", carterId)
             .containing("firstName", " Cart ").specPath("firstName").trim())
         .desc("firstName").asc("lastName");
