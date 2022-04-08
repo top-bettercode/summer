@@ -44,7 +44,8 @@ public class ExcelTest {
         .setData(list, excelFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
-    Runtime.getRuntime().exec("xdg-open " + System.getProperty("user.dir") + "/build/export.xlsx");
+    Runtime.getRuntime()
+        .exec(new String[]{"xdg-open", System.getProperty("user.dir") + "/build/export.xlsx"});
   }
 
   private final ExcelField<DataBean, ?>[] excelMergeFields = ArrayUtil.of(
@@ -68,7 +69,8 @@ public class ExcelTest {
         .setMergeData(list, excelMergeFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
-    Runtime.getRuntime().exec("xdg-open " + System.getProperty("user.dir") + "/build/export.xlsx");
+    Runtime.getRuntime()
+        .exec(new String[]{"xdg-open", System.getProperty("user.dir") + "/build/export.xlsx"});
   }
 
 
@@ -95,7 +97,7 @@ public class ExcelTest {
         .template(excelFields)
         .finish();
     Runtime.getRuntime()
-        .exec("xdg-open " + System.getProperty("user.dir") + "/build/template.xlsx");
+        .exec(new String[]{"xdg-open", System.getProperty("user.dir") + "/build/template.xlsx"});
   }
 
   public static class DataBean {

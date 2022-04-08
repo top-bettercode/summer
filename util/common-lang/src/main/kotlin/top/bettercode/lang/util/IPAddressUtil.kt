@@ -89,7 +89,7 @@ object IPAddressUtil {
         var str: String?
         var strMAC = ""
         try {
-            val pp = Runtime.getRuntime().exec("nbtstat -a $ipAddress")
+            val pp = Runtime.getRuntime().exec(arrayOf("nbtstat", "-a", ipAddress))
             val ir = InputStreamReader(pp.inputStream)
             val input = LineNumberReader(ir)
             for (i in 1..99) {
