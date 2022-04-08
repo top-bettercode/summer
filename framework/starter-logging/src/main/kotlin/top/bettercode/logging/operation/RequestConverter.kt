@@ -60,9 +60,7 @@ object RequestConverter {
         val uri = URI.create(getRequestUri(request))
         val restUri =
             (request.getAttribute(RequestLoggingFilter.BEST_MATCHING_PATTERN_ATTRIBUTE) as? String)
-                ?: if ("/" == request.contextPath) request.requestURI else request.requestURI.substringAfter(
-                    request.contextPath
-                )
+                ?: request.servletPath
 
         @Suppress("UNCHECKED_CAST")
         val uriTemplateVariables =
