@@ -87,9 +87,10 @@ public abstract class BaseWebNoAuthTest {
     try {
       String filePath = System.getProperty("user.dir") + File.separator + fileName;
       if (System.getProperties().getProperty("os.name").toLowerCase().startsWith("win")) {
-        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + filePath);
+        Runtime.getRuntime()
+            .exec(new String[]{"rundll32", "url.dll,FileProtocolHandler", filePath});
       } else {
-        Runtime.getRuntime().exec("xdg-open " + filePath);
+        Runtime.getRuntime().exec(new String[]{"xdg-open", filePath});
       }
     } catch (Exception ignored) {
     }
