@@ -148,8 +148,9 @@ class RequestLoggingFilter(
                     )
                 val uriName =
                     "${operation.collectionName}${if (operation.collectionName.isNotBlank() && operation.name.isNotBlank()) "/" else ""}${operation.name}"
+                val restUri = requestToUse.servletPath
                 if (requestTimeout) {
-                    val initialComment = "$uriName(${operation.request.restUri})：请求响应速度慢"
+                    val initialComment = "$uriName($restUri)：请求响应速度慢"
                     val timeoutMsg = "(${operation.duration / 1000}秒)"
                     marker.add(MarkerFactory.getMarker(ALARM_LOG_MARKER))
                     marker.add(AlarmMarker(initialComment, timeoutMsg))
@@ -174,7 +175,7 @@ class RequestLoggingFilter(
                                 || httpStatusCode >= 500)
                     ) {
                         val initialComment =
-                            "$uriName(${operation.request.restUri})：$httpStatusCode|${
+                            "$uriName($restUri)：$httpStatusCode|${
                                 getMessage(requestAttributes) ?: "${error.javaClass.name}:${
                                     error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
                                 }"
