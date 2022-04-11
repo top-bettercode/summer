@@ -67,6 +67,18 @@ class DatabaseMetaData(
         }
     }
 
+    fun <T> ResultSet.use(rs: ResultSet.() -> T): List<T> {
+        try {
+            val list = mutableListOf<T>()
+            while (next()) {
+                list.add(rs(this))
+            }
+            return list
+        } finally {
+            close()
+        }
+    }
+
     /**
      * 所有数据表
      * @return 数据表名
@@ -74,15 +86,6 @@ class DatabaseMetaData(
     fun tableNames(): List<String> {
         return databaseMetaData.getTables(datasource.catalog, datasource.schema, null, null)
             .map { getString("TABLE_NAME") }.sortedBy { it }
-    }
-
-    /**
-     * 所有数据表
-     * @return 数据表
-     */
-    fun tables(call: (Table) -> Unit = {}): List<Table> {
-        return databaseMetaData.getTables(datasource.catalog, datasource.schema, null, null)
-            .toTables(call)
     }
 
     /**
@@ -97,7 +100,7 @@ class DatabaseMetaData(
         tableName.current { curentSchema, curentTableName ->
             val tables =
                 databaseMetaData.getTables(datasource.catalog, curentSchema, curentTableName, null)
-            table = tables.toTables(call).firstOrNull()
+            table = tables.toTable(call)
         }
         if (table == null) {
             System.err.println("未在${databaseProductName}数据库(${tableNames().joinToString()})中找到${tableName}表")
@@ -105,47 +108,54 @@ class DatabaseMetaData(
         return table
     }
 
-    private fun ResultSet.toTables(call: (Table) -> Unit = {}): List<Table> {
-        return map {
-            val schema = getString("TABLE_SCHEM")
-            val name = getString("TABLE_NAME")
-            val columns = columns(name)
-            fixImportedKeys(schema, name, columns)
-            fixColumns(name, columns)
-            var primaryKeyNames: MutableList<String>
-            var indexes: MutableList<Indexed>
-            if (canReadIndexed) {
-                try {
-                    primaryKeyNames = primaryKeyNames(name)
-                    indexes = if (datasource.queryIndex)
-                        indexes(name)
-                    else
-                        mutableListOf()
-                } catch (e: Exception) {
-                    System.err.println("查询索引出错:${e.message}")
-                    reConnect()
-                    canReadIndexed = false
+    private fun ResultSet.toTable(call: (Table) -> Unit = {}): Table? {
+        try {
+            while (next()) {
+                val schema = getString("TABLE_SCHEM")
+                val name = getString("TABLE_NAME")
+                val tableCat = getString("TABLE_CAT")
+                val tableType = getString("TABLE_TYPE")
+                val remarks = getString("REMARKS")
+                val columns = columns(name)
+                fixImportedKeys(schema, name, columns)
+                fixColumns(name, columns)
+                var primaryKeyNames: MutableList<String>
+                var indexes: MutableList<Indexed>
+                if (canReadIndexed) {
+                    try {
+                        primaryKeyNames = primaryKeyNames(name)
+                        indexes = if (datasource.queryIndex)
+                            indexes(name)
+                        else
+                            mutableListOf()
+                    } catch (e: Exception) {
+                        System.err.println("查询索引出错:${e.message}")
+                        reConnect()
+                        canReadIndexed = false
+                        primaryKeyNames = mutableListOf()
+                        indexes = mutableListOf()
+                    }
+                } else {
                     primaryKeyNames = mutableListOf()
                     indexes = mutableListOf()
                 }
-            } else {
-                primaryKeyNames = mutableListOf()
-                indexes = mutableListOf()
+                val table = Table(
+                    productName = databaseMetaData.databaseProductName,
+                    catalog = tableCat ?: datasource.catalog,
+                    schema = schema ?: datasource.schema,
+                    tableName = name,
+                    tableType = tableType,
+                    remarks = remarks?.trim() ?: "",
+                    primaryKeyNames = primaryKeyNames,
+                    indexes = indexes,
+                    pumlColumns = columns.toMutableList()
+                )
+                call(table)
+                return table
             }
-            val table = Table(
-                productName = databaseMetaData.databaseProductName,
-                catalog = getString("TABLE_CAT") ?: datasource.catalog,
-                schema = schema ?: datasource.schema,
-                tableName = name,
-                tableType = getString("TABLE_TYPE"),
-                remarks = getString("REMARKS")?.trim()
-                    ?: "",
-                primaryKeyNames = primaryKeyNames,
-                indexes = indexes,
-                pumlColumns = columns.toMutableList()
-            )
-            call(table)
-            table
+            return null
+        } finally {
+            close()
         }
     }
 

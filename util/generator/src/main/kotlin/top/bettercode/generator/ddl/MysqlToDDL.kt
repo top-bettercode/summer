@@ -119,7 +119,8 @@ object MysqlToDDL : ToDDL() {
     override fun appendTable(table: Table, pw: Writer) {
         val tableName = table.tableName
         pw.appendLine("$commentPrefix $tableName")
-        pw.appendLine("DROP TABLE IF EXISTS $quote$tableName$quote;")
+        if (table.ext.dropTablesWhenUpdate)
+            pw.appendLine("DROP TABLE IF EXISTS $quote$tableName$quote;")
         pw.appendLine("CREATE TABLE $quote$tableName$quote (")
         val hasPrimary = table.primaryKeyNames.isNotEmpty()
         val lastIndex = table.columns.size - 1
