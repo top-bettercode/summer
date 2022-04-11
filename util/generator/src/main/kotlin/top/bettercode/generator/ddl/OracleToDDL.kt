@@ -170,13 +170,15 @@ object OracleToDDL : ToDDL() {
         pw.appendLine("$commentPrefix $tableName")
         val primaryKey = table.primaryKey
         if (primaryKey?.sequence?.isNotBlank() == true) {
-            pw.appendLine("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
+            if (table.ext.dropTablesWhenUpdate)
+                pw.appendLine("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
             pw.appendLine(
                 "CREATE SEQUENCE $quote${primaryKey.sequence}$quote INCREMENT BY 1 START WITH ${primaryKey.sequenceStartWith} NOMAXVALUE NOCYCLE CACHE 10;"
             )
         }
         pw.appendLine()
-        pw.appendLine("DROP TABLE $quote$tableName$quote;")
+        if (table.ext.dropTablesWhenUpdate)
+            pw.appendLine("DROP TABLE $quote$tableName$quote;")
         pw.appendLine("CREATE TABLE $quote$tableName$quote (")
         val hasPrimary = table.primaryKeyNames.isNotEmpty()
         val lastIndex = table.columns.size - 1
