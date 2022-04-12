@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.hibernate.query.NativeQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +40,15 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
   private final CountSqlParser countSqlParser = new CountSqlParser();
   private final NestedResultMapType nestedResultMapType;
   private final MybatisResultTransformer resultTransformer;
+  private final boolean isModifyingQuery;
 
   public MybatisJpaQuery(JpaExtQueryMethod method, EntityManager em) {
     super(method, em);
     this.mappedStatement = method.getMappedStatement();
+    SqlCommandType sqlCommandType = this.mappedStatement.getSqlCommandType();
+    this.isModifyingQuery =
+        SqlCommandType.UPDATE.equals(sqlCommandType) || SqlCommandType.DELETE.equals(sqlCommandType)
+            || SqlCommandType.INSERT.equals(sqlCommandType);
     MybatisResultSetHandler mybatisResultSetHandler = new MybatisResultSetHandler(mappedStatement);
     mybatisResultSetHandler.validateResultMaps();
     resultTransformer = new MybatisResultTransformer(mybatisResultSetHandler);
@@ -238,7 +244,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
           return PageableExecutionUtils.getPage(resultList, accessor.getPageable(), () -> total);
         }
       };
-    } else if (method.isModifyingQuery()) {
+    } else if (method.isModifyingQuery() || isModifyingQuery) {
       return new JpaQueryExecution.ModifyingExecution(method, getEntityManager()) {
         @Override
         protected Object doExecute(AbstractJpaQuery query,

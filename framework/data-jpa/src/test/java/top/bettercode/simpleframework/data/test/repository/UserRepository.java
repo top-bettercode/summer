@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Select;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
@@ -31,7 +30,6 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
   Page<User> selectNativeSql(String first_name, Pageable pageable);
 
 
-  @Modifying
   @Transactional
   void deleteByLastName(String lastName);
 
@@ -74,23 +72,18 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 
   User selectOneByMybatis(String firstName);
 
-  @Modifying
   @Transactional
   int insert(String firstName, String lastName);
 
-  @Modifying
   @Transactional
   int update(Integer id, String lastName);
 
-  @Modifying
   @Transactional
   void updateNoReturn(Integer id, String lastName);
 
-  @Modifying
   @Transactional
   int deleteMybatis(Integer id);
 
-  @Modifying
   @Transactional
   void deleteMybatisNoResturn(Integer id);
 }
