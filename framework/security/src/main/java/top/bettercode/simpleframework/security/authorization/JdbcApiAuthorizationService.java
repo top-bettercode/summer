@@ -97,7 +97,11 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
               return (ApiAuthenticationToken) jdkSerializationSerializer.deserialize(bytes);
             } catch (Exception e) {
               log.warn("apiToken反序列化失败", e);
-              jdbcTemplate.update(DEFAULT_DELETE_STATEMENT, rs.getString(2));
+              try {
+                jdbcTemplate.update(DEFAULT_DELETE_STATEMENT, rs.getString(2));
+              } catch (Exception ex) {
+                log.warn("apiToken删除失败", ex);
+              }
               return null;
             }
           }, param);
