@@ -18,10 +18,10 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
 
   private static final String DEFAULT_INSERT_STATEMENT = "insert into api_token (id, access_token, refresh_token, authentication) values (?, ?, ?, ?)";
 
-  private static final String DEFAULT_SELECT_STATEMENT = "select authentication from api_token where id=?";
+  private static final String DEFAULT_SELECT_STATEMENT = "select authentication,id from api_token where id=?";
 
-  private static final String DEFAULT_SELECT_BY_ACCESS_STATEMENT = "select authentication from api_token where access_token = ?";
-  private static final String DEFAULT_SELECT_BY_REFRESH_STATEMENT = "select authentication from api_token where refresh_token = ?";
+  private static final String DEFAULT_SELECT_BY_ACCESS_STATEMENT = "select authentication,id from api_token where access_token = ?";
+  private static final String DEFAULT_SELECT_BY_REFRESH_STATEMENT = "select authentication,id from api_token where refresh_token = ?";
 
   private static final String DEFAULT_DELETE_STATEMENT = "delete from api_token where id=?";
 
@@ -97,6 +97,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
               return (ApiAuthenticationToken) jdkSerializationSerializer.deserialize(bytes);
             } catch (Exception e) {
               log.warn("apiToken反序列化失败", e);
+              jdbcTemplate.update(DEFAULT_DELETE_STATEMENT, rs.getString(2));
               return null;
             }
           }, param);
