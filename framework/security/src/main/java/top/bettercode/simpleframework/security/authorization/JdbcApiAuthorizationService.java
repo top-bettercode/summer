@@ -85,8 +85,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
    * @return 结果
    */
   @Nullable
-  private ApiAuthenticationToken getApiAuthenticationToken(String param,
-      String selectStatement) {
+  private ApiAuthenticationToken getApiAuthenticationToken(String param, String selectStatement) {
     try {
       return jdbcTemplate.queryForObject(selectStatement,
           (rs, rowNum) -> {
