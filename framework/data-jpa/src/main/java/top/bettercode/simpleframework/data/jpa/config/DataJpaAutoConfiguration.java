@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import top.bettercode.simpleframework.data.jpa.IbatisErrorHandler;
+import top.bettercode.simpleframework.data.jpa.DataJpaErrorHandler;
 
 /**
  * DataJpaConfiguration 配置
@@ -35,9 +35,9 @@ public class DataJpaAutoConfiguration {
 
   @ConditionalOnWebApplication
   @Bean
-  public IbatisErrorHandler ibatisErrorHandler(MessageSource messageSource,
+  public DataJpaErrorHandler ibatisErrorHandler(MessageSource messageSource,
       HttpServletRequest request) {
-    return new IbatisErrorHandler(messageSource, request);
+    return new DataJpaErrorHandler(messageSource, request);
   }
 
 }

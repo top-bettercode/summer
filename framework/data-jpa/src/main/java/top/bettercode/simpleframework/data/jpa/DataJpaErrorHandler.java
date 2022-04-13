@@ -2,9 +2,9 @@ package top.bettercode.simpleframework.data.jpa;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.util.StringUtils;
 import top.bettercode.simpleframework.web.RespEntity;
 import top.bettercode.simpleframework.web.error.AbstractErrorHandler;
@@ -12,10 +12,10 @@ import top.bettercode.simpleframework.web.error.AbstractErrorHandler;
 /**
  * @author Peter Wu
  */
-public class IbatisErrorHandler extends AbstractErrorHandler {
+public class DataJpaErrorHandler extends AbstractErrorHandler {
 
 
-  public IbatisErrorHandler(MessageSource messageSource,
+  public DataJpaErrorHandler(MessageSource messageSource,
       HttpServletRequest request) {
     super(messageSource, request);
   }
@@ -24,9 +24,12 @@ public class IbatisErrorHandler extends AbstractErrorHandler {
   public void handlerException(Throwable error, RespEntity<?> respEntity,
       Map<String, String> errors, String separator) {
     String message = null;
-    if (error instanceof PersistenceException) {
+    if (error instanceof JpaSystemException) {
       Throwable cause = error.getCause();
       if (cause != null) {
+        if (cause instanceof org.hibernate.exception.GenericJDBCException) {
+          cause = cause.getCause() != null ? cause.getCause() : cause;
+        }
         String causeMessage = cause.getMessage();
         if (causeMessage != null) {
           message = causeMessage.trim();
