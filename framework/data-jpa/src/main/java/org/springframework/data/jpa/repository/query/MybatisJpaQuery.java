@@ -244,7 +244,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
           return PageableExecutionUtils.getPage(resultList, accessor.getPageable(), () -> total);
         }
       };
-    } else if (method.isModifyingQuery() || isModifyingQuery) {
+    } else if (isModifyingQuery || method.isModifyingQuery()) {
       return new JpaQueryExecution.ModifyingExecution(method, getEntityManager()) {
         @Override
         protected Object doExecute(AbstractJpaQuery query,
