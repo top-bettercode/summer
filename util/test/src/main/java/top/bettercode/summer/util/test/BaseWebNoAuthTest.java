@@ -31,6 +31,8 @@ import org.springframework.web.context.WebApplicationContext;
 import top.bettercode.autodoc.gen.Autodoc;
 import top.bettercode.logging.RequestLoggingFilter;
 import top.bettercode.logging.RequestLoggingProperties;
+import top.bettercode.simpleframework.config.SummerWebProperties;
+import top.bettercode.simpleframework.web.error.CustomErrorController;
 
 /**
  * mockMvc 基础测试类
@@ -52,6 +54,10 @@ public abstract class BaseWebNoAuthTest {
   @Autowired(required = false)
   private AutoDocFilter autoDocFilter;
   @Autowired
+  private SummerWebProperties webProperties;
+  @Autowired
+  private CustomErrorController errorController;
+  @Autowired
   protected RequestLoggingProperties requestLoggingProperties;
   @Autowired
   protected ObjectMapper objectMapper;
@@ -69,8 +75,10 @@ public abstract class BaseWebNoAuthTest {
   @NotNull
   protected DefaultMockMvcBuilder mockMvcBuilder() {
     return webAppContextSetup(context)
+        .addFilter(requestLoggingFilter)
+        .addFilter(new TestErrorPageFilter(errorController, webProperties))
         .addFilter(autoDocFilter)
-        .addFilter(requestLoggingFilter);
+    ;
   }
 
   private String getFileName(MvcResult result) throws UnsupportedEncodingException {

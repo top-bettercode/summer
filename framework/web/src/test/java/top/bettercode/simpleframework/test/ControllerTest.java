@@ -10,7 +10,7 @@ public class ControllerTest extends BaseWebNoAuthTest {
 
   @Test
   public void test() throws Exception {
-    mockMvc.perform(get("/test?price=12&cent=22&a=1585549626000&cell=1822406010")
+    mockMvc.perform(get("/test?price=12&cent=22&a=1585549626000&cell=18222546874")
     ).andExpect(status().isOk());
   }
 }
