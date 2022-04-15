@@ -75,9 +75,9 @@ public abstract class BaseWebNoAuthTest {
   @NotNull
   protected DefaultMockMvcBuilder mockMvcBuilder() {
     return webAppContextSetup(context)
+        .addFilter(autoDocFilter)
         .addFilter(requestLoggingFilter)
         .addFilter(new TestErrorPageFilter(errorController, webProperties))
-        .addFilter(autoDocFilter)
     ;
   }
 
