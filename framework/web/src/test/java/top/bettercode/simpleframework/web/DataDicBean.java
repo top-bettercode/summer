@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import javax.validation.constraints.NotNull;
 import top.bettercode.simpleframework.web.resolver.Cent;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonDefault;
@@ -14,6 +15,7 @@ import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 public class DataDicBean {
 
   @JsonDefault("0")
+  @NotNull
   private BigDecimal number1;
   @JsonBigDecimal(scale = 3)
   private BigDecimal number2;
