@@ -28,7 +28,7 @@ import top.bettercode.simpleframework.web.validator.ChinaCell;
 public class TestController extends BaseController {
 
   @RequestMapping(value = "/test")
-  public Object test(DataDicBean form,@Cent Long cent, Date a,@ChinaCell String cell) {
+  public Object test( @Validated DataDicBean form,@Cent Long cent, Date a,@ChinaCell String cell) {
     System.err.println(a);
     System.err.println(cent);
     System.err.println(form.getPrice());

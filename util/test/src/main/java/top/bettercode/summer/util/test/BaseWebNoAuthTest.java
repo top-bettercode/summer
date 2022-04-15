@@ -8,10 +8,11 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,7 +84,7 @@ public abstract class BaseWebNoAuthTest {
     MvcResult result = perform.andExpect(status().isOk()).andReturn();
     String fileName = getFileName(result);
     StreamUtils.copy(result.getResponse().getContentAsByteArray(),
-        new FileOutputStream(fileName));
+        Files.newOutputStream(Paths.get(fileName)));
     try {
       String filePath = System.getProperty("user.dir") + File.separator + fileName;
       if (System.getProperties().getProperty("os.name").toLowerCase().startsWith("win")) {
