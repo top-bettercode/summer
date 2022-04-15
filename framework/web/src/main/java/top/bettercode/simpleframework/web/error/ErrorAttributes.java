@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import javax.servlet.RequestDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
@@ -172,7 +173,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   private void setErrorInfo(WebRequest request, Integer httpStatusCode,
       String message,
       Throwable error) {
-    request.setAttribute("javax.servlet.error.status_code", httpStatusCode,
+    request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, httpStatusCode,
         RequestAttributes.SCOPE_REQUEST);
     request.setAttribute(DefaultErrorAttributes.class.getName() + ".ERROR", error,
         RequestAttributes.SCOPE_REQUEST);

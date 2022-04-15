@@ -31,6 +31,7 @@ import top.bettercode.simpleframework.servlet.HandlerMethodContextHolder
 import java.io.IOException
 import java.time.LocalDateTime
 import javax.servlet.FilterChain
+import javax.servlet.RequestDispatcher
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -314,7 +315,7 @@ class RequestLoggingFilter(
     }
 
     private fun getStatus(requestAttributes: RequestAttributes): Int {
-        val statusCode = getAttribute<Int>(requestAttributes, "javax.servlet.error.status_code")
+        val statusCode = getAttribute<Int>(requestAttributes, RequestDispatcher.ERROR_STATUS_CODE)
         if (statusCode != null) {
             return statusCode
         }
