@@ -94,6 +94,11 @@ public class DataErrorHandler extends AbstractErrorHandler {
         message = detailMessage;
       }
     } else if (error instanceof DataAccessResourceFailureException) {
+      Throwable cause = error.getCause();
+      String extractMessage = "could not extract ResultSet";
+      if (cause != null && extractMessage.equals(cause.getMessage())) {
+        message = cause.getCause() != null ? cause.getCause().getMessage() : extractMessage;
+      }
       String errorMessage = error.getMessage();
       if (errorMessage != null) {
         if (errorMessage.contains("Socket read timed out")) {
