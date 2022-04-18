@@ -128,10 +128,8 @@ abstract class AlarmAppender(
 
     private fun findAlarmMarker(marker: Marker?): AlarmMarker? {
         if (marker != null) {
-            for (mk in marker.iterator()) {
-                if (mk is AlarmMarker)
-                    return mk
-            }
+            return marker.iterator().asSequence().findLast { it is AlarmMarker }
+                ?.let { it as AlarmMarker }
         }
         return null
     }
