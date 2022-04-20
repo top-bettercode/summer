@@ -49,14 +49,13 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
     this.isModifyingQuery =
         SqlCommandType.UPDATE.equals(sqlCommandType) || SqlCommandType.DELETE.equals(sqlCommandType)
             || SqlCommandType.INSERT.equals(sqlCommandType);
-    MybatisResultSetHandler mybatisResultSetHandler = new MybatisResultSetHandler(mappedStatement);
-    mybatisResultSetHandler.validateResultMaps();
-    resultTransformer = new MybatisResultTransformer(mybatisResultSetHandler);
+    MybatisResultSetHandler.validateResultMaps(this.mappedStatement);
+    resultTransformer = new MybatisResultTransformer(this.mappedStatement);
 
     boolean pageQuery = method.isPageQuery();
 
     if (pageQuery) {
-      String nestedResultMapId = mybatisResultSetHandler.findNestedResultMap();
+      String nestedResultMapId = MybatisResultSetHandler.findNestedResultMap(this.mappedStatement);
       if (nestedResultMapId != null) {
         sqlLog.warn(
             "{} may return incorrect paginated data. Please check result maps definition {}.",
@@ -64,7 +63,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
       }
     }
     if (method.isSliceQuery()) {
-      nestedResultMapType = mybatisResultSetHandler.findNestedResultMapType();
+      nestedResultMapType = MybatisResultSetHandler.findNestedResultMapType(this.mappedStatement);
     } else {
       nestedResultMapType = null;
     }
