@@ -95,8 +95,7 @@ public class MybatisResultSetHandler {
     this(mappedStatement, null);
   }
 
-  public MybatisResultSetHandler(MappedStatement mappedStatement,
-      ResultHandler<?> resultHandler) {
+  public MybatisResultSetHandler(MappedStatement mappedStatement, ResultHandler<?> resultHandler) {
     this.configuration = mappedStatement.getConfiguration();
     this.mappedStatement = mappedStatement;
     this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
@@ -106,7 +105,7 @@ public class MybatisResultSetHandler {
   }
 
 
-  public String findNestedResultMap() {
+  public static String findNestedResultMap(MappedStatement mappedStatement) {
     for (ResultMap resultMap : mappedStatement.getResultMaps()) {
       if (resultMap.hasNestedResultMaps()) {
         for (ResultMapping resultMapping : resultMap.getResultMappings()) {
@@ -122,7 +121,7 @@ public class MybatisResultSetHandler {
     return null;
   }
 
-  public NestedResultMapType findNestedResultMapType() {
+  public static NestedResultMapType findNestedResultMapType(MappedStatement mappedStatement) {
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
     for (ResultMap resultMap : resultMaps) {
       if (resultMap.hasNestedResultMaps()) {
@@ -138,7 +137,7 @@ public class MybatisResultSetHandler {
     return null;
   }
 
-  public void validateResultMaps() {
+  public static void validateResultMaps(MappedStatement mappedStatement) {
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
     if (resultMaps.size() > 1) {
       throw new ExecutorException("Multiples resultMaps  not supported");
