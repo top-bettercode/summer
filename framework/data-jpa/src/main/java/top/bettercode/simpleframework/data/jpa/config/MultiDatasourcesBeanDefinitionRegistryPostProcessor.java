@@ -61,6 +61,9 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
       for (Entry<String, BaseDataSourceProperties> entry : dataSources.entrySet()) {
         //dataSource
         BaseDataSourceProperties properties = entry.getValue();
+        if ("false".equals(properties.getUrl())) {
+          continue;
+        }
         String key = entry.getKey();
         boolean primary = "primary".equals(key);
         EnableJpaExtRepositories jpaExtRepositories = properties.getExtConfigClass()
