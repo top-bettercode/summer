@@ -123,8 +123,11 @@ allprojects {
 
         "test"(Test::class) {
             useJUnitPlatform()
+            reports.html.required.set(false)
+            reports.junitXml.required.set(false)
         }
         "compileJava"(JavaCompile::class) {
+            options.isIncremental = true
             options.compilerArgs.add("-Xlint:deprecation")
             options.compilerArgs.add("-Xlint:unchecked")
             options.compilerArgs.add("-parameters")
@@ -132,6 +135,7 @@ allprojects {
             dependsOn("processResources")
         }
         withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
+            incremental = true
             kotlinOptions {
                 jvmTarget = "1.8"
                 freeCompilerArgs = listOf("-Xjvm-default=all")
