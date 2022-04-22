@@ -127,7 +127,6 @@ allprojects {
             reports.junitXml.required.set(false)
         }
         "compileJava"(JavaCompile::class) {
-            options.isIncremental = true
             options.compilerArgs.add("-Xlint:deprecation")
             options.compilerArgs.add("-Xlint:unchecked")
             options.compilerArgs.add("-parameters")
