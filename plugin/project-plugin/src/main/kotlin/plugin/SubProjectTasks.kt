@@ -34,6 +34,8 @@ object SubProjectTasks {
 
             named("test", Test::class.java) {
                 it.useJUnitPlatform()
+                it.reports.html.required.set(false)
+                it.reports.junitXml.required.set(false)
                 if (application != null)
                     it.jvmArgs = application.applicationDefaultJvmArgs.toList()
                 else
