@@ -69,7 +69,7 @@ abstract class AlarmAppender(
         alarmEvaluator.name = "onAlarm"
         alarmEvaluator.start()
         eventEvaluator = alarmEvaluator
-        encoder.pattern = OptionHelper.substVars(Logback2LoggingSystem.FILE_LOG_PATTERN, context)
+        encoder.pattern = OptionHelper.substVars(logPattern, context)
         encoder.context = context
         encoder.start()
         if (cbTracker == null) {
