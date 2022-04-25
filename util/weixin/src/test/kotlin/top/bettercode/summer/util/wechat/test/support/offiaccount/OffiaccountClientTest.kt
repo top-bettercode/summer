@@ -6,7 +6,7 @@ import top.bettercode.lang.util.LocalDateTimeHelper
 import top.bettercode.lang.util.StringUtil
 import top.bettercode.summer.util.test.BaseTest
 import top.bettercode.summer.util.wechat.support.offiaccount.OffiaccountClient
-import top.bettercode.summer.util.wechat.support.offiaccount.entity.TemplateMsgParam
+import top.bettercode.summer.util.wechat.support.offiaccount.entity.Data
 import top.bettercode.summer.util.wechat.support.offiaccount.entity.TemplateMsgRequest
 import java.time.format.DateTimeFormatter
 
@@ -50,15 +50,15 @@ internal class OffiaccountClientTest : BaseTest() {
             "",
             "",
             mapOf(
-                "first" to TemplateMsgParam("抱歉，您参与的竞拍未中标！"),
-                "keyword1" to TemplateMsgParam("xxxxx"),
-                "keyword2" to TemplateMsgParam(
+                "first" to Data("抱歉，您参与的竞拍未中标！"),
+                "keyword1" to Data("xxxxx"),
+                "keyword2" to Data(
                     LocalDateTimeHelper.now()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                             + "至" + LocalDateTimeHelper.now()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 ),
-                "keyword3" to TemplateMsgParam("25.5")
+                "keyword3" to Data("25.5")
             )
         )
         val result = offiaccountClient.sendTemplateMsg(request)

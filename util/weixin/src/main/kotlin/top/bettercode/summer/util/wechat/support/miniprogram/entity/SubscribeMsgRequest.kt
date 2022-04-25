@@ -11,7 +11,7 @@ data class SubscribeMsgRequest @JvmOverloads constructor(
     val templateId: String? = null,
 
     @field:JsonProperty("data")
-    val data: Map<String, SubscribeMsgParam>,
+    val data: Map<String, Data>,
 
     @field:JsonProperty("page")
     val page: String? = null,

@@ -11,7 +11,7 @@ data class TemplateMsgRequest @JvmOverloads constructor(
     val templateId: String,
 
     @field:JsonProperty("data")
-    val data: Map<String,TemplateMsgParam>,
+    val data: Map<String, Data>,
 
     @field:JsonProperty("url")
     val url: String? = null,
