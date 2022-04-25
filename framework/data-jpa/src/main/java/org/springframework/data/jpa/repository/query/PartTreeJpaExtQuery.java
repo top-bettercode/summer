@@ -6,6 +6,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import org.slf4j.MDC;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.JpaParameters.JpaParameter;
 import org.springframework.data.jpa.repository.query.JpaQueryExecution.DeleteExecution;
@@ -21,6 +22,7 @@ import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.data.util.Streamable;
 import org.springframework.lang.Nullable;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
+import top.bettercode.simpleframework.data.jpa.query.JpaQueryLogExecution;
 import top.bettercode.simpleframework.data.jpa.support.DefaultSoftDeleteSupport;
 import top.bettercode.simpleframework.data.jpa.support.SoftDeleteSupport;
 
@@ -38,17 +40,21 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
   private final EscapeCharacter escape;
   private final SoftDeleteSupport softDeleteSupport;
 
-  PartTreeJpaExtQuery(JpaQueryMethod method, EntityManager em, EscapeCharacter escape, JpaExtProperties jpaExtProperties) {
+  private final String statementId;
+
+  PartTreeJpaExtQuery(JpaExtQueryMethod method, EntityManager em, EscapeCharacter escape,
+      JpaExtProperties jpaExtProperties) {
 
     super(method, em);
-
+    this.statementId = method.getStatementId();
     this.em = em;
     this.escape = escape;
     Class<?> domainClass = method.getEntityInformation().getJavaType();
     this.softDeleteSupport = new DefaultSoftDeleteSupport(jpaExtProperties, domainClass);
     this.parameters = method.getParameters();
 
-    boolean recreationRequired = parameters.hasDynamicProjection() || parameters.potentiallySortsDynamically();
+    boolean recreationRequired =
+        parameters.hasDynamicProjection() || parameters.potentiallySortsDynamically();
 
     try {
 
@@ -89,34 +95,49 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
    */
   @Override
   protected JpaQueryExecution getExecution() {
-
     if (this.tree.isDelete()) {
       return new DeleteExecution(em) {
         @Override
         protected Object doExecute(AbstractJpaQuery jpaQuery,
             JpaParametersParameterAccessor accessor) {
-          Query query = jpaQuery.createQuery(accessor);
-          List<?> resultList = query.getResultList();
+          try {
+            MDC.put("id", statementId);
+            Query query = jpaQuery.createQuery(accessor);
+            List<?> resultList = query.getResultList();
 
-          if (softDeleteSupport.support()) {
-            for (Object o : resultList) {
-              softDeleteSupport.setSoftDeleted(o);
-              em.merge(o);
+            if (softDeleteSupport.support()) {
+              for (Object o : resultList) {
+                softDeleteSupport.setSoftDeleted(o);
+                em.merge(o);
+              }
+            } else {
+              for (Object o : resultList) {
+                em.remove(o);
+              }
             }
-          } else {
-            for (Object o : resultList) {
-              em.remove(o);
-            }
+
+            return jpaQuery.getQueryMethod().isCollectionQuery() ? resultList : resultList.size();
+          } finally {
+            MDC.remove("id");
           }
-
-          return jpaQuery.getQueryMethod().isCollectionQuery() ? resultList : resultList.size();
         }
       };
     } else if (this.tree.isExistsProjection()) {
-      return new ExistsExecution();
+      return new ExistsExecution() {
+        @Override
+        protected Object doExecute(AbstractJpaQuery query,
+            JpaParametersParameterAccessor accessor) {
+          try {
+            MDC.put("id", statementId);
+            return super.doExecute(query, accessor);
+          } finally {
+            MDC.remove("id");
+          }
+        }
+      };
     }
 
-    return super.getExecution();
+    return new JpaQueryLogExecution(super.getExecution(), statementId);
   }
 
   private static void validate(PartTree tree, JpaParameters parameters, String methodName) {
@@ -138,7 +159,8 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     }
   }
 
-  private static void throwExceptionOnArgumentMismatch(String methodName, Part part, JpaParameters parameters,
+  private static void throwExceptionOnArgumentMismatch(String methodName, Part part,
+      JpaParameters parameters,
       int index) {
 
     Type type = part.getType();
@@ -153,16 +175,20 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     JpaParameter parameter = parameters.getBindableParameter(index);
 
     if (expectsCollection(type) && !parameterIsCollectionLike(parameter)) {
-      throw new IllegalStateException(wrongParameterTypeMessage(methodName, property, type, "Collection", parameter));
+      throw new IllegalStateException(
+          wrongParameterTypeMessage(methodName, property, type, "Collection", parameter));
     } else if (!expectsCollection(type) && !parameterIsScalarLike(parameter)) {
-      throw new IllegalStateException(wrongParameterTypeMessage(methodName, property, type, "scalar", parameter));
+      throw new IllegalStateException(
+          wrongParameterTypeMessage(methodName, property, type, "scalar", parameter));
     }
   }
 
-  private static String wrongParameterTypeMessage(String methodName, String property, Type operatorType,
+  private static String wrongParameterTypeMessage(String methodName, String property,
+      Type operatorType,
       String expectedArgumentType, JpaParameter parameter) {
 
-    return String.format("Operator %s on %s requires a %s argument, found %s in method %s.", operatorType.name(),
+    return String.format("Operator %s on %s requires a %s argument, found %s in method %s.",
+        operatorType.name(),
         property, expectedArgumentType, parameter.getType(), methodName);
   }
 
@@ -228,12 +254,13 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
 
       TypedQuery<?> query = createQuery(criteriaQuery);
 
-      return restrictMaxResultsIfNecessary(invokeBinding(parameterBinder, query, accessor, this.metadataCache));
+      return restrictMaxResultsIfNecessary(
+          invokeBinding(parameterBinder, query, accessor, this.metadataCache));
     }
 
     /**
-     * Restricts the max results of the given {@link Query} if the current {@code tree} marks this {@code query} as
-     * limited.
+     * Restricts the max results of the given {@link Query} if the current {@code tree} marks this
+     * {@code query} as limited.
      */
     @SuppressWarnings("ConstantConditions")
     private Query restrictMaxResultsIfNecessary(Query query) {
@@ -248,7 +275,8 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
            * - AND the requested page size was bigger than the derived result limitation via the First/Top keyword.
            */
           if (query.getMaxResults() > tree.getMaxResults() && query.getFirstResult() > 0) {
-            query.setFirstResult(query.getFirstResult() - (query.getMaxResults() - tree.getMaxResults()));
+            query.setFirstResult(
+                query.getFirstResult() - (query.getMaxResults() - tree.getMaxResults()));
           }
         }
 
@@ -263,9 +291,10 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     }
 
     /**
-     * Checks whether we are working with a cached {@link CriteriaQuery} and synchronizes the creation of a
-     * {@link TypedQuery} instance from it. This is due to non-thread-safety in the {@link CriteriaQuery} implementation
-     * of some persistence providers (i.e. Hibernate in this case), see DATAJPA-396.
+     * Checks whether we are working with a cached {@link CriteriaQuery} and synchronizes the
+     * creation of a {@link TypedQuery} instance from it. This is due to non-thread-safety in the
+     * {@link CriteriaQuery} implementation of some persistence providers (i.e. Hibernate in this
+     * case), see DATAJPA-396.
      *
      * @param criteriaQuery must not be {@literal null}.
      */
@@ -304,7 +333,8 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     /**
      * Invokes parameter binding on the given {@link TypedQuery}.
      */
-    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, JpaParametersParameterAccessor accessor,
+    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query,
+        JpaParametersParameterAccessor accessor,
         QueryMetadataCache metadataCache) {
 
       QueryMetadata metadata = metadataCache.getMetadata("query", query);
@@ -359,7 +389,8 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
      * Customizes binding by skipping the pagination.
      */
     @Override
-    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query, JpaParametersParameterAccessor accessor,
+    protected Query invokeBinding(ParameterBinder binder, TypedQuery<?> query,
+        JpaParametersParameterAccessor accessor,
         QueryMetadataCache metadataCache) {
 
       QueryMetadata metadata = metadataCache.getMetadata("countquery", query);

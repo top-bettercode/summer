@@ -22,6 +22,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.BeansException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -134,16 +135,34 @@ public class SimpleJpaExtRepository<T, ID> extends
     return em;
   }
 
+
+  private boolean mdcPutId(String id) {
+    if (MDC.get("id") == null) {
+      MDC.put("id", entityInformation.getEntityName() + id);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //--------------------------------------------
 
   @Override
   @Transactional
   public <S extends T> S save(S entity) {
-    if (isNew(entity)) {
-      em.persist(entity);
-      return entity;
-    } else {
-      return em.merge(entity);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".save");
+      if (isNew(entity)) {
+        em.persist(entity);
+        return entity;
+      } else {
+        return em.merge(entity);
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
@@ -151,48 +170,65 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Transactional
   @Override
   public <S extends T> int save(S s, Specification<T> spec) {
-    CriteriaBuilder builder = em.getCriteriaBuilder();
-    Class<T> domainClass = getDomainClass();
-    CriteriaUpdate<T> criteriaUpdate = builder.createCriteriaUpdate(domainClass);
-    Root<T> root = criteriaUpdate.from(domainClass);
-    spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
-    Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
-    if (predicate != null) {
-      criteriaUpdate.where(predicate);
-    }
-    DirectFieldAccessFallbackBeanWrapper beanWrapper = new DirectFieldAccessFallbackBeanWrapper(s);
-    for (SingularAttribute<? super T, ?> attribute : root.getModel().getSingularAttributes()) {
-      String attributeName = attribute.getName();
-      Object attributeValue = beanWrapper.getPropertyValue(attributeName);
-      if (attributeValue == null) {
-        continue;
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".save");
+      CriteriaBuilder builder = em.getCriteriaBuilder();
+      Class<T> domainClass = getDomainClass();
+      CriteriaUpdate<T> criteriaUpdate = builder.createCriteriaUpdate(domainClass);
+      Root<T> root = criteriaUpdate.from(domainClass);
+      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+      Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
+      if (predicate != null) {
+        criteriaUpdate.where(predicate);
       }
-      criteriaUpdate.set(attributeName, attributeValue);
+      DirectFieldAccessFallbackBeanWrapper beanWrapper = new DirectFieldAccessFallbackBeanWrapper(
+          s);
+      for (SingularAttribute<? super T, ?> attribute : root.getModel().getSingularAttributes()) {
+        String attributeName = attribute.getName();
+        Object attributeValue = beanWrapper.getPropertyValue(attributeName);
+        if (attributeValue == null) {
+          continue;
+        }
+        criteriaUpdate.set(attributeName, attributeValue);
+      }
+      int affected = em.createQuery(criteriaUpdate).executeUpdate();
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} row affected", affected);
+      }
+      em.flush();
+      return affected;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    int affected = em.createQuery(criteriaUpdate).executeUpdate();
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} row affected", affected);
-    }
-    em.flush();
-    return affected;
   }
 
   @Transactional
   @Override
   public <S extends T> S dynamicSave(S entity) {
-    if (isNew(entity)) {
-      em.persist(entity);
-      return entity;
-    } else {
-      @SuppressWarnings("unchecked")
-      Optional<T> optional = findById((ID) entityInformation.getId(entity));
-      if (optional.isPresent()) {
-        T exist = optional.get();
-        copyProperties(exist, entity, false);
-        return em.merge(entity);
-      } else {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".dynamicSave");
+      if (isNew(entity)) {
         em.persist(entity);
         return entity;
+      } else {
+        @SuppressWarnings("unchecked")
+        Optional<T> optional = findById((ID) entityInformation.getId(entity));
+        if (optional.isPresent()) {
+          T exist = optional.get();
+          copyProperties(exist, entity, false);
+          return em.merge(entity);
+        } else {
+          em.persist(entity);
+          return entity;
+        }
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
       }
     }
   }
@@ -201,19 +237,27 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Transactional
   @Override
   public <S extends T> S dynamicSave(S entity, boolean ignoreEmpty) {
-    if (isNew(entity)) {
-      em.persist(entity);
-      return entity;
-    } else {
-      @SuppressWarnings("unchecked")
-      Optional<T> optional = findById((ID) entityInformation.getId(entity));
-      if (optional.isPresent()) {
-        T exist = optional.get();
-        copyProperties(exist, entity, ignoreEmpty);
-        return em.merge(entity);
-      } else {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".dynamicSave");
+      if (isNew(entity)) {
         em.persist(entity);
         return entity;
+      } else {
+        @SuppressWarnings("unchecked")
+        Optional<T> optional = findById((ID) entityInformation.getId(entity));
+        if (optional.isPresent()) {
+          T exist = optional.get();
+          copyProperties(exist, entity, ignoreEmpty);
+          return em.merge(entity);
+        } else {
+          em.persist(entity);
+          return entity;
+        }
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
       }
     }
   }
@@ -222,21 +266,37 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Transactional
   @Override
   public void delete(T entity) {
-    if (softDelete.support()) {
-      softDelete.setSoftDeleted(entity);
-      em.merge(entity);
-    } else {
-      super.delete(entity);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".delete");
+      if (softDelete.support()) {
+        softDelete.setSoftDeleted(entity);
+        em.merge(entity);
+      } else {
+        super.delete(entity);
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
   @Transactional
   @Override
   public int delete(Specification<T> spec) {
-    if (softDelete.support()) {
-      return softDelete(spec);
-    } else {
-      return hardDelete(spec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".delete");
+      if (softDelete.support()) {
+        return softDelete(spec);
+      } else {
+        return hardDelete(spec);
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
@@ -282,288 +342,472 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Transactional
   @Override
   public void deleteAllById(Iterable<? extends ID> ids) {
-    delete((root, query, builder) ->
-        root.get(entityInformation.getIdAttribute()).in(toCollection(ids)));
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteAllById");
+      delete((root, query, builder) ->
+          root.get(entityInformation.getIdAttribute()).in(toCollection(ids)));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
   @Override
   public void deleteAllByIdInBatch(Iterable<ID> ids) {
-    if (softDelete.support()) {
-      softDelete((root, query, builder) ->
-          root.get(entityInformation.getIdAttribute()).in(toCollection(ids)));
-    } else {
-      super.deleteAllByIdInBatch(ids);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteAllByIdInBatch");
+      if (softDelete.support()) {
+        softDelete((root, query, builder) ->
+            root.get(entityInformation.getIdAttribute()).in(toCollection(ids)));
+      } else {
+        super.deleteAllByIdInBatch(ids);
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
   @Transactional
   @Override
   public void deleteAllInBatch(Iterable<T> entities) {
-    if (softDelete.support()) {
-      Assert.notNull(entities, "The given Iterable of entities not be null!");
-      if (!entities.iterator().hasNext()) {
-        return;
-      }
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteAllInBatch");
+      if (softDelete.support()) {
+        Assert.notNull(entities, "The given Iterable of entities not be null!");
+        if (!entities.iterator().hasNext()) {
+          return;
+        }
 
-      String softDeleteName = softDelete.getPropertyName();
-      String oldName = "old" + softDeleteName;
-      String queryString = String
-          .format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.getEntityName(),
-              softDeleteName,
-              softDeleteName, softDeleteName, oldName);
+        String softDeleteName = softDelete.getPropertyName();
+        String oldName = "old" + softDeleteName;
+        String queryString = String
+            .format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.getEntityName(),
+                softDeleteName,
+                softDeleteName, softDeleteName, oldName);
 
-      Iterator<T> iterator = entities.iterator();
+        Iterator<T> iterator = entities.iterator();
 
-      if (iterator.hasNext()) {
-        String alias = "e";
-        StringBuilder builder = new StringBuilder(queryString);
-        builder.append(" and (");
+        if (iterator.hasNext()) {
+          String alias = "e";
+          StringBuilder builder = new StringBuilder(queryString);
+          builder.append(" and (");
 
-        int i = 0;
+          int i = 0;
 
-        while (iterator.hasNext()) {
+          while (iterator.hasNext()) {
 
-          iterator.next();
+            iterator.next();
 
-          builder.append(String.format(" %s = ?%d", alias, ++i));
+            builder.append(String.format(" %s = ?%d", alias, ++i));
 
-          if (iterator.hasNext()) {
-            builder.append(" or");
+            if (iterator.hasNext()) {
+              builder.append(" or");
+            }
+          }
+          builder.append(" )");
+          Query query = em.createQuery(builder.toString());
+
+          iterator = entities.iterator();
+          i = 0;
+          query.setParameter(softDeleteName, deleted);
+          query.setParameter(oldName, notDeleted);
+          while (iterator.hasNext()) {
+            query.setParameter(++i, iterator.next());
+          }
+          int affected = query.executeUpdate();
+          if (sqlLog.isDebugEnabled()) {
+            sqlLog.debug("{} row affected", affected);
           }
         }
-        builder.append(" )");
-        Query query = em.createQuery(builder.toString());
-
-        iterator = entities.iterator();
-        i = 0;
-        query.setParameter(softDeleteName, deleted);
-        query.setParameter(oldName, notDeleted);
-        while (iterator.hasNext()) {
-          query.setParameter(++i, iterator.next());
-        }
-        int affected = query.executeUpdate();
-        if (sqlLog.isDebugEnabled()) {
-          sqlLog.debug("{} row affected", affected);
-        }
+      } else {
+        super.deleteAllInBatch(entities);
       }
-    } else {
-      super.deleteAllInBatch(entities);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
   @Transactional
   @Override
   public void deleteAllInBatch() {
-    if (softDelete.support()) {
-      String softDeleteName = softDelete.getPropertyName();
-      String oldName = "old" + softDeleteName;
-      int affected = em.createQuery(String
-              .format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.getEntityName(),
-                  softDeleteName, softDeleteName, softDeleteName, oldName))
-          .setParameter(softDeleteName, deleted)
-          .setParameter(oldName, notDeleted)
-          .executeUpdate();
-      if (sqlLog.isDebugEnabled()) {
-        sqlLog.debug("{} row affected", affected);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteAllInBatch");
+      if (softDelete.support()) {
+        String softDeleteName = softDelete.getPropertyName();
+        String oldName = "old" + softDeleteName;
+        int affected = em.createQuery(String
+                .format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.getEntityName(),
+                    softDeleteName, softDeleteName, softDeleteName, oldName))
+            .setParameter(softDeleteName, deleted)
+            .setParameter(oldName, notDeleted)
+            .executeUpdate();
+        if (sqlLog.isDebugEnabled()) {
+          sqlLog.debug("{} row affected", affected);
+        }
+      } else {
+        super.deleteAllInBatch();
       }
-    } else {
-      super.deleteAllInBatch();
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
   @Override
   public Optional<T> findById(ID id) {
-    if (softDelete.support()) {
-      Specification<T> spec = (root, query, builder) -> builder.equal(
-          root.get(entityInformation.getIdAttribute()), id);
-      spec = spec.and(notDeletedSpec);
-      return super.findOne(spec);
-    } else {
-      return super.findById(id);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findById");
+      if (softDelete.support()) {
+        Specification<T> spec = (root, query, builder) -> builder.equal(
+            root.get(entityInformation.getIdAttribute()), id);
+        spec = spec.and(notDeletedSpec);
+        return super.findOne(spec);
+      } else {
+        return super.findById(id);
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
   @Override
   public Optional<T> findHardById(ID id) {
-    return super.findById(id);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findHardById");
+      return super.findById(id);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
   public T getOne(ID id) {
-    return getById(id);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".getOne");
+      return getById(id);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
   @Override
   public T getById(ID id) {
-    if (softDelete.support()) {
-      Specification<T> spec = (root, query, builder) -> builder.equal(
-          root.get(entityInformation.getIdAttribute()), id);
-      spec = spec.and(notDeletedSpec);
-      return super.findOne(spec).orElse(null);
-    } else {
-      return super.getById(id);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".getById");
+      if (softDelete.support()) {
+        Specification<T> spec = (root, query, builder) -> builder.equal(
+            root.get(entityInformation.getIdAttribute()), id);
+        spec = spec.and(notDeletedSpec);
+        return super.findOne(spec).orElse(null);
+      } else {
+        return super.getById(id);
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
   @Override
   public boolean existsById(ID id) {
-    if (softDelete.support()) {
-      Specification<T> spec = (root, query, builder) -> builder.equal(
-          root.get(entityInformation.getIdAttribute()), id);
-      spec = spec.and(notDeletedSpec);
-      return super.count(spec) > 0;
-    } else {
-      return super.existsById(id);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".existsById");
+      if (softDelete.support()) {
+        Specification<T> spec = (root, query, builder) -> builder.equal(
+            root.get(entityInformation.getIdAttribute()), id);
+        spec = spec.and(notDeletedSpec);
+        return super.count(spec) > 0;
+      } else {
+        return super.existsById(id);
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
   @Override
   public List<T> findAll() {
-    List<T> result;
-    if (softDelete.support()) {
-      result = super.findAll(notDeletedSpec);
-    } else {
-      result = super.findAll();
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      List<T> result;
+      if (softDelete.support()) {
+        result = super.findAll(notDeletedSpec);
+      } else {
+        result = super.findAll();
+      }
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", result.size());
+      }
+      return result;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", result.size());
-    }
-    return result;
   }
 
   @Override
   public List<T> findAllById(Iterable<ID> ids) {
-    Specification<T> spec = (root, query, builder) ->
-        root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
-    if (softDelete.support()) {
-      spec = spec.and(notDeletedSpec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllById");
+      Specification<T> spec = (root, query, builder) ->
+          root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
+      if (softDelete.support()) {
+        spec = spec.and(notDeletedSpec);
+      }
+      List<T> all = super.findAll(spec);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", all.size());
+      }
+      return all;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    List<T> all = super.findAll(spec);
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", all.size());
-    }
-    return all;
   }
 
   @Override
   public List<T> findAll(Sort sort) {
-    List<T> result;
-    if (softDelete.support()) {
-      result = super.findAll(notDeletedSpec, sort);
-    } else {
-      result = super.findAll(sort);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      List<T> result;
+      if (softDelete.support()) {
+        result = super.findAll(notDeletedSpec, sort);
+      } else {
+        result = super.findAll(sort);
+      }
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", result.size());
+      }
+      return result;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", result.size());
-    }
-    return result;
   }
 
   @Override
   public Page<T> findAll(Pageable pageable) {
-    Page<T> result;
-    if (softDelete.support()) {
-      result = super.findAll(notDeletedSpec, pageable);
-    } else {
-      result = super.findAll(pageable);
-    }
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      Page<T> result;
+      if (softDelete.support()) {
+        result = super.findAll(notDeletedSpec, pageable);
+      } else {
+        result = super.findAll(pageable);
+      }
 
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("total: {} rows", result.getTotalElements());
-      sqlLog.debug("{} rows retrieved", result.getContent().size());
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", result.getTotalElements());
+        sqlLog.debug("{} rows retrieved", result.getContent().size());
+      }
+      return result;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return result;
   }
 
   @Override
   public List<T> findAll(int size) {
-    Specification<T> spec = null;
-    if (softDelete.support()) {
-      spec = notDeletedSpec;
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      Specification<T> spec = null;
+      if (softDelete.support()) {
+        spec = notDeletedSpec;
+      }
+      return findUnpaged(spec, PageRequest.of(0, size));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return findUnpaged(spec, PageRequest.of(0, size));
   }
 
 
   @Override
   public List<T> findAll(int size, Sort sort) {
-    Specification<T> spec = null;
-    if (softDelete.support()) {
-      spec = notDeletedSpec;
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      Specification<T> spec = null;
+      if (softDelete.support()) {
+        spec = notDeletedSpec;
+      }
+      return findUnpaged(spec, PageRequest.of(0, size, sort));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return findUnpaged(spec, PageRequest.of(0, size, sort));
   }
 
   @Override
   public long count(Specification<T> spec) {
-    if (softDelete.support()) {
-      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".count");
+      if (softDelete.support()) {
+        spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+      }
+      long count = super.count(spec);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", count);
+      }
+      return count;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    long count = super.count(spec);
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("total: {} rows", count);
-    }
-    return count;
   }
 
   @Override
   public boolean exists(Specification<T> spec) {
-    return count(spec) > 0;
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".exists");
+      return count(spec) > 0;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
   @Override
   public Optional<T> findFirst(Sort sort) {
-    Specification<T> spec = null;
-    if (softDelete.support()) {
-      spec = notDeletedSpec;
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findFirst");
+      Specification<T> spec = null;
+      if (softDelete.support()) {
+        spec = notDeletedSpec;
+      }
+      return findUnpaged(spec, PageRequest.of(0, 1, sort)).stream().findFirst();
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return findUnpaged(spec, PageRequest.of(0, 1, sort)).stream().findFirst();
   }
 
   @Override
   public Optional<T> findFirst(Specification<T> spec) {
-    if (softDelete.support()) {
-      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findFirst");
+      if (softDelete.support()) {
+        spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+      }
+      return findUnpaged(spec, PageRequest.of(0, 1)).stream().findFirst();
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return findUnpaged(spec, PageRequest.of(0, 1)).stream().findFirst();
   }
 
   @Override
   public Optional<T> findOne(Specification<T> spec) {
-    if (softDelete.support()) {
-      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findOne");
+      if (softDelete.support()) {
+        spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+      }
+      return super.findOne(spec);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return super.findOne(spec);
   }
 
   @Override
   public List<T> findAll(Specification<T> spec) {
-    if (softDelete.support()) {
-      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      if (softDelete.support()) {
+        spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+      }
+      List<T> all = super.findAll(spec);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", all.size());
+      }
+      return all;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    List<T> all = super.findAll(spec);
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", all.size());
-    }
-    return all;
   }
 
   @Override
   public List<T> findAll(Specification<T> spec, int size) {
-    if (softDelete.support()) {
-      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      if (softDelete.support()) {
+        spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+      }
+      return findUnpaged(spec, PageRequest.of(0, size));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return findUnpaged(spec, PageRequest.of(0, size));
   }
 
   @Override
   public List<T> findAll(Specification<T> spec, int size, Sort sort) {
-    if (softDelete.support()) {
-      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      if (softDelete.support()) {
+        spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+      }
+      return findUnpaged(spec, PageRequest.of(0, size, sort));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return findUnpaged(spec, PageRequest.of(0, size, sort));
   }
 
 
@@ -576,96 +820,177 @@ public class SimpleJpaExtRepository<T, ID> extends
     if (sqlLog.isDebugEnabled()) {
       sqlLog.debug("{} rows retrieved", content.size());
     }
-    return new PageableList<>(content, pageable, Math.min(pageable.getPageSize(), content.size()));
+    return new PageableList<>(content, pageable,
+        Math.min(pageable.getPageSize(), content.size()));
   }
 
 
   @Override
   public Page<T> findAll(Specification<T> spec, Pageable pageable) {
-    if (softDelete.support()) {
-      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      if (softDelete.support()) {
+        spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+      }
+      Page<T> all = super.findAll(spec, pageable);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", all.getTotalElements());
+        sqlLog.debug("{} rows retrieved", all.getContent().size());
+      }
+      return all;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    Page<T> all = super.findAll(spec, pageable);
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("total: {} rows", all.getTotalElements());
-      sqlLog.debug("{} rows retrieved", all.getContent().size());
-    }
-    return all;
   }
 
   @Override
   public List<T> findAll(Specification<T> spec, Sort sort) {
-    if (softDelete.support()) {
-      spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      if (softDelete.support()) {
+        spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
+      }
+      List<T> all = super.findAll(spec, sort);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", all.size());
+      }
+      return all;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    List<T> all = super.findAll(spec, sort);
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", all.size());
-    }
-    return all;
   }
 
   @Override
   public <S extends T> Optional<S> findFirst(Example<S> example) {
-    return findUnpaged(example, PageRequest.of(0, 1)).stream().findFirst();
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findFirst");
+      return findUnpaged(example, PageRequest.of(0, 1)).stream().findFirst();
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
   @Override
   public <S extends T> Optional<S> findOne(Example<S> example) {
-    if (softDelete.support()) {
-      softDelete.setUnSoftDeleted(example.getProbe());
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findOne");
+      if (softDelete.support()) {
+        softDelete.setUnSoftDeleted(example.getProbe());
+      }
+      return super.findOne(example);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return super.findOne(example);
   }
 
   @Override
   public <S extends T, R> R findBy(Example<S> example,
       Function<FetchableFluentQuery<S>, R> queryFunction) {
-    if (softDelete.support()) {
-      softDelete.setUnSoftDeleted(example.getProbe());
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findBy");
+      if (softDelete.support()) {
+        softDelete.setUnSoftDeleted(example.getProbe());
+      }
+      return super.findBy(example, queryFunction);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return super.findBy(example, queryFunction);
   }
 
   @Override
   public <S extends T> long count(Example<S> example) {
-    if (softDelete.support()) {
-      softDelete.setUnSoftDeleted(example.getProbe());
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".count");
+      if (softDelete.support()) {
+        softDelete.setUnSoftDeleted(example.getProbe());
+      }
+      long count = super.count(example);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", count);
+      }
+      return count;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    long count = super.count(example);
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("total: {} rows", count);
-    }
-    return count;
   }
 
   @Override
   public <S extends T> boolean exists(Example<S> example) {
-    return count(example) > 0;
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".exists");
+      return count(example) > 0;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
   @Override
   public <S extends T> List<S> findAll(Example<S> example) {
-    if (softDelete.support()) {
-      softDelete.setUnSoftDeleted(example.getProbe());
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      if (softDelete.support()) {
+        softDelete.setUnSoftDeleted(example.getProbe());
+      }
+      List<S> all = super.findAll(example);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", all.size());
+      }
+      return all;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    List<S> all = super.findAll(example);
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", all.size());
-    }
-    return all;
   }
 
 
   @Override
   public <S extends T> List<S> findAll(Example<S> example, int size) {
-    return findUnpaged(example, PageRequest.of(0, size));
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      return findUnpaged(example, PageRequest.of(0, size));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
 
   @Override
   public <S extends T> List<S> findAll(Example<S> example, int size, Sort sort) {
-    return findUnpaged(example, PageRequest.of(0, size, sort));
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      return findUnpaged(example, PageRequest.of(0, size, sort));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
 
@@ -689,87 +1014,135 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Override
   public <S extends T> List<S> findAll(Example<S> example, Sort sort) {
-    if (softDelete.support()) {
-      softDelete.setUnSoftDeleted(example.getProbe());
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      if (softDelete.support()) {
+        softDelete.setUnSoftDeleted(example.getProbe());
+      }
+      List<S> all = super.findAll(example, sort);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", all.size());
+      }
+      return all;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    List<S> all = super.findAll(example, sort);
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", all.size());
-    }
-    return all;
   }
 
   @Override
   public <S extends T> Page<S> findAll(Example<S> example, Pageable pageable) {
-    if (softDelete.support()) {
-      softDelete.setUnSoftDeleted(example.getProbe());
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAll");
+      if (softDelete.support()) {
+        softDelete.setUnSoftDeleted(example.getProbe());
+      }
+      Page<S> all = super.findAll(example, pageable);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", all.getTotalElements());
+        sqlLog.debug("{} rows retrieved", all.getContent().size());
+      }
+      return all;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    Page<S> all = super.findAll(example, pageable);
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("total: {} rows", all.getTotalElements());
-      sqlLog.debug("{} rows retrieved", all.getContent().size());
-    }
-    return all;
   }
 
   @Override
   public long count() {
-    long count;
-    if (softDelete.support()) {
-      String softDeleteName = softDelete.getPropertyName();
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".count");
+      long count;
+      if (softDelete.support()) {
+        String softDeleteName = softDelete.getPropertyName();
 
-      String queryString = String.format(COUNT_QUERY_STRING + " WHERE " + EQUALS_CONDITION_STRING,
-          provider.getCountQueryPlaceholder(), entityInformation.getEntityName(), "x",
-          softDeleteName, softDeleteName);
-      count = em.createQuery(queryString, Long.class).setParameter(softDeleteName,
-          notDeleted).getSingleResult();
-    } else {
-      count = super.count();
+        String queryString = String.format(COUNT_QUERY_STRING + " WHERE " + EQUALS_CONDITION_STRING,
+            provider.getCountQueryPlaceholder(), entityInformation.getEntityName(), "x",
+            softDeleteName, softDeleteName);
+        count = em.createQuery(queryString, Long.class).setParameter(softDeleteName,
+            notDeleted).getSingleResult();
+      } else {
+        count = super.count();
+      }
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", count);
+      }
+      return count;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("total: {} rows", count);
-    }
-    return count;
   }
 
 
   @Transactional
   @Override
   public int cleanRecycleBin() {
-    int reslut = 0;
-    if (softDelete.support()) {
-      String softDeleteName = softDelete.getPropertyName();
-      reslut = em.createQuery(String
-          .format("delete from %s x where x.%s = :%s", entityInformation.getEntityName(),
-              softDeleteName,
-              softDeleteName)).setParameter(softDeleteName,
-          deleted).executeUpdate();
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".cleanRecycleBin");
+      int reslut = 0;
+      if (softDelete.support()) {
+        String softDeleteName = softDelete.getPropertyName();
+        reslut = em.createQuery(String
+            .format("delete from %s x where x.%s = :%s", entityInformation.getEntityName(),
+                softDeleteName,
+                softDeleteName)).setParameter(softDeleteName,
+            deleted).executeUpdate();
+      }
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows affected", reslut);
+      }
+      return reslut;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows affected", reslut);
-    }
-    return reslut;
   }
 
   @Transactional
   @Override
   public void deleteFromRecycleBin(ID id) {
-    if (softDelete.support()) {
-      Optional<T> entity = findByIdFromRecycleBin(id);
-      entity.ifPresent(super::delete);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteFromRecycleBin");
+      if (softDelete.support()) {
+        Optional<T> entity = findByIdFromRecycleBin(id);
+        entity.ifPresent(super::delete);
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
   @Override
   public void deleteAllByIdFromRecycleBin(Iterable<ID> ids) {
-    if (softDelete.support()) {
-      Specification<T> spec = (root, query, builder) ->
-          root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
-      spec = spec.and(deletedSpec);
-      hardDelete(spec);
-    } else {
-      if (sqlLog.isDebugEnabled()) {
-        sqlLog.debug("{} rows affected", 0);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteAllByIdFromRecycleBin");
+      if (softDelete.support()) {
+        Specification<T> spec = (root, query, builder) ->
+            root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
+        spec = spec.and(deletedSpec);
+        hardDelete(spec);
+      } else {
+        if (sqlLog.isDebugEnabled()) {
+          sqlLog.debug("{} rows affected", 0);
+        }
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
       }
     }
   }
@@ -777,12 +1150,20 @@ public class SimpleJpaExtRepository<T, ID> extends
   @Transactional
   @Override
   public void deleteFromRecycleBin(Specification<T> spec) {
-    if (softDelete.support()) {
-      spec = spec == null ? deletedSpec : spec.and(deletedSpec);
-      hardDelete(spec);
-    } else {
-      if (sqlLog.isDebugEnabled()) {
-        sqlLog.debug("{} rows affected", 0);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteFromRecycleBin");
+      if (softDelete.support()) {
+        spec = spec == null ? deletedSpec : spec.and(deletedSpec);
+        hardDelete(spec);
+      } else {
+        if (sqlLog.isDebugEnabled()) {
+          sqlLog.debug("{} rows affected", 0);
+        }
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
       }
     }
   }
@@ -790,164 +1171,284 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Override
   public long countRecycleBin() {
-    long count;
-    if (softDelete.support()) {
-      count = super.count(deletedSpec);
-    } else {
-      count = 0;
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".countRecycleBin");
+      long count;
+      if (softDelete.support()) {
+        count = super.count(deletedSpec);
+      } else {
+        count = 0;
+      }
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", count);
+      }
+      return count;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("total: {} rows", count);
-    }
-    return count;
   }
 
   @Override
   public long countRecycleBin(Specification<T> spec) {
-    if (softDelete.support()) {
-      spec = spec.and(deletedSpec);
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".countRecycleBin");
+      if (softDelete.support()) {
+        spec = spec.and(deletedSpec);
+      }
+      long count = super.count(spec);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", count);
+      }
+      return count;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    long count = super.count(spec);
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("total: {} rows", count);
-    }
-    return count;
   }
 
   @Override
   public boolean existsInRecycleBin(Specification<T> spec) {
-    return countRecycleBin(spec) > 0;
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".existsInRecycleBin");
+      return countRecycleBin(spec) > 0;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
 
   @Override
   public Optional<T> findByIdFromRecycleBin(ID id) {
-    if (softDelete.support()) {
-      Specification<T> spec = (root, query, builder) -> builder.equal(
-          root.get(entityInformation.getIdAttribute()), id);
-      spec = spec.and(deletedSpec);
-      return super.findOne(spec);
-    } else {
-      return Optional.empty();
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findByIdFromRecycleBin");
+      if (softDelete.support()) {
+        Specification<T> spec = (root, query, builder) -> builder.equal(
+            root.get(entityInformation.getIdAttribute()), id);
+        spec = spec.and(deletedSpec);
+        return super.findOne(spec);
+      } else {
+        return Optional.empty();
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
   @Override
   public List<T> findAllByIdFromRecycleBin(Iterable<ID> ids) {
-    List<T> result;
-    if (softDelete.support()) {
-      Specification<T> spec = (root, query, builder) ->
-          root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
-      spec = spec.and(deletedSpec);
-      result = super.findAll(spec);
-    } else {
-      result = Collections.emptyList();
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllByIdFromRecycleBin");
+      List<T> result;
+      if (softDelete.support()) {
+        Specification<T> spec = (root, query, builder) ->
+            root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
+        spec = spec.and(deletedSpec);
+        result = super.findAll(spec);
+      } else {
+        result = Collections.emptyList();
+      }
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", result.size());
+      }
+      return result;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", result.size());
-    }
-    return result;
   }
 
   @Override
   public Optional<T> findOneFromRecycleBin(Specification<T> spec) {
-    if (softDelete.support()) {
-      spec = spec == null ? deletedSpec : spec.and(deletedSpec);
-      return super.findOne(spec);
-    } else {
-      return Optional.empty();
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findOneFromRecycleBin");
+      if (softDelete.support()) {
+        spec = spec == null ? deletedSpec : spec.and(deletedSpec);
+        return super.findOne(spec);
+      } else {
+        return Optional.empty();
+      }
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
   }
 
   @Override
   public Optional<T> findFirstFromRecycleBin(Specification<T> spec) {
-    return findUnpagedFromRecycleBin(spec, PageRequest.of(0, 1)).stream().findFirst();
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findFirstFromRecycleBin");
+      return findUnpagedFromRecycleBin(spec, PageRequest.of(0, 1)).stream().findFirst();
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
 
   @Override
   public List<T> findAllFromRecycleBin() {
-    List<T> result;
-    if (softDelete.support()) {
-      result = super.findAll(deletedSpec);
-    } else {
-      result = Collections.emptyList();
-    }
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllFromRecycleBin");
+      List<T> result;
+      if (softDelete.support()) {
+        result = super.findAll(deletedSpec);
+      } else {
+        result = Collections.emptyList();
+      }
 
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", result.size());
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", result.size());
+      }
+      return result;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return result;
   }
 
   @Override
   public List<T> findAllFromRecycleBin(int size) {
-    return findUnpagedFromRecycleBin(null, PageRequest.of(0, size));
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllFromRecycleBin");
+      return findUnpagedFromRecycleBin(null, PageRequest.of(0, size));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
   @Override
   public List<T> findAllFromRecycleBin(int size, Sort sort) {
-    return findUnpagedFromRecycleBin(null, PageRequest.of(0, size, sort));
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllFromRecycleBin");
+      return findUnpagedFromRecycleBin(null, PageRequest.of(0, size, sort));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
   @Override
   public Page<T> findAllFromRecycleBin(Pageable pageable) {
-    Page<T> result;
-    if (softDelete.support()) {
-      result = super.findAll(deletedSpec, pageable);
-    } else {
-      result = Page.empty(pageable);
-    }
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllFromRecycleBin");
+      Page<T> result;
+      if (softDelete.support()) {
+        result = super.findAll(deletedSpec, pageable);
+      } else {
+        result = Page.empty(pageable);
+      }
 
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("total: {} rows", result.getTotalElements());
-      sqlLog.debug("{} rows retrieved", result.getContent().size());
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", result.getTotalElements());
+        sqlLog.debug("{} rows retrieved", result.getContent().size());
+      }
+      return result;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return result;
   }
 
 
   @Override
   public List<T> findAllFromRecycleBin(Sort sort) {
-    List<T> result;
-    if (softDelete.support()) {
-      result = super.findAll(deletedSpec, sort);
-    } else {
-      result = Collections.emptyList();
-    }
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllFromRecycleBin");
+      List<T> result;
+      if (softDelete.support()) {
+        result = super.findAll(deletedSpec, sort);
+      } else {
+        result = Collections.emptyList();
+      }
 
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", result.size());
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", result.size());
+      }
+      return result;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return result;
   }
 
 
   @Override
   public List<T> findAllFromRecycleBin(Specification<T> spec) {
-    List<T> result;
-    if (softDelete.support()) {
-      spec = spec == null ? deletedSpec : spec.and(deletedSpec);
-      result = super.findAll(spec);
-    } else {
-      result = Collections.emptyList();
-    }
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllFromRecycleBin");
+      List<T> result;
+      if (softDelete.support()) {
+        spec = spec == null ? deletedSpec : spec.and(deletedSpec);
+        result = super.findAll(spec);
+      } else {
+        result = Collections.emptyList();
+      }
 
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", result.size());
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", result.size());
+      }
+      return result;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return result;
   }
 
 
   @Override
   public List<T> findAllFromRecycleBin(Specification<T> spec, int size) {
-    return findUnpagedFromRecycleBin(spec, PageRequest.of(0, size));
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllFromRecycleBin");
+      return findUnpagedFromRecycleBin(spec, PageRequest.of(0, size));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
   @Override
   public List<T> findAllFromRecycleBin(Specification<T> spec, int size, Sort sort) {
-    return findUnpagedFromRecycleBin(spec, PageRequest.of(0, size, sort));
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllFromRecycleBin");
+      return findUnpagedFromRecycleBin(spec, PageRequest.of(0, size, sort));
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
   }
 
   @NotNull
@@ -966,35 +1467,51 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Override
   public Page<T> findAllFromRecycleBin(Specification<T> spec, Pageable pageable) {
-    Page<T> result;
-    if (softDelete.support()) {
-      spec = spec == null ? deletedSpec : spec.and(deletedSpec);
-      result = super.findAll(spec, pageable);
-    } else {
-      result = Page.empty(pageable);
-    }
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllFromRecycleBin");
+      Page<T> result;
+      if (softDelete.support()) {
+        spec = spec == null ? deletedSpec : spec.and(deletedSpec);
+        result = super.findAll(spec, pageable);
+      } else {
+        result = Page.empty(pageable);
+      }
 
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("total: {} rows", result.getTotalElements());
-      sqlLog.debug("{} rows retrieved", result.getContent().size());
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", result.getTotalElements());
+        sqlLog.debug("{} rows retrieved", result.getContent().size());
+      }
+      return result;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return result;
   }
 
   @Override
   public List<T> findAllFromRecycleBin(Specification<T> spec, Sort sort) {
-    List<T> result;
-    if (softDelete.support()) {
-      spec = spec == null ? deletedSpec : spec.and(deletedSpec);
-      result = super.findAll(spec, sort);
-    } else {
-      result = Collections.emptyList();
-    }
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findAllFromRecycleBin");
+      List<T> result;
+      if (softDelete.support()) {
+        spec = spec == null ? deletedSpec : spec.and(deletedSpec);
+        result = super.findAll(spec, sort);
+      } else {
+        result = Collections.emptyList();
+      }
 
-    if (sqlLog.isDebugEnabled()) {
-      sqlLog.debug("{} rows retrieved", result.size());
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", result.size());
+      }
+      return result;
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
     }
-    return result;
   }
 
 }
