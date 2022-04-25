@@ -74,5 +74,4 @@ class TestController {
 
 fun main() {
     SpringApplication.run(TestController::class.java)
-    System.err.println(RequestConverter.apiHost)
 }

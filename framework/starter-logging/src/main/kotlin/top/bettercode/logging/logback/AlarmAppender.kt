@@ -24,7 +24,8 @@ abstract class AlarmAppender(
     private val cyclicBufferSize: Int,
     private val cacheSeconds: Long,
     private val timeoutCacheSeconds: Long,
-    private val ignoredWarnLogger: Array<String>
+    private val ignoredWarnLogger: Array<String>,
+    private val logPattern: String
 ) : AppenderBase<ILoggingEvent>() {
 
     companion object {

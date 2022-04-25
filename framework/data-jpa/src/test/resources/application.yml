@@ -4,8 +4,11 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
     top.bettercode.simpleframework.data: debug
-  file:
-    path: build/logs/
+
+summer:
+  logging:
+    files:
+      path: build/logs
 
 
 spring:
