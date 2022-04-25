@@ -38,7 +38,7 @@ class OffiaccountCallbackController(
         } catch (e: Exception) {
             log.warn("token获取失败", e)
         }
-        return offiaccountClient.properties.redirectUrl(token, openId, token != null)
+        return offiaccountClient.properties.redirectUrl(token, openId, wechatService.forceLogin())
     }
 
     /*

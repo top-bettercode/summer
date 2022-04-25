@@ -5,6 +5,10 @@ package top.bettercode.summer.util.wechat.support
  */
 interface IWechatService {
 
+    fun forceLogin(): Boolean{
+        return false
+    }
+
     fun oauth(openId: String): String?
 
     fun receive(

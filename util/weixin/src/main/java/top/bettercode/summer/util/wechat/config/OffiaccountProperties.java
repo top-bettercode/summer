@@ -27,13 +27,14 @@ public class OffiaccountProperties extends WexinProperties {
     return appBaseUrl + OAUTH_URL;
   }
 
-  public String redirectUrl(String token, String openId, boolean hasBound) {
-    return "redirect:" + wechatUrl(token, openId, hasBound);
+  public String redirectUrl(String token, String openId, boolean forceLogin) {
+    return "redirect:" + wechatUrl(token, openId, forceLogin);
   }
 
-  public String wechatUrl(String token, String openId, boolean hasBound) {
+  public String wechatUrl(String token, String openId, boolean forceLogin) {
     return wechatBaseUrl + wechatWebOauthUrl + "?access_token=" + (token == null ? ""
-        : token) + "&" + OPEN_ID_NAME + "=" + openId + "&hasBound=" + hasBound + "&_timer="
+        : token) + "&" + OPEN_ID_NAME + "=" + openId + "&hasBound=" + (token != null)
+        + "&forceLogin=" + forceLogin + "&_timer="
         + System.currentTimeMillis();
   }
   //--------------------------------------------
