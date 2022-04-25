@@ -14,12 +14,14 @@ open class SlackAppender(
     private val warnSubject: String,
     private val managementPath: String,
     private val logsPath: String?,
+    private val logPattern: String,
     logAll: Boolean
 ) : AlarmAppender(
     properties.cyclicBufferSize,
     properties.cacheSeconds,
     properties.timeoutCacheSeconds,
-    properties.ignoredWarnLogger
+    properties.ignoredWarnLogger,
+    logPattern
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)

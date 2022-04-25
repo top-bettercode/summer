@@ -31,7 +31,10 @@ import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.boot.logging.LogFile
 import org.springframework.boot.logging.LoggingInitializationContext
 import org.springframework.boot.logging.LoggingSystem
+import org.springframework.boot.logging.LoggingSystemFactory
 import org.springframework.boot.logging.logback.LogbackLoggingSystem
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
@@ -66,6 +69,13 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             )
         )
         factory as LoggerContext
+    }
+
+    override fun reinitialize(initializationContext: LoggingInitializationContext?) {
+        super.reinitialize(initializationContext)
+        if (initializationContext != null) {
+            loadDefaults(initializationContext, null)
+        }
     }
 
     override fun loadDefaults(
@@ -104,6 +114,8 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             Binder.get(environment).bind("summer.logging.files", FilesProperties::class.java)
                 .get() else FilesProperties()
 
+        val fileLogPattern = environment.getProperty("logging.pattern.file", FILE_LOG_PATTERN)
+
         //slack log
         if (existProperty(environment, "summer.logging.slack.auth-token") && existProperty(
                 environment,
@@ -124,6 +136,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                             warnSubject,
                             managementPath,
                             logsPath,
+                            fileLogPattern,
                             filesProperties.isLogAll
                         )
                     slackAppender.context = context
@@ -197,7 +210,6 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
         //file log
         if (existProperty(environment, "summer.logging.files.path")) {
-            val fileLogPattern = environment.getProperty("logging.pattern.file", FILE_LOG_PATTERN)
 
             val spilts = bind(environment, "summer.logging.spilt")
             val markers = bind(environment, "summer.logging.spilt-marker")
@@ -632,7 +644,24 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
     companion object {
         const val FILE_LOG_PATTERN =
-            "%d{yyyy-MM-dd HH:mm:ss.SSS} \${LOG_LEVEL_PATTERN:%5p} \${PID: } --- [%t] %-40.40logger{39} :%X{id} %m%n\${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+            "%d{yyyy-MM-dd HH:mm:ss.SSS} \${LOG_LEVEL_PATTERN:-%5p} \${PID:- } --- [%t] %-40.40logger{39} :%X{id} %m%n\${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
 
     }
+
+    @Order(Ordered.LOWEST_PRECEDENCE)
+    class Factory : LoggingSystemFactory {
+        override fun getLoggingSystem(classLoader: ClassLoader): LoggingSystem? {
+            return if (PRESENT) {
+                LogbackLoggingSystem(classLoader)
+            } else null
+        }
+
+        companion object {
+            private val PRESENT = ClassUtils.isPresent(
+                "ch.qos.logback.classic.LoggerContext",
+                Factory::class.java.classLoader
+            )
+        }
+    }
+
 }

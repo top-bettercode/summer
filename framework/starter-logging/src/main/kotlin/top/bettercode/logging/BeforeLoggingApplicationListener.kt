@@ -21,7 +21,7 @@ class BeforeLoggingApplicationListener : GenericApplicationListener {
         return isAssignableFrom(sourceType, SpringApplication::class.java, ApplicationContext::class.java)
     }
 
-    override fun onApplicationEvent(event: ApplicationEvent?) {
+    override fun onApplicationEvent(event: ApplicationEvent) {
         System.setProperty(LoggingSystem.SYSTEM_PROPERTY, Logback2LoggingSystem::class.java.name)
     }
 
