@@ -14,6 +14,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.hibernate.query.NativeQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
@@ -150,8 +151,12 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         @Override
         protected Object doExecute(AbstractJpaQuery query,
             JpaParametersParameterAccessor accessor) {
-          sqlLog.debug(mappedStatement.getId());
-          return super.doExecute(query, accessor);
+          try {
+            MDC.put("id", mappedStatement.getId());
+            return super.doExecute(query, accessor);
+          } finally {
+            MDC.remove("id");
+          }
         }
       };
     } else if (method.isProcedureQuery()) {
@@ -159,8 +164,12 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         @Override
         protected Object doExecute(AbstractJpaQuery jpaQuery,
             JpaParametersParameterAccessor accessor) {
-          sqlLog.debug(mappedStatement.getId());
-          return super.doExecute(jpaQuery, accessor);
+          try {
+            MDC.put("id", mappedStatement.getId());
+            return super.doExecute(jpaQuery, accessor);
+          } finally {
+            MDC.remove("id");
+          }
         }
       };
     } else if (method.isCollectionQuery()) {
@@ -168,12 +177,16 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         @Override
         protected Object doExecute(AbstractJpaQuery query,
             JpaParametersParameterAccessor accessor) {
-          sqlLog.debug(mappedStatement.getId());
-          List<?> result = (List<?>) super.doExecute(query, accessor);
-          if (sqlLog.isDebugEnabled()) {
-            sqlLog.debug("{} rows retrieved", result.size());
+          try {
+            MDC.put("id", mappedStatement.getId());
+            List<?> result = (List<?>) super.doExecute(query, accessor);
+            if (sqlLog.isDebugEnabled()) {
+              sqlLog.debug("{} rows retrieved", result.size());
+            }
+            return result;
+          } finally {
+            MDC.remove("id");
           }
-          return result;
         }
       };
     } else if (method.isSliceQuery()) {
@@ -181,24 +194,28 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         @Override
         protected Object doExecute(AbstractJpaQuery query,
             JpaParametersParameterAccessor accessor) {
-          sqlLog.debug(mappedStatement.getId());
-          Pageable pageable = accessor.getPageable();
-          if (pageable.isPaged() && nestedResultMapType != null) {
-            if (nestedResultMapType.isCollection()) {
-              throw new UnsupportedOperationException(nestedResultMapType.getNestedResultMapId()
-                  + " collection resultmap not support page query");
-            } else {
-              sqlLog.warn(
-                  "{} may return incorrect paginated data. Please check result maps definition {}.",
-                  mappedStatement.getId(), nestedResultMapType.getNestedResultMapId());
+          try {
+            MDC.put("id", mappedStatement.getId());
+            Pageable pageable = accessor.getPageable();
+            if (pageable.isPaged() && nestedResultMapType != null) {
+              if (nestedResultMapType.isCollection()) {
+                throw new UnsupportedOperationException(nestedResultMapType.getNestedResultMapId()
+                    + " collection resultmap not support page query");
+              } else {
+                sqlLog.warn(
+                    "{} may return incorrect paginated data. Please check result maps definition {}.",
+                    mappedStatement.getId(), nestedResultMapType.getNestedResultMapId());
+              }
             }
+            SliceImpl<?> result = (SliceImpl<?>) super.doExecute(query, accessor);
+            if (sqlLog.isDebugEnabled()) {
+              sqlLog.debug("total: {} rows", result.getNumberOfElements());
+              sqlLog.debug("{} rows retrieved", result.getSize());
+            }
+            return result;
+          } finally {
+            MDC.remove("id");
           }
-          SliceImpl<?> result = (SliceImpl<?>) super.doExecute(query, accessor);
-          if (sqlLog.isDebugEnabled()) {
-            sqlLog.debug("total: {} rows", result.getNumberOfElements());
-            sqlLog.debug("{} rows retrieved", result.getSize());
-          }
-          return result;
         }
       };
     } else if (method.isPageQuery()) {
@@ -206,58 +223,62 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         @Override
         protected Object doExecute(AbstractJpaQuery repositoryQuery,
             JpaParametersParameterAccessor accessor) {
-          sqlLog.debug(mappedStatement.getId());
-          MybatisQuery mybatisQuery = (MybatisQuery) repositoryQuery.createQuery(accessor);
-          long total;
-          List<?> resultList;
-          if (accessor.getPageable().isPaged()) {
-            JpaQueryMethod method = getQueryMethod();
-            String countQueryString = null;
-            MybatisParam mybatisParam = mybatisQuery.getMybatisParam();
-            if (countMappedStatement != null) {
-              BoundSql boundSql = countMappedStatement.getBoundSql(
-                  mybatisParam.getParameterObject());
-              countQueryString = boundSql.getSql();
-            }
-            String queryString =
-                countQueryString != null ? countQueryString : countSqlParser.getSmartCountSql(
-                    mybatisQuery.getQueryString());
-            EntityManager em = getEntityManager();
+          try {
+            MDC.put("id", mappedStatement.getId());
+            MybatisQuery mybatisQuery = (MybatisQuery) repositoryQuery.createQuery(accessor);
+            long total;
+            List<?> resultList;
+            if (accessor.getPageable().isPaged()) {
+              JpaQueryMethod method = getQueryMethod();
+              String countQueryString = null;
+              MybatisParam mybatisParam = mybatisQuery.getMybatisParam();
+              if (countMappedStatement != null) {
+                BoundSql boundSql = countMappedStatement.getBoundSql(
+                    mybatisParam.getParameterObject());
+                countQueryString = boundSql.getSql();
+              }
+              String queryString =
+                  countQueryString != null ? countQueryString : countSqlParser.getSmartCountSql(
+                      mybatisQuery.getQueryString());
+              EntityManager em = getEntityManager();
 
-            Query countQuery = em.createNativeQuery(queryString);
+              Query countQuery = em.createNativeQuery(queryString);
 
-            QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata(queryString,
-                countQuery);
+              QueryParameterSetter.QueryMetadata metadata = metadataCache.getMetadata(queryString,
+                  countQuery);
 
-            ((MybatisParameterBinder) parameterBinder.get()).bind(metadata.withQuery(countQuery),
-                mybatisParam);
+              ((MybatisParameterBinder) parameterBinder.get()).bind(metadata.withQuery(countQuery),
+                  mybatisParam);
 
-            countQuery =
-                method.applyHintsToCountQuery() ? applyHints(countQuery, method) : countQuery;
+              countQuery =
+                  method.applyHintsToCountQuery() ? applyHints(countQuery, method) : countQuery;
 
-            List<?> totals = countQuery.getResultList();
-            total =
-                totals.size() == 1 ? JpaUtil.convert(totals.get(0), Long.class) : totals.size();
-            if (sqlLog.isDebugEnabled()) {
-              sqlLog.debug("total: {} rows", total);
-            }
-            if (total > 0 && total > accessor.getPageable().getOffset()) {
+              List<?> totals = countQuery.getResultList();
+              total =
+                  totals.size() == 1 ? JpaUtil.convert(totals.get(0), Long.class) : totals.size();
+              if (sqlLog.isDebugEnabled()) {
+                sqlLog.debug("total: {} rows", total);
+              }
+              if (total > 0 && total > accessor.getPageable().getOffset()) {
+                resultList = mybatisQuery.getResultList();
+                if (sqlLog.isDebugEnabled()) {
+                  sqlLog.debug("{} rows retrieved", resultList.size());
+                }
+              } else {
+                resultList = Collections.emptyList();
+              }
+            } else {
               resultList = mybatisQuery.getResultList();
               if (sqlLog.isDebugEnabled()) {
                 sqlLog.debug("{} rows retrieved", resultList.size());
               }
-            } else {
-              resultList = Collections.emptyList();
+              total = resultList.size();
             }
-          } else {
-            resultList = mybatisQuery.getResultList();
-            if (sqlLog.isDebugEnabled()) {
-              sqlLog.debug("{} rows retrieved", resultList.size());
-            }
-            total = resultList.size();
-          }
 
-          return PageableExecutionUtils.getPage(resultList, accessor.getPageable(), () -> total);
+            return PageableExecutionUtils.getPage(resultList, accessor.getPageable(), () -> total);
+          } finally {
+            MDC.remove("id");
+          }
         }
       };
     } else if (isModifyingQuery || method.isModifyingQuery()) {
@@ -265,12 +286,16 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         @Override
         protected Object doExecute(AbstractJpaQuery query,
             JpaParametersParameterAccessor accessor) {
-          sqlLog.debug(mappedStatement.getId());
-          Object result = super.doExecute(query, accessor);
-          if (sqlLog.isDebugEnabled()) {
-            sqlLog.debug("{} row affected", result);
+          try {
+            MDC.put("id", mappedStatement.getId());
+            Object result = super.doExecute(query, accessor);
+            if (sqlLog.isDebugEnabled()) {
+              sqlLog.debug("{} row affected", result);
+            }
+            return result;
+          } finally {
+            MDC.remove("id");
           }
-          return result;
         }
       };
     } else {
@@ -278,12 +303,16 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         @Override
         protected Object doExecute(AbstractJpaQuery query,
             JpaParametersParameterAccessor accessor) {
-          sqlLog.debug(mappedStatement.getId());
-          Object result = super.doExecute(query, accessor);
-          if (sqlLog.isDebugEnabled()) {
-            sqlLog.debug("{} rows retrieved", result == null ? 0 : 1);
+          try {
+            MDC.put("id", mappedStatement.getId());
+            Object result = super.doExecute(query, accessor);
+            if (sqlLog.isDebugEnabled()) {
+              sqlLog.debug("{} rows retrieved", result == null ? 0 : 1);
+            }
+            return result;
+          } finally {
+            MDC.remove("id");
           }
-          return result;
         }
       };
     }
