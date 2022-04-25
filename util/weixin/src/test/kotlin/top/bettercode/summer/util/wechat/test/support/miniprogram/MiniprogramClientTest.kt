@@ -6,7 +6,7 @@ import top.bettercode.lang.util.LocalDateTimeHelper
 import top.bettercode.lang.util.StringUtil
 import top.bettercode.summer.util.test.BaseTest
 import top.bettercode.summer.util.wechat.support.miniprogram.MiniprogramClient
-import top.bettercode.summer.util.wechat.support.miniprogram.entity.SubscribeMsgParam
+import top.bettercode.summer.util.wechat.support.miniprogram.entity.Data
 import top.bettercode.summer.util.wechat.support.miniprogram.entity.SubscribeMsgRequest
 import java.time.format.DateTimeFormatter
 
@@ -31,15 +31,15 @@ internal class MiniprogramClientTest : BaseTest() {
             "",
             "",
             mapOf(
-                "first" to SubscribeMsgParam("抱歉，您参与的竞拍未中标！"),
-                "keyword1" to SubscribeMsgParam("xxxxx"),
-                "keyword2" to SubscribeMsgParam(
+                "first" to Data("抱歉，您参与的竞拍未中标！"),
+                "keyword1" to Data("xxxxx"),
+                "keyword2" to Data(
                     LocalDateTimeHelper.now()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                             + "至" + LocalDateTimeHelper.now()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 ),
-                "keyword3" to SubscribeMsgParam("25.5")
+                "keyword3" to Data("25.5")
             )
         )
         val result = miniprogramClient.sendSubscribeMsg(request)
