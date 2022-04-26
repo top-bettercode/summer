@@ -262,10 +262,9 @@ class DistPlugin : Plugin<Project> {
                         task as Jar
                         if (extension.unwrapResources) {
                             val gradle = project.gradle as GradleInternal
+                            val taskNames = gradle.startParameter.taskNames
                             val needUnwrapTask =
-                                gradle.startParameter.taskNames.firstNotNullOfOrNull { name ->
-                                    needUnwrapTasks.find { it.name == name }
-                                }
+                                needUnwrapTasks.find { taskNames.contains(it.name) }
                             if (needUnwrapTask != null) {
                                 task.outputs.upToDateWhen { false }
                                 val resources = mutableMapOf<String, String>()
