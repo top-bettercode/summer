@@ -251,20 +251,20 @@ class DistPlugin : Plugin<Project> {
         }
 
         project.afterEvaluate {
-            if (project == project.rootProject)
+            if (project == project.rootProject) {
+                val needUnwrapTasks =
+                    (project.gradle as GradleInternal).defaultProject.tasks.filter {
+                        it.group == "distribution" ||
+                                it.group == WindowsServicePlugin.getPLUGIN_GROUP()
+                    }
                 project.rootProject.allprojects { p ->
                     p.tasks.named("jar") { task ->
                         task as Jar
                         if (extension.unwrapResources) {
                             val gradle = project.gradle as GradleInternal
                             val needUnwrapTask =
-                                gradle.startParameter.taskNames.mapNotNull {
-                                    gradle.defaultProject.tasks.findByPath(
-                                        it
-                                    )
-                                }.firstOrNull {
-                                    it.group == "distribution" ||
-                                            it.group == WindowsServicePlugin.getPLUGIN_GROUP()
+                                gradle.startParameter.taskNames.firstNotNullOfOrNull { name ->
+                                    needUnwrapTasks.find { it.name == name }
                                 }
                             if (needUnwrapTask != null) {
                                 task.outputs.upToDateWhen { false }
@@ -339,6 +339,7 @@ class DistPlugin : Plugin<Project> {
                         }
                     }
                 }
+            }
 
             if (project.plugins.findPlugin(DistributionPlugin::class.java) != null) {
                 val distribution = project.extensions.getByType(DistributionContainer::class.java)
