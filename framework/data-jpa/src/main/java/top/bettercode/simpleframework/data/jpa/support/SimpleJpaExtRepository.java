@@ -147,6 +147,99 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   //--------------------------------------------
 
+
+  @Override
+  public void deleteById(ID id) {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteById");
+      super.deleteById(id);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
+  }
+
+  @Override
+  public void deleteAll(Iterable<? extends T> entities) {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteAll");
+      super.deleteAll(entities);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
+  }
+
+  @Override
+  public void deleteAll() {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteAll");
+      super.deleteAll();
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
+  }
+
+  @Override
+  public <S extends T> S saveAndFlush(S entity) {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".saveAndFlush");
+      return super.saveAndFlush(entity);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
+  }
+
+  @Override
+  public <S extends T> List<S> saveAll(Iterable<S> entities) {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".saveAll");
+      return super.saveAll(entities);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
+  }
+
+  @Override
+  public <S extends T> List<S> saveAllAndFlush(Iterable<S> entities) {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".saveAllAndFlush");
+      return super.saveAllAndFlush(entities);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
+  }
+
+  @Deprecated
+  @Override
+  public void deleteInBatch(Iterable<T> entities) {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".deleteInBatch");
+      super.deleteInBatch(entities);
+    } finally {
+      if (mdc) {
+        MDC.remove("id");
+      }
+    }
+  }
+
   @Override
   @Transactional
   public <S extends T> S save(S entity) {
