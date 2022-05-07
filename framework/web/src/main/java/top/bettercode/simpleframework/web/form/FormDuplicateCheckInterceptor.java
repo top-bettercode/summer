@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import top.bettercode.lang.util.Sha512DigestUtils;
 import top.bettercode.lang.util.StringUtil;
+import top.bettercode.logging.RequestLoggingFilter;
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper;
 import top.bettercode.logging.trace.TraceServletInputStream;
 import top.bettercode.simpleframework.AnnotatedUtils;
@@ -51,42 +52,51 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
           log.debug(request.getServletPath() + " formDuplicateCheck");
         }
         if (!hasFormKey) {
-          ServletServerHttpRequest servletServerHttpRequest = new ServletServerHttpRequest(request);
-          HttpHeaders httpHeaders = servletServerHttpRequest.getHeaders();
-          String headers = StringUtil.valueOf(httpHeaders);
-          String params = StringUtil.valueOf(request.getParameterMap());
-          formkey = headers;
-          if (isFormPost(request)) {
-            formkey += "::" + params;
+          String username = (String) request.getAttribute(
+              RequestLoggingFilter.REQUEST_LOGGING_USERNAME);
+          if (StringUtils.hasText(username)) {
+            formkey = username;
           } else {
-            TraceHttpServletRequestWrapper traceHttpServletRequestWrapper = getTraceHttpServletRequestWrapper(
+            ServletServerHttpRequest servletServerHttpRequest = new ServletServerHttpRequest(
                 request);
-            if (traceHttpServletRequestWrapper != null) {
-              try {
-                InputStream body = traceHttpServletRequestWrapper.getInputStream();
-                if (body instanceof TraceServletInputStream) {
-                  formkey += "::" + StreamUtils.copyToString(body, Charset.defaultCharset());
-                  body.reset();
-                } else {
-                  log.info(request.getServletPath()
-                      + " not traceServletInputStream ignore formDuplicateCheck");
+            HttpHeaders httpHeaders = servletServerHttpRequest.getHeaders();
+            formkey = StringUtil.valueOf(httpHeaders);
+
+            if (isFormPost(request)) {
+              String params = StringUtil.valueOf(request.getParameterMap());
+              formkey += "::" + params;
+            } else {
+              TraceHttpServletRequestWrapper traceHttpServletRequestWrapper = getTraceHttpServletRequestWrapper(
+                  request);
+              if (traceHttpServletRequestWrapper != null) {
+                try {
+                  InputStream body = traceHttpServletRequestWrapper.getInputStream();
+                  if (body instanceof TraceServletInputStream) {
+                    formkey += "::" + StreamUtils.copyToString(body, Charset.defaultCharset());
+                    body.reset();
+                  } else {
+                    log.info(request.getServletPath()
+                        + " not traceServletInputStream ignore formDuplicateCheck");
+                    return true;
+                  }
+                } catch (IOException e) {
+                  log.info(
+                      request.getServletPath() + e.getMessage() + " ignore formDuplicateCheck");
                   return true;
                 }
-              } catch (IOException e) {
-                log.info(request.getServletPath() + e.getMessage() + " ignore formDuplicateCheck");
+              } else {
+                log.info(request.getServletPath()
+                    + " not traceHttpServletRequestWrapper ignore formDuplicateCheck");
                 return true;
               }
-            } else {
-              log.info(request.getServletPath()
-                  + " not traceHttpServletRequestWrapper ignore formDuplicateCheck");
-              return true;
             }
           }
+
         }
 
         String servletPath = request.getServletPath();
 
-        formkey = Sha512DigestUtils.shaHex(servletPath + formkey);
+        formkey = Sha512DigestUtils.shaHex(formkey + method + servletPath);
         if (log.isDebugEnabled()) {
           log.debug(request.getServletPath() + " formkey:" + formkey);
         }
