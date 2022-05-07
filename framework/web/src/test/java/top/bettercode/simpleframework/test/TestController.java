@@ -5,11 +5,13 @@ import java.util.Date;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.bettercode.lang.property.Settings;
 import top.bettercode.lang.util.StringUtil;
+import top.bettercode.simpleframework.exception.BusinessException;
 import top.bettercode.simpleframework.support.code.CodeService;
 import top.bettercode.simpleframework.support.code.ICodeService;
 import top.bettercode.simpleframework.web.BaseController;
@@ -28,7 +30,7 @@ import top.bettercode.simpleframework.web.validator.ChinaCell;
 public class TestController extends BaseController {
 
   @RequestMapping(value = "/test")
-  public Object test( @Validated DataDicBean form,@Cent Long cent, Date a,@ChinaCell String cell) {
+  public Object test(@Validated DataDicBean form, @Cent Long cent, Date a, @ChinaCell String cell) {
     System.err.println(a);
     System.err.println(cent);
     System.err.println(form.getPrice());
@@ -42,7 +44,7 @@ public class TestController extends BaseController {
 
   @RequestMapping(value = "/errors")
   public Object error() {
-    throw new RuntimeException("xx");
+    throw new BusinessException(String.valueOf(HttpStatus.BAD_GATEWAY.value()), "xx");
   }
 
   @Configuration(proxyBeanMethods = false)
