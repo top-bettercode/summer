@@ -7,7 +7,7 @@ import top.bettercode.lang.property.PropertiesSource;
 /**
  * @author Peter Wu
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
+@ResponseStatus(HttpStatus.OK)
 public class BusinessException extends RuntimeException {
 
   private static final long serialVersionUID = -7941819415782111951L;

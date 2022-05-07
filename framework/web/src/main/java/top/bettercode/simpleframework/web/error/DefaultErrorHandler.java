@@ -66,7 +66,6 @@ public class DefaultErrorHandler extends AbstractErrorHandler {
         message = "request.timeout";
       }
     } else if (error instanceof BusinessException) {
-      respEntity.setHttpStatusCode(HttpStatus.OK.value());
       respEntity.setStatus(((BusinessException) error).getCode());
       respEntity.setErrors(((BusinessException) error).getData());
     }
