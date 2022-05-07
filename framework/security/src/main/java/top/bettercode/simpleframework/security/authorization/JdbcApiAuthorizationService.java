@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.SqlLobValue;
@@ -37,16 +38,20 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
   @Transactional
   @Override
   public void save(ApiAuthenticationToken authorization) {
-    String scope = authorization.getScope();
-    String username = authorization.getUsername();
-    String id = scope + ":" + username;
-    remove(scope, username);
-    String accessToken = authorization.getAccessToken().getTokenValue();
-    String refreshToken = authorization.getRefreshToken().getTokenValue();
-    byte[] auth = jdkSerializationSerializer.serialize(authorization);
-    jdbcTemplate.update(DEFAULT_INSERT_STATEMENT,
-        new Object[]{id, accessToken, refreshToken, new SqlLobValue(auth)},
-        new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB});
+    try {
+      String scope = authorization.getScope();
+      String username = authorization.getUsername();
+      String id = scope + ":" + username;
+      remove(scope, username);
+      String accessToken = authorization.getAccessToken().getTokenValue();
+      String refreshToken = authorization.getRefreshToken().getTokenValue();
+      byte[] auth = jdkSerializationSerializer.serialize(authorization);
+      jdbcTemplate.update(DEFAULT_INSERT_STATEMENT,
+          new Object[]{id, accessToken, refreshToken, new SqlLobValue(auth)},
+          new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB});
+    } catch (DuplicateKeyException e) {
+      save(authorization);
+    }
   }
 
   @Override
