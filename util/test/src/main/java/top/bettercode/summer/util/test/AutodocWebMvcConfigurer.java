@@ -1,6 +1,7 @@
 package top.bettercode.summer.util.test;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -37,8 +38,9 @@ public class AutodocWebMvcConfigurer implements AutoDocRequestHandler {
   public void handle(AutoDocHttpServletRequest request) {
     HandlerMethod handler = HandlerMethodContextHolder.getHandler(request);
     if (handler != null) {
-      request.setAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME,
-          AuthenticationHelper.getUsername().orElse("Anonymous"));
+      Optional<String> username = AuthenticationHelper.getUsername();
+      username.ifPresent(
+          u -> request.setAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME, username.get()));
       Set<String> requiredHeaders = Autodoc.getRequiredHeaders();
       String url = request.getServletPath();
       boolean needAuth = false;
