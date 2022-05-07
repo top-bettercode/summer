@@ -115,6 +115,15 @@ public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
   }
 
   @Override
+  public boolean softDeletedSeted(Object entity) {
+    try {
+      return readMethod.invoke(entity) != null;
+    } catch (IllegalAccessException | InvocationTargetException e) {
+      throw new RuntimeException(e.getMessage(), e);
+    }
+  }
+
+  @Override
   public boolean support() {
     return support;
   }
