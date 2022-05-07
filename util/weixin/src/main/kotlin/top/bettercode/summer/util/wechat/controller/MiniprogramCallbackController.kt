@@ -28,7 +28,7 @@ class MiniprogramCallbackController(
     fun miniOauth(@NotBlank code: String): Any {
         log.debug("code:{}", code)
         return try {
-            val jsSession = miniprogramClient.code2Session(code)
+            val jsSession = miniprogramClient.jscode2session(code)
             val openId = if (jsSession.isOk) jsSession.openid else null
             log.info("openId:{}", openId)
             val token = if (openId == null) null else wechatService.oauth(openId)
@@ -46,4 +46,29 @@ class MiniprogramCallbackController(
             ok(result)
         }
     }
+
+
+    @RequestLogging(ignoredTimeout = true)
+    @ResponseBody
+    @PostMapping(value = ["/miniPhoneOauth"], name = "小程序手机号授权接口")
+    fun miniPhoneOauth(@NotBlank code: String): Any {
+        log.debug("code:{}", code)
+        return try {
+            val phoneInfoResp = miniprogramClient.getuserphonenumber(code)
+            val phoneInfo = if (phoneInfoResp.isOk) phoneInfoResp.phoneInfo else null
+            log.info("openId:{}", phoneInfo)
+            val token = if (phoneInfo == null) null else wechatService.phoneOauth(phoneInfo)
+            val result: MutableMap<String, Any?> = HashMap()
+            result["access_token"] = token
+            result["message"] = if (token != null) "授权成功" else "授权失败:手机号未绑定"
+            ok(result)
+        } catch (e: Exception) {
+            log.error("授权失败", e)
+            val result: MutableMap<String, Any?> = HashMap()
+            result["access_token"] = null
+            result["message"] = "授权失败:${e.message}"
+            ok(result)
+        }
+    }
+
 }
