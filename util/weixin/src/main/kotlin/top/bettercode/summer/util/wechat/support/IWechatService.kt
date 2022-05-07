@@ -1,15 +1,21 @@
 package top.bettercode.summer.util.wechat.support
 
+import top.bettercode.summer.util.wechat.support.miniprogram.entity.PhoneInfo
+
 /**
  * @author Peter Wu
  */
 interface IWechatService {
 
-    fun forceLogin(): Boolean{
+    fun forceLogin(): Boolean {
         return false
     }
 
     fun oauth(openId: String): String?
+
+    fun phoneOauth(phoneInfo: PhoneInfo): String? {
+        return null
+    }
 
     fun receive(
         timestamp: String,

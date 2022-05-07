@@ -6,6 +6,7 @@ import top.bettercode.summer.util.wechat.config.MiniprogramProperties
 import top.bettercode.summer.util.wechat.support.WeixinClient
 import top.bettercode.summer.util.wechat.support.WeixinResponse
 import top.bettercode.summer.util.wechat.support.miniprogram.entity.JsSession
+import top.bettercode.summer.util.wechat.support.miniprogram.entity.PhoneInfoResp
 import top.bettercode.summer.util.wechat.support.miniprogram.entity.SubscribeMsgRequest
 
 /**
@@ -20,12 +21,20 @@ class MiniprogramClient(properties: MiniprogramProperties) :
         "wexin-offiaccount"
     ) {
 
-    fun code2Session(code: String): JsSession {
+    fun jscode2session(code: String): JsSession {
         return getForObject(
             "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
             properties.appId,
             properties.secret,
             code
+        )
+    }
+
+    fun getuserphonenumber(code: String): PhoneInfoResp {
+        return postForObject(
+            "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}&code={1}",
+            mapOf("code" to code),
+            getBaseAccessToken()
         )
     }
 

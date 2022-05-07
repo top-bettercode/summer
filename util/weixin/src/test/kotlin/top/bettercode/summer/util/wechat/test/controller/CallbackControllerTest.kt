@@ -22,6 +22,15 @@ class CallbackControllerTest : BaseWebNoAuthTest() {
     }
 
     @Test
+    fun miniPhoneOauth() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/wechat/miniPhoneOauth")
+//                .param("code", "xxx")
+        ).andExpect(MockMvcResultMatchers.status().isOk)
+    }
+
+
+    @Test
     fun jsSignUrl() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/wechat/jsSign")

@@ -20,8 +20,14 @@ internal class MiniprogramClientTest : BaseTest() {
     lateinit var miniprogramClient: MiniprogramClient
 
     @Test
-    fun code2Session() {
-        val result = miniprogramClient.code2Session("xxx")
+    fun jscode2session() {
+        val result = miniprogramClient.jscode2session("xxx")
+        System.err.println(StringUtil.valueOf(result, true))
+    }
+
+    @Test
+    fun getuserphonenumber() {
+        val result = miniprogramClient.getuserphonenumber("xxx")
         System.err.println(StringUtil.valueOf(result, true))
     }
 
