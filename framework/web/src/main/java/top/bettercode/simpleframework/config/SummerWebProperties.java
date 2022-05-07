@@ -58,6 +58,10 @@ public class SummerWebProperties {
   private String okName = "ok-response";
 
   /**
+   * 表单防重复提交,header参数名称
+   */
+  private String formKeyName = "formkey";
+  /**
    * 表单防重复提交，key有效时间
    */
   private Long formExpireSeconds = 60L;
@@ -109,6 +113,14 @@ public class SummerWebProperties {
 
   public void setFormExpireSeconds(Long formExpireSeconds) {
     this.formExpireSeconds = formExpireSeconds;
+  }
+
+  public String getFormKeyName() {
+    return formKeyName;
+  }
+
+  public void setFormKeyName(String formKeyName) {
+    this.formKeyName = formKeyName;
   }
 
   public String getProjectName() {
