@@ -426,15 +426,19 @@ public class FrameworkMvcConfiguration {
     private final IFormkeyService formkeyService;
     private final MessageSource messageSource;
 
+    private final SummerWebProperties summerWebProperties;
+
     public WebMvcConfiguration(IFormkeyService formkeyService,
-        MessageSource messageSource) {
+        MessageSource messageSource, SummerWebProperties summerWebProperties) {
       this.formkeyService = formkeyService;
       this.messageSource = messageSource;
+      this.summerWebProperties = summerWebProperties;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-      registry.addInterceptor(new FormDuplicateCheckInterceptor(formkeyService))
+      registry.addInterceptor(
+              new FormDuplicateCheckInterceptor(formkeyService, summerWebProperties.getFormKeyName()))
           .order(Ordered.LOWEST_PRECEDENCE);
       registry.addInterceptor(new DeprecatedAPIInterceptor(messageSource));
     }

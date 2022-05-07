@@ -34,9 +34,11 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
 
   private final Logger log = LoggerFactory.getLogger(FormDuplicateCheckInterceptor.class);
   private final IFormkeyService formkeyService;
+  private final String formKeyName;
 
-  public FormDuplicateCheckInterceptor(IFormkeyService formkeyService) {
+  public FormDuplicateCheckInterceptor(IFormkeyService formkeyService, String formKeyName) {
     this.formkeyService = formkeyService;
+    this.formKeyName = formKeyName;
   }
 
 
@@ -44,7 +46,7 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
   public boolean preHandlerMethod(HttpServletRequest request, HttpServletResponse response,
       HandlerMethod handler) {
     String method = request.getMethod();
-    String formkey = request.getHeader("formkey");
+    String formkey = request.getHeader(formKeyName);
     if (("POST".equals(method) || "PUT".equals(method))) {
       boolean hasFormKey = StringUtils.hasText(formkey);
       if (hasFormKey || AnnotatedUtils.hasAnnotation(handler, FormDuplicateCheck.class)) {
