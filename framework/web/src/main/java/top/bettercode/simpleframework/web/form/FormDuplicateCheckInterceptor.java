@@ -3,7 +3,9 @@ package top.bettercode.simpleframework.web.form;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,32 +58,38 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
           formkey = headers;
           if (isFormPost(request)) {
             formkey += "::" + params;
-          } else if (request instanceof TraceHttpServletRequestWrapper) {
-            try {
-              InputStream body = servletServerHttpRequest.getBody();
-              if (body instanceof TraceServletInputStream) {
-                formkey += "::" + StreamUtils.copyToString(body, Charset.defaultCharset());
-                body.reset();
-              } else {
-                log.info(request.getServletPath()
-                    + " no traceServletInputStream ignore formDuplicateCheck");
+          } else {
+            TraceHttpServletRequestWrapper traceHttpServletRequestWrapper = getTraceHttpServletRequestWrapper(
+                request);
+            if (traceHttpServletRequestWrapper != null) {
+              try {
+                InputStream body = traceHttpServletRequestWrapper.getInputStream();
+                if (body instanceof TraceServletInputStream) {
+                  formkey += "::" + StreamUtils.copyToString(body, Charset.defaultCharset());
+                  body.reset();
+                } else {
+                  log.info(request.getServletPath()
+                      + " not traceServletInputStream ignore formDuplicateCheck");
+                  return true;
+                }
+              } catch (IOException e) {
+                log.info(request.getServletPath() + e.getMessage() + " ignore formDuplicateCheck");
                 return true;
               }
-            } catch (IOException e) {
-              log.info(request.getServletPath() + e.getMessage() + " ignore formDuplicateCheck");
+            } else {
+              log.info(request.getServletPath()
+                  + " not traceHttpServletRequestWrapper ignore formDuplicateCheck");
               return true;
             }
-          } else {
-            log.info(request.getServletPath()
-                + " no traceHttpServletRequestWrapper ignore formDuplicateCheck");
-            return true;
           }
         }
 
         String servletPath = request.getServletPath();
 
         formkey = Sha512DigestUtils.shaHex(servletPath + formkey);
-
+        if (log.isDebugEnabled()) {
+          log.debug(request.getServletPath() + " formkey:" + formkey);
+        }
         if (formkeyService.exist(formkey)) {
           throw new BusinessException(String.valueOf(HttpStatus.BAD_GATEWAY.value()),
               "请勿重复提交");
@@ -90,6 +98,16 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
       }
     }
     return true;
+  }
+
+  private TraceHttpServletRequestWrapper getTraceHttpServletRequestWrapper(ServletRequest request) {
+    if (request instanceof TraceHttpServletRequestWrapper) {
+      return (TraceHttpServletRequestWrapper) request;
+    } else if (request instanceof HttpServletRequestWrapper) {
+      return getTraceHttpServletRequestWrapper(((HttpServletRequestWrapper) request).getRequest());
+    } else {
+      return null;
+    }
   }
 
   private static boolean isFormPost(HttpServletRequest request) {
