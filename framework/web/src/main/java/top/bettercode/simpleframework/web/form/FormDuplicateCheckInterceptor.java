@@ -45,6 +45,9 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
     if (("POST".equals(method) || "PUT".equals(method))) {
       boolean hasFormKey = StringUtils.hasText(formkey);
       if (hasFormKey || AnnotatedUtils.hasAnnotation(handler, FormDuplicateCheck.class)) {
+        if (log.isDebugEnabled()) {
+          log.debug(request.getServletPath() + " formDuplicateCheck");
+        }
         if (!hasFormKey) {
           ServletServerHttpRequest servletServerHttpRequest = new ServletServerHttpRequest(request);
           HttpHeaders httpHeaders = servletServerHttpRequest.getHeaders();
@@ -60,12 +63,17 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
                 formkey += "::" + StreamUtils.copyToString(body, Charset.defaultCharset());
                 body.reset();
               } else {
+                log.info(request.getServletPath()
+                    + " no traceServletInputStream ignore formDuplicateCheck");
                 return true;
               }
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+              log.info(request.getServletPath() + e.getMessage() + " ignore formDuplicateCheck");
               return true;
             }
           } else {
+            log.info(request.getServletPath()
+                + " no traceHttpServletRequestWrapper ignore formDuplicateCheck");
             return true;
           }
         }
