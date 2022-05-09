@@ -57,11 +57,9 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
               request);
           HttpHeaders httpHeaders = servletServerHttpRequest.getHeaders();
           formkey = StringUtil.valueOf(httpHeaders);
-
-          if (isFormPost(request)) {
-            String params = StringUtil.valueOf(request.getParameterMap());
-            formkey += "::" + params;
-          } else {
+          String params = StringUtil.valueOf(request.getParameterMap());
+          formkey += "::" + params;
+          if (!isFormPost(request)) {
             TraceHttpServletRequestWrapper traceHttpServletRequestWrapper = getTraceHttpServletRequestWrapper(
                 request);
             if (traceHttpServletRequestWrapper != null) {
