@@ -45,28 +45,25 @@ public class URLFilterInvocationSecurityMetadataSource implements
 
     handlerMapping.getHandlerMethods().forEach((mappingInfo, handlerMethod) -> {
       //非匿名权限
-      if (!AnnotatedUtils.hasAnnotation(handlerMethod, Anonymous.class)) {
-        for (PathPattern pathPattern : mappingInfo.getPathPatternsCondition().getPatterns()) {
-          String pattern = pathPattern.getPatternString();
-          if (!securityProperties.ignored(pattern)) {
-            Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
-            ConfigAuthority authority = AnnotatedUtils
-                .getAnnotation(handlerMethod, ConfigAuthority.class);
-            Set<ConfigAttribute> configAttributes = new HashSet<>();
-            if (authority != null) {
-              for (String s : authority.value()) {
-                configAttributes.add(new SecurityConfig(s.trim()));
-              }
+      for (PathPattern pathPattern : mappingInfo.getPathPatternsCondition().getPatterns()) {
+        String pattern = pathPattern.getPatternString();
+        if (!securityProperties.ignored(pattern)) {
+          Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
+          ConfigAuthority authority = AnnotatedUtils
+              .getAnnotation(handlerMethod, ConfigAuthority.class);
+          Set<ConfigAttribute> configAttributes = new HashSet<>();
+          if (authority != null) {
+            for (String s : authority.value()) {
+              configAttributes.add(new SecurityConfig(s.trim()));
             }
-            if (methods.isEmpty()) {
+          }
+          if (methods.isEmpty()) {
+            defaultConfigAttributes.put(new AntPathRequestMatcher(pattern), configAttributes);
+          } else {
+            for (RequestMethod requestMethod : methods) {
               defaultConfigAttributes
-                  .put(new AntPathRequestMatcher(pattern), configAttributes);
-            } else {
-              for (RequestMethod requestMethod : methods) {
-                defaultConfigAttributes
-                    .put(new AntPathRequestMatcher(pattern, requestMethod.name()),
-                        configAttributes);
-              }
+                  .put(new AntPathRequestMatcher(pattern, requestMethod.name()),
+                      configAttributes);
             }
           }
         }
