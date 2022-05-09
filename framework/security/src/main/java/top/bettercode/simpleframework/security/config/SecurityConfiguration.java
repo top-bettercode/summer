@@ -31,6 +31,7 @@ import top.bettercode.simpleframework.config.CorsProperties;
 import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.security.ApiTokenEndpointFilter;
 import top.bettercode.simpleframework.security.ApiTokenService;
+import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.IRevokeTokenService;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
 import top.bettercode.simpleframework.security.UserDetailsAuthenticationProvider;
@@ -132,12 +133,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @ConditionalOnMissingBean
     @Bean
-    public AccessDecisionManager accessDecisionManager() {
+    public AccessDecisionManager accessDecisionManager(IResourceService resourceService) {
       return new AccessDecisionManager() {
         @Override
         public void decide(Authentication authentication, Object object,
             Collection<ConfigAttribute> configAttributes) {
           Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+          //处理匿名用户权限
+          if (configAttributes.size() == 1 && "ROLE_ANONYMOUS".equals(
+              configAttributes.iterator().next().getAttribute())
+              && resourceService.supportsAnonymous()) {
+            return;
+          }
 
           if (log.isDebugEnabled()) {
             log.debug("权限检查，当前用户权限：{}，当前资源需要以下权限之一：{}",

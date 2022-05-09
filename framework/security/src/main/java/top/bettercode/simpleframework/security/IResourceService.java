@@ -14,4 +14,8 @@ public interface IResourceService {
   default List<? extends IResource> findAllResources() {
     return Collections.emptyList();
   }
+
+  default boolean supportsAnonymous() {
+    return true;
+  }
 }
