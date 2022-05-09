@@ -68,7 +68,7 @@ object RequestConverter {
                 ?: mapOf()
         val remoteUser =
             (request.getAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME) as? String)
-                ?: request.remoteUser ?: "Anonymous"
+                ?: request.remoteUser ?: "anonymous"
 
         val content = (request as? TraceHttpServletRequestWrapper)?.contentAsByteArray
             ?: try {
