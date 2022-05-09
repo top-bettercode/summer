@@ -14,7 +14,7 @@ interface IWechatService {
     fun oauth(openId: String): String?
 
     fun phoneOauth(phoneInfo: PhoneInfo): String? {
-        return null
+        throw UnsupportedOperationException()
     }
 
     fun receive(
