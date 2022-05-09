@@ -2,7 +2,10 @@ package plugin
 
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.TypeFactory
+import com.github.stuxuhai.jpinyin.PinyinFormat
+import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.gradle.api.Project
+import org.gradle.configurationcache.extensions.capitalized
 import top.bettercode.autodoc.core.Util
 import top.bettercode.autodoc.core.model.Field
 import top.bettercode.generator.dom.java.JavaType
@@ -12,6 +15,7 @@ import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelEnumeration
 import top.bettercode.generator.dom.unit.FileUnit
 import top.bettercode.generator.dsl.DicCodes
+import java.io.File
 import java.util.*
 
 
@@ -180,6 +184,54 @@ class DicCodeGen(private val project: Project) {
                             }
                         }
 
+                        //auth
+                        if ("auth" == codeType) {
+                            val authName =
+                                PinyinHelper.convertToPinyinString(
+                                    name,
+                                    "_",
+                                    PinyinFormat.WITHOUT_TONE
+                                ).split('_').joinToString("") {
+                                    it.capitalized()
+                                }
+
+                            val authClassName = "Auth${authName}"
+                            FileUnit(
+                                name = "${
+                                    "$packageName.security.auth.$authClassName".replace(
+                                        ".",
+                                        File.separator
+                                    )
+                                }.java",
+                                overwrite = true,
+                                sourceSet = sourceSet,
+                                directorySet = directorySet
+                            ).apply {
+                                +"package $packageName.security.auth;"
+                                +""
+                                +"import $packageName.support.dic.AuthEnum.AuthConst;"
+                                +"import java.lang.annotation.Documented;"
+                                +"import java.lang.annotation.ElementType;"
+                                +"import java.lang.annotation.Inherited;"
+                                +"import java.lang.annotation.Retention;"
+                                +"import java.lang.annotation.RetentionPolicy;"
+                                +"import java.lang.annotation.Target;"
+                                +"import top.bettercode.simpleframework.security.ConfigAuthority;"
+                                +""
+                                +"/**"
+                                +" * $name 权限标识"
+                                +" *"
+                                +" */"
+                                +"@Target({ElementType.METHOD, ElementType.TYPE})"
+                                +"@Retention(RetentionPolicy.RUNTIME)"
+                                +"@Inherited"
+                                +"@Documented"
+                                +"@ConfigAuthority(${className}Const.$codeFieldName)"
+                                +"public @interface $authClassName {"
+                                +""
+                                +"}"
+                            }.writeTo(project.rootProject.project("admin").projectDir)
+                        }
                     }
 
                     field(
