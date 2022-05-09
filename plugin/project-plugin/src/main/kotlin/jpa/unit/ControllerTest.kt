@@ -86,6 +86,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }(${it.randomValueToSet});"
             }
             +"${projectEntityName}Service.save($entityName);"
+            +"System.err.println(\"-------------------------------\");"
             +"return $entityName;"
         }
 
