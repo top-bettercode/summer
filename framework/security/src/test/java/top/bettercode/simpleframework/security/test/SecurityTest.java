@@ -122,9 +122,9 @@ public class SecurityTest {
 
 
   @Test
-  public void auth() {
+  public void auth() throws Exception {
     HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer -58QL-aFbMk6NBOFAfy8BQ1541Y");
+    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiToken().getAccessToken());
     ResponseEntity<String> entity = restTemplate
         .exchange("/test", HttpMethod.POST, new HttpEntity<>(httpHeaders), String.class);
     assertEquals(HttpStatus.OK, entity.getStatusCode());
@@ -172,5 +172,14 @@ public class SecurityTest {
     assertEquals(HttpStatus.OK, entity.getStatusCode());
   }
 
+
+  @Test
+  public void testNoAuthWithToken() throws Exception {
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiToken().getAccessToken());
+    ResponseEntity<String> entity = restTemplate
+        .exchange("/testNoAuth", HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
+    assertEquals(HttpStatus.OK, entity.getStatusCode());
+  }
 
 }
