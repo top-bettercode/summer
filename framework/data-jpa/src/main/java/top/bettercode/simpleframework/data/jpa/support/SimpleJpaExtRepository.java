@@ -246,7 +246,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".save");
-      if (!softDelete.softDeletedSeted(entity)) {
+      if (softDelete.support() && !softDelete.softDeletedSeted(entity)) {
         softDelete.setUnSoftDeleted(entity);
       }
       if (isNew(entity)) {
@@ -307,7 +307,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".dynamicSave");
-      if (!softDelete.softDeletedSeted(entity)) {
+      if (softDelete.support() && !softDelete.softDeletedSeted(entity)) {
         softDelete.setUnSoftDeleted(entity);
       }
       if (isNew(entity)) {
@@ -339,7 +339,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".dynamicSave");
-      if (!softDelete.softDeletedSeted(entity)) {
+      if (softDelete.support() && !softDelete.softDeletedSeted(entity)) {
         softDelete.setUnSoftDeleted(entity);
       }
       if (isNew(entity)) {
