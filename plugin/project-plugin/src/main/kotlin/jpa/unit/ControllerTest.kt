@@ -104,7 +104,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             2 + ".param(\"page\", \"1\")"
             2 + ".param(\"size\", \"5\")"
             2 + ".param(\"sort\", \"\")"
-            +").andExpect(status().isOk());"
+            +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
         }
 
         val excel = enable("excel", false)
@@ -146,7 +146,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }();"
                 +"mockMvc.perform(get(\"/$pathName/info\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
-                +").andExpect(status().isOk());"
+                +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
             }
 
             //create
@@ -193,7 +193,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         }
                     }
                 }
-                +").andExpect(status().isOk());"
+                +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
             }
 
             //update
@@ -228,7 +228,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         }
                     }
                 }
-                +").andExpect(status().isOk());"
+                +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
             }
 
             //delete
@@ -249,7 +249,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }();"
                 +"mockMvc.perform(post(\"/$pathName/delete\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
-                +").andExpect(status().isOk());"
+                +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
                 +"assertFalse(${projectEntityName}Service.findById(${primaryKeyName}).isPresent());"
             }
         }
