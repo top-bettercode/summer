@@ -11,11 +11,12 @@ object Sha512DigestUtils {
      * @throws RuntimeException when a [java.security.NoSuchAlgorithmException] is
      * caught.
      */
-    private val sha512Digest: MessageDigest = try {
-        MessageDigest.getInstance("SHA-512")
-    } catch (ex: NoSuchAlgorithmException) {
-        throw RuntimeException(ex.message)
-    }
+    private val sha512Digest: MessageDigest
+        get() = try {
+            MessageDigest.getInstance("SHA-512")
+        } catch (ex: NoSuchAlgorithmException) {
+            throw RuntimeException(ex.message)
+        }
 
 
     /**

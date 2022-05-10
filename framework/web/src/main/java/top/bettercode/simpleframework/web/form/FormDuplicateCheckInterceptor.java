@@ -87,16 +87,17 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
         }
 
         String servletPath = request.getServletPath();
-
-        formkey = Sha512DigestUtils.shaHex(formkey + method + servletPath);
+        formkey = formkey + method + servletPath;
+        String digestFormkey = Sha512DigestUtils.shaHex(formkey + method + servletPath);
         if (log.isDebugEnabled()) {
-          log.debug(request.getServletPath() + " formkey:" + formkey);
+          log.debug("{} formkey:{},digestFormkey:{}", request.getServletPath(), formkey,
+              digestFormkey);
         }
-        if (formkeyService.exist(formkey)) {
+        if (formkeyService.exist(digestFormkey)) {
           throw new BusinessException(String.valueOf(HttpStatus.BAD_GATEWAY.value()),
               "请勿重复提交");
         }
-        formkeyService.putKey(formkey);
+        formkeyService.putKey(digestFormkey);
       }
     }
     return true;
