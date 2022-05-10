@@ -16,11 +16,12 @@ object Sha1DigestUtil {
      * @return An SHA digest instance.
      * @throws RuntimeException when a [NoSuchAlgorithmException] is caught.
      */
-    private val sha1Digest: MessageDigest = try {
-        MessageDigest.getInstance("SHA-1")
-    } catch (e: NoSuchAlgorithmException) {
-        throw RuntimeException(e.message)
-    }
+    private val sha1Digest: MessageDigest
+        get() = try {
+            MessageDigest.getInstance("SHA-1")
+        } catch (e: NoSuchAlgorithmException) {
+            throw RuntimeException(e.message)
+        }
 
 
     /**
