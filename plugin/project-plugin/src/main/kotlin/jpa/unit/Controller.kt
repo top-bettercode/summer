@@ -175,8 +175,8 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             //create
             import("javax.validation.groups.Default")
             method("create", JavaType.objectInstance) {
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"!${primaryKeyName}\", name = \"新增\")")
                 annotation("@org.springframework.transaction.annotation.Transactional")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"!${primaryKeyName}\", name = \"新增\")")
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
@@ -190,8 +190,8 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //update
             method("update", JavaType.objectInstance) {
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"${primaryKeyName}\", name = \"编辑\")")
                 annotation("@org.springframework.transaction.annotation.Transactional")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"${primaryKeyName}\", name = \"编辑\")")
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
@@ -204,8 +204,8 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             method("delete", JavaType.objectInstance) {
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/delete\", name = \"删除\")")
                 annotation("@org.springframework.transaction.annotation.Transactional")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/delete\", name = \"删除\")")
                 parameter {
                     name = primaryKeyName
                     type =
