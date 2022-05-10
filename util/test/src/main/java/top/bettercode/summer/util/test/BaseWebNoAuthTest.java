@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -25,6 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.context.WebApplicationContext;
@@ -78,8 +80,17 @@ public abstract class BaseWebNoAuthTest {
         .addFilter(autoDocFilter)
         .addFilter(requestLoggingFilter)
         .addFilter(new TestErrorPageFilter(errorController, webProperties))
-    ;
+        ;
   }
+
+
+  @NotNull
+  protected ResultMatcher contentStatusIsOk() {
+    return result -> assertTrue(
+        objectMapper.readTree(result.getResponse().getContentAsByteArray())
+            .get("status").asInt() < 400);
+  }
+
 
   private String getFileName(MvcResult result) throws UnsupportedEncodingException {
     String contentDisposition = result.getResponse().getHeader("Content-Disposition");
