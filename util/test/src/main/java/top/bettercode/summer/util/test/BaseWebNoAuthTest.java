@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -89,6 +90,13 @@ public abstract class BaseWebNoAuthTest {
     return result -> assertTrue(
         objectMapper.readTree(result.getResponse().getContentAsByteArray())
             .get("status").asInt() < 400);
+  }
+
+  @NotNull
+  protected ResultMatcher contentStatus(int status) {
+    return result -> assertEquals(
+        objectMapper.readTree(result.getResponse().getContentAsByteArray())
+            .get("status").asInt(), status);
   }
 
 
