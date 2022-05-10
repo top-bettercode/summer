@@ -63,7 +63,7 @@ class AutodocHandler(
             try {
                 val disableOnException =
                     Autodoc.disableOnException ?: genProperties.disableOnException
-                if (disableOnException && operation.response.stackTrace.isNotBlank() && operation.response.content.isEmpty()) {
+                if (disableOnException && operation.response.stackTrace.isNotBlank()) {
                     return
                 }
                 //生成相应数据
