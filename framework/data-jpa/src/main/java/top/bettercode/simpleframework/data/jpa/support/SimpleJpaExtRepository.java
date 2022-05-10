@@ -145,8 +145,13 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
-  //--------------------------------------------
+  private void cleanMdc(boolean mdc) {
+    if (mdc) {
+      MDC.remove("id");
+    }
+  }
 
+  //--------------------------------------------
 
   @Override
   public void deleteById(ID id) {
@@ -155,11 +160,10 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".deleteById");
       super.deleteById(id);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
+
 
   @Override
   public void deleteAll(Iterable<? extends T> entities) {
@@ -168,11 +172,10 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".deleteAll");
       super.deleteAll(entities);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
+
 
   @Override
   public void deleteAll() {
@@ -181,9 +184,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".deleteAll");
       super.deleteAll();
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -194,9 +195,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".saveAndFlush");
       return super.saveAndFlush(entity);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -207,9 +206,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".saveAll");
       return super.saveAll(entities);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -220,9 +217,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".saveAllAndFlush");
       return super.saveAllAndFlush(entities);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -234,9 +229,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".deleteInBatch");
       super.deleteInBatch(entities);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -256,9 +249,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         return em.merge(entity);
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -295,9 +286,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       em.flush();
       return affected;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -326,9 +315,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         }
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -358,9 +345,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         }
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -378,9 +363,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         super.delete(entity);
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -396,9 +379,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         return hardDelete(spec);
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -450,9 +431,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       delete((root, query, builder) ->
           root.get(entityInformation.getIdAttribute()).in(toCollection(ids)));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -468,9 +447,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         super.deleteAllByIdInBatch(ids);
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -531,9 +508,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         super.deleteAllInBatch(entities);
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -559,9 +534,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         super.deleteAllInBatch();
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -579,9 +552,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         return super.findById(id);
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -592,9 +563,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".findHardById");
       return super.findById(id);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -607,9 +576,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".getOne");
       return getById(id);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -627,9 +594,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         return super.getById(id);
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -647,9 +612,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         return super.existsById(id);
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -669,9 +632,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return result;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -691,9 +652,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return all;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -713,9 +672,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return result;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -737,9 +694,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return result;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -754,9 +709,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return findUnpaged(spec, PageRequest.of(0, size));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -772,9 +725,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return findUnpaged(spec, PageRequest.of(0, size, sort));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -792,9 +743,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return count;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -805,9 +754,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".exists");
       return count(spec) > 0;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -822,9 +769,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return findUnpaged(spec, PageRequest.of(0, 1, sort)).stream().findFirst();
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -838,9 +783,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return findUnpaged(spec, PageRequest.of(0, 1)).stream().findFirst();
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -854,9 +797,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return super.findOne(spec);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -874,9 +815,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return all;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -890,9 +829,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return findUnpaged(spec, PageRequest.of(0, size));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -906,9 +843,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return findUnpaged(spec, PageRequest.of(0, size, sort));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -942,9 +877,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return all;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -962,9 +895,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return all;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -975,9 +906,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".findFirst");
       return findUnpaged(example, PageRequest.of(0, 1)).stream().findFirst();
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -991,9 +920,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return super.findOne(example);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1008,9 +935,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return super.findBy(example, queryFunction);
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1028,9 +953,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return count;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1041,9 +964,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".exists");
       return count(example) > 0;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1061,9 +982,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return all;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1075,9 +994,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".findAll");
       return findUnpaged(example, PageRequest.of(0, size));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1089,9 +1006,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".findAll");
       return findUnpaged(example, PageRequest.of(0, size, sort));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1128,9 +1043,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return all;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1149,9 +1062,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return all;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1177,9 +1088,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return count;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1204,9 +1113,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return reslut;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1221,9 +1128,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         entity.ifPresent(super::delete);
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1243,9 +1148,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         }
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1264,9 +1167,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         }
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1287,9 +1188,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return count;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1307,9 +1206,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return count;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1320,9 +1217,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".existsInRecycleBin");
       return countRecycleBin(spec) > 0;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1341,9 +1236,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         return Optional.empty();
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1366,9 +1259,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return result;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1384,9 +1275,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         return Optional.empty();
       }
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1397,9 +1286,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".findFirstFromRecycleBin");
       return findUnpagedFromRecycleBin(spec, PageRequest.of(0, 1)).stream().findFirst();
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1421,9 +1308,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return result;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1434,9 +1319,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".findAllFromRecycleBin");
       return findUnpagedFromRecycleBin(null, PageRequest.of(0, size));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1447,9 +1330,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".findAllFromRecycleBin");
       return findUnpagedFromRecycleBin(null, PageRequest.of(0, size, sort));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1471,9 +1352,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return result;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1495,9 +1374,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return result;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1520,9 +1397,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return result;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1534,9 +1409,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".findAllFromRecycleBin");
       return findUnpagedFromRecycleBin(spec, PageRequest.of(0, size));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1547,9 +1420,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".findAllFromRecycleBin");
       return findUnpagedFromRecycleBin(spec, PageRequest.of(0, size, sort));
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1586,9 +1457,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return result;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
@@ -1610,9 +1479,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       }
       return result;
     } finally {
-      if (mdc) {
-        MDC.remove("id");
-      }
+      cleanMdc(mdc);
     }
   }
 
