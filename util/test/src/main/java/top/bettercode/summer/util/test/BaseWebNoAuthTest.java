@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -87,18 +88,17 @@ public abstract class BaseWebNoAuthTest {
 
   @NotNull
   protected ResultMatcher contentStatusIsOk() {
-    return result -> assertTrue(
-        objectMapper.readTree(result.getResponse().getContentAsByteArray())
-            .get("status").asInt() < 400);
+    return result -> assertTrue(contentAsJsonNode(result).get("status").asInt() < 400);
   }
 
   @NotNull
   protected ResultMatcher contentStatus(int status) {
-    return result -> assertEquals(
-        objectMapper.readTree(result.getResponse().getContentAsByteArray())
-            .get("status").asInt(), status);
+    return result -> assertEquals(contentAsJsonNode(result).get("status").asInt(), status);
   }
 
+  protected JsonNode contentAsJsonNode(MvcResult result) throws IOException {
+    return objectMapper.readTree(result.getResponse().getContentAsByteArray());
+  }
 
   private String getFileName(MvcResult result) throws UnsupportedEncodingException {
     String contentDisposition = result.getResponse().getHeader("Content-Disposition");
