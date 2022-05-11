@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.web.form;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -9,23 +10,18 @@ import java.util.concurrent.TimeUnit;
  */
 public class FormkeyService implements IFormkeyService {
 
-  private final Cache<String, Boolean> cache;
+  private final ConcurrentMap<String, Boolean> cache;
 
   public FormkeyService(Long expireSeconds) {
-    this.cache = CacheBuilder
+    Cache<String, Boolean> objectCache = CacheBuilder
         .newBuilder().expireAfterWrite(expireSeconds, TimeUnit.SECONDS).maximumSize(1000).build();
+    this.cache = objectCache.asMap();
   }
 
-  @Override
-  public String putKey(String formkey) {
-    cache.put(formkey, true);
-    return formkey;
-  }
 
   @Override
   public boolean exist(String formkey) {
-    Boolean present = cache.getIfPresent(formkey);
-    return present != null && present;
+    return cache.putIfAbsent(formkey,true) != null;
   }
 
 }
