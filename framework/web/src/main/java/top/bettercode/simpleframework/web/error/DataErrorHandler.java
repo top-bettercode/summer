@@ -98,13 +98,14 @@ public class DataErrorHandler extends AbstractErrorHandler {
       String extractMessage = "could not extract ResultSet";
       if (cause != null && extractMessage.equals(cause.getMessage())) {
         message = cause.getCause() != null ? cause.getCause().getMessage() : extractMessage;
+      } else {
+        message = error.getMessage();
       }
-      String errorMessage = error.getMessage();
-      if (errorMessage != null) {
-        if (errorMessage.contains("Socket read timed out")) {
+      if (message != null) {
+        if (message.contains("Socket read timed out")) {
           message = "datasource.request.timeout";
         }
-        if (errorMessage.contains("Unable to acquire JDBC Connection")) {
+        if (message.contains("Unable to acquire JDBC Connection")) {
           message = "Unable to acquire JDBC Connection";
         }
       }
