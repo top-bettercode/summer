@@ -64,7 +64,7 @@ public class SummerWebProperties {
   /**
    * 表单防重复提交，key有效时间
    */
-  private Long formExpireSeconds = 60L;
+  private Long formExpireSeconds = 10L;
 
   //--------------------------------------------
   public Boolean wrapEnable(NativeWebRequest request) {
