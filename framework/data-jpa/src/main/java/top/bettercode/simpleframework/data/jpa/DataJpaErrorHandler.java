@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.data.jpa;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.util.StringUtils;
@@ -49,6 +50,11 @@ public class DataJpaErrorHandler extends AbstractErrorHandler {
             respEntity.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
           }
         }
+      }
+    } else if (error instanceof InvalidDataAccessApiUsageException) {
+      message = error.getMessage();
+      if (message != null && message.contains("detached entity passed to persist")) {
+        message = "更新的数据在数据库中不存在";
       }
     }
     if (StringUtils.hasText(message)) {

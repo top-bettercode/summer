@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -310,8 +311,7 @@ public class SimpleJpaExtRepository<T, ID> extends
           copyProperties(exist, entity, false);
           return em.merge(entity);
         } else {
-          em.persist(entity);
-          return entity;
+          throw new EntityNotFoundException(entityInformation.getId(entity) + "对应数据不存在");
         }
       }
     } finally {
@@ -340,8 +340,7 @@ public class SimpleJpaExtRepository<T, ID> extends
           copyProperties(exist, entity, ignoreEmpty);
           return em.merge(entity);
         } else {
-          em.persist(entity);
-          return entity;
+          throw new EntityNotFoundException(entityInformation.getId(entity) + "对应数据不存在");
         }
       }
     } finally {
