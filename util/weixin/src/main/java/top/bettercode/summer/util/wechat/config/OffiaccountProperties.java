@@ -1,14 +1,9 @@
 package top.bettercode.summer.util.wechat.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * @author Peter Wu
  */
-@ConfigurationProperties(prefix = "summer.wechat")
-public class OffiaccountProperties extends WexinProperties {
-
-  public static final String OAUTH_URL = "/wechat/oauth";
+public class OffiaccountProperties extends WexinProperties implements IOffiaccountProperties {
 
   /**
    * 项目部署的URL地址
@@ -23,20 +18,6 @@ public class OffiaccountProperties extends WexinProperties {
    */
   private String wechatWebOauthUrl = "";
 
-  public String getOauthUrl() {
-    return appBaseUrl + OAUTH_URL;
-  }
-
-  public String redirectUrl(String token, String openId, boolean forceLogin) {
-    return "redirect:" + wechatUrl(token, openId, forceLogin);
-  }
-
-  public String wechatUrl(String token, String openId, boolean forceLogin) {
-    return wechatBaseUrl + wechatWebOauthUrl + "?access_token=" + (token == null ? ""
-        : token) + "&" + OPEN_ID_NAME + "=" + openId + "&hasBound=" + (token != null)
-        + "&forceLogin=" + forceLogin + "&_timer="
-        + System.currentTimeMillis();
-  }
   //--------------------------------------------
 
   public String getAppBaseUrl() {

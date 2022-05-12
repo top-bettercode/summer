@@ -3,10 +3,7 @@ package top.bettercode.summer.util.wechat.config;
 /**
  * @author Peter Wu
  */
-public class WexinProperties {
-
-  public static final String OPEN_ID_NAME = "openId";
-
+public class WexinProperties implements IWexinProperties {
   private String appId;
   private String secret;
   private String token;

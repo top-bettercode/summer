@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.wechat.config
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -8,12 +9,9 @@ import top.bettercode.summer.util.wechat.controller.OffiaccountCallbackControlle
 import top.bettercode.summer.util.wechat.support.IWechatService
 import top.bettercode.summer.util.wechat.support.offiaccount.OffiaccountClient
 
-@ConditionalOnProperty(prefix = "summer.wechat", name = ["app-id"])
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(
-    OffiaccountProperties::class
-)
-class WechatConfiguration(private val offiaccountProperties: OffiaccountProperties) {
+@ConditionalOnBean(IOffiaccountProperties::class)
+class WechatConfiguration(private val offiaccountProperties: IOffiaccountProperties) {
 
     @Bean
     fun offiaccountClient(): OffiaccountClient {
