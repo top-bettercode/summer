@@ -4,6 +4,7 @@ import org.slf4j.MarkerFactory
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.lang.util.Sha1DigestUtil
+import top.bettercode.summer.util.wechat.config.IOffiaccountProperties
 import top.bettercode.summer.util.wechat.config.OffiaccountProperties
 import top.bettercode.summer.util.wechat.support.WeixinClient
 import top.bettercode.summer.util.wechat.support.offiaccount.entity.*
@@ -16,8 +17,8 @@ import java.util.*
  *
  * @author Peter Wu
  */
-class OffiaccountClient(properties: OffiaccountProperties) :
-    WeixinClient<OffiaccountProperties>(
+class OffiaccountClient(properties: IOffiaccountProperties) :
+    WeixinClient<IOffiaccountProperties>(
         properties,
         "第三方接口",
         "微信公众号",

@@ -2,6 +2,7 @@ package top.bettercode.summer.util.wechat.support.miniprogram
 
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
+import top.bettercode.summer.util.wechat.config.IMiniprogramProperties
 import top.bettercode.summer.util.wechat.config.MiniprogramProperties
 import top.bettercode.summer.util.wechat.support.WeixinClient
 import top.bettercode.summer.util.wechat.support.WeixinResponse
@@ -13,8 +14,8 @@ import top.bettercode.summer.util.wechat.support.miniprogram.entity.SubscribeMsg
  *
  * @author Peter Wu
  */
-class MiniprogramClient(properties: MiniprogramProperties) :
-    WeixinClient<MiniprogramProperties>(
+class MiniprogramClient(properties: IMiniprogramProperties) :
+    WeixinClient<IMiniprogramProperties>(
         properties,
         "第三方接口",
         "微信公众号",

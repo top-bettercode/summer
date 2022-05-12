@@ -5,8 +5,10 @@ import com.google.common.cache.CacheBuilder
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.lang.Nullable
 import org.springframework.web.client.getForObject
 import top.bettercode.simpleframework.support.client.ApiTemplate
+import top.bettercode.summer.util.wechat.config.IWexinProperties
 import top.bettercode.summer.util.wechat.config.WexinProperties
 import top.bettercode.summer.util.wechat.support.offiaccount.entity.BasicAccessToken
 import top.bettercode.summer.util.wechat.support.offiaccount.entity.CachedValue
@@ -18,7 +20,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author Peter Wu
  */
-open class WeixinClient<T : WexinProperties>(
+open class WeixinClient<T : IWexinProperties>(
     val properties: T,
     collectionName: String,
     name: String,
@@ -49,7 +51,7 @@ open class WeixinClient<T : WexinProperties>(
                     return true
                 }
 
-                override fun canWrite(clazz: Class<*>?, mediaType: MediaType?): Boolean {
+                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
                     return true
                 }
             }

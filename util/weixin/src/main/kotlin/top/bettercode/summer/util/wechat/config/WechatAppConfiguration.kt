@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.wechat.config
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -8,12 +9,9 @@ import top.bettercode.summer.util.wechat.controller.MiniprogramCallbackControlle
 import top.bettercode.summer.util.wechat.support.IWechatService
 import top.bettercode.summer.util.wechat.support.miniprogram.MiniprogramClient
 
-@ConditionalOnProperty(prefix = "summer.wechat.mini", name = ["app-id"])
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(
-    MiniprogramProperties::class
-)
-class WechatAppConfiguration(private val miniprogramProperties: MiniprogramProperties) {
+@ConditionalOnBean(IMiniprogramProperties::class)
+class WechatAppConfiguration(private val miniprogramProperties: IMiniprogramProperties) {
 
     @Bean
     fun miniprogramClient(): MiniprogramClient {
