@@ -11,7 +11,7 @@ import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.simpleframework.web.BaseController
 import top.bettercode.summer.util.wechat.config.WexinProperties
 import top.bettercode.summer.util.wechat.support.IWechatService
-import top.bettercode.summer.util.wechat.support.miniprogram.MiniprogramClient
+import top.bettercode.summer.util.wechat.support.miniprogram.IMiniprogramClient
 import javax.validation.constraints.NotBlank
 
 @ConditionalOnWebApplication
@@ -20,7 +20,7 @@ import javax.validation.constraints.NotBlank
 @RequestMapping(value = ["/wechat"], name = "微信")
 class MiniprogramCallbackController(
     private val wechatService: IWechatService,
-    private val miniprogramClient: MiniprogramClient
+    private val miniprogramClient: IMiniprogramClient
 ) : BaseController() {
 
     @RequestLogging(ignoredTimeout = true)

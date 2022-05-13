@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.lang.util.LocalDateTimeHelper
 import top.bettercode.lang.util.StringUtil
 import top.bettercode.summer.util.test.BaseTest
-import top.bettercode.summer.util.wechat.support.miniprogram.MiniprogramClient
+import top.bettercode.summer.util.wechat.support.miniprogram.IMiniprogramClient
 import top.bettercode.summer.util.wechat.support.miniprogram.entity.Data
 import top.bettercode.summer.util.wechat.support.miniprogram.entity.SubscribeMsgRequest
 import java.time.format.DateTimeFormatter
@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 internal class MiniprogramClientTest : BaseTest() {
 
     @Autowired
-    lateinit var miniprogramClient: MiniprogramClient
+    lateinit var miniprogramClient: IMiniprogramClient
 
     @Test
     fun jscode2session() {

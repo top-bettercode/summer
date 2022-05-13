@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import top.bettercode.summer.util.wechat.controller.MiniprogramCallbackController
 import top.bettercode.summer.util.wechat.support.IWechatService
+import top.bettercode.summer.util.wechat.support.miniprogram.IMiniprogramClient
 import top.bettercode.summer.util.wechat.support.miniprogram.MiniprogramClient
 
 @Configuration(proxyBeanMethods = false)
@@ -14,14 +15,14 @@ import top.bettercode.summer.util.wechat.support.miniprogram.MiniprogramClient
 class WechatAppConfiguration(private val miniprogramProperties: IMiniprogramProperties) {
 
     @Bean
-    fun miniprogramClient(): MiniprogramClient {
+    fun miniprogramClient(): IMiniprogramClient {
         return MiniprogramClient(miniprogramProperties)
     }
 
     @Bean
     fun miniprogramCallbackController(
         wechatService: IWechatService,
-        miniprogramClient: MiniprogramClient
+        miniprogramClient: IMiniprogramClient
     ): MiniprogramCallbackController {
         return MiniprogramCallbackController(wechatService, miniprogramClient)
     }

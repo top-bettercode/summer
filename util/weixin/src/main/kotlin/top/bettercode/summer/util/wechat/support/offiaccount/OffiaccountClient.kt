@@ -23,7 +23,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         "第三方接口",
         "微信公众号",
         "wexin-offiaccount"
-    ) {
+    ), IOffiaccountClient {
 
     companion object {
         const val jsapiTicketKey: String = "jsapi_ticket"
@@ -41,8 +41,11 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         log.info(MarkerFactory.getMarker(logMarker), "authenticationUrl:{}", authenticationUrl)
     }
 
-    @JvmOverloads
-    fun getJsapiTicket(retries: Int = 1): String {
+    override fun getJsapiTicket(): String {
+        return getJsapiTicket(1)
+    }
+
+    override fun getJsapiTicket(retries: Int): String {
         val cachedValue = cache.getIfPresent(jsapiTicketKey)
         return if (cachedValue == null || cachedValue.expired) {
             val jsapiTicket = getForObject<JsapiTicket>(
@@ -71,7 +74,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         }
     }
 
-    fun getWebPageAccessToken(code: String): WebPageAccessToken {
+    override fun getWebPageAccessToken(code: String): WebPageAccessToken {
         return getForObject(
             "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code",
             properties.appId,
@@ -80,8 +83,11 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         )
     }
 
-    @JvmOverloads
-    fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int = 1): MsgResult {
+    override fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult {
+        return sendTemplateMsg(request, 1)
+    }
+
+    override fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int): MsgResult {
         val result = postForObject<MsgResult>(
             "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
             request,
@@ -101,7 +107,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
 
     //--------------------------------------------
 
-    fun jsSignUrl(url: String): JsapiSignature {
+    override fun jsSignUrl(url: String): JsapiSignature {
         val nonceStr = UUID.randomUUID().toString()
         val timestamp = (System.currentTimeMillis() / 1000).toString()
         val jsapiTicket = getJsapiTicket()
@@ -116,7 +122,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         return JsapiSignature(signature, properties.appId, nonceStr, timestamp)
     }
 
-    fun shaHex(vararg str: String): String {
+    override fun shaHex(vararg str: String): String {
         str.sort()
         return Sha1DigestUtil.shaHex(str.joinToString(""))
     }
