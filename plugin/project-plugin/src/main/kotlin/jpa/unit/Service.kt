@@ -1,4 +1,5 @@
 import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.Interface
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelClass
 
@@ -20,6 +21,8 @@ val service: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 repositoryType
             )
 
+        if (interfaceService)
+            implement(iserviceType)
 
         //constructor
         constructor(Parameter("repository", repositoryType)) {
@@ -28,3 +31,19 @@ val service: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     }
 }
 
+val iservice: ProjectGenerator.(Interface) -> Unit = { unit ->
+    unit.apply {
+        javadoc {
+            +"/**"
+            +" * $remarks 服务层接口"
+            +" */"
+        }
+        val superInterface =
+            JavaType("top.bettercode.simpleframework.data.jpa.IBaseService").typeArgument(
+                entityType,
+                primaryKeyType,
+                repositoryType
+            )
+        implement(superInterface)
+    }
+}

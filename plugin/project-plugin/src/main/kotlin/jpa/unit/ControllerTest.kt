@@ -27,7 +27,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         annotation("@org.junit.jupiter.api.TestMethodOrder(org.junit.jupiter.api.MethodOrderer.OrderAnnotation.class)")
 
-        field("${projectEntityName}Service", serviceType) {
+        field("${projectEntityName}Service", if (interfaceService) iserviceType else serviceType) {
             annotation("@org.springframework.beans.factory.annotation.Autowired")
         }
 

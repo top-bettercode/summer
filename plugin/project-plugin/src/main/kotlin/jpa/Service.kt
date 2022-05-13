@@ -23,6 +23,11 @@ open class Service : ProjectGenerator() {
             repository(this)
         }
 
+        if (interfaceService)
+            +interfaze(iserviceType) {
+                iservice(this)
+            }
+
         +clazz(serviceType) {
             service(this)
         }

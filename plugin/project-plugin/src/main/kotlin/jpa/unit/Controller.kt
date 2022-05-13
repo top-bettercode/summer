@@ -23,9 +23,18 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         annotation("@org.springframework.web.bind.annotation.RestController")
         annotation("@org.springframework.web.bind.annotation.RequestMapping(value = \"/$pathName\", name = \"$remarks\")")
 
-        field("${projectEntityName}Service", serviceType, isFinal = true)
+        field(
+            "${projectEntityName}Service",
+            if (interfaceService) iserviceType else serviceType,
+            isFinal = true
+        )
 
-        constructor(Parameter("${projectEntityName}Service", serviceType)) {
+        constructor(
+            Parameter(
+                "${projectEntityName}Service",
+                if (interfaceService) iserviceType else serviceType
+            )
+        ) {
             +"this.${projectEntityName}Service = ${projectEntityName}Service;"
         }
 
@@ -83,7 +92,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 columns.forEachIndexed { i, it ->
                     val code =
                         if (it.isCodeField) {
-                            if (it.columnName.contains("_") ||it.isSoftDelete) ".code()" else ".code(${
+                            if (it.columnName.contains("_") || it.isSoftDelete) ".code()" else ".code(${
                                 (className + it.javaName.replaceFirstChar {
                                     if (it.isLowerCase()) it.titlecase(
                                         Locale.getDefault()
