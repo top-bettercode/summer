@@ -42,7 +42,7 @@ public class AutodocWebMvcConfigurer implements AutoDocRequestHandler {
       username.ifPresent(
           u -> request.setAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME, username.get()));
       Set<String> requiredHeaders = Autodoc.getRequiredHeaders();
-      String url = request.getServletPath();
+      String url = request.getRequestURI();
       boolean needAuth = false;
       //set required
       boolean isClientAuth = AnnotatedUtils.hasAnnotation(handler, ClientAuthorize.class);
