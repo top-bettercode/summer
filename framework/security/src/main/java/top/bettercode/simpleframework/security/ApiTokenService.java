@@ -36,6 +36,9 @@ public class ApiTokenService {
   public Token createAccessToken() {
     String tokenValue = new String(
         Base64.encodeBase64URLSafe(DEFAULT_TOKEN_GENERATOR.generateKey()), US_ASCII);
+    if (apiAuthorizationService.findByAccessToken(tokenValue) != null) {
+      return createAccessToken();
+    }
     Instant now = Instant.now();
     return new Token(tokenValue, now,
         now.plusSeconds(apiSecurityProperties.getAccessTokenValiditySeconds()));
@@ -44,6 +47,9 @@ public class ApiTokenService {
   public Token createRefreshToken() {
     String tokenValue = new String(
         Base64.encodeBase64URLSafe(DEFAULT_TOKEN_GENERATOR.generateKey()), US_ASCII);
+    if (apiAuthorizationService.findByRefreshToken(tokenValue) != null) {
+      return createRefreshToken();
+    }
     Instant now = Instant.now();
     return new Token(tokenValue, now,
         now.plusSeconds(apiSecurityProperties.getRefreshTokenValiditySeconds()));
