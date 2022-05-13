@@ -31,6 +31,7 @@ import top.bettercode.simpleframework.servlet.NotErrorHandlerInterceptor;
  */
 public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor {
 
+  public static final String FORM_KEY = FormDuplicateCheckInterceptor.class.getName() + ".form_key";
   private final Logger log = LoggerFactory.getLogger(FormDuplicateCheckInterceptor.class);
   private final IFormkeyService formkeyService;
   private final String formKeyName;
@@ -44,72 +45,90 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
   @Override
   public boolean preHandlerMethod(HttpServletRequest request, HttpServletResponse response,
       HandlerMethod handler) {
+    String formkey = getFormkey(request, handler);
+    if (formkey == null) {
+      return true;
+    } else if (formkeyService.exist(formkey)) {
+      throw new BusinessException(String.valueOf(HttpStatus.BAD_GATEWAY.value()),
+          "请勿重复提交");
+    } else {
+      request.setAttribute(FORM_KEY, formkey);
+      return true;
+    }
+  }
+
+  @Nullable
+  private String getFormkey(HttpServletRequest request, HandlerMethod handler) {
     String method = request.getMethod();
-    String formkey = request.getHeader(formKeyName);
+    String digestFormkey = null;
     if (("POST".equals(method) || "PUT".equals(method))) {
+      String formkey = request.getHeader(formKeyName);
       boolean hasFormKey = StringUtils.hasText(formkey);
       if (hasFormKey || AnnotatedUtils.hasAnnotation(handler, FormDuplicateCheck.class)) {
         if (log.isDebugEnabled()) {
           log.debug(request.getServletPath() + " formDuplicateCheck");
         }
-        String digestFormkey = getFormkey(request, method, formkey, hasFormKey);
-        if (digestFormkey == null) {
-          return true;
-        }
-        if (formkeyService.exist(digestFormkey)) {
-          throw new BusinessException(String.valueOf(HttpStatus.BAD_GATEWAY.value()),
-              "请勿重复提交");
-        }
-      }
-    }
-    return true;
-  }
-
-  @Nullable
-  private String getFormkey(HttpServletRequest request, String method, String formkey,
-      boolean hasFormKey) {
-    if (!hasFormKey) {
-      ServletServerHttpRequest servletServerHttpRequest = new ServletServerHttpRequest(
-          request);
-      HttpHeaders httpHeaders = servletServerHttpRequest.getHeaders();
-      formkey = StringUtil.valueOf(httpHeaders);
-      String params = StringUtil.valueOf(request.getParameterMap());
-      formkey += "::" + params;
-      if (!isFormPost(request)) {
-        TraceHttpServletRequestWrapper traceHttpServletRequestWrapper = getTraceHttpServletRequestWrapper(
-            request);
-        if (traceHttpServletRequestWrapper != null) {
-          try {
-            InputStream body = traceHttpServletRequestWrapper.getInputStream();
-            if (body instanceof TraceServletInputStream) {
-              formkey += "::" + StreamUtils.copyToString(body, Charset.defaultCharset());
-              body.reset();
+        if (!hasFormKey) {
+          ServletServerHttpRequest servletServerHttpRequest = new ServletServerHttpRequest(
+              request);
+          HttpHeaders httpHeaders = servletServerHttpRequest.getHeaders();
+          formkey = StringUtil.valueOf(httpHeaders);
+          String params = StringUtil.valueOf(request.getParameterMap());
+          formkey += "::" + params;
+          if (!isFormPost(request)) {
+            TraceHttpServletRequestWrapper traceHttpServletRequestWrapper = getTraceHttpServletRequestWrapper(
+                request);
+            if (traceHttpServletRequestWrapper != null) {
+              try {
+                InputStream body = traceHttpServletRequestWrapper.getInputStream();
+                if (body instanceof TraceServletInputStream) {
+                  formkey += "::" + StreamUtils.copyToString(body, Charset.defaultCharset());
+                  body.reset();
+                } else {
+                  log.info(request.getServletPath()
+                      + " not traceServletInputStream ignore formDuplicateCheck");
+                  return null;
+                }
+              } catch (Exception e) {
+                log.info(
+                    request.getServletPath() + e.getMessage() + " ignore formDuplicateCheck");
+                return null;
+              }
             } else {
               log.info(request.getServletPath()
-                  + " not traceServletInputStream ignore formDuplicateCheck");
+                  + " not traceHttpServletRequestWrapper ignore formDuplicateCheck");
               return null;
             }
-          } catch (Exception e) {
-            log.info(
-                request.getServletPath() + e.getMessage() + " ignore formDuplicateCheck");
-            return null;
           }
-        } else {
-          log.info(request.getServletPath()
-              + " not traceHttpServletRequestWrapper ignore formDuplicateCheck");
-          return null;
+        }
+
+        formkey = formkey + method + request.getRequestURI();
+        digestFormkey = Sha512DigestUtils.shaHex(formkey);
+        if (log.isDebugEnabled()) {
+          log.debug("{} formkey:{},digestFormkey:{}", request.getRequestURI(), formkey,
+              digestFormkey);
         }
       }
     }
-
-    String servletPath = request.getServletPath();
-    formkey = formkey + method + servletPath;
-    String digestFormkey = Sha512DigestUtils.shaHex(formkey + method + servletPath);
-    if (log.isDebugEnabled()) {
-      log.debug("{} formkey:{},digestFormkey:{}", request.getServletPath(), formkey,
-          digestFormkey);
-    }
     return digestFormkey;
+  }
+
+  @Override
+  public void afterCompletionMethod(HttpServletRequest request, HttpServletResponse response,
+      HandlerMethod handler, Throwable ex) {
+    if (ex == null) {
+      ex = getError(request);
+    }
+
+    if (ex != null) {
+      String formkey = (String) request.getAttribute(FORM_KEY);
+      if (formkey != null) {
+        formkeyService.remove(formkey);
+        if (log.isDebugEnabled()) {
+          log.debug("{} remove:{}", request.getRequestURI(), formkey);
+        }
+      }
+    }
   }
 
   private TraceHttpServletRequestWrapper getTraceHttpServletRequestWrapper(ServletRequest request) {

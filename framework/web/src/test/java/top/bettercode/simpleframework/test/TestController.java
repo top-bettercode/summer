@@ -16,6 +16,7 @@ import top.bettercode.simpleframework.support.code.CodeService;
 import top.bettercode.simpleframework.support.code.ICodeService;
 import top.bettercode.simpleframework.web.BaseController;
 import top.bettercode.simpleframework.web.DataDicBean;
+import top.bettercode.simpleframework.web.form.FormDuplicateCheck;
 import top.bettercode.simpleframework.web.resolver.Cent;
 import top.bettercode.simpleframework.web.resolver.CentConverter;
 import top.bettercode.simpleframework.web.validator.ChinaCell;
@@ -29,6 +30,7 @@ import top.bettercode.simpleframework.web.validator.ChinaCell;
 
 public class TestController extends BaseController {
 
+  @FormDuplicateCheck
   @RequestMapping(value = "/test")
   public Object test(@Validated DataDicBean form, @Cent Long cent, Date a, @ChinaCell String cell) {
     System.err.println(a);
@@ -42,6 +44,7 @@ public class TestController extends BaseController {
     return ok(dataDicBean);
   }
 
+  @FormDuplicateCheck
   @RequestMapping(value = "/errors")
   public Object error() {
     throw new BusinessException(String.valueOf(HttpStatus.BAD_GATEWAY.value()), "xx");
