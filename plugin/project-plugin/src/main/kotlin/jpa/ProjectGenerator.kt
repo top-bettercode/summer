@@ -7,6 +7,9 @@ import top.bettercode.generator.dsl.Generator
  */
 abstract class ProjectGenerator : Generator() {
 
+
+    val interfaceService get() = enable("interfaceService", false)
+
     val msgName get() = "${if (projectName == "core") "core-" else ""}messages.properties"
     val mapperXmlName
         get() = "${
@@ -22,15 +25,19 @@ abstract class ProjectGenerator : Generator() {
     val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.${className}")
     val propertiesType
         get() = JavaType(
-            "$packageName.${modulePackage("Properties")}.${table.className(
-                ext
-            )}Properties"
+            "$packageName.${modulePackage("Properties")}.${
+                table.className(
+                    ext
+                )
+            }Properties"
         )
     val matcherType
         get() = JavaType(
-            "$packageName.${modulePackage("Matcher")}.${table.className(
-                ext
-            )}Matcher"
+            "$packageName.${modulePackage("Matcher")}.${
+                table.className(
+                    ext
+                )
+            }Matcher"
         )
     val methodInfoType
         get() = JavaType(
@@ -44,6 +51,7 @@ abstract class ProjectGenerator : Generator() {
     val mixInType get() = JavaType("$packageName.${modulePackage("MixIn")}.${projectClassName}MixIn")
     val controllerType get() = JavaType("$packageName.${modulePackage("Controller")}.${projectClassName}Controller")
     val controllerTestType get() = JavaType("$packageName.${modulePackage("ControllerTest")}.${projectClassName}ControllerTest")
+    val iserviceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
     val serviceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}Service")
     val repositoryType get() = JavaType("$packageName.${modulePackage("Repository")}.${projectClassName}Repository")
 
