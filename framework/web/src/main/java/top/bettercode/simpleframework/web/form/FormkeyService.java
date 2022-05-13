@@ -21,7 +21,12 @@ public class FormkeyService implements IFormkeyService {
 
   @Override
   public boolean exist(String formkey) {
-    return cache.putIfAbsent(formkey,true) != null;
+    return cache.putIfAbsent(formkey, true) != null;
+  }
+
+  @Override
+  public void remove(String formkey) {
+    cache.remove(formkey);
   }
 
 }

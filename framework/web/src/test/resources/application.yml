@@ -1,6 +1,7 @@
 logging:
   level:
     root: debug
+    top.bettercode.simpleframework.web.form: debug
     org.springframework: warn
 #    org.springframework.boot.SpringApplication: info
     org.apache: warn
