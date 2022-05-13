@@ -21,4 +21,5 @@ public interface IWexinProperties {
 
   Long getCacheSeconds();
 
+  int getMaxRetries();
 }

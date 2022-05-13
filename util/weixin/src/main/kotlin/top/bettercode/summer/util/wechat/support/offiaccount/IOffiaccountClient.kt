@@ -1,19 +1,10 @@
 package top.bettercode.summer.util.wechat.support.offiaccount
 
-import org.slf4j.MarkerFactory
-import org.springframework.web.client.getForObject
-import org.springframework.web.client.postForObject
-import top.bettercode.lang.util.Sha1DigestUtil
 import top.bettercode.summer.util.wechat.config.IOffiaccountProperties
-import top.bettercode.summer.util.wechat.config.OffiaccountProperties
-import top.bettercode.summer.util.wechat.support.WeixinClient
-import top.bettercode.summer.util.wechat.support.WeixinClient.Companion.baseAccessTokenKey
-import top.bettercode.summer.util.wechat.support.WeixinClient.Companion.maxRetries
-import top.bettercode.summer.util.wechat.support.offiaccount.OffiaccountClient.Companion.jsapiTicketKey
-import top.bettercode.summer.util.wechat.support.offiaccount.entity.*
-import java.net.URLEncoder
-import java.time.LocalDateTime
-import java.util.*
+import top.bettercode.summer.util.wechat.support.offiaccount.entity.JsapiSignature
+import top.bettercode.summer.util.wechat.support.offiaccount.entity.MsgResult
+import top.bettercode.summer.util.wechat.support.offiaccount.entity.TemplateMsgRequest
+import top.bettercode.summer.util.wechat.support.offiaccount.entity.WebPageAccessToken
 
 /**
  * 公众号接口
