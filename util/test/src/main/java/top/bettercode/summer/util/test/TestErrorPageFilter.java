@@ -84,8 +84,7 @@ public class TestErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain chain)
-        throws ServletException, IOException {
+        FilterChain chain) throws IOException {
       TestErrorPageFilter.this.doFilter(request, response, chain);
     }
 
@@ -117,7 +116,7 @@ public class TestErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
   }
 
   private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-      throws IOException, ServletException {
+      throws IOException {
     ErrorWrapperResponse wrapped = new ErrorWrapperResponse(response);
     try {
       chain.doFilter(request, wrapped);
@@ -141,8 +140,7 @@ public class TestErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
   }
 
   private void handleErrorStatus(HttpServletRequest request, HttpServletResponse response,
-      int status, String message)
-      throws ServletException, IOException {
+      int status, String message) throws IOException {
     if (response.isCommitted()) {
       handleCommittedResponse(request, null);
       return;
@@ -164,29 +162,16 @@ public class TestErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
 
   private void handleException(HttpServletRequest request, HttpServletResponse response,
       ErrorWrapperResponse wrapped,
-      Throwable ex) throws IOException, ServletException {
-    Class<?> type = ex.getClass();
-    String errorPath = getErrorPath(type);
-    if (errorPath == null) {
-      rethrow(ex);
-      return;
-    }
+      Throwable ex) throws IOException {
     if (response.isCommitted()) {
       handleCommittedResponse(request, ex);
       return;
     }
-    forwardToErrorPage(errorPath, request, wrapped, ex);
+    forwardToErrorPage(request, wrapped, ex);
   }
 
-  private void forwardToErrorPage(String path, HttpServletRequest request,
-      HttpServletResponse response, Throwable ex)
-      throws ServletException, IOException {
-    if (logger.isErrorEnabled()) {
-      String message =
-          "Forwarding to error page from request " + getDescription(request) + " due to exception ["
-              + ex.getMessage() + "]";
-      logger.error(message, ex);
-    }
+  private void forwardToErrorPage(HttpServletRequest request, HttpServletResponse response,
+      Throwable ex) throws IOException {
     setErrorAttributes(request, 500, ex.getMessage());
     request.setAttribute(ERROR_EXCEPTION, ex);
     request.setAttribute(ERROR_EXCEPTION_TYPE, ex.getClass());

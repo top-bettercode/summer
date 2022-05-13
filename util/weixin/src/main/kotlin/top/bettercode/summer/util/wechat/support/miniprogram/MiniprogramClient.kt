@@ -20,9 +20,9 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         "第三方接口",
         "微信公众号",
         "wexin-offiaccount"
-    ) {
+    ), IMiniprogramClient {
 
-    fun jscode2session(code: String): JsSession {
+    override fun jscode2session(code: String): JsSession {
         return getForObject(
             "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
             properties.appId,
@@ -31,7 +31,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         )
     }
 
-    fun getuserphonenumber(code: String): PhoneInfoResp {
+    override fun getuserphonenumber(code: String): PhoneInfoResp {
         return postForObject(
             "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}&code={1}",
             mapOf("code" to code),
@@ -39,8 +39,11 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         )
     }
 
-    @JvmOverloads
-    fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int = 1): WeixinResponse {
+    override fun sendSubscribeMsg(request: SubscribeMsgRequest): WeixinResponse {
+        return sendSubscribeMsg(request, 1)
+    }
+
+    override fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int): WeixinResponse {
         val result = postForObject<WeixinResponse>(
             "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={0}",
             request,

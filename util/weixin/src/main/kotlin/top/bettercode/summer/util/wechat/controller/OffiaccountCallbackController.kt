@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.simpleframework.web.BaseController
 import top.bettercode.summer.util.wechat.support.IWechatService
+import top.bettercode.summer.util.wechat.support.offiaccount.IOffiaccountClient
 import top.bettercode.summer.util.wechat.support.offiaccount.OffiaccountClient
 import javax.validation.constraints.NotBlank
 
@@ -17,7 +18,7 @@ import javax.validation.constraints.NotBlank
 @RequestMapping(value = ["/wechat"], name = "微信")
 class OffiaccountCallbackController(
     private val wechatService: IWechatService,
-    private val offiaccountClient: OffiaccountClient
+    private val offiaccountClient: IOffiaccountClient
 ) : BaseController() {
 
     /*
