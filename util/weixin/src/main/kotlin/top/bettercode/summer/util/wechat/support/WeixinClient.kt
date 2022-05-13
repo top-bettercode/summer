@@ -9,7 +9,6 @@ import org.springframework.lang.Nullable
 import org.springframework.web.client.getForObject
 import top.bettercode.simpleframework.support.client.ApiTemplate
 import top.bettercode.summer.util.wechat.config.IWexinProperties
-import top.bettercode.summer.util.wechat.config.WexinProperties
 import top.bettercode.summer.util.wechat.support.offiaccount.entity.BasicAccessToken
 import top.bettercode.summer.util.wechat.support.offiaccount.entity.CachedValue
 import java.time.LocalDateTime
@@ -40,7 +39,6 @@ open class WeixinClient<T : IWexinProperties>(
 
 
     companion object {
-        const val maxRetries = 2
         const val baseAccessTokenKey: String = "access_token"
     }
 
@@ -80,7 +78,7 @@ open class WeixinClient<T : IWexinProperties>(
                     )
                 )
                 accessToken.accessToken
-            } else if (retries < maxRetries) {
+            } else if (retries < properties.maxRetries && accessToken.errcode != 40164) {
                 getBaseAccessToken(retries + 1)
             } else {
                 throw RuntimeException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")

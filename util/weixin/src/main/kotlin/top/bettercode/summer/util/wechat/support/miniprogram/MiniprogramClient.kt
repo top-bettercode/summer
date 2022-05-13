@@ -3,7 +3,6 @@ package top.bettercode.summer.util.wechat.support.miniprogram
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.util.wechat.config.IMiniprogramProperties
-import top.bettercode.summer.util.wechat.config.MiniprogramProperties
 import top.bettercode.summer.util.wechat.support.WeixinClient
 import top.bettercode.summer.util.wechat.support.WeixinResponse
 import top.bettercode.summer.util.wechat.support.miniprogram.entity.JsSession
@@ -54,7 +53,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         } else if (40001 == result.errcode) {
             cache.invalidate(baseAccessTokenKey)
             sendSubscribeMsg(request, retries)
-        } else if (retries < maxRetries) {
+        } else if (retries < properties.maxRetries) {
             sendSubscribeMsg(request, retries + 1)
         } else {
             throw RuntimeException("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")

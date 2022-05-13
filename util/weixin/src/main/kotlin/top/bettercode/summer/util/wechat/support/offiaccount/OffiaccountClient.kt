@@ -5,7 +5,6 @@ import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.lang.util.Sha1DigestUtil
 import top.bettercode.summer.util.wechat.config.IOffiaccountProperties
-import top.bettercode.summer.util.wechat.config.OffiaccountProperties
 import top.bettercode.summer.util.wechat.support.WeixinClient
 import top.bettercode.summer.util.wechat.support.offiaccount.entity.*
 import java.net.URLEncoder
@@ -64,7 +63,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
             } else if (40001 == jsapiTicket.errcode) {
                 cache.invalidate(baseAccessTokenKey)
                 getJsapiTicket(retries)
-            } else if (retries < maxRetries) {
+            } else if (retries < properties.maxRetries) {
                 getJsapiTicket(retries + 1)
             } else {
                 throw RuntimeException("获取jsapiTicket失败：errcode:${jsapiTicket.errcode},errmsg:${jsapiTicket.errmsg}")
@@ -98,7 +97,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         } else if (40001 == result.errcode) {
             cache.invalidate(baseAccessTokenKey)
             sendTemplateMsg(request, retries)
-        } else if (retries < maxRetries) {
+        } else if (retries < properties.maxRetries) {
             sendTemplateMsg(request, retries + 1)
         } else {
             throw RuntimeException("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")

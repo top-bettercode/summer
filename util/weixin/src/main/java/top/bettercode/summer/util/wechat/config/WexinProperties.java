@@ -4,6 +4,7 @@ package top.bettercode.summer.util.wechat.config;
  * @author Peter Wu
  */
 public class WexinProperties implements IWexinProperties {
+
   private String appId;
   private String secret;
   private String token;
@@ -22,6 +23,10 @@ public class WexinProperties implements IWexinProperties {
    * access_token 及 jsapi_ticket 有效期7200秒
    */
   private Long cacheSeconds = 7200L;
+  /**
+   * 微信接口请求最大重试次数
+   */
+  private int maxRetries = 2;
 
   public String getAppId() {
     return appId;
@@ -77,5 +82,14 @@ public class WexinProperties implements IWexinProperties {
 
   public void setCacheSeconds(Long cacheSeconds) {
     this.cacheSeconds = cacheSeconds;
+  }
+
+  @Override
+  public int getMaxRetries() {
+    return maxRetries;
+  }
+
+  public void setMaxRetries(int maxRetries) {
+    this.maxRetries = maxRetries;
   }
 }
