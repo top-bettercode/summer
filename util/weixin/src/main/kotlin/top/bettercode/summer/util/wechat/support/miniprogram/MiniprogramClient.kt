@@ -32,7 +32,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
 
     override fun getuserphonenumber(code: String): PhoneInfoResp {
         return postForObject(
-            "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}&code={1}",
+            "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}",
             mapOf("code" to code),
             getBaseAccessToken()
         )
