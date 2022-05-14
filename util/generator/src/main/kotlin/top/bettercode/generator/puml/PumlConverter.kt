@@ -154,7 +154,9 @@ object PumlConverter {
                         extra = extra.replace(" NULL", "", true)
                         extra = extra.replace(" PK", "", true)
                         extra = extra.replace(" [A-Z0-9]*IDGENERATOR\\d*".toRegex(), "")
-                        extra = extra.replace(" VERSION", "", true).trim()
+                        extra = extra.replace(" VERSION", "", true)
+                        extra = extra.replace(" SOFTDELETE", "", true)
+                        extra = extra.replace(" ASBOOLEAN", "", true)
                         val idgeneratorRegex = ".* ([A-Z0-9]*IDGENERATOR\\d*) .*".toRegex()
                         val column = Column(
                             tableCat = null,
@@ -168,7 +170,7 @@ object PumlConverter {
                             unique = unique,
                             indexed = indexed,
                             columnDef = defaultVal,
-                            extra = extra,
+                            extra = extra.trim(),
                             tableSchem = null,
                             isForeignKey = fk,
                             unsigned = unsigned,
@@ -181,6 +183,14 @@ object PumlConverter {
                             ) else "",
                             version = columnDef.contains(
                                 "VERSION",
+                                true
+                            ),
+                            softDelete = columnDef.contains(
+                                "SOFTDELETE",
+                                true
+                            ),
+                            asBoolean = columnDef.contains(
+                                "ASBOOLEAN",
                                 true
                             ),
                             sequence = sequence,

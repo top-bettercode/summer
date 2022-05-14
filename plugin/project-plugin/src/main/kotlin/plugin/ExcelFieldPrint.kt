@@ -15,7 +15,7 @@ open class ExcelFieldPrint : Generator() {
         cols.forEachIndexed { i, it ->
             val code =
                 if (it.isCodeField) {
-                    if (it.columnName.contains("_") || it.isSoftDelete) ".code()" else ".code(${
+                    if (it.columnName.contains("_") || it.softDelete) ".code()" else ".code(${
                         (className + it.javaName.replaceFirstChar {
                             if (it.isLowerCase()) it.titlecase(
                                 Locale.getDefault()

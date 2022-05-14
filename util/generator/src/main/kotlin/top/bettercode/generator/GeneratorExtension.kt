@@ -194,11 +194,6 @@ open class GeneratorExtension(
     }
 
     /**
-     * json 序列化过滤字段
-     */
-    var jsonViewIgnoredFieldNames: Array<String> = arrayOf()
-
-    /**
      * ClassName
      */
     var className: (String) -> String = { str ->

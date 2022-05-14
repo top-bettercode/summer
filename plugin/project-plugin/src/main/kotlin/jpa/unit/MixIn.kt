@@ -61,7 +61,7 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
         //code
         if (!it.jsonViewIgnored && it.isCodeField) {
             method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
-                if (it.columnName.contains("_") || it.isSoftDelete)
+                if (it.columnName.contains("_") || it.softDelete)
                     annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonCode")
                 else {
                     import("${

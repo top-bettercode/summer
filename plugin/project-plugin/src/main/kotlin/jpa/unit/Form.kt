@@ -116,7 +116,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, it ->
     clazz.apply {
         //getter
-        if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.isSoftDelete)
+        if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.softDelete)
             method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
                 if (it.columnSize > 0 && it.javaType == JavaType.stringInstance) {
                     annotation("@org.hibernate.validator.constraints.Length(max = ${it.columnSize}, groups = Default.class)")
@@ -143,7 +143,7 @@ private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
 private val setter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, it ->
     clazz.apply {
 
-        if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.isSoftDelete)
+        if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.softDelete)
             method("set${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
                 parameter {
                     type = it.javaType

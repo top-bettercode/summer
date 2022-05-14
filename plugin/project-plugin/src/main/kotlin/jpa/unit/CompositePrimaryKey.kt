@@ -88,7 +88,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 columnAnnotation += ")"
                 annotation(columnAnnotation)
-                if (it.tinyInt1isBit) {
+                if (it.numericBooleanType) {
                     annotation("@org.hibernate.annotations.Type(type = \"org.hibernate.type.NumericBooleanType\")")
                 }
             }
