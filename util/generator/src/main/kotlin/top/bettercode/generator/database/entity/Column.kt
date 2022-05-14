@@ -3,7 +3,6 @@ package top.bettercode.generator.database.entity
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.JavaTypeResolver
-import java.sql.Types
 import java.util.*
 
 /**
@@ -59,7 +58,9 @@ data class Column(
     val sequence: String = "",
     val sequenceStartWith: Int = 1,
     var generatedColumn: Boolean = false,
-    var version: Boolean = false
+    var version: Boolean = false,
+    var softDelete: Boolean = false,
+    var asBoolean: Boolean = false,
 ) {
     init {
         if ("null".equals(columnDef, true)) {
@@ -168,43 +169,31 @@ data class Column(
     }
 
     override fun toString(): String {
-        return "Column(tableCat=$tableCat, tableSchem=$tableSchem, columnName='$columnName', typeName='$typeName', dataType=$dataType, decimalDigits=$decimalDigits, columnSize=$columnSize, remarks='$remarks', nullable=$nullable, columnDef=$columnDef, extra='$extra', unique=$unique, indexed=$indexed, isPrimary=$isPrimary, unsigned=$unsigned, isForeignKey=$isForeignKey, pktableName=$pktableName, pkcolumnName=$pkcolumnName, autoIncrement=$autoIncrement, idgenerator='$idgenerator', sequence='$sequence', sequenceStartWith=$sequenceStartWith, generatedColumn=$generatedColumn, version=$version, table=$table, originJavaType=$originJavaType, javaName='$javaName', jdbcType='$jdbcType')"
+        return "Column(tableCat=$tableCat, tableSchem=$tableSchem, columnName='$columnName', typeName='$typeName', dataType=$dataType, decimalDigits=$decimalDigits, columnSize=$columnSize, remarks='$remarks', nullable=$nullable, columnDef=$columnDef, extra='$extra', unique=$unique, indexed=$indexed, isPrimary=$isPrimary, unsigned=$unsigned, isForeignKey=$isForeignKey, pktableName=$pktableName, pkcolumnName=$pkcolumnName, autoIncrement=$autoIncrement, idgenerator='$idgenerator', sequence='$sequence', sequenceStartWith=$sequenceStartWith, generatedColumn=$generatedColumn, version=$version, softDelete=$softDelete, asBoolean=$asBoolean, javaName='$javaName')"
     }
+
 
     //--------------------------------------------
 
-    lateinit var table: Table
-
     val javaType: JavaType
             by lazy {
-                if (this.tinyInt1isBit || (table.ext.softDeleteAsBoolean && this.isSoftDelete)) {
+                if (this.asBoolean) {
                     JavaType("java.lang.Boolean")
                 } else
                     this.originJavaType
             }
 
-    val tinyInt1isBit: Boolean
-            by lazy { (table.datasource?.tinyInt1isBit == true) && this.dataType == Types.TINYINT && this.columnSize == 1 }
-
-    val asBoolean: Boolean
-            by lazy { this.tinyInt1isBit || (table.ext.softDeleteAsBoolean && this.isSoftDelete) }
-
-    val numericSoftDelete: Boolean
+    val numericBooleanType: Boolean
             by lazy {
-                this.isSoftDelete && (
+                this.asBoolean && (
                         JavaType(java.lang.Integer::class.java.name) == this.originJavaType
                                 || JavaType(java.lang.Short::class.java.name) == this.originJavaType
                                 || JavaType(java.lang.Byte::class.java.name) == this.originJavaType)
             }
 
-    val isSoftDelete: Boolean
-            by lazy { this.columnName.equals(table.ext.softDeleteColumnName, true) }
-
-
     val jsonViewIgnored: Boolean by lazy {
-        this.table.ext.jsonViewIgnoredFieldNames.contains(this.javaName)
+        this.softDelete
     }
-
 
     val jdbcType: String
             by lazy { JavaTypeResolver.calculateJdbcTypeName(this) }

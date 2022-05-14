@@ -69,9 +69,10 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
                 } else if (primaryKey.idgenerator.isNotBlank()) {
                     val generatorStrategy =
-                        (setting(primaryKey.idgenerator.lowercase(Locale.getDefault())) as? String) ?: "uuid2"
+                        (setting(primaryKey.idgenerator.lowercase(Locale.getDefault())) as? String)
+                            ?: "uuid2"
                     val generator = generatorStrategy.substringAfterLast(".")
-                                        .substringBeforeLast("Generator")
+                        .substringBeforeLast("Generator")
                         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
                     annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\")")
@@ -101,7 +102,10 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
         }
         //primaryKey getter
-        method("get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", primaryKeyType) {
+        method(
+            "get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+            primaryKeyType
+        ) {
             javadoc {
                 +"/**"
                 +" * ${remarks}主键"
@@ -158,16 +162,19 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (it.version) {
                     annotation("@javax.persistence.Version")
                 }
-                if (it.isSoftDelete) {
+                if (it.softDelete) {
                     annotation("@top.bettercode.simpleframework.data.jpa.SoftDelete")
                 }
-                if (it.tinyInt1isBit || it.numericSoftDelete) {
+                if (it.numericBooleanType) {
                     annotation("@org.hibernate.annotations.Type(type = \"org.hibernate.type.NumericBooleanType\")")
                 }
             }
 
             //getter
-            method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
+            method(
+                "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                it.javaType
+            ) {
                 if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"

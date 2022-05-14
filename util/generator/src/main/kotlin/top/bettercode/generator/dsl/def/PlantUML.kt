@@ -35,6 +35,8 @@ UNIQUE
 INDEX
 IDGENERATOR
 SEQUENCE
+SOFTDELETE
+ASBOOLEAN
 
 @startuml ${if (umlModuleName.isNullOrBlank()) DataType.DATABASE.name else umlModuleName}
 
@@ -64,7 +66,7 @@ SEQUENCE
                     prettyRemarks = remarksProperties?.getProperty(it.columnName)?.trim() ?: ""
                 }
 
-                destFile.appendText("    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.idgenerator.isBlank()) "" else " ${it.idgenerator}"}${if (it.isPrimary && it.sequence.isNotBlank()) " SEQUENCE ${it.sequence}${if (it.sequenceStartWith != 1) " ${it.sequenceStartWith}" else ""}" else ""}${if (it.version) " VERSION" else ""}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- $prettyRemarks\n")
+                destFile.appendText("    ${it.columnName} : ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${if (isPrimary) " PK" else if (it.unique) " UNIQUE" else if (it.indexed) " INDEX" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}${if (it.idgenerator.isBlank()) "" else " ${it.idgenerator}"}${if (it.isPrimary && it.sequence.isNotBlank()) " SEQUENCE ${it.sequence}${if (it.sequenceStartWith != 1) " ${it.sequenceStartWith}" else ""}" else ""}${if (it.version) " VERSION" else ""}${if (it.softDelete) " SOFTDELETE" else ""}${if (it.asBoolean) " ASBOOLEAN" else ""}${if (it.isForeignKey) " FK > ${it.pktableName}.${it.pkcolumnName}" else ""} -- $prettyRemarks\n")
                 if (it.isForeignKey) {
                     fklines.add("${it.pktableName} ||--o{ $tableName")
                 }

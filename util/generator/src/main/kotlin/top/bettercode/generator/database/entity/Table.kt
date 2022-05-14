@@ -44,7 +44,6 @@ data class Table(
     val columns: MutableList<Column> =
         pumlColumns.asSequence().filter { it is Column }.map {
             val col = it as Column
-            col.table = this
             col
         }.toMutableList()
 
@@ -114,7 +113,7 @@ data class Table(
     var datasource: JDBCConnectionConfiguration? = null
 
     val supportSoftDelete: Boolean
-        get() = columns.find { it.isSoftDelete } != null
+        get() = columns.find { it.softDelete } != null
 
     fun className(extension: GeneratorExtension): String = extension.className(tableName)
 

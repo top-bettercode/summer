@@ -142,12 +142,6 @@ class GeneratorPlugin : Plugin<Project> {
                 .distinct()
                 .sortedBy { it }.toList()
                 .toTypedArray()
-            extension.jsonViewIgnoredFieldNames =
-                (findProperty(project, "jsonViewIgnoredFieldNames")
-                    ?: "deleted,lastModifiedDate").split(",").asSequence()
-                    .filter { it.isNotBlank() }.map { it.trim() }.distinct().sortedBy { it }
-                    .toList()
-                    .toTypedArray()
 
             extension.generators = (findProperty(project, "generators")
                 ?: "").split(",").asSequence().filter { it.isNotBlank() }.distinct()
