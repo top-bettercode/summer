@@ -12,6 +12,7 @@ public interface SoftDeleteSupport {
   boolean support();
 
   boolean isSoftDeleted(Object entity);
+
   boolean softDeletedSeted(Object entity);
 
   Class<?> getPropertyType();
