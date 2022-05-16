@@ -33,7 +33,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
             "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s#wechat_redirect"
         val authenticationUrl = String.format(
             url,
-            properties.appId,
+            getAppId(),
             URLEncoder.encode(properties.oauthUrl, "UTF-8"),
             "snsapi_userinfo"
         )
@@ -76,8 +76,8 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
     override fun getWebPageAccessToken(code: String): WebPageAccessToken {
         return getForObject(
             "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code",
-            properties.appId,
-            properties.secret,
+            getAppId(),
+            getSecret(),
             code
         )
     }
@@ -118,7 +118,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
                     "&url=" + url
         )
 
-        return JsapiSignature(signature, properties.appId, nonceStr, timestamp)
+        return JsapiSignature(signature, getAppId(), nonceStr, timestamp)
     }
 
     override fun shaHex(vararg str: String): String {
