@@ -75,8 +75,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         }(${it.randomValueToSet});"
                     }
             }
-            otherColumns.forEach {
-//                    if (!it.jsonViewIgnored)
+            otherColumns.filter { !it.version }.forEach {
                 +"$entityName.set${
                     it.javaName.replaceFirstChar {
                         if (it.isLowerCase()) it.titlecase(
