@@ -63,7 +63,7 @@ public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
 
     if (annotation != null) {
       support = true;
-      JpaExtProperties.SoftDelete softDelete = jpaExtProperties.getSoftDelete();
+      JpaExtProperties.SoftDelete softDeleteProperties = jpaExtProperties.getSoftDelete();
       PropertyDescriptor propertyDescriptor = BeanUtils
           .getPropertyDescriptor(domainClass, propertyName);
       writeMethod = propertyDescriptor.getWriteMethod();
@@ -74,14 +74,14 @@ public class DefaultSoftDeleteSupport implements SoftDeleteSupport {
       if (!"".equals(trueValue)) {
         this.trueValue = trueValue;
       } else {
-        this.trueValue = softDelete.getTrueValue();
+        this.trueValue = softDeleteProperties.getTrueValue();
       }
       this.trueValue = JpaUtil.convert(this.trueValue, propertyType);
       String falseValue = annotation.falseValue();
       if (!"".equals(falseValue)) {
         this.falseValue = falseValue;
       } else {
-        this.falseValue = softDelete.getFalseValue();
+        this.falseValue = softDeleteProperties.getFalseValue();
       }
       this.falseValue = JpaUtil.convert(this.falseValue, propertyType);
     }
