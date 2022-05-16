@@ -33,6 +33,8 @@ open class WeixinClient<T : IWexinProperties>(
         properties.readTimeout
     ) {
 
+    private var lastAppId = properties.appId
+
     protected val cache =
         CacheBuilder.newBuilder().expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
             .maximumSize(1000).build<String, CachedValue>()
@@ -66,8 +68,8 @@ open class WeixinClient<T : IWexinProperties>(
         return if (cachedValue == null || cachedValue.expired) {
             val accessToken = getForObject<BasicAccessToken>(
                 "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}",
-                properties.appId,
-                properties.secret
+                getAppId(),
+                getSecret()
             )
             if (accessToken.isOk) {
                 cache.put(
@@ -86,6 +88,18 @@ open class WeixinClient<T : IWexinProperties>(
         } else {
             cachedValue.value
         }
+    }
+
+    protected fun getSecret(): String = properties.secret
+
+    protected fun getAppId(): String {
+        val appId = properties.appId
+        if (lastAppId != appId) {
+            cache.invalidateAll()
+            lastAppId = appId
+        }
+
+        return appId
     }
 
 }
