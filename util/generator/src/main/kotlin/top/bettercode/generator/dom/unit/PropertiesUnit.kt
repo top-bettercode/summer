@@ -31,11 +31,9 @@ open class PropertiesUnit(
      * @param directory 基础目录
      */
     fun load(directory: File) {
-        if (!overwrite) {
-            val trueFile = outputFile(directory)
-            if (trueFile.exists()) {
-                properties.load(trueFile.inputStream())
-            }
+        val trueFile = outputFile(directory)
+        if (trueFile.exists()) {
+            properties.load(trueFile.inputStream())
         }
     }
 }
