@@ -82,6 +82,7 @@ object ProjectDependencies {
                     dependency("top.bettercode.summer:security:$summerVersion")
 
                     dependency("top.bettercode.summer:kk:$summerVersion")
+                    dependency("top.bettercode.summer:sap:$summerVersion")
                     dependency("top.bettercode.summer:test:$summerVersion")
 
                     dependency("top.bettercode.wechat:weixin-mp:0.9.7")

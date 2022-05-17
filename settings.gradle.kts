@@ -35,4 +35,5 @@ include(":util:weixin")
 include(":util:sms")
 
 //include(":wintrue:kk")
+include(":wintrue:sap")
 
