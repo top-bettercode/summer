@@ -589,7 +589,7 @@ After=network.target
 
 [Service]
 ${if (dist.runUser.isNotBlank()) "User=${dist.runUser}" else ""}
-ExecStart=${'$'}APP_HOME/bin/${project.name}
+ExecStart=${'$'}APP_HOME/run.sh
 ExecReload=/bin/kill -HUP \${'$'}MAINPID
 KillMode=/bin/kill -s QUIT \${'$'}MAINPID
 Restart=always
