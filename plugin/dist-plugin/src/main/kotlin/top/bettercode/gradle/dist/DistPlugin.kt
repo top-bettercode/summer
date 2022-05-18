@@ -588,8 +588,9 @@ Description=${project.name}
 After=network.target
 
 [Service]
-${if (dist.runUser.isNotBlank()) "User=${dist.runUser}" else ""}
-ExecStart=${'$'}APP_HOME/run.sh
+${if (dist.runUser.isNotBlank()) "User=${dist.runUser}" else "User=`whoami`"}
+Type=forking
+ExecStart=${'$'}APP_HOME/startup.sh
 ExecReload=/bin/kill -HUP \${'$'}MAINPID
 KillMode=/bin/kill -s QUIT \${'$'}MAINPID
 Restart=always
