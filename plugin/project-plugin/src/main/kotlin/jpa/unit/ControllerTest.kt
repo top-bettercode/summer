@@ -173,7 +173,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"mockMvc.perform(post(\"/$pathName/save\")"
                 if (isFullComposite) {
                     columns.forEach {
-                        if (!it.jsonViewIgnored && it.javaName != "createdDate") {
+                        if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.version) {
                             2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
                         }
                     }
@@ -187,7 +187,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         }
                     }
                     otherColumns.forEach {
-                        if (!it.jsonViewIgnored && it.javaName != "createdDate") {
+                        if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.version) {
                             2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
                         }
                     }
@@ -207,7 +207,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (isFullComposite) {
                     +"mockMvc.perform(post(\"/$pathName/save\")"
                     columns.forEach {
-                        if (!it.jsonViewIgnored && it.javaName != "createdDate") {
+                        if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.version) {
                             2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
                         }
                     }
@@ -222,7 +222,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +"mockMvc.perform(post(\"/$pathName/save\")"
                     2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                     otherColumns.forEach {
-                        if (!it.jsonViewIgnored && it.javaName != "createdDate") {
+                        if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.version) {
                             2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
                         }
                     }
