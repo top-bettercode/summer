@@ -252,20 +252,32 @@ class DistPlugin : Plugin<Project> {
 
         project.afterEvaluate {
             if (project == project.rootProject) {
-                val needUnwrapTasks =
-                    (project.gradle as GradleInternal).defaultProject.tasks.filter {
-                        it.group == "distribution" ||
-                                it.group == WindowsServicePlugin.getPLUGIN_GROUP()
-                    }
+                val gradle = project.gradle as GradleInternal
+                val needUnwrapTasks = mutableListOf<Task>()
+                lateinit var currentProject: Project
+                gradle.allprojects {
+                    if (it.projectDir.absolutePath == gradle.startParameter.currentDir.absolutePath)
+                        currentProject = it
+                    needUnwrapTasks.addAll(it.tasks.filter { task ->
+                        task.group == "distribution" ||
+                                task.group == WindowsServicePlugin.getPLUGIN_GROUP()
+                    })
+                }
                 project.rootProject.allprojects { p ->
                     p.tasks.named("jar") { task ->
                         task as Jar
                         if (extension.unwrapResources) {
-                            val gradle = project.gradle as GradleInternal
-                            val taskNames = gradle.startParameter.taskNames
+                            val taskNames =
+                                gradle.startParameter.taskNames.map {
+                                    var name = it
+                                    if (currentProject != project.rootProject) name =
+                                        currentProject.tasks.getByName(name).path
+                                    if (name.startsWith(":")) name else ":$name"
+                                }
+
                             val needUnwrapTask =
                                 needUnwrapTasks.find {
-                                    taskNames.map { t -> t.substringAfter(":") }.contains(it.name)
+                                    taskNames.contains(it.path)
                                 }
                             if (needUnwrapTask != null) {
                                 task.outputs.upToDateWhen { false }
