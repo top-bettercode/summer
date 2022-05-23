@@ -429,7 +429,8 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> implements SpecPredicate<T
     return withMatcher(value, PathMatcher.NOT_LIKE);
   }
 
-  public M in(Object... value) {
+  @SafeVarargs
+  public final <E> M in(E... value) {
     return withMatcher(Arrays.asList(value), PathMatcher.IN);
   }
 
@@ -437,7 +438,8 @@ public class SpecPath<T, M extends SpecMatcher<T, M>> implements SpecPredicate<T
     return withMatcher(value, PathMatcher.IN);
   }
 
-  public M notIn(Object... value) {
+  @SafeVarargs
+  public final <E> M notIn(E... value) {
     return withMatcher(Arrays.asList(value), PathMatcher.NOT_IN);
   }
 

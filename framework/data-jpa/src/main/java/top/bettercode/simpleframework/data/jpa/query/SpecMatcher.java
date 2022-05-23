@@ -282,7 +282,8 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
     return withMatcher(propertyName, value, PathMatcher.NOT_LIKE);
   }
 
-  public M in(String propertyName, Object... value) {
+  @SafeVarargs
+  public final <E> M in(String propertyName, E... value) {
     return withMatcher(propertyName, Arrays.asList(value), PathMatcher.IN);
   }
 
@@ -290,8 +291,8 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
     return withMatcher(propertyName, value, PathMatcher.IN);
   }
 
-
-  public M notIn(String propertyName, Object... value) {
+  @SafeVarargs
+  public final <E> M notIn(String propertyName, E... value) {
     return withMatcher(propertyName, Arrays.asList(value), PathMatcher.NOT_IN);
   }
 
