@@ -55,6 +55,9 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
             sendSubscribeMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendSubscribeMsg(request, retries + 1)
+        } else if (43004 == result.errcode) {
+            log.warn("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+            result
         } else {
             throw RuntimeException("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
         }
