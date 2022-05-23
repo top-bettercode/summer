@@ -216,6 +216,107 @@ class AliSmsTemplate(
         }
     }
 
+    /**
+     * 查询短信签名列表详情。
+     *
+     *
+     * 本接口的单用户QPS限制为10次/秒。超过限制，API调用会被限流，这可能会影响您的业务，请合理调用。
+     *
+     *
+     * 文档：https://help.aliyun.com/document_detail/419282.html
+     *
+     * @param pageIndex 页码。默认取值为1。
+     * @param pageSize  页数。取值范围：1~50。
+     * @return 结果
+     */
+    @JvmOverloads
+    fun querySmsSignList(pageIndex: Int = 1, pageSize: Int = 10): AliSmsSignResponse {
+        val params: MultiValueMap<String, String> = LinkedMultiValueMap()
+        //公共参数
+        val action = "QuerySmsSignList"
+        commonParams(params, action)
+        //公共参数结束
+        params.add("PageIndex", pageIndex.toString())
+        params.add("PageSize", pageSize.toString())
+
+        //签名
+        sign(params)
+        val requestCallback = httpEntityCallback<Any>(
+            HttpEntity(params, null),
+            AliSmsSignResponse::class.java
+        )
+        val entity: ResponseEntity<AliSmsSignResponse> = try {
+            execute(
+                aliSmsProperties.url,
+                HttpMethod.POST,
+                requestCallback,
+                responseEntityExtractor(
+                    AliSmsSignResponse::class.java
+                )
+            )
+        } catch (e: Exception) {
+            throw SmsException(e)
+        } ?: throw SmsException()
+        val body = entity.body
+        return if (body?.isOk == true) {
+            body
+        } else {
+            val message = body?.message
+            throw SmsSysException(message ?: "请求失败")
+        }
+    }
+
+
+    /**
+     * 查询短信模板列表详情。
+     *
+     *
+     * 本接口的单用户QPS限制为10次/秒。超过限制，API调用会被限流，这可能会影响您的业务，请合理调用。
+     *
+     *
+     * 文档：https://help.aliyun.com/document_detail/419288.html
+     *
+     * @param pageIndex 页码。默认取值为1。
+     * @param pageSize  页数。取值范围：1~50。
+     * @return 结果
+     */
+    @JvmOverloads
+    fun querySmsTemplateList(pageIndex: Int = 1, pageSize: Int = 10): AliSmsTemplateResponse {
+        val params: MultiValueMap<String, String> = LinkedMultiValueMap()
+        //公共参数
+        val action = "QuerySmsTemplateList"
+        commonParams(params, action)
+        //公共参数结束
+        params.add("PageIndex", pageIndex.toString())
+        params.add("PageSize", pageSize.toString())
+
+        //签名
+        sign(params)
+        val requestCallback = httpEntityCallback<Any>(
+            HttpEntity(params, null),
+            AliSmsTemplateResponse::class.java
+        )
+        val entity: ResponseEntity<AliSmsTemplateResponse> = try {
+            execute(
+                aliSmsProperties.url,
+                HttpMethod.POST,
+                requestCallback,
+                responseEntityExtractor(
+                    AliSmsTemplateResponse::class.java
+                )
+            )
+        } catch (e: Exception) {
+            throw SmsException(e)
+        } ?: throw SmsException()
+        val body = entity.body
+        return if (body?.isOk == true) {
+            body
+        } else {
+            val message = body?.message
+            throw SmsSysException(message ?: "请求失败")
+        }
+    }
+
     private fun commonParams(
         params: MultiValueMap<String, String>,
         action: String
