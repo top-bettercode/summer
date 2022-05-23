@@ -25,4 +25,15 @@ class AliSmsTemplateTest extends BaseTest {
   void querySendReport(){
     aliSmsTemplate.querySendReport(mobile);
   }
+
+  @Test
+  void querySmsSignList(){
+    aliSmsTemplate.querySmsSignList();
+  }
+
+  @Test
+  void querySmsTemplateList(){
+    aliSmsTemplate.querySmsTemplateList();
+  }
+
 }
