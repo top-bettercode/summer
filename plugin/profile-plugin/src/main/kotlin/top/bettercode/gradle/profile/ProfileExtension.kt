@@ -248,7 +248,7 @@ open class ProfileExtension(
                     props.forEach { t, u ->
                         val k = t as String
                         if (project.hasProperty(k)) {
-                            project.setProperty(k, u)
+                            project.setProperty(k, u?.toString())
                         }
                     }
                 }
