@@ -99,6 +99,9 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
             sendTemplateMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendTemplateMsg(request, retries + 1)
+        } else if (43004 == result.errcode) {
+            log.warn("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+            result
         } else {
             throw RuntimeException("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
         }
