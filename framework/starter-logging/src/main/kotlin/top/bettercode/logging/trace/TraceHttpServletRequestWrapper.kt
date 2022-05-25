@@ -37,7 +37,7 @@ constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request
         get() = RequestConverter.toString(
             if (!contentType.isNullOrBlank()) MediaType.parseMediaType(
                 contentType
-            ).charset else null, contentAsByteArray
+            ).charset else null, byteArrayOutputStream.toByteArray()
         )
 
     private fun read(): ByteArray {
@@ -46,7 +46,7 @@ constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request
             servletInputStream!!.reset()
             byteArray
         } catch (e: Exception) {
-            "Can't record the original data.".toByteArray()
+            "Can't record the inputStream original data.".toByteArray()
         }
     }
 

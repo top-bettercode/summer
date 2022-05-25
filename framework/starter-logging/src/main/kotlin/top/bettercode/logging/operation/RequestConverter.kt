@@ -77,7 +77,7 @@ object RequestConverter {
             ?: try {
                 StreamUtils.copyToByteArray(request.inputStream)
             } catch (e: Exception) {
-                "Can't record the original data.".toByteArray()
+                "Can't record the original inputStream data.".toByteArray()
             }
 
         return OperationRequest(
