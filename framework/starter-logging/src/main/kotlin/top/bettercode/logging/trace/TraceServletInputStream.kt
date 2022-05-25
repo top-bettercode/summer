@@ -34,7 +34,11 @@ class TraceServletInputStream(
     }
 
     override fun reset() {
-        byteArrayInputStream?.reset()
+        if (byteArrayInputStream != null) {
+            byteArrayInputStream!!.reset()
+        } else {
+            delegate.reset()
+        }
     }
 
     override fun close() {

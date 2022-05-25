@@ -1,7 +1,5 @@
 package top.bettercode.simpleframework.web.form;
 
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -13,13 +11,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import top.bettercode.lang.util.Sha512DigestUtils;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper;
-import top.bettercode.logging.trace.TraceServletInputStream;
 import top.bettercode.simpleframework.AnnotatedUtils;
 import top.bettercode.simpleframework.exception.BusinessException;
 import top.bettercode.simpleframework.servlet.NotErrorHandlerInterceptor;
@@ -80,15 +76,7 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
                 request);
             if (traceHttpServletRequestWrapper != null) {
               try {
-                InputStream body = traceHttpServletRequestWrapper.getInputStream();
-                if (body instanceof TraceServletInputStream) {
-                  formkey += "::" + StreamUtils.copyToString(body, Charset.defaultCharset());
-                  body.reset();
-                } else {
-                  log.info(request.getServletPath()
-                      + " not traceServletInputStream ignore formDuplicateCheck");
-                  return null;
-                }
+                formkey += "::" + traceHttpServletRequestWrapper.getContent();
               } catch (Exception e) {
                 log.info(
                     request.getServletPath() + e.getMessage() + " ignore formDuplicateCheck");

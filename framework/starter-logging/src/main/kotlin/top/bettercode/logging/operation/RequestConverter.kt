@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.util.Assert
 import org.springframework.util.FileCopyUtils
+import org.springframework.util.StreamUtils
 import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
@@ -21,6 +22,7 @@ import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.net.URI
+import java.nio.charset.Charset
 import java.time.LocalDateTime
 import java.util.*
 import javax.servlet.ServletException
@@ -70,12 +72,14 @@ object RequestConverter {
             (request.getAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME) as? String)
                 ?: request.remoteUser ?: "anonymous"
 
-        val content = (request as? TraceHttpServletRequestWrapper)?.contentAsByteArray
+        val traceHttpServletRequestWrapper = getTraceHttpServletRequestWrapper(request)
+        val content = traceHttpServletRequestWrapper?.contentAsByteArray
             ?: try {
-                FileCopyUtils.copyToByteArray(request.inputStream)
+                StreamUtils.copyToByteArray(request.inputStream)
             } catch (e: Exception) {
-                "Request inputStream has been read.Can't record the original data.".toByteArray()
+                "Can't record the original data.".toByteArray()
             }
+
         return OperationRequest(
             uri = uri,
             restUri = restUri,
@@ -90,6 +94,31 @@ object RequestConverter {
             dateTime = dateTime
         )
     }
+
+    fun toString(charset: Charset?, content: ByteArray): String {
+        if (content.isNotEmpty()) {
+            return if (charset != null)
+                String(content, charset)
+            else
+                String(content)
+        }
+        return ""
+    }
+
+    fun getTraceHttpServletRequestWrapper(request: ServletRequest): TraceHttpServletRequestWrapper? {
+        return when (request) {
+            is TraceHttpServletRequestWrapper -> {
+                request
+            }
+            is HttpServletRequestWrapper -> {
+                getTraceHttpServletRequestWrapper(request.request)
+            }
+            else -> {
+                null
+            }
+        }
+    }
+
 
     fun convert(request: ClientHttpRequestWrapper, dateTime: LocalDateTime): OperationRequest {
         val headers = HttpHeaders()

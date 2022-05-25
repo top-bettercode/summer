@@ -1,5 +1,8 @@
 package top.bettercode.logging.trace
 
+import org.springframework.http.MediaType
+import org.springframework.util.StreamUtils
+import top.bettercode.logging.operation.RequestConverter
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.InputStreamReader
@@ -22,13 +25,30 @@ class TraceHttpServletRequestWrapper
  */
 constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request) {
     private val byteArrayOutputStream = ByteArrayOutputStream()
-    private var servletInputStream: ServletInputStream? = null
+    private var servletInputStream: TraceServletInputStream? = null
     private var servletReader: BufferedReader? = null
     private var servletParts: MutableCollection<Part>? = null
 
     val contentAsByteArray: ByteArray
-        get() = byteArrayOutputStream.toByteArray()
+        get() = if (servletInputStream == null) read() else byteArrayOutputStream.toByteArray()
 
+
+    val content: String
+        get() = RequestConverter.toString(
+            if (!contentType.isNullOrBlank()) MediaType.parseMediaType(
+                contentType
+            ).charset else null, contentAsByteArray
+        )
+
+    private fun read(): ByteArray {
+        return try {
+            val byteArray = StreamUtils.copyToByteArray(inputStream)
+            servletInputStream!!.reset()
+            byteArray
+        } catch (e: Exception) {
+            "Can't record the original data.".toByteArray()
+        }
+    }
 
     override fun getPart(name: String?): Part? {
         return parts.find { it.name == name }
