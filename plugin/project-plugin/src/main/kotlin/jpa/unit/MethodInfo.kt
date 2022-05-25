@@ -15,7 +15,7 @@ val methodInfo: ProjectGenerator.(Interface) -> Unit = { unit ->
             +" * $remarks"
             +" */"
         }
-        if (!isFullComposite) {
+        if (isCompositePrimaryKey) {
             //primaryKey getter
             method("get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", primaryKeyType) {
                 javadoc {
@@ -24,15 +24,11 @@ val methodInfo: ProjectGenerator.(Interface) -> Unit = { unit ->
                     +" */"
                 }
             }
-            otherColumns.forEach {
-                //getter
-                getter(this, it)
-            }
-        } else {
-            columns.forEach {
-                //getter
-                getter(this, it)
-            }
+        }
+
+        columns.forEach {
+            //getter
+            getter(this, it)
         }
     }
 

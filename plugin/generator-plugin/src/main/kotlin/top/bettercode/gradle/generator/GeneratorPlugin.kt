@@ -296,6 +296,7 @@ class GeneratorPlugin : Plugin<Project> {
                             task.outputs.dir(out)
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
+                                extension.dropTablesWhenUpdate = true
                                 MysqlToDDL.useQuote = extension.sqlQuote
                                 OracleToDDL.useQuote = extension.sqlQuote
                                 MysqlToDDL.useForeignKey = extension.useForeignKey

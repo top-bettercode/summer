@@ -131,6 +131,39 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return this;"
         }
 
+        if(isCompositePrimaryKey){
+            primaryKeys.forEach {
+                //getter
+                method(
+                    "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                    it.javaType
+                ) {
+                    if (it.remark.isNotBlank() || it.columnDef != null)
+                        javadoc {
+                            +"/**"
+                            +" * ${it.returnRemark}"
+                            +" */"
+                        }
+                    +"return this.${primaryKeyName}.${name}();"
+                }
+                //setter
+                method(
+                    "set${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                    entityType,
+                    Parameter(it.javaName, it.javaType)
+                ) {
+                    javadoc {
+                        +"/**"
+                        +" * ${it.paramRemark}"
+                        +" * @return ${remarks}实例"
+                        +" */"
+                    }
+                    +"this.${primaryKeyName}.${name}(${it.javaName});"
+                    +"return this;"
+                }
+            }
+        }
+
         otherColumns.forEach {
             //field
             field(it.javaName, it.javaType) {

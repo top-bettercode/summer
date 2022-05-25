@@ -6,23 +6,23 @@ import top.bettercode.generator.dom.unit.SourceSet
 /**
  * @author Peter Wu
  */
-open class Controller : ProjectGenerator() {
+open class Controller(private val overwrite: Boolean = false) : ProjectGenerator() {
 
     override fun content() {
 
-        +clazz(controllerType) {
+        +clazz(controllerType, overwrite = overwrite) {
             controller(this)
         }
 
-        +clazz(controllerTestType, sourceSet = SourceSet.TEST) {
+        +clazz(controllerTestType, overwrite = overwrite, sourceSet = SourceSet.TEST) {
             controllerTest(this)
         }
 
-        +clazz(formType) {
+        +clazz(formType, overwrite = overwrite) {
             form(this)
         }
 
-        +interfaze(mixInType) {
+        +interfaze(mixInType, overwrite = overwrite) {
             mixIn(this)
         }
     }

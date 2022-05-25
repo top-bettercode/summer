@@ -25,7 +25,10 @@ val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
 
         if (!isFullComposite) {
             //primaryKey getter
-            method("get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", primaryKeyType) {
+            method(
+                "get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                primaryKeyType
+            ) {
                 javadoc {
                     +"/**"
                     +" * ${remarks}主键"
@@ -36,22 +39,21 @@ val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
                     annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonEmbeddedId")
                 annotation("@Override")
             }
-            otherColumns.forEach {
-                //getter
-                getter(this, it)
-            }
-        } else {
-            columns.forEach {
-                //getter
-                getter(this, it)
-            }
+        }
+
+        columns.filter { it.javaName != primaryKeyName }.forEach {
+            //getter
+            getter(this, it)
         }
     }
 }
 private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, it ->
     interfaze.apply {
         if (it.jsonViewIgnored)
-            method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
+            method(
+                "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                it.javaType
+            ) {
                 if (it.jsonViewIgnored)
                     annotation("@com.fasterxml.jackson.annotation.JsonIgnore")
 
@@ -60,24 +62,31 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
 
         //code
         if (!it.jsonViewIgnored && it.isCodeField) {
-            method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
+            method(
+                "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                it.javaType
+            ) {
                 if (it.columnName.contains("_") || it.softDelete)
                     annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonCode")
                 else {
-                    import("${
-                        (ext.packageName + ".support.dic." + className + it.javaName.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(
-                                Locale.getDefault()
-                            ) else it.toString()
-                        })
-                    }Enum")
-                    annotation("@top.bettercode.simpleframework.web.serializer.annotation.JsonCode(${
-                        (className + it.javaName.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(
-                                Locale.getDefault()
-                            ) else it.toString()
-                        })
-                    }Enum.ENUM_NAME)")
+                    import(
+                        "${
+                            (ext.packageName + ".support.dic." + className + it.javaName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            })
+                        }Enum"
+                    )
+                    annotation(
+                        "@top.bettercode.simpleframework.web.serializer.annotation.JsonCode(${
+                            (className + it.javaName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            })
+                        }Enum.ENUM_NAME)"
+                    )
                 }
                 annotation("@Override")
             }
