@@ -5,30 +5,30 @@ import top.bettercode.generator.dom.unit.SourceSet
 /**
  * @author Peter Wu
  */
-open class Service : ProjectGenerator() {
+open class Service(private val overwrite: Boolean = false) : ProjectGenerator() {
 
     override fun content() {
-        +file(mapperXmlName, overwrite = false, sourceSet = SourceSet.MAIN) {
+        +file(mapperXmlName, overwrite = overwrite, sourceSet = SourceSet.MAIN) {
             mapperXml(this)
         }
 
-        +packageInfo(modulePackageInfoType) {
+        +packageInfo(modulePackageInfoType, overwrite = false) {
             modulePackageInfo(this)
         }
-        +packageInfo(packageInfoType) {
+        +packageInfo(packageInfoType, overwrite = false) {
             packageInfo(this)
         }
 
-        +interfaze(repositoryType) {
+        +interfaze(repositoryType, overwrite = false) {
             repository(this)
         }
 
         if (interfaceService)
-            +interfaze(iserviceType) {
+            +interfaze(iserviceType, overwrite = false) {
                 iservice(this)
             }
 
-        +clazz(serviceType) {
+        +clazz(serviceType, overwrite = false) {
             service(this)
         }
     }

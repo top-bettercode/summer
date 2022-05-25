@@ -56,11 +56,18 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +" * ${remarks}主键"
                     +" */"
                 }
-                import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
+                if (!isCompositePrimaryKey && !primaryKey.autoIncrement && primaryKey.idgenerator.isBlank() && primaryKey.sequence.isBlank()) {
+                    if (primaryKey.columnSize > 0 && primaryKey.javaType == JavaType.stringInstance) {
+                        annotation("@org.hibernate.validator.constraints.Length(max = ${primaryKey.columnSize}, groups = Default.class)")
+                    }
+                }
+                val autoIncrement = !isCompositePrimaryKey && primaryKey.autoIncrement
+                if (autoIncrement)
+                    import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
                 if (primaryKeyType == JavaType.stringInstance) {
-                    annotation("@javax.validation.constraints.NotBlank(groups = UpdateConstraint.class)")
+                    annotation("@javax.validation.constraints.NotBlank${if (autoIncrement) "(groups = UpdateConstraint.class)" else ""}")
                 } else {
-                    annotation("@javax.validation.constraints.NotNull(groups = UpdateConstraint.class)")
+                    annotation("@javax.validation.constraints.NotNull${if (autoIncrement) "(groups = UpdateConstraint.class)" else ""}")
                 }
                 +"return this.entity.get${
                     primaryKeyName.replaceFirstChar {
@@ -70,12 +77,14 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     }
                 }();"
             }
+        }
 
-            otherColumns.forEach {
-                //getter
-                getter(this, it)
-            }
+        columns.filter { it.javaName != primaryKeyName }.forEach {
+            //getter
+            getter(this, it)
+        }
 
+        if (!isFullComposite) {
             //primaryKey setter
             method("set${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
                 javadoc {
@@ -95,19 +104,10 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     }
                 }(${primaryKeyName});"
             }
-            otherColumns.forEach {
-                //setter
-                setter(this, it)
-            }
-        } else {
-            columns.forEach {
-                //getter
-                getter(this, it)
-            }
-            columns.forEach {
-                //setter
-                setter(this, it)
-            }
+        }
+        columns.filter { it.javaName != primaryKeyName }.forEach {
+            //setter
+            setter(this, it)
         }
 
     }
@@ -117,7 +117,10 @@ private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
     clazz.apply {
         //getter
         if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.softDelete)
-            method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
+            method(
+                "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                it.javaType
+            ) {
                 if (it.columnSize > 0 && it.javaType == JavaType.stringInstance) {
                     annotation("@org.hibernate.validator.constraints.Length(max = ${it.columnSize}, groups = Default.class)")
                 }

@@ -14,17 +14,6 @@ val mapperXml: ProjectGenerator.(FileUnit) -> Unit = { unit ->
 <mapper namespace="${repositoryType.fullyQualifiedNameWithoutTypeParameters}">
 """
 
-        if (isCompositePrimaryKey) {
-            +"""  <resultMap type="${entityType.fullyQualifiedNameWithoutTypeParameters}" id="${entityName}Map">"""
-            primaryKeys.forEach {
-                +"    <result property=\"${primaryKeyName}.${it.javaName}\" column=\"${it.columnName}\"/>"
-            }
-            otherColumns.forEach {
-                +"    <result property=\"${it.javaName}\" column=\"${it.columnName}\"/>"
-            }
-            +"""  </resultMap>"""
-
-        }
         +
         """
 
