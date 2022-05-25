@@ -9,6 +9,7 @@ import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
+import org.springframework.lang.Nullable
 import org.springframework.util.Base64Utils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
@@ -48,7 +49,7 @@ class AliSmsTemplate(
                     return true
                 }
 
-                override fun canWrite(clazz: Class<*>?, mediaType: MediaType?): Boolean {
+                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
                     return true
                 }
             }
@@ -126,33 +127,7 @@ class AliSmsTemplate(
         params.add("TemplateCode", templateCode)
         params.add("TemplateParamJson", json(templateParam))
 
-//    签名
-        sign(params)
-        val requestCallback = httpEntityCallback<Any>(
-            HttpEntity(params, null),
-            AliSmsResponse::class.java
-        )
-        val entity: ResponseEntity<AliSmsResponse> = try {
-            execute(
-                aliSmsProperties.url,
-                HttpMethod.POST,
-                requestCallback,
-                responseEntityExtractor(AliSmsResponse::class.java)
-            )
-        } catch (e: Exception) {
-            throw SmsException(e)
-        } ?: throw SmsException()
-        val body = entity.body
-        return if (body?.isOk == true) {
-            body
-        } else {
-            var message = body?.message
-            val regex = "触发号码天级流控Permits:(\\d+)"
-            if (message?.matches(Regex(regex)) == true) {
-                message = "每个手机号一天只能获取" + message.replace(regex.toRegex(), "$1") + "条短信"
-            }
-            throw SmsSysException(message ?: "请求失败")
-        }
+        return request(params, AliSmsResponse::class.java)
     }
 
     /**
@@ -189,31 +164,7 @@ class AliSmsTemplate(
         params.add("PageSize", pageSize.toString())
         params.add("CurrentPage", currentPage.toString())
 
-        //签名
-        sign(params)
-        val requestCallback = httpEntityCallback<Any>(
-            HttpEntity(params, null),
-            AliSendReportResponse::class.java
-        )
-        val entity: ResponseEntity<AliSendReportResponse> = try {
-            execute(
-                aliSmsProperties.url,
-                HttpMethod.POST,
-                requestCallback,
-                responseEntityExtractor(
-                    AliSendReportResponse::class.java
-                )
-            )
-        } catch (e: Exception) {
-            throw SmsException(e)
-        } ?: throw SmsException()
-        val body = entity.body
-        return if (body?.isOk == true) {
-            body
-        } else {
-            val message = body?.message
-            throw SmsSysException(message ?: "请求失败")
-        }
+        return request(params, AliSendReportResponse::class.java)
     }
 
     /**
@@ -239,31 +190,7 @@ class AliSmsTemplate(
         params.add("PageIndex", pageIndex.toString())
         params.add("PageSize", pageSize.toString())
 
-        //签名
-        sign(params)
-        val requestCallback = httpEntityCallback<Any>(
-            HttpEntity(params, null),
-            AliSmsSignResponse::class.java
-        )
-        val entity: ResponseEntity<AliSmsSignResponse> = try {
-            execute(
-                aliSmsProperties.url,
-                HttpMethod.POST,
-                requestCallback,
-                responseEntityExtractor(
-                    AliSmsSignResponse::class.java
-                )
-            )
-        } catch (e: Exception) {
-            throw SmsException(e)
-        } ?: throw SmsException()
-        val body = entity.body
-        return if (body?.isOk == true) {
-            body
-        } else {
-            val message = body?.message
-            throw SmsSysException(message ?: "请求失败")
-        }
+        return request(params, AliSmsSignResponse::class.java)
     }
 
 
@@ -290,19 +217,26 @@ class AliSmsTemplate(
         params.add("PageIndex", pageIndex.toString())
         params.add("PageSize", pageSize.toString())
 
+        return request(params, AliSmsTemplateResponse::class.java)
+    }
+
+    private fun <T : AliSmsResponse> request(
+        params: MultiValueMap<String, String>,
+        responseType: Class<T>
+    ): T {
         //签名
         sign(params)
         val requestCallback = httpEntityCallback<Any>(
             HttpEntity(params, null),
-            AliSmsTemplateResponse::class.java
+            responseType
         )
-        val entity: ResponseEntity<AliSmsTemplateResponse> = try {
+        val entity: ResponseEntity<T> = try {
             execute(
                 aliSmsProperties.url,
                 HttpMethod.POST,
                 requestCallback,
                 responseEntityExtractor(
-                    AliSmsTemplateResponse::class.java
+                    responseType
                 )
             )
         } catch (e: Exception) {
@@ -312,7 +246,11 @@ class AliSmsTemplate(
         return if (body?.isOk == true) {
             body
         } else {
-            val message = body?.message
+            var message = body?.message
+            val regex = "触发号码天级流控Permits:(\\d+)"
+            if (message?.matches(Regex(regex)) == true) {
+                message = "每个手机号一天只能获取" + message.replace(regex.toRegex(), "$1") + "条短信"
+            }
             throw SmsSysException(message ?: "请求失败")
         }
     }
