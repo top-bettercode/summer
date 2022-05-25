@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -117,11 +118,12 @@ public class Security200Test {
 
 
   @Test
-  public void auth() {
+  public void auth() throws Exception {
     HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer -58QL-aFbMk6NBOFAfy8BQ1541Y");
+    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer "+getApiToken().getAccessToken());
     ResponseEntity<String> entity = restTemplate
-        .exchange("/test", HttpMethod.POST, new HttpEntity<>(httpHeaders), String.class);
+        .exchange("/test", HttpMethod.POST,
+            new HttpEntity<>(Collections.singletonMap("aa", "xxx"), httpHeaders), String.class);
     assertEquals(HttpStatus.OK, entity.getStatusCode());
   }
 

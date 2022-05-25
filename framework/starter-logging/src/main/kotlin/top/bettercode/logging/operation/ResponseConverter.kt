@@ -4,8 +4,10 @@ import org.springframework.http.HttpHeaders
 import org.springframework.util.StringUtils
 import top.bettercode.logging.client.ClientHttpResponseWrapper
 import top.bettercode.logging.trace.TraceHttpServletResponseWrapper
+import javax.servlet.ServletResponse
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpServletResponseWrapper
 
 /**
  * A `ResponseConverter` is used to convert an implementation-specific response into
@@ -23,16 +25,33 @@ object ResponseConverter {
      * @return the operation response
      */
     fun convert(response: HttpServletResponse): OperationResponse {
+        val responseWrapper =
+            getResponseWrapper(response, TraceHttpServletResponseWrapper::class.java)
         return OperationResponse(
-                response.status,
-                extractHeaders(response), (response as? TraceHttpServletResponseWrapper)?.contentAsByteArray
-                ?: byteArrayOf())
+            response.status,
+            extractHeaders(responseWrapper ?: response), responseWrapper?.contentAsByteArray
+                ?: byteArrayOf()
+        )
     }
 
     fun convert(response: ClientHttpResponseWrapper): OperationResponse {
         return OperationResponse(
             response.statusCode.value(),
-            response.headers, response.content)
+            response.headers, response.content
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : HttpServletResponseWrapper> getResponseWrapper(
+        response: ServletResponse, responseType: Class<T>
+    ): T? {
+        return if (responseType.isInstance(response)) {
+            response as T
+        } else if (response is HttpServletResponseWrapper) {
+            getResponseWrapper(response.response, responseType)
+        } else {
+            null
+        }
     }
 
     private fun extractHeaders(response: HttpServletResponse): HttpHeaders {

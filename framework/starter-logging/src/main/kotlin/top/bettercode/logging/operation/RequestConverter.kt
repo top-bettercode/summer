@@ -38,6 +38,10 @@ import javax.servlet.http.Part
  * @since 2.0.7
 </R> */
 object RequestConverter {
+
+    const val FAILBACK_CONTENT =
+        "---- failback content ----\n\nCan't record the original inputStream data.\n\n---- failback content ----"
+
     private const val SCHEME_HTTP = "http"
 
     private const val SCHEME_HTTPS = "https"
@@ -72,12 +76,16 @@ object RequestConverter {
             (request.getAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME) as? String)
                 ?: request.remoteUser ?: "anonymous"
 
-        val traceHttpServletRequestWrapper = getTraceHttpServletRequestWrapper(request)
+        val traceHttpServletRequestWrapper =
+            getRequestWrapper(request, TraceHttpServletRequestWrapper::class.java)
         val content = traceHttpServletRequestWrapper?.contentAsByteArray
             ?: try {
-                StreamUtils.copyToByteArray(request.inputStream)
+                val inputStream = request.inputStream
+                if (!inputStream.isFinished)
+                    StreamUtils.copyToByteArray(inputStream)
+                else ByteArray(0)
             } catch (e: Exception) {
-                "Can't record the original inputStream data.".toByteArray()
+                FAILBACK_CONTENT.toByteArray()
             }
 
         return OperationRequest(
@@ -105,17 +113,16 @@ object RequestConverter {
         return ""
     }
 
-    fun getTraceHttpServletRequestWrapper(request: ServletRequest): TraceHttpServletRequestWrapper? {
-        return when (request) {
-            is TraceHttpServletRequestWrapper -> {
-                request
-            }
-            is HttpServletRequestWrapper -> {
-                getTraceHttpServletRequestWrapper(request.request)
-            }
-            else -> {
-                null
-            }
+    @Suppress("UNCHECKED_CAST")
+    fun <T : HttpServletRequestWrapper> getRequestWrapper(
+        request: ServletRequest, requestType: Class<T>
+    ): T? {
+        return if (requestType.isInstance(request)) {
+            request as T
+        } else if (request is HttpServletRequestWrapper) {
+            getRequestWrapper(request.request, requestType)
+        } else {
+            null
         }
     }
 

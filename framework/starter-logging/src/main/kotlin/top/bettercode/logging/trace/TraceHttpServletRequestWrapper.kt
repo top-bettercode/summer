@@ -30,7 +30,7 @@ constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request
     private var servletParts: MutableCollection<Part>? = null
 
     val contentAsByteArray: ByteArray
-        get() = if (servletInputStream == null) read() else byteArrayOutputStream.toByteArray()
+        get() = byteArrayOutputStream.toByteArray()
 
 
     val content: String
@@ -40,13 +40,16 @@ constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request
             ).charset else null, byteArrayOutputStream.toByteArray()
         )
 
-    private fun read(): ByteArray {
-        return try {
-            val byteArray = StreamUtils.copyToByteArray(inputStream)
-            servletInputStream!!.reset()
-            byteArray
-        } catch (e: Exception) {
-            "Can't record the inputStream original data.".toByteArray()
+    fun read() {
+        try {
+            if (servletInputStream == null) {
+                val inputStream = inputStream
+                if (!inputStream.isFinished) {
+                    StreamUtils.copyToByteArray(inputStream)
+                    servletInputStream!!.reset()
+                }
+            }
+        } catch (_: Exception) {
         }
     }
 

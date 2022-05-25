@@ -37,6 +37,11 @@ class RequestLoggingConfiguration {
     }
 
     @Bean
+    fun requestContentReadFilter(): RequestContentReadFilter {
+        return RequestContentReadFilter()
+    }
+
+    @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE + 1)
     @ConditionalOnMissingBean(ErrorPageFilter::class)
     fun errorPageFilter(): ErrorPageFilter {
