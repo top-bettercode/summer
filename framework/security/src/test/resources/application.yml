@@ -14,14 +14,14 @@ spring:
     url: jdbc:mysql://10.13.3.113:3306/auction?characterEncoding=utf8&useSSL=false
     username: mysql
     password: mysql
-  redis:
-    host: 10.13.3.206
-    password: ''
-    port: 6379
-    timeout: PT5S
-  cache:
-    redis:
-      time-to-live: PT1M
+#  redis:
+#    host: 10.13.3.206
+#    password: ''
+#    port: 6379
+#    timeout: PT5S
+#  cache:
+#    redis:
+#      time-to-live: PT1M
 
 logging:
   level:

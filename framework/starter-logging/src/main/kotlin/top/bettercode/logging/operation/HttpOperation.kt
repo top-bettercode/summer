@@ -79,15 +79,16 @@ object HttpOperation {
         val stringBuilder = StringBuilder("")
         stringBuilder.appendLine("$protocol ${response.statusCode} ${HttpStatus.valueOf(response.statusCode).reasonPhrase}")
         response.headers.forEach { k, v -> stringBuilder.appendLine("$k: ${v.joinToString()}") }
+        val decryptedContent = "---- decrypted content ----"
         if (decrypt != null) {
             response.content = decrypt(response.content)
             stringBuilder.appendLine()
-            stringBuilder.appendLine("---- decrypted content ----")
+            stringBuilder.appendLine(decryptedContent)
         }
         stringBuilder.appendLine(getResponseBody(response, format))
         if (decrypt != null) {
             stringBuilder.appendLine()
-            stringBuilder.appendLine("---- decrypted content ----")
+            stringBuilder.appendLine(decryptedContent)
         }
         return stringBuilder.toString()
     }

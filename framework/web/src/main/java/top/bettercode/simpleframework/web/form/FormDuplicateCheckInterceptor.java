@@ -1,8 +1,6 @@
 package top.bettercode.simpleframework.web.form;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -15,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import top.bettercode.lang.util.Sha512DigestUtils;
 import top.bettercode.lang.util.StringUtil;
+import top.bettercode.logging.operation.RequestConverter;
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper;
 import top.bettercode.simpleframework.AnnotatedUtils;
 import top.bettercode.simpleframework.exception.BusinessException;
@@ -72,8 +71,8 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
           String params = StringUtil.valueOf(request.getParameterMap());
           formkey += "::" + params;
           if (!isFormPost(request)) {
-            TraceHttpServletRequestWrapper traceHttpServletRequestWrapper = getTraceHttpServletRequestWrapper(
-                request);
+            TraceHttpServletRequestWrapper traceHttpServletRequestWrapper = RequestConverter.INSTANCE.getRequestWrapper(
+                request, TraceHttpServletRequestWrapper.class);
             if (traceHttpServletRequestWrapper != null) {
               try {
                 formkey += "::" + traceHttpServletRequestWrapper.getContent();
@@ -116,16 +115,6 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
           log.debug("{} remove:{}", request.getRequestURI(), formkey);
         }
       }
-    }
-  }
-
-  private TraceHttpServletRequestWrapper getTraceHttpServletRequestWrapper(ServletRequest request) {
-    if (request instanceof TraceHttpServletRequestWrapper) {
-      return (TraceHttpServletRequestWrapper) request;
-    } else if (request instanceof HttpServletRequestWrapper) {
-      return getTraceHttpServletRequestWrapper(((HttpServletRequestWrapper) request).getRequest());
-    } else {
-      return null;
     }
   }
 
