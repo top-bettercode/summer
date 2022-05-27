@@ -4,6 +4,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.StringUtils;
+import top.bettercode.simpleframework.support.ApplicationContextHolder;
 
 /**
  * 基础测试类
@@ -17,5 +19,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 })
 public abstract class BaseTest {
 
+
+  protected boolean embeddedDatabase() {
+    return !StringUtils.hasText(ApplicationContextHolder.getProperty("spring.datasource.url"));
+  }
 }
 
