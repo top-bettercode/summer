@@ -31,11 +31,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import top.bettercode.autodoc.gen.Autodoc;
 import top.bettercode.logging.RequestLoggingFilter;
 import top.bettercode.logging.RequestLoggingProperties;
 import top.bettercode.simpleframework.config.SummerWebProperties;
+import top.bettercode.simpleframework.support.ApplicationContextHolder;
 import top.bettercode.simpleframework.web.error.CustomErrorController;
 
 /**
@@ -74,6 +76,11 @@ public abstract class BaseWebNoAuthTest {
     requestLoggingProperties.setIncludeResponseBody(true);
     requestLoggingProperties.setFormat(true);
     mockMvc = mockMvcBuilder().build();
+  }
+
+
+  protected boolean embeddedDatabase() {
+    return !StringUtils.hasText(ApplicationContextHolder.getProperty("spring.datasource.url"));
   }
 
   @NotNull
