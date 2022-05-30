@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
-import top.bettercode.simpleframework.exception.BusinessException;
+import top.bettercode.simpleframework.exception.SystemException;
 
 /**
  * @author Peter Wu
@@ -116,13 +116,13 @@ public class RespEntity<T> implements IRespEntity, Serializable {
 
   public static void assertOk(RespEntity<?> respEntity) {
     if (!respEntity.isOk()) {
-      throw new BusinessException(respEntity.getStatus(), respEntity.getMessage());
+      throw new SystemException(respEntity.getStatus(), respEntity.getMessage());
     }
   }
 
   public static void assertOk(RespEntity<?> respEntity, String message) {
     if (!respEntity.isOk()) {
-      throw new BusinessException(respEntity.getStatus(), message);
+      throw new SystemException(respEntity.getStatus(), message);
     }
   }
 
