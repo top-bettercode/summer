@@ -16,6 +16,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import top.bettercode.simpleframework.exception.BusinessException;
+import top.bettercode.simpleframework.exception.SystemException;
 import top.bettercode.simpleframework.web.RespEntity;
 import top.bettercode.simpleframework.web.validator.NoPropertyPath;
 
@@ -68,6 +69,14 @@ public class DefaultErrorHandler extends AbstractErrorHandler {
     } else if (error instanceof BusinessException) {
       respEntity.setStatus(((BusinessException) error).getCode());
       respEntity.setErrors(((BusinessException) error).getData());
+    } else if (error instanceof SystemException) {
+      String code = ((SystemException) error).getCode();
+      try {
+        respEntity.setHttpStatusCode(Integer.parseInt(code));
+      } catch (NumberFormatException e) {
+        respEntity.setStatus(code);
+      }
+      respEntity.setErrors(((SystemException) error).getData());
     }
 
     if (StringUtils.hasText(message)) {
