@@ -43,7 +43,7 @@
 
   <select id="selectResultMap2" resultMap="userResultMap2"
     parameterType="top.bettercode.simpleframework.data.test.domain.User">
-    select *
+    select first_name, last_name, deleted,last_name,first_name
     from user
     where first_name = #{firstName}
     <if test="lastName!=null">
