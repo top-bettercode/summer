@@ -44,7 +44,7 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
     if (formkey == null) {
       return true;
     } else if (formkeyService.exist(formkey)) {
-      throw new BusinessException(String.valueOf(HttpStatus.BAD_GATEWAY.value()),
+      throw new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()),
           "请勿重复提交");
     } else {
       request.setAttribute(FORM_KEY, formkey);
