@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -16,7 +15,6 @@ import top.bettercode.lang.util.StringUtil;
 import top.bettercode.logging.operation.RequestConverter;
 import top.bettercode.logging.trace.TraceHttpServletRequestWrapper;
 import top.bettercode.simpleframework.AnnotatedUtils;
-import top.bettercode.simpleframework.exception.BusinessException;
 import top.bettercode.simpleframework.servlet.NotErrorHandlerInterceptor;
 
 /**
@@ -44,8 +42,7 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
     if (formkey == null) {
       return true;
     } else if (formkeyService.exist(formkey)) {
-      throw new BusinessException(String.valueOf(HttpStatus.BAD_REQUEST.value()),
-          "请勿重复提交");
+      throw new FormDuplicateException("请勿重复提交");
     } else {
       request.setAttribute(FORM_KEY, formkey);
       return true;
