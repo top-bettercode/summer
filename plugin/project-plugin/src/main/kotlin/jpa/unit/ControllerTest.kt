@@ -38,56 +38,8 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"tableNames(\"$tableName\");"
         }
 
-        //insert
         val insertName =
             "insert${pathName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
-        method(insertName, entityType, visibility = JavaVisibility.PRIVATE) {
-            import(entityType)
-            +"$className $entityName = new $className();"
-            if (isCompositePrimaryKey || !primaryKey.autoIncrement) {
-                import(primaryKeyType)
-                if (isCompositePrimaryKey) {
-                    +"${primaryKeyClassName} $primaryKeyName = new ${primaryKeyClassName}();"
-                    primaryKeys.forEach {
-                        +"$primaryKeyName.set${
-                            it.javaName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            }
-                        }(${it.randomValueToSet});"
-                    }
-                    +"$entityName.set${
-                        primaryKeyName.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(
-                                Locale.getDefault()
-                            ) else it.toString()
-                        }
-                    }(${primaryKeyName});"
-                } else
-                    primaryKeys.forEach {
-                        +"$entityName.set${
-                            it.javaName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            }
-                        }(${it.randomValueToSet});"
-                    }
-            }
-            otherColumns.filter { !it.version }.forEach {
-                +"$entityName.set${
-                    it.javaName.replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(
-                            Locale.getDefault()
-                        ) else it.toString()
-                    }
-                }(${it.randomValueToSet});"
-            }
-            +"${projectEntityName}Service.save($entityName);"
-            +"System.err.println(\"-------------------------------\");"
-            +"return $entityName;"
-        }
 
         //list
         method("list", JavaType.voidPrimitiveInstance) {
@@ -250,6 +202,55 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
                 +"assertFalse(${projectEntityName}Service.existsById(${primaryKeyName}));"
+            }
+
+            //insert
+            method(insertName, entityType, visibility = JavaVisibility.PRIVATE) {
+                import(entityType)
+                +"$className $entityName = new $className();"
+                if (isCompositePrimaryKey || !primaryKey.autoIncrement) {
+                    import(primaryKeyType)
+                    if (isCompositePrimaryKey) {
+                        +"${primaryKeyClassName} $primaryKeyName = new ${primaryKeyClassName}();"
+                        primaryKeys.forEach {
+                            +"$primaryKeyName.set${
+                                it.javaName.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase(
+                                        Locale.getDefault()
+                                    ) else it.toString()
+                                }
+                            }(${it.randomValueToSet});"
+                        }
+                        +"$entityName.set${
+                            primaryKeyName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            }
+                        }(${primaryKeyName});"
+                    } else
+                        primaryKeys.forEach {
+                            +"$entityName.set${
+                                it.javaName.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase(
+                                        Locale.getDefault()
+                                    ) else it.toString()
+                                }
+                            }(${it.randomValueToSet});"
+                        }
+                }
+                otherColumns.filter { !it.version }.forEach {
+                    +"$entityName.set${
+                        it.javaName.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.getDefault()
+                            ) else it.toString()
+                        }
+                    }(${it.randomValueToSet});"
+                }
+                +"${projectEntityName}Service.save($entityName);"
+                +"System.err.println(\"-------------------------------\");"
+                +"return $entityName;"
             }
         }
     }
