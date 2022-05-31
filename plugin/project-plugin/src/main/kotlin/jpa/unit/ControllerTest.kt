@@ -249,7 +249,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"mockMvc.perform(post(\"/$pathName/delete\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
-                +"assertFalse(${projectEntityName}Service.findById(${primaryKeyName}).isPresent());"
+                +"assertFalse(${projectEntityName}Service.existsById(${primaryKeyName}));"
             }
         }
     }
