@@ -79,10 +79,11 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
         }
 
-        columns.filter { it.javaName != primaryKeyName }.forEach {
-            //getter
-            getter(this, it)
-        }
+        columns.filter { it.javaName != primaryKeyName && !it.version && !it.jsonViewIgnored && it.javaName != "createdDate" && !it.softDelete }
+            .forEach {
+                //getter
+                getter(this, it)
+            }
 
         if (!isFullComposite) {
             //primaryKey setter
@@ -116,30 +117,29 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, it ->
     clazz.apply {
         //getter
-        if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.softDelete)
-            method(
-                "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
-                it.javaType
-            ) {
-                if (it.columnSize > 0 && it.javaType == JavaType.stringInstance) {
-                    annotation("@org.hibernate.validator.constraints.Length(max = ${it.columnSize}, groups = Default.class)")
-                }
-                if (!it.nullable) {
-                    import("top.bettercode.simpleframework.web.validator.CreateConstraint")
-                    if (it.javaType == JavaType.stringInstance) {
-                        annotation("@javax.validation.constraints.NotBlank(groups = CreateConstraint.class)")
-                    } else {
-                        annotation("@javax.validation.constraints.NotNull(groups = CreateConstraint.class)")
-                    }
-                }
-                +"return this.entity.get${
-                    it.javaName.replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(
-                            Locale.getDefault()
-                        ) else it.toString()
-                    }
-                }();"
+        method(
+            "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+            it.javaType
+        ) {
+            if (it.columnSize > 0 && it.javaType == JavaType.stringInstance) {
+                annotation("@org.hibernate.validator.constraints.Length(max = ${it.columnSize}, groups = Default.class)")
             }
+            if (!it.nullable) {
+                import("top.bettercode.simpleframework.web.validator.CreateConstraint")
+                if (it.javaType == JavaType.stringInstance) {
+                    annotation("@javax.validation.constraints.NotBlank(groups = CreateConstraint.class)")
+                } else {
+                    annotation("@javax.validation.constraints.NotNull(groups = CreateConstraint.class)")
+                }
+            }
+            +"return this.entity.get${
+                it.javaName.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
+            }();"
+        }
     }
 }
 
