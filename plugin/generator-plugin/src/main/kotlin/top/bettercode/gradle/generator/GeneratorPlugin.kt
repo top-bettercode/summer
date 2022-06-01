@@ -74,61 +74,61 @@ class GeneratorPlugin : Plugin<Project> {
                     configuration
                 }.toSortedMap { o1, o2 -> o1.compareTo(o2) }
 
-            extension.unitedDatasource = (findProperty(project, "singleDatasource"))?.toBoolean()
+            extension.unitedDatasource = (findGeneratorProperty(project, "singleDatasource"))?.toBoolean()
                 ?: true
-            extension.delete = (findProperty(project, "delete"))?.toBoolean() ?: false
-            extension.projectPackage = (findProperty(project, "project-package"))?.toBoolean()
+            extension.delete = (findGeneratorProperty(project, "delete"))?.toBoolean() ?: false
+            extension.projectPackage = (findGeneratorProperty(project, "project-package"))?.toBoolean()
                 ?: false
             extension.dropTablesWhenUpdate =
-                (findProperty(project, "dropTablesWhenUpdate"))?.toBoolean()
+                (findGeneratorProperty(project, "dropTablesWhenUpdate"))?.toBoolean()
                     ?: false
             extension.dropColumnsWhenUpdate =
-                (findProperty(project, "dropColumnsWhenUpdate"))?.toBoolean()
+                (findGeneratorProperty(project, "dropColumnsWhenUpdate"))?.toBoolean()
                     ?: false
             extension.useJSR310Types =
-                (findProperty(project, "useJSR310Types"))?.toBoolean() ?: true
+                (findGeneratorProperty(project, "useJSR310Types"))?.toBoolean() ?: true
             extension.forceIntegers =
-                (findProperty(project, "forceIntegers"))?.toBoolean() ?: true
+                (findGeneratorProperty(project, "forceIntegers"))?.toBoolean() ?: true
             extension.forceBigDecimals =
-                (findProperty(project, "forceBigDecimals"))?.toBoolean() ?: false
+                (findGeneratorProperty(project, "forceBigDecimals"))?.toBoolean() ?: false
 
-            extension.replaceAll = (findProperty(project, "replaceAll"))?.toBoolean() ?: false
-            extension.useForeignKey = (findProperty(project, "useForeignKey"))?.toBoolean() ?: false
-            extension.sqlQuote = (findProperty(project, "sqlQuote"))?.toBoolean() ?: true
+            extension.replaceAll = (findGeneratorProperty(project, "replaceAll"))?.toBoolean() ?: false
+            extension.useForeignKey = (findGeneratorProperty(project, "useForeignKey"))?.toBoolean() ?: false
+            extension.sqlQuote = (findGeneratorProperty(project, "sqlQuote"))?.toBoolean() ?: true
             extension.rootPath = project.rootDir
             extension.projectDir = project.projectDir
-            extension.dir = findProperty(project, "dir") ?: "src/main/java"
-            extension.packageName = findProperty(project, "packageName")
+            extension.dir = findGeneratorProperty(project, "dir") ?: "src/main/java"
+            extension.packageName = findGeneratorProperty(project, "packageName")
                 ?: project.findProperty("app.packageName") as? String ?: ""
-            extension.userModule = (findProperty(project, "userModule"))?.toBoolean() ?: true
+            extension.userModule = (findGeneratorProperty(project, "userModule"))?.toBoolean() ?: true
             extension.applicationName = project.findProperty("application.name") as? String
                 ?: project.rootProject.name
-            extension.projectName = (findProperty(project, "projectName") ?: project.name).replace(
+            extension.projectName = (findGeneratorProperty(project, "projectName") ?: project.name).replace(
                 "-",
                 ""
             )
-            extension.primaryKeyName = findProperty(project, "primaryKeyName") ?: "id"
+            extension.primaryKeyName = findGeneratorProperty(project, "primaryKeyName") ?: "id"
             extension.tablePrefixes =
-                (findProperty(project, "tablePrefix") ?: "").split(",").filter { it.isNotBlank() }
+                (findGeneratorProperty(project, "tablePrefix") ?: "").split(",").filter { it.isNotBlank() }
                     .toTypedArray()
-            extension.remarks = findProperty(project, "remarks") ?: ""
-            extension.softDeleteColumnName = findProperty(project, "softDeleteColumnName")
+            extension.remarks = findGeneratorProperty(project, "remarks") ?: ""
+            extension.softDeleteColumnName = findGeneratorProperty(project, "softDeleteColumnName")
                 ?: "deleted"
-            extension.commonCodeTypes = (findProperty(project, "commonCodeTypes")
+            extension.commonCodeTypes = (findGeneratorProperty(project, "commonCodeTypes")
                 ?: extension.softDeleteColumnName).split(",").asSequence()
                 .filter { it.isNotBlank() }.map { it.trim() }.toList()
                 .toTypedArray()
             extension.softDeleteAsBoolean =
-                (findProperty(project, "softDeleteAsBoolean"))?.toBoolean()
+                (findGeneratorProperty(project, "softDeleteAsBoolean"))?.toBoolean()
                     ?: true
             extension.dataType = DataType.valueOf(
-                (findProperty(project, "dataType")
+                (findGeneratorProperty(project, "dataType")
                     ?: DataType.DATABASE.name).uppercase(Locale.getDefault())
             )
             //puml
-            extension.pumlSrc = findProperty(project, "puml.src") ?: "puml"
-            extension.pumlDiagramFormat = findProperty(project, "puml.diagramFormat") ?: "PNG"
-            extension.sqlOutput = findProperty(project, "sqlOutput") ?: "database"
+            extension.pumlSrc = findGeneratorProperty(project, "puml.src") ?: "puml"
+            extension.pumlDiagramFormat = findGeneratorProperty(project, "puml.diagramFormat") ?: "PNG"
+            extension.sqlOutput = findGeneratorProperty(project, "sqlOutput") ?: "database"
 
             val settings = mutableMapOf<String, String>()
             project.properties.forEach { (t, any) ->
@@ -137,13 +137,13 @@ class GeneratorPlugin : Plugin<Project> {
             }
             extension.settings = settings
 
-            extension.tableNames = (findProperty(project, "tableNames")
+            extension.tableNames = (findGeneratorProperty(project, "tableNames")
                 ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
                 .distinct()
                 .sortedBy { it }.toList()
                 .toTypedArray()
 
-            extension.generators = (findProperty(project, "generators")
+            extension.generators = (findGeneratorProperty(project, "generators")
                 ?: "").split(",").asSequence().filter { it.isNotBlank() }.distinct()
                 .map {
                     Class.forName(it.trim()).getDeclaredConstructor().newInstance() as Generator
@@ -394,7 +394,7 @@ class GeneratorPlugin : Plugin<Project> {
         }
     }
 
-    private fun findProperty(project: Project, key: String) =
+    private fun findGeneratorProperty(project: Project, key: String) =
         (project.findProperty("generator.${project.name}.$key") as? String
             ?: project.findProperty("generator.$key") as? String)
 
