@@ -5,7 +5,8 @@ import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelClass
-import java.util.*
+import top.bettercode.lang.capitalized
+import top.bettercode.lang.decapitalized
 
 /**
  * @author Peter Wu
@@ -29,7 +30,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         //constructor with entity
-        val entityName = entityType.shortName.replaceFirstChar { it.lowercase(Locale.getDefault()) }
+        val entityName = entityType.shortName.decapitalized()
         constructor(Parameter(entityName, entityType)) {
             +"this.entity = $entityName;"
         }
@@ -48,7 +49,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //primaryKey getter
             method(
-                "get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                "get${primaryKeyName.capitalized()}",
                 primaryKeyType
             ) {
                 javadoc {
@@ -70,11 +71,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     annotation("@javax.validation.constraints.NotNull${if (autoIncrement) "(groups = UpdateConstraint.class)" else ""}")
                 }
                 +"return this.entity.get${
-                    primaryKeyName.replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(
-                            Locale.getDefault()
-                        ) else it.toString()
-                    }
+                    primaryKeyName.capitalized()
                 }();"
             }
         }
@@ -89,7 +86,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         if (!isFullComposite) {
             //primaryKey setter
-            method("set${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
+            method("set${primaryKeyName.capitalized()}") {
                 javadoc {
                     +"/**"
                     +" * ${remarks}主键"
@@ -100,11 +97,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     name = primaryKeyName
                 }
                 +"this.entity.set${
-                    primaryKeyName.replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(
-                            Locale.getDefault()
-                        ) else it.toString()
-                    }
+                    primaryKeyName.capitalized()
                 }(${primaryKeyName});"
             }
         }
@@ -120,7 +113,7 @@ private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
     clazz.apply {
         //getter
         method(
-            "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+            "get${it.javaName.capitalized()}",
             it.javaType
         ) {
             if (it.columnSize > 0 && it.javaType == JavaType.stringInstance) {
@@ -135,11 +128,7 @@ private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
                 }
             }
             +"return this.entity.get${
-                it.javaName.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                }
+                it.javaName.capitalized()
             }();"
         }
     }
@@ -147,17 +136,13 @@ private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
 
 private val setter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, it ->
     clazz.apply {
-        method("set${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
+        method("set${it.javaName.capitalized()}") {
             parameter {
                 type = it.javaType
                 name = it.javaName
             }
             +"this.entity.set${
-                it.javaName.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                }
+                it.javaName.capitalized()
             }(${it.javaName});"
         }
     }

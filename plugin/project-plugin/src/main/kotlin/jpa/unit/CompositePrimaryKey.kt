@@ -5,7 +5,7 @@ import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelClass
-import java.util.*
+import top.bettercode.lang.capitalized
 
 /**
  *
@@ -95,7 +95,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
 
             //getter
-            method("get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", it.javaType) {
+            method("get${it.javaName.capitalized()}", it.javaType) {
                 if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"
@@ -105,7 +105,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"return ${it.javaName};"
             }
             //setter
-            method("set${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}", primaryKeyType) {
+            method("set${it.javaName.capitalized()}", primaryKeyType) {
                 if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
                         +"/**"

@@ -15,6 +15,7 @@ import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelEnumeration
 import top.bettercode.generator.dom.unit.FileUnit
 import top.bettercode.generator.dsl.DicCodes
+import top.bettercode.lang.decapitalized
 import java.io.File
 import java.util.*
 
@@ -120,10 +121,10 @@ class DicCodeGen(private val project: Project) {
                 )
                 val className = codeType.split("_").joinToString("") {
                     if (codeType.matches(Regex(".*[a-z].*")))
-                        it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                        it.capitalized()
                     else
                         it.lowercase(Locale.getDefault())
-                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                            .capitalized()
                 }
 
                 val isIntCode = v.isInt
@@ -299,12 +300,12 @@ class DicCodeGen(private val project: Project) {
                         +"if (code == null) {"
                         +"return null;"
                         +"}"
-                        +"for (${className}Enum ${className.replaceFirstChar { it.lowercase(Locale.getDefault()) }}Enum : values()) {"
+                        +"for (${className}Enum ${className.decapitalized()}Enum : values()) {"
                         if (isIntCode)
-                            +"if (${className.replaceFirstChar { it.lowercase(Locale.getDefault()) }}Enum.code == code) {"
+                            +"if (${className.decapitalized()}Enum.code == code) {"
                         else
-                            +"if (${className.replaceFirstChar { it.lowercase(Locale.getDefault()) }}Enum.code.equals(code)) {"
-                        +"return ${className.replaceFirstChar { it.lowercase(Locale.getDefault()) }}Enum;"
+                            +"if (${className.decapitalized()}Enum.code.equals(code)) {"
+                        +"return ${className.decapitalized()}Enum;"
                         +"}"
                         +"}"
                         +"return null;"

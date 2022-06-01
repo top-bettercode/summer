@@ -16,6 +16,7 @@ import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.database.entity.Table
 import top.bettercode.generator.powerdesigner.PdmReader
 import top.bettercode.generator.puml.PumlConverter
+import top.bettercode.lang.decapitalized
 import top.bettercode.lang.property.PropertiesSource
 import top.bettercode.logging.operation.OperationRequestPart
 import java.io.File
@@ -437,10 +438,10 @@ object InitField {
             name.endsWith("Urls") -> name.substringBeforeLast("Urls")
             name.endsWith("Path") -> name.substringBeforeLast("Path")
             name.startsWith("start") -> name.substringAfter("start")
-                .replaceFirstChar { it.lowercase(Locale.getDefault()) }
+                .decapitalized()
             name.endsWith("Start") -> name.substringBeforeLast("Start")
             name.startsWith("end") -> name.substringAfter("end")
-                .replaceFirstChar { it.lowercase(Locale.getDefault()) }
+                .decapitalized()
             name.endsWith("End") -> name.substringBeforeLast("End")
             name.endsWith("Pct") -> name.substringBeforeLast("Pct")
             else -> {

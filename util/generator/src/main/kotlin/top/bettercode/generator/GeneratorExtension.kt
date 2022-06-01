@@ -3,6 +3,8 @@ package top.bettercode.generator
 import top.bettercode.generator.dom.java.JavaTypeResolver
 import top.bettercode.generator.dom.java.element.JavaElement
 import top.bettercode.generator.dsl.Generator
+import top.bettercode.lang.capitalized
+import top.bettercode.lang.decapitalized
 import java.io.File
 import java.util.*
 
@@ -146,10 +148,9 @@ open class GeneratorExtension(
 
         private fun javaName(str: String, capitalize: Boolean = false): String {
             val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") { s ->
-                s.lowercase(Locale.getDefault())
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                s.lowercase(Locale.getDefault()).capitalized()
             }
-            return if (capitalize) s else s.replaceFirstChar { it.lowercase(Locale.getDefault()) }
+            return if (capitalize) s else s.decapitalized()
         }
 
     }
