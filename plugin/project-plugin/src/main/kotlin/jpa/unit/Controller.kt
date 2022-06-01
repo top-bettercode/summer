@@ -189,10 +189,10 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
-                    name = "${projectEntityName}Form"
+                    name = "${entityName}Form"
                     type = formType
                 }
-                +"$className $entityName = ${if (isFullComposite) "new $className(${projectEntityName}Form.getEntity())" else "${projectEntityName}Form.getEntity()"};"
+                +"$className $entityName = ${if (isFullComposite) "new $className(${entityName}Form.getEntity())" else "${entityName}Form.getEntity()"};"
                 +"${projectEntityName}Service.save($entityName);"
                 +"return noContent();"
             }
@@ -204,10 +204,10 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
-                    name = "${projectEntityName}Form"
+                    name = "${entityName}Form"
                     type = formType
                 }
-                +"$className $entityName = ${if (isFullComposite) "new $className(${projectEntityName}Form.getEntity())" else "${projectEntityName}Form.getEntity()"};"
+                +"$className $entityName = ${if (isFullComposite) "new $className(${entityName}Form.getEntity())" else "${entityName}Form.getEntity()"};"
                 +"${projectEntityName}Service.dynamicSave($entityName);"
                 +"return noContent();"
             }
