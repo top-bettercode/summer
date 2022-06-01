@@ -53,6 +53,7 @@ abstract class ProjectGenerator : Generator() {
     val controllerTestType get() = JavaType("$packageName.${modulePackage("ControllerTest")}.${projectClassName}ControllerTest")
     val iserviceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
     val serviceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}Service")
+    val testServiceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}TestService")
     val repositoryType get() = JavaType("$packageName.${modulePackage("Repository")}.${projectClassName}Repository")
 
 
