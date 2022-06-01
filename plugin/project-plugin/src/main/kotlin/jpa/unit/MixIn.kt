@@ -54,14 +54,12 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
                 "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
                 it.javaType
             ) {
-                if (it.jsonViewIgnored)
-                    annotation("@com.fasterxml.jackson.annotation.JsonIgnore")
-
+                annotation("@com.fasterxml.jackson.annotation.JsonIgnore")
                 annotation("@Override")
             }
 
         //code
-        if (!it.jsonViewIgnored && it.isCodeField) {
+        if (!it.softDelete && it.isCodeField) {
             method(
                 "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
                 it.javaType
