@@ -10,7 +10,12 @@ abstract class ProjectGenerator : Generator() {
 
     val interfaceService get() = enable("interfaceService", false)
 
-    val msgName get() = "${if (projectName == "core") "core-" else ""}messages.properties"
+    val isCore get() = projectName == "core"
+
+    val msgName: String
+        get() {
+            return "${if (isCore) "core-" else ""}messages.properties"
+        }
     val mapperXmlName
         get() = "${
             repositoryType.fullyQualifiedNameWithoutTypeParameters.replace(
