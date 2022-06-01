@@ -30,6 +30,9 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         field("${projectEntityName}Service", if (interfaceService) iserviceType else serviceType) {
             annotation("@org.springframework.beans.factory.annotation.Autowired")
         }
+        field("${projectEntityName}TestService", testServiceType) {
+            annotation("@org.springframework.beans.factory.annotation.Autowired")
+        }
 
         //setUp
         method("setUp", JavaType.voidPrimitiveInstance) {
@@ -39,7 +42,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         val insertName =
-            "insert${pathName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+            "${projectEntityName}TestService.insert${pathName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
 
         //list
         method("list", JavaType.voidPrimitiveInstance) {
@@ -204,54 +207,73 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"assertFalse(${projectEntityName}Service.existsById(${primaryKeyName}));"
             }
 
-            //insert
-            method(insertName, entityType, visibility = JavaVisibility.PRIVATE) {
-                import(entityType)
-                +"$className $entityName = new $className();"
-                if (isCompositePrimaryKey || !primaryKey.autoIncrement) {
-                    import(primaryKeyType)
-                    if (isCompositePrimaryKey) {
-                        +"${primaryKeyClassName} $primaryKeyName = new ${primaryKeyClassName}();"
-                        primaryKeys.forEach {
-                            +"$primaryKeyName.set${
-                                it.javaName.replaceFirstChar {
-                                    if (it.isLowerCase()) it.titlecase(
-                                        Locale.getDefault()
-                                    ) else it.toString()
-                                }
-                            }(${it.randomValueToSet});"
-                        }
-                        +"$entityName.set${
-                            primaryKeyName.replaceFirstChar {
+
+        }
+    }
+}
+
+val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
+    unit.apply {
+        annotation("@org.springframework.stereotype.Service")
+        javadoc {
+            +"/**"
+            +" * $remarks 测试服务层"
+            +" */"
+        }
+        field("${projectEntityName}Service", if (interfaceService) iserviceType else serviceType) {
+            annotation("@org.springframework.beans.factory.annotation.Autowired")
+        }
+
+        val insertName =
+            "insert${pathName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+
+        //insert
+        method(insertName, entityType, visibility = JavaVisibility.PUBLIC) {
+            import(entityType)
+            +"$className $entityName = new $className();"
+            if (isCompositePrimaryKey || !primaryKey.autoIncrement) {
+                import(primaryKeyType)
+                if (isCompositePrimaryKey) {
+                    +"$primaryKeyClassName $primaryKeyName = new ${primaryKeyClassName}();"
+                    primaryKeys.forEach {
+                        +"$primaryKeyName.set${
+                            it.javaName.replaceFirstChar {
                                 if (it.isLowerCase()) it.titlecase(
                                     Locale.getDefault()
                                 ) else it.toString()
                             }
-                        }(${primaryKeyName});"
-                    } else
-                        primaryKeys.forEach {
-                            +"$entityName.set${
-                                it.javaName.replaceFirstChar {
-                                    if (it.isLowerCase()) it.titlecase(
-                                        Locale.getDefault()
-                                    ) else it.toString()
-                                }
-                            }(${it.randomValueToSet});"
-                        }
-                }
-                otherColumns.filter { !it.version }.forEach {
+                        }(${it.randomValueToSet});"
+                    }
                     +"$entityName.set${
-                        it.javaName.replaceFirstChar {
+                        primaryKeyName.replaceFirstChar {
                             if (it.isLowerCase()) it.titlecase(
                                 Locale.getDefault()
                             ) else it.toString()
                         }
-                    }(${it.randomValueToSet});"
-                }
-                +"${projectEntityName}Service.save($entityName);"
-                +"System.err.println(\"-------------------------------\");"
-                +"return $entityName;"
+                    }(${primaryKeyName});"
+                } else
+                    primaryKeys.forEach {
+                        +"$entityName.set${
+                            it.javaName.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            }
+                        }(${it.randomValueToSet});"
+                    }
             }
+            otherColumns.filter { !it.version }.forEach {
+                +"$entityName.set${
+                    it.javaName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                }(${it.randomValueToSet});"
+            }
+            +"${projectEntityName}Service.save($entityName);"
+            +"System.err.println(\"-------------------------------\");"
+            +"return $entityName;"
         }
     }
 }
