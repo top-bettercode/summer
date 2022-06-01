@@ -79,7 +79,9 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
         }
 
-        columns.filter { it.javaName != primaryKeyName && !it.version && !it.jsonViewIgnored && it.javaName != "createdDate" && !it.softDelete }
+        val filterColumns =
+            columns.filter { it.javaName != primaryKeyName && !it.version && !it.jsonViewIgnored && it.javaName != "createdDate" && it.javaName != "lastModifiedDate" }
+        filterColumns
             .forEach {
                 //getter
                 getter(this, it)
@@ -106,7 +108,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }(${primaryKeyName});"
             }
         }
-        columns.filter { it.javaName != primaryKeyName }.forEach {
+        filterColumns.forEach {
             //setter
             setter(this, it)
         }
@@ -145,20 +147,18 @@ private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
 
 private val setter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, it ->
     clazz.apply {
-
-        if (!it.jsonViewIgnored && it.javaName != "createdDate" && !it.softDelete)
-            method("set${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
-                parameter {
-                    type = it.javaType
-                    name = it.javaName
-                }
-                +"this.entity.set${
-                    it.javaName.replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(
-                            Locale.getDefault()
-                        ) else it.toString()
-                    }
-                }(${it.javaName});"
+        method("set${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
+            parameter {
+                type = it.javaType
+                name = it.javaName
             }
+            +"this.entity.set${
+                it.javaName.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
+            }(${it.javaName});"
+        }
     }
 }
