@@ -4,7 +4,7 @@ import ProjectGenerator
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.TopLevelClass
-import java.util.*
+import top.bettercode.lang.capitalized
 
 /**
  * @author Peter Wu
@@ -43,11 +43,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         val insertName =
             "${projectEntityName}TestService.insert${
-                pathName.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                }
+                pathName.capitalized()
             }"
 
         //list
@@ -98,11 +94,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Order(2)")
                 exception(JavaType("Exception"))
                 +"${primaryKeyClassName} $primaryKeyName = $insertName().get${
-                    primaryKeyName.replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(
-                            Locale.getDefault()
-                        ) else it.toString()
-                    }
+                    primaryKeyName.capitalized()
                 }();"
                 +"mockMvc.perform(get(\"/$pathName/info\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
@@ -127,11 +119,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +"${primaryKeyClassName} $primaryKeyName = new ${primaryKeyClassName}();"
                     primaryKeys.forEach {
                         +"$primaryKeyName.set${
-                            it.javaName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            }
+                            it.javaName.capitalized()
                         }(${it.randomValueToSet});"
                     }
                 }
@@ -172,11 +160,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     }
                 } else {
                     +"${primaryKeyClassName} $primaryKeyName = $insertName().get${
-                        primaryKeyName.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(
-                                Locale.getDefault()
-                            ) else it.toString()
-                        }
+                        primaryKeyName.capitalized()
                     }();"
                     +"mockMvc.perform(post(\"/$pathName/save\")"
                     2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
@@ -197,11 +181,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Order(5)")
                 exception(JavaType("Exception"))
                 +"$primaryKeyClassName $primaryKeyName = $insertName().get${
-                    primaryKeyName.replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(
-                            Locale.getDefault()
-                        ) else it.toString()
-                    }
+                    primaryKeyName.capitalized()
                 }();"
                 +"mockMvc.perform(post(\"/$pathName/delete\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
@@ -227,7 +207,7 @@ val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         val insertName =
-            "insert${pathName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+            "insert${pathName.capitalized()}"
 
         //insert
         method(insertName, entityType, visibility = JavaVisibility.PUBLIC) {
@@ -239,38 +219,22 @@ val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +"$primaryKeyClassName $primaryKeyName = new ${primaryKeyClassName}();"
                     primaryKeys.forEach {
                         +"$primaryKeyName.set${
-                            it.javaName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            }
+                            it.javaName.capitalized()
                         }(${it.randomValueToSet});"
                     }
                     +"$entityName.set${
-                        primaryKeyName.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(
-                                Locale.getDefault()
-                            ) else it.toString()
-                        }
+                        primaryKeyName.capitalized()
                     }(${primaryKeyName});"
                 } else
                     primaryKeys.forEach {
                         +"$entityName.set${
-                            it.javaName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            }
+                            it.javaName.capitalized()
                         }(${it.randomValueToSet});"
                     }
             }
             otherColumns.filter { !it.version }.forEach {
                 +"$entityName.set${
-                    it.javaName.replaceFirstChar { it1 ->
-                        if (it1.isLowerCase()) it1.titlecase(
-                            Locale.getDefault()
-                        ) else it1.toString()
-                    }
+                    it.javaName.capitalized()
                 }(${it.randomValueToSet});"
             }
             +"${projectEntityName}Service.save($entityName);"

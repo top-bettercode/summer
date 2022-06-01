@@ -22,6 +22,7 @@ import top.bettercode.generator.dsl.Generator
 import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.dsl.def.PlantUML
 import top.bettercode.generator.puml.PumlConverter
+import top.bettercode.lang.capitalized
 import java.io.File
 import java.util.*
 
@@ -170,11 +171,7 @@ class GeneratorPlugin : Plugin<Project> {
 
         extension.run { module, tableHolder ->
             val prefix = if (defaultModuleName == module) "" else "[${
-                module.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                }
+                module.capitalized()
             }]"
             project.tasks.create("print[TableNames]${prefix}") { task ->
                 task.group = printGroup
@@ -188,11 +185,7 @@ class GeneratorPlugin : Plugin<Project> {
         }
         extension.run(if (extension.pdmSources.isNotEmpty()) DataType.PDM else DataType.DATABASE) { module, tableHolder ->
             val prefix = if (defaultModuleName == module) "" else "[${
-                module.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                }
+                module.capitalized()
             }]"
             project.tasks.create("toPuml${prefix}") { task ->
                 task.group = pumlGroup
@@ -273,11 +266,7 @@ class GeneratorPlugin : Plugin<Project> {
             extension.run { module, tableHolder ->
                 if (datasourceModules.contains(module)) {
                     val prefix = if (defaultModuleName == module) "" else "[${
-                        module.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(
-                                Locale.getDefault()
-                            ) else it.toString()
-                        }
+                        module.capitalized()
                     }]"
                     project.tasks.create("toDDL${prefix}") { task ->
                         task.group = pumlGroup

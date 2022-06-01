@@ -9,6 +9,8 @@ import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.PrimitiveTypeWrapper
 import top.bettercode.generator.dom.java.element.*
 import top.bettercode.generator.dom.unit.*
+import top.bettercode.lang.capitalized
+import top.bettercode.lang.decapitalized
 import java.util.*
 
 /**
@@ -88,7 +90,7 @@ open class Generator {
             ) table.className(ext) + projectName.substring(
                 0, if (projectName.length > 5) 5 else projectName.length
             )
-                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } else table.className(
+                .capitalized() else table.className(
                 ext
             )
 
@@ -100,7 +102,7 @@ open class Generator {
             )
 
 
-    val projectEntityName get() = projectClassName.replaceFirstChar { it.lowercase(Locale.getDefault()) }
+    val projectEntityName get() = projectClassName.decapitalized()
 
     /**
      * 表名
@@ -395,11 +397,7 @@ open class Generator {
                         columnName,
                         true
                     )
-                }) javaName else (className + javaName.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(
-                                Locale.getDefault()
-                            ) else it.toString()
-                        }).replaceFirstChar { it.lowercase(Locale.getDefault()) }
+                }) javaName else (className + javaName.capitalized()).decapitalized()
             val prettyRemarks = prettyRemarks
             val codeTypeName = prettyRemarks.substringBefore('(')
 

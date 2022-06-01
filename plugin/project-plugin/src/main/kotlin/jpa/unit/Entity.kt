@@ -2,6 +2,7 @@ import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelClass
+import top.bettercode.lang.capitalized
 import java.util.*
 
 /**
@@ -73,7 +74,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                             ?: "uuid2"
                     val generator = generatorStrategy.substringAfterLast(".")
                         .substringBeforeLast("Generator")
-                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                        .capitalized()
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
                     annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\")")
                 } else if (primaryKey.sequence.isNotBlank()) {
@@ -103,7 +104,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         //primaryKey getter
         method(
-            "get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+            "get${primaryKeyName.capitalized()}",
             primaryKeyType
         ) {
             javadoc {
@@ -115,7 +116,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         //primaryKey setter
         method(
-            "set${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+            "set${primaryKeyName.capitalized()}",
             entityType,
             Parameter(primaryKeyName, primaryKeyType)
         ) {
@@ -135,7 +136,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             primaryKeys.forEach {
                 //getter
                 method(
-                    "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                    "get${it.javaName.capitalized()}",
                     it.javaType
                 ) {
                     if (it.remark.isNotBlank() || it.columnDef != null)
@@ -148,7 +149,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 //setter
                 method(
-                    "set${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                    "set${it.javaName.capitalized()}",
                     entityType,
                     Parameter(it.javaName, it.javaType)
                 ) {
@@ -205,7 +206,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //getter
             method(
-                "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                "get${it.javaName.capitalized()}",
                 it.javaType
             ) {
                 if (it.remark.isNotBlank() || it.columnDef != null)
@@ -218,7 +219,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
             //setter
             method(
-                "set${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                "set${it.javaName.capitalized()}",
                 entityType,
                 Parameter(it.javaName, it.javaType)
             ) {
@@ -248,11 +249,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"}"
             +"$className that = (${className}) o;"
             +"if (${primaryKeyName} != that.get${
-                primaryKeyName.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                }
+                primaryKeyName.capitalized()
             }()) {"
             +"return false;"
             +"}"

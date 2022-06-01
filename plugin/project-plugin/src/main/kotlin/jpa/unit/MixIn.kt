@@ -4,7 +4,7 @@ import ProjectGenerator
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Interface
-import java.util.*
+import top.bettercode.lang.capitalized
 
 /**
  * @author Peter Wu
@@ -26,7 +26,7 @@ val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
         if (!isFullComposite) {
             //primaryKey getter
             method(
-                "get${primaryKeyName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                "get${primaryKeyName.capitalized()}",
                 primaryKeyType
             ) {
                 javadoc {
@@ -51,7 +51,7 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
     interfaze.apply {
         if (it.jsonViewIgnored)
             method(
-                "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                "get${it.javaName.capitalized()}",
                 it.javaType
             ) {
                 annotation("@com.fasterxml.jackson.annotation.JsonIgnore")
@@ -61,7 +61,7 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
         //code
         if (!it.softDelete && it.isCodeField) {
             method(
-                "get${it.javaName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}",
+                "get${it.javaName.capitalized()}",
                 it.javaType
             ) {
                 if (it.columnName.contains("_") || it.softDelete)
@@ -69,20 +69,12 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
                 else {
                     import(
                         "${
-                            (ext.packageName + ".support.dic." + className + it.javaName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            })
+                            (ext.packageName + ".support.dic." + className + it.javaName.capitalized())
                         }Enum"
                     )
                     annotation(
                         "@top.bettercode.simpleframework.web.serializer.annotation.JsonCode(${
-                            (className + it.javaName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            })
+                            (className + it.javaName.capitalized())
                         }Enum.ENUM_NAME)"
                     )
                 }

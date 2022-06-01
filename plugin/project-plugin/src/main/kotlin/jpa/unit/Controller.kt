@@ -1,7 +1,7 @@
+import org.gradle.configurationcache.extensions.capitalized
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Parameter
 import top.bettercode.generator.dom.java.element.TopLevelClass
-import java.util.*
 
 /**
  * @author Peter Wu
@@ -16,7 +16,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         import(entityType)
 
-        superClass("$basePackageName.support.AppController")
+        superClass("$basePackageName.support.${projectName.capitalized()}Controller")
 
         annotation("@org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication")
         annotation("@org.springframework.validation.annotation.Validated")
@@ -93,34 +93,18 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     val code =
                         if (it.isCodeField) {
                             if (it.columnName.contains("_") || it.softDelete) ".code()" else ".code(${
-                                (className + it.javaName.replaceFirstChar {
-                                    if (it.isLowerCase()) it.titlecase(
-                                        Locale.getDefault()
-                                    ) else it.toString()
-                                })
+                                (className + it.javaName.capitalized())
                             }Enum.ENUM_NAME)"
                         } else {
                             ""
                         }
                     val propertyGetter =
                         if (it.isPrimary && isCompositePrimaryKey) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${
-                            primaryKeyName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            }
+                            primaryKeyName.capitalized()
                         }().get${
-                            it.javaName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            }
+                            it.javaName.capitalized()
                         }()" else "${if (isFullComposite) primaryKeyClassName else className}::get${
-                            it.javaName.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            }
+                            it.javaName.capitalized()
                         }"
                     initializationString += "      ExcelField.of(\"${
                         it.remark.split(
