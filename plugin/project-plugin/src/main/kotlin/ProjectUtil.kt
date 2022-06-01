@@ -7,14 +7,10 @@ import org.gradle.api.Project
 object ProjectUtil {
 
     val Project.isBoot: Boolean
-        get() = !isCore && parent?.name != "util" && name != "util"
-
-    val Project.needDoc: Boolean
-        get() = parent?.name != "util" && name != "util"
+        get() = !isCore && ((parent == rootProject) || parent?.name == "server" || parent?.name == "service")
 
     val Project.isCore: Boolean
-        get() = name == (findProperty("tools.project") ?: "core")
-
+        get() = name == (findProperty("project.core") ?: "core")
 
     val Project.isCloud: Boolean
         get() = "true" == findProperty("app.cloud")
