@@ -27,8 +27,9 @@ open class Controller(private val overwrite: Boolean = false) : ProjectGenerator
             form(this)
         }
 
-        +interfaze(mixInType, overwrite = overwrite) {
-            mixIn(this)
-        }
+        if (!isCore)
+            +interfaze(mixInType, overwrite = overwrite) {
+                mixIn(this)
+            }
     }
 }
