@@ -1,7 +1,6 @@
 package plugin
 
 import ProjectUtil.isBoot
-import ProjectUtil.needDoc
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.tasks.bundling.Jar
@@ -92,7 +91,7 @@ object SubProjectTasks {
                 named("bootBuildImage") { it.enabled = false }
             }
 
-            if (project.needDoc && !project.isBoot) {
+            if (!project.isBoot) {
                 named("asciidoc") { it.enabled = false }
                 named("htmldoc") { it.enabled = false }
                 named("postman") { it.enabled = false }

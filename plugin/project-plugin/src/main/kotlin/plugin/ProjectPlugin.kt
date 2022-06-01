@@ -3,7 +3,6 @@ package plugin
 import ProjectUtil.isBoot
 import ProjectUtil.isCloud
 import ProjectUtil.isCore
-import ProjectUtil.needDoc
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -53,16 +52,12 @@ class ProjectPlugin : Plugin<Project> {
             subProject.plugins.apply {
                 apply("summer.profile")
                 apply("summer.packageinfo")
+                apply("summer.generator")
+                apply("summer.autodoc")
                 apply("org.springframework.boot")
                 apply("io.spring.dependency-management")
             }
 
-            if (subProject.needDoc) {
-                subProject.plugins.apply {
-                    apply("summer.generator")
-                    apply("summer.autodoc")
-                }
-            }
             if (subProject.isBoot) {
                 subProject.plugins.apply {
                     apply("application")

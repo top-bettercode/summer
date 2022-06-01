@@ -251,105 +251,103 @@ class DistPlugin : Plugin<Project> {
         }
 
         project.afterEvaluate {
-            if (project == project.rootProject) {
-                val gradle = project.gradle as GradleInternal
-                val needUnwrapTasks = mutableListOf<Task>()
-                lateinit var currentProject: Project
-                gradle.allprojects {
-                    if (it.projectDir.absolutePath == gradle.startParameter.currentDir.absolutePath)
-                        currentProject = it
-                    needUnwrapTasks.addAll(it.tasks.filter { task ->
-                        task.group == "distribution" ||
-                                task.group == WindowsServicePlugin.getPLUGIN_GROUP()
-                    })
-                }
-                project.rootProject.allprojects { p ->
-                    p.tasks.named("jar") { task ->
-                        task as Jar
-                        if (extension.unwrapResources) {
-                            val taskNames =
-                                gradle.startParameter.taskNames.map {
-                                    var name = it
-                                    if (currentProject != project.rootProject) name =
-                                        currentProject.tasks.getByName(name).path
-                                    if (name.startsWith(":")) name else ":$name"
-                                }
-
-                            val needUnwrapTask =
-                                needUnwrapTasks.find {
-                                    taskNames.contains(it.path)
-                                }
-                            if (needUnwrapTask != null) {
-                                task.outputs.upToDateWhen { false }
-                                val resources = mutableMapOf<String, String>()
-                                task.exclude { file ->
-                                    val destinationDir =
-                                        (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
-                                    if (file.file.absolutePath.startsWith(destinationDir.absolutePath)) {
-                                        val fileParentPath = destinationDir.absolutePath + "/"
-                                        if (!file.isDirectory) {
-                                            val exclude =
-                                                !extension.excludeUnWrapResources.contains(file.path)
-                                            if (exclude) resources[file.file.absolutePath] =
-                                                if (file.file.parentFile == destinationDir) "" else
-                                                    file.file.parentFile.absolutePath.substringAfter(
-                                                        fileParentPath
-                                                    )
-                                            exclude
-                                        } else {
-                                            var exclude = true
-                                            file.file.walkTopDown().filter { it.isFile }.forEach {
-                                                val path = it.path.substringAfter(fileParentPath)
-                                                val contains =
-                                                    extension.excludeUnWrapResources.contains(path)
-                                                if (contains) {
-                                                    exclude = false
-                                                } else {
-                                                    resources[it.absolutePath] =
-                                                        if (it.parentFile == destinationDir) "" else
-                                                            it.parentFile.absolutePath.substringAfter(
-                                                                fileParentPath
-                                                            )
-                                                }
-                                            }
-
-                                            exclude
-                                        }
-                                    } else {
-                                        false
-                                    }
-                                }
-                                task.doLast(object : Action<Task> {
-                                    override fun execute(it: Task) {
-                                        if (resources.isNotEmpty()) {
-                                            p.copy { spec ->
-                                                resources.forEach { (filePath, to) ->
-                                                    spec.from(filePath) {
-                                                        if (to.isNotBlank())
-                                                            it.into(to)
-                                                    }
-                                                }
-                                                spec.into(
-                                                    File(
-                                                        needUnwrapTask.project.buildDir,
-                                                        "conf"
-                                                    ).absolutePath
-                                                )
-                                            }
-                                        }
-                                    }
-                                })
+            val gradle = project.gradle as GradleInternal
+            val needUnwrapTasks = mutableListOf<Task>()
+            lateinit var currentProject: Project
+            gradle.allprojects {
+                if (it.projectDir.absolutePath == gradle.startParameter.currentDir.absolutePath)
+                    currentProject = it
+                needUnwrapTasks.addAll(it.tasks.filter { task ->
+                    task.group == "distribution" ||
+                            task.group == WindowsServicePlugin.getPLUGIN_GROUP()
+                })
+            }
+            project.rootProject.allprojects { p ->
+                p.tasks.named("jar") { task ->
+                    task as Jar
+                    if (extension.unwrapResources) {
+                        val taskNames =
+                            gradle.startParameter.taskNames.map {
+                                var name = it
+                                if (currentProject != project.rootProject) name =
+                                    currentProject.tasks.getByName(name).path
+                                if (name.startsWith(":")) name else ":$name"
                             }
+
+                        val needUnwrapTask =
+                            needUnwrapTasks.find {
+                                taskNames.contains(it.path)
+                            }
+                        if (needUnwrapTask != null) {
+                            task.outputs.upToDateWhen { false }
+                            val resources = mutableMapOf<String, String>()
+                            task.exclude { file ->
+                                val destinationDir =
+                                    (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
+                                if (file.file.absolutePath.startsWith(destinationDir.absolutePath)) {
+                                    val fileParentPath = destinationDir.absolutePath + "/"
+                                    if (!file.isDirectory) {
+                                        val exclude =
+                                            !extension.excludeUnWrapResources.contains(file.path)
+                                        if (exclude) resources[file.file.absolutePath] =
+                                            if (file.file.parentFile == destinationDir) "" else
+                                                file.file.parentFile.absolutePath.substringAfter(
+                                                    fileParentPath
+                                                )
+                                        exclude
+                                    } else {
+                                        var exclude = true
+                                        file.file.walkTopDown().filter { it.isFile }.forEach {
+                                            val path = it.path.substringAfter(fileParentPath)
+                                            val contains =
+                                                extension.excludeUnWrapResources.contains(path)
+                                            if (contains) {
+                                                exclude = false
+                                            } else {
+                                                resources[it.absolutePath] =
+                                                    if (it.parentFile == destinationDir) "" else
+                                                        it.parentFile.absolutePath.substringAfter(
+                                                            fileParentPath
+                                                        )
+                                            }
+                                        }
+
+                                        exclude
+                                    }
+                                } else {
+                                    false
+                                }
+                            }
+                            task.doLast(object : Action<Task> {
+                                override fun execute(it: Task) {
+                                    if (resources.isNotEmpty()) {
+                                        p.copy { spec ->
+                                            resources.forEach { (filePath, to) ->
+                                                spec.from(filePath) {
+                                                    if (to.isNotBlank())
+                                                        it.into(to)
+                                                }
+                                            }
+                                            spec.into(
+                                                File(
+                                                    needUnwrapTask.project.buildDir,
+                                                    "conf"
+                                                ).absolutePath
+                                            )
+                                        }
+                                    }
+                                }
+                            })
                         }
-                        task.manifest {
-                            it.attributes(
-                                mapOf(
-                                    "Manifest-Version" to project.version,
-                                    "Implementation-Title" to "${if (project != project.rootProject) "${project.rootProject.name}:" else ""}${project.name}",
-                                    "Implementation-Version" to project.version
-                                )
+                    }
+                    task.manifest {
+                        it.attributes(
+                            mapOf(
+                                "Manifest-Version" to project.version,
+                                "Implementation-Title" to "${if (project != project.rootProject) "${project.rootProject.name}:" else ""}${project.name}",
+                                "Implementation-Version" to project.version
                             )
-                        }
+                        )
                     }
                 }
             }
