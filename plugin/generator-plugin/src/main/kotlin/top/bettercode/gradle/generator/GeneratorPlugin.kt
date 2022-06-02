@@ -328,6 +328,11 @@ class GeneratorPlugin : Plugin<Project> {
                         task.group = pumlGroup
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
+                                extension.dropTablesWhenUpdate = (findGeneratorProperty(
+                                    project,
+                                    "dropTablesWhenUpdate"
+                                ))?.toBoolean()
+                                    ?: false
                                 MysqlToDDL.useQuote = extension.sqlQuote
                                 OracleToDDL.useQuote = extension.sqlQuote
                                 MysqlToDDL.useForeignKey = extension.useForeignKey
