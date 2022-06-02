@@ -38,10 +38,10 @@ public class ExcelErrorHandler extends AbstractErrorHandler {
         if (value instanceof ConstraintViolationException) {
           for (ConstraintViolation<?> constraintViolation : ((ConstraintViolationException) value)
               .getConstraintViolations()) {
-            errors.put(key, title + constraintViolation.getMessage());
+            errors.put(key, title + ": " + constraintViolation.getMessage());
           }
         } else {
-          errors.put(key, title + getText(value.getMessage()));
+          errors.put(key, title + ": " + getText(value.getMessage()));
         }
       }
       Entry<String, String> firstError = errors.entrySet().iterator().next();
