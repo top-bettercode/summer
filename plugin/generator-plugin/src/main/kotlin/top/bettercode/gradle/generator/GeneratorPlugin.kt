@@ -75,11 +75,13 @@ class GeneratorPlugin : Plugin<Project> {
                     configuration
                 }.toSortedMap { o1, o2 -> o1.compareTo(o2) }
 
-            extension.unitedDatasource = (findGeneratorProperty(project, "singleDatasource"))?.toBoolean()
-                ?: true
+            extension.unitedDatasource =
+                (findGeneratorProperty(project, "singleDatasource"))?.toBoolean()
+                    ?: true
             extension.delete = (findGeneratorProperty(project, "delete"))?.toBoolean() ?: false
-            extension.projectPackage = (findGeneratorProperty(project, "project-package"))?.toBoolean()
-                ?: false
+            extension.projectPackage =
+                (findGeneratorProperty(project, "project-package"))?.toBoolean()
+                    ?: false
             extension.dropTablesWhenUpdate =
                 (findGeneratorProperty(project, "dropTablesWhenUpdate"))?.toBoolean()
                     ?: false
@@ -93,24 +95,29 @@ class GeneratorPlugin : Plugin<Project> {
             extension.forceBigDecimals =
                 (findGeneratorProperty(project, "forceBigDecimals"))?.toBoolean() ?: false
 
-            extension.replaceAll = (findGeneratorProperty(project, "replaceAll"))?.toBoolean() ?: false
-            extension.useForeignKey = (findGeneratorProperty(project, "useForeignKey"))?.toBoolean() ?: false
+            extension.replaceAll =
+                (findGeneratorProperty(project, "replaceAll"))?.toBoolean() ?: false
+            extension.useForeignKey =
+                (findGeneratorProperty(project, "useForeignKey"))?.toBoolean() ?: false
             extension.sqlQuote = (findGeneratorProperty(project, "sqlQuote"))?.toBoolean() ?: true
             extension.rootPath = project.rootDir
             extension.projectDir = project.projectDir
             extension.dir = findGeneratorProperty(project, "dir") ?: "src/main/java"
             extension.packageName = findGeneratorProperty(project, "packageName")
                 ?: project.findProperty("app.packageName") as? String ?: ""
-            extension.userModule = (findGeneratorProperty(project, "userModule"))?.toBoolean() ?: true
+            extension.userModule =
+                (findGeneratorProperty(project, "userModule"))?.toBoolean() ?: true
             extension.applicationName = project.findProperty("application.name") as? String
                 ?: project.rootProject.name
-            extension.projectName = (findGeneratorProperty(project, "projectName") ?: project.name).replace(
-                "-",
-                ""
-            )
+            extension.projectName =
+                (findGeneratorProperty(project, "projectName") ?: project.name).replace(
+                    "-",
+                    ""
+                )
             extension.primaryKeyName = findGeneratorProperty(project, "primaryKeyName") ?: "id"
             extension.tablePrefixes =
-                (findGeneratorProperty(project, "tablePrefix") ?: "").split(",").filter { it.isNotBlank() }
+                (findGeneratorProperty(project, "tablePrefix") ?: "").split(",")
+                    .filter { it.isNotBlank() }
                     .toTypedArray()
             extension.remarks = findGeneratorProperty(project, "remarks") ?: ""
             extension.softDeleteColumnName = findGeneratorProperty(project, "softDeleteColumnName")
@@ -128,7 +135,8 @@ class GeneratorPlugin : Plugin<Project> {
             )
             //puml
             extension.pumlSrc = findGeneratorProperty(project, "puml.src") ?: "puml"
-            extension.pumlDiagramFormat = findGeneratorProperty(project, "puml.diagramFormat") ?: "PNG"
+            extension.pumlDiagramFormat =
+                findGeneratorProperty(project, "puml.diagramFormat") ?: "PNG"
             extension.sqlOutput = findGeneratorProperty(project, "sqlOutput") ?: "database"
 
             val settings = mutableMapOf<String, String>()
@@ -290,7 +298,8 @@ class GeneratorPlugin : Plugin<Project> {
                                 OracleToDDL.useQuote = extension.sqlQuote
                                 MysqlToDDL.useForeignKey = extension.useForeignKey
                                 OracleToDDL.useForeignKey = extension.useForeignKey
-                                val output = FileUnit("${extension.sqlOutput}/ddl/$module.sql")
+                                val sqlName = if (defaultModuleName == module) "schema" else module
+                                val output = FileUnit("${extension.sqlOutput}/ddl/$sqlName.sql")
                                 val jdbc = extension.datasources[module]
                                     ?: throw IllegalStateException("未配置${module}模块数据库信息")
                                 val tables = tableHolder.tables(tableName = extension.tableNames)
