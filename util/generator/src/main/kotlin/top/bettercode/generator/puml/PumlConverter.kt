@@ -158,6 +158,20 @@ object PumlConverter {
                         extra = extra.replace(" SOFTDELETE", "", true)
                         extra = extra.replace(" ASBOOLEAN", "", true)
                         val idgeneratorRegex = ".* ([A-Z0-9]*IDGENERATOR\\d*) .*".toRegex()
+                        val version = columnDef.contains(
+                            "VERSION",
+                            true
+                        )
+                        val softDelete = columnDef.contains(
+                            "SOFTDELETE",
+                            true
+                        )
+                        val pk = columnDef.contains("PK", true)
+                        val nullable =
+                            if (pk || version || softDelete) false else !columnDef.contains(
+                                "NOT NULL",
+                                true
+                            )
                         val column = Column(
                             tableCat = null,
                             columnName = columnName,
@@ -166,7 +180,7 @@ object PumlConverter {
                             dataType = JavaTypeResolver.calculateDataType(typeName),
                             columnSize = columnSize,
                             decimalDigits = decimalDigits,
-                            nullable = !columnDef.contains("NOT NULL", true),
+                            nullable = nullable,
                             unique = unique,
                             indexed = indexed,
                             columnDef = defaultVal,
@@ -181,14 +195,8 @@ object PumlConverter {
                                 idgeneratorRegex,
                                 "$1"
                             ) else "",
-                            version = columnDef.contains(
-                                "VERSION",
-                                true
-                            ),
-                            softDelete = columnDef.contains(
-                                "SOFTDELETE",
-                                true
-                            ),
+                            version = version,
+                            softDelete = softDelete,
                             asBoolean = columnDef.contains(
                                 "ASBOOLEAN",
                                 true
@@ -218,7 +226,7 @@ object PumlConverter {
                                     }", false, mutableListOf(columnName)
                                 )
                             )
-                        if (columnDef.contains("PK", true)) {
+                        if (pk) {
                             primaryKeyNames.add(column.columnName)
                         }
                         pumlColumns.add(column)
