@@ -146,7 +146,8 @@ open class GeneratorExtension(
             javaName(it, false)
         }
 
-        private fun javaName(str: String, capitalize: Boolean = false): String {
+        @JvmStatic
+        fun javaName(str: String, capitalize: Boolean = false): String {
             val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") { s ->
                 s.lowercase(Locale.getDefault()).capitalized()
             }
