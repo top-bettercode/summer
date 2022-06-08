@@ -158,7 +158,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteById");
-      super.deleteById(id);
+
+      Assert.notNull(id, "The given id must not be null!");
+      findById(id).ifPresent(this::delete);
     } finally {
       cleanMdc(mdc);
     }
