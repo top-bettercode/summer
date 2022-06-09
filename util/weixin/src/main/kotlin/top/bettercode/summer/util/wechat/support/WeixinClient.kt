@@ -67,7 +67,7 @@ open class WeixinClient<T : IWexinProperties>(
         val cachedValue = cache.getIfPresent(baseAccessTokenKey)
         return if (cachedValue == null || cachedValue.expired) {
             val accessToken = getForObject<BasicAccessToken>(
-                "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}",
+                properties.basicAccessTokenUrl,
                 getAppId(),
                 getSecret()
             )
