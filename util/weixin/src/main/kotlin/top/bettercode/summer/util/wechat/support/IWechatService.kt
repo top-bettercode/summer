@@ -11,11 +11,11 @@ interface IWechatService {
         return false
     }
 
-    fun oauth(openId: String): String? {
+    fun oauth(openId: String): WechatToken {
         throw UnsupportedOperationException()
     }
 
-    fun phoneOauth(phoneInfo: PhoneInfo): String? {
+    fun phoneOauth(phoneInfo: PhoneInfo): WechatToken {
         throw UnsupportedOperationException()
     }
 

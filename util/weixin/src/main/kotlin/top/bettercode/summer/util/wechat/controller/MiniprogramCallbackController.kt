@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.simpleframework.web.BaseController
-import top.bettercode.summer.util.wechat.config.WexinProperties
 import top.bettercode.summer.util.wechat.support.IWechatService
+import top.bettercode.summer.util.wechat.support.WechatToken
 import top.bettercode.summer.util.wechat.support.miniprogram.IMiniprogramClient
 import javax.validation.constraints.NotBlank
 
@@ -32,18 +32,16 @@ class MiniprogramCallbackController(
             val jsSession = miniprogramClient.jscode2session(code)
             val openId = if (jsSession.isOk) jsSession.openid else null
             log.info("openId:{}", openId)
-            val token = if (openId == null) null else wechatService.oauth(openId)
-            val result: MutableMap<String, Any?> = HashMap()
-            result["access_token"] = token
-            result[WexinProperties.OPEN_ID_NAME] = openId
-            result["hasBound"] = token != null
+            val result = if (openId == null) WechatToken() else wechatService.oauth(openId)
+            result.openId = openId
+            result.hasBound = result.accessToken.isNullOrBlank().not()
             ok(result)
         } catch (e: Exception) {
             log.error("授权失败", e)
-            val result: MutableMap<String, Any?> = HashMap()
-            result["access_token"] = null
-            result[WexinProperties.OPEN_ID_NAME] = null
-            result["hasBound"] = false
+            val result = WechatToken()
+            result.accessToken = null
+            result.openId = null
+            result.hasBound = false
             ok(result)
         }
     }
@@ -59,10 +57,8 @@ class MiniprogramCallbackController(
         val phoneInfo = if (phoneInfoResp.isOk) phoneInfoResp.phoneInfo else null
         Assert.notNull(phoneInfo, "获取手机号失败")
         log.info("phoneInfo:{}", phoneInfo)
-        val token = wechatService.phoneOauth(phoneInfo!!)
-        val result: MutableMap<String, Any?> = HashMap()
-        result["access_token"] = token
-        result["hasBound"] = token != null
+        val result = wechatService.phoneOauth(phoneInfo!!)
+        result.hasBound = result.accessToken.isNullOrBlank().not()
         return ok(result)
     }
 
