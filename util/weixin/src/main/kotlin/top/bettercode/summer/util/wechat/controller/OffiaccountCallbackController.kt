@@ -24,7 +24,7 @@ class OffiaccountCallbackController(
    * 公众号OAuth回调接口
    */
     @RequestLogging(ignoredTimeout = true)
-    @GetMapping(value = ["/oauth"], name = "OAuth回调接口")
+    @GetMapping(value = ["/oauth"], name = "公众号OAuth回调接口")
     fun oauth(code: String?, state: String?): String {
         plainTextError()
         var openId: String? = null
@@ -45,13 +45,13 @@ class OffiaccountCallbackController(
    * js签名
    */
     @ResponseBody
-    @GetMapping(value = ["/jsSign"], name = "js签名")
+    @GetMapping(value = ["/jsSign"], name = "公众号js签名")
     fun jsSignUrl(@NotBlank url: String): Any {
         return ok(offiaccountClient.jsSignUrl(url))
     }
 
     @ResponseBody
-    @GetMapping(name = "验证回调")
+    @GetMapping(name = "公众号验证回调")
     fun access(signature: String?, echostr: String?, timestamp: String?, nonce: String?): Any? {
         if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || offiaccountClient
                 .shaHex(offiaccountClient.properties.token, timestamp, nonce) != signature
@@ -63,7 +63,7 @@ class OffiaccountCallbackController(
     }
 
     @ResponseBody
-    @PostMapping(name = "事件推送")
+    @PostMapping(name = "公众号事件推送")
     fun receive(
         signature: String?, timestamp: String?,
         nonce: String?, openid: String?, encrypt_type: String?, msg_signature: String?,

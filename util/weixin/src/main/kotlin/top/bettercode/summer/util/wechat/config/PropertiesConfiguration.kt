@@ -12,6 +12,14 @@ import org.springframework.context.annotation.Configuration
 @Configuration(proxyBeanMethods = false)
 class PropertiesConfiguration {
 
+    @ConditionalOnProperty(prefix = "summer.wechat.corp", name = ["app-id"])
+    @ConfigurationProperties(prefix = "summer.wechat.corp")
+    @ConditionalOnMissingBean
+    @Bean
+    fun corpProperties(): ICorpProperties {
+        return CorpProperties()
+    }
+
     @ConditionalOnProperty(prefix = "summer.wechat.mini", name = ["app-id"])
     @ConfigurationProperties(prefix = "summer.wechat.mini")
     @ConditionalOnMissingBean
@@ -27,4 +35,6 @@ class PropertiesConfiguration {
     fun offiaccountProperties(): IOffiaccountProperties {
         return OffiaccountProperties()
     }
+
+
 }
