@@ -10,7 +10,6 @@ import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.simpleframework.web.BaseController
 import top.bettercode.summer.util.wechat.support.IWechatService
 import top.bettercode.summer.util.wechat.support.offiaccount.IOffiaccountClient
-import top.bettercode.summer.util.wechat.support.offiaccount.OffiaccountClient
 import javax.validation.constraints.NotBlank
 
 @ConditionalOnWebApplication
@@ -35,7 +34,7 @@ class OffiaccountCallbackController(
                 if (code.isNullOrBlank()) null else offiaccountClient.getWebPageAccessToken(code)
             openId = if (accessToken?.isOk == true) accessToken.openid else null
             log.info("openId:{}", openId)
-            token = if (openId != null) wechatService.oauth(openId) else null
+            token = if (openId != null) wechatService.oauth(openId).accessToken else null
         } catch (e: Exception) {
             log.warn("token获取失败", e)
         }
