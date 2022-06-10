@@ -70,7 +70,7 @@ public class AutodocWebMvcConfigurer implements AutoDocRequestHandler {
                 SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN);
             if (!StringUtils.hasText(authorization)) {
               request.header(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN,
-                  "xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
+                  "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
             }
           } else {
             String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
