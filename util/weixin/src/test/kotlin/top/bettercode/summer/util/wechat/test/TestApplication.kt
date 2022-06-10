@@ -15,7 +15,7 @@ class TestApplication {
     @Bean
     fun wechatService(): IWechatService {
         return object : IWechatService {
-            override fun oauth(openId: String): WechatToken {
+            override fun oauth(openId: String, unionid: String?): WechatToken {
                 return WechatToken()
             }
         }

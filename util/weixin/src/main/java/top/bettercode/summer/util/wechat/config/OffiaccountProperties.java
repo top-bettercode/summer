@@ -5,6 +5,8 @@ package top.bettercode.summer.util.wechat.config;
  */
 public class OffiaccountProperties extends WexinProperties implements IOffiaccountProperties {
 
+  private Boolean userUnionid= false;
+
   /**
    * 项目部署的URL地址
    */
@@ -19,6 +21,16 @@ public class OffiaccountProperties extends WexinProperties implements IOffiaccou
   private String wechatWebOauthUrl = "";
 
   //--------------------------------------------
+
+  @Override
+  public Boolean getUserUnionid() {
+    return userUnionid;
+  }
+
+  public OffiaccountProperties setUserUnionid(Boolean userUnionid) {
+    this.userUnionid = userUnionid;
+    return this;
+  }
 
   public String getAppBaseUrl() {
     return appBaseUrl;

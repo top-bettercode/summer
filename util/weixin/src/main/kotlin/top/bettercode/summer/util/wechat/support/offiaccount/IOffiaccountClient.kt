@@ -1,10 +1,7 @@
 package top.bettercode.summer.util.wechat.support.offiaccount
 
 import top.bettercode.summer.util.wechat.config.IOffiaccountProperties
-import top.bettercode.summer.util.wechat.support.offiaccount.entity.JsapiSignature
-import top.bettercode.summer.util.wechat.support.offiaccount.entity.MsgResult
-import top.bettercode.summer.util.wechat.support.offiaccount.entity.TemplateMsgRequest
-import top.bettercode.summer.util.wechat.support.offiaccount.entity.WebPageAccessToken
+import top.bettercode.summer.util.wechat.support.offiaccount.entity.*
 
 /**
  * 公众号接口
@@ -20,6 +17,10 @@ interface IOffiaccountClient {
     fun getJsapiTicket(retries: Int): String
 
     fun getWebPageAccessToken(code: String): WebPageAccessToken
+
+    fun getSnsapiUserinfo(accessToken: String, openid: String): SnsapiUserinfo
+
+    fun getSnsapiUserinfo(accessToken: String, openid: String, lang: String): SnsapiUserinfo
 
     fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult
 

@@ -9,6 +9,10 @@ public interface IOffiaccountProperties extends IWexinProperties {
 
   String OAUTH_URL = "/wechat/oauth";
 
+  default Boolean getUserUnionid(){
+    return false;
+  }
+
   String getAppBaseUrl();
 
 

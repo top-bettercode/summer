@@ -34,7 +34,13 @@ class OffiaccountCallbackController(
                 if (code.isNullOrBlank()) null else offiaccountClient.getWebPageAccessToken(code)
             openId = if (accessToken?.isOk == true) accessToken.openid else null
             log.info("openId:{}", openId)
-            token = if (openId != null) wechatService.oauth(openId).accessToken else null
+            token = if (openId != null) wechatService.oauth(
+                openId,
+                (if (offiaccountClient.properties.userUnionid) offiaccountClient.getSnsapiUserinfo(
+                    accessToken!!.accessToken!!,
+                    openId
+                ).unionid else null)
+            ).accessToken else null
         } catch (e: Exception) {
             log.warn("token获取失败", e)
         }
