@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.wechat.support
 
+import top.bettercode.summer.util.wechat.support.corp.entity.CorpWebPageAccessToken
 import top.bettercode.summer.util.wechat.support.miniprogram.entity.PhoneInfo
 
 /**
@@ -11,7 +12,11 @@ interface IWechatService {
         return false
     }
 
-    fun oauth(openId: String): WechatToken {
+    fun oauth(openId: String, unionid: String?): WechatToken {
+        throw UnsupportedOperationException()
+    }
+
+    fun corpOauth(corpWebPageAccessToken: CorpWebPageAccessToken): WechatToken {
         throw UnsupportedOperationException()
     }
 

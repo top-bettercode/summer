@@ -8,6 +8,7 @@ import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.simpleframework.web.BaseController
 import top.bettercode.summer.util.wechat.support.IWechatService
 import top.bettercode.summer.util.wechat.support.corp.ICorpClient
+import top.bettercode.summer.util.wechat.support.corp.entity.CorpWebPageAccessToken
 
 @ConditionalOnWebApplication
 @Controller
@@ -31,7 +32,7 @@ class CorpCallbackController(
                 if (code.isNullOrBlank()) null else corpClient.getWebPageAccessToken(code)
             openId = if (accessToken?.isOk == true) accessToken.openid else null
             log.info("openId:{}", openId)
-            token = if (openId != null) wechatService.oauth(openId).accessToken else null
+            token = if (openId != null) wechatService.corpOauth(accessToken!!).accessToken else null
         } catch (e: Exception) {
             log.warn("token获取失败", e)
         }

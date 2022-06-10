@@ -20,6 +20,12 @@ public class CorpProperties extends WexinProperties implements ICorpProperties {
 
   //--------------------------------------------
 
+
+  @Override
+  public String getBasicAccessTokenUrl() {
+    return "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={0}&corpsecret={1}";
+  }
+
   public String getAppBaseUrl() {
     return appBaseUrl;
   }

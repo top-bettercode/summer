@@ -82,6 +82,23 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         )
     }
 
+    override fun getSnsapiUserinfo(accessToken: String, openid: String): SnsapiUserinfo {
+        return getSnsapiUserinfo(openid, "zh_CN")
+    }
+
+    override fun getSnsapiUserinfo(
+        accessToken: String,
+        openid: String,
+        lang: String
+    ): SnsapiUserinfo {
+        return getForObject(
+            "https://api.weixin.qq.com/sns/userinfo?access_token={0}&openid={1}&lang={2}",
+            accessToken,
+            openid,
+            lang
+        )
+    }
+
     override fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult {
         return sendTemplateMsg(request, 1)
     }

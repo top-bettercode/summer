@@ -32,7 +32,10 @@ class MiniprogramCallbackController(
             val jsSession = miniprogramClient.jscode2session(code)
             val openId = if (jsSession.isOk) jsSession.openid else null
             log.info("openId:{}", openId)
-            val result = if (openId == null) WechatToken() else wechatService.oauth(openId)
+            val result = if (openId == null) WechatToken() else wechatService.oauth(
+                openId,
+                jsSession.unionid
+            )
             result.openId = openId
             result.hasBound = result.accessToken.isNullOrBlank().not()
             ok(result)

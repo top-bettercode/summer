@@ -15,7 +15,7 @@ class WechatToken : HashMap<String, Any?>() {
         this[IWexinProperties.OPEN_ID_NAME] = ""
         this["scope"] = ""
         this["unionid"] = ""
-        this["hasBound"] = 0
+        this["hasBound"] = false
     }
 
     var accessToken: String?
