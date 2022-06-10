@@ -2,6 +2,7 @@ package top.bettercode.lang.util
 
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.abs
 
 /**
  * 随机工具类
@@ -17,7 +18,7 @@ object RandomUtil {
         return LocalDateTimeHelper.now()
             .format(DateTimeFormatter.ofPattern("yyyyMMddHH")) + String.format(
             "%010d",
-            Math.abs(UUID.randomUUID().toString().hashCode())
+            abs(UUID.randomUUID().toString().hashCode())
         )
     }
 
