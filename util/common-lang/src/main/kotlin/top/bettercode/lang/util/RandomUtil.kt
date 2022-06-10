@@ -1,5 +1,6 @@
 package top.bettercode.lang.util
 
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -10,6 +11,15 @@ import java.util.*
 object RandomUtil {
 
     private val RANDOM = Random()
+
+    @JvmStatic
+    fun uuid(): String {
+        return LocalDateTimeHelper.now()
+            .format(DateTimeFormatter.ofPattern("yyyyMMddHH")) + String.format(
+            "%010d",
+            Math.abs(UUID.randomUUID().toString().hashCode())
+        )
+    }
 
     /**
      * 随机数字字符串
@@ -47,7 +57,8 @@ object RandomUtil {
     fun nextString(count: Int, chars: CharArray?): String {
         return if (chars == null) {
             next(count, 0, 0, letters = false, numbers = false, chars = null, random = RANDOM)
-        } else next(count, 0, chars.size,
+        } else next(
+            count, 0, chars.size,
             letters = false,
             numbers = false,
             chars = chars,
@@ -68,8 +79,10 @@ object RandomUtil {
      * @return 随机字符串
      */
     @JvmStatic
-    fun next(count: Int, start: Int, end: Int, letters: Boolean,
-             numbers: Boolean, chars: CharArray?, random: Random): String {
+    fun next(
+        count: Int, start: Int, end: Int, letters: Boolean,
+        numbers: Boolean, chars: CharArray?, random: Random
+    ): String {
         var c = count
         var s = start
         var e = end
@@ -77,8 +90,9 @@ object RandomUtil {
             return ""
         } else if (c < 0) {
             throw IllegalArgumentException(
-                    "Requested next string length " + c
-                            + " is less than 0.")
+                "Requested next string length " + c
+                        + " is less than 0."
+            )
         }
         if (s == 0 && e == 0) {
             e = 'z'.code + 1
@@ -99,8 +113,9 @@ object RandomUtil {
                 chars[random.nextInt(gap) + s]
             }
             if (letters && Character.isLetter(ch)
-                    || numbers && Character.isDigit(ch)
-                    || !letters && !numbers) {
+                || numbers && Character.isDigit(ch)
+                || !letters && !numbers
+            ) {
                 if (ch.code in 56320..57343) {
                     if (c == 0) {
                         c++
