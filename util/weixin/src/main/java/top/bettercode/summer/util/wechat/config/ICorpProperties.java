@@ -7,7 +7,7 @@ import org.springframework.util.StringUtils;
  */
 public interface ICorpProperties extends IWexinProperties {
 
-  String OAUTH_URL = "/wechat/oauth";
+  String OAUTH_URL = "/wechat/corpOauth";
 
   String getAppBaseUrl();
 
