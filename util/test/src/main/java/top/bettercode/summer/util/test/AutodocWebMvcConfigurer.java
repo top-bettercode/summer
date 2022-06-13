@@ -75,7 +75,7 @@ public class AutodocWebMvcConfigurer implements AutoDocRequestHandler {
           } else {
             String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (!StringUtils.hasText(authorization)) {
-              request.header(HttpHeaders.AUTHORIZATION, "bearer xxxxxxx-xxxx-xxxx-xxxx-xxxxxx");
+              request.header(HttpHeaders.AUTHORIZATION, "bearer xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
             }
           }
         }
