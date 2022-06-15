@@ -15,6 +15,9 @@ class DbDoc(private val project: Project) : Generator() {
 
     private var currentModuleName: String? = null
 
+    override val projectDir: File
+        get() = project.rootDir
+
     private val name get() = "database/doc/${ext.applicationName}数据库设计说明书-${project.version}.adoc"
 
     override fun setUp() {
@@ -70,9 +73,10 @@ v${project.version}
 
     override fun tearDown() {
         val fileUnit = this[name] as FileUnit
-        val outFile = File(fileUnit.file.parent, "${fileUnit.file.nameWithoutExtension}.pdf")
+        val outFile =
+            File(projectDir, "${fileUnit.file.parent}/${fileUnit.file.nameWithoutExtension}.pdf")
         if (setting("dbdoc-pdf") == "true")
-            AsciidocGenerator.pdf(fileUnit.file, outFile, project.rootDir)
+            AsciidocGenerator.pdf(fileUnit.outputFile(projectDir), outFile, projectDir)
     }
 }
 
