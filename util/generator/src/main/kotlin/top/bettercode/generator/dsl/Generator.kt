@@ -11,6 +11,7 @@ import top.bettercode.generator.dom.java.element.*
 import top.bettercode.generator.dom.unit.*
 import top.bettercode.lang.capitalized
 import top.bettercode.lang.decapitalized
+import java.io.File
 import java.util.*
 
 /**
@@ -359,9 +360,11 @@ open class Generator {
         content()
         units.forEach { unit ->
             if (ext.replaceAll) unit.overwrite = true
-            unit.writeTo(ext.projectDir)
+            unit.writeTo(projectDir)
         }
     }
+
+    open val projectDir: File get() = ext.projectDir
 
     fun run(table: Table) {
         this.table = table
@@ -381,7 +384,7 @@ open class Generator {
     fun preTearDown() {
         projectUnits.forEach { unit ->
             if (ext.replaceAll) unit.overwrite = true
-            unit.writeTo(ext.projectDir)
+            unit.writeTo(projectDir)
         }
     }
 
@@ -442,6 +445,7 @@ open class Generator {
                             else -> 1
                         }
                 }
+
             else -> columnDef!!
         }
 
@@ -457,6 +461,7 @@ open class Generator {
                             val value = dicCodes(ext)!!.codes.keys.first()
                             if (JavaType.stringInstance == javaType) "\"$value\"" else "$value"
                         }
+
                         else -> when (javaType) {
                             JavaType("java.math.BigDecimal") -> "new java.math.BigDecimal(\"1.0\")"
                             JavaType("java.sql.Timestamp") -> "new java.sql.Timestamp(System.currentTimeMillis())"
@@ -477,6 +482,7 @@ open class Generator {
                         }
                     }
                 }
+
                 else -> initializationString!!
             }
 
@@ -539,6 +545,7 @@ open class Generator {
                                 return false
                             }
                         }
+
                         2 -> {
                             val ch0 = obj[0]
                             val ch1 = obj[1]
@@ -549,6 +556,7 @@ open class Generator {
                                 return false
                             }
                         }
+
                         3 -> {
                             val ch0 = obj[0]
                             val ch1 = obj[1]
@@ -566,6 +574,7 @@ open class Generator {
                                 return false
                             }
                         }
+
                         4 -> {
                             val ch0 = obj[0]
                             val ch1 = obj[1]
@@ -579,6 +588,7 @@ open class Generator {
                                 return true
                             }
                         }
+
                         5 -> {
                             val ch0 = obj[0]
                             val ch1 = obj[1]
@@ -594,10 +604,12 @@ open class Generator {
                                 return false
                             }
                         }
+
                         else -> {
                         }
                     }
                 }
+
                 is Number -> return obj.toInt() > 0
             }
 
