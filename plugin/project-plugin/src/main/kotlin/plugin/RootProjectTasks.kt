@@ -1,6 +1,11 @@
 package plugin
 
 import org.gradle.api.Project
+import top.bettercode.generator.DatabaseDriver
+import top.bettercode.generator.GeneratorExtension
+import top.bettercode.generator.ddl.MysqlToDDL
+import top.bettercode.generator.ddl.OracleToDDL
+import top.bettercode.generator.ddl.SqlLiteToDDL
 import top.bettercode.generator.dom.unit.FileUnit
 import top.bettercode.gradle.generator.GeneratorPlugin
 
@@ -61,8 +66,29 @@ object RootProjectTasks {
                         "database/init.sql"
                     )
                     destFile.apply {
-                        +"SET NAMES 'utf8';"
-//                    +project.rootProject.file("database/database.sql").readText()
+                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
+                        val commentPrefix = when (gen.defaultDatasource.databaseDriver) {
+                            DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                MysqlToDDL.commentPrefix
+                            }
+
+                            else -> {
+                                "--"
+                            }
+                        }
+                        +"$commentPrefix ${
+                            project.rootProject.file("database/database.sql").readText()
+                        }"
+
+                        when (gen.defaultDatasource.databaseDriver) {
+                            DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                +""
+                                +"SET NAMES 'utf8';"
+                                +""
+                            }
+
+                            else -> {}
+                        }
                         project.rootProject.file("database/ddl").listFiles()?.filter { it.isFile }
                             ?.forEach {
                                 +it.readText()
