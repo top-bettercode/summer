@@ -64,6 +64,7 @@ open class WeixinClient<T : IWexinProperties>(
 
     @JvmOverloads
     fun getBaseAccessToken(retries: Int = 1): String {
+        getAppId()
         val cachedValue = cache.getIfPresent(baseAccessTokenKey)
         return if (cachedValue == null || cachedValue.expired) {
             val accessToken = getForObject<BasicAccessToken>(
