@@ -41,8 +41,10 @@ object RootProjectTasks {
                 create("build[All]") {
                     it.group = "jenkins"
                     it.doLast {
-                        jobs.values.flatten().forEach { jobName ->
-                            jenkins.build(jobName)
+                        jobs.forEach { (env, jobNames) ->
+                            jobNames.forEach { jobName ->
+                                jenkins.build(jobName, env)
+                            }
                         }
                     }
                 }
@@ -52,7 +54,7 @@ object RootProjectTasks {
                             it.group = "jenkins"
                             it.doLast {
                                 jobNames.forEach { jobName ->
-                                    jenkins.build(jobName)
+                                    jenkins.build(jobName, env)
                                 }
                             }
                         }
@@ -66,7 +68,7 @@ object RootProjectTasks {
                         create("build$envName[$jobTaskName]") {
                             it.group = "jenkins"
                             it.doLast {
-                                jenkins.build(jobName)
+                                jenkins.build(jobName, env)
                             }
                         }
                         create("lastBuildInfo$envName[$jobTaskName]") {

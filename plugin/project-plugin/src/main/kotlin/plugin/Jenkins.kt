@@ -27,7 +27,7 @@ class Jenkins(private val url: String, auth: String) {
         return restTemplate.getForObject("$url/job/${job}/description")
     }
 
-    fun build(job: String) {
+    fun build(job: String, env: String = "default") {
         restTemplate.postForEntity("$url/job/${job}/build", null, String::class.java)
         println("已发送build请求...")
         val description = description(job)
@@ -35,8 +35,9 @@ class Jenkins(private val url: String, auth: String) {
             println("job 描述信息：")
             println(description)
         }
+        val envName = if (env == "default") "" else "[$env]"
         println(
-            "如需查看最新build信息，请运行:lastBuildInfo[${
+            "如需查看最新build信息，请运行:lastBuildInfo$envName[${
                 job.replace(
                     "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
                     ""
