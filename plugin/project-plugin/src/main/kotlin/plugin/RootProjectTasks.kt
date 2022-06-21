@@ -47,6 +47,16 @@ object RootProjectTasks {
                     }
                 }
                 jobs.forEach { (env, jobNames) ->
+                    if (env != "default") {
+                        create("build[$env]") {
+                            it.group = "jenkins"
+                            it.doLast {
+                                jobNames.forEach { jobName ->
+                                    jenkins.build(jobName)
+                                }
+                            }
+                        }
+                    }
                     jobNames.forEach { jobName ->
                         val jobTaskName = jobName.replace(
                             "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
