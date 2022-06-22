@@ -94,6 +94,7 @@ public class CustomErrorController extends BasicErrorController {
       setCors(request, requestAttributes.getResponse());
     }
     response.setStatus(status.value());
+    response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
     return ResponseEntity.status(status).headers(noCache()).body(body);
   }

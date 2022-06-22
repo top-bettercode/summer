@@ -74,7 +74,10 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
     fun collections(collectionName: String, name: String): DocCollection {
         var collectionTree = projectCollections.find { it.name == collectionName }
         if (collectionTree == null) {
-            collectionTree = DocCollection(collectionName, dir = File(projectModuleDic, "collection/$collectionName"))
+            collectionTree = DocCollection(
+                collectionName,
+                dir = File(projectModuleDic, "collection/$collectionName")
+            )
             projectCollections.add(collectionTree)
         }
         collectionTree.items.add(name)
@@ -84,21 +87,25 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
     fun clean() {
         (rootCollections + projectCollections).forEach { collection ->
             val items = collection.items
-            collection.dir.listFiles()?.filterNot { items.contains(it.nameWithoutExtension) || it.name == "field.yml" }?.forEach {
-                it.delete()
-                println("delete $it")
-            }
+            collection.dir.listFiles()
+                ?.filterNot { items.contains(it.nameWithoutExtension) || it.name == "field.yml" }
+                ?.forEach {
+                    it.delete()
+                    println("delete $it")
+                }
         }
 
         if (this.rootModuleDic != null) {
             val rootCollectionNames = rootCollections.map { it.name }
-            File(this.rootModuleDic, "collection").listFiles()?.filterNot { rootCollectionNames.contains(it.name) }?.forEach {
+            File(this.rootModuleDic, "collection").listFiles()
+                ?.filterNot { rootCollectionNames.contains(it.name) }?.forEach {
                 it.deleteRecursively()
                 println("delete $it")
             }
         }
         val subCollectionNames = projectCollections.map { it.name }
-        File(projectModuleDic, "collection").listFiles()?.filterNot { subCollectionNames.contains(it.name) }?.forEach {
+        File(projectModuleDic, "collection").listFiles()
+            ?.filterNot { subCollectionNames.contains(it.name) }?.forEach {
             it.deleteRecursively()
             println("delete $it")
         }
@@ -110,12 +117,20 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
     }
 
     fun postmanEvents(operation: DocOperation, autodoc: AutodocExtension): List<Event> {
-        return listOf(Event("prerequest", Script(exec = operation.prerequest.ifEmpty { defaultPrerequestExec(operation) })), Event("test", Script(exec = operation.testExec.ifEmpty {
-            defaultPostmanTestExec(operation, autodoc)
-        })))
+        return listOf(
+            Event(
+                "prerequest",
+                Script(exec = operation.prerequest.ifEmpty { defaultPrerequestExec(operation) })
+            ), Event("test", Script(exec = operation.testExec.ifEmpty {
+                defaultPostmanTestExec(operation, autodoc)
+            }))
+        )
     }
 
-    private fun defaultPostmanTestExec(operation: Operation, autodoc: AutodocExtension): List<String> {
+    private fun defaultPostmanTestExec(
+        operation: Operation,
+        autodoc: AutodocExtension
+    ): List<String> {
         val statusCode = operation.response.statusCode
         val exec = mutableListOf<String>()
         val maxResponseTime = autodoc.maxResponseTime
@@ -130,10 +145,12 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
         if (operation.response.headers.contentType?.isCompatibleWith(MediaType.APPLICATION_JSON) == true) {
             exec.add("pm.test('验证返回json格式', function () {")
             exec.add("  pm.response.to.be.json;")
-            if (operation.request.restUri == autodoc.authUri)
+            if (operation.request.restUri == autodoc.authUri) {
+                exec.add("  var jsonData = pm.response.json();")
                 autodoc.authVariables.forEach {
                     exec.add("  pm.globals.set('${it.substringAfterLast('.')}', jsonData.$it);")
                 }
+            }
             exec.add("});")
             exec.add("")
         }
