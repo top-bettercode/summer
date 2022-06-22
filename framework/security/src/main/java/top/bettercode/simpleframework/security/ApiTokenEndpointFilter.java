@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -186,6 +187,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         context.setAuthentication(authenticationResult);
         SecurityContextHolder.setContext(context);
 
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         Object apiTokenResponse = apiAuthenticationToken.toApiToken();
         if (summerWebProperties.wrapEnable(request)) {
           apiTokenResponse = RespEntity.ok(apiTokenResponse);
@@ -217,6 +219,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
               }
               apiAuthorizationService.remove(apiAuthenticationToken);
               SecurityContextHolder.clearContext();
+              response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
               if (summerWebProperties.okEnable(request)) {
                 response.setStatus(HttpStatus.OK.value());
               } else {
