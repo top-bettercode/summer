@@ -23,8 +23,8 @@ import org.springframework.data.util.Streamable;
 import org.springframework.lang.Nullable;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 import top.bettercode.simpleframework.data.jpa.query.JpaQueryLogExecution;
-import top.bettercode.simpleframework.data.jpa.support.DefaultSoftDeleteSupport;
-import top.bettercode.simpleframework.data.jpa.support.SoftDeleteSupport;
+import top.bettercode.simpleframework.data.jpa.support.DefaultExtJpaSupport;
+import top.bettercode.simpleframework.data.jpa.support.ExtJpaSupport;
 
 /**
  * @author Peter Wu
@@ -38,7 +38,7 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
   private final QueryPreparer countQuery;
   private final EntityManager em;
   private final EscapeCharacter escape;
-  private final SoftDeleteSupport softDeleteSupport;
+  private final ExtJpaSupport softDeleteSupport;
 
   private final String statementId;
 
@@ -50,7 +50,7 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
     this.em = em;
     this.escape = escape;
     Class<?> domainClass = method.getEntityInformation().getJavaType();
-    this.softDeleteSupport = new DefaultSoftDeleteSupport(jpaExtProperties, domainClass);
+    this.softDeleteSupport = new DefaultExtJpaSupport(jpaExtProperties, domainClass);
     this.parameters = method.getParameters();
 
     boolean recreationRequired =
@@ -105,7 +105,7 @@ public class PartTreeJpaExtQuery extends AbstractJpaQuery {
             Query query = jpaQuery.createQuery(accessor);
             List<?> resultList = query.getResultList();
 
-            if (softDeleteSupport.support()) {
+            if (softDeleteSupport.supportSoftDeleted()) {
               for (Object o : resultList) {
                 softDeleteSupport.setSoftDeleted(o);
                 em.merge(o);

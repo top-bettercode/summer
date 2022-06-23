@@ -333,7 +333,7 @@ public class SimpleJpaExtRepositoryTest {
         .specPath("lastName").containing("Beauford")
         .any(specMatcher ->
             specMatcher.equal("id", carterId)
-            .containing("firstName", " Cart ").specPath("firstName").trim())
+                .containing("firstName", " Cart ").specPath("firstName").trim())
         .desc("firstName").asc("lastName");
     List<User> all = repository.findAll(matcher);
     System.err.println(StringUtil.valueOf(all, true));

@@ -16,6 +16,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.SingularAttribute;
@@ -55,7 +56,7 @@ public class SimpleJpaExtRepository<T, ID> extends
   private final JpaEntityInformation<T, ID> entityInformation;
   private final EntityManager em;
   private final PersistenceProvider provider;
-  private final SoftDeleteSupport softDelete;
+  private final ExtJpaSupport extJpaSupport;
   private final EscapeCharacter escapeCharacter = EscapeCharacter.DEFAULT;
   private final Object notDeleted;
   private final Object deleted;
@@ -69,13 +70,13 @@ public class SimpleJpaExtRepository<T, ID> extends
     this.entityInformation = entityInformation;
     this.em = entityManager;
     this.provider = PersistenceProvider.fromEntityManager(entityManager);
-    this.softDelete = new DefaultSoftDeleteSupport(jpaExtProperties, getDomainClass());
-    this.notDeleted = softDelete.getFalseValue();
-    this.deleted = softDelete.getTrueValue();
+    this.extJpaSupport = new DefaultExtJpaSupport(jpaExtProperties, getDomainClass());
+    this.notDeleted = extJpaSupport.getSoftDeletedFalseValue();
+    this.deleted = extJpaSupport.getSoftDeletedTrueValue();
     this.notDeletedSpec = (root, query, builder) -> builder.equal(
-        root.get(softDelete.getPropertyName()), notDeleted);
+        root.get(extJpaSupport.getSoftDeletedPropertyName()), notDeleted);
     this.deletedSpec = (root, query, builder) -> builder.equal(
-        root.get(softDelete.getPropertyName()), deleted);
+        root.get(extJpaSupport.getSoftDeletedPropertyName()), deleted);
   }
 
   private static <T> Collection<T> toCollection(Iterable<T> ts) {
@@ -263,8 +264,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".save");
-      if (softDelete.support() && !softDelete.softDeletedSeted(entity)) {
-        softDelete.setUnSoftDeleted(entity);
+      if (extJpaSupport.supportSoftDeleted() && !extJpaSupport.softDeletedSeted(entity)) {
+        extJpaSupport.setUnSoftDeleted(entity);
       }
       if (isNew(entity, false)) {
         em.persist(entity);
@@ -288,7 +289,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       Class<T> domainClass = getDomainClass();
       CriteriaUpdate<T> criteriaUpdate = builder.createCriteriaUpdate(domainClass);
       Root<T> root = criteriaUpdate.from(domainClass);
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
       }
       Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
@@ -305,6 +306,22 @@ public class SimpleJpaExtRepository<T, ID> extends
         }
         criteriaUpdate.set(attributeName, attributeValue);
       }
+      String lastModifiedDatePropertyName = extJpaSupport.getLastModifiedDatePropertyName();
+      if (lastModifiedDatePropertyName != null) {
+        criteriaUpdate.set(lastModifiedDatePropertyName,
+            extJpaSupport.getLastModifiedDateNowValue());
+      }
+      String versionPropertyName = extJpaSupport.getVersionPropertyName();
+      if (versionPropertyName != null) {
+        Object versionIncValue = extJpaSupport.getVersionIncValue();
+        if (versionIncValue instanceof Number) {
+          Path<Number> path = root.get(versionPropertyName);
+          criteriaUpdate.set(path, builder.sum(path, (Number) versionIncValue));
+        } else {
+          criteriaUpdate.set(versionPropertyName, versionIncValue);
+        }
+      }
+
       int affected = em.createQuery(criteriaUpdate).executeUpdate();
       if (sqlLog.isDebugEnabled()) {
         sqlLog.debug("{} row affected", affected);
@@ -322,8 +339,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".dynamicSave");
-      if (softDelete.support() && !softDelete.softDeletedSeted(entity)) {
-        softDelete.setUnSoftDeleted(entity);
+      if (extJpaSupport.supportSoftDeleted() && !extJpaSupport.softDeletedSeted(entity)) {
+        extJpaSupport.setUnSoftDeleted(entity);
       }
       if (isNew(entity, true)) {
         em.persist(entity);
@@ -351,8 +368,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".dynamicSave");
-      if (softDelete.support() && !softDelete.softDeletedSeted(entity)) {
-        softDelete.setUnSoftDeleted(entity);
+      if (extJpaSupport.supportSoftDeleted() && !extJpaSupport.softDeletedSeted(entity)) {
+        extJpaSupport.setUnSoftDeleted(entity);
       }
       if (isNew(entity, true)) {
         em.persist(entity);
@@ -380,8 +397,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".delete");
-      if (softDelete.support()) {
-        softDelete.setSoftDeleted(entity);
+      if (extJpaSupport.supportSoftDeleted()) {
+        extJpaSupport.setSoftDeleted(entity);
         em.merge(entity);
       } else {
         super.delete(entity);
@@ -397,7 +414,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".delete");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         return softDelete(spec);
       } else {
         return hardDelete(spec);
@@ -417,7 +434,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     if (predicate != null) {
       criteriaUpdate.where(predicate);
     }
-    criteriaUpdate.set(root.get(softDelete.getPropertyName()), deleted);
+    criteriaUpdate.set(root.get(extJpaSupport.getSoftDeletedPropertyName()), deleted);
     int affected = em.createQuery(criteriaUpdate).executeUpdate();
     if (sqlLog.isDebugEnabled()) {
       sqlLog.debug("{} row affected", affected);
@@ -464,7 +481,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteAllByIdInBatch");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         softDelete((root, query, builder) ->
             root.get(entityInformation.getIdAttribute()).in(toCollection(ids)));
       } else {
@@ -481,13 +498,13 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteAllInBatch");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         Assert.notNull(entities, "The given Iterable of entities not be null!");
         if (!entities.iterator().hasNext()) {
           return;
         }
 
-        String softDeleteName = softDelete.getPropertyName();
+        String softDeleteName = extJpaSupport.getSoftDeletedPropertyName();
         String oldName = "old" + softDeleteName;
         String queryString = String
             .format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.getEntityName(),
@@ -542,8 +559,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteAllInBatch");
-      if (softDelete.support()) {
-        String softDeleteName = softDelete.getPropertyName();
+      if (extJpaSupport.supportSoftDeleted()) {
+        String softDeleteName = extJpaSupport.getSoftDeletedPropertyName();
         String oldName = "old" + softDeleteName;
         int affected = em.createQuery(String
                 .format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.getEntityName(),
@@ -567,7 +584,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findById");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         Specification<T> spec = (root, query, builder) -> builder.equal(
             root.get(entityInformation.getIdAttribute()), id);
         spec = spec.and(notDeletedSpec);
@@ -609,7 +626,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".getById");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         Specification<T> spec = (root, query, builder) -> builder.equal(
             root.get(entityInformation.getIdAttribute()), id);
         spec = spec.and(notDeletedSpec);
@@ -627,7 +644,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".existsById");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         Specification<T> spec = (root, query, builder) -> builder.equal(
             root.get(entityInformation.getIdAttribute()), id);
         spec = spec.and(notDeletedSpec);
@@ -646,7 +663,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAll");
       List<T> result;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         result = super.findAll(notDeletedSpec);
       } else {
         result = super.findAll();
@@ -667,7 +684,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       mdc = mdcPutId(".findAllById");
       Specification<T> spec = (root, query, builder) ->
           root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec.and(notDeletedSpec);
       }
       List<T> all = super.findAll(spec);
@@ -686,7 +703,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAll");
       List<T> result;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         result = super.findAll(notDeletedSpec, sort);
       } else {
         result = super.findAll(sort);
@@ -706,7 +723,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAll");
       Page<T> result;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         result = super.findAll(notDeletedSpec, pageable);
       } else {
         result = super.findAll(pageable);
@@ -728,7 +745,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAll");
       Specification<T> spec = null;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = notDeletedSpec;
       }
       return findUnpaged(spec, PageRequest.of(0, size));
@@ -744,7 +761,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAll");
       Specification<T> spec = null;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = notDeletedSpec;
       }
       return findUnpaged(spec, PageRequest.of(0, size, sort));
@@ -758,7 +775,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".count");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
       }
       long count = super.count(spec);
@@ -788,7 +805,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findFirst");
       Specification<T> spec = null;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = notDeletedSpec;
       }
       return findUnpaged(spec, PageRequest.of(0, 1, sort)).stream().findFirst();
@@ -802,7 +819,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findFirst");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
       }
       return findUnpaged(spec, PageRequest.of(0, 1)).stream().findFirst();
@@ -816,7 +833,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findOne");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
       }
       return super.findOne(spec);
@@ -830,7 +847,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
       }
       List<T> all = super.findAll(spec);
@@ -848,7 +865,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
       }
       return findUnpaged(spec, PageRequest.of(0, size));
@@ -862,7 +879,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
       }
       return findUnpaged(spec, PageRequest.of(0, size, sort));
@@ -891,7 +908,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
       }
       Page<T> all = super.findAll(spec, pageable);
@@ -910,7 +927,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
       }
       List<T> all = super.findAll(spec, sort);
@@ -939,8 +956,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findOne");
-      if (softDelete.support()) {
-        softDelete.setUnSoftDeleted(example.getProbe());
+      if (extJpaSupport.supportSoftDeleted()) {
+        extJpaSupport.setUnSoftDeleted(example.getProbe());
       }
       return super.findOne(example);
     } finally {
@@ -954,8 +971,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findBy");
-      if (softDelete.support()) {
-        softDelete.setUnSoftDeleted(example.getProbe());
+      if (extJpaSupport.supportSoftDeleted()) {
+        extJpaSupport.setUnSoftDeleted(example.getProbe());
       }
       return super.findBy(example, queryFunction);
     } finally {
@@ -968,8 +985,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".count");
-      if (softDelete.support()) {
-        softDelete.setUnSoftDeleted(example.getProbe());
+      if (extJpaSupport.supportSoftDeleted()) {
+        extJpaSupport.setUnSoftDeleted(example.getProbe());
       }
       long count = super.count(example);
       if (sqlLog.isDebugEnabled()) {
@@ -997,8 +1014,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
-      if (softDelete.support()) {
-        softDelete.setUnSoftDeleted(example.getProbe());
+      if (extJpaSupport.supportSoftDeleted()) {
+        extJpaSupport.setUnSoftDeleted(example.getProbe());
       }
       List<S> all = super.findAll(example);
       if (sqlLog.isDebugEnabled()) {
@@ -1036,8 +1053,8 @@ public class SimpleJpaExtRepository<T, ID> extends
 
 
   private <S extends T> List<S> findUnpaged(Example<S> example, PageRequest pageable) {
-    if (softDelete.support()) {
-      softDelete.setUnSoftDeleted(example.getProbe());
+    if (extJpaSupport.supportSoftDeleted()) {
+      extJpaSupport.setUnSoftDeleted(example.getProbe());
     }
     Class<S> probeType = example.getProbeType();
     TypedQuery<S> query = getQuery(new ExampleSpecification<>(example, escapeCharacter), probeType,
@@ -1058,8 +1075,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
-      if (softDelete.support()) {
-        softDelete.setUnSoftDeleted(example.getProbe());
+      if (extJpaSupport.supportSoftDeleted()) {
+        extJpaSupport.setUnSoftDeleted(example.getProbe());
       }
       List<S> all = super.findAll(example, sort);
       if (sqlLog.isDebugEnabled()) {
@@ -1076,8 +1093,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
-      if (softDelete.support()) {
-        softDelete.setUnSoftDeleted(example.getProbe());
+      if (extJpaSupport.supportSoftDeleted()) {
+        extJpaSupport.setUnSoftDeleted(example.getProbe());
       }
       Page<S> all = super.findAll(example, pageable);
       if (sqlLog.isDebugEnabled()) {
@@ -1096,8 +1113,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".count");
       long count;
-      if (softDelete.support()) {
-        String softDeleteName = softDelete.getPropertyName();
+      if (extJpaSupport.supportSoftDeleted()) {
+        String softDeleteName = extJpaSupport.getSoftDeletedPropertyName();
 
         String queryString = String.format(COUNT_QUERY_STRING + " WHERE " + EQUALS_CONDITION_STRING,
             provider.getCountQueryPlaceholder(), entityInformation.getEntityName(), "x",
@@ -1124,8 +1141,8 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".cleanRecycleBin");
       int reslut = 0;
-      if (softDelete.support()) {
-        String softDeleteName = softDelete.getPropertyName();
+      if (extJpaSupport.supportSoftDeleted()) {
+        String softDeleteName = extJpaSupport.getSoftDeletedPropertyName();
         reslut = em.createQuery(String
             .format("delete from %s x where x.%s = :%s", entityInformation.getEntityName(),
                 softDeleteName,
@@ -1147,7 +1164,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteFromRecycleBin");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         Optional<T> entity = findByIdFromRecycleBin(id);
         entity.ifPresent(super::delete);
       }
@@ -1161,7 +1178,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteAllByIdFromRecycleBin");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         Specification<T> spec = (root, query, builder) ->
             root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
         spec = spec.and(deletedSpec);
@@ -1182,7 +1199,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteFromRecycleBin");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? deletedSpec : spec.and(deletedSpec);
         hardDelete(spec);
       } else {
@@ -1202,7 +1219,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".countRecycleBin");
       long count;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         count = super.count(deletedSpec);
       } else {
         count = 0;
@@ -1221,7 +1238,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".countRecycleBin");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec.and(deletedSpec);
       }
       long count = super.count(spec);
@@ -1251,7 +1268,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findByIdFromRecycleBin");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         Specification<T> spec = (root, query, builder) -> builder.equal(
             root.get(entityInformation.getIdAttribute()), id);
         spec = spec.and(deletedSpec);
@@ -1270,7 +1287,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAllByIdFromRecycleBin");
       List<T> result;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         Specification<T> spec = (root, query, builder) ->
             root.get(entityInformation.getIdAttribute()).in(toCollection(ids));
         spec = spec.and(deletedSpec);
@@ -1292,7 +1309,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findOneFromRecycleBin");
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? deletedSpec : spec.and(deletedSpec);
         return super.findOne(spec);
       } else {
@@ -1321,7 +1338,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAllFromRecycleBin");
       List<T> result;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         result = super.findAll(deletedSpec);
       } else {
         result = Collections.emptyList();
@@ -1364,7 +1381,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAllFromRecycleBin");
       Page<T> result;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         result = super.findAll(deletedSpec, pageable);
       } else {
         result = Page.empty(pageable);
@@ -1387,7 +1404,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAllFromRecycleBin");
       List<T> result;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         result = super.findAll(deletedSpec, sort);
       } else {
         result = Collections.emptyList();
@@ -1409,7 +1426,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAllFromRecycleBin");
       List<T> result;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? deletedSpec : spec.and(deletedSpec);
         result = super.findAll(spec);
       } else {
@@ -1450,7 +1467,7 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @NotNull
   private List<T> findUnpagedFromRecycleBin(Specification<T> spec, PageRequest pageable) {
-    if (softDelete.support()) {
+    if (extJpaSupport.supportSoftDeleted()) {
       spec = spec == null ? deletedSpec : spec.and(deletedSpec);
       return findUnpaged(spec, pageable);
     } else {
@@ -1468,7 +1485,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAllFromRecycleBin");
       Page<T> result;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? deletedSpec : spec.and(deletedSpec);
         result = super.findAll(spec, pageable);
       } else {
@@ -1491,7 +1508,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     try {
       mdc = mdcPutId(".findAllFromRecycleBin");
       List<T> result;
-      if (softDelete.support()) {
+      if (extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? deletedSpec : spec.and(deletedSpec);
         result = super.findAll(spec, sort);
       } else {
