@@ -33,6 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.repository.query.EscapeCharacter;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
+import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
@@ -51,7 +52,7 @@ public class SimpleJpaExtRepository<T, ID> extends
   public static final String SOFT_DELETE_ALL_QUERY_STRING = "update %s e set e.%s = :%s where e.%s = :%s";
   private static final String EQUALS_CONDITION_STRING = "%s.%s = :%s";
 
-  private final JpaEntityInformation<T, ?> entityInformation;
+  private final JpaEntityInformation<T, ID> entityInformation;
   private final EntityManager em;
   private final PersistenceProvider provider;
   private final SoftDeleteSupport softDelete;
@@ -63,7 +64,7 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   public SimpleJpaExtRepository(
       JpaExtProperties jpaExtProperties,
-      JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
+      JpaEntityInformation<T, ID> entityInformation, EntityManager entityManager) {
     super(entityInformation, entityManager);
     this.entityInformation = entityInformation;
     this.em = entityManager;
@@ -90,16 +91,37 @@ public class SimpleJpaExtRepository<T, ID> extends
     return tCollection;
   }
 
-  private <S extends T> boolean isNew(S entity) {
-    if (String.class.equals(entityInformation.getIdType())) {
-      String id = (String) entityInformation.getId(entity);
+  private <S extends T> boolean isNew(S entity, boolean dynamicSave) {
+    Class<ID> idType = entityInformation.getIdType();
+    if (String.class.equals(idType)) {
+      ID id = entityInformation.getId(entity);
       if ("".equals(id)) {
         new DirectFieldAccessFallbackBeanWrapper(entity).setPropertyValue(
             entityInformation.getIdAttribute().getName(), null);
         return true;
       } else {
+        return entityIsNew(entity, dynamicSave);
+      }
+    } else {
+      return entityIsNew(entity, dynamicSave);
+    }
+  }
+
+  private <S extends T> boolean entityIsNew(S entity, boolean dynamicSave) {
+    if (dynamicSave && entityInformation instanceof JpaMetamodelEntityInformation) {
+      ID id = entityInformation.getId(entity);
+      Class<ID> idType = entityInformation.getIdType();
+
+      if (!idType.isPrimitive()) {
         return id == null;
       }
+
+      if (id instanceof Number) {
+        return ((Number) id).longValue() == 0L;
+      }
+
+      throw new IllegalArgumentException(
+          String.format("Unsupported primitive id type %s!", idType));
     } else {
       return entityInformation.isNew(entity);
     }
@@ -244,7 +266,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       if (softDelete.support() && !softDelete.softDeletedSeted(entity)) {
         softDelete.setUnSoftDeleted(entity);
       }
-      if (isNew(entity)) {
+      if (isNew(entity, false)) {
         em.persist(entity);
         return entity;
       } else {
@@ -303,12 +325,11 @@ public class SimpleJpaExtRepository<T, ID> extends
       if (softDelete.support() && !softDelete.softDeletedSeted(entity)) {
         softDelete.setUnSoftDeleted(entity);
       }
-      if (isNew(entity)) {
+      if (isNew(entity, true)) {
         em.persist(entity);
         return entity;
       } else {
-        @SuppressWarnings("unchecked")
-        Optional<T> optional = findById((ID) entityInformation.getId(entity));
+        Optional<T> optional = findById(entityInformation.getId(entity));
         if (optional.isPresent()) {
           T exist = optional.get();
           copyProperties(exist, entity, false);
@@ -333,12 +354,11 @@ public class SimpleJpaExtRepository<T, ID> extends
       if (softDelete.support() && !softDelete.softDeletedSeted(entity)) {
         softDelete.setUnSoftDeleted(entity);
       }
-      if (isNew(entity)) {
+      if (isNew(entity, true)) {
         em.persist(entity);
         return entity;
       } else {
-        @SuppressWarnings("unchecked")
-        Optional<T> optional = findById((ID) entityInformation.getId(entity));
+        Optional<T> optional = findById(entityInformation.getId(entity));
         if (optional.isPresent()) {
           T exist = optional.get();
           copyProperties(exist, entity, ignoreEmpty);
