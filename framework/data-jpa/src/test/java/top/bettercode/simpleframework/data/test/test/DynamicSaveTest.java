@@ -41,23 +41,26 @@ public class DynamicSaveTest {
 
   @Test
   public void dynamicSaveTest() {
-    User dave = new User(null, "Matthews");
+    User dave = new User("Wu", "Matthews");
     dave = repository.save(dave);
 
-    Optional<User> optionalUser = repository.findById(dave.getId());
+    Integer id = dave.getId();
+    Optional<User> optionalUser = repository.findById(id);
     org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
     optionalUser.ifPresent(user -> {
           System.err.println(user);
-      Assertions.assertNull(user.getFirstName());
+          Assertions.assertNotNull(user.getFirstName());
         }
     );
+    dave = new User();
+    dave.setId(id);
     dave.setLastName("MM");
     repository.dynamicSave(dave);
-    optionalUser = repository.findById(dave.getId());
+    optionalUser = repository.findById(id);
     org.junit.jupiter.api.Assertions.assertTrue(optionalUser.isPresent());
     optionalUser.ifPresent(user -> {
           System.err.println(user);
-      Assertions.assertNull(user.getFirstName());
+          Assertions.assertNotNull(user.getFirstName());
         }
     );
   }
