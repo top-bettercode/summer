@@ -37,7 +37,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public Optional<T> findOne(Predicate predicate) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
        return super.findOne(predicate);
@@ -45,7 +45,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public List<T> findAll(Predicate predicate) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
     return super.findAll(predicate);
@@ -53,7 +53,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public List<T> findAll(Predicate predicate, OrderSpecifier<?>... orders) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
     return super.findAll(predicate, orders);
@@ -61,7 +61,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public List<T> findAll(Predicate predicate, Sort sort) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
     return super.findAll(predicate, sort);
@@ -69,7 +69,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public List<T> findAll(OrderSpecifier<?>... orders) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       return super.findAll(softDeleteSupport.andFalsePredicate(null), orders);
     } else {
       return super.findAll(orders);
@@ -78,7 +78,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public Page<T> findAll(Predicate predicate, Pageable pageable) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
     return super.findAll(predicate, pageable);
@@ -86,7 +86,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public long count(Predicate predicate) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
     return super.count(predicate);
@@ -94,7 +94,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public boolean exists(Predicate predicate) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
     return super.exists(predicate);
@@ -102,7 +102,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public Optional<T> findOneFromRecycleBin(Predicate predicate) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andTruePredicate(predicate);
       return super.findOne(predicate);
     } else {
@@ -112,7 +112,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public Iterable<T> findAllFromRecycleBin(Predicate predicate) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andTruePredicate(predicate);
       return super.findAll(predicate);
     } else {
@@ -122,7 +122,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public Iterable<T> findAllFromRecycleBin(Predicate predicate, Sort sort) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andTruePredicate(predicate);
       return super.findAll(predicate, sort);
     } else {
@@ -132,7 +132,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public Iterable<T> findAllFromRecycleBin(Predicate predicate, OrderSpecifier<?>... orders) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andTruePredicate(predicate);
       return super.findAll(predicate, orders);
     } else {
@@ -142,7 +142,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public Iterable<T> findAllFromRecycleBin(OrderSpecifier<?>... orders) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       return super.findAll(softDeleteSupport.andTruePredicate(null), orders);
     } else {
       return Collections.emptyList();
@@ -151,7 +151,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public Page<T> findAllFromRecycleBin(Predicate predicate, Pageable pageable) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andTruePredicate(predicate);
       return super.findAll(predicate, pageable);
     } else {
@@ -161,7 +161,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public long countRecycleBin(Predicate predicate) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andTruePredicate(predicate);
       return super.count(predicate);
     } else {
@@ -171,7 +171,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
 
   @Override
   public boolean existsInRecycleBin(Predicate predicate) {
-    if (softDeleteSupport.support()) {
+    if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andTruePredicate(predicate);
       return super.exists(predicate);
     } else {

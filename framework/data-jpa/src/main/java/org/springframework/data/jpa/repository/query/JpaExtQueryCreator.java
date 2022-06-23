@@ -8,14 +8,14 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.ReturnedType;
 import org.springframework.data.repository.query.parser.PartTree;
-import top.bettercode.simpleframework.data.jpa.support.SoftDeleteSupport;
+import top.bettercode.simpleframework.data.jpa.support.ExtJpaSupport;
 
 /**
  * @author Peter Wu
  */
 public class JpaExtQueryCreator extends JpaQueryCreator {
 
-  private final SoftDeleteSupport softDeleteSupport;
+  private final ExtJpaSupport softDeleteSupport;
 
   /**
    * Create a new {@link JpaQueryCreator}.
@@ -30,7 +30,7 @@ public class JpaExtQueryCreator extends JpaQueryCreator {
       ReturnedType type,
       CriteriaBuilder builder,
       ParameterMetadataProvider provider,
-      SoftDeleteSupport softDeleteSupport) {
+      ExtJpaSupport softDeleteSupport) {
     super(tree, type, builder, provider);
     this.softDeleteSupport = softDeleteSupport;
   }
@@ -38,8 +38,8 @@ public class JpaExtQueryCreator extends JpaQueryCreator {
   @Override
   protected CriteriaQuery<?> complete(Predicate predicate, Sort sort,
       CriteriaQuery<?> query, CriteriaBuilder builder, Root<?> root) {
-    if (softDeleteSupport.support()) {
-      Path<Boolean> deletedPath = root.get(softDeleteSupport.getPropertyName());
+    if (softDeleteSupport.supportSoftDeleted()) {
+      Path<Boolean> deletedPath = root.get(softDeleteSupport.getSoftDeletedPropertyName());
       predicate = builder.and(predicate, builder.isFalse(deletedPath));
     }
     return super.complete(predicate, sort, query, builder, root);

@@ -6,31 +6,31 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.SimplePath;
 import org.springframework.beans.BeansException;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
-import top.bettercode.simpleframework.data.jpa.support.DefaultSoftDeleteSupport;
+import top.bettercode.simpleframework.data.jpa.support.DefaultExtJpaSupport;
 
 /**
  * @author Peter Wu
  */
-public class QuerydslSoftDeleteSupport extends DefaultSoftDeleteSupport {
+public class QuerydslSoftDeleteSupport extends DefaultExtJpaSupport {
 
   private SimplePath<Object> path;
 
   public <T> QuerydslSoftDeleteSupport(JpaExtProperties jpaExtProperties, Class<?> domainClass,
       EntityPath<T> entityPath) throws BeansException {
     super(jpaExtProperties, domainClass);
-    if (support()) {
+    if (supportSoftDeleted()) {
       if (entityPath != null) {
-        this.path = Expressions.path(getPropertyType(), entityPath, getPropertyName());
+        this.path = Expressions.path(getSoftDeletedPropertyType(), entityPath, getSoftDeletedPropertyName());
       }
     }
   }
 
   public Predicate andTruePredicate(Predicate predicate) {
-    return getPredicate(predicate, getTrueValue());
+    return getPredicate(predicate, getSoftDeletedTrueValue());
   }
 
   public Predicate andFalsePredicate(Predicate predicate) {
-    return getPredicate(predicate, getFalseValue());
+    return getPredicate(predicate, getSoftDeletedFalseValue());
   }
 
   protected Predicate getPredicate(Predicate predicate, Object value) {
