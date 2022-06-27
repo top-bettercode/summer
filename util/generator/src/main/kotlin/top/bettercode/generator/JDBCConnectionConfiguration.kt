@@ -3,6 +3,7 @@ package top.bettercode.generator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.generator.GeneratorExtension.Companion.javaName
 import top.bettercode.generator.database.DatabaseMetaData
 import top.bettercode.generator.database.entity.Table
 import java.sql.Connection
@@ -69,6 +70,20 @@ class JDBCConnectionConfiguration(
      */
     var queryIndex: Boolean = true
 
+    /**
+     * 表前缀
+     */
+    override var tablePrefixes: Array<String> = arrayOf()
+        get() {
+            return if (field.isEmpty()) {
+                ext.tablePrefixes
+            } else {
+                field
+            }
+        }
+
+    var entityPrefix: String = ""
+
     var tinyInt1isBit: Boolean
         set(value) = properties.set("tinyInt1isBit", value.toString())
         get() = properties.getProperty("tinyInt1isBit")?.toBoolean() ?: false
@@ -96,6 +111,7 @@ class JDBCConnectionConfiguration(
             connection.close()
         }
     }
+
 
     override fun tableNames(): List<String> {
         return use {

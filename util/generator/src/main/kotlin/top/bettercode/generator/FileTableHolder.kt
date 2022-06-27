@@ -13,6 +13,12 @@ abstract class FileTableHolder(
     val files: List<File>
 ) : TableHolder {
 
+    override var tablePrefixes: Array<String>
+        get() = ext.tablePrefixes
+        set(value) {
+            ext.tablePrefixes = value
+        }
+
     override fun tables(checkFound: Boolean, vararg tableName: String): List<Table> {
         val tableNames = tableName.distinct()
         val all = tableNames.isEmpty()

@@ -27,7 +27,7 @@ object CoreProjectTasks {
                 t.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
                     val tableNames =
-                        (Generators.tableNames(gen) + gen.tableNames).sortedBy { it }.distinct()
+                        (Generators.tableNamesWithOutPrefix(gen)).sortedBy { it }.distinct()
                     val serializationViews =
                         Interface(
                             type = JavaType("${if (gen.projectPackage) "${gen.packageName}.${gen.projectName}" else gen.packageName}.web.CoreSerializationViews"),
@@ -40,7 +40,7 @@ object CoreProjectTasks {
                             }
                             this.visibility = JavaVisibility.PUBLIC
                             tableNames.forEach {
-                                val pathName = gen.className(it)
+                                val pathName = GeneratorExtension.javaName(it, true)
                                 innerInterface(InnerInterface(JavaType("Get${pathName}List")))
                                 innerInterface(InnerInterface(JavaType("Get${pathName}Info")))
                             }

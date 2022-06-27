@@ -51,7 +51,6 @@ class ToolTest {
         val extension = GeneratorExtension()
         extension.tablePrefixes = arrayOf("ls_")
         println(GeneratorExtension.javaName("activity_event"))
-        println(extension.className("ls_activity_event"))
     }
 
     @Test

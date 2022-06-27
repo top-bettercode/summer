@@ -67,6 +67,10 @@ class GeneratorPlugin : Plugin<Project> {
                     configuration.debug = (properties["debug"] as? String ?: "false").toBoolean()
                     configuration.queryIndex =
                         (properties["queryIndex"] as? String ?: "true").toBoolean()
+                    configuration.tablePrefixes =
+                        (properties["tablePrefix"] as? String ?: "").split(",")
+                            .filter { it.isNotBlank() }.toTypedArray()
+                    configuration.entityPrefix = properties["entityPrefix"] as? String ?: ""
                     configuration.tinyInt1isBit =
                         (properties["tinyInt1isBit"] as? String ?: "false").toBoolean()
                     if (configuration.isOracle) {
@@ -119,6 +123,7 @@ class GeneratorPlugin : Plugin<Project> {
                 (findGeneratorProperty(project, "tablePrefix") ?: "").split(",")
                     .filter { it.isNotBlank() }
                     .toTypedArray()
+            extension.entityPrefix = findGeneratorProperty(project, "entityPrefix") ?: ""
             extension.remarks = findGeneratorProperty(project, "remarks") ?: ""
             extension.softDeleteColumnName = findGeneratorProperty(project, "softDeleteColumnName")
                 ?: "deleted"
@@ -308,14 +313,17 @@ class GeneratorPlugin : Plugin<Project> {
                                         tables,
                                         output
                                     )
+
                                     DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
                                         tables,
                                         output
                                     )
+
                                     DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
                                         tables,
                                         output
                                     )
+
                                     else -> {
                                         throw IllegalArgumentException("不支持的数据库")
                                     }
@@ -373,12 +381,15 @@ class GeneratorPlugin : Plugin<Project> {
                                         DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
                                             module, oldTables, tables, pw, extension
                                         )
+
                                         DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
                                             module, oldTables, tables, pw, extension
                                         )
+
                                         DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
                                             module, oldTables, tables, pw, extension
                                         )
+
                                         else -> {
                                             throw IllegalArgumentException("不支持的数据库")
                                         }
