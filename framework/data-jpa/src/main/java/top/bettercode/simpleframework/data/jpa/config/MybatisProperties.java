@@ -46,7 +46,7 @@ public class MybatisProperties {
    */
   private String typeHandlersPackage;
 
-  private TypeHandler<?>[] typeHandlers;
+  private Class<TypeHandler<?>>[] typeHandlerClasses;
 
   /**
    * Indicates whether perform presence check of the MyBatis xml config file.
@@ -89,12 +89,14 @@ public class MybatisProperties {
     this.typeHandlersPackage = typeHandlersPackage;
   }
 
-  public TypeHandler<?>[] getTypeHandlers() {
-    return typeHandlers;
+  public Class<TypeHandler<?>>[] getTypeHandlerClasses() {
+    return typeHandlerClasses;
   }
 
-  public void setTypeHandlers(TypeHandler<?>[] typeHandlers) {
-    this.typeHandlers = typeHandlers;
+  public MybatisProperties setTypeHandlerClasses(
+      Class<TypeHandler<?>>[] typeHandlerClasses) {
+    this.typeHandlerClasses = typeHandlerClasses;
+    return this;
   }
 
   public String getTypeAliasesPackage() {

@@ -125,9 +125,9 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
           .forEach(configuration.getTypeHandlerRegistry()::register);
     }
 
-    TypeHandler<?>[] typeHandlers = properties.getTypeHandlers();
-    if (!ArrayUtil.isEmpty(typeHandlers)) {
-      Stream.of(typeHandlers).forEach(typeHandler -> {
+    Class<TypeHandler<?>>[] typeHandlerClasses = properties.getTypeHandlerClasses();
+    if (!ArrayUtil.isEmpty(typeHandlerClasses)) {
+      Stream.of(typeHandlerClasses).forEach(typeHandler -> {
         finalConfiguration.getTypeHandlerRegistry().register(typeHandler);
         if (log.isDebugEnabled()) {
           log.debug("Registered type handler: '" + typeHandler + "'");
