@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import top.bettercode.simpleframework.web.resolver.Cent;
+import top.bettercode.simpleframework.web.serializer.annotation.JsonArray;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonDefault;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonUrl;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DataDicBean {
+public class StringArrayBean {
 
   @JsonDefault("0")
   @NotNull
@@ -37,9 +38,21 @@ public class DataDicBean {
   private String path1;
   private String desc;
 
+  @JsonArray
+  private String ary;
+
   private List<String> paths;
   private String[] pathArray;
 
+
+  public String getAry() {
+    return ary;
+  }
+
+  public StringArrayBean setAry(String ary) {
+    this.ary = ary;
+    return this;
+  }
 
   public BigDecimal getNumber1() {
     return number1;
@@ -168,10 +181,10 @@ public class DataDicBean {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof DataDicBean)) {
+    if (!(o instanceof StringArrayBean)) {
       return false;
     }
-    DataDicBean that = (DataDicBean) o;
+    StringArrayBean that = (StringArrayBean) o;
     return Objects.equals(number1, that.number1) && Objects.equals(number2,
         that.number2) && Objects.equals(number22, that.number22)
         && Objects.equals(number3, that.number3) && Objects.equals(number4,
