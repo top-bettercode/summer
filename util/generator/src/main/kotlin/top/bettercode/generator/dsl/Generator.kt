@@ -77,9 +77,7 @@ open class Generator {
 
     val className
         get() =
-            if (otherColumns.isEmpty()) "${table.className(ext)}Entity" else table.className(
-                ext
-            )
+            if (otherColumns.isEmpty()) "${table.className}Entity" else table.className
 
 
     val projectClassName
@@ -88,19 +86,15 @@ open class Generator {
                     "projectClassName",
                     true
                 )
-            ) table.className(ext) + projectName.substring(
+            ) table.className + projectName.substring(
                 0, if (projectName.length > 5) 5 else projectName.length
             )
-                .capitalized() else table.className(
-                ext
-            )
+                .capitalized() else table.className
 
 
     val entityName
         get() =
-            if (otherColumns.isEmpty()) "${table.entityName(ext)}Entity" else table.entityName(
-                ext
-            )
+            if (otherColumns.isEmpty()) "${table.entityName}Entity" else table.entityName
 
 
     val projectEntityName get() = projectClassName.decapitalized()
@@ -161,10 +155,8 @@ open class Generator {
             return if (primaryKeys.size == 1) {
                 primaryKey.javaType.shortName
             } else {
-                if (otherColumns.isEmpty()) table.className(ext) else "${
-                    table.className(
-                        ext
-                    )
+                if (otherColumns.isEmpty()) table.className else "${
+                    table.className
                 }Key"
             }
         }
@@ -178,9 +170,9 @@ open class Generator {
                 primaryKey.javaName
             } else {
                 if (otherColumns.isEmpty())
-                    table.entityName(ext)
+                    table.entityName
                 else
-                    "${table.entityName(ext)}Key"
+                    "${table.entityName}Key"
             }
 
 
@@ -191,8 +183,8 @@ open class Generator {
             } else {
                 JavaType(
                     "$packageName.${modulePackage("Entity")}.${
-                        if (isFullComposite) table.className(ext)
-                        else "${table.className(ext)}Key"
+                        if (isFullComposite) table.className
+                        else "${table.className}Key"
                     }"
                 )
             }
@@ -216,7 +208,7 @@ open class Generator {
      */
     val columns: List<Column> get() = table.columns
 
-    val pathName: String get() = table.pathName(ext)
+    val pathName: String get() = table.pathName
 
     fun setting(key: String): Any? = settings[key]
 
@@ -231,7 +223,7 @@ open class Generator {
     fun modulePackage(name: String): String {
         val onePackage = enable("onePackage", true)
         return if (onePackage)
-            table.entityName(ext).lowercase(Locale.getDefault())
+            table.entityName.lowercase(Locale.getDefault())
         else when (name) {
             "Domain" -> "domain"
             "QueryDsl" -> "querydsl"
@@ -246,7 +238,7 @@ open class Generator {
             "Service" -> "service"
             "ServiceImpl" -> "service.impl"
             "Repository" -> "repository"
-            else -> table.entityName(ext).lowercase(Locale.getDefault())
+            else -> table.entityName.lowercase(Locale.getDefault())
         }
     }
 

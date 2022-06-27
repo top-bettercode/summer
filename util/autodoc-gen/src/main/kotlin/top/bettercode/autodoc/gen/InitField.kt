@@ -20,7 +20,6 @@ import top.bettercode.lang.decapitalized
 import top.bettercode.lang.property.PropertiesSource
 import top.bettercode.logging.operation.OperationRequestPart
 import java.io.File
-import java.util.*
 
 /**
  *
@@ -145,13 +144,13 @@ object InitField {
                         for (tableName in Autodoc.tableNames) {
                             val table = tables.find { it.tableName == tableName }
                             if (table != null) {
-                                if (fn(table.fields(extension = ext), false)) {
+                                if (fn(table.fields(), false)) {
                                     return@all
                                 }
                             }
                         }
                         for (table in tables.filter { !Autodoc.tableNames.contains(it.tableName) }) {
-                            if (fn(table.fields(extension = ext), false)) {
+                            if (fn(table.fields(), false)) {
                                 return@all
                             }
                         }
@@ -170,7 +169,7 @@ object InitField {
                                 it.module = module
                             }
                             if (table != null) {
-                                if (fn(table.fields(extension = ext), false)) {
+                                if (fn(table.fields(), false)) {
                                     return
                                 }
                             }
@@ -184,7 +183,7 @@ object InitField {
                                 it.module = module
                             }
                             if (table != null) {
-                                if (fn(table.fields(extension = ext), false)) {
+                                if (fn(table.fields(), false)) {
                                     return
                                 }
                             }
@@ -192,6 +191,7 @@ object InitField {
                     }
                 }
             }
+
             DataType.PUML -> {
                 fixFields(pumlSources) { file, module ->
                     PumlConverter.toTables(file) {
@@ -201,6 +201,7 @@ object InitField {
                     }
                 }
             }
+
             DataType.PDM -> {
                 fixFields(pdmSources) { file, module ->
                     PdmReader.read(file) {
@@ -213,7 +214,7 @@ object InitField {
         }
     }
 
-    private fun Table.fields(extension: GeneratorExtension): Set<Field> {
+    private fun Table.fields(): Set<Field> {
         val fields = columns.flatMapTo(mutableSetOf()) { column ->
             var type =
                 if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits <= 0) "" else ",${column.decimalDigits}"})" else column.javaType.shortNameWithoutTypeArguments
@@ -230,16 +231,16 @@ object InitField {
             )
         }
         fields.addAll(fields.map { Field(English.plural(it.name), "Array", it.description) })
-        fields.add(Field(entityName(extension), "Object", remarks))
-        fields.add(Field(pathName(extension), "Array", remarks))
+        fields.add(Field(entityName, "Object", remarks))
+        fields.add(Field(pathName, "Array", remarks))
         if (primaryKeys.size == 0) {
-            fields.add(Field(entityName(extension) + "Entity", "Object", remarks))
+            fields.add(Field(entityName + "Entity", "Object", remarks))
         } else {
             if (primaryKeys.size > 1) {
-                fields.add(Field(entityName(extension) + "Key", "String", remarks + "主键"))
+                fields.add(Field(entityName + "Key", "String", remarks + "主键"))
                 fields.add(
                     Field(
-                        English.plural(entityName(extension) + "Key"),
+                        English.plural(entityName + "Key"),
                         "String",
                         remarks + "主键"
                     )
@@ -439,9 +440,11 @@ object InitField {
             name.endsWith("Path") -> name.substringBeforeLast("Path")
             name.startsWith("start") -> name.substringAfter("start")
                 .decapitalized()
+
             name.endsWith("Start") -> name.substringBeforeLast("Start")
             name.startsWith("end") -> name.substringAfter("end")
                 .decapitalized()
+
             name.endsWith("End") -> name.substringBeforeLast("End")
             name.endsWith("Pct") -> name.substringBeforeLast("Pct")
             else -> {

@@ -36,6 +36,10 @@ public class GenProperties extends AutodocExtension {
    * 表前缀
    */
   private String[] tablePrefixes = new String[0];
+  /**
+   * 实体前缀
+   */
+  private String entityPrefix = "";
 
   public Boolean getEnable() {
     return enable;
@@ -83,5 +87,14 @@ public class GenProperties extends AutodocExtension {
 
   public void setTablePrefixes(String[] tablePrefixes) {
     this.tablePrefixes = tablePrefixes;
+  }
+
+  public String getEntityPrefix() {
+    return entityPrefix;
+  }
+
+  public GenProperties setEntityPrefix(String entityPrefix) {
+    this.entityPrefix = entityPrefix;
+    return this;
   }
 }

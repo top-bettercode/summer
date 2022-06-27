@@ -86,6 +86,10 @@ open class GeneratorExtension(
      */
     var tablePrefixes: Array<String> = arrayOf(),
     /**
+     * 实体类前缀
+     */
+    var entityPrefix: String = "",
+    /**
      * 注释说明
      */
     var remarks: String = "",
@@ -146,6 +150,17 @@ open class GeneratorExtension(
             javaName(it, false)
         }
 
+        /**
+         * ClassName
+         */
+        @JvmStatic
+        fun className(str: String, entityPrefix: String, tablePrefixes: Array<String>): String {
+            return javaName(
+                (if (entityPrefix.isBlank()) "" else entityPrefix + "_") + str.substringAfter(
+                    tablePrefixes.find { str.startsWith(it) }
+                        ?: ""), true)
+        }
+
         @JvmStatic
         fun javaName(str: String, capitalize: Boolean = false): String {
             val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") { s ->
@@ -193,13 +208,6 @@ open class GeneratorExtension(
         if (File(projectDir, pumlSrc).exists())
             projectDir
         else rootPath
-    }
-
-    /**
-     * ClassName
-     */
-    var className: (String) -> String = { str ->
-        javaName(str.substringAfter(tablePrefixes.find { str.startsWith(it) } ?: ""), true)
     }
 
     private fun findUpPath(file: File): File? {
@@ -271,11 +279,13 @@ open class GeneratorExtension(
                     function(module, jdbc)
                 }
             }
+
             DataType.PUML -> {
                 pumlSources.map { (module, files) ->
                     function(module, PumlTableHolder(this, module, files))
                 }
             }
+
             DataType.PDM -> {
                 pdmSources.map { (module, files) ->
                     function(module, PdmTableHolder(this, module, files))

@@ -158,7 +158,8 @@ class AutodocHandler(
                 //field
                 val extension = GeneratorExtension(
                     dataType = genProperties.dataType,
-                    tablePrefixes = genProperties.tablePrefixes
+                    tablePrefixes = genProperties.tablePrefixes,
+                    entityPrefix = genProperties.entityPrefix
                 )
                 extension.datasources = datasources
 

@@ -16,6 +16,13 @@ object Generators {
         }.flatten().sortedBy { it }
     }
 
+    fun tableNamesWithOutPrefix(extension: GeneratorExtension): List<String> {
+        return extension.run { _, tableHolder ->
+            tableHolder.tableNames().map {str-> str.substringAfter(tableHolder.tablePrefixes.find { str.startsWith(it) } ?: "") }
+        }.flatten().sortedBy { it }
+    }
+
+
     /**
      * @param extension 配置
      */

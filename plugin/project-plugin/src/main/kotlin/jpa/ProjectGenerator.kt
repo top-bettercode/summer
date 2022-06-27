@@ -31,25 +31,19 @@ abstract class ProjectGenerator : Generator() {
     val propertiesType
         get() = JavaType(
             "$packageName.${modulePackage("Properties")}.${
-                table.className(
-                    ext
-                )
+                table.className
             }Properties"
         )
     val matcherType
         get() = JavaType(
             "$packageName.${modulePackage("Matcher")}.${
-                table.className(
-                    ext
-                )
+                table.className
             }Matcher"
         )
     val methodInfoType
         get() = JavaType(
             "$packageName.${modulePackage("MethodInfo")}.${
-                table.className(
-                    ext
-                )
+                table.className
             }MethodInfo"
         )
     val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")

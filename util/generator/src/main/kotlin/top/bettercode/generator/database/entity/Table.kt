@@ -115,11 +115,15 @@ data class Table(
     val supportSoftDelete: Boolean
         get() = columns.find { it.softDelete } != null
 
-    fun className(extension: GeneratorExtension): String = extension.className(tableName)
+    val className: String
+        get() = if (datasource != null) GeneratorExtension.className(
+            tableName,
+            datasource!!.entityPrefix,
+            datasource!!.tablePrefixes
+        ) else GeneratorExtension.className(tableName, ext.entityPrefix, ext.tablePrefixes)
 
-    fun entityName(extension: GeneratorExtension): String =
-        className(extension).decapitalized()
+    val entityName: String get() = className.decapitalized()
 
-    fun pathName(extension: GeneratorExtension): String = entityName(extension)
+    val pathName: String get() = entityName
 
 }
