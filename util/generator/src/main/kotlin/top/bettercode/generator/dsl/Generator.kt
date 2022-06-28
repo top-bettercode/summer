@@ -493,7 +493,7 @@ open class Generator {
                 "Long" -> "${columnDef}L"
                 "Double" -> "${columnDef}D"
                 "Float" -> "${columnDef}F"
-                "BigDecimal" -> "new BigDecimal($columnDef)"
+                "BigDecimal" -> "new java.math.BigDecimal($columnDef)"
                 "String" -> "\"$columnDef\""
                 else -> columnDef
             }
@@ -509,7 +509,7 @@ open class Generator {
             "Long" -> "Long.valueOf($value)"
             "Double" -> "Double.valueOf($value)"
             "Float" -> "Float.valueOf($value)"
-            "BigDecimal" -> "new BigDecimal($value)"
+            "BigDecimal" -> "new java.math.BigDecimal($value)"
             else -> value
         }
     }
