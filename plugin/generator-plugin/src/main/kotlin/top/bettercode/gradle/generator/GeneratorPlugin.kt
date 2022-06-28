@@ -164,14 +164,24 @@ class GeneratorPlugin : Plugin<Project> {
                 }.toList().toTypedArray()
         }
 
-        project.tasks.create("gen") { task ->
-            task.group = genGroup
-            task.doLast {
-                Generators.call(project.extensions.getByType(GeneratorExtension::class.java))
+        val extension = project.extensions.getByType(GeneratorExtension::class.java)
+        extension.run { module, tableHolder ->
+            val prefix = if (defaultModuleName == module) "" else "[${
+                module.capitalized()
+            }]"
+            project.tasks.create("gen${prefix}") { task ->
+                task.group = genGroup
+                task.doLast(object : Action<Task> {
+                    override fun execute(it: Task) {
+                        Generators.call(
+                            project.extensions.getByType(GeneratorExtension::class.java),
+                            tableHolder
+                        )
+                    }
+                })
             }
         }
 
-        val extension = project.extensions.getByType(GeneratorExtension::class.java)
         if (extension.unitedDatasource) {
             if (!project.rootProject.tasks.names.contains("print[TableNames]"))
                 configPuml(project.rootProject, extension)
@@ -191,7 +201,7 @@ class GeneratorPlugin : Plugin<Project> {
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val tableNames = tableHolder.tableNames()
-                        print("${module}数据表:${tableNames}")
+                        print("${module}数据表:${tableNames.joinToString(",")}")
                     }
                 })
             }
