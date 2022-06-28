@@ -6,7 +6,6 @@ import top.bettercode.generator.dom.java.element.TopLevelClass
 /**
  * @author Peter Wu
  */
-
 val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         javadoc {
@@ -181,22 +180,6 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"return noContent();"
             }
 
-            //update
-            method("update", JavaType.objectInstance) {
-                annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
-                annotation("@org.springframework.transaction.annotation.Transactional")
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"${primaryKeyName}\", name = \"编辑\")")
-                parameter {
-                    import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
-                    annotation("@org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
-                    name = "${entityName}Form"
-                    type = formType
-                }
-                +"$className $entityName = ${if (isFullComposite) "new $className(${entityName}Form.getEntity())" else "${entityName}Form.getEntity()"};"
-                +"${projectEntityName}Service.dynamicSave($entityName);"
-                +"return noContent();"
-            }
-
             method("delete", JavaType.objectInstance) {
                 annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
@@ -217,4 +200,71 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
     }
 
+}
+
+val updateController: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
+    unit.apply {
+        javadoc {
+            +"/**"
+            +" * $remarks 接口"
+            +" */"
+        }
+        import(entityType)
+
+        superClass("$basePackageName.support.${projectName.capitalized()}Controller")
+
+        annotation("@org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication")
+        annotation("@org.springframework.validation.annotation.Validated")
+        annotation("@org.springframework.web.bind.annotation.RestController")
+        annotation("@org.springframework.web.bind.annotation.RequestMapping(value = \"/$pathName\", name = \"$remarks\")")
+
+        field(
+            "${projectEntityName}Service",
+            if (interfaceService) iserviceType else serviceType,
+            isFinal = true
+        )
+
+        constructor(
+            Parameter(
+                "${projectEntityName}Service",
+                if (interfaceService) iserviceType else serviceType
+            )
+        ) {
+            +"this.${projectEntityName}Service = ${projectEntityName}Service;"
+        }
+
+        import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
+        method("${entityName}Form", formType) {
+            annotation("@org.springframework.web.bind.annotation.ModelAttribute")
+            parameter {
+                name = primaryKeyName
+                type =
+                    if (isCompositePrimaryKey) JavaType.stringInstance else primaryKeyType
+                if (JavaType.stringInstance == type) {
+                    annotation("@javax.validation.constraints.NotBlank")
+                } else {
+                    annotation("@javax.validation.constraints.NotNull")
+                }
+            }
+            +"$className $entityName = ${projectEntityName}Service.findById(${if (isCompositePrimaryKey) "${primaryKeyType.shortName}.of($primaryKeyName)" else primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
+            +"return new ${projectClassName}Form($entityName);"
+        }
+
+        //update
+        import("javax.validation.groups.Default")
+        method("update", JavaType.objectInstance) {
+            annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
+            annotation("@org.springframework.transaction.annotation.Transactional")
+            annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"${primaryKeyName}\", name = \"编辑\")")
+            parameter {
+                import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
+                annotation("@org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
+                name = "${entityName}Form"
+                type = formType
+            }
+            +"$className $entityName = ${if (isFullComposite) "new $className(${entityName}Form.getEntity())" else "${entityName}Form.getEntity()"};"
+            +"${projectEntityName}Service.save($entityName);"
+            +"return noContent();"
+        }
+    }
 }

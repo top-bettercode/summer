@@ -49,6 +49,7 @@ abstract class ProjectGenerator : Generator() {
     val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
     val mixInType get() = JavaType("$packageName.${modulePackage("MixIn")}.${projectClassName}MixIn")
     val controllerType get() = JavaType("$packageName.${modulePackage("Controller")}.${projectClassName}Controller")
+    val updateControllerType get() = JavaType("$packageName.${modulePackage("Controller")}.${projectClassName}UpdateController")
     val controllerTestType get() = JavaType("$packageName.${modulePackage("ControllerTest")}.${projectClassName}ControllerTest")
     val iserviceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
     val serviceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}Service")

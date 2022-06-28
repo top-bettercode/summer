@@ -14,6 +14,11 @@ open class Controller(private val overwrite: Boolean = false) : ProjectGenerator
         +clazz(controllerType, overwrite = overwrite) {
             controller(this)
         }
+        if (!isFullComposite) {
+            +clazz(updateControllerType, overwrite = overwrite) {
+                updateController(this)
+            }
+        }
 
         +clazz(controllerTestType, overwrite = overwrite, sourceSet = SourceSet.TEST) {
             controllerTest(this)
