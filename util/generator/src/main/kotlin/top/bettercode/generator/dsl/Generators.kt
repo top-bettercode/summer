@@ -2,6 +2,7 @@ package top.bettercode.generator.dsl
 
 import top.bettercode.generator.DataType
 import top.bettercode.generator.GeneratorExtension
+import top.bettercode.generator.TableHolder
 
 /**
  * 模板脚本
@@ -18,7 +19,9 @@ object Generators {
 
     fun tableNamesWithOutPrefix(extension: GeneratorExtension): List<String> {
         return extension.run { _, tableHolder ->
-            tableHolder.tableNames().map {str-> str.substringAfter(tableHolder.tablePrefixes.find { str.startsWith(it) } ?: "") }
+            tableHolder.tableNames().map { str ->
+                str.substringAfter(tableHolder.tablePrefixes.find { str.startsWith(it) } ?: "")
+            }
         }.flatten().sortedBy { it }
     }
 
@@ -41,9 +44,11 @@ object Generators {
                     DataType.DATABASE -> {
                         extension.datasources.size <= 1
                     }
+
                     DataType.PUML -> {
                         extension.pumlSources.size <= 1
                     }
+
                     DataType.PDM -> {
                         extension.pdmSources.size <= 1
                     }
@@ -52,6 +57,41 @@ object Generators {
                 generators.forEach { generator ->
                     generator.run(table)
                 }
+            }
+        }
+
+        generators.forEach { generator ->
+            generator.preTearDown()
+            generator.tearDown()
+        }
+    }
+
+    fun call(extension: GeneratorExtension, tableHolder: TableHolder) {
+        val generators = extension.generators
+        if (generators.isEmpty()) {
+            return
+        }
+        generators.forEach { generator ->
+            generator.setUp(extension)
+        }
+
+        tableHolder.tables(
+            checkFound = when (extension.dataType) {
+                DataType.DATABASE -> {
+                    extension.datasources.size <= 1
+                }
+
+                DataType.PUML -> {
+                    extension.pumlSources.size <= 1
+                }
+
+                DataType.PDM -> {
+                    extension.pdmSources.size <= 1
+                }
+            }, tableName = extension.tableNames
+        ).forEach { table ->
+            generators.forEach { generator ->
+                generator.run(table)
             }
         }
 
