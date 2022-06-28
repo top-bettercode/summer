@@ -167,6 +167,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             //create
             import("javax.validation.groups.Default")
             method("create", JavaType.objectInstance) {
+                annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"!${primaryKeyName}\", name = \"新增\")")
                 parameter {
@@ -182,6 +183,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //update
             method("update", JavaType.objectInstance) {
+                annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"${primaryKeyName}\", name = \"编辑\")")
                 parameter {
@@ -196,6 +198,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             method("delete", JavaType.objectInstance) {
+                annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/delete\", name = \"删除\")")
                 parameter {
