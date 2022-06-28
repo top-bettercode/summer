@@ -20,9 +20,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         annotation("@org.springframework.transaction.annotation.Transactional")
         superClass("$basePackageName.support.BaseWebTest")
 
-        staticImport("org.junit.jupiter.api.Assertions.assertFalse")
         staticImport("org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get")
-        staticImport("org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post")
         staticImport("org.springframework.test.web.servlet.result.MockMvcResultMatchers.status")
 
         annotation("@org.junit.jupiter.api.TestMethodOrder(org.junit.jupiter.api.MethodOrderer.OrderAnnotation.class)")
@@ -106,6 +104,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             val filterOtherColumns =
                 otherColumns.filter { !it.version && !it.jsonViewIgnored && it.javaName != "createdDate" && it.javaName != "lastModifiedDate" }
             //create
+            staticImport("org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post")
             method("create", JavaType.voidPrimitiveInstance) {
 //                javadoc {
 //                    +"// ${remarks}新增"
@@ -172,6 +171,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             //delete
+            staticImport("org.junit.jupiter.api.Assertions.assertFalse")
             method("delete", JavaType.voidPrimitiveInstance) {
 //                javadoc {
 //                    +"// ${remarks}删除"
