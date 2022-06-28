@@ -158,7 +158,6 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         annotation("@javax.validation.constraints.NotNull")
                     }
                 }
-                import("java.util.Optional")
                 import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
 
                 +"$className $entityName = ${projectEntityName}Service.findById(${if (isCompositePrimaryKey) "${primaryKeyType.shortName}.of($primaryKeyName)" else primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"

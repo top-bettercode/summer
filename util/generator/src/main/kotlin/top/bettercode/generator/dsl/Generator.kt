@@ -433,7 +433,7 @@ open class Generator {
                             PrimitiveTypeWrapper.doubleInstance -> 1.0
                             PrimitiveTypeWrapper.longInstance -> 1L
                             PrimitiveTypeWrapper.integerInstance -> 1
-                            JavaType.stringInstance -> remark.replace("\"", "\\\"")
+                            JavaType.stringInstance -> remark.replace("\\", "\\\\")
                             else -> 1
                         }
                 }
@@ -469,7 +469,7 @@ open class Generator {
                             PrimitiveTypeWrapper.shortInstance -> "new Short(\"1\")"
                             PrimitiveTypeWrapper.byteInstance -> "new Byte(\"1\")"
                             JavaType("byte[]") -> "new byte[0]"
-                            JavaType.stringInstance -> "\"${remark.replace("\"", "\\\"")}\""
+                            JavaType.stringInstance -> "\"${remark.replace("\\", "\\\\")}\""
                             else -> "1"
                         }
                     }
