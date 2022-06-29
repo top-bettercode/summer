@@ -1,8 +1,10 @@
 package top.bettercode.simpleframework.data.test.support;
 
+import java.util.stream.Stream;
 import javax.sql.DataSource;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.InitializingBean;
@@ -15,6 +17,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import top.bettercode.lang.util.ArrayUtil;
 import top.bettercode.simpleframework.data.jpa.config.JpaMybatisAutoConfiguration;
 import top.bettercode.simpleframework.data.jpa.config.MybatisProperties;
 
@@ -63,7 +66,11 @@ public class MybatisAutoConfiguration implements InitializingBean {
     factory.setTypeAliases(this.properties.getTypeAliases());
     factory.setTypeAliasesSuperType(this.properties.getTypeAliasesSuperType());
     factory.setTypeHandlersPackage(this.properties.getTypeHandlersPackage());
-    factory.setTypeHandlers(this.properties.getTypeHandlers());
+
+    Class<TypeHandler<?>>[] typeHandlerClasses = properties.getTypeHandlerClasses();
+    if (!ArrayUtil.isEmpty(typeHandlerClasses)) {
+      Stream.of(typeHandlerClasses).forEach(typeHandler -> configuration.getTypeHandlerRegistry().register(typeHandler));
+    }
 
     Resource[] mapperLocations = JpaMybatisAutoConfiguration.resolveMapperLocations(
         this.properties.getMapperLocations());
