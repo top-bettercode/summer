@@ -39,11 +39,6 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
-  public <S extends T> S dynamicSave(S s, boolean ignoreEmpty) {
-    return repository.dynamicSave(s, ignoreEmpty);
-  }
-
-  @Override
   public int delete(Specification<T> spec) {
     return repository.delete(spec);
   }

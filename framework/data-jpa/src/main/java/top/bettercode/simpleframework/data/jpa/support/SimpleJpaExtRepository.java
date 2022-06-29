@@ -2,7 +2,6 @@ package top.bettercode.simpleframework.data.jpa.support;
 
 import static org.springframework.data.jpa.repository.query.QueryUtils.COUNT_QUERY_STRING;
 
-import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.BeansException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +38,7 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import top.bettercode.lang.util.BeanUtil;
 import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
 
@@ -125,31 +124,6 @@ public class SimpleJpaExtRepository<T, ID> extends
           String.format("Unsupported primitive id type %s!", idType));
     } else {
       return entityInformation.isNew(entity);
-    }
-  }
-
-  private void copyProperties(Object exist, Object newEntity, boolean ignoreEmpty)
-      throws BeansException {
-
-    Assert.notNull(exist, "exist must not be null");
-    Assert.notNull(newEntity, "newEntity must not be null");
-
-    DirectFieldAccessFallbackBeanWrapper existWrapper = new DirectFieldAccessFallbackBeanWrapper(
-        exist);
-    DirectFieldAccessFallbackBeanWrapper newWrapper = new DirectFieldAccessFallbackBeanWrapper(
-        newEntity);
-    PropertyDescriptor[] targetPds = newWrapper.getPropertyDescriptors();
-
-    for (PropertyDescriptor targetPd : targetPds) {
-      String propertyName = targetPd.getName();
-      if ("class".equals(propertyName)) {
-        continue;
-      }
-      Object propertyValue = newWrapper.getPropertyValue(propertyName);
-      if (propertyValue != null && (!ignoreEmpty || !"".equals(propertyValue))) {
-        continue;
-      }
-      newWrapper.setPropertyValue(propertyName, existWrapper.getPropertyValue(propertyName));
     }
   }
 
@@ -349,36 +323,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         Optional<T> optional = findById(entityInformation.getId(entity));
         if (optional.isPresent()) {
           T exist = optional.get();
-          copyProperties(exist, entity, false);
-          return em.merge(entity);
-        } else {
-          em.persist(entity);
-          return entity;
-        }
-      }
-    } finally {
-      cleanMdc(mdc);
-    }
-  }
-
-
-  @Transactional
-  @Override
-  public <S extends T> S dynamicSave(S entity, boolean ignoreEmpty) {
-    boolean mdc = false;
-    try {
-      mdc = mdcPutId(".dynamicSave");
-      if (extJpaSupport.supportSoftDeleted() && !extJpaSupport.softDeletedSeted(entity)) {
-        extJpaSupport.setUnSoftDeleted(entity);
-      }
-      if (isNew(entity, true)) {
-        em.persist(entity);
-        return entity;
-      } else {
-        Optional<T> optional = findById(entityInformation.getId(entity));
-        if (optional.isPresent()) {
-          T exist = optional.get();
-          copyProperties(exist, entity, ignoreEmpty);
+          BeanUtil.copyPropertiesNotNull(exist, entity);
           return em.merge(entity);
         } else {
           em.persist(entity);

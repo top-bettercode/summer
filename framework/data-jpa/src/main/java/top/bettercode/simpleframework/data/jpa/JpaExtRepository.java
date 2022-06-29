@@ -35,16 +35,6 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
    */
   <S extends T> S dynamicSave(S s);
 
-  /**
-   * 动态更新
-   *
-   * @param s           对象
-   * @param ignoreEmpty 是否不更新空字符字段
-   * @param <S>         类型
-   * @return 结果
-   */
-  <S extends T> S dynamicSave(S s, boolean ignoreEmpty);
-
   int delete(Specification<T> spec);
 
   boolean exists(Specification<T> spec);
