@@ -69,7 +69,7 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
     if (!this.orders.isEmpty()) {
       List<Order> orders = this.orders.stream().map(o -> {
-        Path<Object> path = root.get(o.getProperty());
+        Path<?> path = SpecPath.toPath(root, o.getProperty());
         return o.getDirection().isDescending() ? cb.desc(path) : cb.asc(path);
       }).collect(Collectors.toList());
       query.orderBy(orders);
