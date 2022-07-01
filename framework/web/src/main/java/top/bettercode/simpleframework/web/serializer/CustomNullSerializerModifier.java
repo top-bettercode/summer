@@ -28,13 +28,16 @@ public class CustomNullSerializerModifier extends BeanSerializerModifier {
         JsonDefault annotation = writer.getAnnotation(JsonDefault.class);
         String defaultValue = null;
         String extendedValue = null;
+        String fieldName = null;
         if (annotation != null) {
           defaultValue = annotation.value();
           extendedValue = annotation.extended();
+          fieldName = annotation.fieldName();
         }
-        if (defaultValue != null
+        if (defaultValue != null || fieldName != null
             || config.getDefaultPropertyInclusion().getValueInclusion() != Include.NON_NULL) {
-          writer.assignNullSerializer(new CustomNullSerializer(writer, defaultValue, extendedValue,
+          writer.assignNullSerializer(new CustomNullSerializer(writer, defaultValue, fieldName,
+              extendedValue,
               jacksonExtProperties));
         }
       }

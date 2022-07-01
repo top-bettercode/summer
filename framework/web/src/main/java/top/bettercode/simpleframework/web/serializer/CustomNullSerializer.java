@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import org.springframework.util.StringUtils;
+import top.bettercode.lang.util.DirectFieldAccessFallbackBeanWrapper;
 import top.bettercode.simpleframework.config.JacksonExtProperties;
 import top.bettercode.simpleframework.support.ApplicationContextHolder;
 import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
@@ -28,16 +29,18 @@ public class CustomNullSerializer extends StdSerializer<Object> {
   private final Class<?> type;
   private final String defaultValue;
   private final String extendedValue;
+  private final String fieldName;
   private final JacksonExtProperties jacksonExtProperties;
   private final boolean isArray;
   private final BeanPropertyWriter writer;
 
   public CustomNullSerializer(BeanPropertyWriter writer, String defaultValue,
-      String extendedValue, JacksonExtProperties jacksonExtProperties) {
+      String fieldName, String extendedValue, JacksonExtProperties jacksonExtProperties) {
     super(Object.class);
     this.writer = writer;
     this.type = writer.getType().getRawClass();
     this.defaultValue = defaultValue;
+    this.fieldName = fieldName;
     this.extendedValue = extendedValue;
     this.jacksonExtProperties = jacksonExtProperties;
     isArray = type.isArray() || (Collection.class.isAssignableFrom(type) && !Map.class
@@ -49,63 +52,66 @@ public class CustomNullSerializer extends StdSerializer<Object> {
       throws IOException {
     JsonStreamContext outputContext = gen.getOutputContext();
     String fieldName = outputContext.getCurrentName();
+    Object defaultValue = this.defaultValue;
+    if ("".equals(this.defaultValue) && StringUtils.hasText(this.fieldName)) {
+      Object o = gen.currentValue();
+      DirectFieldAccessFallbackBeanWrapper beanWrapper = new DirectFieldAccessFallbackBeanWrapper(
+          o);
+      defaultValue = beanWrapper.getPropertyValue(this.fieldName);
+    }
 
     if (defaultValue == null) {
       if (jacksonExtProperties.getDefaultEmpty()) {
-        JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
-        if (jsonCode != null) {
-          new CodeSerializer(jsonCode.value(), jsonCode.extended())
-              .serialize("", gen, provider);
-          return;
-        }
-        serializeNull(gen, type, value);
-        serializeExtend(gen, fieldName, true);
+        serializeJsonCode(value, gen, provider, fieldName);
       } else {
         gen.writeNull();
         serializeExtend(gen, fieldName, false);
       }
     } else {
-      if (StringUtils.hasText(defaultValue)) {
-        JsonBigDecimal jsonBigDecimal = writer.getAnnotation(JsonBigDecimal.class);
-        if (jsonBigDecimal != null && jsonBigDecimal.toPlainString()) {
-          gen.writeString(defaultValue);
+      if (defaultValue instanceof String && !StringUtils.hasText((String) defaultValue)) {
+        if (serializeJsonCode(value, gen, provider, fieldName)) {
           return;
         }
-        Object val = ApplicationContextHolder.getConversionService().convert(defaultValue, type);
-        if (jsonBigDecimal != null) {
-          new BigDecimalSerializer(jsonBigDecimal.scale(), jsonBigDecimal.roundingMode(),
-              jsonBigDecimal.toPlainString(),
-              jsonBigDecimal.reduceFraction(), jsonBigDecimal.percent()).serialize(
-              (BigDecimal) val, gen,
-              provider);
-          return;
-        }
-        JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
-        if (jsonCode != null) {
-          new CodeSerializer(jsonCode.value(), jsonCode.extended())
-              .serialize((Serializable) val, gen, provider);
-          return;
-        }
-        JsonUrl jsonUrl = writer.getAnnotation(JsonUrl.class);
-        if (jsonUrl != null) {
-          new UrlSerializer(jsonUrl.value(), jsonUrl.urlFieldName(), jsonUrl.extended(),
-              jsonUrl.asMap(),
-              jsonUrl.separator(), jsonUrl.mapper()).serialize(val, gen, provider);
-          return;
-        }
-
-        gen.writeObject(val);
-      } else {
-        JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
-        if (jsonCode != null) {
-          new CodeSerializer(jsonCode.value(), jsonCode.extended())
-              .serialize("", gen, provider);
-          return;
-        }
-        serializeNull(gen, type, value);
-        serializeExtend(gen, fieldName, true);
+        return;
       }
+      JsonBigDecimal jsonBigDecimal = writer.getAnnotation(JsonBigDecimal.class);
+      Object val = ApplicationContextHolder.getConversionService().convert(defaultValue, type);
+      if (jsonBigDecimal != null) {
+        new BigDecimalSerializer(jsonBigDecimal.scale(), jsonBigDecimal.roundingMode(),
+            jsonBigDecimal.toPlainString(),
+            jsonBigDecimal.reduceFraction(), jsonBigDecimal.percent()).serialize(
+            (BigDecimal) val, gen,
+            provider);
+        return;
+      }
+      JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
+      if (jsonCode != null) {
+        new CodeSerializer(jsonCode.value(), jsonCode.extended())
+            .serialize((Serializable) val, gen, provider);
+        return;
+      }
+      JsonUrl jsonUrl = writer.getAnnotation(JsonUrl.class);
+      if (jsonUrl != null) {
+        new UrlSerializer(jsonUrl.value(), jsonUrl.urlFieldName(), jsonUrl.extended(),
+            jsonUrl.asMap(),
+            jsonUrl.separator(), jsonUrl.mapper()).serialize(val, gen, provider);
+        return;
+      }
+      gen.writeObject(val);
     }
+  }
+
+  private boolean serializeJsonCode(Object value, JsonGenerator gen, SerializerProvider provider,
+      String fieldName) throws IOException {
+    JsonCode jsonCode = writer.getAnnotation(JsonCode.class);
+    if (jsonCode != null) {
+      new CodeSerializer(jsonCode.value(), jsonCode.extended())
+          .serialize("", gen, provider);
+      return true;
+    }
+    serializeNull(gen, type, value);
+    serializeExtend(gen, fieldName, true);
+    return false;
   }
 
   private void serializeExtend(JsonGenerator gen, String fieldName,

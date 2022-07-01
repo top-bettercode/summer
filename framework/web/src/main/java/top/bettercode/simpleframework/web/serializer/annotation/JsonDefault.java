@@ -17,6 +17,11 @@ public @interface JsonDefault {
   String value() default "";
 
   /**
+   * @return 使用另一个字段的值
+   */
+  String fieldName() default "";
+
+  /**
    * @return 扩展默认值
    */
   String extended() default "";
