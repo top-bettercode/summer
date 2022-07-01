@@ -19,6 +19,7 @@ public class DataDicBean {
   private BigDecimal number1;
   @JsonBigDecimal(scale = 3)
   private BigDecimal number2;
+  @JsonDefault(fieldName = "number2")
   @JsonBigDecimal(scale = 3, reduceFraction = true)
   private BigDecimal number22;
   @JsonBigDecimal(scale = 4, toPlainString = true, percent = true, reduceFraction = true)
