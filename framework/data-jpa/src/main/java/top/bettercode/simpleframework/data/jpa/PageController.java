@@ -44,6 +44,11 @@ public class PageController extends BaseController {
       int number = properties.getPageable().isOneIndexedParameters() ? 1 : 0;
       int size = collection.size();
       return new PagedResources<>(new PageMetadata(number, size, 1, size), collection);
+    } else if (object != null && object.getClass().isArray()) {
+      Object[] array = (Object[]) object;
+      int number = properties.getPageable().isOneIndexedParameters() ? 1 : 0;
+      int size = array.length;
+      return new PagedResources<>(new PageMetadata(number, size, 1, size), array);
     } else {
       return object;
     }

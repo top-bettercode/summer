@@ -2,30 +2,29 @@ package top.bettercode.simpleframework.web;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import java.util.Collection;
 import java.util.Objects;
 import org.springframework.util.Assert;
 
 public class PagedResources<T> {
 
-  private Collection<T> content;
+  private T content;
 
   private PageMetadata metadata;
 
   public PagedResources() {
   }
 
-  public PagedResources(PageMetadata metadata, Collection<T> content) {
+  public PagedResources(PageMetadata metadata, T content) {
     this.content = content;
     this.metadata = metadata;
   }
 
   @JsonView(Object.class)
-  public Collection<T> getContent() {
+  public T getContent() {
     return content;
   }
 
-  public void setContent(Collection<T> content) {
+  public void setContent(T content) {
     this.content = content;
   }
 
