@@ -7,13 +7,13 @@ import top.bettercode.generator.dom.unit.PropertiesUnit
 class Entity : ProjectGenerator() {
 
     override fun setUp() {
-        if (ext.projectIsBoot) {
+        if (isCore) {
             add(properties(msgName, true) { load(ext.projectDir) })
         }
     }
 
     override fun content() {
-        if (ext.projectIsBoot) {
+        if (isCore) {
             msg(this[msgName] as PropertiesUnit)
         }
 
