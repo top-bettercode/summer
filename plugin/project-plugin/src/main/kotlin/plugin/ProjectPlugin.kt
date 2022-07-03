@@ -1,8 +1,8 @@
 package plugin
 
-import ProjectUtil.isBoot
-import ProjectUtil.isCloud
-import ProjectUtil.isCore
+import top.bettercode.gradle.generator.ProjectUtil.isBoot
+import top.bettercode.gradle.generator.ProjectUtil.isCloud
+import top.bettercode.gradle.generator.ProjectUtil.isCore
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project

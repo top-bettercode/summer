@@ -1,6 +1,6 @@
 package plugin
 
-import ProjectUtil.isCloud
+import top.bettercode.gradle.generator.ProjectUtil.isCloud
 import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
 import org.gradle.api.Project
 import java.util.*

@@ -1,6 +1,6 @@
-import ProjectUtil.isBoot
-import ProjectUtil.isCloud
-import ProjectUtil.isCore
+import top.bettercode.gradle.generator.ProjectUtil.isBoot
+import top.bettercode.gradle.generator.ProjectUtil.isCloud
+import top.bettercode.gradle.generator.ProjectUtil.isCore
 import org.gradle.api.Project
 import top.bettercode.gradle.profile.ProfileExtension
 import top.bettercode.gradle.profile.ProfileExtension.Companion.profilesActive
