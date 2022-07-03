@@ -1,13 +1,12 @@
 package plugin
 
-import top.bettercode.gradle.generator.ProjectUtil.isBoot
-import top.bettercode.gradle.generator.ProjectUtil.isCloud
-import top.bettercode.gradle.generator.ProjectUtil.isCore
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
+import top.bettercode.gradle.generator.ProjectUtil.isBoot
+import top.bettercode.gradle.generator.ProjectUtil.isCloud
+import top.bettercode.gradle.generator.ProjectUtil.isCore
 
 /**
  *
@@ -40,12 +39,6 @@ class ProjectPlugin : Plugin<Project> {
                     it.testOutputDir = convention.sourceSets
                         .getByName(SourceSet.TEST_SOURCE_SET_NAME).java.classesDirectory.get().asFile
                 }
-            }
-
-            //java
-            subProject.extensions.configure(org.gradle.api.plugins.JavaPluginExtension::class.java) { java ->
-                java.sourceCompatibility = JavaVersion.VERSION_1_8
-                java.targetCompatibility = JavaVersion.VERSION_1_8
             }
 
             //plugins
