@@ -21,6 +21,10 @@ open class GeneratorExtension(
      * 包名是否自动加项目名区分
      */
     var projectPackage: Boolean = false,
+    /**
+     * 是否是主项目
+     */
+    var projectIsBoot: Boolean = false,
 
     /**
      * 生成文件基础路径,项目路径

@@ -1,6 +1,6 @@
 package plugin
 
-import ProjectUtil.isBoot
+import top.bettercode.gradle.generator.ProjectUtil.isBoot
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.Plugin
 import org.gradle.api.Project

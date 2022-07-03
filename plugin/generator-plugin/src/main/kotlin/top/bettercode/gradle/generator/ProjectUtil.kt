@@ -1,3 +1,5 @@
+package top.bettercode.gradle.generator
+
 import org.gradle.api.Project
 
 /**

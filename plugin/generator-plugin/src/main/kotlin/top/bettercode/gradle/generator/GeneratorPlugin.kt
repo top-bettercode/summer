@@ -22,6 +22,7 @@ import top.bettercode.generator.dsl.Generator
 import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.dsl.def.PlantUML
 import top.bettercode.generator.puml.PumlConverter
+import top.bettercode.gradle.generator.ProjectUtil.isBoot
 import top.bettercode.lang.capitalized
 import java.io.File
 import java.util.*
@@ -162,6 +163,8 @@ class GeneratorPlugin : Plugin<Project> {
                 .map {
                     Class.forName(it.trim()).getDeclaredConstructor().newInstance() as Generator
                 }.toList().toTypedArray()
+
+            extension.projectIsBoot=project.isBoot
         }
 
         val extension = project.extensions.getByType(GeneratorExtension::class.java)
