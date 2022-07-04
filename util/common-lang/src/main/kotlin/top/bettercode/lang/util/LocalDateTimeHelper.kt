@@ -9,8 +9,7 @@ import java.util.*
  * @author Peter Wu
  */
 class LocalDateTimeHelper private constructor(
-    private val localDateTime: LocalDateTime,
-    private var zoneOffset: ZoneOffset?
+    private val localDateTime: LocalDateTime
 ) {
 
     /**
@@ -20,7 +19,6 @@ class LocalDateTimeHelper private constructor(
      */
     val firstDayOfMonth: LocalDateTimeHelper by lazy {
         of(localDateTime.with(TemporalAdjusters.firstDayOfMonth()))
-            .zoneOffset(zoneOffset)
     }
 
     /**
@@ -30,7 +28,6 @@ class LocalDateTimeHelper private constructor(
      */
     val firstDayOfNextMonth: LocalDateTimeHelper by lazy {
         of(localDateTime.with(TemporalAdjusters.firstDayOfNextMonth()))
-            .zoneOffset(zoneOffset)
     }
 
     /**
@@ -40,7 +37,6 @@ class LocalDateTimeHelper private constructor(
      */
     val lastDayOfMonth: LocalDateTimeHelper by lazy {
         of(localDateTime.with(TemporalAdjusters.lastDayOfMonth()))
-            .zoneOffset(zoneOffset)
     }
 
     /**
@@ -52,7 +48,7 @@ class LocalDateTimeHelper private constructor(
         of(
             localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().value)
                 .with(TemporalAdjusters.firstDayOfMonth())
-        ).zoneOffset(zoneOffset)
+        )
     }
 
     /**
@@ -62,10 +58,9 @@ class LocalDateTimeHelper private constructor(
      */
     val firstDayOfNextQuarter: LocalDateTimeHelper by lazy {
         of(
-            localDateTime
-                .withMonth(localDateTime.month.firstMonthOfQuarter().plus(3).value)
+            localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().plus(3).value)
                 .with(TemporalAdjusters.firstDayOfMonth())
-        ).zoneOffset(zoneOffset)
+        )
     }
 
     /**
@@ -78,7 +73,7 @@ class LocalDateTimeHelper private constructor(
             localDateTime
                 .withMonth(localDateTime.month.firstMonthOfQuarter().plus(2).value)
                 .with(TemporalAdjusters.lastDayOfMonth())
-        ).zoneOffset(zoneOffset)
+        )
     }
 
     /**
@@ -88,7 +83,6 @@ class LocalDateTimeHelper private constructor(
      */
     val firstDayOfYear: LocalDateTimeHelper by lazy {
         of(localDateTime.with(TemporalAdjusters.firstDayOfYear()))
-            .zoneOffset(zoneOffset)
     }
 
     /**
@@ -98,7 +92,6 @@ class LocalDateTimeHelper private constructor(
      */
     val firstDayOfNextYear: LocalDateTimeHelper by lazy {
         of(localDateTime.with(TemporalAdjusters.firstDayOfNextYear()))
-            .zoneOffset(zoneOffset)
     }
 
     /**
@@ -108,7 +101,6 @@ class LocalDateTimeHelper private constructor(
      */
     val lastDayOfYear: LocalDateTimeHelper by lazy {
         of(localDateTime.with(TemporalAdjusters.lastDayOfYear()))
-            .zoneOffset(zoneOffset)
     }
 
     //--------------------------------------------
@@ -120,8 +112,9 @@ class LocalDateTimeHelper private constructor(
         return Date.from(toInstant())
     }
 
-    fun toInstant(): Instant {
-        return toLocalDateTime().toInstant(zoneOffset)
+    @JvmOverloads
+    fun toInstant(zoneId: ZoneId = DEFAULT_ZONE_ID): Instant {
+        return localDateTime.atZone(zoneId).toInstant()
     }
 
     fun toLocalDateTime(): LocalDateTime {
@@ -132,22 +125,14 @@ class LocalDateTimeHelper private constructor(
         return localDateTime.toLocalDate()
     }
 
-    fun format(): String {
-        return toLocalDateTime().format(DateTimeFormatter.ISO_DATE_TIME)
-    }
-
-    fun format(dateTimeFormatter: DateTimeFormatter): String {
+    @JvmOverloads
+    fun format(dateTimeFormatter: DateTimeFormatter = dateFormatter): String {
         return localDateTime.format(dateTimeFormatter)
-    }
-
-    private fun zoneOffset(zoneOffset: ZoneOffset?): LocalDateTimeHelper {
-        this.zoneOffset = zoneOffset
-        return this
     }
 
     companion object {
 
-        private val DEFAULT_ZONE_OFFSET = ZoneOffset.of("+8")!!
+        private val DEFAULT_ZONE_ID = ZoneId.systemDefault()
         private const val dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS"
         private val dateFormatter = DateTimeFormatter.ofPattern(dateFormatPattern)
 
@@ -163,64 +148,67 @@ class LocalDateTimeHelper private constructor(
 
         @JvmStatic
         fun now(): LocalDateTimeHelper {
-            return LocalDateTimeHelper(LocalDateTime.now(), DEFAULT_ZONE_OFFSET)
+            return LocalDateTimeHelper(LocalDateTime.now())
         }
 
         @JvmStatic
         fun parse(text: CharSequence): LocalDateTimeHelper {
-            return LocalDateTimeHelper(LocalDateTime.parse(text), DEFAULT_ZONE_OFFSET)
+            return LocalDateTimeHelper(LocalDateTime.parse(text))
         }
 
         @JvmStatic
-
         fun parse(text: CharSequence, formatter: DateTimeFormatter): LocalDateTimeHelper {
-            return LocalDateTimeHelper(LocalDateTime.parse(text, formatter), DEFAULT_ZONE_OFFSET)
+            return LocalDateTimeHelper(LocalDateTime.parse(text, formatter))
         }
 
         @JvmStatic
         fun of(year: Int, month: Int, dayOfMonth: Int): LocalDateTimeHelper {
-            return LocalDateTimeHelper(
-                LocalDate.of(year, month, dayOfMonth).atStartOfDay(),
-                DEFAULT_ZONE_OFFSET
-            )
+            return LocalDateTimeHelper(LocalDate.of(year, month, dayOfMonth).atStartOfDay())
+        }
+
+        @JvmStatic
+        @JvmOverloads
+        fun of(instant: Instant, zoneId: ZoneId = DEFAULT_ZONE_ID): LocalDateTimeHelper {
+            return of(LocalDateTime.ofInstant(instant, zoneId))
         }
 
         @JvmStatic
         fun of(localDateTime: LocalDateTime): LocalDateTimeHelper {
-            return LocalDateTimeHelper(localDateTime, DEFAULT_ZONE_OFFSET)
+            return LocalDateTimeHelper(localDateTime)
         }
 
         @JvmStatic
         fun of(localDate: LocalDate): LocalDateTimeHelper {
-            return LocalDateTimeHelper(localDate.atStartOfDay(), DEFAULT_ZONE_OFFSET)
+            return LocalDateTimeHelper(localDate.atStartOfDay())
         }
 
         @JvmStatic
         fun of(date: Date): LocalDateTimeHelper {
-            return of(date.time)
+            return of(date.toInstant())
         }
 
         @JvmStatic
         fun of(millis: Long): LocalDateTimeHelper {
-            return of(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDateTime())
+            return of(Instant.ofEpochMilli(millis))
         }
 
         @JvmStatic
         fun of(calendar: Calendar): LocalDateTimeHelper {
             return LocalDateTimeHelper(
-                LocalDateTime.ofInstant(calendar.toInstant(), calendar.timeZone.toZoneId()),
-                DEFAULT_ZONE_OFFSET
+                LocalDateTime.ofInstant(calendar.toInstant(), calendar.timeZone.toZoneId())
             )
         }
 
+        @JvmOverloads
         @JvmStatic
-        fun toDate(localDate: LocalDate): Date {
-            return Date.from(localDate.atStartOfDay(DEFAULT_ZONE_OFFSET).toInstant())
+        fun toDate(localDate: LocalDate, zoneId: ZoneId = DEFAULT_ZONE_ID): Date {
+            return Date.from(localDate.atStartOfDay(zoneId).toInstant())
         }
 
+        @JvmOverloads
         @JvmStatic
-        fun toDate(localDateTime: LocalDateTime): Date {
-            return Date.from(localDateTime.toInstant(DEFAULT_ZONE_OFFSET))
+        fun toDate(localDateTime: LocalDateTime, zoneId: ZoneId = DEFAULT_ZONE_ID): Date {
+            return Date.from(localDateTime.atZone(zoneId).toInstant())
         }
 
     }
