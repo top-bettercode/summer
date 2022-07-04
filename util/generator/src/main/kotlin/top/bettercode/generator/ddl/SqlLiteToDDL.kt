@@ -41,7 +41,7 @@ object SqlLiteToDDL : ToDDL() {
         val tableName = table.tableName
         pw.appendLine("$commentPrefix $tableName")
         pw.appendLine("DROP TABLE IF EXISTS $quote$tableName$quote;")
-        pw.appendLine("CREATE TABLE $quote$tableName$quote ( -- '${table.remarks}'")
+        pw.appendLine("CREATE TABLE $quote$tableName$quote ( -- '${table.remarks.replace("\\","\\\\")}'")
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
             pw.appendLine(
@@ -50,7 +50,7 @@ object SqlLiteToDDL : ToDDL() {
                         column,
                         quote
                     )
-                } ${if (index < lastIndex) "," else ""} -- '${column.remarks}'"
+                } ${if (index < lastIndex) "," else ""} -- '${column.remarks.replace("\\","\\\\")}'"
             )
         }
 

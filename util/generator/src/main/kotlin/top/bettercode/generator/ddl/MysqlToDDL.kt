@@ -34,7 +34,7 @@ object MysqlToDDL : ToDDL() {
                     if (oldTable != table) {
                         val lines = mutableListOf<String>()
                         if (oldTable.remarks != table.remarks)
-                            lines.add("ALTER TABLE $quote$tableName$quote COMMENT '${table.remarks}';")
+                            lines.add("ALTER TABLE $quote$tableName$quote COMMENT '${table.remarks.replace("\\","\\\\")}';")
 
                         val oldColumns = oldTable.columns
                         val columns = table.columns
@@ -51,7 +51,7 @@ object MysqlToDDL : ToDDL() {
                                             primaryKey,
                                             quote
                                         )
-                                    } COMMENT '${primaryKey.remarks}';"
+                                    } COMMENT '${primaryKey.remarks.replace("\\","\\\\")}';"
                                 )
                                 oldColumns.remove(oldPrimaryKey)
                                 columns.remove(primaryKey)
@@ -76,7 +76,7 @@ object MysqlToDDL : ToDDL() {
                                             column,
                                             quote
                                         )
-                                    } COMMENT '${column.remarks}';"
+                                    } COMMENT '${column.remarks.replace("\\","\\\\")}';"
                                 )
                                 addFk(column, lines, tableName, columnName)
                             } else {
@@ -88,7 +88,7 @@ object MysqlToDDL : ToDDL() {
                                                 column,
                                                 quote
                                             )
-                                        } COMMENT '${column.remarks}';"
+                                        } COMMENT '${column.remarks.replace("\\","\\\\")}';"
                                     )
                                     updateFk(column, oldColumn, lines, tableName)
                                 }
@@ -131,12 +131,12 @@ object MysqlToDDL : ToDDL() {
                         column,
                         quote
                     )
-                } COMMENT '${column.remarks}'${if (index < lastIndex || hasPrimary) "," else ""}"
+                } COMMENT '${column.remarks.replace("\\","\\\\")}'${if (index < lastIndex || hasPrimary) "," else ""}"
             )
         }
 
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
-        pw.appendLine(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${table.remarks}';")
+        pw.appendLine(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${table.remarks.replace("\\","\\\\")}';")
 
         appendIndexes(table, pw, quote)
 
