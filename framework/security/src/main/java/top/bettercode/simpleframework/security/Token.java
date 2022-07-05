@@ -38,8 +38,7 @@ public class Token implements Serializable {
 
   public int getExpires_in() {
     return expiresAt != null ? Long.valueOf(
-            (expiresAt.toEpochMilli() - System.currentTimeMillis()) / 1000L)
-        .intValue() : 0;
+        (expiresAt.toEpochMilli() - System.currentTimeMillis()) / 1000L).intValue() : -1;
   }
 
 }
