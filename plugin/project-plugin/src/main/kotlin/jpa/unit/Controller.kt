@@ -133,7 +133,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
                 +"Iterable<$className> results = ${projectEntityName}Service.findAll(${matcherType.shortName}.matching(${entityName}), sort);"
                 import("top.bettercode.util.excel.ExcelExport")
-                +"ExcelExport.export(request, response, \"$remarks\", excelExport -> excelExport.sheet(\"$remarks\").setData(${
+                +"ExcelExport.sheet(\"$remarks\", excelExport -> excelExport.setData(${
                     if (isFullComposite) {
                         import("com.google.common.collect.Streams")
                         "Streams.stream(results).map($className::get$primaryKeyClassName).collect(Collectors.toList())"
