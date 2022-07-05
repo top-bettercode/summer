@@ -1,12 +1,12 @@
 package top.bettercode.util.excel;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -74,8 +74,8 @@ public class ExcelExport {
    * @return ExcelExport
    * @throws FileNotFoundException FileNotFoundException
    */
-  public static ExcelExport of(String filename) throws FileNotFoundException {
-    return new ExcelExport(new FileOutputStream(filename));
+  public static ExcelExport of(String filename) throws IOException {
+    return new ExcelExport(Files.newOutputStream(Paths.get(filename)));
   }
 
   /**
@@ -83,12 +83,12 @@ public class ExcelExport {
    * @return ExcelExport
    * @throws FileNotFoundException FileNotFoundException
    */
-  public static ExcelExport of(File file) throws FileNotFoundException {
+  public static ExcelExport of(File file) throws IOException {
     File parentFile = file.getParentFile();
     if (!parentFile.exists()) {
       parentFile.mkdirs();
     }
-    return new ExcelExport(new FileOutputStream(file));
+    return new ExcelExport(Files.newOutputStream(file.toPath()));
   }
 
 
@@ -581,12 +581,12 @@ public class ExcelExport {
         dir.mkdirs();
       }
       File tmpFile = new File(file + "-" + UUID.randomUUID());
-      try (OutputStream outputStream = new FileOutputStream(tmpFile)) {
+      try (OutputStream outputStream = Files.newOutputStream(tmpFile.toPath())) {
         consumer.accept(outputStream);
       }
       tmpFile.renameTo(file);
     }
-    StreamUtils.copy(new FileInputStream(file), response.getOutputStream());
+    StreamUtils.copy(Files.newInputStream(file.toPath()), response.getOutputStream());
   }
 
   /**
