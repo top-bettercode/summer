@@ -50,16 +50,19 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
   private final boolean useExtensionField;
   private final boolean asMap;
   private final String separator;
+
+  private final String defaultValue;
   private final Class<? extends JsonUrlMapper> mapperType;
 
   public UrlSerializer() {
-    this(null, "", true, true, ",", null);
+    this(null, "", true, true, ",", "", null);
   }
 
   public UrlSerializer(String formatExpression, String urlFieldName,
       boolean useExtensionField,
       boolean asMap,
       String separator,
+      String defaultValue,
       Class<? extends JsonUrlMapper> mapperType) {
     super(Object.class, false);
     this.formatExpression = formatExpression;
@@ -67,6 +70,7 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
     this.useExtensionField = useExtensionField;
     this.asMap = asMap;
     this.separator = separator;
+    this.defaultValue = defaultValue;
     this.mapperType = mapperType;
   }
 
@@ -132,7 +136,8 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
         try {
           jsonUrlMapper = mapperType.getDeclaredConstructor().newInstance();
           mapperCache.put(mapperType, jsonUrlMapper);
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) {
           throw new RuntimeException("mapper实例化失败", e);
         }
       }
@@ -146,6 +151,9 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
     Class<?> type = value.getClass();
     JsonUrlMapper mapper = getMapper();
     if (type == String.class) {
+      if (!StringUtils.hasText((String) value)) {
+        value = defaultValue;
+      }
       if (separator.isEmpty()) {
         String path = mapper.mapper(value);
         if (useExtensionField) {
@@ -216,7 +224,7 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
       }
       return new UrlSerializer(annotation.value(), annotation.urlFieldName(), annotation.extended(),
           annotation.asMap(),
-          annotation.separator(), annotation.mapper());
+          annotation.separator(), annotation.defaultValue(), annotation.mapper());
     }
     return this;
   }

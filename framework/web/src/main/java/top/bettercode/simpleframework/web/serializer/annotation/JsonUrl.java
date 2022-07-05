@@ -26,6 +26,11 @@ public @interface JsonUrl {
   String value() default "";
 
   /**
+   * @return 默认值
+   */
+  String defaultValue() default "";
+
+  /**
    * @return url字段名称，默认为空表示在原字段后加Url后缀
    */
   String urlFieldName() default "";
