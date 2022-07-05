@@ -21,12 +21,7 @@ open class ExcelFieldPrint : Generator() {
                 } else {
                     ""
                 }
-            val propertyGetter =
-                if (it.isPrimary && primaryKeys.size > 1) "${it.javaType.shortNameWithoutTypeArguments}.class, from -> from.get${
-                    primaryKeyName.capitalized()
-                }().get${it.javaName.capitalized()}()" else "$className::get${
-                    it.javaName.capitalized()
-                }"
+            val propertyGetter = "$className::get${it.javaName.capitalized()}"
             println("      ExcelField.of(\"${it.remark.split(Regex("[:：,， (（]"))[0]}\", $propertyGetter)${code}${if (i == size - 1) "" else ","}")
         }
         println("""  );""")
