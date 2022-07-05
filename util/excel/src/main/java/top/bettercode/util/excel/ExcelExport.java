@@ -499,6 +499,42 @@ public class ExcelExport {
     excelExport.finish();
   }
 
+
+  /**
+   * 输出数据流
+   *
+   * @param fileName 输出文件名
+   * @param consumer 处理生成excel
+   * @throws IOException IOException
+   */
+  public static void sheet(String fileName, Consumer<ExcelExport> consumer) throws IOException {
+    ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+        .getRequestAttributes();
+    Assert.notNull(requestAttributes, "requestAttributes获取失败");
+    HttpServletRequest request = requestAttributes.getRequest();
+    HttpServletResponse response = requestAttributes.getResponse();
+    sheet(request, response, fileName, consumer);
+  }
+
+  /**
+   * 输出数据流
+   *
+   * @param request  request
+   * @param response response
+   * @param fileName 输出文件名
+   * @param consumer 处理生成excel
+   * @throws IOException IOException
+   */
+  public static void sheet(HttpServletRequest request, HttpServletResponse response,
+      String fileName, Consumer<ExcelExport> consumer) throws IOException {
+    setResponseHeader(request, response, fileName);
+    ExcelExport excelExport = ExcelExport.of(response.getOutputStream());
+    excelExport.sheet("sheet1");
+    consumer.accept(excelExport);
+    excelExport.finish();
+  }
+
+
   /**
    * 文件缓存输出
    *
