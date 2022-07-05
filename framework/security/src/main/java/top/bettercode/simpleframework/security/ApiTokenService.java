@@ -40,8 +40,10 @@ public class ApiTokenService {
       return createAccessToken();
     }
     Instant now = Instant.now();
+    Integer accessTokenValiditySeconds = apiSecurityProperties.getAccessTokenValiditySeconds();
     return new Token(tokenValue, now,
-        now.plusSeconds(apiSecurityProperties.getAccessTokenValiditySeconds()));
+        accessTokenValiditySeconds != null && accessTokenValiditySeconds > 0 ? now.plusSeconds(
+            accessTokenValiditySeconds) : null);
   }
 
   public Token createRefreshToken() {
@@ -51,8 +53,10 @@ public class ApiTokenService {
       return createRefreshToken();
     }
     Instant now = Instant.now();
+    Integer refreshTokenValiditySeconds = apiSecurityProperties.getRefreshTokenValiditySeconds();
     return new Token(tokenValue, now,
-        now.plusSeconds(apiSecurityProperties.getRefreshTokenValiditySeconds()));
+        refreshTokenValiditySeconds != null && refreshTokenValiditySeconds > 0 ? now.plusSeconds(
+            refreshTokenValiditySeconds) : null);
   }
 
   public ApiToken getApiToken(String scope, String username) {
