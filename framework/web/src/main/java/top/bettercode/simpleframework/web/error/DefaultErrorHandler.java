@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import top.bettercode.simpleframework.exception.BusinessException;
 import top.bettercode.simpleframework.exception.SystemException;
 import top.bettercode.simpleframework.web.RespEntity;
@@ -66,6 +67,20 @@ public class DefaultErrorHandler extends AbstractErrorHandler {
         respEntity.setHttpStatusCode(HttpStatus.REQUEST_TIMEOUT.value());
         message = "request.timeout";
       }
+    } else if (error instanceof UnsatisfiedServletRequestParameterException) {
+      List<String[]> paramConditionGroups = ((UnsatisfiedServletRequestParameterException) error).getParamConditionGroups();
+      StringBuilder sb = new StringBuilder("参数不匹配:");
+      int i = 0;
+      for (String[] conditions : paramConditionGroups) {
+        if (i > 0) {
+          sb.append(" OR ");
+        }
+        sb.append('"');
+        sb.append(StringUtils.arrayToDelimitedString(conditions, ", "));
+        sb.append('"');
+        i++;
+      }
+      message = sb.toString();
     } else if (error instanceof BusinessException) {
       respEntity.setStatus(((BusinessException) error).getCode());
       respEntity.setErrors(((BusinessException) error).getData());
