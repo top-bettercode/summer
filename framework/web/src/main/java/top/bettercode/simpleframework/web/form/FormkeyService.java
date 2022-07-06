@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 不支持 {@link FormDuplicateCheck} 自定义 expireSeconds
+ *
  * @author Peter Wu
  */
 public class FormkeyService implements IFormkeyService {
@@ -20,7 +22,7 @@ public class FormkeyService implements IFormkeyService {
 
 
   @Override
-  public boolean exist(String formkey) {
+  public boolean exist(String formkey, long expireSeconds) {
     return cache.putIfAbsent(formkey, true) != null;
   }
 

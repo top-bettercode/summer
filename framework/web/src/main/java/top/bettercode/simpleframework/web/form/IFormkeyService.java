@@ -5,7 +5,7 @@ package top.bettercode.simpleframework.web.form;
  */
 public interface IFormkeyService {
 
-  boolean exist(String formkey);
+  boolean exist(String formkey, long expireSeconds);
 
   void remove(String formkey);
 }
