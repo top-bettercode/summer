@@ -28,6 +28,8 @@ public class SummerCaffeineCacheConfiguration {
     if (caches != null) {
       caches.forEach((name, spec) -> caffeineCacheManager.registerCustomCache(name,
           Caffeine.from(spec).build()));
+    } else {
+      caffeineCacheManager.setCacheSpecification(caffeineCacheProperties.getDefaultSpec());
     }
     return caffeineCacheManager;
   }
