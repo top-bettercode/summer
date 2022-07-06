@@ -9,7 +9,7 @@ import java.lang.Integer.min
 object CollectionUtil {
 
     @JvmStatic
-    fun <T> cut(list: List<T>, maxLength: Int): List<List<T>> {
+    fun <T> partition(list: List<T>, maxLength: Int): List<List<T>> {
         val listSize = list.size
         return if (listSize > maxLength) {
             val result = mutableListOf<List<T>>()
