@@ -30,7 +30,6 @@ include(":util:autodoc-gen")
 include(":util:generator")
 include(":util:test")
 include(":util:ueditor")
-include(":util:wechat")
 include(":util:weixin")
 include(":util:sms")
 
