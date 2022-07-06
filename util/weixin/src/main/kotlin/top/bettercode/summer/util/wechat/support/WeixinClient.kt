@@ -1,7 +1,7 @@
 package top.bettercode.summer.util.wechat.support
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.google.common.cache.CacheBuilder
+import com.github.benmanes.caffeine.cache.Caffeine
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -36,7 +36,7 @@ open class WeixinClient<T : IWexinProperties>(
     private var lastAppId = properties.appId
 
     protected val cache =
-        CacheBuilder.newBuilder().expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
+        Caffeine.newBuilder().expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
             .maximumSize(1000).build<String, CachedValue>()
 
 

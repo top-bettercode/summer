@@ -2,13 +2,13 @@ package top.bettercode.sms.b2m
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.type.TypeFactory
-import com.google.common.collect.ImmutableMap
 import org.springframework.http.*
 import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
+import org.springframework.lang.Nullable
 import top.bettercode.lang.util.AESUtil.decrypt
 import top.bettercode.lang.util.AESUtil.encrypt
 import top.bettercode.lang.util.StringUtil.gzip
@@ -43,7 +43,7 @@ class B2mSmsTemplate(
                     return true
                 }
 
-                override fun canWrite(clazz: Class<*>?, mediaType: MediaType?): Boolean {
+                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
                     return true
                 }
             }
@@ -88,12 +88,12 @@ class B2mSmsTemplate(
         val smses: MutableList<Map<String, Any>> = mutableListOf()
         content.forEach { (key: String, value: String) ->
             smses.add(
-                ImmutableMap.of<String, Any>(
-                    //          "customSmsId", "",
-                    //          "timerTime", "",
-                    //          "extendedCode", "",
-                    "mobile", key,
-                    "content", value
+                mapOf<String, Any>(
+                    //          "customSmsId" to "",
+                    //          "timerTime" to "",
+                    //          "extendedCode" to "",
+                    "mobile" to key,
+                    "content" to value
                 )
             )
         }

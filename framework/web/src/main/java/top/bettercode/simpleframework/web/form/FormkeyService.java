@@ -1,7 +1,8 @@
 package top.bettercode.simpleframework.web.form;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
@@ -12,23 +13,37 @@ import java.util.concurrent.TimeUnit;
  */
 public class FormkeyService implements IFormkeyService {
 
-  private final ConcurrentMap<String, Boolean> cache;
+  private final ConcurrentMap<String, Long> nameCache;
+  private final ConcurrentMap<Long, ConcurrentMap<String, Boolean>> caches;
 
   public FormkeyService(Long expireSeconds) {
-    Cache<String, Boolean> objectCache = CacheBuilder
-        .newBuilder().expireAfterWrite(expireSeconds, TimeUnit.SECONDS).maximumSize(1000).build();
-    this.cache = objectCache.asMap();
+    this.caches = new ConcurrentHashMap<>();
+    Cache<String, Long> objectCache = Caffeine.newBuilder()
+        .expireAfterWrite(expireSeconds, TimeUnit.SECONDS).build();
+    this.nameCache = objectCache.asMap();
   }
 
+  private ConcurrentMap<String, Boolean> getCache(Long expireSeconds) {
+    return caches.computeIfAbsent(expireSeconds, k -> new ConcurrentHashMap<>());
+  }
 
   @Override
   public boolean exist(String formkey, long expireSeconds) {
-    return cache.putIfAbsent(formkey, true) != null;
+    Boolean present = getCache(expireSeconds).putIfAbsent(formkey, true);
+    if (present == null) {
+      nameCache.put(formkey, expireSeconds);
+    }
+    return present != null;
   }
 
   @Override
   public void remove(String formkey) {
-    cache.remove(formkey);
+    Long expireSeconds = nameCache.get(formkey);
+    if (expireSeconds == null) {
+      caches.values().forEach(map -> map.remove(formkey));
+    } else {
+      getCache(expireSeconds).remove(formkey);
+    }
   }
 
 }

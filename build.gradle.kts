@@ -78,7 +78,6 @@ allprojects {
             dependency("commons-codec:commons-codec:1.15")
             dependency("org.json:json:20220320")
             dependency("org.javassist:javassist:3.28.0-GA")
-            dependency("com.google.guava:guava:31.1-jre")
             dependency("org.dom4j:dom4j:2.1.3")
             dependency("org.jsoup:jsoup:1.14.3")
             dependency("org.atteo:evo-inflector:1.3")

@@ -13,7 +13,7 @@ import ch.qos.logback.core.helpers.CyclicBuffer
 import ch.qos.logback.core.sift.DefaultDiscriminator
 import ch.qos.logback.core.spi.CyclicBufferTracker
 import ch.qos.logback.core.util.OptionHelper
-import com.google.common.cache.CacheBuilder
+import com.github.benmanes.caffeine.cache.Caffeine
 import org.slf4j.Marker
 import top.bettercode.logging.RequestLoggingFilter
 import java.util.concurrent.ConcurrentMap
@@ -46,10 +46,10 @@ abstract class AlarmAppender(
     private var asynchronousSending = true
 
     override fun start() {
-        cacheMap = CacheBuilder.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS)
+        cacheMap = Caffeine.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS)
             .maximumSize(1000).build<String, Int>().asMap()
         timeoutCacheMap =
-            CacheBuilder.newBuilder().expireAfterWrite(timeoutCacheSeconds, TimeUnit.SECONDS)
+            Caffeine.newBuilder().expireAfterWrite(timeoutCacheSeconds, TimeUnit.SECONDS)
                 .maximumSize(1000).build<String, Int>().asMap()
 
         val alarmEvaluator = object : EventEvaluatorBase<ILoggingEvent>() {
