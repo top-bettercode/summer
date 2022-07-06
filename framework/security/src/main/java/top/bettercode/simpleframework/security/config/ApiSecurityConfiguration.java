@@ -3,8 +3,8 @@ package top.bettercode.simpleframework.security.config;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
@@ -66,14 +66,14 @@ public class ApiSecurityConfiguration {
   @ConditionalOnMissingBean(ApiAuthorizationService.class)
   @Bean
   public ApiAuthorizationService apiAuthorizationService() {
-    Cache<String, ApiAuthenticationToken> cache = CacheBuilder.newBuilder()
+    Cache<String, ApiAuthenticationToken> cache = Caffeine.newBuilder()
         .expireAfterWrite(Math.max(securityProperties.getAccessTokenValiditySeconds(),
             securityProperties.getRefreshTokenValiditySeconds()), TimeUnit.SECONDS)
         .maximumSize(10000).build();
-    Cache<String, String> accessTokenBuild = CacheBuilder.newBuilder()
+    Cache<String, String> accessTokenBuild = Caffeine.newBuilder()
         .expireAfterWrite(securityProperties.getAccessTokenValiditySeconds(), TimeUnit.SECONDS)
         .maximumSize(10000).build();
-    Cache<String, String> refreshTokenBuild = CacheBuilder.newBuilder()
+    Cache<String, String> refreshTokenBuild = Caffeine.newBuilder()
         .expireAfterWrite(
             securityProperties.getRefreshTokenValiditySeconds(), TimeUnit.SECONDS)
         .maximumSize(10000).build();

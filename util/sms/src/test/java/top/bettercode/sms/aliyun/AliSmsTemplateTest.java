@@ -1,6 +1,8 @@
 package top.bettercode.sms.aliyun;
 
-import com.google.common.collect.ImmutableMap;
+
+import kotlin.Pair;
+import kotlin.collections.MapsKt;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,21 +20,22 @@ class AliSmsTemplateTest extends BaseTest {
 
   @Test
   void sendSms() {
-    aliSmsTemplate.sendSms("SMS_126359654", new AliSmsReq(mobile,"云图提货", ImmutableMap.of("code","123456")));
+    aliSmsTemplate.sendSms("SMS_126359654", new AliSmsReq(mobile, "云图提货", MapsKt.mapOf(
+        new Pair<>("code", "123456"))));
   }
 
   @Test
-  void querySendReport(){
+  void querySendReport() {
     aliSmsTemplate.querySendReport(mobile);
   }
 
   @Test
-  void querySmsSignList(){
+  void querySmsSignList() {
     aliSmsTemplate.querySmsSignList();
   }
 
   @Test
-  void querySmsTemplateList(){
+  void querySmsTemplateList() {
     aliSmsTemplate.querySmsTemplateList();
   }
 

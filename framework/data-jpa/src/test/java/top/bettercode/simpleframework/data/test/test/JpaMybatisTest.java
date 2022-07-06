@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.data.test.test;
 
-import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Stream;
+import kotlin.Pair;
+import kotlin.collections.MapsKt;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -213,7 +214,8 @@ public class JpaMybatisTest {
     System.err.println(users);
     List<Object> users1 = sqlSession
         .selectList(UserRepository.class.getName() + ".selectMybatisIfParam",
-            ImmutableMap.of("firstName", "Carter", "lastName", "Beauford1", "param2", "Beauford1"));
+            MapsKt.mapOf(new Pair<>("firstName", "Carter"), new Pair<>("lastName", "Beauford1"),
+                new Pair<>("param2", "Beauford1")));
     System.err.println(users1);
     Assertions.assertIterableEquals(users, users1);
     Assertions.assertEquals(1, users.size());
@@ -239,8 +241,9 @@ public class JpaMybatisTest {
           System.err.println(users);
           List<Object> users1 = sqlSession
               .selectList(UserRepository.class.getName() + ".selectMybatisIfParam",
-                  ImmutableMap.of("firstName", "Carter", "lastName", "Beauford1", "param2",
-                      "Beauford1"));
+                  MapsKt.mapOf(new Pair<>("firstName", "Carter"),
+                      new Pair<>("lastName", "Beauford1"),
+                      new Pair<>("param2", "Beauford1")));
           System.err.println(users1);
           Assertions.assertIterableEquals(users, users1);
           Assertions.assertEquals(1, users.size());
@@ -256,7 +259,8 @@ public class JpaMybatisTest {
           System.err.println(users2);
           List<Object> users21 = sqlSession
               .selectList(UserRepository.class.getName() + ".selectMybatisIfParam",
-                  ImmutableMap.of("firstName", "Carter"));
+                  MapsKt.mapOf(new Pair<>("firstName", "Carter"))
+              );
           System.err.println(users21);
           Assertions.assertIterableEquals(users2, users21);
           Assertions.assertEquals(2, users2.size());

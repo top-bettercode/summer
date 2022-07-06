@@ -96,7 +96,6 @@ object ProjectDependencies {
 
                     dependency("org.bouncycastle:bcpkix-jdk15on:1.70")
                     dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
-                    dependency("net.sf.ehcache:ehcache:2.10.9.2")
                     dependency("com.github.axet:kaptcha:0.0.9")
                     dependency("org.dhatim:fastexcel-reader:0.12.14")
                     dependency("org.apache.poi:poi-ooxml:5.2.2")

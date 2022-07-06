@@ -7,7 +7,7 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-logging")
     api("com.fasterxml.jackson.module:jackson-module-kotlin")
     api("org.springframework.boot:spring-boot-starter-web")
-    api("com.google.guava:guava")
+    api("com.github.ben-manes.caffeine:caffeine")
 
     api("org.springframework.boot:spring-boot-starter-actuator")
 

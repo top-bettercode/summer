@@ -1,6 +1,6 @@
 package top.bettercode.summer.util.wechat.support
 
-import com.google.common.cache.CacheBuilder
+import com.github.benmanes.caffeine.cache.Caffeine
 import java.util.concurrent.TimeUnit
 
 class DefaultDuplicatedMessageChecker : DuplicatedMessageChecker {
@@ -16,7 +16,7 @@ class DefaultDuplicatedMessageChecker : DuplicatedMessageChecker {
 
     companion object {
         private val cache =
-            CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS).maximumSize(10000)
+            Caffeine.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS).maximumSize(10000)
                 .build<String, String>()
     }
 }
