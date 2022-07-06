@@ -16,4 +16,10 @@ import java.lang.annotation.Target;
 @Documented
 public @interface FormDuplicateCheck {
 
+  /**
+   * 使用 {@link RedisFormkeyService} 时，支持指定过期时间，单位秒
+   *
+   * @return form key有效时间
+   */
+  long expireSeconds() default -1;
 }

@@ -38,10 +38,12 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
   @Override
   public boolean preHandlerMethod(HttpServletRequest request, HttpServletResponse response,
       HandlerMethod handler) {
-    String formkey = getFormkey(request, handler);
+    FormDuplicateCheck annotation = AnnotatedUtils.getAnnotation(handler, FormDuplicateCheck.class);
+    String formkey = getFormkey(request, handler, annotation);
     if (formkey == null) {
       return true;
-    } else if (formkeyService.exist(formkey)) {
+    } else if (formkeyService.exist(formkey,
+        annotation == null ? -1 : annotation.expireSeconds())) {
       throw new FormDuplicateException("请勿重复提交");
     } else {
       request.setAttribute(FORM_KEY, formkey);
@@ -50,13 +52,14 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
   }
 
   @Nullable
-  private String getFormkey(HttpServletRequest request, HandlerMethod handler) {
+  private String getFormkey(HttpServletRequest request, HandlerMethod handler,
+      FormDuplicateCheck annotation) {
     String method = request.getMethod();
     String digestFormkey = null;
     if (("POST".equals(method) || "PUT".equals(method))) {
       String formkey = request.getHeader(formKeyName);
       boolean hasFormKey = StringUtils.hasText(formkey);
-      if (hasFormKey || AnnotatedUtils.hasAnnotation(handler, FormDuplicateCheck.class)) {
+      if (hasFormKey || annotation != null) {
         if (log.isDebugEnabled()) {
           log.debug(request.getServletPath() + " formDuplicateCheck");
         }
