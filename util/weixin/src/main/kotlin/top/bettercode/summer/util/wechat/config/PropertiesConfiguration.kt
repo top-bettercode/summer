@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration
 class PropertiesConfiguration {
 
     @ConditionalOnProperty(prefix = "summer.wechat.corp", name = ["app-id"])
-    @ConfigurationProperties(prefix = "summer.wechat.corp")
     @ConditionalOnMissingBean
     @Bean
     fun corpProperties(): ICorpProperties {
@@ -21,7 +20,6 @@ class PropertiesConfiguration {
     }
 
     @ConditionalOnProperty(prefix = "summer.wechat.mini", name = ["app-id"])
-    @ConfigurationProperties(prefix = "summer.wechat.mini")
     @ConditionalOnMissingBean
     @Bean
     fun miniprogramProperties(): IMiniprogramProperties {
@@ -29,7 +27,6 @@ class PropertiesConfiguration {
     }
 
     @ConditionalOnProperty(prefix = "summer.wechat", name = ["app-id"])
-    @ConfigurationProperties(prefix = "summer.wechat")
     @ConditionalOnMissingBean
     @Bean
     fun offiaccountProperties(): IOffiaccountProperties {
