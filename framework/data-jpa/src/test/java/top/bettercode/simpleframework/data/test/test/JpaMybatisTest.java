@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+import top.bettercode.lang.util.CollectionUtil;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 import top.bettercode.simpleframework.data.test.domain.User;
@@ -214,8 +215,8 @@ public class JpaMybatisTest {
     System.err.println(users);
     List<Object> users1 = sqlSession
         .selectList(UserRepository.class.getName() + ".selectMybatisIfParam",
-            MapsKt.mapOf(new Pair<>("firstName", "Carter"), new Pair<>("lastName", "Beauford1"),
-                new Pair<>("param2", "Beauford1")));
+            CollectionUtil.mapOf("firstName", "Carter", "lastName", "Beauford1",
+                "param2", "Beauford1"));
     System.err.println(users1);
     Assertions.assertIterableEquals(users, users1);
     Assertions.assertEquals(1, users.size());
@@ -241,9 +242,9 @@ public class JpaMybatisTest {
           System.err.println(users);
           List<Object> users1 = sqlSession
               .selectList(UserRepository.class.getName() + ".selectMybatisIfParam",
-                  MapsKt.mapOf(new Pair<>("firstName", "Carter"),
-                      new Pair<>("lastName", "Beauford1"),
-                      new Pair<>("param2", "Beauford1")));
+                  CollectionUtil.mapOf("firstName", "Carter",
+                      "lastName", "Beauford1",
+                      "param2", "Beauford1"));
           System.err.println(users1);
           Assertions.assertIterableEquals(users, users1);
           Assertions.assertEquals(1, users.size());

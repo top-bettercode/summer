@@ -130,7 +130,7 @@ class LocalDateTimeHelper private constructor(
         return localDateTime.format(dateTimeFormatter)
     }
 
-    fun format(dateFormatPattern: String = LocalDateTimeHelper.dateFormatPattern): String {
+    fun format(dateFormatPattern: String): String {
         return format(DateTimeFormatter.ofPattern(dateFormatPattern))
     }
 
