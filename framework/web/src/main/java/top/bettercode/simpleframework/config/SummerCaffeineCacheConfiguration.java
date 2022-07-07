@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.config;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import java.util.Map;
 import org.springframework.boot.autoconfigure.cache.CacheManagerCustomizer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Peter Wu
  */
+@ConditionalOnClass(CaffeineCacheManager.class)
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(CaffeineCacheProperties.class)
 public class SummerCaffeineCacheConfiguration {
