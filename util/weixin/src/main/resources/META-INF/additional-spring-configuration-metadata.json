@@ -1,6 +1,210 @@
 {
-  "properties": [
+  "groups": [
+    {
+      "name": "summer.wechat",
+      "type": "top.bettercode.summer.util.wechat.config.OffiaccountProperties",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties"
+    },
+    {
+      "name": "summer.wechat.corp",
+      "type": "top.bettercode.summer.util.wechat.config.CorpProperties",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties"
+    },
+    {
+      "name": "summer.wechat.mini",
+      "type": "top.bettercode.summer.util.wechat.config.MiniprogramProperties",
+      "sourceType": "top.bettercode.summer.util.wechat.config.MiniprogramProperties"
+    }
   ],
-  "hints": [
-  ]
+  "properties": [
+    {
+      "name": "summer.wechat.aes-key",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties"
+    },
+    {
+      "name": "summer.wechat.app-base-url",
+      "type": "java.lang.String",
+      "description": "项目部署的URL地址",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties"
+    },
+    {
+      "name": "summer.wechat.app-id",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties"
+    },
+    {
+      "name": "summer.wechat.cache-seconds",
+      "type": "java.lang.Long",
+      "description": "access_token 及 jsapi_ticket 有效期7200秒",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties",
+      "defaultValue": 7200
+    },
+    {
+      "name": "summer.wechat.connect-timeout",
+      "type": "java.lang.Integer",
+      "description": "请求连接超时时间毫秒数",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties",
+      "defaultValue": 10000
+    },
+    {
+      "name": "summer.wechat.corp.aes-key",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties"
+    },
+    {
+      "name": "summer.wechat.corp.app-base-url",
+      "type": "java.lang.String",
+      "description": "项目部署的URL地址",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties"
+    },
+    {
+      "name": "summer.wechat.corp.app-id",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties"
+    },
+    {
+      "name": "summer.wechat.corp.cache-seconds",
+      "type": "java.lang.Long",
+      "description": "access_token 及 jsapi_ticket 有效期7200秒",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties",
+      "defaultValue": 7200
+    },
+    {
+      "name": "summer.wechat.corp.connect-timeout",
+      "type": "java.lang.Integer",
+      "description": "请求连接超时时间毫秒数",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties",
+      "defaultValue": 10000
+    },
+    {
+      "name": "summer.wechat.corp.max-retries",
+      "type": "java.lang.Integer",
+      "description": "微信接口请求最大重试次数",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties",
+      "defaultValue": 2
+    },
+    {
+      "name": "summer.wechat.corp.read-timeout",
+      "type": "java.lang.Integer",
+      "description": "请求读取超时时间毫秒数",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties",
+      "defaultValue": 10000
+    },
+    {
+      "name": "summer.wechat.corp.secret",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties"
+    },
+    {
+      "name": "summer.wechat.corp.token",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties"
+    },
+    {
+      "name": "summer.wechat.corp.wechat-base-url",
+      "type": "java.lang.String",
+      "description": "微信前端基础地址",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties"
+    },
+    {
+      "name": "summer.wechat.corp.wechat-web-oauth-url",
+      "type": "java.lang.String",
+      "description": "微信前端授权页面地址",
+      "sourceType": "top.bettercode.summer.util.wechat.config.CorpProperties",
+      "defaultValue": ""
+    },
+    {
+      "name": "summer.wechat.max-retries",
+      "type": "java.lang.Integer",
+      "description": "微信接口请求最大重试次数",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties",
+      "defaultValue": 2
+    },
+    {
+      "name": "summer.wechat.mini.aes-key",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.MiniprogramProperties"
+    },
+    {
+      "name": "summer.wechat.mini.app-id",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.MiniprogramProperties"
+    },
+    {
+      "name": "summer.wechat.mini.cache-seconds",
+      "type": "java.lang.Long",
+      "description": "access_token 及 jsapi_ticket 有效期7200秒",
+      "sourceType": "top.bettercode.summer.util.wechat.config.MiniprogramProperties",
+      "defaultValue": 7200
+    },
+    {
+      "name": "summer.wechat.mini.connect-timeout",
+      "type": "java.lang.Integer",
+      "description": "请求连接超时时间毫秒数",
+      "sourceType": "top.bettercode.summer.util.wechat.config.MiniprogramProperties",
+      "defaultValue": 10000
+    },
+    {
+      "name": "summer.wechat.mini.max-retries",
+      "type": "java.lang.Integer",
+      "description": "微信接口请求最大重试次数",
+      "sourceType": "top.bettercode.summer.util.wechat.config.MiniprogramProperties",
+      "defaultValue": 2
+    },
+    {
+      "name": "summer.wechat.mini.read-timeout",
+      "type": "java.lang.Integer",
+      "description": "请求读取超时时间毫秒数",
+      "sourceType": "top.bettercode.summer.util.wechat.config.MiniprogramProperties",
+      "defaultValue": 10000
+    },
+    {
+      "name": "summer.wechat.mini.secret",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.MiniprogramProperties"
+    },
+    {
+      "name": "summer.wechat.mini.token",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.MiniprogramProperties"
+    },
+    {
+      "name": "summer.wechat.read-timeout",
+      "type": "java.lang.Integer",
+      "description": "请求读取超时时间毫秒数",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties",
+      "defaultValue": 10000
+    },
+    {
+      "name": "summer.wechat.secret",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties"
+    },
+    {
+      "name": "summer.wechat.token",
+      "type": "java.lang.String",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties"
+    },
+    {
+      "name": "summer.wechat.user-unionid",
+      "type": "java.lang.Boolean",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "summer.wechat.wechat-base-url",
+      "type": "java.lang.String",
+      "description": "微信前端基础地址",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties"
+    },
+    {
+      "name": "summer.wechat.wechat-web-oauth-url",
+      "type": "java.lang.String",
+      "description": "微信前端授权页面地址",
+      "sourceType": "top.bettercode.summer.util.wechat.config.OffiaccountProperties",
+      "defaultValue": ""
+    }
+  ],
+  "hints": []
 }
