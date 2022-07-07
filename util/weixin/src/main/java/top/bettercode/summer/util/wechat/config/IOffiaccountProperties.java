@@ -1,6 +1,7 @@
 package top.bettercode.summer.util.wechat.config;
 
 import org.springframework.util.StringUtils;
+import top.bettercode.summer.util.wechat.support.WechatToken;
 
 /**
  * @author Peter Wu
@@ -9,7 +10,7 @@ public interface IOffiaccountProperties extends IWexinProperties {
 
   String OAUTH_URL = "/wechat/oauth";
 
-  default Boolean getUserUnionid(){
+  default Boolean getUserUnionid() {
     return false;
   }
 
@@ -26,15 +27,16 @@ public interface IOffiaccountProperties extends IWexinProperties {
     return getAppBaseUrl() + OAUTH_URL;
   }
 
-  default String redirectUrl(String token, String openId, boolean forceLogin) {
-    return "redirect:" + wechatUrl(token, openId, forceLogin);
+  default String redirectUrl(WechatToken wechatToken, boolean forceLogin) {
+    return "redirect:" + wechatUrl(wechatToken, forceLogin);
   }
 
-  default String wechatUrl(String token, String openId, boolean forceLogin) {
-    return getWechatBaseUrl() + getWechatWebOauthUrl() + "?access_token=" + (token == null ? ""
-        : token) + "&" + OPEN_ID_NAME + "=" + openId + "&hasBound=" + (StringUtils.hasText(token))
-        + "&forceLogin=" + forceLogin + "&_timer="
-        + System.currentTimeMillis();
+  default String wechatUrl(WechatToken wechatToken, boolean forceLogin) {
+    String token = wechatToken == null ? "" : wechatToken.getAccessToken();
+    String openId = wechatToken == null ? "" : wechatToken.getOpenId();
+    return getWechatBaseUrl() + getWechatWebOauthUrl() + "?access_token=" + token + "&"
+        + OPEN_ID_NAME + "=" + openId + "&hasBound=" + (StringUtils.hasText(token)) + "&forceLogin="
+        + forceLogin + "&_timer=" + System.currentTimeMillis();
   }
 
 
