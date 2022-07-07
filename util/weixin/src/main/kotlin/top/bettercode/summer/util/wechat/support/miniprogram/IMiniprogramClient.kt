@@ -11,7 +11,7 @@ import top.bettercode.summer.util.wechat.support.miniprogram.entity.SubscribeMsg
  */
 interface IMiniprogramClient {
 
-    fun jscode2session(code: String, encryptedData: String? = null, iv: String? = null): JsSession
+    fun jscode2session(code: String): JsSession
 
     fun getuserphonenumber(code: String): PhoneInfoResp
 
