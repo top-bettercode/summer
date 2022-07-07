@@ -95,7 +95,9 @@ object ProjectDependencies {
                     dependency("com.oracle.database.security:osdt_cert:$oracleJdbcVersion")
 
                     dependency("org.bouncycastle:bcpkix-jdk15on:1.70")
-                    dependency("org.bouncycastle:bcprov-jdk15:1.46")
+                    dependency("org.bouncycastle:bcprov-jdk18on:1.71")
+                    dependency("org.bouncycastle:bcpkix-jdk18on:1.71")
+
                     dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
                     dependency("com.github.axet:kaptcha:0.0.9")
                     dependency("org.dhatim:fastexcel-reader:0.12.14")
