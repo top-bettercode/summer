@@ -27,6 +27,10 @@ public class WexinProperties implements IWexinProperties {
    * 微信接口请求最大重试次数
    */
   private int maxRetries = 2;
+  /**
+   * 授权请求路径
+   */
+  private String oauthMappingPath;
 
   public String getAppId() {
     return appId;
@@ -91,5 +95,14 @@ public class WexinProperties implements IWexinProperties {
 
   public void setMaxRetries(int maxRetries) {
     this.maxRetries = maxRetries;
+  }
+
+  public String getOauthMappingPath() {
+    return oauthMappingPath;
+  }
+
+  public WexinProperties setOauthMappingPath(String oauthMappingPath) {
+    this.oauthMappingPath = oauthMappingPath;
+    return this;
   }
 }

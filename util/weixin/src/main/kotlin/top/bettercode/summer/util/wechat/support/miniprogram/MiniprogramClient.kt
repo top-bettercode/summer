@@ -21,7 +21,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         "wexin-offiaccount"
     ), IMiniprogramClient {
 
-    override fun jscode2session(code: String): JsSession {
+    override fun jscode2session(code: String, encryptedData: String?, iv: String?): JsSession {
         return getForObject(
             "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
             getAppId(),
