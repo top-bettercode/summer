@@ -7,7 +7,7 @@ apply {
 dependencies {
     api(project(":framework:web"))
 
-    compileOnly("org.bouncycastle:bcprov-jdk15")
+    compileOnly("org.bouncycastle:bcprov-jdk18on")
 
 
     testImplementation(project(":util:test"))

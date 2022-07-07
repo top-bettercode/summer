@@ -104,7 +104,7 @@ allprojects {
 
             dependency("org.mybatis.generator:mybatis-generator-core:1.4.1")
 
-            dependency("org.bouncycastle:bcprov-jdk15:1.46")
+            dependency("org.bouncycastle:bcprov-jdk18on:1.71")
 
             dependency("xerces:xercesImpl:2.12.2")
         }
