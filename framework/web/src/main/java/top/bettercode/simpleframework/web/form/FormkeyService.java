@@ -28,7 +28,11 @@ public class FormkeyService implements IFormkeyService {
   }
 
   private ConcurrentMap<String, Boolean> getCache(Long expireSeconds) {
-    return caches.computeIfAbsent(expireSeconds, k -> new ConcurrentHashMap<>());
+    return caches.computeIfAbsent(expireSeconds, k -> {
+      Cache<String, Boolean> objectCache = Caffeine.newBuilder()
+          .expireAfterWrite(expireSeconds, TimeUnit.SECONDS).build();
+      return objectCache.asMap();
+    });
   }
 
   @Override
