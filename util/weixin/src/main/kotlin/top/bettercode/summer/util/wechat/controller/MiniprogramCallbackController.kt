@@ -25,12 +25,16 @@ class MiniprogramCallbackController(
 
     @RequestLogging(ignoredTimeout = true)
     @ResponseBody
-    @PostMapping(value = ["/miniOauth"], name = "小程序code2Session授权接口")
-    fun miniOauth(@NotBlank code: String): Any {
+    @PostMapping(
+        value = ["\${summer.wechat.mini.oauth-mapping-path:/miniOauth}"],
+        name = "小程序code2Session授权接口"
+    )
+    fun miniOauth(@NotBlank code: String, encryptedData: String?, iv: String?): Any {
         log.debug("code:{}", code)
         return try {
-            val jsSession = miniprogramClient.jscode2session(code)
-            val result = if (jsSession.isOk) WechatToken() else wechatService.miniOauth( jsSession )
+            val jsSession =
+                miniprogramClient.jscode2session(code, encryptedData, iv).decrypt(encryptedData, iv)
+            val result = if (jsSession.isOk) WechatToken() else wechatService.miniOauth(jsSession)
             result.openId = result.openId
             result.hasBound = result.accessToken.isNullOrBlank().not()
             ok(result)

@@ -130,6 +130,10 @@ class LocalDateTimeHelper private constructor(
         return localDateTime.format(dateTimeFormatter)
     }
 
+    fun format(dateFormatPattern: String = LocalDateTimeHelper.dateFormatPattern): String {
+        return format(DateTimeFormatter.ofPattern(dateFormatPattern))
+    }
+
     companion object {
 
         private val DEFAULT_ZONE_ID = ZoneId.systemDefault()
