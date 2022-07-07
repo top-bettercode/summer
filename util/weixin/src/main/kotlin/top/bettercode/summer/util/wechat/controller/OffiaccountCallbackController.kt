@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import top.bettercode.logging.annotation.RequestLogging
 import top.bettercode.simpleframework.web.BaseController
 import top.bettercode.summer.util.wechat.support.IWechatService
+import top.bettercode.summer.util.wechat.support.WechatToken
 import top.bettercode.summer.util.wechat.support.offiaccount.IOffiaccountClient
 import javax.validation.constraints.NotBlank
 
@@ -27,24 +28,21 @@ class OffiaccountCallbackController(
     @GetMapping(value = ["/oauth"], name = "公众号OAuth回调接口")
     fun oauth(code: String?, state: String?): String {
         plainTextError()
-        var openId: String? = null
-        var token: String? = null
+        var token: WechatToken? = null
         try {
             val accessToken =
                 if (code.isNullOrBlank()) null else offiaccountClient.getWebPageAccessToken(code)
-            openId = if (accessToken?.isOk == true) accessToken.openid else null
-            log.info("openId:{}", openId)
-            token = if (openId != null) wechatService.oauth(
-                openId,
+            token = if (accessToken?.isOk == true) wechatService.oauth(
+                accessToken,
                 (if (offiaccountClient.properties.userUnionid) offiaccountClient.getSnsapiUserinfo(
-                    accessToken!!.accessToken!!,
-                    openId
-                ).unionid else null)
-            ).accessToken else null
+                    accessToken.accessToken!!,
+                    accessToken.openid!!
+                ) else null)
+            ) else null
         } catch (e: Exception) {
             log.warn("token获取失败", e)
         }
-        return offiaccountClient.properties.redirectUrl(token, openId, wechatService.forceLogin())
+        return offiaccountClient.properties.redirectUrl(token, wechatService.forceLogin())
     }
 
     /*
