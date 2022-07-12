@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,7 +88,11 @@ public class ExcelImport {
    */
   private ExcelImport(InputStream is)
       throws IOException {
-    workbook = new ReadableWorkbook(is);
+    try {
+      workbook = new ReadableWorkbook(is);
+    } catch (IOException e) {
+      throw new ExportException("excel读取失败", e);
+    }
     sheet = workbook.getFirstSheet();
     setRowAndColumn(1, 0);
     log.debug("Initialize success.");
