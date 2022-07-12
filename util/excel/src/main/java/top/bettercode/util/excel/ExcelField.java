@@ -66,7 +66,8 @@ public class ExcelField<T, P> {
    * 导出字段水平对齐方式
    * <p>
    * Define horizontal alignment.
-   * <a href="https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx">here</a>.
+   * <a
+   * href="https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx">here</a>.
    */
   private Alignment align = Alignment.center;
 
@@ -136,8 +137,6 @@ public class ExcelField<T, P> {
   protected DateTimeFormatter dateTimeFormatter;
 
   //--------------------------------------------
-
-
   public static <T, P> ExcelField<T, P> index(String title) {
     ExcelField<T, P> excelField = new ExcelField<>(title);
     excelField.indexColumn();
@@ -156,33 +155,6 @@ public class ExcelField<T, P> {
   public static <T, P> ExcelField<T, P> of(String title, ExcelConverter<T, P> propertyGetter) {
     return new ExcelField<>(title, propertyGetter);
   }
-
-  /**
-   * 只支持导入的初始化方法
-   *
-   * @param <P>            属性类型
-   * @param <T>            实体类型
-   * @param propertySetter 属性设置方法
-   * @return Excel字段描述
-   */
-  public static <T, P> ExcelField<T, P> of(ExcelCellSetter<T, P> propertySetter) {
-    return new ExcelField<>(propertySetter);
-  }
-
-  /**
-   * 只支持导入的初始化方法
-   *
-   * @param <P>            属性类型
-   * @param <T>            实体类型
-   * @param propertyType   属性字段类型
-   * @param propertySetter 属性设置方法
-   * @return Excel字段描述
-   */
-  public static <T, P> ExcelField<T, P> of(Class<P> propertyType,
-      ExcelCellSetter<T, P> propertySetter) {
-    return new ExcelField<>(propertyType, propertySetter);
-  }
-
 
   /**
    * 只支持导出的初始化方法
@@ -322,29 +294,6 @@ public class ExcelField<T, P> {
   }
 
   //--------------------------------------------
-  @SuppressWarnings("unchecked")
-  private ExcelField(ExcelCellSetter<T, P> propertySetter) {
-    this.title = "";
-    this.propertySetter = propertySetter;
-    try {
-      Method writeReplace = propertySetter.getClass().getDeclaredMethod("writeReplace");
-      writeReplace.setAccessible(true);
-      SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(propertySetter);
-      String implMethodName = serializedLambda.getImplMethodName();
-
-      MethodSignature methodSignature = SignatureAttribute
-          .toMethodSignature(serializedLambda.getInstantiatedMethodType());
-      entityType = (Class<T>) ClassUtils
-          .forName(methodSignature.getParameterTypes()[0].jvmTypeName(), null);
-      propertyType = ClassUtils.forName(methodSignature.getParameterTypes()[1].jvmTypeName(), null);
-      propertyName = resolveSetPropertyName(implMethodName);
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException | BadBytecode e) {
-      throw new ExcelException("属性解析错误", e);
-    }
-
-    init();
-  }
-
   private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new IdentityHashMap<>(8);
 
   static {
@@ -403,7 +352,8 @@ public class ExcelField<T, P> {
         propertySetter = null;
         entityType = null;
       }
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException | BadBytecode e) {
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+             ClassNotFoundException | BadBytecode e) {
       throw new ExcelException(title + "属性解析错误", e);
     }
 
@@ -426,20 +376,6 @@ public class ExcelField<T, P> {
     init();
   }
 
-
-  /**
-   * 只支持导入的初始化方法
-   *
-   * @param propertyType   属性字段类型
-   * @param propertySetter 属性设置方法
-   */
-  private ExcelField(Class<P> propertyType, ExcelCellSetter<T, P> propertySetter) {
-    this.title = "";
-    this.propertyType = propertyType;
-    this.propertySetter = propertySetter;
-
-    init();
-  }
 
   private ExcelField(String title) {
     this.title = title;
