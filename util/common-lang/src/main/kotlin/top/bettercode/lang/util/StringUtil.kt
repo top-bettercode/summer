@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.*
 import org.springframework.util.StringUtils
-import top.bettercode.lang.util.LocalDateTimeHelper.Companion.of
 import java.io.*
 import java.nio.charset.Charset
 import java.time.LocalDate
@@ -45,7 +44,7 @@ object StringUtil {
                     gen: JsonGenerator,
                     serializers: SerializerProvider
                 ) {
-                    gen.writeNumber(of(value).toMillis())
+                    gen.writeNumber(TimeUtil.of(value).toMillis())
                 }
             })
         module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
@@ -54,7 +53,7 @@ object StringUtil {
                 value: LocalDateTime, gen: JsonGenerator,
                 serializers: SerializerProvider?
             ) {
-                gen.writeNumber(of(value).toMillis())
+                gen.writeNumber(TimeUtil.of(value).toMillis())
             }
         })
 
@@ -66,7 +65,7 @@ object StringUtil {
                     return if (valueAsString.isNullOrBlank())
                         null
                     else
-                        of(valueAsString.toLong()).toLocalDate()
+                        TimeUtil.toLocalDate(valueAsString.toLong())
                 }
             })
 
@@ -81,7 +80,7 @@ object StringUtil {
                     return if (valueAsString.isNullOrBlank())
                         null
                     else
-                        return of(p.valueAsString.toLong()).toLocalDateTime()
+                        return TimeUtil.toLocalDateTime(p.valueAsString.toLong())
                 }
             })
 
@@ -194,6 +193,7 @@ object StringUtil {
                         i++
                         continue@loop
                     }
+
                     '}', ']' -> {
                         ret.append(newline)
                             .append(if (indentWidth.let { indent -= it; indent } > 0) String.format(
@@ -204,17 +204,20 @@ object StringUtil {
                         i++
                         continue@loop
                     }
+
                     ':' -> {
                         ret.append(c).append(" ")
                         i++
                         continue@loop
                     }
+
                     ',' -> {
                         ret.append(c).append(newline)
                             .append(if (indent > 0) String.format("%" + indent + "s", "") else "")
                         i++
                         continue@loop
                     }
+
                     else -> if (Character.isWhitespace(c)) {
                         i++
                         continue@loop
@@ -494,6 +497,7 @@ object StringUtil {
                     }
                     sb.append(current)
                 }
+
                 '{', '[' -> {
                     sb.append(current)
                     if (!isInQuotationMarks) {
@@ -502,6 +506,7 @@ object StringUtil {
                         addIndentBlank(sb, indent)
                     }
                 }
+
                 '}', ']' -> {
                     if (!isInQuotationMarks) {
                         sb.append('\n')
@@ -510,6 +515,7 @@ object StringUtil {
                     }
                     sb.append(current)
                 }
+
                 ',' -> {
                     sb.append(current)
                     if (last != '\\' && !isInQuotationMarks) {
@@ -517,6 +523,7 @@ object StringUtil {
                         addIndentBlank(sb, indent)
                     }
                 }
+
                 else -> sb.append(current)
             }
         }

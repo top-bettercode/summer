@@ -6,7 +6,7 @@ import java.util.Date;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import top.bettercode.lang.util.LocalDateTimeHelper;
+import top.bettercode.lang.util.TimeUtil;
 import top.bettercode.simpleframework.web.kaptcha.KaptchaProperties;
 
 /**
@@ -35,8 +35,8 @@ public class DefaultCaptchaServiceImpl implements ICaptchaService {
     Assert.hasText(captcha,"验证码错误");
     String kaptcha = (String) httpSession.getAttribute(Constants.KAPTCHA_SESSION_KEY);
     Date date = (Date) httpSession.getAttribute(Constants.KAPTCHA_SESSION_DATE);
-    return date != null && LocalDateTimeHelper.of(date).toLocalDateTime().plus(kaptchaProperties.getExpireSeconds(),
-        ChronoUnit.SECONDS).isAfter(LocalDateTimeHelper.now().toLocalDateTime()) && captcha.equalsIgnoreCase(kaptcha);
+    return date != null && TimeUtil.of(date).toLocalDateTime().plus(kaptchaProperties.getExpireSeconds(),
+        ChronoUnit.SECONDS).isAfter(TimeUtil.now().toLocalDateTime()) && captcha.equalsIgnoreCase(kaptcha);
   }
 
 }

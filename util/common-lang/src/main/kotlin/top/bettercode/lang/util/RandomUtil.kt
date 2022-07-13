@@ -15,7 +15,7 @@ object RandomUtil {
 
     @JvmStatic
     fun uuid(): String {
-        return LocalDateTimeHelper.now()
+        return TimeUtil.now()
             .format(DateTimeFormatter.ofPattern("yyyyMMddHH")) + String.format(
             "%010d",
             abs(UUID.randomUUID().toString().hashCode())

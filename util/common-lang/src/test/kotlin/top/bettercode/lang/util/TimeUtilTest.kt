@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test
 /**
  * @author Peter Wu
  */
-class LocalDateTimeHelperTest {
+class TimeUtilTest {
 
-    private val localDate = LocalDateTimeHelper.of(2018, 3, 5)
+    private val localDate = TimeUtil.of(2018, 3, 5)
 
     @Test
     fun getFirstDayOfMonth() {

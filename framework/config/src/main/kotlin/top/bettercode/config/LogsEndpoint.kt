@@ -16,7 +16,7 @@ import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.StringUtils
 import top.bettercode.lang.PrettyMessageHTMLLayout
-import top.bettercode.lang.util.LocalDateTimeHelper
+import top.bettercode.lang.util.TimeUtil
 import top.bettercode.logging.WebsocketProperties
 import java.io.File
 import java.io.FileInputStream
@@ -320,7 +320,7 @@ class LogsEndpoint(
                 else if (useWebSocket) {
                     writer.println(
                         "<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${
-                            LocalDateTimeHelper.now().format(dateTimeFormatter)
+                            TimeUtil.now().format(dateTimeFormatter)
                         }       -"
                     )
                 }
@@ -331,7 +331,7 @@ class LogsEndpoint(
                     if (it.isDirectory) {
                         writer.println(
                             "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${
-                                LocalDateTimeHelper.of(
+                                TimeUtil.of(
                                     it.lastModified()
                                 ).format(dateTimeFormatter)
                             }       -"
@@ -339,7 +339,7 @@ class LogsEndpoint(
                     } else {
                         writer.println(
                             "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        ${
-                                LocalDateTimeHelper.of(
+                                TimeUtil.of(
                                     it.lastModified()
                                 ).format(dateTimeFormatter)
                             }       ${prettyValue(it.length())}"

@@ -7,7 +7,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.CoreConstants.LINE_SEPARATOR
 import ch.qos.logback.core.helpers.Transform
 import ch.qos.logback.core.pattern.Converter
-import top.bettercode.lang.util.LocalDateTimeHelper
+import top.bettercode.lang.util.TimeUtil
 import java.util.*
 
 /**
@@ -98,7 +98,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
             else -> buf.append("Message")
         }
         buf.append("\"><pre>")
-        buf.append("${LocalDateTimeHelper.format(event.timeStamp)} ")
+        buf.append("${TimeUtil.format(event.timeStamp)} ")
         buf.append("${event.level} ")
         buf.append("[${event.threadName}] ")
         buf.append("${event.loggerName} :")
