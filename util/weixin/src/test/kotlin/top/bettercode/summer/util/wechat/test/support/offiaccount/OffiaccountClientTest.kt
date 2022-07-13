@@ -2,7 +2,7 @@ package top.bettercode.summer.util.wechat.test.support.offiaccount
 
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import top.bettercode.lang.util.LocalDateTimeHelper
+import top.bettercode.lang.util.TimeUtil
 import top.bettercode.lang.util.StringUtil
 import top.bettercode.summer.util.test.BaseTest
 import top.bettercode.summer.util.wechat.support.offiaccount.OffiaccountClient
@@ -53,9 +53,9 @@ internal class OffiaccountClientTest : BaseTest() {
                 "first" to Data("抱歉，您参与的竞拍未中标！"),
                 "keyword1" to Data("xxxxx"),
                 "keyword2" to Data(
-                    LocalDateTimeHelper.now()
+                    TimeUtil.now()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                            + "至" + LocalDateTimeHelper.now()
+                            + "至" + TimeUtil.now()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 ),
                 "keyword3" to Data("25.5")

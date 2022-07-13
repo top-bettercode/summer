@@ -28,7 +28,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import top.bettercode.lang.util.BooleanUtil;
-import top.bettercode.lang.util.LocalDateTimeHelper;
+import top.bettercode.lang.util.TimeUtil;
 import top.bettercode.lang.util.MoneyUtil;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.support.code.CodeServiceHolder;
@@ -418,9 +418,9 @@ public class ExcelField<T, P> {
       } else if (propertyType == Long.class || propertyType == long.class) {
         if (isDateField()) {
           if (cellValue instanceof LocalDateTime) {
-            return LocalDateTimeHelper.of((LocalDateTime) cellValue).toMillis();
+            return TimeUtil.of((LocalDateTime) cellValue).toMillis();
           } else {
-            return LocalDateTimeHelper.parse(String.valueOf(cellValue), dateTimeFormatter)
+            return TimeUtil.parse(String.valueOf(cellValue), dateTimeFormatter)
                 .toMillis();
           }
         } else {
@@ -434,22 +434,22 @@ public class ExcelField<T, P> {
         return ((BigDecimal) cellValue).floatValue();
       } else if (propertyType == Date.class) {
         if (cellValue instanceof LocalDateTime) {
-          return LocalDateTimeHelper.of((LocalDateTime) cellValue).toDate();
+          return TimeUtil.of((LocalDateTime) cellValue).toDate();
         } else {
-          return LocalDateTimeHelper.parse(String.valueOf(cellValue), dateTimeFormatter).toDate();
+          return TimeUtil.parse(String.valueOf(cellValue), dateTimeFormatter).toDate();
         }
       } else if (propertyType == LocalDateTime.class) {
         if (cellValue instanceof LocalDateTime) {
           return cellValue;
         } else {
-          return LocalDateTimeHelper.parse(String.valueOf(cellValue), dateTimeFormatter)
+          return TimeUtil.parse(String.valueOf(cellValue), dateTimeFormatter)
               .toLocalDateTime();
         }
       } else if (propertyType == LocalDate.class) {
         if (cellValue instanceof LocalDateTime) {
           return ((LocalDateTime) cellValue).toLocalDate();
         } else {
-          return LocalDateTimeHelper.parse(String.valueOf(cellValue), dateTimeFormatter)
+          return TimeUtil.parse(String.valueOf(cellValue), dateTimeFormatter)
               .toLocalDate();
         }
       }
@@ -463,11 +463,11 @@ public class ExcelField<T, P> {
       } else if (propertyType == boolean.class || propertyType == Boolean.class) {
         return (Boolean) property ? "是" : "否";
       } else if (propertyType == LocalDate.class) {
-        return LocalDateTimeHelper.of((LocalDate) property).toDate();
+        return TimeUtil.of((LocalDate) property).toDate();
       } else if (propertyType == LocalDateTime.class) {
-        return LocalDateTimeHelper.of((LocalDateTime) property).toDate();
+        return TimeUtil.of((LocalDateTime) property).toDate();
       } else if (isDateField() && (propertyType == Long.class || propertyType == long.class)) {
-        return LocalDateTimeHelper.of((Long) property).toDate();
+        return TimeUtil.of((Long) property).toDate();
       } else if (ClassUtils.isPrimitiveOrWrapper(propertyType)) {
         return property;
       } else if (propertyType == BigDecimal.class) {

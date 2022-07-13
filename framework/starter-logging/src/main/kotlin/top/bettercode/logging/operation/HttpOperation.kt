@@ -5,7 +5,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.util.StringUtils
-import top.bettercode.lang.util.LocalDateTimeHelper
+import top.bettercode.lang.util.TimeUtil
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -30,8 +30,8 @@ object HttpOperation {
             stringBuilder.appendLine("${output.collectionName}/${output.name}")
         }
         stringBuilder.appendLine("USERNAME        : ${output.request.remoteUser}")
-        stringBuilder.appendLine("REQUEST    TIME : ${LocalDateTimeHelper.format(output.request.dateTime)}")
-        stringBuilder.appendLine("RESPONSE   TIME : ${LocalDateTimeHelper.format(output.response.dateTime)}")
+        stringBuilder.appendLine("REQUEST    TIME : ${TimeUtil.format(output.request.dateTime)}")
+        stringBuilder.appendLine("RESPONSE   TIME : ${TimeUtil.format(output.response.dateTime)}")
         stringBuilder.appendLine("DURATION MILLIS : ${output.duration}")
         stringBuilder.appendLine(separatorLine)
         stringBuilder.append(toString(output.request, output.protocol, format, requestDecrypt))

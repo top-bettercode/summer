@@ -63,7 +63,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import top.bettercode.lang.util.LocalDateTimeHelper;
+import top.bettercode.lang.util.TimeUtil;
 import top.bettercode.logging.annotation.NoRequestLogging;
 import top.bettercode.simpleframework.support.packagescan.PackageScanClassResolver;
 import top.bettercode.simpleframework.web.DefaultCaptchaServiceImpl;
@@ -181,7 +181,7 @@ public class FrameworkMvcConfiguration {
         @Override
         public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers)
             throws IOException {
-          gen.writeNumber(LocalDateTimeHelper.of(value).toMillis());
+          gen.writeNumber(TimeUtil.of(value).toMillis());
         }
       });
       jacksonObjectMapperBuilder.deserializerByType(LocalDate.class,
@@ -191,7 +191,7 @@ public class FrameworkMvcConfiguration {
                 throws IOException {
               String asString = p.getValueAsString();
               if (StringUtils.hasText(asString)) {
-                return LocalDateTimeHelper.of(Long.parseLong(asString)).toLocalDate();
+                return TimeUtil.of(Long.parseLong(asString)).toLocalDate();
               } else {
                 return null;
               }
@@ -203,7 +203,7 @@ public class FrameworkMvcConfiguration {
             public void serialize(LocalDateTime value, JsonGenerator gen,
                 SerializerProvider serializers)
                 throws IOException {
-              gen.writeNumber(LocalDateTimeHelper.of(value).toMillis());
+              gen.writeNumber(TimeUtil.of(value).toMillis());
             }
           });
       jacksonObjectMapperBuilder.deserializerByType(LocalDateTime.class,
@@ -213,7 +213,7 @@ public class FrameworkMvcConfiguration {
                 throws IOException {
               String asString = p.getValueAsString();
               if (StringUtils.hasText(asString)) {
-                return LocalDateTimeHelper.of(Long.parseLong(asString)).toLocalDateTime();
+                return TimeUtil.of(Long.parseLong(asString)).toLocalDateTime();
               } else {
                 return null;
               }
@@ -473,7 +473,7 @@ public class FrameworkMvcConfiguration {
         @Override
         public LocalDate convert(String source) {
           if (legalDate(source)) {
-            return LocalDateTimeHelper.of(Long.parseLong(source)).toLocalDate();
+            return TimeUtil.of(Long.parseLong(source)).toLocalDate();
           } else {
             return null;
           }
@@ -483,7 +483,7 @@ public class FrameworkMvcConfiguration {
         @Override
         public LocalDateTime convert(String source) {
           if (legalDate(source)) {
-            return LocalDateTimeHelper.of(Long.parseLong(source)).toLocalDateTime();
+            return TimeUtil.of(Long.parseLong(source)).toLocalDateTime();
           } else {
             return null;
           }

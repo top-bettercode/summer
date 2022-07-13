@@ -13,7 +13,7 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import top.bettercode.lang.PrettyMessageHTMLLayout
-import top.bettercode.lang.util.LocalDateTimeHelper
+import top.bettercode.lang.util.TimeUtil
 import top.bettercode.logging.operation.RequestConverter
 import java.io.File
 
@@ -179,10 +179,10 @@ class SlackClient(
         params.add("token", authToken)
         params.add("channels", channel)
         params.add("content", message.joinToString("").toByteArray())
-        params.add("filename", "$title-${LocalDateTimeHelper.format(timeStamp)}.log")
+        params.add("filename", "$title-${TimeUtil.format(timeStamp)}.log")
         params.add("filetype", "text")
         if (title.isNotBlank()) {
-            params.add("title", "$title-${LocalDateTimeHelper.format(timeStamp)}")
+            params.add("title", "$title-${TimeUtil.format(timeStamp)}")
         }
         params.add("initial_comment", "$title:\n$initialComment")
         val result = request("files.upload", Result::class.java, params)
