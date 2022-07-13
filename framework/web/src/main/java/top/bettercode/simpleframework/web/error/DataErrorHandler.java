@@ -95,9 +95,9 @@ public class DataErrorHandler extends AbstractErrorHandler {
       }
     } else if (error instanceof DataAccessResourceFailureException) {
       Throwable cause = error.getCause();
-      String extractMessage = "could not extract ResultSet";
-      if (cause != null && extractMessage.equals(cause.getMessage())) {
-        message = cause.getCause() != null ? cause.getCause().getMessage() : extractMessage;
+      if (cause != null && "org.hibernate.exception.JDBCConnectionException".equals(
+          cause.getClass().getName())) {
+        message = cause.getCause() != null ? cause.getCause().getMessage() : cause.getMessage();
       } else {
         message = error.getMessage();
       }
