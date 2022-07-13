@@ -1,6 +1,9 @@
 package top.bettercode.lang.util
 
-import java.time.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 import java.util.*
@@ -215,6 +218,17 @@ class LocalDateTimeHelper private constructor(
             return Date.from(localDateTime.atZone(zoneId).toInstant())
         }
 
+        @JvmOverloads
+        @JvmStatic
+        fun toLocalDateTime(date: Date, zoneId: ZoneId = DEFAULT_ZONE_ID): LocalDateTime {
+            return LocalDateTime.ofInstant(date.toInstant(), zoneId)
+        }
+
+        @JvmOverloads
+        @JvmStatic
+        fun toLocalDate(date: Date, zoneId: ZoneId = DEFAULT_ZONE_ID): LocalDate {
+            return toLocalDateTime(date, zoneId).toLocalDate()
+        }
     }
 
 }
