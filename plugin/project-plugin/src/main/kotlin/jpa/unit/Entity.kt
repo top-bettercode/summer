@@ -20,7 +20,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             annotation("@org.hibernate.annotations.DynamicInsert")
         annotation("@org.hibernate.annotations.DynamicUpdate")
         annotation("@javax.persistence.Entity")
-        annotation("@javax.persistence.Table(name = \"$tableName\")")
+        annotation("@javax.persistence.Table(name = ${className}.TABLE_NAME)")
         annotation("@javax.persistence.EntityListeners(AuditingEntityListener.class)")
 
         javadoc {
@@ -132,7 +132,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return this;"
         }
 
-        if(isCompositePrimaryKey){
+        if (isCompositePrimaryKey) {
             primaryKeys.forEach {
                 //getter
                 method(
@@ -267,9 +267,11 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         0 -> {
                             +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
                         }
+
                         size - 1 -> {
                             +"    Objects.equals(${column.javaName}, that.${column.javaName});"
                         }
+
                         else -> {
                             +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
                         }
