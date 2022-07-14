@@ -1,4 +1,14 @@
 {
   "properties": [
+    {
+      "name": "scheduling.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Description for scheduling.enable."
+    },
+    {
+      "name": "async.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Description for async.enabled."
+    }
   ]
 }
