@@ -16,6 +16,6 @@ public class SchedulingConfiguration {
 
   public SchedulingConfiguration() {
     Logger log = LoggerFactory.getLogger(SchedulingConfiguration.class);
-    log.info("------------启用定时任务------------");
+    log.info("------------启用 Spring 的计划任务执行功能------------");
   }
 }

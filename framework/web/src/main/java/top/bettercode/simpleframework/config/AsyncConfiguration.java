@@ -16,6 +16,6 @@ public class AsyncConfiguration {
 
   public AsyncConfiguration() {
     Logger log = LoggerFactory.getLogger(AsyncConfiguration.class);
-    log.info("------------启用异步任务------------");
+    log.info("------------启用 Spring 的异步方法执行功能------------");
   }
 }
