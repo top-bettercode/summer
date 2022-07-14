@@ -37,7 +37,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             annotation("@Override")
             annotation("@org.junit.jupiter.api.BeforeEach")
             exception(JavaType("Exception"))
-            +"tableNames(\"$tableName\");"
+            +"tableNames(${className}.TABLE_NAME);"
             +"super.setup();"
         }
 
