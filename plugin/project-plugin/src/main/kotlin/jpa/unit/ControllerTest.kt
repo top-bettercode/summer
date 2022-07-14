@@ -22,8 +22,9 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         staticImport("org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get")
         staticImport("org.springframework.test.web.servlet.result.MockMvcResultMatchers.status")
+        import("org.junit.jupiter.api.MethodOrderer.OrderAnnotation")
 
-        annotation("@org.junit.jupiter.api.TestMethodOrder(org.junit.jupiter.api.MethodOrderer.OrderAnnotation.class)")
+        annotation("@org.junit.jupiter.api.TestMethodOrder(OrderAnnotation.class)")
 
         field("${projectEntityName}Service", if (interfaceService) iserviceType else serviceType) {
             annotation("@org.springframework.beans.factory.annotation.Autowired")
