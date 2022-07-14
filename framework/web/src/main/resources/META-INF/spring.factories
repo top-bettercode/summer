@@ -6,6 +6,8 @@ top.bettercode.simpleframework.config.FrameworkMvcConfiguration,\
 top.bettercode.simpleframework.config.SerializerConfiguration,\
 top.bettercode.simpleframework.config.CorsConfiguration,\
 top.bettercode.simpleframework.config.MultipartFileConfiguration,\
-top.bettercode.simpleframework.config.SummerCaffeineCacheConfiguration
+top.bettercode.simpleframework.config.SummerCaffeineCacheConfiguration,\
+top.bettercode.simpleframework.config.AsyncConfiguration,\
+top.bettercode.simpleframework.config.SchedulingConfiguration
 
 
