@@ -76,6 +76,15 @@ public abstract class BaseWebNoAuthTest {
     requestLoggingProperties.setIncludeResponseBody(true);
     requestLoggingProperties.setFormat(true);
     mockMvc = mockMvcBuilder().build();
+    defaultBeforeEach();
+  }
+
+  protected void defaultBeforeEach() throws Exception{
+
+  }
+
+  protected void beforeEach() throws Exception{
+
   }
 
 
