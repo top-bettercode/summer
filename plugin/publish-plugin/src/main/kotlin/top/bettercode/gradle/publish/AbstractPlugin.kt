@@ -200,7 +200,7 @@ abstract class AbstractPlugin : Plugin<Project> {
                 manifest.attributes(
                     mapOf(
                         "Manifest-Version" to project.version,
-                        "Implementation-Title" to "${if (project != project.rootProject) "${project.rootProject.name}:" else ""}${project.name}",
+                        "Implementation-Title" to "${project.rootProject.name}${project.path}",
                         "Implementation-Version" to project.version
                     )
                 )
