@@ -343,9 +343,9 @@ class DistPlugin : Plugin<Project> {
                     task.manifest {
                         it.attributes(
                             mapOf(
-                                "Manifest-Version" to project.version,
-                                "Implementation-Title" to "${if (project != project.rootProject) "${project.rootProject.name}:" else ""}${project.name}",
-                                "Implementation-Version" to project.version
+                                "Manifest-Version" to p.version,
+                                "Implementation-Title" to "${p.rootProject.name}${p.path}",
+                                "Implementation-Version" to p.version
                             )
                         )
                     }
