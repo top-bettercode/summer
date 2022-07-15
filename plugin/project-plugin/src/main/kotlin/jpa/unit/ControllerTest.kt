@@ -33,13 +33,11 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             annotation("@org.springframework.beans.factory.annotation.Autowired")
         }
 
-        //setup
-        method("setup", JavaType.voidPrimitiveInstance) {
+        //beforeEach
+        method("beforeEach", JavaType.voidPrimitiveInstance) {
             annotation("@Override")
-            annotation("@org.junit.jupiter.api.BeforeEach")
             exception(JavaType("Exception"))
             +"tableNames(${className}.TABLE_NAME);"
-            +"super.setup();"
         }
 
         val insertName =
