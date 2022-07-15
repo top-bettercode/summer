@@ -11,7 +11,7 @@ import top.bettercode.simpleframework.security.UserDetailsAuthenticationToken;
  *
  * @author Peter Wu
  */
-public abstract class BaseWebTest extends BaseWebNoAuthTest {
+public abstract class BaseWebAuthTest extends BaseWebNoAuthTest {
 
   protected String username = "root";
   @Autowired
