@@ -148,8 +148,13 @@ public class RespEntity<T> implements IRespEntity, Serializable {
   }
 
   @JsonIgnore
+  public static <T> RespEntity<T> fail(String status, String message) {
+    return fail(status, message, null);
+  }
+
+  @JsonIgnore
   public static <T> RespEntity<T> fail(String message, Object errors) {
-    return fail(String.valueOf(HttpStatus.SERVICE_UNAVAILABLE.value()), message, errors);
+    return fail(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()), message, errors);
   }
 
   @JsonIgnore
