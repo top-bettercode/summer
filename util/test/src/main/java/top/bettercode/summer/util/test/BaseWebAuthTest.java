@@ -31,7 +31,6 @@ public abstract class BaseWebAuthTest extends BaseWebNoAuthTest {
     }
     SecurityContextHolder.getContext()
         .setAuthentication(new UserDetailsAuthenticationToken(userDetails));
-    System.err.println("------------------------------------------------------");
   }
 
 
