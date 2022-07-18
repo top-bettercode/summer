@@ -79,6 +79,7 @@ public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
     requestLoggingProperties.setFormat(true);
     mockMvc = mockMvcBuilder().build();
     defaultBeforeEach();
+    System.err.println("------------------------------------------------------");
   }
 
   protected void defaultBeforeEach() throws Exception {
