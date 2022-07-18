@@ -20,8 +20,6 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         annotation("@org.springframework.transaction.annotation.Transactional")
         superClass("$basePackageName.support.BaseWebTest")
 
-        staticImport("org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get")
-        staticImport("org.springframework.test.web.servlet.result.MockMvcResultMatchers.status")
         import("org.junit.jupiter.api.MethodOrderer.OrderAnnotation")
 
         annotation("@org.junit.jupiter.api.TestMethodOrder(OrderAnnotation.class)")
@@ -55,11 +53,11 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             annotation("@org.junit.jupiter.api.Order(0)")
             exception(JavaType("Exception"))
             +"$insertName();"
-            +"mockMvc.perform(get(\"/$pathName/list\")"
+            +"perform(get(\"/$pathName/list\")"
             2 + ".param(\"page\", \"1\")"
             2 + ".param(\"size\", \"5\")"
             2 + ".param(\"sort\", \"\")"
-            +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
+            +");"
         }
 
         val excel = enable("excel", false)
@@ -75,10 +73,9 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 exception(JavaType("Exception"))
                 +"$insertName();"
                 import("org.springframework.test.web.servlet.ResultActions")
-                +"ResultActions actions = mockMvc.perform(get(\"/$pathName/export.xlsx\")"
+                +"download(get(\"/$pathName/export.xlsx\")"
                 2 + ".param(\"sort\", \"\")"
                 +");"
-                +"download(actions);"
             }
         }
 
@@ -95,9 +92,9 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"${primaryKeyClassName} $primaryKeyName = $insertName().get${
                     primaryKeyName.capitalized()
                 }();"
-                +"mockMvc.perform(get(\"/$pathName/info\")"
+                +"perform(get(\"/$pathName/info\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
-                +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
+                +");"
             }
 
             val filterColumns =
@@ -105,7 +102,6 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             val filterOtherColumns =
                 otherColumns.filter { !it.version && !it.jsonViewIgnored && it.javaName != "createdDate" && it.javaName != "lastModifiedDate" }
             //create
-            staticImport("org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post")
             method("create", JavaType.voidPrimitiveInstance) {
 //                javadoc {
 //                    +"// ${remarks}新增"
@@ -123,7 +119,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         }(${it.randomValueToSet});"
                     }
                 }
-                +"mockMvc.perform(post(\"/$pathName/save\")"
+                +"perform(post(\"/$pathName/save\")"
                 if (isFullComposite) {
                     filterColumns.forEach {
                         2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
@@ -141,7 +137,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
                     }
                 }
-                +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
+                +");"
             }
 
             //update
@@ -154,7 +150,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Order(4)")
                 exception(JavaType("Exception"))
                 if (isFullComposite) {
-                    +"mockMvc.perform(post(\"/$pathName/save\")"
+                    +"perform(post(\"/$pathName/save\")"
                     filterColumns.forEach {
                         2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
                     }
@@ -162,13 +158,13 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +"${primaryKeyClassName} $primaryKeyName = $insertName().get${
                         primaryKeyName.capitalized()
                     }();"
-                    +"mockMvc.perform(post(\"/$pathName/save\")"
+                    +"perform(post(\"/$pathName/save\")"
                     2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                     filterOtherColumns.forEach {
                         2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
                     }
                 }
-                +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
+                +");"
             }
 
             //delete
@@ -184,9 +180,9 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"$primaryKeyClassName $primaryKeyName = $insertName().get${
                     primaryKeyName.capitalized()
                 }();"
-                +"mockMvc.perform(post(\"/$pathName/delete\")"
+                +"perform(post(\"/$pathName/delete\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
-                +").andExpect(status().isOk()).andExpect(contentStatusIsOk());"
+                +");"
                 +"assertFalse(${projectEntityName}Service.existsById(${primaryKeyName}));"
             }
 
