@@ -27,8 +27,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
@@ -50,7 +52,7 @@ import top.bettercode.simpleframework.web.error.CustomErrorController;
 @TestPropertySource(properties = {
     "summer.security.enabled=false"
 })
-public abstract class BaseWebNoAuthTest {
+public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
 
   @Autowired
   private WebApplicationContext context;
@@ -79,11 +81,11 @@ public abstract class BaseWebNoAuthTest {
     defaultBeforeEach();
   }
 
-  protected void defaultBeforeEach() throws Exception{
+  protected void defaultBeforeEach() throws Exception {
 
   }
 
-  protected void beforeEach() throws Exception{
+  protected void beforeEach() throws Exception {
 
   }
 
@@ -121,6 +123,15 @@ public abstract class BaseWebNoAuthTest {
     contentDisposition = URLDecoder
         .decode(contentDisposition.replaceAll(".*filename\\*=UTF-8''(.*?)", "$1"), "UTF-8");
     return "build/" + contentDisposition;
+  }
+
+  protected ResultActions perform(RequestBuilder requestBuilder) throws Exception {
+    return mockMvc.perform(requestBuilder
+    ).andExpect(status().isOk()).andExpect(contentStatusIsOk());
+  }
+
+  protected void download(RequestBuilder requestBuilder) throws Exception {
+    download(mockMvc.perform(requestBuilder));
   }
 
   protected void download(ResultActions perform) throws Exception {
