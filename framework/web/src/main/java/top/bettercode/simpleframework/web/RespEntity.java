@@ -126,6 +126,10 @@ public class RespEntity<T> implements IRespEntity, Serializable {
     }
   }
 
+  @JsonIgnore
+  public static <T> RespEntity<T> of(String status, String message) {
+    return new RespEntity<>(status, message);
+  }
 
   @JsonIgnore
   public static <T> RespEntity<T> ok() {
@@ -145,11 +149,6 @@ public class RespEntity<T> implements IRespEntity, Serializable {
   @JsonIgnore
   public static <T> RespEntity<T> fail(String message) {
     return fail(message, null);
-  }
-
-  @JsonIgnore
-  public static <T> RespEntity<T> fail(String status, String message) {
-    return fail(status, message, null);
   }
 
   @JsonIgnore

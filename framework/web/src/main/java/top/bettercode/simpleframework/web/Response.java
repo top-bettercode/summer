@@ -66,6 +66,10 @@ public class Response {
     return ok(new RespEntity<>(String.valueOf(HttpStatus.OK.value()), message));
   }
 
+  protected ResponseEntity<?> message(String status, String message) {
+    return ok(new RespEntity<>(status, message));
+  }
+
   /**
    * @param message message
    * @return 400 ResponseEntity
