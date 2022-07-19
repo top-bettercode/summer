@@ -1,5 +1,6 @@
 package plugin
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
@@ -39,6 +40,15 @@ class ProjectPlugin : Plugin<Project> {
                     it.testOutputDir = convention.sourceSets
                         .getByName(SourceSet.TEST_SOURCE_SET_NAME).java.classesDirectory.get().asFile
                 }
+            }
+
+            //java
+            subProject.extensions.configure(org.gradle.api.plugins.JavaPluginExtension::class.java) { java ->
+                val javaVersionPropertyName = "java.version"
+                val javaVersion =
+                    JavaVersion.toVersion(subProject.findProperty(javaVersionPropertyName) ?: "8")
+                java.sourceCompatibility = javaVersion
+                java.targetCompatibility = javaVersion
             }
 
             //plugins
