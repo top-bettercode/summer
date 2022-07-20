@@ -166,6 +166,26 @@ open class TimeUtil(
         }
 
         @JvmStatic
+        fun parse(text: CharSequence, formatter: String): TimeUtil {
+            return TimeUtil(LocalDateTime.parse(text, DateTimeFormatter.ofPattern(formatter)))
+        }
+
+        @JvmStatic
+        fun parseDate(text: CharSequence): TimeUtil {
+            return of(LocalDate.parse(text))
+        }
+
+        @JvmStatic
+        fun parseDate(text: CharSequence, formatter: DateTimeFormatter): TimeUtil {
+            return of(LocalDate.parse(text, formatter))
+        }
+
+        @JvmStatic
+        fun parseDate(text: CharSequence, formatter: String): TimeUtil {
+            return of(LocalDate.parse(text, DateTimeFormatter.ofPattern(formatter)))
+        }
+
+        @JvmStatic
         fun of(year: Int, month: Int, dayOfMonth: Int): TimeUtil {
             return TimeUtil(LocalDate.of(year, month, dayOfMonth).atStartOfDay())
         }
