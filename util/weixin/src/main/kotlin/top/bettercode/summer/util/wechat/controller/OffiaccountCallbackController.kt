@@ -39,6 +39,7 @@ class OffiaccountCallbackController(
                     accessToken.openid!!
                 ) else null)
             ) else null
+            token?.openId = accessToken?.openid
         } catch (e: Exception) {
             log.warn("token获取失败", e)
         }
