@@ -15,7 +15,7 @@ import top.bettercode.simpleframework.security.UserDetailsAuthenticationToken;
 public abstract class BaseWebAuthTest extends BaseWebNoAuthTest {
 
   protected String username = "root";
-  protected String scope = null;
+  protected String scope = "app";
   @Autowired
   UserDetailsService userDetailsService;
 
@@ -23,7 +23,7 @@ public abstract class BaseWebAuthTest extends BaseWebNoAuthTest {
   public void defaultBeforeEach() throws Exception {
     beforeEach();
     UserDetails userDetails;
-    if (scope != null && userDetailsService instanceof ScopeUserDetailsService) {
+    if (userDetailsService instanceof ScopeUserDetailsService) {
       userDetails = ((ScopeUserDetailsService) userDetailsService).loadUserByScopeAndUsername(scope,
           username);
     } else {
