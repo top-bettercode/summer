@@ -41,6 +41,7 @@ public class DataErrorHandler extends AbstractErrorHandler {
       String dataTooLongRegex = "^Data truncation: Data too long for column '(.*?)'.*";
       String outOfRangeRegex = "^Data truncation: Out of range value for column '(.*?)'.*";
       String constraintSubfix = "Cannot delete or update a parent row";
+      String incorrectRegex = "^Data truncation: Incorrect .* value: '(.*?)' for column '(.*?)' at.*";
       if (specificCauseMessage.matches(duplicateRegex)) {
         String columnName = getText(
             specificCauseMessage.replaceAll(duplicateRegex, "$1"));
@@ -67,6 +68,9 @@ public class DataErrorHandler extends AbstractErrorHandler {
         if (!StringUtils.hasText(message)) {
           message = "data.valid.failed";
         }
+      } else if (specificCauseMessage.matches(incorrectRegex)) {
+        String columnName = getText(specificCauseMessage.replaceAll(incorrectRegex, "$2"));
+        message = columnName + "格式不正确";
       } else {
         message = ((DataIntegrityViolationException) error).getRootCause().getMessage();
       }
