@@ -60,13 +60,12 @@ public class ExcelField<T, P> {
   /**
    * 格式
    */
-  private String pattern;
+  private String numberingFormat;
 
   /**
    * 导出字段水平对齐方式
    * <p>
-   * Define horizontal alignment.
-   * <a
+   * Define horizontal alignment. <a
    * href="https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx">here</a>.
    */
   private Alignment align = Alignment.center;
@@ -204,7 +203,6 @@ public class ExcelField<T, P> {
   }
 
   public ExcelField<T, P> millis(String pattern) {
-    this.pattern = pattern;
     this.dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
     return this;
   }
@@ -379,32 +377,35 @@ public class ExcelField<T, P> {
 
   private ExcelField(String title) {
     this.title = title;
-    this.pattern = ExcelCell.DEFAULT_PATTERN;
+    this.numberingFormat = ExcelCell.DEFAULT_NUMBERING_FORMAT;
   }
 
   private void init() {
     Assert.notNull(propertyType, "propertyType 不能为空");
-    if (this.pattern == null) {
+    if (this.numberingFormat == null) {
       if (propertyType == Integer.class || propertyType == int.class) {
-        this.pattern = "0";
+        this.numberingFormat = "0";
       } else if (propertyType == Long.class || propertyType == long.class) {
-        this.pattern = "0";
+        this.numberingFormat = "0";
       } else if (propertyType == Double.class || propertyType == double.class) {
-        this.pattern = "0.00";
+        this.numberingFormat = "0.00";
       } else if (propertyType == Float.class || propertyType == float.class) {
-        this.pattern = "0.00";
+        this.numberingFormat = "0.00";
       } else if (propertyType == LocalDate.class) {
-        this.pattern = ExcelCell.DEFAULT_DATE_PATTERN;
+        this.numberingFormat = ExcelCell.DEFAULT_DATE_NUMBERING_FORMAT;
       } else if (propertyType == Date.class || propertyType == LocalDateTime.class) {
-        this.pattern = ExcelCell.DEFAULT_DATE_TIME_PATTERN;
+        this.numberingFormat = ExcelCell.DEFAULT_DATE_TIME_NUMBERING_FORMAT;
       } else {
-        this.pattern = ExcelCell.DEFAULT_PATTERN;
+        this.numberingFormat = ExcelCell.DEFAULT_NUMBERING_FORMAT;
       }
     }
 
-    if (dateTimeFormatter == null && (propertyType == Date.class
-        || propertyType == LocalDateTime.class || propertyType == LocalDate.class)) {
-      dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+    if (dateTimeFormatter == null) {
+      if (propertyType == LocalDate.class) {
+        dateTimeFormatter = DateTimeFormatter.ofPattern(ExcelCell.DEFAULT_DATE_PATTERN);
+      } else if (propertyType == Date.class || propertyType == LocalDateTime.class) {
+        dateTimeFormatter = DateTimeFormatter.ofPattern(ExcelCell.DEFAULT_DATE_TIME_PATTERN);
+      }
     }
 
     propertyConverter = (cellValue) -> {
@@ -473,9 +474,9 @@ public class ExcelField<T, P> {
       } else if (propertyType == BigDecimal.class) {
         int scale = ((BigDecimal) property).scale();
         if (scale > 0) {
-          this.pattern = "0." + String.format("%0" + scale + "d", 0);
+          this.numberingFormat = "0." + String.format("%0" + scale + "d", 0);
         } else {
-          this.pattern = "0";
+          this.numberingFormat = "0";
         }
         return property;
       } else if (propertyType.isArray()) {
@@ -540,8 +541,13 @@ public class ExcelField<T, P> {
     return this;
   }
 
+  public ExcelField<T, P> format(String numberingFormat) {
+    this.numberingFormat = numberingFormat;
+    return this;
+  }
+
   public ExcelField<T, P> pattern(String pattern) {
-    this.pattern = pattern;
+    this.dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
     return this;
   }
 
@@ -650,8 +656,8 @@ public class ExcelField<T, P> {
     return dataValidation;
   }
 
-  String pattern() {
-    return pattern;
+  String numberingFormat() {
+    return numberingFormat;
   }
 
   Alignment align() {
