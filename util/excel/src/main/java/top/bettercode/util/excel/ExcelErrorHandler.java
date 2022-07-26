@@ -1,5 +1,6 @@
 package top.bettercode.util.excel;
 
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,7 +42,14 @@ public class ExcelErrorHandler extends AbstractErrorHandler {
             errors.put(key, title + ": " + constraintViolation.getMessage());
           }
         } else {
-          errors.put(key, title + ": " + getText(value.getMessage()));
+          String msg = value.getMessage();
+          if (value instanceof DateTimeParseException) {
+            String msgRegex = "Text '(.*?)' could not be parsed at index (\\d+)";
+            if (msg.matches(msgRegex)) {
+              msg = msg.replaceAll(msgRegex, "$1") + "不是有效的日期格式";
+            }
+          }
+          errors.put(key, title + ": " + getText(msg));
         }
       }
       Entry<String, String> firstError = errors.entrySet().iterator().next();
