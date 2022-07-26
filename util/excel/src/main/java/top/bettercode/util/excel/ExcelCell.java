@@ -8,15 +8,23 @@ public class ExcelCell {
   /**
    * 默认日期格式
    */
-  public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm";
+  public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
   /**
    * 默认时间格式
    */
   public static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm";
   /**
+   * 默认日期格式
+   */
+  public static final String DEFAULT_DATE_NUMBERING_FORMAT = "yyyy-m-dd";
+  /**
+   * 默认时间格式
+   */
+  public static final String DEFAULT_DATE_TIME_NUMBERING_FORMAT = "yyyy-m-dd hh:mm";
+  /**
    * 默认格式
    */
-  public static final String DEFAULT_PATTERN = "@";
+  public static final String DEFAULT_NUMBERING_FORMAT = "@";
 
   private final int row;
   private final int column;
@@ -25,7 +33,7 @@ public class ExcelCell {
   protected boolean fillColor;
   private final String align;
   private final double width;
-  private final String pattern;
+  private final String numberingFormat;
   protected Object cellValue;
   protected final boolean indexColumn;
   private final boolean dateField;
@@ -44,7 +52,7 @@ public class ExcelCell {
     this.fillColor = index % 2 == 0;
     this.align = excelField.align().name();
     this.width = excelField.width();
-    this.pattern = excelField.pattern();
+    this.numberingFormat = excelField.numberingFormat();
     this.indexColumn = excelField.isIndexColumn();
     if (this.indexColumn) {
       this.cellValue = index;
@@ -92,8 +100,8 @@ public class ExcelCell {
     return width;
   }
 
-  public String getPattern() {
-    return pattern;
+  public String getNumberingFormat() {
+    return numberingFormat;
   }
 
   public Object getCellValue() {

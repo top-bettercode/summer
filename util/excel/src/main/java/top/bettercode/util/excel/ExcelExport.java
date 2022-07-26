@@ -191,6 +191,7 @@ public class ExcelExport {
           sheet.width(c, width);
         }
         setHeaderStyle();
+        sheet.range(r + 1, c, r + 1000, c).style().format(excelField.numberingFormat());
         if (includeComment) {
           String commentStr = excelField.comment();
           if (StringUtils.hasText(commentStr)) {
@@ -273,11 +274,11 @@ public class ExcelExport {
     int column = excelCell.getColumn();
     int row = excelCell.getRow();
     StyleSetter style = sheet.style(row, column);
-    String pattern = excelCell.getPattern();
+    String numberingFormat = excelCell.getNumberingFormat();
     style.horizontalAlignment(excelCell.getAlign())
         .verticalAlignment(Alignment.center.name())
         .wrapText(wrapText)
-        .format(pattern)
+        .format(numberingFormat)
         .borderStyle("thin")
         .borderColor("000000");
 
@@ -315,7 +316,7 @@ public class ExcelExport {
     double width = excelCell.getWidth();
     if (width == -1) {
       Object cellValue = excelCell.getCellValue();
-      columnWidths.put(column, excelCell.isDateField() ? pattern : cellValue);
+      columnWidths.put(column, excelCell.isDateField() ? numberingFormat : cellValue);
       if (excelCell.isLastRow()) {
         sheet.width(column, columnWidths.width(column));
       }
@@ -430,7 +431,7 @@ public class ExcelExport {
       sheet.range(excelCell.getLastRangeTop(), column, excelCell.getLastRangeBottom(), column)
           .merge();
       double width = excelCell.getWidth();
-      String pattern = excelCell.getPattern();
+      String numberingFormat = excelCell.getNumberingFormat();
       if (width == -1) {
         sheet.width(column, columnWidths.width(column));
       } else {
@@ -442,7 +443,7 @@ public class ExcelExport {
       style.horizontalAlignment(excelCell.getAlign())
           .verticalAlignment(Alignment.center.name())
           .wrapText(wrapText)
-          .format(pattern)
+          .format(numberingFormat)
           .borderStyle("thin")
           .borderColor("000000");
 
