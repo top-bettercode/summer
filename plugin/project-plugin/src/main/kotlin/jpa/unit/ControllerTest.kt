@@ -235,7 +235,7 @@ val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }(${it.randomValueToSet});"
             }
             +"${projectEntityName}Service.save($entityName);"
-            +"System.err.println(\"-------------------------------\");"
+            +"System.err.println(\"------------------------------------------------------\");"
             +"return $entityName;"
         }
     }
