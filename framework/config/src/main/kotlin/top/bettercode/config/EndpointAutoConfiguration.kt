@@ -51,7 +51,7 @@ class EndpointAutoConfiguration {
         )
     }
 
-    @Profile("\${summer.logging.auth-profile:!default & !dev & !test}")
+    @Profile("!default & !dev & !test")
     @Bean
     @ConditionalOnMissingBean(ManagementLoginPageGeneratingFilter::class)
     fun managementLoginPageGeneratingFilter(
