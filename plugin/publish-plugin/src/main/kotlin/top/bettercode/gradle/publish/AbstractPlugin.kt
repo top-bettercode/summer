@@ -206,6 +206,12 @@ abstract class AbstractPlugin : Plugin<Project> {
                 )
             }
         }
+        project.tasks.named("javadoc", Javadoc::class.java) {
+            it.options { options ->
+                options as StandardJavadocDocletOptions
+                options.addStringOption("Xdoclint:none", "-quiet")
+            }
+        }
         project.tasks.named("publishToMavenLocal") {
             it.doLast {
                 println("${project.name}:${project.version} published to: MavenLocal")
