@@ -33,6 +33,12 @@ public class LoggingProperties {
    * 是否启用日志浏览功能.
    */
   private Boolean showEnabled = true;
+  /**
+   * 启用访问权限控制的Profile。
+   */
+  private String authProfile = "!default & !dev & !test";
+
+  private String apiHost;
 
   public String getWarnSubject() {
     return warnSubject;
@@ -72,5 +78,23 @@ public class LoggingProperties {
 
   public void setShowEnabled(Boolean showEnabled) {
     this.showEnabled = showEnabled;
+  }
+
+  public String getAuthProfile() {
+    return authProfile;
+  }
+
+  public LoggingProperties setAuthProfile(String authProfile) {
+    this.authProfile = authProfile;
+    return this;
+  }
+
+  public String getApiHost() {
+    return apiHost;
+  }
+
+  public LoggingProperties setApiHost(String apiHost) {
+    this.apiHost = apiHost;
+    return this;
   }
 }
