@@ -324,6 +324,11 @@ object RequestConverter {
     }
 
     val apiHost: String? by lazy {
+        val apiHost = ApplicationContextHolder.getProperty("summer.logging.api-host")
+        if (StringUtils.hasText(apiHost)) {
+            return@lazy apiHost
+        }
+
         val uriWriter = StringWriter()
         val printer = PrintWriter(uriWriter)
         val serverProperties = ApplicationContextHolder.getBean(ServerProperties::class.java)
