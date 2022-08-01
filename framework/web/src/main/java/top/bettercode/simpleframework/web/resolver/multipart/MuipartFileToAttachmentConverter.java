@@ -32,7 +32,8 @@ import top.bettercode.simpleframework.config.MultipartProperties;
 public class MuipartFileToAttachmentConverter implements Converter<MultipartFile, Attachment> {
 
   public static final String FILE_TYPE_PARAM_TYPE = "fileType";
-  public static final String REQUEST_FILES = "REQUEST_FILES";
+  public static final String REQUEST_FILES =
+      MuipartFileToAttachmentConverter.class.getName() + ":REQUEST_FILES";
   private final Logger log = LoggerFactory.getLogger(MuipartFileToAttachmentConverter.class);
 
   private final MultipartProperties multipartProperties;
