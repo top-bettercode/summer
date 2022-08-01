@@ -1,8 +1,8 @@
 package top.bettercode.simpleframework.web.resolver.multipart;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -93,7 +93,7 @@ public class MuipartFileToAttachmentConverter implements Converter<MultipartFile
       if (!parentFile.exists()) {
         parentFile.mkdirs();
       }
-      StreamUtils.copy(source.getInputStream(), new FileOutputStream(dest));
+      StreamUtils.copy(source.getInputStream(), Files.newOutputStream(dest.toPath()));
 
       if (log.isDebugEnabled()) {
         log.debug("上传文件保存至：" + dest.getAbsolutePath());

@@ -16,7 +16,7 @@ public class Attachment implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private final static Logger log = LoggerFactory.getLogger(Attachment.class);
+  protected final static Logger log = LoggerFactory.getLogger(Attachment.class);
   private String name;
   @JsonUrl
   private String path;
