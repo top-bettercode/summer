@@ -98,7 +98,7 @@ import top.bettercode.simpleframework.web.serializer.MixIn;
 @AutoConfigureBefore({ErrorMvcAutoConfiguration.class, JacksonAutoConfiguration.class})
 public class FrameworkMvcConfiguration {
 
-  private final Logger log = LoggerFactory.getLogger(SerializerConfiguration.class);
+  private final Logger log = LoggerFactory.getLogger(FrameworkMvcConfiguration.class);
 
   private final SummerWebProperties summerWebProperties;
   private final JacksonExtProperties jacksonExtProperties;
