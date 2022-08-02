@@ -60,6 +60,8 @@ class GeneratorPlugin : Plugin<Project> {
                     val configuration = JDBCConnectionConfiguration()
                     configuration.module = module
                     configuration.url = properties["url"] as? String ?: ""
+                    configuration.databaseDriver =
+                        DatabaseDriver.fromProductName(properties["productName"] as? String ?: "")
                     configuration.catalog = properties["catalog"] as? String?
                     configuration.schema = properties["schema"] as? String?
                     configuration.username = properties["username"] as? String ?: "root"
@@ -164,7 +166,7 @@ class GeneratorPlugin : Plugin<Project> {
                     Class.forName(it.trim()).getDeclaredConstructor().newInstance() as Generator
                 }.toList().toTypedArray()
 
-            extension.projectIsBoot=project.isBoot
+            extension.projectIsBoot = project.isBoot
         }
 
         val extension = project.extensions.getByType(GeneratorExtension::class.java)

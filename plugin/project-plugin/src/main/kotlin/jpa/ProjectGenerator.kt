@@ -1,3 +1,5 @@
+import top.bettercode.generator.DatabaseDriver
+import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dsl.Generator
 
@@ -7,6 +9,27 @@ import top.bettercode.generator.dsl.Generator
  */
 abstract class ProjectGenerator : Generator() {
 
+
+    fun columnAnnotation(column: Column): String {
+        val columnDefinition = if (datasource.databaseDriver == DatabaseDriver.H2) "" else
+            ", columnDefinition = \"${column.typeDesc}${column.defaultDesc}${if (column.extra.isBlank()) "" else " ${column.extra}"}\""
+        var columnAnnotation =
+            "@javax.persistence.Column(name = \"${column.columnName}\"$columnDefinition"
+        if (column.columnSize > 0 && column.columnSize != 255) {
+            if (column.javaType == JavaType.stringInstance)
+                columnAnnotation += ", length = ${column.columnSize}"
+            if (column.javaType == JavaType("java.math.BigDecimal"))
+                columnAnnotation += ", precision = ${column.columnSize}"
+        }
+        if (column.javaType == JavaType("java.math.BigDecimal") && column.decimalDigits > 0) {
+            columnAnnotation += ", scale = ${column.decimalDigits}"
+        }
+        if (!column.nullable) {
+            columnAnnotation += ", nullable = false"
+        }
+        columnAnnotation += ")"
+        return columnAnnotation
+    }
 
     val interfaceService get() = enable("interfaceService", false)
 

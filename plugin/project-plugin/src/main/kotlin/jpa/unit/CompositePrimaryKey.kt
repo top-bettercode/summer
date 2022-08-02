@@ -75,19 +75,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         +" * ${it.docRemark}"
                         +" */"
                     }
-
-                var columnAnnotation =
-                    "@javax.persistence.Column(name = \"${it.columnName}\", columnDefinition = \"${it.typeDesc}${it.defaultDesc}${if (it.extra.isBlank()) "" else " ${it.extra}"}\""
-                if (it.columnSize > 0 && it.columnSize != 255 || !it.nullable) {
-                    if (it.columnSize > 0 && it.columnSize != 255) {
-                        columnAnnotation += ", length = ${it.columnSize}"
-                    }
-                    if (!it.nullable) {
-                        columnAnnotation += ", nullable = false"
-                    }
-                }
-                columnAnnotation += ")"
-                annotation(columnAnnotation)
+                annotation(columnAnnotation(it))
                 if (it.numericBooleanType) {
                     annotation("@org.hibernate.annotations.Type(type = \"org.hibernate.type.NumericBooleanType\")")
                 }

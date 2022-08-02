@@ -3,7 +3,6 @@ package top.bettercode.generator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
-import top.bettercode.generator.GeneratorExtension.Companion.javaName
 import top.bettercode.generator.database.DatabaseMetaData
 import top.bettercode.generator.database.entity.Table
 import java.sql.Connection
@@ -44,7 +43,14 @@ class JDBCConnectionConfiguration(
 
     val isOracle by lazy { databaseDriver == DatabaseDriver.ORACLE }
 
-    val databaseDriver by lazy { DatabaseDriver.fromJdbcUrl(url) }
+    var databaseDriver: DatabaseDriver = DatabaseDriver.UNKNOWN
+        get() {
+            return if (field == DatabaseDriver.UNKNOWN && url.isNotBlank()) {
+                DatabaseDriver.fromJdbcUrl(url)
+            } else {
+                field
+            }
+        }
 
     var driverClass: String = ""
         get() {

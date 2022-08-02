@@ -81,18 +81,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.SEQUENCE, generator = \"${entityName}Sequence\")")
                     annotation("@javax.persistence.SequenceGenerator(name = \"${entityName}Sequence\", sequenceName = \"${primaryKey.sequence}\", allocationSize = 1)")
                 }
-                var columnAnnotation =
-                    "@javax.persistence.Column(name = \"${primaryKey.columnName}\", columnDefinition = \"${primaryKey.typeDesc}${primaryKey.defaultDesc}${if (primaryKey.extra.isBlank()) "" else " ${primaryKey.extra}"}\""
-                if (primaryKey.columnSize > 0 && primaryKey.columnSize != 255 || !primaryKey.nullable) {
-                    if (primaryKey.columnSize > 0 && primaryKey.columnSize != 255) {
-                        columnAnnotation += ", length = ${primaryKey.columnSize}"
-                    }
-                    if (!primaryKey.nullable) {
-                        columnAnnotation += ", nullable = false"
-                    }
-                }
-                columnAnnotation += ")"
-                annotation(columnAnnotation)
+                annotation(columnAnnotation(primaryKey))
             } else {
                 javadoc {
                     +"/**"
@@ -174,19 +163,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         +" * ${it.docRemark}"
                         +" */"
                     }
-
-                var columnAnnotation =
-                    "@javax.persistence.Column(name = \"${it.columnName}\", columnDefinition = \"${it.typeDesc}${it.defaultDesc}${if (it.extra.isBlank()) "" else " ${it.extra}"}\""
-                if (it.columnSize > 0 && it.columnSize != 255 || !it.nullable) {
-                    if (it.columnSize > 0 && it.columnSize != 255) {
-                        columnAnnotation += ", length = ${it.columnSize}"
-                    }
-                    if (!it.nullable) {
-                        columnAnnotation += ", nullable = false"
-                    }
-                }
-                columnAnnotation += ")"
-                annotation(columnAnnotation)
+                annotation(columnAnnotation(it))
                 if (it.javaName == "createdDate") {
                     annotation("@org.springframework.data.annotation.CreatedDate")
                 }
