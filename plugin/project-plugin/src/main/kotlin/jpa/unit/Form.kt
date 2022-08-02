@@ -39,7 +39,6 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return entity;"
         }
 
-        import("javax.validation.groups.Default")
 
         if (!isFullComposite) {
             //constructor with id
@@ -59,6 +58,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 if (!isCompositePrimaryKey && !primaryKey.autoIncrement && primaryKey.idgenerator.isBlank() && primaryKey.sequence.isBlank()) {
                     if (primaryKey.columnSize > 0 && primaryKey.javaType == JavaType.stringInstance) {
+                        import("javax.validation.groups.Default")
                         annotation("@org.hibernate.validator.constraints.Length(max = ${primaryKey.columnSize}, groups = Default.class)")
                     }
                 }
@@ -117,6 +117,7 @@ private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
             it.javaType
         ) {
             if (it.columnSize > 0 && it.javaType == JavaType.stringInstance) {
+                import("javax.validation.groups.Default")
                 annotation("@org.hibernate.validator.constraints.Length(max = ${it.columnSize}, groups = Default.class)")
             }
             if (!it.nullable) {
