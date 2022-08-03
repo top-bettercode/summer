@@ -151,8 +151,9 @@ open class TimeUtil(
         }
 
         @JvmStatic
-        fun now(): TimeUtil {
-            return TimeUtil(LocalDateTime.now())
+        @JvmOverloads
+        fun now(zoneId: ZoneId = DEFAULT_ZONE_ID): TimeUtil {
+            return TimeUtil(LocalDateTime.now(zoneId))
         }
 
         @JvmStatic
