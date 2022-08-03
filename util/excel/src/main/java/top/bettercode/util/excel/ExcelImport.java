@@ -1,9 +1,10 @@
 package top.bettercode.util.excel;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public class ExcelImport {
    */
   public static ExcelImport of(String fileName)
       throws IOException {
-    return new ExcelImport(new FileInputStream(fileName));
+    return new ExcelImport(Files.newInputStream(Paths.get(fileName)));
   }
 
   /**
@@ -67,7 +68,7 @@ public class ExcelImport {
    */
   public static ExcelImport of(File file)
       throws IOException {
-    return new ExcelImport(new FileInputStream(file));
+    return new ExcelImport(Files.newInputStream(file.toPath()));
   }
 
   /**
@@ -178,7 +179,16 @@ public class ExcelImport {
    */
   public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields)
       throws Exception {
-    return getData(excelFields[0].entityType, excelFields);
+    return getData(getEntityType(excelFields), excelFields);
+  }
+
+  private static <F> Class<F> getEntityType(ExcelField<F, ?>[] excelFields) {
+    for (ExcelField<F, ?> excelField : excelFields) {
+      if (!excelField.isIndexColumn()) {
+        return excelField.entityType;
+      }
+    }
+    throw new ExcelException("只有索引列？");
   }
 
 
@@ -197,7 +207,7 @@ public class ExcelImport {
    */
   public <F, E> List<E> getData(ExcelField<F, ?>[] excelFields, ExcelConverter<F, E> converter)
       throws Exception {
-    return getData(excelFields[0].entityType, excelFields, converter);
+    return getData(getEntityType(excelFields), excelFields, converter);
   }
 
   /**
@@ -262,6 +272,9 @@ public class ExcelImport {
     r = row.getRowNum();
 
     for (ExcelField<F, ?> excelField : excelFields) {
+      if (excelField.isIndexColumn()) {
+        continue;
+      }
       Object cellValue = getCellValue(excelField, row, column++);
       notAllBlank = notAllBlank || !excelField.isEmptyCell(cellValue);
       try {

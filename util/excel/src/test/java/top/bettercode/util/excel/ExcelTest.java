@@ -76,8 +76,8 @@ public class ExcelTest {
 
   @Test
   public void testImport() throws Exception {
-    testExport();
-    List<DataBean> list = ExcelImport.of("build/export.xlsx").setColumn(1)
+//    testExport();
+    List<DataBean> list = ExcelImport.of("build/template.xlsx").setColumn(1)
         .getData(excelFields);
     System.out.println(StringUtil.valueOf(list, true));
     System.err.println(list.size());
@@ -97,8 +97,8 @@ public class ExcelTest {
     private Integer intCode;
     private Integer integer;
     private Long longl;
-    private double doublel;
-    private float floatl;
+    private Double doublel;
+    private Float floatl;
     private String name;
     private Date date;
 
@@ -146,20 +146,22 @@ public class ExcelTest {
       this.longl = longl;
     }
 
-    public double getDoublel() {
+    public Double getDoublel() {
       return doublel;
     }
 
-    public void setDoublel(double doublel) {
+    public DataBean setDoublel(Double doublel) {
       this.doublel = doublel;
+      return this;
     }
 
-    public float getFloatl() {
+    public Float getFloatl() {
       return floatl;
     }
 
-    public void setFloatl(float floatl) {
+    public DataBean setFloatl(Float floatl) {
       this.floatl = floatl;
+      return this;
     }
 
     public String getName() {
