@@ -17,3 +17,4 @@ classes
 /util/weixin/src/test/resources/application.yml
 /framework/starter-logging/src/test/resources/application-test.yml
 /util/sms/src/test/resources/application.yml
+/util/mobile-query/src/test/resources/application.yml

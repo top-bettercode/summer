@@ -32,7 +32,7 @@ include(":util:test")
 include(":util:ueditor")
 include(":util:weixin")
 include(":util:sms")
+include("util:mobile-query")
 
 //include(":wintrue:kk")
 include(":wintrue:sap")
-

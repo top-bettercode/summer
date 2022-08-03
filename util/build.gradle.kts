@@ -8,7 +8,7 @@ subprojects {
         plugin("org.springframework.boot")
     }
 
-    if (arrayOf("excel", "wechat", "ueditor").contains(name)) {
+    if (arrayOf("excel", "ueditor").contains(name)) {
         apply {
             plugin("summer.publish")
         }
