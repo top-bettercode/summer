@@ -52,6 +52,7 @@ public class ApiTemplate extends RestTemplate {
     clientHttpRequestFactory.setConnectTimeout(connectTimeout);
     //Read timeout
     clientHttpRequestFactory.setReadTimeout(readTimeout);
+    clientHttpRequestFactory.setOutputStreaming(false);
     setRequestFactory(clientHttpRequestFactory);
   }
 

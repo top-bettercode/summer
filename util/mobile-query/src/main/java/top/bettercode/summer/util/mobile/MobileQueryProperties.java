@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * @author Peter Wu
  */
-@ConfigurationProperties(prefix = "summer.mobile.query")
+@ConfigurationProperties(prefix = "summer.mobile-query")
 public class MobileQueryProperties {
 
   /**

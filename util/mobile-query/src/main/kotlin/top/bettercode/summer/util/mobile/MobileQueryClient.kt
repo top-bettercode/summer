@@ -17,14 +17,18 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 /**
- * 公众号接口
+ * 手机号查询接口
  *
  * @author Peter Wu
  */
 open class MobileQueryClient(
     private val properties: MobileQueryProperties
 ) : ApiTemplate(
-    "", "", "mobile-query", properties.connectTimeout, properties.readTimeout
+    "第三方平台",
+    "获取本机手机号码",
+    "mobile-query",
+    properties.connectTimeout,
+    properties.readTimeout
 ) {
 
     init {
@@ -97,7 +101,7 @@ open class MobileQueryClient(
     ): String {
         val signStr = "x-date: $datetime\nx-source: $source"
         val mac: Mac = Mac.getInstance("HmacSHA1")
-        val sKey: Key = SecretKeySpec(secretKey.toByteArray(charset("UTF-8")), mac.getAlgorithm())
+        val sKey: Key = SecretKeySpec(secretKey.toByteArray(charset("UTF-8")), mac.algorithm)
         mac.init(sKey)
         val hash: ByteArray = mac.doFinal(signStr.toByteArray(charset("UTF-8")))
         val sig: String = Base64Utils.encodeToString(hash)
