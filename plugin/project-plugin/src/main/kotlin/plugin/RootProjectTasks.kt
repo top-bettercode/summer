@@ -118,6 +118,21 @@ object RootProjectTasks {
 
                             else -> {}
                         }
+
+                        val mysqlSecuritySchema =
+                            project.rootProject.file("database/security/security-mysql-schema.sql")
+                        if (gen.defaultDatasource.databaseDriver == DatabaseDriver.MYSQL && mysqlSecuritySchema.exists()) {
+                            +mysqlSecuritySchema.readText()
+                            +""
+                        }
+
+                        val oracleSecuritySchema =
+                            project.rootProject.file("database/security/security-oracle-schema.sql")
+                        if (gen.defaultDatasource.databaseDriver == DatabaseDriver.ORACLE && oracleSecuritySchema.exists()) {
+                            +oracleSecuritySchema.readText()
+                            +""
+                        }
+
                         project.rootProject.file("database/ddl").listFiles()?.filter { it.isFile }
                             ?.forEach {
                                 +it.readText()
