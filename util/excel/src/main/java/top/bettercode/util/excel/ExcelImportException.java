@@ -1,10 +1,13 @@
 package top.bettercode.util.excel;
 
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @author Peter Wu
  */
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ExcelImportException extends Exception {
 
   private static final long serialVersionUID = 1L;
