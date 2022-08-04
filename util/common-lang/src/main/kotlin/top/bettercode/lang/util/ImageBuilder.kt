@@ -16,19 +16,23 @@ class ImageBuilder @Throws(IOException::class)
 constructor(inputStream: Any) {
 
     private var bufferedImage: BufferedImage
+
     /**
      * @return 格式名
      */
-    private var formatName: String
+    var formatName: String
+
     /**
      * @return 宽度
      */
     var width: Int = 0
         private set
+
     /**
      * @return 高度
      */
-    private var height: Int = 0
+    var height: Int = 0
+
     /**
      * @return 格式
      */
@@ -155,10 +159,12 @@ constructor(inputStream: Any) {
             Origin.LEFT_BOTTOM -> y = this.height - h
             Origin.LEFT_TOP -> {
             }
+
             Origin.RIGHT_BOTTOM -> {
                 x = this.width - w
                 y = this.height - h
             }
+
             Origin.RIGHT_TOP -> x = this.width - w
             Origin.CENTER -> {
                 x = (this.width - w) / 2
@@ -231,7 +237,11 @@ constructor(inputStream: Any) {
      * @return ImageBuilder
      */
     fun outputFormat(formatName: String): ImageBuilder {
-        if (StringUtil.hasText(formatName) && !this.formatName.equals(formatName, ignoreCase = true)) {
+        if (StringUtil.hasText(formatName) && !this.formatName.equals(
+                formatName,
+                ignoreCase = true
+            )
+        ) {
             /*
        * Note: The following code is a workaround for the JPEG writer
        * which ships with the JDK.
@@ -244,8 +254,12 @@ constructor(inputStream: Any) {
        * Also, the BMP writer appears not to support ARGB, so an RGB image
        * will be produced before saving.
        */
-            if (formatName.equals("jpg", ignoreCase = true) || formatName.equals("jpeg", ignoreCase = true) || formatName
-                            .equals("bmp", ignoreCase = true)) {
+            if (formatName.equals("jpg", ignoreCase = true) || formatName.equals(
+                    "jpeg",
+                    ignoreCase = true
+                ) || formatName
+                    .equals("bmp", ignoreCase = true)
+            ) {
                 bufferedImage = copy(bufferedImage, BufferedImage.TYPE_INT_RGB)
             }
             this.formatName = formatName
@@ -288,18 +302,22 @@ constructor(inputStream: Any) {
          * 左下
          */
         LEFT_BOTTOM,
+
         /**
          * 左上
          */
         LEFT_TOP,
+
         /**
          * 右下
          */
         RIGHT_BOTTOM,
+
         /**
          * 左上
          */
         RIGHT_TOP,
+
         /**
          * 中心
          */
