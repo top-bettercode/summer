@@ -1,6 +1,9 @@
 package top.bettercode.summer.util.qvod
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.qcloud.vod.VodUploadClient
+import com.qcloud.vod.model.VodUploadRequest
+import com.qcloud.vod.model.VodUploadResponse
 import com.tencentcloudapi.common.Credential
 import com.tencentcloudapi.common.profile.ClientProfile
 import com.tencentcloudapi.common.profile.HttpProfile
@@ -14,6 +17,7 @@ import org.springframework.util.Base64Utils
 import top.bettercode.lang.util.RandomUtil
 import top.bettercode.lang.util.StringUtil
 import top.bettercode.simpleframework.support.client.ApiTemplate
+import java.io.File
 import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -31,6 +35,7 @@ open class QvodClient(
 ) {
 
     val vodClient: VodClient
+    val vodUploadClient = VodUploadClient(properties.secretId, properties.secretKey)
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
@@ -58,6 +63,9 @@ open class QvodClient(
 
     }
 
+    /**
+     * 签名
+     */
     @JvmOverloads
     fun signature(isPicture: Boolean = false): String {
         val currentTimeStamp = System.currentTimeMillis() / 1000
@@ -78,6 +86,45 @@ open class QvodClient(
             .replace("\n", "")
             .replace("\r", "")
     }
+
+    /**
+     * 简单上传
+     */
+    fun upload(file: File, procedure: String? = null): VodUploadResponse {
+        val req = VodUploadRequest()
+        req.mediaFilePath = file.absolutePath
+        if (procedure != null) {
+            req.procedure = procedure
+        }
+
+        val start = System.currentTimeMillis()
+        var durationMillis: Long? = null
+
+        var resp: VodUploadResponse? = null
+        var throwable: Throwable? = null
+        try {
+            resp = vodUploadClient.upload(properties.region, req)
+            durationMillis = System.currentTimeMillis() - start
+            return resp
+        } catch (e: Exception) {
+            throwable = e
+            throw e
+        } finally {
+            if (durationMillis == null) {
+                durationMillis = System.currentTimeMillis() - start
+            }
+            log.info(
+                "DURATION MILLIS : {}\\n{}\\n{}",
+                durationMillis,
+                VodUploadRequest.toJsonString(req),
+                if (resp == null) StringUtil.valueOf(
+                    throwable,
+                    true
+                ) else VodUploadResponse.toJsonString(resp)
+            )
+        }
+    }
+
 
     /**
      * 音视频审核
@@ -145,11 +192,11 @@ open class QvodClient(
             log.info(
                 "DURATION MILLIS : {}\\n{}\\n{}",
                 durationMillis,
-                ProcessMediaRequest.toJsonString(req),
+                ReviewImageRequest.toJsonString(req),
                 if (resp == null) StringUtil.valueOf(
                     throwable,
                     true
-                ) else ProcessMediaResponse.toJsonString(resp)
+                ) else ReviewImageResponse.toJsonString(resp)
             )
         }
     }
@@ -179,11 +226,11 @@ open class QvodClient(
             log.info(
                 "DURATION MILLIS : {}\\n{}\\n{}",
                 durationMillis,
-                ProcessMediaRequest.toJsonString(req),
+                PullEventsRequest.toJsonString(req),
                 if (resp == null) StringUtil.valueOf(
                     throwable,
                     true
-                ) else ProcessMediaResponse.toJsonString(resp)
+                ) else PullEventsResponse.toJsonString(resp)
             )
         }
     }
@@ -214,11 +261,11 @@ open class QvodClient(
             log.info(
                 "DURATION MILLIS : {}\\n{}\\n{}",
                 durationMillis,
-                ProcessMediaRequest.toJsonString(req),
+                ConfirmEventsRequest.toJsonString(req),
                 if (resp == null) StringUtil.valueOf(
                     throwable,
                     true
-                ) else ProcessMediaResponse.toJsonString(resp)
+                ) else ConfirmEventsResponse.toJsonString(resp)
             )
         }
     }

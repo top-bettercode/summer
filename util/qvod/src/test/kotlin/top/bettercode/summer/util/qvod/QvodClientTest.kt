@@ -20,6 +20,10 @@ class QvodClientTest : BaseTest() {
     }
 
     @Test
+    fun upload() {
+    }
+
+    @Test
     fun processMedia() {
     }
 
