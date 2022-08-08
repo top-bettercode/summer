@@ -77,7 +77,7 @@ open class QvodClient(
         val secretKey = SecretKeySpec(properties.secretKey.toByteArray(), mac.algorithm)
         mac.init(secretKey)
         val signatureTmp: ByteArray = mac.doFinal(original.toByteArray())
-        return Base64Utils.encodeToString(
+        val signature = Base64Utils.encodeToString(
             byteMerger(
                 signatureTmp,
                 original.toByteArray(charset("utf8"))
@@ -85,6 +85,8 @@ open class QvodClient(
         ).replace(" ", "")
             .replace("\n", "")
             .replace("\r", "")
+        log.info("signature: $signature")
+        return signature
     }
 
     /**
