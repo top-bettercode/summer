@@ -79,6 +79,7 @@ object ProjectDependencies {
                     dependency("top.bettercode.summer:mobile-query:$summerVersion")
                     dependency("top.bettercode.summer:weather:$summerVersion")
                     dependency("top.bettercode.summer:jpush:$summerVersion")
+                    dependency("top.bettercode.summer:qvod:$summerVersion")
 
                     dependency("top.bettercode.summer:web:$summerVersion")
                     dependency("top.bettercode.summer:data-jpa:$summerVersion")

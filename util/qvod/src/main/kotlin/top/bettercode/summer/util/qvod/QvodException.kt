@@ -1,15 +1,15 @@
-package top.bettercode.summer.util.jpush
+package top.bettercode.summer.util.qvod
 
 /**
  * @author Peter Wu
  */
-class JpushException : RuntimeException {
+class QvodException : RuntimeException {
     @JvmOverloads
-    constructor(message: String? = "极光推送平台请求失败") : super(message) {
+    constructor(message: String? = "天气数据平台请求失败") : super(message) {
     }
 
     constructor(message: String?, cause: Throwable?) : super(message, cause) {}
-    constructor(cause: Throwable?) : this("极光推送平台请求失败", cause) {}
+    constructor(cause: Throwable?) : this("天气数据平台请求失败", cause) {}
     constructor(
         message: String?, cause: Throwable?, enableSuppression: Boolean,
         writableStackTrace: Boolean

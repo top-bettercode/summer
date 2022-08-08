@@ -1,12 +1,8 @@
 package top.bettercode.summer.util.mobile
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
-
 /**
  * @author Peter Wu
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
 class QueryException : RuntimeException {
     @JvmOverloads
     constructor(message: String? = "查询平台请求失败") : super(message) {

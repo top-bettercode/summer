@@ -20,3 +20,4 @@ classes
 /util/mobile-query/src/test/resources/application.yml
 /util/weather/src/test/resources/application.yml
 /util/jpush/src/test/resources/application.yml
+/util/qvod/src/test/resources/application.yml

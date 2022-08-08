@@ -1,12 +1,8 @@
 package top.bettercode.summer.util.weather
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
-
 /**
  * @author Peter Wu
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
 class WeatherException : RuntimeException {
     @JvmOverloads
     constructor(message: String? = "天气数据平台请求失败") : super(message) {

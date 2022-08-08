@@ -85,6 +85,7 @@ allprojects {
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
             dependency("net.sourceforge.plantuml:plantuml:1.2022.2")
             dependency("com.github.jsqlparser:jsqlparser:4.3")
+            dependency("com.qcloud:vod_api:2.1.5")
 
             dependency("mysql:mysql-connector-java:8.0.28")
             dependency("com.oracle.database.jdbc:ojdbc8:$oracleJdbcVersion")
