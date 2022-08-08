@@ -1,0 +1,34 @@
+{
+  "cid": "8103a4c628a0b98974ec1949-711261d4-5f17-4d2f-a855-5e5a8909b26e",
+  "platform": "all",
+  "audience" : {"registration_id" : [ "4312kjklfds2", "8914afd2", "45fdsa31"]
+  },
+  "notification": {
+    "android": {
+      "alert": "Hi, JPush!",
+      "title": "Send to Android",
+      "builder_id": 1,
+      "large_icon": "http://www.jiguang.cn/largeIcon.jpg",
+      "intent": {"url": "intent:#Intent;component=com.jiguang.push/com.example.jpushdemo.SettingActivity;end"},
+      "extras": {"newsid": 321}
+    },
+    "ios": {
+      "alert": "Hi, JPush!",
+      "sound": "default",
+      "badge": "+1",
+      "thread-id": "default",
+      "extras": {"newsid": 321}
+    }
+  },
+  "message": {
+    "msg_content": "Hi,JPush",
+    "content_type": "text",
+    "title": "msg",
+    "extras": {"key": "value"}
+  },
+
+  "options": {
+    "time_to_live": 60,
+    "apns_production": false
+  }
+}

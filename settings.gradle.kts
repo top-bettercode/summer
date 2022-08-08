@@ -34,6 +34,7 @@ include(":util:weixin")
 include(":util:sms")
 include(":util:mobile-query")
 include(":util:weather")
+include(":util:jpush")
 
 //include(":wintrue:kk")
 include(":wintrue:sap")

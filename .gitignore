@@ -19,3 +19,4 @@ classes
 /util/sms/src/test/resources/application.yml
 /util/mobile-query/src/test/resources/application.yml
 /util/weather/src/test/resources/application.yml
+/util/jpush/src/test/resources/application.yml

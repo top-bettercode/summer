@@ -1,9 +1,8 @@
-package top.bettercode.summer.util.mobile
+package top.bettercode.summer.util.weather
 
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.util.test.BaseTest
-import top.bettercode.summer.util.weather.WeatherClient
 
 /**
  *
