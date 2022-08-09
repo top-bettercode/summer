@@ -127,6 +127,40 @@ open class QvodClient(
         }
     }
 
+    /**
+     * 删除媒体
+     */
+    fun deleteMedia(fileId: String): DeleteMediaResponse {
+        val req = DeleteMediaRequest()
+        req.fileId = fileId
+
+        val start = System.currentTimeMillis()
+        var durationMillis: Long? = null
+
+        var resp: DeleteMediaResponse? = null
+        var throwable: Throwable? = null
+        try {
+            resp = vodClient.DeleteMedia(req)
+            durationMillis = System.currentTimeMillis() - start
+            return resp
+        } catch (e: Exception) {
+            throwable = e
+            throw e
+        } finally {
+            if (durationMillis == null) {
+                durationMillis = System.currentTimeMillis() - start
+            }
+            log.info(
+                "DURATION MILLIS : {}\\n{}\\n{}",
+                durationMillis,
+                VodUploadRequest.toJsonString(req),
+                if (resp == null) StringUtil.valueOf(
+                    throwable,
+                    true
+                ) else DeleteMediaResponse.toJsonString(resp)
+            )
+        }
+    }
 
     /**
      * 音视频审核

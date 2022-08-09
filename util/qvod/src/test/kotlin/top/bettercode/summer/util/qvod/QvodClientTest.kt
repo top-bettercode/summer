@@ -24,6 +24,10 @@ class QvodClientTest : BaseTest() {
     }
 
     @Test
+    fun deleteMedia() {
+    }
+
+    @Test
     fun processMedia() {
     }
 
