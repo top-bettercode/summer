@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.security;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
 import java.time.Instant;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +23,7 @@ public class ApiTokenService {
   private final ApiAuthorizationService apiAuthorizationService;
   private final UserDetailsService userDetailsService;
   private final boolean isScopeUserDetailsService;
+  private final boolean isGrantTypeDetailsService;
 
   public ApiTokenService(
       ApiSecurityProperties apiSecurityProperties,
@@ -31,6 +33,7 @@ public class ApiTokenService {
     this.apiAuthorizationService = apiAuthorizationService;
     this.userDetailsService = userDetailsService;
     this.isScopeUserDetailsService = userDetailsService instanceof ScopeUserDetailsService;
+    this.isGrantTypeDetailsService = userDetailsService instanceof GrantTypeUserDetailsService;
   }
 
   public Token createAccessToken() {
@@ -73,6 +76,15 @@ public class ApiTokenService {
   }
 
   public ApiToken getApiToken(String scope, UserDetails userDetails, Boolean loginKickedOut) {
+    ApiAuthenticationToken authenticationToken = getApiAuthenticationToken(scope, userDetails,
+        loginKickedOut);
+
+    apiAuthorizationService.save(authenticationToken);
+    return authenticationToken.toApiToken();
+  }
+
+  public ApiAuthenticationToken getApiAuthenticationToken(String scope, UserDetails userDetails,
+      Boolean loginKickedOut) {
     ApiAuthenticationToken authenticationToken;
     if (loginKickedOut) {
       authenticationToken = new ApiAuthenticationToken(scope, createAccessToken(),
@@ -90,8 +102,15 @@ public class ApiTokenService {
         authenticationToken.setUserDetails(userDetails);
       }
     }
-    apiAuthorizationService.save(authenticationToken);
-    return authenticationToken.toApiToken();
+    return authenticationToken;
+  }
+
+  public UserDetails getUserDetails(String grantType, HttpServletRequest request) {
+    if (isGrantTypeDetailsService) {
+      return ((GrantTypeUserDetailsService) userDetailsService).loadUserByGrantTypeAndRequest(
+          grantType, request);
+    }
+    throw new IllegalArgumentException("不支持的grantType类型");
   }
 
   public UserDetails getUserDetails(String scope, String username) {

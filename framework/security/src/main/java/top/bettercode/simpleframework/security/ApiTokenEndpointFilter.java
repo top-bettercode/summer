@@ -129,26 +129,8 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
           UserDetails userDetails = (UserDetails) principal;
 
-          if (apiSecurityProperties.needKickedOut(scope)) {
-            apiAuthenticationToken = new ApiAuthenticationToken(scope,
-                apiTokenService.createAccessToken(),
-                apiTokenService.createRefreshToken(), userDetails);
-          } else {
-            apiAuthenticationToken = apiAuthorizationService.findByScopeAndUsername(scope,
-                username);
-            if (apiAuthenticationToken == null || apiAuthenticationToken.getRefreshToken()
-                .isExpired()) {
-              apiAuthenticationToken = new ApiAuthenticationToken(scope,
-                  apiTokenService.createAccessToken(),
-                  apiTokenService.createRefreshToken(), userDetails);
-            } else if (apiAuthenticationToken.getAccessToken()
-                .isExpired()) {
-              apiAuthenticationToken.setAccessToken(apiTokenService.createAccessToken());
-              apiAuthenticationToken.setUserDetails(userDetails);
-            } else {
-              apiAuthenticationToken.setUserDetails(userDetails);
-            }
-          }
+          apiAuthenticationToken = apiTokenService.getApiAuthenticationToken(scope, userDetails,
+              apiSecurityProperties.needKickedOut(scope));
         } else if (SecurityParameterNames.REFRESH_TOKEN.equals(grantType)) {
           String refreshToken = request.getParameter(SecurityParameterNames.REFRESH_TOKEN);
           Assert.hasText(refreshToken, "refreshToken不能为空");
@@ -174,7 +156,9 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
           }
 
         } else {
-          throw new IllegalArgumentException("不支持的grantType类型");
+          UserDetails userDetails = apiTokenService.getUserDetails(grantType, request);
+          apiAuthenticationToken = apiTokenService.getApiAuthenticationToken(scope, userDetails,
+              apiSecurityProperties.needKickedOut(scope));
         }
 
         UserDetails userDetails = apiAuthenticationToken.getUserDetails();
