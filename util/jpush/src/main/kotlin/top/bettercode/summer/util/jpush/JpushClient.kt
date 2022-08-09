@@ -98,7 +98,7 @@ open class JpushClient(
         )
         val entity: ResponseEntity<JpushCidResponse> = try {
             execute(
-                properties.url + "//push/cid?count={0}", HttpMethod.GET,
+                properties.url + "/push/cid?count={0}", HttpMethod.GET,
                 requestCallback,
                 responseEntityExtractor(JpushCidResponse::class.java),
                 count

@@ -51,10 +51,21 @@ class ClientHttpRequestWrapper(
             throw e
         } finally {
             if (log.isInfoEnabled) {
+                var exception: Exception? = null
                 val operationResponse = if (response == null) OperationResponse(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     HttpHeaders.EMPTY, ByteArray(0)
-                ) else ResponseConverter.convert(response as ClientHttpResponseWrapper)
+                ) else try {
+                    ResponseConverter.convert(response as ClientHttpResponseWrapper)
+                } catch (e: Exception) {
+                    if (stackTrace.isBlank())
+                        stackTrace = StringUtil.valueOf(e)
+                    exception = e
+                    OperationResponse(
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        HttpHeaders.EMPTY, ByteArray(0)
+                    )
+                }
                 operationResponse.stackTrace = stackTrace
                 val operation = Operation(
                     collectionName = collectionName,
@@ -88,6 +99,9 @@ class ClientHttpRequestWrapper(
                         log.warn(MarkerFactory.getMarker(logMarker), msg)
                     } else
                         log.info(MarkerFactory.getMarker(logMarker), msg)
+                }
+                if (exception != null) {
+                    throw exception
                 }
             }
         }
