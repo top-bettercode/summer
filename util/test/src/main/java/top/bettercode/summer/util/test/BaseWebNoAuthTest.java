@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,8 +19,10 @@ import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.impl.StaticLoggerBinder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -69,6 +73,13 @@ public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
   protected RequestLoggingProperties requestLoggingProperties;
   @Autowired
   protected ObjectMapper objectMapper;
+
+  @AfterAll
+  static void logAfterAll() {
+    ((LoggerContext) StaticLoggerBinder.getSingleton().getLoggerFactory()).getLogger(
+        "org.hibernate.SQL").setLevel(
+        Level.OFF);
+  }
 
   @BeforeEach
   public void setup() throws Exception {
