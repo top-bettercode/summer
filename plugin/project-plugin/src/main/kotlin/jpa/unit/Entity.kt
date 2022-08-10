@@ -55,6 +55,29 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"this.${primaryKeyName} = ${primaryKeyName};"
         }
 
+        val defaultColumns = otherColumns.filter {
+            !it.version && !it.initializationString(this).isNullOrBlank()
+        }
+        if (defaultColumns.isNotEmpty()) {
+            method(
+                "withDefaults",
+                entityType
+            ) {
+                isStatic = true
+                javadoc {
+                    +"/**"
+                    +" * @return ${remarks}带默认值实例"
+                    +" */"
+                }
+                +"$className $entityName = new $className();"
+                defaultColumns.forEach {
+                    +"$entityName.set${it.javaName.capitalized()}(${it.initializationString(this@apply)});"
+                }
+                +"return $entityName;"
+            }
+        }
+
+
         //primaryKey
         field(primaryKeyName, primaryKeyType) {
             if (primaryKeys.size == 1) {

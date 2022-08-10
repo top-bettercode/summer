@@ -16,7 +16,7 @@ open class SetterPrint(private val randomValue: Boolean) : ProjectGenerator() {
                     println(
                         "$primaryKeyName.set${
                             it.javaName.capitalized()
-                        }(${if (randomValue) it.randomValueToSet else ""});")
+                        }(${if (randomValue) it.randomValueToSet() else ""});")
                 }
                 println(
                     "$entityName.set${
@@ -27,14 +27,14 @@ open class SetterPrint(private val randomValue: Boolean) : ProjectGenerator() {
                     println(
                         "$entityName.set${
                             it.javaName.capitalized()
-                        }(${if (randomValue) it.randomValueToSet else ""});")
+                        }(${if (randomValue) it.randomValueToSet() else ""});")
                 }
         }
         otherColumns.forEach {
             println(
                 "$entityName.set${
                     it.javaName.capitalized()
-                }(${if (randomValue) it.randomValueToSet else ""});")
+                }(${if (randomValue) it.randomValueToSet() else ""});")
         }
     }
 }

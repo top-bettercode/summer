@@ -116,7 +116,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     primaryKeys.forEach {
                         +"$primaryKeyName.set${
                             it.javaName.capitalized()
-                        }(${it.randomValueToSet});"
+                        }(${it.randomValueToSet(this@apply)});"
                     }
                 }
                 +"perform(post(\"/$pathName/save\")"
@@ -217,7 +217,7 @@ val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     primaryKeys.forEach {
                         +"$primaryKeyName.set${
                             it.javaName.capitalized()
-                        }(${it.randomValueToSet});"
+                        }(${it.randomValueToSet(this@apply)});"
                     }
                     +"$entityName.set${
                         primaryKeyName.capitalized()
@@ -226,13 +226,13 @@ val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     primaryKeys.forEach {
                         +"$entityName.set${
                             it.javaName.capitalized()
-                        }(${it.randomValueToSet});"
+                        }(${it.randomValueToSet(this@apply)});"
                     }
             }
             otherColumns.filter { !it.version }.forEach {
                 +"$entityName.set${
                     it.javaName.capitalized()
-                }(${it.randomValueToSet});"
+                }(${it.randomValueToSet(this@apply)});"
             }
             +"${projectEntityName}Service.save($entityName);"
             +"System.err.println(\"------------------------------------------------------\");"

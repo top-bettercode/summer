@@ -441,76 +441,119 @@ open class Generator {
             else -> columnDef!!
         }
 
-    val Column.randomValueToSet: String
-        get() =
-            when {
-                initializationString.isNullOrBlank() || "CURRENT_TIMESTAMP".equals(
-                    columnDef,
-                    true
-                ) -> {
-                    when {
-                        isCodeField && !asBoolean -> {
-                            val value = dicCodes(ext)!!.codes.keys.first()
-                            if (JavaType.stringInstance == javaType) "\"$value\"" else "$value"
+    fun Column.randomValueToSet(unit: CompilationUnit? = null): String {
+        val initializationString = initializationString(unit)
+        return when {
+            initializationString.isNullOrBlank() -> {
+                when {
+                    isCodeField && !asBoolean -> {
+                        val value = dicCodes(ext)!!.codes.keys.first()
+                        if (JavaType.stringInstance == javaType) "\"$value\"" else "$value"
+                    }
+
+                    else -> when (javaType) {
+                        JavaType("java.sql.Timestamp") -> {
+                            unit?.import("java.sql.Timestamp")
+                            "new Timestamp(System.currentTimeMillis())"
                         }
 
-                        else -> when (javaType) {
-                            JavaType("java.math.BigDecimal") -> "new java.math.BigDecimal(\"1.0\")"
-                            JavaType("java.sql.Timestamp") -> "new java.sql.Timestamp(System.currentTimeMillis())"
-                            JavaType.dateInstance -> "new java.util.Date(System.currentTimeMillis())"
-                            JavaType("java.sql.Date") -> "new java.sql.Date(System.currentTimeMillis())"
-                            JavaType("java.sql.Time") -> "new java.sql.Time(System.currentTimeMillis())"
-                            JavaType("java.time.LocalDate") -> "java.time.LocalDate.now()"
-                            JavaType("java.time.LocalDateTime") -> "java.time.LocalDateTime.now()"
-                            PrimitiveTypeWrapper.booleanInstance -> "false"
-                            PrimitiveTypeWrapper.doubleInstance -> "1.0"
-                            PrimitiveTypeWrapper.longInstance -> "1L"
-                            PrimitiveTypeWrapper.integerInstance -> "1"
-                            PrimitiveTypeWrapper.shortInstance -> "new Short(\"1\")"
-                            PrimitiveTypeWrapper.byteInstance -> "new Byte(\"1\")"
-                            JavaType("byte[]") -> "new byte[0]"
-                            JavaType.stringInstance -> "\"${remark.replace("\\", "\\\\")}\""
-                            else -> "1"
+                        JavaType.dateInstance -> {
+                            unit?.import("java.util.Date")
+                            "new Date(System.currentTimeMillis())"
                         }
+
+                        JavaType("java.sql.Date") -> {
+                            unit?.import("java.sql.Date")
+                            "new Date(System.currentTimeMillis())"
+                        }
+
+                        JavaType("java.sql.Time") -> {
+                            unit?.import("java.sql.Time")
+                            "new Time(System.currentTimeMillis())"
+                        }
+
+                        JavaType("java.time.LocalDate") -> {
+                            unit?.import("java.time.LocalDate")
+                            "LocalDate.now()"
+                        }
+
+                        JavaType("java.time.LocalDateTime") -> {
+                            unit?.import("java.time.LocalDateTime")
+                            "LocalDateTime.now()"
+                        }
+
+                        PrimitiveTypeWrapper.booleanInstance -> "false"
+                        PrimitiveTypeWrapper.doubleInstance -> "1.0"
+                        PrimitiveTypeWrapper.longInstance -> "1L"
+                        PrimitiveTypeWrapper.integerInstance -> "1"
+                        PrimitiveTypeWrapper.shortInstance -> "new Short(\"1\")"
+                        PrimitiveTypeWrapper.byteInstance -> "new Byte(\"1\")"
+                        JavaType("byte[]") -> "new byte[0]"
+                        JavaType.stringInstance -> "\"${remark.replace("\\", "\\\\")}\""
+                        else -> "1"
                     }
                 }
-
-                else -> initializationString!!
             }
 
-    val Column.testId: Any
-        get() = when (javaType) {
-            JavaType.stringInstance -> "\"1\""
-            PrimitiveTypeWrapper.longInstance -> "1L"
-            PrimitiveTypeWrapper.integerInstance -> 1
-            else -> 1
+            else -> initializationString
         }
+    }
 
-    private val Column.initializationString
-        get() = if (columnDef != null) {
-            when (javaType.shortName) {
-                "Boolean" -> toBoolean(columnDef).toString()
-                "Long" -> "${columnDef}L"
-                "Double" -> "${columnDef}D"
-                "Float" -> "${columnDef}F"
-                "BigDecimal" -> "new java.math.BigDecimal($columnDef)"
-                "String" -> "\"$columnDef\""
-                else -> columnDef
+    fun Column.initializationString(unit: CompilationUnit?): String? {
+        return if (columnDef != null) {
+            when (javaType) {
+                PrimitiveTypeWrapper.booleanInstance -> toBoolean(columnDef).toString()
+                PrimitiveTypeWrapper.longInstance -> "${columnDef}L"
+                PrimitiveTypeWrapper.doubleInstance -> "${columnDef}D"
+                PrimitiveTypeWrapper.floatInstance -> "${columnDef}F"
+                JavaType("java.math.BigDecimal") -> {
+                    unit?.import("java.math.BigDecimal")
+                    "new BigDecimal($columnDef)"
+                }
+
+                JavaType.stringInstance -> "\"$columnDef\""
+                else -> {
+                    if ("CURRENT_TIMESTAMP".equals(columnDef, true)) {
+                        when (javaType) {
+                            JavaType("java.sql.Timestamp") -> {
+                                unit?.import("java.sql.Timestamp")
+                                "new Timestamp(System.currentTimeMillis())"
+                            }
+
+                            JavaType.dateInstance -> {
+                                unit?.import("java.util.Date")
+                                "new Date(System.currentTimeMillis())"
+                            }
+
+                            JavaType("java.sql.Date") -> {
+                                unit?.import("java.sql.Date")
+                                "new Date(System.currentTimeMillis())"
+                            }
+
+                            JavaType("java.sql.Time") -> {
+                                unit?.import("java.sql.Time")
+                                "new Time(System.currentTimeMillis())"
+                            }
+
+                            JavaType("java.time.LocalDate") -> {
+                                unit?.import("java.time.LocalDate")
+                                "LocalDate.now()"
+                            }
+
+                            JavaType("java.time.LocalDateTime") -> {
+                                unit?.import("java.time.LocalDateTime")
+                                "LocalDateTime.now()"
+                            }
+
+                            else -> columnDef
+                        }
+                    } else {
+                        columnDef
+                    }
+                }
             }
         } else {
             columnDef
-        }
-
-
-    fun Column.setValue(value: String): String {
-        return "\"null\".equals($value) ? null : " + when (javaType.shortName) {
-            "Boolean" -> "Boolean.valueOf($value)"
-            "Integer" -> "Integer.valueOf($value)"
-            "Long" -> "Long.valueOf($value)"
-            "Double" -> "Double.valueOf($value)"
-            "Float" -> "Float.valueOf($value)"
-            "BigDecimal" -> "new java.math.BigDecimal($value)"
-            else -> value
         }
     }
 
