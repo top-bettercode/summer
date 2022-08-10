@@ -29,7 +29,7 @@ open class MobileQueryClient(
     "mobile-query",
     properties.connectTimeout,
     properties.readTimeout
-) {
+), IMobileQueryClient {
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
@@ -50,7 +50,7 @@ open class MobileQueryClient(
     }
 
 
-    fun query(token: String): QueryResponse {
+    override fun query(token: String): QueryResponse {
         val source = "market"
         val secretId = properties.appId
         val secretKey = properties.appKey

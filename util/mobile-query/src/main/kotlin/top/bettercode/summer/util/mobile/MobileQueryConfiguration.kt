@@ -14,7 +14,7 @@ class MobileQueryConfiguration {
 
 
     @Bean
-    fun mobileQueryClient(mobileQueryProperties: MobileQueryProperties): MobileQueryClient {
+    fun mobileQueryClient(mobileQueryProperties: MobileQueryProperties): IMobileQueryClient {
         return MobileQueryClient(mobileQueryProperties)
     }
 
