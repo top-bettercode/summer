@@ -14,7 +14,7 @@ class WeatherConfiguration {
 
 
     @Bean
-    fun mobileQueryClient(weatherProperties: WeatherProperties): WeatherClient {
+    fun weatherClient(weatherProperties: WeatherProperties): WeatherClient {
         return WeatherClient(weatherProperties)
     }
 
