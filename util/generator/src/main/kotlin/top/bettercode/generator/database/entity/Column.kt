@@ -86,9 +86,11 @@ data class Column(
             ) -> {
                 oldCodeRemarks.replace(",", ";")
             }
+
             isCodeField -> {
                 codeRemarks
             }
+
             else -> {
                 remarks
             }
@@ -192,7 +194,7 @@ data class Column(
             }
 
     val jsonViewIgnored: Boolean by lazy {
-        this.softDelete
+        this.softDelete || this.version
     }
 
     val jdbcType: String
