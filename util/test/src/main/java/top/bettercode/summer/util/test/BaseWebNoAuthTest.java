@@ -142,6 +142,11 @@ public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
     ).andExpect(status().isOk()).andExpect(contentStatusIsOk());
   }
 
+  protected ResultActions performRest(RequestBuilder requestBuilder) throws Exception {
+    return mockMvc.perform(requestBuilder
+    ).andExpect(status().isOk());
+  }
+
   protected void download(RequestBuilder requestBuilder) throws Exception {
     download(mockMvc.perform(requestBuilder));
   }
