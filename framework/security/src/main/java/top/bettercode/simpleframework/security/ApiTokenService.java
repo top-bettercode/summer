@@ -71,6 +71,16 @@ public class ApiTokenService {
     return getApiToken(scope, userDetails, loginKickedOut);
   }
 
+  public ApiToken getApiToken(String scope, String oldUsername, String newUsername,
+      Boolean loginKickedOut) {
+    UserDetails oldUserDetails = getUserDetails(scope, oldUsername);
+    ApiAuthenticationToken authenticationToken = getApiAuthenticationToken(scope, oldUserDetails,
+        loginKickedOut);
+    authenticationToken.setUserDetails(getUserDetails(scope, newUsername));
+    apiAuthorizationService.save(authenticationToken);
+    return authenticationToken.toApiToken();
+  }
+
   public ApiToken getApiToken(String scope, UserDetails userDetails) {
     return getApiToken(scope, userDetails, apiSecurityProperties.needKickedOut(scope));
   }
