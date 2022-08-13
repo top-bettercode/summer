@@ -291,7 +291,7 @@ public class TestErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
   private static void addClassIfPresent(Collection<Class<?>> collection, String className) {
     try {
       collection.add(ClassUtils.forName(className, null));
-    } catch (Throwable ex) {
+    } catch (Throwable ignored) {
     }
   }
 
@@ -308,12 +308,12 @@ public class TestErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
     }
 
     @Override
-    public void sendError(int status) throws IOException {
+    public void sendError(int status) {
       sendError(status, null);
     }
 
     @Override
-    public void sendError(int status, String message) throws IOException {
+    public void sendError(int status, String message) {
       this.status = status;
       this.message = message;
       this.hasErrorToSend = true;
@@ -336,7 +336,7 @@ public class TestErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
       super.flushBuffer();
     }
 
-    private void sendErrorIfNecessary() throws IOException {
+    private void sendErrorIfNecessary() {
       if (this.hasErrorToSend && !isCommitted()) {
 //        ((HttpServletResponse) getResponse()).sendError(this.status, this.message);
       }
