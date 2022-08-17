@@ -1,13 +1,18 @@
 package top.bettercode.summer.util.weather
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import org.springframework.http.*
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.lang.Nullable
+import top.bettercode.lang.util.TimeUtil
 import top.bettercode.simpleframework.support.client.ApiTemplate
 import top.bettercode.summer.util.weather.entity.WeatherResponse
 import top.bettercode.summer.util.weather.entity.WeatherResult
+import java.time.LocalTime
+import java.time.ZoneId
 
 /**
  * 天气接口
@@ -38,6 +43,11 @@ open class WeatherClient(
         super.setMessageConverters(messageConverters)
     }
 
+
+    @JvmOverloads
+    fun isNight(zoneId: ZoneId = TimeUtil.DEFAULT_ZONE_ID): Boolean {
+        return LocalTime.now(zoneId).hour in properties.nightStartTime.hour..properties.nightEndTime.hour
+    }
 
     fun query(ip: String): WeatherResult {
         val entity: ResponseEntity<WeatherResponse> = try {
