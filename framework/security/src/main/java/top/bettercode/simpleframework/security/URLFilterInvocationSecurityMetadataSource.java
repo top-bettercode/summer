@@ -34,6 +34,7 @@ public class URLFilterInvocationSecurityMetadataSource implements
   private final Map<AntPathRequestMatcher, Set<ConfigAttribute>> defaultConfigAttributes = new HashMap<>();
   private Map<AntPathRequestMatcher, Set<ConfigAttribute>> requestMatcherConfigAttributes;
   private final IResourceService securityService;
+  private final ApiSecurityProperties securityProperties;
 
   // ~ Constructors
   // ===================================================================================================
@@ -42,6 +43,7 @@ public class URLFilterInvocationSecurityMetadataSource implements
       RequestMappingHandlerMapping handlerMapping,
       ApiSecurityProperties securityProperties) {
     this.securityService = securityService;
+    this.securityProperties = securityProperties;
 
     handlerMapping.getHandlerMethods().forEach((mappingInfo, handlerMethod) -> {
       //非匿名权限
@@ -105,7 +107,7 @@ public class URLFilterInvocationSecurityMetadataSource implements
         }
       }
       return bestMatch.configAttributes.isEmpty() ? SecurityConfig
-          .createList("authenticated") : bestMatch.configAttributes;
+          .createList(securityProperties.getDefaultAuthority()) : bestMatch.configAttributes;
     }
     return Collections.emptyList();
   }

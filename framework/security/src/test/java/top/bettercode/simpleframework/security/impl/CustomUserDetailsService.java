@@ -1,7 +1,6 @@
 package top.bettercode.simpleframework.security.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     AdditionalUserDetails additionalUserDetails = new AdditionalUserDetails(username,
         DigestUtils.md5DigestAsHex("123456".getBytes()),
         getAuthorities(username));
-    additionalUserDetails.put("key","value");
+    additionalUserDetails.put("key", "value");
     return additionalUserDetails;
   }
 
@@ -43,6 +42,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     if (username.equals("root")) {
       return DefaultAuthority.addDefaultAuthority(new SimpleGrantedAuthority("a"));
     }
-    return Collections.singleton(DefaultAuthority.DEFAULT_GRANTED_AUTHORITY);
+    return DefaultAuthority.defaultAuthority();
   }
 }

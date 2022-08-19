@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.security;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,9 +12,20 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  */
 public class DefaultAuthority {
 
-  public static final String DEFAULT_AUTHORITY_STRING = "authenticated";
-  public static final GrantedAuthority DEFAULT_GRANTED_AUTHORITY = new SimpleGrantedAuthority(
-      DEFAULT_AUTHORITY_STRING);
+  public static GrantedAuthority DEFAULT_GRANTED_AUTHORITY = new SimpleGrantedAuthority(
+      "authenticated");
+
+  public static boolean isDefaultAuthority(String authority) {
+    return DEFAULT_GRANTED_AUTHORITY.getAuthority().equals(authority);
+  }
+
+  public static boolean isDefaultAuthority(GrantedAuthority authority) {
+    return DEFAULT_GRANTED_AUTHORITY.equals(authority);
+  }
+
+  public static Collection<? extends GrantedAuthority> defaultAuthority() {
+    return Collections.singleton(DEFAULT_GRANTED_AUTHORITY);
+  }
 
 
   public static Collection<? extends GrantedAuthority> addDefaultAuthority(

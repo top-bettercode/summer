@@ -46,6 +46,11 @@ public class ApiSecurityProperties {
 
   private String clientSecret;
 
+  /**
+   * 默认权限
+   */
+  private String defaultAuthority = "authenticated";
+
   //--------------------------------------------
   public boolean ignored(String path) {
     if (ArrayUtil.isEmpty(urlFilterIgnored)) {
@@ -153,5 +158,13 @@ public class ApiSecurityProperties {
 
   public void setClientSecret(String clientSecret) {
     this.clientSecret = clientSecret;
+  }
+
+  public String getDefaultAuthority() {
+    return defaultAuthority;
+  }
+
+  public void setDefaultAuthority(String defaultAuthority) {
+    this.defaultAuthority = defaultAuthority;
   }
 }

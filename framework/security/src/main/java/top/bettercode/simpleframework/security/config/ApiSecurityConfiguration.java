@@ -17,12 +17,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import top.bettercode.simpleframework.security.ApiAuthenticationToken;
 import top.bettercode.simpleframework.security.ApiSecurityErrorHandler;
 import top.bettercode.simpleframework.security.ApiTokenService;
+import top.bettercode.simpleframework.security.DefaultAuthority;
 import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
 import top.bettercode.simpleframework.security.authorization.InMemoryApiAuthorizationService;
@@ -36,6 +38,8 @@ public class ApiSecurityConfiguration {
   public ApiSecurityConfiguration(
       ApiSecurityProperties securityProperties) {
     this.securityProperties = securityProperties;
+    DefaultAuthority.DEFAULT_GRANTED_AUTHORITY = new SimpleGrantedAuthority(
+        securityProperties.getDefaultAuthority());
   }
 
   @ConditionalOnMissingBean(IResourceService.class)

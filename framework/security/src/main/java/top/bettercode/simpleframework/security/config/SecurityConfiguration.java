@@ -33,7 +33,6 @@ import top.bettercode.simpleframework.config.CorsProperties;
 import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.security.ApiTokenEndpointFilter;
 import top.bettercode.simpleframework.security.ApiTokenService;
-import top.bettercode.simpleframework.security.DefaultAuthority;
 import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.IRevokeTokenService;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
@@ -132,7 +131,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final Logger log = LoggerFactory.getLogger(
         top.bettercode.simpleframework.security.config.SecurityConfiguration.class);
+    private final ApiSecurityProperties securityProperties;
 
+    protected AccessSecurityConfiguration(ApiSecurityProperties securityProperties) {
+      this.securityProperties = securityProperties;
+    }
 
     @ConditionalOnMissingBean
     @Bean
@@ -149,7 +152,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
               return;
             } else {
               configAttributes = Collections.singletonList(
-                  new SecurityConfig(DefaultAuthority.DEFAULT_AUTHORITY_STRING));
+                  new SecurityConfig(securityProperties.getDefaultAuthority()));
             }
           }
 
