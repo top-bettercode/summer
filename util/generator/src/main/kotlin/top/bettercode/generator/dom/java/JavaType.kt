@@ -263,7 +263,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
         } else {
             val index = fullTypeSpecification.indexOf('<')
             if (index == -1) {
-                simpleParse(fullTypeSpecification)
+                simpleParse(fullTypeSpecification.substringBefore('['))
             } else {
                 simpleParse(fullTypeSpecification.substring(0, index))
                 val endIndex = fullTypeSpecification.lastIndexOf('>')
