@@ -17,22 +17,30 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
 
   private final Logger log = LoggerFactory.getLogger(JdbcApiAuthorizationService.class);
 
-  private static final String DEFAULT_INSERT_STATEMENT = "insert into api_token (id, access_token, refresh_token, authentication) values (?, ?, ?, ?)";
-
-  private static final String DEFAULT_SELECT_STATEMENT = "select authentication,id from api_token where id=?";
-
-  private static final String DEFAULT_SELECT_BY_ACCESS_STATEMENT = "select authentication,id from api_token where access_token = ?";
-  private static final String DEFAULT_SELECT_BY_REFRESH_STATEMENT = "select authentication,id from api_token where refresh_token = ?";
-
-  private static final String DEFAULT_DELETE_STATEMENT = "delete from api_token where id=?";
-
+  private final String defaultInsertStatement;
+  private final String defaultSelectStatement;
+  private final String defaultSelectByAccessStatement;
+  private final String defaultSelectByRefreshStatement;
+  private final String defaultDeleteStatement;
   private final JdkSerializationSerializer jdkSerializationSerializer = new JdkSerializationSerializer();
-
   private final JdbcTemplate jdbcTemplate;
 
   public JdbcApiAuthorizationService(DataSource dataSource) {
+    this(dataSource, "api_token");
+  }
+
+  public JdbcApiAuthorizationService(DataSource dataSource, String tableName) {
     Assert.notNull(dataSource, "DataSource required");
+    Assert.hasText(tableName, "tableName required");
     this.jdbcTemplate = new JdbcTemplate(dataSource);
+    defaultInsertStatement = "insert into " + tableName
+        + " (id, access_token, refresh_token, authentication) values (?, ?, ?, ?)";
+    defaultSelectStatement = "select authentication,id from " + tableName + " where id=?";
+    defaultSelectByAccessStatement =
+        "select authentication,id from " + tableName + " where access_token = ?";
+    defaultSelectByRefreshStatement =
+        "select authentication,id from " + tableName + " where refresh_token = ?";
+    defaultDeleteStatement = "delete from " + tableName + " where id=?";
   }
 
   @Transactional
@@ -46,7 +54,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
       String accessToken = authorization.getAccessToken().getTokenValue();
       String refreshToken = authorization.getRefreshToken().getTokenValue();
       byte[] auth = jdkSerializationSerializer.serialize(authorization);
-      jdbcTemplate.update(DEFAULT_INSERT_STATEMENT,
+      jdbcTemplate.update(defaultInsertStatement,
           new Object[]{id, accessToken, refreshToken, new SqlLobValue(auth)},
           new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB});
     } catch (DuplicateKeyException e) {
@@ -64,24 +72,24 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
   @Override
   public void remove(String scope, String username) {
     String id = scope + ":" + username;
-    jdbcTemplate.update(DEFAULT_DELETE_STATEMENT, id);
+    jdbcTemplate.update(defaultDeleteStatement, id);
   }
 
   @Override
   public ApiAuthenticationToken findByScopeAndUsername(String scope, String username) {
     String id = scope + ":" + username;
-    return getApiAuthenticationToken(id, DEFAULT_SELECT_STATEMENT);
+    return getApiAuthenticationToken(id, defaultSelectStatement);
   }
 
 
   @Override
   public ApiAuthenticationToken findByAccessToken(String accessToken) {
-    return getApiAuthenticationToken(accessToken, DEFAULT_SELECT_BY_ACCESS_STATEMENT);
+    return getApiAuthenticationToken(accessToken, defaultSelectByAccessStatement);
   }
 
   @Override
   public ApiAuthenticationToken findByRefreshToken(String refreshToken) {
-    return getApiAuthenticationToken(refreshToken, DEFAULT_SELECT_BY_REFRESH_STATEMENT);
+    return getApiAuthenticationToken(refreshToken, defaultSelectByRefreshStatement);
   }
 
   /**
@@ -103,7 +111,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
             } catch (Exception e) {
               log.warn("apiToken反序列化失败", e);
               try {
-                jdbcTemplate.update(DEFAULT_DELETE_STATEMENT, rs.getString(2));
+                jdbcTemplate.update(defaultDeleteStatement, rs.getString(2));
               } catch (Exception ex) {
                 log.warn("apiToken删除失败", ex);
               }
