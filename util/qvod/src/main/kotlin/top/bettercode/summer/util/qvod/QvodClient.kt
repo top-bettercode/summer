@@ -31,7 +31,7 @@ import javax.crypto.spec.SecretKeySpec
 open class QvodClient(
     private val properties: QvodProperties
 ) : ApiTemplate(
-    "第三方平台", "天气数据", "weather", properties.connectTimeout, properties.readTimeout
+    "第三方平台", "腾讯云点播", "qvod", properties.connectTimeout, properties.readTimeout
 ) {
 
     val vodClient: VodClient
