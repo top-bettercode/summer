@@ -39,14 +39,14 @@ object QueryStringParser {
     private fun processParameter(parameter: String, parameters: Parameters) {
         val components = parameter.split("=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         if (components.size in 1..2) {
+            val name = components[0]
             if (components.size == 2) {
-                val name = components[0]
                 val value = components[1]
                 parameters.add(decode(name), decode(value))
             } else {
-                val values = parameters[components[0]]
+                val values = parameters[name]
                 if (values == null) {
-                    parameters[components[0]] = LinkedList()
+                    parameters[name] = LinkedList()
                 }
             }
         } else {

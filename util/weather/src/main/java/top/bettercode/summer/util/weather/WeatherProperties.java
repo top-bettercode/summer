@@ -22,7 +22,7 @@ public class WeatherProperties {
    * jsoncallback 	string 	否 	js跨域使用jsonp时可使用此参数
    * </p>
    */
-  private String url = "https://sapi.k780.com/?app=weather.realtime&cityIp={0}&ag=today&appkey={1}&sign={2}&format=json";
+  private String url = "https://sapi.k780.com/?app=weather.realtime&cityIp={0}&ag=&appkey={1}&sign={2}&format=json";
   /**
    * 使用API的唯一凭证
    */

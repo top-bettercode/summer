@@ -12,6 +12,10 @@ import java.net.URLEncoder
  */
 class Parameters : LinkedMultiValueMap<String, String>() {
 
+    override fun get(key: String): MutableList<String>? {
+        return super.get(key)
+    }
+
     /**
      * Converts the parameters to a query string suitable for use in a URI or the body of
      * a form-encoded request.

@@ -1,7 +1,11 @@
 package top.bettercode.logging
 
 import org.junit.jupiter.api.Test
+import org.springframework.util.LinkedMultiValueMap
 import top.bettercode.lang.util.StringUtil
+import top.bettercode.logging.operation.Parameters
+import top.bettercode.logging.operation.QueryStringParser
+import java.net.URI
 
 /**
  * @author Peter Wu
@@ -13,6 +17,25 @@ class JsonPrettyPrinterTest {
         System.err.println(unformattedJsonString)
         System.err.println("--------------------------------")
         System.err.println(StringUtil.prettyJson(unformattedJsonString))
+    }
+
+    @Test
+    fun param1() {
+        val parameters = LinkedMultiValueMap<String, String>()
+        System.err.println(parameters["1"])
+    }
+
+
+    @Test
+    fun param2() {
+        val parameters = Parameters()
+        System.err.println(parameters["1"])
+    }
+
+
+    @Test
+    fun param() {
+        QueryStringParser.parse(URI("https://sapi.k780.com/?app=weather.realtime&cityIp=xx&ag=&appkey=xx&sign=xxx&format=json"))
     }
 
     data class Data(
