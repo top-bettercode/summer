@@ -35,7 +35,9 @@ class JsonPrettyPrinterTest {
 
     @Test
     fun param() {
-        QueryStringParser.parse(URI("https://sapi.k780.com/?app=weather.realtime&cityIp=xx&ag=&appkey=xx&sign=xxx&format=json"))
+        val parameters =
+            QueryStringParser.parse(URI("https://sapi.k780.com/?app=weather.realtime&cityIp=xx&ag=&appkey=xx&sign=xxx&format=json"))
+        System.err.println(parameters)
     }
 
     data class Data(
