@@ -141,6 +141,7 @@ object RequestConverter {
 
         val restUri = uri.toString()
         val content = request.record.toByteArray()
+        val parameters = QueryStringParser.parse(uri)
         return OperationRequest(
             uri = uri,
             restUri = restUri,
@@ -149,7 +150,7 @@ object RequestConverter {
             headers = headers,
             cookies = cookies,
             remoteUser = "NonSpecificUser",
-            parameters = Parameters().getUniqueParameters(uri),
+            parameters = parameters,
             parts = listOf(),
             content = content,
             dateTime = dateTime
