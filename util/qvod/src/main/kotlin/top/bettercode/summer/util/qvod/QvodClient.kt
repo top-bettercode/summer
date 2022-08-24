@@ -16,7 +16,6 @@ import org.springframework.lang.Nullable
 import org.springframework.util.Base64Utils
 import top.bettercode.lang.util.RandomUtil
 import top.bettercode.lang.util.StringUtil
-import top.bettercode.logging.operation.PrettyPrintingContentModifier
 import top.bettercode.simpleframework.support.client.ApiTemplate
 import java.io.File
 import java.util.*
@@ -126,6 +125,7 @@ open class QvodClient(
     /**
      * 简单上传
      */
+    @JvmOverloads
     fun upload(file: File, procedure: String? = null): VodUploadResponse {
         val req = VodUploadRequest()
         req.mediaFilePath = file.absolutePath
@@ -306,11 +306,45 @@ open class QvodClient(
     }
 
     /**
+     * 拉取事件通知
+     */
+    fun taskDetail(taskId:String): DescribeTaskDetailResponse {
+        val req = DescribeTaskDetailRequest()
+        req.taskId = taskId
+
+        val start = System.currentTimeMillis()
+        var durationMillis: Long? = null
+
+        var resp: DescribeTaskDetailResponse? = null
+        var throwable: Throwable? = null
+        try {
+            resp = vodClient.DescribeTaskDetail(req)
+            durationMillis = System.currentTimeMillis() - start
+            return resp
+        } catch (e: Exception) {
+            throwable = e
+            throw e
+        } finally {
+            if (durationMillis == null) {
+                durationMillis = System.currentTimeMillis() - start
+            }
+            log.info(
+                "DURATION MILLIS : {}\n{}\n{}",
+                durationMillis,
+                StringUtil.json(req, true),
+                if (resp == null) StringUtil.valueOf(
+                    throwable,
+                    true
+                ) else StringUtil.json(resp, true)
+            )
+        }
+    }
+    /**
      * 确认事件通知
      */
-    fun confirmEvents(vararg eventHandles: String): ConfirmEventsResponse {
+    fun confirmEvents(vararg eventHandle: String): ConfirmEventsResponse {
         val req = ConfirmEventsRequest()
-        req.eventHandles = eventHandles
+        req.eventHandles = eventHandle
 
         val start = System.currentTimeMillis()
         var durationMillis: Long? = null

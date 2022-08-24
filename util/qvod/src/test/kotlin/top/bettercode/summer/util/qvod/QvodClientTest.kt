@@ -28,26 +28,42 @@ class QvodClientTest : BaseTest() {
 
     @Test
     fun upload() {
-        qvodClient.upload(ClassPathResource("test.jpg").file)
+//        qvodClient.upload(ClassPathResource("test.jpg").file)//387702304899111623
+        qvodClient.upload(ClassPathResource("test.mp4").file)//387702304900182040
     }
 
     @Test
     fun deleteMedia() {
+        qvodClient.deleteMedia("387702304899113118")
     }
 
     @Test
     fun processMedia() {
+        val processMedia = qvodClient.processMedia("387702304900182040")
+        //{
+        //  "taskId" : "1313291945-procedurev2-8fbc7e646955b66e751a585153cc5706tt0",
+        //  "requestId" : "824a12f8-306b-4cda-ae9e-6697bb4672e5"
+        //}
     }
 
     @Test
     fun reviewImage() {
+        qvodClient.reviewImage("387702304899111623")
+    }
+
+    @Test
+    fun taskDetail() {
+        qvodClient.taskDetail("1313291945-procedurev2-76faf54c22414dc08b880ecfc6b83a2att0")
     }
 
     @Test
     fun pullEvents() {
+        val pullEvents = qvodClient.pullEvents()
+        pullEvents.eventSet[0].eventHandle
     }
 
     @Test
     fun confirmEvents() {
+        qvodClient.confirmEvents("tdmq830894935510738067")
     }
 }
