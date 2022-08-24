@@ -14,7 +14,13 @@ class WeatherClientTest : BaseTest() {
     lateinit var weatherClient: WeatherClient
 
     @Test
-    fun query() {
+    fun query1() {
         weatherClient.query("182.148.121.104")
     }
+
+    @Test
+    fun query2() {
+        weatherClient.query(104.176376, 30.817039)
+    }
+
 }

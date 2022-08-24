@@ -52,12 +52,40 @@ open class WeatherClient(
     fun query(ip: String): WeatherResult {
         val entity: ResponseEntity<WeatherResponse> = try {
             execute(
-                properties.url, HttpMethod.GET,
+                properties.url + "&cityIp={2}", HttpMethod.GET,
                 null,
                 responseEntityExtractor(WeatherResponse::class.java),
-                ip,
                 properties.appKey,
-                properties.sign
+                properties.sign,
+                ip
+            )
+        } catch (e: Exception) {
+            throw WeatherException(e)
+        } ?: throw WeatherException()
+
+        return if (entity.statusCode.is2xxSuccessful) {
+            val body = entity.body
+            if (body?.isOk() == true && body.result != null) {
+                body.result
+            } else {
+                val message = body?.msg
+                throw WeatherSysException(message ?: "请求失败")
+            }
+        } else {
+            throw WeatherException()
+        }
+    }
+
+    fun query(longitude: Double, latitude: Double): WeatherResult {
+        val entity: ResponseEntity<WeatherResponse> = try {
+            execute(
+                properties.url + "&wgs84ll={2},{3}", HttpMethod.GET,
+                null,
+                responseEntityExtractor(WeatherResponse::class.java),
+                properties.appKey,
+                properties.sign,
+                longitude,
+                latitude
             )
         } catch (e: Exception) {
             throw WeatherException(e)
