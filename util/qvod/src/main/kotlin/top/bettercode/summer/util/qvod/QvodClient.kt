@@ -16,6 +16,7 @@ import org.springframework.lang.Nullable
 import org.springframework.util.Base64Utils
 import top.bettercode.lang.util.RandomUtil
 import top.bettercode.lang.util.StringUtil
+import top.bettercode.logging.operation.PrettyPrintingContentModifier
 import top.bettercode.simpleframework.support.client.ApiTemplate
 import java.io.File
 import java.util.*
@@ -36,6 +37,7 @@ open class QvodClient(
 
     val vodClient: VodClient
     val vodUploadClient = VodUploadClient(properties.secretId, properties.secretKey)
+    val procedure = properties.procedure
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
@@ -89,6 +91,38 @@ open class QvodClient(
         return signature
     }
 
+
+    fun storageRegions(): DescribeStorageRegionsResponse {
+        val req = DescribeStorageRegionsRequest()
+
+        val start = System.currentTimeMillis()
+        var durationMillis: Long? = null
+
+        var resp: DescribeStorageRegionsResponse? = null
+        var throwable: Throwable? = null
+        try {
+            resp = vodClient.DescribeStorageRegions(req)
+            durationMillis = System.currentTimeMillis() - start
+            return resp
+        } catch (e: Exception) {
+            throwable = e
+            throw e
+        } finally {
+            if (durationMillis == null) {
+                durationMillis = System.currentTimeMillis() - start
+            }
+            log.info(
+                "DURATION MILLIS : {}\n{}\n{}",
+                durationMillis,
+                StringUtil.json(req, true),
+                if (resp == null) StringUtil.valueOf(
+                    throwable,
+                    true
+                ) else StringUtil.json(resp, true)
+            )
+        }
+    }
+
     /**
      * 简单上传
      */
@@ -116,13 +150,13 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
-                "DURATION MILLIS : {}\\n{}\\n{}",
+                "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
-                VodUploadRequest.toJsonString(req),
+                StringUtil.json(req, true),
                 if (resp == null) StringUtil.valueOf(
                     throwable,
                     true
-                ) else VodUploadResponse.toJsonString(resp)
+                ) else StringUtil.json(resp, true)
             )
         }
     }
@@ -151,13 +185,13 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
-                "DURATION MILLIS : {}\\n{}\\n{}",
+                "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
-                VodUploadRequest.toJsonString(req),
+                StringUtil.json(req, true),
                 if (resp == null) StringUtil.valueOf(
                     throwable,
                     true
-                ) else DeleteMediaResponse.toJsonString(resp)
+                ) else StringUtil.json(resp, true)
             )
         }
     }
@@ -190,13 +224,13 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
-                "DURATION MILLIS : {}\\n{}\\n{}",
+                "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
-                ProcessMediaRequest.toJsonString(req),
+                StringUtil.json(req, true),
                 if (resp == null) StringUtil.valueOf(
                     throwable,
                     true
-                ) else ProcessMediaResponse.toJsonString(resp)
+                ) else StringUtil.json(resp, true)
             )
         }
     }
@@ -226,13 +260,13 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
-                "DURATION MILLIS : {}\\n{}\\n{}",
+                "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
-                ReviewImageRequest.toJsonString(req),
+                StringUtil.json(req, true),
                 if (resp == null) StringUtil.valueOf(
                     throwable,
                     true
-                ) else ReviewImageResponse.toJsonString(resp)
+                ) else StringUtil.json(resp, true)
             )
         }
     }
@@ -260,13 +294,13 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
-                "DURATION MILLIS : {}\\n{}\\n{}",
+                "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
-                PullEventsRequest.toJsonString(req),
+                StringUtil.json(req, true),
                 if (resp == null) StringUtil.valueOf(
                     throwable,
                     true
-                ) else PullEventsResponse.toJsonString(resp)
+                ) else StringUtil.json(resp, true)
             )
         }
     }
@@ -295,13 +329,13 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
-                "DURATION MILLIS : {}\\n{}\\n{}",
+                "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
-                ConfirmEventsRequest.toJsonString(req),
+                StringUtil.json(req, true),
                 if (resp == null) StringUtil.valueOf(
                     throwable,
                     true
-                ) else ConfirmEventsResponse.toJsonString(resp)
+                ) else StringUtil.json(resp, true)
             )
         }
     }

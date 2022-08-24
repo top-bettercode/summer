@@ -2,6 +2,7 @@ package top.bettercode.summer.util.qvod
 
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.util.test.BaseTest
 
 /**
@@ -20,7 +21,14 @@ class QvodClientTest : BaseTest() {
     }
 
     @Test
+    fun storageRegions() {
+        qvodClient.storageRegions()
+    }
+
+
+    @Test
     fun upload() {
+        qvodClient.upload(ClassPathResource("test.jpg").file)
     }
 
     @Test
