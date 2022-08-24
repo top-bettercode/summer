@@ -64,7 +64,7 @@ class DicCodeGen(private val project: Project) {
         val map = TreeMap<String, DicCodes>()
         val keys = properties.keys.sortedBy {
             if (it.toString().contains(".")) {
-                val s = it.toString().split(".")[1]
+                val s = it.toString().substringAfter(".")
                 s.toIntOrNull() ?: s.hashCode()
             } else -1
         }
@@ -72,9 +72,8 @@ class DicCodeGen(private val project: Project) {
             key as String
             val codeType: String
             if (key.contains(".")) {
-                val split = key.split(".")
-                codeType = split[0]
-                val code = split[1]
+                codeType = key.substringBefore(".")
+                val code = key.substringAfter(".")
                 val isInt = "Int" == properties.getProperty("$codeType|TYPE")
                 val dicCode = map.computeIfAbsent(codeType) {
                     DicCodes(
@@ -156,7 +155,7 @@ class DicCodeGen(private val project: Project) {
                             } else if (code.toString().isBlank()) {
                                 "BLANK"
                             } else {
-                                code as String
+                                (code as String).replace("-", "_").replace(".", "_")
                             }
                         )
                         innerInterface.apply {
