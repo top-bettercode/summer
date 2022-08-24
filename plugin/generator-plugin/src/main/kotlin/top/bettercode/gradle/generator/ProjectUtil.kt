@@ -9,7 +9,7 @@ import org.gradle.api.Project
 object ProjectUtil {
 
     val Project.isBoot: Boolean
-        get() = !isCore && ((parent == rootProject) || parent?.name == "server" || parent?.name == "service")
+        get() = !isCore && "util" != name && "commons" != name && ((parent == rootProject) || parent?.name == "server" || parent?.name == "service")
 
     val Project.isCore: Boolean
         get() = name.matches(Regex((findProperty("project.core") as? String) ?: "^(core|.*-core)$"))
