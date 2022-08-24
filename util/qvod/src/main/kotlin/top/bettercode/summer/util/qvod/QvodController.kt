@@ -14,8 +14,8 @@ class QvodController(
 
     @ResponseBody
     @GetMapping(value = ["/signature"], name = "客户端上传签名")
-    fun signature(isPicture: Boolean = false): Any {
-        return ok(qvodClient.signature(isPicture))
+    fun signature(): Any {
+        return ok(qvodClient.signature())
     }
 
 }

@@ -59,7 +59,7 @@ class QvodClientTest : BaseTest() {
     @Test
     fun pullEvents() {
         val pullEvents = qvodClient.pullEvents()
-        pullEvents.eventSet[0].eventHandle
+        System.err.println(pullEvents.eventSet[0].eventHandle)
     }
 
     @Test

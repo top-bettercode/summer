@@ -67,13 +67,12 @@ open class QvodClient(
     /**
      * 签名
      */
-    @JvmOverloads
-    fun signature(isPicture: Boolean = false): String {
+    fun signature(): String {
         val currentTimeStamp = System.currentTimeMillis() / 1000
         val original =
             "secretId=${properties.secretId}&currentTimeStamp=$currentTimeStamp&expireTime=${currentTimeStamp + properties.validSeconds}&random=${
                 RandomUtil.nextInt(9)
-            }${if (isPicture || properties.procedure.isNullOrBlank()) "" else "&procedure=${properties.procedure}"}"
+            }"
         val mac: Mac = Mac.getInstance("HmacSHA1")
         val secretKey = SecretKeySpec(properties.secretKey.toByteArray(), mac.algorithm)
         mac.init(secretKey)
