@@ -5,6 +5,7 @@ import com.qcloud.vod.VodUploadClient
 import com.qcloud.vod.model.VodUploadRequest
 import com.qcloud.vod.model.VodUploadResponse
 import com.tencentcloudapi.common.Credential
+import com.tencentcloudapi.common.exception.TencentCloudSDKException
 import com.tencentcloudapi.common.profile.ClientProfile
 import com.tencentcloudapi.common.profile.HttpProfile
 import com.tencentcloudapi.vod.v20180717.VodClient
@@ -285,6 +286,15 @@ open class QvodClient(
             resp = vodClient.PullEvents(req)
             durationMillis = System.currentTimeMillis() - start
             return resp
+        } catch (e: TencentCloudSDKException) {
+            if (e.errorCode.equals("ResourceNotFound")) {
+                resp = PullEventsResponse()
+                resp.requestId = e.requestId
+                resp.eventSet = arrayOf()
+                return resp
+            }
+            throwable = e
+            throw e
         } catch (e: Exception) {
             throwable = e
             throw e
@@ -307,7 +317,7 @@ open class QvodClient(
     /**
      * 拉取事件通知
      */
-    fun taskDetail(taskId:String): DescribeTaskDetailResponse {
+    fun taskDetail(taskId: String): DescribeTaskDetailResponse {
         val req = DescribeTaskDetailRequest()
         req.taskId = taskId
 
@@ -338,6 +348,7 @@ open class QvodClient(
             )
         }
     }
+
     /**
      * 确认事件通知
      */

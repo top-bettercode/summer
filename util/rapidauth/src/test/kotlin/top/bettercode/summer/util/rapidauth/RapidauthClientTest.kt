@@ -15,6 +15,6 @@ class RapidauthClientTest : BaseTest() {
 
     @Test
     fun query() {
-        rapidauthClient.query("xxx", "xx")
+        rapidauthClient.query("mobile", "xx")
     }
 }

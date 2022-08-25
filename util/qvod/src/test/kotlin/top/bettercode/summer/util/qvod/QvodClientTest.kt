@@ -39,7 +39,7 @@ class QvodClientTest : BaseTest() {
 
     @Test
     fun processMedia() {
-        val processMedia = qvodClient.processMedia("387702304900182040")
+        qvodClient.processMedia("387702304900182040")
         //{
         //  "taskId" : "1313291945-procedurev2-8fbc7e646955b66e751a585153cc5706tt0",
         //  "requestId" : "824a12f8-306b-4cda-ae9e-6697bb4672e5"
@@ -59,7 +59,9 @@ class QvodClientTest : BaseTest() {
     @Test
     fun pullEvents() {
         val pullEvents = qvodClient.pullEvents()
-        System.err.println(pullEvents.eventSet[0].eventHandle)
+        for (eventContent in pullEvents.eventSet) {
+            System.err.println(eventContent.eventHandle)
+        }
     }
 
     @Test
