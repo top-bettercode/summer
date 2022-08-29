@@ -11,6 +11,7 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
+import org.springframework.lang.Nullable
 import org.springframework.util.DigestUtils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
@@ -43,7 +44,7 @@ class SimpleB2mSmsTemplate(
                     return true
                 }
 
-                override fun canWrite(clazz: Class<*>?, mediaType: MediaType?): Boolean {
+                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
                     return true
                 }
             }
@@ -70,8 +71,12 @@ class SimpleB2mSmsTemplate(
      * @param content 内容
      * @return 结果
      */
-    fun simpleSendSms(cell: String, content: String): B2mResponse<B2mRespData> {
-        return simpleSendSms(Collections.singletonMap(cell, content))
+    fun simpleSendSms(
+        cell: String,
+        content: String,
+        mock: Boolean = false
+    ): B2mResponse<B2mRespData> {
+        return simpleSendSms(Collections.singletonMap(cell, content), mock)
     }
 
     /**
@@ -86,7 +91,13 @@ class SimpleB2mSmsTemplate(
      * @param content 手机号=内容(必填)【可多个】 以手机号为参数名，内容为参数值传输 如：18001000000=端午节快乐,(最多500个)
      * @return 结果
      */
-    fun simpleSendSms(content: Map<String, String>): B2mResponse<B2mRespData> {
+    @JvmOverloads
+    fun simpleSendSms(
+        content: Map<String, String>,
+        mock: Boolean = false
+    ): B2mResponse<B2mRespData> {
+        if (mock)
+            return B2mResponse()
         //    格式：yyyyMMddHHmmss 14位
         val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()

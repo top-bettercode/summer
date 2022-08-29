@@ -67,8 +67,9 @@ class B2mSmsTemplate(
      * @param content 内容
      * @return 结果
      */
-    fun sendSms(cell: String, content: String): B2mResponse<B2mRespData> {
-        return sendSms(Collections.singletonMap(cell, content))
+    @JvmOverloads
+    fun sendSms(cell: String, content: String, mock: Boolean = false): B2mResponse<B2mRespData> {
+        return sendSms(Collections.singletonMap(cell, content), mock)
     }
 
     /**
@@ -80,7 +81,10 @@ class B2mSmsTemplate(
      * @param content 手机号=内容(必填)【可多个】 以手机号为参数名，内容为参数值传输 如：18001000000=端午节快乐,(最多500个)
      * @return 结果
      */
-    fun sendSms(content: Map<String, String>): B2mResponse<B2mRespData> {
+    @JvmOverloads
+    fun sendSms(content: Map<String, String>, mock: Boolean = false): B2mResponse<B2mRespData> {
+        if (mock)
+            return B2mResponse()
         val headers = HttpHeaders()
         headers.add("appId", b2mProperties.appId)
         headers.add("gzip", "on")

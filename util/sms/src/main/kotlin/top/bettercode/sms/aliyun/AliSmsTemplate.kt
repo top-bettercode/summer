@@ -74,11 +74,13 @@ class AliSmsTemplate(
      * @param templateParam 短信模板变量对应的实际值
      * @return 结果
      */
+    @JvmOverloads
     fun sendSms(
         templateCode: String, phoneNumber: String, signName: String,
-        templateParam: Map<String, String>
+        templateParam: Map<String, String>,
+        mock: Boolean = false
     ): AliSmsResponse {
-        return sendSms(templateCode, listOf(AliSmsReq(phoneNumber, signName, templateParam)))
+        return sendSms(templateCode, listOf(AliSmsReq(phoneNumber, signName, templateParam)), mock)
     }
 
     /**
@@ -88,8 +90,9 @@ class AliSmsTemplate(
      * @param aliSmsReq    请求信息。
      * @return 结果
      */
-    fun sendSms(templateCode: String, aliSmsReq: AliSmsReq): AliSmsResponse {
-        return sendSms(templateCode, listOf(aliSmsReq))
+    @JvmOverloads
+    fun sendSms(templateCode: String, aliSmsReq: AliSmsReq, mock: Boolean = false): AliSmsResponse {
+        return sendSms(templateCode, listOf(aliSmsReq), mock)
     }
 
     /**
@@ -108,7 +111,14 @@ class AliSmsTemplate(
      * @param aliSmsReqs   请求信息。
      * @return 结果
      */
-    fun sendSms(templateCode: String, aliSmsReqs: List<AliSmsReq>): AliSmsResponse {
+    @JvmOverloads
+    fun sendSms(
+        templateCode: String,
+        aliSmsReqs: List<AliSmsReq>,
+        mock: Boolean = false
+    ): AliSmsResponse {
+        if (mock)
+            return AliSmsResponse()
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         //公共参数
         val action = "SendBatchSms"
@@ -249,7 +259,8 @@ class AliSmsTemplate(
             var message = body?.message
             val regex = "触发号码天级流控Permits:(\\d+)"
             if (message?.matches(Regex(regex)) == true) {
-                message = "每个手机号一天只能获取" + message.replace(regex.toRegex(), "$1") + "条短信"
+                message =
+                    "每个手机号一天只能获取" + message.replace(regex.toRegex(), "$1") + "条短信"
             }
             throw SmsSysException(message ?: "请求失败")
         }
