@@ -14,6 +14,10 @@ public class B2mSmsProperties {
   private String appId;
   private String secretKey;
   /**
+   * 模拟发送
+   */
+  private Boolean mock = false;
+  /**
    * 请求连接超时时间毫秒数
    */
   private int connectTimeout = 10000;
@@ -48,6 +52,14 @@ public class B2mSmsProperties {
 
   public void setSecretKey(String secretKey) {
     this.secretKey = secretKey;
+  }
+
+  public Boolean getMock() {
+    return mock;
+  }
+
+  public void setMock(Boolean mock) {
+    this.mock = mock;
   }
 
   public int getConnectTimeout() {

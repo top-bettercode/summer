@@ -74,7 +74,7 @@ class SimpleB2mSmsTemplate(
     fun simpleSendSms(
         cell: String,
         content: String,
-        mock: Boolean = false
+        mock: Boolean = b2mProperties.mock
     ): B2mResponse<B2mRespData> {
         return simpleSendSms(Collections.singletonMap(cell, content), mock)
     }
@@ -94,7 +94,7 @@ class SimpleB2mSmsTemplate(
     @JvmOverloads
     fun simpleSendSms(
         content: Map<String, String>,
-        mock: Boolean = false
+        mock: Boolean = b2mProperties.mock
     ): B2mResponse<B2mRespData> {
         if (mock)
             return B2mResponse()

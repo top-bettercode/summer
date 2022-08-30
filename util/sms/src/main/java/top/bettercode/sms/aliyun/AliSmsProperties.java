@@ -10,6 +10,10 @@ public class AliSmsProperties {
   private String accessKeySecret;
   private String regionId = "cn-chengdu";
   /**
+   * 模拟发送
+   */
+  private Boolean mock = false;
+  /**
    * 请求连接超时时间毫秒数
    */
   private int connectTimeout = 10000;
@@ -51,6 +55,14 @@ public class AliSmsProperties {
 
   public void setRegionId(String regionId) {
     this.regionId = regionId;
+  }
+
+  public Boolean getMock() {
+    return mock;
+  }
+
+  public void setMock(Boolean mock) {
+    this.mock = mock;
   }
 
   public int getConnectTimeout() {

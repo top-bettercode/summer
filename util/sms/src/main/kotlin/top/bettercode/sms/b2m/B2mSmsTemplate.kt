@@ -68,7 +68,11 @@ class B2mSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun sendSms(cell: String, content: String, mock: Boolean = false): B2mResponse<B2mRespData> {
+    fun sendSms(
+        cell: String,
+        content: String,
+        mock: Boolean = b2mProperties.mock
+    ): B2mResponse<B2mRespData> {
         return sendSms(Collections.singletonMap(cell, content), mock)
     }
 
@@ -82,7 +86,10 @@ class B2mSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun sendSms(content: Map<String, String>, mock: Boolean = false): B2mResponse<B2mRespData> {
+    fun sendSms(
+        content: Map<String, String>,
+        mock: Boolean = b2mProperties.mock
+    ): B2mResponse<B2mRespData> {
         if (mock)
             return B2mResponse()
         val headers = HttpHeaders()
