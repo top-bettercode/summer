@@ -140,6 +140,6 @@ object CellUtil {
      */
     @JvmStatic
     fun isSimpleCell(cell: String?): Boolean {
-        return cell?.matches(Regex("^\\d{11}$")) ?: false
+        return cell?.matches(Regex("^[1-9]\\d{10}$")) ?: false
     }
 }
