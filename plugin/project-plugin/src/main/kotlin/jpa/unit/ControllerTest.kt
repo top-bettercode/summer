@@ -193,6 +193,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
 val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
+        annotation("@org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication")
         annotation("@org.springframework.stereotype.Service")
         javadoc {
             +"/**"
