@@ -27,16 +27,17 @@ public interface IOffiaccountProperties extends IWexinProperties {
     return getAppBaseUrl() + OAUTH_URL;
   }
 
-  default String redirectUrl(WechatToken wechatToken, boolean forceLogin) {
-    return "redirect:" + wechatUrl(wechatToken, forceLogin);
+  default String redirectUrl(WechatToken wechatToken, boolean forceLogin, String state) {
+    return "redirect:" + wechatUrl(wechatToken, forceLogin, state);
   }
 
-  default String wechatUrl(WechatToken wechatToken, boolean forceLogin) {
+  default String wechatUrl(WechatToken wechatToken, boolean forceLogin, String state) {
     String token = wechatToken == null ? "" : wechatToken.getAccessToken();
     String openId = wechatToken == null ? "" : wechatToken.getOpenId();
     return getWechatBaseUrl() + getWechatWebOauthUrl() + "?access_token=" + token + "&"
         + OPEN_ID_NAME + "=" + openId + "&hasBound=" + (StringUtils.hasText(token)) + "&forceLogin="
-        + forceLogin + "&_timer=" + System.currentTimeMillis();
+        + forceLogin + "&state=" + (state == null ? "" : state) + "&_timer="
+        + System.currentTimeMillis();
   }
 
 

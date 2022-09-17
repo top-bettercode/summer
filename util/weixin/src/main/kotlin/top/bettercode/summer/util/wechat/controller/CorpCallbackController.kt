@@ -34,7 +34,7 @@ class CorpCallbackController(
         } catch (e: Exception) {
             log.warn("token获取失败", e)
         }
-        return corpClient.properties.redirectUrl(token, wechatService.forceLogin())
+        return corpClient.properties.redirectUrl(token, wechatService.forceLogin(), state)
     }
 
 
