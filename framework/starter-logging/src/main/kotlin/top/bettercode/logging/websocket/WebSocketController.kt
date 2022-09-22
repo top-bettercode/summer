@@ -12,9 +12,7 @@ import javax.websocket.server.ServerEndpoint
 class WebSocketController() {
 
     private val log = LoggerFactory.getLogger(WebSocketController::class.java)
-    private val websocketProperties: WebsocketProperties by lazy {
-        ApplicationContextHolder.getBean(WebsocketProperties::class.java)
-    }
+
 
     @OnOpen
     fun onOpen(session: Session) {
@@ -53,8 +51,10 @@ class WebSocketController() {
     }
 
     companion object {
-
         private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
+        private val websocketProperties: WebsocketProperties by lazy {
+            ApplicationContextHolder.getBean(WebsocketProperties::class.java)
+        }
 
         @Throws(IOException::class)
         fun send(message: String?) {
