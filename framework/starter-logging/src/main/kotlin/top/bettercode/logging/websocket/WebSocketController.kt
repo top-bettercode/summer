@@ -1,7 +1,6 @@
 package top.bettercode.logging.websocket
 
 import org.slf4j.LoggerFactory
-import org.springframework.context.ApplicationContext
 import top.bettercode.logging.WebsocketProperties
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
@@ -9,9 +8,9 @@ import javax.websocket.*
 import javax.websocket.server.ServerEndpoint
 
 @ServerEndpoint("/websocket/logging")
-class WebSocketController {
-    private val log = LoggerFactory.getLogger(WebSocketController::class.java)
+class WebSocketController(private val websocketProperties: WebsocketProperties) {
 
+    private val log = LoggerFactory.getLogger(WebSocketController::class.java)
 
     @OnOpen
     fun onOpen(session: Session) {
@@ -50,12 +49,7 @@ class WebSocketController {
     }
 
     companion object {
-        var applicationContext: ApplicationContext? = null
-        private val websocketProperties: WebsocketProperties by lazy {
-            applicationContext!!.getBean(
-                WebsocketProperties::class.java
-            )
-        }
+
         private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
 
         @Throws(IOException::class)
