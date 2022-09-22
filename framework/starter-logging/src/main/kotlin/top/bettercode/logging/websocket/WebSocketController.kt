@@ -2,15 +2,19 @@ package top.bettercode.logging.websocket
 
 import org.slf4j.LoggerFactory
 import top.bettercode.logging.WebsocketProperties
+import top.bettercode.simpleframework.support.ApplicationContextHolder
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import javax.websocket.*
 import javax.websocket.server.ServerEndpoint
 
 @ServerEndpoint("/websocket/logging")
-class WebSocketController(private val websocketProperties: WebsocketProperties) {
+class WebSocketController() {
 
     private val log = LoggerFactory.getLogger(WebSocketController::class.java)
+    private val websocketProperties: WebsocketProperties by lazy {
+        ApplicationContextHolder.getBean(WebsocketProperties::class.java)
+    }
 
     @OnOpen
     fun onOpen(session: Session) {
