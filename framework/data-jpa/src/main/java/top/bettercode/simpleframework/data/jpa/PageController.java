@@ -1,6 +1,9 @@
 package top.bettercode.simpleframework.data.jpa;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
@@ -30,6 +33,17 @@ public class PageController extends BaseController {
     } else {
       return super.ok(object);
     }
+  }
+
+  protected <T, R> ResponseEntity<?> ok(Page<T> object, Function<? super T, ? extends R> mapper) {
+    int number =
+        properties.getPageable().isOneIndexedParameters() ? object.getNumber() + 1
+            : object.getNumber();
+    List<T> content = object.getContent();
+    return super.ok(
+        new PagedResources<>(new PageMetadata(number, object.getSize(), object.getTotalPages(),
+            object.getTotalElements()),
+            content.stream().map(mapper).collect(Collectors.toList())));
   }
 
   protected ResponseEntity<?> page(Object object) {
