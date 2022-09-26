@@ -45,7 +45,10 @@ open class WeatherClient(
 
 
     @JvmOverloads
-    fun isNight(zoneId: ZoneId = TimeUtil.DEFAULT_ZONE_ID): Boolean {
+    fun isNight(
+        time: LocalTime = LocalTime.now(TimeUtil.DEFAULT_ZONE_ID),
+        zoneId: ZoneId = TimeUtil.DEFAULT_ZONE_ID
+    ): Boolean {
         return LocalTime.now(zoneId).hour in properties.nightStartTime.hour..properties.nightEndTime.hour
     }
 
