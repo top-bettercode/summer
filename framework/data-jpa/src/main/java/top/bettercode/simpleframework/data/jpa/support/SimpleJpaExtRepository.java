@@ -847,6 +847,21 @@ public class SimpleJpaExtRepository<T, ID> extends
         Math.min(pageable.getPageSize(), content.size()));
   }
 
+  @Override
+  public Page<T> findHardAll(Specification<T> spec, Pageable pageable) {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findHardAll");
+      Page<T> all = super.findAll(spec, pageable);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", all.getTotalElements());
+        sqlLog.debug("{} rows retrieved", all.getContent().size());
+      }
+      return all;
+    } finally {
+      cleanMdc(mdc);
+    }
+  }
 
   @Override
   public Page<T> findAll(Specification<T> spec, Pageable pageable) {

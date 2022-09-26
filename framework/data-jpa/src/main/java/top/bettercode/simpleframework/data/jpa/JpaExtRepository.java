@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
+import org.springframework.lang.Nullable;
 import top.bettercode.simpleframework.data.jpa.query.RecycleExecutor;
 
 /**
@@ -52,6 +55,15 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
    * @return 结果
    */
   Optional<T> findHardById(ID id);
+
+  /**
+   * 包括已逻辑删除的数据
+   *
+   * @param spec     条件
+   * @param pageable 分页信息
+   * @return 分页数据
+   */
+  Page<T> findHardAll(@Nullable Specification<T> spec, Pageable pageable);
 
   List<T> findAll(int size);
 
