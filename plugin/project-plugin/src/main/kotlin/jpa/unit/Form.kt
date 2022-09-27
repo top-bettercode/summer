@@ -26,7 +26,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         //constructor no args
         constructor {
-            +"this.entity = new ${entityType.shortName}();"
+            +"this.entity = ${entityType.shortName}.withDefaults();"
         }
 
         //constructor with entity
