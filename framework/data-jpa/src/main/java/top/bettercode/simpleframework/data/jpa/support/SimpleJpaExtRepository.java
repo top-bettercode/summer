@@ -734,6 +734,22 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
+  public long countHard(Specification<T> spec) {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".count");
+      long count = super.count(spec);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("total: {} rows", count);
+      }
+      return count;
+    } finally {
+      cleanMdc(mdc);
+    }
+  }
+
+
+  @Override
   public boolean exists(Specification<T> spec) {
     boolean mdc = false;
     try {
@@ -743,6 +759,18 @@ public class SimpleJpaExtRepository<T, ID> extends
       cleanMdc(mdc);
     }
   }
+
+  @Override
+  public boolean existsHard(Specification<T> spec) {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".exists");
+      return countHard(spec) > 0;
+    } finally {
+      cleanMdc(mdc);
+    }
+  }
+
 
   @Override
   public Optional<T> findFirst(Sort sort) {
