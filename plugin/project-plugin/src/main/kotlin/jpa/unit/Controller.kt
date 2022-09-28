@@ -68,11 +68,10 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
             import("org.springframework.data.domain.Page")
             import(matcherType)
-            +"Page<$className> results = ${projectEntityName}Service.findAll(${matcherType.shortName}.matching(${entityName}), pageable);"
+            +"${matcherType.shortName} matcher = ${matcherType.shortName}.matching(${entityName});"
+            +"Page<$className> results = ${projectEntityName}Service.findAll(matcher, pageable);"
             if (isFullComposite) {
-                import("org.springframework.data.domain.PageImpl")
-                import("java.util.stream.Collectors")
-                +"return ok(new PageImpl<>(results.getContent().stream().map($className::get$primaryKeyClassName).collect(Collectors.toList()), pageable, results.getTotalElements()));"
+                +"return ok(results, $className::get$primaryKeyClassName);"
             } else {
                 +"return ok(results);"
             }
@@ -125,7 +124,8 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     annotation("@org.springframework.data.web.SortDefault${defaultSort}")
                 }
 
-                +"Iterable<$className> results = ${projectEntityName}Service.findAll(${matcherType.shortName}.matching(${entityName}), sort);"
+                +"${matcherType.shortName} matcher = ${matcherType.shortName}.matching(${entityName});"
+                +"Iterable<$className> results = ${projectEntityName}Service.findAll(matcher, sort);"
                 import("top.bettercode.util.excel.ExcelExport")
                 +"ExcelExport.sheet(\"$remarks\", excelExport -> excelExport.setData(${
                     if (isFullComposite) {
