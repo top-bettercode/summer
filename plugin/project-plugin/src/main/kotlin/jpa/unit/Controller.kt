@@ -166,10 +166,10 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
-                    name = "${entityName}Form"
+                    name = "form"
                     type = formType
                 }
-                +"$className $entityName = ${if (isFullComposite) "new $className(${entityName}Form.getEntity())" else "${entityName}Form.getEntity()"};"
+                +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
                 +"${projectEntityName}Service.save($entityName);"
                 +"return noContent();"
             }
@@ -228,7 +228,7 @@ val updateController: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
-        method("${entityName}Form", formType) {
+        method("form", formType) {
             annotation("@org.springframework.web.bind.annotation.ModelAttribute")
             parameter {
                 name = primaryKeyName
@@ -241,7 +241,7 @@ val updateController: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
             }
             +"$className $entityName = ${projectEntityName}Service.findById(${if (isCompositePrimaryKey) "${primaryKeyType.shortName}.of($primaryKeyName)" else primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
-            +"return new ${projectClassName}Form($entityName);"
+            +"return new ${formType.shortName}($entityName);"
         }
 
         //update
@@ -253,10 +253,10 @@ val updateController: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             parameter {
                 import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
                 annotation("@org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")
-                name = "${entityName}Form"
+                name = "form"
                 type = formType
             }
-            +"$className $entityName = ${if (isFullComposite) "new $className(${entityName}Form.getEntity())" else "${entityName}Form.getEntity()"};"
+            +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
             +"${projectEntityName}Service.save($entityName);"
             +"return noContent();"
         }
