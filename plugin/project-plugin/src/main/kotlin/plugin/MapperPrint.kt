@@ -19,6 +19,6 @@ open class MapperPrint : ProjectGenerator() {
         otherColumns.forEach {
             println("    <result property=\"${it.javaName}\" column=\"${it.columnName}\"/>")
         }
-        println("""  </resultMap>""")
+        println("""</resultMap>""")
     }
 }

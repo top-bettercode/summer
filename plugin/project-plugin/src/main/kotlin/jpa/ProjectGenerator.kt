@@ -1,7 +1,9 @@
 import top.bettercode.generator.DatabaseDriver
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
+import top.bettercode.generator.dom.java.element.TopLevelClass
 import top.bettercode.generator.dsl.Generator
+import top.bettercode.lang.capitalized
 
 /**
  *
@@ -30,6 +32,34 @@ abstract class ProjectGenerator : Generator() {
         columnAnnotation += ")"
         return columnAnnotation
     }
+
+    val TopLevelClass.defaultSort: String
+        get() {
+            var defaultSort = ""
+            if (columns.any { it.javaName == "createdDate" } || !isCompositePrimaryKey) {
+                import(propertiesType)
+                import("org.springframework.data.domain.Sort.Direction")
+                defaultSort = "(sort = {"
+                if (columns.any { it.javaName == "createdDate" }) {
+                    defaultSort += "${propertiesType.shortName}.createdDate"
+                    if (!isCompositePrimaryKey) {
+                        defaultSort += ", ${propertiesType.shortName}.${primaryKeyName}"
+                    }
+                    defaultSort += "}"
+                } else if (!isCompositePrimaryKey) {
+                    defaultSort += "${propertiesType.shortName}.${primaryKeyName}}"
+                }
+                defaultSort += ", direction = Direction.DESC)"
+            }
+            return defaultSort
+        }
+
+    val testInsertName: String
+        get() =
+            "${projectEntityName}TestService.insert${
+                pathName.capitalized()
+            }"
+
 
     val interfaceService get() = enable("interfaceService", false)
 

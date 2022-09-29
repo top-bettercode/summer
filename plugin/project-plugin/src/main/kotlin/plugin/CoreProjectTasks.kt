@@ -74,11 +74,11 @@ object CoreProjectTasks {
                 }
             }
 
-            create("print[ExcelField]") {
+            create("print[ExcelCode]") {
                 it.group = GeneratorPlugin.printGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                    gen.generators = arrayOf(ExcelFieldPrint())
+                    gen.generators = arrayOf(ExcelCodePrint())
                     Generators.call(gen)
                 }
             }

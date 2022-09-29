@@ -38,10 +38,6 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"tableNames(${className}.TABLE_NAME);"
         }
 
-        val insertName =
-            "${projectEntityName}TestService.insert${
-                pathName.capitalized()
-            }"
 
         //list
         method("list", JavaType.voidPrimitiveInstance) {
@@ -52,7 +48,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             annotation("@org.junit.jupiter.api.Test")
             annotation("@org.junit.jupiter.api.Order(0)")
             exception(JavaType("Exception"))
-            +"$insertName();"
+            +"$testInsertName();"
             +"perform(get(\"/$pathName/list\")"
             2 + ".param(\"page\", \"1\")"
             2 + ".param(\"size\", \"5\")"
@@ -71,7 +67,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(1)")
                 exception(JavaType("Exception"))
-                +"$insertName();"
+                +"$testInsertName();"
                 import("org.springframework.test.web.servlet.ResultActions")
                 +"download(get(\"/$pathName/export.xlsx\")"
                 2 + ".param(\"sort\", \"\")"
@@ -89,7 +85,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(2)")
                 exception(JavaType("Exception"))
-                +"${primaryKeyClassName} $primaryKeyName = $insertName().get${
+                +"${primaryKeyClassName} $primaryKeyName = $testInsertName().get${
                     primaryKeyName.capitalized()
                 }();"
                 +"perform(get(\"/$pathName/info\")"
@@ -112,12 +108,11 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 exception(JavaType("Exception"))
                 if (isCompositePrimaryKey && !isFullComposite) {
                     import(primaryKeyType)
-                    +"${primaryKeyClassName} $primaryKeyName = new ${primaryKeyClassName}();"
-                    primaryKeys.forEach {
-                        +"$primaryKeyName.set${
-                            it.javaName.capitalized()
-                        }(${it.randomValueToSet(this@apply)});"
-                    }
+                    +"${primaryKeyClassName} $primaryKeyName = new ${primaryKeyClassName}(${
+                        primaryKeys.joinToString(
+                            ", "
+                        ) { it.randomValueToSet(this@apply) }
+                    });"
                 }
                 +"perform(post(\"/$pathName/save\")"
                 if (isFullComposite) {
@@ -155,7 +150,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
                     }
                 } else {
-                    +"${primaryKeyClassName} $primaryKeyName = $insertName().get${
+                    +"${primaryKeyClassName} $primaryKeyName = $testInsertName().get${
                         primaryKeyName.capitalized()
                     }();"
                     +"perform(post(\"/$pathName/save\")"
@@ -177,7 +172,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(5)")
                 exception(JavaType("Exception"))
-                +"$primaryKeyClassName $primaryKeyName = $insertName().get${
+                +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
                     primaryKeyName.capitalized()
                 }();"
                 +"perform(post(\"/$pathName/delete\")"
