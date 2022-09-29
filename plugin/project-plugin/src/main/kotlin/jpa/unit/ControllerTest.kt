@@ -68,7 +68,6 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Order(1)")
                 exception(JavaType("Exception"))
                 +"$testInsertName();"
-                import("org.springframework.test.web.servlet.ResultActions")
                 +"download(get(\"/$pathName/export.xlsx\")"
                 2 + ".param(\"sort\", \"\")"
                 +");"

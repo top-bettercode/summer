@@ -101,9 +101,27 @@ open class ExcelCodePrint : ProjectGenerator() {
                 annotation("@org.junit.jupiter.api.Order(1)")
                 exception(JavaType("Exception"))
                 +"$testInsertName();"
-                import("org.springframework.test.web.servlet.ResultActions")
                 +"download(get(\"/$pathName/export.xlsx\")"
                 2 + ".param(\"sort\", \"\")"
+                +");"
+            }
+
+            method("template", JavaType.voidPrimitiveInstance) {
+                annotation("@org.junit.jupiter.api.DisplayName(\"导入模板\")")
+                annotation("@org.junit.jupiter.api.Test")
+                annotation("@org.junit.jupiter.api.Order(1)")
+                exception(JavaType("Exception"))
+                +"download(get(\"/$pathName/template.xlsx\")"
+                +");"
+            }
+
+            method("importTemplate", JavaType.voidPrimitiveInstance) {
+                annotation("@org.junit.jupiter.api.DisplayName(\"导入\")")
+                annotation("@org.junit.jupiter.api.Test")
+                annotation("@org.junit.jupiter.api.Order(1)")
+                exception(JavaType("Exception"))
+                +"perform(multipart(\"/$pathName/import\")."
+                2 + "file(file(\"file\", \"${remarks}导入数据.xlsx\"))"
                 +");"
             }
 
