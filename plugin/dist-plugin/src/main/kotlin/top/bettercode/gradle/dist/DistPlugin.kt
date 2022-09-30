@@ -605,7 +605,6 @@ Type=forking
 ExecStart=${'$'}APP_HOME/startup.sh
 ExecReload=/bin/kill -HUP \${'$'}MAINPID
 KillMode=/bin/kill -s QUIT \${'$'}MAINPID
-Restart=always
 
 [Install]
 WantedBy=multi-user.target
