@@ -109,7 +109,8 @@ public class DataErrorHandler extends AbstractErrorHandler {
         if (message.contains("Socket read timed out")) {
           message = "datasource.request.timeout";
         }
-        if (message.contains("Unable to acquire JDBC Connection")) {
+        if (message.contains("Unable to acquire JDBC Connection") || message.contains(
+            "Connection is not available")) {
           message = "Unable to acquire JDBC Connection";
         }
       }
