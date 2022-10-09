@@ -37,12 +37,17 @@ public class DataErrorHandler extends AbstractErrorHandler {
     } else if (error instanceof DataIntegrityViolationException) {
       String specificCauseMessage = ((DataIntegrityViolationException) error).getMostSpecificCause()
           .getMessage();
+      String notNullRegex = "Column '(.*?)' cannot be null";
       String duplicateRegex = "^Duplicate entry '(.*?)'.*";
       String dataTooLongRegex = "^Data truncation: Data too long for column '(.*?)'.*";
       String outOfRangeRegex = "^Data truncation: Out of range value for column '(.*?)'.*";
       String constraintSubfix = "Cannot delete or update a parent row";
       String incorrectRegex = "^Data truncation: Incorrect .* value: '(.*?)' for column '(.*?)' at.*";
-      if (specificCauseMessage.matches(duplicateRegex)) {
+      if (specificCauseMessage.matches(notNullRegex)) {
+        String columnName = getText(
+            specificCauseMessage.replaceAll(notNullRegex, "$1"));
+        message = getText("notnull", columnName);
+      } else if (specificCauseMessage.matches(duplicateRegex)) {
         String columnName = getText(
             specificCauseMessage.replaceAll(duplicateRegex, "$1"));
         message = getText("duplicate.entry", columnName);
