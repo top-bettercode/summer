@@ -18,9 +18,9 @@ object Generators {
     }
 
     fun tableNamesWithOutPrefix(extension: GeneratorExtension): List<String> {
-        return extension.run { _, tableHolder ->
-            tableHolder.tableNames().map { str ->
-                str.substringAfter(tableHolder.tablePrefixes.find { str.startsWith(it) } ?: "")
+        return extension.run { module, tableHolder ->
+            tableHolder.tableNames().map { tableName ->
+                extension.datasources[module]!!.fixTableName(tableName)
             }
         }.flatten().sortedBy { it }
     }

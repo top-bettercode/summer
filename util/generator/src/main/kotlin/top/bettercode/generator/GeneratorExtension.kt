@@ -90,6 +90,10 @@ open class GeneratorExtension(
      */
     var tablePrefixes: Array<String> = arrayOf(),
     /**
+     * 表后缀
+     */
+    var tableSuffixes: Array<String> = arrayOf(),
+    /**
      * 实体类前缀
      */
     var entityPrefix: String = "",
@@ -143,6 +147,7 @@ open class GeneratorExtension(
             }
         }
 
+
     companion object {
 
         const val defaultModuleName = "modules"
@@ -152,17 +157,6 @@ open class GeneratorExtension(
          */
         var javaName: (String) -> String = {
             javaName(it, false)
-        }
-
-        /**
-         * ClassName
-         */
-        @JvmStatic
-        fun className(str: String, entityPrefix: String, tablePrefixes: Array<String>): String {
-            return javaName(
-                (if (entityPrefix.isBlank()) "" else entityPrefix + "_") + str.substringAfter(
-                    tablePrefixes.find { str.startsWith(it) }
-                        ?: ""), true)
         }
 
         @JvmStatic

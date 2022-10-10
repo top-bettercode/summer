@@ -110,17 +110,13 @@ data class Table(
 
     lateinit var module: String
     lateinit var ext: GeneratorExtension
-    var datasource: JDBCConnectionConfiguration? = null
+    lateinit var datasource: JDBCConnectionConfiguration
 
     val supportSoftDelete: Boolean
         get() = columns.find { it.softDelete } != null
 
     val className: String
-        get() = if (datasource != null) GeneratorExtension.className(
-            tableName,
-            datasource!!.entityPrefix,
-            datasource!!.tablePrefixes
-        ) else GeneratorExtension.className(tableName, ext.entityPrefix, ext.tablePrefixes)
+        get() = datasource.className(tableName)
 
     val entityName: String get() = className.decapitalized()
 

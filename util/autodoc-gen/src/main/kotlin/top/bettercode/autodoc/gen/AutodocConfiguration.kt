@@ -32,6 +32,7 @@ import javax.annotation.PostConstruct
 @Configuration(proxyBeanMethods = false)
 @ImportAutoConfiguration(RequestLoggingConfiguration::class)
 class AutodocConfiguration {
+
     private val log: Logger = LoggerFactory.getLogger(AutodocConfiguration::class.java)
 
     @Autowired
@@ -67,23 +68,37 @@ class AutodocConfiguration {
                 configuration.url = dataSourceProperties!!.determineUrl() ?: ""
                 configuration.username = dataSourceProperties!!.determineUsername() ?: ""
                 configuration.password = dataSourceProperties!!.determinePassword() ?: ""
-                configuration.driverClass =
-                    dataSourceProperties!!.determineDriverClassName() ?: ""
+                configuration.driverClass = dataSourceProperties!!.determineDriverClassName() ?: ""
+                configuration.entityPrefix = genProperties.entityPrefix
+                configuration.tablePrefixes = genProperties.tablePrefixes
+                configuration.tableSuffixes = genProperties.tableSuffixes
+
                 datasources = mapOf(defaultModuleName to configuration)
             }
         } catch (_: Exception) {
         }
-        return AutodocHandler(
-            datasources ?: Binder.get(
+        if (datasources == null) {
+            datasources = Binder.get(
                 environment
-            ).bind<Map<String, JDBCConnectionConfiguration>>(
+            ).bind<MutableMap<String, JDBCConnectionConfiguration>>(
                 "summer.datasource.multi.datasources", Bindable
                     .mapOf(
                         String::class.java,
                         JDBCConnectionConfiguration::class.java
                     )
-            ).orElse(emptyMap()), genProperties, signProperties, summerWebProperties
-        )
+            ).orElse(mutableMapOf())
+            datasources.values.forEach { configuration ->
+                if (configuration.entityPrefix.isBlank())
+                    configuration.entityPrefix = genProperties.entityPrefix
+                if (configuration.tablePrefixes.isEmpty())
+                    configuration.tablePrefixes = genProperties.tablePrefixes
+                if (configuration.tableSuffixes.isEmpty())
+                    configuration.tableSuffixes = genProperties.tableSuffixes
+            }
+            datasources[defaultModuleName] = datasources["primary"]!!
+        }
+
+        return AutodocHandler(datasources!!, genProperties, signProperties, summerWebProperties)
     }
 
 }

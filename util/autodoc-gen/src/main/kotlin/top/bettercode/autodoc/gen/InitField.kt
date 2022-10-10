@@ -197,7 +197,7 @@ object InitField {
                     PumlConverter.toTables(file) {
                         it.ext = ext
                         it.module = module
-                        it.datasource = ext.datasources[module]
+                        it.datasource = ext.datasources[module]!!
                     }
                 }
             }
@@ -207,7 +207,7 @@ object InitField {
                     PdmReader.read(file) {
                         it.ext = ext
                         it.module = module
-                        it.datasource = ext.datasources[module]
+                        it.datasource = ext.datasources[module]!!
                     }
                 }
             }

@@ -3,6 +3,7 @@ package top.bettercode.generator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.generator.GeneratorExtension.Companion.javaName
 import top.bettercode.generator.database.DatabaseMetaData
 import top.bettercode.generator.database.entity.Table
 import java.sql.Connection
@@ -24,9 +25,41 @@ class JDBCConnectionConfiguration(
         set("tinyInt1isBit", "false")
     }
 ) : TableHolder {
+
     val available: Boolean by lazy { url.isNotBlank() }
 
     lateinit var ext: GeneratorExtension
+
+    /**
+     * 表前缀
+     */
+    var tablePrefixes: Array<String> = arrayOf()
+    /**
+     * 表后缀
+     */
+    var tableSuffixes: Array<String> = arrayOf()
+
+    var entityPrefix: String = ""
+
+    /**
+     * ClassName
+     */
+    fun className(tableName: String): String {
+        return javaName(
+            (if (entityPrefix.isBlank()) "" else entityPrefix + "_") + fixTableName(tableName), true
+        )
+    }
+
+    fun fixTableName(tableName: String): String {
+        var newName = tableName
+        tablePrefixes.filter { tableName.startsWith(it) }.forEach {
+            newName = newName.substringAfter(it)
+        }
+        tableSuffixes.filter { tableName.endsWith(it) }.forEach {
+            newName = newName.substringBeforeLast(it)
+        }
+        return newName
+    }
 
     var schema: String? = null
         get() {
@@ -75,20 +108,6 @@ class JDBCConnectionConfiguration(
      * 生成PUML时是否查询index，查询较耗时
      */
     var queryIndex: Boolean = true
-
-    /**
-     * 表前缀
-     */
-    override var tablePrefixes: Array<String> = arrayOf()
-        get() {
-            return if (field.isEmpty()) {
-                ext.tablePrefixes
-            } else {
-                field
-            }
-        }
-
-    var entityPrefix: String = ""
 
     var tinyInt1isBit: Boolean
         set(value) = properties.set("tinyInt1isBit", value.toString())

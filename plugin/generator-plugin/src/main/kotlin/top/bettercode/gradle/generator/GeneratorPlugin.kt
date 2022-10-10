@@ -70,15 +70,33 @@ class GeneratorPlugin : Plugin<Project> {
                     configuration.debug = (properties["debug"] as? String ?: "false").toBoolean()
                     configuration.queryIndex =
                         (properties["queryIndex"] as? String ?: "true").toBoolean()
-                    configuration.tablePrefixes =
-                        (properties["tablePrefix"] as? String ?: "").split(",")
-                            .filter { it.isNotBlank() }.toTypedArray()
-                    configuration.entityPrefix = properties["entityPrefix"] as? String ?: ""
+
                     configuration.tinyInt1isBit =
                         (properties["tinyInt1isBit"] as? String ?: "false").toBoolean()
                     if (configuration.isOracle) {
                         configuration.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
                     }
+
+                    configuration.entityPrefix =
+                        properties["entityPrefix"] as? String ?: findGeneratorProperty(
+                            project,
+                            "entityPrefix"
+                        ) ?: ""
+
+                    configuration.tablePrefixes =
+                        (properties["tablePrefix"] as? String ?: findGeneratorProperty(
+                            project,
+                            "tablePrefix"
+                        ) ?: "").split(",")
+                            .filter { it.isNotBlank() }.toTypedArray()
+
+                    configuration.tableSuffixes =
+                        (properties["tableSuffix"] as? String ?: findGeneratorProperty(
+                            project,
+                            "tableSuffix"
+                        ) ?: "").split(",")
+                            .filter { it.isNotBlank() }.toTypedArray()
+
                     configuration
                 }.toSortedMap { o1, o2 -> o1.compareTo(o2) }
 
@@ -122,11 +140,6 @@ class GeneratorPlugin : Plugin<Project> {
                     ""
                 )
             extension.primaryKeyName = findGeneratorProperty(project, "primaryKeyName") ?: "id"
-            extension.tablePrefixes =
-                (findGeneratorProperty(project, "tablePrefix") ?: "").split(",")
-                    .filter { it.isNotBlank() }
-                    .toTypedArray()
-            extension.entityPrefix = findGeneratorProperty(project, "entityPrefix") ?: ""
             extension.remarks = findGeneratorProperty(project, "remarks") ?: ""
             extension.softDeleteColumnName = findGeneratorProperty(project, "softDeleteColumnName")
                 ?: "deleted"
@@ -382,7 +395,7 @@ class GeneratorPlugin : Plugin<Project> {
                                         PumlConverter.toTables(databaseFile) {
                                             it.ext = extension
                                             it.module = module
-                                            it.datasource = extension.datasources[module]
+                                            it.datasource = extension.datasources[module]!!
                                         }
                                     } else {
                                         jdbc.tables(

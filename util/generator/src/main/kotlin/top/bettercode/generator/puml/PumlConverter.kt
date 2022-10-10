@@ -303,6 +303,7 @@ object PumlConverter {
                         file,
                         remarksProperties
                     )
+
                     DatabaseDriver.ORACLE -> toOracle(
                         extension,
                         module,
@@ -310,6 +311,7 @@ object PumlConverter {
                         file,
                         remarksProperties
                     )
+
                     else -> compile(extension, module, file, file, remarksProperties)
                 }
             }
@@ -329,7 +331,7 @@ object PumlConverter {
             toTableOrAnys(src) {
                 it.ext = extension
                 it.module = module
-                it.datasource = extension.datasources[module]
+                it.datasource = extension.datasources[module]!!
             },
             out,
             remarksProperties
@@ -345,7 +347,7 @@ object PumlConverter {
         val tables = toTableOrAnys(src) {
             it.ext = extension
             it.module = module
-            it.datasource = extension.datasources[module]
+            it.datasource = extension.datasources[module]!!
         }
         tables.forEach { t ->
             if (t is Table) {
@@ -361,18 +363,23 @@ object PumlConverter {
                                         in 1..4 -> {
                                             it.typeName = "TINYINT"
                                         }
+
                                         in 5..6 -> {
                                             it.typeName = "SMALLINT"
                                         }
+
                                         in 7..9 -> {
                                             it.typeName = "MEDUIMINT"
                                         }
+
                                         in 10..11 -> {
                                             it.typeName = "INT"
                                         }
+
                                         in 12..20 -> {
                                             it.typeName = "BIGINT"
                                         }
+
                                         else -> it.typeName = "DECIMAL"
                                     }
                                 } else {
@@ -396,7 +403,7 @@ object PumlConverter {
         val tables = toTableOrAnys(src) {
             it.ext = extension
             it.module = module
-            it.datasource = extension.datasources[module]
+            it.datasource = extension.datasources[module]!!
         }
         tables.forEach { t ->
             if (t is Table) {
@@ -407,21 +414,27 @@ object PumlConverter {
                             "TINYINT" -> {
                                 it.typeName = "NUMBER"
                             }
+
                             "SMALLINT" -> {
                                 it.typeName = "NUMBER"
                             }
+
                             "MEDUIMINT" -> {
                                 it.typeName = "NUMBER"
                             }
+
                             "INT" -> {
                                 it.typeName = "NUMBER"
                             }
+
                             "BIGINT" -> {
                                 it.typeName = "NUMBER"
                             }
+
                             "FLOAT", "DOUBLE", "DECIMAL" -> {
                                 it.typeName = "NUMBER"
                             }
+
                             "TINYTEXT" -> it.typeName = "CLOB"
                             "TINYBLOB" -> it.typeName = "BLOB"
                             "BINARY" -> it.typeName = "RAW"
