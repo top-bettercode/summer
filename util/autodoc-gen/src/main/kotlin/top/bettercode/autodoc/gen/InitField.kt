@@ -71,7 +71,7 @@ object InitField {
 
                 uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()
             }
-            if (uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()) {
+            if (!(uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank())) {
                 uriNeedFix.fix(uriNeedFix)
                 reqHeadNeedFix.fix(reqHeadNeedFix)
                 paramNeedFix.fix(paramNeedFix)
@@ -81,6 +81,18 @@ object InitField {
                 resContentNeedFix.fix(resContentNeedFix, wrap)
             }
         }
+
+        Autodoc.fields.forEach { name, desc ->
+            request.uriVariablesExt.filter { it.name == name }.forEach { it.description = desc }
+            request.headersExt.filter { it.name == name }.forEach { it.description = desc }
+            request.parametersExt.filter { it.name == name }.forEach { it.description = desc }
+            request.partsExt.filter { it.name == name }.forEach { it.description = desc }
+            request.contentExt.filter { it.name == name }.forEach { it.description = desc }
+
+            response.headersExt.filter { it.name == name }.forEach { it.description = desc }
+            response.contentExt.filter { it.name == name }.forEach { it.description = desc }
+        }
+
 
         request.uriVariablesExt.checkBlank("request.uriVariablesExt")
         request.headersExt.checkBlank("request.headersExt")

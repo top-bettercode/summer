@@ -67,6 +67,19 @@ object Autodoc {
     @JvmStatic
     var schema: String? = null
 
+    /**
+     * 字段描述
+     */
+    @JvmStatic
+    var fields: MutableMap<String, String> = mutableMapOf()
+
+    /**
+     * 设置字段描述
+     */
+    @JvmStatic
+    fun field(name: String, description: String) {
+        fields[name] = description
+    }
 
     /**
      * 设置相关数据表名
