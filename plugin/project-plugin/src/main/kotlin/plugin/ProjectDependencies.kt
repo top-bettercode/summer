@@ -121,6 +121,7 @@ object ProjectDependencies {
                 "org.springframework.boot:spring-boot-configuration-processor"
             )
             add("compileOnly", "org.springframework.boot:spring-boot-configuration-processor")
+            add("compileOnly", "com.google.code.findbugs:annotations:3.0.1")
         }
     }
 }
