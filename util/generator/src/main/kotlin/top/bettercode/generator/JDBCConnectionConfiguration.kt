@@ -168,7 +168,6 @@ class JDBCConnectionConfiguration(
                             try {
                                 val table = table(it) { table ->
                                     table.ext = ext
-                                    table.datasource = this@JDBCConnectionConfiguration
                                     table.module = module
                                 }
                                 if (table != null) {

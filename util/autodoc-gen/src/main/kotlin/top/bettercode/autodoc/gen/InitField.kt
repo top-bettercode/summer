@@ -177,7 +177,6 @@ object InitField {
                         Autodoc.tableNames.forEach { tableName ->
                             val table = table(tableName) {
                                 it.ext = ext
-                                it.datasource = jdbc
                                 it.module = module
                             }
                             if (table != null) {
@@ -191,7 +190,6 @@ object InitField {
                         tableNames.forEach { tableName ->
                             val table = table(tableName) {
                                 it.ext = ext
-                                it.datasource = jdbc
                                 it.module = module
                             }
                             if (table != null) {
@@ -209,7 +207,6 @@ object InitField {
                     PumlConverter.toTables(file) {
                         it.ext = ext
                         it.module = module
-                        it.datasource = ext.datasources[module]?: ext.defaultDatasource
                     }
                 }
             }
@@ -219,7 +216,6 @@ object InitField {
                     PdmReader.read(file) {
                         it.ext = ext
                         it.module = module
-                        it.datasource = ext.datasources[module]?: ext.defaultDatasource
                     }
                 }
             }

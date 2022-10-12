@@ -23,7 +23,6 @@ class GeneratorsTest {
         dir = "gen/java",
         packageName = "com.bettercode.test",
         replaceAll = true,
-        tablePrefixes = arrayOf("oauth_")
     )
 
     init {
@@ -31,6 +30,7 @@ class GeneratorsTest {
         configuration.url = "jdbc:h2:mem:test"
         configuration.username = "sa"
         configuration.password = "sa"
+        configuration.tablePrefixes = arrayOf("oauth_")
         extension.datasources = mapOf(defaultModuleName to configuration)
 
 //        extension.tableNames = arrayOf("OAUTH_CLIENT_DETAILS", "OAUTH_CLIENT_TOKEN")

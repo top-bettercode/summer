@@ -86,18 +86,6 @@ open class GeneratorExtension(
 
     var projectName: String = "",
     /**
-     * 表前缀
-     */
-    var tablePrefixes: Array<String> = arrayOf(),
-    /**
-     * 表后缀
-     */
-    var tableSuffixes: Array<String> = arrayOf(),
-    /**
-     * 实体类前缀
-     */
-    var entityPrefix: String = "",
-    /**
      * 注释说明
      */
     var remarks: String = "",
@@ -225,6 +213,9 @@ open class GeneratorExtension(
             null
     }
 
+    fun datasource(moduleName: String): JDBCConnectionConfiguration {
+        return datasources[moduleName] ?: defaultDatasource
+    }
 
     fun file(subfile: String): File {
         val file = File(subfile)

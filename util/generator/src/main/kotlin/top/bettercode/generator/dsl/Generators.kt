@@ -20,7 +20,7 @@ object Generators {
     fun tableNamesWithOutPrefix(extension: GeneratorExtension): List<String> {
         return extension.run { module, tableHolder ->
             tableHolder.tableNames().map { tableName ->
-                (extension.datasources[module] ?: extension.defaultDatasource).fixTableName(
+                (extension.datasource(module)).fixTableName(
                     tableName
                 )
             }

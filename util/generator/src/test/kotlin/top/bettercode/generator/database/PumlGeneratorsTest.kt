@@ -16,7 +16,6 @@ class PumlGeneratorsTest {
         dir = "gen/java",
         packageName = "com.bettercode.test",
         replaceAll = true,
-        tablePrefixes = arrayOf("OAUTH_"),
         dataType = DataType.PUML,
         tableNames = arrayOf("OAUTH_CLIENT_DETAILS", "OAUTH_CLIENT_TOKEN")
     )

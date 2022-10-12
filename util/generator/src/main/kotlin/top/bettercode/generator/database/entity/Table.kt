@@ -110,7 +110,7 @@ data class Table(
 
     lateinit var module: String
     lateinit var ext: GeneratorExtension
-    lateinit var datasource: JDBCConnectionConfiguration
+    val datasource: JDBCConnectionConfiguration by lazy { ext.datasource(module) }
 
     val supportSoftDelete: Boolean
         get() = columns.find { it.softDelete } != null

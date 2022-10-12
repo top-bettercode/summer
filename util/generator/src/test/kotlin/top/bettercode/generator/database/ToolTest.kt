@@ -48,8 +48,6 @@ class ToolTest {
 
     @Test
     fun javaName() {
-        val extension = GeneratorExtension()
-        extension.tablePrefixes = arrayOf("ls_")
         println(GeneratorExtension.javaName("activity_event"))
     }
 
