@@ -395,7 +395,8 @@ class GeneratorPlugin : Plugin<Project> {
                                         PumlConverter.toTables(databaseFile) {
                                             it.ext = extension
                                             it.module = module
-                                            it.datasource = extension.datasources[module]!!
+                                            it.datasource = extension.datasources[module]
+                                                ?: extension.defaultDatasource
                                         }
                                     } else {
                                         jdbc.tables(

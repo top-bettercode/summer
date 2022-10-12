@@ -47,7 +47,7 @@ abstract class FileTableHolder(
         file: File, call: (Table) -> Unit = {
             it.ext = ext
             it.module = module
-            it.datasource = ext.datasources[module]!!
+            it.datasource = ext.datasources[module]?: ext.defaultDatasource
         }
     ): List<Table>
 }

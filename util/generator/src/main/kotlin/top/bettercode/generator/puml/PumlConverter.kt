@@ -331,7 +331,7 @@ object PumlConverter {
             toTableOrAnys(src) {
                 it.ext = extension
                 it.module = module
-                it.datasource = extension.datasources[module]!!
+                it.datasource = extension.datasources[module]?: extension.defaultDatasource
             },
             out,
             remarksProperties
@@ -347,7 +347,7 @@ object PumlConverter {
         val tables = toTableOrAnys(src) {
             it.ext = extension
             it.module = module
-            it.datasource = extension.datasources[module]!!
+            it.datasource = extension.datasources[module]?: extension.defaultDatasource
         }
         tables.forEach { t ->
             if (t is Table) {
@@ -403,7 +403,7 @@ object PumlConverter {
         val tables = toTableOrAnys(src) {
             it.ext = extension
             it.module = module
-            it.datasource = extension.datasources[module]!!
+            it.datasource = extension.datasources[module]?: extension.defaultDatasource
         }
         tables.forEach { t ->
             if (t is Table) {
