@@ -27,6 +27,9 @@ class AutodocPlugin : Plugin<Project> {
 
         project.extensions.configure(AutodocExtension::class.java) { autodocExtension ->
             autodocExtension.rootSource = project.rootProject.file("doc")
+            val apiHost = findProperty(project, "api-host")
+            if (!apiHost.isNullOrBlank())
+                autodocExtension.apiHost = apiHost
             val path = findProperty(project, "source") ?: "src/doc"
             autodocExtension.source = if (path.startsWith("/")) {
                 autodocExtension.source

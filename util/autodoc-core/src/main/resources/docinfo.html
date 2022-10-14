@@ -32,11 +32,11 @@
         }
         const apiHost = window.location.href.substr(0, indexOf);
         [].slice.call(document.getElementsByTagName("td")).forEach(function (item) {
-            item.setAttribute("title", item.innerText.replace("{{apiHost}}", apiHost));
+            item.setAttribute("title", item.innerText.replace("{apiHost}", apiHost));
         });
         [].slice.call(document.getElementsByTagName("a")).forEach(function (item) {
-            item.setAttribute("href", item.getAttribute("href").replace("{{apiHost}}", apiHost));
-            item.innerText = item.innerText.replace("{{apiHost}}", apiHost);
+            item.setAttribute("href", item.getAttribute("href").replace("{apiHost}", apiHost));
+            item.innerText = item.innerText.replace("{apiHost}", apiHost);
         });
     }
 </script>

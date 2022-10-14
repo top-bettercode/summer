@@ -32,7 +32,7 @@ object PostmanGenerator : AbstractbGenerator() {
             variables.add(
                 Variable(
                     key = "apiHost",
-                    value = "http://localhost:8080",
+                    value = autodoc.apiHost,
                     type = "string",
                     description = "接口地址"
                 )

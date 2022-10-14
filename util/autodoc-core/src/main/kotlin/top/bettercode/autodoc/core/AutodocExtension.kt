@@ -11,6 +11,7 @@ import java.io.File
  * @author Peter Wu
  */
 open class AutodocExtension(
+    var apiHost: String = "{apiHost}",
     var author: String = "autodoc",
     var version: String = "v1.0",
     var toclevels: Int = 2,
