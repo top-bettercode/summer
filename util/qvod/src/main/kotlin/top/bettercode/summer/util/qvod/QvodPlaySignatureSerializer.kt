@@ -27,14 +27,14 @@ class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
     @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeObject(value)
-        val fieldName = gen.outputContext.currentName
+        val fileIdName = gen.outputContext.currentName
         var playSignature = ""
         var appId = ""
         if (StringUtils.hasText(value)) {
             playSignature = qvodClient.playSignature(value)
             appId = qvodClient.properties.appId
         }
-        gen.writeStringField(fieldName + "Psign", playSignature)
+        gen.writeStringField(fileIdName + "Psign", playSignature)
         gen.writeStringField("qvodAppID", appId)
     }
 

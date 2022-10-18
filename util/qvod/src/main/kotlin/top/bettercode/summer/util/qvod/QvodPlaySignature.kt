@@ -7,7 +7,7 @@ import java.lang.annotation.Inherited
 /**
  * 开启防盗链后序列化自动补充相应字段
  *
- * 注解在fieldId字段上
+ * 注解在fileId字段上
  *
  */
 @Target(
