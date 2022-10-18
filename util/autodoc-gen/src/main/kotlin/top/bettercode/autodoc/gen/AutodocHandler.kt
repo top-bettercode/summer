@@ -142,10 +142,9 @@ class AutodocHandler(
                 request.headers.putAll(headers)
 
                 //参数
-                val calculateParams = RequiredParameters.calculate(handler)
-                val defaultValueParams =
-                    calculateParams.filter { it.value != ValueConstants.DEFAULT_NONE }
-                val requiredParameters = calculateParams.keys.toMutableSet()
+                val paramInfo = RequiredParameters.calculate(handler)
+                val defaultValueParams = paramInfo.defaultValueParams
+                val requiredParameters = paramInfo.requiredParameters.toMutableSet()
                 requiredParameters.addAll(Autodoc.requiredParameters)
 
                 if (requiredHeaders.contains(signParamName)) {
@@ -201,7 +200,7 @@ class AutodocHandler(
                     defaultValueParams
                 )
 
-                if (RequiredParameters.existNoAnnoDefaultPageParam(handler)) {
+                if (paramInfo.existNoAnnoDefaultPageParam) {
                     (docOperation.request as DocOperationRequest).parametersExt.filter { "page" == it.name || "size" == it.name }
                         .forEach {
                             it.description += "，不传返回所有数据"

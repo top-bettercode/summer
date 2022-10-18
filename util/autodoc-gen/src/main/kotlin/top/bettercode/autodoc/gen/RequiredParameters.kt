@@ -1,6 +1,5 @@
 package top.bettercode.autodoc.gen
 
-import org.springframework.util.ClassUtils
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
@@ -40,41 +39,30 @@ object RequiredParameters {
         return requiredHeaders
     }
 
-    fun existNoAnnoDefaultPageParam(handler: HandlerMethod?): Boolean {
-        if (!ClassUtils.isPresent(
-                "org.springframework.data.domain.Pageable",
-                javaClass.classLoader
-            )
-        ) {
-            return false
-        }
+    fun calculate(handler: HandlerMethod?): ParamInfo {
+        val requiredParameters: MutableSet<String> = mutableSetOf()
+        val defaultValueParams: MutableMap<String, String> = mutableMapOf()
+        var existNoAnnoDefaultPageParam = false
 
-        return handler?.methodParameters?.any {
-            it.parameterType.name == "org.springframework.data.domain.Pageable" && !it.hasParameterAnnotation(
-                org.springframework.data.web.PageableDefault::class.java
-            )
-        } ?: false
-    }
-
-    fun calculate(handler: HandlerMethod?): Map<String, String> {
-        val requiredParameters = mutableMapOf<String, String>()
         val requestMapping = handler?.getMethodAnnotation(RequestMapping::class.java)
         val requiredParams = requestMapping?.params?.filter { !it.startsWith("!") }
         if (!requiredParams.isNullOrEmpty()) {
-            requiredParams.forEach {
-                requiredParameters[it] = ValueConstants.DEFAULT_NONE
-            }
+            requiredParameters.addAll(requiredParams)
         }
         handler?.methodParameters?.forEach {
+            existNoAnnoDefaultPageParam =
+                it.parameterType.name == "org.springframework.data.domain.Pageable" && !it.hasParameterAnnotation(
+                    org.springframework.data.web.PageableDefault::class.java
+                )
             val requestParam = it.getParameterAnnotation(RequestParam::class.java)
-            if (it.hasParameterAnnotation(NotNull::class.java) || it.hasParameterAnnotation(NotBlank::class.java) || it.hasParameterAnnotation(
-                    NotEmpty::class.java
-                ) || requestParam?.required == true
+            if (requestParam != null) {
+                defaultValueParams[it.parameterName!!] = requestParam.defaultValue
+            }
+            if (it.parameterName != null && (it.hasParameterAnnotation(NotNull::class.java) || it.hasParameterAnnotation(
+                    NotBlank::class.java
+                ) || it.hasParameterAnnotation(NotEmpty::class.java) || requestParam?.required == true)
             ) {
-                if (it.parameterName != null) {
-                    requiredParameters[it.parameterName!!] = requestParam?.defaultValue
-                        ?: ValueConstants.DEFAULT_NONE
-                }
+                requiredParameters.add(it.parameterName!!)
             }
 
             var clazz = it.parameterType
@@ -93,13 +81,13 @@ object RequiredParameters {
                 addRequires(clazz, requiredParameters, hints)
             }
         }
-        return requiredParameters
+        return ParamInfo(requiredParameters, defaultValueParams, existNoAnnoDefaultPageParam)
     }
 
 
     private fun addRequires(
         clazz: Class<*>,
-        requires: MutableMap<String, String>,
+        requires: MutableSet<String>,
         groups: Array<out KClass<out Any>>,
         prefix: String = ""
     ) {
@@ -108,7 +96,7 @@ object RequiredParameters {
             pd.constraintDescriptors.forEach { cd ->
                 if (groups.any { cd.groups.contains(it.java) }) {
                     if (cd.annotation is NotNull || cd.annotation is NotBlank || cd.annotation is NotEmpty) {
-                        requires[prefix + pd.propertyName] = ValueConstants.DEFAULT_NONE
+                        requires.add(prefix + pd.propertyName)
                     }
                 }
             }
