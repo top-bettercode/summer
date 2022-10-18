@@ -59,14 +59,11 @@ object PumlConverter {
                             line.substringAfter(if (uniqueMult) "'UNIQUE" else "'INDEX").trim()
                         indexes.add(
                             Indexed(
-                                "${if (uniqueMult) "UK" else "IDX"}_${
-                                    tableName.replace(
-                                        "_",
-                                        ""
-                                    ).takeLast(7)
-                                }_${
-                                    columnNames.replace(tableName, "").replace("_", "")
-                                        .replace(",", "").takeLast(7)
+                                "${if (uniqueMult) "IDX_UK" else "IDX"}_${
+                                    columnNames.split(",").joinToString("_") { cname ->
+                                        cname.replace(tableName, "").replace("_", "")
+                                            .takeLast(7)
+                                    }
                                 }", uniqueMult, columnNames.split(",").toMutableList()
                             )
                         )
