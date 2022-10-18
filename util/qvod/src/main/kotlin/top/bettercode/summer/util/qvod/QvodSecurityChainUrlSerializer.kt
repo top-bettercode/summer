@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
+import org.springframework.util.StringUtils
 import top.bettercode.simpleframework.support.ApplicationContextHolder
 import java.io.IOException
 import java.util.*
@@ -25,7 +26,10 @@ class QvodSecurityChainUrlSerializer : StdScalarSerializer<String>(
 
     @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
-        gen.writeString(qvodClient.securityChainUrl(value))
+        var url = value
+        if (StringUtils.hasText(value))
+            url = qvodClient.securityChainUrl(value)
+        gen.writeString(url)
     }
 
     @Throws(IOException::class)

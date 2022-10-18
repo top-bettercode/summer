@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
+import org.springframework.util.StringUtils
 import top.bettercode.simpleframework.support.ApplicationContextHolder
 import java.io.IOException
 import java.util.*
@@ -27,8 +28,14 @@ class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeObject(value)
         val fieldName = gen.outputContext.currentName
-        gen.writeStringField(fieldName + "Psign", qvodClient.playSignature(value))
-        gen.writeStringField("qvodAppID", qvodClient.properties.appId)
+        var playSignature = ""
+        var appId = ""
+        if (StringUtils.hasText(value)) {
+            playSignature = qvodClient.playSignature(value)
+            appId = qvodClient.properties.appId
+        }
+        gen.writeStringField(fieldName + "Psign", playSignature)
+        gen.writeStringField("qvodAppID", appId)
     }
 
     @Throws(IOException::class)
