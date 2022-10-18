@@ -108,6 +108,7 @@ allprojects {
             dependency("org.bouncycastle:bcprov-jdk18on:1.71")
 
             dependency("xerces:xercesImpl:2.12.2")
+            dependency("com.auth0:java-jwt:4.0.0")
         }
     }
 

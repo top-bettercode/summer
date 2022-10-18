@@ -8,6 +8,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "summer.qvod")
 public class QvodProperties {
 
+  /**
+   * 点播帐号APP ID
+   */
+  private String appId;
+
+  /**
+   * 防盗链 Key
+   */
+  private String securityChainKey;
 
   private String secretId;
 
@@ -35,6 +44,22 @@ public class QvodProperties {
    * 请求读取超时时间毫秒数
    */
   private int readTimeout = 10000;
+
+  public String getAppId() {
+    return appId;
+  }
+
+  public void setAppId(String appId) {
+    this.appId = appId;
+  }
+
+  public String getSecurityChainKey() {
+    return securityChainKey;
+  }
+
+  public void setSecurityChainKey(String securityChainKey) {
+    this.securityChainKey = securityChainKey;
+  }
 
   public String getSecretId() {
     return secretId;

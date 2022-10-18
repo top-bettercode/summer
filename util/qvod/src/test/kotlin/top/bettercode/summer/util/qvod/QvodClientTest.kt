@@ -28,8 +28,8 @@ class QvodClientTest : BaseTest() {
 
     @Test
     fun upload() {
-//        qvodClient.upload(ClassPathResource("test.jpg").file)//387702304899111623
-        qvodClient.upload(ClassPathResource("test.mp4").file)//387702304900182040
+        qvodClient.upload(ClassPathResource("test.jpg").file, "LongVideoPreset")//387702304899111623
+//        qvodClient.upload(ClassPathResource("test.mp4").file)//387702304900182040
     }
 
     @Test
@@ -67,5 +67,17 @@ class QvodClientTest : BaseTest() {
     @Test
     fun confirmEvents() {
         qvodClient.confirmEvents("tdmq830894935510738067")
+    }
+
+    @Test
+    fun describeMediaInfo() {
+        qvodClient.describeMediaInfo("387702306840111681", "metaData")
+    }
+
+    @Test
+    fun securityChainUrl(){
+        val securityChainUrl =
+            qvodClient.securityChainUrl("http://example.vod2.myqcloud.com/dir1/dir2/myVideo.mp4")
+        System.err.println(securityChainUrl)
     }
 }

@@ -1,5 +1,7 @@
 package top.bettercode.summer.util.qvod
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.qcloud.vod.VodUploadClient
 import com.qcloud.vod.model.VodUploadRequest
@@ -15,6 +17,7 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.lang.Nullable
 import org.springframework.util.Base64Utils
+import org.springframework.util.DigestUtils
 import top.bettercode.lang.util.RandomUtil
 import top.bettercode.lang.util.StringUtil
 import top.bettercode.simpleframework.support.client.ApiTemplate
@@ -30,14 +33,13 @@ import javax.crypto.spec.SecretKeySpec
  * @author Peter Wu
  */
 open class QvodClient(
-    private val properties: QvodProperties
+    val properties: QvodProperties
 ) : ApiTemplate(
     "第三方平台", "腾讯云点播", "qvod", properties.connectTimeout, properties.readTimeout
 ) {
 
     val vodClient: VodClient
     val vodUploadClient = VodUploadClient(properties.secretId, properties.secretKey)
-    val procedure = properties.procedure
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
@@ -73,7 +75,7 @@ open class QvodClient(
         val original =
             "secretId=${properties.secretId}&currentTimeStamp=$currentTimeStamp&expireTime=${currentTimeStamp + properties.validSeconds}&random=${
                 RandomUtil.nextInt(9)
-            }"
+            }&procedure=${properties.procedure ?: ""}"
         val mac: Mac = Mac.getInstance("HmacSHA1")
         val secretKey = SecretKeySpec(properties.secretKey.toByteArray(), mac.algorithm)
         mac.init(secretKey)
@@ -90,7 +92,127 @@ open class QvodClient(
         return signature
     }
 
+    /**
+     * 防盗链 URL 生成
+     *
+     * https://cloud.tencent.com/document/product/266/14047
+     */
+    fun securityChainUrl(
+        url: String,
+        t: String = java.lang.Long.toHexString(System.currentTimeMillis() / 1000 + 60 * 60 * 24),
+        rlimit: Int = 3
+    ): String {
+        val dir = url.substringAfter("vod2.myqcloud.com").substringBeforeLast("/") + "/"
+        val us = RandomUtil.nextString(10)
+//        sign = md5(KEY + Dir + t + exper + rlimit + us + uv)
+        val sign =
+            DigestUtils.md5DigestAsHex("${properties.securityChainKey}${dir}${t}${rlimit}${us}".toByteArray())
+        return "$url?t=$t&rlimit=$rlimit&us=$us&sign=$sign"
+    }
 
+    /**
+     * 播放器签名
+     */
+    fun playSignature(
+        fileId: String,
+        currentTimeStamp: Long = System.currentTimeMillis() / 1000,
+        //派发签名到期 Unix 时间戳，不填表示不过期,默认一天有效时间
+        expireTimeStamp: Long = currentTimeStamp + 60 * 60 * 24,
+        //派发签名到期 Unix 时间戳，不填表示不过期
+        //播放地址的过期时间戳，以 Unix 时间的十六进制小写形式表示
+        //过期后该 URL 将不再有效，返回403响应码。考虑到机器之间可能存在时间差，防盗链 URL 的实际过期时间一般比指定的过期时间长5分钟，即额外给出300秒的容差时间
+        //建议过期时间戳不要过短，确保视频有足够时间完整播放
+        //默认一天有效时间
+        urlTimeExpire: String = java.lang.Long.toHexString(currentTimeStamp + 60 * 60 * 24)
+    ): String {
+        val urlAccessInfo = HashMap<String, String>()
+        urlAccessInfo["t"] = urlTimeExpire
+
+        val algorithm: Algorithm = Algorithm.HMAC256(properties.securityChainKey)
+        return JWT.create().withClaim("appId", properties.appId)
+            .withClaim("fileId", fileId)
+            .withClaim("currentTimeStamp", currentTimeStamp)
+            .withClaim("expireTimeStamp", expireTimeStamp)
+            .withClaim("urlAccessInfo", urlAccessInfo)
+            .sign(algorithm)
+    }
+
+    /**
+     * 获取媒体详细信息
+     * @param fileId 媒体文件 ID 列表，N 从 0 开始取值，最大 19。
+     * @param filter 指定所有媒体文件需要返回的信息，可同时指定多个信息，N 从 0 开始递增。如果未填写该字段，默认返回所有信息。选项有：
+    basicInfo（视频基础信息）。
+    metaData（视频元信息）。
+    transcodeInfo（视频转码结果信息）。
+    animatedGraphicsInfo（视频转动图结果信息）。
+    imageSpriteInfo（视频雪碧图信息）。
+    snapshotByTimeOffsetInfo（视频指定时间点截图信息）。
+    sampleSnapshotInfo（采样截图信息）。
+    keyFrameDescInfo（打点信息）。
+    adaptiveDynamicStreamingInfo（转自适应码流信息）。
+    miniProgramReviewInfo（小程序审核信息）。
+     */
+    fun describeMediaInfo(
+        fileId: String,
+        filter: String
+    ): DescribeMediaInfosResponse {
+        return describeMediaInfos(arrayOf(fileId), arrayOf(filter))
+    }
+
+    /**
+     * 获取媒体详细信息
+     * @param fileIds 媒体文件 ID 列表，N 从 0 开始取值，最大 19。
+     * @param filters 指定所有媒体文件需要返回的信息，可同时指定多个信息，N 从 0 开始递增。如果未填写该字段，默认返回所有信息。选项有：
+    basicInfo（视频基础信息）。
+    metaData（视频元信息）。
+    transcodeInfo（视频转码结果信息）。
+    animatedGraphicsInfo（视频转动图结果信息）。
+    imageSpriteInfo（视频雪碧图信息）。
+    snapshotByTimeOffsetInfo（视频指定时间点截图信息）。
+    sampleSnapshotInfo（采样截图信息）。
+    keyFrameDescInfo（打点信息）。
+    adaptiveDynamicStreamingInfo（转自适应码流信息）。
+    miniProgramReviewInfo（小程序审核信息）。
+     */
+    fun describeMediaInfos(
+        fileIds: Array<String>,
+        filters: Array<String>
+    ): DescribeMediaInfosResponse {
+        val req = DescribeMediaInfosRequest()
+        req.fileIds = fileIds
+        req.filters = filters
+
+        val start = System.currentTimeMillis()
+        var durationMillis: Long? = null
+
+        var resp: DescribeMediaInfosResponse? = null
+        var throwable: Throwable? = null
+        try {
+            resp = vodClient.DescribeMediaInfos(req)
+            durationMillis = System.currentTimeMillis() - start
+            return resp
+        } catch (e: Exception) {
+            throwable = e
+            throw e
+        } finally {
+            if (durationMillis == null) {
+                durationMillis = System.currentTimeMillis() - start
+            }
+            log.info(
+                "DURATION MILLIS : {}\n{}\n{}",
+                durationMillis,
+                StringUtil.json(req, true),
+                if (resp == null) StringUtil.valueOf(
+                    throwable,
+                    true
+                ) else StringUtil.json(resp, true)
+            )
+        }
+    }
+
+    /**
+     * 该接口用于： 1. 查询点播可开通的所有存储园区列表。 2. 查询已经开通的园区列表。 3. 查询默认使用的存储园区。
+     */
     fun storageRegions(): DescribeStorageRegionsResponse {
         val req = DescribeStorageRegionsRequest()
 
