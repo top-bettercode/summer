@@ -471,6 +471,7 @@ object InitField {
 
             name.endsWith("End") -> name.substringBeforeLast("End")
             name.endsWith("Pct") -> name.substringBeforeLast("Pct")
+            name.endsWith("Psign") -> name.substringBeforeLast("Psign")
             else -> {
                 return null
             }
@@ -485,6 +486,8 @@ object InitField {
                 field.description = "开始" + field.description
             if (name.startsWith("end") || name.endsWith("End"))
                 field.description = "结束" + field.description
+            if (name.endsWith("Psign"))
+                field.description = "播放器签名"
         }
         return field
     }
