@@ -73,9 +73,12 @@ open class QvodClient(
     fun signature(): String {
         val currentTimeStamp = System.currentTimeMillis() / 1000
         val original =
-            "secretId=${properties.secretId}&currentTimeStamp=$currentTimeStamp&expireTime=${currentTimeStamp + properties.validSeconds}&random=${
+            "secretId=${properties.secretId}&currentTimeStamp=$currentTimeStamp&expireTime=${currentTimeStamp + properties.uploadValidSeconds}&random=${
                 RandomUtil.nextInt(9)
             }&procedure=${properties.procedure ?: ""}"
+        if (log.isDebugEnabled) {
+            log.debug("original signature:{}", original)
+        }
         val mac: Mac = Mac.getInstance("HmacSHA1")
         val secretKey = SecretKeySpec(properties.secretKey.toByteArray(), mac.algorithm)
         mac.init(secretKey)
@@ -92,38 +95,22 @@ open class QvodClient(
         return signature
     }
 
-    /**
-     * 防盗链 URL 生成
-     *
-     * https://cloud.tencent.com/document/product/266/14047
-     */
-    fun securityChainUrl(
-        url: String,
-        t: String = java.lang.Long.toHexString(System.currentTimeMillis() / 1000 + 60 * 60 * 24),
-        rlimit: Int = 3
-    ): String {
-        val dir = url.substringAfter("vod2.myqcloud.com").substringBeforeLast("/") + "/"
-        val us = RandomUtil.nextString(10)
-//        sign = md5(KEY + Dir + t + exper + rlimit + us + uv)
-        val sign =
-            DigestUtils.md5DigestAsHex("${properties.securityChainKey}${dir}${t}${rlimit}${us}".toByteArray())
-        return "$url?t=$t&rlimit=$rlimit&us=$us&sign=$sign"
-    }
 
     /**
      * 播放器签名
+     *
+     * https://cloud.tencent.com/document/product/266/42437
      */
     fun playSignature(
         fileId: String,
         currentTimeStamp: Long = System.currentTimeMillis() / 1000,
         //派发签名到期 Unix 时间戳，不填表示不过期,默认一天有效时间
-        expireTimeStamp: Long = currentTimeStamp + 60 * 60 * 24,
-        //派发签名到期 Unix 时间戳，不填表示不过期
+        expireTimeStamp: Long = currentTimeStamp + properties.accessValidSeconds,
         //播放地址的过期时间戳，以 Unix 时间的十六进制小写形式表示
         //过期后该 URL 将不再有效，返回403响应码。考虑到机器之间可能存在时间差，防盗链 URL 的实际过期时间一般比指定的过期时间长5分钟，即额外给出300秒的容差时间
         //建议过期时间戳不要过短，确保视频有足够时间完整播放
         //默认一天有效时间
-        urlTimeExpire: String = java.lang.Long.toHexString(currentTimeStamp + 60 * 60 * 24)
+        urlTimeExpire: String = java.lang.Long.toHexString(currentTimeStamp + properties.accessValidSeconds)
     ): String {
         val urlAccessInfo = HashMap<String, String>()
         urlAccessInfo["t"] = urlTimeExpire
@@ -136,6 +123,30 @@ open class QvodClient(
             .withClaim("urlAccessInfo", urlAccessInfo)
             .sign(algorithm)
     }
+
+    /**
+     * 防盗链 URL 生成
+     *
+     * https://cloud.tencent.com/document/product/266/14047
+     */
+    fun securityChainUrl(
+        url: String,
+        //播放地址的过期时间戳，以 Unix 时间的十六进制小写形式表示
+        //过期后该 URL 将不再有效，返回403响应码。考虑到机器之间可能存在时间差，防盗链 URL 的实际过期时间一般比指定的过期时间长5分钟，即额外给出300秒的容差时间
+        //建议过期时间戳不要过短，确保视频有足够时间完整播放
+        t: String = java.lang.Long.toHexString(System.currentTimeMillis() / 1000 + properties.accessValidSeconds),
+        //最多允许多少个不同 IP 的终端播放，以十进制表示，最大值为9，不填表示不做限制
+        //当限制 URL 只能被1个人播放时，建议 rlimit 不要严格限制成1（例如可设置为3），因为移动端断网后重连 IP 可能改变
+        rlimit: Int = properties.rlimit
+    ): String {
+        val dir = url.substringAfter("vod2.myqcloud.com").substringBeforeLast("/") + "/"
+        val us = RandomUtil.nextString(10)
+//        sign = md5(KEY + Dir + t + exper + rlimit + us + uv)
+        val sign =
+            DigestUtils.md5DigestAsHex("${properties.securityChainKey}${dir}${t}${rlimit}${us}".toByteArray())
+        return "$url?t=$t&rlimit=$rlimit&us=$us&sign=$sign"
+    }
+
 
     /**
      * 获取媒体详细信息

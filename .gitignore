@@ -22,4 +22,5 @@ classes
 /util/jpush/src/test/resources/application.yml
 /util/qvod/src/test/resources/application.yml
 /util/qvod/src/test/resources/test.mp4
+/util/qvod/src/test/resources/test.html
 /util/rapidauth/src/test/resources/application.yml

@@ -11,13 +11,22 @@ public class QvodProperties {
   /**
    * 点播帐号APP ID
    */
-  private String appId;
+  private Long appId;
 
   /**
    * 防盗链 Key
    */
   private String securityChainKey;
 
+  /**
+   * 视频访问有效时长，单位秒,默认一天有效时间
+   */
+  private long accessValidSeconds = 60 * 60 * 24L;
+  /**
+   * 最多允许多少个不同 IP 的终端播放，以十进制表示，最大值为9，不填表示不做限制 当限制 URL 只能被1个人播放时，建议 rlimit
+   * 不要严格限制成1（例如可设置为3），因为移动端断网后重连 IP 可能改变
+   */
+  private Integer rlimit = 9;
   private String secretId;
 
   private String secretKey;
@@ -32,9 +41,9 @@ public class QvodProperties {
   private String procedure;
 
   /**
-   * 签名有效时长，单位：秒 有效时长最大取值为7776000，即90天。
+   * 上传签名有效时长，单位：秒 有效时长最大取值为7776000，即90天。
    */
-  private long validSeconds = 60 * 60L;
+  private long uploadValidSeconds = 60 * 60L;
 
   /**
    * 请求连接超时时间毫秒数
@@ -45,11 +54,11 @@ public class QvodProperties {
    */
   private int readTimeout = 10000;
 
-  public String getAppId() {
+  public Long getAppId() {
     return appId;
   }
 
-  public void setAppId(String appId) {
+  public void setAppId(Long appId) {
     this.appId = appId;
   }
 
@@ -59,6 +68,22 @@ public class QvodProperties {
 
   public void setSecurityChainKey(String securityChainKey) {
     this.securityChainKey = securityChainKey;
+  }
+
+  public long getAccessValidSeconds() {
+    return accessValidSeconds;
+  }
+
+  public void setAccessValidSeconds(long accessValidSeconds) {
+    this.accessValidSeconds = accessValidSeconds;
+  }
+
+  public Integer getRlimit() {
+    return rlimit;
+  }
+
+  public void setRlimit(Integer rlimit) {
+    this.rlimit = rlimit;
   }
 
   public String getSecretId() {
@@ -93,12 +118,12 @@ public class QvodProperties {
     this.procedure = procedure;
   }
 
-  public long getValidSeconds() {
-    return validSeconds;
+  public long getUploadValidSeconds() {
+    return uploadValidSeconds;
   }
 
-  public void setValidSeconds(long validSeconds) {
-    this.validSeconds = validSeconds;
+  public void setUploadValidSeconds(long uploadValidSeconds) {
+    this.uploadValidSeconds = uploadValidSeconds;
   }
 
   public int getConnectTimeout() {
