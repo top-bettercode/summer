@@ -325,8 +325,8 @@ object InitField {
                 field.description = field.description.replace(k, v)
             }
 
-            findField?.children?.fixFieldTree(field.children)
-            fixFieldTree(field.children)
+            findField?.children?.fixFieldTree(needFixFields = field.children, fuzzy = fuzzy)
+            fixFieldTree(needFixFields = field.children, fuzzy = fuzzy)
         }
     }
 
