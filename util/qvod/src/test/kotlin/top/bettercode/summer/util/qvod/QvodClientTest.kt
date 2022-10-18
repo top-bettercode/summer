@@ -76,14 +76,14 @@ class QvodClientTest : BaseTest() {
 
     @Test
     fun playSignature() {
-        val signature = qvodClient.playSignature("387702306815411679")
+        val signature = qvodClient.playSignature("387702307226359579")
         System.err.println(signature)
     }
 
     @Test
     fun securityChainUrl() {
         val securityChainUrl =
-            qvodClient.securityChainUrl("https://1313291945.vod2.myqcloud.com/5c1cfae8vodcq1313291945/3692c307387702306840111681/yBzMZQdbkpYA.mp4")
+            qvodClient.securityChainUrl("https://1313291945.vod2.myqcloud.com/3306e890vodtranscq1313291945/7a0382da387702307226359579/v.f80000.mp4")
         System.err.println(securityChainUrl)
     }
 }
