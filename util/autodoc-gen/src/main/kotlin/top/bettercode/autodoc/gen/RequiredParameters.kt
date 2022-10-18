@@ -1,5 +1,6 @@
 package top.bettercode.autodoc.gen
 
+import org.springframework.util.ClassUtils
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
@@ -37,6 +38,22 @@ object RequiredParameters {
             }
         }
         return requiredHeaders
+    }
+
+    fun existNoAnnoDefaultPageParam(handler: HandlerMethod?): Boolean {
+        if (!ClassUtils.isPresent(
+                "org.springframework.data.domain.Pageable",
+                javaClass.classLoader
+            )
+        ) {
+            return false
+        }
+
+        return handler?.methodParameters?.any {
+            it.parameterType.name == "org.springframework.data.domain.Pageable" && !it.hasParameterAnnotation(
+                org.springframework.data.web.PageableDefault::class.java
+            )
+        } ?: false
     }
 
     fun calculate(handler: HandlerMethod?): Map<String, String> {

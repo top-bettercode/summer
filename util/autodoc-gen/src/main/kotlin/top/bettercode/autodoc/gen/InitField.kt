@@ -72,13 +72,13 @@ object InitField {
                 uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()
             }
             if (!(uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank())) {
-                uriNeedFix.fix(uriNeedFix)
-                reqHeadNeedFix.fix(reqHeadNeedFix)
-                paramNeedFix.fix(paramNeedFix)
-                partNeedFix.fix(partNeedFix)
-                reqContentNeedFix.fix(reqContentNeedFix)
-                resHeadNeedFix.fix(resHeadNeedFix)
-                resContentNeedFix.fix(resContentNeedFix, wrap)
+                uriNeedFix.fix(needFixFields = uriNeedFix, fuzzy = true)
+                reqHeadNeedFix.fix(needFixFields = reqHeadNeedFix, fuzzy = true)
+                paramNeedFix.fix(needFixFields = paramNeedFix, fuzzy = true)
+                partNeedFix.fix(needFixFields = partNeedFix, fuzzy = true)
+                reqContentNeedFix.fix(needFixFields = reqContentNeedFix, fuzzy = true)
+                resHeadNeedFix.fix(needFixFields = resHeadNeedFix, fuzzy = true)
+                resContentNeedFix.fix(needFixFields = resContentNeedFix, wrap = wrap, fuzzy = true)
             }
         }
 
@@ -130,14 +130,16 @@ object InitField {
     private fun Set<Field>.fix(
         needFixFields: Set<Field>,
         wrap: Boolean = false,
-        onlyDesc: Boolean = false
+        onlyDesc: Boolean = false,
+        fuzzy: Boolean = false,
     ) {
         fixFieldTree(
             needFixFields,
             hasDesc = false,
             userDefault = false,
             wrap = wrap,
-            onlyDesc = onlyDesc
+            onlyDesc = onlyDesc,
+            fuzzy = fuzzy
         )
     }
 
@@ -306,7 +308,8 @@ object InitField {
         hasDesc: Boolean = true,
         userDefault: Boolean = true,
         wrap: Boolean = false,
-        onlyDesc: Boolean = false
+        onlyDesc: Boolean = false,
+        fuzzy: Boolean = false
     ) {
         needFixFields.forEach { field ->
             val findField =
@@ -315,7 +318,8 @@ object InitField {
                     hasDesc = hasDesc,
                     userDefault = userDefault,
                     wrap = wrap,
-                    onlyDesc = onlyDesc
+                    onlyDesc = onlyDesc,
+                    fuzzy = fuzzy
                 )
             fieldDescBundle.all().forEach { (k, v) ->
                 field.description = field.description.replace(k, v)
@@ -332,9 +336,15 @@ object InitField {
         coverType: Boolean = true,
         userDefault: Boolean = true,
         wrap: Boolean = false,
-        onlyDesc: Boolean = false
+        onlyDesc: Boolean = false,
+        fuzzy: Boolean = false
     ): Field? {
-        val findField = this.findPossibleField(field.name, field.value.type, hasDesc)
+        val findField = this.findPossibleField(
+            name = field.name,
+            type = field.value.type,
+            hasDesc = hasDesc,
+            fuzzy = fuzzy
+        )
         if (findField != null && (field.canCover || field.description.isBlank() || !findField.canCover) && (!wrap || !contentWrapFields.contains(
                 field.name
             ))
@@ -415,7 +425,7 @@ object InitField {
 
     private fun Set<Field>.field(name: String, value: Any?): Field {
         val type = (value?.type ?: "String")
-        val field = findPossibleField(name, type) ?: Field(name = name, type = type)
+        val field = findPossibleField(name = name, type = type) ?: Field(name = name, type = type)
 
         var tempVal = value
         if (tempVal == null || "" == tempVal) {
@@ -430,9 +440,15 @@ object InitField {
     private fun Set<Field>.findPossibleField(
         name: String,
         type: String,
-        hasDesc: Boolean = false
+        hasDesc: Boolean = false,
+        fuzzy: Boolean = false
     ): Field? {
-        return this.findField(name, type, hasDesc) ?: this.findFuzzyField(name, type, hasDesc)
+        return this.findField(name = name, type = type, hasDesc = hasDesc)
+            ?: if (fuzzy) this.findFuzzyField(
+                name = name,
+                type = type,
+                hasDesc = hasDesc
+            ) else null
     }
 
 

@@ -12,6 +12,8 @@ dependencies {
     api(project(":util:generator"))
     api("org.atteo:evo-inflector")
 
+    compileOnly(project(":framework:data-jpa"))
+
     //test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

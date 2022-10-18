@@ -201,6 +201,14 @@ class AutodocHandler(
                     defaultValueParams
                 )
 
+                if (RequiredParameters.existNoAnnoDefaultPageParam(handler)) {
+                    (docOperation.request as DocOperationRequest).parametersExt.filter { "page" == it.name || "size" == it.name }
+                        .forEach {
+                            it.description += "，不传返回所有数据"
+                            it.defaultVal = ""
+                        }
+                }
+
                 docOperation.save()
             } finally {
                 Autodoc.collectionName = ""
