@@ -12,7 +12,6 @@ import top.bettercode.simpleframework.support.client.ApiTemplate
 import top.bettercode.summer.util.weather.entity.WeatherResponse
 import top.bettercode.summer.util.weather.entity.WeatherResult
 import java.time.LocalTime
-import java.time.ZoneId
 
 /**
  * 天气接口
@@ -46,10 +45,9 @@ open class WeatherClient(
 
     @JvmOverloads
     fun isNight(
-        time: LocalTime = LocalTime.now(TimeUtil.DEFAULT_ZONE_ID),
-        zoneId: ZoneId = TimeUtil.DEFAULT_ZONE_ID
+        time: LocalTime = LocalTime.now(TimeUtil.DEFAULT_ZONE_ID)
     ): Boolean {
-        return LocalTime.now(zoneId).hour in properties.nightStartTime.hour..properties.nightEndTime.hour
+        return time.hour in properties.nightStartTime.hour..properties.nightEndTime.hour
     }
 
     fun query(ip: String): WeatherResult {
