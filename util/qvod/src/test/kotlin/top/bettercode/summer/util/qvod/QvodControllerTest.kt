@@ -17,5 +17,11 @@ class QvodControllerTest : BaseWebNoAuthTest() {
             MockMvcRequestBuilders.get("/qvod/signature")
         )
     }
+    @Test
+    fun antiLeechUrl() {
+        perform(
+            MockMvcRequestBuilders.post("/qvod/antiLeechUrl").param("url","https://1313291945.vod2.myqcloud.com/3306e890vodtranscq1313291945/7a0382da387702307226359579/v.f80000.mp4")
+        )
+    }
 
 }

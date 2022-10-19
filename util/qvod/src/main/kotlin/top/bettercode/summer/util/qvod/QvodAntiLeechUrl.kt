@@ -19,5 +19,5 @@ import java.lang.annotation.Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @JacksonAnnotationsInside
 @Inherited
-@JsonSerialize(using = QvodSecurityChainUrlSerializer::class)
-annotation class QvodSecurityChainUrl
+@JsonSerialize(using = QvodAntiLeechUrlSerializer::class)
+annotation class QvodAntiLeechUrl

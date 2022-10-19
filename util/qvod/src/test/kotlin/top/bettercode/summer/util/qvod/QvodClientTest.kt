@@ -83,7 +83,7 @@ class QvodClientTest : BaseTest() {
     @Test
     fun securityChainUrl() {
         val securityChainUrl =
-            qvodClient.securityChainUrl("https://1313291945.vod2.myqcloud.com/3306e890vodtranscq1313291945/7a0382da387702307226359579/v.f80000.mp4")
+            qvodClient.antiLeechUrl("https://1313291945.vod2.myqcloud.com/3306e890vodtranscq1313291945/7a0382da387702307226359579/v.f80000.mp4")
         System.err.println(securityChainUrl)
     }
 }

@@ -68,7 +68,8 @@ open class QvodClient(
     }
 
     /**
-     * 签名
+     * 客户端上传签名
+     * https://cloud.tencent.com/document/product/266/9221
      */
     fun signature(): String {
         val currentTimeStamp = System.currentTimeMillis() / 1000
@@ -129,7 +130,7 @@ open class QvodClient(
      *
      * https://cloud.tencent.com/document/product/266/14047
      */
-    fun securityChainUrl(
+    fun antiLeechUrl(
         url: String,
         //播放地址的过期时间戳，以 Unix 时间的十六进制小写形式表示
         //过期后该 URL 将不再有效，返回403响应码。考虑到机器之间可能存在时间差，防盗链 URL 的实际过期时间一般比指定的过期时间长5分钟，即额外给出300秒的容差时间

@@ -15,7 +15,7 @@ import java.util.*
  * @author Peter Wu
  */
 @JacksonStdImpl
-class QvodSecurityChainUrlSerializer : StdScalarSerializer<String>(
+class QvodAntiLeechUrlSerializer : StdScalarSerializer<String>(
     String::class.java, false
 ) {
     private val qvodClient: QvodClient
@@ -28,7 +28,7 @@ class QvodSecurityChainUrlSerializer : StdScalarSerializer<String>(
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
         var url = value
         if (StringUtils.hasText(value))
-            url = qvodClient.securityChainUrl(value)
+            url = qvodClient.antiLeechUrl(value)
         gen.writeString(url)
     }
 
