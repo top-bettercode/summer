@@ -55,7 +55,7 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
   private final Class<? extends JsonUrlMapper> mapperType;
 
   public UrlSerializer() {
-    this(null, "", true, true, ",", "", null);
+    this(null, "", true, true, "", "", null);
   }
 
   public UrlSerializer(String formatExpression, String urlFieldName,
