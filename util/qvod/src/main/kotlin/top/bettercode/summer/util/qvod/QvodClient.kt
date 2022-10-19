@@ -330,7 +330,50 @@ open class QvodClient(
     }
 
     /**
+     * 使用任务流模板进行视频处理
+     * https://cloud.tencent.com/document/product/266/34782
+     */
+    fun processMediaByProcedure(
+        fileId: String,
+        procedureName: String
+    ): ProcessMediaByProcedureResponse {
+        val req = ProcessMediaByProcedureRequest()
+        req.fileId = fileId
+        req.procedureName = procedureName
+        req.sessionId = UUID.randomUUID().toString()
+
+        val start = System.currentTimeMillis()
+        var durationMillis: Long? = null
+
+        var resp: ProcessMediaByProcedureResponse? = null
+        var throwable: Throwable? = null
+        try {
+            resp = vodClient.ProcessMediaByProcedure(req)
+            durationMillis = System.currentTimeMillis() - start
+            return resp
+        } catch (e: Exception) {
+            throwable = e
+            throw e
+        } finally {
+            if (durationMillis == null) {
+                durationMillis = System.currentTimeMillis() - start
+            }
+            log.info(
+                "DURATION MILLIS : {}\n{}\n{}",
+                durationMillis,
+                StringUtil.json(req, true),
+                if (resp == null) StringUtil.valueOf(
+                    throwable,
+                    true
+                ) else StringUtil.json(resp, true)
+            )
+        }
+    }
+
+    /**
      * 音视频审核
+     *
+     * https://cloud.tencent.com/document/product/266/33427
      */
     fun processMedia(fileId: String): ProcessMediaResponse {
         val req = ProcessMediaRequest()
