@@ -41,9 +41,9 @@ public class QvodProperties {
   private String procedure;
 
   /**
-   * 上传签名有效时长，单位：秒 有效时长最大取值为7776000，即90天。
+   * 上传签名有效时长，单位：秒 有效时长最大取值为7776000，即90天。默认2小时.
    */
-  private long uploadValidSeconds = 60 * 60L;
+  private long uploadValidSeconds = 2 * 60 * 60L;
 
   /**
    * 请求连接超时时间毫秒数
