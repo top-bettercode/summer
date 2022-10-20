@@ -140,12 +140,13 @@ open class QvodClient(
         //当限制 URL 只能被1个人播放时，建议 rlimit 不要严格限制成1（例如可设置为3），因为移动端断网后重连 IP 可能改变
         rlimit: Int = properties.rlimit
     ): String {
-        val dir = url.substringAfter("vod2.myqcloud.com").substringBeforeLast("/") + "/"
+        val trueUrl = url.substringBefore("?")
+        val dir = trueUrl.substringAfter("vod2.myqcloud.com").substringBeforeLast("/") + "/"
         val us = RandomUtil.nextString(10)
 //        sign = md5(KEY + Dir + t + exper + rlimit + us + uv)
         val sign =
             DigestUtils.md5DigestAsHex("${properties.securityChainKey}${dir}${t}${rlimit}${us}".toByteArray())
-        return "$url?t=$t&rlimit=$rlimit&us=$us&sign=$sign"
+        return "$trueUrl?t=$t&rlimit=$rlimit&us=$us&sign=$sign"
     }
 
 
