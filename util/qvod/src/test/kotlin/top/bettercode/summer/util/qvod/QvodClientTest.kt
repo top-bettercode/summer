@@ -2,7 +2,6 @@ package top.bettercode.summer.util.qvod
 
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.util.test.BaseTest
 
 /**
@@ -25,11 +24,9 @@ class QvodClientTest : BaseTest() {
         qvodClient.storageRegions()
     }
 
-
     @Test
-    fun upload() {
-        qvodClient.upload(ClassPathResource("test.jpg").file, "LongVideoPreset")//387702304899111623
-//        qvodClient.upload(ClassPathResource("test.mp4").file)//387702304900182040
+    fun processMediaByProcedure() {
+        qvodClient.processMediaByProcedure("", "")
     }
 
     @Test

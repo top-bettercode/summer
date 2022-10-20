@@ -3,9 +3,6 @@ package top.bettercode.summer.util.qvod
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.qcloud.vod.VodUploadClient
-import com.qcloud.vod.model.VodUploadRequest
-import com.qcloud.vod.model.VodUploadResponse
 import com.tencentcloudapi.common.Credential
 import com.tencentcloudapi.common.exception.TencentCloudSDKException
 import com.tencentcloudapi.common.profile.ClientProfile
@@ -21,14 +18,13 @@ import org.springframework.util.DigestUtils
 import top.bettercode.lang.util.RandomUtil
 import top.bettercode.lang.util.StringUtil
 import top.bettercode.simpleframework.support.client.ApiTemplate
-import java.io.File
 import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 
 /**
- * 天气接口
+ * 腾讯云接口
  *
  * @author Peter Wu
  */
@@ -39,7 +35,6 @@ open class QvodClient(
 ) {
 
     val vodClient: VodClient
-    val vodUploadClient = VodUploadClient(properties.secretId, properties.secretKey)
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
@@ -236,45 +231,6 @@ open class QvodClient(
         var throwable: Throwable? = null
         try {
             resp = vodClient.DescribeStorageRegions(req)
-            durationMillis = System.currentTimeMillis() - start
-            return resp
-        } catch (e: Exception) {
-            throwable = e
-            throw e
-        } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            log.info(
-                "DURATION MILLIS : {}\n{}\n{}",
-                durationMillis,
-                StringUtil.json(req, true),
-                if (resp == null) StringUtil.valueOf(
-                    throwable,
-                    true
-                ) else StringUtil.json(resp, true)
-            )
-        }
-    }
-
-    /**
-     * 简单上传
-     */
-    @JvmOverloads
-    fun upload(file: File, procedure: String? = null): VodUploadResponse {
-        val req = VodUploadRequest()
-        req.mediaFilePath = file.absolutePath
-        if (procedure != null) {
-            req.procedure = procedure
-        }
-
-        val start = System.currentTimeMillis()
-        var durationMillis: Long? = null
-
-        var resp: VodUploadResponse? = null
-        var throwable: Throwable? = null
-        try {
-            resp = vodUploadClient.upload(properties.region, req)
             durationMillis = System.currentTimeMillis() - start
             return resp
         } catch (e: Exception) {
