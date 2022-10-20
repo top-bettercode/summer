@@ -52,7 +52,7 @@ open class Generator {
 
     val settings: Map<String, String> get() = ext.settings
 
-    val datasource: JDBCConnectionConfiguration get() = ext.datasources[table.module]!!
+    val datasource: JDBCConnectionConfiguration get() = ext.datasource(table.module)
 
     val projectName: String get() = ext.projectName
 
