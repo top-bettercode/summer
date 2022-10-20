@@ -22,6 +22,9 @@ object RootProjectTasks {
                 ?.filter { it.isNotBlank() }
             val jenkinsTestJobs = project.findProperty("jenkins.test.jobs")?.toString()?.split(",")
                 ?.filter { it.isNotBlank() }
+            val jenkinsOtherJobs =
+                project.findProperty("jenkins.other.jobs")?.toString()?.split(",")
+                    ?.filter { it.isNotBlank() }
 
             val jobs = mutableMapOf<String, List<String>>()
             if (!jenkinsJobs.isNullOrEmpty()) {
@@ -32,6 +35,9 @@ object RootProjectTasks {
             }
             if (!jenkinsTestJobs.isNullOrEmpty()) {
                 jobs["test"] = jenkinsTestJobs
+            }
+            if (!jenkinsOtherJobs.isNullOrEmpty()) {
+                jobs["other"] = jenkinsOtherJobs
             }
 
             val jenkinsServer = project.findProperty("jenkins.server")?.toString()
