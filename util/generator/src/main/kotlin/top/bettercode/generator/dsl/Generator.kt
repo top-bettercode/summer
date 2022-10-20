@@ -513,7 +513,11 @@ open class Generator {
 
                 JavaType.stringInstance -> "\"$columnDef\""
                 else -> {
-                    if ("CURRENT_TIMESTAMP".equals(columnDef, true)) {
+                    if ("CURRENT_TIMESTAMP".equals(columnDef, true) || "SYSDATE".equals(
+                            columnDef,
+                            true
+                        )
+                    ) {
                         when (javaType) {
                             JavaType("java.sql.Timestamp") -> {
                                 unit?.import("java.sql.Timestamp")
