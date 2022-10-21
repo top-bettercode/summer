@@ -44,7 +44,7 @@ object RootProjectTasks {
             val jenkinsAuth = project.findProperty("jenkins.auth")?.toString()
             if (jobs.isNotEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
                 val jenkins = Jenkins(jenkinsServer, jenkinsAuth)
-                create("build[All]") {
+                create("build[[All]") {
                     it.group = "jenkins"
                     it.doLast {
                         jobs.forEach { (env, jobNames) ->
@@ -94,7 +94,7 @@ object RootProjectTasks {
                 }
             }
 
-            create("gen[DbScript]") { t ->
+            create("gene[DbScript]") { t ->
                 t.group = GeneratorPlugin.genGroup
                 t.doLast {
                     val destFile = FileUnit(
