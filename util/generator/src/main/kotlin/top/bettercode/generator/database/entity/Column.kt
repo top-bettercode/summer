@@ -205,9 +205,9 @@ data class Column(
 
     val containsSize: Boolean by lazy {
         columnSize > 0 && !arrayOf(
-            java.lang.Object::class.java.name,
+            "java.lang.Object",
             "byte[]",
-            java.util.Date::class.java.name,
+            "java.util.Date",
             "java.time.OffsetTime",
             "java.time.OffsetDateTime",
             "java.time.LocalDate",
