@@ -508,7 +508,7 @@ open class Generator {
                 PrimitiveTypeWrapper.floatInstance -> "${columnDef}F"
                 JavaType("java.math.BigDecimal") -> {
                     unit?.import("java.math.BigDecimal")
-                    "new BigDecimal($columnDef)"
+                    "new BigDecimal(\"$columnDef\")"
                 }
 
                 JavaType.stringInstance -> "\"$columnDef\""

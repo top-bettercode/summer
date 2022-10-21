@@ -248,32 +248,34 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return false;"
             +"}"
             +"$className that = (${className}) o;"
-            +"if (${primaryKeyName} != that.get${
-                primaryKeyName.capitalized()
-            }()) {"
-            +"return false;"
-            +"}"
-
 
             val size = otherColumns.size
             if (size == 0) {
-                +"return true;"
-            }
-            if (size == 1) {
-                +"return Objects.equals(${otherColumns[0].javaName}, that.${otherColumns[0].javaName});"
+                +"return Objects.equals(${primaryKeyName}, that.get${
+                    primaryKeyName.capitalized()
+                }());"
             } else {
-                otherColumns.forEachIndexed { index, column ->
-                    when (index) {
-                        0 -> {
-                            +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
-                        }
+                +"if (!Objects.equals(${primaryKeyName}, that.get${
+                    primaryKeyName.capitalized()
+                }())) {"
+                +"return false;"
+                +"}"
+                if (size == 1) {
+                    +"return Objects.equals(${otherColumns[0].javaName}, that.${otherColumns[0].javaName});"
+                } else {
+                    otherColumns.forEachIndexed { index, column ->
+                        when (index) {
+                            0 -> {
+                                +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                            }
 
-                        size - 1 -> {
-                            +"    Objects.equals(${column.javaName}, that.${column.javaName});"
-                        }
+                            size - 1 -> {
+                                +"    Objects.equals(${column.javaName}, that.${column.javaName});"
+                            }
 
-                        else -> {
-                            +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                            else -> {
+                                +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                            }
                         }
                     }
                 }
