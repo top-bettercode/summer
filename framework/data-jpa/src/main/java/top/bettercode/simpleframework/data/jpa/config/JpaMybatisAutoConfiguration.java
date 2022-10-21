@@ -229,7 +229,7 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
           }
         } catch (Throwable e) {
           if (log.isWarnEnabled()) {
-            log.warn("Cannot load the '" + resource + "'. Cause by " + e.toString());
+            log.warn("Cannot load the '" + resource + "'. Cause by " + e);
           }
         }
       }

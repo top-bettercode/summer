@@ -13,63 +13,56 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
- * Collects references to <code>@ConfigurationProperties</code> beans in the context and
- * its parent.
+ * Collects references to {@code @ConfigurationProperties} beans in the context and its parent.
  *
  * @author Dave Syer
  */
 @Component
 public class ConfigurationPropertiesBeans implements BeanPostProcessor, ApplicationContextAware {
 
-	private final Map<String, ConfigurationPropertiesBean> beans = new HashMap<>();
+  private final Map<String, ConfigurationPropertiesBean> beans = new HashMap<>();
 
-	private ApplicationContext applicationContext;
+  private ApplicationContext applicationContext;
 
-	private ConfigurableListableBeanFactory beanFactory;
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+    if (applicationContext.getAutowireCapableBeanFactory() instanceof ConfigurableListableBeanFactory) {
+      applicationContext.getAutowireCapableBeanFactory();
+    }
+    if (applicationContext.getParent() != null && applicationContext.getParent()
+        .getAutowireCapableBeanFactory() instanceof ConfigurableListableBeanFactory) {
+      ConfigurableListableBeanFactory listable = (ConfigurableListableBeanFactory) applicationContext.getParent()
+          .getAutowireCapableBeanFactory();
+      String[] names = listable.getBeanNamesForType(ConfigurationPropertiesBeans.class);
+      if (names.length == 1) {
+        ConfigurationPropertiesBeans parent = (ConfigurationPropertiesBeans) listable.getBean(
+            names[0]);
+        this.beans.putAll(parent.beans);
+      }
+    }
+  }
 
-	private String refreshScope;
-
-	private boolean refreshScopeInitialized;
-
-	private ConfigurationPropertiesBeans parent;
-
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-		if (applicationContext.getAutowireCapableBeanFactory() instanceof ConfigurableListableBeanFactory) {
-			this.beanFactory = (ConfigurableListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
-		}
-		if (applicationContext.getParent() != null && applicationContext.getParent()
-				.getAutowireCapableBeanFactory() instanceof ConfigurableListableBeanFactory) {
-			ConfigurableListableBeanFactory listable = (ConfigurableListableBeanFactory) applicationContext.getParent()
-					.getAutowireCapableBeanFactory();
-			String[] names = listable.getBeanNamesForType(ConfigurationPropertiesBeans.class);
-			if (names.length == 1) {
-				this.parent = (ConfigurationPropertiesBeans) listable.getBean(names[0]);
-				this.beans.putAll(this.parent.beans);
-			}
-		}
-	}
-
-	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		ConfigurationPropertiesBean propertiesBean = ConfigurationPropertiesBean.get(this.applicationContext, bean,
-				beanName);
-		if (propertiesBean != null) {
-			this.beans.put(beanName, propertiesBean);
-		}
-		return bean;
-	}
+  @Override
+  public Object postProcessBeforeInitialization(Object bean, String beanName)
+      throws BeansException {
+    ConfigurationPropertiesBean propertiesBean = ConfigurationPropertiesBean.get(
+        this.applicationContext, bean,
+        beanName);
+    if (propertiesBean != null) {
+      this.beans.put(beanName, propertiesBean);
+    }
+    return bean;
+  }
 
 
+  @Override
+  public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+    return bean;
+  }
 
-	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		return bean;
-	}
-
-	public Set<String> getBeanNames() {
-		return new HashSet<>(this.beans.keySet());
-	}
+  public Set<String> getBeanNames() {
+    return new HashSet<>(this.beans.keySet());
+  }
 
 }

@@ -9,7 +9,7 @@ import javax.websocket.*
 import javax.websocket.server.ServerEndpoint
 
 @ServerEndpoint("/websocket/logging")
-class WebSocketController() {
+class WebSocketController {
 
     private val log = LoggerFactory.getLogger(WebSocketController::class.java)
 

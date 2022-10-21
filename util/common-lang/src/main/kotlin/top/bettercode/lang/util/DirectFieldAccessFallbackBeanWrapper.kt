@@ -25,8 +25,8 @@ import org.springframework.util.ReflectionUtils
  * wrapped does not use accessor methods.
  */
 class DirectFieldAccessFallbackBeanWrapper : BeanWrapperImpl {
-    constructor(entity: Any) : super(entity) {}
-    constructor(type: Class<*>) : super(type) {}
+    constructor(entity: Any) : super(entity)
+    constructor(type: Class<*>) : super(type)
 
     /*
 	 * (non-Javadoc)
