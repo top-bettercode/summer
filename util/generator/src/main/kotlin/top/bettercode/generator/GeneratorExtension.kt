@@ -282,4 +282,21 @@ open class GeneratorExtension(
             }
         }
     }
+
+    val moduleSize: Int
+        get() {
+            return when (dataType) {
+                DataType.DATABASE -> {
+                    datasources.size
+                }
+
+                DataType.PUML -> {
+                    pumlSources.size
+                }
+
+                DataType.PDM -> {
+                    pdmSources.size
+                }
+            }
+        }
 }
