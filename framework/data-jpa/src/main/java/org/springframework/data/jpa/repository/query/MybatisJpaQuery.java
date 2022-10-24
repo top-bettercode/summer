@@ -58,7 +58,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
     if (pageQuery) {
       String nestedResultMapId = MybatisResultSetHandler.findNestedResultMap(this.mappedStatement);
       if (nestedResultMapId != null) {
-        sqlLog.warn(
+        sqlLog.info(
             "{} may return incorrect paginated data. Please check result maps definition {}.",
             mappedStatement.getId(), nestedResultMapId);
       }
@@ -203,7 +203,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
                 throw new UnsupportedOperationException(nestedResultMapType.getNestedResultMapId()
                     + " collection resultmap not support page query");
               } else {
-                sqlLog.warn(
+                sqlLog.info(
                     "{} may return incorrect paginated data. Please check result maps definition {}.",
                     sqlLogId, nestedResultMapType.getNestedResultMapId());
               }
