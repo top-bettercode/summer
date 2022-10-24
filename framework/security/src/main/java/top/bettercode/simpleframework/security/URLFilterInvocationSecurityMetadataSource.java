@@ -51,10 +51,11 @@ public class URLFilterInvocationSecurityMetadataSource implements
         String pattern = pathPattern.getPatternString();
         if (!securityProperties.ignored(pattern)) {
           Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
-          ConfigAuthority authority = AnnotatedUtils
-              .getAnnotation(handlerMethod, ConfigAuthority.class);
+
+          Set<ConfigAuthority> authoritySet = AnnotatedUtils
+              .getAnnotations(handlerMethod, ConfigAuthority.class);
           Set<ConfigAttribute> configAttributes = new HashSet<>();
-          if (authority != null) {
+          for (ConfigAuthority authority : authoritySet) {
             for (String s : authority.value()) {
               configAttributes.add(new SecurityConfig(s.trim()));
             }

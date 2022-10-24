@@ -1,6 +1,5 @@
 package top.bettercode.simpleframework.security.test;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ public class MvcControllerTest extends BaseWebNoAuthTest {
 
 
   @Test
-  public void shipBases() throws Exception {
+  public void test() throws Exception {
     mockMvc.perform(get("/test")
     ).andExpect(status().isOk());
   }

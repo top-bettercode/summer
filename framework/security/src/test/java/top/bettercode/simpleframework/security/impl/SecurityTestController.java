@@ -23,6 +23,7 @@ public class SecurityTestController extends BaseController {
   }
 
   @ConfigAuthority("a")
+  @ConfigAuthority("b")
   @RequestMapping(value = "/testAuth")
   public Object testAuth() {
     Object authentication = AuthenticationHelper.getPrincipal();
