@@ -19,7 +19,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 /**
- * JSON序列化url自动补全
+ * 防盗链URL 处理
  *
  * @author Peter Wu
  */
@@ -51,11 +51,10 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
 
     @Throws(IOException::class)
     override fun serialize(value: Any, gen: JsonGenerator, provider: SerializerProvider) {
-        var url = value as String
-        val type: Class<*> = value.javaClass
         val fieldName = gen.outputContext.currentName
         val urlFieldName = fieldName + "Alurl"
-        if (type == String::class.java) {
+        if (value is String) {
+            var url = value
             if (separator.isEmpty()) {
                 url = mapper.mapper(url)
                 gen.writeObject(url)
@@ -65,15 +64,10 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
                     value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 genCollection(value, gen, fieldName, Arrays.stream(split))
             }
-        } else if (type.isArray) {
-            val array = value as Array<*>
-            genCollection(value, gen, fieldName, Arrays.stream(array))
-        } else if (Collection::class.java.isAssignableFrom(type) && !Map::class.java.isAssignableFrom(
-                type
-            )
-        ) {
-            val array = url as Collection<*>
-            genCollection(url, gen, fieldName, array.stream())
+        } else if (value is Array<*>) {
+            genCollection(value, gen, fieldName, Arrays.stream(value))
+        } else if (value is Collection<*>) {
+            genCollection(value, gen, fieldName, value.stream())
         } else {
             throw UnsupportedOperationException()
         }
