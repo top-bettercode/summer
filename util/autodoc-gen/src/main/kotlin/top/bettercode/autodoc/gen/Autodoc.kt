@@ -20,6 +20,18 @@ object Autodoc {
     var version: String = ""
 
     /**
+     * 接口描述
+     */
+    @JvmStatic
+    var description: String = ""
+
+    /**
+     * 数据库 schema
+     */
+    @JvmStatic
+    var schema: String? = null
+
+    /**
      * 相关数据表名
      */
     @JvmStatic
@@ -55,17 +67,6 @@ object Autodoc {
     @JvmStatic
     var disableOnException: Boolean? = null
 
-    /**
-     * 接口描述
-     */
-    @JvmStatic
-    var description: String = ""
-
-    /**
-     * 数据库 schema
-     */
-    @JvmStatic
-    var schema: String? = null
 
     /**
      * 字段描述
@@ -73,13 +74,32 @@ object Autodoc {
     @JvmStatic
     var fields: MutableMap<String, String> = mutableMapOf()
 
-    /**
-     * 设置字段描述
-     */
+
     @JvmStatic
-    fun field(name: String, description: String) {
-        fields[name] = description
+    fun collectionName(collectionName: String) {
+        this.collectionName = collectionName
     }
+
+    @JvmStatic
+    fun name(name: String) {
+        this.name = name
+    }
+
+    @JvmStatic
+    fun version(version: String) {
+        this.version = version
+    }
+
+    @JvmStatic
+    fun description(description: String) {
+        this.description = description
+    }
+
+    @JvmStatic
+    fun schema(schema: String) {
+        this.schema = schema
+    }
+
 
     /**
      * 设置相关数据表名
@@ -138,4 +158,13 @@ object Autodoc {
     fun enableOnException() {
         disableOnException = false
     }
+
+    /**
+     * 设置字段描述
+     */
+    @JvmStatic
+    fun field(name: String, description: String) {
+        fields[name] = description
+    }
+
 }

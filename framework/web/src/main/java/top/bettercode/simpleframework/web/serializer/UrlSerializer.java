@@ -175,8 +175,7 @@ public class UrlSerializer extends StdScalarSerializer<Object> implements
     } else if (type.isArray()) {
       Object[] array = (Object[]) value;
       genCollection(value, gen, mapper, Arrays.stream(array));
-    } else if (Collection.class.isAssignableFrom(type) && !Map.class
-        .isAssignableFrom(type)) {
+    } else if (Collection.class.isAssignableFrom(type)) {
       Collection<?> array = (Collection<?>) value;
       genCollection(value, gen, mapper, array.stream());
     } else {
