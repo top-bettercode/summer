@@ -30,11 +30,10 @@ object InitField {
     private val contentWrapFields: Set<String> =
         setOf("status", "message", "data", "trace", "errors")
     private val fieldDescBundle: PropertiesSource = PropertiesSource.of("field-desc-replace")
-    private val messageFields = PropertiesSource.of("base-messages").all()
-        .map { Field(it.key, "Object", it.value) }
-        .toSet() + PropertiesSource.of("messages").all()
-        .map { Field(it.key, "Object", it.value) }
-        .toSet()
+    private val messageFields =
+        setOf(Field(name = "lines", description = "行信息")) + PropertiesSource.of("messages").all()
+            .map { Field(name = it.key, description = it.value) }
+            .toSet()
 
     fun init(
         operation: DocOperation,
@@ -229,7 +228,7 @@ object InitField {
     private fun Table.fields(): Set<Field> {
         val fields = columns.flatMapTo(mutableSetOf()) { column ->
             var type =
-                if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits <= 0) "" else ",${column.decimalDigits}"})" else column.javaType.shortNameWithoutTypeArguments
+                if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits > 0) ",${column.decimalDigits}" else ""})" else column.javaType.shortNameWithoutTypeArguments
             if (column.javaType.shortNameWithoutTypeArguments == "Date")//前端统一传毫秒数
                 type = "Long"
             setOf(
@@ -242,19 +241,23 @@ object InitField {
                 )
             )
         }
-        fields.addAll(fields.map { Field(English.plural(it.name), "Array", it.description) })
-        fields.add(Field(entityName, "Object", remarks))
-        fields.add(Field(pathName, "Array", remarks))
+        fields.addAll(fields.map {
+            Field(
+                name = English.plural(it.name),
+                description = it.description
+            )
+        })
+        fields.add(Field(name = entityName, description = remarks))
+        fields.add(Field(name = pathName, description = remarks))
         if (primaryKeys.size == 0) {
-            fields.add(Field(entityName + "Entity", "Object", remarks))
+            fields.add(Field(name = entityName + "Entity", description = remarks))
         } else {
             if (primaryKeys.size > 1) {
-                fields.add(Field(entityName + "Key", "String", remarks + "主键"))
+                fields.add(Field(name = entityName + "Key", description = remarks + "主键"))
                 fields.add(
                     Field(
-                        English.plural(entityName + "Key"),
-                        "String",
-                        remarks + "主键"
+                        name = English.plural(entityName + "Key"),
+                        description = remarks + "主键"
                     )
                 )
             }
@@ -358,7 +361,7 @@ object InitField {
                 field.canCover = findField.canCover
                 if (userDefault)
                     field.defaultVal = findField.defaultVal
-                if (coverType || !findField.canCover)
+                if (findField.type.isNotBlank() && (coverType || !findField.canCover))
                     field.type = findField.type
                 if (findField.description.isNotBlank())
                     field.description = findField.description
