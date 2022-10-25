@@ -30,7 +30,9 @@ object InitField {
     private val contentWrapFields: Set<String> =
         setOf("status", "message", "data", "trace", "errors")
     private val fieldDescBundle: PropertiesSource = PropertiesSource.of("field-desc-replace")
-    private val messageFields = PropertiesSource.of("messages").all()
+    private val messageFields = PropertiesSource.of("base-messages").all()
+        .map { Field(it.key, "Object", it.value) }
+        .toSet() + PropertiesSource.of("messages").all()
         .map { Field(it.key, "Object", it.value) }
         .toSet()
 
