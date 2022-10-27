@@ -22,4 +22,10 @@ public @interface FormDuplicateCheck {
    * @return form key有效时间
    */
   long expireSeconds() default -1;
+
+  /**
+   * @return 提示信息
+   */
+  String message() default "请勿重复提交";
+
 }

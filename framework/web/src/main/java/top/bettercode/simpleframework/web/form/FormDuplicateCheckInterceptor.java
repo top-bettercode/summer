@@ -44,7 +44,7 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
       return true;
     } else if (formkeyService.exist(formkey,
         annotation == null ? -1 : annotation.expireSeconds())) {
-      throw new FormDuplicateException("请勿重复提交");
+      throw new FormDuplicateException(annotation.message());
     } else {
       request.setAttribute(FORM_KEY, formkey);
       return true;
