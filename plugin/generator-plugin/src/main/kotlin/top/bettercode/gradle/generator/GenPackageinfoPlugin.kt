@@ -29,7 +29,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
                         srcDir.walkTopDown().filter { it.isDirectory }.forEach { packageDir ->
                             val listFiles =
                                 packageDir.listFiles()?.filter { it.name != "package-info.java" }
-                            if (listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
+                            if (listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile } || packageDir.name == "response")) {
                                 val packageinfo =
                                     packageDir.absolutePath.replace(
                                         srcDir.absolutePath + File.separator,
@@ -63,7 +63,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
                     srcDir.walkTopDown().filter { it.isDirectory }.forEach { packageDir ->
                         val listFiles =
                             packageDir.listFiles()?.filter { it.name != "package-info.java" }
-                        if (listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile })) {
+                        if (listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile } || packageDir.name == "response")) {
                             val packageinfo =
                                 packageDir.absolutePath.replace(
                                     srcDir.absolutePath + File.separator,
