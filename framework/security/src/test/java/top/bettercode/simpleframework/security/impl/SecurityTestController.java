@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.bettercode.simpleframework.security.Anonymous;
 import top.bettercode.simpleframework.security.AuthenticationHelper;
-import top.bettercode.simpleframework.security.ConfigAuthority;
 import top.bettercode.simpleframework.web.BaseController;
 
 /**
@@ -22,8 +21,8 @@ public class SecurityTestController extends BaseController {
     return ok("success");
   }
 
-  @ConfigAuthority("a")
-  @ConfigAuthority("b")
+  @CustAuth
+  @EmpAuth
   @RequestMapping(value = "/testAuth")
   public Object testAuth() {
     Object authentication = AuthenticationHelper.getPrincipal();

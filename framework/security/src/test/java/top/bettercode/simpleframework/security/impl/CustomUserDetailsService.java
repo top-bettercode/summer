@@ -40,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
   public Collection<? extends GrantedAuthority> getAuthorities(String username) {
     if (username.equals("root")) {
-      return DefaultAuthority.addDefaultAuthority(new SimpleGrantedAuthority("a"));
+      return DefaultAuthority.addDefaultAuthority(new SimpleGrantedAuthority("cust"));
     }
     return DefaultAuthority.defaultAuthority();
   }
