@@ -54,14 +54,20 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
       String accessToken = authorization.getAccessToken().getTokenValue();
       String refreshToken = authorization.getRefreshToken().getTokenValue();
       byte[] auth = jdkSerializationSerializer.serialize(authorization);
-      jdbcTemplate.update(defaultInsertStatement,
+      int update = jdbcTemplate.update(defaultInsertStatement,
           new Object[]{id, accessToken, refreshToken, new SqlLobValue(auth)},
           new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB});
+      if (log.isDebugEnabled()) {
+        log.debug("JdbcApiAuthorizationService.save\n{}\n{},{},{},{}\naffected:{}",
+            defaultInsertStatement, id,
+            accessToken, refreshToken, new String(auth), update);
+      }
     } catch (DuplicateKeyException e) {
       save(authorization);
     }
   }
 
+  @Transactional
   @Override
   public void remove(ApiAuthenticationToken authorization) {
     String scope = authorization.getScope();
@@ -69,10 +75,15 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
     remove(scope, username);
   }
 
+  @Transactional
   @Override
   public void remove(String scope, String username) {
     String id = scope + ":" + username;
-    jdbcTemplate.update(defaultDeleteStatement, id);
+    int update = jdbcTemplate.update(defaultDeleteStatement, id);
+    if (log.isDebugEnabled()) {
+      log.debug("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", defaultDeleteStatement,
+          id, update);
+    }
   }
 
   @Override
@@ -100,7 +111,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
   @Nullable
   private ApiAuthenticationToken getApiAuthenticationToken(String param, String selectStatement) {
     try {
-      return jdbcTemplate.queryForObject(selectStatement,
+      ApiAuthenticationToken apiAuthenticationToken = jdbcTemplate.queryForObject(selectStatement,
           (rs, rowNum) -> {
             byte[] bytes = rs.getBytes(1);
             if (JdkSerializationSerializer.isEmpty(bytes)) {
@@ -111,13 +122,23 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
             } catch (Exception e) {
               log.warn("apiToken反序列化失败", e);
               try {
-                jdbcTemplate.update(defaultDeleteStatement, rs.getString(2));
+                int update = jdbcTemplate.update(defaultDeleteStatement, rs.getString(2));
+                if (log.isDebugEnabled()) {
+                  log.debug(
+                      "JdbcApiAuthorizationService.getApiAuthenticationToken delete\n{}\n{}\naffected:{}",
+                      defaultDeleteStatement, rs.getString(2), update);
+                }
               } catch (Exception ex) {
                 log.warn("apiToken删除失败", ex);
               }
               return null;
             }
           }, param);
+      if (log.isDebugEnabled()) {
+        log.debug("JdbcApiAuthorizationService.getApiAuthenticationToken\n{}\n{}\nresult:{}",
+            selectStatement, param, apiAuthenticationToken.getUserDetails());
+      }
+      return apiAuthenticationToken;
     } catch (EmptyResultDataAccessException e) {
       return null;
     }
