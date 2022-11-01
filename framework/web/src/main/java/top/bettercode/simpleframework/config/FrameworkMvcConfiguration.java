@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,8 +55,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -83,7 +80,8 @@ import top.bettercode.simpleframework.web.form.FormDuplicateCheckInterceptor;
 import top.bettercode.simpleframework.web.form.FormkeyService;
 import top.bettercode.simpleframework.web.form.IFormkeyService;
 import top.bettercode.simpleframework.web.kaptcha.KaptchaProperties;
-import top.bettercode.simpleframework.web.resolver.ApiHandlerMethodReturnValueHandler;
+import top.bettercode.simpleframework.web.resolver.ApiExceptionHandlerExceptionResolver;
+import top.bettercode.simpleframework.web.resolver.ApiRequestMappingHandlerAdapter;
 import top.bettercode.simpleframework.web.resolver.StringToEnumConverterFactory;
 import top.bettercode.simpleframework.web.serializer.MixIn;
 
@@ -300,48 +298,13 @@ public class FrameworkMvcConfiguration {
     return new WebMvcRegistrations() {
       @Override
       public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
-        return new RequestMappingHandlerAdapter() {
-          @Override
-          public void afterPropertiesSet() {
-            super.afterPropertiesSet();
-
-            // Retrieve actual handlers to use as delegate
-            HandlerMethodReturnValueHandlerComposite oldHandlers = new HandlerMethodReturnValueHandlerComposite()
-                .addHandlers(this.getReturnValueHandlers());
-
-            // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
-            List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
-            newHandlers
-                .add(new ApiHandlerMethodReturnValueHandler(oldHandlers, summerWebProperties,
-                    errorAttributes));
-
-            // Configure the new handler to be used
-            this.setReturnValueHandlers(newHandlers);
-          }
-        };
+        return new ApiRequestMappingHandlerAdapter(summerWebProperties, errorAttributes);
       }
 
 
       @Override
       public ExceptionHandlerExceptionResolver getExceptionHandlerExceptionResolver() {
-        return new ExceptionHandlerExceptionResolver() {
-          @Override
-          public void afterPropertiesSet() {
-            super.afterPropertiesSet();
-
-            // Retrieve actual handlers to use as delegate
-            HandlerMethodReturnValueHandlerComposite oldHandlers = this.getReturnValueHandlers();
-
-            // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
-            List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>();
-            newHandlers
-                .add(new ApiHandlerMethodReturnValueHandler(oldHandlers, summerWebProperties,
-                    errorAttributes));
-
-            // Configure the new handler to be used
-            this.setReturnValueHandlers(newHandlers);
-          }
-        };
+        return new ApiExceptionHandlerExceptionResolver(summerWebProperties, errorAttributes);
       }
     };
   }

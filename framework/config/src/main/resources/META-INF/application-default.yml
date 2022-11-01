@@ -133,3 +133,9 @@ logging:
     net.sf: warn
     javax.activation: warn
     org.mongodb: warn
+    top.bettercode.simpleframework.web.resolver.ApiRequestMappingHandlerAdapter: info
+    top.bettercode.simpleframework.web.resolver.ApiExceptionHandlerExceptionResolver: info
+    top.bettercode.simpleframework.web.filter: info
+    top.bettercode.logging.RequestLoggingFilter: info
+    top.bettercode.logging.RequestContentReadFilter: info
+    top.bettercode.config.NavFilter: info

@@ -111,8 +111,8 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
     if (ArrayUtil.isNotEmpty(typeAliases)) {
       Stream.of(typeAliases).forEach(typeAlias -> {
         finalConfiguration.getTypeAliasRegistry().registerAlias(typeAlias);
-        if (log.isDebugEnabled()) {
-          log.debug("Registered type alias: '" + typeAlias + "'");
+        if (log.isTraceEnabled()) {
+          log.trace("Registered type alias: '" + typeAlias + "'");
         }
       });
     }
@@ -129,8 +129,8 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
     if (!ArrayUtil.isEmpty(typeHandlerClasses)) {
       Stream.of(typeHandlerClasses).forEach(typeHandler -> {
         finalConfiguration.getTypeHandlerRegistry().register(typeHandler);
-        if (log.isDebugEnabled()) {
-          log.debug("Registered type handler: '" + typeHandler + "'");
+        if (log.isTraceEnabled()) {
+          log.trace("Registered type handler: '" + typeHandler + "'");
         }
       });
     }
@@ -138,8 +138,8 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
     if (xmlConfigBuilder != null) {
       try {
         xmlConfigBuilder.parse();
-        if (log.isDebugEnabled()) {
-          log.debug("Parsed configuration file: '" + configResource + "'");
+        if (log.isTraceEnabled()) {
+          log.trace("Parsed configuration file: '" + configResource + "'");
         }
       } catch (Exception ex) {
         throw new NestedIOException("Failed to parse config resource: " + configResource, ex);
@@ -182,8 +182,8 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
           } finally {
             ErrorContext.instance().reset();
           }
-          if (log.isDebugEnabled()) {
-            log.debug("Parsed mapper file: '" + mapperResource + "'");
+          if (log.isTraceEnabled()) {
+            log.trace("Parsed mapper file: '" + mapperResource + "'");
           }
         }
       }

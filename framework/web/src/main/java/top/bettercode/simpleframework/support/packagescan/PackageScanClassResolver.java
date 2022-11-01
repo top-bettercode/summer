@@ -30,7 +30,7 @@ public class PackageScanClassResolver {
 
   private final Logger log = LoggerFactory.getLogger(PackageScanClassResolver.class);
   private Set<PackageScanFilter> scanFilters;
-  private final Map<String, Set<Class>> allClassesByPackage = new HashMap<>();
+  private final Map<String, Set<Class<?>>> allClassesByPackage = new HashMap<>();
   private final Set<String> loadedPackages = new HashSet<>();
   private final ResourcePatternResolver resourcePatternResolver;
   private final MetadataReaderFactory metadataReaderFactory;
@@ -81,13 +81,15 @@ public class PackageScanClassResolver {
     }
   }
 
-  public Set<Class<?>> findImplementations(Class parent, String... packageNames) {
+  public Set<Class<?>> findImplementations(Class<?> parent, String... packageNames) {
     if (packageNames == null) {
       return Collections.emptySet();
     }
 
-    log.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays
-        .asList(packageNames));
+    if (log.isTraceEnabled()) {
+      log.trace("Searching for implementations of " + parent.getName() + " in packages: " + Arrays
+          .asList(packageNames));
+    }
 
     PackageScanFilter test = getCompositeFilter(new AssignableToPackageScanFilter(parent));
 
@@ -104,7 +106,9 @@ public class PackageScanClassResolver {
       find(filter, pkg, classes);
     }
 
-    log.debug("Found: " + classes);
+    if (log.isTraceEnabled()) {
+      log.trace("Found: " + classes);
+    }
 
     return classes;
   }
@@ -150,14 +154,18 @@ public class PackageScanClassResolver {
 
   protected void findInAllClasses(PackageScanFilter test, String packageName,
       Set<Class<?>> classes) {
-    log.debug("Searching for: " + test + " in package: " + packageName);
+    if (log.isTraceEnabled()) {
+      log.trace("Searching for: " + test + " in package: " + packageName);
+    }
 
-    Set<Class> packageClasses = getFoundClasses(packageName);
+    Set<Class<?>> packageClasses = getFoundClasses(packageName);
     if (packageClasses == null) {
-      log.debug("No classes found in package: " + packageName);
+      if (log.isTraceEnabled()) {
+        log.trace("No classes found in package: " + packageName);
+      }
       return;
     }
-    for (Class type : packageClasses) {
+    for (Class<?> type : packageClasses) {
       if (test.matches(type)) {
         classes.add(type);
       }
@@ -186,7 +194,7 @@ public class PackageScanClassResolver {
     this.allClassesByPackage.get(packageName).add(type);
   }
 
-  protected Set<Class> getFoundClasses(String packageName) {
+  protected Set<Class<?>> getFoundClasses(String packageName) {
     packageName = packageName.replace("/", ".");
     return this.allClassesByPackage.get(packageName);
   }

@@ -60,8 +60,8 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
       String formkey = request.getHeader(formKeyName);
       boolean hasFormKey = StringUtils.hasText(formkey);
       if (hasFormKey || annotation != null) {
-        if (log.isDebugEnabled()) {
-          log.debug(request.getServletPath() + " formDuplicateCheck");
+        if (log.isTraceEnabled()) {
+          log.trace(request.getServletPath() + " formDuplicateCheck");
         }
         if (!hasFormKey) {
           ServletServerHttpRequest servletServerHttpRequest = new ServletServerHttpRequest(
@@ -91,8 +91,8 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
 
         formkey = formkey + method + request.getRequestURI();
         digestFormkey = Sha512DigestUtils.shaHex(formkey);
-        if (log.isDebugEnabled()) {
-          log.debug("{} formkey:{},digestFormkey:{}", request.getRequestURI(), formkey,
+        if (log.isTraceEnabled()) {
+          log.trace("{} formkey:{},digestFormkey:{}", request.getRequestURI(), formkey,
               digestFormkey);
         }
       }
@@ -111,8 +111,8 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
       String formkey = (String) request.getAttribute(FORM_KEY);
       if (formkey != null) {
         formkeyService.remove(formkey);
-        if (log.isDebugEnabled()) {
-          log.debug("{} remove:{}", request.getRequestURI(), formkey);
+        if (log.isTraceEnabled()) {
+          log.trace("{} remove:{}", request.getRequestURI(), formkey);
         }
       }
     }
