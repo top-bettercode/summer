@@ -58,9 +58,9 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
           new Object[]{id, accessToken, refreshToken, new SqlLobValue(auth)},
           new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB});
       if (log.isDebugEnabled()) {
-        log.debug("JdbcApiAuthorizationService.save\n{}\n{},{},{},{}\naffected:{}",
+        log.debug("JdbcApiAuthorizationService.save\n{}\n{},{},{}\naffected:{}",
             defaultInsertStatement, id,
-            accessToken, refreshToken, new String(auth), update);
+            accessToken, refreshToken, update);
       }
     } catch (DuplicateKeyException e) {
       save(authorization);
