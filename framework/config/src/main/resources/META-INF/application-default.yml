@@ -133,4 +133,3 @@ logging:
     net.sf: warn
     javax.activation: warn
     org.mongodb: warn
-    top.bettercode: info

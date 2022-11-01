@@ -26,6 +26,5 @@ spring:
 logging:
   level:
     root: debug
-    top.bettercode: debug
 
 
