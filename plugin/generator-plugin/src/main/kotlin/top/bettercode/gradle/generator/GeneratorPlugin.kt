@@ -185,7 +185,7 @@ class GeneratorPlugin : Plugin<Project> {
         val extension = project.extensions.getByType(GeneratorExtension::class.java)
 
         if (extension.moduleSize > 1)
-            project.tasks.create("genCode[[All]") { task ->
+            project.tasks.create("gen[[[All]") { task ->
                 task.group = genGroup
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
@@ -201,10 +201,10 @@ class GeneratorPlugin : Plugin<Project> {
             }
 
         extension.run { module, tableHolder ->
-            val prefix = if (defaultModuleName == module) "" else "[${
+            val prefix = if (defaultModuleName == module) "" else "[[${
                 module.capitalized()
             }]"
-            project.tasks.create("genCode${prefix}") { task ->
+            project.tasks.create("gen${prefix}") { task ->
                 task.group = genGroup
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {

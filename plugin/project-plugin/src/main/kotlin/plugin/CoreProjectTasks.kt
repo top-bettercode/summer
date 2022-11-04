@@ -22,7 +22,7 @@ object CoreProjectTasks {
     fun config(project: Project) {
 
         project.tasks.apply {
-            create("gene[SerializationViews]") { t ->
+            create("gen[SerializationViews]") { t ->
                 t.group = GeneratorPlugin.genGroup
                 t.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -82,7 +82,7 @@ object CoreProjectTasks {
                     Generators.call(gen)
                 }
             }
-            create("gene[DbDoc]") {
+            create("gen[DbDoc]") {
                 it.group = GeneratorPlugin.genGroup
                 it.doLast {
                     val dbDoc = DbDoc(project)
@@ -92,7 +92,7 @@ object CoreProjectTasks {
                     Generators.call(gen)
                 }
             }
-            create("gene[DicCode]") {
+            create("gen[DicCode]") {
                 it.group = GeneratorPlugin.genGroup
                 it.doLast {
                     val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -104,7 +104,7 @@ object CoreProjectTasks {
                     DicCodeGen(project).run()
                 }
             }
-            create("gene[ErrorCode]") { t ->
+            create("gen[ErrorCode]") { t ->
                 t.group = GeneratorPlugin.genGroup
                 t.doLast {
                     val file = project.file("src/main/resources/error-code.properties")

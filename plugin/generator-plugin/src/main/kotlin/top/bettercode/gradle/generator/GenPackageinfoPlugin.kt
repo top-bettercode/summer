@@ -19,7 +19,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
 
-        project.tasks.create("gene[PackageInfo]") { task ->
+        project.tasks.create("gen[PackageInfo]") { task ->
             task.group = GeneratorPlugin.genGroup
             task.doLast { _ ->
                 project.allprojects { subProject ->
@@ -96,7 +96,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
             }
         }
 
-        project.tasks.create("gene[PackageInfoDoc]") { task ->
+        project.tasks.create("gen[PackageInfoDoc]") { task ->
             task.group = GeneratorPlugin.genGroup
             task.doLast { _ ->
                 val regex = Regex(".*/\\*\\*(.*)\\*/.*", RegexOption.DOT_MATCHES_ALL)
