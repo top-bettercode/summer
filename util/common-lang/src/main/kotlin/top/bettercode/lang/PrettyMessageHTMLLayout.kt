@@ -31,6 +31,23 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         sbuf.append(LINE_SEPARATOR)
         sbuf.append("<p>Log session start time ")
         sbuf.append(Date())
+        sbuf.append("</p><p></p>")
+        sbuf.append(LINE_SEPARATOR)
+        sbuf.append(LINE_SEPARATOR)
+        sbuf.append("<table id=\"loggingText\" cellspacing=\"0\" cellpadding=\"0\">")
+        sbuf.append(LINE_SEPARATOR)
+
+        buildHeaderRowForTable(sbuf)
+
+        return sbuf.toString()
+    }
+
+    fun getLogsHeader(): String {
+        val sbuf = StringBuilder()
+        sbuf.append("<hr/>")
+        sbuf.append(LINE_SEPARATOR)
+        sbuf.append("<p>Log session start time ")
+        sbuf.append(Date())
         sbuf.append("&nbsp;&nbsp;&nbsp;&nbsp;<a href='./'>../</a>")
         sbuf.append("</p><p></p>")
         sbuf.append(LINE_SEPARATOR)

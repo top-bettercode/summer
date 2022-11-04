@@ -107,7 +107,7 @@ class LogsEndpoint(
                 prettyMessageHTMLLayout.title = "实时日志"
                 response.writer.use { writer ->
                     writer.println(prettyMessageHTMLLayout.fileHeader)
-                    writer.println(prettyMessageHTMLLayout.presentationHeader)
+                    writer.println(prettyMessageHTMLLayout.getLogsHeader())
                     writer.println(prettyMessageHTMLLayout.presentationFooter)
                     writer.println(
                         """
@@ -220,7 +220,7 @@ class LogsEndpoint(
                 prettyMessageHTMLLayout.start()
                 response.writer.use { writer ->
                     writer.println(prettyMessageHTMLLayout.fileHeader)
-                    writer.println(prettyMessageHTMLLayout.presentationHeader)
+                    writer.println(prettyMessageHTMLLayout.getLogsHeader())
 
                     var msg = StringBuilder("")
                     var level: String? = null
