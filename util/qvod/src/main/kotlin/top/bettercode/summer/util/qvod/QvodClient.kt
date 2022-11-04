@@ -71,7 +71,7 @@ open class QvodClient(
         val original =
             "secretId=${properties.secretId}&currentTimeStamp=$currentTimeStamp&expireTime=${currentTimeStamp + properties.uploadValidSeconds}&random=${
                 RandomUtil.nextInt(9)
-            }&procedure=${properties.procedure ?: ""}"
+            }&classId=${properties.classId}&procedure=${properties.procedure ?: ""}"
         if (log.isDebugEnabled) {
             log.debug("original signature:{}", original)
         }

@@ -53,6 +53,10 @@ public class QvodProperties {
    * 请求读取超时时间毫秒数
    */
   private int readTimeout = 10000;
+  /**
+   * 文件分类，默认为0
+   */
+  private int classId = 0;
 
   public Long getAppId() {
     return appId;
@@ -142,5 +146,13 @@ public class QvodProperties {
   public QvodProperties setReadTimeout(int readTimeout) {
     this.readTimeout = readTimeout;
     return this;
+  }
+
+  public int getClassId() {
+    return classId;
+  }
+
+  public void setClassId(int classId) {
+    this.classId = classId;
   }
 }
