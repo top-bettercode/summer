@@ -143,12 +143,13 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"return ok($entityName${if (isFullComposite) "get${primaryKeyClassName}()" else ""});"
             }
 
+            import("org.springframework.http.MediaType")
             //create
             import("javax.validation.groups.Default")
             method("create", JavaType.objectInstance) {
                 annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"!${primaryKeyName}\", name = \"新增\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, params = \"!${primaryKeyName}\", name = \"新增\")")
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
@@ -160,10 +161,28 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"return noContent();"
             }
 
+            //save
+            import("javax.validation.groups.Default")
+            method("save", JavaType.objectInstance) {
+                annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
+                annotation("@org.springframework.transaction.annotation.Transactional")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_JSON_VALUE, name = \"保存\")")
+                parameter {
+                    annotation("@org.springframework.web.bind.annotation.RequestBody")
+                    import("top.bettercode.simpleframework.web.validator.CreateConstraint")
+                    annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
+                    name = "form"
+                    type = formType
+                }
+                +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
+                +"${projectEntityName}Service.dynamicSave($entityName);"
+                +"return noContent();"
+            }
+
             method("delete", JavaType.objectInstance) {
                 annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/delete\", name = \"删除\")")
+                annotation("@org.springframework.web.bind.annotation.RequestMapping(value = \"/delete\", name = \"删除\")")
                 parameter {
                     name = primaryKeyName
                     type =
@@ -231,11 +250,12 @@ val updateController: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         //update
+        import("org.springframework.http.MediaType")
         import("javax.validation.groups.Default")
         method("update", JavaType.objectInstance) {
             annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
             annotation("@org.springframework.transaction.annotation.Transactional")
-            annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", params = \"${primaryKeyName}\", name = \"编辑\")")
+            annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, params = \"${primaryKeyName}\", name = \"编辑\")")
             parameter {
                 import("top.bettercode.simpleframework.web.validator.UpdateConstraint")
                 annotation("@org.springframework.validation.annotation.Validated({Default.class, UpdateConstraint.class})")

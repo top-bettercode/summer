@@ -92,10 +92,10 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +");"
             }
 
-            val filterColumns =
-                columns.filter { !it.version && !it.jsonViewIgnored && it.javaName != "createdDate" && it.javaName != "lastModifiedDate" }
-            val filterOtherColumns =
-                otherColumns.filter { !it.version && !it.jsonViewIgnored && it.javaName != "createdDate" && it.javaName != "lastModifiedDate" }
+            val filterColumns = columns.filter { !it.testIgnored }
+            val filterOtherColumns = otherColumns.filter { !it.testIgnored }
+
+            import("org.springframework.http.MediaType")
             //create
             method("create", JavaType.voidPrimitiveInstance) {
 //                javadoc {
@@ -114,6 +114,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     });"
                 }
                 +"perform(post(\"/$pathName/save\")"
+                2 + ".contentType(MediaType.APPLICATION_FORM_URLENCODED)"
                 if (isFullComposite) {
                     filterColumns.forEach {
                         2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
@@ -134,6 +135,46 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +");"
             }
 
+            //save
+            method("save", JavaType.voidPrimitiveInstance) {
+//                javadoc {
+//                    +"// ${remarks}保存"
+//                }
+                annotation("@org.junit.jupiter.api.DisplayName(\"保存\")")
+                annotation("@org.junit.jupiter.api.Test")
+                annotation("@org.junit.jupiter.api.Order(4)")
+                exception(JavaType("Exception"))
+                +"$className $entityName = new $className();"
+                if (isCompositePrimaryKey || !primaryKey.autoIncrement) {
+                    import(primaryKeyType)
+                    if (isCompositePrimaryKey) {
+                        +"$primaryKeyClassName $primaryKeyName = new ${primaryKeyClassName}();"
+                        primaryKeys.forEach {
+                            +"$primaryKeyName.set${
+                                it.javaName.capitalized()
+                            }(${it.randomValueToSet(this@apply)});"
+                        }
+                        +"$entityName.set${
+                            primaryKeyName.capitalized()
+                        }(${primaryKeyName});"
+                    } else
+                        primaryKeys.forEach {
+                            +"$entityName.set${
+                                it.javaName.capitalized()
+                            }(${it.randomValueToSet(this@apply)});"
+                        }
+                }
+                filterOtherColumns.forEach {
+                    +"$entityName.set${
+                        it.javaName.capitalized()
+                    }(${it.randomValueToSet(this@apply)});"
+                }
+                +"perform(post(\"/$pathName/save\")"
+                2 + ".contentType(MediaType.APPLICATION_JSON)"
+                2 + ".content(json($entityName))"
+                +");"
+            }
+
             //update
             method("update", JavaType.voidPrimitiveInstance) {
 //                javadoc {
@@ -141,7 +182,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 //                }
                 annotation("@org.junit.jupiter.api.DisplayName(\"编辑\")")
                 annotation("@org.junit.jupiter.api.Test")
-                annotation("@org.junit.jupiter.api.Order(4)")
+                annotation("@org.junit.jupiter.api.Order(5)")
                 exception(JavaType("Exception"))
                 if (isFullComposite) {
                     +"perform(post(\"/$pathName/save\")"
@@ -153,6 +194,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         primaryKeyName.capitalized()
                     }();"
                     +"perform(post(\"/$pathName/save\")"
+                    2 + ".contentType(MediaType.APPLICATION_FORM_URLENCODED)"
                     2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                     filterOtherColumns.forEach {
                         2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
@@ -169,12 +211,12 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 //                }
                 annotation("@org.junit.jupiter.api.DisplayName(\"删除\")")
                 annotation("@org.junit.jupiter.api.Test")
-                annotation("@org.junit.jupiter.api.Order(5)")
+                annotation("@org.junit.jupiter.api.Order(6)")
                 exception(JavaType("Exception"))
                 +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
                     primaryKeyName.capitalized()
                 }();"
-                +"perform(post(\"/$pathName/delete\")"
+                +"perform(get(\"/$pathName/delete\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 +");"
                 +"assertFalse(${projectEntityName}Service.existsById(${primaryKeyName}));"

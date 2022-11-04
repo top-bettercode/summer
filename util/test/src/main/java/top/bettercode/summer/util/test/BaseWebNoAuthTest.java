@@ -71,8 +71,7 @@ public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
   private CustomErrorController errorController;
   @Autowired
   protected RequestLoggingProperties requestLoggingProperties;
-  @Autowired
-  protected ObjectMapper objectMapper;
+  protected ObjectMapper objectMapper = new ObjectMapper();
 
   @AfterAll
   static void logAfterAll() {

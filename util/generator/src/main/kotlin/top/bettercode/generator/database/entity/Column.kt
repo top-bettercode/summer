@@ -197,6 +197,10 @@ data class Column(
         this.softDelete || this.version
     }
 
+    val testIgnored: Boolean by lazy {
+        this.jsonViewIgnored || javaName == "createdDate" || javaName == "lastModifiedDate"
+    }
+
     val jdbcType: String
             by lazy { JavaTypeResolver.calculateJdbcTypeName(this) }
 
