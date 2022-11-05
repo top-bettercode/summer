@@ -129,9 +129,9 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             //saveBody
             method("saveBody", JavaType.voidPrimitiveInstance) {
 //                javadoc {
-//                    +"// ${remarks}保存"
+//                    +"// ${remarks}保存JSON"
 //                }
-                annotation("@org.junit.jupiter.api.DisplayName(\"保存\")")
+                annotation("@org.junit.jupiter.api.DisplayName(\"保存JSON\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(4)")
                 exception(JavaType("Exception"))

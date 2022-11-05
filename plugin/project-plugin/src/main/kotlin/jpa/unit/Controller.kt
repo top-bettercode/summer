@@ -163,7 +163,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             method("saveBody", JavaType.objectInstance) {
                 annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_JSON_VALUE, name = \"保存\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_JSON_VALUE, name = \"保存JSON\")")
                 parameter {
                     annotation("@org.springframework.web.bind.annotation.RequestBody")
                     import("top.bettercode.simpleframework.web.validator.CreateConstraint")
