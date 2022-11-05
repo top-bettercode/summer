@@ -8,39 +8,30 @@ import org.springframework.util.Assert
 object BeanUtil {
 
     @JvmStatic
-    fun copyPropertiesNotNull(exist: Any, newEntity: Any) {
-        copyPropertiesNotNullOrEmpty(exist, newEntity)
+    fun Any.setNullPropertiesFrom(exist: Any) {
+        this.setNullOrEmptyPropertiesFrom(exist, false)
     }
 
     @JvmStatic
-    fun copyPropertiesNotEmpty(exist: Any, newEntity: Any) {
-        copyPropertiesNotNullOrEmpty(exist, newEntity, true)
-    }
-
-    private fun copyPropertiesNotNullOrEmpty(
+    fun Any.setNullOrEmptyPropertiesFrom(
         exist: Any,
-        newEntity: Any,
-        ignoreEmpty: Boolean = false
+        setEmptyProperties: Boolean = true
     ) {
         Assert.notNull(exist, "exist must not be null")
-        Assert.notNull(newEntity, "newEntity must not be null")
-        val existWrapper = DirectFieldAccessFallbackBeanWrapper(
-            exist
-        )
-        val newWrapper = DirectFieldAccessFallbackBeanWrapper(
-            newEntity
-        )
-        val targetPds = newWrapper.propertyDescriptors
+        Assert.notNull(this, "newEntity must not be null")
+        val existWrapper = DirectFieldAccessFallbackBeanWrapper(exist)
+        val thisWrapper = DirectFieldAccessFallbackBeanWrapper(this)
+        val targetPds = thisWrapper.propertyDescriptors
         for (targetPd in targetPds) {
             val propertyName = targetPd.name
             if ("class" == propertyName) {
                 continue
             }
-            val propertyValue = newWrapper.getPropertyValue(propertyName)
-            if (propertyValue != null && (!ignoreEmpty || "" != propertyValue)) {
+            val propertyValue = thisWrapper.getPropertyValue(propertyName)
+            if (propertyValue != null && (!setEmptyProperties || "" != propertyValue)) {
                 continue
             }
-            newWrapper.setPropertyValue(propertyName, existWrapper.getPropertyValue(propertyName))
+            thisWrapper.setPropertyValue(propertyName, existWrapper.getPropertyValue(propertyName))
         }
     }
 

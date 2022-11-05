@@ -38,7 +38,6 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
 
-
         //list
         val returnType = JavaType.objectInstance
         method("list", returnType) {
@@ -144,26 +143,24 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             import("org.springframework.http.MediaType")
-            //create
+            //saveForm
             import("javax.validation.groups.Default")
-            method("create", JavaType.objectInstance) {
+            method("saveForm", JavaType.objectInstance) {
                 annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, params = \"!${primaryKeyName}\", name = \"新增\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, name = \"保存表单\")")
                 parameter {
                     import("top.bettercode.simpleframework.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
                     name = "form"
                     type = formType
                 }
-                +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
-                +"${projectEntityName}Service.save($entityName);"
-                +"return noContent();"
+                +"return save(form);"
             }
 
-            //save
+            //saveBody
             import("javax.validation.groups.Default")
-            method("save", JavaType.objectInstance) {
+            method("saveBody", JavaType.objectInstance) {
                 annotation("@top.bettercode.simpleframework.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_JSON_VALUE, name = \"保存\")")
@@ -174,8 +171,44 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     name = "form"
                     type = formType
                 }
+                +"return save(form);"
+            }
+
+            method("save", JavaType.objectInstance) {
+                parameter {
+                    name = "form"
+                    type = formType
+                }
+                +"${primaryKeyType.shortName} $primaryKeyName = form.get${primaryKeyName.capitalized()}();"
+                import("org.springframework.util.StringUtils")
+                +"if (${if (primaryKeyType == JavaType.stringInstance) "!StringUtils.hasText($primaryKeyName)" else "$primaryKeyName == null"}) {"
+                +"return create(form);"
+                +"} else {"
+                +"return update(form);"
+                +"}"
+            }
+
+            method("create", JavaType.objectInstance) {
+                parameter {
+                    name = "form"
+                    type = formType
+                }
                 +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
-                +"${projectEntityName}Service.dynamicSave($entityName);"
+                +"${projectEntityName}Service.save($entityName);"
+                +"return noContent();"
+            }
+
+            method("update", JavaType.objectInstance) {
+                parameter {
+                    name = "form"
+                    type = formType
+                }
+                import("top.bettercode.lang.util.BeanUtil")
+                +"${primaryKeyType.shortName} $primaryKeyName = form.get${primaryKeyName.capitalized()}();"
+                +"$className exist = ${projectEntityName}Service.findById(${primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
+                +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
+                +"BeanUtil.setNullPropertiesFrom($entityName, exist);"
+                +"${projectEntityName}Service.save($entityName);"
                 +"return noContent();"
             }
 
