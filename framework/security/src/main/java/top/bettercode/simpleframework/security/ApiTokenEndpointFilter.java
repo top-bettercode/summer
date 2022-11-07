@@ -195,7 +195,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authenticationResult);
             request.setAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME,
-                userDetails.getUsername());
+                apiAuthenticationToken.getScope() + ":" + userDetails.getUsername());
             SecurityContextHolder.setContext(context);
             if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
               if (revokeTokenService != null) {
