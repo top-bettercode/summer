@@ -91,8 +91,8 @@ class AutodocHandler(
                     log.warn("docOperation resource未设置")
                     return
                 }
-                operation.collectionName = operation.collectionName.replace("/", "、")
-                operation.name = operation.name.replace("/", "、")
+                operation.collectionName = operation.collectionName.replace("/", Util.replaceChar)
+                operation.name = operation.name.replace("/", Util.replaceChar)
 
                 if (genProperties.projectPath.isNotBlank()) {
                     operation.request.restUri =

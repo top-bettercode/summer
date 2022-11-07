@@ -271,7 +271,7 @@ object AsciidocGenerator : AbstractbGenerator() {
                         out.println()
                         val operationPath =
                             operation.operationFile.absolutePath.substringAfter(sourcePath)
-                        val operationName = operation.name
+                        val operationName = operation.name.replace(Util.replaceChar, "/")
                         out.println("[[_${pynames.pyname("$collectionName-$operationName")}]]")
                         out.println("=== $operationName")
                         out.println()

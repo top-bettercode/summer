@@ -29,6 +29,7 @@ import java.util.*
  * @author Peter Wu
  */
 object Util {
+    val replaceChar="丨"
     val objectMapper = ObjectMapper()
     val yamlMapper = YAMLMapper()
 
