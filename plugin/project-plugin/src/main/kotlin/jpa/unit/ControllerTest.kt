@@ -106,7 +106,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 annotation("@org.junit.jupiter.api.DisplayName(\"保存(application/json)\")")
                 annotation("@org.junit.jupiter.api.Test")
-                annotation("@org.junit.jupiter.api.Order(4)")
+                annotation("@org.junit.jupiter.api.Order(3)")
                 exception(JavaType("Exception"))
                 +"$className $entityName = new $className();"
                 import(primaryKeyType)
@@ -148,7 +148,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 //                }
                 annotation("@org.junit.jupiter.api.DisplayName(\"保存(application/x-www-form-urlencoded)\")")
                 annotation("@org.junit.jupiter.api.Test")
-                annotation("@org.junit.jupiter.api.Order(3)")
+                annotation("@org.junit.jupiter.api.Order(4)")
                 exception(JavaType("Exception"))
                 if (isFullComposite) {
                     +"perform(post(\"/$pathName/save\")"

@@ -26,7 +26,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         //constructor no args
         constructor {
-            +"this.entity = ${if (isFullComposite) "new ${entityType.shortName}()" else "${entityType.shortName}.withDefaults()"};"
+            +"this.entity = new ${entityType.shortName}();"
         }
 
         //constructor with entity
