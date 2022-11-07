@@ -98,39 +98,12 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             val filterOtherColumns = otherColumns.filter { !it.testIgnored }
 
             import("org.springframework.http.MediaType")
-            //saveForm
-            method("saveForm", JavaType.voidPrimitiveInstance) {
-//                javadoc {
-//                    +"// ${remarks}保存(application/x-www-form-urlencoded)"
-//                }
-                annotation("@org.junit.jupiter.api.DisplayName(\"保存(application/x-www-form-urlencoded)\")")
-                annotation("@org.junit.jupiter.api.Test")
-                annotation("@org.junit.jupiter.api.Order(3)")
-                exception(JavaType("Exception"))
-                if (isFullComposite) {
-                    +"perform(post(\"/$pathName/save\")"
-                    filterColumns.forEach {
-                        2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
-                    }
-                } else {
-                    +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
-                        primaryKeyName.capitalized()
-                    }();"
-                    +"perform(post(\"/$pathName/save\")"
-                    2 + ".contentType(MediaType.APPLICATION_FORM_URLENCODED)"
-                    2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
-                    filterOtherColumns.forEach {
-                        2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
-                    }
-                }
-                +");"
-            }
 
             //saveBody
             method("saveBody", JavaType.voidPrimitiveInstance) {
-//                javadoc {
-//                    +"// ${remarks}保存(application/json)"
-//                }
+                javadoc {
+                    +"// 优先使用 ${remarks}保存(application/json)"
+                }
                 annotation("@org.junit.jupiter.api.DisplayName(\"保存(application/json)\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(4)")
@@ -165,6 +138,34 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"perform(post(\"/$pathName/save\")"
                 2 + ".contentType(MediaType.APPLICATION_JSON)"
                 2 + ".content(json($entityName))"
+                +");"
+            }
+
+            //saveForm
+            method("saveForm", JavaType.voidPrimitiveInstance) {
+//                javadoc {
+//                    +"// ${remarks}保存(application/x-www-form-urlencoded)"
+//                }
+                annotation("@org.junit.jupiter.api.DisplayName(\"保存(application/x-www-form-urlencoded)\")")
+                annotation("@org.junit.jupiter.api.Test")
+                annotation("@org.junit.jupiter.api.Order(3)")
+                exception(JavaType("Exception"))
+                if (isFullComposite) {
+                    +"perform(post(\"/$pathName/save\")"
+                    filterColumns.forEach {
+                        2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
+                    }
+                } else {
+                    +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
+                        primaryKeyName.capitalized()
+                    }();"
+                    +"perform(post(\"/$pathName/save\")"
+                    2 + ".contentType(MediaType.APPLICATION_FORM_URLENCODED)"
+                    2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
+                    filterOtherColumns.forEach {
+                        2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
+                    }
+                }
                 +");"
             }
 
