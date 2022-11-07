@@ -472,12 +472,6 @@ public class ExcelField<T, P> {
       } else if (ClassUtils.isPrimitiveOrWrapper(propertyType)) {
         return property;
       } else if (propertyType == BigDecimal.class) {
-        int scale = ((BigDecimal) property).scale();
-        if (scale > 0) {
-          this.numberingFormat = "0." + String.format("%0" + scale + "d", 0);
-        } else {
-          this.numberingFormat = "0";
-        }
         return property;
       } else if (propertyType.isArray()) {
         int length = Array.getLength(property);

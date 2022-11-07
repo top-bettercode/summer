@@ -1,12 +1,14 @@
 package top.bettercode.util.excel;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import top.bettercode.lang.util.ArrayUtil;
+import top.bettercode.lang.util.RandomUtil;
 import top.bettercode.lang.util.StringUtil;
 
 /**
@@ -28,7 +30,8 @@ public class ExcelTest {
       ExcelField.of("编码4", DataBean::getDoublel),
       ExcelField.of("编码5", DataBean::getFloatl),
       ExcelField.of("编码6", DataBean::getName),
-      ExcelField.of("编码7", DataBean::getDate)
+      ExcelField.of("编码7", DataBean::getDate),
+      ExcelField.of("编码8", DataBean::getNum)
   );
 
   @Test
@@ -100,6 +103,7 @@ public class ExcelTest {
     private Double doublel;
     private Float floatl;
     private String name;
+    private BigDecimal num;
     private Date date;
 
     public DataBean() {
@@ -108,6 +112,7 @@ public class ExcelTest {
       longl = new Date().getTime();
       doublel = 4.4;
       floatl = 5.5f;
+      num = new BigDecimal("0." + RandomUtil.nextInt(2));
       name = "名称";
       date = new Date();
     }
@@ -118,8 +123,17 @@ public class ExcelTest {
       longl = new Date().getTime() + index * 10000;
       doublel = 4.4 + index;
       floatl = 5.5f + index;
+      num = new BigDecimal("0." + index);
       name = "名称" + index;
       date = new Date();
+    }
+
+    public BigDecimal getNum() {
+      return num;
+    }
+
+    public void setNum(BigDecimal num) {
+      this.num = num;
     }
 
     public Integer getIntCode() {
