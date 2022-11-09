@@ -75,8 +75,41 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 +"return $entityName;"
             }
+
+            method(
+                "setNullPropertyWithDefaults",
+                entityType
+            ) {
+                javadoc {
+                    +"/**"
+                    +" * 如果属性为null，设置默认值"
+                    +" */"
+                }
+                defaultColumns.forEach {
+                    +"if (${it.javaName} == null) {"
+                    +"${it.javaName} = ${it.initializationString(this@apply)};"
+                    +"}"
+                }
+                +"return this;"
+            }
         }
 
+        method(
+            "setNullPropertyFrom",
+            entityType
+        ) {
+            javadoc {
+                +"/**"
+                +" * 如果属性为null，根据参数对象的属性设置值"
+                +" *"
+                +" * @param exist 已存在实体"
+                +" */"
+            }
+            parameter(entityType, "exist")
+            import("top.bettercode.lang.util.BeanUtil")
+            +"BeanUtil.setNullPropertyFrom(this, exist);"
+            +"return this;"
+        }
 
         //primaryKey
         field(primaryKeyName, primaryKeyType) {

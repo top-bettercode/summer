@@ -8,14 +8,14 @@ import org.springframework.util.Assert
 object BeanUtil {
 
     @JvmStatic
-    fun Any.setNullPropertiesFrom(exist: Any) {
-        this.setNullOrEmptyPropertiesFrom(exist, false)
+    fun Any.setNullPropertyFrom(exist: Any) {
+        this.setNullOrEmptyPropertyFrom(exist, false)
     }
 
     @JvmStatic
-    fun Any.setNullOrEmptyPropertiesFrom(
+    fun Any.setNullOrEmptyPropertyFrom(
         exist: Any,
-        setEmptyProperties: Boolean = true
+        setEmptyProperty: Boolean = true
     ) {
         Assert.notNull(exist, "exist must not be null")
         Assert.notNull(this, "newEntity must not be null")
@@ -28,7 +28,7 @@ object BeanUtil {
                 continue
             }
             val propertyValue = thisWrapper.getPropertyValue(propertyName)
-            if (propertyValue != null && (!setEmptyProperties || "" != propertyValue)) {
+            if (propertyValue != null && (!setEmptyProperty || "" != propertyValue)) {
                 continue
             }
             thisWrapper.setPropertyValue(propertyName, existWrapper.getPropertyValue(propertyName))
