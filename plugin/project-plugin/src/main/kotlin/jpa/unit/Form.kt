@@ -35,11 +35,6 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"this.entity = $entityName;"
         }
 
-        method("getEntity", entityType) {
-            +"return entity;"
-        }
-
-
         if (!isFullComposite) {
             //constructor with id
             constructor(Parameter(primaryKeyName, primaryKeyType)) {
@@ -74,6 +69,10 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     primaryKeyName.capitalized()
                 }();"
             }
+        }
+
+        method("getEntity", entityType) {
+            +"return entity;"
         }
 
         val filterColumns =
