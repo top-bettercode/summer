@@ -26,6 +26,6 @@ public @interface FormDuplicateCheck {
   /**
    * @return 提示信息
    */
-  String message() default "请勿重复提交";
+  String message() default "您提交的太快了,请稍候再试.";
 
 }
