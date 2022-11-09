@@ -55,9 +55,6 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"this.${primaryKeyName} = ${primaryKeyName};"
         }
 
-        val defaultColumns = otherColumns.filter {
-            !it.version && !it.initializationString(this).isNullOrBlank()
-        }
         if (defaultColumns.isNotEmpty()) {
             method(
                 "withDefaults",
@@ -77,7 +74,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             method(
-                "setNullPropertyWithDefaults",
+                "nullPropertySetWithDefaults",
                 entityType
             ) {
                 javadoc {
@@ -86,16 +83,26 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +" */"
                 }
                 defaultColumns.forEach {
-                    +"if (${it.javaName} == null) {"
-                    +"${it.javaName} = ${it.initializationString(this@apply)};"
-                    +"}"
+                    if (isFullComposite || isCompositePrimaryKey && it.isPrimary) {
+                        +"if (this.${primaryKeyName}.get${it.javaName.capitalized()}() == null) {"
+                        +"this.${primaryKeyName}.set${it.javaName.capitalized()}(${
+                            it.initializationString(
+                                this@apply
+                            )
+                        });"
+                        +"}"
+                    } else {
+                        +"if (this.${it.javaName} == null) {"
+                        +"this.${it.javaName} = ${it.initializationString(this@apply)};"
+                        +"}"
+                    }
                 }
                 +"return this;"
             }
         }
 
         method(
-            "setNullPropertyFrom",
+            "nullPropertySetFrom",
             entityType
         ) {
             javadoc {
@@ -106,8 +113,17 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +" */"
             }
             parameter(entityType, "exist")
-            import("top.bettercode.lang.util.BeanUtil")
-            +"BeanUtil.setNullPropertyFrom(this, exist);"
+            columns.forEach {
+                if (isFullComposite || isCompositePrimaryKey && it.isPrimary) {
+                    +"if (this.${primaryKeyName}.get${it.javaName.capitalized()}() == null) {"
+                    +"this.${primaryKeyName}.set${it.javaName.capitalized()}(exist.get${it.javaName.capitalized()}());"
+                    +"}"
+                } else {
+                    +"if (this.${it.javaName} == null) {"
+                    +"this.${it.javaName} = exist.get${it.javaName.capitalized()}();"
+                    +"}"
+                }
+            }
             +"return this;"
         }
 

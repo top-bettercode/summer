@@ -8,12 +8,12 @@ import org.springframework.util.Assert
 object BeanUtil {
 
     @JvmStatic
-    fun Any.setNullPropertyFrom(exist: Any) {
-        this.setNullOrEmptyPropertyFrom(exist, false)
+    fun Any.nullPropertySetFrom(exist: Any) {
+        this.nullOrEmptyPropertySetFrom(exist, false)
     }
 
     @JvmStatic
-    fun Any.setNullOrEmptyPropertyFrom(
+    fun Any.nullOrEmptyPropertySetFrom(
         exist: Any,
         setEmptyProperty: Boolean = true
     ) {

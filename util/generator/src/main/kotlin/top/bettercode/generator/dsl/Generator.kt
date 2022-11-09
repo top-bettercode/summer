@@ -203,6 +203,11 @@ open class Generator {
      */
     val otherColumns: List<Column> get() = columns.filter { !primaryKeys.contains(it) }
 
+    val CompilationUnit.defaultColumns
+        get() = otherColumns.filter {
+            !it.version && !it.initializationString(this).isNullOrBlank()
+        }
+
     /**
      * 字段
      */

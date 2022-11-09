@@ -195,6 +195,8 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     type = formType
                 }
                 +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
+                if (defaultColumns.isNotEmpty())
+                    +"$entityName.nullPropertySetWithDefaults();"
                 +"${projectEntityName}Service.save($entityName);"
                 +"return noContent();"
             }
@@ -208,7 +210,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"${primaryKeyType.shortName} $primaryKeyName = form.get${primaryKeyName.capitalized()}();"
                 +"$className exist = ${projectEntityName}Service.findById(${primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
                 +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
-                +"BeanUtil.setNullPropertiesFrom($entityName, exist);"
+                +"$entityName.nullPropertySetFrom(exist);"
                 +"${projectEntityName}Service.save($entityName);"
                 +"return noContent();"
             }

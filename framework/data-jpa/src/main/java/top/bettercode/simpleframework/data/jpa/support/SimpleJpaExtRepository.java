@@ -323,7 +323,7 @@ public class SimpleJpaExtRepository<T, ID> extends
         Optional<T> optional = findById(entityInformation.getId(entity));
         if (optional.isPresent()) {
           T exist = optional.get();
-          BeanUtil.setNullPropertyFrom(entity, exist);
+          BeanUtil.nullPropertySetFrom(entity, exist);
           return em.merge(entity);
         } else {
           em.persist(entity);
