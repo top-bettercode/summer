@@ -2,6 +2,8 @@ package top.bettercode.lang.util
 
 import java.time.*
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 import java.time.temporal.TemporalAdjusters
 import java.util.*
 
@@ -168,7 +170,12 @@ open class TimeUtil(
 
         @JvmStatic
         fun parse(text: CharSequence, formatter: String): TimeUtil {
-            return TimeUtil(LocalDateTime.parse(text, DateTimeFormatter.ofPattern(formatter)))
+            return parse(
+                text, DateTimeFormatterBuilder()
+                    .appendPattern(formatter)
+                    .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                    .toFormatter()
+            )
         }
 
         @JvmStatic
@@ -183,7 +190,14 @@ open class TimeUtil(
 
         @JvmStatic
         fun parseDate(text: CharSequence, formatter: String): TimeUtil {
-            return of(LocalDate.parse(text, DateTimeFormatter.ofPattern(formatter)))
+            return of(
+                LocalDate.parse(
+                    text, DateTimeFormatterBuilder()
+                        .appendPattern(formatter)
+                        .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                        .toFormatter()
+                )
+            )
         }
 
         @JvmStatic

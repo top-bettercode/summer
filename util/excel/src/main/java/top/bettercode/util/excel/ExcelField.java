@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -415,6 +417,9 @@ public class ExcelField<T, P> {
         return cellValue instanceof Boolean ? cellValue
             : BooleanUtil.toBoolean(String.valueOf(cellValue));
       } else if (propertyType == Integer.class || propertyType == int.class) {
+        if (cellValue instanceof String) {
+          return new BigDecimal((String) cellValue).intValue();
+        }
         return ((BigDecimal) cellValue).intValue();
       } else if (propertyType == Long.class || propertyType == long.class) {
         if (isDateField()) {
@@ -425,13 +430,25 @@ public class ExcelField<T, P> {
                 .toMillis();
           }
         } else {
+          if (cellValue instanceof String) {
+            return new BigDecimal((String) cellValue).longValue();
+          }
           return ((BigDecimal) cellValue).longValue();
         }
       } else if (propertyType == BigDecimal.class) {
+        if (cellValue instanceof String) {
+          return new BigDecimal((String) cellValue);
+        }
         return cellValue;
       } else if (propertyType == Double.class || propertyType == double.class) {
+        if (cellValue instanceof String) {
+          return new BigDecimal((String) cellValue).doubleValue();
+        }
         return ((BigDecimal) cellValue).doubleValue();
       } else if (propertyType == Float.class || propertyType == float.class) {
+        if (cellValue instanceof String) {
+          return new BigDecimal((String) cellValue).floatValue();
+        }
         return ((BigDecimal) cellValue).floatValue();
       } else if (propertyType == Date.class) {
         if (cellValue instanceof LocalDateTime) {
@@ -540,8 +557,16 @@ public class ExcelField<T, P> {
     return this;
   }
 
+  public ExcelField<T, P> dateTimeFormatter(DateTimeFormatter dateTimeFormatter) {
+    this.dateTimeFormatter = dateTimeFormatter;
+    return this;
+  }
+
   public ExcelField<T, P> pattern(String pattern) {
-    this.dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+    this.dateTimeFormatter = new DateTimeFormatterBuilder()
+        .appendPattern(pattern)
+        .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+        .toFormatter();
     return this;
   }
 
