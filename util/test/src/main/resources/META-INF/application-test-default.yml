@@ -9,10 +9,12 @@ summer:
     request:
       timeout-alarm-seconds: -1
 
-scheduling:
-  enabled: false
-async:
-  enabled: false
+  scheduling:
+    enabled: false
+  async:
+    enabled: false
+
+
 
 logging:
   level:

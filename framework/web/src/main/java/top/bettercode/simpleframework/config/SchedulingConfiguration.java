@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * @author Peter Wu
  */
-@ConditionalOnProperty(value = "scheduling.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "summer.scheduling.enabled", havingValue = "true")
 @EnableScheduling
 @Configuration(proxyBeanMethods = false)
 public class SchedulingConfiguration {

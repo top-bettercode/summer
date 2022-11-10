@@ -1,14 +1,14 @@
 {
   "properties": [
     {
-      "name": "scheduling.enabled",
+      "name": "summer.scheduling.enabled",
       "type": "java.lang.Boolean",
-      "description": "Description for scheduling.enable."
+      "description": "Description for summer.scheduling.enable."
     },
     {
-      "name": "async.enabled",
+      "name": "summer.async.enabled",
       "type": "java.lang.Boolean",
-      "description": "Description for async.enabled."
+      "description": "Description for summer.async.enabled."
     }
   ]
 }
