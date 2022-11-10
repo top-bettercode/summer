@@ -156,13 +156,13 @@ class SlackClient(
                         )
             }
 
-            if (log.isDebugEnabled) {
-                log.debug("slack params:{}", params)
+            if (log.isTraceEnabled) {
+                log.trace("slack params:{}", params)
             }
 
             val result = request("chat.postMessage", Result::class.java, params)
-            if (log.isDebugEnabled) {
-                log.debug("slack result:{}", result)
+            if (log.isTraceEnabled) {
+                log.trace("slack result:{}", result)
             }
             return result?.ok == true
         }
@@ -186,8 +186,8 @@ class SlackClient(
         }
         params.add("initial_comment", "$title:\n$initialComment")
         val result = request("files.upload", Result::class.java, params)
-        if (log.isDebugEnabled) {
-            log.debug("slack result:{}", result)
+        if (log.isTraceEnabled) {
+            log.trace("slack result:{}", result)
         }
         if (result?.ok != true) {
             log.error("slack api request fail:{}", result?.error)
