@@ -62,7 +62,9 @@ abstract class AlarmAppender(
                 }
                 return (event.level.levelInt >= Level.ERROR_INT || event.marker?.contains(
                     RequestLoggingFilter.ALARM_LOG_MARKER
-                ) == true) && (event.marker == null || !event.marker.contains(RequestLoggingFilter.NO_ALARM_LOG_MARKER))
+                ) == true || event.formattedMessage.matches(Regex("^Started .*? in .*? seconds \\(JVM running for .*?\\)$"))) && (event.marker == null || !event.marker.contains(
+                    RequestLoggingFilter.NO_ALARM_LOG_MARKER
+                ))
             }
         }
         alarmEvaluator.context = context
