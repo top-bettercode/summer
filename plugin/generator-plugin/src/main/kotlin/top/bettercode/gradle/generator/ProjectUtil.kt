@@ -12,7 +12,12 @@ object ProjectUtil {
         get() = !isCore && "util" != name && "commons" != name && ((parent == rootProject) || parent?.name == "server" || parent?.name == "service")
 
     val Project.isCore: Boolean
-        get() = name.matches(Regex((findProperty("project.core") as? String) ?: "^(core|.*-core)$"))
+        get() {
+            var projectCore = findProperty("project.core") as? String
+            if (projectCore.isNullOrBlank())
+                projectCore = "^(core|.*-core)$"
+            return name.matches(Regex(projectCore))
+        }
 
     val Project.isCloud: Boolean
         get() = "true" == findProperty("app.cloud")

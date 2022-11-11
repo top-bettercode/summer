@@ -85,6 +85,8 @@ open class GeneratorExtension(
     var applicationName: String = "",
 
     var projectName: String = "",
+
+    var isCore: Boolean = false,
     /**
      * 注释说明
      */

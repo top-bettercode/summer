@@ -23,6 +23,7 @@ import top.bettercode.generator.dsl.Generators
 import top.bettercode.generator.dsl.def.PlantUML
 import top.bettercode.generator.puml.PumlConverter
 import top.bettercode.gradle.generator.ProjectUtil.isBoot
+import top.bettercode.gradle.generator.ProjectUtil.isCore
 import top.bettercode.lang.capitalized
 import java.io.File
 import java.util.*
@@ -139,6 +140,8 @@ class GeneratorPlugin : Plugin<Project> {
                     "-",
                     ""
                 )
+            extension.isCore = project.isCore
+
             extension.primaryKeyName = findGeneratorProperty(project, "primaryKeyName") ?: "id"
             extension.remarks = findGeneratorProperty(project, "remarks") ?: ""
             extension.softDeleteColumnName = findGeneratorProperty(project, "softDeleteColumnName")
