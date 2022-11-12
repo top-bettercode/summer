@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -108,6 +109,17 @@ public class JpaMybatisTest {
     System.err.println(StringUtil.valueOf(users1, true));
     Assertions.assertEquals(2, users1.size());
     Assertions.assertIterableEquals(users, users1);
+  }
+
+  @Test
+  public void selectResultOne3() {
+    Assertions.assertThrows(IncorrectResultSizeDataAccessException.class, () -> repository.selectResultOne3(new User("Carter", null)));
+  }
+
+  @Test
+  public void selectResultFirst3() {
+    AUser users = repository.selectResultFirst3(new User("Carter", null));
+    System.err.println(StringUtil.valueOf(users, true));
   }
 
   @Test

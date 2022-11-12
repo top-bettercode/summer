@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import top.bettercode.simpleframework.data.jpa.JpaExtRepository;
 import top.bettercode.simpleframework.data.jpa.querydsl.RecycleQuerydslPredicateExecutor;
+import top.bettercode.simpleframework.data.jpa.support.FindFirst;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 import top.bettercode.simpleframework.data.test.domain.User;
 import top.bettercode.simpleframework.data.test.resp.AUser;
@@ -42,6 +43,11 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 //  Page<CUsers> selectResultMap2(User user, Pageable pageable);
 
   List<AUser> selectResultMap3(User user);
+
+  AUser selectResultOne3(User user);
+
+  @FindFirst
+  AUser selectResultFirst3(User user);
 
   Page<AUser> selectResultMap3(User user, Pageable pageable);
 

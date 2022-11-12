@@ -60,6 +60,24 @@
       and last_name = #{lastName}
     </if>
   </select>
+  <select id="selectResultOne3" resultMap="userResultMap3"
+    parameterType="top.bettercode.simpleframework.data.test.domain.User">
+    select *
+    from user
+    where first_name = #{firstName}
+    <if test="lastName!=null">
+      and last_name = #{lastName}
+    </if>
+  </select>
+  <select id="selectResultFirst3" resultMap="userResultMap3"
+    parameterType="top.bettercode.simpleframework.data.test.domain.User">
+    select *
+    from user
+    where first_name = #{firstName}
+    <if test="lastName!=null">
+      and last_name = #{lastName}
+    </if>
+  </select>
 
   <insert id="insert">
     insert into user (first_name, last_name, id, deleted)
@@ -92,7 +110,8 @@
     where deleted = 0
   </select>
   <select id="selectMybatisAll" resultType="top.bettercode.simpleframework.data.test.domain.User">
-    select  <include refid="name"/>
+    select
+    <include refid="name"/>
     from user
     where deleted = 0
   </select>
@@ -156,6 +175,7 @@
     select first_name, last_name
     from user
     where deleted = 0
-    order by id limit 1
+    order by id
+    limit 1
   </select>
 </mapper>

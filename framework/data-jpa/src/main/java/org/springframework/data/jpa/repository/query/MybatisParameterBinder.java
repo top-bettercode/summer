@@ -106,7 +106,8 @@ public class MybatisParameterBinder extends ParameterBinder {
   }
 
 
-  Query bindAndPrepare(Query query,QueryParameterSetter.QueryMetadata metadata, JpaParametersParameterAccessor accessor,
+  Query bindAndPrepare(Query query, QueryParameterSetter.QueryMetadata metadata,
+      JpaParametersParameterAccessor accessor,
       MybatisParam mybatisParam) {
 
     bind(metadata.withQuery(query), mybatisParam);

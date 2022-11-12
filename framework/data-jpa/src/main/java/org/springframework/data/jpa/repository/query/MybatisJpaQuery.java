@@ -128,9 +128,14 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         query);
     // it is ok to reuse the binding contained in the ParameterBinder although we create a new query String because the
     // parameters in the query do not change.
+    JpaQueryMethod queryMethod = getQueryMethod();
+    if (queryMethod instanceof JpaExtQueryMethod
+        && ((JpaExtQueryMethod) queryMethod).isFindFirstQuery()) {
+      query.setFirstResult(0);
+      query.setMaxResults(1);
+    }
     return parameterBinder.bindAndPrepare(new MybatisQuery(queryString, query, mybatisParam),
-        metadata,
-        accessor, mybatisParam);
+        metadata, accessor, mybatisParam);
   }
 
   @Override
