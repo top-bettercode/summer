@@ -8,7 +8,7 @@ import org.springframework.data.jpa.provider.QueryExtractor;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.util.Lazy;
-import top.bettercode.simpleframework.data.jpa.support.FindFirst;
+import top.bettercode.simpleframework.data.jpa.support.QuerySize;
 
 /**
  * @author Peter Wu
@@ -17,7 +17,7 @@ public class JpaExtQueryMethod extends JpaQueryMethod {
 
   private final String statementId;
   private final MappedStatement mappedStatement;
-  private final Lazy<FindFirst> findFirst;
+  private final Lazy<QuerySize> querySize;
 
 
   public JpaExtQueryMethod(Method method,
@@ -25,8 +25,8 @@ public class JpaExtQueryMethod extends JpaQueryMethod {
       ProjectionFactory factory,
       QueryExtractor extractor, Configuration configuration) {
     super(method, metadata, factory, extractor);
-    this.findFirst = Lazy.of(
-        () -> AnnotatedElementUtils.findMergedAnnotation(method, FindFirst.class));
+    this.querySize = Lazy.of(
+        () -> AnnotatedElementUtils.findMergedAnnotation(method, QuerySize.class));
     this.statementId = method.getDeclaringClass().getName() + "." + method.getName();
     MappedStatement mappedStatement;
     try {
@@ -45,8 +45,8 @@ public class JpaExtQueryMethod extends JpaQueryMethod {
     return statementId;
   }
 
-  public boolean isFindFirstQuery() {
-    return findFirst.getNullable() != null;
+  public QuerySize getQuerySize() {
+    return querySize.getNullable();
   }
 
 }

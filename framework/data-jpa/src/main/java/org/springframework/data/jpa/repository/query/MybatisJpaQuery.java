@@ -30,6 +30,7 @@ import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisResultSetHan
 import top.bettercode.simpleframework.data.jpa.query.mybatis.MybatisResultTransformer;
 import top.bettercode.simpleframework.data.jpa.query.mybatis.NestedResultMapType;
 import top.bettercode.simpleframework.data.jpa.support.JpaUtil;
+import top.bettercode.simpleframework.data.jpa.support.QuerySize;
 import top.bettercode.simpleframework.data.jpa.support.Size;
 
 public class MybatisJpaQuery extends AbstractJpaQuery {
@@ -42,6 +43,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
   private final NestedResultMapType nestedResultMapType;
   private final MybatisResultTransformer resultTransformer;
   private final boolean isModifyingQuery;
+  private final Integer querySize;
 
   public MybatisJpaQuery(JpaExtQueryMethod method, EntityManager em) {
     super(method, em);
@@ -80,6 +82,15 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
       this.countMappedStatement = countMappedStatement;
     } else {
       this.countMappedStatement = null;
+    }
+
+    QuerySize querySize = method.getQuerySize();
+    if (querySize != null) {
+      int value = querySize.value();
+      Assert.isTrue(value > 0, "size 必须大于0");
+      this.querySize = value;
+    } else {
+      this.querySize = null;
     }
   }
 
@@ -128,11 +139,9 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
         query);
     // it is ok to reuse the binding contained in the ParameterBinder although we create a new query String because the
     // parameters in the query do not change.
-    JpaQueryMethod queryMethod = getQueryMethod();
-    if (queryMethod instanceof JpaExtQueryMethod
-        && ((JpaExtQueryMethod) queryMethod).isFindFirstQuery()) {
+    if (querySize != null) {
       query.setFirstResult(0);
-      query.setMaxResults(1);
+      query.setMaxResults(querySize);
     }
     return parameterBinder.bindAndPrepare(new MybatisQuery(queryString, query, mybatisParam),
         metadata, accessor, mybatisParam);
