@@ -1,5 +1,4 @@
-import jpa.unit.mapperXml
-import jpa.unit.repository
+import jpa.unit.*
 import top.bettercode.generator.dom.unit.SourceSet
 
 /**
@@ -30,6 +29,20 @@ open class Service(private val overwrite: Boolean = false) : ProjectGenerator() 
 
         +clazz(serviceType, overwrite = false) {
             service(this)
+        }
+
+        +clazz(testServiceType, overwrite = overwrite, sourceSet = SourceSet.TEST) {
+            testService(this)
+        }
+
+        if (!isCore) {
+            //form
+            +clazz(formType, overwrite = overwrite) {
+                form(this)
+            }
+            +interfaze(mixInType, overwrite = overwrite) {
+                mixIn(this)
+            }
         }
     }
 }

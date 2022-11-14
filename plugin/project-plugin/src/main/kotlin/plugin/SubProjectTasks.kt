@@ -1,7 +1,11 @@
 package plugin
 
-import top.bettercode.gradle.generator.ProjectUtil.isBoot
+import Controller
+import Service
+import isCore
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
@@ -10,7 +14,12 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.application.tasks.CreateStartScripts
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
+import top.bettercode.generator.GeneratorExtension
+import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.generator.dsl.Generators
 import top.bettercode.gradle.dist.DistExtension.Companion.jvmArgs
+import top.bettercode.gradle.generator.ProjectUtil.isBoot
+import top.bettercode.lang.capitalized
 
 
 /**
@@ -49,6 +58,49 @@ object SubProjectTasks {
                 it.options.compilerArgs.add("-Xlint:unchecked")
                 it.options.compilerArgs.add("-parameters")
                 it.options.encoding = "UTF-8"
+            }
+            if (project.isBoot) {
+                val ext = project.extensions.getByType(GeneratorExtension::class.java)
+                ext.run { module, tableHolder ->
+                    val prefix = if (defaultModuleName == module) "" else "[[${
+                        module.capitalized()
+                    }]"
+                    project.tasks.create("genController${prefix}") { task ->
+                        task.group = "gen controller"
+                        task.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                ext.generators = arrayOf(Controller())
+                                Generators.call(ext, tableHolder)
+                            }
+                        })
+                    }
+                }
+            }
+            if (project.isCore) {
+                val ext = project.extensions.getByType(GeneratorExtension::class.java)
+                ext.run { module, tableHolder ->
+                    val prefix = if (defaultModuleName == module) "" else "[[${
+                        module.capitalized()
+                    }]"
+                    project.tasks.create("genCoreService${prefix}") { task ->
+                        task.group = "gen service"
+                        task.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                ext.generators = arrayOf(Service())
+                                Generators.call(ext, tableHolder)
+                            }
+                        })
+                    }
+                    project.tasks.create("genCoreController${prefix}") { task ->
+                        task.group = "gen controller"
+                        task.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                ext.generators = arrayOf(Controller())
+                                Generators.call(ext, tableHolder)
+                            }
+                        })
+                    }
+                }
             }
 
             if (project.isBoot) {
