@@ -69,6 +69,14 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
    */
   Page<T> findHardAll(@Nullable Specification<T> spec, Pageable pageable);
 
+  /**
+   * 包括已逻辑删除的数据
+   *
+   * @param ids ID
+   * @return 数据
+   */
+  List<T> findHardAllById(Iterable<ID> ids);
+
   List<T> findAll(int size);
 
   List<T> findAll(int size, Sort sort);

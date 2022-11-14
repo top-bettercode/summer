@@ -892,6 +892,21 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
+  public List<T> findHardAllById(Iterable<ID> ids) {
+    boolean mdc = false;
+    try {
+      mdc = mdcPutId(".findHardAllById");
+      List<T> all = super.findAllById(ids);
+      if (sqlLog.isDebugEnabled()) {
+        sqlLog.debug("{} rows retrieved", all.size());
+      }
+      return all;
+    } finally {
+      cleanMdc(mdc);
+    }
+  }
+
+  @Override
   public Page<T> findAll(Specification<T> spec, Pageable pageable) {
     boolean mdc = false;
     try {
