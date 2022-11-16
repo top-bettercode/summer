@@ -65,6 +65,15 @@ object SubProjectTasks {
                     val prefix = if (defaultModuleName == module) "" else "[[${
                         module.capitalized()
                     }]"
+                    project.tasks.create("genService${prefix}") { task ->
+                        task.group = "gen service"
+                        task.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                ext.generators = arrayOf(Service())
+                                Generators.call(ext, tableHolder)
+                            }
+                        })
+                    }
                     project.tasks.create("genController${prefix}") { task ->
                         task.group = "gen controller"
                         task.doLast(object : Action<Task> {
