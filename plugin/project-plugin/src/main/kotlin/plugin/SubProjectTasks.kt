@@ -1,6 +1,7 @@
 package plugin
 
 import Controller
+import Entity
 import Service
 import isCore
 import org.gradle.api.Action
@@ -65,6 +66,15 @@ object SubProjectTasks {
                     val prefix = if (defaultModuleName == module) "" else "[[${
                         module.capitalized()
                     }]"
+                    project.tasks.create("genEntity${prefix}") { task ->
+                        task.group = "gen entity"
+                        task.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                ext.generators = arrayOf(Entity())
+                                Generators.call(ext, tableHolder)
+                            }
+                        })
+                    }
                     project.tasks.create("genService${prefix}") { task ->
                         task.group = "gen service"
                         task.doLast(object : Action<Task> {
@@ -91,6 +101,15 @@ object SubProjectTasks {
                     val prefix = if (defaultModuleName == module) "" else "[[${
                         module.capitalized()
                     }]"
+                    project.tasks.create("genCoreEntity${prefix}") { task ->
+                        task.group = "gen entity"
+                        task.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                ext.generators = arrayOf(Entity())
+                                Generators.call(ext, tableHolder)
+                            }
+                        })
+                    }
                     project.tasks.create("genCoreService${prefix}") { task ->
                         task.group = "gen service"
                         task.doLast(object : Action<Task> {
