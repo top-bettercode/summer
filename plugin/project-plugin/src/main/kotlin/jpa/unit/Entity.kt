@@ -16,7 +16,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         if (columns.any { it.autoIncrement || it.idgenerator.isNotBlank() || it.sequence.isNotBlank() }) {
             import("javax.persistence.GenerationType")
         }
-        if (enable("dynamicInsert", true))
+        if (enable("dynamicInsert", false))
             annotation("@org.hibernate.annotations.DynamicInsert")
         annotation("@org.hibernate.annotations.DynamicUpdate")
         annotation("@javax.persistence.Entity")
