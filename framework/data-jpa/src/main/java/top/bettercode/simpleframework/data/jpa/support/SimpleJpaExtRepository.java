@@ -307,6 +307,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @Deprecated
   @Transactional
   @Override
   public <S extends T> S dynamicSave(S entity) {

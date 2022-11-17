@@ -36,6 +36,7 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
    * @param <S> 类型
    * @return 结果
    */
+  @Deprecated
   <S extends T> S dynamicSave(S s);
 
   int delete(Specification<T> spec);

@@ -33,6 +33,7 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
     return repository.save(s, spec);
   }
 
+  @Deprecated
   @Override
   public <S extends T> S dynamicSave(S s) {
     return repository.dynamicSave(s);

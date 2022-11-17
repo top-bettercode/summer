@@ -27,6 +27,7 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
    * @param <S> 类型
    * @return 结果
    */
+  @Deprecated
   <S extends T> S dynamicSave(S s);
 
   <S extends T> List<S> saveAll(Iterable<S> entities);
