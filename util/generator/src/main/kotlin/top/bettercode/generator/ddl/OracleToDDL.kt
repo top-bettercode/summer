@@ -20,14 +20,15 @@ object OracleToDDL : ToDDL() {
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
             if (extension.dropTablesWhenUpdate)
-                (oldTableNames - tableNames.toSet()).forEach { tableName ->
-                    out.appendLine("$commentPrefix DROP $tableName")
-                    val primaryKey = oldTables.find { it.tableName == tableName }!!.primaryKey
-                    if (primaryKey?.sequence?.isNotBlank() == true)
-                        out.appendLine("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
-                    out.appendLine("DROP TABLE $quote$tableName$quote;")
-                    out.appendLine()
-                }
+                (oldTableNames - tableNames.toSet()).filter { "api_token" != it }
+                    .forEach { tableName ->
+                        out.appendLine("$commentPrefix DROP $tableName")
+                        val primaryKey = oldTables.find { it.tableName == tableName }!!.primaryKey
+                        if (primaryKey?.sequence?.isNotBlank() == true)
+                            out.appendLine("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
+                        out.appendLine("DROP TABLE $quote$tableName$quote;")
+                        out.appendLine()
+                    }
             val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
                 val tableName = table.tableName
@@ -38,7 +39,14 @@ object OracleToDDL : ToDDL() {
                     if (oldTable != table) {
                         val lines = mutableListOf<String>()
                         if (oldTable.remarks != table.remarks)
-                            lines.add("COMMENT ON TABLE $quote$tableName$quote IS '${table.remarks.replace("\\","\\\\")}';")
+                            lines.add(
+                                "COMMENT ON TABLE $quote$tableName$quote IS '${
+                                    table.remarks.replace(
+                                        "\\",
+                                        "\\\\"
+                                    )
+                                }';"
+                            )
                         val oldColumns = oldTable.columns
                         val columns = table.columns
                         val oldPrimaryKeys = oldTable.primaryKeys
@@ -78,7 +86,14 @@ object OracleToDDL : ToDDL() {
                                         )
                                     };"
                                 )
-                                lines.add("COMMENT ON COLUMN $quote$tableName$quote.$quote$columnName$quote IS '${column.remarks.replace("\\","\\\\")}';")
+                                lines.add(
+                                    "COMMENT ON COLUMN $quote$tableName$quote.$quote$columnName$quote IS '${
+                                        column.remarks.replace(
+                                            "\\",
+                                            "\\\\"
+                                        )
+                                    }';"
+                                )
                                 addFk(column, lines, tableName, columnName)
                             } else {
                                 val oldColumn = oldColumns.find { it.columnName == columnName }!!
@@ -87,7 +102,14 @@ object OracleToDDL : ToDDL() {
                                     if (updateColumnDef.isNotBlank())
                                         lines.add("ALTER TABLE $quote$tableName$quote MODIFY $updateColumnDef;")
                                     if (oldColumn.remarks != column.remarks)
-                                        lines.add("COMMENT ON COLUMN $quote$tableName$quote.$quote$columnName$quote IS '${column.remarks.replace("\\","\\\\")}';")
+                                        lines.add(
+                                            "COMMENT ON COLUMN $quote$tableName$quote.$quote$columnName$quote IS '${
+                                                column.remarks.replace(
+                                                    "\\",
+                                                    "\\\\"
+                                                )
+                                            }';"
+                                        )
                                     updateFk(column, oldColumn, lines, tableName)
                                 }
                             }
@@ -196,9 +218,23 @@ object OracleToDDL : ToDDL() {
         pw.appendLine(");")
         appendIndexes(table, pw, quote)
 
-        pw.appendLine("COMMENT ON TABLE $quote$tableName$quote IS '${table.remarks.replace("\\","\\\\")}';")
+        pw.appendLine(
+            "COMMENT ON TABLE $quote$tableName$quote IS '${
+                table.remarks.replace(
+                    "\\",
+                    "\\\\"
+                )
+            }';"
+        )
         table.columns.forEach {
-            pw.appendLine("COMMENT ON COLUMN $quote$tableName$quote.$quote${it.columnName}$quote IS '${it.remarks.replace("\\","\\\\")}';")
+            pw.appendLine(
+                "COMMENT ON COLUMN $quote$tableName$quote.$quote${it.columnName}$quote IS '${
+                    it.remarks.replace(
+                        "\\",
+                        "\\\\"
+                    )
+                }';"
+            )
         }
         pw.appendLine()
     }
