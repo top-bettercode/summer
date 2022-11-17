@@ -35,6 +35,12 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
    * @param s   对象
    * @param <S> 类型
    * @return 结果
+   * @deprecated 不建议再使用, 请使用以下方式替代
+   * <p>
+   * entity.nullPropertySetFrom(exist);
+   * <p>
+   * save(entity);
+   * <p>
    */
   @Deprecated
   <S extends T> S dynamicSave(S s);
