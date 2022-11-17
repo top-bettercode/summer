@@ -15,22 +15,18 @@ import org.springframework.util.Assert;
 public class FormkeyService implements IFormkeyService {
 
   private final long expireSeconds;
-  private final ConcurrentMap<String, Long> nameCache;
   private final ConcurrentMap<Long, ConcurrentMap<String, Boolean>> caches;
 
   public FormkeyService(long expireSeconds) {
     Assert.isTrue(expireSeconds > 0, "过期时间必须大于0");
     this.expireSeconds = expireSeconds;
     this.caches = new ConcurrentHashMap<>();
-    Cache<String, Long> objectCache = Caffeine.newBuilder()
-        .expireAfterWrite(expireSeconds, TimeUnit.SECONDS).build();
-    this.nameCache = objectCache.asMap();
   }
 
   private ConcurrentMap<String, Boolean> getCache(Long expireSeconds) {
     return caches.computeIfAbsent(expireSeconds, k -> {
       Cache<String, Boolean> objectCache = Caffeine.newBuilder()
-          .expireAfterWrite(expireSeconds, TimeUnit.SECONDS).build();
+          .expireAfterWrite(k, TimeUnit.SECONDS).build();
       return objectCache.asMap();
     });
   }
@@ -39,20 +35,12 @@ public class FormkeyService implements IFormkeyService {
   public boolean exist(String formkey, long expireSeconds) {
     expireSeconds = expireSeconds <= 0 ? this.expireSeconds : expireSeconds;
     Boolean present = getCache(expireSeconds).putIfAbsent(formkey, true);
-    if (present == null) {
-      nameCache.put(formkey, expireSeconds);
-    }
     return present != null;
   }
 
   @Override
   public void remove(String formkey) {
-    Long expireSeconds = nameCache.get(formkey);
-    if (expireSeconds == null) {
-      caches.values().forEach(map -> map.remove(formkey));
-    } else {
-      getCache(expireSeconds).remove(formkey);
-    }
+    caches.values().forEach(map -> map.remove(formkey));
   }
 
 }
