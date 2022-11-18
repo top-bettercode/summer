@@ -49,6 +49,9 @@ val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     it.javaName.capitalized()
                 }(${it.randomValueToSet(this@apply)});"
             }
+            if (defaultColumns.isNotEmpty()) {
+                +"$entityName.nullPropertySetWithDefaults();"
+            }
             +"${projectEntityName}Service.save($entityName);"
             +"System.err.println(\"------------------------------------------------------\");"
             +"return $entityName;"
