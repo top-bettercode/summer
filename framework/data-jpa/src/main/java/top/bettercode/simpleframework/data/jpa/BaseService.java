@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -60,11 +59,6 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   @Override
-  public <S extends T> Optional<S> findFirst(Example<S> example) {
-    return repository.findFirst(example);
-  }
-
-  @Override
   public List<T> findAll(int size) {
     return repository.findAll(size);
   }
@@ -82,17 +76,6 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   @Override
   public List<T> findAll(Specification<T> spec, int size, Sort sort) {
     return repository.findAll(spec, size, sort);
-  }
-
-  @Override
-  public <S extends T> List<S> findAll(Example<S> example, int size) {
-    return repository.findAll(example, size);
-  }
-
-  @Override
-  public <S extends T> List<S> findAll(Example<S> example, int size,
-      Sort sort) {
-    return repository.findAll(example, size, sort);
   }
 
   @Override
@@ -123,16 +106,6 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   @Override
   public void deleteAllInBatch() {
     repository.deleteAllInBatch();
-  }
-
-  @Override
-  public <S extends T> List<S> findAll(Example<S> example) {
-    return repository.findAll(example);
-  }
-
-  @Override
-  public <S extends T> List<S> findAll(Example<S> example, Sort sort) {
-    return repository.findAll(example, sort);
   }
 
   @Override
@@ -183,27 +156,6 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   @Override
   public void deleteAll() {
     repository.deleteAll();
-  }
-
-  @Override
-  public <S extends T> Optional<S> findOne(Example<S> example) {
-    return repository.findOne(example);
-  }
-
-  @Override
-  public <S extends T> Page<S> findAll(Example<S> example,
-      Pageable pageable) {
-    return repository.findAll(example, pageable);
-  }
-
-  @Override
-  public <S extends T> long count(Example<S> example) {
-    return repository.count(example);
-  }
-
-  @Override
-  public <S extends T> boolean exists(Example<S> example) {
-    return repository.exists(example);
   }
 
   @Override

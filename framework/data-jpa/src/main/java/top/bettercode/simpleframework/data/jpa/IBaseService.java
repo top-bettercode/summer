@@ -2,7 +2,6 @@ package top.bettercode.simpleframework.data.jpa;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -92,21 +91,4 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
 
   List<T> findAll(@Nullable Specification<T> spec, Sort sort);
 
-  <S extends T> long count(Example<S> example);
-
-  <S extends T> boolean exists(Example<S> example);
-
-  <S extends T> Optional<S> findOne(Example<S> example);
-
-  <S extends T> Optional<S> findFirst(Example<S> example);
-
-  <S extends T> List<S> findAll(Example<S> example);
-
-  <S extends T> List<S> findAll(Example<S> example, int size);
-
-  <S extends T> List<S> findAll(Example<S> example, int size, Sort sort);
-
-  <S extends T> Page<S> findAll(Example<S> example, Pageable pageable);
-
-  <S extends T> List<S> findAll(Example<S> example, Sort sort);
 }
