@@ -44,7 +44,9 @@ val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         }(${it.randomValueToSet(this@apply)});"
                     }
             }
-            otherColumns.filter { !it.version }.forEach {
+            otherColumns.filter {
+                !it.version && it.initializationString(this@apply).isNullOrBlank()
+            }.forEach {
                 +"$entityName.set${
                     it.javaName.capitalized()
                 }(${it.randomValueToSet(this@apply)});"
