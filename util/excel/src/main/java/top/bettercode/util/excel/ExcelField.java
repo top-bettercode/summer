@@ -324,33 +324,35 @@ public class ExcelField<T, P> {
           .forName(methodSignature.getParameterTypes()[0].jvmTypeName(), null);
       propertyType = ClassUtils.forName(methodSignature.getReturnType().jvmTypeName(), null);
       propertyName = resolvePropertyName(implMethodName);
-      try {
-        Method writeMethod;
+      if (!propertyName.contains("lambda$new$")) {
         try {
-          writeMethod = entityType
-              .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
-        } catch (NoSuchMethodException e) {
-          if (ClassUtils.isPrimitiveWrapper(propertyType)) {
-            propertyType = primitiveWrapperTypeMap.get(propertyType);
+          Method writeMethod;
+          try {
             writeMethod = entityType
                 .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
-          } else {
-            throw e;
+          } catch (NoSuchMethodException e) {
+            if (ClassUtils.isPrimitiveWrapper(propertyType)) {
+              propertyType = primitiveWrapperTypeMap.get(propertyType);
+              writeMethod = entityType
+                  .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
+            } else {
+              throw e;
+            }
           }
+          if (writeMethod != null) {
+            Method fWriteMethod = writeMethod;
+            this.propertySetter = (obj, property) -> ReflectionUtils.invokeMethod(fWriteMethod, obj,
+                property);
+          }
+        } catch (NoSuchMethodException e) {
+          Logger log = LoggerFactory.getLogger(ExcelField.class);
+          if (log.isDebugEnabled()) {
+            log.debug("自动识别属性{} setter方法失败", propertyName);
+          }
+          propertyName = null;
+          propertySetter = null;
+          entityType = null;
         }
-        if (writeMethod != null) {
-          Method fWriteMethod = writeMethod;
-          this.propertySetter = (obj, property) -> ReflectionUtils.invokeMethod(fWriteMethod, obj,
-              property);
-        }
-      } catch (NoSuchMethodException e) {
-        Logger log = LoggerFactory.getLogger(ExcelField.class);
-        if (log.isDebugEnabled()) {
-          log.debug("自动识别属性setter方法失败");
-        }
-        propertyName = null;
-        propertySetter = null;
-        entityType = null;
       }
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
              ClassNotFoundException | BadBytecode e) {
