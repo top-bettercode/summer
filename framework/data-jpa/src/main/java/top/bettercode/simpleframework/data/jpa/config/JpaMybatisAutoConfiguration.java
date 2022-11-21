@@ -160,36 +160,30 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
       configuration.getVariables().putAll(configurationProperties);
     }
 
-    if (mapperResources != null) {
-      if (mapperResources.length == 0) {
-        if (log.isInfoEnabled()) {
-          log.info(
-              "Property 'mapperLocations' was specified but matching resources are not found.");
-        }
-      } else {
-        for (Resource mapperResource : mapperResources) {
-          if (mapperResource == null) {
-            continue;
-          }
-          try {
-            XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(
-                mapperResource.getInputStream(),
-                configuration, mapperResource.toString(), configuration.getSqlFragments());
-            xmlMapperBuilder.parse();
-          } catch (Exception e) {
-            throw new NestedIOException(
-                "Failed to parse mapping resource: '" + mapperResource + "'", e);
-          } finally {
-            ErrorContext.instance().reset();
-          }
-          if (log.isTraceEnabled()) {
-            log.trace("Parsed mapper file: '" + mapperResource + "'");
-          }
-        }
+    if (mapperResources.length == 0) {
+      if (log.isInfoEnabled()) {
+        log.info(
+            "Property 'mapperLocations' was specified but matching resources are not found.");
       }
     } else {
-      if (log.isDebugEnabled()) {
-        log.debug("Property 'mapperLocations' was not specified.");
+      for (Resource mapperResource : mapperResources) {
+        if (mapperResource == null) {
+          continue;
+        }
+        try {
+          XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(
+              mapperResource.getInputStream(),
+              configuration, mapperResource.toString(), configuration.getSqlFragments());
+          xmlMapperBuilder.parse();
+        } catch (Exception e) {
+          throw new NestedIOException(
+              "Failed to parse mapping resource: '" + mapperResource + "'", e);
+        } finally {
+          ErrorContext.instance().reset();
+        }
+        if (log.isTraceEnabled()) {
+          log.trace("Parsed mapper file: '" + mapperResource + "'");
+        }
       }
     }
 

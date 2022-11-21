@@ -43,11 +43,7 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
             jsonUrlMapper
         }
 
-    private val qvodClient: QvodClient
-
-    init {
-        qvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)
-    }
+    private val qvodClient: QvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)
 
     @Throws(IOException::class)
     override fun serialize(value: Any, gen: JsonGenerator, provider: SerializerProvider) {

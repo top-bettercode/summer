@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.access.ConfigAttribute;
@@ -47,7 +48,7 @@ public class URLFilterInvocationSecurityMetadataSource implements
 
     handlerMapping.getHandlerMethods().forEach((mappingInfo, handlerMethod) -> {
       //非匿名权限
-      for (PathPattern pathPattern : mappingInfo.getPathPatternsCondition().getPatterns()) {
+      for (PathPattern pathPattern : Objects.requireNonNull(mappingInfo.getPathPatternsCondition()).getPatterns()) {
         String pattern = pathPattern.getPatternString();
         if (!securityProperties.ignored(pattern)) {
           Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();

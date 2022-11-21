@@ -294,7 +294,7 @@ abstract class AbstractPlugin : Plugin<Project> {
         developer.appendNode("name", project.findProperty("developer.name"))
         developer.appendNode("email", project.findProperty("developer.email"))
 
-        if (projectVcsUrl != null && projectVcsUrl.isNotBlank()) {
+        if (!projectVcsUrl.isNullOrBlank()) {
             val scm = appendNode("scm")
             scm.appendNode("url", projectVcsUrl)
             val tag =

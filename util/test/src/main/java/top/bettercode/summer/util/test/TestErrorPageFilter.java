@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ErrorPageRegistrar;
 import org.springframework.boot.web.server.ErrorPageRegistry;
@@ -83,8 +84,9 @@ public class TestErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
   private final OncePerRequestFilter delegate = new OncePerRequestFilter() {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain chain) throws IOException {
+    protected void doFilterInternal(
+        @NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+        @NotNull FilterChain chain) throws IOException {
       TestErrorPageFilter.this.doFilter(request, response, chain);
     }
 

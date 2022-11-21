@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.apache.tomcat.util.codec.binary.Base64
 import top.bettercode.lang.util.StringUtil
 import top.bettercode.summer.util.wechat.support.WeixinResponse
-import java.nio.charset.Charset
 import java.security.AlgorithmParameters
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -27,9 +26,7 @@ data class JsSession(
      * AES解密
      *
      * @param data           密文，被加密的数据
-     * @param key            秘钥
      * @param iv             偏移量
-     * @param charset   解密后的结果需要进行的编码
      * @return
      */
     fun decrypt(data: String?, iv: String?): JsSession {

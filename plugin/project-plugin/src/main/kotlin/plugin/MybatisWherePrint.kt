@@ -1,6 +1,6 @@
 package plugin
 
-import ProjectGenerator
+import jpa.ProjectGenerator
 import top.bettercode.generator.dom.java.JavaType
 
 /**

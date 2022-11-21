@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.servlet;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.web.method.HandlerMethod;
@@ -18,8 +19,8 @@ public interface NotErrorHandlerInterceptor extends AsyncHandlerInterceptor {
   String ERROR_INTERNAL_ATTRIBUTE = DefaultErrorAttributes.class.getName() + ".ERROR";
 
   @Override
-  default boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-      Object handler) throws Exception {
+  default boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+      @NotNull Object handler) throws Exception {
     if (handler instanceof HandlerMethod) {
       HandlerMethod handlerMethod = (HandlerMethod) handler;
       if (ErrorController.class.isAssignableFrom((handlerMethod).getBeanType())) {
@@ -37,8 +38,8 @@ public interface NotErrorHandlerInterceptor extends AsyncHandlerInterceptor {
   }
 
   @Override
-  default void afterCompletion(HttpServletRequest request, HttpServletResponse response,
-      Object handler, Exception ex) throws Exception {
+  default void afterCompletion(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+      @NotNull Object handler, Exception ex) throws Exception {
     if (handler instanceof HandlerMethod) {
       HandlerMethod handlerMethod = (HandlerMethod) handler;
       if (ErrorController.class.isAssignableFrom((handlerMethod).getBeanType())) {

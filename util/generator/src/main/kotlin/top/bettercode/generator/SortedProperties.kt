@@ -118,7 +118,7 @@ class SortedProperties
         private const val serialVersionUID: Long = 1L
 
         @JvmField
-        val EOL = System.lineSeparator()
+        val EOL: String = System.lineSeparator()
         private val keyComparator =
             Comparator.comparing<Any, String> { obj: Any? -> java.lang.String.valueOf(obj) }
         private val entryComparator = java.util.Map.Entry.comparingByKey<Any, Any>(keyComparator)

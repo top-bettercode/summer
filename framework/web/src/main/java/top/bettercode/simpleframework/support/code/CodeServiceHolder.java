@@ -15,7 +15,7 @@ public class CodeServiceHolder {
 
   public final static ICodeService PROPERTIES_CODESERVICE = new CodeService(Settings.getDicCode());
 
-  public static String DEFAULT_BEAN_NAME = "defaultCodeService";
+  public static final String DEFAULT_BEAN_NAME = "defaultCodeService";
 
 
   public static ICodeService getDefault() {

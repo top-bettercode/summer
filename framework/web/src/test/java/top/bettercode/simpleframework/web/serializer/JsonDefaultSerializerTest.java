@@ -19,7 +19,7 @@ import top.bettercode.simpleframework.web.serializer.annotation.JsonDefault;
 public class JsonDefaultSerializerTest {
 
   private final JacksonExtProperties jacksonExtProperties = new JacksonExtProperties();
-  ObjectMapper objectMapper = new ObjectMapper();
+  final ObjectMapper objectMapper = new ObjectMapper();
 
   @BeforeEach
   public void setUp() {

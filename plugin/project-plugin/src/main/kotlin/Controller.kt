@@ -1,3 +1,5 @@
+import jpa.ProjectGenerator
+import jpa.unit.controller
 import jpa.unit.controllerTest
 import jpa.unit.form
 import top.bettercode.generator.dom.unit.SourceSet

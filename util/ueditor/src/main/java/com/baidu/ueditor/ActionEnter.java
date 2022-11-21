@@ -8,6 +8,7 @@ import com.baidu.ueditor.hunter.FileManager;
 import com.baidu.ueditor.upload.IUploader;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.util.Assert;
 
 public class ActionEnter {
 
@@ -73,7 +74,7 @@ public class ActionEnter {
         break;
 
     }
-
+    Assert.notNull(state,"state 异常");
     return state.toJSONString();
 
   }

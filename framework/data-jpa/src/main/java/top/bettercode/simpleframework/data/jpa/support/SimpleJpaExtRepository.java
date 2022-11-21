@@ -151,7 +151,7 @@ public class SimpleJpaExtRepository<T, ID> extends
   //--------------------------------------------
 
   @Override
-  public void deleteById(ID id) {
+  public void deleteById(@NotNull ID id) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteById");
@@ -165,7 +165,7 @@ public class SimpleJpaExtRepository<T, ID> extends
 
 
   @Override
-  public void deleteAll(Iterable<? extends T> entities) {
+  public void deleteAll(@NotNull Iterable<? extends T> entities) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteAll");
@@ -187,8 +187,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public <S extends T> S saveAndFlush(S entity) {
+  public <S extends T> S saveAndFlush(@NotNull S entity) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".saveAndFlush");
@@ -198,8 +199,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public <S extends T> List<S> saveAll(Iterable<S> entities) {
+  public <S extends T> List<S> saveAll(@NotNull Iterable<S> entities) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".saveAll");
@@ -209,8 +211,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public <S extends T> List<S> saveAllAndFlush(Iterable<S> entities) {
+  public <S extends T> List<S> saveAllAndFlush(@NotNull Iterable<S> entities) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".saveAllAndFlush");
@@ -222,7 +225,7 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Deprecated
   @Override
-  public void deleteInBatch(Iterable<T> entities) {
+  public void deleteInBatch(@NotNull Iterable<T> entities) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteInBatch");
@@ -232,9 +235,10 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
   @Transactional
-  public <S extends T> S save(S entity) {
+  public <S extends T> S save(@NotNull S entity) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".save");
@@ -339,7 +343,7 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Transactional
   @Override
-  public void delete(T entity) {
+  public void delete(@NotNull T entity) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".delete");
@@ -411,7 +415,7 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Transactional
   @Override
-  public void deleteAllById(Iterable<? extends ID> ids) {
+  public void deleteAllById(@NotNull Iterable<? extends ID> ids) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteAllById");
@@ -423,7 +427,7 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
-  public void deleteAllByIdInBatch(Iterable<ID> ids) {
+  public void deleteAllByIdInBatch(@NotNull Iterable<ID> ids) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteAllByIdInBatch");
@@ -440,7 +444,7 @@ public class SimpleJpaExtRepository<T, ID> extends
 
   @Transactional
   @Override
-  public void deleteAllInBatch(Iterable<T> entities) {
+  public void deleteAllInBatch(@NotNull Iterable<T> entities) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".deleteAllInBatch");
@@ -525,8 +529,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public Optional<T> findById(ID id) {
+  public Optional<T> findById(@NotNull ID id) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findById");
@@ -554,10 +559,11 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public T getOne(ID id) {
+  public T getOne(@NotNull ID id) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".getOne");
@@ -567,8 +573,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public T getById(ID id) {
+  public T getById(@NotNull ID id) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".getById");
@@ -586,7 +593,7 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
-  public boolean existsById(ID id) {
+  public boolean existsById(@NotNull ID id) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".existsById");
@@ -603,6 +610,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
   public List<T> findAll() {
     boolean mdc = false;
@@ -623,8 +631,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public List<T> findAllById(Iterable<ID> ids) {
+  public List<T> findAllById(@NotNull Iterable<ID> ids) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAllById");
@@ -643,8 +652,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public List<T> findAll(Sort sort) {
+  public List<T> findAll(@NotNull Sort sort) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
@@ -663,8 +673,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public Page<T> findAll(Pageable pageable) {
+  public Page<T> findAll(@NotNull Pageable pageable) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
@@ -802,6 +813,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
   public Optional<T> findOne(Specification<T> spec) {
     boolean mdc = false;
@@ -816,6 +828,7 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
   public List<T> findAll(Specification<T> spec) {
     boolean mdc = false;
@@ -907,8 +920,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public Page<T> findAll(Specification<T> spec, Pageable pageable) {
+  public Page<T> findAll(Specification<T> spec, @NotNull Pageable pageable) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
@@ -926,8 +940,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public List<T> findAll(Specification<T> spec, Sort sort) {
+  public List<T> findAll(Specification<T> spec, @NotNull Sort sort) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
@@ -955,8 +970,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public <S extends T> Optional<S> findOne(Example<S> example) {
+  public <S extends T> Optional<S> findOne(@NotNull Example<S> example) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findOne");
@@ -969,9 +985,10 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public <S extends T, R> R findBy(Example<S> example,
-      Function<FetchableFluentQuery<S>, R> queryFunction) {
+  public <S extends T, R> R findBy(@NotNull Example<S> example,
+      @NotNull Function<FetchableFluentQuery<S>, R> queryFunction) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findBy");
@@ -985,7 +1002,7 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
-  public <S extends T> long count(Example<S> example) {
+  public <S extends T> long count(@NotNull Example<S> example) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".count");
@@ -1003,7 +1020,7 @@ public class SimpleJpaExtRepository<T, ID> extends
   }
 
   @Override
-  public <S extends T> boolean exists(Example<S> example) {
+  public <S extends T> boolean exists(@NotNull Example<S> example) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".exists");
@@ -1013,8 +1030,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public <S extends T> List<S> findAll(Example<S> example) {
+  public <S extends T> List<S> findAll(@NotNull Example<S> example) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
@@ -1074,8 +1092,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     return new PageableList<>(content, pageable, Math.min(pageable.getPageSize(), content.size()));
   }
 
+  @NotNull
   @Override
-  public <S extends T> List<S> findAll(Example<S> example, Sort sort) {
+  public <S extends T> List<S> findAll(@NotNull Example<S> example, @NotNull Sort sort) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");
@@ -1092,8 +1111,9 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @NotNull
   @Override
-  public <S extends T> Page<S> findAll(Example<S> example, Pageable pageable) {
+  public <S extends T> Page<S> findAll(@NotNull Example<S> example, @NotNull Pageable pageable) {
     boolean mdc = false;
     try {
       mdc = mdcPutId(".findAll");

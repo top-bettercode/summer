@@ -1,7 +1,7 @@
 dependencies {
     api(project(":framework:web"))
     api("com.auth0:java-jwt")
-    api("com.tencentcloudapi:tencentcloud-sdk-java:3.1.564")
+    api("com.tencentcloudapi:tencentcloud-sdk-java")
 
     compileOnly("com.qcloud:vod_api") {
         exclude(group = "org.slf4j")

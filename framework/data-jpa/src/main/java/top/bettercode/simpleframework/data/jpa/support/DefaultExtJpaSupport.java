@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import org.springframework.beans.BeanUtils;
@@ -143,7 +144,7 @@ public class DefaultExtJpaSupport implements ExtJpaSupport {
       JpaExtProperties.SoftDelete softDeleteProperties = jpaExtProperties.getSoftDelete();
       PropertyDescriptor propertyDescriptor = BeanUtils
           .getPropertyDescriptor(domainClass, softDeletedPropertyName);
-      softDeletedWriteMethod = propertyDescriptor.getWriteMethod();
+      softDeletedWriteMethod = Objects.requireNonNull(propertyDescriptor).getWriteMethod();
       softDeletedReadMethod = propertyDescriptor.getReadMethod();
 
       if (!"".equals(trueValue)) {

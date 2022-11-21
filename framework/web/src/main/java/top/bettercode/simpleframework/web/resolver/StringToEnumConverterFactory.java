@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.web.resolver;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 
@@ -11,8 +12,9 @@ import org.springframework.core.convert.converter.ConverterFactory;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class StringToEnumConverterFactory implements ConverterFactory<String, Enum> {
 
+  @NotNull
   @Override
-  public <T extends Enum> Converter<String, T> getConverter(Class<T> targetType) {
+  public <T extends Enum> Converter<String, T> getConverter(@NotNull Class<T> targetType) {
     Class<?> enumType = targetType;
     while (enumType != null && !enumType.isEnum()) {
       enumType = enumType.getSuperclass();

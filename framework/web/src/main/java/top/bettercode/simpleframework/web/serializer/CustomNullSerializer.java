@@ -91,7 +91,7 @@ public class CustomNullSerializer extends StdSerializer<Object> {
         return;
       }
       JsonUrl jsonUrl = writer.getAnnotation(JsonUrl.class);
-      if (jsonUrl != null) {
+      if (jsonUrl != null && val != null) {
         new UrlSerializer(jsonUrl.value(), jsonUrl.urlFieldName(), jsonUrl.extended(),
             jsonUrl.asMap(),
             jsonUrl.separator(), jsonUrl.defaultValue(), jsonUrl.mapper()).serialize(val, gen,

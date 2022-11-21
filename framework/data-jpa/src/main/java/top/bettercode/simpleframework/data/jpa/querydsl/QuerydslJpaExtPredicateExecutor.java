@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -35,40 +36,45 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
         entityInformation.getJavaType(), resolver.createPath(entityInformation.getJavaType()));
   }
 
+  @NotNull
   @Override
-  public Optional<T> findOne(Predicate predicate) {
+  public Optional<T> findOne(@NotNull Predicate predicate) {
     if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
        return super.findOne(predicate);
   }
 
+  @NotNull
   @Override
-  public List<T> findAll(Predicate predicate) {
+  public List<T> findAll(@NotNull Predicate predicate) {
     if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
     return super.findAll(predicate);
   }
 
+  @NotNull
   @Override
-  public List<T> findAll(Predicate predicate, OrderSpecifier<?>... orders) {
+  public List<T> findAll(@NotNull Predicate predicate, @NotNull OrderSpecifier<?>... orders) {
     if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
     return super.findAll(predicate, orders);
   }
 
+  @NotNull
   @Override
-  public List<T> findAll(Predicate predicate, Sort sort) {
+  public List<T> findAll(@NotNull Predicate predicate, @NotNull Sort sort) {
     if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
     return super.findAll(predicate, sort);
   }
 
+  @NotNull
   @Override
-  public List<T> findAll(OrderSpecifier<?>... orders) {
+  public List<T> findAll(@NotNull OrderSpecifier<?>... orders) {
     if (softDeleteSupport.supportSoftDeleted()) {
       return super.findAll(softDeleteSupport.andFalsePredicate(null), orders);
     } else {
@@ -76,8 +82,9 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
     }
   }
 
+  @NotNull
   @Override
-  public Page<T> findAll(Predicate predicate, Pageable pageable) {
+  public Page<T> findAll(@NotNull Predicate predicate, @NotNull Pageable pageable) {
     if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
@@ -85,7 +92,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
   }
 
   @Override
-  public long count(Predicate predicate) {
+  public long count(@NotNull Predicate predicate) {
     if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
@@ -93,7 +100,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
   }
 
   @Override
-  public boolean exists(Predicate predicate) {
+  public boolean exists(@NotNull Predicate predicate) {
     if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }

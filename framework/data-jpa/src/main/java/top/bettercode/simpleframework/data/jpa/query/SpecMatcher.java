@@ -23,6 +23,7 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.SingularAttribute;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -66,7 +67,8 @@ public class SpecMatcher<T, M extends SpecMatcher<T, M>> implements Specificatio
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+  public Predicate toPredicate(
+      @NotNull Root<T> root, @NotNull CriteriaQuery<?> query, @NotNull CriteriaBuilder cb) {
     if (!this.orders.isEmpty()) {
       List<Order> orders = this.orders.stream().map(o -> {
         Path<?> path = SpecPath.toPath(root, o.getProperty());

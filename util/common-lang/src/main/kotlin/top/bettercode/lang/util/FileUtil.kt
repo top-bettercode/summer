@@ -80,8 +80,10 @@ object FileUtil {
         return files
     }
 
-    private fun innerListFiles(files: MutableCollection<File>, directory: File, filter: FileFilter,
-                               includeSubDirectories: Boolean, recursive: Boolean) {
+    private fun innerListFiles(
+        files: MutableCollection<File>, directory: File, filter: FileFilter,
+        includeSubDirectories: Boolean, recursive: Boolean
+    ) {
         val found = directory.listFiles(filter)
 
         if (found != null) {
@@ -91,7 +93,7 @@ object FileUtil {
                         files.add(file)
                     }
                     if (recursive) {
-                        innerListFiles(files, file, filter, includeSubDirectories, recursive)
+                        innerListFiles(files, file, filter, includeSubDirectories, true)
                     }
                 } else {
                     files.add(file)
@@ -159,8 +161,10 @@ object FileUtil {
 
     @Throws(IOException::class)
     @JvmStatic
-    fun writeLines(lines: Collection<*>?, lineEnding: String?, output: OutputStream,
-                   encoding: Charset) {
+    fun writeLines(
+        lines: Collection<*>?, lineEnding: String?, output: OutputStream,
+        encoding: Charset
+    ) {
         var ending = lineEnding
         if (lines == null) {
             return
@@ -180,8 +184,10 @@ object FileUtil {
     @Throws(IOException::class)
     @JvmOverloads
     @JvmStatic
-    fun writeLines(file: File, encoding: String?, lines: Collection<*>, lineEnding: String? = null,
-                   append: Boolean = false) {
+    fun writeLines(
+        file: File, encoding: String?, lines: Collection<*>, lineEnding: String? = null,
+        append: Boolean = false
+    ) {
         var out: FileOutputStream? = null
         try {
             out = openOutputStream(file, append)

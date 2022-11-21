@@ -114,7 +114,7 @@ class SkipKeywordFilter(
      * @param chars 过滤的字符
      */
     fun addSkipChar(chars: Collection<Char>?) {
-        if (null != chars && !chars.isEmpty()) {
+        if (!chars.isNullOrEmpty()) {
             this.skipChars.addAll(chars)
             this.skip = true
         }

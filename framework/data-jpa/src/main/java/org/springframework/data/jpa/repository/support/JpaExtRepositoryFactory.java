@@ -36,6 +36,7 @@ import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 import org.springframework.data.repository.query.ReturnedType;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import top.bettercode.simpleframework.data.jpa.config.JpaExtProperties;
@@ -154,7 +155,7 @@ public class JpaExtRepositoryFactory extends RepositoryFactorySupport {
 
 
   @Override
-  protected Optional<QueryLookupStrategy> getQueryLookupStrategy(Key key,
+  protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable Key key,
       QueryMethodEvaluationContextProvider evaluationContextProvider) {
     return Optional.of(
         JpaExtQueryLookupStrategy

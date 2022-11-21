@@ -327,7 +327,7 @@ class LogsEndpoint(
 
                 val listFiles = file.listFiles()
                 listFiles?.sortWith(comparator)
-                listFiles?.forEach { it ->
+                listFiles?.forEach {
                     if (it.isDirectory) {
                         writer.println(
                             "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${

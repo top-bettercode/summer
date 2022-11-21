@@ -5,6 +5,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.OncePerRequestFilter;
 import top.bettercode.simpleframework.config.SummerWebProperties;
@@ -43,7 +44,7 @@ public class ApiVersionFilter extends OncePerRequestFilter implements Ordered {
   }
 
   @Override
-  protected void doFilterInternal(final HttpServletRequest request, HttpServletResponse response,
+  protected void doFilterInternal(@NotNull final HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws IOException, ServletException {
     response.setHeader(summerWebProperties.getVersionName(), summerWebProperties.getVersion());
     response.setHeader(summerWebProperties.getVersionNoName(), summerWebProperties.getVersionNo());

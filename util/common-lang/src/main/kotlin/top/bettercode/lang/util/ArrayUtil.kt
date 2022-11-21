@@ -55,7 +55,7 @@ object ArrayUtil {
      */
     @JvmStatic
     fun isEmpty(array: Array<Any>?): Boolean {
-        return array == null || array.isEmpty()
+        return array.isNullOrEmpty()
     }
 
     /**

@@ -46,7 +46,7 @@ public class LogstashTcpSocketProperties {
 
   /**
    * The number of bytes available in the write buffer. Defaults to DEFAULT_WRITE_BUFFER_SIZE
-   *
+   * <p>
    * If less than or equal to zero, buffering the output stream will be disabled. If buffering is
    * disabled, the writer thread can slow down, but it will also can prevent dropping events in the
    * buffer on flaky connections.
@@ -55,7 +55,7 @@ public class LogstashTcpSocketProperties {
   /**
    * If this duration elapses without an event being sent, then the keepAliveDuration will be sent
    * to the socket in order to keep the connection alive.
-   *
+   * <p>
    * When null (the default), no keepAlive messages will be sent.
    */
   private Duration keepAliveDuration;

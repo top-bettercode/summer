@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.support.client;
 import java.io.IOException;
 import java.net.URI;
 import kotlin.jvm.functions.Function1;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -56,8 +57,9 @@ public class ApiTemplate extends RestTemplate {
     setRequestFactory(clientHttpRequestFactory);
   }
 
+  @NotNull
   @Override
-  protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
+  protected ClientHttpRequest createRequest(@NotNull URI url, @NotNull HttpMethod method) throws IOException {
     if (log.isInfoEnabled()) {
       return new ClientHttpRequestWrapper(collectionName, name, logMarker,
           super.createRequest(url, method), requestDecrypt, responseDecrypt);

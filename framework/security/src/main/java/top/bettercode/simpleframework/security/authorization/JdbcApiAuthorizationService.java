@@ -1,6 +1,7 @@
 package top.bettercode.simpleframework.security.authorization;
 
 import java.sql.Types;
+import java.util.Objects;
 import javax.sql.DataSource;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -136,7 +137,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
           }, param);
       if (log.isDebugEnabled()) {
         log.debug("JdbcApiAuthorizationService.getApiAuthenticationToken\n{}\n{}\nresult:{}",
-            selectStatement, param, apiAuthenticationToken.getUserDetails());
+            selectStatement, param, Objects.requireNonNull(apiAuthenticationToken).getUserDetails());
       }
       return apiAuthenticationToken;
     } catch (EmptyResultDataAccessException e) {

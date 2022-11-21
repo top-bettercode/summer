@@ -339,11 +339,9 @@ public class ExcelField<T, P> {
               throw e;
             }
           }
-          if (writeMethod != null) {
-            Method fWriteMethod = writeMethod;
-            this.propertySetter = (obj, property) -> ReflectionUtils.invokeMethod(fWriteMethod, obj,
-                property);
-          }
+          Method fWriteMethod = writeMethod;
+          this.propertySetter = (obj, property) -> ReflectionUtils.invokeMethod(fWriteMethod, obj,
+              property);
         } catch (NoSuchMethodException e) {
           Logger log = LoggerFactory.getLogger(ExcelField.class);
           if (log.isDebugEnabled()) {

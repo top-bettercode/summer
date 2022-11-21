@@ -13,6 +13,7 @@ import org.apache.ibatis.session.Configuration;
 import org.hibernate.boot.model.naming.ImplicitNamingStrategy;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.cfg.AvailableSettings;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -51,7 +52,7 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
   private Environment environment;
 
   @Override
-  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+  public void postProcessBeanFactory(@NotNull ConfigurableListableBeanFactory beanFactory)
       throws BeansException {
     Map<String, BaseDataSourceProperties> dataSources = Binder.get(
         environment).bind("summer.datasource.multi.datasources", Bindable
@@ -94,7 +95,7 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
               return dataSource;
             });
         if (primary) {
-          beanDefinitionBuilder.setPrimary(primary);
+          beanDefinitionBuilder.setPrimary(true);
           if (factory.containsBeanDefinition(dataSourceBeanName)) {
             factory.removeBeanDefinition(dataSourceBeanName);
           }
@@ -145,7 +146,7 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
                   .build();
             });
         if (primary) {
-          beanDefinitionBuilder.setPrimary(primary);
+          beanDefinitionBuilder.setPrimary(true);
           if (factory.containsBeanDefinition(entityManagerFactoryBeanName)) {
             factory.removeBeanDefinition(entityManagerFactoryBeanName);
           }
@@ -172,7 +173,7 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
               return jpaTransactionManager;
             });
         if (primary) {
-          beanDefinitionBuilder.setPrimary(primary);
+          beanDefinitionBuilder.setPrimary(true);
           if (factory.containsBeanDefinition(transactionManagerBeanName)) {
             factory.removeBeanDefinition(transactionManagerBeanName);
           }
@@ -203,7 +204,7 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
             }
         );
         if (primary) {
-          beanDefinitionBuilder.setPrimary(primary);
+          beanDefinitionBuilder.setPrimary(true);
           if (factory.containsBeanDefinition(mybatisConfigurationRef)) {
             factory.removeBeanDefinition(mybatisConfigurationRef);
           }
@@ -262,17 +263,17 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
 
 
   @Override
-  public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)
+  public void postProcessBeanDefinitionRegistry(@NotNull BeanDefinitionRegistry registry)
       throws BeansException {
   }
 
   @Override
-  public void setResourceLoader(ResourceLoader resourceLoader) {
+  public void setResourceLoader(@NotNull ResourceLoader resourceLoader) {
     this.resourceLoader = resourceLoader;
   }
 
   @Override
-  public void setEnvironment(Environment environment) {
+  public void setEnvironment(@NotNull Environment environment) {
     this.environment = environment;
   }
 }

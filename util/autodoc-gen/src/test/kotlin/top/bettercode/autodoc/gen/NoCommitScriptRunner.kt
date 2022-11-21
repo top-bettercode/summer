@@ -234,7 +234,7 @@ class NoCommitScriptRunner(private val connection: Connection) {
         private const val DEFAULT_DELIMITER = ";"
 
         private val DELIMITER_PATTERN = Pattern
-                .compile("^\\s*((--)|(//))?\\s*(//)?\\s*@DELIMITER\\s+([^\\s]+)", Pattern.CASE_INSENSITIVE)
+                .compile("^\\s*((--)|(//))?\\s*(//)?\\s*@DELIMITER\\s+(\\S+)", Pattern.CASE_INSENSITIVE)
     }
 
 }

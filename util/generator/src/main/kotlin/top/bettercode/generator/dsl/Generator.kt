@@ -562,7 +562,7 @@ open class Generator {
                 }
             }
         } else {
-            columnDef
+            null
         }
     }
 

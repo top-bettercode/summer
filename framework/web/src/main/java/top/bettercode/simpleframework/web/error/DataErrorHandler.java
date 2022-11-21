@@ -1,6 +1,7 @@
 package top.bettercode.simpleframework.web.error;
 
 import java.util.Map;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import org.springframework.context.MessageSource;
@@ -77,7 +78,7 @@ public class DataErrorHandler extends AbstractErrorHandler {
         String columnName = getText(specificCauseMessage.replaceAll(incorrectRegex, "$2"));
         message = columnName + "格式不正确";
       } else {
-        message = ((DataIntegrityViolationException) error).getRootCause().getMessage();
+        message = Objects.requireNonNull(((DataIntegrityViolationException) error).getRootCause()).getMessage();
       }
     } else if (error instanceof UncategorizedSQLException) {
       String detailMessage = ((UncategorizedSQLException) error).getSQLException().getMessage()

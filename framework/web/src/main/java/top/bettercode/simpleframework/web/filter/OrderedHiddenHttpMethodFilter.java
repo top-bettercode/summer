@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -36,7 +37,7 @@ public class OrderedHiddenHttpMethodFilter extends HiddenHttpMethodFilter implem
    * @param methodParam methodParam
    * @see #DEFAULT_METHOD_PARAM
    */
-  public void setMethodParam(String methodParam) {
+  public void setMethodParam(@NotNull String methodParam) {
     Assert.hasText(methodParam, "'methodParam' must not be empty");
     this.methodParam = methodParam;
   }
@@ -57,7 +58,7 @@ public class OrderedHiddenHttpMethodFilter extends HiddenHttpMethodFilter implem
 
   @Override
   protected void doFilterInternal(HttpServletRequest request,
-      HttpServletResponse response, FilterChain filterChain)
+      @NotNull HttpServletResponse response, @NotNull FilterChain filterChain)
       throws ServletException, IOException {
 
     String paramValue = request.getParameter(this.methodParam);

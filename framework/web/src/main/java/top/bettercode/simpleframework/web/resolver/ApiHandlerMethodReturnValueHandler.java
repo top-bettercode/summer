@@ -2,12 +2,14 @@ package top.bettercode.simpleframework.web.resolver;
 
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -37,13 +39,14 @@ public class ApiHandlerMethodReturnValueHandler implements HandlerMethodReturnVa
 
 
   @Override
-  public boolean supportsReturnType(MethodParameter returnType) {
+  public boolean supportsReturnType(@NotNull MethodParameter returnType) {
     return delegate.supportsReturnType(returnType);
   }
 
   @Override
   public void handleReturnValue(Object returnValue, MethodParameter returnType,
-      ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
+      @NotNull ModelAndViewContainer mavContainer, @NotNull NativeWebRequest webRequest)
+      throws Exception {
 
     Class<?> typeContainingClass = returnType.getContainingClass();
     Class<?> parameterType = returnType.getParameterType();
@@ -54,21 +57,22 @@ public class ApiHandlerMethodReturnValueHandler implements HandlerMethodReturnVa
         && !RequestEntity.class.isAssignableFrom(parameterType))) {
 
       //异常信息处理
-      Object body =
-          returnValue instanceof ResponseEntity ? ((ResponseEntity<?>) returnValue).getBody()
-              : returnValue;
+      boolean isResponseEntity = returnValue instanceof ResponseEntity;
+      Object body = isResponseEntity ? ((ResponseEntity<?>) returnValue).getBody() : returnValue;
+      HttpServletResponse nativeResponse = webRequest.getNativeResponse(HttpServletResponse.class);
+      Assert.notNull(nativeResponse, "HttpServletResponse 为 null");
       if (body instanceof Throwable) {
         IRespEntity respEntity = errorAttributes.getErrorAttributes((Throwable) body, webRequest);
         body = respEntity;
 
-        HttpStatus statusCode = ((ResponseEntity<?>) returnValue).getStatusCode();
+        HttpStatus statusCode =
+            isResponseEntity ? ((ResponseEntity<?>) returnValue).getStatusCode() : null;
         Integer httpStatusCode = respEntity.getHttpStatusCode();
         if (httpStatusCode != null) {
           statusCode = HttpStatus.valueOf(httpStatusCode);
         }
-        webRequest.getNativeResponse(HttpServletResponse.class)
-            .setStatus(statusCode.value());
-        if (returnValue instanceof ResponseEntity) {
+        nativeResponse.setStatus(statusCode.value());
+        if (isResponseEntity) {
           returnValue =
               ResponseEntity
                   .status(statusCode)
@@ -95,7 +99,7 @@ public class ApiHandlerMethodReturnValueHandler implements HandlerMethodReturnVa
       }
 
       if (summerWebProperties.okEnable(webRequest)) {
-        webRequest.getNativeResponse(HttpServletResponse.class).setStatus(HttpStatus.OK.value());
+        nativeResponse.setStatus(HttpStatus.OK.value());
         if (returnValue instanceof ResponseEntity) {
           int statusCode = ((ResponseEntity<?>) returnValue).getStatusCode().value();
           if (statusCode != 404 && statusCode != 405) {
@@ -119,7 +123,7 @@ public class ApiHandlerMethodReturnValueHandler implements HandlerMethodReturnVa
       return !Objects.equals(returnType.getExecutable().getDeclaringClass().getPackage().getName(),
           "org.springframework.boot.actuate.endpoint.web.servlet");
     }
-    return support;
+    return false;
   }
 
   private Object rewrapResult(Object originalValue) {

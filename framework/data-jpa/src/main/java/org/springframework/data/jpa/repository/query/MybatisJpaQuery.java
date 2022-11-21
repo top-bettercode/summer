@@ -4,6 +4,7 @@ import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -196,7 +197,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             MDC.put("id", sqlLogId);
             List<?> result = (List<?>) super.doExecute(query, accessor);
             if (sqlLog.isDebugEnabled()) {
-              sqlLog.debug("{} rows retrieved", result.size());
+              sqlLog.debug("{} rows retrieved", Objects.requireNonNull(result).size());
             }
             return result;
           } finally {
@@ -224,7 +225,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             }
             SliceImpl<?> result = (SliceImpl<?>) super.doExecute(query, accessor);
             if (sqlLog.isDebugEnabled()) {
-              sqlLog.debug("total: {} rows", result.getNumberOfElements());
+              sqlLog.debug("total: {} rows", Objects.requireNonNull(result).getNumberOfElements());
               sqlLog.debug("{} rows retrieved", result.getSize());
             }
             return result;

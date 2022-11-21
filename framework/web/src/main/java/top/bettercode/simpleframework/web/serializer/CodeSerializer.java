@@ -96,7 +96,7 @@ public class CodeSerializer extends StdScalarSerializer<Serializable> implements
       codeType = "".equals(codeType) ? property.getName() : codeType;
       return new CodeSerializer(annotation.codeServiceRef(), codeType, annotation.extended());
     }
-    return prov.findNullValueSerializer(property);
+    return prov.findNullValueSerializer(null);
   }
 
 

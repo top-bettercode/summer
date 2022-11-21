@@ -72,7 +72,7 @@ object CaptchaUtil {
      */
     private fun generateCaptcha(size: Int, sources: String?): String {
         var source = sources
-        if (source == null || source.isEmpty()) {
+        if (source.isNullOrEmpty()) {
             source = CAPTCHA_CODES
         }
         val codesLen = source.length

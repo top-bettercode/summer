@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.web.resolver;
 
 import java.util.Collections;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalGenericConverter;
 import org.springframework.util.StringUtils;
@@ -13,7 +14,7 @@ import top.bettercode.lang.util.MoneyUtil;
 public class CentConverter implements ConditionalGenericConverter {
 
   @Override
-  public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+  public boolean matches(@NotNull TypeDescriptor sourceType, TypeDescriptor targetType) {
     return targetType.hasAnnotation(Cent.class);
   }
 
@@ -23,7 +24,7 @@ public class CentConverter implements ConditionalGenericConverter {
   }
 
   @Override
-  public Object convert(Object object, TypeDescriptor sourceType, TypeDescriptor targetType) {
+  public Object convert(Object object, @NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
     if (!StringUtils.hasText((String) object)) {
       return null;
     }

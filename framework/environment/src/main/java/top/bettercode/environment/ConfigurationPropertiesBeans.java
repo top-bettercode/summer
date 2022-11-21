@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -44,7 +45,7 @@ public class ConfigurationPropertiesBeans implements BeanPostProcessor, Applicat
   }
 
   @Override
-  public Object postProcessBeforeInitialization(Object bean, String beanName)
+  public Object postProcessBeforeInitialization(@NotNull Object bean, @NotNull String beanName)
       throws BeansException {
     ConfigurationPropertiesBean propertiesBean = ConfigurationPropertiesBean.get(
         this.applicationContext, bean,
@@ -57,7 +58,7 @@ public class ConfigurationPropertiesBeans implements BeanPostProcessor, Applicat
 
 
   @Override
-  public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+  public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
     return bean;
   }
 

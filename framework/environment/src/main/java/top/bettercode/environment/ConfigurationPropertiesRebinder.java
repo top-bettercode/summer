@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -22,7 +23,7 @@ import org.springframework.util.StringUtils;
  * {@link Environment} using {@link ConfigurationProperties ConfigurationProperties}. When these beans are re-bound and
  * re-initialized, the changes are available immediately to any component that is using
  * the @ConfigurationProperties bean.
- *
+ * <p>
  *
  */
 @Component
@@ -41,7 +42,7 @@ public class ConfigurationPropertiesRebinder
 	}
 
 	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+	public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
 

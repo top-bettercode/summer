@@ -27,6 +27,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -273,8 +274,8 @@ public class FrameworkMvcConfiguration {
       }
 
       @Override
-      public void render(Map<String, ?> model, HttpServletRequest request,
-          HttpServletResponse response)
+      public void render(Map<String, ?> model, @NotNull HttpServletRequest request,
+          @NotNull HttpServletResponse response)
           throws Exception {
         if (response.getContentType() == null) {
           response.setContentType(getContentType());
@@ -414,7 +415,7 @@ public class FrameworkMvcConfiguration {
       registry.addConverterFactory(new StringToEnumConverterFactory());
       registry.addConverter(new Converter<String, Date>() {
         @Override
-        public Date convert(String source) {
+        public Date convert(@NotNull String source) {
           if (legalDate(source)) {
             return new Date(Long.parseLong(source));
           } else {
@@ -424,7 +425,7 @@ public class FrameworkMvcConfiguration {
       });
       registry.addConverter(new Converter<String, java.sql.Date>() {
         @Override
-        public java.sql.Date convert(String source) {
+        public java.sql.Date convert(@NotNull String source) {
           if (legalDate(source)) {
             return new java.sql.Date(Long.parseLong(source));
           } else {
@@ -434,7 +435,7 @@ public class FrameworkMvcConfiguration {
       });
       registry.addConverter(new Converter<String, LocalDate>() {
         @Override
-        public LocalDate convert(String source) {
+        public LocalDate convert(@NotNull String source) {
           if (legalDate(source)) {
             return TimeUtil.of(Long.parseLong(source)).toLocalDate();
           } else {
@@ -444,7 +445,7 @@ public class FrameworkMvcConfiguration {
       });
       registry.addConverter(new Converter<String, LocalDateTime>() {
         @Override
-        public LocalDateTime convert(String source) {
+        public LocalDateTime convert(@NotNull String source) {
           if (legalDate(source)) {
             return TimeUtil.of(Long.parseLong(source)).toLocalDateTime();
           } else {

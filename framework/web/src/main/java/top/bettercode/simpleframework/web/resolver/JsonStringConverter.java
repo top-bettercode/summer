@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.TypeDescriptor;
@@ -28,7 +29,7 @@ public class JsonStringConverter implements ConditionalGenericConverter {
   }
 
   @Override
-  public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+  public boolean matches(@NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
     return true;
   }
 
@@ -38,7 +39,7 @@ public class JsonStringConverter implements ConditionalGenericConverter {
   }
 
   @Override
-  public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+  public Object convert(Object source, @NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
     if (!StringUtils.hasText((String) source)) {
       return null;
     }

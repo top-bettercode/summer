@@ -1,6 +1,6 @@
 package jpa.unit
 
-import ProjectGenerator
+import jpa.ProjectGenerator
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.JavaVisibility
 import top.bettercode.generator.dom.java.element.Parameter
@@ -122,7 +122,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"if (!(o instanceof ${primaryKeyClassName})) {"
             +"return false;"
             +"}"
-            +"${primaryKeyClassName} that = (${primaryKeyClassName}) o;"
+            +"$primaryKeyClassName that = (${primaryKeyClassName}) o;"
             val size = primaryKeys.size
             primaryKeys.forEachIndexed { index, column ->
                 when (index) {

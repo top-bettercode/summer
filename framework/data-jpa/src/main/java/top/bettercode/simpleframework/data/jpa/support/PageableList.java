@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.data.jpa.support;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -74,7 +75,7 @@ public class PageableList<T> extends PageImpl<T> implements List<T> {
   }
 
   public boolean containsAll(@NotNull Collection<?> c) {
-    return getContent().containsAll(c);
+    return new HashSet<>(getContent()).containsAll(c);
   }
 
   public boolean addAll(@NotNull Collection<? extends T> c) {
@@ -159,6 +160,7 @@ public class PageableList<T> extends PageImpl<T> implements List<T> {
     return getContent().removeIf(filter);
   }
 
+  @NotNull
   @Override
   public Stream<T> stream() {
     return getContent().stream();

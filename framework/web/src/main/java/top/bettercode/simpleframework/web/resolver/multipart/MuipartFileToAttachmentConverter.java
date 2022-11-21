@@ -8,8 +8,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
@@ -43,11 +45,11 @@ public class MuipartFileToAttachmentConverter implements Converter<MultipartFile
   }
 
   @Override
-  public Attachment convert(MultipartFile source) {
+  public Attachment convert(@NotNull MultipartFile source) {
     try {
       ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
           .getRequestAttributes();
-      HttpServletRequest request = requestAttributes.getRequest();
+      HttpServletRequest request = Objects.requireNonNull(requestAttributes).getRequest();
 
       String name = source.getName();
       if (source.isEmpty()) {
@@ -70,20 +72,20 @@ public class MuipartFileToAttachmentConverter implements Converter<MultipartFile
       String filePath = File.separator + fileType + File.separator;
       filePath += LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
       String originalFilename = source.getOriginalFilename();
-      boolean hasExtension = StringUtils.hasText(originalFilename);
-      String extension = hasExtension ? FilenameUtil.getExtension(originalFilename) : "";
+      boolean hasOriginalName = StringUtils.hasText(originalFilename);
+      String extension = hasOriginalName ? FilenameUtil.getExtension(originalFilename) : "";
       String path;
       if (multipartProperties.isKeepOriginalFilename()) {
         filePath += File.separator + UUID.randomUUID() + File.separator;
-        String nameWithoutExtension = StringUtils
-            .trimAllWhitespace(FilenameUtil.getNameWithoutExtension(originalFilename));
+        String nameWithoutExtension = hasOriginalName ? StringUtils
+            .trimAllWhitespace(FilenameUtil.getNameWithoutExtension(originalFilename)) : "";
         path = filePath + URLEncoder.encode(nameWithoutExtension, "UTF-8");
         filePath += nameWithoutExtension;
       } else {
         filePath += File.separator + UUID.randomUUID();
         path = filePath;
       }
-      if (hasExtension) {
+      if (hasOriginalName) {
         filePath += "." + extension;
         path += "." + extension;
       }
@@ -122,7 +124,7 @@ public class MuipartFileToAttachmentConverter implements Converter<MultipartFile
   public void cleanFile() {
     ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
         .getRequestAttributes();
-    HttpServletRequest request = requestAttributes.getRequest();
+    HttpServletRequest request = Objects.requireNonNull(requestAttributes).getRequest();
     @SuppressWarnings("unchecked") MultiValueMap<String, Attachment> files = (MultiValueMap<String, Attachment>) request
         .getAttribute(REQUEST_FILES);
     if (files != null) {

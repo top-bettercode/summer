@@ -45,6 +45,6 @@ public class EmbeddedIdSerializer extends StdScalarSerializer<Object> implements
       delimiter = "".equals(delimiter) ? EmbeddedIdConverter.DELIMITER : delimiter;
       return new EmbeddedIdSerializer(delimiter);
     }
-    return prov.findNullValueSerializer(property);
+    return prov.findNullValueSerializer(null);
   }
 }

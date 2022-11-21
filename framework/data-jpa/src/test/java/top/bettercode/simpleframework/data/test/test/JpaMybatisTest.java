@@ -242,7 +242,7 @@ public class JpaMybatisTest {
     }
   }
 
-  CountDownLatch countDownLatch = new CountDownLatch(200);
+  final CountDownLatch countDownLatch = new CountDownLatch(200);
 
   @Test
   public void selectMybatisIfParamAsynchronous() throws Exception {

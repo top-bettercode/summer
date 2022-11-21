@@ -29,7 +29,7 @@ import java.util.*
  * @author Peter Wu
  */
 object Util {
-    val replaceChar="丨"
+    const val replaceChar="丨"
     val objectMapper = ObjectMapper()
     val yamlMapper = YAMLMapper()
 
@@ -125,7 +125,7 @@ object Util {
             return if (unwrapped) {
                 val map = mutableMapOf<Any?, Any?>()
                 this.forEach {
-                    val convertAny = it?.convert(unwrapped)
+                    val convertAny = it?.convert(true)
                     if (convertAny is Map<*, *>) {
                         convertAny.forEach { (any, u) ->
                             val value = map[any]
@@ -139,7 +139,7 @@ object Util {
                     }
                 }
                 if (map.isEmpty()) {
-                    this.firstOrNull { it != null }?.convert(unwrapped)
+                    this.firstOrNull { it != null }?.convert(true)
                 } else
                     map
             } else

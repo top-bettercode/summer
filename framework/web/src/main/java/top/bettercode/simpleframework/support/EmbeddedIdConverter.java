@@ -19,7 +19,7 @@ import org.springframework.util.ReflectionUtils;
 public class EmbeddedIdConverter {
 
   private static final ConcurrentMap<Class<?>, List<PropertyDescriptor>> cache = new ConcurrentHashMap<>();
-  public static String DELIMITER = ",";
+  public static final String DELIMITER = ",";
 
   public static <T> String toString(T embeddedId) {
     return toString(embeddedId, DELIMITER);

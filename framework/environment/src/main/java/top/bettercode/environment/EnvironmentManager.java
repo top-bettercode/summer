@@ -3,6 +3,8 @@ package top.bettercode.environment;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -35,14 +37,15 @@ public class EnvironmentManager implements ApplicationEventPublisherAware {
     MutablePropertySources sources = environment.getPropertySources();
     if (sources.contains(MANAGER_PROPERTY_SOURCE)) {
       @SuppressWarnings("unchecked")
-      Map<String, Object> map = (Map<String, Object>) sources.get(MANAGER_PROPERTY_SOURCE)
+      Map<String, Object> map = (Map<String, Object>) Objects.requireNonNull(
+              sources.get(MANAGER_PROPERTY_SOURCE))
           .getSource();
       this.map = map;
     }
   }
 
   @Override
-  public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
+  public void setApplicationEventPublisher(@NotNull ApplicationEventPublisher publisher) {
     this.publisher = publisher;
   }
 

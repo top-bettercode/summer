@@ -43,7 +43,7 @@ class DistPlugin : Plugin<Project> {
             it.autoStart = project.findDistProperty("auto-start")?.toBoolean() ?: true
             it.includeJre = project.findDistProperty("include-jre")?.toBoolean() ?: false
             it.windows =
-                if (windowsServiceEnable) windowsServiceEnable else project.findDistProperty("windows")
+                if (windowsServiceEnable) true else project.findDistProperty("windows")
                     ?.toBoolean() ?: false
             it.urandom = (project.findDistProperty("urandom") ?: "false").toBoolean()
             it.x64 = project.findDistProperty("x64")?.toBoolean() ?: true

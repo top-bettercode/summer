@@ -8,12 +8,14 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.ReturnedType;
 import org.springframework.data.repository.query.parser.PartTree;
+import org.springframework.lang.Nullable;
 import top.bettercode.simpleframework.data.jpa.support.ExtJpaSupport;
 
 /**
  * @author Peter Wu
  */
 public class JpaExtCountQueryCreator extends JpaCountQueryCreator {
+
   private final ExtJpaSupport softDeleteSupport;
 
   public JpaExtCountQueryCreator(PartTree tree,
@@ -26,9 +28,9 @@ public class JpaExtCountQueryCreator extends JpaCountQueryCreator {
   }
 
   @Override
-  protected CriteriaQuery<?> complete(Predicate predicate, Sort sort,
+  protected CriteriaQuery<?> complete(@Nullable Predicate predicate, Sort sort,
       CriteriaQuery<?> query, CriteriaBuilder builder, Root<?> root) {
-    if (softDeleteSupport.supportSoftDeleted()) {
+    if (predicate != null && softDeleteSupport.supportSoftDeleted()) {
       Path<Boolean> deletedPath = root.get(softDeleteSupport.getSoftDeletedPropertyName());
       predicate = builder.and(predicate, builder.isFalse(deletedPath));
     }

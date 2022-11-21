@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.MediaType;
@@ -65,12 +66,13 @@ public class OrderedHttpPutFormContentFilter extends OncePerRequestFilter implem
   }
 
   @Override
-  protected void doFilterInternal(final HttpServletRequest request, HttpServletResponse response,
-      FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(final HttpServletRequest request, @NotNull HttpServletResponse response,
+      @NotNull FilterChain filterChain) throws ServletException, IOException {
 
     if (("PUT".equals(request.getMethod()) || "DELETE".equals(request.getMethod()) || "PATCH"
         .equals(request.getMethod())) && isFormContentType(request)) {
       HttpInputMessage inputMessage = new ServletServerHttpRequest(request) {
+        @NotNull
         @Override
         public InputStream getBody() throws IOException {
           return request.getInputStream();

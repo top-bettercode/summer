@@ -83,7 +83,7 @@ object InitField {
             }
         }
 
-        Autodoc.fields.forEach { name, desc ->
+        Autodoc.fields.forEach { (name, desc) ->
             request.uriVariablesExt.filter { it.name == name }.forEach { it.description = desc }
             request.headersExt.filter { it.name == name }.forEach { it.description = desc }
             request.parametersExt.filter { it.name == name }.forEach { it.description = desc }
@@ -409,7 +409,7 @@ object InitField {
             if (expand) {
                 val expandValue = field.value.toMap()
                 if (expandValue != null) {
-                    field.children = expandValue.toFields(field.children + fields, expand)
+                    field.children = expandValue.toFields(field.children + fields, true)
                 } else {
                     field.children = LinkedHashSet()
                 }

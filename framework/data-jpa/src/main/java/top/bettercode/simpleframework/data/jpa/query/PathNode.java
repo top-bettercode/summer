@@ -7,11 +7,13 @@ import org.springframework.util.ObjectUtils;
 
 class PathNode {
 
-  String name;
+  final String name;
   @Nullable
+  final
   PathNode parent;
-  List<PathNode> siblings = new ArrayList<>();
+  final List<PathNode> siblings = new ArrayList<>();
   @Nullable
+  final
   Object value;
 
   PathNode(String edge, @Nullable PathNode parent, @Nullable Object value) {

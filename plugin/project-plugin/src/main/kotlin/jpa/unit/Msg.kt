@@ -1,6 +1,6 @@
 package jpa.unit
 
-import ProjectGenerator
+import jpa.ProjectGenerator
 import org.atteo.evo.inflector.English
 import top.bettercode.generator.dom.unit.PropertiesUnit
 

@@ -1,3 +1,4 @@
+import jpa.ProjectGenerator
 import jpa.unit.*
 import top.bettercode.generator.dom.unit.PropertiesUnit
 

@@ -19,7 +19,7 @@ public class NoCommitScriptRunner {
   private static final String DEFAULT_DELIMITER = ";";
 
   private static final Pattern DELIMITER_PATTERN = Pattern
-      .compile("^\\s*((--)|(//))?\\s*(//)?\\s*@DELIMITER\\s+([^\\s]+)", Pattern.CASE_INSENSITIVE);
+      .compile("^\\s*((--)|(//))?\\s*(//)?\\s*@DELIMITER\\s+(\\S+)", Pattern.CASE_INSENSITIVE);
 
   private final Connection connection;
 

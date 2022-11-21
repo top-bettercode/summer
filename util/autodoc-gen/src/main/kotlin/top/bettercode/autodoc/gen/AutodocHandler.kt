@@ -42,7 +42,6 @@ class AutodocHandler(
     private val log: Logger = LoggerFactory.getLogger(AutodocHandler::class.java)
     private val cache: ConcurrentMap<File, DocModule> = ConcurrentHashMap()
 
-    @Suppress("unused")
     @PreDestroy
     fun destroy() {
         try {

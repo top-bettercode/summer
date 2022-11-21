@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.web.validator;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import top.bettercode.lang.property.PropertiesSource;
 import top.bettercode.lang.property.Settings;
 
@@ -43,7 +44,7 @@ public class IDCardInfo {
         idcard = IDCardUtil.convertFrom15bit(idcard);
       }
       // 获取省份
-      String provinceId = idcard.substring(0, 2);
+      String provinceId = Objects.requireNonNull(idcard).substring(0, 2);
       String cityId = idcard.substring(2, 4);
       String regionId = idcard.substring(4, 6);
       this.province = getString(provinceId + "0000", null);

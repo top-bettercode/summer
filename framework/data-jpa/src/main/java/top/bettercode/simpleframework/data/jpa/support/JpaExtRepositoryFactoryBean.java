@@ -3,6 +3,7 @@ package top.bettercode.simpleframework.data.jpa.support;
 import java.io.Serializable;
 import javax.persistence.EntityManager;
 import org.apache.ibatis.session.Configuration;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.support.JpaExtRepositoryFactory;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
@@ -40,8 +41,9 @@ public class JpaExtRepositoryFactoryBean<T extends JpaExtRepository<Object, Seri
    * @see org.springframework.data.jpa.repository.support.
    * GenericJpaRepositoryFactoryBean#getFactory()
    */
+  @NotNull
   @Override
-  protected RepositoryFactorySupport createRepositoryFactory(EntityManager em) {
+  protected RepositoryFactorySupport createRepositoryFactory(@NotNull EntityManager em) {
     Assert.notNull(mybatisConfiguration, "mybatisConfiguration must not be null");
     Assert.notNull(jpaExtProperties, "jpaExtProperties must not be null");
     return new JpaExtRepositoryFactory(em, mybatisConfiguration, jpaExtProperties);

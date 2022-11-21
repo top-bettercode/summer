@@ -1,9 +1,6 @@
 package top.bettercode.gradle.publish
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.tasks.Jar
 
 /**

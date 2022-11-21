@@ -2,6 +2,7 @@ package top.bettercode.simpleframework.web.error;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -42,13 +43,13 @@ public class DefaultErrorHandler extends AbstractErrorHandler {
         String paramName = error.getMessage().replaceAll(regex, "$1");
         message = getText(paramName) + "不能为空";
       }
-    } else if (error instanceof BindException) {//参数错误
-      BindException er = (BindException) error;
-      List<FieldError> fieldErrors = er.getFieldErrors();
-      message = handleFieldError(errors, fieldErrors, separator);
     } else if (error instanceof MethodArgumentNotValidException) {
       BindingResult bindingResult = ((MethodArgumentNotValidException) error).getBindingResult();
       List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+      message = handleFieldError(errors, fieldErrors, separator);
+    } else if (error instanceof BindException) {//参数错误
+      BindException er = (BindException) error;
+      List<FieldError> fieldErrors = er.getFieldErrors();
       message = handleFieldError(errors, fieldErrors, separator);
     } else if (error instanceof ConversionFailedException) {
       message = getText("typeMismatch",
@@ -105,7 +106,7 @@ public class DefaultErrorHandler extends AbstractErrorHandler {
     String message;
     for (FieldError fieldError : fieldErrors) {
       String defaultMessage = fieldError.getDefaultMessage();
-      if (defaultMessage.contains("required type")) {
+      if (Objects.requireNonNull(defaultMessage).contains("required type")) {
         defaultMessage = getText(fieldError.getCode());
       }
       String regrex = "^.*threw exception; nested exception is .*: (.*)$";

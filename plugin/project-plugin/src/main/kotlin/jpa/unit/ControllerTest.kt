@@ -1,6 +1,6 @@
 package jpa.unit
 
-import ProjectGenerator
+import jpa.ProjectGenerator
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.TopLevelClass
 import top.bettercode.lang.capitalized
@@ -85,7 +85,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(2)")
                 exception(JavaType("Exception"))
-                +"${primaryKeyClassName} $primaryKeyName = $testInsertName().get${
+                +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
                     primaryKeyName.capitalized()
                 }();"
                 +"perform(get(\"/$pathName/info\")"

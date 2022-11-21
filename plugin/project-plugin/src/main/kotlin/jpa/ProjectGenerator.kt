@@ -1,3 +1,5 @@
+package jpa
+
 import top.bettercode.generator.DatabaseDriver
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType

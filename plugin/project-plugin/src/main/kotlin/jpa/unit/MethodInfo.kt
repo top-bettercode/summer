@@ -1,6 +1,6 @@
 package jpa.unit
 
-import ProjectGenerator
+import jpa.ProjectGenerator
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.element.Interface
 import top.bettercode.lang.capitalized

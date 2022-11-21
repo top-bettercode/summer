@@ -38,7 +38,7 @@ public class SocketLoggingProperties {
    * events are enqueued, assuming that there is space available in the queue. Using a queue length
    * greater than one can improve performance by eliminating delays caused by transient network
    * delays.
-   *
+   * <p>
    * See also the eventDelayLimit property.
    */
   private Integer queueSize = 128;

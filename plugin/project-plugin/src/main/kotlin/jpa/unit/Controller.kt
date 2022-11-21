@@ -1,3 +1,6 @@
+package jpa.unit
+
+import jpa.ProjectGenerator
 import org.gradle.configurationcache.extensions.capitalized
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.Parameter

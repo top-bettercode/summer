@@ -219,11 +219,11 @@ class RequestLoggingFilter(
 
 
             var encryptHeaders = requestLoggingAnno?.encryptHeaders
-            if (encryptHeaders == null || encryptHeaders.isEmpty()) {
+            if (encryptHeaders.isNullOrEmpty()) {
                 encryptHeaders = properties.encryptHeaders
             }
             var encryptParameters = requestLoggingAnno?.encryptParameters
-            if (encryptParameters == null || encryptParameters.isEmpty()) {
+            if (encryptParameters.isNullOrEmpty()) {
                 encryptParameters = properties.encryptParameters
             }
             var timeoutAlarmSeconds = requestLoggingAnno?.timeoutAlarmSeconds ?: 0

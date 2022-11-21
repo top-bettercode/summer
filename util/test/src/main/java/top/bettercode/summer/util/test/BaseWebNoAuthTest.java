@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +72,7 @@ public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
   private CustomErrorController errorController;
   @Autowired
   protected RequestLoggingProperties requestLoggingProperties;
-  protected ObjectMapper objectMapper = new ObjectMapper();
+  protected final ObjectMapper objectMapper = new ObjectMapper();
 
   @AfterAll
   static void logAfterAll() {
@@ -132,7 +133,8 @@ public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
   private String getFileName(MvcResult result) throws UnsupportedEncodingException {
     String contentDisposition = result.getResponse().getHeader("Content-Disposition");
     contentDisposition = URLDecoder
-        .decode(contentDisposition.replaceAll(".*filename\\*=UTF-8''(.*?)", "$1"), "UTF-8");
+        .decode(
+            Objects.requireNonNull(contentDisposition).replaceAll(".*filename\\*=UTF-8''(.*?)", "$1"), "UTF-8");
     return "build/" + contentDisposition;
   }
 

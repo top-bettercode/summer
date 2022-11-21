@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +55,7 @@ public class PackageScanClassResolver {
       for (Object o : applicationContext.getBeansWithAnnotation(ComponentScan.class).values()) {
         ComponentScan annotation = AnnotatedElementUtils
             .findMergedAnnotation(o.getClass(), ComponentScan.class);
-        for (Class<?> aClass : annotation.basePackageClasses()) {
+        for (Class<?> aClass : Objects.requireNonNull(annotation).basePackageClasses()) {
           packages.add(aClass.getPackage().getName());
         }
         packages.addAll(Arrays.asList(annotation.basePackages()));

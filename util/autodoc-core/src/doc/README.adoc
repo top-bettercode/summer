@@ -7,27 +7,27 @@
 |请求方法 | URI | 说明 | 响应的HTTP状态码
 
 |GET/POST
-|/{model}/list
+|/\{model}/list
 |资源列表
 |200
 
 |GET/POST
-|/{model}/info
+|/\{model}/info
 |单个资源
 |200
 
 |GET/POST
-|/{model}/create
+|/\{model}/create
 |新建资源
 |200
 
 |GET/POST
-|/{model}/update
+|/\{model}/update
 |更新资源
 |200
 
 |GET/POST
-|{model}/delete
+|\{model}/delete
 |删除资源
 |200
 
