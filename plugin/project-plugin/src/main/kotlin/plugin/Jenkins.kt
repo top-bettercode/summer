@@ -24,7 +24,7 @@ class Jenkins(private val url: String, auth: String) {
 
 
     fun description(job: String): String {
-        return restTemplate.getForObject("$url/job/${job}/description")
+        return restTemplate.getForObject("$url/job/${job}/description") ?: ""
     }
 
     fun build(job: String, env: String = "default") {
