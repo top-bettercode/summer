@@ -101,7 +101,8 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   }
 
   @Override
-  protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+  protected void doFilterInternal(@NotNull HttpServletRequest request,
+      @NotNull HttpServletResponse response,
       @NotNull FilterChain filterChain)
       throws ServletException, IOException {
 
@@ -191,6 +192,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             .isExpired()) {
           try {
             UserDetails userDetails = apiAuthenticationToken.getUserDetails();
+            apiAuthorizationService.validateUserDetails(userDetails);
             Authentication authenticationResult = authenticationManager.authenticate(
                 new UserDetailsAuthenticationToken(userDetails));
             SecurityContext context = SecurityContextHolder.createEmptyContext();
