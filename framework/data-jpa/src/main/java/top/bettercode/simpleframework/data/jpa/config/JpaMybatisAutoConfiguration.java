@@ -1,5 +1,6 @@
 package top.bettercode.simpleframework.data.jpa.config;
 
+import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -50,9 +52,12 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   public JpaMybatisAutoConfiguration(
       MybatisProperties properties,
-      ResourceLoader resourceLoader) {
+      ResourceLoader resourceLoader, @Autowired(required = false) HikariDataSource hikari) {
     this.properties = properties;
     this.resourceLoader = resourceLoader;
+    if (hikari != null && log.isInfoEnabled()) {
+      log.info("init dataSource {} : {}", hikari.getPoolName(), hikari.getJdbcUrl());
+    }
   }
 
   @Override

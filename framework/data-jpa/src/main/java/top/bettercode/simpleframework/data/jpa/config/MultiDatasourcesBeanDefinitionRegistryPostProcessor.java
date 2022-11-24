@@ -14,6 +14,8 @@ import org.hibernate.boot.model.naming.ImplicitNamingStrategy;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.cfg.AvailableSettings;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -48,6 +50,8 @@ import org.springframework.util.StringUtils;
 public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
     BeanDefinitionRegistryPostProcessor, ResourceLoaderAware, EnvironmentAware {
 
+  private final Logger log = LoggerFactory.getLogger(
+      MultiDatasourcesBeanDefinitionRegistryPostProcessor.class);
   private ResourceLoader resourceLoader;
   private Environment environment;
 
@@ -84,13 +88,20 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
               }
 
               HikariDataSource hikari = properties.getHikari();
-              String hikariConfigKey = "summer.datasource.multi.datasources." + key + ".hikari";
+              if (!StringUtils.hasText(hikari.getPoolName())) {
+                hikari.setPoolName(key + "Pool");
+              }
               if (hikari != null) {
+                String hikariConfigKey = "summer.datasource.multi.datasources." + key + ".hikari";
                 Binder.get(environment)
                     .bind(hikariConfigKey, Bindable.ofInstance(dataSource));
               } else {
                 Binder.get(environment)
                     .bind("spring.datasource.hikari", Bindable.ofInstance(dataSource));
+              }
+              if (log.isInfoEnabled()) {
+                log.info("init dataSource {} : {}", dataSource.getPoolName(),
+                    dataSource.getJdbcUrl());
               }
               return dataSource;
             });
