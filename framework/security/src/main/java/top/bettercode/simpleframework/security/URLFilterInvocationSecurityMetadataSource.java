@@ -17,6 +17,7 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -48,7 +49,8 @@ public class URLFilterInvocationSecurityMetadataSource implements
 
     handlerMapping.getHandlerMethods().forEach((mappingInfo, handlerMethod) -> {
       //非匿名权限
-      for (PathPattern pathPattern : Objects.requireNonNull(mappingInfo.getPathPatternsCondition()).getPatterns()) {
+      for (PathPattern pathPattern : Objects.requireNonNull(mappingInfo.getPathPatternsCondition())
+          .getPatterns()) {
         String pattern = pathPattern.getPatternString();
         if (!securityProperties.ignored(pattern)) {
           Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
@@ -163,6 +165,8 @@ public class URLFilterInvocationSecurityMetadataSource implements
           for (String u : url.split("\\|")) {
             if (StringUtils.hasText(method)) {
               for (String m : method.split("\\|")) {
+                Assert.isNull(requestMatcherConfigAttributes.get(new AntPathRequestMatcher(u)),
+                    "\""+u + "\"对应RequestMapping不包含请求方法描述，请使用通用路径\"" + u + "\"配置权限");
                 Set<ConfigAttribute> authorities = requestMatcherConfigAttributes
                     .computeIfAbsent(new AntPathRequestMatcher(u, m),
                         k -> new HashSet<>());
