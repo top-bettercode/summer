@@ -85,7 +85,7 @@ object SubProjectTasks {
                         })
                     }
                     project.tasks.create("genController${prefix}") { task ->
-                        task.group = "gen jpa.unit.getController"
+                        task.group = "gen controller"
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
                                 ext.generators = arrayOf(Controller())
@@ -120,7 +120,7 @@ object SubProjectTasks {
                         })
                     }
                     project.tasks.create("genCoreController${prefix}") { task ->
-                        task.group = "gen jpa.unit.getController"
+                        task.group = "gen controller"
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
                                 ext.generators = arrayOf(Controller())
