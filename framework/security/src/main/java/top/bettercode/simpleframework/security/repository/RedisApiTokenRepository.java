@@ -76,7 +76,7 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
     byte[] idKey = serializeKey(ID + id);
 
     try (RedisConnection conn = getConnection()) {
-      ApiToken exist = getApiAuthenticationToken(idKey, conn);
+      ApiToken exist = getApiToken(idKey, conn);
       conn.openPipeline();
       //删除已存在
       if (exist != null) {
@@ -139,7 +139,7 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
     String id = scope + ":" + username;
     byte[] idKey = serializeKey(ID + id);
     try (RedisConnection conn = getConnection()) {
-      ApiToken apiAuthenticationToken = getApiAuthenticationToken(idKey, conn);
+      ApiToken apiAuthenticationToken = getApiToken(idKey, conn);
       if (apiAuthenticationToken != null) {
         conn.openPipeline();
         byte[] accessKey = serializeKey(
@@ -164,12 +164,12 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
   @Nullable
   private ApiToken findByIdKey(byte[] idKey) {
     try (RedisConnection conn = getConnection()) {
-      return getApiAuthenticationToken(idKey, conn);
+      return getApiToken(idKey, conn);
     }
   }
 
   @Nullable
-  private ApiToken getApiAuthenticationToken(byte[] idKey, RedisConnection conn) {
+  private ApiToken getApiToken(byte[] idKey, RedisConnection conn) {
     byte[] bytes = conn.get(idKey);
     if (JdkSerializationSerializer.isEmpty(bytes)) {
       return null;
@@ -195,7 +195,7 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
       if (JdkSerializationSerializer.isEmpty(bytes)) {
         return null;
       }
-      return getApiAuthenticationToken(bytes, conn);
+      return getApiToken(bytes, conn);
     }
   }
 
@@ -207,7 +207,7 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
       if (JdkSerializationSerializer.isEmpty(bytes)) {
         return null;
       }
-      return getApiAuthenticationToken(bytes, conn);
+      return getApiToken(bytes, conn);
     }
   }
 }

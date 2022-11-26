@@ -1,7 +1,6 @@
 package top.bettercode.simpleframework.security.repository;
 
 import java.sql.Types;
-import java.util.Objects;
 import javax.sql.DataSource;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -90,18 +89,18 @@ public class JdbcApiTokenRepository implements ApiTokenRepository {
   @Override
   public ApiToken findByScopeAndUsername(String scope, String username) {
     String id = scope + ":" + username;
-    return getApiAuthenticationToken(id, defaultSelectStatement);
+    return getApiToken(id, defaultSelectStatement);
   }
 
 
   @Override
   public ApiToken findByAccessToken(String accessToken) {
-    return getApiAuthenticationToken(accessToken, defaultSelectByAccessStatement);
+    return getApiToken(accessToken, defaultSelectByAccessStatement);
   }
 
   @Override
   public ApiToken findByRefreshToken(String refreshToken) {
-    return getApiAuthenticationToken(refreshToken, defaultSelectByRefreshStatement);
+    return getApiToken(refreshToken, defaultSelectByRefreshStatement);
   }
 
   /**
@@ -110,9 +109,9 @@ public class JdbcApiTokenRepository implements ApiTokenRepository {
    * @return 结果
    */
   @Nullable
-  private ApiToken getApiAuthenticationToken(String param, String selectStatement) {
+  private ApiToken getApiToken(String param, String selectStatement) {
     try {
-      ApiToken apiAuthenticationToken = jdbcTemplate.queryForObject(selectStatement,
+      ApiToken apiToken = jdbcTemplate.queryForObject(selectStatement,
           (rs, rowNum) -> {
             byte[] bytes = rs.getBytes(1);
             if (JdkSerializationSerializer.isEmpty(bytes)) {
@@ -137,9 +136,9 @@ public class JdbcApiTokenRepository implements ApiTokenRepository {
           }, param);
       if (log.isDebugEnabled()) {
         log.debug("JdbcApiAuthorizationService.getApiAuthenticationToken\n{}\n{}\nresult:{}",
-            selectStatement, param, Objects.requireNonNull(apiAuthenticationToken).getUserDetails());
+            selectStatement, param, apiToken == null ? null : apiToken.getUserDetails());
       }
-      return apiAuthenticationToken;
+      return apiToken;
     } catch (EmptyResultDataAccessException e) {
       return null;
     }
