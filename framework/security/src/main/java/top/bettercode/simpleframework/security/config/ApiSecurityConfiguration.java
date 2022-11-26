@@ -21,13 +21,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import top.bettercode.simpleframework.security.ApiAuthenticationToken;
+import top.bettercode.simpleframework.security.ApiToken;
 import top.bettercode.simpleframework.security.ApiSecurityErrorHandler;
 import top.bettercode.simpleframework.security.ApiTokenService;
 import top.bettercode.simpleframework.security.DefaultAuthority;
 import top.bettercode.simpleframework.security.IResourceService;
-import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
-import top.bettercode.simpleframework.security.authorization.InMemoryApiAuthorizationService;
+import top.bettercode.simpleframework.security.repository.ApiTokenRepository;
+import top.bettercode.simpleframework.security.repository.InMemoryApiTokenRepository;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
@@ -56,7 +56,7 @@ public class ApiSecurityConfiguration {
   }
 
   @Bean
-  public ApiTokenService apiTokenService(ApiAuthorizationService apiAuthorizationService,
+  public ApiTokenService apiTokenService(ApiTokenRepository apiAuthorizationService,
       UserDetailsService userDetailsService) {
     return new ApiTokenService(securityProperties, apiAuthorizationService, userDetailsService);
   }
@@ -67,10 +67,10 @@ public class ApiSecurityConfiguration {
     return new ApiSecurityErrorHandler(messageSource, request);
   }
 
-  @ConditionalOnMissingBean(ApiAuthorizationService.class)
+  @ConditionalOnMissingBean(ApiTokenRepository.class)
   @Bean
-  public ApiAuthorizationService apiAuthorizationService() {
-    Cache<String, ApiAuthenticationToken> cache = Caffeine.newBuilder()
+  public ApiTokenRepository apiAuthorizationService() {
+    Cache<String, ApiToken> cache = Caffeine.newBuilder()
         .expireAfterWrite(Math.max(securityProperties.getAccessTokenValiditySeconds(),
             securityProperties.getRefreshTokenValiditySeconds()), TimeUnit.SECONDS)
         .maximumSize(10000).build();
@@ -81,7 +81,7 @@ public class ApiSecurityConfiguration {
         .expireAfterWrite(
             securityProperties.getRefreshTokenValiditySeconds(), TimeUnit.SECONDS)
         .maximumSize(10000).build();
-    return new InMemoryApiAuthorizationService(cache.asMap(), accessTokenBuild.asMap(),
+    return new InMemoryApiTokenRepository(cache.asMap(), accessTokenBuild.asMap(),
         refreshTokenBuild.asMap());
   }
 

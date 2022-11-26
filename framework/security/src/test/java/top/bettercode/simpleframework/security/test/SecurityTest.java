@@ -22,7 +22,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import top.bettercode.autodoc.gen.Autodoc;
-import top.bettercode.simpleframework.security.ApiToken;
+import top.bettercode.simpleframework.security.ApiAccessToken;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
 import top.bettercode.simpleframework.security.impl.TestApplication;
 import top.bettercode.simpleframework.web.RespEntity;
@@ -58,7 +58,7 @@ public class SecurityTest {
   }
 
   @NotNull
-  private ApiToken getApiToken() throws Exception {
+  private ApiAccessToken getApiToken() throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
     params.add("scope", "app");
@@ -70,9 +70,9 @@ public class SecurityTest {
     String body = entity.getBody();
     org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
 
-    RespEntity<ApiToken> resp = objectMapper
+    RespEntity<ApiAccessToken> resp = objectMapper
         .readValue(body, TypeFactory.defaultInstance().constructParametricType(
-            RespEntity.class, ApiToken.class));
+            RespEntity.class, ApiAccessToken.class));
     return resp.getData();
   }
 
@@ -81,7 +81,7 @@ public class SecurityTest {
     Autodoc.setDescription("");
     Autodoc.setName("获取accessToken");
     Autodoc.requiredParameters("grant_type", "scope", "username", "password");
-    ApiToken accessToken = getApiToken();
+    ApiAccessToken accessToken = getApiToken();
     org.junit.jupiter.api.Assertions.assertNotNull(accessToken);
     Thread.sleep(1000);
   }

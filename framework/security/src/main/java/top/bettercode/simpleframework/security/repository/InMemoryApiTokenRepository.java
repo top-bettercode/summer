@@ -1,19 +1,19 @@
-package top.bettercode.simpleframework.security.authorization;
+package top.bettercode.simpleframework.security.repository;
 
 import java.util.Map;
-import top.bettercode.simpleframework.security.ApiAuthenticationToken;
+import top.bettercode.simpleframework.security.ApiToken;
 
 /**
  * @author Peter Wu
  */
-public class InMemoryApiAuthorizationService implements ApiAuthorizationService {
+public class InMemoryApiTokenRepository implements ApiTokenRepository {
 
-  private final Map<String, ApiAuthenticationToken> tokenMap;
+  private final Map<String, ApiToken> tokenMap;
   private final Map<String, String> accessTokenMap;
   private final Map<String, String> refreshTokenMap;
 
-  public InMemoryApiAuthorizationService(
-      Map<String, ApiAuthenticationToken> tokenMap,
+  public InMemoryApiTokenRepository(
+      Map<String, ApiToken> tokenMap,
       Map<String, String> accessTokenMap,
       Map<String, String> refreshTokenMap) {
     this.tokenMap = tokenMap;
@@ -22,7 +22,7 @@ public class InMemoryApiAuthorizationService implements ApiAuthorizationService 
   }
 
   @Override
-  public void save(ApiAuthenticationToken authorization) {
+  public void save(ApiToken authorization) {
     String scope = authorization.getScope();
     String username = authorization.getUsername();
     String id = scope + ":" + username;
@@ -33,7 +33,7 @@ public class InMemoryApiAuthorizationService implements ApiAuthorizationService 
   }
 
   @Override
-  public void remove(ApiAuthenticationToken authorization) {
+  public void remove(ApiToken authorization) {
     String scope = authorization.getScope();
     String username = authorization.getUsername();
     String id = scope + ":" + username;
@@ -44,20 +44,20 @@ public class InMemoryApiAuthorizationService implements ApiAuthorizationService 
 
   @Override
   public void remove(String scope, String username) {
-    ApiAuthenticationToken authenticationToken = findByScopeAndUsername(scope, username);
+    ApiToken authenticationToken = findByScopeAndUsername(scope, username);
     if (authenticationToken != null) {
       remove(authenticationToken);
     }
   }
 
   @Override
-  public ApiAuthenticationToken findByScopeAndUsername(String scope, String username) {
+  public ApiToken findByScopeAndUsername(String scope, String username) {
     String id = scope + ":" + username;
     return tokenMap.get(id);
   }
 
   @Override
-  public ApiAuthenticationToken findByAccessToken(String accessToken) {
+  public ApiToken findByAccessToken(String accessToken) {
     String id = accessTokenMap.get(accessToken);
     if (id != null) {
       return tokenMap.get(id);
@@ -66,7 +66,7 @@ public class InMemoryApiAuthorizationService implements ApiAuthorizationService 
   }
 
   @Override
-  public ApiAuthenticationToken findByRefreshToken(String refreshToken) {
+  public ApiToken findByRefreshToken(String refreshToken) {
     String id = refreshTokenMap.get(refreshToken);
     if (id != null) {
       return tokenMap.get(id);

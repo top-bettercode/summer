@@ -1,4 +1,4 @@
-package top.bettercode.simpleframework.security.authorization;
+package top.bettercode.simpleframework.security.repository;
 
 import java.sql.Types;
 import java.util.Objects;
@@ -12,11 +12,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.SqlLobValue;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import top.bettercode.simpleframework.security.ApiAuthenticationToken;
+import top.bettercode.simpleframework.security.ApiToken;
 
-public class JdbcApiAuthorizationService implements ApiAuthorizationService {
+public class JdbcApiTokenRepository implements ApiTokenRepository {
 
-  private final Logger log = LoggerFactory.getLogger(JdbcApiAuthorizationService.class);
+  private final Logger log = LoggerFactory.getLogger(JdbcApiTokenRepository.class);
 
   private final String defaultInsertStatement;
   private final String defaultSelectStatement;
@@ -26,11 +26,11 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
   private final JdkSerializationSerializer jdkSerializationSerializer = new JdkSerializationSerializer();
   private final JdbcTemplate jdbcTemplate;
 
-  public JdbcApiAuthorizationService(DataSource dataSource) {
+  public JdbcApiTokenRepository(DataSource dataSource) {
     this(dataSource, "api_token");
   }
 
-  public JdbcApiAuthorizationService(DataSource dataSource, String tableName) {
+  public JdbcApiTokenRepository(DataSource dataSource, String tableName) {
     Assert.notNull(dataSource, "DataSource required");
     Assert.hasText(tableName, "tableName required");
     this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -46,7 +46,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
 
   @Transactional
   @Override
-  public void save(ApiAuthenticationToken authorization) {
+  public void save(ApiToken authorization) {
     try {
       String scope = authorization.getScope();
       String username = authorization.getUsername();
@@ -70,7 +70,7 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
 
   @Transactional
   @Override
-  public void remove(ApiAuthenticationToken authorization) {
+  public void remove(ApiToken authorization) {
     String scope = authorization.getScope();
     String username = authorization.getUsername();
     remove(scope, username);
@@ -88,19 +88,19 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
   }
 
   @Override
-  public ApiAuthenticationToken findByScopeAndUsername(String scope, String username) {
+  public ApiToken findByScopeAndUsername(String scope, String username) {
     String id = scope + ":" + username;
     return getApiAuthenticationToken(id, defaultSelectStatement);
   }
 
 
   @Override
-  public ApiAuthenticationToken findByAccessToken(String accessToken) {
+  public ApiToken findByAccessToken(String accessToken) {
     return getApiAuthenticationToken(accessToken, defaultSelectByAccessStatement);
   }
 
   @Override
-  public ApiAuthenticationToken findByRefreshToken(String refreshToken) {
+  public ApiToken findByRefreshToken(String refreshToken) {
     return getApiAuthenticationToken(refreshToken, defaultSelectByRefreshStatement);
   }
 
@@ -110,16 +110,16 @@ public class JdbcApiAuthorizationService implements ApiAuthorizationService {
    * @return 结果
    */
   @Nullable
-  private ApiAuthenticationToken getApiAuthenticationToken(String param, String selectStatement) {
+  private ApiToken getApiAuthenticationToken(String param, String selectStatement) {
     try {
-      ApiAuthenticationToken apiAuthenticationToken = jdbcTemplate.queryForObject(selectStatement,
+      ApiToken apiAuthenticationToken = jdbcTemplate.queryForObject(selectStatement,
           (rs, rowNum) -> {
             byte[] bytes = rs.getBytes(1);
             if (JdkSerializationSerializer.isEmpty(bytes)) {
               return null;
             }
             try {
-              return (ApiAuthenticationToken) jdkSerializationSerializer.deserialize(bytes);
+              return (ApiToken) jdkSerializationSerializer.deserialize(bytes);
             } catch (Exception e) {
               log.warn("apiToken反序列化失败", e);
               try {

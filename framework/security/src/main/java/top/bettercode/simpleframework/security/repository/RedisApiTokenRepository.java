@@ -1,4 +1,4 @@
-package top.bettercode.simpleframework.security.authorization;
+package top.bettercode.simpleframework.security.repository;
 
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -11,11 +11,11 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
-import top.bettercode.simpleframework.security.ApiAuthenticationToken;
+import top.bettercode.simpleframework.security.ApiToken;
 
-public final class RedisApiAuthorizationService implements ApiAuthorizationService {
+public final class RedisApiTokenRepository implements ApiTokenRepository {
 
-  private final Logger log = LoggerFactory.getLogger(RedisApiAuthorizationService.class);
+  private final Logger log = LoggerFactory.getLogger(RedisApiTokenRepository.class);
   private static final String API_AUTH = "api_auth:";
   private static final String ID = "id:";
   private static final String ACCESS_TOKEN = "access_token:";
@@ -25,18 +25,18 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
 
   private static final boolean springDataRedis_2_0 = ClassUtils.isPresent(
       "org.springframework.data.redis.connection.RedisStandaloneConfiguration",
-      RedisApiAuthorizationService.class.getClassLoader());
+      RedisApiTokenRepository.class.getClassLoader());
 
   private final RedisConnectionFactory connectionFactory;
   private final JdkSerializationSerializer jdkSerializationSerializer = new JdkSerializationSerializer();
 
   private Method redisConnectionSet_2_0;
 
-  public RedisApiAuthorizationService(RedisConnectionFactory connectionFactory) {
+  public RedisApiTokenRepository(RedisConnectionFactory connectionFactory) {
     this(connectionFactory, "");
   }
 
-  public RedisApiAuthorizationService(RedisConnectionFactory connectionFactory, String prefix) {
+  public RedisApiTokenRepository(RedisConnectionFactory connectionFactory, String prefix) {
     this.connectionFactory = connectionFactory;
     if (StringUtils.hasText(prefix)) {
       this.keyPrefix = API_AUTH + prefix + ":";
@@ -63,7 +63,7 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
 
 
   @Override
-  public void save(ApiAuthenticationToken authorization) {
+  public void save(ApiToken authorization) {
     String scope = authorization.getScope();
     String username = authorization.getUsername();
     String id = scope + ":" + username;
@@ -76,7 +76,7 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
     byte[] idKey = serializeKey(ID + id);
 
     try (RedisConnection conn = getConnection()) {
-      ApiAuthenticationToken exist = getApiAuthenticationToken(idKey, conn);
+      ApiToken exist = getApiAuthenticationToken(idKey, conn);
       conn.openPipeline();
       //删除已存在
       if (exist != null) {
@@ -117,7 +117,7 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
   }
 
   @Override
-  public void remove(ApiAuthenticationToken authorization) {
+  public void remove(ApiToken authorization) {
     String scope = authorization.getScope();
     String username = authorization.getUsername();
     String id = scope + ":" + username;
@@ -139,7 +139,7 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
     String id = scope + ":" + username;
     byte[] idKey = serializeKey(ID + id);
     try (RedisConnection conn = getConnection()) {
-      ApiAuthenticationToken apiAuthenticationToken = getApiAuthenticationToken(idKey, conn);
+      ApiToken apiAuthenticationToken = getApiAuthenticationToken(idKey, conn);
       if (apiAuthenticationToken != null) {
         conn.openPipeline();
         byte[] accessKey = serializeKey(
@@ -155,27 +155,27 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
   }
 
   @Override
-  public ApiAuthenticationToken findByScopeAndUsername(String scope, String username) {
+  public ApiToken findByScopeAndUsername(String scope, String username) {
     String id = scope + ":" + username;
     byte[] idKey = serializeKey(ID + id);
     return findByIdKey(idKey);
   }
 
   @Nullable
-  private ApiAuthenticationToken findByIdKey(byte[] idKey) {
+  private ApiToken findByIdKey(byte[] idKey) {
     try (RedisConnection conn = getConnection()) {
       return getApiAuthenticationToken(idKey, conn);
     }
   }
 
   @Nullable
-  private ApiAuthenticationToken getApiAuthenticationToken(byte[] idKey, RedisConnection conn) {
+  private ApiToken getApiAuthenticationToken(byte[] idKey, RedisConnection conn) {
     byte[] bytes = conn.get(idKey);
     if (JdkSerializationSerializer.isEmpty(bytes)) {
       return null;
     }
     try {
-      return (ApiAuthenticationToken) jdkSerializationSerializer.deserialize(bytes);
+      return (ApiToken) jdkSerializationSerializer.deserialize(bytes);
     } catch (Exception e) {
       log.warn("apiToken反序列化失败", e);
       try {
@@ -188,7 +188,7 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
   }
 
   @Override
-  public ApiAuthenticationToken findByAccessToken(String accessToken) {
+  public ApiToken findByAccessToken(String accessToken) {
     byte[] accessKey = serializeKey(ACCESS_TOKEN + accessToken);
     try (RedisConnection conn = getConnection()) {
       byte[] bytes = conn.get(accessKey);
@@ -200,7 +200,7 @@ public final class RedisApiAuthorizationService implements ApiAuthorizationServi
   }
 
   @Override
-  public ApiAuthenticationToken findByRefreshToken(String refreshToken) {
+  public ApiToken findByRefreshToken(String refreshToken) {
     byte[] refreshKey = serializeKey(REFRESH_TOKEN + refreshToken);
     try (RedisConnection conn = getConnection()) {
       byte[] bytes = conn.get(refreshKey);

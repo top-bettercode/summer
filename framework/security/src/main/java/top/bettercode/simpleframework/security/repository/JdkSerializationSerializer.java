@@ -1,4 +1,4 @@
-package top.bettercode.simpleframework.security.authorization;
+package top.bettercode.simpleframework.security.repository;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.serializer.support.DeserializingConverter;

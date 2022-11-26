@@ -26,6 +26,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.util.StringUtils;
@@ -36,8 +37,6 @@ import top.bettercode.simpleframework.security.ApiTokenService;
 import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.IRevokeTokenService;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
-import top.bettercode.simpleframework.security.UserDetailsAuthenticationProvider;
-import top.bettercode.simpleframework.security.authorization.ApiAuthorizationService;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
@@ -47,7 +46,6 @@ import top.bettercode.simpleframework.security.authorization.ApiAuthorizationSer
 @EnableConfigurationProperties({ApiSecurityProperties.class, CorsProperties.class})
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-  private final ApiSecurityProperties securityProperties;
   private final CorsProperties corsProperties;
   private final URLFilterInvocationSecurityMetadataSource securityMetadataSource;
   private final AccessDecisionManager accessDecisionManager;
@@ -55,19 +53,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   private final IRevokeTokenService revokeTokenService;
   private final SummerWebProperties summerWebProperties;
   private final ObjectMapper objectMapper;
-  private final ApiAuthorizationService apiAuthorizationService;
+  private final PasswordEncoder passwordEncoder;
 
   public SecurityConfiguration(
-      ApiSecurityProperties securityProperties,
       CorsProperties corsProperties,
       URLFilterInvocationSecurityMetadataSource securityMetadataSource,
       AccessDecisionManager accessDecisionManager,
       ApiTokenService apiTokenService,
       @Autowired(required = false) IRevokeTokenService revokeTokenService,
       SummerWebProperties summerWebProperties,
-      ObjectMapper objectMapper,
-      ApiAuthorizationService apiAuthorizationService) {
-    this.securityProperties = securityProperties;
+      ObjectMapper objectMapper, PasswordEncoder passwordEncoder) {
     this.corsProperties = corsProperties;
     this.securityMetadataSource = securityMetadataSource;
     this.accessDecisionManager = accessDecisionManager;
@@ -75,12 +70,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     this.revokeTokenService = revokeTokenService;
     this.summerWebProperties = summerWebProperties;
     this.objectMapper = objectMapper;
-    this.apiAuthorizationService = apiAuthorizationService;
+    this.passwordEncoder = passwordEncoder;
   }
 
 
   @Override
   public void configure(HttpSecurity http) throws Exception {
+    ApiSecurityProperties securityProperties = apiTokenService.getSecurityProperties();
     if (securityProperties.getSupportClientCache()) {
       http.headers().cacheControl().disable();
     }
@@ -94,11 +90,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     http.csrf().disable();
 
-    ApiTokenEndpointFilter apiTokenEndpointFilter = new ApiTokenEndpointFilter(
-        authenticationManagerBean(), apiAuthorizationService, apiTokenService,
-        summerWebProperties, revokeTokenService, securityProperties, objectMapper);
+    ApiTokenEndpointFilter apiTokenEndpointFilter = new ApiTokenEndpointFilter(apiTokenService,
+        passwordEncoder, summerWebProperties, revokeTokenService, objectMapper);
 
-    http.authenticationProvider(new UserDetailsAuthenticationProvider());
     http.addFilterBefore(apiTokenEndpointFilter, LogoutFilter.class);
 
     http
