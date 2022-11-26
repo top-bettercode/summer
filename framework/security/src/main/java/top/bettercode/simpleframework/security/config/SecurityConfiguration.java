@@ -2,7 +2,7 @@ package top.bettercode.simpleframework.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -19,7 +19,6 @@ import org.springframework.core.Ordered;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,6 +33,7 @@ import top.bettercode.simpleframework.config.CorsProperties;
 import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.security.ApiTokenEndpointFilter;
 import top.bettercode.simpleframework.security.ApiTokenService;
+import top.bettercode.simpleframework.security.DefaultAuthority;
 import top.bettercode.simpleframework.security.IResourceService;
 import top.bettercode.simpleframework.security.IRevokeTokenService;
 import top.bettercode.simpleframework.security.URLFilterInvocationSecurityMetadataSource;
@@ -125,11 +125,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final Logger log = LoggerFactory.getLogger(
         top.bettercode.simpleframework.security.config.SecurityConfiguration.class);
-    private final ApiSecurityProperties securityProperties;
-
-    protected AccessSecurityConfiguration(ApiSecurityProperties securityProperties) {
-      this.securityProperties = securityProperties;
-    }
 
     @ConditionalOnMissingBean
     @Bean
@@ -140,13 +135,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             Collection<ConfigAttribute> configAttributes) {
           Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
           //处理匿名用户权限
-          if (configAttributes.size() == 1 && "ROLE_ANONYMOUS".equals(
-              configAttributes.iterator().next().getAttribute())) {
+          if (configAttributes.contains(DefaultAuthority.ROLE_ANONYMOUS)) {
             if (resourceService.supportsAnonymous()) {
               return;
             } else {
-              configAttributes = Collections.singletonList(
-                  new SecurityConfig(securityProperties.getDefaultAuthority()));
+              configAttributes = new HashSet<>(configAttributes);
+              configAttributes.remove(DefaultAuthority.ROLE_ANONYMOUS);
+              configAttributes.add(DefaultAuthority.DEFAULT_AUTHENTICATED);
             }
           }
 

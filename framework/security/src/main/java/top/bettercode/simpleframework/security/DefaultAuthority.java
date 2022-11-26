@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -14,6 +15,8 @@ public class DefaultAuthority {
 
   public static GrantedAuthority DEFAULT_GRANTED_AUTHORITY = new SimpleGrantedAuthority(
       "authenticated");
+  public static SecurityConfig DEFAULT_AUTHENTICATED = new SecurityConfig("authenticated");
+  public static final SecurityConfig ROLE_ANONYMOUS = new SecurityConfig("ROLE_ANONYMOUS");
 
   public static boolean isDefaultAuthority(String authority) {
     return DEFAULT_GRANTED_AUTHORITY.getAuthority().equals(authority);
