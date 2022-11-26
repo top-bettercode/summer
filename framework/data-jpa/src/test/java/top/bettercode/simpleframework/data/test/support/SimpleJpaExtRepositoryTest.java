@@ -129,7 +129,6 @@ public class SimpleJpaExtRepositoryTest {
     User update = new User();
     update.setId(id);
     update.setFirstName("Dave22");
-    update.setDeleted(false);
     repository.save(update);
     Optional<User> optionalUser = repository.findById(id);
     optionalUser.ifPresent(System.err::println);
@@ -411,7 +410,7 @@ public class SimpleJpaExtRepositoryTest {
   @Test
   void nativeQuery() {
     Query query = repository.getEntityManager().createNativeQuery(
-        "select first_name,last_name, '2022-03-23 16:45:37' as date from user where first_name = ? AND first_name = ? and last_name = ?",
+        "select first_name,last_name, '2022-03-23 16:45:37' as date from t_user where first_name = ? AND first_name = ? and last_name = ?",
         Tuple.class);
     query.setParameter(1, "Carter");
     query.setParameter(2, "Carter");

@@ -1,11 +1,11 @@
 package top.bettercode.simpleframework.data.test.domain;
 
 import java.util.Objects;
-import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.data.jpa.SoftDelete;
@@ -16,14 +16,12 @@ public class BaseUser {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
-  @Column(name = "first_name")
   private String firstName;
-  @Column(name = "last_name")
   private String lastName;
 
-  @Column(name = "deleted", columnDefinition = "TINYINT(1) DEFAULT 0", length = 1, nullable = false)
   @SoftDelete
   @Type(type = "org.hibernate.type.NumericBooleanType")
+  @ColumnDefault("0")
   private Boolean deleted;
 
   public BaseUser() {
@@ -32,7 +30,6 @@ public class BaseUser {
   public BaseUser(String firstName, String lastName) {
     this.firstName = firstName;
     this.lastName = lastName;
-    this.deleted = false;
   }
 
   public Integer getId() {
@@ -76,9 +73,9 @@ public class BaseUser {
       return false;
     }
     BaseUser baseUser = (BaseUser) o;
-    return deleted == baseUser.deleted && Objects.equals(id, baseUser.id)
-        && Objects.equals(firstName, baseUser.firstName) && Objects.equals(
-        lastName, baseUser.lastName);
+    return Objects.equals(id, baseUser.id) && Objects.equals(firstName,
+        baseUser.firstName) && Objects.equals(lastName, baseUser.lastName)
+        && Objects.equals(deleted, baseUser.deleted);
   }
 
   @Override

@@ -1,8 +1,8 @@
 package top.bettercode.simpleframework.data.test.domain;
 
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import top.bettercode.lang.util.StringUtil;
@@ -14,13 +14,12 @@ public class Employee {
 
   @EmbeddedId
   private EmployeeKey employeeKey;
-  @Column(name = "first_name")
   private String firstName;
-  @Column(name = "last_name")
   private String lastName;
   @SoftDelete
   @Type(type = "org.hibernate.type.NumericBooleanType")
-  private boolean deleted;
+  @ColumnDefault("0")
+  private Boolean deleted;
 
   public Employee() {
   }
@@ -55,11 +54,11 @@ public class Employee {
     this.lastName = lastName;
   }
 
-  public boolean isDeleted() {
+  public Boolean getDeleted() {
     return deleted;
   }
 
-  public void setDeleted(boolean deleted) {
+  public void setDeleted(Boolean deleted) {
     this.deleted = deleted;
   }
 

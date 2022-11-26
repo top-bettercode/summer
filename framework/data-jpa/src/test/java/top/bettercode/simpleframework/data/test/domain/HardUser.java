@@ -1,26 +1,27 @@
 package top.bettercode.simpleframework.data.test.domain;
 
 import java.util.Objects;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Type;
 import top.bettercode.lang.util.StringUtil;
 
 @Entity
-@Table(name = "User")
+@Table(name = "t_user")
 public class HardUser {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
-  @Column(name = "first_name")
   private String firstName;
-  @Column(name = "last_name")
   private String lastName;
-  private boolean deleted;
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  @ColumnDefault("0")
+  private Boolean deleted;
 
   public HardUser() {
   }
@@ -54,11 +55,11 @@ public class HardUser {
     this.lastName = lastName;
   }
 
-  public boolean isDeleted() {
+  public Boolean getDeleted() {
     return deleted;
   }
 
-  public void setDeleted(boolean deleted) {
+  public void setDeleted(Boolean deleted) {
     this.deleted = deleted;
   }
 

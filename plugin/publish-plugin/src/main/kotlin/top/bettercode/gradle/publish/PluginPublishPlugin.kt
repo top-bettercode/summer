@@ -1,10 +1,15 @@
 package top.bettercode.gradle.publish
 
 import com.gradle.publish.PluginBundleExtension
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.publish.Publication
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 
 /**
@@ -23,9 +28,6 @@ class PluginPublishPlugin : AbstractPlugin() {
         project.plugins.apply("java-gradle-plugin")
         project.plugins.apply("com.gradle.plugin-publish")
 
-        project.extensions.configure(GradlePluginDevelopmentExtension::class.java) {
-            it.isAutomatedPublishing = false
-        }
         if (project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
             if (!project.plugins.hasPlugin("org.jetbrains.dokka"))
                 project.plugins.apply("org.jetbrains.dokka")
@@ -39,9 +41,6 @@ class PluginPublishPlugin : AbstractPlugin() {
         val projectVcsUrl = project.findProperty("vcsUrl") as? String
         configureGradlePlugins(project, projectUrl, projectVcsUrl)
 
-
-        configurePluginsPublication(project, projectUrl, projectVcsUrl)
-
         //发布到gradle plugins
         val name = project.name
         project.extensions.configure(PluginBundleExtension::class.java) {
@@ -52,6 +51,15 @@ class PluginPublishPlugin : AbstractPlugin() {
             it.description = name
             it.tags = setOf(name)
         }
+
+        project.tasks.withType(GenerateModuleMetadata::class.java) {
+            it.enabled = false
+        }
+
+        configurePluginsPublication(project, projectUrl, projectVcsUrl)
+
+        project.tasks.getByName("publish").dependsOn("publishToMavenLocal")
+
     }
 
     /**
@@ -62,27 +70,47 @@ class PluginPublishPlugin : AbstractPlugin() {
         projectUrl: String?,
         projectVcsUrl: String?
     ) {
-        project.extensions.configure(GradlePluginDevelopmentExtension::class.java) {
-            with(it.plugins) {
-                configPublish(project, names.toTypedArray())
-                forEach { plugin ->
-                    project.extensions.configure(PublishingExtension::class.java) { p ->
-                        val publication =
-                            p.publications.create(plugin.name, MavenPublication::class.java)
-                        publication.groupId = plugin.id
-                        publication.artifactId = plugin.id + ".gradle.plugin"
-                        publication.pom.withXml { po ->
-                            po.asNode().apply {
-                                val dependency = appendNode("dependencies").appendNode("dependency")
-                                dependency.appendNode("groupId", project.group)
-                                dependency.appendNode("artifactId", project.name)
-                                dependency.appendNode("version", project.version)
+        project.afterEvaluate {
+            project.extensions.configure(PublishingExtension::class.java) { p ->
+                conifgRepository(project, p)
+                p.publications.getByName(
+                    "pluginMaven",
+                    object : Action<Publication> {
+                        override fun execute(mavenPublication: Publication) {
+                            mavenPublication as MavenPublication
+                            mavenPublication.pom.withXml(
+                                configurePomXml(
+                                    project,
+                                    projectUrl,
+                                    projectVcsUrl
+                                )
+                            )
+                        }
+                    })
+            }
 
-                                configurePomXml(project, projectUrl, projectVcsUrl)
-                            }
+            project.extensions.configure(GradlePluginDevelopmentExtension::class.java) {
+                with(it.plugins) {
+                    forEach { plugin ->
+                        project.extensions.configure(PublishingExtension::class.java) { p ->
+                            conifgRepository(project, p)
+
+                            p.publications.getByName(
+                                plugin.name + "PluginMarkerMaven",
+                                object : Action<Publication> {
+                                    override fun execute(mavenPublication: Publication) {
+                                        mavenPublication as MavenPublication
+                                        mavenPublication.pom.withXml { po ->
+                                            po.asNode().apply {
+                                                configurePomXml(project, projectUrl, projectVcsUrl)
+                                            }
+                                        }
+                                    }
+                                })
 
                         }
                     }
+
                 }
             }
         }
@@ -99,6 +127,7 @@ class PluginPublishPlugin : AbstractPlugin() {
                     it.from(project.tasks.getByName("dokkaJavadoc").outputs)
                 }
             }
+
             project.plugins.hasPlugin("groovy") -> project.tasks.create(
                 "javadocJar",
                 Jar::class.java
@@ -106,9 +135,19 @@ class PluginPublishPlugin : AbstractPlugin() {
                 it.archiveClassifier.set("javadoc")
                 it.from(project.tasks.getByName("groovydoc").outputs)
             }
+
             else -> project.tasks.create("javadocJar", Jar::class.java) {
                 it.archiveClassifier.set("javadoc")
                 it.from(project.tasks.getByName("javadoc").outputs)
+            }
+        }
+
+        project.tasks.withType(Javadoc::class.java) {
+            with(it.options as StandardJavadocDocletOptions) {
+                encoding = project.findProperty("project.encoding") as? String ?: "UTF-8"
+                charSet = project.findProperty("project.encoding") as? String ?: "UTF-8"
+                isAuthor = true
+                isVersion = true
             }
         }
     }

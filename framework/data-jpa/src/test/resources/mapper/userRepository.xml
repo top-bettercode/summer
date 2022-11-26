@@ -34,7 +34,7 @@
   <select id="selectResultMap" resultMap="userResultMap"
     parameterType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from t_user
     where first_name = #{firstName}
     <if test="lastName!=null">
       and last_name = #{lastName}
@@ -44,7 +44,7 @@
   <select id="selectResultMap2" resultMap="userResultMap2"
     parameterType="top.bettercode.simpleframework.data.test.domain.User">
     select first_name, last_name, deleted,last_name,first_name
-    from user
+    from t_user
     where first_name = #{firstName}
     <if test="lastName!=null">
       and last_name = #{lastName}
@@ -54,7 +54,7 @@
   <select id="selectResultMap3" resultMap="userResultMap3"
     parameterType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from t_user
     where first_name = #{firstName}
     <if test="lastName!=null">
       and last_name = #{lastName}
@@ -63,7 +63,7 @@
   <select id="selectResultOne3" resultMap="userResultMap3"
     parameterType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from t_user
     where first_name = #{firstName}
     <if test="lastName!=null">
       and last_name = #{lastName}
@@ -72,7 +72,7 @@
   <select id="selectResultFirst3" resultMap="userResultMap3"
     parameterType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from t_user
     where first_name = #{firstName}
     <if test="lastName!=null">
       and last_name = #{lastName}
@@ -80,39 +80,40 @@
   </select>
 
   <insert id="insert">
-    insert into user (first_name, last_name, id, deleted)
-    values (#{firstName}, #{lastName}, 100, 0)
+    insert into t_user (first_name, last_name, id, deleted, last_modified_date, created_date,
+                        version)
+    values (#{firstName}, #{lastName}, 100, 0, now(), now(), 0)
   </insert>
   <update id="update">
-    update user
+    update t_user
     set last_name=#{lastName}
     where id = #{id}
   </update>
   <update id="updateNoReturn">
-    update user
+    update t_user
     set last_name=#{lastName}
     where id = #{id}
   </update>
   <delete id="deleteMybatis">
     delete
-    from user
+    from t_user
     where id = #{id}
   </delete>
   <delete id="deleteMybatisNoResturn">
     delete
-    from user
+    from t_user
     where id = #{id}
   </delete>
 
   <select id="selectMybatisAll_COUNT" resultType="java.lang.Long">
     select count(1)
-    from user
+    from t_user
     where deleted = 0
   </select>
   <select id="selectMybatisAll" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select
     <include refid="name"/>
-    from user
+    from t_user
     where deleted = 0
   </select>
   <sql id="name">
@@ -121,7 +122,7 @@
   <select id="selectMybatisIfParam"
     resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from t_user
     where first_name = #{firstName} AND first_name = #{firstName}
     <if test="lastName!=null or param2!=null">
       and last_name = #{param2}
@@ -130,7 +131,7 @@
   <select id="selectMybatisStream"
     resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from t_user
     where first_name = #{firstName} AND first_name = #{firstName}
     <if test="lastName!=null or param2!=null">
       and last_name = #{param2}
@@ -138,7 +139,7 @@
   </select>
   <select id="selectByMybatisMap" resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from t_user
     where first_name = #{firstName}
     <if test="lastName!=null">
       and last_name = #{lastName}
@@ -147,20 +148,20 @@
   <select id="selectByMybatisSort"
     resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from t_user
     where first_name = #{firstName}
   </select>
   <select id="selectOneByMybatis"
     resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from t_user
     where deleted = 0
       and first_name = #{a}
   </select>
   <select id="selectByMybatisEntity"
     resultType="top.bettercode.simpleframework.data.test.domain.User">
     select *
-    from user
+    from t_user
     where first_name = #{firstName}
     <if test="lastName!=null">
       and last_name = #{lastName}
@@ -168,12 +169,12 @@
   </select>
   <select id="selectMybatisMapList" resultType="java.util.Map">
     select first_name, last_name
-    from user
+    from t_user
     where deleted = 0
   </select>
   <select id="selectMybatisMap" resultType="java.util.Map">
     select first_name, last_name
-    from user
+    from t_user
     where deleted = 0
     order by id
     limit 1

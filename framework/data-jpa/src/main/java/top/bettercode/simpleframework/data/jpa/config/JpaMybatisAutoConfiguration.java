@@ -22,7 +22,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -147,7 +146,7 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
           log.trace("Parsed configuration file: '" + configResource + "'");
         }
       } catch (Exception ex) {
-        throw new NestedIOException("Failed to parse config resource: " + configResource, ex);
+        throw new IOException("Failed to parse config resource: " + configResource, ex);
       } finally {
         ErrorContext.instance().reset();
       }
@@ -181,7 +180,7 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
               configuration, mapperResource.toString(), configuration.getSqlFragments());
           xmlMapperBuilder.parse();
         } catch (Exception e) {
-          throw new NestedIOException(
+          throw new IOException(
               "Failed to parse mapping resource: '" + mapperResource + "'", e);
         } finally {
           ErrorContext.instance().reset();

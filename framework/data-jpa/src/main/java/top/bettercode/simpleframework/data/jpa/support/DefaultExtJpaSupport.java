@@ -110,6 +110,9 @@ public class DefaultExtJpaSupport implements ExtJpaSupport {
     if (finish < 3) {
       PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(domainClass);
       for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+        if ("class".equals(propertyDescriptor.getName())) {
+          continue;
+        }
         if (softDeletedPropertyName == null) {
           SoftDelete annotation = propertyDescriptor.getReadMethod()
               .getAnnotation(SoftDelete.class);

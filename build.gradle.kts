@@ -64,52 +64,50 @@ allprojects {
 
             dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
             dependency("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
-            dependency("com.gradle.publish:plugin-publish-plugin:0.20.0")
+            dependency("com.gradle.publish:plugin-publish-plugin:1.1.0")
             dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
             dependency("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-            dependency("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
+            dependency("io.spring.gradle:dependency-management-plugin:1.0.15.RELEASE")
 
             dependency("top.bettercode.summer:windows-service-plugin:1.2.0-SNAPSHOT")
 
-            dependency("top.bettercode.wechat:weixin-mp:0.9.7")
-            dependency("top.bettercode.wechat:weixin-app:0.9.7")
-
             dependency("commons-codec:commons-codec:1.15")
-            dependency("org.json:json:20220320")
-            dependency("org.javassist:javassist:3.28.0-GA")
+            dependency("org.json:json:20220924")
+            dependency("org.javassist:javassist:3.29.2-GA")
             dependency("org.dom4j:dom4j:2.1.3")
-            dependency("org.jsoup:jsoup:1.14.3")
+            dependency("org.jsoup:jsoup:1.15.3")
             dependency("org.atteo:evo-inflector:1.3")
             dependency("com.github.axet:kaptcha:0.0.9")
             dependency("com.github.stuxuhai:jpinyin:1.1.8")
-            dependency("net.sourceforge.plantuml:plantuml:1.2022.2")
-            dependency("com.github.jsqlparser:jsqlparser:4.3")
+            dependency("net.sourceforge.plantuml:plantuml:1.2022.12")
+            dependency("com.github.jsqlparser:jsqlparser:4.5")
             dependency("com.qcloud:vod_api:2.1.5")
 
-            dependency("mysql:mysql-connector-java:8.0.28")
+            dependency("mysql:mysql-connector-java:8.0.31")
             dependency("com.oracle.database.jdbc:ojdbc8:$oracleJdbcVersion")
 
-            dependency("org.asciidoctor:asciidoctorj:2.5.3")
-            dependency("org.asciidoctor:asciidoctorj-diagram:2.2.1")
-            dependency("org.asciidoctor:asciidoctorj-pdf:1.6.2")
+            dependency("org.asciidoctor:asciidoctorj:2.5.7")
+            dependency("org.asciidoctor:asciidoctorj-diagram:2.2.3")
+            dependency("org.asciidoctor:asciidoctorj-pdf:2.3.3")
 
-            dependency("net.logstash.logback:logstash-logback-encoder:7.0.1")
+            dependency("net.logstash.logback:logstash-logback-encoder:7.2")
             dependency("javax.mail:mail:1.4.7")
 
-            dependency("org.dhatim:fastexcel:0.12.12")
-            dependency("org.dhatim:fastexcel-reader:0.12.14")
+            dependency("org.dhatim:fastexcel:0.14.0")
+            dependency("org.dhatim:fastexcel-reader:0.13.0")
 
-            dependency("org.mybatis:mybatis:3.5.9")
+            dependency("org.mybatis:mybatis:3.5.11")
             dependency("org.mybatis:mybatis-spring:2.0.7")
 
             dependency("org.mybatis.generator:mybatis-generator-core:1.4.1")
 
-            dependency("org.bouncycastle:bcprov-jdk18on:1.71")
+            dependency("org.bouncycastle:bcprov-jdk18on:1.72")
 
             dependency("xerces:xercesImpl:2.12.2")
-            dependency("com.auth0:java-jwt:4.0.0")
-            dependency("com.tencentcloudapi:tencentcloud-sdk-java:3.1.564")
+            dependency("com.auth0:java-jwt:4.2.1")
+            dependency("com.tencentcloudapi:tencentcloud-sdk-java:3.1.638")
+
         }
     }
 

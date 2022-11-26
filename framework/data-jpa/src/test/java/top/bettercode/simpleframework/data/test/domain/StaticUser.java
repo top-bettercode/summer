@@ -4,8 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "User")
-public class StaticUser extends BaseUser{
+@Table(name = "t_user")
+public class StaticUser extends BaseUser {
 
   public StaticUser() {
   }

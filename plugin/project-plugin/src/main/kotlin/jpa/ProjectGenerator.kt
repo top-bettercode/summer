@@ -1,6 +1,5 @@
 package jpa
 
-import top.bettercode.generator.DatabaseDriver
 import top.bettercode.generator.database.entity.Column
 import top.bettercode.generator.dom.java.JavaType
 import top.bettercode.generator.dom.java.element.TopLevelClass
@@ -15,8 +14,7 @@ abstract class ProjectGenerator : Generator() {
 
 
     fun columnAnnotation(column: Column): String {
-        val columnDefinition = if (datasource.databaseDriver == DatabaseDriver.H2) "" else
-            ", columnDefinition = \"${column.typeDesc}${column.defaultDesc}${if (column.extra.isBlank()) "" else " ${column.extra}"}\""
+        val columnDefinition = ""
         var columnAnnotation =
             "@javax.persistence.Column(name = \"${column.columnName}\"$columnDefinition"
         if (column.columnSize > 0 && column.columnSize != 255) {

@@ -25,7 +25,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
     implementation("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
-    implementation("com.gradle.publish:plugin-publish-plugin:0.20.0")
+    implementation("com.gradle.publish:plugin-publish-plugin:1.1.0")
 //    implementation("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
 //    implementation("top.bettercode.summer:publish-plugin:0.0.18-SNAPSHOT")

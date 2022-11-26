@@ -76,6 +76,8 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         +" */"
                     }
                 annotation(columnAnnotation(it))
+                if (it.columnDef != null)
+                    annotation("@org.hibernate.annotations.ColumnDefault(\"${it.columnDef}\")")
                 if (it.numericBooleanType) {
                     annotation("@org.hibernate.annotations.Type(type = \"org.hibernate.type.NumericBooleanType\")")
                 }
@@ -129,9 +131,11 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     0 -> {
                         +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
                     }
+
                     size - 1 -> {
                         +"    Objects.equals(${column.javaName}, that.${column.javaName});"
                     }
+
                     else -> {
                         +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
                     }

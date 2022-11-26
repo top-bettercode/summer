@@ -90,26 +90,23 @@ object ProjectDependencies {
                     dependency("top.bettercode.summer:sap:$summerVersion")
                     dependency("top.bettercode.summer:test:$summerVersion")
 
-                    dependency("top.bettercode.wechat:weixin-mp:0.9.7")
-                    dependency("top.bettercode.wechat:weixin-app:0.9.7")
-
                     dependency("com.oracle.database.jdbc:ojdbc8:$oracleJdbcVersion")
                     dependency("com.oracle.database.jdbc:ucp:$oracleJdbcVersion")
                     dependency("com.oracle.database.security:oraclepki:$oracleJdbcVersion")
                     dependency("com.oracle.database.security:osdt_core:$oracleJdbcVersion")
                     dependency("com.oracle.database.security:osdt_cert:$oracleJdbcVersion")
 
-                    dependency("org.bouncycastle:bcprov-jdk18on:1.71")
+                    dependency("org.bouncycastle:bcprov-jdk18on:1.72")
 
                     dependency("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
                     dependency("com.github.axet:kaptcha:0.0.9")
-                    dependency("org.dhatim:fastexcel-reader:0.12.14")
-                    dependency("org.apache.poi:poi-ooxml:5.2.2")
+                    dependency("org.dhatim:fastexcel-reader:0.13.0")
+                    dependency("org.apache.poi:poi-ooxml:5.2.3")
                     dependency("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
 
-                    dependency("org.apache.logging.log4j:log4j-api:2.17.2")
-                    dependency("org.apache.logging.log4j:log4j-core:2.17.2")
-                    dependency("org.apache.logging.log4j:log4j-to-slf4j:2.17.2")
+                    dependency("org.apache.logging.log4j:log4j-api:2.19.0")
+                    dependency("org.apache.logging.log4j:log4j-core:2.19.0")
+                    dependency("org.apache.logging.log4j:log4j-to-slf4j:2.19.0")
                 }
             }
         }

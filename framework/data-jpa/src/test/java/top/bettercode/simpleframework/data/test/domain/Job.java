@@ -1,10 +1,10 @@
 package top.bettercode.simpleframework.data.test.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -19,12 +19,11 @@ public class Job {
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "jobid")
   @GenericGenerator(name = "jobid", strategy = "uuid2")
   private String id;
-  @Column(name = "name")
   private String name;
   @SoftDelete
   @Type(type = "org.hibernate.type.NumericBooleanType")
-  private boolean deleted;
-
+  @ColumnDefault("0")
+  private Boolean deleted;
 
   public String getId() {
     return id;
@@ -42,11 +41,11 @@ public class Job {
     this.name = name;
   }
 
-  public boolean isDeleted() {
+  public Boolean getDeleted() {
     return deleted;
   }
 
-  public void setDeleted(boolean deleted) {
+  public void setDeleted(Boolean deleted) {
     this.deleted = deleted;
   }
 

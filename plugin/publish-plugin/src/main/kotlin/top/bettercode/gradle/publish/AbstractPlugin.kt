@@ -54,7 +54,7 @@ abstract class AbstractPlugin : Plugin<Project> {
     /**
      * 公用配置
      */
-    protected fun configPublish(project: Project, publicationName: Array<String> = arrayOf()) {
+    protected fun configPublish(project: Project) {
 
         project.tasks.withType(Javadoc::class.java) {
             with(it.options as StandardJavadocDocletOptions) {
@@ -69,10 +69,6 @@ abstract class AbstractPlugin : Plugin<Project> {
         val projectVcsUrl = project.findProperty("vcsUrl") as? String
 
         configurePublishing(project, projectUrl, projectVcsUrl)
-
-        val publicationNames = mutableSetOf<String>()
-        publicationNames.add("mavenJava")
-        publicationNames.addAll(publicationName)
 
         if (project.hasProperty("signing.keyId"))
             project.extensions.getByType(SigningExtension::class.java).apply {
@@ -94,62 +90,77 @@ abstract class AbstractPlugin : Plugin<Project> {
             it.enabled = false
         }
         project.extensions.configure(PublishingExtension::class.java) { p ->
-            project.findProperty("mavenRepos")?.toString()?.split(",")?.forEach {
-                var mavenRepoName = project.findProperty("$it.name") as? String ?: it
-                var mavenRepoUrl = project.findProperty("$it.url") as? String
-                var mavenRepoUsername = project.findProperty("$it.username") as? String
-                var mavenRepoPassword = project.findProperty("$it.password") as? String
+            conifgRepository(project, p)
 
-                if (project.version.toString().endsWith("SNAPSHOT")) {
-                    mavenRepoName = project.findProperty("$it.snapshots.name") as? String
-                        ?: mavenRepoName
-                    mavenRepoUrl = project.findProperty("$it.snapshots.url") as? String
-                        ?: mavenRepoUrl
-                    mavenRepoUsername = project.findProperty("$it.snapshots.username") as? String
-                        ?: mavenRepoUsername
-                    mavenRepoPassword = project.findProperty("$it.snapshots.password") as? String
-                        ?: mavenRepoPassword
-                }
-                if (mavenRepoUrl != null)
-                    p.repositories { handler ->
-                        handler.maven { repository ->
-                            repository.name = mavenRepoName
-                            repository.url = URI(mavenRepoUrl)
-                            repository.isAllowInsecureProtocol = true
-                            repository.credentials { credentials ->
-                                credentials.username = mavenRepoUsername
-                                credentials.password = mavenRepoPassword
-                            }
+            p.publications.create("mavenJava", MavenPublication::class.java) { mavenPublication ->
+                configPublication(project, mavenPublication, projectUrl, projectVcsUrl)
+            }
+
+        }
+    }
+
+    protected fun configPublication(
+        project: Project,
+        mavenPublication: MavenPublication,
+        projectUrl: String?,
+        projectVcsUrl: String?
+    ) {
+        if (project.plugins.hasPlugin("war")) {
+            mavenPublication.from(project.components.getByName("web"))
+        } else {
+            mavenPublication.from(project.components.getByName("java"))
+        }
+
+        mavenPublication.artifact(project.tasks.getByName("sourcesJar")) {
+            it.classifier = "sources"
+        }
+
+        mavenPublication.artifact(project.tasks.getByName("javadocJar")) {
+            it.classifier = "javadoc"
+        }
+
+        mavenPublication.pom.withXml(configurePomXml(project, projectUrl, projectVcsUrl))
+    }
+
+    protected fun conifgRepository(
+        project: Project,
+        p: PublishingExtension
+    ) {
+        project.findProperty("mavenRepos")?.toString()?.split(",")?.forEach {
+            var mavenRepoName = project.findProperty("$it.name") as? String ?: it
+            var mavenRepoUrl = project.findProperty("$it.url") as? String
+            var mavenRepoUsername = project.findProperty("$it.username") as? String
+            var mavenRepoPassword = project.findProperty("$it.password") as? String
+
+            if (project.version.toString().endsWith("SNAPSHOT")) {
+                mavenRepoName = project.findProperty("$it.snapshots.name") as? String
+                    ?: mavenRepoName
+                mavenRepoUrl = project.findProperty("$it.snapshots.url") as? String
+                    ?: mavenRepoUrl
+                mavenRepoUsername = project.findProperty("$it.snapshots.username") as? String
+                    ?: mavenRepoUsername
+                mavenRepoPassword = project.findProperty("$it.snapshots.password") as? String
+                    ?: mavenRepoPassword
+            }
+            if (mavenRepoUrl != null)
+                p.repositories { handler ->
+                    handler.maven { repository ->
+                        repository.name = mavenRepoName
+                        repository.url = URI(mavenRepoUrl)
+                        repository.isAllowInsecureProtocol = true
+                        repository.credentials { credentials ->
+                            credentials.username = mavenRepoUsername
+                            credentials.password = mavenRepoPassword
                         }
                     }
-            }
-
-
-            p.publications.create("mavenJava", MavenPublication::class.java) { m ->
-                if (project.plugins.hasPlugin("war")) {
-                    m.from(project.components.getByName("web"))
-                } else {
-                    m.from(project.components.getByName("java"))
                 }
-
-                m.artifact(project.tasks.getByName("sourcesJar")) {
-                    it.classifier = "sources"
-                }
-
-                m.artifact(project.tasks.getByName("javadocJar")) {
-                    it.classifier = "javadoc"
-                }
-
-                m.pom.withXml(configurePomXml(project, projectUrl, projectVcsUrl))
-            }
-
         }
     }
 
     /**
      * 配置pom.xml相关信息
      */
-    private fun configurePomXml(
+    protected fun configurePomXml(
         project: Project,
         projectUrl: String?,
         projectVcsUrl: String?

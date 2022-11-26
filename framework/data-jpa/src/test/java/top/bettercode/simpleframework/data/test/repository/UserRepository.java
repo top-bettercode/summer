@@ -27,7 +27,7 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 
   Page<User> findByFirstName(String lastName, Pageable pageable);
 
-  @Query(value = "select * from user where first_name = ?1", nativeQuery = true)
+  @Query(value = "select * from t_user where first_name = ?1", nativeQuery = true)
   Page<User> selectNativeSql(String first_name, Pageable pageable);
 
 
@@ -59,7 +59,7 @@ public interface UserRepository extends JpaExtRepository<User, Integer>,
 
   Page<User> selectMybatisAll(Pageable pageable);
 
-  @Select("select * from user where deleted = 0")
+  @Select("select * from t_user where deleted = 0")
   List<User> selectByMybatisSize(Size size);
 
   List<User> selectMybatisIfParam(String firstName, String lastName);

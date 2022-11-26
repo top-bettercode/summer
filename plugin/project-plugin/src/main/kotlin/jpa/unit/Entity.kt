@@ -156,6 +156,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.SEQUENCE, generator = \"${entityName}Sequence\")")
                     annotation("@javax.persistence.SequenceGenerator(name = \"${entityName}Sequence\", sequenceName = \"${primaryKey.sequence}\", allocationSize = 1)")
                 }
+                if (primaryKey.columnDef != null)
+                    annotation("@org.hibernate.annotations.ColumnDefault(\"${primaryKey.columnDef}\")")
                 annotation(columnAnnotation(primaryKey))
             } else {
                 javadoc {
@@ -238,6 +240,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         +" * ${it.docRemark}"
                         +" */"
                     }
+                if (it.columnDef != null)
+                    annotation("@org.hibernate.annotations.ColumnDefault(\"${it.columnDef}\")")
                 annotation(columnAnnotation(it))
                 if (it.javaName == "createdDate") {
                     annotation("@org.springframework.data.annotation.CreatedDate")
