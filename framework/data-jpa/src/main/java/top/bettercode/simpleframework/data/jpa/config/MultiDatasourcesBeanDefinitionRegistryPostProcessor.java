@@ -88,9 +88,6 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
               }
 
               HikariDataSource hikari = properties.getHikari();
-              if (!StringUtils.hasText(hikari.getPoolName())) {
-                hikari.setPoolName(key + "Pool");
-              }
               if (hikari != null) {
                 String hikariConfigKey = "summer.datasource.multi.datasources." + key + ".hikari";
                 Binder.get(environment)
@@ -98,6 +95,9 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
               } else {
                 Binder.get(environment)
                     .bind("spring.datasource.hikari", Bindable.ofInstance(dataSource));
+              }
+              if (!StringUtils.hasText(dataSource.getPoolName())) {
+                dataSource.setPoolName(key + "Pool");
               }
               if (log.isInfoEnabled()) {
                 log.info("init dataSource {} : {}", dataSource.getPoolName(),
