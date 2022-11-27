@@ -1,0 +1,19 @@
+extends: default
+font:
+  catalog:
+    merge: true
+    simfang: simfang.ttf
+  fallbacks:
+    - Noto Serif
+base:
+  text-align: left
+  font-color: #000000
+  font-family: simfang
+heading:
+  font-color: #000000
+codespan:
+  font-family: simfang
+kbd:
+  font-family: $codespan-font-family
+code:
+  font-family: $codespan-font-family

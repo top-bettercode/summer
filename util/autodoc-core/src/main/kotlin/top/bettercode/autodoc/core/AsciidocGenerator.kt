@@ -92,17 +92,20 @@ object AsciidocGenerator : AbstractbGenerator() {
             val optionsBuilder = Options.builder()
             optionsBuilder.toFile(outFile)
             optionsBuilder.backend("pdf")
+//asciidoctor-pdf -a scripts=cjk -a pdf-theme=./themes/cjk-theme.yml -a pdf-fontsdir=./themes document.adoc
             optionsBuilder.attributes(
                 Attributes.builder().attributes(
                     mapOf(
-                        "pdf-fontsdir" to AsciidocGenerator::class.java.getResource("/data/fonts")?.file,
-                        "pdf-style" to AsciidocGenerator::class.java.getResource("/data/themes/default-theme.yml")?.file
+                        "scripts" to "cjk",
+                        "pdf-fontsdir" to "uri:classloader:/themes;GEM_FONTS_DIR;",
+                        "pdf-theme" to "uri:classloader:/themes/cjk-theme.yml"
                     )
                 ).build()
             )
             optionsBuilder.mkDirs(true)
             optionsBuilder.safe(SafeMode.UNSAFE)
             try {
+                asciidoctor.convertFile(inFile, optionsBuilder.build())
                 println(
                     "${if (outFile.exists()) "覆盖" else "生成"}：${
                         if (prefixPath == null) outFile.path else
@@ -111,7 +114,6 @@ object AsciidocGenerator : AbstractbGenerator() {
                             )
                     }"
                 )
-                asciidoctor.convertFile(inFile, optionsBuilder.build())
             } catch (e: Exception) {
                 e.printStackTrace()
             }

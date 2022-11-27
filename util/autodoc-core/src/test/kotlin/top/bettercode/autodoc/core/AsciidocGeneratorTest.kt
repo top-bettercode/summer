@@ -31,7 +31,7 @@ class AsciidocGeneratorTest {
 
     @Test
     fun genPdf() {
-//        AsciidocGenerator.asciidoc(autodoc)
+        AsciidocGenerator.asciidoc(autodoc)
         AsciidocGenerator.pdf(autodoc)
     }
 
