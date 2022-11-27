@@ -57,6 +57,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             import("org.springframework.data.domain.Page")
             import(matcherType)
             +"${matcherType.shortName} matcher = ${matcherType.shortName}.matching(${entityName});"
+            +""
             +"Page<$className> results = ${projectEntityName}Service.findAll(matcher, pageable);"
             if (isFullComposite) {
                 +"return ok(results, $className::get$primaryKeyClassName);"
@@ -113,6 +114,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
 
                 +"${matcherType.shortName} matcher = ${matcherType.shortName}.matching(${entityName});"
+                +""
                 +"Iterable<$className> results = ${projectEntityName}Service.findAll(matcher, sort);"
                 import("top.bettercode.util.excel.ExcelExport")
                 +"ExcelExport.sheet(\"$remarks\", excelExport -> excelExport.setData(${
@@ -142,6 +144,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 import("top.bettercode.simpleframework.exception.ResourceNotFoundException")
 
                 +"$className $entityName = ${projectEntityName}Service.findById(${if (isCompositePrimaryKey) "${primaryKeyType.shortName}.of($primaryKeyName)" else primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
+                +""
                 +"return ok($entityName${if (isFullComposite) "get${primaryKeyClassName}()" else ""});"
             }
 
@@ -198,6 +201,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     type = formType
                 }
                 +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
+                +""
                 if (defaultColumns.isNotEmpty())
                     +"$entityName.nullPropertySetWithDefaults();"
                 +"${projectEntityName}Service.save($entityName);"
@@ -212,7 +216,9 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 import("top.bettercode.lang.util.BeanUtil")
                 +"${primaryKeyType.shortName} $primaryKeyName = form.get${primaryKeyName.capitalized()}();"
                 +"$className exist = ${projectEntityName}Service.findById(${primaryKeyName}).orElseThrow(ResourceNotFoundException::new);"
+                +""
                 +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
+                +""
                 +"$entityName.nullPropertySetFrom(exist);"
                 +"${projectEntityName}Service.save($entityName);"
                 +"return noContent();"

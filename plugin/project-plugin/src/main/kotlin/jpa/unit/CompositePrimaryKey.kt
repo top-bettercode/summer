@@ -153,7 +153,11 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         import("top.bettercode.lang.util.StringUtil")
         method("toString", JavaType.stringInstance) {
             annotation("@Override")
-            +"return StringUtil.json(this);"
+            if (isFullComposite) {
+                +"return StringUtil.json(this);"
+            } else {
+                +"return EmbeddedIdConverter.toString(this);"
+            }
         }
     }
 }

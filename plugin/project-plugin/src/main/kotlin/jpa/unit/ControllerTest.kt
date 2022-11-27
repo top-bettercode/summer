@@ -50,6 +50,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             annotation("@org.junit.jupiter.api.Order(0)")
             exception(JavaType("Exception"))
             +"$testInsertName();"
+            +""
             +"perform(get(\"/$pathName/list\")"
             2 + ".param(\"page\", \"1\")"
             2 + ".param(\"size\", \"5\")"
@@ -69,6 +70,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Order(1)")
                 exception(JavaType("Exception"))
                 +"$testInsertName();"
+                +""
                 +"download(get(\"/$pathName/export.xlsx\")"
                 2 + ".param(\"sort\", \"\")"
                 +");"
@@ -88,6 +90,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
                     primaryKeyName.capitalized()
                 }();"
+                +""
                 +"perform(get(\"/$pathName/info\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 +");"
@@ -107,33 +110,33 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(3)")
                 exception(JavaType("Exception"))
-                +"$className $entityName = new $className();"
                 import(primaryKeyType)
-                if (isCompositePrimaryKey) {
-                    +"$primaryKeyClassName $primaryKeyName = new ${primaryKeyClassName}();"
-                    primaryKeys.forEach {
-                        +"$primaryKeyName.set${
+                if (isFullComposite) {
+                    +"$className $entityName = new $className();"
+                    +""
+                    filterColumns.forEach {
+                        +"$entityName.set${
                             it.javaName.capitalized()
                         }(${it.randomValueToSet(this@apply)});"
                     }
-                    +"$entityName.set${
-                        primaryKeyName.capitalized()
-                    }(${primaryKeyName});"
                 } else {
                     +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
                         primaryKeyName.capitalized()
                     }();"
-                    primaryKeys.forEach {
+                    +""
+                    +"$className $entityName = new $className();"
+                    +"$entityName.set${
+                        primaryKeyName.capitalized()
+                    }(${primaryKeyName});"
+
+                    filterOtherColumns.forEach {
                         +"$entityName.set${
                             it.javaName.capitalized()
-                        }(${primaryKeyName});"
+                        }(${it.randomValueToSet(this@apply)});"
                     }
                 }
-                filterOtherColumns.forEach {
-                    +"$entityName.set${
-                        it.javaName.capitalized()
-                    }(${it.randomValueToSet(this@apply)});"
-                }
+
+                +""
                 +"perform(post(\"/$pathName/save\")"
                 2 + ".contentType(MediaType.APPLICATION_JSON)"
                 2 + ".content(json($entityName))"
@@ -158,6 +161,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
                         primaryKeyName.capitalized()
                     }();"
+                    +""
                     +"perform(post(\"/$pathName/save\")"
                     2 + ".contentType(MediaType.APPLICATION_FORM_URLENCODED)"
                     2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
@@ -181,6 +185,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
                     primaryKeyName.capitalized()
                 }();"
+                +""
                 +"perform(get(\"/$pathName/delete\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 +");"
