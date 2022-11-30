@@ -148,13 +148,17 @@ public class FrameworkMvcConfiguration {
 
   @Bean
   public com.fasterxml.jackson.databind.Module module(GenericApplicationContext applicationContext,
-      PackageScanClassResolver packageScanClassResolver) {
+      PackageScanClassResolver packageScanClassResolver) throws ClassNotFoundException {
     SimpleModule module = new SimpleModule();
     Set<String> packages = new HashSet<>(
         Arrays.asList(jacksonExtProperties.getMixInAnnotationBasePackages()));
     String[] beanNames = applicationContext.getBeanNamesForAnnotation(ComponentScan.class);
     for (String beanName : beanNames) {
-      AbstractBeanDefinition beanDefinition = (AbstractBeanDefinition) applicationContext.getBeanDefinition(beanName);
+      AbstractBeanDefinition beanDefinition = (AbstractBeanDefinition) applicationContext.getBeanDefinition(
+          beanName);
+      if (!beanDefinition.hasBeanClass()) {
+        beanDefinition.resolveBeanClass(FrameworkMvcConfiguration.class.getClassLoader());
+      }
       Class<?> beanClass = beanDefinition.getBeanClass();
       ComponentScan annotation = AnnotatedElementUtils.findMergedAnnotation(beanClass,
           ComponentScan.class);
