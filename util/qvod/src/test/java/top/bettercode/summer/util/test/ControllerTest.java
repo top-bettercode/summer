@@ -1,9 +1,8 @@
-package top.bettercode.summer.util.qvod;
+package top.bettercode.summer.util.test;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
-import top.bettercode.summer.util.test.BaseWebNoAuthTest;
 
 public class ControllerTest extends BaseWebNoAuthTest {
 

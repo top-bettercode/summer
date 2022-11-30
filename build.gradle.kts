@@ -136,6 +136,9 @@ allprojects {
             options.encoding = "UTF-8"
             dependsOn("processResources")
         }
+        "compileTestJava"(JavaCompile::class) {
+            options.compilerArgs.add("-Xlint:deprecation")
+        }
         withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
             incremental = true
             kotlinOptions {

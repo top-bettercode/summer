@@ -135,6 +135,7 @@ public class SimpleJpaExtRepositoryTest {
     Assertions.assertTrue(optionalUser.isPresent());
   }
 
+  @Deprecated
   @Test
   public void save() {
     User dave = new User("Dave", "Matthews");

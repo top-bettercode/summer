@@ -1,9 +1,9 @@
-package top.bettercode.summer.util.qvod
+package top.bettercode.summer.util.test
 
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import top.bettercode.summer.util.test.BaseTest
+import top.bettercode.summer.util.qvod.QvodClient
 
 /**
  *

@@ -1,4 +1,4 @@
-package top.bettercode.summer.util.qvod;
+package top.bettercode.summer.util.test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

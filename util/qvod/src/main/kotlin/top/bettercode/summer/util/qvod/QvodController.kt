@@ -2,14 +2,12 @@ package top.bettercode.summer.util.qvod
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 import top.bettercode.simpleframework.web.BaseController
 import javax.validation.constraints.NotBlank
 
 @Validated
+@RestController
 @ConditionalOnWebApplication
 @RequestMapping(value = ["/qvod"], name = "腾讯云")
 class QvodController(

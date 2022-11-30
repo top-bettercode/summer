@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ public class SoftDeleteTest {
     System.err.println("--------------------------------------------------------");
   }
 
+  @Disabled
   @Test
   public void name() {
     System.err.println(repository.findAll(QUser.user.firstName.contains("D")));

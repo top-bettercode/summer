@@ -1,8 +1,9 @@
-package top.bettercode.summer.util.qvod;
+package top.bettercode.summer.util.test;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import kotlin.collections.CollectionsKt;
+import top.bettercode.summer.util.qvod.QvodAntiLeechUrl;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DataBean {

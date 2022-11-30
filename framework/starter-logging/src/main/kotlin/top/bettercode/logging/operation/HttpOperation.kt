@@ -130,7 +130,7 @@ object HttpOperation {
     }
 
     private fun includeParametersInUri(request: OperationRequest): Boolean {
-        return request.method === HttpMethod.GET.name() || request.method === HttpMethod.DELETE.name() || request.content.isNotEmpty() && !MediaType.APPLICATION_FORM_URLENCODED
+        return request.method === HttpMethod.GET.name || request.method === HttpMethod.DELETE.name || request.content.isNotEmpty() && !MediaType.APPLICATION_FORM_URLENCODED
             .isCompatibleWith(request.headers.contentType)
     }
 
@@ -189,7 +189,7 @@ object HttpOperation {
 
 
     fun isPutOrPost(request: OperationRequest): Boolean {
-        return HttpMethod.PUT.name() == request.method || HttpMethod.POST.name() == request.method
+        return HttpMethod.PUT.name == request.method || HttpMethod.POST.name == request.method
     }
 
     private fun writeParts(request: OperationRequest, writer: PrintWriter) {
