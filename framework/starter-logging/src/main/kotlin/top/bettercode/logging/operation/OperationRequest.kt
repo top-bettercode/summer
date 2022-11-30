@@ -46,7 +46,7 @@ open class OperationRequest(
      *
      * the HTTP method
      */
-    var method: HttpMethod = HttpMethod.GET,
+    var method: String = HttpMethod.GET.name(),
     /**
      * Returns the headers that were included in the request.
      *

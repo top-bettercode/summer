@@ -98,7 +98,7 @@ object PostmanGenerator : AbstractbGenerator() {
         httpHeaders.removeIf { it.name == HttpHeaders.HOST || it.name == HttpHeaders.CONTENT_LENGTH }
 
         return Request(
-            method = request.method.name,
+            method = request.method,
             header = request.headersExt.checkBlank("$operationPath:request.headersExt").map {
                 HeaderItem(it.name, it.name, it.value, it.postmanDescription)
             },

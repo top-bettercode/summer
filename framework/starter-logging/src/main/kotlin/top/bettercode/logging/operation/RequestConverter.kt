@@ -3,7 +3,6 @@ package top.bettercode.logging.operation
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.convert.ConversionException
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.util.Assert
 import org.springframework.util.FileCopyUtils
@@ -92,7 +91,7 @@ object RequestConverter {
             uri = uri,
             restUri = restUri,
             uriVariables = uriTemplateVariables,
-            method = HttpMethod.valueOf(request.method),
+            method = request.method,
             headers = headers,
             cookies = cookies,
             remoteUser = remoteUser,
@@ -146,7 +145,7 @@ object RequestConverter {
             uri = uri,
             restUri = restUri,
             uriVariables = mapOf(),
-            method = request.method,
+            method = request.method.name,
             headers = headers,
             cookies = cookies,
             remoteUser = "NonSpecificUser",
