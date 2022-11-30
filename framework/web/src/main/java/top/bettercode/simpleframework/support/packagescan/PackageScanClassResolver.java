@@ -8,22 +8,16 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import org.apache.tomcat.util.buf.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
-import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.SystemPropertyUtils;
 
@@ -43,30 +37,6 @@ public class PackageScanClassResolver {
   public PackageScanClassResolver(ClassLoader classLoader) {
     resourcePatternResolver = new PathMatchingResourcePatternResolver(classLoader);
     metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
-  }
-
-  @NotNull
-  public static Set<String> detectPackagesToScan(ApplicationContext applicationContext,
-      String[] basePackages) {
-    Assert.notNull(applicationContext, "applicationContext 不能为null");
-
-    Set<String> packages = new HashSet<>();
-    if (basePackages.length == 0) {
-      for (Object o : applicationContext.getBeansWithAnnotation(ComponentScan.class).values()) {
-        ComponentScan annotation = AnnotatedElementUtils
-            .findMergedAnnotation(o.getClass(), ComponentScan.class);
-        for (Class<?> aClass : Objects.requireNonNull(annotation).basePackageClasses()) {
-          packages.add(aClass.getPackage().getName());
-        }
-        packages.addAll(Arrays.asList(annotation.basePackages()));
-        if (packages.isEmpty()) {
-          packages.add(o.getClass().getPackage().getName());
-        }
-      }
-    } else {
-      packages.addAll(Arrays.asList(basePackages));
-    }
-    return packages;
   }
 
   public void addFilter(PackageScanFilter filter) {

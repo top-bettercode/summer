@@ -11,15 +11,22 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import javax.imageio.ImageIO;
@@ -32,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -43,11 +51,13 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
@@ -141,13 +151,23 @@ public class FrameworkMvcConfiguration {
   }
 
   @Bean
-  public com.fasterxml.jackson.databind.Module module(ApplicationContext applicationContext,
+  public com.fasterxml.jackson.databind.Module module(GenericApplicationContext applicationContext,
       PackageScanClassResolver packageScanClassResolver) {
     SimpleModule module = new SimpleModule();
-    Set<String> packages = PackageScanClassResolver
-        .detectPackagesToScan(applicationContext,
-            jacksonExtProperties.getMixInAnnotationBasePackages());
-
+    Set<String> packages = new HashSet<>(
+        Arrays.asList(jacksonExtProperties.getMixInAnnotationBasePackages()));
+    String[] beanNames = applicationContext.getBeanNamesForAnnotation(ComponentScan.class);
+    for (String beanName : beanNames) {
+      AbstractBeanDefinition beanDefinition = (AbstractBeanDefinition) applicationContext.getBeanDefinition(beanName);
+      Class<?> beanClass = beanDefinition.getBeanClass();
+      ComponentScan annotation = AnnotatedElementUtils.findMergedAnnotation(beanClass,
+          ComponentScan.class);
+      for (Class<?> packageClass : Objects.requireNonNull(annotation).basePackageClasses()) {
+        packages.add(packageClass.getPackage().getName());
+      }
+      packages.addAll(Arrays.asList(annotation.basePackages()));
+      packages.add(beanClass.getPackage().getName());
+    }
     packages.add("top.bettercode.simpleframework.data.serializer");
 
     Set<Class<?>> allSubClasses = packageScanClassResolver
