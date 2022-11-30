@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class IllegalUserException extends InternalAuthenticationServiceException {
 
-  private static final long serialVersionUID = 4634232939775284312L;
+  private static final long serialVersionUID = 1L;
 
   private Map<String, String> errors;
 

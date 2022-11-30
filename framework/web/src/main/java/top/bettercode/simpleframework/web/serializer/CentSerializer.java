@@ -11,7 +11,7 @@ import top.bettercode.lang.util.MoneyUtil;
 @JacksonStdImpl
 public class CentSerializer extends NumberSerializer {
 
-  private static final long serialVersionUID = 1759139980737771L;
+  private static final long serialVersionUID = 1L;
 
   private static int newScale = 2;
 

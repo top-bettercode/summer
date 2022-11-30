@@ -3,15 +3,16 @@ package top.bettercode.simpleframework.web;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Peter Wu
  */
-public class RespExtra<T> {
+public class RespExtra<T> implements Serializable {
 
-  private static final long serialVersionUID = -8674517568275448549L;
+  private static final long serialVersionUID = 1L;
 
   private final T content;
 

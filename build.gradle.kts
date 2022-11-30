@@ -62,8 +62,8 @@ allprojects {
             dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
             dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
 
-            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
-            dependency("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
+            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
+            dependency("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
             dependency("com.gradle.publish:plugin-publish-plugin:1.1.0")
             dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 

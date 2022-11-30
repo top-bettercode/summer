@@ -17,7 +17,7 @@ import javax.annotation.Generated;
 @Generated("com.querydsl.codegen.SupertypeSerializer")
 public class QBaseUser extends EntityPathBase<BaseUser> {
 
-    private static final long serialVersionUID = -888630333L;
+    private static final long serialVersionUID = 1L;
 
     public static final QBaseUser baseUser = new QBaseUser("baseUser");
 

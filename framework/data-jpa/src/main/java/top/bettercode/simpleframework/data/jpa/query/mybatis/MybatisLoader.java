@@ -38,12 +38,8 @@ public class MybatisLoader extends CustomLoader {
   public Object loadSingleRow(ResultSet resultSet, SharedSessionContractImplementor session,
       QueryParameters queryParameters, boolean returnProxies) throws HibernateException {
     if (mybatisQuery) {
-      try {
-        return ((MybatisResultTransformer) queryParameters.getResultTransformer()).transform(
-            resultSet);
-      } catch (SQLException e) {
-        throw new HibernateException(e);
-      }
+      return ((MybatisResultTransformer) queryParameters.getResultTransformer()).transform(
+          resultSet);
     } else {
       return super.loadSingleRow(resultSet, session, queryParameters, returnProxies);
     }

@@ -6,7 +6,7 @@ import java.util.Map;
 public class MIMEType {
 
 	public static final Map<String, String> types = new HashMap<String, String>(){
-    private static final long serialVersionUID = -2881802098108442811L;
+    private static final long serialVersionUID = 1L;
 
     {
 		put( "image/gif", ".gif" );

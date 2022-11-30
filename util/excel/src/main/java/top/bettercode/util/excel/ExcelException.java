@@ -5,7 +5,7 @@ package top.bettercode.util.excel;
  */
 public class ExcelException extends RuntimeException {
 
-  private static final long serialVersionUID = -6806745108191259515L;
+  private static final long serialVersionUID = 1L;
 
   public ExcelException(String message) {
     super(message);

@@ -14,7 +14,7 @@ import top.bettercode.simpleframework.exception.SystemException;
  */
 public class RespEntity<T> implements IRespEntity, Serializable {
 
-  private static final long serialVersionUID = 3861540517275767213L;
+  private static final long serialVersionUID = 1L;
   public static final String KEY_STATUS = "status";
   public static final String KEY_MESSAGE = "message";
   public static final String KEY_DATA = "data";
@@ -177,7 +177,7 @@ public class RespEntity<T> implements IRespEntity, Serializable {
 
   public static class RespEntityMap extends HashMap<String, Object> implements IRespEntity {
 
-    private static final long serialVersionUID = -8836404214545603605L;
+    private static final long serialVersionUID = 1L;
 
     @Override
     public Integer getHttpStatusCode() {

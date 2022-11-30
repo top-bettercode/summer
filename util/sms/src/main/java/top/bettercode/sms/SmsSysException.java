@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class SmsSysException extends IllegalArgumentException {
 
-  private static final long serialVersionUID = -5872372703467294621L;
+  private static final long serialVersionUID = 1L;
 
   public SmsSysException(String message) {
     super("短信平台：" + message);

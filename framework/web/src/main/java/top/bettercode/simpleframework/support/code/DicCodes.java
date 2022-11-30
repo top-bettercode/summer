@@ -10,7 +10,7 @@ import org.springframework.util.Assert;
  */
 public class DicCodes implements Serializable {
 
-  private static final long serialVersionUID = 1975408514555403680L;
+  private static final long serialVersionUID = 1L;
 
 
   private String type;

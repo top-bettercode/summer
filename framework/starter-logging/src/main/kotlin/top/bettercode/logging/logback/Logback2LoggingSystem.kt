@@ -25,16 +25,12 @@ import net.logstash.logback.appender.LogstashTcpSocketAppender
 import org.slf4j.ILoggerFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.impl.StaticLoggerBinder
 import org.springframework.boot.context.properties.bind.Bindable
 import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.boot.logging.LogFile
 import org.springframework.boot.logging.LoggingInitializationContext
 import org.springframework.boot.logging.LoggingSystem
-import org.springframework.boot.logging.LoggingSystemFactory
 import org.springframework.boot.logging.logback.LogbackLoggingSystem
-import org.springframework.core.Ordered
-import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
@@ -56,18 +52,16 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
     private val log: Logger = LoggerFactory.getLogger(Logback2LoggingSystem::class.java)
     private val loggerContext: LoggerContext by lazy {
-        val factory = StaticLoggerBinder.getSingleton().loggerFactory
+        val factory = LoggerFactory.getILoggerFactory()
         Assert.isInstanceOf(
-            LoggerContext::class.java, factory,
+            LoggerContext::class.java, factory
+        ) {
             String.format(
-                "LoggerFactory is not a Logback LoggerContext but Logback is on "
-                        + "the classpath. Either remove Logback or the competing "
-                        + "implementation (%s loaded from %s). If you are using "
-                        + "WebLogic you will need to add 'org.slf4j' to "
-                        + "prefer-application-packages in WEB-INF/weblogic.xml",
-                factory.javaClass, getLocation(factory)
+                "LoggerFactory is not a Logback LoggerContext but Logback is on the classpath. Either remove Logback or the competing implementation (%s loaded from %s). If you are using WebLogic you will need to add 'org.slf4j' to prefer-application-packages in WEB-INF/weblogic.xml",
+                factory.javaClass,
+                getLocation(factory)
             )
-        )
+        }
         factory as LoggerContext
     }
 
@@ -646,22 +640,6 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         const val FILE_LOG_PATTERN =
             "%d{yyyy-MM-dd HH:mm:ss.SSS} \${LOG_LEVEL_PATTERN:-%5p} \${PID:- } --- [%t] %-40.40logger{39} :%X{id} %m%n\${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
 
-    }
-
-    @Order(Ordered.LOWEST_PRECEDENCE)
-    class Factory : LoggingSystemFactory {
-        override fun getLoggingSystem(classLoader: ClassLoader): LoggingSystem? {
-            return if (PRESENT) {
-                LogbackLoggingSystem(classLoader)
-            } else null
-        }
-
-        companion object {
-            private val PRESENT = ClassUtils.isPresent(
-                "ch.qos.logback.classic.LoggerContext",
-                Factory::class.java.classLoader
-            )
-        }
     }
 
 }

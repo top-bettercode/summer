@@ -16,7 +16,7 @@ import top.bettercode.simpleframework.web.serializer.annotation.JsonEmbeddedId;
 public class EmbeddedIdSerializer extends StdScalarSerializer<Object> implements
     ContextualSerializer {
 
-  private static final long serialVersionUID = 1759139980737771L;
+  private static final long serialVersionUID = 1L;
   private final String delimiter;
 
 

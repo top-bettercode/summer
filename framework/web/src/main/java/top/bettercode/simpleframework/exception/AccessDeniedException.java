@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.FORBIDDEN)
 public class AccessDeniedException extends RuntimeException {
 
-  private static final long serialVersionUID = -7941819415782111951L;
+  private static final long serialVersionUID = 1L;
 
   public AccessDeniedException() {
     this("access.denied");

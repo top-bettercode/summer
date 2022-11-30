@@ -29,7 +29,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.NestedServletException;
 import top.bettercode.lang.util.StringUtil;
 import top.bettercode.simpleframework.config.SummerWebProperties;
 import top.bettercode.simpleframework.web.error.CustomErrorController;
@@ -130,8 +129,8 @@ public class TestErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
       }
     } catch (Throwable ex) {
       Throwable exceptionToHandle = ex;
-      if (ex instanceof NestedServletException) {
-        Throwable rootCause = ((NestedServletException) ex).getRootCause();
+      if (ex instanceof ServletException) {
+        Throwable rootCause = ((ServletException) ex).getRootCause();
         if (rootCause != null) {
           exceptionToHandle = rootCause;
         }

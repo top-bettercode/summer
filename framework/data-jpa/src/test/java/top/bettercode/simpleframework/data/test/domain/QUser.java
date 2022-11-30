@@ -17,7 +17,7 @@ import javax.annotation.Generated;
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QUser extends EntityPathBase<User> {
 
-    private static final long serialVersionUID = 839697618L;
+    private static final long serialVersionUID = 1L;
 
     public static final QUser user = new QUser("user");
 

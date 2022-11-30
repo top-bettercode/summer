@@ -19,7 +19,7 @@ import top.bettercode.simpleframework.web.serializer.annotation.JsonBigDecimal;
 public class BigDecimalSerializer extends StdScalarSerializer<BigDecimal> implements
     ContextualSerializer {
 
-  private static final long serialVersionUID = -6196337598040684558L;
+  private static final long serialVersionUID = 1L;
   private final int scale;
   private final boolean toPlainString;
   private final boolean reduceFraction;

@@ -162,79 +162,7 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
   protected JpaQueryExecution getExecution() {
     JpaQueryMethod method = getQueryMethod();
     String sqlLogId = mappedStatement.getId();
-    if (method.isStreamQuery()) {
-      return new StreamExecution() {
-        @Override
-        protected Object doExecute(AbstractJpaQuery query,
-            JpaParametersParameterAccessor accessor) {
-          try {
-            MDC.put("id", sqlLogId);
-            return super.doExecute(query, accessor);
-          } finally {
-            MDC.remove("id");
-          }
-        }
-      };
-    } else if (method.isProcedureQuery()) {
-      return new ProcedureExecution() {
-        @Override
-        protected Object doExecute(AbstractJpaQuery jpaQuery,
-            JpaParametersParameterAccessor accessor) {
-          try {
-            MDC.put("id", sqlLogId);
-            return super.doExecute(jpaQuery, accessor);
-          } finally {
-            MDC.remove("id");
-          }
-        }
-      };
-    } else if (method.isCollectionQuery()) {
-      return new JpaQueryExecution.CollectionExecution() {
-        @Override
-        protected Object doExecute(AbstractJpaQuery query,
-            JpaParametersParameterAccessor accessor) {
-          try {
-            MDC.put("id", sqlLogId);
-            List<?> result = (List<?>) super.doExecute(query, accessor);
-            if (sqlLog.isDebugEnabled()) {
-              sqlLog.debug("{} rows retrieved", Objects.requireNonNull(result).size());
-            }
-            return result;
-          } finally {
-            MDC.remove("id");
-          }
-        }
-      };
-    } else if (method.isSliceQuery()) {
-      return new JpaQueryExecution.SlicedExecution() {
-        @Override
-        protected Object doExecute(AbstractJpaQuery query,
-            JpaParametersParameterAccessor accessor) {
-          try {
-            MDC.put("id", sqlLogId);
-            Pageable pageable = accessor.getPageable();
-            if (pageable.isPaged() && nestedResultMapType != null) {
-              if (nestedResultMapType.isCollection()) {
-                throw new UnsupportedOperationException(nestedResultMapType.getNestedResultMapId()
-                    + " collection resultmap not support page query");
-              } else {
-                sqlLog.info(
-                    "{} may return incorrect paginated data. Please check result maps definition {}.",
-                    sqlLogId, nestedResultMapType.getNestedResultMapId());
-              }
-            }
-            SliceImpl<?> result = (SliceImpl<?>) super.doExecute(query, accessor);
-            if (sqlLog.isDebugEnabled()) {
-              sqlLog.debug("total: {} rows", Objects.requireNonNull(result).getNumberOfElements());
-              sqlLog.debug("{} rows retrieved", result.getSize());
-            }
-            return result;
-          } finally {
-            MDC.remove("id");
-          }
-        }
-      };
-    } else if (method.isPageQuery()) {
+    if (method.isPageQuery()) {
       return new JpaQueryExecution.PagedExecution() {
         @Override
         protected Object doExecute(AbstractJpaQuery repositoryQuery,
@@ -297,6 +225,23 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
           }
         }
       };
+    } else if (method.isCollectionQuery()) {
+      return new JpaQueryExecution.CollectionExecution() {
+        @Override
+        protected Object doExecute(AbstractJpaQuery query,
+            JpaParametersParameterAccessor accessor) {
+          try {
+            MDC.put("id", sqlLogId);
+            List<?> result = (List<?>) super.doExecute(query, accessor);
+            if (sqlLog.isDebugEnabled()) {
+              sqlLog.debug("{} rows retrieved", Objects.requireNonNull(result).size());
+            }
+            return result;
+          } finally {
+            MDC.remove("id");
+          }
+        }
+      };
     } else if (isModifyingQuery || method.isModifyingQuery()) {
       return new JpaQueryExecution.ModifyingExecution(method, getEntityManager()) {
         @Override
@@ -307,6 +252,61 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             Object result = super.doExecute(query, accessor);
             if (sqlLog.isDebugEnabled()) {
               sqlLog.debug("{} row affected", result);
+            }
+            return result;
+          } finally {
+            MDC.remove("id");
+          }
+        }
+      };
+    } else if (method.isProcedureQuery()) {
+      return new ProcedureExecution() {
+        @Override
+        protected Object doExecute(AbstractJpaQuery jpaQuery,
+            JpaParametersParameterAccessor accessor) {
+          try {
+            MDC.put("id", sqlLogId);
+            return super.doExecute(jpaQuery, accessor);
+          } finally {
+            MDC.remove("id");
+          }
+        }
+      };
+    } else if (method.isStreamQuery()) {
+      return new StreamExecution() {
+        @Override
+        protected Object doExecute(AbstractJpaQuery query,
+            JpaParametersParameterAccessor accessor) {
+          try {
+            MDC.put("id", sqlLogId);
+            return super.doExecute(query, accessor);
+          } finally {
+            MDC.remove("id");
+          }
+        }
+      };
+    } else if (method.isSliceQuery()) {
+      return new JpaQueryExecution.SlicedExecution() {
+        @Override
+        protected Object doExecute(AbstractJpaQuery query,
+            JpaParametersParameterAccessor accessor) {
+          try {
+            MDC.put("id", sqlLogId);
+            Pageable pageable = accessor.getPageable();
+            if (pageable.isPaged() && nestedResultMapType != null) {
+              if (nestedResultMapType.isCollection()) {
+                throw new UnsupportedOperationException(nestedResultMapType.getNestedResultMapId()
+                    + " collection resultmap not support page query");
+              } else {
+                sqlLog.info(
+                    "{} may return incorrect paginated data. Please check result maps definition {}.",
+                    sqlLogId, nestedResultMapType.getNestedResultMapId());
+              }
+            }
+            SliceImpl<?> result = (SliceImpl<?>) super.doExecute(query, accessor);
+            if (sqlLog.isDebugEnabled()) {
+              sqlLog.debug("total: {} rows", Objects.requireNonNull(result).getNumberOfElements());
+              sqlLog.debug("{} rows retrieved", result.getSize());
             }
             return result;
           } finally {

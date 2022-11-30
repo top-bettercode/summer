@@ -11,7 +11,7 @@ import top.bettercode.simpleframework.support.KilogramUtil;
 @JacksonStdImpl
 public class KilogramSerializer extends NumberSerializer {
 
-  private static final long serialVersionUID = 6040177008446373376L;
+  private static final long serialVersionUID = 1L;
   private static int newScale = 3;
 
   public KilogramSerializer() {

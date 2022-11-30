@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public class UserDetailsAuthenticationToken extends AbstractAuthenticationToken {
 
-  private static final long serialVersionUID = -6193857647931135747L;
+  private static final long serialVersionUID = 1L;
   private final UserDetails userDetails;
 
   public UserDetailsAuthenticationToken(UserDetails userDetails) {

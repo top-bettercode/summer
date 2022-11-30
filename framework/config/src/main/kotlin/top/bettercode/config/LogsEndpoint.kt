@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.core.CoreConstants
 import org.slf4j.ILoggerFactory
-import org.slf4j.impl.StaticLoggerBinder
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.boot.actuate.endpoint.annotation.Selector
@@ -24,6 +23,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
+import org.slf4j.LoggerFactory
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import kotlin.math.max
@@ -48,7 +48,7 @@ class LogsEndpoint(
         "summer.logging.websocket.enabled"
     ).isNullOrBlank())
     private val loggerContext: LoggerContext by lazy {
-        val factory = StaticLoggerBinder.getSingleton().loggerFactory
+        val factory = LoggerFactory.getILoggerFactory()
         Assert.isInstanceOf(
             LoggerContext::class.java, factory,
             String.format(

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "disabledUser")
 public class DisabledUserException extends RuntimeException {
 
-  private static final long serialVersionUID = 4871067433010822786L;
+  private static final long serialVersionUID = 1L;
 
   public DisabledUserException() {
     this("disabledUser");

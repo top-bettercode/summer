@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.impl.StaticLoggerBinder;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -76,7 +76,7 @@ public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
 
   @AfterAll
   static void logAfterAll() {
-    ((LoggerContext) StaticLoggerBinder.getSingleton().getLoggerFactory()).getLogger(
+    ((LoggerContext) LoggerFactory.getILoggerFactory()).getLogger(
         "org.hibernate.SQL").setLevel(
         Level.OFF);
   }

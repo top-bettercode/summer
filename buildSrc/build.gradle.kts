@@ -14,6 +14,7 @@ repositories {
 dependencies {
     val springBootVersion = property("spring-boot.version")
     val kotlinVersion = property("kotlin.version")
+    val dokkaVersion = property("dokka.version")
     val kotlinxCoroutinesVersion = property("kotlinx-coroutines.version")
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
@@ -23,8 +24,8 @@ dependencies {
     //--------------------------------------------
     //publish plugin dependencies
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
-    implementation("org.jetbrains.dokka:kotlin-as-java-plugin:$kotlinVersion")
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
+    implementation("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
     implementation("com.gradle.publish:plugin-publish-plugin:1.1.0")
 //    implementation("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
