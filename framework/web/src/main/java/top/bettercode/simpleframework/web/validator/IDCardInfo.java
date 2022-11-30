@@ -1,10 +1,10 @@
 package top.bettercode.simpleframework.web.validator;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import top.bettercode.lang.property.PropertiesSource;
 import top.bettercode.lang.property.Settings;
-import top.bettercode.lang.util.TimeUtil;
 
 public class IDCardInfo {
 
@@ -60,8 +60,8 @@ public class IDCardInfo {
       }
 
       // 获取出生日期
-      this.birthday = TimeUtil
-          .parse(idcard.substring(6, 14), "yyyyMMdd").toLocalDate();
+      this.birthday = LocalDate.parse(idcard.substring(6, 14),
+          DateTimeFormatter.ofPattern("yyyyMMdd"));
       this.year = birthday.getYear();
       this.month = birthday.getMonthValue();
       this.day = birthday.getDayOfMonth();
