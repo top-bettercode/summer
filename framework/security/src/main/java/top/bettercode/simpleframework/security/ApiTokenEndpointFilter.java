@@ -107,7 +107,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         String scope = request.getParameter(SecurityParameterNames.SCOPE);
         Assert.hasText(scope, "scope 不能为空");
 
-        ApiToken apiAuthenticationToken;
+        ApiToken apiToken;
 
         if (SecurityParameterNames.PASSWORD.equals(grantType)) {
           String username = request.getParameter(SecurityParameterNames.USERNAME);
@@ -119,49 +119,50 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
           Assert.isTrue(passwordEncoder.matches(password, userDetails.getPassword()),
               "用户名或密码错误");
 
-          apiAuthenticationToken = apiTokenService.getApiToken(scope, userDetails,
+          apiToken = apiTokenService.getApiToken(scope, userDetails,
               apiTokenService.getSecurityProperties().needKickedOut(scope));
         } else if (SecurityParameterNames.REFRESH_TOKEN.equals(grantType)) {
           String refreshToken = request.getParameter(SecurityParameterNames.REFRESH_TOKEN);
           Assert.hasText(refreshToken, "refreshToken不能为空");
-          apiAuthenticationToken = apiTokenRepository.findByRefreshToken(
+          apiToken = apiTokenRepository.findByRefreshToken(
               refreshToken);
 
-          if (apiAuthenticationToken == null || apiAuthenticationToken.getRefreshToken()
+          if (apiToken == null || apiToken.getRefreshToken()
               .isExpired()) {
-            if (apiAuthenticationToken != null) {
-              apiTokenRepository.remove(apiAuthenticationToken);
+            if (apiToken != null) {
+              apiTokenRepository.remove(apiToken);
             }
             throw new UnauthorizedException("请重新登录");
           }
 
           try {
             UserDetails userDetails = apiTokenService.getUserDetails(scope,
-                apiAuthenticationToken.getUsername());
+                apiToken.getUsername());
 
-            apiAuthenticationToken.setAccessToken(apiTokenService.createAccessToken());
-            apiAuthenticationToken.setUserDetails(userDetails);
+            apiToken.setAccessToken(apiTokenService.createAccessToken());
+            apiToken.setUserDetailsInstantAt(apiTokenService.createUserDetailsInstantAt());
+            apiToken.setUserDetails(userDetails);
           } catch (Exception e) {
             throw new UnauthorizedException("请重新登录", e);
           }
 
         } else {
           UserDetails userDetails = apiTokenService.getUserDetails(grantType, request);
-          apiAuthenticationToken = apiTokenService.getApiToken(scope, userDetails,
+          apiToken = apiTokenService.getApiToken(scope, userDetails,
               apiTokenService.getSecurityProperties().needKickedOut(scope));
         }
 
-        UserDetails userDetails = apiAuthenticationToken.getUserDetails();
+        UserDetails userDetails = apiToken.getUserDetails();
         Authentication authenticationResult = new UserDetailsAuthenticationToken(userDetails);
 
-        apiTokenRepository.save(apiAuthenticationToken);
+        apiTokenRepository.save(apiToken);
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authenticationResult);
         SecurityContextHolder.setContext(context);
 
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        Object apiTokenResponse = apiAuthenticationToken.toApiToken();
+        Object apiTokenResponse = apiToken.toApiToken();
         if (summerWebProperties.wrapEnable(request)) {
           apiTokenResponse = RespEntity.ok(apiTokenResponse);
         }
@@ -173,24 +174,33 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
     } else {
       String accessToken = bearerTokenResolver.resolve(request);
       if (StringUtils.hasText(accessToken)) {
-        ApiToken apiAuthenticationToken = apiTokenRepository.findByAccessToken(
+        ApiToken apiToken = apiTokenRepository.findByAccessToken(
             accessToken);
-        if (apiAuthenticationToken != null && !apiAuthenticationToken.getAccessToken()
+        if (apiToken != null && !apiToken.getAccessToken()
             .isExpired()) {
           try {
-            UserDetails userDetails = apiAuthenticationToken.getUserDetails();
+            UserDetails userDetails = apiToken.getUserDetails();
             apiTokenRepository.validateUserDetails(userDetails);
+
+            if (apiToken.getUserDetailsInstantAt().isExpired()) {//刷新userDetails
+              userDetails = apiTokenService.getUserDetails(apiToken.getScope(),
+                  apiToken.getUsername());
+              apiToken.setUserDetailsInstantAt(apiTokenService.createUserDetailsInstantAt());
+              apiToken.setUserDetails(userDetails);
+              apiTokenRepository.save(apiToken);
+            }
+
             Authentication authenticationResult = new UserDetailsAuthenticationToken(userDetails);
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authenticationResult);
             request.setAttribute(RequestLoggingFilter.REQUEST_LOGGING_USERNAME,
-                apiAuthenticationToken.getScope() + ":" + userDetails.getUsername());
+                apiToken.getScope() + ":" + userDetails.getUsername());
             SecurityContextHolder.setContext(context);
             if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
               if (revokeTokenService != null) {
                 revokeTokenService.revokeToken(userDetails);
               }
-              apiTokenRepository.remove(apiAuthenticationToken);
+              apiTokenRepository.remove(apiToken);
               SecurityContextHolder.clearContext();
               response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
               if (summerWebProperties.okEnable(request)) {

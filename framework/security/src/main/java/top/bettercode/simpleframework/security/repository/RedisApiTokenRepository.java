@@ -63,16 +63,16 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
 
 
   @Override
-  public void save(ApiToken authorization) {
-    String scope = authorization.getScope();
-    String username = authorization.getUsername();
+  public void save(ApiToken apiToken) {
+    String scope = apiToken.getScope();
+    String username = apiToken.getUsername();
     String id = scope + ":" + username;
 
-    byte[] auth = jdkSerializationSerializer.serialize(authorization);
+    byte[] auth = jdkSerializationSerializer.serialize(apiToken);
 
-    byte[] accessKey = serializeKey(ACCESS_TOKEN + authorization.getAccessToken().getTokenValue());
+    byte[] accessKey = serializeKey(ACCESS_TOKEN + apiToken.getAccessToken().getTokenValue());
     byte[] refreshKey = serializeKey(
-        REFRESH_TOKEN + authorization.getRefreshToken().getTokenValue());
+        REFRESH_TOKEN + apiToken.getRefreshToken().getTokenValue());
     byte[] idKey = serializeKey(ID + id);
 
     try (RedisConnection conn = getConnection()) {
@@ -84,10 +84,10 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
         byte[] existRefreshKey = serializeKey(
             REFRESH_TOKEN + exist.getRefreshToken().getTokenValue());
         if (!Arrays.equals(existAccessKey, accessKey)) {
-          conn.del(existAccessKey);
+          conn.keyCommands().del(existAccessKey);
         }
         if (!Arrays.equals(existRefreshKey, refreshKey)) {
-          conn.del(existRefreshKey);
+          conn.keyCommands().del(existRefreshKey);
         }
       }
 
@@ -101,35 +101,35 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
           throw new RuntimeException(ex);
         }
       } else {
-        conn.set(accessKey, idKey);
-        conn.set(refreshKey, idKey);
-        conn.set(idKey, auth);
+        conn.stringCommands().set(accessKey, idKey);
+        conn.stringCommands().set(refreshKey, idKey);
+        conn.stringCommands().set(idKey, auth);
       }
 
-      int access_expires_in = authorization.getAccessToken().getExpires_in();
-      int refresh_expires_in = authorization.getRefreshToken().getExpires_in();
-      conn.expire(accessKey, access_expires_in);
-      conn.expire(refreshKey, refresh_expires_in);
-      conn.expire(idKey, Math.max(access_expires_in, refresh_expires_in));
+      int access_expires_in = apiToken.getAccessToken().getExpires_in();
+      int refresh_expires_in = apiToken.getRefreshToken().getExpires_in();
+      conn.keyCommands().expire(accessKey, access_expires_in);
+      conn.keyCommands().expire(refreshKey, refresh_expires_in);
+      conn.keyCommands().expire(idKey, Math.max(access_expires_in, refresh_expires_in));
 
       conn.closePipeline();
     }
   }
 
   @Override
-  public void remove(ApiToken authorization) {
-    String scope = authorization.getScope();
-    String username = authorization.getUsername();
+  public void remove(ApiToken apiToken) {
+    String scope = apiToken.getScope();
+    String username = apiToken.getUsername();
     String id = scope + ":" + username;
-    byte[] accessKey = serializeKey(ACCESS_TOKEN + authorization.getAccessToken().getTokenValue());
+    byte[] accessKey = serializeKey(ACCESS_TOKEN + apiToken.getAccessToken().getTokenValue());
     byte[] refreshKey = serializeKey(
-        REFRESH_TOKEN + authorization.getRefreshToken().getTokenValue());
+        REFRESH_TOKEN + apiToken.getRefreshToken().getTokenValue());
     byte[] idKey = serializeKey(ID + id);
     try (RedisConnection conn = getConnection()) {
       conn.openPipeline();
-      conn.del(accessKey);
-      conn.del(refreshKey);
-      conn.del(idKey);
+      conn.keyCommands().del(accessKey);
+      conn.keyCommands().del(refreshKey);
+      conn.keyCommands().del(idKey);
       conn.closePipeline();
     }
   }
@@ -146,9 +146,9 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
             ACCESS_TOKEN + apiAuthenticationToken.getAccessToken().getTokenValue());
         byte[] refreshKey = serializeKey(
             REFRESH_TOKEN + apiAuthenticationToken.getRefreshToken().getTokenValue());
-        conn.del(accessKey);
-        conn.del(refreshKey);
-        conn.del(idKey);
+        conn.keyCommands().del(accessKey);
+        conn.keyCommands().del(refreshKey);
+        conn.keyCommands().del(idKey);
         conn.closePipeline();
       }
     }
@@ -170,7 +170,7 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
 
   @Nullable
   private ApiToken getApiToken(byte[] idKey, RedisConnection conn) {
-    byte[] bytes = conn.get(idKey);
+    byte[] bytes = conn.stringCommands().get(idKey);
     if (JdkSerializationSerializer.isEmpty(bytes)) {
       return null;
     }
@@ -179,7 +179,7 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
     } catch (Exception e) {
       log.warn("apiToken反序列化失败", e);
       try {
-        conn.del(idKey);
+        conn.keyCommands().del(idKey);
       } catch (Exception ex) {
         log.warn("apiToken删除失败", ex);
       }
@@ -191,7 +191,7 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
   public ApiToken findByAccessToken(String accessToken) {
     byte[] accessKey = serializeKey(ACCESS_TOKEN + accessToken);
     try (RedisConnection conn = getConnection()) {
-      byte[] bytes = conn.get(accessKey);
+      byte[] bytes = conn.stringCommands().get(accessKey);
       if (JdkSerializationSerializer.isEmpty(bytes)) {
         return null;
       }
@@ -203,7 +203,7 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
   public ApiToken findByRefreshToken(String refreshToken) {
     byte[] refreshKey = serializeKey(REFRESH_TOKEN + refreshToken);
     try (RedisConnection conn = getConnection()) {
-      byte[] bytes = conn.get(refreshKey);
+      byte[] bytes = conn.stringCommands().get(refreshKey);
       if (JdkSerializationSerializer.isEmpty(bytes)) {
         return null;
       }

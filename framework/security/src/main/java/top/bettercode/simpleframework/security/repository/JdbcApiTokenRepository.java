@@ -45,15 +45,15 @@ public class JdbcApiTokenRepository implements ApiTokenRepository {
 
   @Transactional
   @Override
-  public void save(ApiToken authorization) {
+  public void save(ApiToken apiToken) {
     try {
-      String scope = authorization.getScope();
-      String username = authorization.getUsername();
+      String scope = apiToken.getScope();
+      String username = apiToken.getUsername();
       String id = scope + ":" + username;
       remove(scope, username);
-      String accessToken = authorization.getAccessToken().getTokenValue();
-      String refreshToken = authorization.getRefreshToken().getTokenValue();
-      byte[] auth = jdkSerializationSerializer.serialize(authorization);
+      String accessToken = apiToken.getAccessToken().getTokenValue();
+      String refreshToken = apiToken.getRefreshToken().getTokenValue();
+      byte[] auth = jdkSerializationSerializer.serialize(apiToken);
       int update = jdbcTemplate.update(defaultInsertStatement,
           new Object[]{id, accessToken, refreshToken, new SqlLobValue(auth)},
           new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BLOB});
@@ -63,15 +63,15 @@ public class JdbcApiTokenRepository implements ApiTokenRepository {
             accessToken, refreshToken, update);
       }
     } catch (DuplicateKeyException e) {
-      save(authorization);
+      save(apiToken);
     }
   }
 
   @Transactional
   @Override
-  public void remove(ApiToken authorization) {
-    String scope = authorization.getScope();
-    String username = authorization.getUsername();
+  public void remove(ApiToken apiToken) {
+    String scope = apiToken.getScope();
+    String username = apiToken.getUsername();
     remove(scope, username);
   }
 

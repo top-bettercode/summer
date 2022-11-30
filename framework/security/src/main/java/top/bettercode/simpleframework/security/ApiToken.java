@@ -16,16 +16,19 @@ public class ApiToken implements Serializable {
 
   private Token refreshToken;
 
+  private  InstantAt userDetailsInstantAt;
+
   private UserDetails userDetails;
 
   public ApiToken() {
   }
 
   public ApiToken(String scope, Token accessToken,
-      Token refreshToken, UserDetails userDetails) {
+      Token refreshToken, InstantAt userDetailsInstantAt, UserDetails userDetails) {
     this.scope = scope;
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
+    this.userDetailsInstantAt = userDetailsInstantAt;
     this.userDetails = userDetails;
   }
 
@@ -63,6 +66,15 @@ public class ApiToken implements Serializable {
     this.refreshToken = refreshToken;
   }
 
+  public InstantAt getUserDetailsInstantAt() {
+    return userDetailsInstantAt;
+  }
+
+  public void setUserDetailsInstantAt(
+      InstantAt userDetailsInstantAt) {
+    this.userDetailsInstantAt = userDetailsInstantAt;
+  }
+
   public UserDetails getUserDetails() {
     return userDetails;
   }
@@ -70,4 +82,5 @@ public class ApiToken implements Serializable {
   public void setUserDetails(UserDetails userDetails) {
     this.userDetails = userDetails;
   }
+
 }

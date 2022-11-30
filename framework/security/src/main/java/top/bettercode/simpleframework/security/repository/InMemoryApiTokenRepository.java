@@ -22,23 +22,23 @@ public class InMemoryApiTokenRepository implements ApiTokenRepository {
   }
 
   @Override
-  public void save(ApiToken authorization) {
-    String scope = authorization.getScope();
-    String username = authorization.getUsername();
+  public void save(ApiToken apiToken) {
+    String scope = apiToken.getScope();
+    String username = apiToken.getUsername();
     String id = scope + ":" + username;
     remove(scope, username);
-    accessTokenMap.put(authorization.getAccessToken().getTokenValue(), id);
-    refreshTokenMap.put(authorization.getRefreshToken().getTokenValue(), id);
-    tokenMap.put(id, authorization);
+    accessTokenMap.put(apiToken.getAccessToken().getTokenValue(), id);
+    refreshTokenMap.put(apiToken.getRefreshToken().getTokenValue(), id);
+    tokenMap.put(id, apiToken);
   }
 
   @Override
-  public void remove(ApiToken authorization) {
-    String scope = authorization.getScope();
-    String username = authorization.getUsername();
+  public void remove(ApiToken apiToken) {
+    String scope = apiToken.getScope();
+    String username = apiToken.getUsername();
     String id = scope + ":" + username;
-    accessTokenMap.remove(authorization.getAccessToken().getTokenValue());
-    refreshTokenMap.remove(authorization.getRefreshToken().getTokenValue());
+    accessTokenMap.remove(apiToken.getAccessToken().getTokenValue());
+    refreshTokenMap.remove(apiToken.getRefreshToken().getTokenValue());
     tokenMap.remove(id);
   }
 

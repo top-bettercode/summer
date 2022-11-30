@@ -1,7 +1,5 @@
 package top.bettercode.simpleframework.security;
 
-import static java.nio.charset.StandardCharsets.US_ASCII;
-
 import java.time.Instant;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -9,8 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.keygen.KeyGenerators;
-import top.bettercode.simpleframework.security.repository.ApiTokenRepository;
 import top.bettercode.simpleframework.security.config.ApiSecurityProperties;
+import top.bettercode.simpleframework.security.repository.ApiTokenRepository;
 
 /**
  * @author Peter Wu
@@ -45,8 +43,7 @@ public class ApiTokenService {
   }
 
   public Token createAccessToken() {
-    String tokenValue = new String(
-        Base64.encodeBase64URLSafe(DEFAULT_TOKEN_GENERATOR.generateKey()), US_ASCII);
+    String tokenValue = Base64.encodeBase64URLSafeString(DEFAULT_TOKEN_GENERATOR.generateKey());
     if (apiTokenRepository.findByAccessToken(tokenValue) != null) {
       return createAccessToken();
     }
@@ -58,8 +55,7 @@ public class ApiTokenService {
   }
 
   public Token createRefreshToken() {
-    String tokenValue = new String(
-        Base64.encodeBase64URLSafe(DEFAULT_TOKEN_GENERATOR.generateKey()), US_ASCII);
+    String tokenValue = Base64.encodeBase64URLSafeString(DEFAULT_TOKEN_GENERATOR.generateKey());
     if (apiTokenRepository.findByRefreshToken(tokenValue) != null) {
       return createRefreshToken();
     }
@@ -68,6 +64,14 @@ public class ApiTokenService {
     return new Token(tokenValue, now,
         refreshTokenValiditySeconds != null && refreshTokenValiditySeconds > 0 ? now.plusSeconds(
             refreshTokenValiditySeconds) : null);
+  }
+
+  public InstantAt createUserDetailsInstantAt() {
+    Instant now = Instant.now();
+    Integer userDetailsValiditySeconds = securityProperties.getUserDetailsValiditySeconds();
+    return new InstantAt(now,
+        userDetailsValiditySeconds != null && userDetailsValiditySeconds > 0 ? now.plusSeconds(
+            userDetailsValiditySeconds) : null);
   }
 
   public ApiAccessToken getApiAccessToken(String scope, String username) {
@@ -82,11 +86,11 @@ public class ApiTokenService {
   public ApiAccessToken getApiAccessToken(String scope, String oldUsername, String newUsername,
       Boolean loginKickedOut) {
     UserDetails oldUserDetails = getUserDetails(scope, oldUsername);
-    ApiToken authenticationToken = getApiToken(scope, oldUserDetails,
-        loginKickedOut);
-    authenticationToken.setUserDetails(getUserDetails(scope, newUsername));
-    apiTokenRepository.save(authenticationToken);
-    return authenticationToken.toApiToken();
+    ApiToken apiToken = getApiToken(scope, oldUserDetails, loginKickedOut);
+    apiToken.setUserDetailsInstantAt(createUserDetailsInstantAt());
+    apiToken.setUserDetails(getUserDetails(scope, newUsername));
+    apiTokenRepository.save(apiToken);
+    return apiToken.toApiToken();
   }
 
   public ApiAccessToken getApiAccessToken(String scope, UserDetails userDetails) {
@@ -106,17 +110,19 @@ public class ApiTokenService {
     ApiToken apiToken;
     if (loginKickedOut) {
       apiToken = new ApiToken(scope, createAccessToken(),
-          createRefreshToken(), userDetails);
+          createRefreshToken(), createUserDetailsInstantAt(), userDetails);
     } else {
       apiToken = apiTokenRepository.findByScopeAndUsername(scope,
           userDetails.getUsername());
       if (apiToken == null || apiToken.getRefreshToken().isExpired()) {
         apiToken = new ApiToken(scope, createAccessToken(),
-            createRefreshToken(), userDetails);
+            createRefreshToken(), createUserDetailsInstantAt(), userDetails);
       } else if (apiToken.getAccessToken().isExpired()) {
         apiToken.setAccessToken(createAccessToken());
+        apiToken.setUserDetailsInstantAt(createUserDetailsInstantAt());
         apiToken.setUserDetails(userDetails);
       } else {
+        apiToken.setUserDetailsInstantAt(createUserDetailsInstantAt());
         apiToken.setUserDetails(userDetails);
       }
     }

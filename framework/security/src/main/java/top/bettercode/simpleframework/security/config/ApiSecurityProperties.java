@@ -15,6 +15,8 @@ public class ApiSecurityProperties {
 
   private Integer accessTokenValiditySeconds = 60 * 60 * 12; // default 12 hours.
 
+  private Integer userDetailsValiditySeconds = 60 * 60; // default 1 hours.
+
   /**
    * security.url-filter.ignored.
    */
@@ -101,6 +103,14 @@ public class ApiSecurityProperties {
 
   public void setAccessTokenValiditySeconds(Integer accessTokenValiditySeconds) {
     this.accessTokenValiditySeconds = accessTokenValiditySeconds;
+  }
+
+  public Integer getUserDetailsValiditySeconds() {
+    return userDetailsValiditySeconds;
+  }
+
+  public void setUserDetailsValiditySeconds(Integer userDetailsValiditySeconds) {
+    this.userDetailsValiditySeconds = userDetailsValiditySeconds;
   }
 
   public String[] getUrlFilterIgnored() {
