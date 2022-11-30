@@ -76,9 +76,9 @@ class AutodocPlugin : Plugin<Project> {
 
         val group = "autodoc"
         project.tasks.create("asciidoc") { task ->
+            task.group = group
             task.dependsOn("processResources")
             task.mustRunAfter("clean", "processResources")
-            configInputOutput(task, group, autodoc, project)
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     val extension = project.extensions.findByType(AutodocExtension::class.java)!!
@@ -88,8 +88,8 @@ class AutodocPlugin : Plugin<Project> {
             })
         }
         project.tasks.create("htmldoc") { task ->
+            task.group = group
             task.dependsOn("asciidoc")
-            configInputOutput(task, group, autodoc, project)
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     AutodocPlugin::class.java.getResourceAsStream("/favicon.ico")?.copyTo(
@@ -107,8 +107,8 @@ class AutodocPlugin : Plugin<Project> {
             })
         }
         project.tasks.create("pdfdoc") { task ->
+            task.group = group
             task.dependsOn("asciidoc")
-            configInputOutput(task, group, autodoc, project)
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     AsciidocGenerator.pdf(
@@ -120,8 +120,8 @@ class AutodocPlugin : Plugin<Project> {
             })
         }
         project.tasks.create("postman") { task ->
+            task.group = group
             task.mustRunAfter("clean", "processResources")
-            configInputOutput(task, group, autodoc, project)
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     PostmanGenerator.postman(project.extensions.findByType(AutodocExtension::class.java)!!)
@@ -154,22 +154,4 @@ class AutodocPlugin : Plugin<Project> {
         (project.findProperty("autodoc.${project.name}.$key") as? String
             ?: project.findProperty("autodoc.$key") as? String)
 
-    private fun configInputOutput(
-        task: Task,
-        group: String,
-        autodoc: AutodocExtension,
-        project: Project
-    ) {
-        task.group = group
-
-        if (autodoc.source.exists()) {
-            task.inputs.dir(autodoc.source)
-        }
-        if (autodoc.rootSource?.exists() == true) {
-            task.inputs.dir(autodoc.rootSource!!)
-        }
-        task.inputs.file(project.rootProject.file("gradle.properties"))
-        if (autodoc.outputFile.exists())
-            task.outputs.dir(autodoc.outputFile)
-    }
 }
