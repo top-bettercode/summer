@@ -3,6 +3,8 @@ package top.bettercode.lang.util
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.util.StringUtils
 import java.io.*
 import java.nio.charset.Charset
@@ -21,6 +23,8 @@ import java.util.zip.InflaterOutputStream
  * @author Peter Wu
  */
 object StringUtil {
+
+    private val log: Logger = LoggerFactory.getLogger(StringUtil::class.java)
 
     @JvmStatic
     var OBJECT_MAPPER = ObjectMapper()
@@ -159,6 +163,10 @@ object StringUtil {
         return try {
             json(`object`, format)
         } catch (e: Exception) {
+            e.printStackTrace()
+            if (log.isTraceEnabled) {
+                log.trace("to json fail:", e)
+            }
             `object`.toString()
         }
     }

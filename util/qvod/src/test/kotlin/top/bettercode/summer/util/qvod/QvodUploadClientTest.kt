@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.qvod
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ClassPathResource
@@ -15,6 +16,7 @@ internal class QvodUploadClientTest : BaseTest() {
     lateinit var qvodUploadClient: QvodUploadClient
 
 
+    @Disabled
     @Test
     fun upload() {
         qvodUploadClient.upload(

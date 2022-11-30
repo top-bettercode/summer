@@ -1,10 +1,10 @@
 package top.bettercode.simpleframework.web.validator;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import top.bettercode.lang.property.PropertiesSource;
 import top.bettercode.lang.property.Settings;
+import top.bettercode.lang.util.TimeUtil;
 
 public class IDCardInfo {
 
@@ -32,7 +32,7 @@ public class IDCardInfo {
 
 
   private String getString(String key, String defaultVal) {
-    return areaCodes.getOrDefault(key, defaultVal);
+    return areaCodes.getOrDefault(key, defaultVal == null ? "" : defaultVal);
   }
 
   public IDCardInfo(String idcard) {
@@ -60,8 +60,8 @@ public class IDCardInfo {
       }
 
       // 获取出生日期
-      this.birthday = LocalDate
-          .parse(idcard.substring(6, 14), DateTimeFormatter.ofPattern("yyMMdd"));
+      this.birthday = TimeUtil
+          .parse(idcard.substring(6, 14), "yyyyMMdd").toLocalDate();
       this.year = birthday.getYear();
       this.month = birthday.getMonthValue();
       this.day = birthday.getDayOfMonth();
@@ -152,7 +152,8 @@ public class IDCardInfo {
   @Override
   public String toString() {
     if (legal) {
-      return "出生地：" + province + city + region + ",生日：" + year + "年" + month + "月" + day + "日,性别："
+      return "出生地：" + province + city + region + ",生日：" + year + "年" + month + "月" + day
+          + "日,性别："
           + gender;
     } else {
       return "非法身份证号码";

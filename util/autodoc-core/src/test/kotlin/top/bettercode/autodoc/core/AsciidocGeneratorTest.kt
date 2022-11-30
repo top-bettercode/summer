@@ -1,6 +1,7 @@
 package top.bettercode.autodoc.core
 
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.*
@@ -29,6 +30,7 @@ class AsciidocGeneratorTest {
         AsciidocGenerator.html(autodoc)
     }
 
+    @Disabled
     @Test
     fun genPdf() {
         AsciidocGenerator.asciidoc(autodoc)
@@ -40,6 +42,7 @@ class AsciidocGeneratorTest {
         AsciidocGenerator.setDefaultDesc(autodoc, Properties())
     }
 
+    @Disabled
     @Test
     fun genHtmlPdf() {
         AsciidocGenerator.asciidoc(autodoc)

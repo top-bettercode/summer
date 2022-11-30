@@ -100,7 +100,13 @@ public class Setting {
       } else if (methodName.startsWith("set") && objects.length == 1) {
         Object result = methodProxy.invokeSuper(o, objects);
         String propertyName = StringUtils.uncapitalize(methodName.substring(3));
-        put(name + "." + propertyName, String.valueOf(objects[0]));
+        String key = name + "." + propertyName;
+        if (result != null) {
+          String value = conversionService.convert(objects[0], String.class);
+          put(key, value);
+        } else {
+          remove(key);
+        }
         return result;
       } else {
         return methodProxy.invokeSuper(o, objects);
@@ -117,12 +123,14 @@ public class Setting {
     String key = name + "." + propertyName;
     Object result = get(key);
     if (result == null) {
-      result = String.valueOf(methodProxy.invokeSuper(o, objects));
-      put(key, String.valueOf(result));
-      return result;
+      result = methodProxy.invokeSuper(o, objects);
+      if (result != null) {
+        put(key, conversionService.convert(result, String.class));
+      }
     } else {
-      return conversionService.convert(result, method.getReturnType());
+      result = conversionService.convert(result, method.getReturnType());
     }
+    return result;
   }
 
 }

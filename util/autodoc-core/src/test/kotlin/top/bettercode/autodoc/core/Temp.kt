@@ -20,14 +20,14 @@ class Temp {
 
     @Test
     fun name() {
-        File(Temp::class.java.getResource("/docStatic/Open+Sans.css").file).readLines().filter { it.contains("url(https:") }.forEach {
+        File(Temp::class.java.getResource("/static/Open+Sans.css")!!.file).readLines().filter { it.contains("url(https:") }.forEach {
             println(it.replace(".*url\\((.*?)\\).*".toRegex(), "$1"))
         }
     }
 
     @Test
     fun cp() {
-        File(AutodocExtension::class.java.getResource("/docStatic").file).walkTopDown().filter { it.isFile }.forEach {
+        File(AutodocExtension::class.java.getResource("/static")!!.file).walkTopDown().filter { it.isFile }.forEach {
             val path = it.path.replace("/data/repositories/bettercode/default/autodoc/core/build/resources/main/", "")
             System.err.println("AutodocExtension::class.java.getResourceAsStream(\"/$path\").copyTo(File(outputFile, \"$path\").outputStream())")
         }

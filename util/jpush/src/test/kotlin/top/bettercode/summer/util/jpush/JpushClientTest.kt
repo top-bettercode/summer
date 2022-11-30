@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.jpush
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.util.jpush.entity.*
@@ -14,6 +15,7 @@ class JpushClientTest : BaseTest() {
     @Autowired
     lateinit var jpushClient: JpushClient
 
+    @Disabled
     @Test
     fun send() {
         val extras = mapOf("key" to "value")

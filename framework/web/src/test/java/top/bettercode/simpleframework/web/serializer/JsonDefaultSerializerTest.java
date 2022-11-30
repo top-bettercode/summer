@@ -72,13 +72,13 @@ public class JsonDefaultSerializerTest {
 
     DataDicBean dicBean = new DataDicBean();
     assertEquals(
-        "{\"price\":0,\"path\":\"/default.jpg\",\"path1\":\"\"}",
+        "{\"number1\":0,\"number22\":null,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"http://127.0.0.1/default.jpg\",\"path1\":\"\"}",
         objectMapper.writeValueAsString(dicBean));
     dicBean.setPrice(100L);
     dicBean.setPath("/a.jpg");
     dicBean.setPath1("/b.jpg");
 
-    assertEquals("{\"price\":100,\"path\":\"/a.jpg\",\"path1\":\"/b.jpg\"}",
+    assertEquals("{\"number1\":0,\"number22\":null,\"price\":\"1.00\",\"path\":\"/a.jpg\",\"pathUrl\":\"http://127.0.0.1/a.jpg\",\"path1\":\"/b.jpg\"}",
         objectMapper.writeValueAsString(dicBean));
 
   }

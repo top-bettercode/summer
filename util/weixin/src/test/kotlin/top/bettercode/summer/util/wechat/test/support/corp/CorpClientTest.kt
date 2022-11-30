@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.wechat.test.support.corp
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.lang.util.StringUtil
@@ -10,6 +11,7 @@ import top.bettercode.summer.util.wechat.support.corp.CorpClient
  *
  * @author Peter Wu
  */
+@Disabled
 internal class CorpClientTest: BaseTest() {
 
 

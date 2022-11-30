@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.wechat.test.support.miniprogram
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.lang.util.TimeUtil
@@ -25,12 +26,14 @@ internal class MiniprogramClientTest : BaseTest() {
         System.err.println(StringUtil.valueOf(result, true))
     }
 
+    @Disabled
     @Test
     fun getuserphonenumber() {
         val result = miniprogramClient.getuserphonenumber("xxx")
         System.err.println(StringUtil.valueOf(result, true))
     }
 
+    @Disabled
     @Test
     fun sendSubscribeMsg() {
         val request = SubscribeMsgRequest(

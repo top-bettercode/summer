@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.rapidauth
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.util.test.BaseTest
@@ -13,6 +14,7 @@ class RapidauthClientTest : BaseTest() {
     @Autowired
     lateinit var rapidauthClient: IRapidauthClient
 
+    @Disabled
     @Test
     fun query() {
         rapidauthClient.query("mobile", "xx")

@@ -3,6 +3,7 @@ package top.bettercode.sms.aliyun;
 
 import kotlin.Pair;
 import kotlin.collections.MapsKt;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ class AliSmsTemplateTest extends BaseTest {
   @Value("${mobile}")
   String mobile;
 
+  @Disabled
   @Test
   void sendSms() {
     aliSmsTemplate.sendSms("SMS_126359654", new AliSmsReq(mobile, "云图提货", MapsKt.mapOf(

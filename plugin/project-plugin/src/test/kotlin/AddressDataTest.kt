@@ -18,15 +18,13 @@ class AddressDataTest {
 
     @Test
     fun test() {
-
         val tableName = "ac_area"
-        val dest =
-            File(AddressDataTest::class.java.classLoader.getResource("build/ac_area.sql").file)
+        val dest = File("build/ac_area.sql")
         dest.printWriter().use { p ->
             p.println("delete from $tableName;")
             val addressData = Properties()
             addressData.load(
-                AddressDataTest::class.java.classLoader.getResourceAsStream("area-data.properties")
+                AddressDataTest::class.java.classLoader.getResourceAsStream("address-data.properties")
             )
             addressData.keys.sortedBy { any -> any.toString() }.forEach {
                 val code = it.toString()

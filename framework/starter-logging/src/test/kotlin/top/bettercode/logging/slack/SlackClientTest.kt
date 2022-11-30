@@ -1,26 +1,16 @@
 package top.bettercode.logging.slack
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.lang.util.StringUtil
-import top.bettercode.logging.operation.RequestConverter
 
 /**
  * @author Peter Wu
  */
+@Disabled
 class SlackClientTest {
 
     private val slackClient = SlackClient("", true, "/actuator")
-
-    @Test
-    fun apiHost() {
-        try {
-            System.err.println(RequestConverter.apiHost)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            System.err.println("------------------------------------")
-            System.err.println(RequestConverter.apiHost)
-        }
-    }
 
     @Test
     fun errorToken() {
@@ -40,7 +30,6 @@ class SlackClientTest {
     @Test
     fun channelExist() {
         val channelExist = slackClient.channelExist("dev")
-        org.junit.jupiter.api.Assertions.assertTrue(channelExist)
         println(StringUtil.valueOf(channelExist, true))
     }
 

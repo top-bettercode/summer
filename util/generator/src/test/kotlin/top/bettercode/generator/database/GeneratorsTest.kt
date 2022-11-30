@@ -2,7 +2,7 @@ package top.bettercode.generator.database
 
 import org.h2.jdbcx.JdbcDataSource
 import org.h2.tools.RunScript
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import top.bettercode.generator.DataType
 import top.bettercode.generator.GeneratorExtension
@@ -32,23 +32,6 @@ class GeneratorsTest {
         configuration.password = "sa"
         configuration.tablePrefixes = arrayOf("oauth_")
         extension.datasources = mapOf(defaultModuleName to configuration)
-
-//        extension.tableNames = arrayOf("OAUTH_CLIENT_DETAILS", "OAUTH_CLIENT_TOKEN")
-    }
-
-    @BeforeEach
-    fun setUp() {
-        val jdbcDataSource = JdbcDataSource()
-        jdbcDataSource.setURL("jdbc:h2:mem:test")
-        jdbcDataSource.user = "sa"
-        jdbcDataSource.password = "sa"
-        RunScript.execute(
-            jdbcDataSource.connection,
-            FileReader(
-                MetaDataTest::class.java.getResource("/hsql.sql")?.file
-                    ?: throw IllegalStateException("文件不存在")
-            )
-        )
     }
 
     @Test
@@ -66,5 +49,23 @@ class GeneratorsTest {
         print(
             "============>" + Generators.tableNames(extension).joinToString(",") + "<============"
         )
+    }
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun setUp() {
+            val jdbcDataSource = JdbcDataSource()
+            jdbcDataSource.setURL("jdbc:h2:mem:test")
+            jdbcDataSource.user = "sa"
+            jdbcDataSource.password = "sa"
+            RunScript.execute(
+                jdbcDataSource.connection,
+                FileReader(
+                    MetaDataTest::class.java.getResource("/hsql.sql")?.file
+                        ?: throw IllegalStateException("文件不存在")
+                )
+            )
+        }
     }
 }

@@ -1,8 +1,6 @@
 package top.bettercode.generator.powerdesigner
 
 import org.junit.jupiter.api.Test
-import top.bettercode.generator.ddl.MysqlToDDL
-import top.bettercode.generator.dom.unit.FileUnit
 import java.io.File
 
 /**
@@ -10,7 +8,7 @@ import java.io.File
  */
 class PdmReaderTest {
     private val pdmFile = File(
-        PdmReaderTest::class.java.getResource("/pdm.src/kie.pdm")?.file
+        PdmReaderTest::class.java.getResource("/pdm/src/kie.pdm")?.file
             ?: throw IllegalStateException()
     )
 
@@ -23,14 +21,4 @@ class PdmReaderTest {
         }
     }
 
-    @Test
-    fun toDDL() {
-        val out = FileUnit("build/gen/puml/mysql.sql")
-        MysqlToDDL.toDDL(
-            PdmReader.read(
-                pdmFile
-            ), out
-        )
-        out.writeTo()
-    }
 }

@@ -15,6 +15,7 @@ dependencies {
     compileOnly(project(":framework:data-jpa"))
 
     //test
+    testImplementation(project(":framework:data-jpa"))
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")

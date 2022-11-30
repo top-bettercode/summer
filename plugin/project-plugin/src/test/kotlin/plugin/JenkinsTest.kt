@@ -1,5 +1,6 @@
 package plugin
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 /**
@@ -16,6 +17,7 @@ internal class JenkinsTest {
         System.err.println(description)
     }
 
+    @Disabled
     @Test
     fun build() {
         jenkins.build("test-futures-front")

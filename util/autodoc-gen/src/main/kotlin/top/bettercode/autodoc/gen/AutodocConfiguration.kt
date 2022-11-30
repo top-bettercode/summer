@@ -61,44 +61,46 @@ class AutodocConfiguration {
         signProperties: ApiSignProperties,
         summerWebProperties: SummerWebProperties
     ): AutodocHandler {
-        var datasources: Map<String, JDBCConnectionConfiguration>? = null
-        try {
-            if (dataSourceProperties != null) {
-                val configuration = JDBCConnectionConfiguration()
-                configuration.url = dataSourceProperties!!.determineUrl() ?: ""
-                configuration.username = dataSourceProperties!!.determineUsername() ?: ""
-                configuration.password = dataSourceProperties!!.determinePassword() ?: ""
-                configuration.driverClass = dataSourceProperties!!.determineDriverClassName() ?: ""
+        val datasources: MutableMap<String, JDBCConnectionConfiguration> = Binder.get(
+            environment
+        ).bind<MutableMap<String, JDBCConnectionConfiguration>>(
+            "summer.datasource.multi.datasources", Bindable
+                .mapOf(
+                    String::class.java,
+                    JDBCConnectionConfiguration::class.java
+                )
+        ).orElse(mutableMapOf())
+        datasources.values.forEach { configuration ->
+            if (configuration.entityPrefix.isBlank())
                 configuration.entityPrefix = genProperties.entityPrefix
+            if (configuration.tablePrefixes.isEmpty())
                 configuration.tablePrefixes = genProperties.tablePrefixes
+            if (configuration.tableSuffixes.isEmpty())
                 configuration.tableSuffixes = genProperties.tableSuffixes
-
-                datasources = mapOf(defaultModuleName to configuration)
-            }
-        } catch (_: Exception) {
         }
-        if (datasources == null) {
-            datasources = Binder.get(
-                environment
-            ).bind<MutableMap<String, JDBCConnectionConfiguration>>(
-                "summer.datasource.multi.datasources", Bindable
-                    .mapOf(
-                        String::class.java,
-                        JDBCConnectionConfiguration::class.java
-                    )
-            ).orElse(mutableMapOf())
-            datasources.values.forEach { configuration ->
-                if (configuration.entityPrefix.isBlank())
+        val defaultConfiguration = datasources["primary"]
+        if (defaultConfiguration != null) {
+            datasources[defaultModuleName] = defaultConfiguration
+        } else {
+            try {
+                if (dataSourceProperties != null) {
+                    val configuration = JDBCConnectionConfiguration()
+                    configuration.url = dataSourceProperties!!.determineUrl() ?: ""
+                    configuration.username = dataSourceProperties!!.determineUsername() ?: ""
+                    configuration.password = dataSourceProperties!!.determinePassword() ?: ""
+                    configuration.driverClass =
+                        dataSourceProperties!!.determineDriverClassName() ?: ""
                     configuration.entityPrefix = genProperties.entityPrefix
-                if (configuration.tablePrefixes.isEmpty())
                     configuration.tablePrefixes = genProperties.tablePrefixes
-                if (configuration.tableSuffixes.isEmpty())
                     configuration.tableSuffixes = genProperties.tableSuffixes
+
+                    datasources[defaultModuleName] = configuration
+                }
+            } catch (_: Exception) {
             }
-            datasources[defaultModuleName] = datasources["primary"]!!
         }
 
-        return AutodocHandler(datasources!!, genProperties, signProperties, summerWebProperties)
+        return AutodocHandler(datasources, genProperties, signProperties, summerWebProperties)
     }
 
 }

@@ -1,14 +1,10 @@
 package top.bettercode.generator.database
 
-import org.h2.jdbcx.JdbcDataSource
-import org.h2.tools.RunScript
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import top.bettercode.generator.GeneratorExtension
 import top.bettercode.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.generator.JDBCConnectionConfiguration
 import java.io.File
-import java.io.FileReader
 
 /**
  * @author Peter Wu
@@ -22,21 +18,6 @@ class MetaDataTest {
         configuration.username = "sa"
         configuration.password = "sa"
         extension.datasources = mapOf(defaultModuleName to configuration)
-    }
-
-    @BeforeEach
-    fun setUp() {
-        val jdbcDataSource = JdbcDataSource()
-        jdbcDataSource.setURL("jdbc:h2:mem:test")
-        jdbcDataSource.user = "sa"
-        jdbcDataSource.password = "sa"
-        RunScript.execute(
-            jdbcDataSource.connection,
-            FileReader(
-                MetaDataTest::class.java.getResource("/hsql.sql")?.file
-                    ?: throw IllegalStateException("文件不存在")
-            )
-        )
     }
 
     @Test

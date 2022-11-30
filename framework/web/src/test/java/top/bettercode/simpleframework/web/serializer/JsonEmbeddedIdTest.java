@@ -13,7 +13,7 @@ import top.bettercode.simpleframework.web.serializer.annotation.JsonEmbeddedId;
  */
 public class JsonEmbeddedIdTest {
 
-  static class User {
+  public static class User {
 
     @JsonEmbeddedId
     UserKey key;
@@ -45,7 +45,7 @@ public class JsonEmbeddedIdTest {
     }
   }
 
-  static class UserKey implements Serializable {
+  public static class UserKey implements Serializable {
 
     private static final long serialVersionUID = 657590294630200671L;
     String id;
@@ -55,9 +55,9 @@ public class JsonEmbeddedIdTest {
     }
 
     public UserKey(String key) {
-      Assert.hasText(key,"key不能为空");
+      Assert.hasText(key, "key不能为空");
       String[] split = key.split(",");
-      Assert.isTrue(split.length==2,"key格式不对");
+      Assert.isTrue(split.length == 2, "key格式不对");
       this.id = split[0];
       this.key = split[1];
     }
@@ -89,12 +89,12 @@ public class JsonEmbeddedIdTest {
   @Test
   public void test() throws JsonProcessingException {
     User user = new User();
-    UserKey key=new UserKey("1,2");
+    UserKey key = new UserKey("1,2");
     user.setKey(key);
     user.setPassword("1");
     user.setTel("18000000000");
     String value = objectMapper.writeValueAsString(user);
     System.err.println(value);
-    System.err.println(StringUtil.valueOf(objectMapper.readValue(value,User.class)));
+    System.err.println(StringUtil.valueOf(objectMapper.readValue(value, User.class)));
   }
 }

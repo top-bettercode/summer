@@ -1,5 +1,6 @@
 package top.bettercode.summer.util.wechat.test.support.offiaccount
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.lang.util.TimeUtil
@@ -44,6 +45,7 @@ internal class OffiaccountClientTest : BaseTest() {
         System.err.println(StringUtil.valueOf(result, true))
     }
 
+    @Disabled
     @Test
     fun sendTemplateMsg() {
         val request = TemplateMsgRequest(

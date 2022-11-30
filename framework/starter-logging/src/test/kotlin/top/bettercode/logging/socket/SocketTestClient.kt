@@ -1,5 +1,6 @@
 package top.bettercode.logging.socket
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.util.LinkedMultiValueMap
@@ -9,6 +10,7 @@ import java.net.HttpURLConnection
 import java.net.Socket
 import java.net.URL
 
+@Disabled
 class SocketTestClient {
 
     @Test

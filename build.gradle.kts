@@ -75,7 +75,7 @@ allprojects {
             dependency("commons-codec:commons-codec:1.15")
             dependency("org.json:json:20220924")
             dependency("org.javassist:javassist:3.29.2-GA")
-            dependency("org.dom4j:dom4j:2.1.3")
+            dependency("org.dom4j:dom4j:2.1.1")
             dependency("org.jsoup:jsoup:1.15.3")
             dependency("org.atteo:evo-inflector:1.3")
             dependency("com.github.axet:kaptcha:0.0.9")
@@ -126,6 +126,8 @@ allprojects {
             useJUnitPlatform()
             reports.html.required.set(false)
             reports.junitXml.required.set(false)
+
+            jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
         }
         "compileJava"(JavaCompile::class) {
             options.compilerArgs.add("-Xlint:deprecation")
