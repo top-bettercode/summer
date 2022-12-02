@@ -44,11 +44,6 @@ allprojects {
     }
 
     configurations {
-        filter { arrayOf("implementation", "testImplementation").contains(it.name) }.forEach {
-            it.exclude("org.codehaus.jackson")
-            it.exclude("org.junit.vintage", "junit-vintage-engine")
-        }
-
     }
     extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
         imports {
