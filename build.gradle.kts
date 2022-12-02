@@ -113,6 +113,7 @@ allprojects {
 
     dependencies {
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+        runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
         compileOnly("org.springframework.boot:spring-boot-configuration-processor")
         compileOnly("com.google.code.findbugs:annotations:3.0.1")
     }
