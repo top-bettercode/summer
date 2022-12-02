@@ -24,11 +24,10 @@ import java.util.regex.Pattern
  */
 object AsciidocGenerator : AbstractbGenerator() {
 
-    private val asciidoctor: Asciidoctor = Asciidoctor.Factory.create()
     private val TOKEN_PATTERN = Pattern.compile("@.+?@")
 
     init {
-        asciidoctor.requireLibrary("asciidoctor-diagram")
+
     }
 
     fun html(autodoc: AutodocExtension) {
@@ -68,6 +67,8 @@ object AsciidocGenerator : AbstractbGenerator() {
             optionsBuilder.mkDirs(true)
             optionsBuilder.safe(SafeMode.UNSAFE)
             try {
+                val asciidoctor: Asciidoctor = Asciidoctor.Factory.create()
+                asciidoctor.requireLibrary("asciidoctor-diagram")
                 asciidoctor.convertFile(inFile, optionsBuilder.build())
                 println("生成：$outFile")
             } catch (e: Exception) {
@@ -105,6 +106,8 @@ object AsciidocGenerator : AbstractbGenerator() {
             optionsBuilder.mkDirs(true)
             optionsBuilder.safe(SafeMode.UNSAFE)
             try {
+                val asciidoctor: Asciidoctor = Asciidoctor.Factory.create()
+                asciidoctor.requireLibrary("asciidoctor-diagram")
                 asciidoctor.convertFile(inFile, optionsBuilder.build())
                 println(
                     "${if (outFile.exists()) "覆盖" else "生成"}：${
