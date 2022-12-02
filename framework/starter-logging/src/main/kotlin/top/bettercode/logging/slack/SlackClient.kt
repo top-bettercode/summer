@@ -50,12 +50,12 @@ class SlackClient(
     private fun <T> request(
         url: String,
         responseType: Class<T>,
-        body: Any? = null,
+        request: Any? = null,
         method: HttpMethod = HttpMethod.POST
     ): T? {
         val headers = HttpHeaders()
         headers.add("Authorization", "Bearer $authToken")
-        val requestEntity = HttpEntity(body, headers)
+        val requestEntity = HttpEntity(request, headers)
         val response = restTemplate.exchange(api + url, method, requestEntity, responseType)
         return response.body
     }
@@ -64,9 +64,9 @@ class SlackClient(
         val headers = HttpHeaders()
         headers.setBearerAuth(authToken)
         val result = request(
-            "conversations.list?types=public_channel,private_channel&exclude_archived=true",
-            ChannelsResult::class.java,
-            HttpMethod.GET
+            url = "conversations.list?types=public_channel,private_channel&exclude_archived=true",
+            responseType = ChannelsResult::class.java,
+            method = HttpMethod.GET
         )
         if (result?.ok != true) {
             log.error("slack api request fail:{}", result?.error)
@@ -160,7 +160,11 @@ class SlackClient(
                 log.trace("slack params:{}", params)
             }
 
-            val result = request("chat.postMessage", Result::class.java, params)
+            val result = request(
+                url = "chat.postMessage",
+                responseType = Result::class.java,
+                request = params
+            )
             if (log.isTraceEnabled) {
                 log.trace("slack result:{}", result)
             }
@@ -185,7 +189,11 @@ class SlackClient(
             params.add("title", "$title-${TimeUtil.format(timeStamp)}")
         }
         params.add("initial_comment", "$title:\n$initialComment")
-        val result = request("files.upload", Result::class.java, params)
+        val result = request(
+            url = "files.upload",
+            responseType = Result::class.java,
+            request = params
+        )
         if (log.isTraceEnabled) {
             log.trace("slack result:{}", result)
         }

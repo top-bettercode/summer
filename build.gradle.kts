@@ -128,6 +128,8 @@ allprojects {
             reports.junitXml.required.set(false)
 
             jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
+            jvmArgs("--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED")
+            jvmArgs("--add-opens", "java.base/java.io=ALL-UNNAMED")
         }
         "compileJava"(JavaCompile::class) {
             options.compilerArgs.add("-Xlint:deprecation")
