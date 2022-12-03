@@ -39,6 +39,7 @@ public class DynamicSaveTest {
     System.err.println("--------------------------------------------------------");
   }
 
+  @Deprecated
   @Test
   public void dynamicSaveTest() {
     User dave = new User("Wu", "Matthews");
