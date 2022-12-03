@@ -1,0 +1,24 @@
+{
+  "groups": [
+    {
+      "name": "logging",
+      "type": "top.bettercode.summer.logging.logback.Logback2LoggingSystem"
+    }
+  ],
+  "properties": [
+    {
+      "name": "summer.datasource.multi.enabled",
+      "sourceType": "top.bettercode.summer.data.jpa.config.DataJpaAutoConfiguration",
+      "defaultValue": "false",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "name": "summer.datasource.multi.datasources",
+      "type": "java.util.Map<java.lang.String,top.bettercode.summer.data.jpa.config.BaseDataSourceProperties>",
+      "sourceType": "top.bettercode.summer.data.jpa.config.MultiDatasourcesBeanDefinitionRegistryPostProcessor"
+    }
+  ],
+  "hints": [
+  ]
+}
+

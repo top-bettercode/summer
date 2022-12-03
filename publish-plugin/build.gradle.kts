@@ -1,0 +1,19 @@
+plugins {
+    `java-library`
+}
+
+apply {
+    plugin("org.jetbrains.kotlin.jvm")
+    plugin("summer.plugin-publish")
+}
+
+dependencies {
+    api(gradleApi())
+
+    api("org.jetbrains.dokka:dokka-gradle-plugin")
+    api("com.gradle.publish:plugin-publish-plugin")
+//    api("io.codearte.gradle.nexus:gradle-nexus-staging-plugin")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}

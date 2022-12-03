@@ -1,38 +1,25 @@
 plugins {
-    kotlin("jvm").version("1.6.10")
+    kotlin("jvm").version("1.6.21")
 }
 
 repositories {
     mavenLocal()
-    maven("https://maven.aliyun.com/repository/gradle-plugin/")
-    maven("https://maven.aliyun.com/repository/public/")
-    maven("https://s01.oss.sonatype.org/content/groups/public/")
     gradlePluginPortal()
     mavenCentral()
 }
 
 dependencies {
-    val springBootVersion = property("spring-boot.version")
-    val kotlinVersion = property("kotlin.version")
-    val dokkaVersion = property("dokka.version")
-    val kotlinxCoroutinesVersion = property("kotlinx-coroutines.version")
-
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${KotlinVersion.CURRENT}")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:${KotlinVersion.CURRENT}")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:${property("spring-boot.version")}")
     //--------------------------------------------
-    //publish plugin dependencies
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
-    implementation("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:${property("dokka.version")}")
     implementation("com.gradle.publish:plugin-publish-plugin:1.1.0")
 //    implementation("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
-
-//    implementation("top.bettercode.summer:publish-plugin:0.0.18-SNAPSHOT")
 }
 
 tasks {
+    @Suppress("UnstableApiUsage")
     "processResources"(ProcessResources::class) {
         outputs.upToDateWhen { false }
         filesMatching(setOf("**/*.properties")) {

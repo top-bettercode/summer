@@ -1,0 +1,11 @@
+{
+  "properties": [
+    {
+      "name": "summer.auto-sign.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Description for summer.auto-sign.enable."
+    }
+  ],
+  "hints": [
+  ]
+}

@@ -1,3 +1,0 @@
-# AutoConfiguration
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-top.bettercode.environment.WritableEnvironmentEndpointAutoConfiguration

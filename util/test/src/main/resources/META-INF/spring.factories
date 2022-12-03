@@ -1,8 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-top.bettercode.summer.util.test.TestConfiguration,\
-top.bettercode.summer.util.test.AutodocWebMvcConfigurer
-
-
-org.springframework.boot.env.EnvironmentPostProcessor=\
-top.bettercode.summer.util.test.TestConfigEnvironmentPostProcessor

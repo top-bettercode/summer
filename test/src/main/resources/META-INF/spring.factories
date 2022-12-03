@@ -1,0 +1,10 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+top.bettercode.summer.test.TestConfiguration,\
+top.bettercode.summer.test.AutodocAuthWebMvcConfigurer,\
+top.bettercode.summer.test.autodoc.AutodocConfiguration
+
+
+
+org.springframework.boot.env.EnvironmentPostProcessor=\
+top.bettercode.summer.test.TestConfigEnvironmentPostProcessor

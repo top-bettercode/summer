@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "summer.security.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Description for summer.security.enable."
+    }
+  ]
+}

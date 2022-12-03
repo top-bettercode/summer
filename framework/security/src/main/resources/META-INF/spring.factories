@@ -1,5 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  top.bettercode.simpleframework.security.config.SecurityConfiguration,\
-  top.bettercode.simpleframework.security.config.ApiSecurityConfiguration
-

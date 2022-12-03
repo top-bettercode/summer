@@ -1,0 +1,33 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+top.bettercode.summer.web.config.MessageSourceConfiguration,\
+top.bettercode.summer.web.config.WebConfiguration,\
+top.bettercode.summer.web.config.WebMvcConfiguration,\
+top.bettercode.summer.web.config.SummerWebMvcConfigurer,\
+top.bettercode.summer.web.config.SerializerConfiguration,\
+top.bettercode.summer.web.config.XmlSerializerConfiguration,\
+top.bettercode.summer.web.config.CorsConfiguration,\
+top.bettercode.summer.web.config.MultipartFileConfiguration,\
+top.bettercode.summer.web.config.SummerCaffeineCacheConfiguration,\
+top.bettercode.summer.web.config.AsyncConfiguration,\
+top.bettercode.summer.web.config.SchedulingConfiguration,\
+top.bettercode.summer.web.servlet.HandlerMethodContextHolderConfiguration,\
+top.bettercode.summer.web.ApplicationContextHolderConfiguration,\
+top.bettercode.summer.logging.RequestLoggingConfiguration,\
+top.bettercode.summer.logging.websocket.WebsocketConfiguration,\
+top.bettercode.summer.config.EndpointAutoConfiguration,\
+top.bettercode.summer.web.apisign.ApiSignConfiguration
+
+org.springframework.boot.env.EnvironmentPostProcessor=\
+top.bettercode.summer.config.ConfigEnvironmentPostProcessor
+
+
+# Logging Systems
+org.springframework.boot.logging.LoggingSystemFactory=\
+top.bettercode.summer.logging.logback.Logback2LoggingSystemFactory,\
+org.springframework.boot.logging.log4j2.Log4J2LoggingSystem.Factory,\
+org.springframework.boot.logging.java.JavaLoggingSystem.Factory
+
+
+
+

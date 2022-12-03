@@ -1,3 +1,8 @@
+import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+import org.springframework.boot.gradle.util.VersionExtractor
+
 plugins {
     `java-library`
     idea
@@ -36,36 +41,35 @@ allprojects {
 
     repositories {
         mavenLocal()
-        maven("https://maven.aliyun.com/repository/public/")
-        maven("https://maven.aliyun.com/repository/gradle-plugin/")
         maven("https://s01.oss.sonatype.org/content/groups/public/")
         mavenCentral()
         gradlePluginPortal()
     }
 
-    configurations {
-    }
-    extensions.configure(io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension::class) {
+    extra["kotlin-coroutines.version"] = kotlinxCoroutinesVersion
+    extensions.configure(StandardDependencyManagementExtension::class) {
         imports {
-            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+            mavenBom(SpringBootPlugin.BOM_COORDINATES)
         }
 
         dependencies {
-
-            dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-            dependency("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
-            dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-            dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
-
             dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
             dependency("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
-            dependency("com.gradle.publish:plugin-publish-plugin:1.1.0")
-            dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
-            dependency("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+
+            dependency(
+                "org.springframework.boot:spring-boot-gradle-plugin:${
+                    VersionExtractor.forClass(
+                        SpringBootPlugin::class.java
+                    )
+                }"
+            )
             dependency("io.spring.gradle:dependency-management-plugin:1.0.15.RELEASE")
 
             dependency("top.bettercode.summer:windows-service-plugin:1.2.0-SNAPSHOT")
+
+            dependency("com.gradle.publish:plugin-publish-plugin:1.1.0")
+            dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
             dependency("commons-codec:commons-codec:1.15")
             dependency("org.json:json:20220924")
@@ -99,7 +103,6 @@ allprojects {
 
             dependency("org.bouncycastle:bcprov-jdk18on:1.72")
 
-            dependency("xerces:xercesImpl:2.12.2")
             dependency("com.auth0:java-jwt:4.2.1")
             dependency("com.tencentcloudapi:tencentcloud-sdk-java:3.1.638")
 
@@ -107,9 +110,11 @@ allprojects {
     }
 
     dependencies {
-        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
         runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
+
+        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
         compileOnly("org.springframework.boot:spring-boot-configuration-processor")
+
         compileOnly("com.google.code.findbugs:annotations:3.0.1")
     }
 
@@ -122,22 +127,17 @@ allprojects {
             useJUnitPlatform()
             reports.html.required.set(false)
             reports.junitXml.required.set(false)
-
-            jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
-            jvmArgs("--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED")
-            jvmArgs("--add-opens", "java.base/java.io=ALL-UNNAMED")
         }
-        "compileJava"(JavaCompile::class) {
+
+        withType(JavaCompile::class) {
             options.compilerArgs.add("-Xlint:deprecation")
             options.compilerArgs.add("-Xlint:unchecked")
             options.compilerArgs.add("-parameters")
             options.encoding = "UTF-8"
             dependsOn("processResources")
         }
-        "compileTestJava"(JavaCompile::class) {
-            options.compilerArgs.add("-Xlint:deprecation")
-        }
-        withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
+
+        withType(KotlinCompile::class) {
             incremental = true
             kotlinOptions {
                 jvmTarget = "1.8"
