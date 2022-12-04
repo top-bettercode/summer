@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPipelineException;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -64,93 +65,106 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
 
   @Override
   public void save(ApiToken apiToken) {
-    String scope = apiToken.getScope();
-    String username = apiToken.getUsername();
-    String id = scope + ":" + username;
+    try {
+      String scope = apiToken.getScope();
+      String username = apiToken.getUsername();
+      String id = scope + ":" + username;
 
-    byte[] auth = jdkSerializationSerializer.serialize(apiToken);
+      byte[] auth = jdkSerializationSerializer.serialize(apiToken);
 
-    byte[] accessKey = serializeKey(ACCESS_TOKEN + apiToken.getAccessToken().getTokenValue());
-    byte[] refreshKey = serializeKey(
-        REFRESH_TOKEN + apiToken.getRefreshToken().getTokenValue());
-    byte[] idKey = serializeKey(ID + id);
+      byte[] accessKey = serializeKey(ACCESS_TOKEN + apiToken.getAccessToken().getTokenValue());
+      byte[] refreshKey = serializeKey(
+          REFRESH_TOKEN + apiToken.getRefreshToken().getTokenValue());
+      byte[] idKey = serializeKey(ID + id);
 
-    try (RedisConnection conn = getConnection()) {
-      ApiToken exist = getApiToken(idKey, conn);
-      conn.openPipeline();
-      //删除已存在
-      if (exist != null) {
-        byte[] existAccessKey = serializeKey(ACCESS_TOKEN + exist.getAccessToken().getTokenValue());
-        byte[] existRefreshKey = serializeKey(
-            REFRESH_TOKEN + exist.getRefreshToken().getTokenValue());
-        if (!Arrays.equals(existAccessKey, accessKey)) {
-          conn.keyCommands().del(existAccessKey);
+      try (RedisConnection conn = getConnection()) {
+        ApiToken exist = getApiToken(idKey, conn);
+        conn.openPipeline();
+        //删除已存在
+        if (exist != null) {
+          byte[] existAccessKey = serializeKey(
+              ACCESS_TOKEN + exist.getAccessToken().getTokenValue());
+          byte[] existRefreshKey = serializeKey(
+              REFRESH_TOKEN + exist.getRefreshToken().getTokenValue());
+          if (!Arrays.equals(existAccessKey, accessKey)) {
+            conn.keyCommands().del(existAccessKey);
+          }
+          if (!Arrays.equals(existRefreshKey, refreshKey)) {
+            conn.keyCommands().del(existRefreshKey);
+          }
         }
-        if (!Arrays.equals(existRefreshKey, refreshKey)) {
-          conn.keyCommands().del(existRefreshKey);
+
+        if (springDataRedis_2_0) {
+          try {
+            this.redisConnectionSet_2_0.invoke(conn, accessKey, idKey);
+            this.redisConnectionSet_2_0.invoke(conn, refreshKey, idKey);
+            this.redisConnectionSet_2_0.invoke(conn, idKey, auth);
+          } catch (Exception ex) {
+            conn.closePipeline();
+            throw new RuntimeException(ex);
+          }
+        } else {
+          conn.stringCommands().set(accessKey, idKey);
+          conn.stringCommands().set(refreshKey, idKey);
+          conn.stringCommands().set(idKey, auth);
         }
+
+        int access_expires_in = apiToken.getAccessToken().getExpires_in();
+        int refresh_expires_in = apiToken.getRefreshToken().getExpires_in();
+        conn.keyCommands().expire(accessKey, access_expires_in);
+        conn.keyCommands().expire(refreshKey, refresh_expires_in);
+        conn.keyCommands().expire(idKey, Math.max(access_expires_in, refresh_expires_in));
+
+        conn.closePipeline();
       }
-
-      if (springDataRedis_2_0) {
-        try {
-          this.redisConnectionSet_2_0.invoke(conn, accessKey, idKey);
-          this.redisConnectionSet_2_0.invoke(conn, refreshKey, idKey);
-          this.redisConnectionSet_2_0.invoke(conn, idKey, auth);
-        } catch (Exception ex) {
-          conn.closePipeline();
-          throw new RuntimeException(ex);
-        }
-      } else {
-        conn.stringCommands().set(accessKey, idKey);
-        conn.stringCommands().set(refreshKey, idKey);
-        conn.stringCommands().set(idKey, auth);
-      }
-
-      int access_expires_in = apiToken.getAccessToken().getExpires_in();
-      int refresh_expires_in = apiToken.getRefreshToken().getExpires_in();
-      conn.keyCommands().expire(accessKey, access_expires_in);
-      conn.keyCommands().expire(refreshKey, refresh_expires_in);
-      conn.keyCommands().expire(idKey, Math.max(access_expires_in, refresh_expires_in));
-
-      conn.closePipeline();
+    } catch (Exception e) {
+      throw new RuntimeException("保存授权信息失败", e);
     }
   }
 
   @Override
   public void remove(ApiToken apiToken) {
-    String scope = apiToken.getScope();
-    String username = apiToken.getUsername();
-    String id = scope + ":" + username;
-    byte[] accessKey = serializeKey(ACCESS_TOKEN + apiToken.getAccessToken().getTokenValue());
-    byte[] refreshKey = serializeKey(
-        REFRESH_TOKEN + apiToken.getRefreshToken().getTokenValue());
-    byte[] idKey = serializeKey(ID + id);
-    try (RedisConnection conn = getConnection()) {
-      conn.openPipeline();
-      conn.keyCommands().del(accessKey);
-      conn.keyCommands().del(refreshKey);
-      conn.keyCommands().del(idKey);
-      conn.closePipeline();
-    }
-  }
-
-  @Override
-  public void remove(String scope, String username) {
-    String id = scope + ":" + username;
-    byte[] idKey = serializeKey(ID + id);
-    try (RedisConnection conn = getConnection()) {
-      ApiToken apiAuthenticationToken = getApiToken(idKey, conn);
-      if (apiAuthenticationToken != null) {
+    try {
+      String scope = apiToken.getScope();
+      String username = apiToken.getUsername();
+      String id = scope + ":" + username;
+      byte[] accessKey = serializeKey(ACCESS_TOKEN + apiToken.getAccessToken().getTokenValue());
+      byte[] refreshKey = serializeKey(
+          REFRESH_TOKEN + apiToken.getRefreshToken().getTokenValue());
+      byte[] idKey = serializeKey(ID + id);
+      try (RedisConnection conn = getConnection()) {
         conn.openPipeline();
-        byte[] accessKey = serializeKey(
-            ACCESS_TOKEN + apiAuthenticationToken.getAccessToken().getTokenValue());
-        byte[] refreshKey = serializeKey(
-            REFRESH_TOKEN + apiAuthenticationToken.getRefreshToken().getTokenValue());
         conn.keyCommands().del(accessKey);
         conn.keyCommands().del(refreshKey);
         conn.keyCommands().del(idKey);
         conn.closePipeline();
       }
+    } catch (Exception e) {
+      throw new RuntimeException("移除授权信息失败", e);
+    }
+  }
+
+  @Override
+  public void remove(String scope, String username) {
+    try {
+      String id = scope + ":" + username;
+      byte[] idKey = serializeKey(ID + id);
+      try (RedisConnection conn = getConnection()) {
+        ApiToken apiAuthenticationToken = getApiToken(idKey, conn);
+        if (apiAuthenticationToken != null) {
+          conn.openPipeline();
+          byte[] accessKey = serializeKey(
+              ACCESS_TOKEN + apiAuthenticationToken.getAccessToken().getTokenValue());
+          byte[] refreshKey = serializeKey(
+              REFRESH_TOKEN + apiAuthenticationToken.getRefreshToken().getTokenValue());
+          conn.keyCommands().del(accessKey);
+          conn.keyCommands().del(refreshKey);
+          conn.keyCommands().del(idKey);
+          conn.closePipeline();
+        }
+      }
+    } catch (RedisPipelineException e) {
+      throw new RuntimeException("移除授权信息失败", e);
     }
   }
 
@@ -170,44 +184,56 @@ public final class RedisApiTokenRepository implements ApiTokenRepository {
 
   @Nullable
   private ApiToken getApiToken(byte[] idKey, RedisConnection conn) {
-    byte[] bytes = conn.stringCommands().get(idKey);
-    if (JdkSerializationSerializer.isEmpty(bytes)) {
-      return null;
-    }
     try {
-      return (ApiToken) jdkSerializationSerializer.deserialize(bytes);
-    } catch (Exception e) {
-      log.warn("apiToken反序列化失败", e);
-      try {
-        conn.keyCommands().del(idKey);
-      } catch (Exception ex) {
-        log.warn("apiToken删除失败", ex);
+      byte[] bytes = conn.stringCommands().get(idKey);
+      if (JdkSerializationSerializer.isEmpty(bytes)) {
+        return null;
       }
-      return null;
+      try {
+        return (ApiToken) jdkSerializationSerializer.deserialize(bytes);
+      } catch (Exception e) {
+        log.warn("apiToken反序列化失败", e);
+        try {
+          conn.keyCommands().del(idKey);
+        } catch (Exception ex) {
+          log.warn("apiToken删除失败", ex);
+        }
+        return null;
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("查询授权信息失败", e);
     }
   }
 
   @Override
   public ApiToken findByAccessToken(String accessToken) {
-    byte[] accessKey = serializeKey(ACCESS_TOKEN + accessToken);
-    try (RedisConnection conn = getConnection()) {
-      byte[] bytes = conn.stringCommands().get(accessKey);
-      if (JdkSerializationSerializer.isEmpty(bytes)) {
-        return null;
+    try {
+      byte[] accessKey = serializeKey(ACCESS_TOKEN + accessToken);
+      try (RedisConnection conn = getConnection()) {
+        byte[] bytes = conn.stringCommands().get(accessKey);
+        if (JdkSerializationSerializer.isEmpty(bytes)) {
+          return null;
+        }
+        return getApiToken(bytes, conn);
       }
-      return getApiToken(bytes, conn);
+    } catch (Exception e) {
+      throw new RuntimeException("查询授权信息失败", e);
     }
   }
 
   @Override
   public ApiToken findByRefreshToken(String refreshToken) {
-    byte[] refreshKey = serializeKey(REFRESH_TOKEN + refreshToken);
-    try (RedisConnection conn = getConnection()) {
-      byte[] bytes = conn.stringCommands().get(refreshKey);
-      if (JdkSerializationSerializer.isEmpty(bytes)) {
-        return null;
+    try {
+      byte[] refreshKey = serializeKey(REFRESH_TOKEN + refreshToken);
+      try (RedisConnection conn = getConnection()) {
+        byte[] bytes = conn.stringCommands().get(refreshKey);
+        if (JdkSerializationSerializer.isEmpty(bytes)) {
+          return null;
+        }
+        return getApiToken(bytes, conn);
       }
-      return getApiToken(bytes, conn);
+    } catch (Exception e) {
+      throw new RuntimeException("查询授权信息失败", e);
     }
   }
 }
