@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
-import top.bettercode.summer.tools.autodoc.Util
+import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
@@ -33,7 +33,7 @@ data class DocCollection(
         val operationFile = operationFile(operationName)
         return if (operationFile.exists()) {
             val docOperation = try {
-                Util.yamlMapper.readValue(operationFile, DocOperation::class.java)
+                AutodocUtil.yamlMapper.readValue(operationFile, DocOperation::class.java)
             } catch (e: Exception) {
                 log.error(name + "/" + operationName + "解析失败")
                 throw e

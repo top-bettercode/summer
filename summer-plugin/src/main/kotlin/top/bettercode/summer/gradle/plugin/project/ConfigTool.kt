@@ -1,7 +1,7 @@
 package top.bettercode.summer.gradle.plugin.project
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import top.bettercode.summer.tools.autodoc.Util
+import top.bettercode.summer.tools.autodoc.AutodocUtil
 import java.io.File
 import java.util.*
 
@@ -80,7 +80,7 @@ object ConfigTool {
     }
 
     fun toProperties(ymlFile: File): Properties {
-        val map = Util.yamlMapper.readValue<Map<String, Any>>(ymlFile)
+        val map = AutodocUtil.yamlMapper.readValue<Map<String, Any>>(ymlFile)
         val properties = Properties()
         iterateAndProcess(properties, map, "")
         return properties

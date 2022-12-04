@@ -28,7 +28,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
-object Util {
+object AutodocUtil {
     const val replaceChar="丨"
     val objectMapper = ObjectMapper()
     val yamlMapper = YAMLMapper()

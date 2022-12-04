@@ -10,10 +10,9 @@ import org.springframework.web.method.HandlerMethod
 import top.bettercode.summer.web.apisign.ApiSignProperties
 import top.bettercode.summer.logging.RequestLoggingHandler
 import top.bettercode.summer.test.autodoc.InitField.toFields
-import top.bettercode.summer.tools.autodoc.PostmanGenerator
-import top.bettercode.summer.tools.autodoc.Util
-import top.bettercode.summer.tools.autodoc.Util.singleValueMap
-import top.bettercode.summer.tools.autodoc.Util.toMap
+import top.bettercode.summer.tools.autodoc.AutodocUtil
+import top.bettercode.summer.tools.autodoc.AutodocUtil.singleValueMap
+import top.bettercode.summer.tools.autodoc.AutodocUtil.toMap
 import top.bettercode.summer.tools.autodoc.model.DocModule
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
@@ -46,11 +45,6 @@ class AutodocHandler(
     fun destroy() {
         try {
             cache.values.forEach { it.writeToDisk() }
-            if (genProperties.doc) {
-                top.bettercode.summer.tools.autodoc.AsciidocGenerator.asciidoc(genProperties)
-                PostmanGenerator.postman(genProperties)
-                top.bettercode.summer.tools.autodoc.AsciidocGenerator.html(genProperties)
-            }
         } catch (e: Exception) {
             log.error("生成文档失败", e)
         }
@@ -90,8 +84,8 @@ class AutodocHandler(
                     log.warn("docOperation resource未设置")
                     return
                 }
-                operation.collectionName = operation.collectionName.replace("/", Util.replaceChar)
-                operation.name = operation.name.replace("/", Util.replaceChar)
+                operation.collectionName = operation.collectionName.replace("/", AutodocUtil.replaceChar)
+                operation.name = operation.name.replace("/", AutodocUtil.replaceChar)
 
                 if (genProperties.projectPath.isNotBlank()) {
                     operation.request.restUri =
@@ -248,7 +242,7 @@ class AutodocHandler(
                         val oldOperationFile = File(oDir, "collection/$collectionName/$name.yml")
                         if (oldOperationFile.exists()) {
                             docOperation =
-                                Util.yamlMapper.readValue(
+                                AutodocUtil.yamlMapper.readValue(
                                     oldOperationFile,
                                     DocOperation::class.java
                                 )
@@ -258,7 +252,7 @@ class AutodocHandler(
                 }
             }
         } else {
-            docOperation = Util.yamlMapper.readValue(operationFile, DocOperation::class.java)
+            docOperation = AutodocUtil.yamlMapper.readValue(operationFile, DocOperation::class.java)
         }
         return if (docOperation != null) {
             docOperation.description = description

@@ -1,12 +1,12 @@
 package top.bettercode.summer.test.autodoc
 
 import org.atteo.evo.inflector.English
-import top.bettercode.summer.tools.autodoc.Util.checkBlank
-import top.bettercode.summer.tools.autodoc.Util.convert
-import top.bettercode.summer.tools.autodoc.Util.parseList
-import top.bettercode.summer.tools.autodoc.Util.toJsonString
-import top.bettercode.summer.tools.autodoc.Util.toMap
-import top.bettercode.summer.tools.autodoc.Util.type
+import top.bettercode.summer.tools.autodoc.AutodocUtil.checkBlank
+import top.bettercode.summer.tools.autodoc.AutodocUtil.convert
+import top.bettercode.summer.tools.autodoc.AutodocUtil.parseList
+import top.bettercode.summer.tools.autodoc.AutodocUtil.toJsonString
+import top.bettercode.summer.tools.autodoc.AutodocUtil.toMap
+import top.bettercode.summer.tools.autodoc.AutodocUtil.type
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest

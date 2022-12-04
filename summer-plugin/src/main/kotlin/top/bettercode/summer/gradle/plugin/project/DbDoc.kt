@@ -1,6 +1,7 @@
 package top.bettercode.summer.gradle.plugin.project
 
 import org.gradle.api.Project
+import top.bettercode.summer.gradle.plugin.autodoc.AsciidocGenerator
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.Generator
@@ -75,7 +76,7 @@ v${project.version}
         val outFile =
             File(projectDir, "${fileUnit.file.parent}/${fileUnit.file.nameWithoutExtension}.pdf")
         if (setting("dbdoc-pdf") == "true")
-            top.bettercode.summer.tools.autodoc.AsciidocGenerator.pdf(fileUnit.outputFile(projectDir), outFile, projectDir)
+            AsciidocGenerator.pdf(fileUnit.outputFile(projectDir), outFile, projectDir)
     }
 }
 

@@ -3,8 +3,8 @@ package top.bettercode.summer.test.autodoc
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import top.bettercode.summer.tools.autodoc.Util.singleValueMap
-import top.bettercode.summer.tools.autodoc.Util.toMap
+import top.bettercode.summer.tools.autodoc.AutodocUtil.singleValueMap
+import top.bettercode.summer.tools.autodoc.AutodocUtil.toMap
 import top.bettercode.summer.tools.lang.operation.OperationRequest
 
 /**

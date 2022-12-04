@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
-import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.dhatim.fastexcel.AbsoluteListDataValidation;
@@ -643,7 +642,7 @@ public class ExcelExport {
     if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
       newFileName = URLEncoder.encode(fileName, "UTF-8");
     } else {
-      newFileName = MimeUtility.encodeText(fileName, "UTF8", "B");
+      newFileName = fileName;
     }
     response.setHeader("Content-Disposition",
         "attachment;filename=" + newFileName + ".xlsx;filename*=UTF-8''" + URLEncoder

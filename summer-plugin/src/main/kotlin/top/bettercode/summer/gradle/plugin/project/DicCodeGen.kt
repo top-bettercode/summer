@@ -6,7 +6,7 @@ import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.gradle.api.Project
 import org.gradle.configurationcache.extensions.capitalized
-import top.bettercode.summer.tools.autodoc.Util
+import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.InnerInterface
@@ -56,8 +56,8 @@ class DicCodeGen(private val project: Project) {
             field.type = if (t.isInt) "Integer" else "String"
             fields.add(field)
         }
-        fields.addAll(Util.yamlMapper.readValue(file, collectionType))
-        file.writeText(Util.yamlMapper.writeValueAsString(fields))
+        fields.addAll(AutodocUtil.yamlMapper.readValue(file, collectionType))
+        file.writeText(AutodocUtil.yamlMapper.writeValueAsString(fields))
     }
 
     private fun convert(properties: Properties): MutableMap<String, DicCodes> {

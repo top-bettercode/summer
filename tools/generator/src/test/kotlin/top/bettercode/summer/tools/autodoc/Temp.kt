@@ -4,7 +4,6 @@ import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.autodoc.model.Field
-import java.io.File
 import java.util.*
 
 /**
@@ -15,23 +14,15 @@ class Temp {
 
     @Test
     fun pinyin() {
-        println(PinyinHelper.convertToPinyinString("手势密码新增-、修改", "", PinyinFormat.WITHOUT_TONE).replace("[^\\x00-\\xff]".toRegex(),"").replace("\\s*|\t|\r|\n".toRegex(),""))
+        println(
+            PinyinHelper.convertToPinyinString(
+                "手势密码新增-、修改",
+                "",
+                PinyinFormat.WITHOUT_TONE
+            ).replace("[^\\x00-\\xff]".toRegex(), "").replace("\\s*|\t|\r|\n".toRegex(), "")
+        )
     }
 
-    @Test
-    fun name() {
-        File(Temp::class.java.getResource("/static/Open+Sans.css")!!.file).readLines().filter { it.contains("url(https:") }.forEach {
-            println(it.replace(".*url\\((.*?)\\).*".toRegex(), "$1"))
-        }
-    }
-
-    @Test
-    fun cp() {
-        File(AutodocExtension::class.java.getResource("/static")!!.file).walkTopDown().filter { it.isFile }.forEach {
-            val path = it.path.replace("/data/repositories/bettercode/default/autodoc/core/build/resources/main/", "")
-            System.err.println("AutodocExtension::class.java.getResourceAsStream(\"/$path\").copyTo(File(outputFile, \"$path\").outputStream())")
-        }
-    }
 
     @Test
     fun fieldSet() {

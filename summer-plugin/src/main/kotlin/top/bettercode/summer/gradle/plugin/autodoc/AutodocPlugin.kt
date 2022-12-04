@@ -8,7 +8,6 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profileProperties
 import top.bettercode.summer.gradle.plugin.profile.ProfilePlugin
 import top.bettercode.summer.tools.autodoc.AutodocExtension
-import top.bettercode.summer.tools.autodoc.PostmanGenerator
 import java.io.File
 import java.util.*
 
@@ -83,7 +82,7 @@ class AutodocPlugin : Plugin<Project> {
                 override fun execute(it: Task) {
                     val extension = project.extensions.findByType(AutodocExtension::class.java)!!
                     extension.properties = project.profileProperties
-                    top.bettercode.summer.tools.autodoc.AsciidocGenerator.asciidoc(extension)
+                    AsciidocGenerator.asciidoc(extension)
                 }
             })
         }
@@ -98,7 +97,7 @@ class AutodocPlugin : Plugin<Project> {
                             "/META-INF/resources/favicon.ico"
                         ).apply { parentFile.mkdirs() }.outputStream()
                     )
-                    top.bettercode.summer.tools.autodoc.AsciidocGenerator.html(
+                    AsciidocGenerator.html(
                         project.extensions.findByType(
                             AutodocExtension::class.java
                         )!!
@@ -111,7 +110,7 @@ class AutodocPlugin : Plugin<Project> {
             task.dependsOn("asciidoc")
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
-                    top.bettercode.summer.tools.autodoc.AsciidocGenerator.pdf(
+                    AsciidocGenerator.pdf(
                         project.extensions.findByType(
                             AutodocExtension::class.java
                         )!!
@@ -137,8 +136,7 @@ class AutodocPlugin : Plugin<Project> {
                 if (file.exists()) {
                     source.load(file.inputStream())
                 }
-
-                top.bettercode.summer.tools.autodoc.AsciidocGenerator.setDefaultDesc(extension, source)
+                AsciidocGenerator.setDefaultDesc(extension, source)
             }
         }
         project.tasks.getByName("jar") {

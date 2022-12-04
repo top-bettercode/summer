@@ -1,11 +1,13 @@
-package top.bettercode.summer.tools.autodoc
+package top.bettercode.summer.gradle.plugin.autodoc
 
 import org.asciidoctor.Asciidoctor
 import org.asciidoctor.Attributes
 import org.asciidoctor.Options
 import org.asciidoctor.SafeMode
-import top.bettercode.summer.tools.autodoc.Util.checkBlank
-import top.bettercode.summer.tools.autodoc.Util.pyname
+import top.bettercode.summer.tools.autodoc.AutodocExtension
+import top.bettercode.summer.tools.autodoc.AutodocUtil
+import top.bettercode.summer.tools.autodoc.AutodocUtil.checkBlank
+import top.bettercode.summer.tools.autodoc.AutodocUtil.pyname
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
@@ -26,12 +28,8 @@ object AsciidocGenerator {
 
     private val TOKEN_PATTERN = Pattern.compile("@.+?@")
 
-    init {
-
-    }
-
     fun html(autodoc: AutodocExtension) {
-        autodoc.docStatic()
+        docStatic(autodoc)
         autodoc.listModuleNames { name, pyname ->
             val adocFile = autodoc.adocFile(name)
             if (adocFile.exists()) {
@@ -276,7 +274,7 @@ object AsciidocGenerator {
                         out.println()
                         val operationPath =
                             operation.operationFile.absolutePath.substringAfter(sourcePath)
-                        val operationName = operation.name.replace(Util.replaceChar, "/")
+                        val operationName = operation.name.replace(AutodocUtil.replaceChar, "/")
                         out.println("[[_${pynames.pyname("$collectionName-$operationName")}]]")
                         out.println("=== $operationName")
                         out.println()
@@ -520,12 +518,14 @@ object AsciidocGenerator {
         )
         out.append("|${str(field.type)}")
         out.append("|${str(field.requiredDescription)}")
-        out.append("|${
-            str(
-                field.description,
-                true
-            )
-        }")
+        out.append(
+            "|${
+                str(
+                    field.description,
+                    true
+                )
+            }"
+        )
         out.append("|${str(field.defaultVal)}")
         out.append("|${str(field.value)}")
         out.appendLine()
@@ -558,4 +558,94 @@ object AsciidocGenerator {
             blank
         }
     }
+
+    fun docStatic(ext: AutodocExtension) {
+        copy(ext, "docinfo.html")
+        copy(ext, "static/font-awesome.min.css")
+        copy(ext, "static/highlight.min.js")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKWyV9hkIqOjjg.woff2")
+        copy(ext, "static/gstatic/ga6Law1J5X9T9RW6j9bNdOwzfRmecf1I.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKWyV9hoIqOjjg.woff2")
+        copy(ext, "static/gstatic/ga6Kaw1J5X9T9RW6j9bNfFImaTC7TMQ.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UNirkOUuhp.woff2")
+        copy(ext, "static/gstatic/ga6Vaw1J5X9T9RW6j9bNfFIu0RWufuVMCoY.woff2")
+        copy(ext, "static/gstatic/ga6Vaw1J5X9T9RW6j9bNfFIu0RWufeVMCoY.woff2")
+        copy(ext, "static/gstatic/ga6Law1J5X9T9RW6j9bNdOwzfROecf1I.woff2")
+        copy(ext, "static/gstatic/mem6YaGs126MiZpBA-UFUK0Xdc1UAw.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKWyV9hvIqOjjg.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UN_r8OXuhpOqc.woff2")
+        copy(ext, "static/gstatic/ga6Iaw1J5X9T9RW6j9bNfFMWaCi_.woff2")
+        copy(ext, "static/gstatic/ga6Law1J5X9T9RW6j9bNdOwzfRuecf1I.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKXGUdhrIqM.woff2")
+        copy(ext, "static/gstatic/ga6Vaw1J5X9T9RW6j9bNfFIu0RWufOVMCoY.woff2")
+        copy(ext, "static/gstatic/mem8YaGs126MiZpBA-UFUZ0bbck.woff2")
+        copy(ext, "static/gstatic/ga6Kaw1J5X9T9RW6j9bNfFImbjC7TMQ.woff2")
+        copy(ext, "static/gstatic/ga6Law1J5X9T9RW6j9bNdOwzfRiecf1I.woff2")
+        copy(ext, "static/gstatic/ga6Kaw1J5X9T9RW6j9bNfFImajC7.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKXGUdhoIqOjjg.woff2")
+        copy(ext, "static/gstatic/ga6Kaw1J5X9T9RW6j9bNfFImZzC7TMQ.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UN_r8OUehpOqc.woff2")
+        copy(ext, "static/gstatic/mem8YaGs126MiZpBA-UFWJ0bbck.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKWyV9hlIqOjjg.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKWyV9hmIqOjjg.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKXGUdhlIqOjjg.woff2")
+        copy(ext, "static/gstatic/mem8YaGs126MiZpBA-UFVp0bbck.woff2")
+        copy(ext, "static/gstatic/ga6Kaw1J5X9T9RW6j9bNfFImZDC7TMQ.woff2")
+        copy(ext, "static/gstatic/ga6Iaw1J5X9T9RW6j9bNfFsWaCi_.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKWyV9hnIqOjjg.woff2")
+        copy(ext, "static/gstatic/ga6Iaw1J5X9T9RW6j9bNfFgWaCi_.woff2")
+        copy(ext, "static/gstatic/mem8YaGs126MiZpBA-UFVZ0b.woff2")
+        copy(ext, "static/gstatic/ga6Iaw1J5X9T9RW6j9bNfFQWaCi_.woff2")
+        copy(ext, "static/gstatic/ga6Vaw1J5X9T9RW6j9bNfFIu0RWuf-VMCoY.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UNirkOXuhpOqc.woff2")
+        copy(ext, "static/gstatic/mem6YaGs126MiZpBA-UFUK0ddc1UAw.woff2")
+        copy(ext, "static/gstatic/ga6Law1J5X9T9RW6j9bNdOwzfReecQ.woff2")
+        copy(ext, "static/gstatic/mem8YaGs126MiZpBA-UFWZ0bbck.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UN_r8OXehpOqc.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UNirkOXehpOqc.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UNirkOVuhpOqc.woff2")
+        copy(ext, "static/gstatic/ga6Law1J5X9T9RW6j9bNdOwzfRqecf1I.woff2")
+        copy(ext, "static/gstatic/6NUO8FuJNQ2MbkrZ5-J8lKFrp7pRef2r.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UN_r8OVuhpOqc.woff2")
+        copy(ext, "static/gstatic/mem6YaGs126MiZpBA-UFUK0Vdc1UAw.woff2")
+        copy(ext, "static/gstatic/mem6YaGs126MiZpBA-UFUK0Udc1UAw.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKWyV9hrIqM.woff2")
+        copy(ext, "static/gstatic/mem6YaGs126MiZpBA-UFUK0adc1UAw.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKXGUdhkIqOjjg.woff2")
+        copy(ext, "static/gstatic/ga6Iaw1J5X9T9RW6j9bNfFkWaCi_.woff2")
+        copy(ext, "static/gstatic/ga6Vaw1J5X9T9RW6j9bNfFIu0RWuc-VM.woff2")
+        copy(ext, "static/gstatic/ga6Iaw1J5X9T9RW6j9bNfFcWaA.woff2")
+        copy(ext, "static/gstatic/mem6YaGs126MiZpBA-UFUK0Wdc1UAw.woff2")
+        copy(ext, "static/gstatic/mem8YaGs126MiZpBA-UFW50bbck.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UNirkOUehpOqc.woff2")
+        copy(ext, "static/gstatic/ga6Law1J5X9T9RW6j9bNdOwzfRSecf1I.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKXGUdhvIqOjjg.woff2")
+        copy(ext, "static/gstatic/mem8YaGs126MiZpBA-UFWp0bbck.woff2")
+        copy(ext, "static/gstatic/ga6Vaw1J5X9T9RW6j9bNfFIu0RWud-VMCoY.woff2")
+        copy(ext, "static/gstatic/ga6Vaw1J5X9T9RW6j9bNfFIu0RWucOVMCoY.woff2")
+        copy(ext, "static/gstatic/mem6YaGs126MiZpBA-UFUK0Zdc0.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UN_r8OXOhpOqc.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKXGUdhmIqOjjg.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UN_r8OX-hpOqc.woff2")
+        copy(ext, "static/gstatic/ga6Kaw1J5X9T9RW6j9bNfFImZjC7TMQ.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UN_r8OUuhp.woff2")
+        copy(ext, "static/gstatic/memnYaGs126MiZpBA-UFUKXGUdhnIqOjjg.woff2")
+        copy(ext, "static/gstatic/ga6Iaw1J5X9T9RW6j9bNfFoWaCi_.woff2")
+        copy(ext, "static/gstatic/ga6Kaw1J5X9T9RW6j9bNfFImZTC7TMQ.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UNirkOX-hpOqc.woff2")
+        copy(ext, "static/gstatic/mem5YaGs126MiZpBA-UNirkOXOhpOqc.woff2")
+        copy(ext, "static/fonts/fontawesome-webfont.woff2")
+        copy(ext, "static/fonts/fontawesome-webfont.svg")
+        copy(ext, "static/fonts/fontawesome-webfont.woff")
+        copy(ext, "static/fonts/fontawesome-webfont.ttf")
+        copy(ext, "static/fonts/fontawesome-webfont.eot")
+        copy(ext, "static/github.min.css")
+        copy(ext, "static/Open+Sans.css")
+    }
+
+    private fun copy(ext: AutodocExtension, path: String) {
+        AutodocExtension::class.java.getResourceAsStream("/$path")
+            ?.copyTo(File(ext.outputFile, path).apply { parentFile.mkdirs() }.outputStream())
+    }
+
 }

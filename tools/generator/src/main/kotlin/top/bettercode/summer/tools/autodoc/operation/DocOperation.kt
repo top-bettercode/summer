@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import top.bettercode.summer.tools.autodoc.Util
+import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.lang.operation.Operation
 import top.bettercode.summer.tools.lang.operation.OperationResponse
 import java.io.File
@@ -28,7 +28,7 @@ class DocOperation(operation: Operation = Operation(),
         operationFile.parentFile.mkdirs()
         operationFile.parentFile.mkdirs()
         println("${if (operationFile.exists()) "更新" else "创建"}：$operationFile")
-        operationFile.writeText(Util.yamlMapper.writeValueAsString(this))
+        operationFile.writeText(AutodocUtil.yamlMapper.writeValueAsString(this))
     }
 
     override var request

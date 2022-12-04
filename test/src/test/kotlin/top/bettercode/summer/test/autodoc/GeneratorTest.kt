@@ -3,10 +3,10 @@ package top.bettercode.summer.test.autodoc
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.test.autodoc.InitField.toFields
-import top.bettercode.summer.tools.autodoc.Util
-import top.bettercode.summer.tools.autodoc.Util.parseList
-import top.bettercode.summer.tools.autodoc.Util.singleValueMap
-import top.bettercode.summer.tools.autodoc.Util.toMap
+import top.bettercode.summer.tools.autodoc.AutodocUtil
+import top.bettercode.summer.tools.autodoc.AutodocUtil.parseList
+import top.bettercode.summer.tools.autodoc.AutodocUtil.singleValueMap
+import top.bettercode.summer.tools.autodoc.AutodocUtil.toMap
 import top.bettercode.summer.tools.autodoc.model.DocCollection
 import top.bettercode.summer.tools.autodoc.model.DocCollections
 import top.bettercode.summer.tools.autodoc.model.Field
@@ -32,7 +32,7 @@ class GeneratorTest {
                     val coFields = (file.parseList(Field::class.java) + commonFields).toMutableSet()
                     file.delete()
                     path.listFiles()?.filter { f -> f.name != "field.yml" }?.forEach { f ->
-                        val exist = Util.yamlMapper.readValue(f, OldDocOperation::class.java)
+                        val exist = AutodocUtil.yamlMapper.readValue(f, OldDocOperation::class.java)
                         coFields += exist.fields
                         val newVal = DocOperation(exist, exist.description, exist.prerequest, exist.testExec)
                         val request = newVal.request as DocOperationRequest
@@ -76,7 +76,7 @@ class GeneratorTest {
 
                 val file = File(it, "collections.yml")
                 if (file.exists()) {
-                    Util.yamlMapper.readValue(file.inputStream(), DocCollections::class.java).mapTo(linkedSetOf()) { (k, v) ->
+                    AutodocUtil.yamlMapper.readValue(file.inputStream(), DocCollections::class.java).mapTo(linkedSetOf()) { (k, v) ->
                         DocCollection(k, LinkedHashSet(v), File(file.parentFile, "collection/${k}"))
                     }.forEach { dd ->
                         dd.operations.forEach { d ->

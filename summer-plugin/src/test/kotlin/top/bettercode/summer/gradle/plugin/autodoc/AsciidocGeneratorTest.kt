@@ -1,8 +1,9 @@
-package top.bettercode.summer.tools.autodoc
+package top.bettercode.summer.gradle.plugin.autodoc
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.autodoc.AutodocExtension
 import java.io.File
 import java.util.*
 
@@ -17,6 +18,26 @@ class AsciidocGeneratorTest {
         val file = File("src/doc")
         autodoc = AutodocExtension(source = file, output = File("build/doc"))
         autodoc.projectName = "文档"
+    }
+
+    @Test
+    fun cp() {
+        File(AutodocExtension::class.java.getResource("/static")!!.file).walkTopDown()
+            .filter { it.isFile }.forEach {
+            val path = it.path.replace(
+                "/data/repositories/bettercode/default/summer/summer-plugin/src/main/",
+                ""
+            )
+            System.err.println("AutodocExtension::class.java.getResourceAsStream(\"/$path\").copyTo(File(outputFile, \"$path\").outputStream())")
+        }
+    }
+
+    @Test
+    fun name() {
+        File(AsciidocGeneratorTest::class.java.getResource("/static/Open+Sans.css")!!.file).readLines()
+            .filter { it.contains("url(https:") }.forEach {
+                println(it.replace(".*url\\((.*?)\\).*".toRegex(), "$1"))
+            }
     }
 
     @Test

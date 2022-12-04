@@ -2,8 +2,8 @@ package top.bettercode.summer.tools.autodoc.model
 
 import org.springframework.http.MediaType
 import top.bettercode.summer.tools.autodoc.AutodocExtension
-import top.bettercode.summer.tools.autodoc.Util.readCollections
-import top.bettercode.summer.tools.autodoc.Util.writeCollections
+import top.bettercode.summer.tools.autodoc.AutodocUtil.readCollections
+import top.bettercode.summer.tools.autodoc.AutodocUtil.writeCollections
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
 import top.bettercode.summer.tools.autodoc.postman.Event
 import top.bettercode.summer.tools.autodoc.postman.Script

@@ -1,10 +1,11 @@
-package top.bettercode.summer.tools.autodoc
+package top.bettercode.summer.gradle.plugin.autodoc
 
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import top.bettercode.summer.tools.autodoc.Util.checkBlank
-import top.bettercode.summer.tools.autodoc.Util.toJsonString
+import top.bettercode.summer.tools.autodoc.AutodocExtension
+import top.bettercode.summer.tools.autodoc.AutodocUtil.checkBlank
+import top.bettercode.summer.tools.autodoc.AutodocUtil.toJsonString
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.autodoc.postman.*

@@ -20,10 +20,6 @@ public class GenProperties extends AutodocExtension {
   private Boolean disableOnException = true;
 
   /**
-   * 是否生成文档
-   */
-  private Boolean doc = false;
-  /**
    * 数据源类型
    */
   private DataType dataType = DataType.DATABASE;
@@ -59,14 +55,6 @@ public class GenProperties extends AutodocExtension {
 
   public void setDisableOnException(Boolean disableOnException) {
     this.disableOnException = disableOnException;
-  }
-
-  public Boolean getDoc() {
-    return doc;
-  }
-
-  public void setDoc(Boolean doc) {
-    this.doc = doc;
   }
 
   public DataType getDataType() {
