@@ -11,6 +11,7 @@ import top.bettercode.summer.test.BaseTest;
 /**
  * @author Peter Wu
  */
+@Disabled
 class B2mSmsTemplateTest extends BaseTest {
 
   @Autowired

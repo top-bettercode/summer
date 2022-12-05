@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.weather
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.test.BaseTest
@@ -8,6 +9,7 @@ import top.bettercode.summer.test.BaseTest
  *
  * @author Peter Wu
  */
+@Disabled
 class WeatherClientTest : BaseTest() {
 
     @Autowired

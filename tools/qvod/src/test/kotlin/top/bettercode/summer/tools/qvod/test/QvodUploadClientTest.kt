@@ -11,6 +11,7 @@ import top.bettercode.summer.tools.qvod.QvodUploadClient
  *
  * @author Peter Wu
  */
+@Disabled
 internal class QvodUploadClientTest : BaseTest() {
 
     @Autowired

@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.weixin.test.controller
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -10,6 +11,7 @@ import top.bettercode.summer.tools.weixin.test.TestApplication
 /**
  * @author Peter Wu
  */
+@Disabled
 @SpringBootTest(classes = [TestApplication::class])
 class CallbackControllerTest : BaseWebNoAuthTest() {
 

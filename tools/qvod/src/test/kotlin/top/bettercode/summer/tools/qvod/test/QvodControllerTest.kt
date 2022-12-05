@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.qvod.test
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import top.bettercode.summer.test.BaseWebNoAuthTest
@@ -7,6 +8,7 @@ import top.bettercode.summer.test.BaseWebNoAuthTest
 /**
  * @author Peter Wu
  */
+@Disabled
 @SpringBootTest
 class QvodControllerTest : BaseWebNoAuthTest() {
 

@@ -10,6 +10,7 @@ import top.bettercode.summer.tools.qvod.QvodClient
  *
  * @author Peter Wu
  */
+@Disabled
 class QvodClientTest : BaseTest() {
 
     @Autowired
