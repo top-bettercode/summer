@@ -216,7 +216,7 @@ class DicCodeGen(private val project: Project) {
                                 +"import java.lang.annotation.Retention;"
                                 +"import java.lang.annotation.RetentionPolicy;"
                                 +"import java.lang.annotation.Target;"
-                                +"import top.bettercode.simpleframework.security.ConfigAuthority;"
+                                +"import top.bettercode.summer.security.ConfigAuthority;"
                                 +""
                                 +"/**"
                                 +" * $name 权限标识"
@@ -259,7 +259,7 @@ class DicCodeGen(private val project: Project) {
                         +"return code;"
                     }
 
-                    import("top.bettercode.simpleframework.support.code.CodeServiceHolder")
+                    import("top.bettercode.summer.web.support.code.CodeServiceHolder")
                     method("nameOf", JavaType.stringInstance) {
                         javadoc {
                             +"/**"
