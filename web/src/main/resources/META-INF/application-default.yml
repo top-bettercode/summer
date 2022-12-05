@@ -136,5 +136,6 @@ logging:
     top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter: info
     top.bettercode.summer.web.resolver.ApiExceptionHandlerExceptionResolver: info
     top.bettercode.summer.web.filter: info
+    top.bettercode.summer.config.NavFilter: info
     top.bettercode.summer.logging.RequestLoggingFilter: info
     top.bettercode.summer.logging.RequestContentReadFilter: info
