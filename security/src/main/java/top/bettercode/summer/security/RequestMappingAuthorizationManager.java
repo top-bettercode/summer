@@ -40,6 +40,8 @@ import top.bettercode.summer.web.AnnotatedUtils;
 public class RequestMappingAuthorizationManager implements
     AuthorizationManager<RequestAuthorizationContext> {
 
+  private static final AntPathRequestMatcher actuatorPathMatcher = new AntPathRequestMatcher(
+      "/actuator/**");
   private static final AuthorizationDecision DENY = new AuthorizationDecision(false);
   private static final AuthorizationDecision ALLOW = new AuthorizationDecision(true);
   private final Logger log = LoggerFactory.getLogger(RequestMappingAuthorizationManager.class);
@@ -97,6 +99,9 @@ public class RequestMappingAuthorizationManager implements
   public AuthorizationDecision check(Supplier<Authentication> authentication,
       RequestAuthorizationContext requestAuthorizationContext) {
     HttpServletRequest request = requestAuthorizationContext.getRequest();
+    if (actuatorPathMatcher.matches(request)) {
+      return ALLOW;
+    }
     if (this.log.isTraceEnabled()) {
       this.log.trace("Authorizing {}", request);
     }
