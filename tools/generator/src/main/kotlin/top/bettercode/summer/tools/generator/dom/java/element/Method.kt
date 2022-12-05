@@ -240,7 +240,8 @@ class Method : JavaElement() {
                 sb.append(line)
 
                 if (line.endsWith("{") && !line.startsWith("switch")  //$NON-NLS-2$
-                        || line.endsWith(":")) {
+                    || line.endsWith(":")
+                ) {
                     indentLevelInner++
                 }
 

@@ -8,10 +8,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Query(
-        @JsonProperty("key")
-        var key: String? = null,
-        @JsonProperty("value")
-        var value: String? = null,
-        @JsonProperty("description")
-        var description: String? = null
+    @JsonProperty("key")
+    var key: String? = null,
+    @JsonProperty("value")
+    var value: String? = null,
+    @JsonProperty("description")
+    var description: String? = null
 )

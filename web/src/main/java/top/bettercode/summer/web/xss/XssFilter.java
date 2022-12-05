@@ -21,7 +21,8 @@ public class XssFilter extends OncePerRequestFilter implements Ordered {
   }
 
   @Override
-  protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+  protected void doFilterInternal(@NotNull HttpServletRequest request,
+      @NotNull HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
     XssHttpServletRequestWrapper xssRequest = new XssHttpServletRequestWrapper(request);
     filterChain.doFilter(xssRequest, response);

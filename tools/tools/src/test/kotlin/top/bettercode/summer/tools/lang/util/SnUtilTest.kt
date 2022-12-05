@@ -14,7 +14,7 @@ internal class SnUtilTest {
         val n = 1461630453925425153
         val sn = SnUtil.toSn(n)
         val toNum = SnUtil.toNum(sn)
-        assertEquals(n,toNum)
+        assertEquals(n, toNum)
         System.err.println(sn)
         System.err.println(toNum)
     }
@@ -24,7 +24,7 @@ internal class SnUtilTest {
         val sn = "1JYhxNqDgrL"
         val n = SnUtil.toNum(sn)
         val s = SnUtil.toSn(n)
-        assertEquals(sn,s)
+        assertEquals(sn, s)
         System.err.println(sn)
         System.err.println(n)
     }

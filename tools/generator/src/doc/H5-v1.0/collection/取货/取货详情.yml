@@ -1,158 +1,137 @@
 request:
   uriVariablesExt:
-   -
-    name: "pickupId"
-    type: "String"
-    description: "主键"
-    value: "1"
-    canCover: true
-    required: false
+    - name: "pickupId"
+      type: "String"
+      description: "主键"
+      value: "1"
+      canCover: true
+      required: false
   headersExt:
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    value: "application/json;version=2.0"
-    canCover: true
-    required: false
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    value: "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<_qianmingsuanfa>>"
-    value: "6c5467aaaf8b8c5876b8016771744b64"
-    canCover: true
-    required: true
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/x-www-form-urlencoded"
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    value: "403f9c54-7dcf-4e7f-8809-a56487af526e"
-    canCover: true
-    required: false
+    - name: "Accept"
+      type: "String"
+      description: "客户端接收格式"
+      value: "application/json;version=2.0"
+      canCover: true
+      required: false
+    - name: "user-agent"
+      type: "String"
+      description: "用户代理"
+      value: "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+      canCover: true
+      required: false
+    - name: "sign"
+      type: "String"
+      description: "接口签名 <<_qianmingsuanfa>>"
+      value: "6c5467aaaf8b8c5876b8016771744b64"
+      canCover: true
+      required: true
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/x-www-form-urlencoded"
+      canCover: true
+      required: false
+    - name: "accessToken"
+      type: "String"
+      description: "存取令牌"
+      value: "403f9c54-7dcf-4e7f-8809-a56487af526e"
+      canCover: true
+      required: false
   restUri: "/pickups/{pickupId}"
   method: "GET"
 response:
   contentExt:
-   -
-    name: "pickupId"
-    type: "String"
-    description: "主键"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "custName"
-    type: "String"
-    description: "客户名称"
-    value: "吉林公司"
-    canCover: true
-    required: false
-   -
-    name: "sapNo"
-    type: "String"
-    description: "SAP编号"
-    value: "0001500100"
-    canCover: true
-    required: false
-   -
-    name: "contacts"
-    type: "String"
-    description: "客户联系人"
-    value: "李美女"
-    canCover: true
-    required: false
-   -
-    name: "custTel"
-    type: "String"
-    description: "客户手机号"
-    value: "13678998712"
-    canCover: true
-    required: false
-   -
-    name: "salesman"
-    type: "String"
-    description: "所属业务员"
-    value: "张三"
-    canCover: true
-    required: false
-   -
-    name: "salesmanTel"
-    type: "String"
-    description: "所属业务员手机号"
-    value: "18651835626"
-    canCover: true
-    required: false
-   -
-    name: "status"
-    type: "Integer"
-    description: "状态"
-    defaultVal: "0"
-    value: "0"
-    canCover: true
-    required: false
-   -
-    name: "note"
-    type: "String"
-    description: "取货备注"
-    value: "1212"
-    canCover: true
-    required: false
-   -
-    name: "createdTime"
-    type: "Long"
-    description: "申请时间"
-    value: "1520478772843"
-    canCover: true
-    required: false
-   -
-    name: "invoiceTime"
-    type: "Long"
-    description: "开票时间"
-    value: "1525686242857"
-    canCover: true
-    required: false
-   -
-    name: "sysUserId"
-    type: "String"
-    description: "系统内务人员ID"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "username"
-    type: "String"
-    description: "系统内务人员名称"
-    value: "admin"
-    canCover: true
-    required: false
-   -
-    name: "reason"
-    type: "String"
-    description: "驳回原因"
-    canCover: true
-    required: false
+    - name: "pickupId"
+      type: "String"
+      description: "主键"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "custName"
+      type: "String"
+      description: "客户名称"
+      value: "吉林公司"
+      canCover: true
+      required: false
+    - name: "sapNo"
+      type: "String"
+      description: "SAP编号"
+      value: "0001500100"
+      canCover: true
+      required: false
+    - name: "contacts"
+      type: "String"
+      description: "客户联系人"
+      value: "李美女"
+      canCover: true
+      required: false
+    - name: "custTel"
+      type: "String"
+      description: "客户手机号"
+      value: "13678998712"
+      canCover: true
+      required: false
+    - name: "salesman"
+      type: "String"
+      description: "所属业务员"
+      value: "张三"
+      canCover: true
+      required: false
+    - name: "salesmanTel"
+      type: "String"
+      description: "所属业务员手机号"
+      value: "18651835626"
+      canCover: true
+      required: false
+    - name: "status"
+      type: "Integer"
+      description: "状态"
+      defaultVal: "0"
+      value: "0"
+      canCover: true
+      required: false
+    - name: "note"
+      type: "String"
+      description: "取货备注"
+      value: "1212"
+      canCover: true
+      required: false
+    - name: "createdTime"
+      type: "Long"
+      description: "申请时间"
+      value: "1520478772843"
+      canCover: true
+      required: false
+    - name: "invoiceTime"
+      type: "Long"
+      description: "开票时间"
+      value: "1525686242857"
+      canCover: true
+      required: false
+    - name: "sysUserId"
+      type: "String"
+      description: "系统内务人员ID"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "username"
+      type: "String"
+      description: "系统内务人员名称"
+      value: "admin"
+      canCover: true
+      required: false
+    - name: "reason"
+      type: "String"
+      description: "驳回原因"
+      canCover: true
+      required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
   statusCode: 200
   contentAsString: "{\"pickupId\":\"1\",\"custName\":\"吉林公司\",\"sapNo\":\"0001500100\"\
     ,\"contacts\":\"李美女\",\"custTel\":\"13678998712\",\"salesman\":\"张三\",\"salesmanTel\"\
@@ -161,15 +140,15 @@ response:
     :null}"
 protocol: "HTTP/1.1"
 testExec:
- - "pm.test('验证响应状态码是200', function () {"
- - "  pm.response.to.have.status(200);"
- - "});"
- - ""
- - "pm.test('验证响应时间小于1000ms', function () {"
- - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
- - "});"
- - ""
- - "pm.test('验证返回json格式', function () {"
- - "  pm.response.to.be.json;"
- - "});"
- - ""
+  - "pm.test('验证响应状态码是200', function () {"
+  - "  pm.response.to.have.status(200);"
+  - "});"
+  - ""
+  - "pm.test('验证响应时间小于1000ms', function () {"
+  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+  - "});"
+  - ""
+  - "pm.test('验证返回json格式', function () {"
+  - "  pm.response.to.be.json;"
+  - "});"
+  - ""

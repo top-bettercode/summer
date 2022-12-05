@@ -14,7 +14,8 @@ public class PackageScanClassResolverTest {
 
   @Test
   public void findClass() {
-    System.err.println(packageScanClassResolver.findImplementations(Response.class, "top.bettercode"));
+    System.err.println(
+        packageScanClassResolver.findImplementations(Response.class, "top.bettercode"));
   }
 
   @Test

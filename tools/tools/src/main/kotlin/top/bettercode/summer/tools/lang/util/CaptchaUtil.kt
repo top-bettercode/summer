@@ -102,7 +102,16 @@ object CaptchaUtil {
         val g2 = image.createGraphics()
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         val colors = arrayOfNulls<Color>(5)
-        val colorSpaces = arrayOf(Color.WHITE, Color.CYAN, Color.GRAY, Color.LIGHT_GRAY, Color.MAGENTA, Color.ORANGE, Color.PINK, Color.YELLOW)
+        val colorSpaces = arrayOf(
+            Color.WHITE,
+            Color.CYAN,
+            Color.GRAY,
+            Color.LIGHT_GRAY,
+            Color.MAGENTA,
+            Color.ORANGE,
+            Color.PINK,
+            Color.YELLOW
+        )
         val fractions = FloatArray(colors.size)
         for (i in colors.indices) {
             colors[i] = colorSpaces[rand.nextInt(colorSpaces.size)]
@@ -147,8 +156,10 @@ object CaptchaUtil {
         val chars = code.toCharArray()
         for (i in 0 until verifySize) {
             val affine = AffineTransform()
-            affine.setToRotation(Math.PI / 4 * rand.nextDouble() * (if (rand.nextBoolean()) 1 else -1).toDouble(),
-                    (w / verifySize * i + fontSize / 2).toDouble(), (h / 2).toDouble())
+            affine.setToRotation(
+                Math.PI / 4 * rand.nextDouble() * (if (rand.nextBoolean()) 1 else -1).toDouble(),
+                (w / verifySize * i + fontSize / 2).toDouble(), (h / 2).toDouble()
+            )
             g2.transform = affine
             g2.drawChars(chars, i, 1, (w - 10) / verifySize * i + 5, h / 2 + fontSize / 2 - 10)
         }
@@ -207,7 +218,8 @@ object CaptchaUtil {
 
         for (i in 0 until h1) {
             val d = (period shr 1).toDouble() * sin(
-                    i.toDouble() / period.toDouble() + 6.2831853071795862 * phase.toDouble() / frames.toDouble())
+                i.toDouble() / period.toDouble() + 6.2831853071795862 * phase.toDouble() / frames.toDouble()
+            )
             g.copyArea(0, i, w1, 1, d.toInt(), 0)
             g.color = color
             g.drawLine(d.toInt(), i, 0, i)
@@ -232,7 +244,8 @@ object CaptchaUtil {
         val phase = 7
         for (i in 0 until w1) {
             val d = (period shr 1).toDouble() * sin(
-                    i.toDouble() / period.toDouble() + 6.2831853071795862 * phase.toDouble() / frames.toDouble())
+                i.toDouble() / period.toDouble() + 6.2831853071795862 * phase.toDouble() / frames.toDouble()
+            )
             g.copyArea(i, 0, 1, h1, 0, d.toInt())
             g.color = color
             g.drawLine(i, d.toInt(), i, 0)

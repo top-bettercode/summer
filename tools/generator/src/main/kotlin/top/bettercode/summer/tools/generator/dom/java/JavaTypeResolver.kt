@@ -212,6 +212,7 @@ object JavaTypeResolver {
             Types.BIT -> answer = calculateBitReplacement(column, defaultType)
             Types.DECIMAL, Types.NUMERIC -> answer =
                 calculateBigDecimalReplacement(column, defaultType)
+
             Types.DATE -> answer = calculateDateType(defaultType)
             Types.TIME -> answer = calculateTimeType(defaultType)
             Types.TIMESTAMP -> answer = calculateTimestampType(defaultType)

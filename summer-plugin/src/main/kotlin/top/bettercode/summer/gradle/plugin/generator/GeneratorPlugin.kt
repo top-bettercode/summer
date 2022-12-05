@@ -154,7 +154,9 @@ class GeneratorPlugin : Plugin<Project> {
                     ?: true
             extension.dataType = top.bettercode.summer.tools.generator.DataType.valueOf(
                 (findGeneratorProperty(project, "dataType")
-                    ?: top.bettercode.summer.tools.generator.DataType.DATABASE.name).uppercase(Locale.getDefault())
+                    ?: top.bettercode.summer.tools.generator.DataType.DATABASE.name).uppercase(
+                    Locale.getDefault()
+                )
             )
             //puml
             extension.pumlSrc = findGeneratorProperty(project, "puml.src") ?: "puml"

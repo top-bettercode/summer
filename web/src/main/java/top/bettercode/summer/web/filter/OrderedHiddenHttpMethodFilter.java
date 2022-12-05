@@ -77,8 +77,8 @@ public class OrderedHiddenHttpMethodFilter extends HiddenHttpMethodFilter implem
   }
 
   /**
-   * Simple {@link HttpServletRequest} wrapper that returns the supplied method for {@link
-   * HttpServletRequest#getMethod()}.
+   * Simple {@link HttpServletRequest} wrapper that returns the supplied method for
+   * {@link HttpServletRequest#getMethod()}.
    */
   private static class HttpMethodRequestWrapper extends HttpServletRequestWrapper {
 

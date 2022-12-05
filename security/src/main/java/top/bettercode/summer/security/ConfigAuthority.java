@@ -30,6 +30,7 @@ public @interface ConfigAuthority {
   @Inherited
   @Target({ElementType.METHOD, ElementType.TYPE})
   @interface List {
+
     ConfigAuthority[] value();
   }
 

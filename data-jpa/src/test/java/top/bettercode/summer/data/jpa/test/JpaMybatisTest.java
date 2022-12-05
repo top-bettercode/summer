@@ -113,7 +113,8 @@ public class JpaMybatisTest {
 
   @Test
   public void selectResultOne3() {
-    Assertions.assertThrows(IncorrectResultSizeDataAccessException.class, () -> repository.selectResultOne3(new User("Carter", null)));
+    Assertions.assertThrows(IncorrectResultSizeDataAccessException.class,
+        () -> repository.selectResultOne3(new User("Carter", null)));
   }
 
   @Test

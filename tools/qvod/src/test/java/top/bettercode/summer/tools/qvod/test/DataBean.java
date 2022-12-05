@@ -7,16 +7,18 @@ import top.bettercode.summer.tools.qvod.QvodAntiLeechUrl;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DataBean {
-  @QvodAntiLeechUrl
-  private String path="https://vod2.myqcloud.com/ad/dd/a.mp4";
-  @QvodAntiLeechUrl(separator = ",")
-  private String path1="https://vod2.myqcloud.com/ad/dd/a.mp4,https://vod2.myqcloud.com/ad/dd/b.mp4";
 
   @QvodAntiLeechUrl
-  private List<String> paths= CollectionsKt.listOf("https://vod2.myqcloud.com/ad/dd/a.mp4","https://vod2.myqcloud.com/ad/dd/b.mp4");
+  private String path = "https://vod2.myqcloud.com/ad/dd/a.mp4";
+  @QvodAntiLeechUrl(separator = ",")
+  private String path1 = "https://vod2.myqcloud.com/ad/dd/a.mp4,https://vod2.myqcloud.com/ad/dd/b.mp4";
+
   @QvodAntiLeechUrl
-  private String[] pathArray=new String[]{
-      "https://vod2.myqcloud.com/ad/dd/a.mp4","https://vod2.myqcloud.com/ad/dd/b.mp4"
+  private List<String> paths = CollectionsKt.listOf("https://vod2.myqcloud.com/ad/dd/a.mp4",
+      "https://vod2.myqcloud.com/ad/dd/b.mp4");
+  @QvodAntiLeechUrl
+  private String[] pathArray = new String[]{
+      "https://vod2.myqcloud.com/ad/dd/a.mp4", "https://vod2.myqcloud.com/ad/dd/b.mp4"
   };
 
   public String getPath() {

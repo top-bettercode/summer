@@ -130,8 +130,10 @@ object PostmanGenerator {
             postmanPreviewlanguage = when {
                 MediaType.APPLICATION_JSON
                     .isCompatibleWith(contentType) -> "json"
+
                 MediaType.APPLICATION_XML
                     .isCompatibleWith(contentType) -> "xml"
+
                 else -> "text"
             }
         )
@@ -145,11 +147,14 @@ object PostmanGenerator {
                 options = when {
                     MediaType.APPLICATION_JSON
                         .isCompatibleWith(request.headers.contentType) -> Body.rawLanguage()
+
                     MediaType.APPLICATION_XML
                         .isCompatibleWith(request.headers.contentType) -> Body.rawLanguage("xml")
+
                     else -> Body.rawLanguage("text")
                 }
             )
+
             request.partsExt.isNotEmpty() -> {
                 return Body(
                     "formdata",
@@ -157,6 +162,7 @@ object PostmanGenerator {
                         Formdatum(it.name, it.value, it.partType, it.postmanDescription)
                     })
             }
+
             HttpOperation.isPutOrPost(request) -> {
                 val param = request.parametersExt.checkBlank("$operationPath:request.parametersExt")
                 param.filter { it.name == "refresh_token" }.forEach {
@@ -172,6 +178,7 @@ object PostmanGenerator {
                     )
                 })
             }
+
             else ->
                 return null
         }

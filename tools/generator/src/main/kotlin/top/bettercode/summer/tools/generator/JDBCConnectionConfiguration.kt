@@ -34,6 +34,7 @@ class JDBCConnectionConfiguration(
      * 表前缀
      */
     var tablePrefixes: Array<String> = arrayOf()
+
     /**
      * 表后缀
      */

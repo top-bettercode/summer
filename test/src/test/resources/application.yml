@@ -5,7 +5,7 @@ summer:
       source: build/doc
       output: build/docOutput
       doc: true
-#    postman-tests: false
+  #    postman-tests: false
   sign:
     client-secret: 123
 

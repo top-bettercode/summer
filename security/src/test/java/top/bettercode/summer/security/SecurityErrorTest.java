@@ -63,7 +63,8 @@ public class SecurityErrorTest {
     HttpHeaders httpHeaders = new HttpHeaders();
 //    httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_XML));
     ResponseEntity<String> entity = restTemplate
-        .exchange("/testDefaultAuth?access_token=xxx", HttpMethod.GET, new HttpEntity<>(httpHeaders),
+        .exchange("/testDefaultAuth?access_token=xxx", HttpMethod.GET,
+            new HttpEntity<>(httpHeaders),
             String.class);
     System.err.println(entity.getBody());
     assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());

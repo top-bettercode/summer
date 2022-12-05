@@ -1,108 +1,94 @@
 request:
   parametersExt:
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    value: "20"
-    canCover: true
-    required: false
-   -
-    name: "newCust"
-    type: "Boolean"
-    description: "是否新增客户"
-    defaultVal: "false"
-    value: "false"
-    canCover: true
-    required: false
-   -
-    name: "keyword"
-    type: "string"
-    description: "关键字"
-    canCover: true
-    required: false
+    - name: "page"
+      type: "Integer"
+      description: "页码"
+      defaultVal: "1"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "size"
+      type: "Integer"
+      description: "当前页的数量"
+      value: "20"
+      canCover: true
+      required: false
+    - name: "newCust"
+      type: "Boolean"
+      description: "是否新增客户"
+      defaultVal: "false"
+      value: "false"
+      canCover: true
+      required: false
+    - name: "keyword"
+      type: "string"
+      description: "关键字"
+      canCover: true
+      required: false
   headersExt:
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    value: "application/json;version=2.0"
-    canCover: true
-    required: false
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<_qianmingsuanfa>>"
-    value: "cc54606f7208369215576f07705cee5c"
-    canCover: true
-    required: true
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/x-www-form-urlencoded"
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    value: "b7af896b-be48-4d9d-b6fd-2ab6b41e93a7"
-    canCover: true
-    required: false
+    - name: "Accept"
+      type: "String"
+      description: "客户端接收格式"
+      value: "application/json;version=2.0"
+      canCover: true
+      required: false
+    - name: "user-agent"
+      type: "String"
+      description: "用户代理"
+      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+      canCover: true
+      required: false
+    - name: "sign"
+      type: "String"
+      description: "接口签名 <<_qianmingsuanfa>>"
+      value: "cc54606f7208369215576f07705cee5c"
+      canCover: true
+      required: true
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/x-www-form-urlencoded"
+      canCover: true
+      required: false
+    - name: "accessToken"
+      type: "String"
+      description: "存取令牌"
+      value: "b7af896b-be48-4d9d-b6fd-2ab6b41e93a7"
+      canCover: true
+      required: false
   restUri: "/custInfos"
   method: "GET"
 response:
   contentExt:
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    value: "19"
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    value: "20"
-    canCover: true
-    required: false
-   -
-    name: "pages"
-    type: "Long"
-    description: "总页数"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "list"
-    type: "Array"
-    description: "内容"
-    value: "[{\"custId\":\"CUST000083\",\"custName\":\"成都云图测试中心\",\"phone\":\"13363548888\"\
+    - name: "total"
+      type: "Long"
+      description: "总记录数"
+      value: "19"
+      canCover: true
+      required: false
+    - name: "size"
+      type: "Integer"
+      description: "当前页的数量"
+      value: "20"
+      canCover: true
+      required: false
+    - name: "pages"
+      type: "Long"
+      description: "总页数"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "page"
+      type: "Integer"
+      description: "页码"
+      defaultVal: "1"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "list"
+      type: "Array"
+      description: "内容"
+      value: "[{\"custId\":\"CUST000083\",\"custName\":\"成都云图测试中心\",\"phone\":\"13363548888\"\
       ,\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"FREEZE\",\"sapNo\":null,\"\
       brandNames\":[]},{\"custId\":\"CUST000082\",\"custName\":\"成都云图测试账号1\",\"phone\"\
       :\"13810828700\",\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\":\"FREEZE\",\"\
@@ -143,65 +129,57 @@ response:
       ,\"sapNo\":null,\"brandNames\":[]},{\"custId\":\"CUST00670\",\"custName\":\"\
       湖北天门何浩明\",\"phone\":\"18672885888\",\"reviewStatus\":\"HAS_AUDIT\",\"custStatus\"\
       :\"NORMAL\",\"sapNo\":null,\"brandNames\":[]}]"
-    canCover: true
-    children:
-     -
-      name: "custId"
-      type: "String"
-      description: "客户ID"
-      value: "CUST000083"
       canCover: true
+      children:
+        - name: "custId"
+          type: "String"
+          description: "客户ID"
+          value: "CUST000083"
+          canCover: true
+          required: false
+        - name: "custName"
+          type: "String"
+          description: "客户名称"
+          value: "成都云图测试中心"
+          canCover: true
+          required: false
+        - name: "phone"
+          type: "String"
+          description: "手机"
+          value: "13363548888"
+          canCover: true
+          required: false
+        - name: "reviewStatus"
+          type: "String"
+          description: "审核状态"
+          value: "HAS_AUDIT"
+          canCover: true
+          required: false
+        - name: "custStatus"
+          type: "String"
+          description: "客户状态"
+          value: "FREEZE"
+          canCover: true
+          required: false
+        - name: "sapNo"
+          type: "String"
+          description: "SAP Number"
+          canCover: true
+          required: false
+        - name: "brandNames"
+          type: "List<String>"
+          description: "代理的品牌"
+          value: "[\"凯利丰\"]"
+          canCover: true
+          required: false
       required: false
-     -
-      name: "custName"
-      type: "String"
-      description: "客户名称"
-      value: "成都云图测试中心"
-      canCover: true
-      required: false
-     -
-      name: "phone"
-      type: "String"
-      description: "手机"
-      value: "13363548888"
-      canCover: true
-      required: false
-     -
-      name: "reviewStatus"
-      type: "String"
-      description: "审核状态"
-      value: "HAS_AUDIT"
-      canCover: true
-      required: false
-     -
-      name: "custStatus"
-      type: "String"
-      description: "客户状态"
-      value: "FREEZE"
-      canCover: true
-      required: false
-     -
-      name: "sapNo"
-      type: "String"
-      description: "SAP Number"
-      canCover: true
-      required: false
-     -
-      name: "brandNames"
-      type: "List<String>"
-      description: "代理的品牌"
-      value: "[\"凯利丰\"]"
-      canCover: true
-      required: false
-    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
   statusCode: 200
   contentAsString: "{\"total\":19,\"size\":20,\"pages\":1,\"page\":1,\"list\":[{\"\
     custId\":\"CUST000083\",\"custName\":\"成都云图测试中心\",\"phone\":\"13363548888\",\"\
@@ -245,15 +223,15 @@ response:
     :[]}]}"
 protocol: "HTTP/1.1"
 testExec:
- - "pm.test('验证响应状态码是200', function () {"
- - "  pm.response.to.have.status(200);"
- - "});"
- - ""
- - "pm.test('验证响应时间小于1000ms', function () {"
- - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
- - "});"
- - ""
- - "pm.test('验证返回json格式', function () {"
- - "  pm.response.to.be.json;"
- - "});"
- - ""
+  - "pm.test('验证响应状态码是200', function () {"
+  - "  pm.response.to.have.status(200);"
+  - "});"
+  - ""
+  - "pm.test('验证响应时间小于1000ms', function () {"
+  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+  - "});"
+  - ""
+  - "pm.test('验证返回json格式', function () {"
+  - "  pm.response.to.be.json;"
+  - "});"
+  - ""

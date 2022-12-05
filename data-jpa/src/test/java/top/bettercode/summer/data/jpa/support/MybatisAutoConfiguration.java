@@ -69,7 +69,8 @@ public class MybatisAutoConfiguration implements InitializingBean {
 
     Class<TypeHandler<?>>[] typeHandlerClasses = properties.getTypeHandlerClasses();
     if (!ArrayUtil.isEmpty(typeHandlerClasses)) {
-      Stream.of(typeHandlerClasses).forEach(typeHandler -> configuration.getTypeHandlerRegistry().register(typeHandler));
+      Stream.of(typeHandlerClasses)
+          .forEach(typeHandler -> configuration.getTypeHandlerRegistry().register(typeHandler));
     }
 
     Resource[] mapperLocations = JpaMybatisAutoConfiguration.resolveMapperLocations(

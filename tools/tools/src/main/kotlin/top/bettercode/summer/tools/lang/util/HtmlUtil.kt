@@ -76,10 +76,11 @@ object HtmlUtil {
             val html = elements.html()
             val clean = Jsoup.clean(html, Safelist.none())
             content = Parser.unescapeEntities(clean, false)
-            val split = content.split("\\\\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val split =
+                content.split("\\\\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             val contentBuilder = StringBuilder("")
             split.filterNot { it.isBlank() }
-                    .forEach { contentBuilder.append("\t").append(it.trim()).append("\n") }
+                .forEach { contentBuilder.append("\t").append(it.trim()).append("\n") }
 
             contentBuilder.toString()
         } catch (e: IOException) {

@@ -28,7 +28,7 @@ public class LogstashTcpSocketProperties {
   /**
    * Destinations to which to attempt to send logs, in order of preference.
    * <p>
-   *
+   * <p>
    * Logs are only sent to one destination at a time.
    * <p>
    */
@@ -39,8 +39,8 @@ public class LogstashTcpSocketProperties {
    */
   private Duration reconnectionDelay = new Duration(DEFAULT_RECONNECTION_DELAY);
   /**
-   * The encoder which is ultimately responsible for writing the event to the socket's {@link
-   * java.io.OutputStream}.
+   * The encoder which is ultimately responsible for writing the event to the socket's
+   * {@link java.io.OutputStream}.
    */
   private Class<? extends Encoder<ILoggingEvent>> encoderClass = LogstashEncoder.class;
 

@@ -14,6 +14,7 @@ import javax.validation.groups.Default
 
 
 interface Create : Default
+
 /**
  * @author Peter Wu
  */
@@ -27,9 +28,13 @@ class ClientTokenController {
     @GetMapping(value = ["/clientTokens"], name = "列表")
     fun index(): Any {
         val results = listOf(insert())
-        return ok(mapOf("page" to 1,
+        return ok(
+            mapOf(
+                "page" to 1,
                 "size" to 20,
-                "list" to results))
+                "list" to results
+            )
+        )
     }
 
     @PostMapping(value = ["/oauth/token"], name = "token")

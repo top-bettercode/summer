@@ -13,13 +13,13 @@ import top.bettercode.summer.tools.lang.keyword.replace.ReplaceStrategy
 class SkipKeywordFilter(
     root: CharNode = CharNode(),
     /**
-         * 设置匹配模式
-         */
-        matchType: MatchType = MatchType.LONG,
+     * 设置匹配模式
+     */
+    matchType: MatchType = MatchType.LONG,
     /**
-         * 设置替换策略
-         */
-        strategy: ReplaceStrategy = DefaultReplaceStrategy()
+     * 设置替换策略
+     */
+    strategy: ReplaceStrategy = DefaultReplaceStrategy()
 ) : SimpleKeywordFilter(root, matchType, strategy) {
 
     private val skipChars = HashSet<Char>(0)
@@ -62,13 +62,22 @@ class SkipKeywordFilter(
                     result.append(word)
                     ignoredWords.clear()
                 } else if (containLast && matchShort && lastEnd) {
-                    result.append(strategy
-                            .replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
+                    result.append(
+                        strategy
+                            .replaceWith(words.copyOfRange(lastIndex, lastIndex + length))
+                    )
                     ignoredWords.clear()
                     last = root
                 } else if (!containLast || end) {
                     if (lastEnd) {
-                        result.append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
+                        result.append(
+                            strategy.replaceWith(
+                                words.copyOfRange(
+                                    lastIndex,
+                                    lastIndex + length
+                                )
+                            )
+                        )
                         if (!containLast) {
                             i--
                         }
@@ -94,7 +103,14 @@ class SkipKeywordFilter(
                                     count++
                                 }
                                 failLength += count
-                                result.append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + failLength)))
+                                result.append(
+                                    strategy.replaceWith(
+                                        words.copyOfRange(
+                                            lastIndex,
+                                            lastIndex + failLength
+                                        )
+                                    )
+                                )
                             }
                         }
                     }

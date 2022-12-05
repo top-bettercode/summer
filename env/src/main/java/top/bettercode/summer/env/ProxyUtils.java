@@ -8,21 +8,20 @@ import org.springframework.aop.support.AopUtils;
  */
 public final class ProxyUtils {
 
-	private ProxyUtils() {
-		throw new IllegalStateException("Can't instantiate a utility class");
-	}
+  private ProxyUtils() {
+    throw new IllegalStateException("Can't instantiate a utility class");
+  }
 
-	@SuppressWarnings("unchecked")
-	public static <T> T getTargetObject(Object candidate) {
-		try {
-			if (AopUtils.isAopProxy(candidate) && (candidate instanceof Advised)) {
-				return (T) ((Advised) candidate).getTargetSource().getTarget();
-			}
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException("Failed to unwrap proxied object", ex);
-		}
-		return (T) candidate;
-	}
+  @SuppressWarnings("unchecked")
+  public static <T> T getTargetObject(Object candidate) {
+    try {
+      if (AopUtils.isAopProxy(candidate) && (candidate instanceof Advised)) {
+        return (T) ((Advised) candidate).getTargetSource().getTarget();
+      }
+    } catch (Exception ex) {
+      throw new IllegalStateException("Failed to unwrap proxied object", ex);
+    }
+    return (T) candidate;
+  }
 
 }

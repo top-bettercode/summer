@@ -118,7 +118,7 @@ public class Security200Test {
   @Test
   public void auth() throws Exception {
     HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer "+getApiToken().getAccessToken());
+    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiToken().getAccessToken());
     ResponseEntity<String> entity = restTemplate
         .exchange("/testDefaultAuth", HttpMethod.POST,
             new HttpEntity<>(Collections.singletonMap("aa", "xxx"), httpHeaders), String.class);

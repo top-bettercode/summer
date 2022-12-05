@@ -10,6 +10,7 @@ abstract class JavaElement {
 
     /** The annotations.  */
     val annotations: Annotations = Annotations()
+
     /** The visibility.  */
     open var visibility = JavaVisibility.DEFAULT
 

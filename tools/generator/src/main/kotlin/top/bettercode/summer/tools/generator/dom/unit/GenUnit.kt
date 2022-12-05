@@ -26,7 +26,8 @@ interface GenUnit {
                         directorySet.name.lowercase(
                             Locale.getDefault()
                         )
-                    }/$name")
+                    }/$name"
+                )
             }
         }
 

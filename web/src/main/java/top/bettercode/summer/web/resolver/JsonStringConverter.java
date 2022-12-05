@@ -39,12 +39,14 @@ public class JsonStringConverter implements ConditionalGenericConverter {
   }
 
   @Override
-  public Object convert(Object source, @NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
+  public Object convert(Object source, @NotNull TypeDescriptor sourceType,
+      @NotNull TypeDescriptor targetType) {
     if (!StringUtils.hasText((String) source)) {
       return null;
     }
     CollectionType collectionType = TypeFactory
-        .defaultInstance().constructCollectionType(List.class, targetType.getResolvableType().resolveGeneric(0));
+        .defaultInstance()
+        .constructCollectionType(List.class, targetType.getResolvableType().resolveGeneric(0));
     try {
       return objectMapper.readValue((String) source, collectionType);
     } catch (IOException e) {

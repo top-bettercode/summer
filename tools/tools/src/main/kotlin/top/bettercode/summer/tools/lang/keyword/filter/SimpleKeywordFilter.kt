@@ -13,13 +13,13 @@ import top.bettercode.summer.tools.lang.keyword.replace.ReplaceStrategy
 open class SimpleKeywordFilter(
     val root: CharNode = CharNode(),
     /**
-         * 设置匹配模式
-         */
-        var matchType: MatchType = MatchType.LONG,
+     * 设置匹配模式
+     */
+    var matchType: MatchType = MatchType.LONG,
     /**
-         * 设置替换策略
-         */
-        var strategy: ReplaceStrategy = DefaultReplaceStrategy()
+     * 设置替换策略
+     */
+    var strategy: ReplaceStrategy = DefaultReplaceStrategy()
 ) :
     KeywordFilter {
 
@@ -48,12 +48,14 @@ open class SimpleKeywordFilter(
                 result.append(word)
             } else if (containLast && matchShort && lastEnd) {
                 result
-                        .append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
+                    .append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
                 last = root
             } else if (!containLast || end) {
                 if (lastEnd) {
-                    result.append(strategy
-                            .replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
+                    result.append(
+                        strategy
+                            .replaceWith(words.copyOfRange(lastIndex, lastIndex + length))
+                    )
                     if (!containLast) {
                         i--
                     }
@@ -70,7 +72,14 @@ open class SimpleKeywordFilter(
                         } else {
                             val failLength = failNode!!.length
                             i = lastIndex + failLength - 1
-                            result.append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + failLength)))
+                            result.append(
+                                strategy.replaceWith(
+                                    words.copyOfRange(
+                                        lastIndex,
+                                        lastIndex + failLength
+                                    )
+                                )
+                            )
                         }
                     }
                 }

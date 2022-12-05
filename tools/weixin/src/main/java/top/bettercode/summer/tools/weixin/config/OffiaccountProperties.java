@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "summer.wechat")
 public class OffiaccountProperties extends WexinProperties implements IOffiaccountProperties {
 
-  private Boolean userUnionid= false;
+  private Boolean userUnionid = false;
 
   /**
    * 项目部署的URL地址

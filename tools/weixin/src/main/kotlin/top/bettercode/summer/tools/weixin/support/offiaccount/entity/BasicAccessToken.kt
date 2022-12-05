@@ -5,9 +5,9 @@ import top.bettercode.summer.tools.weixin.support.WeixinResponse
 
 data class BasicAccessToken(
 
-	@field:JsonProperty("access_token")
-	val accessToken: String? = null,
+    @field:JsonProperty("access_token")
+    val accessToken: String? = null,
 
-	@field:JsonProperty("expires_in")
-	val expiresIn: Int? = null
-): WeixinResponse()
+    @field:JsonProperty("expires_in")
+    val expiresIn: Int? = null
+) : WeixinResponse()

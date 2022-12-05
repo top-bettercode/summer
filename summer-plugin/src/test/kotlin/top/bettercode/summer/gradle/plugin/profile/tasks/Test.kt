@@ -11,14 +11,19 @@ class Test {
 
     @Test
     fun test() {
-        val inputStream = top.bettercode.summer.gradle.plugin.profile.tasks.Test::class.java.getResourceAsStream("/application.yml")
+        val inputStream =
+            top.bettercode.summer.gradle.plugin.profile.tasks.Test::class.java.getResourceAsStream("/application.yml")
         val map = Yaml().loadAs(inputStream, Map::class.java)
         val result = parseYml(map)
         System.err.println(map)
         System.err.println(result)
     }
 
-    fun parseYml(map: Map<*, *>, result: MutableMap<Any, Any> = mutableMapOf(), prefix: String = ""): MutableMap<Any, Any> {
+    fun parseYml(
+        map: Map<*, *>,
+        result: MutableMap<Any, Any> = mutableMapOf(),
+        prefix: String = ""
+    ): MutableMap<Any, Any> {
         map.forEach { (k, u) ->
             if (u != null) {
                 if (u is Map<*, *>) {

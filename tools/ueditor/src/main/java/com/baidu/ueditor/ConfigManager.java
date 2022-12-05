@@ -32,7 +32,6 @@ public final class ConfigManager {
    */
   private ConfigManager() throws IOException {
 
-
     String configContent = this.readFile(new ClassPathResource(configFileName).getInputStream());
 
     try {

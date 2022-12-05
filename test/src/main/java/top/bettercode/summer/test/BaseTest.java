@@ -17,7 +17,7 @@ import top.bettercode.summer.web.support.ApplicationContextHolder;
 @TestPropertySource(properties = {
     "summer.security.enabled=false"
 })
-public abstract class BaseTest extends BaseLogTest{
+public abstract class BaseTest extends BaseLogTest {
 
 
   protected boolean embeddedDatabase() {

@@ -7,7 +7,6 @@ import org.springframework.http.MediaType
 import org.springframework.util.StreamUtils
 import org.springframework.web.bind.annotation.ValueConstants
 import org.springframework.web.method.HandlerMethod
-import top.bettercode.summer.web.apisign.ApiSignProperties
 import top.bettercode.summer.logging.RequestLoggingHandler
 import top.bettercode.summer.test.autodoc.InitField.toFields
 import top.bettercode.summer.tools.autodoc.AutodocUtil
@@ -21,6 +20,7 @@ import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
 import top.bettercode.summer.tools.lang.operation.Operation
+import top.bettercode.summer.web.apisign.ApiSignProperties
 import top.bettercode.summer.web.config.SummerWebProperties
 import java.io.File
 import java.net.URI
@@ -84,7 +84,8 @@ class AutodocHandler(
                     log.warn("docOperation resource未设置")
                     return
                 }
-                operation.collectionName = operation.collectionName.replace("/", AutodocUtil.replaceChar)
+                operation.collectionName =
+                    operation.collectionName.replace("/", AutodocUtil.replaceChar)
                 operation.name = operation.name.replace("/", AutodocUtil.replaceChar)
 
                 if (genProperties.projectPath.isNotBlank()) {

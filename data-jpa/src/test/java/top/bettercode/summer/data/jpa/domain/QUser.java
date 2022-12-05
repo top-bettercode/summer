@@ -17,35 +17,35 @@ import javax.annotation.Generated;
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QUser extends EntityPathBase<User> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public static final QUser user = new QUser("user");
+  public static final QUser user = new QUser("user");
 
-    public final QBaseUser _super = new QBaseUser(this);
+  public final QBaseUser _super = new QBaseUser(this);
 
-    //inherited
-    public final BooleanPath deleted = _super.deleted;
+  //inherited
+  public final BooleanPath deleted = _super.deleted;
 
-    //inherited
-    public final StringPath firstName = _super.firstName;
+  //inherited
+  public final StringPath firstName = _super.firstName;
 
-    //inherited
-    public final NumberPath<Integer> id = _super.id;
+  //inherited
+  public final NumberPath<Integer> id = _super.id;
 
-    //inherited
-    public final StringPath lastName = _super.lastName;
+  //inherited
+  public final StringPath lastName = _super.lastName;
 
-    public QUser(String variable) {
-        super(User.class, forVariable(variable));
-    }
+  public QUser(String variable) {
+    super(User.class, forVariable(variable));
+  }
 
-    public QUser(Path<? extends User> path) {
-        super(path.getType(), path.getMetadata());
-    }
+  public QUser(Path<? extends User> path) {
+    super(path.getType(), path.getMetadata());
+  }
 
-    public QUser(PathMetadata metadata) {
-        super(User.class, metadata);
-    }
+  public QUser(PathMetadata metadata) {
+    super(User.class, metadata);
+  }
 
 }
 

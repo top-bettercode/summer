@@ -27,11 +27,13 @@ object SocketTestServer {
                     `is`.lines().forEach {
                         println("Client:$it")
                     }
-                    os.println("HTTP/1.1 200 OK\n"
-                            + "Date: Sat, 31 Dec 2005 23:59:59 GMT\n"
-                            + "Content-Type: text/html;charset=ISO-8859-1\n"
-                            + "\n"
-                            + "result")
+                    os.println(
+                        "HTTP/1.1 200 OK\n"
+                                + "Date: Sat, 31 Dec 2005 23:59:59 GMT\n"
+                                + "Content-Type: text/html;charset=ISO-8859-1\n"
+                                + "\n"
+                                + "result"
+                    )
                     os.print("finish")
                     System.err.println("finish")
                     os.flush()

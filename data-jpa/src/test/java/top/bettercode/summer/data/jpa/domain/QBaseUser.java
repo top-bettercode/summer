@@ -17,29 +17,29 @@ import javax.annotation.Generated;
 @Generated("com.querydsl.codegen.SupertypeSerializer")
 public class QBaseUser extends EntityPathBase<BaseUser> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public static final QBaseUser baseUser = new QBaseUser("baseUser");
+  public static final QBaseUser baseUser = new QBaseUser("baseUser");
 
-    public final BooleanPath deleted = createBoolean("deleted");
+  public final BooleanPath deleted = createBoolean("deleted");
 
-    public final StringPath firstName = createString("firstName");
+  public final StringPath firstName = createString("firstName");
 
-    public final NumberPath<Integer> id = createNumber("id", Integer.class);
+  public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
-    public final StringPath lastName = createString("lastName");
+  public final StringPath lastName = createString("lastName");
 
-    public QBaseUser(String variable) {
-        super(BaseUser.class, forVariable(variable));
-    }
+  public QBaseUser(String variable) {
+    super(BaseUser.class, forVariable(variable));
+  }
 
-    public QBaseUser(Path<? extends BaseUser> path) {
-        super(path.getType(), path.getMetadata());
-    }
+  public QBaseUser(Path<? extends BaseUser> path) {
+    super(path.getType(), path.getMetadata());
+  }
 
-    public QBaseUser(PathMetadata metadata) {
-        super(BaseUser.class, metadata);
-    }
+  public QBaseUser(PathMetadata metadata) {
+    super(BaseUser.class, metadata);
+  }
 
 }
 

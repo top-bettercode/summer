@@ -66,7 +66,8 @@ public class OrderedHttpPutFormContentFilter extends OncePerRequestFilter implem
   }
 
   @Override
-  protected void doFilterInternal(final HttpServletRequest request, @NotNull HttpServletResponse response,
+  protected void doFilterInternal(final HttpServletRequest request,
+      @NotNull HttpServletResponse response,
       @NotNull FilterChain filterChain) throws ServletException, IOException {
 
     if (("PUT".equals(request.getMethod()) || "DELETE".equals(request.getMethod()) || "PATCH"

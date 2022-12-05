@@ -24,7 +24,8 @@ public class CentConverter implements ConditionalGenericConverter {
   }
 
   @Override
-  public Object convert(Object object, @NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
+  public Object convert(Object object, @NotNull TypeDescriptor sourceType,
+      @NotNull TypeDescriptor targetType) {
     if (!StringUtils.hasText((String) object)) {
       return null;
     }

@@ -17,7 +17,8 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     @Test
     @Throws(Exception::class)
     fun test() {
-        mockMvc.perform(post("/test")
+        mockMvc.perform(
+            post("/test")
                 .param("username", "1")
                 .param("username", "1")
                 .param("password", "20")
@@ -32,7 +33,8 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     @Test
     @Throws(Exception::class)
     fun testGet() {
-        mockMvc.perform(get("/test")
+        mockMvc.perform(
+            get("/test")
                 .param("username", "1")
                 .param("username", "1")
                 .param("password", "20")
@@ -47,7 +49,8 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     @Test
     @Throws(Exception::class)
     fun testGet1() {
-        mockMvc.perform(get("/test")
+        mockMvc.perform(
+            get("/test")
                 .content(requestBody)
                 .header("Accept", "application/json;version=2.0")
                 .header("user-agent", "app/2.0 (iPhone; iOS 8.1.2; Scale/2.00)")
@@ -57,7 +60,8 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     @Test
     @Throws(Exception::class)
     fun testGet2() {
-        mockMvc.perform(get("/test")
+        mockMvc.perform(
+            get("/test")
                 .param("username", "1")
                 .param("username", "1")
                 .param("password", "20")
@@ -71,7 +75,8 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     @Test
     @Throws(Exception::class)
     fun testPostForm() {
-        mockMvc.perform(post("/test")
+        mockMvc.perform(
+            post("/test")
                 .param("username", "1")
                 .param("username", "1")
                 .param("password", "20")
@@ -85,7 +90,8 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
 
     @Test
     fun testNoRead() {
-        mockMvc.perform(post("/testNoRead")
+        mockMvc.perform(
+            post("/testNoRead")
                 .param("username", "1")
                 .param("password", "20")
                 .content(requestBody)
@@ -96,7 +102,8 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
 
     @Test
     fun testNoReqestbody() {
-        mockMvc.perform(post("/testNoRead")
+        mockMvc.perform(
+            post("/testNoRead")
                 .param("username", "1")
                 .param("password", "20")
                 .header("Accept", "application/json;version=2.0")
@@ -106,7 +113,8 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
 
     @Test
     fun encrypted() {
-        mockMvc.perform(post("/encrypted")
+        mockMvc.perform(
+            post("/encrypted")
                 .param("username", "1")
                 .param("password", "20")
                 .header("token", "abcdefg")
@@ -117,8 +125,16 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
 
     @Test
     fun testMultipart() {
-        mockMvc.perform(multipart("/multipart")
-                .file(MockMultipartFile("file", "filename", null, ClassPathResource("application.yml").inputStream))
+        mockMvc.perform(
+            multipart("/multipart")
+                .file(
+                    MockMultipartFile(
+                        "file",
+                        "filename",
+                        null,
+                        ClassPathResource("application.yml").inputStream
+                    )
+                )
                 .param("username", "1")
                 .param("password", "20")
                 .header("token", "abcdefg")

@@ -34,7 +34,6 @@ class CorpClient(properties: ICorpProperties) :
     }
 
 
-
     override fun getWebPageAccessToken(code: String): CorpWebPageAccessToken {
         return getForObject(
             "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=%s&code=CODE",

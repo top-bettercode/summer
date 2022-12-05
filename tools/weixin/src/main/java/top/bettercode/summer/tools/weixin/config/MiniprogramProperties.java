@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.wechat.mini")
-public class MiniprogramProperties extends WexinProperties implements IMiniprogramProperties{
+public class MiniprogramProperties extends WexinProperties implements IMiniprogramProperties {
 
 
 }

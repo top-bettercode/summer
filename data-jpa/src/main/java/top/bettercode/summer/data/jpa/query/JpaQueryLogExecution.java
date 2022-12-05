@@ -22,7 +22,8 @@ public class JpaQueryLogExecution extends JpaQueryExecution {
 
   @Override
   @Nullable
-  public Object execute(@NotNull AbstractJpaQuery query, @NotNull JpaParametersParameterAccessor accessor) {
+  public Object execute(@NotNull AbstractJpaQuery query,
+      @NotNull JpaParametersParameterAccessor accessor) {
     try {
       MDC.put("id", id);
       return delegate.execute(query, accessor);

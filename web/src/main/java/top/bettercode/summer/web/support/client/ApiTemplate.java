@@ -59,7 +59,8 @@ public class ApiTemplate extends RestTemplate {
 
   @NotNull
   @Override
-  protected ClientHttpRequest createRequest(@NotNull URI url, @NotNull HttpMethod method) throws IOException {
+  protected ClientHttpRequest createRequest(@NotNull URI url, @NotNull HttpMethod method)
+      throws IOException {
     if (log.isInfoEnabled()) {
       return new ClientHttpRequestWrapper(collectionName, name, logMarker,
           super.createRequest(url, method), requestDecrypt, responseDecrypt);

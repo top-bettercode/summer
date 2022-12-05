@@ -85,7 +85,10 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         if (existProperty(environment, "summer.logging.smtp.host")) {
             synchronized(context.configurationLock) {
                 val smtpProperties =
-                    Binder.get(environment).bind("summer.logging.smtp", top.bettercode.summer.logging.SmtpProperties::class.java)
+                    Binder.get(environment).bind(
+                        "summer.logging.smtp",
+                        top.bettercode.summer.logging.SmtpProperties::class.java
+                    )
                         .get()
                 val levelMailAppender = mailAppender(context, smtpProperties, warnSubject)
                 val mailMarker = smtpProperties.marker
@@ -104,7 +107,10 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         }
 
         val filesProperties = if (existProperty(environment, "summer.logging.files.path"))
-            Binder.get(environment).bind("summer.logging.files", top.bettercode.summer.logging.FilesProperties::class.java)
+            Binder.get(environment).bind(
+                "summer.logging.files",
+                top.bettercode.summer.logging.FilesProperties::class.java
+            )
                 .get() else top.bettercode.summer.logging.FilesProperties()
 
         val fileLogPattern = environment.getProperty("logging.pattern.file", FILE_LOG_PATTERN)
@@ -118,7 +124,10 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             synchronized(context.configurationLock) {
                 val slackProperties =
                     Binder.get(environment)
-                        .bind("summer.logging.slack", top.bettercode.summer.logging.SlackProperties::class.java).get()
+                        .bind(
+                            "summer.logging.slack",
+                            top.bettercode.summer.logging.SlackProperties::class.java
+                        ).get()
                 try {
                     val logsPath = environment.getProperty("summer.logging.files.path")
                     val managementPath =
@@ -176,7 +185,10 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         if (existProperty(environment, "summer.logging.socket.remote-host")) {
             synchronized(context.configurationLock) {
                 val socketProperties = Binder.get(environment)
-                    .bind("summer.logging.socket", top.bettercode.summer.logging.SocketLoggingProperties::class.java).get()
+                    .bind(
+                        "summer.logging.socket",
+                        top.bettercode.summer.logging.SocketLoggingProperties::class.java
+                    ).get()
                 val socketAppender = if (socketProperties.ssl == null) socketAppender(
                     context,
                     socketProperties
@@ -194,7 +206,10 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         if (existProperty(environment, "summer.logging.logstash.destinations[0]")) {
             synchronized(context.configurationLock) {
                 val socketProperties = Binder.get(environment)
-                    .bind("summer.logging.logstash", top.bettercode.summer.logging.LogstashTcpSocketProperties::class.java).get()
+                    .bind(
+                        "summer.logging.logstash",
+                        top.bettercode.summer.logging.LogstashTcpSocketProperties::class.java
+                    ).get()
                 val socketAppender = logstashTcpSocketAppender(context, socketProperties)
                 socketAppender.start()
                 context.getLogger("root").addAppender(socketAppender)
@@ -250,8 +265,11 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     }
 
     private fun setAllFileAppender(
-        context: LoggerContext, fileLogPattern: String, filesProperties: top.bettercode.summer.logging.FilesProperties,
-        rootLevel: String?, logFile: LogFile?
+        context: LoggerContext,
+        fileLogPattern: String,
+        filesProperties: top.bettercode.summer.logging.FilesProperties,
+        rootLevel: String?,
+        logFile: LogFile?
     ) {
         val appender = RollingFileAppender<ILoggingEvent>()
         val encoder = PatternLayoutEncoder()
@@ -278,8 +296,13 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     }
 
     private fun setRootFileAppender(
-        context: LoggerContext, fileLogPattern: String, filesProperties: top.bettercode.summer.logging.FilesProperties,
-        rootLevel: String?, spilts: Set<String>, markers: Set<String>, levels: Set<String>
+        context: LoggerContext,
+        fileLogPattern: String,
+        filesProperties: top.bettercode.summer.logging.FilesProperties,
+        rootLevel: String?,
+        spilts: Set<String>,
+        markers: Set<String>,
+        levels: Set<String>
     ) {
 
         val appender = RollingFileAppender<ILoggingEvent>()
@@ -467,7 +490,9 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
     private fun setRollingPolicy(
         appender: RollingFileAppender<ILoggingEvent>,
-        context: LoggerContext, filesProperties: top.bettercode.summer.logging.FilesProperties, logFile: String
+        context: LoggerContext,
+        filesProperties: top.bettercode.summer.logging.FilesProperties,
+        logFile: String
     ) {
         if (filesProperties.isRolloverOnStart)
             appender.rollingPolicy = StartAndSizeAndTimeBasedRollingPolicy<ILoggingEvent>().apply {
@@ -492,7 +517,9 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
      */
     private fun mailAppender(
         context: LoggerContext,
-        smtpProperties: top.bettercode.summer.logging.SmtpProperties, warnSubject: String, mailMarker: String? = null
+        smtpProperties: top.bettercode.summer.logging.SmtpProperties,
+        warnSubject: String,
+        mailMarker: String? = null
     ): Appender<ILoggingEvent> {
         val appender = SMTPAppender()
         with(appender) {

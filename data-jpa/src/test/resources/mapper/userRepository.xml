@@ -117,7 +117,8 @@
     where deleted = 0
   </select>
   <sql id="name">
-    first_name, last_name
+    first_name
+    , last_name
   </sql>
   <select id="selectMybatisIfParam"
     resultType="top.bettercode.summer.data.jpa.domain.User">
@@ -176,7 +177,6 @@
     select first_name, last_name
     from t_user
     where deleted = 0
-    order by id
-    limit 1
+    order by id limit 1
   </select>
 </mapper>

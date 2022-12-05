@@ -143,7 +143,8 @@ public class SapService {
         if (message.matches(msgRegex)) {
           String fieldValue = message.replaceAll(msgRegex, "$1");
           String fieldName = message.replaceAll(msgRegex, "$2");
-          JCoField jCoField = getField(Objects.requireNonNull(function).getImportParameterList(), fieldName);
+          JCoField jCoField = getField(Objects.requireNonNull(function).getImportParameterList(),
+              fieldName);
           if (jCoField != null) {
             fieldName = jCoField.getDescription();
             int length = jCoField.getLength();

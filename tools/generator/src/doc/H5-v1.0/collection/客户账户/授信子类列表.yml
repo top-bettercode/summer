@@ -1,167 +1,145 @@
 request:
   parametersExt:
-   -
-    name: "serviceType"
-    type: "String"
-    description: "业务类型"
-    value: "01"
-    canCover: true
-    required: true
-   -
-    name: "childrenAccountType"
-    type: "String"
-    description: "01"
-    value: "06"
-    canCover: true
-    required: true
-   -
-    name: "custId"
-    type: "String"
-    description: "客户ID"
-    value: "CUST01175"
-    canCover: true
-    required: false
-  headersExt:
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    value: "application/json;version=2.0"
-    canCover: true
-    required: false
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<_qianmingsuanfa>>"
-    value: "0813411f093580b7c20dc124528d8158"
-    canCover: true
-    required: true
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/x-www-form-urlencoded"
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    value: "b7af896b-be48-4d9d-b6fd-2ab6b41e93a7"
-    canCover: true
-    required: false
-  restUri: "/custAccountInfos/availableCredit/children"
-  method: "GET"
-response:
-  contentExt:
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "pages"
-    type: "Long"
-    description: "总页数"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "list"
-    type: "Array"
-    description: "内容"
-    value: "[{\"accountId\":\"1000052967\",\"childrenAccountType\":\"06\",\"availableBalance\"\
-      :0.0,\"alreadyRepayment\":0.0,\"needPayment\":0.0,\"approvedAmount\":0.0,\"\
-      endDate\":null,\"overdays\":null}]"
-    canCover: true
-    children:
-     -
-      name: "accountId"
+    - name: "serviceType"
       type: "String"
-      description: "账户ID"
-      value: "1000052967"
+      description: "业务类型"
+      value: "01"
       canCover: true
-      required: false
-     -
-      name: "childrenAccountType"
+      required: true
+    - name: "childrenAccountType"
       type: "String"
       description: "01"
       value: "06"
       canCover: true
-      required: false
-     -
-      name: "availableBalance"
-      type: "BigDecimal"
-      description: "可用金额"
-      value: "0.0"
+      required: true
+    - name: "custId"
+      type: "String"
+      description: "客户ID"
+      value: "CUST01175"
       canCover: true
       required: false
-     -
-      name: "alreadyRepayment"
-      type: "BigDecimal"
-      description: "已还金额"
-      value: "0.0"
-      canCover: true
-      required: false
-     -
-      name: "needPayment"
-      type: "BigDecimal"
-      description: "待还金额"
-      value: "0.0"
-      canCover: true
-      required: false
-     -
-      name: "approvedAmount"
-      type: "BigDecimal"
-      description: "审批金额"
-      value: "0.0"
-      canCover: true
-      required: false
-     -
-      name: "endDate"
-      type: "Long"
-      description: "几天后到期"
-      canCover: true
-      required: false
-     -
-      name: "overdays"
-      type: "Short"
-      description: "超期天数"
-      canCover: true
-      required: false
-    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
+    - name: "Accept"
+      type: "String"
+      description: "客户端接收格式"
+      value: "application/json;version=2.0"
+      canCover: true
+      required: false
+    - name: "user-agent"
+      type: "String"
+      description: "用户代理"
+      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+      canCover: true
+      required: false
+    - name: "sign"
+      type: "String"
+      description: "接口签名 <<_qianmingsuanfa>>"
+      value: "0813411f093580b7c20dc124528d8158"
+      canCover: true
+      required: true
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/x-www-form-urlencoded"
+      canCover: true
+      required: false
+    - name: "accessToken"
+      type: "String"
+      description: "存取令牌"
+      value: "b7af896b-be48-4d9d-b6fd-2ab6b41e93a7"
+      canCover: true
+      required: false
+  restUri: "/custAccountInfos/availableCredit/children"
+  method: "GET"
+response:
+  contentExt:
+    - name: "total"
+      type: "Long"
+      description: "总记录数"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "size"
+      type: "Integer"
+      description: "当前页的数量"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "pages"
+      type: "Long"
+      description: "总页数"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "page"
+      type: "Integer"
+      description: "页码"
+      defaultVal: "1"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "list"
+      type: "Array"
+      description: "内容"
+      value: "[{\"accountId\":\"1000052967\",\"childrenAccountType\":\"06\",\"availableBalance\"\
+      :0.0,\"alreadyRepayment\":0.0,\"needPayment\":0.0,\"approvedAmount\":0.0,\"\
+      endDate\":null,\"overdays\":null}]"
+      canCover: true
+      children:
+        - name: "accountId"
+          type: "String"
+          description: "账户ID"
+          value: "1000052967"
+          canCover: true
+          required: false
+        - name: "childrenAccountType"
+          type: "String"
+          description: "01"
+          value: "06"
+          canCover: true
+          required: false
+        - name: "availableBalance"
+          type: "BigDecimal"
+          description: "可用金额"
+          value: "0.0"
+          canCover: true
+          required: false
+        - name: "alreadyRepayment"
+          type: "BigDecimal"
+          description: "已还金额"
+          value: "0.0"
+          canCover: true
+          required: false
+        - name: "needPayment"
+          type: "BigDecimal"
+          description: "待还金额"
+          value: "0.0"
+          canCover: true
+          required: false
+        - name: "approvedAmount"
+          type: "BigDecimal"
+          description: "审批金额"
+          value: "0.0"
+          canCover: true
+          required: false
+        - name: "endDate"
+          type: "Long"
+          description: "几天后到期"
+          canCover: true
+          required: false
+        - name: "overdays"
+          type: "Short"
+          description: "超期天数"
+          canCover: true
+          required: false
+      required: false
+  headersExt:
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
   statusCode: 200
   contentAsString: "{\"total\":1,\"size\":1,\"pages\":1,\"page\":1,\"list\":[{\"accountId\"\
     :\"1000052967\",\"childrenAccountType\":\"06\",\"availableBalance\":0.0,\"alreadyRepayment\"\
@@ -169,15 +147,15 @@ response:
     :null}]}"
 protocol: "HTTP/1.1"
 testExec:
- - "pm.test('验证响应状态码是200', function () {"
- - "  pm.response.to.have.status(200);"
- - "});"
- - ""
- - "pm.test('验证响应时间小于1000ms', function () {"
- - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
- - "});"
- - ""
- - "pm.test('验证返回json格式', function () {"
- - "  pm.response.to.be.json;"
- - "});"
- - ""
+  - "pm.test('验证响应状态码是200', function () {"
+  - "  pm.response.to.have.status(200);"
+  - "});"
+  - ""
+  - "pm.test('验证响应时间小于1000ms', function () {"
+  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+  - "});"
+  - ""
+  - "pm.test('验证返回json格式', function () {"
+  - "  pm.response.to.be.json;"
+  - "});"
+  - ""

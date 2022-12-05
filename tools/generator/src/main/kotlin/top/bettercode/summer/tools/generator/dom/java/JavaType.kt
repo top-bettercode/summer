@@ -250,11 +250,13 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
                     extendsBoundedWildcard = true
                     spec = spec.substring(8)  // "extends ".columnSize()
                 }
+
                 spec.startsWith("super ") -> {
                     boundedWildcard = true
                     extendsBoundedWildcard = false
                     spec = spec.substring(6)  // "super ".columnSize()
                 }
+
                 else -> {
                     boundedWildcard = false
                 }
@@ -303,34 +305,42 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
                     isPrimitive = true
                     primitiveTypeWrapper = PrimitiveTypeWrapper.byteInstance
                 }
+
                 "short" -> {
                     isPrimitive = true
                     primitiveTypeWrapper = PrimitiveTypeWrapper.shortInstance
                 }
+
                 "int" -> {
                     isPrimitive = true
                     primitiveTypeWrapper = PrimitiveTypeWrapper.integerInstance
                 }
+
                 "long" -> {
                     isPrimitive = true
                     primitiveTypeWrapper = PrimitiveTypeWrapper.longInstance
                 }
+
                 "char" -> {
                     isPrimitive = true
                     primitiveTypeWrapper = PrimitiveTypeWrapper.characterInstance
                 }
+
                 "float" -> {
                     isPrimitive = true
                     primitiveTypeWrapper = PrimitiveTypeWrapper.floatInstance
                 }
+
                 "double" -> {
                     isPrimitive = true
                     primitiveTypeWrapper = PrimitiveTypeWrapper.doubleInstance
                 }
+
                 "boolean" -> {
                     isPrimitive = true
                     primitiveTypeWrapper = PrimitiveTypeWrapper.booleanInstance
                 }
+
                 else -> {
                     isPrimitive = false
                     primitiveTypeWrapper = null

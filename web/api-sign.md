@@ -4,7 +4,8 @@
 
 ## 签名传递方式
 
-* 支持request.header、request.querystring、request.form等方式传递签名，签名参数名为："sign"。推荐使用request.header方便传递。
+* 支持request.header、request.querystring、request.form等方式传递签名，签名参数名为："sign"
+  。推荐使用request.header方便传递。
 
 ``` 
 

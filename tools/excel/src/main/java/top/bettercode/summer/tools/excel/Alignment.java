@@ -2,7 +2,8 @@ package top.bettercode.summer.tools.excel;
 
 /**
  * Define horizontal alignment.
- * <a href="https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx">here</a>.
+ * <a
+ * href="https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx">here</a>.
  * <pre>
  *   Member name 	Description
  * 	General 	General Horizontal Alignment. When the item is serialized out as xml, its value is "general".

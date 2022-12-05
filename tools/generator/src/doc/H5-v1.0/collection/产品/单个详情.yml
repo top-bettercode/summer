@@ -1,225 +1,195 @@
 description: "员工端无价格政策信息"
 request:
   uriVariablesExt:
-   -
-    name: "materialId"
-    type: "String"
-    description: "物料ID"
-    value: "000000000020103192"
-    canCover: true
-    required: false
+    - name: "materialId"
+      type: "String"
+      description: "物料ID"
+      value: "000000000020103192"
+      canCover: true
+      required: false
   headersExt:
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    value: "application/json;version=2.0"
-    canCover: true
-    required: false
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<_qianmingsuanfa>>"
-    value: "6c5467aaaf8b8c5876b8016771744b64"
-    canCover: true
-    required: true
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/x-www-form-urlencoded"
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    value: "9e317c83-eac8-4a7c-ba01-ae75fde9ee9d"
-    canCover: true
-    required: false
+    - name: "Accept"
+      type: "String"
+      description: "客户端接收格式"
+      value: "application/json;version=2.0"
+      canCover: true
+      required: false
+    - name: "user-agent"
+      type: "String"
+      description: "用户代理"
+      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+      canCover: true
+      required: false
+    - name: "sign"
+      type: "String"
+      description: "接口签名 <<_qianmingsuanfa>>"
+      value: "6c5467aaaf8b8c5876b8016771744b64"
+      canCover: true
+      required: true
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/x-www-form-urlencoded"
+      canCover: true
+      required: false
+    - name: "accessToken"
+      type: "String"
+      description: "存取令牌"
+      value: "9e317c83-eac8-4a7c-ba01-ae75fde9ee9d"
+      canCover: true
+      required: false
   restUri: "/materialProducts/{materialId}"
   method: "GET"
 response:
   contentExt:
-   -
-    name: "materialId"
-    type: "String"
-    description: "物料ID"
-    value: "000000000020103192"
-    canCover: true
-    required: false
-   -
-    name: "name"
-    type: "String"
-    description: "产品名称"
-    value: "45%嘉施利12-18-15喷浆硫基白色40KG"
-    canCover: true
-    required: false
-   -
-    name: "factory"
-    type: "String"
-    description: "工厂"
-    canCover: true
-    required: false
-   -
-    name: "strain"
-    type: "String"
-    description: "品系"
-    value: "常规肥"
-    canCover: true
-    required: false
-   -
-    name: "category"
-    type: "String"
-    description: "品类"
-    value: "喷浆硫酸钾"
-    canCover: true
-    required: false
-   -
-    name: "properties"
-    type: "MaterialInfo"
-    description: "属性"
-    value: "{\"nutrient\":\"45%\",\"proportion\":\"12-18-15\",\"spec\":\"40KG\",\"\
+    - name: "materialId"
+      type: "String"
+      description: "物料ID"
+      value: "000000000020103192"
+      canCover: true
+      required: false
+    - name: "name"
+      type: "String"
+      description: "产品名称"
+      value: "45%嘉施利12-18-15喷浆硫基白色40KG"
+      canCover: true
+      required: false
+    - name: "factory"
+      type: "String"
+      description: "工厂"
+      canCover: true
+      required: false
+    - name: "strain"
+      type: "String"
+      description: "品系"
+      value: "常规肥"
+      canCover: true
+      required: false
+    - name: "category"
+      type: "String"
+      description: "品类"
+      value: "喷浆硫酸钾"
+      canCover: true
+      required: false
+    - name: "properties"
+      type: "MaterialInfo"
+      description: "属性"
+      value: "{\"nutrient\":\"45%\",\"proportion\":\"12-18-15\",\"spec\":\"40KG\",\"\
       color\":\"白色\",\"brandName\":\"嘉施利\",\"prodGroupDesc\":\"复合肥\"}"
-    canCover: true
-    children:
-     -
-      name: "nutrient"
-      type: "String"
-      description: "总养分含量"
-      value: "45%"
+      canCover: true
+      children:
+        - name: "nutrient"
+          type: "String"
+          description: "总养分含量"
+          value: "45%"
+          canCover: true
+          required: false
+        - name: "proportion"
+          type: "String"
+          description: "配方结构"
+          value: "12-18-15"
+          canCover: true
+          required: false
+        - name: "spec"
+          type: "String"
+          description: "规格"
+          value: "40KG"
+          canCover: true
+          required: false
+        - name: "color"
+          type: "String"
+          description: "颜色"
+          value: "白色"
+          canCover: true
+          required: false
+        - name: "brandName"
+          type: "String"
+          description: "品牌名称"
+          value: "嘉施利"
+          canCover: true
+          required: false
+        - name: "prodGroupDesc"
+          type: "String"
+          description: "产品组描述"
+          value: "复合肥"
+          canCover: true
+          required: false
+      required: false
+    - name: "price"
+      type: "BigDecimal"
+      description: "单价"
       canCover: true
       required: false
-     -
-      name: "proportion"
-      type: "String"
-      description: "配方结构"
-      value: "12-18-15"
+    - name: "policies"
+      type: "Array<String>"
+      description: "优惠政策"
       canCover: true
       required: false
-     -
-      name: "spec"
-      type: "String"
-      description: "规格"
-      value: "40KG"
+    - name: "picUrls"
+      type: "Array<String>"
+      description: "图片url"
+      value: "[]"
       canCover: true
       required: false
-     -
-      name: "color"
-      type: "String"
-      description: "颜色"
-      value: "白色"
-      canCover: true
-      required: false
-     -
-      name: "brandName"
-      type: "String"
-      description: "品牌名称"
-      value: "嘉施利"
-      canCover: true
-      required: false
-     -
-      name: "prodGroupDesc"
-      type: "String"
-      description: "产品组描述"
-      value: "复合肥"
-      canCover: true
-      required: false
-    required: false
-   -
-    name: "price"
-    type: "BigDecimal"
-    description: "单价"
-    canCover: true
-    required: false
-   -
-    name: "policies"
-    type: "Array<String>"
-    description: "优惠政策"
-    canCover: true
-    required: false
-   -
-    name: "picUrls"
-    type: "Array<String>"
-    description: "图片url"
-    value: "[]"
-    canCover: true
-    required: false
-   -
-    name: "detailUrls"
-    type: "Array<String>"
-    description: "详情图片url"
-    value: "[\"http://10.13.8.193/hollycrm-yuntu/upload/prod/嘉施利.jpg?reqid=10000\"\
+    - name: "detailUrls"
+      type: "Array<String>"
+      description: "详情图片url"
+      value: "[\"http://10.13.8.193/hollycrm-yuntu/upload/prod/嘉施利.jpg?reqid=10000\"\
       ,\"http://10.13.8.193/hollycrm-yuntu/upload/prod/喷浆硫酸钾.jpg?reqid=10000\"]"
-    canCover: true
-    required: false
-   -
-    name: "factorys"
-    type: "Array<Factory>"
-    description: "工厂"
-    value: "[{\"factoryId\":\"1000\",\"factoryName\":\"成都云图控股股份有限公司工厂\",\"saleTun\"\
+      canCover: true
+      required: false
+    - name: "factorys"
+      type: "Array<Factory>"
+      description: "工厂"
+      value: "[{\"factoryId\":\"1000\",\"factoryName\":\"成都云图控股股份有限公司工厂\",\"saleTun\"\
       :0.0,\"price\":null,\"policies\":null},{\"factoryId\":\"1330\",\"factoryName\"\
       :\"嘉施利(宜城)化肥有限公司宜城复合肥工厂\",\"saleTun\":0.0,\"price\":null,\"policies\":null},{\"\
       factoryId\":\"1370\",\"factoryName\":\"嘉施利(荆州)化肥有限公司复合肥工厂\",\"saleTun\":0.0,\"\
       price\":null,\"policies\":null}]"
-    canCover: true
-    children:
-     -
-      name: "factoryId"
-      type: "String"
-      description: "工厂ID"
-      value: "1000"
       canCover: true
+      children:
+        - name: "factoryId"
+          type: "String"
+          description: "工厂ID"
+          value: "1000"
+          canCover: true
+          required: false
+        - name: "factoryName"
+          type: "String"
+          description: "工厂名称"
+          value: "成都云图控股股份有限公司工厂"
+          canCover: true
+          required: false
+        - name: "saleTun"
+          type: "BigDecimal"
+          description: "库存"
+          value: "0.0"
+          canCover: true
+          required: false
+        - name: "price"
+          type: "BigDecimal"
+          description: "单价"
+          canCover: true
+          required: false
+        - name: "policies"
+          type: "Array<String>"
+          description: "优惠政策"
+          canCover: true
+          required: false
       required: false
-     -
-      name: "factoryName"
-      type: "String"
-      description: "工厂名称"
-      value: "成都云图控股股份有限公司工厂"
-      canCover: true
-      required: false
-     -
-      name: "saleTun"
+    - name: "saleTun"
       type: "BigDecimal"
       description: "库存"
       value: "0.0"
       canCover: true
       required: false
-     -
-      name: "price"
-      type: "BigDecimal"
-      description: "单价"
-      canCover: true
-      required: false
-     -
-      name: "policies"
-      type: "Array<String>"
-      description: "优惠政策"
-      canCover: true
-      required: false
-    required: false
-   -
-    name: "saleTun"
-    type: "BigDecimal"
-    description: "库存"
-    value: "0.0"
-    canCover: true
-    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
   statusCode: 200
   contentAsString: "{\"materialId\":\"000000000020103192\",\"name\":\"45%嘉施利12-18-15喷\
     浆硫基白色40KG\",\"factory\":null,\"strain\":\"常规肥\",\"category\":\"喷浆硫酸钾\",\"properties\"\
@@ -234,15 +204,15 @@ response:
     price\":null,\"policies\":null}],\"saleTun\":0.0}"
 protocol: "HTTP/1.1"
 testExec:
- - "pm.test('验证响应状态码是200', function () {"
- - "  pm.response.to.have.status(200);"
- - "});"
- - ""
- - "pm.test('验证响应时间小于1000ms', function () {"
- - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
- - "});"
- - ""
- - "pm.test('验证返回json格式', function () {"
- - "  pm.response.to.be.json;"
- - "});"
- - ""
+  - "pm.test('验证响应状态码是200', function () {"
+  - "  pm.response.to.have.status(200);"
+  - "});"
+  - ""
+  - "pm.test('验证响应时间小于1000ms', function () {"
+  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+  - "});"
+  - ""
+  - "pm.test('验证返回json格式', function () {"
+  - "  pm.response.to.be.json;"
+  - "});"
+  - ""

@@ -3,7 +3,6 @@ package top.bettercode.summer.web.apisign;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.web.method.HandlerMethod;
-import top.bettercode.summer.web.apisign.ApiSignIgnore;
 
 /**
  * 签名配置属性

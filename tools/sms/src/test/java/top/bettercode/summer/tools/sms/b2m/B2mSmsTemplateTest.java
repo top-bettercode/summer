@@ -47,6 +47,6 @@ class B2mSmsTemplateTest extends BaseTest {
   @Disabled
   @Test
   void retrieveReport() {
-    simpleB2mTemplate.retrieveReport(LocalDateTime.of(2022, 3, 30, 9,0));
+    simpleB2mTemplate.retrieveReport(LocalDateTime.of(2022, 3, 30, 9, 0));
   }
 }

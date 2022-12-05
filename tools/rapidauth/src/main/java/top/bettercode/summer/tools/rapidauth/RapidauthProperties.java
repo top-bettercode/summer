@@ -15,7 +15,7 @@ public class RapidauthProperties {
   /**
    * 腾讯应用ID
    */
-  private String sdkappid ;
+  private String sdkappid;
   /**
    * 应用密钥
    */

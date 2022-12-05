@@ -18,12 +18,12 @@ public class TestApplication {
   }
 
   @Bean
-  public SapCostService sapCostService(SapService sapService){
+  public SapCostService sapCostService(SapService sapService) {
     return new SapCostService(sapService);
   }
 
   @Bean
-  public SapStockService sapStockService(SapService sapService){
+  public SapStockService sapStockService(SapService sapService) {
     return new SapStockService(sapService);
   }
 }

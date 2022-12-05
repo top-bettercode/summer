@@ -24,7 +24,8 @@ class GeneratorTest {
 
     @Test
     fun convert() {
-        File("/data/repositories/bettercode/wintruelife/acceptance-api").walkTopDown().filter { it.isDirectory && it.name == "doc" }.forEach { doc ->
+        File("/data/repositories/bettercode/wintruelife/acceptance-api").walkTopDown()
+            .filter { it.isDirectory && it.name == "doc" }.forEach { doc ->
             val commonFields = File(doc, "field.yml").parseList(Field::class.java)
             doc.listFiles()?.filter { it.isDirectory }?.forEach {
                 File(it, "collection").listFiles()?.filter { f -> f.isDirectory }?.forEach { path ->
@@ -34,29 +35,39 @@ class GeneratorTest {
                     path.listFiles()?.filter { f -> f.name != "field.yml" }?.forEach { f ->
                         val exist = AutodocUtil.yamlMapper.readValue(f, OldDocOperation::class.java)
                         coFields += exist.fields
-                        val newVal = DocOperation(exist, exist.description, exist.prerequest, exist.testExec)
+                        val newVal =
+                            DocOperation(exist, exist.description, exist.prerequest, exist.testExec)
                         val request = newVal.request as DocOperationRequest
                         val response = newVal.response as DocOperationResponse
                         request.uriVariablesExt = request.uriVariables.toFields(coFields)
 
                         request.headersExt = request.headers.singleValueMap.toFields(coFields)
                         request.headersExt.forEach { ff ->
-                            ff.required = (exist.request as OldDocOperationRequest).requiredHeaders.contains(ff.name)
+                            ff.required =
+                                (exist.request as OldDocOperationRequest).requiredHeaders.contains(
+                                    ff.name
+                                )
                         }
 
-                        request.parametersExt = request.parameters.singleValueMap.toFields(coFields, expand = true)
+                        request.parametersExt =
+                            request.parameters.singleValueMap.toFields(coFields, expand = true)
                         request.parametersExt.forEach { p ->
-                            p.required = (exist.request as OldDocOperationRequest).requiredParameters.contains(p.name)
+                            p.required =
+                                (exist.request as OldDocOperationRequest).requiredParameters.contains(
+                                    p.name
+                                )
                         }
 
                         request.partsExt = request.parts.toFields(coFields)
 
-                        request.contentExt = request.contentAsString.toMap()?.toFields(coFields, expand = true)
+                        request.contentExt =
+                            request.contentAsString.toMap()?.toFields(coFields, expand = true)
                                 ?: linkedSetOf()
 
                         response.headersExt = response.headers.singleValueMap.toFields(coFields)
 
-                        response.contentExt = response.contentAsString.toMap()?.toFields(coFields, expand = true)
+                        response.contentExt =
+                            response.contentAsString.toMap()?.toFields(coFields, expand = true)
                                 ?: linkedSetOf()
 
                         newVal.operationFile = f
@@ -76,24 +87,37 @@ class GeneratorTest {
 
                 val file = File(it, "collections.yml")
                 if (file.exists()) {
-                    AutodocUtil.yamlMapper.readValue(file.inputStream(), DocCollections::class.java).mapTo(linkedSetOf()) { (k, v) ->
-                        DocCollection(k, LinkedHashSet(v), File(file.parentFile, "collection/${k}"))
-                    }.forEach { dd ->
+                    AutodocUtil.yamlMapper.readValue(file.inputStream(), DocCollections::class.java)
+                        .mapTo(linkedSetOf()) { (k, v) ->
+                            DocCollection(
+                                k,
+                                LinkedHashSet(v),
+                                File(file.parentFile, "collection/${k}")
+                            )
+                        }.forEach { dd ->
                         dd.operations.forEach { d ->
                             val request = d.request as DocOperationRequest
                             val response = d.response as DocOperationResponse
 
-                            request.uriVariablesExt = request.uriVariables.toFields(request.uriVariablesExt)
-                            request.headersExt = request.headers.singleValueMap.toFields(request.headersExt)
+                            request.uriVariablesExt =
+                                request.uriVariables.toFields(request.uriVariablesExt)
+                            request.headersExt =
+                                request.headers.singleValueMap.toFields(request.headersExt)
 
-                            request.parametersExt = request.parameters.singleValueMap.toFields(request.parametersExt, expand = true)
+                            request.parametersExt = request.parameters.singleValueMap.toFields(
+                                request.parametersExt,
+                                expand = true
+                            )
                             request.partsExt = request.parts.toFields(request.partsExt)
-                            request.contentExt = request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
-                                    ?: linkedSetOf()
+                            request.contentExt = request.contentAsString.toMap()
+                                ?.toFields(request.contentExt, expand = true)
+                                ?: linkedSetOf()
 
-                            response.headersExt = response.headers.singleValueMap.toFields(response.headersExt)
-                            response.contentExt = response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)
-                                    ?: linkedSetOf()
+                            response.headersExt =
+                                response.headers.singleValueMap.toFields(response.headersExt)
+                            response.contentExt = response.contentAsString.toMap()
+                                ?.toFields(response.contentExt, expand = true)
+                                ?: linkedSetOf()
 
                             val genProperties = GenProperties()
                             genProperties.rootSource = File(file1, "doc")

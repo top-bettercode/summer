@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties("jco.client")
 public class SapProperties {
+
   private String ashost;
   private String sysnr;
   private String client;

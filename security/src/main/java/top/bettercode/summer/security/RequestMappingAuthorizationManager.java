@@ -39,6 +39,7 @@ import top.bettercode.summer.web.AnnotatedUtils;
  */
 public class RequestMappingAuthorizationManager implements
     AuthorizationManager<RequestAuthorizationContext> {
+
   private static final AuthorizationDecision DENY = new AuthorizationDecision(false);
   private static final AuthorizationDecision ALLOW = new AuthorizationDecision(true);
   private final Logger log = LoggerFactory.getLogger(RequestMappingAuthorizationManager.class);

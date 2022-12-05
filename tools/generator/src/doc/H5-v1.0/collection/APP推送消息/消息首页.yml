@@ -1,114 +1,100 @@
 description: "测试账号：13582238115"
 request:
   headersExt:
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<_qianmingsuanfa>>"
-    value: "6c5467aaaf8b8c5876b8016771744b64"
-    canCover: true
-    required: true
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/x-www-form-urlencoded"
-    canCover: true
-    required: false
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    value: "8daba125-0d3c-4ff7-b0b4-75f19b49d556"
-    canCover: true
-    required: false
+    - name: "sign"
+      type: "String"
+      description: "接口签名 <<_qianmingsuanfa>>"
+      value: "6c5467aaaf8b8c5876b8016771744b64"
+      canCover: true
+      required: true
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/x-www-form-urlencoded"
+      canCover: true
+      required: false
+    - name: "Accept"
+      type: "String"
+      description: "客户端接收格式"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
+    - name: "accessToken"
+      type: "String"
+      description: "存取令牌"
+      value: "8daba125-0d3c-4ff7-b0b4-75f19b49d556"
+      canCover: true
+      required: false
   restUri: "/appMessages/home"
   method: "GET"
 response:
   contentExt:
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    value: "2"
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    value: "2"
-    canCover: true
-    required: false
-   -
-    name: "pages"
-    type: "Long"
-    description: "总页数"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "list"
-    type: "Array"
-    description: "内容"
-    value: "[{\"type\":\"ORDER\",\"unReadNum\":57,\"lastMessageDate\":1524993367000,\"\
+    - name: "total"
+      type: "Long"
+      description: "总记录数"
+      value: "2"
+      canCover: true
+      required: false
+    - name: "size"
+      type: "Integer"
+      description: "当前页的数量"
+      value: "2"
+      canCover: true
+      required: false
+    - name: "pages"
+      type: "Long"
+      description: "总页数"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "page"
+      type: "Integer"
+      description: "页码"
+      defaultVal: "1"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "list"
+      type: "Array"
+      description: "内容"
+      value: "[{\"type\":\"ORDER\",\"unReadNum\":57,\"lastMessageDate\":1524993367000,\"\
       lastMessage\":\"你的订单已发货50.000吨，请做好收货准备\"},{\"type\":\"FUND\",\"unReadNum\":5,\"\
       lastMessageDate\":1524216890000,\"lastMessage\":\"你有一笔[现金]上账成功，金额为[¥9000.00]\"\
       }]"
-    canCover: true
-    children:
-     -
-      name: "type"
-      type: "String"
-      description: "消息类型"
-      value: "ORDER"
       canCover: true
+      children:
+        - name: "type"
+          type: "String"
+          description: "消息类型"
+          value: "ORDER"
+          canCover: true
+          required: false
+        - name: "unReadNum"
+          type: "String"
+          description: "未读数量"
+          value: "57"
+          canCover: true
+          required: false
+        - name: "lastMessageDate"
+          type: "Long"
+          description: "最新消息发送时间"
+          value: "1524993367000"
+          canCover: true
+          required: false
+        - name: "lastMessage"
+          type: "String"
+          description: "最新消息"
+          value: "你的订单已发货50.000吨，请做好收货准备"
+          canCover: true
+          required: false
       required: false
-     -
-      name: "unReadNum"
-      type: "String"
-      description: "未读数量"
-      value: "57"
-      canCover: true
-      required: false
-     -
-      name: "lastMessageDate"
-      type: "Long"
-      description: "最新消息发送时间"
-      value: "1524993367000"
-      canCover: true
-      required: false
-     -
-      name: "lastMessage"
-      type: "String"
-      description: "最新消息"
-      value: "你的订单已发货50.000吨，请做好收货准备"
-      canCover: true
-      required: false
-    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
   statusCode: 200
   contentAsString: "{\"total\":2,\"size\":2,\"pages\":1,\"page\":1,\"list\":[{\"type\"\
     :\"ORDER\",\"unReadNum\":57,\"lastMessageDate\":1524993367000,\"lastMessage\"\
@@ -116,15 +102,15 @@ response:
     :1524216890000,\"lastMessage\":\"你有一笔[现金]上账成功，金额为[¥9000.00]\"}]}"
 protocol: "HTTP/1.1"
 testExec:
- - "pm.test('验证响应状态码是200', function () {"
- - "  pm.response.to.have.status(200);"
- - "});"
- - ""
- - "pm.test('验证响应时间小于1000ms', function () {"
- - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
- - "});"
- - ""
- - "pm.test('验证返回json格式', function () {"
- - "  pm.response.to.be.json;"
- - "});"
- - ""
+  - "pm.test('验证响应状态码是200', function () {"
+  - "  pm.response.to.have.status(200);"
+  - "});"
+  - ""
+  - "pm.test('验证响应时间小于1000ms', function () {"
+  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+  - "});"
+  - ""
+  - "pm.test('验证返回json格式', function () {"
+  - "  pm.response.to.be.json;"
+  - "});"
+  - ""

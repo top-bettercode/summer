@@ -43,7 +43,8 @@ class AutodocMockMvcControllerTest {
     @Throws(Exception::class)
     fun test0Index() {
         Autodoc.requiredHeaders("sign")
-        mockMvc.perform(get("/clientTokens")
+        mockMvc.perform(
+            get("/clientTokens")
                 .param("page", "1")
                 .param("size", "5")
         ).andExpect(status().isOk)
@@ -52,7 +53,8 @@ class AutodocMockMvcControllerTest {
     @Test
     @Throws(Exception::class)
     fun token() {
-        mockMvc.perform(post("/oauth/token")
+        mockMvc.perform(
+            post("/oauth/token")
                 .param("page", "1")
                 .param("size", "5")
         ).andExpect(status().isOk)
@@ -67,8 +69,9 @@ class AutodocMockMvcControllerTest {
     @Test
     @Throws(Exception::class)
     fun test2Create() {
-        mockMvc.perform(post("/clientTokens").contentType(MediaType.APPLICATION_JSON)
-            .content("[{}]")
+        mockMvc.perform(
+            post("/clientTokens").contentType(MediaType.APPLICATION_JSON)
+                .content("[{}]")
 //                .param("map", "{\"a\":1}")
 //                .param("list", "[{\"a\":1}]")
 //                .param("tokenId", "test")
@@ -82,7 +85,8 @@ class AutodocMockMvcControllerTest {
     @Test
     @Throws(Exception::class)
     fun test3Update() {
-        mockMvc.perform(put("/clientTokens/1")
+        mockMvc.perform(
+            put("/clientTokens/1")
                 .param("tokenId", "test")
                 .param("token", "1")
                 .param("userName", "test")

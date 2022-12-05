@@ -4,9 +4,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * {@code CompositePackageScanFilter} allows multiple
- * {@link PackageScanFilter}s to be composed into a single filter. For a
- * {@link Class} to match a {@link CompositePackageScanFilter} it must match
+ * {@code CompositePackageScanFilter} allows multiple {@link PackageScanFilter}s to be composed into
+ * a single filter. For a {@link Class} to match a {@link CompositePackageScanFilter} it must match
  * each of the filters the composite contains
  */
 public class CompositePackageScanFilter implements PackageScanFilter {

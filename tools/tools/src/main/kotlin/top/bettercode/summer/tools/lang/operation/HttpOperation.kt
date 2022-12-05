@@ -19,6 +19,7 @@ object HttpOperation {
     const val REQUEST_LOG_MARKER = "request"
     val REQUEST_DATE_TIME = HttpOperation::class.java.name + ".dateTime"
     val BEST_MATCHING_PATTERN_ATTRIBUTE = HttpOperation::class.java.name + ".bestMatchingPattern"
+
     @JvmField
     val REQUEST_LOGGING_USERNAME = HttpOperation::class.java.name + ".username"
 

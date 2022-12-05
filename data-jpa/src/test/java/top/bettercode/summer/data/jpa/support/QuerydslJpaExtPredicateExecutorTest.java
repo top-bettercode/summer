@@ -83,7 +83,8 @@ public class QuerydslJpaExtPredicateExecutorTest {
 
   @Test
   public void findAll3() {
-    org.junit.jupiter.api.Assertions.assertTrue(repository.findAll(QUser.user.lastName.asc()).iterator().hasNext());
+    org.junit.jupiter.api.Assertions.assertTrue(
+        repository.findAll(QUser.user.lastName.asc()).iterator().hasNext());
   }
 
   @Test
@@ -98,12 +99,14 @@ public class QuerydslJpaExtPredicateExecutorTest {
 
   @Test
   public void count() {
-    org.junit.jupiter.api.Assertions.assertEquals(2, repository.count(QUser.user.firstName.eq("Carter")));
+    org.junit.jupiter.api.Assertions.assertEquals(2,
+        repository.count(QUser.user.firstName.eq("Carter")));
   }
 
   @Test
   public void exists() {
-    org.junit.jupiter.api.Assertions.assertTrue(repository.exists(QUser.user.firstName.eq("Carter")));
+    org.junit.jupiter.api.Assertions.assertTrue(
+        repository.exists(QUser.user.firstName.eq("Carter")));
   }
 
   @Test
@@ -155,12 +158,15 @@ public class QuerydslJpaExtPredicateExecutorTest {
 
   @Test
   public void countRecycleBin() {
-    org.junit.jupiter.api.Assertions.assertEquals(1, repository.countRecycleBin(QUser.user.firstName.eq("Dave")));
+    org.junit.jupiter.api.Assertions.assertEquals(1,
+        repository.countRecycleBin(QUser.user.firstName.eq("Dave")));
   }
 
   @Test
   public void existsInRecycleBin() {
-    org.junit.jupiter.api.Assertions.assertTrue(repository.existsInRecycleBin(QUser.user.firstName.eq("Dave")));
-    org.junit.jupiter.api.Assertions.assertFalse(repository.existsInRecycleBin(QUser.user.firstName.eq("Carter")));
+    org.junit.jupiter.api.Assertions.assertTrue(
+        repository.existsInRecycleBin(QUser.user.firstName.eq("Dave")));
+    org.junit.jupiter.api.Assertions.assertFalse(
+        repository.existsInRecycleBin(QUser.user.firstName.eq("Carter")));
   }
 }

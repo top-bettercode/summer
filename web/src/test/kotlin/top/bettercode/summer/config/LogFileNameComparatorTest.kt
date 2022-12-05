@@ -27,9 +27,9 @@ class LogFileNameComparatorTest {
                 "sap.log"
             ).map { File(it) }
         listFiles.sortedWith(LogFileNameComparator())
-        .forEach {
-            println(it.name)
-        }
+            .forEach {
+                println(it.name)
+            }
     }
 
     @Test

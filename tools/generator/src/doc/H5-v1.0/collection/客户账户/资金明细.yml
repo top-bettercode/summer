@@ -1,99 +1,86 @@
 request:
   parametersExt:
-   -
-    name: "fundType"
-    type: "String"
-    description: "资金来源"
-    value: "01"
-    canCover: true
-    required: false
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    canCover: true
-    required: false
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    value: "20"
-    canCover: true
-    required: false
-   -
-    name: "custId"
-    type: "String"
-    description: "客户ID"
-    canCover: true
-    required: false
+    - name: "fundType"
+      type: "String"
+      description: "资金来源"
+      value: "01"
+      canCover: true
+      required: false
+    - name: "page"
+      type: "Integer"
+      description: "页码"
+      defaultVal: "1"
+      value: "1"
+      canCover: true
+      required: false
+    - name: "size"
+      type: "Integer"
+      description: "当前页的数量"
+      value: "20"
+      canCover: true
+      required: false
+    - name: "custId"
+      type: "String"
+      description: "客户ID"
+      canCover: true
+      required: false
   headersExt:
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    value: "application/json;version=2.0"
-    canCover: true
-    required: false
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<_qianmingsuanfa>>"
-    value: "ce34f57c406cc8770ad0ce317571ada0"
-    canCover: true
-    required: true
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/x-www-form-urlencoded"
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    value: "b02cd37284c3546f6506b836374999db"
-    canCover: true
-    required: false
+    - name: "Accept"
+      type: "String"
+      description: "客户端接收格式"
+      value: "application/json;version=2.0"
+      canCover: true
+      required: false
+    - name: "user-agent"
+      type: "String"
+      description: "用户代理"
+      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+      canCover: true
+      required: false
+    - name: "sign"
+      type: "String"
+      description: "接口签名 <<_qianmingsuanfa>>"
+      value: "ce34f57c406cc8770ad0ce317571ada0"
+      canCover: true
+      required: true
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/x-www-form-urlencoded"
+      canCover: true
+      required: false
+    - name: "accessToken"
+      type: "String"
+      description: "存取令牌"
+      value: "b02cd37284c3546f6506b836374999db"
+      canCover: true
+      required: false
   restUri: "/fundTranDetailFlows"
   method: "GET"
 response:
   contentExt:
-   -
-    name: "size"
-    type: "Integer"
-    description: "当前页的数量"
-    value: "20"
-    canCover: true
-    required: false
-   -
-    name: "total"
-    type: "Long"
-    description: "总记录数"
-    value: "12387"
-    canCover: true
-    required: false
-   -
-    name: "pages"
-    type: "Long"
-    description: "总页数"
-    value: "620"
-    canCover: true
-    required: false
-   -
-    name: "list"
-    type: "Array"
-    description: "内容"
-    value: "[{\"flowNo\":\"FUND00126B\",\"serviceType\":\"01\",\"fundType\":\"04\"\
+    - name: "size"
+      type: "Integer"
+      description: "当前页的数量"
+      value: "20"
+      canCover: true
+      required: false
+    - name: "total"
+      type: "Long"
+      description: "总记录数"
+      value: "12387"
+      canCover: true
+      required: false
+    - name: "pages"
+      type: "Long"
+      description: "总页数"
+      value: "620"
+      canCover: true
+      required: false
+    - name: "list"
+      type: "Array"
+      description: "内容"
+      value: "[{\"flowNo\":\"FUND00126B\",\"serviceType\":\"01\",\"fundType\":\"04\"\
       ,\"inputDate\":1509630706000,\"addAmt\":2651183.16,\"plusAmt\":0},{\"flowNo\"\
       :\"FUND00126C\",\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509630718000,\"\
       addAmt\":25450,\"plusAmt\":0},{\"flowNo\":\"FUND00126D\",\"serviceType\":\"\
@@ -126,67 +113,59 @@ response:
       :\"01\",\"inputDate\":1509931216000,\"plusAmt\":0},{\"flowNo\":\"FUND0016BD\"\
       ,\"serviceType\":\"01\",\"fundType\":\"01\",\"inputDate\":1509931231000,\"plusAmt\"\
       :0}]"
-    canCover: true
-    children:
-     -
-      name: "flowNo"
-      type: "String"
-      description: "流水号"
-      value: "FUND00126B"
+      canCover: true
+      children:
+        - name: "flowNo"
+          type: "String"
+          description: "流水号"
+          value: "FUND00126B"
+          canCover: true
+          required: false
+        - name: "serviceType"
+          type: "String"
+          description: "业务类型"
+          value: "01"
+          canCover: true
+          required: false
+        - name: "fundType"
+          type: "String"
+          description: "资金来源"
+          value: "04"
+          canCover: true
+          required: false
+        - name: "inputDate"
+          type: "Long"
+          description: "导入日期"
+          value: "1509630706000"
+          canCover: true
+          required: false
+        - name: "addAmt"
+          type: "BigDecimal"
+          description: "增加金额"
+          value: "2651183.16"
+          canCover: true
+          required: false
+        - name: "plusAmt"
+          type: "BigDecimal"
+          description: "减少金额"
+          value: "0"
+          canCover: true
+          required: false
+      required: false
+    - name: "page"
+      type: "Integer"
+      description: "页码"
+      defaultVal: "1"
+      value: "1"
       canCover: true
       required: false
-     -
-      name: "serviceType"
-      type: "String"
-      description: "业务类型"
-      value: "01"
-      canCover: true
-      required: false
-     -
-      name: "fundType"
-      type: "String"
-      description: "资金来源"
-      value: "04"
-      canCover: true
-      required: false
-     -
-      name: "inputDate"
-      type: "Long"
-      description: "导入日期"
-      value: "1509630706000"
-      canCover: true
-      required: false
-     -
-      name: "addAmt"
-      type: "BigDecimal"
-      description: "增加金额"
-      value: "2651183.16"
-      canCover: true
-      required: false
-     -
-      name: "plusAmt"
-      type: "BigDecimal"
-      description: "减少金额"
-      value: "0"
-      canCover: true
-      required: false
-    required: false
-   -
-    name: "page"
-    type: "Integer"
-    description: "页码"
-    defaultVal: "1"
-    value: "1"
-    canCover: true
-    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
   statusCode: 200
   contentAsString: "{\"size\":20,\"total\":12387,\"pages\":620,\"list\":[{\"flowNo\"\
     :\"FUND00126B\",\"serviceType\":\"01\",\"fundType\":\"04\",\"inputDate\":1509630706000,\"\
@@ -222,15 +201,15 @@ response:
     ,\"fundType\":\"01\",\"inputDate\":1509931231000,\"plusAmt\":0}],\"page\":1}"
 protocol: "HTTP/1.1"
 testExec:
- - "pm.test('验证响应状态码是200', function () {"
- - "  pm.response.to.have.status(200);"
- - "});"
- - ""
- - "pm.test('验证响应时间小于1000ms', function () {"
- - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
- - "});"
- - ""
- - "pm.test('验证返回json格式', function () {"
- - "  pm.response.to.be.json;"
- - "});"
- - ""
+  - "pm.test('验证响应状态码是200', function () {"
+  - "  pm.response.to.have.status(200);"
+  - "});"
+  - ""
+  - "pm.test('验证响应时间小于1000ms', function () {"
+  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+  - "});"
+  - ""
+  - "pm.test('验证返回json格式', function () {"
+  - "  pm.response.to.be.json;"
+  - "});"
+  - ""

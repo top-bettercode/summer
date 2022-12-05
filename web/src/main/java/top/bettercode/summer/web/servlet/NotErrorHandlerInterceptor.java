@@ -19,7 +19,8 @@ public interface NotErrorHandlerInterceptor extends AsyncHandlerInterceptor {
   String ERROR_INTERNAL_ATTRIBUTE = DefaultErrorAttributes.class.getName() + ".ERROR";
 
   @Override
-  default boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+  default boolean preHandle(@NotNull HttpServletRequest request,
+      @NotNull HttpServletResponse response,
       @NotNull Object handler) throws Exception {
     if (handler instanceof HandlerMethod) {
       HandlerMethod handlerMethod = (HandlerMethod) handler;
@@ -38,7 +39,8 @@ public interface NotErrorHandlerInterceptor extends AsyncHandlerInterceptor {
   }
 
   @Override
-  default void afterCompletion(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+  default void afterCompletion(@NotNull HttpServletRequest request,
+      @NotNull HttpServletResponse response,
       @NotNull Object handler, Exception ex) throws Exception {
     if (handler instanceof HandlerMethod) {
       HandlerMethod handlerMethod = (HandlerMethod) handler;

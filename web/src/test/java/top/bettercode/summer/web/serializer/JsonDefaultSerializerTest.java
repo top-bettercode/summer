@@ -78,7 +78,8 @@ public class JsonDefaultSerializerTest {
     dicBean.setPath("/a.jpg");
     dicBean.setPath1("/b.jpg");
 
-    assertEquals("{\"number1\":0,\"number22\":null,\"price\":\"1.00\",\"path\":\"/a.jpg\",\"pathUrl\":\"http://127.0.0.1/a.jpg\",\"path1\":\"/b.jpg\"}",
+    assertEquals(
+        "{\"number1\":0,\"number22\":null,\"price\":\"1.00\",\"path\":\"/a.jpg\",\"pathUrl\":\"http://127.0.0.1/a.jpg\",\"path1\":\"/b.jpg\"}",
         objectMapper.writeValueAsString(dicBean));
 
   }

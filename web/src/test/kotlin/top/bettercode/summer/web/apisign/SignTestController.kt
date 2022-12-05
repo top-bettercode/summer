@@ -23,6 +23,7 @@ class SignTestController {
     }
 
 }
+
 @SpringBootApplication
 @RestController
 @ApiSignIgnore
@@ -34,6 +35,7 @@ class ApiSignIgnoreTestController {
     }
 
 }
+
 @SpringBootApplication
 @RestController
 class ApiSignIgnoreMethodController {

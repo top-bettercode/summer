@@ -31,12 +31,14 @@ public class DefaultCaptchaServiceImpl implements ICaptchaService {
 
   @Override
   public boolean match(String loginId, String captcha) {
-    Assert.hasText(loginId,"验证码错误");
-    Assert.hasText(captcha,"验证码错误");
+    Assert.hasText(loginId, "验证码错误");
+    Assert.hasText(captcha, "验证码错误");
     String kaptcha = (String) httpSession.getAttribute(Constants.KAPTCHA_SESSION_KEY);
     Date date = (Date) httpSession.getAttribute(Constants.KAPTCHA_SESSION_DATE);
-    return date != null && TimeUtil.of(date).toLocalDateTime().plus(kaptchaProperties.getExpireSeconds(),
-        ChronoUnit.SECONDS).isAfter(TimeUtil.now().toLocalDateTime()) && captcha.equalsIgnoreCase(kaptcha);
+    return date != null && TimeUtil.of(date).toLocalDateTime()
+        .plus(kaptchaProperties.getExpireSeconds(),
+            ChronoUnit.SECONDS).isAfter(TimeUtil.now().toLocalDateTime())
+        && captcha.equalsIgnoreCase(kaptcha);
   }
 
 }

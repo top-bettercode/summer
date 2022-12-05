@@ -44,7 +44,8 @@ public class ApiVersionFilter extends OncePerRequestFilter implements Ordered {
   }
 
   @Override
-  protected void doFilterInternal(@NotNull final HttpServletRequest request, HttpServletResponse response,
+  protected void doFilterInternal(@NotNull final HttpServletRequest request,
+      HttpServletResponse response,
       FilterChain filterChain) throws IOException, ServletException {
     response.setHeader(summerWebProperties.getVersionName(), summerWebProperties.getVersion());
     response.setHeader(summerWebProperties.getVersionNoName(), summerWebProperties.getVersionNo());

@@ -22,7 +22,10 @@ object ProjectDependencies {
         project.dependencies.apply {
             add("implementation", platform("top.bettercode.summer:summer-bom:$summerVersion"))
             add("annotationProcessor", platform("top.bettercode.summer:summer-bom:$summerVersion"))
-            add( "annotationProcessor", "org.springframework.boot:spring-boot-configuration-processor" )
+            add(
+                "annotationProcessor",
+                "org.springframework.boot:spring-boot-configuration-processor"
+            )
             add("compileOnly", "org.springframework.boot:spring-boot-configuration-processor")
             add("compileOnly", "com.google.code.findbugs:annotations")
         }

@@ -66,7 +66,11 @@ class ProfilePlugin : Plugin<Project> {
         }
     }
 
-    private fun doFilter(@Suppress("UnstableApiUsage") it: ProcessResources, project: Project, hash: Hashtable<String, String>) {
+    private fun doFilter(
+        @Suppress("UnstableApiUsage") it: ProcessResources,
+        project: Project,
+        hash: Hashtable<String, String>
+    ) {
         it.inputs.property(profilesActiveName, project.profilesActive)
         it.inputs.files(*project.profileFiles)
         val profile = project.extensions.getByType(ProfileExtension::class.java)

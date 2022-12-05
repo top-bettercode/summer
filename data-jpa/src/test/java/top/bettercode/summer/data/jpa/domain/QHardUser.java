@@ -17,29 +17,29 @@ import javax.annotation.Generated;
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QHardUser extends EntityPathBase<HardUser> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public static final QHardUser hardUser = new QHardUser("hardUser");
+  public static final QHardUser hardUser = new QHardUser("hardUser");
 
-    public final BooleanPath deleted = createBoolean("deleted");
+  public final BooleanPath deleted = createBoolean("deleted");
 
-    public final StringPath firstName = createString("firstName");
+  public final StringPath firstName = createString("firstName");
 
-    public final NumberPath<Integer> id = createNumber("id", Integer.class);
+  public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
-    public final StringPath lastName = createString("lastName");
+  public final StringPath lastName = createString("lastName");
 
-    public QHardUser(String variable) {
-        super(HardUser.class, forVariable(variable));
-    }
+  public QHardUser(String variable) {
+    super(HardUser.class, forVariable(variable));
+  }
 
-    public QHardUser(Path<? extends HardUser> path) {
-        super(path.getType(), path.getMetadata());
-    }
+  public QHardUser(Path<? extends HardUser> path) {
+    super(path.getType(), path.getMetadata());
+  }
 
-    public QHardUser(PathMetadata metadata) {
-        super(HardUser.class, metadata);
-    }
+  public QHardUser(PathMetadata metadata) {
+    super(HardUser.class, metadata);
+  }
 
 }
 

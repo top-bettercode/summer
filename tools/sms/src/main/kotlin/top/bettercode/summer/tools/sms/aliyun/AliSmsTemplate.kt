@@ -91,7 +91,11 @@ class AliSmsTemplate(
      * @return 结果
      */
     @JvmOverloads
-    fun sendSms(templateCode: String, aliSmsReq: AliSmsReq, mock: Boolean = aliSmsProperties.mock): AliSmsResponse {
+    fun sendSms(
+        templateCode: String,
+        aliSmsReq: AliSmsReq,
+        mock: Boolean = aliSmsProperties.mock
+    ): AliSmsResponse {
         return sendSms(templateCode, listOf(aliSmsReq), mock)
     }
 

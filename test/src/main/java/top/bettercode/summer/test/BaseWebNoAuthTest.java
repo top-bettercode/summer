@@ -134,7 +134,8 @@ public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
     String contentDisposition = result.getResponse().getHeader("Content-Disposition");
     contentDisposition = URLDecoder
         .decode(
-            Objects.requireNonNull(contentDisposition).replaceAll(".*filename\\*=UTF-8''(.*?)", "$1"), "UTF-8");
+            Objects.requireNonNull(contentDisposition)
+                .replaceAll(".*filename\\*=UTF-8''(.*?)", "$1"), "UTF-8");
     return "build/" + contentDisposition;
   }
 

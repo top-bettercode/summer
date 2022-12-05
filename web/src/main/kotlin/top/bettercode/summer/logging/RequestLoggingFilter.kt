@@ -149,7 +149,11 @@ class RequestLoggingFilter(
                     marker.add(AlarmMarker(initialComment, timeoutMsg))
                     msg = "$initialComment${timeoutMsg}\n$msg"
                 }
-                if (LoggingUtil.existProperty(environment, "summer.logging.logstash.destinations[0]")) {
+                if (LoggingUtil.existProperty(
+                        environment,
+                        "summer.logging.logstash.destinations[0]"
+                    )
+                ) {
                     marker.add(
                         Markers.appendRaw(
                             OPERATION_MARKER,

@@ -26,7 +26,7 @@ public class TempTest {
     StringBuilder chars = new StringBuilder();
     do {
       chars.append((char) ('A' + i % 26));
-    } while ((i = ((i / 26)-1)) >= 0);
+    } while ((i = ((i / 26) - 1)) >= 0);
     return chars.reverse().toString();
   }
 }

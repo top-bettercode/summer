@@ -104,7 +104,8 @@ class NoCommitScriptRunner(private val connection: Connection) {
     private fun checkForMissingLineTerminator(command: StringBuilder?) {
         if (command != null && command.toString().trim { it <= ' ' }.isNotEmpty()) {
             throw RuntimeException(
-                    "Line missing end-of-line terminator ($delimiter) => $command")
+                "Line missing end-of-line terminator ($delimiter) => $command"
+            )
         }
     }
 
@@ -119,6 +120,7 @@ class NoCommitScriptRunner(private val connection: Connection) {
                 }
                 println(trimmedLine)
             }
+
             commandReadyToExecute(trimmedLine) -> {
                 command.append(line, 0, line.lastIndexOf(delimiter))
                 command.append(LINE_SEPARATOR)
@@ -126,6 +128,7 @@ class NoCommitScriptRunner(private val connection: Connection) {
                 executeStatement(command.toString())
                 command.setLength(0)
             }
+
             trimmedLine.isNotEmpty() -> {
                 command.append(line)
                 command.append(LINE_SEPARATOR)
@@ -234,7 +237,7 @@ class NoCommitScriptRunner(private val connection: Connection) {
         private const val DEFAULT_DELIMITER = ";"
 
         private val DELIMITER_PATTERN = Pattern
-                .compile("^\\s*((--)|(//))?\\s*(//)?\\s*@DELIMITER\\s+(\\S+)", Pattern.CASE_INSENSITIVE)
+            .compile("^\\s*((--)|(//))?\\s*(//)?\\s*@DELIMITER\\s+(\\S+)", Pattern.CASE_INSENSITIVE)
     }
 
 }

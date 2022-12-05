@@ -1,213 +1,186 @@
 request:
   parametersExt:
-   -
-    name: "taskListType"
-    type: "Integer"
-    description: "任务排名类型"
-    value: "0"
-    canCover: true
-    required: false
+    - name: "taskListType"
+      type: "Integer"
+      description: "任务排名类型"
+      value: "0"
+      canCover: true
+      required: false
   headersExt:
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    value: "application/json;version=2.0"
-    canCover: true
-    required: false
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<_qianmingsuanfa>>"
-    value: "e7199c8b6f662dcb61aa4be256cb7046"
-    canCover: true
-    required: true
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/x-www-form-urlencoded"
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    value: "4883e7ab06741b03a99ec466472e3baf"
-    canCover: true
-    required: false
+    - name: "Accept"
+      type: "String"
+      description: "客户端接收格式"
+      value: "application/json;version=2.0"
+      canCover: true
+      required: false
+    - name: "user-agent"
+      type: "String"
+      description: "用户代理"
+      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+      canCover: true
+      required: false
+    - name: "sign"
+      type: "String"
+      description: "接口签名 <<_qianmingsuanfa>>"
+      value: "e7199c8b6f662dcb61aa4be256cb7046"
+      canCover: true
+      required: true
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/x-www-form-urlencoded"
+      canCover: true
+      required: false
+    - name: "accessToken"
+      type: "String"
+      description: "存取令牌"
+      value: "4883e7ab06741b03a99ec466472e3baf"
+      canCover: true
+      required: false
   restUri: "/custInfos/taskList"
   method: "GET"
 response:
   contentExt:
-   -
-    name: "yearTargetCoefficient"
-    type: "BigDecimal"
-    description: "年出货目标"
-    value: "1000.0"
-    canCover: true
-    required: false
-   -
-    name: "coefficient"
-    type: "BigDecimal"
-    description: "出货数量"
-    value: "450.0"
-    canCover: true
-    required: false
-   -
-    name: "reachs"
-    type: "List<AreaNum>"
-    description: "达成目录数量"
-    value: "[{\"area\":\"新都地区\",\"num\":24},{\"area\":\"四川省\",\"num\":1899}]"
-    canCover: true
-    children:
-     -
-      name: "area"
-      type: "String"
-      description: "地区"
-      value: "新都地区"
-      canCover: true
-      required: false
-     -
-      name: "num"
-      type: "Integer"
-      description: "数量/排名"
-      value: "24"
-      canCover: true
-      required: false
-    required: false
-   -
-    name: "month"
-    type: "CustSum"
-    description: "月度排名统计"
-    value: "{\"shipments\":55.0,\"areas\":[{\"area\":\"新都地区\",\"num\":24},{\"area\"\
-      :\"四川省\",\"num\":1899},{\"area\":\"全国\",\"num\":1899}]}"
-    canCover: true
-    children:
-     -
-      name: "shipments"
+    - name: "yearTargetCoefficient"
       type: "BigDecimal"
-      description: "出货量"
-      value: "55.0"
+      description: "年出货目标"
+      value: "1000.0"
       canCover: true
       required: false
-     -
-      name: "areas"
-      type: "List<AreaNum>"
-      description: "分区排名"
-      value: "[{\"area\":\"新都地区\",\"num\":24},{\"area\":\"四川省\",\"num\":1899},{\"\
-        area\":\"全国\",\"num\":1899}]"
-      canCover: true
-      children:
-       -
-        name: "area"
-        type: "String"
-        description: "地区"
-        value: "新都地区"
-        canCover: true
-        required: false
-       -
-        name: "num"
-        type: "Integer"
-        description: "数量/排名"
-        value: "24"
-        canCover: true
-        required: false
-      required: false
-    required: false
-   -
-    name: "quarter"
-    type: "CustSum"
-    description: "季度排名统计"
-    value: "{\"shipments\":155.0,\"areas\":[{\"area\":\"新都地区\",\"num\":24},{\"area\"\
-      :\"四川省\",\"num\":1899},{\"area\":\"全国\",\"num\":1899}]}"
-    canCover: true
-    children:
-     -
-      name: "shipments"
+    - name: "coefficient"
       type: "BigDecimal"
-      description: "出货量"
-      value: "155.0"
-      canCover: true
-      required: false
-     -
-      name: "areas"
-      type: "List<AreaNum>"
-      description: "分区排名"
-      value: "[{\"area\":\"新都地区\",\"num\":24},{\"area\":\"四川省\",\"num\":1899},{\"\
-        area\":\"全国\",\"num\":1899}]"
-      canCover: true
-      children:
-       -
-        name: "area"
-        type: "String"
-        description: "地区"
-        value: "新都地区"
-        canCover: true
-        required: false
-       -
-        name: "num"
-        type: "Integer"
-        description: "数量/排名"
-        value: "24"
-        canCover: true
-        required: false
-      required: false
-    required: false
-   -
-    name: "year"
-    type: "CustSum"
-    description: "年排名统计"
-    value: "{\"shipments\":450.0,\"areas\":[{\"area\":\"新都地区\",\"num\":24},{\"area\"\
-      :\"四川省\",\"num\":1899},{\"area\":\"全国\",\"num\":1899}]}"
-    canCover: true
-    children:
-     -
-      name: "shipments"
-      type: "BigDecimal"
-      description: "出货量"
+      description: "出货数量"
       value: "450.0"
       canCover: true
       required: false
-     -
-      name: "areas"
+    - name: "reachs"
       type: "List<AreaNum>"
-      description: "分区排名"
-      value: "[{\"area\":\"新都地区\",\"num\":24},{\"area\":\"四川省\",\"num\":1899},{\"\
-        area\":\"全国\",\"num\":1899}]"
+      description: "达成目录数量"
+      value: "[{\"area\":\"新都地区\",\"num\":24},{\"area\":\"四川省\",\"num\":1899}]"
       canCover: true
       children:
-       -
-        name: "area"
-        type: "String"
-        description: "地区"
-        value: "新都地区"
-        canCover: true
-        required: false
-       -
-        name: "num"
-        type: "Integer"
-        description: "数量/排名"
-        value: "24"
-        canCover: true
-        required: false
+        - name: "area"
+          type: "String"
+          description: "地区"
+          value: "新都地区"
+          canCover: true
+          required: false
+        - name: "num"
+          type: "Integer"
+          description: "数量/排名"
+          value: "24"
+          canCover: true
+          required: false
       required: false
-    required: false
+    - name: "month"
+      type: "CustSum"
+      description: "月度排名统计"
+      value: "{\"shipments\":55.0,\"areas\":[{\"area\":\"新都地区\",\"num\":24},{\"area\"\
+      :\"四川省\",\"num\":1899},{\"area\":\"全国\",\"num\":1899}]}"
+      canCover: true
+      children:
+        - name: "shipments"
+          type: "BigDecimal"
+          description: "出货量"
+          value: "55.0"
+          canCover: true
+          required: false
+        - name: "areas"
+          type: "List<AreaNum>"
+          description: "分区排名"
+          value: "[{\"area\":\"新都地区\",\"num\":24},{\"area\":\"四川省\",\"num\":1899},{\"\
+        area\":\"全国\",\"num\":1899}]"
+          canCover: true
+          children:
+            - name: "area"
+              type: "String"
+              description: "地区"
+              value: "新都地区"
+              canCover: true
+              required: false
+            - name: "num"
+              type: "Integer"
+              description: "数量/排名"
+              value: "24"
+              canCover: true
+              required: false
+          required: false
+      required: false
+    - name: "quarter"
+      type: "CustSum"
+      description: "季度排名统计"
+      value: "{\"shipments\":155.0,\"areas\":[{\"area\":\"新都地区\",\"num\":24},{\"area\"\
+      :\"四川省\",\"num\":1899},{\"area\":\"全国\",\"num\":1899}]}"
+      canCover: true
+      children:
+        - name: "shipments"
+          type: "BigDecimal"
+          description: "出货量"
+          value: "155.0"
+          canCover: true
+          required: false
+        - name: "areas"
+          type: "List<AreaNum>"
+          description: "分区排名"
+          value: "[{\"area\":\"新都地区\",\"num\":24},{\"area\":\"四川省\",\"num\":1899},{\"\
+        area\":\"全国\",\"num\":1899}]"
+          canCover: true
+          children:
+            - name: "area"
+              type: "String"
+              description: "地区"
+              value: "新都地区"
+              canCover: true
+              required: false
+            - name: "num"
+              type: "Integer"
+              description: "数量/排名"
+              value: "24"
+              canCover: true
+              required: false
+          required: false
+      required: false
+    - name: "year"
+      type: "CustSum"
+      description: "年排名统计"
+      value: "{\"shipments\":450.0,\"areas\":[{\"area\":\"新都地区\",\"num\":24},{\"area\"\
+      :\"四川省\",\"num\":1899},{\"area\":\"全国\",\"num\":1899}]}"
+      canCover: true
+      children:
+        - name: "shipments"
+          type: "BigDecimal"
+          description: "出货量"
+          value: "450.0"
+          canCover: true
+          required: false
+        - name: "areas"
+          type: "List<AreaNum>"
+          description: "分区排名"
+          value: "[{\"area\":\"新都地区\",\"num\":24},{\"area\":\"四川省\",\"num\":1899},{\"\
+        area\":\"全国\",\"num\":1899}]"
+          canCover: true
+          children:
+            - name: "area"
+              type: "String"
+              description: "地区"
+              value: "新都地区"
+              canCover: true
+              required: false
+            - name: "num"
+              type: "Integer"
+              description: "数量/排名"
+              value: "24"
+              canCover: true
+              required: false
+          required: false
+      required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
   statusCode: 200
   contentAsString: "{\"yearTargetCoefficient\":1000.0,\"coefficient\":450.0,\"reachs\"\
     :[{\"area\":\"新都地区\",\"num\":24},{\"area\":\"四川省\",\"num\":1899}],\"month\":{\"\
@@ -218,15 +191,15 @@ response:
     都地区\",\"num\":24},{\"area\":\"四川省\",\"num\":1899},{\"area\":\"全国\",\"num\":1899}]}}"
 protocol: "HTTP/1.1"
 testExec:
- - "pm.test('验证响应状态码是200', function () {"
- - "  pm.response.to.have.status(200);"
- - "});"
- - ""
- - "pm.test('验证响应时间小于1000ms', function () {"
- - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
- - "});"
- - ""
- - "pm.test('验证返回json格式', function () {"
- - "  pm.response.to.be.json;"
- - "});"
- - ""
+  - "pm.test('验证响应状态码是200', function () {"
+  - "  pm.response.to.have.status(200);"
+  - "});"
+  - ""
+  - "pm.test('验证响应时间小于1000ms', function () {"
+  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+  - "});"
+  - ""
+  - "pm.test('验证返回json格式', function () {"
+  - "  pm.response.to.be.json;"
+  - "});"
+  - ""

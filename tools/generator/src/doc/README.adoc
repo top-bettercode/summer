@@ -2,7 +2,6 @@
 == 系统概述
 
 .接口定义规范
-
 |===
 |请求方法 | URI | 说明 | 响应的HTTP状态码
 
@@ -41,7 +40,6 @@ TIP: Accept的格式为:application/json.
 错误的Accept服务器将响应406 HTTP Status Code.
 
 .响应说明
-
 返回的时间，默认格式为毫秒数(从1970年1月1日（UTC/GMT的午夜）开始所经过的毫秒数)
 
 * HTTP状态码为200时：
@@ -122,7 +120,6 @@ TIP: Accept的格式为:application/json.
 *** errors：详细错误信息，errors 内key为错误的字段/错误信息名称，value为错误信息
 
 .出错处理
-
 当客户端收到的 HTTP 状态码大于等于400时，客户端应按以下方式处理。
 
 * 当 HTTP 状态码为400时,表示业务异常，根据响应体中的 status 字段值按<<_yewuxiangguancuowuma>>处理。
@@ -132,7 +129,6 @@ TIP: Accept的格式为:application/json.
 * 当 HTTP 状态码为其他时，取 message 字段内容提示用户即可。
 
 .HTTP状态码说明
-
 |===
 |HTTP状态码 | 说明
 

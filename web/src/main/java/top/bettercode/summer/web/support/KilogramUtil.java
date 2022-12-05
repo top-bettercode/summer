@@ -26,7 +26,7 @@ public class KilogramUtil {
   }
 
   /**
-   * @param gram 单位克
+   * @param gram  单位克
    * @param scale 小数位数
    * @return 单位千克
    */

@@ -4,7 +4,10 @@ import java.io.ByteArrayOutputStream
 import javax.servlet.ServletOutputStream
 import javax.servlet.WriteListener
 
-class TraceServletOutputStream(private val delegate: ServletOutputStream, private val byteArrayOutputStream: ByteArrayOutputStream) : ServletOutputStream() {
+class TraceServletOutputStream(
+    private val delegate: ServletOutputStream,
+    private val byteArrayOutputStream: ByteArrayOutputStream
+) : ServletOutputStream() {
 
     private val trace = object : ServletOutputStream() {
 

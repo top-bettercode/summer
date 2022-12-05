@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder("key", "value")
-data class Header(@JsonProperty("key")
-             val key: String? = null,
-             @JsonProperty("value")
-             val value: String? = null)
+data class Header(
+    @JsonProperty("key")
+    val key: String? = null,
+    @JsonProperty("value")
+    val value: String? = null
+)

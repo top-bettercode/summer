@@ -20,13 +20,13 @@ import org.springframework.core.annotation.AliasFor;
 public @interface DeprecatedAPI {
 
   /**
-   * @return 提示消息,默认“该功能已弃用”
+   * @return 提示消息, 默认“该功能已弃用”
    */
   @AliasFor("message")
   String value() default "deprecated.api";
 
   /**
-   * @return 提示消息,默认“该功能已弃用”
+   * @return 提示消息, 默认“该功能已弃用”
    */
   @AliasFor("value")
   String message() default "deprecated.api";

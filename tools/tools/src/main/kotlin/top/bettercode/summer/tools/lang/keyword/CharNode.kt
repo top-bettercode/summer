@@ -7,13 +7,14 @@ package top.bettercode.summer.tools.lang.keyword
  */
 data class CharNode(
     /**
-         * 父节点
-         */
-        var parent: CharNode? = null,
+     * 父节点
+     */
+    var parent: CharNode? = null,
     /**
-         * 字符所在层级，即匹配的字符串的长度;
-         */
-        var length: Int = 0) {
+     * 字符所在层级，即匹配的字符串的长度;
+     */
+    var length: Int = 0
+) {
 
     /**
      * 子节点

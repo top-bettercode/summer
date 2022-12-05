@@ -17,7 +17,8 @@ public class ApplicationContextHolder implements ApplicationContextAware {
   private static ApplicationContext applicationContext;
 
   @Override
-  public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
+  public void setApplicationContext(@NotNull ApplicationContext applicationContext)
+      throws BeansException {
     ApplicationContextHolder.applicationContext = applicationContext;
   }
 
@@ -61,7 +62,8 @@ public class ApplicationContextHolder implements ApplicationContextAware {
   }
 
   public static ConversionService getConversionService() {
-    return applicationContext == null ? new DefaultConversionService() : applicationContext.getBean(ConversionService.class);
+    return applicationContext == null ? new DefaultConversionService()
+        : applicationContext.getBean(ConversionService.class);
   }
 
 }

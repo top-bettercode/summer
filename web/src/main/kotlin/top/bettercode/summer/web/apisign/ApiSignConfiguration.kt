@@ -9,7 +9,6 @@ import org.springframework.core.type.AnnotatedTypeMetadata
 import org.springframework.util.StringUtils
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import top.bettercode.summer.web.apisign.ApiSignProperties
 
 /**
  * 接口签名 自动配置

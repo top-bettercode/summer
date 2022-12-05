@@ -16,7 +16,7 @@ public class ApiToken implements Serializable {
 
   private Token refreshToken;
 
-  private  InstantAt userDetailsInstantAt;
+  private InstantAt userDetailsInstantAt;
 
   private UserDetails userDetails;
 
@@ -36,7 +36,7 @@ public class ApiToken implements Serializable {
     return userDetails.getUsername();
   }
 
-  public ApiAccessToken toApiToken(){
+  public ApiAccessToken toApiToken() {
     return new ApiAccessToken(this);
   }
 

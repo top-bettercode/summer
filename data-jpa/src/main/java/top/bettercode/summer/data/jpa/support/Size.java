@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
  * @author Peter Wu
  */
 public class Size {
+
   private final int size;
   private final Sort sort;
 

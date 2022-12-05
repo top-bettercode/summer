@@ -1,158 +1,137 @@
 request:
   uriVariablesExt:
-   -
-    name: "accountId"
-    type: "String"
-    description: "账户ID"
-    value: "1000046457"
-    canCover: true
-    required: false
+    - name: "accountId"
+      type: "String"
+      description: "账户ID"
+      value: "1000046457"
+      canCover: true
+      required: false
   headersExt:
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    value: "application/json;version=2.0"
-    canCover: true
-    required: false
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<_qianmingsuanfa>>"
-    value: "6c5467aaaf8b8c5876b8016771744b64"
-    canCover: true
-    required: true
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/x-www-form-urlencoded"
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    value: "2beb03d4-c19c-4486-8a90-f2cd1ff0b8b0"
-    canCover: true
-    required: false
+    - name: "Accept"
+      type: "String"
+      description: "客户端接收格式"
+      value: "application/json;version=2.0"
+      canCover: true
+      required: false
+    - name: "user-agent"
+      type: "String"
+      description: "用户代理"
+      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+      canCover: true
+      required: false
+    - name: "sign"
+      type: "String"
+      description: "接口签名 <<_qianmingsuanfa>>"
+      value: "6c5467aaaf8b8c5876b8016771744b64"
+      canCover: true
+      required: true
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/x-www-form-urlencoded"
+      canCover: true
+      required: false
+    - name: "accessToken"
+      type: "String"
+      description: "存取令牌"
+      value: "2beb03d4-c19c-4486-8a90-f2cd1ff0b8b0"
+      canCover: true
+      required: false
   restUri: "/custAccountInfos/availableCredit/{accountId}"
   method: "GET"
 response:
   contentExt:
-   -
-    name: "accountId"
-    type: "String"
-    description: "账户ID"
-    value: "1000046457"
-    canCover: true
-    required: false
-   -
-    name: "childrenAccountType"
-    type: "String"
-    description: "01"
-    value: "06"
-    canCover: true
-    required: false
-   -
-    name: "availableBalance"
-    type: "BigDecimal"
-    description: "可用金额"
-    value: "0"
-    canCover: true
-    required: false
-   -
-    name: "alreadyRepayment"
-    type: "BigDecimal"
-    description: "已还金额"
-    value: "47525"
-    canCover: true
-    required: false
-   -
-    name: "needPayment"
-    type: "BigDecimal"
-    description: "待还金额"
-    value: "0"
-    canCover: true
-    required: false
-   -
-    name: "approvedAmount"
-    type: "BigDecimal"
-    description: "审批金额"
-    value: "47525"
-    canCover: true
-    required: false
-   -
-    name: "FundCreditFlow_beginDate"
-    type: "Long"
-    description: "FundCreditFlow_beginDate"
-    value: "1509206400000"
-    canCover: true
-    required: false
-   -
-    name: "FundCreditFlow_endDate"
-    type: "Long"
-    description: "FundCreditFlow_endDate"
-    value: "1509292800000"
-    canCover: true
-    required: false
-   -
-    name: "FundCreditFlow_repayDate"
-    type: "Long"
-    description: "FundCreditFlow_repayDate"
-    value: "1509379200000"
-    canCover: true
-    required: false
-   -
-    name: "serviceType"
-    type: "String"
-    description: "业务类型"
-    value: "01"
-    canCover: true
-    required: false
-   -
-    name: "custName"
-    type: "String"
-    description: "客户名称"
-    value: "鲁山县维钊农资商行"
-    canCover: true
-    required: false
-   -
-    name: "saleCompany"
-    type: "String"
-    description: "销售公司"
-    value: "成都云图控股股份有限公司"
-    canCover: true
-    required: false
-   -
-    name: "rate"
-    type: "BigDecimal"
-    description: "罚息率"
-    value: "2"
-    canCover: true
-    required: false
-   -
-    name: "FundCreditFlow_inputDate"
-    type: "Long"
-    description: "FundCreditFlow_inputDate"
-    value: "1512282645000"
-    canCover: true
-    required: false
+    - name: "accountId"
+      type: "String"
+      description: "账户ID"
+      value: "1000046457"
+      canCover: true
+      required: false
+    - name: "childrenAccountType"
+      type: "String"
+      description: "01"
+      value: "06"
+      canCover: true
+      required: false
+    - name: "availableBalance"
+      type: "BigDecimal"
+      description: "可用金额"
+      value: "0"
+      canCover: true
+      required: false
+    - name: "alreadyRepayment"
+      type: "BigDecimal"
+      description: "已还金额"
+      value: "47525"
+      canCover: true
+      required: false
+    - name: "needPayment"
+      type: "BigDecimal"
+      description: "待还金额"
+      value: "0"
+      canCover: true
+      required: false
+    - name: "approvedAmount"
+      type: "BigDecimal"
+      description: "审批金额"
+      value: "47525"
+      canCover: true
+      required: false
+    - name: "FundCreditFlow_beginDate"
+      type: "Long"
+      description: "FundCreditFlow_beginDate"
+      value: "1509206400000"
+      canCover: true
+      required: false
+    - name: "FundCreditFlow_endDate"
+      type: "Long"
+      description: "FundCreditFlow_endDate"
+      value: "1509292800000"
+      canCover: true
+      required: false
+    - name: "FundCreditFlow_repayDate"
+      type: "Long"
+      description: "FundCreditFlow_repayDate"
+      value: "1509379200000"
+      canCover: true
+      required: false
+    - name: "serviceType"
+      type: "String"
+      description: "业务类型"
+      value: "01"
+      canCover: true
+      required: false
+    - name: "custName"
+      type: "String"
+      description: "客户名称"
+      value: "鲁山县维钊农资商行"
+      canCover: true
+      required: false
+    - name: "saleCompany"
+      type: "String"
+      description: "销售公司"
+      value: "成都云图控股股份有限公司"
+      canCover: true
+      required: false
+    - name: "rate"
+      type: "BigDecimal"
+      description: "罚息率"
+      value: "2"
+      canCover: true
+      required: false
+    - name: "FundCreditFlow_inputDate"
+      type: "Long"
+      description: "FundCreditFlow_inputDate"
+      value: "1512282645000"
+      canCover: true
+      required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
   statusCode: 200
   contentAsString: "{\"accountId\":\"1000046457\",\"childrenAccountType\":\"06\",\"\
     availableBalance\":0,\"alreadyRepayment\":47525,\"needPayment\":0,\"approvedAmount\"\
@@ -162,15 +141,15 @@ response:
     :1512282645000}"
 protocol: "HTTP/1.1"
 testExec:
- - "pm.test('验证响应状态码是200', function () {"
- - "  pm.response.to.have.status(200);"
- - "});"
- - ""
- - "pm.test('验证响应时间小于1000ms', function () {"
- - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
- - "});"
- - ""
- - "pm.test('验证返回json格式', function () {"
- - "  pm.response.to.be.json;"
- - "});"
- - ""
+  - "pm.test('验证响应状态码是200', function () {"
+  - "  pm.response.to.have.status(200);"
+  - "});"
+  - ""
+  - "pm.test('验证响应时间小于1000ms', function () {"
+  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+  - "});"
+  - ""
+  - "pm.test('验证返回json格式', function () {"
+  - "  pm.response.to.be.json;"
+  - "});"
+  - ""

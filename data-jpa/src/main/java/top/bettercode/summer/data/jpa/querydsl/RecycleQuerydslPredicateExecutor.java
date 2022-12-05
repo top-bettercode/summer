@@ -25,7 +25,7 @@ public interface RecycleQuerydslPredicateExecutor<T> {
    * @return a single entity matching the given {@link Predicate} or {@link Optional#empty()} if
    * none was found.
    * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if the predicate yields
-   * more than one result.
+   *                                                                        more than one result.
    */
   Optional<T> findOneFromRecycleBin(Predicate predicate);
 
@@ -43,21 +43,22 @@ public interface RecycleQuerydslPredicateExecutor<T> {
    * case no match could be found an empty {@link Iterable} is returned.
    *
    * @param predicate must not be {@literal null}.
-   * @param sort the {@link Sort} specification to sort the results by, may be {@link Sort#empty()},
-   * must not be {@literal null}.
+   * @param sort      the {@link Sort} specification to sort the results by, may be
+   *                  {@link Sort#empty()}, must not be {@literal null}.
    * @return all entities matching the given {@link Predicate}.
    * @since 1.10
    */
   Iterable<T> findAllFromRecycleBin(Predicate predicate, Sort sort);
 
   /**
-   * Returns all entities matching the given {@link Predicate} applying the given {@link
-   * OrderSpecifier}s. In case no match could be found an empty {@link Iterable} is returned.
+   * Returns all entities matching the given {@link Predicate} applying the given
+   * {@link OrderSpecifier}s. In case no match could be found an empty {@link Iterable} is
+   * returned.
    *
    * @param predicate must not be {@literal null}.
-   * @param orders the {@link OrderSpecifier}s to sort the results by.
-   * @return all entities matching the given {@link Predicate} applying the given {@link
-   * OrderSpecifier}s.
+   * @param orders    the {@link OrderSpecifier}s to sort the results by.
+   * @return all entities matching the given {@link Predicate} applying the given
+   * {@link OrderSpecifier}s.
    */
   Iterable<T> findAllFromRecycleBin(Predicate predicate, OrderSpecifier<?>... orders);
 
@@ -74,7 +75,7 @@ public interface RecycleQuerydslPredicateExecutor<T> {
    * be found, an empty {@link Page} is returned.
    *
    * @param predicate must not be {@literal null}.
-   * @param pageable may be {@link Pageable#unpaged()}, must not be {@literal null}.
+   * @param pageable  may be {@link Pageable#unpaged()}, must not be {@literal null}.
    * @return a {@link Page} of entities matching the given {@link Predicate}.
    */
   Page<T> findAllFromRecycleBin(Predicate predicate, Pageable pageable);
@@ -90,10 +91,10 @@ public interface RecycleQuerydslPredicateExecutor<T> {
   /**
    * Checks whether the data store contains elements that match the given {@link Predicate}.
    *
-   * @param predicate the {@link Predicate} to use for the existence check, must not be {@literal
-   * null}.
-   * @return {@literal true} if the data store contains elements that match the given {@link
-   * Predicate}.
+   * @param predicate the {@link Predicate} to use for the existence check, must not be
+   *                  {@literal null}.
+   * @return {@literal true} if the data store contains elements that match the given
+   * {@link Predicate}.
    */
   boolean existsInRecycleBin(Predicate predicate);
 

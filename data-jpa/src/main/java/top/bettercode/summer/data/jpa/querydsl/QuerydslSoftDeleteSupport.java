@@ -20,7 +20,8 @@ public class QuerydslSoftDeleteSupport extends DefaultExtJpaSupport {
     super(jpaExtProperties, domainClass);
     if (supportSoftDeleted()) {
       if (entityPath != null) {
-        this.path = Expressions.path(getSoftDeletedPropertyType(), entityPath, getSoftDeletedPropertyName());
+        this.path = Expressions.path(getSoftDeletedPropertyType(), entityPath,
+            getSoftDeletedPropertyName());
       }
     }
   }

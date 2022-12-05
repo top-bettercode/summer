@@ -78,7 +78,8 @@ public class DataErrorHandler extends AbstractErrorHandler {
         String columnName = getText(specificCauseMessage.replaceAll(incorrectRegex, "$2"));
         message = columnName + "格式不正确";
       } else {
-        message = Objects.requireNonNull(((DataIntegrityViolationException) error).getRootCause()).getMessage();
+        message = Objects.requireNonNull(((DataIntegrityViolationException) error).getRootCause())
+            .getMessage();
       }
     } else if (error instanceof UncategorizedSQLException) {
       String detailMessage = ((UncategorizedSQLException) error).getSQLException().getMessage()

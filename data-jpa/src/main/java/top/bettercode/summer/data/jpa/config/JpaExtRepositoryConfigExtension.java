@@ -14,7 +14,9 @@ public class JpaExtRepositoryConfigExtension extends JpaRepositoryConfigExtensio
   public void postProcess(
       @NotNull BeanDefinitionBuilder builder, @NotNull RepositoryConfigurationSource source) {
     super.postProcess(builder, source);
-    builder.addPropertyReference("mybatisConfiguration", source.getAttribute("mybatisConfigurationRef").orElse("mybatisConfiguration"));
-    builder.addPropertyReference("jpaExtProperties", source.getAttribute("jpaExtPropertiesRef").orElse("jpaExtProperties"));
+    builder.addPropertyReference("mybatisConfiguration",
+        source.getAttribute("mybatisConfigurationRef").orElse("mybatisConfiguration"));
+    builder.addPropertyReference("jpaExtProperties",
+        source.getAttribute("jpaExtPropertiesRef").orElse("jpaExtProperties"));
   }
 }

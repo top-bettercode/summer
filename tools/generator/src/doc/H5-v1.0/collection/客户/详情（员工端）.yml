@@ -1,282 +1,246 @@
 request:
   uriVariablesExt:
-   -
-    name: "custId"
-    type: "String"
-    description: "客户ID"
-    value: "CUST00161"
-    canCover: true
-    required: false
-  headersExt:
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    value: "application/json;version=2.0"
-    canCover: true
-    required: false
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<_qianmingsuanfa>>"
-    value: "6c5467aaaf8b8c5876b8016771744b64"
-    canCover: true
-    required: true
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/x-www-form-urlencoded"
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    value: "d187f527-47e7-4b51-a90b-595b21f5f38a"
-    canCover: true
-    required: false
-  restUri: "/custInfos/{custId}"
-  method: "GET"
-response:
-  contentExt:
-   -
-    name: "base"
-    type: "CustInfoBase"
-    description: "基本信息"
-    defaultVal: "false"
-    value: "{\"sapNo\":\"0001503975\",\"custId\":\"CUST00161\",\"custName\":\"漳州市雪\
-      娟化肥有限公司\",\"phone\":\"13906969213\",\"reviewStatus\":\"HAS_AUDIT\",\"detailedAddress\"\
-      :\"福建省漳州市芗城区南坑街道\",\"area\":\"福建省漳州市\",\"region\":\"复肥事业部本部闽南区域\"}"
-    canCover: true
-    children:
-     -
-      name: "sapNo"
-      type: "String"
-      description: "SAP Number"
-      value: "0001503975"
-      canCover: true
-      required: false
-     -
-      name: "custId"
+    - name: "custId"
       type: "String"
       description: "客户ID"
       value: "CUST00161"
       canCover: true
       required: false
-     -
-      name: "custName"
+  headersExt:
+    - name: "Accept"
       type: "String"
-      description: "客户名称"
-      value: "漳州市雪娟化肥有限公司"
+      description: "客户端接收格式"
+      value: "application/json;version=2.0"
       canCover: true
       required: false
-     -
-      name: "phone"
+    - name: "user-agent"
       type: "String"
-      description: "手机"
-      value: "13906969213"
+      description: "用户代理"
+      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
       canCover: true
       required: false
-     -
-      name: "reviewStatus"
+    - name: "sign"
       type: "String"
-      description: "审核状态"
-      value: "HAS_AUDIT"
+      description: "接口签名 <<_qianmingsuanfa>>"
+      value: "6c5467aaaf8b8c5876b8016771744b64"
+      canCover: true
+      required: true
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/x-www-form-urlencoded"
       canCover: true
       required: false
-     -
-      name: "detailedAddress"
+    - name: "accessToken"
       type: "String"
-      description: "详细地址"
-      value: "福建省漳州市芗城区南坑街道"
+      description: "存取令牌"
+      value: "d187f527-47e7-4b51-a90b-595b21f5f38a"
       canCover: true
       required: false
-     -
-      name: "area"
-      type: "String"
-      description: "地区"
-      value: "福建省漳州市"
-      canCover: true
-      required: false
-     -
-      name: "region"
-      type: "String"
-      description: "大区"
+  restUri: "/custInfos/{custId}"
+  method: "GET"
+response:
+  contentExt:
+    - name: "base"
+      type: "CustInfoBase"
+      description: "基本信息"
       defaultVal: "false"
-      value: "复肥事业部本部闽南区域"
+      value: "{\"sapNo\":\"0001503975\",\"custId\":\"CUST00161\",\"custName\":\"漳州市雪\
+      娟化肥有限公司\",\"phone\":\"13906969213\",\"reviewStatus\":\"HAS_AUDIT\",\"detailedAddress\"\
+      :\"福建省漳州市芗城区南坑街道\",\"area\":\"福建省漳州市\",\"region\":\"复肥事业部本部闽南区域\"}"
       canCover: true
+      children:
+        - name: "sapNo"
+          type: "String"
+          description: "SAP Number"
+          value: "0001503975"
+          canCover: true
+          required: false
+        - name: "custId"
+          type: "String"
+          description: "客户ID"
+          value: "CUST00161"
+          canCover: true
+          required: false
+        - name: "custName"
+          type: "String"
+          description: "客户名称"
+          value: "漳州市雪娟化肥有限公司"
+          canCover: true
+          required: false
+        - name: "phone"
+          type: "String"
+          description: "手机"
+          value: "13906969213"
+          canCover: true
+          required: false
+        - name: "reviewStatus"
+          type: "String"
+          description: "审核状态"
+          value: "HAS_AUDIT"
+          canCover: true
+          required: false
+        - name: "detailedAddress"
+          type: "String"
+          description: "详细地址"
+          value: "福建省漳州市芗城区南坑街道"
+          canCover: true
+          required: false
+        - name: "area"
+          type: "String"
+          description: "地区"
+          value: "福建省漳州市"
+          canCover: true
+          required: false
+        - name: "region"
+          type: "String"
+          description: "大区"
+          defaultVal: "false"
+          value: "复肥事业部本部闽南区域"
+          canCover: true
+          required: false
       required: false
-    required: false
-   -
-    name: "identification"
-    type: "CustIdentification"
-    description: "身份信息"
-    defaultVal: "false"
-    value: "{\"indentifyId\":\"IDEN00161\",\"customerLevel\":\"\",\"customerService\"\
+    - name: "identification"
+      type: "CustIdentification"
+      description: "身份信息"
+      defaultVal: "false"
+      value: "{\"indentifyId\":\"IDEN00161\",\"customerLevel\":\"\",\"customerService\"\
       :\"复肥\",\"customerType\":\"经销商\",\"salesOrg\":\"新都公司销售组织\",\"salesCompany\"\
       :\"成都云图控股股份有限公司\"}"
-    canCover: true
-    children:
-     -
-      name: "indentifyId"
-      type: "String"
-      description: "身份表ID"
-      value: "IDEN00161"
       canCover: true
+      children:
+        - name: "indentifyId"
+          type: "String"
+          description: "身份表ID"
+          value: "IDEN00161"
+          canCover: true
+          required: false
+        - name: "customerLevel"
+          type: "String"
+          description: "客户级别"
+          canCover: true
+          required: false
+        - name: "customerService"
+          type: "String"
+          description: "业务类型 50"
+          value: "复肥"
+          canCover: true
+          required: false
+        - name: "customerType"
+          type: "String"
+          description: "客户类型"
+          value: "经销商"
+          canCover: true
+          required: false
+        - name: "salesOrg"
+          type: "String"
+          description: "销售组织"
+          value: "新都公司销售组织"
+          canCover: true
+          required: false
+        - name: "salesCompany"
+          type: "String"
+          description: "销售公司"
+          value: "成都云图控股股份有限公司"
+          canCover: true
+          required: false
       required: false
-     -
-      name: "customerLevel"
-      type: "String"
-      description: "客户级别"
-      canCover: true
-      required: false
-     -
-      name: "customerService"
-      type: "String"
-      description: "业务类型 50"
-      value: "复肥"
-      canCover: true
-      required: false
-     -
-      name: "customerType"
-      type: "String"
-      description: "客户类型"
-      value: "经销商"
-      canCover: true
-      required: false
-     -
-      name: "salesOrg"
-      type: "String"
-      description: "销售组织"
-      value: "新都公司销售组织"
-      canCover: true
-      required: false
-     -
-      name: "salesCompany"
-      type: "String"
-      description: "销售公司"
-      value: "成都云图控股股份有限公司"
-      canCover: true
-      required: false
-    required: false
-   -
-    name: "brandAreas"
-    type: "List<BrandArea>"
-    description: "品牌代理区域"
-    defaultVal: "false"
-    value: "[{\"address\":\"新疆维吾尔自治区伊犁哈萨克自治州伊宁市\",\"brandNames\":[\"嘉施利\",\"五禾丰\"\
+    - name: "brandAreas"
+      type: "List<BrandArea>"
+      description: "品牌代理区域"
+      defaultVal: "false"
+      value: "[{\"address\":\"新疆维吾尔自治区伊犁哈萨克自治州伊宁市\",\"brandNames\":[\"嘉施利\",\"五禾丰\"\
       ]},{\"address\":\"云南省红河哈尼族彝族自治州泸西县\",\"brandNames\":[\"凯利丰\"]},{\"address\"\
       :\"四川省眉山市东坡区修文镇\",\"brandNames\":[\"撒威\"]}]"
-    canCover: true
-    children:
-     -
-      name: "address"
-      type: "String"
-      description: "地址"
+      canCover: true
+      children:
+        - name: "address"
+          type: "String"
+          description: "地址"
+          defaultVal: "false"
+          value: "新疆维吾尔自治区伊犁哈萨克自治州伊宁市"
+          canCover: true
+          required: false
+        - name: "brandNames"
+          type: "List<String>"
+          description: "代理的品牌"
+          value: "[\"嘉施利\",\"五禾丰\"]"
+          canCover: true
+          required: false
+      required: false
+    - name: "invoice"
+      type: "CustInvoice"
+      description: "开票信息"
       defaultVal: "false"
-      value: "新疆维吾尔自治区伊犁哈萨克自治州伊宁市"
-      canCover: true
-      required: false
-     -
-      name: "brandNames"
-      type: "List<String>"
-      description: "代理的品牌"
-      value: "[\"嘉施利\",\"五禾丰\"]"
-      canCover: true
-      required: false
-    required: false
-   -
-    name: "invoice"
-    type: "CustInvoice"
-    description: "开票信息"
-    defaultVal: "false"
-    value: "{\"invoiceId\":\"INVO00161\",\"isInvoice\":\"开专票\",\"invoiceCompany\"\
+      value: "{\"invoiceId\":\"INVO00161\",\"isInvoice\":\"开专票\",\"invoiceCompany\"\
       :\"漳州市需娟化肥有限公司\",\"invoiceType\":\"公司\",\"taxpayerIdentificationNum\":\"91350602MA2XN44W4R\"\
       ,\"invoiceCompanyAddress\":\"福建省漳州市芗城区元光南路鑫豪园2710室\",\"invoiceConpanyPhone\"\
       :\"028-88888888\",\"bank\":\"福建漳州农村商业银行股份有限公司大同支行\",\"account\":\"9080215090010000262209\"\
       }"
-    canCover: true
-    children:
-     -
-      name: "invoiceId"
-      type: "String"
-      description: "开票信息ID"
-      value: "INVO00161"
       canCover: true
+      children:
+        - name: "invoiceId"
+          type: "String"
+          description: "开票信息ID"
+          value: "INVO00161"
+          canCover: true
+          required: false
+        - name: "isInvoice"
+          type: "String"
+          description: "是否开票"
+          value: "开专票"
+          canCover: true
+          required: false
+        - name: "invoiceCompany"
+          type: "String"
+          description: "开票抬头"
+          value: "漳州市需娟化肥有限公司"
+          canCover: true
+          required: false
+        - name: "invoiceType"
+          type: "String"
+          description: "开票类型"
+          value: "公司"
+          canCover: true
+          required: false
+        - name: "taxpayerIdentificationNum"
+          type: "String"
+          description: "纳税人身份识别码"
+          value: "91350602MA2XN44W4R"
+          canCover: true
+          required: false
+        - name: "invoiceCompanyAddress"
+          type: "String"
+          description: "公司地址"
+          value: "福建省漳州市芗城区元光南路鑫豪园2710室"
+          canCover: true
+          required: false
+        - name: "invoiceConpanyPhone"
+          type: "String"
+          description: "开票公司电话"
+          value: "028-88888888"
+          canCover: true
+          required: false
+        - name: "bank"
+          type: "String"
+          description: "开户行"
+          value: "福建漳州农村商业银行股份有限公司大同支行"
+          canCover: true
+          required: false
+        - name: "account"
+          type: "String"
+          description: "银行账号"
+          value: "9080215090010000262209"
+          canCover: true
+          required: false
       required: false
-     -
-      name: "isInvoice"
-      type: "String"
-      description: "是否开票"
-      value: "开专票"
-      canCover: true
-      required: false
-     -
-      name: "invoiceCompany"
-      type: "String"
-      description: "开票抬头"
-      value: "漳州市需娟化肥有限公司"
-      canCover: true
-      required: false
-     -
-      name: "invoiceType"
-      type: "String"
-      description: "开票类型"
-      value: "公司"
-      canCover: true
-      required: false
-     -
-      name: "taxpayerIdentificationNum"
-      type: "String"
-      description: "纳税人身份识别码"
-      value: "91350602MA2XN44W4R"
-      canCover: true
-      required: false
-     -
-      name: "invoiceCompanyAddress"
-      type: "String"
-      description: "公司地址"
-      value: "福建省漳州市芗城区元光南路鑫豪园2710室"
-      canCover: true
-      required: false
-     -
-      name: "invoiceConpanyPhone"
-      type: "String"
-      description: "开票公司电话"
-      value: "028-88888888"
-      canCover: true
-      required: false
-     -
-      name: "bank"
-      type: "String"
-      description: "开户行"
-      value: "福建漳州农村商业银行股份有限公司大同支行"
-      canCover: true
-      required: false
-     -
-      name: "account"
-      type: "String"
-      description: "银行账号"
-      value: "9080215090010000262209"
-      canCover: true
-      required: false
-    required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
   statusCode: 200
   contentAsString: "{\"base\":{\"sapNo\":\"0001503975\",\"custId\":\"CUST00161\",\"\
     custName\":\"漳州市雪娟化肥有限公司\",\"phone\":\"13906969213\",\"reviewStatus\":\"HAS_AUDIT\"\
@@ -293,15 +257,15 @@ response:
     }}"
 protocol: "HTTP/1.1"
 testExec:
- - "pm.test('验证响应状态码是200', function () {"
- - "  pm.response.to.have.status(200);"
- - "});"
- - ""
- - "pm.test('验证响应时间小于1000ms', function () {"
- - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
- - "});"
- - ""
- - "pm.test('验证返回json格式', function () {"
- - "  pm.response.to.be.json;"
- - "});"
- - ""
+  - "pm.test('验证响应状态码是200', function () {"
+  - "  pm.response.to.have.status(200);"
+  - "});"
+  - ""
+  - "pm.test('验证响应时间小于1000ms', function () {"
+  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+  - "});"
+  - ""
+  - "pm.test('验证返回json格式', function () {"
+  - "  pm.response.to.be.json;"
+  - "});"
+  - ""

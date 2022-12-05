@@ -99,16 +99,16 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
             val rootCollectionNames = rootCollections.map { it.name }
             File(this.rootModuleDic, "collection").listFiles()
                 ?.filterNot { rootCollectionNames.contains(it.name) }?.forEach {
-                it.deleteRecursively()
-                println("delete $it")
-            }
+                    it.deleteRecursively()
+                    println("delete $it")
+                }
         }
         val subCollectionNames = projectCollections.map { it.name }
         File(projectModuleDic, "collection").listFiles()
             ?.filterNot { subCollectionNames.contains(it.name) }?.forEach {
-            it.deleteRecursively()
-            println("delete $it")
-        }
+                it.deleteRecursively()
+                println("delete $it")
+            }
     }
 
     fun writeToDisk() {

@@ -37,8 +37,8 @@ public final class JpaExtQueryLookupStrategy {
   }
 
   /**
-   * Base class for {@link QueryLookupStrategy} implementations that need access to an {@link
-   * EntityManager}.
+   * Base class for {@link QueryLookupStrategy} implementations that need access to an
+   * {@link EntityManager}.
    *
    * @author Oliver Gierke
    * @author Thomas Darimont
@@ -105,7 +105,6 @@ public final class JpaExtQueryLookupStrategy {
   }
 
 
-
   /**
    * {@link QueryLookupStrategy} that tries to detect a declared query declared via {@link Query}
    * annotation followed by a JPA named query lookup.
@@ -136,17 +135,20 @@ public final class JpaExtQueryLookupStrategy {
 
         if (method.hasAnnotatedQueryName()) {
           LOG.warn(String.format(
-              "Query method %s is annotated with both, a query and a query name. Using the declared query.", method));
+              "Query method %s is annotated with both, a query and a query name. Using the declared query.",
+              method));
         }
 
-        return JpaQueryFactory.INSTANCE.fromMethodWithQueryString(method, em, method.getRequiredAnnotatedQuery(),
+        return JpaQueryFactory.INSTANCE.fromMethodWithQueryString(method, em,
+            method.getRequiredAnnotatedQuery(),
             getCountQuery(method, namedQueries, em),
             evaluationContextProvider);
       }
 
       String name = method.getNamedQueryName();
       if (namedQueries.hasQuery(name)) {
-        return JpaQueryFactory.INSTANCE.fromMethodWithQueryString(method, em, namedQueries.getQuery(name), getCountQuery(method, namedQueries, em),
+        return JpaQueryFactory.INSTANCE.fromMethodWithQueryString(method, em,
+            namedQueries.getQuery(name), getCountQuery(method, namedQueries, em),
             evaluationContextProvider);
       }
 
@@ -157,11 +159,13 @@ public final class JpaExtQueryLookupStrategy {
       }
 
       throw new IllegalStateException(
-          String.format("Did neither find a NamedQuery nor an annotated query for method %s!", method));
+          String.format("Did neither find a NamedQuery nor an annotated query for method %s!",
+              method));
     }
 
     @Nullable
-    private String getCountQuery(JpaQueryMethod method, NamedQueries namedQueries, EntityManager em) {
+    private String getCountQuery(JpaQueryMethod method, NamedQueries namedQueries,
+        EntityManager em) {
 
       if (StringUtils.hasText(method.getCountQuery())) {
         return method.getCountQuery();
@@ -188,9 +192,9 @@ public final class JpaExtQueryLookupStrategy {
   }
 
   /**
-   * {@link QueryLookupStrategy} to try to detect a declared query first ( {@link
-   * org.springframework.data.jpa.repository.Query}, JPA named query). In case none is found we fall
-   * back on query creation.
+   * {@link QueryLookupStrategy} to try to detect a declared query first (
+   * {@link org.springframework.data.jpa.repository.Query}, JPA named query). In case none is found
+   * we fall back on query creation.
    *
    * @author Oliver Gierke
    * @author Thomas Darimont

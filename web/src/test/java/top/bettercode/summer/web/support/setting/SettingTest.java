@@ -15,6 +15,7 @@ import top.bettercode.summer.web.config.CorsProperties;
 class SettingTest {
 
   String key = "summer.security.cors.enable";
+
   @Test
   void getAndset() {
     Map<String, String> map = new HashMap<>();

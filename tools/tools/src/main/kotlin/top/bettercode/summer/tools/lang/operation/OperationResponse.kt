@@ -11,32 +11,32 @@ import java.time.LocalDateTime
 @JsonPropertyOrder("statusCode", "headers", "contentAsString", "createdDate", "stackTrace")
 open class OperationResponse(
 
-        /**
-         * Returns the status of the response.
-         *
-         * the statusCode
-         */
-        var statusCode: Int = HttpStatus.OK.value(),
+    /**
+     * Returns the status of the response.
+     *
+     * the statusCode
+     */
+    var statusCode: Int = HttpStatus.OK.value(),
 
-        /**
-         * Returns the headers in the response.
-         *
-         * the headers
-         */
-        headers: HttpHeaders = HttpHeaders(),
-        /**
-         * Returns the content of the response. If the response has no content an empty array
-         * is returned.
-         *
-         * the contents, never `null`
-         */
-        content: ByteArray = ByteArray(0),
-        /**
-         * 响应时间
-         */
-        var dateTime: LocalDateTime = LocalDateTime.now(),
-        /**
-         * 异常追踪桟
-         */
-        var stackTrace: String = ""
+    /**
+     * Returns the headers in the response.
+     *
+     * the headers
+     */
+    headers: HttpHeaders = HttpHeaders(),
+    /**
+     * Returns the content of the response. If the response has no content an empty array
+     * is returned.
+     *
+     * the contents, never `null`
+     */
+    content: ByteArray = ByteArray(0),
+    /**
+     * 响应时间
+     */
+    var dateTime: LocalDateTime = LocalDateTime.now(),
+    /**
+     * 异常追踪桟
+     */
+    var stackTrace: String = ""
 ) : AbstractOperationMessage(headers, content)

@@ -40,11 +40,13 @@ class AddressDataTest {
                         path = name
                         level = 1
                     }
+
                     code.endsWith("00") -> {
                         parentCode = rootCode
                         path = "$rootName>$name"
                         level = 2
                     }
+
                     else -> {
                         parentCode = "${code.subSequence(0, 4)}00"
                         var pname = getName(addressData, parentCode)

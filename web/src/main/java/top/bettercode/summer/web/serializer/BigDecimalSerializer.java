@@ -68,8 +68,8 @@ public class BigDecimalSerializer extends StdScalarSerializer<BigDecimal> implem
       String fieldName = outputContext.getCurrentName();
       String percentPlainSring = content.multiply(new BigDecimal(100))
           .setScale(scale - 2, roundingMode).toPlainString();
-      if(reduceFraction){
-        percentPlainSring=reduceFraction(percentPlainSring);
+      if (reduceFraction) {
+        percentPlainSring = reduceFraction(percentPlainSring);
       }
       gen.writeStringField(fieldName + "Pct", percentPlainSring + "%");
     }

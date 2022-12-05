@@ -21,7 +21,12 @@ class PackageInfo(
 ) : GenUnit {
 
     override val name: String
-        get() = "${type.fullyQualifiedNameWithoutTypeParameters.replace(".", File.separator)}.${if (DirectorySet.JAVA == directorySet) "java" else "kt"}"
+        get() = "${
+            type.fullyQualifiedNameWithoutTypeParameters.replace(
+                ".",
+                File.separator
+            )
+        }.${if (DirectorySet.JAVA == directorySet) "java" else "kt"}"
 
 
     private val javaDocLines: MutableList<String> = mutableListOf()

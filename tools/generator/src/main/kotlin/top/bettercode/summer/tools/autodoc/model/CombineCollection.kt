@@ -3,7 +3,10 @@ package top.bettercode.summer.tools.autodoc.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
 
-data class CombineCollection(private val rootCollection: DocCollection, var projectCollection: DocCollection?) : ICollection {
+data class CombineCollection(
+    private val rootCollection: DocCollection,
+    var projectCollection: DocCollection?
+) : ICollection {
 
     override val name: String = rootCollection.name
 
@@ -12,7 +15,11 @@ data class CombineCollection(private val rootCollection: DocCollection, var proj
         get() {
             return if (projectCollection != null) {
                 val operations = mutableListOf<DocOperation>()
-                operations.addAll(rootCollection.operations.filter { !projectCollection!!.operations.contains(it) })
+                operations.addAll(rootCollection.operations.filter {
+                    !projectCollection!!.operations.contains(
+                        it
+                    )
+                })
                 operations.addAll(projectCollection!!.operations)
                 operations
             } else rootCollection.operations

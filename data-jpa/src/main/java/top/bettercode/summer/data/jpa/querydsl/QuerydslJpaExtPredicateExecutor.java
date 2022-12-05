@@ -42,7 +42,7 @@ public class QuerydslJpaExtPredicateExecutor<T> extends QuerydslJpaPredicateExec
     if (softDeleteSupport.supportSoftDeleted()) {
       predicate = softDeleteSupport.andFalsePredicate(predicate);
     }
-       return super.findOne(predicate);
+    return super.findOne(predicate);
   }
 
   @NotNull

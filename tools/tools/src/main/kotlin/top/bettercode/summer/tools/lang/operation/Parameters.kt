@@ -53,8 +53,9 @@ class Parameters : LinkedMultiValueMap<String, String>() {
         return uniqueParameters
     }
 
-    private fun addIfUnique(parameter: Map.Entry<String, List<String>>,
-                            queryStringParameters: Parameters, uniqueParameters: Parameters
+    private fun addIfUnique(
+        parameter: Map.Entry<String, List<String>>,
+        queryStringParameters: Parameters, uniqueParameters: Parameters
     ) {
         if (!queryStringParameters.containsKey(parameter.key)) {
             uniqueParameters[parameter.key] = parameter.value
@@ -91,8 +92,10 @@ class Parameters : LinkedMultiValueMap<String, String>() {
         try {
             return URLEncoder.encode(s, "UTF-8")
         } catch (ex: UnsupportedEncodingException) {
-            throw IllegalStateException("Unable to URL encode $s using UTF-8",
-                    ex)
+            throw IllegalStateException(
+                "Unable to URL encode $s using UTF-8",
+                ex
+            )
         }
 
     }

@@ -9,16 +9,16 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Url(
 
-        @JsonProperty("path")
-        var path: List<String>? = null,
-        @JsonProperty("protocol")
-        var protocol: String? = null,
-        @JsonProperty("port")
-        var port: String? = null,
-        @JsonProperty("host")
-        var host: List<String>? = null,
-        @JsonProperty("raw")
-        var raw: String? = null,
-        @JsonProperty("query")
-        var query: List<Query>? = null
+    @JsonProperty("path")
+    var path: List<String>? = null,
+    @JsonProperty("protocol")
+    var protocol: String? = null,
+    @JsonProperty("port")
+    var port: String? = null,
+    @JsonProperty("host")
+    var host: List<String>? = null,
+    @JsonProperty("raw")
+    var raw: String? = null,
+    @JsonProperty("query")
+    var query: List<Query>? = null
 )

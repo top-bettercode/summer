@@ -3,7 +3,7 @@ package top.bettercode.summer.data.jpa.resp;
 /**
  * @author Peter Wu
  */
-public class UUser  {
+public class UUser {
 
   private String firstName;
   private String lastName;

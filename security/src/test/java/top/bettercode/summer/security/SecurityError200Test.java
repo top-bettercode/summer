@@ -75,7 +75,8 @@ public class SecurityError200Test {
   public void invalidToken() {
     HttpHeaders httpHeaders = new HttpHeaders();
     ResponseEntity<String> entity = restTemplate
-        .exchange("/testDefaultAuth?access_token=xxx", HttpMethod.GET, new HttpEntity<>(httpHeaders),
+        .exchange("/testDefaultAuth?access_token=xxx", HttpMethod.GET,
+            new HttpEntity<>(httpHeaders),
             String.class);
     System.err.println(entity.getBody());
     assertEquals(HttpStatus.OK, entity.getStatusCode());

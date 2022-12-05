@@ -2,102 +2,90 @@ description: "不传levels返回首页分类（根据返回数据levels分别展
   品牌；levels=2时返回所有品系；"
 request:
   parametersExt:
-   -
-    name: "levels"
-    type: "String"
-    description: "级别"
-    value: "1"
-    canCover: true
-    required: false
-  headersExt:
-   -
-    name: "Accept"
-    type: "String"
-    description: "客户端接收格式"
-    value: "application/json;version=2.0"
-    canCover: true
-    required: false
-   -
-    name: "user-agent"
-    type: "String"
-    description: "用户代理"
-    value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
-    canCover: true
-    required: false
-   -
-    name: "sign"
-    type: "String"
-    description: "接口签名 <<_qianmingsuanfa>>"
-    value: "dea58c947e4ed3d2aea8cac4c01f67d7"
-    canCover: true
-    required: true
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/x-www-form-urlencoded"
-    canCover: true
-    required: false
-   -
-    name: "accessToken"
-    type: "String"
-    description: "存取令牌"
-    value: "b02cd37284c3546f6506b836374999db"
-    canCover: true
-    required: false
-  restUri: "/materialClasss"
-  method: "GET"
-response:
-  contentExt:
-   -
-    name: "list"
-    type: "Array"
-    description: "内容"
-    value: "[{\"id\":\"3314\",\"levelName\":\"五禾丰\",\"levels\":\"1\",\"picUrl\":\"\
-      http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3314.png?reqid=10000\"\
-      },{\"id\":\"3317\",\"levelName\":\"桂湖\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3317.png?reqid=10000\"\
-      },{\"id\":\"3318\",\"levelName\":\"嘉施利\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3318.png?reqid=10000\"\
-      },{\"id\":\"5454\",\"levelName\":\"常规中浓度\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
-      }]"
-    canCover: true
-    children:
-     -
-      name: "id"
-      type: "String"
-      description: "id"
-      value: "3314"
-      canCover: true
-      required: false
-     -
-      name: "levelName"
-      type: "String"
-      description: "名称"
-      value: "五禾丰"
-      canCover: true
-      required: false
-     -
-      name: "levels"
+    - name: "levels"
       type: "String"
       description: "级别"
       value: "1"
       canCover: true
       required: false
-     -
-      name: "picUrl"
+  headersExt:
+    - name: "Accept"
       type: "String"
-      description: "图片url"
-      value: "http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3314.png?reqid=10000"
+      description: "客户端接收格式"
+      value: "application/json;version=2.0"
       canCover: true
       required: false
-    required: false
+    - name: "user-agent"
+      type: "String"
+      description: "用户代理"
+      value: "npk/2.0 (iPhone; iOS 8.1.2; Scale/2.00)"
+      canCover: true
+      required: false
+    - name: "sign"
+      type: "String"
+      description: "接口签名 <<_qianmingsuanfa>>"
+      value: "dea58c947e4ed3d2aea8cac4c01f67d7"
+      canCover: true
+      required: true
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/x-www-form-urlencoded"
+      canCover: true
+      required: false
+    - name: "accessToken"
+      type: "String"
+      description: "存取令牌"
+      value: "b02cd37284c3546f6506b836374999db"
+      canCover: true
+      required: false
+  restUri: "/materialClasss"
+  method: "GET"
+response:
+  contentExt:
+    - name: "list"
+      type: "Array"
+      description: "内容"
+      value: "[{\"id\":\"3314\",\"levelName\":\"五禾丰\",\"levels\":\"1\",\"picUrl\":\"\
+      http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3314.png?reqid=10000\"\
+      },{\"id\":\"3317\",\"levelName\":\"桂湖\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3317.png?reqid=10000\"\
+      },{\"id\":\"3318\",\"levelName\":\"嘉施利\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3318.png?reqid=10000\"\
+      },{\"id\":\"5454\",\"levelName\":\"常规中浓度\",\"levels\":\"1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/5454.png?reqid=10000\"\
+      }]"
+      canCover: true
+      children:
+        - name: "id"
+          type: "String"
+          description: "id"
+          value: "3314"
+          canCover: true
+          required: false
+        - name: "levelName"
+          type: "String"
+          description: "名称"
+          value: "五禾丰"
+          canCover: true
+          required: false
+        - name: "levels"
+          type: "String"
+          description: "级别"
+          value: "1"
+          canCover: true
+          required: false
+        - name: "picUrl"
+          type: "String"
+          description: "图片url"
+          value: "http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3314.png?reqid=10000"
+          canCover: true
+          required: false
+      required: false
   headersExt:
-   -
-    name: "Content-Type"
-    type: "String"
-    description: "内容类型"
-    value: "application/json;charset=UTF-8"
-    canCover: true
-    required: false
+    - name: "Content-Type"
+      type: "String"
+      description: "内容类型"
+      value: "application/json;charset=UTF-8"
+      canCover: true
+      required: false
   statusCode: 200
   contentAsString: "{\"list\":[{\"id\":\"3314\",\"levelName\":\"五禾丰\",\"levels\":\"\
     1\",\"picUrl\":\"http://10.0.2.72:8188/hollycrm-yuntu/upload/brandLogo/3314.png?reqid=10000\"\
@@ -107,15 +95,15 @@ response:
     }]}"
 protocol: "HTTP/1.1"
 testExec:
- - "pm.test('验证响应状态码是200', function () {"
- - "  pm.response.to.have.status(200);"
- - "});"
- - ""
- - "pm.test('验证响应时间小于1000ms', function () {"
- - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
- - "});"
- - ""
- - "pm.test('验证返回json格式', function () {"
- - "  pm.response.to.be.json;"
- - "});"
- - ""
+  - "pm.test('验证响应状态码是200', function () {"
+  - "  pm.response.to.have.status(200);"
+  - "});"
+  - ""
+  - "pm.test('验证响应时间小于1000ms', function () {"
+  - "  pm.expect(pm.response.responseTime).to.be.below(1000);"
+  - "});"
+  - ""
+  - "pm.test('验证返回json格式', function () {"
+  - "  pm.response.to.be.json;"
+  - "});"
+  - ""

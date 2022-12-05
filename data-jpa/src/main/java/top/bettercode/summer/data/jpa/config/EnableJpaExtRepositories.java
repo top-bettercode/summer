@@ -32,7 +32,8 @@ public @interface EnableJpaExtRepositories {
 
   /**
    * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation
-   * declarations e.g.: {@code @EnableJpaRepositories("org.my.pkg")} instead of {@code @EnableJpaExtRepositories(basePackages="org.my.pkg")}.
+   * declarations e.g.: {@code @EnableJpaRepositories("org.my.pkg")} instead of
+   * {@code @EnableJpaExtRepositories(basePackages="org.my.pkg")}.
    *
    * @return value
    */
@@ -52,6 +53,7 @@ public @interface EnableJpaExtRepositories {
    * annotated components. The package of each class specified will be scanned. Consider creating a
    * special no-op marker class or interface in each package that serves no purpose other than being
    * referenced by this attribute.
+   *
    * @return basePackageClasses
    */
   Class<?>[] basePackageClasses() default {};
@@ -60,12 +62,14 @@ public @interface EnableJpaExtRepositories {
    * Specifies which types are eligible for component scanning. Further narrows the set of candidate
    * components from everything in {@link #basePackages()} to everything in the base packages that
    * matches the given filter or filters.
+   *
    * @return includeFilters
    */
   Filter[] includeFilters() default {};
 
   /**
    * Specifies which types are not eligible for component scanning.
+   *
    * @return excludeFilters
    */
   Filter[] excludeFilters() default {};
@@ -124,8 +128,8 @@ public @interface EnableJpaExtRepositories {
 
   /**
    * Configures the name of the {@link PlatformTransactionManager} bean definition to be used to
-   * create repositories discovered through this annotation. Defaults to {@code
-   * transactionManager}.
+   * create repositories discovered through this annotation. Defaults to
+   * {@code transactionManager}.
    *
    * @return transactionManagerRef
    */
@@ -134,6 +138,7 @@ public @interface EnableJpaExtRepositories {
   /**
    * Configures whether nested repository-interfaces (e.g. defined as inner classes) should be
    * discovered by the repositories infrastructure.
+   *
    * @return considerNestedRepositories
    */
   boolean considerNestedRepositories() default false;
@@ -149,15 +154,15 @@ public @interface EnableJpaExtRepositories {
   boolean enableDefaultTransactions() default true;
 
   /**
-   * Configures when the repositories are initialized in the bootstrap lifecycle. {@link
-   * BootstrapMode#DEFAULT} (default) means eager initialization except all repository interfaces
-   * annotated with {@link Lazy}, {@link BootstrapMode#LAZY} means lazy by default including
-   * injection of lazy-initialization proxies into client beans so that those can be instantiated
-   * but will only trigger the initialization upon first repository usage (i.e a method invocation
-   * on it). This means repositories can still be uninitialized when the application context has
-   * completed its bootstrap. {@link BootstrapMode#DEFERRED} is fundamentally the same as {@link
-   * BootstrapMode#LAZY}, but triggers repository initialization when the application context
-   * finishes its bootstrap.
+   * Configures when the repositories are initialized in the bootstrap lifecycle.
+   * {@link BootstrapMode#DEFAULT} (default) means eager initialization except all repository
+   * interfaces annotated with {@link Lazy}, {@link BootstrapMode#LAZY} means lazy by default
+   * including injection of lazy-initialization proxies into client beans so that those can be
+   * instantiated but will only trigger the initialization upon first repository usage (i.e a method
+   * invocation on it). This means repositories can still be uninitialized when the application
+   * context has completed its bootstrap. {@link BootstrapMode#DEFERRED} is fundamentally the same
+   * as {@link BootstrapMode#LAZY}, but triggers repository initialization when the application
+   * context finishes its bootstrap.
    *
    * @return bootstrapMode
    * @since 2.1
@@ -174,9 +179,8 @@ public @interface EnableJpaExtRepositories {
   char escapeCharacter() default '\\';
 
   /**
-   * @return Configures the name of the {@link Configuration} bean definition to be used to
-   * create repositories discovered through this annotation. Defaults to {@code
-   * mybatisConfiguration}.
+   * @return Configures the name of the {@link Configuration} bean definition to be used to create
+   * repositories discovered through this annotation. Defaults to {@code mybatisConfiguration}.
    */
   String mybatisConfigurationRef() default "mybatisConfiguration";
 

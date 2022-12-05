@@ -97,10 +97,10 @@ object ConfigTool {
             if (value is Map<*, *>) {
                 @Suppress("UNCHECKED_CAST")
                 (iterateAndProcess(
-        properties,
-        value as Map<String, Any>,
-        if (rootKey.isEmpty()) key else "$rootKey.$key"
-    ))
+                    properties,
+                    value as Map<String, Any>,
+                    if (rootKey.isEmpty()) key else "$rootKey.$key"
+                ))
             } else {
                 properties.setProperty(
                     if (rootKey.isEmpty()) key else "$rootKey.$key",

@@ -295,7 +295,8 @@ public class SapGenService {
       toStringMethod.setReturnType(JavaType.Companion.getStringInstance());
       toStringMethod.annotation("@Override");
       toStringMethod.bodyLine("return StringUtil.json(this);");
-      topLevelClass.getImportedTypes().add(new JavaType("top.bettercode.summer.tools.lang.util.StringUtil"));
+      topLevelClass.getImportedTypes()
+          .add(new JavaType("top.bettercode.summer.tools.lang.util.StringUtil"));
       topLevelClass.method(toStringMethod);
       topLevelClass.writeTo(outputDir);
     }

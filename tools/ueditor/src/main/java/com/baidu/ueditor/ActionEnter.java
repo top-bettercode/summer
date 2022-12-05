@@ -74,7 +74,7 @@ public class ActionEnter {
         break;
 
     }
-    Assert.notNull(state,"state 异常");
+    Assert.notNull(state, "state 异常");
     return state.toJSONString();
 
   }

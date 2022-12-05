@@ -23,11 +23,10 @@ public class SocketLoggingProperties {
    */
   private Integer port = 4560;
   /**
-   * The reconnectionDelay option takes a duration string, such "10
-   * seconds" representing the time to wait between each failed connection attempt to the server.
-   * The default value of this option is 30 seconds. Setting this option to zero turns off
-   * reconnection capability. Note that in case of successful connection to the server, there will
-   * be no connector thread present.
+   * The reconnectionDelay option takes a duration string, such "10 seconds" representing the time
+   * to wait between each failed connection attempt to the server. The default value of this option
+   * is 30 seconds. Setting this option to zero turns off reconnection capability. Note that in case
+   * of successful connection to the server, there will be no connector thread present.
    */
   private Duration reconnectionDelay = Duration.ofSeconds(30);
 

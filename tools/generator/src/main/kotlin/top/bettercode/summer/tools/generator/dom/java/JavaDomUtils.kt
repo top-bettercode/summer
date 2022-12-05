@@ -19,18 +19,24 @@ object JavaDomUtils {
         }
 
         return if (compilationUnit == null
-                || typeDoesNotRequireImport(fqjt)
-                || typeIsInSamePackage(compilationUnit, fqjt)
-                || typeIsAlreadyImported(compilationUnit, fqjt)) {
+            || typeDoesNotRequireImport(fqjt)
+            || typeIsInSamePackage(compilationUnit, fqjt)
+            || typeIsAlreadyImported(compilationUnit, fqjt)
+        ) {
             fqjt.shortName
         } else {
             fqjt.fullyQualifiedName
         }
     }
 
-    private fun calculateParameterizedTypeName(compilationUnit: CompilationUnit?, fqjt: JavaType): String {
-        val baseTypeName = calculateTypeName(compilationUnit,
-                JavaType(fqjt.fullyQualifiedNameWithoutTypeParameters))
+    private fun calculateParameterizedTypeName(
+        compilationUnit: CompilationUnit?,
+        fqjt: JavaType
+    ): String {
+        val baseTypeName = calculateTypeName(
+            compilationUnit,
+            JavaType(fqjt.fullyQualifiedNameWithoutTypeParameters)
+        )
 
         val sb = StringBuilder()
         sb.append(baseTypeName)
@@ -56,12 +62,19 @@ object JavaDomUtils {
         return fullyQualifiedJavaType.isPrimitive || !fullyQualifiedJavaType.isExplicitlyImported
     }
 
-    private fun typeIsInSamePackage(compilationUnit: CompilationUnit, fullyQualifiedJavaType: JavaType): Boolean {
+    private fun typeIsInSamePackage(
+        compilationUnit: CompilationUnit,
+        fullyQualifiedJavaType: JavaType
+    ): Boolean {
         return fullyQualifiedJavaType
-                .packageName == compilationUnit.type.packageName
+            .packageName == compilationUnit.type.packageName
     }
 
-    private fun typeIsAlreadyImported(compilationUnit: CompilationUnit, fullyQualifiedJavaType: JavaType): Boolean {
-        return compilationUnit.importedTypes.flatMap { it.importList }.contains(fullyQualifiedJavaType.fullyQualifiedNameWithoutTypeParameters)
+    private fun typeIsAlreadyImported(
+        compilationUnit: CompilationUnit,
+        fullyQualifiedJavaType: JavaType
+    ): Boolean {
+        return compilationUnit.importedTypes.flatMap { it.importList }
+            .contains(fullyQualifiedJavaType.fullyQualifiedNameWithoutTypeParameters)
     }
 }

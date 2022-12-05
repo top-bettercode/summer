@@ -55,7 +55,8 @@ public class UrlSerializerTest {
     dicBean.setPath("");
     dicBean.setPath("  ");
     dicBean.setPath1(null);
-    assertEquals("{\"number1\":0,\"number22\":null,\"path\":\"\",\"pathUrl\":\"\"}", objectMapper.writeValueAsString(dicBean));
+    assertEquals("{\"number1\":0,\"number22\":null,\"path\":\"\",\"pathUrl\":\"\"}",
+        objectMapper.writeValueAsString(dicBean));
   }
 
   @Test
@@ -72,7 +73,8 @@ public class UrlSerializerTest {
     dicBean.setPath("");
     dicBean.setPath("  ");
     dicBean.setPath1(null);
-    assertEquals("{\"number1\":0,\"number22\":null,\"path\":\"\"}", objectMapper.writeValueAsString(dicBean));
+    assertEquals("{\"number1\":0,\"number22\":null,\"path\":\"\"}",
+        objectMapper.writeValueAsString(dicBean));
   }
 
   @Test

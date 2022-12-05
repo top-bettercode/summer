@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.generator.dom.java
 
-class Annotations(private val annotations: MutableList<String> = mutableListOf()) : MutableList<String> by annotations {
+class Annotations(private val annotations: MutableList<String> = mutableListOf()) :
+    MutableList<String> by annotations {
     companion object {
         val regex = Regex("(@[^( ]+)")
         val splitRegex = Regex("[\n ]")

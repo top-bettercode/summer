@@ -13,7 +13,7 @@ data class Notification(
     @JvmOverloads
     constructor(
         alert: String? = null,
-        extras: Map<String,Any?>? = null,
+        extras: Map<String, Any?>? = null,
         title: String? = null
     ) : this(android = Android(alert, title, extras), ios = Ios(alert, extras))
 }

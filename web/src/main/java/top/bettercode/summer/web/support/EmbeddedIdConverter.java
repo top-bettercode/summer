@@ -53,7 +53,8 @@ public class EmbeddedIdConverter {
       PropertyDescriptor descriptor = descriptors.get(i);
       ReflectionUtils.invokeMethod(
           descriptor.getWriteMethod(), result,
-          ApplicationContextHolder.getConversionService().convert(values[i], descriptor.getPropertyType()));
+          ApplicationContextHolder.getConversionService()
+              .convert(values[i], descriptor.getPropertyType()));
     }
     return result;
   }

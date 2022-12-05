@@ -24,12 +24,12 @@ class AsciidocGeneratorTest {
     fun cp() {
         File(AutodocExtension::class.java.getResource("/static")!!.file).walkTopDown()
             .filter { it.isFile }.forEach {
-            val path = it.path.replace(
-                "/data/repositories/bettercode/default/summer/summer-plugin/src/main/",
-                ""
-            )
-            System.err.println("AutodocExtension::class.java.getResourceAsStream(\"/$path\").copyTo(File(outputFile, \"$path\").outputStream())")
-        }
+                val path = it.path.replace(
+                    "/data/repositories/bettercode/default/summer/summer-plugin/src/main/",
+                    ""
+                )
+                System.err.println("AutodocExtension::class.java.getResourceAsStream(\"/$path\").copyTo(File(outputFile, \"$path\").outputStream())")
+            }
     }
 
     @Test

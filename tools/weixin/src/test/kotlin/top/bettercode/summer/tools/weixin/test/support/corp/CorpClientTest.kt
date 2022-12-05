@@ -12,7 +12,7 @@ import top.bettercode.summer.tools.weixin.support.corp.CorpClient
  * @author Peter Wu
  */
 @Disabled
-internal class CorpClientTest: BaseTest() {
+internal class CorpClientTest : BaseTest() {
 
 
     @Autowired

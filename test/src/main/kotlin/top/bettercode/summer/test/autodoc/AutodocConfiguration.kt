@@ -12,11 +12,11 @@ import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import top.bettercode.summer.web.apisign.ApiSignProperties
 import top.bettercode.summer.logging.RequestLoggingConfiguration
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.web.apisign.ApiSignProperties
 import top.bettercode.summer.web.config.SummerWebProperties
 import javax.annotation.PostConstruct
 
