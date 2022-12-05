@@ -11,8 +11,7 @@ build
 out
 classes
 
-/buildSrc/src/main/kotlin/top
-/buildSrc/src/main/resources/META-INF
+/buildSrc/src
 /web/src/test/resources/application-test.yml
 /tools/weixin/src/test/resources/application.yml
 /tools/sms/src/test/resources/application.yml

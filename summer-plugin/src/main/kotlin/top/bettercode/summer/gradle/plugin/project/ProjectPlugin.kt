@@ -1,5 +1,8 @@
 package top.bettercode.summer.gradle.plugin.project
 
+import isBoot
+import isCloud
+import isCore
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -9,9 +12,6 @@ import top.bettercode.summer.gradle.plugin.autodoc.AutodocPlugin
 import top.bettercode.summer.gradle.plugin.dist.DistPlugin
 import top.bettercode.summer.gradle.plugin.generator.GenPackageinfoPlugin
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
-import top.bettercode.summer.gradle.plugin.generator.ProjectUtil.isBoot
-import top.bettercode.summer.gradle.plugin.generator.ProjectUtil.isCloud
-import top.bettercode.summer.gradle.plugin.generator.ProjectUtil.isCore
 import top.bettercode.summer.gradle.plugin.profile.ProfilePlugin
 
 /**

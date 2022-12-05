@@ -3,7 +3,7 @@ package top.bettercode.summer.gradle.plugin.project
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import top.bettercode.summer.gradle.plugin.generator.ProjectUtil.isBoot
+import isBoot
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profileProperties
 import java.io.File
 import java.util.*

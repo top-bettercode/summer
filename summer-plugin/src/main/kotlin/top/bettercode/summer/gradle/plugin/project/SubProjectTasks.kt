@@ -3,6 +3,7 @@ package top.bettercode.summer.gradle.plugin.project
 import Controller
 import Entity
 import Service
+import isBoot
 import isCore
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -16,7 +17,6 @@ import org.gradle.jvm.application.tasks.CreateStartScripts
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.jvmArgs
-import top.bettercode.summer.gradle.plugin.generator.ProjectUtil.isBoot
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.summer.tools.generator.dsl.Generators

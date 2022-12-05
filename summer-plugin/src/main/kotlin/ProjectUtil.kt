@@ -1,9 +1,24 @@
 import org.gradle.api.Project
-import top.bettercode.summer.gradle.plugin.generator.ProjectUtil.isBoot
-import top.bettercode.summer.gradle.plugin.generator.ProjectUtil.isCloud
-import top.bettercode.summer.gradle.plugin.generator.ProjectUtil.isCore
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profilesActive
+
+val Project.isBoot: Boolean
+    get() = !isCore
+            && "tools" != name
+            && "commons" != name
+            && "util" != name
+            && ((parent == rootProject) || parent?.name == "server" || parent?.name == "service")
+
+val Project.isCore: Boolean
+    get() {
+        var projectCore = findProperty("project.core") as? String
+        if (projectCore.isNullOrBlank())
+            projectCore = "^(core|.*-core)$"
+        return name.matches(Regex(projectCore))
+    }
+
+val Project.isCloud: Boolean
+    get() = "true" == findProperty("app.cloud")
 
 /**
  *
@@ -21,13 +36,3 @@ fun Project.profileClosure(active: String, closure: Project.(ProfileExtension) -
     val profile = project.extensions.getByType(ProfileExtension::class.java)
     profile.profileClosure.computeIfAbsent(active) { mutableSetOf() }.add(closure)
 }
-
-val Project.isBoot: Boolean
-    get() = this.isBoot
-
-
-val Project.isCore: Boolean
-    get() = this.isCore
-
-val Project.isCloud: Boolean
-    get() = this.isCloud

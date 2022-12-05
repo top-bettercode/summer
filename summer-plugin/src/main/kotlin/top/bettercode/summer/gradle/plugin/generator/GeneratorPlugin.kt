@@ -1,5 +1,7 @@
 package top.bettercode.summer.gradle.plugin.generator
 
+import isBoot
+import isCore
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
 import net.sourceforge.plantuml.ISourceFileReader
@@ -8,8 +10,6 @@ import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import top.bettercode.summer.gradle.plugin.generator.ProjectUtil.isBoot
-import top.bettercode.summer.gradle.plugin.generator.ProjectUtil.isCore
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
