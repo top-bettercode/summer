@@ -1,6 +1,7 @@
 package top.bettercode.summer.config
 
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
+import org.springframework.core.Ordered
 import org.springframework.core.io.ResourceLoader
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.File
@@ -17,7 +18,8 @@ import javax.servlet.http.HttpServletResponse
 class NavFilter(
     private val webEndpointProperties: WebEndpointProperties,
     private val resourceLoader: ResourceLoader
-) : OncePerRequestFilter() {
+) : OncePerRequestFilter(), Ordered {
+
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -72,5 +74,9 @@ class NavFilter(
 
     companion object {
         private const val staticLocations = "classpath:/META-INF/resources"
+    }
+
+    override fun getOrder(): Int {
+        return Ordered.HIGHEST_PRECEDENCE + 1
     }
 }

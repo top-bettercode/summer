@@ -11,6 +11,8 @@ import org.springframework.boot.autoconfigure.condition.*
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.*
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.core.io.ResourceLoader
 import org.springframework.core.type.AnnotatedTypeMetadata
