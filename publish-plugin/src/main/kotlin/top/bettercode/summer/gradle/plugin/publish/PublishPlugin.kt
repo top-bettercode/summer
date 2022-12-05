@@ -9,7 +9,7 @@ import org.gradle.api.tasks.bundling.Jar
  *
  * @author Peter Wu
  */
-class PublishPlugin : AbstractPlugin() {
+class PublishPlugin : AbstractPublishPlugin() {
 
     /**
      * {@inheritDoc}

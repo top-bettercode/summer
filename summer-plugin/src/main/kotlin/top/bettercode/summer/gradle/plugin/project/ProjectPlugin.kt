@@ -63,7 +63,6 @@ class ProjectPlugin : Plugin<Project> {
                 apply(GeneratorPlugin::class.java)
                 apply(AutodocPlugin::class.java)
                 apply("org.springframework.boot")
-                apply("io.spring.dependency-management")
             }
 
             if (subProject.isBoot) {

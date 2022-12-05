@@ -13,7 +13,6 @@ dependencies {
     api(gradleApi())
 
     api("org.springframework.boot:spring-boot-gradle-plugin")
-    api("io.spring.gradle:dependency-management-plugin")
 
     api("top.bettercode.summer:windows-service-plugin")
 
@@ -26,17 +25,4 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-}
-
-tasks {
-    @Suppress("UnstableApiUsage")
-    "processResources"(ProcessResources::class) {
-        outputs.upToDateWhen { false }
-        filesMatching(setOf("**/*.properties")) {
-            filter(
-                mapOf("tokens" to project.versionConfig),
-                org.apache.tools.ant.filters.ReplaceTokens::class.java
-            )
-        }
-    }
 }

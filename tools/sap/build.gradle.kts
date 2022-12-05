@@ -8,7 +8,7 @@ apply {
 
 dependencies {
     api(project(":web"))
-    api("com.github.easonjim:com.sap.conn.jco.sapjco3:3.0.11")
+    api("com.github.easonjim:com.sap.conn.jco.sapjco3")
 
     compileOnly(project(":tools:generator"))
     testImplementation(project(":tools:generator"))

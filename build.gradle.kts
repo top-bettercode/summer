@@ -1,7 +1,4 @@
-import io.spring.gradle.dependencymanagement.internal.dsl.StandardDependencyManagementExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.springframework.boot.gradle.plugin.SpringBootPlugin
-import org.springframework.boot.gradle.util.VersionExtractor
 
 plugins {
     `java-library`
@@ -10,138 +7,74 @@ plugins {
 
 allprojects {
     group = "top.bettercode.summer"
-    version = summerVersion
+    version = "0.0.19-SNAPSHOT"
 
-    apply {
-        plugin("java")
-        plugin("idea")
-        plugin("io.spring.dependency-management")
-    }
-
-    idea {
-        module {
-            inheritOutputDirs = false
-            isDownloadJavadoc = false
-            isDownloadSources = true
-            outputDir = the<SourceSetContainer>()["main"].java.classesDirectory.get().asFile
-            testOutputDir = the<SourceSetContainer>()["test"].java.classesDirectory.get().asFile
+    if (name != "summer-bom") {
+        apply {
+            plugin("java")
+            plugin("idea")
         }
-    }
 
-    java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    configurations {
-        all {
-            resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)
+        idea {
+            module {
+                inheritOutputDirs = false
+                isDownloadJavadoc = false
+                isDownloadSources = true
+                outputDir = the<SourceSetContainer>()["main"].java.classesDirectory.get().asFile
+                testOutputDir = the<SourceSetContainer>()["test"].java.classesDirectory.get().asFile
+            }
         }
-    }
 
-    repositories {
-        mavenLocal()
-        maven("https://s01.oss.sonatype.org/content/groups/public/")
-        mavenCentral()
-        gradlePluginPortal()
-    }
+        java {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
 
-    extra["kotlin-coroutines.version"] = kotlinxCoroutinesVersion
-    extensions.configure(StandardDependencyManagementExtension::class) {
-        imports {
-            mavenBom(SpringBootPlugin.BOM_COORDINATES)
+        configurations {
+            all {
+                resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)
+            }
+        }
+
+        repositories {
+            mavenLocal()
+            maven("https://s01.oss.sonatype.org/content/groups/public/")
+            mavenCentral()
+            gradlePluginPortal()
         }
 
         dependencies {
-            dependency("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
-            dependency("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
+            implementation(platform(project(":summer-bom")))
+            annotationProcessor(platform(project(":summer-bom")))
+            runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
 
+            annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+            compileOnly("org.springframework.boot:spring-boot-configuration-processor")
 
-            dependency(
-                "org.springframework.boot:spring-boot-gradle-plugin:${
-                    VersionExtractor.forClass(
-                        SpringBootPlugin::class.java
-                    )
-                }"
-            )
-            dependency("io.spring.gradle:dependency-management-plugin:1.0.15.RELEASE")
-
-            dependency("top.bettercode.summer:windows-service-plugin:1.2.0-SNAPSHOT")
-
-            dependency("com.gradle.publish:plugin-publish-plugin:1.1.0")
-            dependency("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
-
-            dependency("commons-codec:commons-codec:1.15")
-            dependency("org.json:json:20220924")
-            dependency("org.javassist:javassist:3.29.2-GA")
-            dependency("org.dom4j:dom4j:2.1.1")
-            dependency("org.jsoup:jsoup:1.15.3")
-            dependency("org.atteo:evo-inflector:1.3")
-            dependency("com.github.axet:kaptcha:0.0.9")
-            dependency("com.github.stuxuhai:jpinyin:1.1.8")
-            dependency("net.sourceforge.plantuml:plantuml:1.2022.12")
-            dependency("com.github.jsqlparser:jsqlparser:4.5")
-            dependency("com.qcloud:vod_api:2.1.5")
-
-            dependency("mysql:mysql-connector-java:8.0.31")
-            dependency("com.oracle.database.jdbc:ojdbc8:$oracleJdbcVersion")
-
-            dependency("org.asciidoctor:asciidoctorj:2.5.7")
-            dependency("org.asciidoctor:asciidoctorj-diagram:2.2.3")
-            dependency("org.asciidoctor:asciidoctorj-pdf:2.3.3")
-
-            dependency("net.logstash.logback:logstash-logback-encoder:7.2")
-            dependency("javax.mail:mail:1.4.7")
-
-            dependency("org.dhatim:fastexcel:0.14.0")
-            dependency("org.dhatim:fastexcel-reader:0.13.0")
-
-            dependency("org.mybatis:mybatis:3.5.11")
-            dependency("org.mybatis:mybatis-spring:2.0.7")
-
-            dependency("org.mybatis.generator:mybatis-generator-core:1.4.1")
-
-            dependency("org.bouncycastle:bcprov-jdk18on:1.72")
-
-            dependency("com.auth0:java-jwt:4.2.1")
-            dependency("com.tencentcloudapi:tencentcloud-sdk-java:3.1.638")
-
-        }
-    }
-
-    dependencies {
-        runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
-
-        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-        compileOnly("org.springframework.boot:spring-boot-configuration-processor")
-
-        compileOnly("com.google.code.findbugs:annotations:3.0.1")
-    }
-
-    tasks {
-        build {
-            setDependsOn(listOf("testClasses"))
+            compileOnly("com.google.code.findbugs:annotations")
         }
 
-        "test"(Test::class) {
-            useJUnitPlatform()
-            reports.html.required.set(false)
-            reports.junitXml.required.set(false)
-        }
+        tasks {
+            "test"(Test::class) {
+                useJUnitPlatform()
+                reports.html.required.set(false)
+                reports.junitXml.required.set(false)
+            }
 
-        withType(JavaCompile::class) {
-            options.compilerArgs.add("-Xlint:deprecation")
-            options.compilerArgs.add("-Xlint:unchecked")
-            options.compilerArgs.add("-parameters")
-            options.encoding = "UTF-8"
-            dependsOn("processResources")
-        }
+            withType(JavaCompile::class) {
+                options.compilerArgs.add("-Xlint:deprecation")
+                options.compilerArgs.add("-Xlint:unchecked")
+                options.compilerArgs.add("-parameters")
+                options.encoding = "UTF-8"
+                dependsOn("processResources")
+            }
 
-        withType(KotlinCompile::class) {
-            incremental = true
-            kotlinOptions {
-                jvmTarget = "1.8"
-                freeCompilerArgs = listOf("-Xjvm-default=all")
+            withType(KotlinCompile::class) {
+                incremental = true
+                kotlinOptions {
+                    jvmTarget = "1.8"
+                    freeCompilerArgs = listOf("-Xjvm-default=all")
+                }
             }
         }
     }

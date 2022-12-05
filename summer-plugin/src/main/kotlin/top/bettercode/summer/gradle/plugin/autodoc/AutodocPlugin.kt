@@ -107,7 +107,6 @@ class AutodocPlugin : Plugin<Project> {
         }
         project.tasks.create("pdfdoc") { task ->
             task.group = group
-            task.dependsOn("asciidoc")
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     AsciidocGenerator.pdf(

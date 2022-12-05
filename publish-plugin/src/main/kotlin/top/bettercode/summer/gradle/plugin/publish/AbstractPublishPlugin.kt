@@ -32,7 +32,47 @@ import java.net.URI
 /**
  * 抽象类
  */
-abstract class AbstractPlugin : Plugin<Project> {
+abstract class AbstractPublishPlugin : Plugin<Project> {
+
+    companion object {
+        fun conifgRepository(
+            project: Project,
+            p: PublishingExtension
+        ) {
+            project.findProperty("mavenRepos")?.toString()?.split(",")?.forEach {
+                var mavenRepoName = project.findProperty("$it.name") as? String ?: it
+                var mavenRepoUrl = project.findProperty("$it.url") as? String
+                var mavenRepoUsername = project.findProperty("$it.username") as? String
+                var mavenRepoPassword = project.findProperty("$it.password") as? String
+
+                if (project.version.toString().endsWith("SNAPSHOT")) {
+                    mavenRepoName = project.findProperty("$it.snapshots.name") as? String
+                        ?: mavenRepoName
+                    mavenRepoUrl = project.findProperty("$it.snapshots.url") as? String
+                        ?: mavenRepoUrl
+                    mavenRepoUsername = project.findProperty("$it.snapshots.username") as? String
+                        ?: mavenRepoUsername
+                    mavenRepoPassword = project.findProperty("$it.snapshots.password") as? String
+                        ?: mavenRepoPassword
+                }
+                if (mavenRepoUrl != null)
+                    p.repositories { handler ->
+                        handler.maven { repository ->
+                            repository.name = mavenRepoName
+                            repository.url = URI(mavenRepoUrl)
+                            repository.isAllowInsecureProtocol = true
+                            repository.credentials { credentials ->
+                                credentials.username = mavenRepoUsername
+                                credentials.password = mavenRepoPassword
+                            }
+                        }
+                    }
+            }
+        }
+
+
+    }
+
 
     private fun Node.getAt(name: String): Node? {
         val nodeList = get(name) as NodeList
@@ -55,7 +95,6 @@ abstract class AbstractPlugin : Plugin<Project> {
      * 公用配置
      */
     protected fun configPublish(project: Project) {
-
         project.tasks.withType(Javadoc::class.java) {
             with(it.options as StandardJavadocDocletOptions) {
                 encoding = project.findProperty("project.encoding") as? String ?: "UTF-8"
@@ -122,40 +161,6 @@ abstract class AbstractPlugin : Plugin<Project> {
         mavenPublication.pom.withXml(configurePomXml(project, projectUrl, projectVcsUrl))
     }
 
-    protected fun conifgRepository(
-        project: Project,
-        p: PublishingExtension
-    ) {
-        project.findProperty("mavenRepos")?.toString()?.split(",")?.forEach {
-            var mavenRepoName = project.findProperty("$it.name") as? String ?: it
-            var mavenRepoUrl = project.findProperty("$it.url") as? String
-            var mavenRepoUsername = project.findProperty("$it.username") as? String
-            var mavenRepoPassword = project.findProperty("$it.password") as? String
-
-            if (project.version.toString().endsWith("SNAPSHOT")) {
-                mavenRepoName = project.findProperty("$it.snapshots.name") as? String
-                    ?: mavenRepoName
-                mavenRepoUrl = project.findProperty("$it.snapshots.url") as? String
-                    ?: mavenRepoUrl
-                mavenRepoUsername = project.findProperty("$it.snapshots.username") as? String
-                    ?: mavenRepoUsername
-                mavenRepoPassword = project.findProperty("$it.snapshots.password") as? String
-                    ?: mavenRepoPassword
-            }
-            if (mavenRepoUrl != null)
-                p.repositories { handler ->
-                    handler.maven { repository ->
-                        repository.name = mavenRepoName
-                        repository.url = URI(mavenRepoUrl)
-                        repository.isAllowInsecureProtocol = true
-                        repository.credentials { credentials ->
-                            credentials.username = mavenRepoUsername
-                            credentials.password = mavenRepoPassword
-                        }
-                    }
-                }
-        }
-    }
 
     /**
      * 配置pom.xml相关信息

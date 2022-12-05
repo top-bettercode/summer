@@ -9,7 +9,7 @@ import org.gradle.jvm.tasks.Jar
  *
  * @author Peter Wu
  */
-class GroovyPublishPlugin : AbstractPlugin() {
+class GroovyPublishPlugin : AbstractPublishPlugin() {
     /**
      * {@inheritDoc}
      */

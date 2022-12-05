@@ -18,7 +18,7 @@ dependencies {
 
     compileOnly("com.querydsl:querydsl-jpa")
     testImplementation("com.querydsl:querydsl-jpa")
-//    testAnnotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa")
+//    testAnnotationProcessor("com.querydsl:querydsl-apt")
 //    testAnnotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
     testImplementation(project(":test"))

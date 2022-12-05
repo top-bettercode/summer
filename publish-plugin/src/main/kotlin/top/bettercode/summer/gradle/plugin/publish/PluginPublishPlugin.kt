@@ -18,7 +18,7 @@ import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
  *
  * @author Peter Wu
  */
-class PluginPublishPlugin : AbstractPlugin() {
+class PluginPublishPlugin : AbstractPublishPlugin() {
     /**
      * {@inheritDoc}
      */
