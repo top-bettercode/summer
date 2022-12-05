@@ -161,22 +161,21 @@ public class WebMvcConfiguration {
       packages.addAll(Arrays.asList(annotation.basePackages()));
       packages.add(beanClass.getPackage().getName());
     }
-    packages.add("top.bettercode.simpleframework.data.serializer");
 
     Set<Class<?>> allSubClasses = packageScanClassResolver
         .findImplementations(MixIn.class, packages.toArray(new String[0]));
     HashMap<Class<?>, Class<?>> targetTypes = new HashMap<>();
-    for (Class<?> aClass : allSubClasses) {
-      ParameterizedType object = (ParameterizedType) aClass.getGenericInterfaces()[0];
+    for (Class<?> clazz : allSubClasses) {
+      ParameterizedType object = (ParameterizedType) clazz.getGenericInterfaces()[0];
       Class<?> targetType = (Class<?>) object.getActualTypeArguments()[0];
       if (targetTypes.containsKey(targetType)) {
         throw new Error(targetType + " 已存在对应Json MixIn: " + targetTypes.get(targetType));
       }
-      targetTypes.put(targetType, aClass);
+      targetTypes.put(targetType, clazz);
       if (log.isTraceEnabled()) {
-        log.trace("Detected MixInAnnotation:{}=>{}", targetType, aClass);
+        log.trace("Detected MixInAnnotation:{}=>{}", targetType, clazz);
       }
-      module.setMixInAnnotation(targetType, aClass);
+      module.setMixInAnnotation(targetType, clazz);
     }
     return module;
   }
