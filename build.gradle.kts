@@ -46,7 +46,7 @@ allprojects {
         dependencies {
             implementation(platform(project(":summer-bom")))
             annotationProcessor(platform(project(":summer-bom")))
-            runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
+//            runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
 
             annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
             compileOnly("org.springframework.boot:spring-boot-configuration-processor")
