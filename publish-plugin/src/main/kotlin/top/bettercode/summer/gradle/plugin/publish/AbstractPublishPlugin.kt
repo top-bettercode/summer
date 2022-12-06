@@ -107,7 +107,31 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
         val projectUrl = project.findProperty("projectUrl") as? String
         val projectVcsUrl = project.findProperty("vcsUrl") as? String
 
-        configurePublishing(project, projectUrl, projectVcsUrl)
+        project.tasks.withType(GenerateModuleMetadata::class.java) {
+            it.enabled = false
+        }
+        project.extensions.configure(PublishingExtension::class.java) { p ->
+            conifgRepository(project, p)
+
+            p.publications.create("mavenJava", MavenPublication::class.java) { mavenPublication ->
+                if (project.plugins.hasPlugin("war")) {
+                    mavenPublication.from(project.components.getByName("web"))
+                } else {
+                    mavenPublication.from(project.components.getByName("java"))
+                }
+
+                mavenPublication.artifact(project.tasks.getByName("sourcesJar")) {
+                    it.classifier = "sources"
+                }
+
+                mavenPublication.artifact(project.tasks.getByName("javadocJar")) {
+                    it.classifier = "javadoc"
+                }
+
+                mavenPublication.pom.withXml(configurePomXml(project, projectUrl, projectVcsUrl))
+            }
+
+        }
 
         if (project.hasProperty("signing.keyId"))
             project.extensions.getByType(SigningExtension::class.java).apply {
@@ -121,46 +145,6 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
         project.tasks.getByName("publish").dependsOn("publishToMavenLocal")
     }
 
-    /**
-     * 配置 Publishing
-     */
-    private fun configurePublishing(project: Project, projectUrl: String?, projectVcsUrl: String?) {
-        project.tasks.withType(GenerateModuleMetadata::class.java) {
-            it.enabled = false
-        }
-        project.extensions.configure(PublishingExtension::class.java) { p ->
-            conifgRepository(project, p)
-
-            p.publications.create("mavenJava", MavenPublication::class.java) { mavenPublication ->
-                configPublication(project, mavenPublication, projectUrl, projectVcsUrl)
-            }
-
-        }
-    }
-
-    protected fun configPublication(
-        project: Project,
-        mavenPublication: MavenPublication,
-        projectUrl: String?,
-        projectVcsUrl: String?
-    ) {
-        if (project.plugins.hasPlugin("war")) {
-            mavenPublication.from(project.components.getByName("web"))
-        } else {
-            mavenPublication.from(project.components.getByName("java"))
-        }
-
-        mavenPublication.artifact(project.tasks.getByName("sourcesJar")) {
-            it.classifier = "sources"
-        }
-
-        mavenPublication.artifact(project.tasks.getByName("javadocJar")) {
-            it.classifier = "javadoc"
-        }
-
-        mavenPublication.pom.withXml(configurePomXml(project, projectUrl, projectVcsUrl))
-    }
-
 
     /**
      * 配置pom.xml相关信息
@@ -172,14 +156,38 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
     ): (XmlProvider) -> Unit {
         return {
             val root = it.asNode()
-
             /**
              * 配置pom.xml相关信息
              */
             root.apply {
                 if (getAt("packaging") == null)
                     appendNode("packaging", if (project.plugins.hasPlugin("war")) "war" else "jar")
-                configurePomXml(project, projectUrl, projectVcsUrl)
+                appendNode("name", project.name)
+                appendNode(
+                    "description",
+                    if (!project.description.isNullOrBlank()) project.description else project.name
+                )
+                if (!projectUrl.isNullOrBlank())
+                    appendNode("url", projectUrl)
+
+                val license = appendNode("licenses").appendNode("license")
+                license.appendNode("name", project.findProperty("license.name"))
+                license.appendNode("url", project.findProperty("license.url"))
+                license.appendNode("distribution", project.findProperty("license.distribution"))
+
+                val developer = appendNode("developers").appendNode("developer")
+                developer.appendNode("id", project.findProperty("developer.id"))
+                developer.appendNode("name", project.findProperty("developer.name"))
+                developer.appendNode("email", project.findProperty("developer.email"))
+
+                if (!projectVcsUrl.isNullOrBlank()) {
+                    val scm = appendNode("scm")
+                    scm.appendNode("url", projectVcsUrl)
+                    val tag =
+                        if (projectVcsUrl.contains("git")) "git" else if (projectVcsUrl.contains("svn")) "svn" else projectVcsUrl
+                    scm.appendNode("connection", "scm:$tag:$projectVcsUrl")
+                    scm.appendNode("developerConnection", "scm:$tag:$projectVcsUrl")
+                }
             }
         }
     }
@@ -249,25 +257,24 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
 //        if (!project.rootProject.plugins.hasPlugin("io.codearte.nexus-staging")) {
 //            project.rootProject.plugins.apply("io.codearte.nexus-staging")
 //        }
-//        val extension = project.rootProject.extensions.getByType(NexusStagingExtension::class.java)
-//        extension.apply {
+//        project.rootProject.extensions.configure(NexusStagingExtension::class.java) {
 //            //required only for projects registered in Sonatype after 2021-02-24
-//            serverUrl = project.rootProject.findProperty("nexusStaging.serverUrl")?.toString()
+//            it.serverUrl = project.rootProject.findProperty("nexusStaging.serverUrl")?.toString()
 //                ?: "https://s01.oss.sonatype.org/service/local/"
 //            //optional if packageGroup == project.getGroup()
 //            val packageGroup = project.rootProject.findProperty("nexusStaging.packageGroup")
 //            if (packageGroup != null) {
-//                this.packageGroup = packageGroup.toString()
+//                it.packageGroup = packageGroup.toString()
 //            }
 //            //when not defined will be got from server using "packageGroup"
 //            val stagingProfileId = project.rootProject.findProperty("nexusStaging.stagingProfileId")
 //            if (stagingProfileId != null) {
-//                this.stagingProfileId = stagingProfileId.toString()
+//                it.stagingProfileId = stagingProfileId.toString()
 //            }
 //            val stagingRepositoryId =
 //                project.rootProject.findProperty("nexusStaging.stagingRepositoryId")
 //            if (stagingRepositoryId != null) {
-//                this.stagingRepositoryId.set(stagingRepositoryId.toString())
+//                it.stagingRepositoryId.set(stagingRepositoryId.toString())
 //            }
 //
 //            var mavenRepoUsername = project.findProperty("mavenRepo.username") as? String
@@ -279,44 +286,9 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
 //                mavenRepoPassword = project.findProperty("mavenRepo.snapshots.password") as? String
 //                    ?: mavenRepoPassword
 //            }
-//            this.username = mavenRepoUsername
-//            this.password = mavenRepoPassword
+//            it.username = mavenRepoUsername
+//            it.password = mavenRepoPassword
 //        }
     }
 
-    /**
-     * 配置pom.xml相关信息
-     */
-    protected fun Node.configurePomXml(
-        project: Project,
-        projectUrl: String?,
-        projectVcsUrl: String?
-    ) {
-        appendNode("name", project.name)
-        appendNode(
-            "description",
-            if (!project.description.isNullOrBlank()) project.description else project.name
-        )
-        if (!projectUrl.isNullOrBlank())
-            appendNode("url", projectUrl)
-
-        val license = appendNode("licenses").appendNode("license")
-        license.appendNode("name", project.findProperty("license.name"))
-        license.appendNode("url", project.findProperty("license.url"))
-        license.appendNode("distribution", project.findProperty("license.distribution"))
-
-        val developer = appendNode("developers").appendNode("developer")
-        developer.appendNode("id", project.findProperty("developer.id"))
-        developer.appendNode("name", project.findProperty("developer.name"))
-        developer.appendNode("email", project.findProperty("developer.email"))
-
-        if (!projectVcsUrl.isNullOrBlank()) {
-            val scm = appendNode("scm")
-            scm.appendNode("url", projectVcsUrl)
-            val tag =
-                if (projectVcsUrl.contains("git")) "git" else if (projectVcsUrl.contains("svn")) "svn" else projectVcsUrl
-            scm.appendNode("connection", "scm:$tag:$projectVcsUrl")
-            scm.appendNode("developerConnection", "scm:$tag:$projectVcsUrl")
-        }
-    }
 }

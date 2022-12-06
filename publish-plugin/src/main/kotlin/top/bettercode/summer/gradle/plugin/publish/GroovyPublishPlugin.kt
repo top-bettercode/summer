@@ -21,6 +21,7 @@ class GroovyPublishPlugin : AbstractPublishPlugin() {
             it.archiveClassifier.set("javadoc")
             it.from(project.tasks.getByName("groovydoc").outputs)
         }
+
         configPublish(project)
     }
 }
