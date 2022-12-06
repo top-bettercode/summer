@@ -17,7 +17,7 @@ class CorpClient(properties: ICorpProperties) :
         properties,
         "第三方接口",
         "微信企业号",
-        "wexin-corp"
+        "wxcorp"
     ), ICorpClient {
 
 

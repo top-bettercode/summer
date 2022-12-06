@@ -21,7 +21,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         properties,
         "第三方接口",
         "微信公众号",
-        "wexin-offiaccount"
+        "weixin"
     ), IOffiaccountClient {
 
     companion object {

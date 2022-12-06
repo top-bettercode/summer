@@ -18,7 +18,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         properties,
         "第三方接口",
         "微信公众号",
-        "wexin-offiaccount"
+        "wxmini"
     ), IMiniprogramClient {
 
     override fun jscode2session(code: String): JsSession {
