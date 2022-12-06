@@ -74,7 +74,10 @@ open class JpushClient(
                     e.responseBodyAsByteArray,
                     JpushErrorResponse::class.java
                 )
-                throw JpushSysException(errorResponse)
+                val error = errorResponse.error
+                if (error != null) {
+                    throw JpushSysException(error)
+                }
             }
             throw JpushException(e)
         } ?: throw JpushException()
@@ -109,7 +112,10 @@ open class JpushClient(
                     e.responseBodyAsByteArray,
                     JpushErrorResponse::class.java
                 )
-                throw JpushSysException(errorResponse)
+                val error = errorResponse.error
+                if (error != null) {
+                    throw JpushSysException(error)
+                }
             }
             throw JpushException(e)
         } ?: throw JpushException()
