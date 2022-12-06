@@ -25,7 +25,7 @@ class JpushClientTest : BaseTest() {
         val request = JpushRequest(
             Audience("123"),
             Notification("msg", extras),
-            Message("1", "msg", extras)
+            Message("msg", extras)
         )
         jpushClient.send(request)
     }
