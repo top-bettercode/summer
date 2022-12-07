@@ -213,7 +213,6 @@ class RequestLoggingFilter(
             val requestLoggingAnno =
                 AnnotatedUtils.getAnnotation(handler, RequestLogging::class.java)
 
-
             var encryptHeaders = requestLoggingAnno?.encryptHeaders
             if (encryptHeaders.isNullOrEmpty()) {
                 encryptHeaders = properties.encryptHeaders

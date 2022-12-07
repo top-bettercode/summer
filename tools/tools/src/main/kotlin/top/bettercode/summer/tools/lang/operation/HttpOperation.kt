@@ -137,8 +137,8 @@ object HttpOperation {
     }
 
     private fun includeParametersInUri(request: OperationRequest): Boolean {
-        return request.method === HttpMethod.GET.name || request.method === HttpMethod.DELETE.name || request.content.isNotEmpty() && !MediaType.APPLICATION_FORM_URLENCODED
-            .isCompatibleWith(request.headers.contentType)
+        return ((request.method == HttpMethod.GET.name || request.method == HttpMethod.DELETE.name) && !MediaType.APPLICATION_FORM_URLENCODED
+            .isCompatibleWith(request.headers.contentType)) || request.content.isEmpty()
     }
 
     private fun getHeaders(request: OperationRequest): HttpHeaders {
@@ -253,10 +253,7 @@ object HttpOperation {
     }
 
     private fun requiresFormEncodingContentTypeHeader(request: OperationRequest): Boolean {
-        return (request.headers[HttpHeaders.CONTENT_TYPE] == null
-                && isPutOrPost(request) && !request.parameters.isEmpty() && !includeParametersInUri(
-            request
-        ))
+        return request.headers[HttpHeaders.CONTENT_TYPE] == null && isPutOrPost(request) && !request.parameters.isEmpty()
     }
 
     private fun getResponseBody(
