@@ -157,7 +157,7 @@ class DicCodeGen(private val project: Project) {
                             } else {
                                 (code as String).replace("-", "_").replace(".", "_")
                             }
-                        )
+                        ).replace(Regex("_+"),"_")
                         innerInterface.apply {
                             visibility = JavaVisibility.PUBLIC
                             val initializationString =
