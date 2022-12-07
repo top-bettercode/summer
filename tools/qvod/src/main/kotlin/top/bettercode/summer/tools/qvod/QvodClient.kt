@@ -15,8 +15,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.lang.Nullable
 import org.springframework.util.Base64Utils
 import org.springframework.util.DigestUtils
+import top.bettercode.summer.logging.logback.LogMarker
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.lang.util.StringUtil
+import top.bettercode.summer.tools.qvod.QvodClient.Companion.LOG_MARKER
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.util.*
 import javax.crypto.Mac
@@ -28,11 +30,16 @@ import javax.crypto.spec.SecretKeySpec
  *
  * @author Peter Wu
  */
+@LogMarker(LOG_MARKER)
 open class QvodClient(
     val properties: QvodProperties
 ) : ApiTemplate(
     "第三方平台", "腾讯云点播", "qvod", properties.connectTimeout, properties.readTimeout
 ) {
+
+    companion object {
+        const val LOG_MARKER = "qvod"
+    }
 
     val vodClient: VodClient
 

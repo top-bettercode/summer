@@ -38,6 +38,8 @@ import top.bettercode.summer.logging.LoggingUtil.existProperty
 import top.bettercode.summer.logging.slack.SlackAppender
 import top.bettercode.summer.logging.websocket.WebSocketAppender
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
+import top.bettercode.summer.tools.lang.operation.HttpOperation
+import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 import java.io.File
 import java.nio.charset.Charset
 import java.util.*
@@ -220,7 +222,11 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         if (existProperty(environment, "summer.logging.files.path")) {
 
             val spilts = bind(environment, "summer.logging.spilt")
-            val markers = bind(environment, "summer.logging.spilt-marker")
+            val defaultLevel = rootLevel ?: "debug"
+            val markers = defaultSpiltMarkers.associateWith { defaultLevel }.toMutableMap()
+            markers[HttpOperation.REQUEST_LOG_MARKER] = defaultLevel
+            markers.putAll(bind(environment, "summer.logging.spilt-marker"))
+
             val levels = Binder.get(environment)
                 .bind("summer.logging.spilt-level", Bindable.setOf(String::class.java))
                 .orElseGet { setOf() }
@@ -665,7 +671,16 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
     companion object {
         const val FILE_LOG_PATTERN =
             "%d{yyyy-MM-dd HH:mm:ss.SSS} \${LOG_LEVEL_PATTERN:-%5p} \${PID:- } --- [%t] %-40.40logger{39} :%X{id} %m%n\${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
-
+        private val packageScanClassResolver = PackageScanClassResolver()
+        val defaultSpiltMarkers: List<String>
+            get() {
+                val clazzs: Set<Class<*>> = packageScanClassResolver
+                    .findByFilter(
+                        { it.isAnnotationPresent(LogMarker::class.java) },
+                        "top.bettercode.summer"
+                    )
+                return clazzs.map { it.getAnnotation(LogMarker::class.java).value }
+            }
     }
 
 }

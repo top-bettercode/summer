@@ -3,14 +3,16 @@ package top.bettercode.summer.tools.sms;
 import kotlin.jvm.functions.Function1;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import top.bettercode.summer.logging.logback.LogMarker;
 import top.bettercode.summer.web.support.client.ApiTemplate;
 
 /**
  * @author Peter Wu
  */
+@LogMarker(SmsTemplate.LOG_MARKER_STR)
 public abstract class SmsTemplate extends ApiTemplate {
 
-  protected static final String LOG_MARKER_STR = "sms";
+  public static final String LOG_MARKER_STR = "sms";
   public static final Marker LOG_MARKER = MarkerFactory.getMarker(LOG_MARKER_STR);
 
   public SmsTemplate(String collectionName, String name, String logMarker, int connectTimeout,

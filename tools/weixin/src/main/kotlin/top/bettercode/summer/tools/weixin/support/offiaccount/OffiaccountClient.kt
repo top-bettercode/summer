@@ -3,9 +3,11 @@ package top.bettercode.summer.tools.weixin.support.offiaccount
 import org.slf4j.MarkerFactory
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
+import top.bettercode.summer.logging.logback.LogMarker
 import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.config.IOffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient
+import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
 import java.net.URLEncoder
 import java.time.LocalDateTime
@@ -16,16 +18,18 @@ import java.util.*
  *
  * @author Peter Wu
  */
+@LogMarker(LOG_MARKER)
 class OffiaccountClient(properties: IOffiaccountProperties) :
     WeixinClient<IOffiaccountProperties>(
         properties,
         "第三方接口",
         "微信公众号",
-        "weixin"
+        LOG_MARKER
     ), IOffiaccountClient {
 
     companion object {
         const val jsapiTicketKey: String = "jsapi_ticket"
+        const val LOG_MARKER = "weixin"
     }
 
     init {

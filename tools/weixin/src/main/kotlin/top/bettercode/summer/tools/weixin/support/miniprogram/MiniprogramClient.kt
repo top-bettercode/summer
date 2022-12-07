@@ -2,9 +2,11 @@ package top.bettercode.summer.tools.weixin.support.miniprogram
 
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
+import top.bettercode.summer.logging.logback.LogMarker
 import top.bettercode.summer.tools.weixin.config.IMiniprogramProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
+import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.JsSession
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.PhoneInfoResp
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.SubscribeMsgRequest
@@ -13,13 +15,18 @@ import top.bettercode.summer.tools.weixin.support.miniprogram.entity.SubscribeMs
  *
  * @author Peter Wu
  */
+@LogMarker(LOG_MARKER)
 class MiniprogramClient(properties: IMiniprogramProperties) :
     WeixinClient<IMiniprogramProperties>(
         properties,
         "第三方接口",
         "微信公众号",
-        "wxmini"
+        LOG_MARKER
     ), IMiniprogramClient {
+
+    companion object {
+        const val LOG_MARKER = "wxmini"
+    }
 
     override fun jscode2session(code: String): JsSession {
         return getForObject(

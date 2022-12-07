@@ -6,7 +6,9 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.lang.Nullable
 import org.springframework.util.Base64Utils
+import top.bettercode.summer.logging.logback.LogMarker
 import top.bettercode.summer.tools.lang.util.TimeUtil
+import top.bettercode.summer.tools.mobile.MobileQueryClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.mobile.entity.QueryResponse
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.security.Key
@@ -21,15 +23,20 @@ import javax.crypto.spec.SecretKeySpec
  *
  * @author Peter Wu
  */
+@LogMarker(LOG_MARKER)
 open class MobileQueryClient(
     private val properties: MobileQueryProperties
 ) : ApiTemplate(
     "第三方平台",
     "获取本机手机号码",
-    "mobile-query",
+    LOG_MARKER,
     properties.connectTimeout,
     properties.readTimeout
 ), IMobileQueryClient {
+
+    companion object {
+        const val LOG_MARKER = "mobile-query"
+    }
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =

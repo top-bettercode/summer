@@ -2,6 +2,7 @@ package top.bettercode.summer.logging
 
 import org.junit.jupiter.api.Test
 import org.springframework.util.LinkedMultiValueMap
+import top.bettercode.summer.logging.logback.Logback2LoggingSystem
 import top.bettercode.summer.tools.lang.operation.Parameters
 import top.bettercode.summer.tools.lang.operation.QueryStringParser
 import top.bettercode.summer.tools.lang.util.StringUtil
@@ -10,7 +11,15 @@ import java.net.URI
 /**
  * @author Peter Wu
  */
-class JsonPrettyPrinterTest {
+class LoggingTest {
+
+
+    @Test
+    fun defaultSpiltMarkers() {
+        val defaultSpiltMarkers = Logback2LoggingSystem.defaultSpiltMarkers
+        System.err.println(defaultSpiltMarkers)
+    }
+
     @Test
     fun print() {
         val unformattedJsonString = StringUtil.json(Data(data = StringUtil.json(Data())))

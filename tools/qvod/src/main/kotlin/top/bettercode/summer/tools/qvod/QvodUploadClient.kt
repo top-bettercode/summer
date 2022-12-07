@@ -8,7 +8,9 @@ import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.lang.Nullable
+import top.bettercode.summer.logging.logback.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
+import top.bettercode.summer.tools.qvod.QvodUploadClient.Companion.LOG_MARKER
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.io.File
 
@@ -18,11 +20,16 @@ import java.io.File
  *
  * @author Peter Wu
  */
+@LogMarker(LOG_MARKER)
 open class QvodUploadClient(
     val properties: QvodProperties
 ) : ApiTemplate(
-    "第三方平台", "腾讯云点播", "qvod", properties.connectTimeout, properties.readTimeout
+    "第三方平台", "腾讯云点播", LOG_MARKER, properties.connectTimeout, properties.readTimeout
 ) {
+
+    companion object {
+        const val LOG_MARKER = "qvod"
+    }
 
     val vodUploadClient = VodUploadClient(properties.secretId, properties.secretKey)
 

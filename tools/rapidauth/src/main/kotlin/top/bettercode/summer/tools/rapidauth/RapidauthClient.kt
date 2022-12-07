@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.lang.Nullable
+import top.bettercode.summer.logging.logback.LogMarker
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.lang.util.Sha256DigestUtils
+import top.bettercode.summer.tools.rapidauth.RapidauthClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.rapidauth.entity.RapidauthRequest
 import top.bettercode.summer.tools.rapidauth.entity.RapidauthResponse
 import top.bettercode.summer.web.support.client.ApiTemplate
@@ -19,15 +21,20 @@ import top.bettercode.summer.web.support.client.ApiTemplate
  *
  * @author Peter Wu
  */
+@LogMarker(LOG_MARKER)
 open class RapidauthClient(
     private val properties: RapidauthProperties
 ) : ApiTemplate(
     "第三方平台",
     "腾讯云号码认证",
-    "rapidauth",
+    LOG_MARKER,
     properties.connectTimeout,
     properties.readTimeout
 ), IRapidauthClient {
+
+    companion object {
+        const val LOG_MARKER = "rapidauth"
+    }
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =

@@ -7,6 +7,8 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.lang.Nullable
 import org.springframework.web.client.HttpClientErrorException
+import top.bettercode.summer.logging.logback.LogMarker
+import top.bettercode.summer.tools.jpush.JpushClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.jpush.entity.JpushRequest
 import top.bettercode.summer.tools.jpush.entity.Options
 import top.bettercode.summer.tools.jpush.entity.resp.JpushCidResponse
@@ -19,11 +21,17 @@ import top.bettercode.summer.web.support.client.ApiTemplate
  *
  * @author Peter Wu
  */
+@LogMarker(LOG_MARKER)
 open class JpushClient(
     private val properties: JpushProperties
 ) : ApiTemplate(
-    "第三方平台", "极光推送", "jpush", properties.connectTimeout, properties.readTimeout
+    "第三方平台", "极光推送", LOG_MARKER, properties.connectTimeout, properties.readTimeout
 ) {
+
+    companion object {
+        const val LOG_MARKER = "jpush"
+    }
+
     var objectMapper: ObjectMapper
 
     init {

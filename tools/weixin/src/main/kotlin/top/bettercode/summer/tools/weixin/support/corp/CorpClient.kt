@@ -2,8 +2,10 @@ package top.bettercode.summer.tools.weixin.support.corp
 
 import org.slf4j.MarkerFactory
 import org.springframework.web.client.getForObject
+import top.bettercode.summer.logging.logback.LogMarker
 import top.bettercode.summer.tools.weixin.config.ICorpProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient
+import top.bettercode.summer.tools.weixin.support.corp.CorpClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.corp.entity.CorpWebPageAccessToken
 import java.net.URLEncoder
 
@@ -12,14 +14,18 @@ import java.net.URLEncoder
  *
  * @author Peter Wu
  */
+@LogMarker(LOG_MARKER)
 class CorpClient(properties: ICorpProperties) :
     WeixinClient<ICorpProperties>(
         properties,
         "第三方接口",
         "微信企业号",
-        "wxcorp"
+        LOG_MARKER
     ), ICorpClient {
 
+    companion object {
+        const val LOG_MARKER = "wxcorp"
+    }
 
     init {
         val url =

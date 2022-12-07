@@ -33,6 +33,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
+import top.bettercode.summer.logging.logback.LogMarker;
 import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier;
 import top.bettercode.summer.tools.lang.util.StringUtil;
 import top.bettercode.summer.tools.sap.annotation.SapField;
@@ -41,10 +42,12 @@ import top.bettercode.summer.tools.sap.annotation.SapTable;
 import top.bettercode.summer.tools.sap.config.SapProperties;
 import top.bettercode.summer.tools.sap.connection.pojo.ISapReturn;
 
+@LogMarker(SapService.LOG_MARKER_STRING)
 @SuppressWarnings("unchecked")
 public class SapService {
 
-  private final static Marker LOG_MARKER = MarkerFactory.getMarker("sap");
+  public static final String LOG_MARKER_STRING = "sap";
+  private final static Marker LOG_MARKER = MarkerFactory.getMarker(LOG_MARKER_STRING);
   private final Logger log = LoggerFactory.getLogger(SapService.class);
 
   private final static String ABAP_AS_POOLED = "ABAP_AS_WITH_POOL";
@@ -386,6 +389,5 @@ public class SapService {
     }
     return sapObjMap;
   }
-
 
 }
