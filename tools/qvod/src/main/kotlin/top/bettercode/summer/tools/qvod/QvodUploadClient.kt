@@ -8,7 +8,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.lang.Nullable
-import top.bettercode.summer.logging.logback.LogMarker
+import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.qvod.QvodUploadClient.Companion.LOG_MARKER
 import top.bettercode.summer.web.support.client.ApiTemplate

@@ -15,7 +15,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.lang.Nullable
 import org.springframework.util.Base64Utils
 import org.springframework.util.DigestUtils
-import top.bettercode.summer.logging.logback.LogMarker
+import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.qvod.QvodClient.Companion.LOG_MARKER

@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.weixin.support.miniprogram
 
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
-import top.bettercode.summer.logging.logback.LogMarker
+import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.weixin.config.IMiniprogramProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.WeixinResponse

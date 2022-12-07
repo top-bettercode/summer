@@ -33,7 +33,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
-import top.bettercode.summer.logging.logback.LogMarker;
+import top.bettercode.summer.logging.annotation.LogMarker;
 import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier;
 import top.bettercode.summer.tools.lang.util.StringUtil;
 import top.bettercode.summer.tools.sap.annotation.SapField;

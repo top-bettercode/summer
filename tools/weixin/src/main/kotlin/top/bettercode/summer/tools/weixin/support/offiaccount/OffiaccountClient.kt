@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.weixin.support.offiaccount
 import org.slf4j.MarkerFactory
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
-import top.bettercode.summer.logging.logback.LogMarker
+import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.config.IOffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient

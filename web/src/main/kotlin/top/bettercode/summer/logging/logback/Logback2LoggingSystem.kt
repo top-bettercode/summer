@@ -35,6 +35,7 @@ import org.springframework.core.env.Environment
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import top.bettercode.summer.logging.LoggingUtil.existProperty
+import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.logging.slack.SlackAppender
 import top.bettercode.summer.logging.websocket.WebSocketAppender
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
@@ -676,7 +677,13 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             get() {
                 val clazzs: Set<Class<*>> = packageScanClassResolver
                     .findByFilter(
-                        { it.isAnnotationPresent(LogMarker::class.java) },
+                        {
+                            try {
+                                it.isAnnotationPresent(LogMarker::class.java)
+                            } catch (e: Exception) {
+                                false
+                            }
+                        },
                         "top.bettercode.summer"
                     )
                 return clazzs.map { it.getAnnotation(LogMarker::class.java).value }

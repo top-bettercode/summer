@@ -1,4 +1,4 @@
-package top.bettercode.summer.logging.logback
+package top.bettercode.summer.logging.annotation
 
 /**
  *

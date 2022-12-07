@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.sms;
 import kotlin.jvm.functions.Function1;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import top.bettercode.summer.logging.logback.LogMarker;
+import top.bettercode.summer.logging.annotation.LogMarker;
 import top.bettercode.summer.web.support.client.ApiTemplate;
 
 /**
