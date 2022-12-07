@@ -27,19 +27,16 @@ class QvodClientTest : BaseTest() {
         qvodClient.storageRegions()
     }
 
-    @Disabled
     @Test
     fun processMediaByProcedure() {
         qvodClient.processMediaByProcedure("", "")
     }
 
-    @Disabled
     @Test
     fun deleteMedia() {
         qvodClient.deleteMedia("387702304899113118")
     }
 
-    @Disabled
     @Test
     fun processMedia() {
         qvodClient.processMedia("387702304900182040")
@@ -49,13 +46,11 @@ class QvodClientTest : BaseTest() {
         //}
     }
 
-    @Disabled
     @Test
     fun reviewImage() {
         qvodClient.reviewImage("387702304899111623")
     }
 
-    @Disabled
     @Test
     fun taskDetail() {
         qvodClient.taskDetail("1313291945-procedurev2-76faf54c22414dc08b880ecfc6b83a2att0")
@@ -69,19 +64,16 @@ class QvodClientTest : BaseTest() {
         }
     }
 
-    @Disabled
     @Test
     fun confirmEvents() {
         qvodClient.confirmEvents("tdmq830894935510738067")
     }
 
-    @Disabled
     @Test
     fun describeMediaInfo() {
         qvodClient.describeMediaInfo("387702306840111681", "metaData")
     }
 
-    @Disabled
     @Test
     fun playSignature() {
         val signature = qvodClient.playSignature("387702307226359579")
