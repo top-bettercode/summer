@@ -28,6 +28,7 @@ import org.springframework.web.method.HandlerMethod;
 import top.bettercode.summer.security.config.ApiSecurityProperties;
 import top.bettercode.summer.security.repository.ApiTokenRepository;
 import top.bettercode.summer.tools.lang.operation.HttpOperation;
+import top.bettercode.summer.tools.lang.util.ArrayUtil;
 import top.bettercode.summer.web.AnnotatedUtils;
 import top.bettercode.summer.web.RespEntity;
 import top.bettercode.summer.web.config.SummerWebProperties;
@@ -99,6 +100,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       @NotNull FilterChain filterChain)
       throws ServletException, IOException {
     ApiTokenRepository apiTokenRepository = apiTokenService.getApiTokenRepository();
+    ApiSecurityProperties securityProperties = apiTokenService.getSecurityProperties();
     if (this.tokenEndpointMatcher.matches(request)) {
       authenticateBasic(request);
       try {
@@ -106,6 +108,8 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         Assert.hasText(grantType, "grantType 不能为空");
         String scope = request.getParameter(SecurityParameterNames.SCOPE);
         Assert.hasText(scope, "scope 不能为空");
+        Assert.isTrue(ArrayUtil.contains(securityProperties.getSupportScopes(), scope),
+            "不支持的scope:" + scope);
 
         ApiToken apiToken;
 
@@ -120,7 +124,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
               "用户名或密码错误");
 
           apiToken = apiTokenService.getApiToken(scope, userDetails,
-              apiTokenService.getSecurityProperties().needKickedOut(scope));
+              securityProperties.needKickedOut(scope));
         } else if (SecurityParameterNames.REFRESH_TOKEN.equals(grantType)) {
           String refreshToken = request.getParameter(SecurityParameterNames.REFRESH_TOKEN);
           Assert.hasText(refreshToken, "refreshToken不能为空");
@@ -149,7 +153,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         } else {
           UserDetails userDetails = apiTokenService.getUserDetails(grantType, request);
           apiToken = apiTokenService.getApiToken(scope, userDetails,
-              apiTokenService.getSecurityProperties().needKickedOut(scope));
+              securityProperties.needKickedOut(scope));
         }
 
         UserDetails userDetails = apiToken.getUserDetails();
@@ -174,17 +178,16 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
     } else {
       String accessToken = bearerTokenResolver.resolve(request);
       if (StringUtils.hasText(accessToken)) {
-        ApiToken apiToken = apiTokenRepository.findByAccessToken(
-            accessToken);
-        if (apiToken != null && !apiToken.getAccessToken()
-            .isExpired()) {
+        ApiToken apiToken = apiTokenRepository.findByAccessToken(accessToken);
+        if (apiToken != null && ArrayUtil.contains(securityProperties.getSupportScopes(),
+            apiToken.getScope()) && !apiToken.getAccessToken().isExpired()) {
           try {
+            String scope = apiToken.getScope();
             UserDetails userDetails = apiToken.getUserDetails();
             apiTokenRepository.validateUserDetails(userDetails);
 
             if (apiToken.getUserDetailsInstantAt().isExpired()) {//刷新userDetails
-              userDetails = apiTokenService.getUserDetails(apiToken.getScope(),
-                  apiToken.getUsername());
+              userDetails = apiTokenService.getUserDetails(scope, apiToken.getUsername());
               apiToken.setUserDetailsInstantAt(apiTokenService.createUserDetailsInstantAt());
               apiToken.setUserDetails(userDetails);
               apiTokenRepository.save(apiToken);
@@ -194,7 +197,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authenticationResult);
             request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME,
-                apiToken.getScope() + ":" + userDetails.getUsername());
+                scope + ":" + userDetails.getUsername());
             SecurityContextHolder.setContext(context);
             if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
               if (revokeTokenService != null) {

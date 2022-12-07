@@ -69,7 +69,7 @@ public class RequestMappingAuthorizationManager implements
           Set<ConfigAuthority> authoritySet = AnnotatedUtils
               .getAnnotations(handlerMethod, ConfigAuthority.class);
           if (authoritySet.isEmpty()) {
-            configAttributes.add(securityProperties.getDefaultAuthority());
+            configAttributes.add(DefaultAuthority.DEFAULT_AUTHENTICATED_STRING);
           } else {
             for (ConfigAuthority authority : authoritySet) {
               for (String s : authority.value()) {
@@ -116,7 +116,7 @@ public class RequestMappingAuthorizationManager implements
                 AuthorityUtils.createAuthorityList(authorities.toArray(new String[0])));
           } else {
             authorities.remove(DefaultAuthority.ROLE_ANONYMOUS);
-            authorities.add(securityProperties.getDefaultAuthority());
+            authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_STRING);
             manager = AuthorityAuthorizationManager.hasAnyAuthority(
                 authorities.toArray(new String[0]));
             entry.setManager(manager);

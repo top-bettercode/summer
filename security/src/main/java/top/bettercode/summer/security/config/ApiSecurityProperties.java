@@ -49,9 +49,9 @@ public class ApiSecurityProperties {
   private String clientSecret;
 
   /**
-   * 默认权限
+   * 支持的权限范围
    */
-  private String defaultAuthority = "authenticated";
+  private String[] supportScopes = new String[]{"app"};
 
   //--------------------------------------------
   public boolean ignored(String path) {
@@ -170,11 +170,11 @@ public class ApiSecurityProperties {
     this.clientSecret = clientSecret;
   }
 
-  public String getDefaultAuthority() {
-    return defaultAuthority;
+  public String[] getSupportScopes() {
+    return supportScopes;
   }
 
-  public void setDefaultAuthority(String defaultAuthority) {
-    this.defaultAuthority = defaultAuthority;
+  public void setSupportScopes(String[] supportScopes) {
+    this.supportScopes = supportScopes;
   }
 }

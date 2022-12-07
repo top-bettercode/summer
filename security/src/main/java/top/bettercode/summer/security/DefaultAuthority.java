@@ -13,9 +13,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  */
 public class DefaultAuthority {
 
+  public static final String DEFAULT_AUTHENTICATED_STRING = "authenticated";
   public static GrantedAuthority DEFAULT_GRANTED_AUTHORITY = new SimpleGrantedAuthority(
-      "authenticated");
-  public static SecurityConfig DEFAULT_AUTHENTICATED = new SecurityConfig("authenticated");
+      DEFAULT_AUTHENTICATED_STRING);
+  public static SecurityConfig DEFAULT_AUTHENTICATED = new SecurityConfig(
+      DEFAULT_AUTHENTICATED_STRING);
   public static final SecurityConfig ROLE_ANONYMOUS = new SecurityConfig("ROLE_ANONYMOUS");
 
   public static boolean isDefaultAuthority(String authority) {
