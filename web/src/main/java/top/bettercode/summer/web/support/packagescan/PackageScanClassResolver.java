@@ -109,7 +109,9 @@ public class PackageScanClassResolver {
             Class<?> type = Class.forName(className);
             addFoundClass(type);
           } catch (ClassNotFoundException | NoClassDefFoundError e) {
-            log.info("加载" + className + "失败，" + e.getMessage());
+            if (log.isTraceEnabled()) {
+              log.trace("加载" + className + "失败，" + e.getMessage());
+            }
           }
         }
       }
