@@ -78,7 +78,7 @@ open class QvodClient(
         val original =
             "secretId=${properties.secretId}&currentTimeStamp=$currentTimeStamp&expireTime=${currentTimeStamp + properties.uploadValidSeconds}&random=${
                 RandomUtil.nextInt(9)
-            }&classId=${properties.classId}&procedure=${properties.procedure ?: ""}"
+            }&classId=${properties.classId}&procedure=${properties.procedure ?: ""}&vodSubAppId=${properties.appId}"
         if (log.isDebugEnabled) {
             log.debug("original signature:{}", original)
         }
@@ -153,6 +153,8 @@ open class QvodClient(
 
 
     /**
+     * https://cloud.tencent.com/document/product/266/31763
+     *
      * 获取媒体详细信息
      * @param fileId 媒体文件 ID 列表，N 从 0 开始取值，最大 19。
      * @param filter 指定所有媒体文件需要返回的信息，可同时指定多个信息，N 从 0 开始递增。如果未填写该字段，默认返回所有信息。选项有：
@@ -176,6 +178,9 @@ open class QvodClient(
 
     /**
      * 获取媒体详细信息
+     *
+     * https://cloud.tencent.com/document/product/266/31763
+     *
      * @param fileIds 媒体文件 ID 列表，N 从 0 开始取值，最大 19。
      * @param filters 指定所有媒体文件需要返回的信息，可同时指定多个信息，N 从 0 开始递增。如果未填写该字段，默认返回所有信息。选项有：
     basicInfo（视频基础信息）。
@@ -196,6 +201,7 @@ open class QvodClient(
         val req = DescribeMediaInfosRequest()
         req.fileIds = fileIds
         req.filters = filters
+        req.subAppId = properties.appId
 
         val start = System.currentTimeMillis()
         var durationMillis: Long? = null
@@ -226,10 +232,13 @@ open class QvodClient(
     }
 
     /**
+     * https://cloud.tencent.com/document/product/266/72480
+     *
      * 该接口用于： 1. 查询点播可开通的所有存储园区列表。 2. 查询已经开通的园区列表。 3. 查询默认使用的存储园区。
      */
     fun storageRegions(): DescribeStorageRegionsResponse {
         val req = DescribeStorageRegionsRequest()
+        req.subAppId = properties.appId
 
         val start = System.currentTimeMillis()
         var durationMillis: Long? = null
@@ -260,11 +269,14 @@ open class QvodClient(
     }
 
     /**
+     * https://cloud.tencent.com/document/product/266/31764
+     *
      * 删除媒体
      */
     fun deleteMedia(fileId: String): DeleteMediaResponse {
         val req = DeleteMediaRequest()
         req.fileId = fileId
+        req.subAppId = properties.appId
 
         val start = System.currentTimeMillis()
         var durationMillis: Long? = null
@@ -306,6 +318,7 @@ open class QvodClient(
         req.fileId = fileId
         req.procedureName = procedureName
         req.sessionId = UUID.randomUUID().toString()
+        req.subAppId = properties.appId
 
         val start = System.currentTimeMillis()
         var durationMillis: Long? = null
@@ -346,6 +359,7 @@ open class QvodClient(
         val aiContentReviewTaskInput = AiContentReviewTaskInput()
         aiContentReviewTaskInput.definition = 20
         req.aiContentReviewTask = aiContentReviewTaskInput
+        req.subAppId = properties.appId
 
         req.sessionId = UUID.randomUUID().toString()
         val start = System.currentTimeMillis()
@@ -377,12 +391,15 @@ open class QvodClient(
     }
 
     /**
+     * https://cloud.tencent.com/document/product/266/73217
+     *
      * 图片审核
      */
     fun reviewImage(fileId: String): ReviewImageResponse {
         val req = ReviewImageRequest()
         req.fileId = fileId
         req.definition = 10L
+        req.subAppId = properties.appId
 
         val start = System.currentTimeMillis()
         var durationMillis: Long? = null
@@ -413,10 +430,14 @@ open class QvodClient(
     }
 
     /**
+     *
+     * https://cloud.tencent.com/document/product/266/33433
+     *
      * 拉取事件通知
      */
     fun pullEvents(): PullEventsResponse {
         val req = PullEventsRequest()
+        req.subAppId = properties.appId
 
         val start = System.currentTimeMillis()
         var durationMillis: Long? = null
@@ -456,11 +477,13 @@ open class QvodClient(
     }
 
     /**
-     * 拉取事件通知
+     * https://cloud.tencent.com/document/product/266/33431
+     * 查询任务详情
      */
     fun taskDetail(taskId: String): DescribeTaskDetailResponse {
         val req = DescribeTaskDetailRequest()
         req.taskId = taskId
+        req.subAppId = properties.appId
 
         val start = System.currentTimeMillis()
         var durationMillis: Long? = null
@@ -491,11 +514,14 @@ open class QvodClient(
     }
 
     /**
+     *
+     * https://cloud.tencent.com/document/product/266/33434
      * 确认事件通知
      */
     fun confirmEvents(vararg eventHandle: String): ConfirmEventsResponse {
         val req = ConfirmEventsRequest()
         req.eventHandles = eventHandle
+        req.subAppId = properties.appId
 
         val start = System.currentTimeMillis()
         var durationMillis: Long? = null
