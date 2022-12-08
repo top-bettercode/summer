@@ -17,6 +17,7 @@ import org.gradle.jvm.application.tasks.CreateStartScripts
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.jvmArgs
+import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin.Companion.genGroup
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.summer.tools.generator.dsl.Generators
@@ -62,71 +63,109 @@ object SubProjectTasks {
             }
             if (project.isBoot) {
                 val ext = project.extensions.getByType(GeneratorExtension::class.java)
+                if (ext.moduleSize > 1) {
+                    project.tasks.create("genEntity[[[All]") { task ->
+                        task.group = "gen entity"
+                        task.doLast {
+                            ext.run { _, tableHolder ->
+                                ext.generators = arrayOf(Entity())
+                                Generators.call(ext, tableHolder)
+                            }
+                        }
+                    }
+                    project.tasks.create("genController[[[All]") { task ->
+                        task.group = "gen controller"
+                        task.doLast {
+                            ext.run { _, tableHolder ->
+                                ext.generators = arrayOf(Controller())
+                                Generators.call(ext, tableHolder)
+                            }
+                        }
+                    }
+                }
+
                 ext.run { module, tableHolder ->
                     val prefix = if (defaultModuleName == module) "" else "[[${
                         module.capitalized()
                     }]"
                     project.tasks.create("genEntity${prefix}") { task ->
                         task.group = "gen entity"
-                        task.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                ext.generators = arrayOf(Entity())
-                                Generators.call(ext, tableHolder)
-                            }
-                        })
+                        task.doLast {
+                            ext.generators = arrayOf(Entity())
+                            Generators.call(ext, tableHolder)
+                        }
                     }
                     project.tasks.create("genService${prefix}") { task ->
                         task.group = "gen service"
-                        task.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                ext.generators = arrayOf(Service())
-                                Generators.call(ext, tableHolder)
-                            }
-                        })
+                        task.doLast {
+                            ext.generators = arrayOf(Service())
+                            Generators.call(ext, tableHolder)
+                        }
                     }
                     project.tasks.create("genController${prefix}") { task ->
                         task.group = "gen controller"
-                        task.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                ext.generators = arrayOf(Controller())
-                                Generators.call(ext, tableHolder)
-                            }
-                        })
+                        task.doLast {
+                            ext.generators = arrayOf(Controller())
+                            Generators.call(ext, tableHolder)
+                        }
                     }
                 }
             }
             if (project.isCore) {
                 val ext = project.extensions.getByType(GeneratorExtension::class.java)
+                if (ext.moduleSize > 1) {
+                    project.tasks.create("genCoreEntity[[[All]") { task ->
+                        task.group = "gen entity"
+                        task.doLast {
+                            ext.run { _, tableHolder ->
+                                ext.generators = arrayOf(Entity())
+                                Generators.call(ext, tableHolder)
+                            }
+                        }
+                    }
+                    project.tasks.create("genCoreService[[[All]") { task ->
+                        task.group = "gen service"
+                        task.doLast {
+                            ext.run { _, tableHolder ->
+                                ext.generators = arrayOf(Service())
+                                Generators.call(ext, tableHolder)
+                            }
+                        }
+                    }
+                    project.tasks.create("genCoreController[[[All]") { task ->
+                        task.group = "gen controller"
+                        task.doLast {
+                            ext.run { _, tableHolder ->
+                                ext.generators = arrayOf(Controller())
+                                Generators.call(ext, tableHolder)
+                            }
+                        }
+                    }
+                }
                 ext.run { module, tableHolder ->
                     val prefix = if (defaultModuleName == module) "" else "[[${
                         module.capitalized()
                     }]"
                     project.tasks.create("genCoreEntity${prefix}") { task ->
                         task.group = "gen entity"
-                        task.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                ext.generators = arrayOf(Entity())
-                                Generators.call(ext, tableHolder)
-                            }
-                        })
+                        task.doLast {
+                            ext.generators = arrayOf(Entity())
+                            Generators.call(ext, tableHolder)
+                        }
                     }
                     project.tasks.create("genCoreService${prefix}") { task ->
                         task.group = "gen service"
-                        task.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                ext.generators = arrayOf(Service())
-                                Generators.call(ext, tableHolder)
-                            }
-                        })
+                        task.doLast {
+                            ext.generators = arrayOf(Service())
+                            Generators.call(ext, tableHolder)
+                        }
                     }
                     project.tasks.create("genCoreController${prefix}") { task ->
                         task.group = "gen controller"
-                        task.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                ext.generators = arrayOf(Controller())
-                                Generators.call(ext, tableHolder)
-                            }
-                        })
+                        task.doLast {
+                            ext.generators = arrayOf(Controller())
+                            Generators.call(ext, tableHolder)
+                        }
                     }
                 }
             }
