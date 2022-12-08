@@ -120,6 +120,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         ApiToken apiToken;
 
         if (SecurityParameterNames.PASSWORD.equals(grantType)) {
+          apiTokenService.beforeLogin(request, grantType, scope);
           String username = request.getParameter(SecurityParameterNames.USERNAME);
           Assert.hasText(username, "用户名不能为空");
           String password = request.getParameter(SecurityParameterNames.PASSWORD);
@@ -130,6 +131,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
               "用户名或密码错误");
 
           apiToken = apiTokenService.getApiToken(scope, userDetails);
+          apiTokenService.afterLogin(apiToken);
         } else if (SecurityParameterNames.REFRESH_TOKEN.equals(grantType)) {
           String refreshToken = request.getParameter(SecurityParameterNames.REFRESH_TOKEN);
           Assert.hasText(refreshToken, "refreshToken不能为空");

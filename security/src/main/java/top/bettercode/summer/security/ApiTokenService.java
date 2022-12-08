@@ -13,25 +13,24 @@ import top.bettercode.summer.security.token.ApiAccessToken;
 import top.bettercode.summer.security.token.ApiToken;
 import top.bettercode.summer.security.token.InstantAt;
 import top.bettercode.summer.security.token.Token;
-import top.bettercode.summer.security.userdetails.CheckedUserDetailsService;
+import top.bettercode.summer.security.userdetails.LoginListener;
+import top.bettercode.summer.security.userdetails.UserDetailsValidator;
 import top.bettercode.summer.security.userdetails.GrantTypeUserDetailsService;
-import top.bettercode.summer.security.userdetails.NeedKickedOutUserDetailsService;
+import top.bettercode.summer.security.userdetails.NeedKickedOutValidator;
 import top.bettercode.summer.security.userdetails.ScopeUserDetailsService;
 
 /**
  * @author Peter Wu
  */
-public class ApiTokenService {
+public class ApiTokenService implements NeedKickedOutValidator, UserDetailsValidator,
+    LoginListener {
 
   private static final BytesKeyGenerator DEFAULT_TOKEN_GENERATOR = KeyGenerators.secureRandom(20);
 
   private final ApiSecurityProperties securityProperties;
   private final ApiTokenRepository apiTokenRepository;
   private final UserDetailsService userDetailsService;
-  private final boolean isScopeUserDetailsService;
-  private final boolean isGrantTypeDetailsService;
-  private final boolean isCheckedDetailsService;
-  private final boolean isNeedKickedDetailsService;
+
 
   public ApiTokenService(
       ApiSecurityProperties securityProperties,
@@ -40,10 +39,6 @@ public class ApiTokenService {
     this.securityProperties = securityProperties;
     this.apiTokenRepository = apiTokenRepository;
     this.userDetailsService = userDetailsService;
-    this.isScopeUserDetailsService = userDetailsService instanceof ScopeUserDetailsService;
-    this.isGrantTypeDetailsService = userDetailsService instanceof GrantTypeUserDetailsService;
-    this.isCheckedDetailsService = userDetailsService instanceof CheckedUserDetailsService;
-    this.isNeedKickedDetailsService = userDetailsService instanceof NeedKickedOutUserDetailsService;
   }
 
   public ApiSecurityProperties getSecurityProperties() {
@@ -88,7 +83,7 @@ public class ApiTokenService {
 
   public ApiAccessToken getApiAccessToken(String scope, String username) {
     UserDetails userDetails = getUserDetails(scope, username);
-    return getApiAccessToken(scope, userDetails, needKickedOut(scope, userDetails));
+    return getApiAccessToken(scope, userDetails, validate(scope, userDetails));
   }
 
   public ApiAccessToken getApiAccessToken(String scope, String username, boolean loginKickedOut) {
@@ -107,7 +102,7 @@ public class ApiTokenService {
   }
 
   public ApiAccessToken getApiAccessToken(String scope, UserDetails userDetails) {
-    return getApiAccessToken(scope, userDetails, needKickedOut(scope, userDetails));
+    return getApiAccessToken(scope, userDetails, validate(scope, userDetails));
   }
 
   public ApiAccessToken getApiAccessToken(String scope, UserDetails userDetails,
@@ -119,7 +114,7 @@ public class ApiTokenService {
 
 
   public ApiToken getApiToken(String scope, UserDetails userDetails) {
-    return getApiToken(scope, userDetails, needKickedOut(scope, userDetails));
+    return getApiToken(scope, userDetails, validate(scope, userDetails));
   }
 
 
@@ -147,7 +142,7 @@ public class ApiTokenService {
   }
 
   public UserDetails getUserDetails(String grantType, HttpServletRequest request) {
-    if (isGrantTypeDetailsService) {
+    if (userDetailsService instanceof GrantTypeUserDetailsService) {
       return ((GrantTypeUserDetailsService) userDetailsService).loadUserByGrantTypeAndRequest(
           grantType, request);
     }
@@ -156,7 +151,7 @@ public class ApiTokenService {
 
   public UserDetails getUserDetails(String scope, String username) {
     UserDetails userDetails;
-    if (isScopeUserDetailsService) {
+    if (userDetailsService instanceof ScopeUserDetailsService) {
       userDetails = ((ScopeUserDetailsService) userDetailsService).loadUserByScopeAndUsername(
           scope, username);
     } else {
@@ -169,19 +164,35 @@ public class ApiTokenService {
     apiTokenRepository.remove(scope, username);
   }
 
-  public void validate(UserDetails userDetails) {
-    if (isCheckedDetailsService) {
-      ((CheckedUserDetailsService) userDetailsService).validate(userDetails);
+
+  @Override
+  public void beforeLogin(HttpServletRequest request, String grantType, String scope) {
+    if (userDetailsService instanceof LoginListener) {
+      ((LoginListener) userDetailsService).beforeLogin(request, grantType, scope);
     }
   }
 
-  private boolean needKickedOut(String scope, UserDetails userDetails) {
-    if (isNeedKickedDetailsService) {
-      return ((NeedKickedOutUserDetailsService) userDetailsService).needKickedOut(scope,
+  @Override
+  public void afterLogin(ApiToken apiToken) {
+    if (userDetailsService instanceof LoginListener) {
+      ((LoginListener) userDetailsService).afterLogin(apiToken);
+    }
+  }
+
+  @Override
+  public void validate(UserDetails userDetails) {
+    if (userDetailsService instanceof UserDetailsValidator) {
+      ((UserDetailsValidator) userDetailsService).validate(userDetails);
+    }
+  }
+
+  @Override
+  public boolean validate(String scope, UserDetails userDetails) {
+    if (userDetailsService instanceof NeedKickedOutValidator) {
+      return ((NeedKickedOutValidator) userDetailsService).validate(scope,
           userDetails);
     } else {
       return securityProperties.needKickedOut(scope);
     }
   }
-
 }
