@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -48,7 +49,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -144,7 +144,7 @@ public class WebMvcConfiguration {
     SimpleModule module = new SimpleModule();
     Set<String> packages = new HashSet<>(
         Arrays.asList(jacksonExtProperties.getMixInAnnotationBasePackages()));
-    String[] beanNames = applicationContext.getBeanNamesForAnnotation(ComponentScan.class);
+    String[] beanNames = applicationContext.getBeanNamesForAnnotation(SpringBootApplication.class);
     for (String beanName : beanNames) {
       AbstractBeanDefinition beanDefinition = (AbstractBeanDefinition) applicationContext.getBeanDefinition(
           beanName);
@@ -153,12 +153,12 @@ public class WebMvcConfiguration {
             top.bettercode.summer.web.config.WebMvcConfiguration.class.getClassLoader());
       }
       Class<?> beanClass = beanDefinition.getBeanClass();
-      ComponentScan annotation = AnnotatedElementUtils.findMergedAnnotation(beanClass,
-          ComponentScan.class);
-      for (Class<?> packageClass : Objects.requireNonNull(annotation).basePackageClasses()) {
+      SpringBootApplication annotation = AnnotatedElementUtils.findMergedAnnotation(beanClass,
+          SpringBootApplication.class);
+      for (Class<?> packageClass : Objects.requireNonNull(annotation).scanBasePackageClasses()) {
         packages.add(packageClass.getPackage().getName());
       }
-      packages.addAll(Arrays.asList(annotation.basePackages()));
+      packages.addAll(Arrays.asList(annotation.scanBasePackages()));
       packages.add(beanClass.getPackage().getName());
     }
 
