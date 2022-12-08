@@ -181,4 +181,23 @@ public class SecurityTest {
     assertEquals(HttpStatus.OK, entity.getStatusCode());
   }
 
+  @Test
+  public void testPublicSource() throws Exception {
+    HttpHeaders httpHeaders = new HttpHeaders();
+//    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiToken().getAccessToken());
+    ResponseEntity<String> entity = restTemplate
+        .exchange("/test2.json", HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
+    System.err.println(entity.getBody());
+    assertEquals(HttpStatus.OK, entity.getStatusCode());
+  }
+
+  @Test
+  public void testStaticSource() throws Exception {
+    HttpHeaders httpHeaders = new HttpHeaders();
+//    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiToken().getAccessToken());
+    ResponseEntity<String> entity = restTemplate
+        .exchange("/test.json", HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
+    System.err.println(entity.getBody());
+    assertEquals(HttpStatus.OK, entity.getStatusCode());
+  }
 }

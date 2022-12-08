@@ -11,7 +11,7 @@ public interface LoginListener {
   default void beforeLogin(HttpServletRequest request, String grantType, String scope) {
   }
 
-  default void afterLogin(ApiToken apiToken) {
+  default void afterLogin(ApiToken apiToken, HttpServletRequest request) {
   }
 
 }

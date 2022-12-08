@@ -173,9 +173,9 @@ public class ApiTokenService implements NeedKickedOutValidator, UserDetailsValid
   }
 
   @Override
-  public void afterLogin(ApiToken apiToken) {
+  public void afterLogin(ApiToken apiToken, HttpServletRequest request) {
     if (userDetailsService instanceof LoginListener) {
-      ((LoginListener) userDetailsService).afterLogin(apiToken);
+      ((LoginListener) userDetailsService).afterLogin(apiToken, request);
     }
   }
 

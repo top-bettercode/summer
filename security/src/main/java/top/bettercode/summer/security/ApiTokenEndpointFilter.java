@@ -131,7 +131,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
               "用户名或密码错误");
 
           apiToken = apiTokenService.getApiToken(scope, userDetails);
-          apiTokenService.afterLogin(apiToken);
+          apiTokenService.afterLogin(apiToken, request);
         } else if (SecurityParameterNames.REFRESH_TOKEN.equals(grantType)) {
           String refreshToken = request.getParameter(SecurityParameterNames.REFRESH_TOKEN);
           Assert.hasText(refreshToken, "refreshToken不能为空");

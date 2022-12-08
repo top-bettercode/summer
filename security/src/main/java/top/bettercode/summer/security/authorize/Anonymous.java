@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@ConfigAuthority("ROLE_ANONYMOUS")
+@ConfigAuthority(DefaultAuthority.ROLE_ANONYMOUS_VALUE)
 public @interface Anonymous {
 
 }

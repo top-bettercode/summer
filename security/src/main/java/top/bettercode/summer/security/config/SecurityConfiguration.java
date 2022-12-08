@@ -60,8 +60,8 @@ public class SecurityConfiguration {
   public RequestMappingAuthorizationManager authorizationManager(
       IResourceService resourceService,
       RequestMappingHandlerMapping requestMappingHandlerMapping) {
-    return new RequestMappingAuthorizationManager(resourceService,
-        requestMappingHandlerMapping, securityProperties);
+    return new RequestMappingAuthorizationManager(resourceService, requestMappingHandlerMapping,
+        securityProperties);
   }
 
 
