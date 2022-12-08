@@ -63,8 +63,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
   public Map<String, Object> getErrorAttributes(WebRequest webRequest,
       ErrorAttributeOptions options) {
     Throwable error = getError(webRequest);
-    return getErrorAttributes(error, webRequest, options.isIncluded(
-        Include.STACK_TRACE)).toMap();
+    return getErrorAttributes(error, webRequest, options.isIncluded(Include.STACK_TRACE)).toMap();
   }
 
   public IRespEntity getErrorAttributes(Throwable error, WebRequest webRequest) {
@@ -139,6 +138,9 @@ public class ErrorAttributes extends DefaultErrorAttributes {
       }
     }
     message = getText(webRequest, message).trim();
+    if (message.matches(".*query did not return a unique result:.*")) {
+      message = getText(webRequest, "data.not.unique.result");
+    }
 
     setErrorInfo(webRequest, httpStatusCode, message, error);
 
