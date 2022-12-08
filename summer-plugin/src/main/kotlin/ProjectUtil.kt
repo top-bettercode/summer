@@ -5,8 +5,6 @@ import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.pr
 val Project.isBoot: Boolean
     get() = !isCore
             && "tools" != name
-            && "commons" != name
-            && "util" != name
             && ((parent == rootProject) || parent?.name == "server" || parent?.name == "service")
 
 val Project.isCore: Boolean
