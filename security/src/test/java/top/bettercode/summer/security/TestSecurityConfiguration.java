@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import top.bettercode.summer.security.token.IRevokeTokenService;
 import top.bettercode.summer.tools.lang.util.StringUtil;
 
 @Configuration(proxyBeanMethods = false)

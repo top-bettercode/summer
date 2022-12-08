@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.support;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;

@@ -20,8 +20,8 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import top.bettercode.summer.security.ApiTokenEndpointFilter;
 import top.bettercode.summer.security.ApiTokenService;
 import top.bettercode.summer.security.IResourceService;
-import top.bettercode.summer.security.IRevokeTokenService;
-import top.bettercode.summer.security.RequestMappingAuthorizationManager;
+import top.bettercode.summer.security.token.IRevokeTokenService;
+import top.bettercode.summer.security.authorization.RequestMappingAuthorizationManager;
 import top.bettercode.summer.web.config.CorsProperties;
 import top.bettercode.summer.web.config.SummerWebProperties;
 

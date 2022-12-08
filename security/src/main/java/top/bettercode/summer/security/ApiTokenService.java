@@ -9,6 +9,14 @@ import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import top.bettercode.summer.security.config.ApiSecurityProperties;
 import top.bettercode.summer.security.repository.ApiTokenRepository;
+import top.bettercode.summer.security.token.ApiAccessToken;
+import top.bettercode.summer.security.token.ApiToken;
+import top.bettercode.summer.security.token.InstantAt;
+import top.bettercode.summer.security.token.Token;
+import top.bettercode.summer.security.userdetails.CheckedUserDetailsService;
+import top.bettercode.summer.security.userdetails.GrantTypeUserDetailsService;
+import top.bettercode.summer.security.userdetails.NeedKickedOutUserDetailsService;
+import top.bettercode.summer.security.userdetails.ScopeUserDetailsService;
 
 /**
  * @author Peter Wu
@@ -22,6 +30,8 @@ public class ApiTokenService {
   private final UserDetailsService userDetailsService;
   private final boolean isScopeUserDetailsService;
   private final boolean isGrantTypeDetailsService;
+  private final boolean isCheckedDetailsService;
+  private final boolean isNeedKickedDetailsService;
 
   public ApiTokenService(
       ApiSecurityProperties securityProperties,
@@ -32,6 +42,8 @@ public class ApiTokenService {
     this.userDetailsService = userDetailsService;
     this.isScopeUserDetailsService = userDetailsService instanceof ScopeUserDetailsService;
     this.isGrantTypeDetailsService = userDetailsService instanceof GrantTypeUserDetailsService;
+    this.isCheckedDetailsService = userDetailsService instanceof CheckedUserDetailsService;
+    this.isNeedKickedDetailsService = userDetailsService instanceof NeedKickedOutUserDetailsService;
   }
 
   public ApiSecurityProperties getSecurityProperties() {
@@ -76,17 +88,16 @@ public class ApiTokenService {
 
   public ApiAccessToken getApiAccessToken(String scope, String username) {
     UserDetails userDetails = getUserDetails(scope, username);
-    return getApiAccessToken(scope, userDetails,
-        apiTokenRepository.needKickedOut(securityProperties, scope, userDetails));
+    return getApiAccessToken(scope, userDetails, needKickedOut(scope, userDetails));
   }
 
-  public ApiAccessToken getApiAccessToken(String scope, String username, Boolean loginKickedOut) {
+  public ApiAccessToken getApiAccessToken(String scope, String username, boolean loginKickedOut) {
     UserDetails userDetails = getUserDetails(scope, username);
     return getApiAccessToken(scope, userDetails, loginKickedOut);
   }
 
   public ApiAccessToken getApiAccessToken(String scope, String oldUsername, String newUsername,
-      Boolean loginKickedOut) {
+      boolean loginKickedOut) {
     UserDetails oldUserDetails = getUserDetails(scope, oldUsername);
     ApiToken apiToken = getApiToken(scope, oldUserDetails, loginKickedOut);
     apiToken.setUserDetailsInstantAt(createUserDetailsInstantAt());
@@ -96,12 +107,11 @@ public class ApiTokenService {
   }
 
   public ApiAccessToken getApiAccessToken(String scope, UserDetails userDetails) {
-    return getApiAccessToken(scope, userDetails,
-        apiTokenRepository.needKickedOut(securityProperties, scope, userDetails));
+    return getApiAccessToken(scope, userDetails, needKickedOut(scope, userDetails));
   }
 
   public ApiAccessToken getApiAccessToken(String scope, UserDetails userDetails,
-      Boolean loginKickedOut) {
+      boolean loginKickedOut) {
     ApiToken authenticationToken = getApiToken(scope, userDetails, loginKickedOut);
     apiTokenRepository.save(authenticationToken);
     return authenticationToken.toApiToken();
@@ -109,12 +119,11 @@ public class ApiTokenService {
 
 
   public ApiToken getApiToken(String scope, UserDetails userDetails) {
-    return getApiToken(scope, userDetails,
-        apiTokenRepository.needKickedOut(securityProperties, scope, userDetails));
+    return getApiToken(scope, userDetails, needKickedOut(scope, userDetails));
   }
 
 
-  public ApiToken getApiToken(String scope, UserDetails userDetails, Boolean loginKickedOut) {
+  public ApiToken getApiToken(String scope, UserDetails userDetails, boolean loginKickedOut) {
     ApiToken apiToken;
     if (loginKickedOut) {
       apiToken = new ApiToken(scope, createAccessToken(),
@@ -158,6 +167,21 @@ public class ApiTokenService {
 
   public void removeApiToken(String scope, String username) {
     apiTokenRepository.remove(scope, username);
+  }
+
+  public void validate(UserDetails userDetails) {
+    if (isCheckedDetailsService) {
+      ((CheckedUserDetailsService) userDetailsService).validate(userDetails);
+    }
+  }
+
+  private boolean needKickedOut(String scope, UserDetails userDetails) {
+    if (isNeedKickedDetailsService) {
+      return ((NeedKickedOutUserDetailsService) userDetailsService).needKickedOut(scope,
+          userDetails);
+    } else {
+      return securityProperties.needKickedOut(scope);
+    }
   }
 
 }

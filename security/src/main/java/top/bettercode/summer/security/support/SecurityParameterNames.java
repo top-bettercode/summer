@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.support;
 
 public interface SecurityParameterNames {
 

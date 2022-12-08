@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.userdetails;
 
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import top.bettercode.summer.security.support.SecurityParameterNames;
 
 /**
  * @author Peter Wu

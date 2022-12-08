@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.token;
 
 import org.springframework.security.core.userdetails.UserDetails;
 

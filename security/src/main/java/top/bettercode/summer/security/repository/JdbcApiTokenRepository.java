@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.SqlLobValue;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import top.bettercode.summer.security.ApiToken;
+import top.bettercode.summer.security.token.ApiToken;
 
 public class JdbcApiTokenRepository implements ApiTokenRepository {
 

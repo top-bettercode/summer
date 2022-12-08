@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.token;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
+import top.bettercode.summer.security.support.SecurityParameterNames;
 
 public class MultipleBearerTokenResolver {
 

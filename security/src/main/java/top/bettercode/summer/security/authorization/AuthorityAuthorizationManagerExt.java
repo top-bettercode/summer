@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.authorization;
 
 import java.util.Set;
 import org.springframework.security.authorization.AuthorizationManager;

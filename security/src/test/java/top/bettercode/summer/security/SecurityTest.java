@@ -22,6 +22,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import top.bettercode.summer.security.config.ApiSecurityProperties;
+import top.bettercode.summer.security.token.ApiAccessToken;
 import top.bettercode.summer.test.autodoc.Autodoc;
 import top.bettercode.summer.web.RespEntity;
 

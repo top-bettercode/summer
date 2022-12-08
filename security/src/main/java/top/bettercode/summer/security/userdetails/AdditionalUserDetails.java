@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.userdetails;
 
 import java.util.Collection;
 import java.util.HashMap;

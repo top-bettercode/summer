@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.support;
 
 import java.util.Collection;
 import java.util.Optional;

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import top.bettercode.summer.security.ScopeUserDetailsService;
-import top.bettercode.summer.security.UserDetailsAuthenticationToken;
+import top.bettercode.summer.security.userdetails.ScopeUserDetailsService;
+import top.bettercode.summer.security.authorization.UserDetailsAuthenticationToken;
 
 /**
  * mockMvc 基础测试类

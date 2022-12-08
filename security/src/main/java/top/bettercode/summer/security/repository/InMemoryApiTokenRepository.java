@@ -1,7 +1,7 @@
 package top.bettercode.summer.security.repository;
 
 import java.util.Map;
-import top.bettercode.summer.security.ApiToken;
+import top.bettercode.summer.security.token.ApiToken;
 
 /**
  * @author Peter Wu

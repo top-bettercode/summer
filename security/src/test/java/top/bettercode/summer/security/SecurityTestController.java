@@ -3,6 +3,8 @@ package top.bettercode.summer.security;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.bettercode.summer.security.authorize.Anonymous;
+import top.bettercode.summer.security.support.AuthenticationHelper;
 import top.bettercode.summer.web.BaseController;
 
 /**

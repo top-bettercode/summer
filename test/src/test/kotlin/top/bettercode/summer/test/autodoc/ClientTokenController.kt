@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import top.bettercode.summer.security.Anonymous
+import top.bettercode.summer.security.authorize.Anonymous
 import javax.validation.groups.Default
 
 

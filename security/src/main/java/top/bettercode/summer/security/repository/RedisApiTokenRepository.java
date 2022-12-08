@@ -12,7 +12,7 @@ import org.springframework.data.redis.connection.RedisPipelineException;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
-import top.bettercode.summer.security.ApiToken;
+import top.bettercode.summer.security.token.ApiToken;
 
 public final class RedisApiTokenRepository implements ApiTokenRepository {
 

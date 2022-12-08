@@ -25,8 +25,14 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.HandlerMethod;
+import top.bettercode.summer.security.authorization.UserDetailsAuthenticationToken;
+import top.bettercode.summer.security.authorize.ClientAuthorize;
 import top.bettercode.summer.security.config.ApiSecurityProperties;
 import top.bettercode.summer.security.repository.ApiTokenRepository;
+import top.bettercode.summer.security.support.SecurityParameterNames;
+import top.bettercode.summer.security.token.ApiToken;
+import top.bettercode.summer.security.token.IRevokeTokenService;
+import top.bettercode.summer.security.token.MultipleBearerTokenResolver;
 import top.bettercode.summer.tools.lang.operation.HttpOperation;
 import top.bettercode.summer.tools.lang.util.ArrayUtil;
 import top.bettercode.summer.web.AnnotatedUtils;
@@ -181,7 +187,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
           try {
             String scope = apiToken.getScope();
             UserDetails userDetails = apiToken.getUserDetails();
-            apiTokenRepository.validateUserDetails(userDetails);
+            apiTokenService.validate(userDetails);
 
             if (apiToken.getUserDetailsInstantAt().isExpired()) {//刷新userDetails
               userDetails = apiTokenService.getUserDetails(scope, apiToken.getUsername());

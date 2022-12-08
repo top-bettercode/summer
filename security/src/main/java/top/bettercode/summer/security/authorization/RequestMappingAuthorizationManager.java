@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.authorization;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +29,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.pattern.PathPattern;
+import top.bettercode.summer.security.authorize.ConfigAuthority;
+import top.bettercode.summer.security.authorize.DefaultAuthority;
+import top.bettercode.summer.security.IResource;
+import top.bettercode.summer.security.IResourceService;
 import top.bettercode.summer.security.config.ApiSecurityProperties;
 import top.bettercode.summer.web.AnnotatedUtils;
 

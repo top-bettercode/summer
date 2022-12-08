@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.authorize;
 
 import java.util.Arrays;
 import java.util.Collection;

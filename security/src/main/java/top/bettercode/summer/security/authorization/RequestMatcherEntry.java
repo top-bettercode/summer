@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.authorization;
 
 import org.springframework.security.web.util.matcher.RequestMatcher;
 

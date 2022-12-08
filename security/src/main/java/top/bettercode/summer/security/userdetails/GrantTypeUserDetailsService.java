@@ -1,4 +1,4 @@
-package top.bettercode.summer.security;
+package top.bettercode.summer.security.userdetails;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetails;

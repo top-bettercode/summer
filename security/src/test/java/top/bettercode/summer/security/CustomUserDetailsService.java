@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import top.bettercode.summer.security.authorize.DefaultAuthority;
+import top.bettercode.summer.security.support.IllegalUserException;
+import top.bettercode.summer.security.userdetails.AdditionalUserDetails;
 
 /**
  * 自定义UserDetailsService
