@@ -75,7 +75,9 @@ public class ApiTokenService {
   }
 
   public ApiAccessToken getApiAccessToken(String scope, String username) {
-    return getApiAccessToken(scope, username, securityProperties.needKickedOut(scope));
+    UserDetails userDetails = getUserDetails(scope, username);
+    return getApiAccessToken(scope, userDetails,
+        apiTokenRepository.needKickedOut(securityProperties, scope, userDetails));
   }
 
   public ApiAccessToken getApiAccessToken(String scope, String username, Boolean loginKickedOut) {
@@ -94,17 +96,23 @@ public class ApiTokenService {
   }
 
   public ApiAccessToken getApiAccessToken(String scope, UserDetails userDetails) {
-    return getApiAccessToken(scope, userDetails, securityProperties.needKickedOut(scope));
+    return getApiAccessToken(scope, userDetails,
+        apiTokenRepository.needKickedOut(securityProperties, scope, userDetails));
   }
 
   public ApiAccessToken getApiAccessToken(String scope, UserDetails userDetails,
       Boolean loginKickedOut) {
-    ApiToken authenticationToken = getApiToken(scope, userDetails,
-        loginKickedOut);
-
+    ApiToken authenticationToken = getApiToken(scope, userDetails, loginKickedOut);
     apiTokenRepository.save(authenticationToken);
     return authenticationToken.toApiToken();
   }
+
+
+  public ApiToken getApiToken(String scope, UserDetails userDetails) {
+    return getApiToken(scope, userDetails,
+        apiTokenRepository.needKickedOut(securityProperties, scope, userDetails));
+  }
+
 
   public ApiToken getApiToken(String scope, UserDetails userDetails, Boolean loginKickedOut) {
     ApiToken apiToken;
@@ -151,6 +159,5 @@ public class ApiTokenService {
   public void removeApiToken(String scope, String username) {
     apiTokenRepository.remove(scope, username);
   }
-
 
 }

@@ -123,16 +123,14 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
           Assert.isTrue(passwordEncoder.matches(password, userDetails.getPassword()),
               "用户名或密码错误");
 
-          apiToken = apiTokenService.getApiToken(scope, userDetails,
-              securityProperties.needKickedOut(scope));
+          apiToken = apiTokenService.getApiToken(scope, userDetails);
         } else if (SecurityParameterNames.REFRESH_TOKEN.equals(grantType)) {
           String refreshToken = request.getParameter(SecurityParameterNames.REFRESH_TOKEN);
           Assert.hasText(refreshToken, "refreshToken不能为空");
           apiToken = apiTokenRepository.findByRefreshToken(
               refreshToken);
 
-          if (apiToken == null || apiToken.getRefreshToken()
-              .isExpired()) {
+          if (apiToken == null || apiToken.getRefreshToken().isExpired()) {
             if (apiToken != null) {
               apiTokenRepository.remove(apiToken);
             }
@@ -152,8 +150,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
 
         } else {
           UserDetails userDetails = apiTokenService.getUserDetails(grantType, request);
-          apiToken = apiTokenService.getApiToken(scope, userDetails,
-              securityProperties.needKickedOut(scope));
+          apiToken = apiTokenService.getApiToken(scope, userDetails);
         }
 
         UserDetails userDetails = apiToken.getUserDetails();
