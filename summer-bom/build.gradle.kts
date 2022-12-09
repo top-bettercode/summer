@@ -39,7 +39,7 @@ dependencies {
         api("org.asciidoctor:asciidoctorj-pdf:2.3.3")
 
         api("org.dhatim:fastexcel:0.14.0")
-        api("org.dhatim:fastexcel-reader:0.13.0")
+        api("org.dhatim:fastexcel-reader:0.14.0")
         api("org.apache.poi:poi-ooxml:5.2.3")
 
         api("org.mybatis:mybatis:3.5.11")
