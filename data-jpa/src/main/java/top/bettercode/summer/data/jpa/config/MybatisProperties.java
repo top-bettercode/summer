@@ -59,6 +59,10 @@ public class MybatisProperties {
   private Properties configurationProperties;
 
   /**
+   * 结果集转换是否使用 TupleTransformer
+   */
+  private Boolean useTupleTransformer = false;
+  /**
    * A Configuration object for customize default settings. If {@link #configLocation} is specified,
    * this property is not used.
    */
@@ -137,6 +141,14 @@ public class MybatisProperties {
 
   public void setConfigurationProperties(Properties configurationProperties) {
     this.configurationProperties = configurationProperties;
+  }
+
+  public Boolean getUseTupleTransformer() {
+    return useTupleTransformer;
+  }
+
+  public void setUseTupleTransformer(Boolean useTupleTransformer) {
+    this.useTupleTransformer = useTupleTransformer;
   }
 
   public Configuration getConfiguration() {

@@ -1,4 +1,4 @@
-package top.bettercode.summer.data.jpa.query.mybatis;
+package top.bettercode.summer.data.jpa.query.mybatis.hibernate;
 
 import org.hibernate.engine.query.internal.NativeQueryInterpreterStandardImpl;
 import org.hibernate.engine.spi.SessionFactoryImplementor;

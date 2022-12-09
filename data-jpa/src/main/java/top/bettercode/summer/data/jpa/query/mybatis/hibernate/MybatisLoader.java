@@ -1,4 +1,4 @@
-package top.bettercode.summer.data.jpa.query.mybatis;
+package top.bettercode.summer.data.jpa.query.mybatis.hibernate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +12,7 @@ import org.hibernate.loader.custom.CustomLoader;
 import org.hibernate.loader.custom.CustomQuery;
 import org.hibernate.loader.spi.AfterLoadAction;
 import org.hibernate.transform.ResultTransformer;
+import top.bettercode.summer.data.jpa.query.mybatis.MybatisResultTransformer;
 
 /**
  * @author Peter Wu
@@ -38,7 +39,7 @@ public class MybatisLoader extends CustomLoader {
   public Object loadSingleRow(ResultSet resultSet, SharedSessionContractImplementor session,
       QueryParameters queryParameters, boolean returnProxies) throws HibernateException {
     if (mybatisQuery) {
-      return ((MybatisResultTransformer) queryParameters.getResultTransformer()).transform(
+      return ((MybatisResultTransformer) queryParameters.getResultTransformer()).transformResultSet(
           resultSet);
     } else {
       return super.loadSingleRow(resultSet, session, queryParameters, returnProxies);
@@ -51,7 +52,7 @@ public class MybatisLoader extends CustomLoader {
       ResultTransformer forcedResultTransformer, int maxRows,
       List<AfterLoadAction> afterLoadActions) throws SQLException {
     if (mybatisQuery) {
-      return ((MybatisResultTransformer) queryParameters.getResultTransformer()).transformList(rs,
+      return ((MybatisResultTransformer) queryParameters.getResultTransformer()).transformListResultSet(rs,
           maxRows);
     } else {
       return super.processResultSet(rs, queryParameters, session, returnProxies,

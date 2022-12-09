@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,7 @@ import top.bettercode.summer.data.jpa.repository.UserRepository;
 /**
  * @author Peter Wu
  */
-@Disabled
+//@Disabled
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class QuerydslJpaExtPredicateExecutorTest {
@@ -52,6 +51,11 @@ public class QuerydslJpaExtPredicateExecutorTest {
   public void tearDown() {
     repository.deleteAll();
     repository.cleanRecycleBin();
+  }
+
+  @Test
+  public void name() {
+    System.err.println(repository.findAll(QUser.user.firstName.contains("D")));
   }
 
   @Test

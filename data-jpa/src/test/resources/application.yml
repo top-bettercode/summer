@@ -19,6 +19,7 @@ spring:
         configuration:
           map-underscore-to-camel-case: true
         mapper-locations: classpath*:/mapper/*.xml
+#        use-tuple-transformer: true
 
   datasource:
     name: scratchdb

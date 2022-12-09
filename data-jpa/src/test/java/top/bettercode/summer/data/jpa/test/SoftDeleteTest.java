@@ -7,14 +7,12 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import top.bettercode.summer.data.jpa.domain.HardUser;
-import top.bettercode.summer.data.jpa.domain.QUser;
 import top.bettercode.summer.data.jpa.domain.User;
 import top.bettercode.summer.data.jpa.repository.HardUserRepository;
 import top.bettercode.summer.data.jpa.repository.UserRepository;
@@ -52,12 +50,6 @@ public class SoftDeleteTest {
     repository.delete(dave);
     carterId = carter.getId();
     System.err.println("--------------------------------------------------------");
-  }
-
-  @Disabled
-  @Test
-  public void name() {
-    System.err.println(repository.findAll(QUser.user.firstName.contains("D")));
   }
 
   @AfterEach
