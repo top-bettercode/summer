@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.support;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 /**
@@ -13,6 +14,11 @@ public class Size {
   public static Size of(int size) {
     return of(size, Sort.unsorted());
   }
+
+  public static Size of(Pageable pageable) {
+    return of(pageable.getPageSize(), pageable.getSort());
+  }
+
 
   public static Size of(int size, Sort sort) {
     return new Size(size, sort);
