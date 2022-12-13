@@ -120,12 +120,11 @@ public class ApiAccessToken implements Serializable {
   }
 
   @JsonAnySetter
-  public void setAddress(String name, String value) {
+  public void setAdditionalInformation(String name, Object value) {
     this.additionalInformation.put(name, value);
   }
 
-  public void setAdditionalInformation(
-      Map<String, Object> additionalInformation) {
+  public void setAdditionalInformation(Map<String, Object> additionalInformation) {
     this.additionalInformation = additionalInformation;
   }
 }
