@@ -18,7 +18,7 @@ object Settings : HashMap<String, PropertiesSource>() {
     val areaCode = PropertiesSource.of("areaCode")
 
     @JvmStatic
-    val dicCode = PropertiesSource("default-dic-code", "dic-code")
+    val dicCode = PropertiesSource("default-dic-code", "dic-code", "app-dic-code")
 
     @JvmStatic
     val exceptionHandle = PropertiesSource.of("default-exception-handle", "exception-handle")
