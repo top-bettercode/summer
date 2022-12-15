@@ -24,6 +24,7 @@ import top.bettercode.summer.security.token.IRevokeTokenService;
 import top.bettercode.summer.security.authorization.RequestMappingAuthorizationManager;
 import top.bettercode.summer.web.config.CorsProperties;
 import top.bettercode.summer.web.config.SummerWebProperties;
+import top.bettercode.summer.web.form.IFormkeyService;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
@@ -40,13 +41,14 @@ public class SecurityConfiguration {
   private final SummerWebProperties summerWebProperties;
   private final ObjectMapper objectMapper;
   private final PasswordEncoder passwordEncoder;
+  private final IFormkeyService formkeyService;
 
   public SecurityConfiguration(
       CorsProperties corsProperties,
       ApiSecurityProperties securityProperties, ApiTokenService apiTokenService,
       @Autowired(required = false) IRevokeTokenService revokeTokenService,
       SummerWebProperties summerWebProperties,
-      ObjectMapper objectMapper, PasswordEncoder passwordEncoder) {
+      ObjectMapper objectMapper, PasswordEncoder passwordEncoder, IFormkeyService formkeyService) {
     this.corsProperties = corsProperties;
     this.securityProperties = securityProperties;
     this.apiTokenService = apiTokenService;
@@ -54,6 +56,7 @@ public class SecurityConfiguration {
     this.summerWebProperties = summerWebProperties;
     this.objectMapper = objectMapper;
     this.passwordEncoder = passwordEncoder;
+    this.formkeyService = formkeyService;
   }
 
   @Bean
@@ -83,7 +86,7 @@ public class SecurityConfiguration {
     http.csrf().disable();
 
     ApiTokenEndpointFilter apiTokenEndpointFilter = new ApiTokenEndpointFilter(apiTokenService,
-        passwordEncoder, summerWebProperties, revokeTokenService, objectMapper);
+        passwordEncoder, summerWebProperties, revokeTokenService, objectMapper, formkeyService);
 
     http.addFilterBefore(apiTokenEndpointFilter, LogoutFilter.class);
 

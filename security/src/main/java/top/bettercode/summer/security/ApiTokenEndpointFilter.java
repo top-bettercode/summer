@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -39,9 +41,13 @@ import top.bettercode.summer.web.AnnotatedUtils;
 import top.bettercode.summer.web.RespEntity;
 import top.bettercode.summer.web.config.SummerWebProperties;
 import top.bettercode.summer.web.exception.UnauthorizedException;
+import top.bettercode.summer.web.form.FormDuplicateException;
+import top.bettercode.summer.web.form.IFormkeyService;
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder;
 
 public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
+
+  private final Logger log = LoggerFactory.getLogger(ApiTokenEndpointFilter.class);
 
   /**
    * The default endpoint {@code URI} for access token requests.
@@ -55,6 +61,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
   private final SummerWebProperties summerWebProperties;
   private final IRevokeTokenService revokeTokenService;
   private final ObjectMapper objectMapper;
+  private final IFormkeyService formkeyService;
   private final String basicCredentials;
 
   private final MultipleBearerTokenResolver bearerTokenResolver = new MultipleBearerTokenResolver();
@@ -65,11 +72,10 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       PasswordEncoder passwordEncoder,
       SummerWebProperties summerWebProperties,
       IRevokeTokenService revokeTokenService,
-      ObjectMapper objectMapper) {
+      ObjectMapper objectMapper, IFormkeyService formkeyService) {
     this(apiTokenService, passwordEncoder, summerWebProperties, revokeTokenService, objectMapper,
-        DEFAULT_TOKEN_ENDPOINT_URI);
+        formkeyService, DEFAULT_TOKEN_ENDPOINT_URI);
   }
-
 
   public ApiTokenEndpointFilter(
       ApiTokenService apiTokenService,
@@ -77,6 +83,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       SummerWebProperties summerWebProperties,
       IRevokeTokenService revokeTokenService,
       ObjectMapper objectMapper,
+      IFormkeyService formkeyService,
       String tokenEndpointUri
   ) {
     this.apiTokenService = apiTokenService;
@@ -92,6 +99,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
     }
     this.revokeTokenService = revokeTokenService;
     this.objectMapper = objectMapper;
+    this.formkeyService = formkeyService;
     Assert.hasText(tokenEndpointUri, "tokenEndpointUri cannot be empty");
     this.tokenEndpointMatcher = new AntPathRequestMatcher(tokenEndpointUri, HttpMethod.POST.name());
     this.revokeTokenEndpointMatcher = new AntPathRequestMatcher(tokenEndpointUri,
@@ -108,8 +116,13 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
     ApiTokenRepository apiTokenRepository = apiTokenService.getApiTokenRepository();
     ApiSecurityProperties securityProperties = apiTokenService.getSecurityProperties();
     if (this.tokenEndpointMatcher.matches(request)) {
-      authenticateBasic(request);
+      String formkey = formkeyService.getFormkey(request, summerWebProperties.getFormKeyName(),
+          true);
+      if (formkey != null && formkeyService.exist(formkey, -1)) {
+        throw new FormDuplicateException("您提交的太快了,请稍候再试.");
+      }
       try {
+        authenticateBasic(request);
         String grantType = request.getParameter(SecurityParameterNames.GRANT_TYPE);
         Assert.hasText(grantType, "grantType 不能为空");
         String scope = request.getParameter(SecurityParameterNames.SCOPE);
@@ -177,6 +190,12 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         }
         objectMapper.writeValue(response.getOutputStream(), apiTokenResponse);
       } catch (AuthenticationException ex) {
+        if (formkey != null) {
+          formkeyService.remove(formkey);
+          if (log.isTraceEnabled()) {
+            log.trace("{} remove:{}", request.getRequestURI(), formkey);
+          }
+        }
         SecurityContextHolder.clearContext();
         throw ex;
       }

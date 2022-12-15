@@ -91,14 +91,17 @@ public class ApiTokenService implements NeedKickedOutValidator, UserDetailsValid
     return getApiAccessToken(scope, userDetails, loginKickedOut);
   }
 
-  public ApiAccessToken getApiAccessToken(String scope, String oldUsername, String newUsername,
-      boolean loginKickedOut) {
+  public void refreshUserDetails(String scope, String oldUsername, String newUsername) {
     UserDetails oldUserDetails = getUserDetails(scope, oldUsername);
-    ApiToken apiToken = getApiToken(scope, oldUserDetails, loginKickedOut);
+    ApiToken apiToken = getApiToken(scope, oldUserDetails, false);
     apiToken.setUserDetailsInstantAt(createUserDetailsInstantAt());
     apiToken.setUserDetails(getUserDetails(scope, newUsername));
     apiTokenRepository.save(apiToken);
-    return apiToken.toApiToken();
+  }
+
+  public void refreshUserDetails(String scope, String username) {
+    UserDetails userDetails = getUserDetails(scope, username);
+    getApiAccessToken(scope, userDetails);
   }
 
   public ApiAccessToken getApiAccessToken(String scope, UserDetails userDetails) {
@@ -116,7 +119,6 @@ public class ApiTokenService implements NeedKickedOutValidator, UserDetailsValid
   public ApiToken getApiToken(String scope, UserDetails userDetails) {
     return getApiToken(scope, userDetails, validate(scope, userDetails));
   }
-
 
   public ApiToken getApiToken(String scope, UserDetails userDetails, boolean loginKickedOut) {
     ApiToken apiToken;
