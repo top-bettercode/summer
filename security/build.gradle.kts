@@ -3,7 +3,6 @@ plugins {
 }
 
 apply {
-    plugin("org.springframework.boot")
     plugin("summer.publish")
 }
 
@@ -20,15 +19,4 @@ dependencies {
 
 //    testImplementation("org.springframework.boot:spring-boot-starter-jdbc")
 //    testImplementation("mysql:mysql-connector-java")
-}
-
-tasks {
-    "jar"(Jar::class) {
-        enabled = true
-        archiveClassifier.convention("")
-    }
-
-    "bootJar" {
-        enabled = false
-    }
 }

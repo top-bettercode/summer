@@ -3,7 +3,6 @@ plugins {
 }
 
 apply {
-    plugin("org.springframework.boot")
     plugin("summer.publish")
 }
 
@@ -24,14 +23,4 @@ dependencies {
     testImplementation(project(":test"))
     testImplementation("org.mybatis:mybatis-spring")
     testImplementation("com.h2database:h2")
-}
-
-tasks {
-    "jar"(Jar::class) {
-        enabled = true
-        archiveClassifier.convention("")
-    }
-    "bootJar" {
-        enabled = false
-    }
 }

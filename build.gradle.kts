@@ -5,6 +5,8 @@ plugins {
     idea
 }
 
+val javaVersion = JavaVersion.VERSION_1_8
+
 allprojects {
     group = "top.bettercode.summer"
     version = "0.0.19-SNAPSHOT"
@@ -13,6 +15,12 @@ allprojects {
         apply {
             plugin("java")
             plugin("idea")
+            if (name.endsWith("-plugin")) {
+                plugin("org.jetbrains.kotlin.jvm")
+                plugin("summer.plugin-publish")
+            } else {
+                plugin("org.springframework.boot")
+            }
         }
 
         idea {
@@ -26,8 +34,8 @@ allprojects {
         }
 
         java {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
+            sourceCompatibility = javaVersion
+            targetCompatibility = javaVersion
         }
 
         configurations {
@@ -72,8 +80,18 @@ allprojects {
             withType(KotlinCompile::class) {
                 incremental = true
                 kotlinOptions {
-                    jvmTarget = "1.8"
+                    jvmTarget = javaVersion.toString()
                     freeCompilerArgs = listOf("-Xjvm-default=all")
+                }
+            }
+
+            if (!name.endsWith("-plugin")) {
+                "jar"(Jar::class) {
+                    enabled = true
+                    archiveClassifier.convention("")
+                }
+                "bootJar" {
+                    enabled = false
                 }
             }
         }

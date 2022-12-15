@@ -2,11 +2,6 @@ plugins {
     `java-library`
 }
 
-apply {
-    plugin("org.jetbrains.kotlin.jvm")
-    plugin("summer.plugin-publish")
-}
-
 dependencies {
     api(project(":tools:generator"))
 

@@ -3,7 +3,6 @@ plugins {
 }
 
 apply {
-    plugin("org.springframework.boot")
     plugin("org.jetbrains.kotlin.jvm")
     plugin("org.jetbrains.kotlin.plugin.spring")
     plugin("summer.kotlin-publish")
@@ -23,16 +22,4 @@ dependencies {
 
     compileOnly(project(":security"))
     testImplementation(project(":security"))
-}
-
-
-tasks {
-    "jar"(Jar::class) {
-        enabled = true
-        archiveClassifier.convention("")
-    }
-
-    "bootJar" {
-        enabled = false
-    }
 }
