@@ -9,10 +9,7 @@ import org.gradle.configurationcache.extensions.capitalized
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.generator.dom.java.JavaType
-import top.bettercode.summer.tools.generator.dom.java.element.InnerInterface
-import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
-import top.bettercode.summer.tools.generator.dom.java.element.Parameter
-import top.bettercode.summer.tools.generator.dom.java.element.TopLevelEnumeration
+import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.DicCodes
 import top.bettercode.summer.tools.lang.decapitalized
@@ -157,7 +154,7 @@ class DicCodeGen(private val project: Project) {
                             } else {
                                 (code as String).replace("-", "_").replace(".", "_")
                             }
-                        ).replace(Regex("_+"),"_")
+                        ).replace(Regex("_+"), "_")
                         innerInterface.apply {
                             visibility = JavaVisibility.PUBLIC
                             val initializationString =
@@ -196,40 +193,29 @@ class DicCodeGen(private val project: Project) {
                                 }
 
                             val authClassName = "Auth${authName}"
-                            FileUnit(
-                                name = "${
-                                    "$packageName.security.auth.$authClassName".replace(
-                                        ".",
-                                        File.separator
-                                    )
-                                }.java",
-                                overwrite = true,
-                                sourceSet = sourceSet,
-                                directorySet = directorySet
+                            Interface(
+                                type = JavaType("$packageName.security.auth.$authClassName"),
+                                overwrite = true
                             ).apply {
-                                +"package $packageName.security.auth;"
-                                +""
-                                +"import $packageName.support.dic.AuthEnum.AuthConst;"
-                                +"import java.lang.annotation.Documented;"
-                                +"import java.lang.annotation.ElementType;"
-                                +"import java.lang.annotation.Inherited;"
-                                +"import java.lang.annotation.Retention;"
-                                +"import java.lang.annotation.RetentionPolicy;"
-                                +"import java.lang.annotation.Target;"
-                                +"import top.bettercode.summer.security.authorize.ConfigAuthority;"
-                                +""
-                                +"/**"
-                                +" * $name 权限标识"
-                                +" *"
-                                +" */"
-                                +"@Target({ElementType.METHOD, ElementType.TYPE})"
-                                +"@Retention(RetentionPolicy.RUNTIME)"
-                                +"@Inherited"
-                                +"@Documented"
-                                +"@ConfigAuthority(${className}Const.$codeFieldName)"
-                                +"public @interface $authClassName {"
-                                +""
-                                +"}"
+                                isAnnotation = true
+                                javadoc {
+                                    +"/**"
+                                    +" * $name 权限标识"
+                                    +" *"
+                                    +" */"
+                                }
+
+                                import("java.lang.annotation.ElementType")
+                                annotation("@java.lang.annotation.Target({ElementType.METHOD, ElementType.TYPE})")
+
+                                import("java.lang.annotation.RetentionPolicy")
+                                annotation("@java.lang.annotation.Retention(RetentionPolicy.RUNTIME)")
+                                annotation("@java.lang.annotation.Inherited")
+                                annotation("@java.lang.annotation.Documented")
+
+                                import("$packageName.support.dic.AuthEnum.AuthConst")
+                                annotation("@top.bettercode.summer.security.authorize.ConfigAuthority(${className}Const.$codeFieldName)")
+
                             }.writeTo(project.rootProject.project("admin").projectDir)
                         }
                     }

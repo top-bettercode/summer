@@ -18,6 +18,8 @@ open class InnerInterface(type: JavaType) : InnerUnit(type) {
 
     val isJavaEnumeration: Boolean = false
 
+    var isAnnotation: Boolean = false
+
 
     /**
      * Adds the inner interface.
@@ -61,7 +63,8 @@ open class InnerInterface(type: JavaType) : InnerUnit(type) {
         if (isFinal) {
             sb.append("final ")
         }
-
+        if (isAnnotation)
+            sb.append("@")
         sb.append("interface ")
         sb.append(type.shortName)
 

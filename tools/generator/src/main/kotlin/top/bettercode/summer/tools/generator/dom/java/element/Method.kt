@@ -59,6 +59,8 @@ class Method : JavaElement() {
 
     var isDefault: Boolean = false
 
+    var defaultString: String? = null
+
     fun parameter(closure: Parameter.() -> Unit) {
         val parameter = Parameter()
         closure(parameter)
@@ -223,6 +225,8 @@ class Method : JavaElement() {
         }
 
         if (isAbstract || isNative || (interfaceMethod && !isDefault)) {
+            if (!defaultString.isNullOrBlank())
+                sb.append(" default ${if (returnType == JavaType.stringInstance) "\"${defaultString}\"" else defaultString}")
             sb.append(';')
         } else {
             sb.append(" {")
