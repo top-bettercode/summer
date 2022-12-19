@@ -28,4 +28,4 @@ include(":tools:jpush")
 include(":tools:qvod")
 include(":tools:sap")
 
-include("summer-bom")
+include(":summer-bom")
