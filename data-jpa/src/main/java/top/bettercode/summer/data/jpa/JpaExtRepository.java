@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 import org.springframework.lang.Nullable;
+import org.springframework.transaction.annotation.Transactional;
 import top.bettercode.summer.data.jpa.query.RecycleExecutor;
 
 /**
@@ -26,6 +27,9 @@ public interface JpaExtRepository<T, ID> extends JpaRepository<T, ID>, QueryByEx
     RecycleExecutor<T, ID> {
 
   EntityManager getEntityManager();
+
+  @Transactional
+  <S extends T> int hardSave(S s, Specification<T> spec);
 
   <S extends T> int save(S s, Specification<T> spec);
 

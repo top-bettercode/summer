@@ -256,18 +256,27 @@ public class SimpleJpaExtRepository<T, ID> extends
     }
   }
 
+  @Transactional
+  @Override
+  public <S extends T> int hardSave(S s, Specification<T> spec) {
+    return save(s, spec, true, ".hardSave");
+  }
 
   @Transactional
   @Override
   public <S extends T> int save(S s, Specification<T> spec) {
+    return save(s, spec, false, ".save");
+  }
+
+  private <S extends T> int save(S s, Specification<T> spec, boolean hard, String mdcId) {
     boolean mdc = false;
     try {
-      mdc = mdcPutId(".save");
+      mdc = mdcPutId(mdcId);
       CriteriaBuilder builder = em.getCriteriaBuilder();
       Class<T> domainClass = getDomainClass();
       CriteriaUpdate<T> criteriaUpdate = builder.createCriteriaUpdate(domainClass);
       Root<T> root = criteriaUpdate.from(domainClass);
-      if (extJpaSupport.supportSoftDeleted()) {
+      if (!hard && extJpaSupport.supportSoftDeleted()) {
         spec = spec == null ? notDeletedSpec : spec.and(notDeletedSpec);
       }
       Predicate predicate = spec.toPredicate(root, builder.createQuery(), builder);
@@ -310,6 +319,7 @@ public class SimpleJpaExtRepository<T, ID> extends
       cleanMdc(mdc);
     }
   }
+
 
   @Deprecated
   @Transactional
