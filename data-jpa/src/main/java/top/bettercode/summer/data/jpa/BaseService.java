@@ -2,12 +2,14 @@ package top.bettercode.summer.data.jpa;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import top.bettercode.summer.web.exception.ResourceNotFoundException;
 
 /**
  * @author Peter Wu
@@ -25,6 +27,14 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   @Override
   public M getRepository() {
     return repository;
+  }
+
+  protected Supplier<? extends Throwable> throwable() {
+    return ResourceNotFoundException::new;
+  }
+
+  protected Supplier<? extends Throwable> throwable(String msg) {
+    return () -> new ResourceNotFoundException(msg);
   }
 
   @Override

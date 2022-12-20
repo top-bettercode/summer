@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import java.util.Locale;
+import java.util.function.Supplier;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import org.springframework.util.StringUtils;
 import top.bettercode.summer.tools.lang.util.ParameterUtil;
 import top.bettercode.summer.tools.lang.util.Sha1DigestUtil;
 import top.bettercode.summer.web.error.ErrorAttributes;
+import top.bettercode.summer.web.exception.ResourceNotFoundException;
 import top.bettercode.summer.web.support.DeviceUtil;
 
 /**
@@ -157,6 +159,14 @@ public class BaseController extends Response {
 
   protected void assertOk(RespEntity<?> respEntity, String message) {
     RespEntity.assertOk(respEntity, message);
+  }
+
+  protected Supplier<? extends Throwable> throwable() {
+    return ResourceNotFoundException::new;
+  }
+
+  protected Supplier<? extends Throwable> throwable(String msg) {
+    return () -> new ResourceNotFoundException(msg);
   }
 
 }
