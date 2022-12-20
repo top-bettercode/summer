@@ -13,6 +13,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 import org.dhatim.fastexcel.reader.Cell;
+import org.dhatim.fastexcel.reader.ExcelReaderException;
 import org.dhatim.fastexcel.reader.ReadableWorkbook;
 import org.dhatim.fastexcel.reader.Row;
 import org.dhatim.fastexcel.reader.Sheet;
@@ -87,12 +88,11 @@ public class ExcelImport {
    * @param is is
    * @throws IOException IOException
    */
-  private ExcelImport(InputStream is)
-      throws IOException {
+  private ExcelImport(InputStream is) throws IOException {
     try {
       workbook = new ReadableWorkbook(is);
-    } catch (IOException e) {
-      throw new ExportException("excel读取失败", e);
+    } catch (IOException | ExcelReaderException e) {
+      throw new ExportException("excel读取失败，仅支持.xlsx格式excel文件", e);
     }
     sheet = workbook.getFirstSheet();
     setRowAndColumn(1, 0);
