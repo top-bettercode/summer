@@ -19,6 +19,7 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
   private final Logger log = LoggerFactory.getLogger(FormDuplicateCheckInterceptor.class);
   private final IFormkeyService formkeyService;
   private final String formKeyName;
+  public final static String DEFAULT_MESSAGE = "您提交的太快了，请稍候再试。";
 
   public FormDuplicateCheckInterceptor(IFormkeyService formkeyService, String formKeyName) {
     this.formkeyService = formkeyService;
@@ -36,7 +37,7 @@ public class FormDuplicateCheckInterceptor implements NotErrorHandlerInterceptor
     } else if (formkeyService.exist(formkey,
         annotation == null ? -1 : annotation.expireSeconds())) {
       throw new FormDuplicateException(
-          annotation == null ? "您提交的太快了,请稍候再试." : annotation.message());
+          annotation == null ? DEFAULT_MESSAGE : annotation.message());
     } else {
       request.setAttribute(FORM_KEY, formkey);
       return true;

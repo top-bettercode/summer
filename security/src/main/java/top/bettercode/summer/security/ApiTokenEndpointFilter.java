@@ -41,6 +41,7 @@ import top.bettercode.summer.web.AnnotatedUtils;
 import top.bettercode.summer.web.RespEntity;
 import top.bettercode.summer.web.config.SummerWebProperties;
 import top.bettercode.summer.web.exception.UnauthorizedException;
+import top.bettercode.summer.web.form.FormDuplicateCheckInterceptor;
 import top.bettercode.summer.web.form.FormDuplicateException;
 import top.bettercode.summer.web.form.IFormkeyService;
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder;
@@ -119,7 +120,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       String formkey = formkeyService.getFormkey(request, summerWebProperties.getFormKeyName(),
           true);
       if (formkey != null && formkeyService.exist(formkey, -1)) {
-        throw new FormDuplicateException("您提交的太快了,请稍候再试.");
+        throw new FormDuplicateException(FormDuplicateCheckInterceptor.DEFAULT_MESSAGE);
       }
       try {
         authenticateBasic(request);
