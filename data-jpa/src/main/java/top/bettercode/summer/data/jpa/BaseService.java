@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import top.bettercode.summer.web.exception.ResourceNotFoundException;
+import top.bettercode.summer.web.BaseController;
 
 /**
  * @author Peter Wu
@@ -30,11 +30,11 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
   }
 
   protected Supplier<? extends RuntimeException> notFound() {
-    return ResourceNotFoundException::new;
+    return BaseController.notFound();
   }
 
   protected Supplier<? extends RuntimeException> notFound(String msg) {
-    return () -> new ResourceNotFoundException(msg);
+    return BaseController.notFound(msg);
   }
 
   @Override
