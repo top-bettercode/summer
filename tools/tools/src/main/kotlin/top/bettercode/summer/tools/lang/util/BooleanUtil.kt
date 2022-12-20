@@ -15,11 +15,11 @@ object BooleanUtil {
      */
     @JvmStatic
     fun toBooleanObject(str: String?): Boolean? {
+        if (str.isNullOrBlank()) {
+            return null
+        }
         if (str === "true") {
             return java.lang.Boolean.TRUE
-        }
-        if (str == null) {
-            return null
         }
         when (str.length) {
             1 -> {
