@@ -38,11 +38,25 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
     }
 
     override fun getuserphonenumber(code: String): PhoneInfoResp {
-        return postForObject(
+        return getuserphonenumber(code, 1)
+    }
+
+    override fun getuserphonenumber(code: String, retries: Int): PhoneInfoResp {
+        val result = postForObject<PhoneInfoResp>(
             "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}",
             mapOf("code" to code),
             getBaseAccessToken()
         )
+        return if (result.isOk) {
+            result
+        } else if (40001 == result.errcode) {
+            cache.invalidate(baseAccessTokenKey)
+            getuserphonenumber(code)
+        } else if (retries < properties.maxRetries) {
+            getuserphonenumber(code)
+        } else {
+            throw RuntimeException("手机授权失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+        }
     }
 
     override fun sendSubscribeMsg(request: SubscribeMsgRequest): WeixinResponse {

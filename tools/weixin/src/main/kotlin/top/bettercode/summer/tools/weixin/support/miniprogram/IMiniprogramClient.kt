@@ -18,4 +18,5 @@ interface IMiniprogramClient {
     fun sendSubscribeMsg(request: SubscribeMsgRequest): WeixinResponse
 
     fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int): WeixinResponse
+    fun getuserphonenumber(code: String, retries: Int): PhoneInfoResp
 }

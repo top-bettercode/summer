@@ -41,10 +41,24 @@ class CorpClient(properties: ICorpProperties) :
 
 
     override fun getWebPageAccessToken(code: String): CorpWebPageAccessToken {
-        return getForObject(
+        return getWebPageAccessToken(code, 1)
+    }
+
+    override fun getWebPageAccessToken(code: String, retries: Int): CorpWebPageAccessToken {
+        val result = getForObject<CorpWebPageAccessToken>(
             "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=%s&code=CODE",
             getBaseAccessToken()
         )
+        return if (result.isOk) {
+            result
+        } else if (40001 == result.errcode) {
+            cache.invalidate(baseAccessTokenKey)
+            getWebPageAccessToken(code)
+        } else if (retries < properties.maxRetries) {
+            getWebPageAccessToken(code)
+        } else {
+            throw RuntimeException("网页授权失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+        }
     }
 
 }
