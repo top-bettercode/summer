@@ -161,11 +161,11 @@ public class BaseController extends Response {
     RespEntity.assertOk(respEntity, message);
   }
 
-  protected Supplier<? extends Throwable> throwable() {
+  protected Supplier<? extends RuntimeException> throwable() {
     return ResourceNotFoundException::new;
   }
 
-  protected Supplier<? extends Throwable> throwable(String msg) {
+  protected Supplier<? extends RuntimeException> throwable(String msg) {
     return () -> new ResourceNotFoundException(msg);
   }
 

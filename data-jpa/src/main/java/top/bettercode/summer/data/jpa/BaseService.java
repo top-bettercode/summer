@@ -29,11 +29,11 @@ public class BaseService<T, ID, M extends BaseRepository<T, ID>> implements
     return repository;
   }
 
-  protected Supplier<? extends Throwable> throwable() {
+  protected Supplier<? extends RuntimeException> throwable() {
     return ResourceNotFoundException::new;
   }
 
-  protected Supplier<? extends Throwable> throwable(String msg) {
+  protected Supplier<? extends RuntimeException> throwable(String msg) {
     return () -> new ResourceNotFoundException(msg);
   }
 
