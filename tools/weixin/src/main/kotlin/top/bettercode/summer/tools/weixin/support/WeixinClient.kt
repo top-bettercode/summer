@@ -8,7 +8,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.lang.Nullable
 import org.springframework.web.client.getForObject
 import top.bettercode.summer.tools.weixin.config.IWexinProperties
-import top.bettercode.summer.tools.weixin.support.corp.entity.CorpWebPageAccessToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccessToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
 import top.bettercode.summer.web.support.client.ApiTemplate
@@ -102,9 +101,5 @@ open class WeixinClient<T : IWexinProperties>(
         }
 
         return appId
-    }
-
-    open fun getWebPageAccessToken(code: String, retries: Int): CorpWebPageAccessToken {
-        TODO("Not yet implemented")
     }
 }

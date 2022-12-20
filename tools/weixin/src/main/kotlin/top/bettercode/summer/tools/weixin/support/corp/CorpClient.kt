@@ -53,9 +53,9 @@ class CorpClient(properties: ICorpProperties) :
             result
         } else if (40001 == result.errcode) {
             cache.invalidate(baseAccessTokenKey)
-            getWebPageAccessToken(code)
+            getWebPageAccessToken(code, retries)
         } else if (retries < properties.maxRetries) {
-            getWebPageAccessToken(code)
+            getWebPageAccessToken(code, retries + 1)
         } else {
             throw RuntimeException("网页授权失败：errcode:${result.errcode},errmsg:${result.errmsg}")
         }

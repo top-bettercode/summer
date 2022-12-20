@@ -51,9 +51,9 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
             result
         } else if (40001 == result.errcode) {
             cache.invalidate(baseAccessTokenKey)
-            getuserphonenumber(code)
+            getuserphonenumber(code, retries)
         } else if (retries < properties.maxRetries) {
-            getuserphonenumber(code)
+            getuserphonenumber(code, retries + 1)
         } else {
             throw RuntimeException("手机授权失败：errcode:${result.errcode},errmsg:${result.errmsg}")
         }

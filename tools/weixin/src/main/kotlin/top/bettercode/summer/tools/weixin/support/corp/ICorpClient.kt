@@ -14,4 +14,6 @@ interface ICorpClient {
 
     fun getWebPageAccessToken(code: String): CorpWebPageAccessToken
 
+    fun getWebPageAccessToken(code: String, retries: Int): CorpWebPageAccessToken
+
 }
