@@ -93,8 +93,6 @@ class PluginPublishPlugin : AbstractPlugin() {
                 with(it.plugins) {
                     forEach { plugin ->
                         project.extensions.configure(PublishingExtension::class.java) { p ->
-                            conifgRepository(project, p)
-
                             p.publications.getByName(
                                 plugin.name + "PluginMarkerMaven",
                                 object : Action<Publication> {
