@@ -218,11 +218,9 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     type = formType
                 }
                 +"${primaryKeyType.shortName} $primaryKeyName = form.get${primaryKeyName.capitalized()}();"
-                +"$className exist = ${projectEntityName}Service.findById(${primaryKeyName}).orElseThrow(notFound());"
+                +"$className $entityName = ${projectEntityName}Service.findById(${primaryKeyName}).orElseThrow(notFound());"
                 +""
-                +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
-                +""
-                +"$entityName.nullPropertySetFrom(exist);"
+                +"$entityName.propertySetFrom(form);"
                 +"${projectEntityName}Service.save($entityName);"
                 +"return noContent();"
             }

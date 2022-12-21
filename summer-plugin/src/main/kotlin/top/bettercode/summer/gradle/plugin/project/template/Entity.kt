@@ -129,6 +129,22 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return this;"
         }
 
+        method(
+            "propertySetFrom",
+            entityType
+        ) {
+            javadoc {
+                +"/**"
+                +" * 从form表单对象更新实体属性"
+                +" */"
+            }
+            parameter(JavaType.objectInstance, "form")
+            import("org.springframework.beans.BeanUtils")
+            +"BeanUtils.copyProperties(form, this);"
+            +"return this;"
+        }
+
+
         //primaryKey
         field(primaryKeyName, primaryKeyType) {
             if (primaryKeys.size == 1) {
