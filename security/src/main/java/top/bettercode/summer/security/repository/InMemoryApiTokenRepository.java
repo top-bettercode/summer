@@ -44,7 +44,8 @@ public class InMemoryApiTokenRepository implements ApiTokenRepository {
 
   @Override
   public void remove(String scope, String username) {
-    ApiToken authenticationToken = findByScopeAndUsername(scope, username);
+    String id = scope + ":" + username;
+    ApiToken authenticationToken = tokenMap.get(id);
     if (authenticationToken != null) {
       remove(authenticationToken);
     }

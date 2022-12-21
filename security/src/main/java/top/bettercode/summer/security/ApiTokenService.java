@@ -126,8 +126,7 @@ public class ApiTokenService implements NeedKickedOutValidator, UserDetailsValid
       apiToken = new ApiToken(scope, createAccessToken(),
           createRefreshToken(), createUserDetailsInstantAt(), userDetails);
     } else {
-      apiToken = apiTokenRepository.findByScopeAndUsername(scope,
-          userDetails.getUsername());
+      apiToken = apiTokenRepository.findByScopeAndUsername(scope, userDetails.getUsername());
       if (apiToken == null || apiToken.getRefreshToken().isExpired()) {
         apiToken = new ApiToken(scope, createAccessToken(),
             createRefreshToken(), createUserDetailsInstantAt(), userDetails);
