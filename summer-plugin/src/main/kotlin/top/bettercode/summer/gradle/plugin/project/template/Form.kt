@@ -39,17 +39,19 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             constructor(Parameter(primaryKeyName, primaryKeyType)) {
                 +"this.entity = new $className(${primaryKeyName});"
             }
+        }
+
+        method("getEntity", entityType) {
+            +"return entity;"
+        }
+
+        if (!isFullComposite) {
 
             //primaryKey getter
             method(
                 "get${primaryKeyName.capitalized()}",
                 primaryKeyType
             ) {
-                javadoc {
-                    +"/**"
-                    +" * ${remarks}主键"
-                    +" */"
-                }
                 if (!isCompositePrimaryKey && !primaryKey.autoIncrement && primaryKey.idgenerator.isBlank() && primaryKey.sequence.isBlank()) {
                     if (primaryKey.columnSize > 0 && primaryKey.javaType == JavaType.stringInstance) {
                         import("javax.validation.groups.Default")
@@ -68,28 +70,9 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     primaryKeyName.capitalized()
                 }();"
             }
-        }
 
-        method("getEntity", entityType) {
-            +"return entity;"
-        }
-
-        val filterColumns =
-            columns.filter { it.javaName != primaryKeyName && !it.version && !it.jsonViewIgnored && it.javaName != "createdDate" && it.javaName != "lastModifiedDate" }
-        filterColumns
-            .forEach {
-                //getter
-                getter(this, it)
-            }
-
-        if (!isFullComposite) {
             //primaryKey setter
             method("set${primaryKeyName.capitalized()}") {
-                javadoc {
-                    +"/**"
-                    +" * ${remarks}主键"
-                    +" */"
-                }
                 parameter {
                     type = primaryKeyType
                     name = primaryKeyName
@@ -99,11 +82,16 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }(${primaryKeyName});"
             }
         }
-        filterColumns.forEach {
-            //setter
-            setter(this, it)
-        }
 
+        val filterColumns =
+            columns.filter { it.javaName != primaryKeyName && !it.testIgnored }
+        filterColumns
+            .forEach {
+                //getter
+                getter(this, it)
+                //setter
+                setter(this, it)
+            }
     }
 }
 
