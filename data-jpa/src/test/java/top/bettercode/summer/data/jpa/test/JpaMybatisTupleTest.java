@@ -49,6 +49,7 @@ public class JpaMybatisTupleTest {
   @Autowired
   SqlSession sqlSession;
   Integer carterId;
+  Long s;
 
   @BeforeEach
   public void setUp() {
@@ -65,10 +66,12 @@ public class JpaMybatisTupleTest {
     carterId = carter.getId();
     repository.delete(dave);
     System.err.println("--------------------------------------------------------");
+    s = System.currentTimeMillis();
   }
 
   @AfterEach
   public void tearDown() {
+    System.err.println("token seconds:" + (System.currentTimeMillis() - s));
     System.err.println("--------------------------------------------------------");
     repository.deleteAll();
     repository.cleanRecycleBin();
