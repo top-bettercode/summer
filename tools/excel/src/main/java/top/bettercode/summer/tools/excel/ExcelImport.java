@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -86,13 +85,12 @@ public class ExcelImport {
    * 构造函数
    *
    * @param is is
-   * @throws IOException IOException
    */
-  private ExcelImport(InputStream is) throws IOException {
+  private ExcelImport(InputStream is) {
     try {
       workbook = new ReadableWorkbook(is);
     } catch (IOException | ExcelReaderException e) {
-      throw new ExportException("excel读取失败，仅支持.xlsx格式excel文件", e);
+      throw new ExcelException("excel读取失败，仅支持.xlsx格式excel文件", e);
     }
     sheet = workbook.getFirstSheet();
     setRowAndColumn(1, 0);
