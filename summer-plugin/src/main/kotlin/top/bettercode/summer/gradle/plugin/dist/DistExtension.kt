@@ -36,11 +36,7 @@ open class DistExtension(
      */
     var distOldPath: String = "",
     var jvmArgs: List<String> = listOf(),
-    var excludeUnWrapResources: List<String> =
-        listOf(
-            "META-INF/additional-spring-configuration-metadata.json",
-            "META-INF/spring.factories"
-        )
+    var excludeUnWrapResources: List<String> = emptyList()
 ) {
     companion object {
 
