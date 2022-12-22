@@ -34,24 +34,15 @@ class ProjectPlugin : Plugin<Project> {
             //idea
             subProject.extensions.configure(org.gradle.plugins.ide.idea.model.IdeaModel::class.java) { idea ->
                 idea.module {
-                    it.inheritOutputDirs = false
                     it.isDownloadJavadoc = false
                     it.isDownloadSources = true
-                    val convention = subProject.extensions.getByType(
-                        JavaPluginExtension::class.java
-                    )
-                    it.outputDir = convention.sourceSets
-                        .getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.classesDirectory.get().asFile
-                    it.testOutputDir = convention.sourceSets
-                        .getByName(SourceSet.TEST_SOURCE_SET_NAME).java.classesDirectory.get().asFile
                 }
             }
 
             //java
             subProject.extensions.configure(org.gradle.api.plugins.JavaPluginExtension::class.java) { java ->
-                val javaVersionPropertyName = "java.version"
-                val javaVersion =
-                    JavaVersion.toVersion(subProject.findProperty(javaVersionPropertyName) ?: "8")
+                val version = subProject.findProperty("java.version") ?: "8"
+                val javaVersion = JavaVersion.toVersion(version)
                 java.sourceCompatibility = javaVersion
                 java.targetCompatibility = javaVersion
             }

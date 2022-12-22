@@ -25,11 +25,8 @@ allprojects {
 
         idea {
             module {
-                inheritOutputDirs = false
                 isDownloadJavadoc = false
                 isDownloadSources = true
-                outputDir = the<SourceSetContainer>()["main"].java.classesDirectory.get().asFile
-                testOutputDir = the<SourceSetContainer>()["test"].java.classesDirectory.get().asFile
             }
         }
 
