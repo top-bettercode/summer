@@ -10,6 +10,7 @@ build
 *.ipr
 out
 classes
+link.sh
 
 /web/src/test/resources/application-test.yml
 /tools/weixin/src/test/resources/application.yml
