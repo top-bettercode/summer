@@ -1,11 +1,11 @@
 package top.bettercode.summer.security;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import top.bettercode.summer.security.config.ApiSecurityProperties;
 import top.bettercode.summer.security.token.ApiAccessToken;
 import top.bettercode.summer.test.autodoc.Autodoc;
@@ -56,17 +57,22 @@ public class Security200Test {
   }
 
   @NotNull
-  private ApiAccessToken getApiToken() throws Exception {
+  private ApiAccessToken getApiAccessToken(String tag) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
     params.add("scope", "app");
     params.add("username", username);
     params.add("password", password);
 
+    HttpHeaders headers = new HttpHeaders();
+    if (StringUtils.hasText(tag)) {
+      headers.add("tag", tag);
+    }
+
     ResponseEntity<String> entity = clientRestTemplate
-        .postForEntity("/oauth/token", new HttpEntity<>(params), String.class);
+        .postForEntity("/oauth/token", new HttpEntity<>(params, headers), String.class);
     String body = entity.getBody();
-    org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
+    Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
 
     return objectMapper.readValue(body, ApiAccessToken.class);
   }
@@ -76,8 +82,8 @@ public class Security200Test {
     Autodoc.setDescription("");
     Autodoc.setName("获取accessToken");
     Autodoc.requiredParameters("grant_type", "scope", "username", "password");
-    ApiAccessToken accessToken = getApiToken();
-    org.junit.jupiter.api.Assertions.assertNotNull(accessToken);
+    ApiAccessToken accessToken = getApiAccessToken(null);
+    Assertions.assertNotNull(accessToken);
     Thread.sleep(1000);
   }
 
@@ -90,20 +96,20 @@ public class Security200Test {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "refresh_token");
     params.add("scope", "app");
-    params.add("refresh_token", getApiToken().getRefreshToken());
+    params.add("refresh_token", getApiAccessToken("refresh_token").getRefreshToken());
     Autodoc.enable();
     Autodoc.setName("刷新accessToken");
     Autodoc.requiredParameters("grant_type", "scope", "refresh_token");
     ResponseEntity<String> entity2 = clientRestTemplate
         .postForEntity("/oauth/token", new HttpEntity<>(params), String.class);
-    assertEquals(HttpStatus.OK, entity2.getStatusCode());
+    Assertions.assertEquals(HttpStatus.OK, entity2.getStatusCode());
     Thread.sleep(1000);
   }
 
   @Test
   public void revokeToken() throws Exception {
     Autodoc.disable();
-    String accessToken = getApiToken().getAccessToken();
+    String accessToken = getApiAccessToken("revokeToken").getAccessToken();
     Autodoc.enable();
     Autodoc.setName("撤销accessToken");
 
@@ -112,18 +118,18 @@ public class Security200Test {
     ResponseEntity<String> entity2 = restTemplate.exchange("/oauth/token",
         HttpMethod.DELETE, new HttpEntity<>(httpHeaders),
         String.class);
-    assertEquals(HttpStatus.OK, entity2.getStatusCode());
+    Assertions.assertEquals(HttpStatus.OK, entity2.getStatusCode());
   }
 
 
   @Test
   public void auth() throws Exception {
     HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiToken().getAccessToken());
+    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiAccessToken("auth").getAccessToken());
     ResponseEntity<String> entity = restTemplate
         .exchange("/testDefaultAuth", HttpMethod.POST,
             new HttpEntity<>(Collections.singletonMap("aa", "xxx"), httpHeaders), String.class);
-    assertEquals(HttpStatus.OK, entity.getStatusCode());
+    Assertions.assertEquals(HttpStatus.OK, entity.getStatusCode());
   }
 
 
