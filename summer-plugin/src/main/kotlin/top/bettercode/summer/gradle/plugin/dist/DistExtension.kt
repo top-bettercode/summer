@@ -66,8 +66,15 @@ open class DistExtension(
 
     }
 
-    internal fun includeJdk(project: Project): Boolean =
-        jdkArchive.isNotBlank() && project.file(jdkArchive).exists()
+    internal fun includeJdk(project: Project): Boolean {
+        if (jdkArchive.isNotBlank()) {
+            val file = project.file(jdkArchive)
+            if (file.exists())
+                return true
+            else System.err.println("jdk archive:$file 不存在 ")
+        }
+        return false
+    }
 
 
     internal val isX64: Boolean get() = jdkArchive.contains("x64")
