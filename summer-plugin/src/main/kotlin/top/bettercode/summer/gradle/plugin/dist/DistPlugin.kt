@@ -8,6 +8,7 @@ import org.gradle.api.Task
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.distribution.plugins.DistributionPlugin.TASK_INSTALL_NAME
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.plugins.JavaPlugin.PROCESS_RESOURCES_TASK_NAME
@@ -376,6 +377,7 @@ class DistPlugin : Plugin<Project> {
                                     it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
                                 }
                                 spec.includeEmptyDirs = false
+                                spec.duplicatesStrategy = DuplicatesStrategy.INCLUDE
                             }
                         distribution.distributionBaseName.set("${project.name}-${if (extension.x64) "x64" else "x86"}")
                     } else {

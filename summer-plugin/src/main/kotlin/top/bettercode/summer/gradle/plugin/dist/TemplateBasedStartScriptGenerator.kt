@@ -117,16 +117,16 @@ class TemplateBasedStartScriptGenerator(
         var text = bufferedReader.readText()
         if (dist.includeJre) {
             text = if (windows) {
-                val location = "for %%i in (\"%APP_HOME%\") do set APP_HOME=%%~fi"
+                val location = "@rem Add default JVM options here"
                 StringBuilder(text).insert(
-                    text.indexOf(location) + location.length,
-                    "\r\n\r\n@rem Set JAVA_HOME.\r\nset JAVA_HOME=%APP_HOME%\\\\jre"
+                    text.indexOf(location),
+                    "@rem Set JAVA_HOME.\r\nset JAVA_HOME=%APP_HOME%\\\\jre\r\n\r\n"
                 ).toString()
             } else {
-                val location = "APP_BASE_NAME=\\\${0##*/}"
+                val location = "# Add default JVM options here"
                 StringBuilder(text).insert(
-                    text.indexOf(location) + location.length,
-                    "\n\n# Set JAVA_HOME.\nJAVA_HOME=\"\\\$APP_HOME/jre\""
+                    text.indexOf(location),
+                    "# Set JAVA_HOME.\nJAVA_HOME=\"\\\$APP_HOME/jre\"\n\n"
                 ).toString()
             }
         }
