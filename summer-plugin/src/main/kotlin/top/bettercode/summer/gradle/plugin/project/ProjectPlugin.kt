@@ -6,8 +6,6 @@ import isCore
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.tasks.SourceSet
 import top.bettercode.summer.gradle.plugin.autodoc.AutodocPlugin
 import top.bettercode.summer.gradle.plugin.dist.DistPlugin
 import top.bettercode.summer.gradle.plugin.generator.GenPackageinfoPlugin

@@ -1,51 +1,51 @@
 package top.bettercode.summer.gradle.plugin.project.template
 
-import top.bettercode.summer.tools.generator.dom.java.JavaType
-import top.bettercode.summer.tools.generator.dom.java.element.Interface
-import top.bettercode.summer.tools.generator.dom.java.element.Parameter
-import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
+import top.bettercode.summer.gradle.plugin.project.template.*
+import top.bettercode.summer.gradle.plugin.project.template.unit.*
+import top.bettercode.summer.tools.generator.dom.unit.SourceSet
 
 /**
  * @author Peter Wu
  */
-val service: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
-    unit.apply {
-        annotation("@org.springframework.stereotype.Service")
-        javadoc {
-            +"/**"
-            +" * $remarks 服务层实现"
-            +" */"
+open class Service(private val overwrite: Boolean = false) : ProjectGenerator() {
+
+    override fun content() {
+        +file(mapperXmlName, overwrite = overwrite, sourceSet = SourceSet.MAIN) {
+            mapperXml(this)
         }
-        superClass =
-            JavaType("top.bettercode.summer.data.jpa.BaseService").typeArgument(
-                entityType,
-                primaryKeyType,
-                repositoryType
-            )
+
+        +packageInfo(modulePackageInfoType, overwrite = false) {
+            modulePackageInfo(this)
+        }
+        +packageInfo(packageInfoType, overwrite = false) {
+            packageInfo(this)
+        }
+
+        +interfaze(repositoryType, overwrite = false) {
+            repository(this)
+        }
 
         if (interfaceService)
-            implement(iserviceType)
+            +interfaze(iserviceType, overwrite = false) {
+                iservice(this)
+            }
 
-        //constructor
-        constructor(Parameter("repository", repositoryType)) {
-            +"super(repository);"
+        +clazz(serviceType, overwrite = false) {
+            service(this)
         }
-    }
-}
 
-val iservice: ProjectGenerator.(Interface) -> Unit = { unit ->
-    unit.apply {
-        javadoc {
-            +"/**"
-            +" * $remarks 服务层接口"
-            +" */"
+        +clazz(testServiceType, overwrite = overwrite, sourceSet = SourceSet.TEST) {
+            testService(this)
         }
-        val superInterface =
-            JavaType("top.bettercode.summer.data.jpa.IBaseService").typeArgument(
-                entityType,
-                primaryKeyType,
-                repositoryType
-            )
-        implement(superInterface)
+
+        if (!isCore) {
+            //form
+            +clazz(formType, overwrite = overwrite) {
+                form(this)
+            }
+            +interfaze(mixInType, overwrite = overwrite) {
+                mixIn(this)
+            }
+        }
     }
 }
