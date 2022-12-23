@@ -377,7 +377,7 @@ class DistPlugin : Plugin<Project> {
                                     it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
                                 }
                                 spec.includeEmptyDirs = false
-                                spec.duplicatesStrategy = DuplicatesStrategy.INCLUDE
+                                spec.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
                             }
                         distribution.distributionBaseName.set("${project.name}-${if (extension.x64) "x64" else "x86"}")
                     } else {
