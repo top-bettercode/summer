@@ -115,7 +115,7 @@ class TemplateBasedStartScriptGenerator(
             InputStreamReader(stream, Charsets.UTF_8)
         )
         var text = bufferedReader.readText()
-        if (dist.includeJre) {
+        if (dist.includeJdk(project)) {
             text = if (windows) {
                 val location = "@rem Add default JVM options here"
                 StringBuilder(text).insert(

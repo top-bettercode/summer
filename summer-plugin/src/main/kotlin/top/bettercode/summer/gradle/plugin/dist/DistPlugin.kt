@@ -1,7 +1,6 @@
 package top.bettercode.summer.gradle.plugin.dist
 
 import com.github.alexeylisyutenko.windowsserviceplugin.*
-import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -42,26 +41,20 @@ class DistPlugin : Plugin<Project> {
         project.extensions.configure(DistExtension::class.java) {
             it.unwrapResources = project.findDistProperty("unwrap-resources")?.toBoolean() ?: true
             it.autoStart = project.findDistProperty("auto-start")?.toBoolean() ?: true
-            it.includeJre = project.findDistProperty("include-jre")?.toBoolean() ?: false
-            it.windows =
-                if (windowsServiceEnable) true else project.findDistProperty("windows")
-                    ?.toBoolean() ?: false
             it.urandom = (project.findDistProperty("urandom") ?: "false").toBoolean()
-            it.x64 = project.findDistProperty("x64")?.toBoolean() ?: true
             it.nativePath = project.findDistProperty("native-path") ?: "native"
             it.runUser = project.findDistProperty("run-user") ?: ""
-            it.jreWindowsI586Gz = project.findDistProperty("jre-windows-i-586-gz") ?: ""
-            it.jreWindowsX64Gz = project.findDistProperty("jre-windows-x-64-gz") ?: ""
-            it.jreLinuxI586Gz = project.findDistProperty("jre-linux-i-586-gz") ?: ""
-            it.jreLinuxX64Gz = project.findDistProperty("jre-linux-x-64-gz") ?: ""
-            it.windowsServiceOldPath = project.findDistProperty("windows-service-old-path") ?: ""
-            it.distOldPath = project.findDistProperty("dist-old-path") ?: ""
+            it.jdkArchive = project.findDistProperty("jdk-archive") ?: ""
+            it.prevArchive = project.findDistProperty("prev-archive") ?: ""
             it.jvmArgs = (project.findDistProperty("jvm-args") ?: "").split(" +".toRegex())
             it.excludeUnWrapResources = (project.findDistProperty("exclude-unwrap-resources")
                 ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories").split(
                 ","
             )
         }
+        val dist = project.extensions.getByType(DistExtension::class.java)
+
+        val includeJdk = dist.includeJdk(project)
 
         if (windowsServiceEnable) {
             project.plugins.apply(WindowsServicePlugin::class.java)
@@ -99,13 +92,12 @@ class DistPlugin : Plugin<Project> {
                 it.environment = project.findDistProperty("windows-service.environment") ?: ""
                 it.libraryPath = project.findDistProperty("windows-service.library-path")
                 it.javaHome = project.findDistProperty("windows-service.java-home")
-                val dist = project.extensions.getByType(DistExtension::class.java)
-                if (it.javaHome.isNullOrBlank() && dist.includeJre)
+                if (it.javaHome.isNullOrBlank() && includeJdk)
                     it.javaHome = "\"%APP_HOME%jre\""
                 it.jvm = project.findDistProperty("windows-service.jvm")
                 if (it.jvm.isNullOrBlank()) {
-                    it.jvm = if (dist.includeJre) {
-                        if (dist.x64) {
+                    it.jvm = if (includeJdk) {
+                        if (dist.isX64) {
                             "\"%APP_HOME%jre\\jre\\bin\\server\\jvm.dll\""
                         } else
                             "\"%APP_HOME%jre\\bin\\client\\jvm.dll\""
@@ -138,9 +130,6 @@ class DistPlugin : Plugin<Project> {
             }
         }
 
-        val extension = project.extensions.getByType(DistExtension::class.java)
-
-
 
         project.tasks.apply {
 
@@ -161,44 +150,38 @@ class DistPlugin : Plugin<Project> {
                     task.inputs.file(project.rootProject.file("gradle.properties"))
                     task.automaticClasspath =
                         project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
-                    task.doLast(object : Action<Task> {
-                        override fun execute(it: Task) {
-                            val outputDirectory = task.outputDirectory
+                    task.doLast {
+                        val outputDirectory = task.outputDirectory
 
-                            val dist = project.extensions.getByType(DistExtension::class.java)
-
-                            if (dist.unwrapResources)
-                                project.copy { spec ->
-                                    spec.from(File(project.buildDir, "conf").absolutePath)
-                                    spec.into(File(outputDirectory, "conf").absolutePath)
-                                }
+                        if (dist.unwrapResources)
+                            project.copy { spec ->
+                                spec.from(File(project.buildDir, "conf").absolutePath)
+                                spec.into(File(outputDirectory, "conf").absolutePath)
+                            }
 
 
-                            val jreGz =
-                                if (dist.x64) dist.jreWindowsX64Gz else dist.jreWindowsI586Gz
-                            if (dist.includeJre && jreGz.isNotBlank()) {
-                                project.copy { copySpec ->
-                                    copySpec.from(project.tarTree(jreGz)) { spec ->
-                                        spec.eachFile {
-                                            it.path = "jre/" + it.path.substringAfter("/")
-                                        }
-                                        spec.includeEmptyDirs = false
+                        if (includeJdk) {
+                            project.copy { copySpec ->
+                                copySpec.from(project.tarTree(dist.jdkArchive)) { spec ->
+                                    spec.eachFile {
+                                        it.path = "jre/" + it.path.substringAfter("/")
                                     }
-                                    copySpec.into(outputDirectory.absolutePath)
+                                    spec.includeEmptyDirs = false
                                 }
+                                copySpec.into(outputDirectory.absolutePath)
                             }
-                            val installScript = File(outputDirectory, "${project.name}-install.bat")
-                            var installScriptText = installScript.readText()
-                                .replace("%APP_HOME%lib\\conf;", "%APP_HOME%conf;")
-                            if (dist.autoStart) {
-                                installScriptText = installScriptText.replace(
-                                    "if \"%OS%\"==\"Windows_NT\" endlocal",
-                                    "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
-                                )
-                            }
-                            installScript.writeText(installScriptText)
                         }
-                    })
+                        val installScript = File(outputDirectory, "${project.name}-install.bat")
+                        var installScriptText = installScript.readText()
+                            .replace("%APP_HOME%lib\\conf;", "%APP_HOME%conf;")
+                        if (dist.autoStart) {
+                            installScriptText = installScriptText.replace(
+                                "if \"%OS%\"==\"Windows_NT\" endlocal",
+                                "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
+                            )
+                        }
+                        installScript.writeText(installScriptText)
+                    }
                 }
                 create("windowsServiceZip", Zip::class.java) {
                     it.dependsOn(createWindowsServiceTaskName)
@@ -206,34 +189,30 @@ class DistPlugin : Plugin<Project> {
                         project.tasks.getByName(createWindowsServiceTaskName) as WindowsServicePluginTask
                     it.group = createTask.group
                     it.from(createTask.outputDirectory)
-                    if (extension.includeJre)
-                        it.archiveFileName.set("${project.name}-windows-${if (extension.x64) "x64" else "x86"}-${project.version}.zip")
+                    if (includeJdk)
+                        it.archiveFileName.set("${project.name}-windows-${if (dist.isX64) "x64" else "x86"}-${project.version}.zip")
                     else
                         it.archiveFileName.set("${project.name}-windows-${project.version}.zip")
                     it.destinationDirectory.set(createTask.outputDirectory.parentFile)
                 }
 
-                if (extension.windowsServiceOldPath.isNotBlank()) {
+                if (dist.prevArchive.isNotBlank()) {
                     create("windowsServiceUpdate") {
                         it.dependsOn(createWindowsServiceTaskName)
                         val createTask =
                             project.tasks.getByName(createWindowsServiceTaskName) as WindowsServicePluginTask
                         it.group = createTask.group
-                        it.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                val dist = project.extensions.getByType(DistExtension::class.java)
-                                val updateDir =
-                                    File(createTask.outputDirectory.parentFile, "update")
-                                require(dist.windowsServiceOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                                compareUpdate(
-                                    project,
-                                    updateDir,
-                                    project.file(dist.windowsServiceOldPath),
-                                    createTask.outputDirectory,
-                                    true
-                                )
-                            }
-                        })
+                        it.doLast {
+                            val updateDir =
+                                File(createTask.outputDirectory.parentFile, "update")
+                            compareUpdate(
+                                project,
+                                updateDir,
+                                project.file(dist.prevArchive),
+                                createTask.outputDirectory,
+                                true
+                            )
+                        }
                     }
 
                     create("windowsServiceUpdateZip", Zip::class.java) {
@@ -266,7 +245,7 @@ class DistPlugin : Plugin<Project> {
             project.rootProject.allprojects { p ->
                 p.tasks.named("jar") { task ->
                     task as Jar
-                    if (extension.unwrapResources) {
+                    if (dist.unwrapResources) {
                         val taskNames =
                             gradle.startParameter.taskNames.map {
                                 var name = it
@@ -289,7 +268,7 @@ class DistPlugin : Plugin<Project> {
                                     val fileParentPath = destinationDir.absolutePath + "/"
                                     if (!file.isDirectory) {
                                         val exclude =
-                                            !extension.excludeUnWrapResources.contains(file.path)
+                                            !dist.excludeUnWrapResources.contains(file.path)
                                         if (exclude) resources[file.file.absolutePath] =
                                             if (file.file.parentFile == destinationDir) "" else
                                                 file.file.parentFile.absolutePath.substringAfter(
@@ -301,7 +280,7 @@ class DistPlugin : Plugin<Project> {
                                         file.file.walkTopDown().filter { it.isFile }.forEach {
                                             val path = it.path.substringAfter(fileParentPath)
                                             val contains =
-                                                extension.excludeUnWrapResources.contains(path)
+                                                dist.excludeUnWrapResources.contains(path)
                                             if (contains) {
                                                 exclude = false
                                             } else {
@@ -319,26 +298,24 @@ class DistPlugin : Plugin<Project> {
                                     false
                                 }
                             }
-                            task.doLast(object : Action<Task> {
-                                override fun execute(it: Task) {
-                                    if (resources.isNotEmpty()) {
-                                        p.copy { spec ->
-                                            resources.forEach { (filePath, to) ->
-                                                spec.from(filePath) {
-                                                    if (to.isNotBlank())
-                                                        it.into(to)
-                                                }
+                            task.doLast {
+                                if (resources.isNotEmpty()) {
+                                    p.copy { spec ->
+                                        resources.forEach { (filePath, to) ->
+                                            spec.from(filePath) {
+                                                if (to.isNotBlank())
+                                                    it.into(to)
                                             }
-                                            spec.into(
-                                                File(
-                                                    needUnwrapTask.project.buildDir,
-                                                    "conf"
-                                                ).absolutePath
-                                            )
                                         }
+                                        spec.into(
+                                            File(
+                                                needUnwrapTask.project.buildDir,
+                                                "conf"
+                                            ).absolutePath
+                                        )
                                     }
                                 }
-                            })
+                            }
                         }
                     }
                     task.manifest {
@@ -358,53 +335,47 @@ class DistPlugin : Plugin<Project> {
                     .getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
                 distribution.contents { copySpec ->
 
-                    if (extension.unwrapResources)
+                    if (dist.unwrapResources)
                         copySpec.from(File(project.buildDir, "conf").absolutePath) {
                             it.into("conf")
                         }
 
-                    if (project.file(extension.nativePath).exists()) {
-                        copySpec.from(project.file(extension.nativePath).absolutePath) {
+                    if (project.file(dist.nativePath).exists()) {
+                        copySpec.from(project.file(dist.nativePath).absolutePath) {
                             it.into("native")
                         }
                     }
-                    if (extension.includeJre) {
-                        val jreGz =
-                            if (extension.windows) (if (extension.x64) extension.jreWindowsX64Gz else extension.jreWindowsI586Gz) else (if (extension.x64) extension.jreLinuxX64Gz else extension.jreLinuxI586Gz)
-                        if (jreGz.isNotBlank())
-                            copySpec.from(project.tarTree(jreGz)) { spec ->
-                                spec.eachFile {
-                                    it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
-                                }
-                                spec.includeEmptyDirs = false
-                                spec.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+                    if (includeJdk) {
+                        copySpec.from(project.tarTree(dist.jdkArchive)) { spec ->
+                            spec.eachFile {
+                                it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
                             }
-                        distribution.distributionBaseName.set("${project.name}-${if (extension.x64) "x64" else "x86"}")
+                            spec.includeEmptyDirs = false
+                            spec.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+                        }
+                        distribution.distributionBaseName.set("${project.name}-${if (dist.isX64) "x64" else "x86"}")
                     } else {
                         distribution.distributionBaseName.set(project.name)
                     }
                     copySpec.from(File(project.buildDir, "service").absolutePath)
                 }
 
-                if (extension.distOldPath.isNotBlank()) {
+                if (dist.prevArchive.isNotBlank()) {
                     project.tasks.create("installDistUpdate") {
                         it.dependsOn(TASK_INSTALL_NAME)
                         val createTask = project.tasks.getByName(TASK_INSTALL_NAME)
                         it.group = createTask.group
-                        it.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                val dest = project.file("" + project.buildDir + "/install")
-                                val updateDir = File(dest, "update")
-                                require(extension.distOldPath.isNotBlank()) { "旧版本路径不能为空" }
-                                compareUpdate(
-                                    project,
-                                    updateDir,
-                                    project.file(extension.distOldPath),
-                                    File(dest, distribution.distributionBaseName.get()),
-                                    false
-                                )
-                            }
-                        })
+                        it.doLast {
+                            val dest = project.file("" + project.buildDir + "/install")
+                            val updateDir = File(dest, "update")
+                            compareUpdate(
+                                project,
+                                updateDir,
+                                project.file(dist.prevArchive),
+                                File(dest, distribution.distributionBaseName.get()),
+                                false
+                            )
+                        }
                     }
 
                     project.tasks.create("installDistUpdateZip", Zip::class.java) {
@@ -425,8 +396,6 @@ class DistPlugin : Plugin<Project> {
         val application = project.extensions.findByType(JavaApplication::class.java)
 
         if (application != null) {
-            val dist = project.extensions.getByType(DistExtension::class.java)
-
             application.applicationDefaultJvmArgs += jvmArgs
             application.applicationDefaultJvmArgs = application.applicationDefaultJvmArgs.distinct()
 
@@ -441,206 +410,203 @@ class DistPlugin : Plugin<Project> {
                 if (!task.mainClass.isPresent) {
                     task.mainClass.set(project.findDistProperty("main-class-name"))
                 }
-                task.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        //run.sh
-                        writeServiceFile(
-                            project, "run.sh", """
-#!/usr/bin/env sh
+                task.doLast { //run.sh
+                    writeServiceFile(
+                        project, "run.sh", """
+            #!/usr/bin/env sh
+            
+            # Attempt to set APP_HOME
+            # Resolve links: ${'$'}0 may be a link
+            PRG="${'$'}0"
+            # Need this for relative symlinks.
+            while [ -h "${'$'}PRG" ] ; do
+                ls=`ls -ld "${'$'}PRG"`
+                link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
+                if expr "${'$'}link" : '/.*' > /dev/null; then
+                    PRG="${'$'}link"
+                else
+                    PRG=`dirname "${'$'}PRG"`"/${'$'}link"
+                fi
+            done
+            SAVED="`pwd`"
+            cd "`dirname \"${'$'}PRG\"`/" >/dev/null
+            APP_HOME="`pwd -P`"
+            
+            cd ${'$'}APP_HOME
+            mkdir -p "${'$'}APP_HOME/logs"
+            ${'$'}APP_HOME/bin/${project.name}
+            """
+                    )
 
-# Attempt to set APP_HOME
-# Resolve links: ${'$'}0 may be a link
-PRG="${'$'}0"
-# Need this for relative symlinks.
-while [ -h "${'$'}PRG" ] ; do
-    ls=`ls -ld "${'$'}PRG"`
-    link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
-    if expr "${'$'}link" : '/.*' > /dev/null; then
-        PRG="${'$'}link"
-    else
-        PRG=`dirname "${'$'}PRG"`"/${'$'}link"
-    fi
-done
-SAVED="`pwd`"
-cd "`dirname \"${'$'}PRG\"`/" >/dev/null
-APP_HOME="`pwd -P`"
+                    //startup.sh
+                    writeServiceFile(
+                        project, "startup.sh", """
+            #!/usr/bin/env sh
+            
+            # Attempt to set APP_HOME
+            # Resolve links: ${'$'}0 may be a link
+            PRG="${'$'}0"
+            # Need this for relative symlinks.
+            while [ -h "${'$'}PRG" ] ; do
+                ls=`ls -ld "${'$'}PRG"`
+                link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
+                if expr "${'$'}link" : '/.*' > /dev/null; then
+                    PRG="${'$'}link"
+                else
+                    PRG=`dirname "${'$'}PRG"`"/${'$'}link"
+                fi
+            done
+            SAVED="`pwd`"
+            cd "`dirname \"${'$'}PRG\"`/" >/dev/null
+            APP_HOME="`pwd -P`"
+            
+            cd ${'$'}APP_HOME
+            mkdir -p "${'$'}APP_HOME/logs"
+            nohup "${'$'}APP_HOME/bin/${project.name}" 1>/dev/null 2>"${'$'}APP_HOME/logs/error.log" &
+            ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'
+            """
+                    )
 
-cd ${'$'}APP_HOME
-mkdir -p "${'$'}APP_HOME/logs"
-${'$'}APP_HOME/bin/${project.name}
-"""
-                        )
+                    //shutdown.sh
+                    writeServiceFile(
+                        project, "shutdown.sh", """
+            #!/usr/bin/env sh
+            
+            # Attempt to set APP_HOME
+            # Resolve links: ${'$'}0 may be a link
+            PRG="${'$'}0"
+            # Need this for relative symlinks.
+            while [ -h "${'$'}PRG" ] ; do
+                ls=`ls -ld "${'$'}PRG"`
+                link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
+                if expr "${'$'}link" : '/.*' > /dev/null; then
+                    PRG="${'$'}link"
+                else
+                    PRG=`dirname "${'$'}PRG"`"/${'$'}link"
+                fi
+            done
+            SAVED="`pwd`"
+            cd "`dirname \"${'$'}PRG\"`/" >/dev/null
+            APP_HOME="`pwd -P`"
+            
+            pid="`ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'`"
+            if [ -n "${'$'}pid" ]
+            then
+                echo "${'$'}pid" |while read id
+                do
+                kill -9 ${'$'}id
+                echo "${'$'}id"
+                done
+            fi
+            """
+                    )
+                    //${project.name}-install
+                    writeServiceFile(
+                        project, "${project.name}-install", """
+            #!/usr/bin/env sh
+            
+            # Attempt to set APP_HOME
+            # Resolve links: ${'$'}0 may be a link
+            PRG="${'$'}0"
+            # Need this for relative symlinks.
+            while [ -h "${'$'}PRG" ] ; do
+                ls=`ls -ld "${'$'}PRG"`
+                link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
+                if expr "${'$'}link" : '/.*' > /dev/null; then
+                    PRG="${'$'}link"
+                else
+                    PRG=`dirname "${'$'}PRG"`"/${'$'}link"
+                fi
+            done
+            SAVED="`pwd`"
+            cd "`dirname \"${'$'}PRG\"`/" >/dev/null
+            APP_HOME="`pwd -P`"
+            
+            if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
+              (
+                cat <<EOF
+            #!/usr/bin/env sh
+            #chkconfig: 2345 80 90
+            #description:auto_run
+            
+            case "\${'$'}1" in
+              start)
+                    # Start daemon.
+                    echo "Starting ${project.name}";
+                    ${'$'}APP_HOME/startup.sh
+                    ;;
+              stop)
+                    # Stop daemons.
+                    echo "Shutting down ${project.name}";
+                    ${'$'}APP_HOME/shutdown.sh
+                    ;;
+              restart)
+                    \${'$'}0 stop
+                    sleep 2
+                    \${'$'}0 start
+                    ;;
+              *)
+                    echo \${'$'}"Usage: \${'$'}0 {start|stop|restart}"
+                    exit 1
+                    ;;
+            esac
+            
+            exit 0
+            EOF
+              ) | sudo tee /etc/init.d/${project.name}
+              sudo chmod +x /etc/init.d/${project.name}
+              sudo chkconfig ${project.name} on
+              ${
+                            if (dist.autoStart) """
+              sudo service ${project.name} start
+              """.trimIndent() else ""
+                        }
+            else
+              (
+                cat <<EOF
+            [Unit]
+            Description=${project.name}
+            After=network.target
+            
+            [Service]
+            ${if (dist.runUser.isNotBlank()) "User=${dist.runUser}" else "User=`whoami`"}
+            Type=forking
+            ExecStart=${'$'}APP_HOME/startup.sh
+            ExecReload=/bin/kill -HUP \${'$'}MAINPID
+            KillMode=/bin/kill -s QUIT \${'$'}MAINPID
+            
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+              ) | sudo tee /etc/systemd/system/${project.name}.service
+              sudo systemctl daemon-reload
+              sudo systemctl enable ${project.name}.service
+              ${
+                            if (dist.autoStart) """
+              sudo systemctl start ${project.name}.service
+              """.trimIndent() else ""
+                        }
+            fi
+            """
+                    )
 
-                        //startup.sh
-                        writeServiceFile(
-                            project, "startup.sh", """
-#!/usr/bin/env sh
-
-# Attempt to set APP_HOME
-# Resolve links: ${'$'}0 may be a link
-PRG="${'$'}0"
-# Need this for relative symlinks.
-while [ -h "${'$'}PRG" ] ; do
-    ls=`ls -ld "${'$'}PRG"`
-    link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
-    if expr "${'$'}link" : '/.*' > /dev/null; then
-        PRG="${'$'}link"
-    else
-        PRG=`dirname "${'$'}PRG"`"/${'$'}link"
-    fi
-done
-SAVED="`pwd`"
-cd "`dirname \"${'$'}PRG\"`/" >/dev/null
-APP_HOME="`pwd -P`"
-
-cd ${'$'}APP_HOME
-mkdir -p "${'$'}APP_HOME/logs"
-nohup "${'$'}APP_HOME/bin/${project.name}" 1>/dev/null 2>"${'$'}APP_HOME/logs/error.log" &
-ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'
-"""
-                        )
-
-                        //shutdown.sh
-                        writeServiceFile(
-                            project, "shutdown.sh", """
-#!/usr/bin/env sh
-
-# Attempt to set APP_HOME
-# Resolve links: ${'$'}0 may be a link
-PRG="${'$'}0"
-# Need this for relative symlinks.
-while [ -h "${'$'}PRG" ] ; do
-    ls=`ls -ld "${'$'}PRG"`
-    link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
-    if expr "${'$'}link" : '/.*' > /dev/null; then
-        PRG="${'$'}link"
-    else
-        PRG=`dirname "${'$'}PRG"`"/${'$'}link"
-    fi
-done
-SAVED="`pwd`"
-cd "`dirname \"${'$'}PRG\"`/" >/dev/null
-APP_HOME="`pwd -P`"
-
-pid="`ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'`"
-if [ -n "${'$'}pid" ]
-then
-    echo "${'$'}pid" |while read id
-    do
-    kill -9 ${'$'}id
-    echo "${'$'}id"
-    done
-fi
-"""
-                        )
-                        //${project.name}-install
-                        writeServiceFile(
-                            project, "${project.name}-install", """
-#!/usr/bin/env sh
-
-# Attempt to set APP_HOME
-# Resolve links: ${'$'}0 may be a link
-PRG="${'$'}0"
-# Need this for relative symlinks.
-while [ -h "${'$'}PRG" ] ; do
-    ls=`ls -ld "${'$'}PRG"`
-    link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
-    if expr "${'$'}link" : '/.*' > /dev/null; then
-        PRG="${'$'}link"
-    else
-        PRG=`dirname "${'$'}PRG"`"/${'$'}link"
-    fi
-done
-SAVED="`pwd`"
-cd "`dirname \"${'$'}PRG\"`/" >/dev/null
-APP_HOME="`pwd -P`"
-
-if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
-  (
-    cat <<EOF
-#!/usr/bin/env sh
-#chkconfig: 2345 80 90
-#description:auto_run
-
-case "\${'$'}1" in
-  start)
-        # Start daemon.
-        echo "Starting ${project.name}";
-        ${'$'}APP_HOME/startup.sh
-        ;;
-  stop)
-        # Stop daemons.
-        echo "Shutting down ${project.name}";
-        ${'$'}APP_HOME/shutdown.sh
-        ;;
-  restart)
-        \${'$'}0 stop
-        sleep 2
-        \${'$'}0 start
-        ;;
-  *)
-        echo \${'$'}"Usage: \${'$'}0 {start|stop|restart}"
-        exit 1
-        ;;
-esac
-
-exit 0
-EOF
-  ) | sudo tee /etc/init.d/${project.name}
-  sudo chmod +x /etc/init.d/${project.name}
-  sudo chkconfig ${project.name} on
-  ${
-                                if (dist.autoStart) """
-  sudo service ${project.name} start
-  """.trimIndent() else ""
-                            }
-else
-  (
-    cat <<EOF
-[Unit]
-Description=${project.name}
-After=network.target
-
-[Service]
-${if (dist.runUser.isNotBlank()) "User=${dist.runUser}" else "User=`whoami`"}
-Type=forking
-ExecStart=${'$'}APP_HOME/startup.sh
-ExecReload=/bin/kill -HUP \${'$'}MAINPID
-KillMode=/bin/kill -s QUIT \${'$'}MAINPID
-
-[Install]
-WantedBy=multi-user.target
-EOF
-  ) | sudo tee /etc/systemd/system/${project.name}.service
-  sudo systemctl daemon-reload
-  sudo systemctl enable ${project.name}.service
-  ${
-                                if (dist.autoStart) """
-  sudo systemctl start ${project.name}.service
-  """.trimIndent() else ""
-                            }
-fi
-"""
-                        )
-
-                        //${project.name}-uninstall
-                        writeServiceFile(
-                            project, "${project.name}-uninstall", """
-#!/usr/bin/env sh
-
-if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
-  sudo service ${project.name} stop
-  sudo chkconfig ${project.name} off
-  sudo rm -f /etc/init.d/${project.name}
-else
-  sudo systemctl stop ${project.name}.service
-  sudo systemctl disable ${project.name}.service
-  sudo rm -f /etc/systemd/system/${project.name}.service
-fi
-"""
-                        )
-                    }
-                })
+                    //${project.name}-uninstall
+                    writeServiceFile(
+                        project, "${project.name}-uninstall", """
+            #!/usr/bin/env sh
+            
+            if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
+              sudo service ${project.name} stop
+              sudo chkconfig ${project.name} off
+              sudo rm -f /etc/init.d/${project.name}
+            else
+              sudo systemctl stop ${project.name}.service
+              sudo systemctl disable ${project.name}.service
+              sudo rm -f /etc/systemd/system/${project.name}.service
+            fi
+            """
+                    )
+                }
             }
         }
 
@@ -708,7 +674,7 @@ fi
         news.forEach {
             val subPath = it.absolutePath.substringAfter(newDir.absolutePath + File.separator)
             val oldFile = File(oldDir, subPath)
-            if (!oldFile.exists() || it.sha1() != oldFile.sha1()) {
+            if (!oldFile.exists() || it.sha256() != oldFile.sha256()) {
                 val newFile = File(updateDir, subPath)
                 it.copyTo(newFile)
                 newFile.setExecutable(true, false)
@@ -718,9 +684,9 @@ fi
         }
     }
 
-    private fun File.sha1(): String {
+    private fun File.sha256(): String {
         require(exists()) { "文件${absolutePath}不存在" }
-        val digest = MessageDigest.getInstance("SHA-1")
+        val digest = MessageDigest.getInstance("SHA-256")
         digest.update(this.readBytes())
         return BigInteger(1, digest.digest()).toString(16)
     }
