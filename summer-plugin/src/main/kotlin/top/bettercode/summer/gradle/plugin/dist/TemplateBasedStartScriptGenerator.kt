@@ -20,7 +20,8 @@ import java.io.*
 class TemplateBasedStartScriptGenerator(
     private val project: Project,
     private val dist: DistExtension,
-    private val windows: Boolean
+    private val windows: Boolean,
+    private val includeJdk: Boolean
 ) : TemplateBasedScriptGenerator {
     private val lineSeparator: String =
         if (windows) TextUtil.getWindowsLineSeparator() else TextUtil.getUnixLineSeparator()
@@ -29,7 +30,7 @@ class TemplateBasedStartScriptGenerator(
     private var template: TextResource
 
     init {
-        template = template(dist, windows)
+        template = template()
     }
 
     override fun generateScript(details: JavaAppStartScriptGenerationDetails, destination: Writer) {
@@ -101,10 +102,7 @@ class TemplateBasedStartScriptGenerator(
         })
     }
 
-    private fun template(
-        dist: DistExtension,
-        windows: Boolean
-    ): StringBackedTextResource {
+    private fun template(): StringBackedTextResource {
         val filename = if (windows) "windowsStartScript.txt" else "unixStartScript.txt"
         val stream: InputStream =
             UnixStartScriptGenerator::class.java.getResourceAsStream(
@@ -115,7 +113,7 @@ class TemplateBasedStartScriptGenerator(
             InputStreamReader(stream, Charsets.UTF_8)
         )
         var text = bufferedReader.readText()
-        if (dist.includeJdk(project)) {
+        if (includeJdk) {
             text = if (windows) {
                 val location = "@rem Add default JVM options here"
                 StringBuilder(text).insert(

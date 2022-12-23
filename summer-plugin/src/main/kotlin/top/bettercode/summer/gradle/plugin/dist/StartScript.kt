@@ -12,9 +12,10 @@ object StartScript {
     fun startScriptGenerator(
         project: Project,
         dist: DistExtension,
-        windows: Boolean
+        windows: Boolean,
+        includeJdk: Boolean
     ): TemplateBasedScriptGenerator {
-        return TemplateBasedStartScriptGenerator(project, dist, windows)
+        return TemplateBasedStartScriptGenerator(project, dist, windows, includeJdk)
     }
 
 

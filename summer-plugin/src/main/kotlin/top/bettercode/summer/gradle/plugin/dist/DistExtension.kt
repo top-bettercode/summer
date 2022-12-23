@@ -71,7 +71,8 @@ open class DistExtension(
             val file = project.file(jdkArchive)
             if (file.exists())
                 return true
-            else System.err.println("jdk archive:$file 不存在 ")
+            else
+                System.err.println("${project.path} jdk archive:$file 不存在 ")
         }
         return false
     }

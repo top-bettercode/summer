@@ -402,9 +402,9 @@ class DistPlugin : Plugin<Project> {
             project.tasks.getByName("startScripts") { task ->
                 task as CreateStartScripts
                 task.unixStartScriptGenerator =
-                    StartScript.startScriptGenerator(project, dist, false)
+                    StartScript.startScriptGenerator(project, dist, false, includeJdk)
                 task.windowsStartScriptGenerator =
-                    StartScript.startScriptGenerator(project, dist, true)
+                    StartScript.startScriptGenerator(project, dist, true, includeJdk)
 
                 task.inputs.file(project.rootProject.file("gradle.properties"))
                 if (!task.mainClass.isPresent) {
