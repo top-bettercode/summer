@@ -385,7 +385,7 @@ class DistPlugin : Plugin<Project> {
                         val dest = project.file("" + project.buildDir + "/install")
                         val updateDir = File(dest, "update")
                         it.from(updateDir)
-                        it.archiveFileName.set("${project.name}-${project.version}-dist_update.zip")
+                        it.archiveFileName.set("${project.name}-${project.version}-dist-update.zip")
                         it.destinationDirectory.set(dest)
                     }
                 }
