@@ -10,7 +10,6 @@ import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.distribution.plugins.DistributionPlugin.TASK_INSTALL_NAME
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.FileTree
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.plugins.JavaPlugin.PROCESS_RESOURCES_TASK_NAME
@@ -99,14 +98,11 @@ class DistPlugin : Plugin<Project> {
                 it.libraryPath = project.findDistProperty("windows-service.library-path")
                 it.javaHome = project.findDistProperty("windows-service.java-home")
                 if (it.javaHome.isNullOrBlank() && includeJdk)
-                    it.javaHome = "\"%APP_HOME%jre\""
+                    it.javaHome = "\"%APP_HOME%jdk\""
                 it.jvm = project.findDistProperty("windows-service.jvm")
                 if (it.jvm.isNullOrBlank()) {
                     it.jvm = if (includeJdk) {
-                        if (dist.isX64) {
-                            "\"%APP_HOME%jre\\jre\\bin\\server\\jvm.dll\""
-                        } else
-                            "\"%APP_HOME%jre\\bin\\client\\jvm.dll\""
+                        "\"%APP_HOME%jdk\\jre\\bin\\server\\jvm.dll\""
                     } else {
                         "auto"
                     }
@@ -232,33 +228,33 @@ class DistPlugin : Plugin<Project> {
 
         project.afterEvaluate {
             val gradle = project.gradle as GradleInternal
-            val needUnwrapTasks = mutableListOf<Task>()
+            val distributionTasks = mutableListOf<Task>()
             lateinit var currentProject: Project
             gradle.allprojects {
                 if (it.projectDir.absolutePath == gradle.startParameter.currentDir.absolutePath)
                     currentProject = it
-                needUnwrapTasks.addAll(it.tasks.filter { task ->
+                distributionTasks.addAll(it.tasks.filter { task ->
                     task.group == "distribution" ||
                             task.group == WindowsServicePlugin.getPLUGIN_GROUP()
                 })
             }
+            val taskNames =
+                gradle.startParameter.taskNames.map {
+                    var name = it
+                    if (currentProject != project.rootProject) name =
+                        currentProject.tasks.getByName(name).path
+                    if (name.startsWith(":")) name else ":$name"
+                }
+
+            val distributionTask =
+                distributionTasks.find {
+                    taskNames.contains(it.path)
+                }
             project.rootProject.allprojects { p ->
                 p.tasks.named("jar") { task ->
                     task as Jar
                     if (dist.unwrapResources) {
-                        val taskNames =
-                            gradle.startParameter.taskNames.map {
-                                var name = it
-                                if (currentProject != project.rootProject) name =
-                                    currentProject.tasks.getByName(name).path
-                                if (name.startsWith(":")) name else ":$name"
-                            }
-
-                        val needUnwrapTask =
-                            needUnwrapTasks.find {
-                                taskNames.contains(it.path)
-                            }
-                        if (needUnwrapTask != null) {
+                        if (distributionTask != null) {
                             task.outputs.upToDateWhen { false }
                             val resources = mutableMapOf<String, String>()
                             task.exclude { file ->
@@ -309,7 +305,7 @@ class DistPlugin : Plugin<Project> {
                                         }
                                         spec.into(
                                             File(
-                                                needUnwrapTask.project.buildDir,
+                                                distributionTask.project.buildDir,
                                                 "conf"
                                             ).absolutePath
                                         )
@@ -345,7 +341,7 @@ class DistPlugin : Plugin<Project> {
                             it.into("native")
                         }
                     }
-                    if (includeJdk) {
+                    if (includeJdk && distributionTask != null) {
                         includeJdk(copySpec, dist, project)
                         distribution.distributionBaseName.set("${project.name}-${if (dist.isX64) "x64" else "x86"}")
                     } else {
@@ -618,16 +614,6 @@ class DistPlugin : Plugin<Project> {
         dist: DistExtension,
         project: Project
     ) {
-        copySpec.from(jdkArchive(dist, project)) { spec ->
-            spec.eachFile {
-                it.path = it.path.replace("j(dk|re|ava).*?/".toRegex(), "jre/")
-            }
-            spec.includeEmptyDirs = false
-            spec.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        }
-    }
-
-    private fun jdkArchive(dist: DistExtension, project: Project): FileTree {
         val jdkArchive = dist.jdkArchive
         if (!jdkArchive.exists()) {
             val get = Get()
@@ -641,11 +627,20 @@ class DistPlugin : Plugin<Project> {
                 Get.VerboseProgress(System.out)
             )
         }
-        return if (jdkArchive.extension == "zip") project.zipTree(jdkArchive) else project.tarTree(
-            jdkArchive
-        )
+        println("packaging jdk:$jdkArchive")
+        copySpec.from(
+            if (jdkArchive.extension == "zip")
+                project.zipTree(jdkArchive)
+            else
+                project.tarTree(jdkArchive)
+        ) { spec ->
+            spec.eachFile {
+                it.path = "jdk/" + it.path.substringAfter("/")
+            }
+            spec.includeEmptyDirs = false
+            spec.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
     }
-
 
     private fun compareUpdate(
         project: Project,

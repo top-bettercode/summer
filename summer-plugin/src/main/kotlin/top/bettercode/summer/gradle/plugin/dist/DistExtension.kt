@@ -35,22 +35,24 @@ open class DistExtension(
     var prevArchiveSrc: String = ""
 ) {
 
-    private val jdkFileName: String
-        get() = if (windows)
-            "openjdk-8u42-b03-windows-i586-14_jul_2022.zip"
-        else
-            "openjdk-8u42-b03-linux-x64-14_jul_2022.tar.gz"
-
     var jdkArchiveSrc: String = ""
         get() {
             return field.ifBlank {
-                "https://download.java.net/openjdk/jdk8u42/ri/$jdkFileName"
+                if (windows)
+                    "https://download.java.net/openjdk/jdk8u42/ri/openjdk-8u42-b03-windows-i586-14_jul_2022.zip"
+                else
+                    "https://download.java.net/openjdk/jdk8u42/ri/openjdk-8u42-b03-linux-x64-14_jul_2022.tar.gz"
             }
         }
+
     val jdkArchive: File
         get() {
-            val tmpPath = System.getProperty("java.io.tmpdir")
-            return File(tmpPath, File(jdkArchiveSrc).name)
+            val tmpPath = System.getProperty("user.home")
+            val file = File(tmpPath + File.separator + ".cache/jdk", File(jdkArchiveSrc).name)
+            if (!file.parentFile.exists()) {
+                file.parentFile.mkdirs()
+            }
+            return file
         }
 
     internal val isX64: Boolean get() = jdkArchiveSrc.contains("x64")
