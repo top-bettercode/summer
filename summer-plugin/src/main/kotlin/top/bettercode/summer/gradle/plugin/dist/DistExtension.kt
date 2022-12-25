@@ -3,12 +3,15 @@ package top.bettercode.summer.gradle.plugin.dist
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Project
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profilesActive
+import java.io.File
+import java.net.URL
 
 
 /**
  * @author Peter Wu
  */
 open class DistExtension(
+    var windows: Boolean = false,
     var unwrapResources: Boolean = true,
     var autoStart: Boolean = true,
     var urandom: Boolean = false,
@@ -19,15 +22,39 @@ open class DistExtension(
     var jvmArgs: List<String> = listOf(),
     var excludeUnWrapResources: List<String> = emptyList(),
     /**
+     * 是否打包JDK
+     */
+    var includeJdk: Boolean = false,
+    /**
      * 相对当前项目的路径
      */
     var nativePath: String = "native",
-    var jdkArchive: String = "",
     /**
      * 老版本路径 用于生成更新包
      */
-    var prevArchive: String = ""
+    var prevArchiveSrc: String = ""
 ) {
+
+    private val jdkFileName: String
+        get() = if (windows)
+            "openjdk-8u42-b03-windows-i586-14_jul_2022.zip"
+        else
+            "openjdk-8u42-b03-linux-x64-14_jul_2022.tar.gz"
+
+    var jdkArchiveSrc: String = ""
+        get() {
+            return field.ifBlank {
+                "https://download.java.net/openjdk/jdk8u42/ri/$jdkFileName"
+            }
+        }
+    val jdkArchive: File
+        get() {
+            val tmpPath = System.getProperty("java.io.tmpdir")
+            return File(tmpPath, File(jdkArchiveSrc).name)
+        }
+
+    internal val isX64: Boolean get() = jdkArchiveSrc.contains("x64")
+
     companion object {
 
         val Project.jvmArgs: Set<String>
@@ -65,18 +92,4 @@ open class DistExtension(
             }
 
     }
-
-    internal fun includeJdk(project: Project): Boolean {
-        if (jdkArchive.isNotBlank()) {
-            val file = project.file(jdkArchive)
-            if (file.exists())
-                return true
-            else
-                System.err.println("${project.path} jdk archive:$file 不存在 ")
-        }
-        return false
-    }
-
-
-    internal val isX64: Boolean get() = jdkArchive.contains("x64")
 }

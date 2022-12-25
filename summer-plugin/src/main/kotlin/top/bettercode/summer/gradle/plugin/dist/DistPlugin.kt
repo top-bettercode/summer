@@ -1,13 +1,16 @@
 package top.bettercode.summer.gradle.plugin.dist
 
 import com.github.alexeylisyutenko.windowsserviceplugin.*
+import org.apache.tools.ant.taskdefs.Get
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.distribution.plugins.DistributionPlugin.TASK_INSTALL_NAME
+import org.gradle.api.file.CopySpec
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.FileTree
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.plugins.JavaPlugin.PROCESS_RESOURCES_TASK_NAME
@@ -18,8 +21,10 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.findDistProperty
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.jvmArgs
+import top.bettercode.summer.tools.lang.util.OS
 import java.io.File
 import java.math.BigInteger
+import java.net.URL
 import java.security.MessageDigest
 
 /**
@@ -35,17 +40,18 @@ class DistPlugin : Plugin<Project> {
 
         project.extensions.create("dist", DistExtension::class.java)
 
-        val windowsServiceEnable = (project.findDistProperty("windows-service.enable"))?.toBoolean()
-            ?: false
 
         project.extensions.configure(DistExtension::class.java) {
+            it.windows = (project.findDistProperty("windows"))?.toBoolean()
+                ?: OS.WINDOWS.isCurrentOs
             it.unwrapResources = project.findDistProperty("unwrap-resources")?.toBoolean() ?: true
             it.autoStart = project.findDistProperty("auto-start")?.toBoolean() ?: true
+            it.includeJdk = project.findDistProperty("include-jdk")?.toBoolean() ?: false
             it.urandom = (project.findDistProperty("urandom") ?: "false").toBoolean()
             it.nativePath = project.findDistProperty("native-path") ?: "native"
             it.runUser = project.findDistProperty("run-user") ?: ""
-            it.jdkArchive = project.findDistProperty("jdk-archive") ?: ""
-            it.prevArchive = project.findDistProperty("prev-archive") ?: ""
+            it.jdkArchiveSrc = project.findDistProperty("jdk-archive-src") ?: ""
+            it.prevArchiveSrc = project.findDistProperty("prev-archive-src") ?: ""
             it.jvmArgs = (project.findDistProperty("jvm-args") ?: "").split(" +".toRegex())
             it.excludeUnWrapResources = (project.findDistProperty("exclude-unwrap-resources")
                 ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories").split(
@@ -54,9 +60,9 @@ class DistPlugin : Plugin<Project> {
         }
         val dist = project.extensions.getByType(DistExtension::class.java)
 
-        val includeJdk = dist.includeJdk(project)
+        val includeJdk = dist.includeJdk
 
-        if (windowsServiceEnable) {
+        if (dist.windows) {
             project.plugins.apply(WindowsServicePlugin::class.java)
             project.extensions.configure(WindowsServicePluginConfiguration::class.java) {
                 val isX64 = project.findDistProperty("x64")?.toBoolean() != false
@@ -141,7 +147,7 @@ class DistPlugin : Plugin<Project> {
                 it.dependsOn(PROCESS_RESOURCES_TASK_NAME)
             }
 
-            if (windowsServiceEnable) {
+            if (dist.windows) {
                 val createWindowsServiceTaskName =
                     WindowsServicePlugin.getCREATE_WINDOWS_SERVICE_TASK_NAME()
                 named(createWindowsServiceTaskName) { task ->
@@ -162,13 +168,7 @@ class DistPlugin : Plugin<Project> {
 
                         if (includeJdk) {
                             project.copy { copySpec ->
-                                copySpec.from(project.tarTree(dist.jdkArchive)) { spec ->
-                                    spec.eachFile {
-                                        it.path = "jre/" + it.path.substringAfter("/")
-                                    }
-                                    spec.includeEmptyDirs = false
-                                }
-                                copySpec.into(outputDirectory.absolutePath)
+                                includeJdk(copySpec, dist, project)
                             }
                         }
                         val installScript = File(outputDirectory, "${project.name}-install.bat")
@@ -196,7 +196,7 @@ class DistPlugin : Plugin<Project> {
                     it.destinationDirectory.set(createTask.outputDirectory.parentFile)
                 }
 
-                if (dist.prevArchive.isNotBlank()) {
+                if (dist.prevArchiveSrc.isNotBlank()) {
                     create("windowsServiceUpdate") {
                         it.dependsOn(createWindowsServiceTaskName)
                         val createTask =
@@ -208,7 +208,7 @@ class DistPlugin : Plugin<Project> {
                             compareUpdate(
                                 project,
                                 updateDir,
-                                project.file(dist.prevArchive),
+                                project.file(dist.prevArchiveSrc),
                                 createTask.outputDirectory,
                                 true
                             )
@@ -346,13 +346,7 @@ class DistPlugin : Plugin<Project> {
                         }
                     }
                     if (includeJdk) {
-                        copySpec.from(project.tarTree(dist.jdkArchive)) { spec ->
-                            spec.eachFile {
-                                it.path = it.path.replace("j(dk|re).*?/".toRegex(), "jre/")
-                            }
-                            spec.includeEmptyDirs = false
-                            spec.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-                        }
+                        includeJdk(copySpec, dist, project)
                         distribution.distributionBaseName.set("${project.name}-${if (dist.isX64) "x64" else "x86"}")
                     } else {
                         distribution.distributionBaseName.set(project.name)
@@ -360,7 +354,7 @@ class DistPlugin : Plugin<Project> {
                     copySpec.from(File(project.buildDir, "service").absolutePath)
                 }
 
-                if (dist.prevArchive.isNotBlank()) {
+                if (dist.prevArchiveSrc.isNotBlank()) {
                     project.tasks.create("installDistUpdate") {
                         it.dependsOn(TASK_INSTALL_NAME)
                         val createTask = project.tasks.getByName(TASK_INSTALL_NAME)
@@ -371,7 +365,7 @@ class DistPlugin : Plugin<Project> {
                             compareUpdate(
                                 project,
                                 updateDir,
-                                project.file(dist.prevArchive),
+                                project.file(dist.prevArchiveSrc),
                                 File(dest, distribution.distributionBaseName.get()),
                                 false
                             )
@@ -617,6 +611,39 @@ class DistPlugin : Plugin<Project> {
             else
                 task.jvmArgs = jvmArgs.toList()
         }
+    }
+
+    private fun includeJdk(
+        copySpec: CopySpec,
+        dist: DistExtension,
+        project: Project
+    ) {
+        copySpec.from(jdkArchive(dist, project)) { spec ->
+            spec.eachFile {
+                it.path = it.path.replace("j(dk|re|ava).*?/".toRegex(), "jre/")
+            }
+            spec.includeEmptyDirs = false
+            spec.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+    }
+
+    private fun jdkArchive(dist: DistExtension, project: Project): FileTree {
+        val jdkArchive = dist.jdkArchive
+        if (!jdkArchive.exists()) {
+            val get = Get()
+            get.project = project.ant.project
+            val url = URL(dist.jdkArchiveSrc)
+            get.setVerbose(true)
+            get.setSkipExisting(true)
+            println("download:${url}")
+            get.doGet(
+                url, jdkArchive, 2,
+                Get.VerboseProgress(System.out)
+            )
+        }
+        return if (jdkArchive.extension == "zip") project.zipTree(jdkArchive) else project.tarTree(
+            jdkArchive
+        )
     }
 
 
