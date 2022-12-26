@@ -9,6 +9,7 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.util.LinkedMultiValueMap
 
@@ -20,6 +21,7 @@ import org.springframework.util.LinkedMultiValueMap
     classes = [(TestController::class)],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
+@TestPropertySource(properties = ["summer.logging.slack.channel=dev"])
 class LoggingTemplateControllerTest {
 
     @Autowired
