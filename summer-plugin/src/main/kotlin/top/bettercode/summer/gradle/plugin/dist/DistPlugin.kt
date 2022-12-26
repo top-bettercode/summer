@@ -45,7 +45,7 @@ class DistPlugin : Plugin<Project> {
                 ?: OS.WINDOWS.isCurrentOs
             it.unwrapResources = project.findDistProperty("unwrap-resources")?.toBoolean() ?: true
             it.autoStart = project.findDistProperty("auto-start")?.toBoolean() ?: true
-            it.includeJre = project.findDistProperty("include-jre")?.toBoolean() ?: false
+            it.includeJdk = project.findDistProperty("include-jdk")?.toBoolean() ?: false
             it.urandom = (project.findDistProperty("urandom") ?: "false").toBoolean()
             it.nativePath = project.findDistProperty("native-path") ?: "native"
             it.runUser = project.findDistProperty("run-user") ?: ""
@@ -59,7 +59,7 @@ class DistPlugin : Plugin<Project> {
         }
         val dist = project.extensions.getByType(DistExtension::class.java)
 
-        val includeJre = dist.includeJre
+        val includeJre = dist.includeJdk
 
         if (dist.windows) {
             project.plugins.apply(WindowsServicePlugin::class.java)
@@ -98,11 +98,11 @@ class DistPlugin : Plugin<Project> {
                 it.libraryPath = project.findDistProperty("windows-service.library-path")
                 it.javaHome = project.findDistProperty("windows-service.java-home")
                 if (it.javaHome.isNullOrBlank() && includeJre)
-                    it.javaHome = "\"%APP_HOME%jre\""
+                    it.javaHome = "\"%APP_HOME%jdk\""
                 it.jvm = project.findDistProperty("windows-service.jvm")
                 if (it.jvm.isNullOrBlank()) {
                     it.jvm = if (includeJre) {
-                        "\"%APP_HOME%jre\\bin\\server\\jvm.dll\""
+                        "\"%APP_HOME%jdk\\bin\\server\\jvm.dll\""
                     } else {
                         "auto"
                     }
@@ -433,7 +433,7 @@ class DistPlugin : Plugin<Project> {
                 Get.VerboseProgress(System.out)
             )
         }
-        println("packaging jre:$jdkArchive")
+        println("packaging jdk:$jdkArchive")
         copySpec.from(
             if (jdkArchive.extension == "zip")
                 project.zipTree(jdkArchive)
@@ -444,9 +444,9 @@ class DistPlugin : Plugin<Project> {
             spec.eachFile {
                 val dir = it.sourcePath.substringBefore("/")
                 it.path = if (it.path.contains("/$dir/"))
-                    it.path.replaceFirst("/$dir/jre/", "/jre/")
+                    it.path.replaceFirst("/$dir/jre/", "/jdk/")
                 else
-                    it.path.replaceFirst("$dir/jre/", "jre/")
+                    it.path.replaceFirst("$dir/jre/", "jdk/")
             }
             spec.includeEmptyDirs = false
             spec.duplicatesStrategy = DuplicatesStrategy.EXCLUDE

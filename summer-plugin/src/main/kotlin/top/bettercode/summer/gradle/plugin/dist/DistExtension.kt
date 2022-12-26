@@ -21,9 +21,9 @@ open class DistExtension(
     var jvmArgs: List<String> = listOf(),
     var excludeUnWrapResources: List<String> = emptyList(),
     /**
-     * 是否打包jre
+     * 是否打包jdk
      */
-    var includeJre: Boolean = false,
+    var includeJdk: Boolean = false,
     /**
      * 相对当前项目的路径
      */

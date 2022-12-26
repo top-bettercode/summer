@@ -118,13 +118,13 @@ class TemplateBasedStartScriptGenerator(
                 val location = "@rem Add default JVM options here"
                 StringBuilder(text).insert(
                     text.indexOf(location),
-                    "@rem Set JAVA_HOME.\r\nset JAVA_HOME=%APP_HOME%\\\\jre\r\n\r\n"
+                    "@rem Set JAVA_HOME.\r\nset JAVA_HOME=%APP_HOME%\\\\jdk\r\n\r\n"
                 ).toString()
             } else {
                 val location = "# Add default JVM options here"
                 StringBuilder(text).insert(
                     text.indexOf(location),
-                    "# Set JAVA_HOME.\nJAVA_HOME=\"\\\$APP_HOME/jre\"\n\n"
+                    "# Set JAVA_HOME.\nJAVA_HOME=\"\\\$APP_HOME/jdk\"\n\n"
                 ).toString()
             }
         }
