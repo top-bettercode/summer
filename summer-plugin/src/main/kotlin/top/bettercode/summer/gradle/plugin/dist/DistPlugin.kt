@@ -45,7 +45,7 @@ class DistPlugin : Plugin<Project> {
                 ?: OS.WINDOWS.isCurrentOs
             it.unwrapResources = project.findDistProperty("unwrap-resources")?.toBoolean() ?: true
             it.autoStart = project.findDistProperty("auto-start")?.toBoolean() ?: true
-            it.includeJdk = project.findDistProperty("include-jdk")?.toBoolean() ?: false
+            it.includeJre = project.findDistProperty("include-jre")?.toBoolean() ?: false
             it.urandom = (project.findDistProperty("urandom") ?: "false").toBoolean()
             it.nativePath = project.findDistProperty("native-path") ?: "native"
             it.runUser = project.findDistProperty("run-user") ?: ""
@@ -59,7 +59,7 @@ class DistPlugin : Plugin<Project> {
         }
         val dist = project.extensions.getByType(DistExtension::class.java)
 
-        val includeJdk = dist.includeJdk
+        val includeJre = dist.includeJre
 
         if (dist.windows) {
             project.plugins.apply(WindowsServicePlugin::class.java)
@@ -97,12 +97,12 @@ class DistPlugin : Plugin<Project> {
                 it.environment = project.findDistProperty("windows-service.environment") ?: ""
                 it.libraryPath = project.findDistProperty("windows-service.library-path")
                 it.javaHome = project.findDistProperty("windows-service.java-home")
-                if (it.javaHome.isNullOrBlank() && includeJdk)
-                    it.javaHome = "\"%APP_HOME%jdk\""
+                if (it.javaHome.isNullOrBlank() && includeJre)
+                    it.javaHome = "\"%APP_HOME%jre\""
                 it.jvm = project.findDistProperty("windows-service.jvm")
                 if (it.jvm.isNullOrBlank()) {
-                    it.jvm = if (includeJdk) {
-                        "\"%APP_HOME%jdk\\jre\\bin\\server\\jvm.dll\""
+                    it.jvm = if (includeJre) {
+                        "\"%APP_HOME%jre\\bin\\server\\jvm.dll\""
                     } else {
                         "auto"
                     }
@@ -162,9 +162,9 @@ class DistPlugin : Plugin<Project> {
                             }
 
 
-                        if (includeJdk) {
+                        if (includeJre) {
                             project.copy { copySpec ->
-                                includeJdk(copySpec, dist, project)
+                                includeJre(copySpec, dist, project)
                             }
                         }
                         val installScript = File(outputDirectory, "${project.name}-install.bat")
@@ -185,7 +185,7 @@ class DistPlugin : Plugin<Project> {
                         project.tasks.getByName(createWindowsServiceTaskName) as WindowsServicePluginTask
                     it.group = createTask.group
                     it.from(createTask.outputDirectory)
-                    if (includeJdk)
+                    if (includeJre)
                         it.archiveFileName.set("${project.name}-windows-${if (dist.isX64) "x64" else "x86"}-${project.version}.zip")
                     else
                         it.archiveFileName.set("${project.name}-windows-${project.version}.zip")
@@ -341,8 +341,8 @@ class DistPlugin : Plugin<Project> {
                             it.into("native")
                         }
                     }
-                    if (includeJdk && distributionTask != null) {
-                        includeJdk(copySpec, dist, project)
+                    if (includeJre && distributionTask != null) {
+                        includeJre(copySpec, dist, project)
                         distribution.distributionBaseName.set("${project.name}-${if (dist.isX64) "x64" else "x86"}")
                     } else {
                         distribution.distributionBaseName.set(project.name)
@@ -392,210 +392,16 @@ class DistPlugin : Plugin<Project> {
             project.tasks.getByName("startScripts") { task ->
                 task as CreateStartScripts
                 task.unixStartScriptGenerator =
-                    StartScript.startScriptGenerator(project, dist, false, includeJdk)
+                    StartScript.startScriptGenerator(project, dist, false, includeJre)
                 task.windowsStartScriptGenerator =
-                    StartScript.startScriptGenerator(project, dist, true, includeJdk)
+                    StartScript.startScriptGenerator(project, dist, true, includeJre)
 
                 task.inputs.file(project.rootProject.file("gradle.properties"))
                 if (!task.mainClass.isPresent) {
                     task.mainClass.set(project.findDistProperty("main-class-name"))
                 }
-                task.doLast { //run.sh
-                    writeServiceFile(
-                        project, "run.sh", """
-            #!/usr/bin/env sh
-            
-            # Attempt to set APP_HOME
-            # Resolve links: ${'$'}0 may be a link
-            PRG="${'$'}0"
-            # Need this for relative symlinks.
-            while [ -h "${'$'}PRG" ] ; do
-                ls=`ls -ld "${'$'}PRG"`
-                link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
-                if expr "${'$'}link" : '/.*' > /dev/null; then
-                    PRG="${'$'}link"
-                else
-                    PRG=`dirname "${'$'}PRG"`"/${'$'}link"
-                fi
-            done
-            SAVED="`pwd`"
-            cd "`dirname \"${'$'}PRG\"`/" >/dev/null
-            APP_HOME="`pwd -P`"
-            
-            cd ${'$'}APP_HOME
-            mkdir -p "${'$'}APP_HOME/logs"
-            ${'$'}APP_HOME/bin/${project.name}
-            """
-                    )
-
-                    //startup.sh
-                    writeServiceFile(
-                        project, "startup.sh", """
-            #!/usr/bin/env sh
-            
-            # Attempt to set APP_HOME
-            # Resolve links: ${'$'}0 may be a link
-            PRG="${'$'}0"
-            # Need this for relative symlinks.
-            while [ -h "${'$'}PRG" ] ; do
-                ls=`ls -ld "${'$'}PRG"`
-                link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
-                if expr "${'$'}link" : '/.*' > /dev/null; then
-                    PRG="${'$'}link"
-                else
-                    PRG=`dirname "${'$'}PRG"`"/${'$'}link"
-                fi
-            done
-            SAVED="`pwd`"
-            cd "`dirname \"${'$'}PRG\"`/" >/dev/null
-            APP_HOME="`pwd -P`"
-            
-            cd ${'$'}APP_HOME
-            mkdir -p "${'$'}APP_HOME/logs"
-            nohup "${'$'}APP_HOME/bin/${project.name}" 1>/dev/null 2>"${'$'}APP_HOME/logs/error.log" &
-            ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'
-            """
-                    )
-
-                    //shutdown.sh
-                    writeServiceFile(
-                        project, "shutdown.sh", """
-            #!/usr/bin/env sh
-            
-            # Attempt to set APP_HOME
-            # Resolve links: ${'$'}0 may be a link
-            PRG="${'$'}0"
-            # Need this for relative symlinks.
-            while [ -h "${'$'}PRG" ] ; do
-                ls=`ls -ld "${'$'}PRG"`
-                link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
-                if expr "${'$'}link" : '/.*' > /dev/null; then
-                    PRG="${'$'}link"
-                else
-                    PRG=`dirname "${'$'}PRG"`"/${'$'}link"
-                fi
-            done
-            SAVED="`pwd`"
-            cd "`dirname \"${'$'}PRG\"`/" >/dev/null
-            APP_HOME="`pwd -P`"
-            
-            pid="`ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'`"
-            if [ -n "${'$'}pid" ]
-            then
-                echo "${'$'}pid" |while read id
-                do
-                kill -9 ${'$'}id
-                echo "${'$'}id"
-                done
-            fi
-            """
-                    )
-                    //${project.name}-install
-                    writeServiceFile(
-                        project, "${project.name}-install", """
-            #!/usr/bin/env sh
-            
-            # Attempt to set APP_HOME
-            # Resolve links: ${'$'}0 may be a link
-            PRG="${'$'}0"
-            # Need this for relative symlinks.
-            while [ -h "${'$'}PRG" ] ; do
-                ls=`ls -ld "${'$'}PRG"`
-                link=`expr "${'$'}ls" : '.*-> \(.*\)${'$'}'`
-                if expr "${'$'}link" : '/.*' > /dev/null; then
-                    PRG="${'$'}link"
-                else
-                    PRG=`dirname "${'$'}PRG"`"/${'$'}link"
-                fi
-            done
-            SAVED="`pwd`"
-            cd "`dirname \"${'$'}PRG\"`/" >/dev/null
-            APP_HOME="`pwd -P`"
-            
-            if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
-              (
-                cat <<EOF
-            #!/usr/bin/env sh
-            #chkconfig: 2345 80 90
-            #description:auto_run
-            
-            case "\${'$'}1" in
-              start)
-                    # Start daemon.
-                    echo "Starting ${project.name}";
-                    ${'$'}APP_HOME/startup.sh
-                    ;;
-              stop)
-                    # Stop daemons.
-                    echo "Shutting down ${project.name}";
-                    ${'$'}APP_HOME/shutdown.sh
-                    ;;
-              restart)
-                    \${'$'}0 stop
-                    sleep 2
-                    \${'$'}0 start
-                    ;;
-              *)
-                    echo \${'$'}"Usage: \${'$'}0 {start|stop|restart}"
-                    exit 1
-                    ;;
-            esac
-            
-            exit 0
-            EOF
-              ) | sudo tee /etc/init.d/${project.name}
-              sudo chmod +x /etc/init.d/${project.name}
-              sudo chkconfig ${project.name} on
-              ${
-                            if (dist.autoStart) """
-              sudo service ${project.name} start
-              """.trimIndent() else ""
-                        }
-            else
-              (
-                cat <<EOF
-            [Unit]
-            Description=${project.name}
-            After=network.target
-            
-            [Service]
-            ${if (dist.runUser.isNotBlank()) "User=${dist.runUser}" else "User=`whoami`"}
-            Type=forking
-            ExecStart=${'$'}APP_HOME/startup.sh
-            ExecReload=/bin/kill -HUP \${'$'}MAINPID
-            KillMode=/bin/kill -s QUIT \${'$'}MAINPID
-            
-            [Install]
-            WantedBy=multi-user.target
-            EOF
-              ) | sudo tee /etc/systemd/system/${project.name}.service
-              sudo systemctl daemon-reload
-              sudo systemctl enable ${project.name}.service
-              ${
-                            if (dist.autoStart) """
-              sudo systemctl start ${project.name}.service
-              """.trimIndent() else ""
-                        }
-            fi
-            """
-                    )
-
-                    //${project.name}-uninstall
-                    writeServiceFile(
-                        project, "${project.name}-uninstall", """
-            #!/usr/bin/env sh
-            
-            if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
-              sudo service ${project.name} stop
-              sudo chkconfig ${project.name} off
-              sudo rm -f /etc/init.d/${project.name}
-            else
-              sudo systemctl stop ${project.name}.service
-              sudo systemctl disable ${project.name}.service
-              sudo rm -f /etc/systemd/system/${project.name}.service
-            fi
-            """
-                    )
+                task.doLast {
+                    StartScriptsExt.ext(project, dist)
                 }
             }
         }
@@ -609,7 +415,7 @@ class DistPlugin : Plugin<Project> {
         }
     }
 
-    private fun includeJdk(
+    private fun includeJre(
         copySpec: CopySpec,
         dist: DistExtension,
         project: Project
@@ -627,15 +433,20 @@ class DistPlugin : Plugin<Project> {
                 Get.VerboseProgress(System.out)
             )
         }
-        println("packaging jdk:$jdkArchive")
+        println("packaging jre:$jdkArchive")
         copySpec.from(
             if (jdkArchive.extension == "zip")
                 project.zipTree(jdkArchive)
             else
                 project.tarTree(jdkArchive)
         ) { spec ->
+            spec.include("*/jre/**")
             spec.eachFile {
-                it.path = "jdk/" + it.path.substringAfter("/")
+                val dir = it.sourcePath.substringBefore("/")
+                it.path = if (it.path.contains("/$dir/"))
+                    it.path.replaceFirst("/$dir/jre/", "/jre/")
+                else
+                    it.path.replaceFirst("$dir/jre/", "jre/")
             }
             spec.includeEmptyDirs = false
             spec.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -713,22 +524,7 @@ class DistPlugin : Plugin<Project> {
         return BigInteger(1, digest.digest()).toString(16)
     }
 
-    private fun writeServiceFile(
-        project: Project,
-        fileName: String,
-        text: String,
-        executable: Boolean = true
-    ) {
-        val serviceScript = File(project.buildDir, "service/$fileName")
-        if (!serviceScript.parentFile.exists()) {
-            serviceScript.parentFile.mkdirs()
-        }
-        serviceScript.printWriter().use {
-            it.println(text.trimIndent())
-        }
-        if (executable)
-            serviceScript.setExecutable(true, false)
-    }
+
 }
 
 

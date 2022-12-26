@@ -4,7 +4,6 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Project
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profilesActive
 import java.io.File
-import java.net.URL
 
 
 /**
@@ -22,9 +21,9 @@ open class DistExtension(
     var jvmArgs: List<String> = listOf(),
     var excludeUnWrapResources: List<String> = emptyList(),
     /**
-     * 是否打包JDK
+     * 是否打包jre
      */
-    var includeJdk: Boolean = false,
+    var includeJre: Boolean = false,
     /**
      * 相对当前项目的路径
      */
