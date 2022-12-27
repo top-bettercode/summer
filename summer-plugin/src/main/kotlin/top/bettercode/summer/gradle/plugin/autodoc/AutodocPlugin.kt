@@ -128,15 +128,17 @@ class AutodocPlugin : Plugin<Project> {
         }
         project.tasks.create("setDefaultDesc") { task ->
             task.group = group
-            task.doLast {
-                val extension = project.extensions.findByType(AutodocExtension::class.java)!!
-                val file = project.file("src/main/resources/messages.properties")
-                val source = Properties()
-                if (file.exists()) {
-                    source.load(file.inputStream())
+            task.doLast(object : Action<Task> {
+                override fun execute(it: Task) {
+                    val extension = project.extensions.findByType(AutodocExtension::class.java)!!
+                    val file = project.file("src/main/resources/messages.properties")
+                    val source = Properties()
+                    if (file.exists()) {
+                        source.load(file.inputStream())
+                    }
+                    AsciidocGenerator.setDefaultDesc(extension, source)
                 }
-                AsciidocGenerator.setDefaultDesc(extension, source)
-            }
+            })
         }
         project.tasks.getByName("jar") {
             it.dependsOn("htmldoc", "postman")

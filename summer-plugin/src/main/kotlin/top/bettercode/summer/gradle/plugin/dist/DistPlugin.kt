@@ -2,6 +2,7 @@ package top.bettercode.summer.gradle.plugin.dist
 
 import com.github.alexeylisyutenko.windowsserviceplugin.*
 import org.apache.tools.ant.taskdefs.Get
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -152,32 +153,34 @@ class DistPlugin : Plugin<Project> {
                     task.inputs.file(project.rootProject.file("gradle.properties"))
                     task.automaticClasspath =
                         project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
-                    task.doLast {
-                        val outputDirectory = task.outputDirectory
+                    task.doLast(object : Action<Task> {
+                        override fun execute(it: Task) {
+                            val outputDirectory = task.outputDirectory
 
-                        if (dist.unwrapResources)
-                            project.copy { spec ->
-                                spec.from(File(project.buildDir, "conf").absolutePath)
-                                spec.into(File(outputDirectory, "conf").absolutePath)
+                            if (dist.unwrapResources)
+                                project.copy { spec ->
+                                    spec.from(File(project.buildDir, "conf").absolutePath)
+                                    spec.into(File(outputDirectory, "conf").absolutePath)
+                                }
+
+
+                            if (includeJre) {
+                                project.copy { copySpec ->
+                                    includeJre(copySpec, dist, project)
+                                }
                             }
-
-
-                        if (includeJre) {
-                            project.copy { copySpec ->
-                                includeJre(copySpec, dist, project)
+                            val installScript = File(outputDirectory, "${project.name}-install.bat")
+                            var installScriptText = installScript.readText()
+                                .replace("%APP_HOME%lib\\conf;", "%APP_HOME%conf;")
+                            if (dist.autoStart) {
+                                installScriptText = installScriptText.replace(
+                                    "if \"%OS%\"==\"Windows_NT\" endlocal",
+                                    "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
+                                )
                             }
+                            installScript.writeText(installScriptText)
                         }
-                        val installScript = File(outputDirectory, "${project.name}-install.bat")
-                        var installScriptText = installScript.readText()
-                            .replace("%APP_HOME%lib\\conf;", "%APP_HOME%conf;")
-                        if (dist.autoStart) {
-                            installScriptText = installScriptText.replace(
-                                "if \"%OS%\"==\"Windows_NT\" endlocal",
-                                "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
-                            )
-                        }
-                        installScript.writeText(installScriptText)
-                    }
+                    })
                 }
                 create("windowsServiceZip", Zip::class.java) {
                     it.dependsOn(createWindowsServiceTaskName)
@@ -198,17 +201,19 @@ class DistPlugin : Plugin<Project> {
                         val createTask =
                             project.tasks.getByName(createWindowsServiceTaskName) as WindowsServicePluginTask
                         it.group = createTask.group
-                        it.doLast {
-                            val updateDir =
-                                File(createTask.outputDirectory.parentFile, "update")
-                            compareUpdate(
-                                project,
-                                updateDir,
-                                project.file(dist.prevArchiveSrc),
-                                createTask.outputDirectory,
-                                true
-                            )
-                        }
+                        it.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                val updateDir =
+                                    File(createTask.outputDirectory.parentFile, "update")
+                                compareUpdate(
+                                    project,
+                                    updateDir,
+                                    project.file(dist.prevArchiveSrc),
+                                    createTask.outputDirectory,
+                                    true
+                                )
+                            }
+                        })
                     }
 
                     create("windowsServiceUpdateZip", Zip::class.java) {
@@ -294,24 +299,26 @@ class DistPlugin : Plugin<Project> {
                                     false
                                 }
                             }
-                            task.doLast {
-                                if (resources.isNotEmpty()) {
-                                    p.copy { spec ->
-                                        resources.forEach { (filePath, to) ->
-                                            spec.from(filePath) {
-                                                if (to.isNotBlank())
-                                                    it.into(to)
+                            task.doLast(object : Action<Task> {
+                                override fun execute(it: Task) {
+                                    if (resources.isNotEmpty()) {
+                                        p.copy { spec ->
+                                            resources.forEach { (filePath, to) ->
+                                                spec.from(filePath) {
+                                                    if (to.isNotBlank())
+                                                        it.into(to)
+                                                }
                                             }
+                                            spec.into(
+                                                File(
+                                                    distributionTask.project.buildDir,
+                                                    "conf"
+                                                ).absolutePath
+                                            )
                                         }
-                                        spec.into(
-                                            File(
-                                                distributionTask.project.buildDir,
-                                                "conf"
-                                            ).absolutePath
-                                        )
                                     }
                                 }
-                            }
+                            })
                         }
                     }
                     task.manifest {
@@ -355,17 +362,19 @@ class DistPlugin : Plugin<Project> {
                         it.dependsOn(TASK_INSTALL_NAME)
                         val createTask = project.tasks.getByName(TASK_INSTALL_NAME)
                         it.group = createTask.group
-                        it.doLast {
-                            val dest = project.file("" + project.buildDir + "/install")
-                            val updateDir = File(dest, "update")
-                            compareUpdate(
-                                project,
-                                updateDir,
-                                project.file(dist.prevArchiveSrc),
-                                File(dest, distribution.distributionBaseName.get()),
-                                false
-                            )
-                        }
+                        it.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                val dest = project.file("" + project.buildDir + "/install")
+                                val updateDir = File(dest, "update")
+                                compareUpdate(
+                                    project,
+                                    updateDir,
+                                    project.file(dist.prevArchiveSrc),
+                                    File(dest, distribution.distributionBaseName.get()),
+                                    false
+                                )
+                            }
+                        })
                     }
 
                     project.tasks.create("installDistUpdateZip", Zip::class.java) {
@@ -400,9 +409,11 @@ class DistPlugin : Plugin<Project> {
                 if (!task.mainClass.isPresent) {
                     task.mainClass.set(project.findDistProperty("main-class-name"))
                 }
-                task.doLast {
-                    StartScriptsExt.ext(project, dist)
-                }
+                task.doLast(object : Action<Task> {
+                    override fun execute(it: Task) {
+                        StartScriptsExt.ext(project, dist)
+                    }
+                })
             }
         }
 

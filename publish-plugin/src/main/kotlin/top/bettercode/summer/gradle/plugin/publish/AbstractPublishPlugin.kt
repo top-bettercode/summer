@@ -2,9 +2,7 @@ package top.bettercode.summer.gradle.plugin.publish
 
 import groovy.util.Node
 import groovy.util.NodeList
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.XmlProvider
+import org.gradle.api.*
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
@@ -237,21 +235,24 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
             }
         }
         project.tasks.named("publishToMavenLocal") {
-            it.doLast {
-                println("${project.name}:${project.version} published to: MavenLocal")
-            }
+            it.doLast(object : Action<Task> {
+                override fun execute(it: Task) {
+                    println("${project.name}:${project.version} published to: MavenLocal")
+                }
+            })
         }
         project.tasks.named("publish") {
-            it.doLast {
-                project.extensions.getByType(PublishingExtension::class.java).repositories.forEach { repository ->
-                    if (repository is MavenArtifactRepository) {
-                        println("${project.name}:${project.version} published to: ${repository.url}")
-                    } else {
-                        println("${project.name}:${project.version} published to: ${repository.name}")
+            it.doLast(object : Action<Task> {
+                override fun execute(it: Task) {
+                    project.extensions.getByType(PublishingExtension::class.java).repositories.forEach { repository ->
+                        if (repository is MavenArtifactRepository) {
+                            println("${project.name}:${project.version} published to: ${repository.url}")
+                        } else {
+                            println("${project.name}:${project.version} published to: ${repository.name}")
+                        }
                     }
                 }
-
-            }
+            })
         }
 
 //        if (!project.rootProject.plugins.hasPlugin("io.codearte.nexus-staging")) {
