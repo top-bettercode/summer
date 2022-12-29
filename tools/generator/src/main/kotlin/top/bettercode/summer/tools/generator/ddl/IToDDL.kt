@@ -39,5 +39,5 @@ interface IToDDL {
         extension: GeneratorExtension
     )
 
-    fun appendTable(table: Table, pw: Writer)
+    fun appendTable(prefixTableName: String, table: Table, pw: Writer)
 }

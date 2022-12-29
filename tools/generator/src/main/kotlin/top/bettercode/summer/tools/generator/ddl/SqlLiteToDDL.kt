@@ -19,8 +19,12 @@ object SqlLiteToDDL : ToDDL() {
 
     }
 
-    override fun dropFkStatement(tableName: String, columnName: String): String =
-        "ALTER TABLE $quote$tableName$quote DROP FOREIGN KEY ${
+    override fun dropFkStatement(
+        prefixTableName: String,
+        tableName: String,
+        columnName: String
+    ): String =
+        "ALTER TABLE $prefixTableName$quote$tableName$quote DROP FOREIGN KEY ${
             foreignKeyName(
                 tableName,
                 columnName
@@ -37,14 +41,14 @@ object SqlLiteToDDL : ToDDL() {
         return "$quote${it.columnName}$quote ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.isPrimary) " PRIMARY KEY" else ""}${if (it.autoIncrement) " AUTOINCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}"
     }
 
-    override fun appendTable(table: Table, pw: Writer) {
+    override fun appendTable(prefixTableName: String, table: Table, pw: Writer) {
         val tableName = table.tableName
         pw.appendLine("$commentPrefix $tableName")
         if (table.ext.dropTablesWhenUpdate)
-            pw.appendLine("DROP TABLE IF EXISTS $quote$tableName$quote;")
+            pw.appendLine("DROP TABLE IF EXISTS $prefixTableName$quote$tableName$quote;")
 
         pw.appendLine(
-            "CREATE TABLE $quote$tableName$quote ( -- '${
+            "CREATE TABLE $prefixTableName$quote$tableName$quote ( -- '${
                 table.remarks.replace(
                     "\\",
                     "\\\\"
@@ -71,7 +75,7 @@ object SqlLiteToDDL : ToDDL() {
 
         pw.appendLine(")${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""};")
 
-        appendIndexes(table, pw, quote)
+        appendIndexes(prefixTableName, table, pw, quote)
 
         pw.appendLine()
     }

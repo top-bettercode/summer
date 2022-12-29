@@ -16,26 +16,32 @@ object MysqlToDDL : ToDDL() {
         extension: GeneratorExtension
     ) {
         if (tables != oldTables) {
+            val prefixTableName =
+                if (extension.settings["include-schema"] == "true") {
+                    "${extension.datasource(module).schema}."
+                } else {
+                    ""
+                }
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
             if (extension.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).filter { "api_token" != it }.forEach {
                     out.appendLine("$commentPrefix DROP $it")
-                    out.appendLine("DROP TABLE IF EXISTS $quote$it$quote;")
+                    out.appendLine("DROP TABLE IF EXISTS $prefixTableName$quote$it$quote;")
                     out.appendLine()
                 }
             val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
                 val tableName = table.tableName
                 if (newTableNames.contains(tableName)) {
-                    appendTable(table, out)
+                    appendTable(prefixTableName, table, out)
                 } else {
                     val oldTable = oldTables.find { it.tableName == tableName }!!
                     if (oldTable != table) {
                         val lines = mutableListOf<String>()
                         if (oldTable.remarks != table.remarks)
                             lines.add(
-                                "ALTER TABLE $quote$tableName$quote COMMENT '${
+                                "ALTER TABLE $prefixTableName$quote$tableName$quote COMMENT '${
                                     table.remarks.replace(
                                         "\\",
                                         "\\\\"
@@ -53,7 +59,7 @@ object MysqlToDDL : ToDDL() {
                             val primaryKey = primaryKeys[0]
                             if (oldPrimaryKey != primaryKey) {
                                 lines.add(
-                                    "ALTER TABLE $quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
+                                    "ALTER TABLE $prefixTableName$quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
                                         columnDef(
                                             primaryKey,
                                             quote
@@ -70,39 +76,39 @@ object MysqlToDDL : ToDDL() {
                         val dropColumnNames = oldColumnNames - columnNames.toSet()
                         if (extension.dropColumnsWhenUpdate)
                             dropColumnNames.forEach {
-                                lines.add("ALTER TABLE $quote$tableName$quote DROP COLUMN $quote$it$quote;")
+                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote DROP COLUMN $quote$it$quote;")
                             }
-                        dropFk(oldColumns, dropColumnNames, lines, tableName)
+                        dropFk(prefixTableName, oldColumns, dropColumnNames, lines, tableName)
                         val newColumnNames = columnNames - oldColumnNames.toSet()
                         columns.forEach { column ->
                             val columnName = column.columnName
                             if (newColumnNames.contains(columnName)) {
                                 lines.add(
-                                    "ALTER TABLE $quote$tableName$quote ADD COLUMN ${
+                                    "ALTER TABLE $prefixTableName$quote$tableName$quote ADD COLUMN ${
                                         columnDef(
                                             column,
                                             quote
                                         )
                                     } COMMENT '${column.remarks.replace("\\", "\\\\")}';"
                                 )
-                                addFk(column, lines, tableName, columnName)
+                                addFk(prefixTableName, column, lines, tableName, columnName)
                             } else {
                                 val oldColumn = oldColumns.find { it.columnName == columnName }!!
                                 if (column != oldColumn) {
                                     lines.add(
-                                        "ALTER TABLE $quote$tableName$quote MODIFY ${
+                                        "ALTER TABLE $prefixTableName$quote$tableName$quote MODIFY ${
                                             columnDef(
                                                 column,
                                                 quote
                                             )
                                         } COMMENT '${column.remarks.replace("\\", "\\\\")}';"
                                     )
-                                    updateFk(column, oldColumn, lines, tableName)
+                                    updateFk(prefixTableName, column, oldColumn, lines, tableName)
                                 }
                             }
                         }
                         if (extension.datasources[module]?.queryIndex == true)
-                            updateIndexes(oldTable, table, lines, dropColumnNames)
+                            updateIndexes(prefixTableName, oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
                             out.appendLine("$commentPrefix $tableName")
                             lines.forEach { out.appendLine(it) }
@@ -115,20 +121,24 @@ object MysqlToDDL : ToDDL() {
         }
     }
 
-    override fun dropFkStatement(tableName: String, columnName: String): String =
-        "ALTER TABLE $quote$tableName$quote DROP FOREIGN KEY ${
+    override fun dropFkStatement(
+        prefixTableName: String,
+        tableName: String,
+        columnName: String
+    ): String =
+        "ALTER TABLE $prefixTableName$quote$tableName$quote DROP FOREIGN KEY ${
             foreignKeyName(
                 tableName,
                 columnName
             )
         };"
 
-    override fun appendTable(table: Table, pw: Writer) {
+    override fun appendTable(prefixTableName: String, table: Table, pw: Writer) {
         val tableName = table.tableName
         pw.appendLine("$commentPrefix $tableName")
         if (table.ext.dropTablesWhenUpdate)
-            pw.appendLine("DROP TABLE IF EXISTS $quote$tableName$quote;")
-        pw.appendLine("CREATE TABLE $quote$tableName$quote (")
+            pw.appendLine("DROP TABLE IF EXISTS $prefixTableName$quote$tableName$quote;")
+        pw.appendLine("CREATE TABLE $prefixTableName$quote$tableName$quote (")
         val hasPrimary = table.primaryKeyNames.isNotEmpty()
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
@@ -157,7 +167,7 @@ object MysqlToDDL : ToDDL() {
             }';"
         )
 
-        appendIndexes(table, pw, quote)
+        appendIndexes(prefixTableName, table, pw, quote)
 
         pw.appendLine()
     }

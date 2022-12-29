@@ -67,6 +67,10 @@ class JDBCConnectionConfiguration(
             return if (field.isNullOrBlank()) {
                 when {
                     isOracle -> username.uppercase(Locale.getDefault())
+                    databaseDriver == DatabaseDriver.MYSQL -> url.replace(
+                        Regex("jdbc:mysql://[^/]*/(.*)?\\?.*"),
+                        "$1"
+                    )
                     databaseDriver == DatabaseDriver.H2 -> "PUBLIC"
                     else -> field
                 }

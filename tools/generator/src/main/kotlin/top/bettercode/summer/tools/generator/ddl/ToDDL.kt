@@ -67,12 +67,12 @@ abstract class ToDDL : IToDDL {
         }$quote"
 
 
-    protected fun appendIndexes(table: Table, pw: Writer, quote: String) {
+    protected fun appendIndexes(prefixTableName: String, table: Table, pw: Writer, quote: String) {
         val tableName = table.tableName
         table.indexes.forEach { t ->
             if (t.unique) {
                 pw.appendLine(
-                    "CREATE UNIQUE INDEX ${t.name} ON $quote$tableName$quote (${
+                    "CREATE UNIQUE INDEX ${t.name} ON $prefixTableName$quote$tableName$quote (${
                         t.columnName.joinToString(
                             ","
                         ) { "$quote$it$quote" }
@@ -80,7 +80,7 @@ abstract class ToDDL : IToDDL {
                 )
             } else {
                 pw.appendLine(
-                    "CREATE INDEX ${t.name} ON $quote$tableName$quote (${
+                    "CREATE INDEX ${t.name} ON $prefixTableName$quote$tableName$quote (${
                         t.columnName.joinToString(
                             ","
                         ) { "$quote$it$quote" }
@@ -91,6 +91,7 @@ abstract class ToDDL : IToDDL {
     }
 
     protected open fun updateIndexes(
+        prefixTableName: String,
         oldTable: Table,
         table: Table,
         lines: MutableList<String>,
@@ -101,7 +102,7 @@ abstract class ToDDL : IToDDL {
         if (delIndexes.isNotEmpty()) {
             delIndexes.forEach {
                 if (!dropColumnNames.containsAll(it.columnName))
-                    lines.add("DROP INDEX $quote${it.name}$quote ON $quote$tableName$quote;")
+                    lines.add("DROP INDEX $quote${it.name}$quote ON $prefixTableName$quote$tableName$quote;")
             }
         }
         val newIndexes = table.indexes - oldTable.indexes.toSet()
@@ -109,7 +110,7 @@ abstract class ToDDL : IToDDL {
             newIndexes.forEach { indexed ->
                 if (indexed.unique) {
                     lines.add(
-                        "CREATE UNIQUE INDEX $quote${indexed.name}$quote ON $quote$tableName$quote (${
+                        "CREATE UNIQUE INDEX $quote${indexed.name}$quote ON $prefixTableName$quote$tableName$quote (${
                             indexed.columnName.joinToString(
                                 ","
                             ) { "$quote$it$quote" }
@@ -117,7 +118,7 @@ abstract class ToDDL : IToDDL {
                     )
                 } else {
                     lines.add(
-                        "CREATE INDEX $quote${indexed.name}$quote ON $quote$tableName$quote (${
+                        "CREATE INDEX $quote${indexed.name}$quote ON $prefixTableName$quote$tableName$quote (${
                             indexed.columnName.joinToString(
                                 ","
                             ) { "$quote$it$quote" }
@@ -129,6 +130,7 @@ abstract class ToDDL : IToDDL {
     }
 
     protected fun updateFk(
+        prefixTableName: String,
         column: Column,
         oldColumn: Column,
         lines: MutableList<String>,
@@ -136,11 +138,11 @@ abstract class ToDDL : IToDDL {
     ) {
         if (useForeignKey && (column.isForeignKey != oldColumn.isForeignKey || column.pktableName != oldColumn.pktableName || column.pkcolumnName != oldColumn.pkcolumnName)) {
             if (oldColumn.isForeignKey) {
-                lines.add(dropFkStatement(tableName, oldColumn.columnName))
+                lines.add(dropFkStatement(prefixTableName, tableName, oldColumn.columnName))
             }
             if (column.isForeignKey) {
                 lines.add(
-                    "ALTER TABLE $quote$tableName$quote ADD CONSTRAINT ${
+                    "ALTER TABLE $prefixTableName$quote$tableName$quote ADD CONSTRAINT ${
                         foreignKeyName(
                             tableName,
                             column.columnName
@@ -152,6 +154,7 @@ abstract class ToDDL : IToDDL {
     }
 
     protected fun addFk(
+        prefixTableName: String,
         column: Column,
         lines: MutableList<String>,
         tableName: String,
@@ -159,7 +162,7 @@ abstract class ToDDL : IToDDL {
     ) {
         if (useForeignKey && column.isForeignKey)
             lines.add(
-                "ALTER TABLE $quote$tableName$quote ADD CONSTRAINT ${
+                "ALTER TABLE $prefixTableName$quote$tableName$quote ADD CONSTRAINT ${
                     foreignKeyName(
                         tableName,
                         column.columnName
@@ -169,6 +172,7 @@ abstract class ToDDL : IToDDL {
     }
 
     protected fun dropFk(
+        prefixTableName: String,
         oldColumns: MutableList<Column>,
         dropColumnNames: List<String>,
         lines: MutableList<String>,
@@ -177,12 +181,16 @@ abstract class ToDDL : IToDDL {
         if (useForeignKey)
             oldColumns.filter { it.isForeignKey && dropColumnNames.contains(it.columnName) }
                 .forEach { column ->
-                    lines.add(dropFkStatement(tableName, column.columnName))
+                    lines.add(dropFkStatement(prefixTableName, tableName, column.columnName))
                 }
     }
 
-    protected open fun dropFkStatement(tableName: String, columnName: String) =
-        "ALTER TABLE $quote$tableName$quote DROP CONSTRAINT ${
+    protected open fun dropFkStatement(
+        prefixTableName: String,
+        tableName: String,
+        columnName: String
+    ) =
+        "ALTER TABLE $prefixTableName$quote$tableName$quote DROP CONSTRAINT ${
             foreignKeyName(
                 tableName,
                 columnName
@@ -194,7 +202,7 @@ abstract class ToDDL : IToDDL {
             out.use { pw ->
                 pw.appendLine("$commentPrefix ${tables[0].subModule}")
                 tables.forEach { table ->
-                    appendTable(table, pw)
+                    appendTable("", table, pw)
                 }
             }
         }
