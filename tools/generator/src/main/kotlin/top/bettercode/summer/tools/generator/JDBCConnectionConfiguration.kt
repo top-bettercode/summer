@@ -68,7 +68,7 @@ class JDBCConnectionConfiguration(
                 when {
                     isOracle -> username.uppercase(Locale.getDefault())
                     databaseDriver == DatabaseDriver.MYSQL -> url.replace(
-                        Regex("jdbc:mysql://[^/]*/(.*)?\\?.*"),
+                        Regex("jdbc:mysql://[^/]*/(.*)?\\??.*"),
                         "$1"
                     )
                     databaseDriver == DatabaseDriver.H2 -> "PUBLIC"
