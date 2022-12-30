@@ -119,8 +119,9 @@ public class RequestMappingAuthorizationManager implements
       if (matchResult.isMatch()) {
         Set<String> authorities = requestMatcher.getValue();
         if (log.isDebugEnabled()) {
-          log.debug("权限检查，当前用户权限：{}，当前资源需要以下权限之一：{}",
+          log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
               StringUtils.collectionToCommaDelimitedString(userAuthorities),
+              request.getServletPath(),
               authorities);
         }
         if (authorities.contains(DefaultAuthority.ROLE_ANONYMOUS_VALUE)) {

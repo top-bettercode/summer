@@ -1,6 +1,7 @@
 package top.bettercode.summer.web.support;
 
 import java.util.Locale;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -8,6 +9,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * @author Peter Wu
@@ -65,5 +68,9 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     return applicationContext == null ? new DefaultConversionService()
         : applicationContext.getBean(ConversionService.class);
   }
-
+  public static Optional<ServletRequestAttributes> getRequestAttributes() {
+    ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+        .getRequestAttributes();
+    return Optional.ofNullable(requestAttributes);
+  }
 }
