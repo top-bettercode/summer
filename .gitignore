@@ -23,3 +23,4 @@ link.sh
 /tools/qvod/src/test/resources/test.html
 /tools/qvod/src/test/resources/upload.html
 /tools/rapidauth/src/test/resources/application.yml
+/tools/amap/src/test/resources/application.yml

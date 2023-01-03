@@ -19,7 +19,7 @@ import top.bettercode.summer.tools.weixin.support.miniprogram.entity.SubscribeMs
 class MiniprogramClient(properties: IMiniprogramProperties) :
     WeixinClient<IMiniprogramProperties>(
         properties,
-        "第三方接口",
+        "第三方平台",
         "微信公众号",
         LOG_MARKER
     ), IMiniprogramClient {

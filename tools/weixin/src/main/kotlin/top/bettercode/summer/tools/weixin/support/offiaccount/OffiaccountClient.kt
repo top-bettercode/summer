@@ -22,7 +22,7 @@ import java.util.*
 class OffiaccountClient(properties: IOffiaccountProperties) :
     WeixinClient<IOffiaccountProperties>(
         properties,
-        "第三方接口",
+        "第三方平台",
         "微信公众号",
         LOG_MARKER
     ), IOffiaccountClient {

@@ -18,7 +18,7 @@ import java.net.URLEncoder
 class CorpClient(properties: ICorpProperties) :
     WeixinClient<ICorpProperties>(
         properties,
-        "第三方接口",
+        "第三方平台",
         "微信企业号",
         LOG_MARKER
     ), ICorpClient {

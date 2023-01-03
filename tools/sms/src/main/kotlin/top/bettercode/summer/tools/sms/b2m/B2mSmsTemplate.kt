@@ -27,7 +27,7 @@ import java.util.*
 class B2mSmsTemplate(
     private val b2mProperties: B2mSmsProperties
 ) : SmsTemplate(
-    "第三方接口",
+    "第三方平台",
     "亿美软通短信平台",
     LOG_MARKER_STR,
     b2mProperties.connectTimeout,
