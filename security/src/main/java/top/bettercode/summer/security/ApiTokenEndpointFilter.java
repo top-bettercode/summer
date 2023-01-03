@@ -204,10 +204,10 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       String accessToken = bearerTokenResolver.resolve(request);
       if (StringUtils.hasText(accessToken)) {
         ApiToken apiToken = apiTokenRepository.findByAccessToken(accessToken);
-        if (apiToken != null && ArrayUtil.contains(securityProperties.getSupportScopes(),
-            apiToken.getScope()) && !apiToken.getAccessToken().isExpired()) {
+        String scope = apiToken.getScope();
+        if (apiToken != null && !apiToken.getAccessToken().isExpired() && ArrayUtil.contains(
+            securityProperties.getSupportScopes(), scope)) {
           try {
-            String scope = apiToken.getScope();
             UserDetails userDetails = apiToken.getUserDetails();
             apiTokenService.validate(userDetails);
 
@@ -221,8 +221,8 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             Authentication authenticationResult = new UserDetailsAuthenticationToken(userDetails);
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authenticationResult);
-            request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME,
-                scope + ":" + userDetails.getUsername());
+            String username = userDetails.getUsername();
+            request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME, scope + ":" + username);
             SecurityContextHolder.setContext(context);
             if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
               if (revokeTokenService != null) {
@@ -250,6 +250,9 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             throw failed;
           }
         } else {
+          if (!ArrayUtil.contains(securityProperties.getSupportScopes(), scope)) {
+            logger.warn("不支持token所属scope:" + scope);
+          }
           if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
             throw new UnauthorizedException("错误或过期的token:" + accessToken);
           }
