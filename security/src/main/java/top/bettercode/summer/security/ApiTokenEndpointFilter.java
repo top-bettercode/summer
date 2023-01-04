@@ -204,10 +204,10 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
       String accessToken = bearerTokenResolver.resolve(request);
       if (StringUtils.hasText(accessToken)) {
         ApiToken apiToken = apiTokenRepository.findByAccessToken(accessToken);
-        String scope = apiToken.getScope();
         if (apiToken != null && !apiToken.getAccessToken().isExpired() && ArrayUtil.contains(
-            securityProperties.getSupportScopes(), scope)) {
+            securityProperties.getSupportScopes(), apiToken.getScope())) {
           try {
+            String scope = apiToken.getScope();
             UserDetails userDetails = apiToken.getUserDetails();
             apiTokenService.validate(userDetails);
 
@@ -250,8 +250,11 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             throw failed;
           }
         } else {
-          if (!ArrayUtil.contains(securityProperties.getSupportScopes(), scope)) {
-            logger.warn("不支持token所属scope:" + scope);
+          if (apiToken != null) {
+            String scope = apiToken.getScope();
+            if (!ArrayUtil.contains(securityProperties.getSupportScopes(), scope)) {
+              logger.warn("不支持token所属scope:" + scope);
+            }
           }
           if (this.revokeTokenEndpointMatcher.matches(request)) {//撤消token
             throw new UnauthorizedException("错误或过期的token:" + accessToken);
