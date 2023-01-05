@@ -2,24 +2,21 @@ package top.bettercode.summer.tools.qvod
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.tencentcloudapi.common.Credential
 import com.tencentcloudapi.common.exception.TencentCloudSDKException
 import com.tencentcloudapi.common.profile.ClientProfile
 import com.tencentcloudapi.common.profile.HttpProfile
 import com.tencentcloudapi.vod.v20180717.VodClient
 import com.tencentcloudapi.vod.v20180717.models.*
-import org.springframework.http.MediaType
-import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.lang.Nullable
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.slf4j.MarkerFactory
 import org.springframework.util.Base64Utils
 import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.qvod.QvodClient.Companion.LOG_MARKER
-import top.bettercode.summer.web.support.client.ApiTemplate
 import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -33,9 +30,8 @@ import javax.crypto.spec.SecretKeySpec
 @LogMarker(LOG_MARKER)
 open class QvodClient(
     val properties: QvodProperties
-) : ApiTemplate(
-    "第三方平台", "腾讯云点播", "qvod", properties.connectTimeout, properties.readTimeout
 ) {
+    private val log: Logger = LoggerFactory.getLogger(QvodClient::class.java)
 
     companion object {
         const val LOG_MARKER = "qvod"
@@ -44,22 +40,6 @@ open class QvodClient(
     val vodClient: VodClient
 
     init {
-        val messageConverter: MappingJackson2HttpMessageConverter =
-            object : MappingJackson2HttpMessageConverter() {
-                override fun canRead(@Nullable mediaType: MediaType?): Boolean {
-                    return true
-                }
-
-                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
-                    return true
-                }
-            }
-        val objectMapper = messageConverter.objectMapper
-        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-        val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
-        messageConverters.add(messageConverter)
-        super.setMessageConverters(messageConverters)
-
         val cred = Credential(properties.secretId, properties.secretKey)
         val httpProfile = HttpProfile()
         httpProfile.endpoint = "vod.tencentcloudapi.com"
@@ -80,7 +60,7 @@ open class QvodClient(
                 RandomUtil.nextInt(9)
             }&classId=${properties.classId}&procedure=${properties.procedure ?: ""}&vodSubAppId=${properties.appId}"
         if (log.isDebugEnabled) {
-            log.debug("original signature:{}", original)
+            log.debug(MarkerFactory.getMarker(LOG_MARKER), "original signature:{}", original)
         }
         val mac: Mac = Mac.getInstance("HmacSHA1")
         val secretKey = SecretKeySpec(properties.secretKey.toByteArray(), mac.algorithm)
@@ -94,7 +74,7 @@ open class QvodClient(
         ).replace(" ", "")
             .replace("\n", "")
             .replace("\r", "")
-        log.info("signature: $signature")
+        log.info(MarkerFactory.getMarker(LOG_MARKER), "signature: $signature")
         return signature
     }
 
@@ -220,6 +200,7 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
                 "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
@@ -257,6 +238,7 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
                 "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
@@ -295,6 +277,7 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
                 "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
@@ -337,6 +320,7 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
                 "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
@@ -379,6 +363,7 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
                 "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
@@ -418,6 +403,7 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
                 "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
@@ -465,6 +451,7 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
                 "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
@@ -502,6 +489,7 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
                 "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
@@ -540,6 +528,7 @@ open class QvodClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
                 "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
