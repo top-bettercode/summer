@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.qcloud.vod.VodUploadClient
 import com.qcloud.vod.model.VodUploadRequest
 import com.qcloud.vod.model.VodUploadResponse
+import org.slf4j.MarkerFactory
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -11,6 +12,7 @@ import org.springframework.lang.Nullable
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.qvod.QvodUploadClient.Companion.LOG_MARKER
+import top.bettercode.summer.web.form.IFormkeyService.log
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.io.File
 
@@ -23,8 +25,6 @@ import java.io.File
 @LogMarker(LOG_MARKER)
 open class QvodUploadClient(
     val properties: QvodProperties
-) : ApiTemplate(
-    "第三方平台", "腾讯云点播", LOG_MARKER, properties.connectTimeout, properties.readTimeout
 ) {
 
     companion object {
@@ -32,25 +32,6 @@ open class QvodUploadClient(
     }
 
     val vodUploadClient = VodUploadClient(properties.secretId, properties.secretKey)
-
-    init {
-        val messageConverter: MappingJackson2HttpMessageConverter =
-            object : MappingJackson2HttpMessageConverter() {
-                override fun canRead(@Nullable mediaType: MediaType?): Boolean {
-                    return true
-                }
-
-                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
-                    return true
-                }
-            }
-        val objectMapper = messageConverter.objectMapper
-        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-        val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
-        messageConverters.add(messageConverter)
-        super.setMessageConverters(messageConverters)
-
-    }
 
     /**
      * 简单上传
@@ -80,6 +61,7 @@ open class QvodUploadClient(
                 durationMillis = System.currentTimeMillis() - start
             }
             log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
                 "DURATION MILLIS : {}\n{}\n{}",
                 durationMillis,
                 StringUtil.json(req, true),

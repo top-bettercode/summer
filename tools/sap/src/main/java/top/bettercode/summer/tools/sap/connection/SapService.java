@@ -236,7 +236,7 @@ public class SapService {
       Object fv = beanWrapper.getPropertyValue(field.getName());
       fieldName = field.getName();
       if (fv == null && this.filterNullFiled) {
-        log.info("Not Setting SAP param: " + fieldName + " is " + fv);
+        log.info(LOG_MARKER, "Not Setting SAP param: " + fieldName + " is " + fv);
       } else if (field.isAnnotationPresent(SapStructure.class)) {
         SapStructure struAnn = field.getAnnotation(SapStructure.class);
         JCoStructure struJco = input.getStructure(struAnn.value());
