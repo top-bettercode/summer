@@ -87,6 +87,7 @@ dependencies {
         api(project(":publish-plugin"))
 
         api(project(":tools:generator"))
+        api(project(":tools:amap"))
         api(project(":tools:tools"))
         api(project(":tools:excel"))
         api(project(":tools:ueditor"))

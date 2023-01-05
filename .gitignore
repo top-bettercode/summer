@@ -10,6 +10,9 @@ build
 *.ipr
 out
 classes
+.gradletasknamecache
+
+
 link.sh
 
 /web/src/test/resources/application-test.yml
