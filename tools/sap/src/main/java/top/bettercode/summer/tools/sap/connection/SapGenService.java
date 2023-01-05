@@ -70,7 +70,8 @@ public class SapGenService {
 
     field = new Field();
     topLevelClass.getImportedTypes().add(new JavaType("org.slf4j.LoggerFactory"));
-    field.setInitializationString("LoggerFactory.getLogger(SapStockService.class)");
+    field.setInitializationString(
+        "LoggerFactory.getLogger(" + classType.getShortName() + ".class)");
     field.setType(new JavaType("org.slf4j.Logger"));
     field.setName("log");
     field.setFinal(true);
