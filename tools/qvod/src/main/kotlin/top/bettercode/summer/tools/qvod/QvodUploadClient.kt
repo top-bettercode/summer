@@ -62,7 +62,7 @@ open class QvodUploadClient(
             }
             log.info(
                 MarkerFactory.getMarker(LOG_MARKER),
-                "DURATION MILLIS : {}\n{}\n{}",
+                "DURATION MILLIS : {}\n{}\n\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
                 if (resp == null) StringUtil.valueOf(
