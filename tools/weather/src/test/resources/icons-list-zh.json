@@ -1,0 +1,1054 @@
+[
+  {
+    "icon_code": "100",
+    "icon_name": "晴"
+  },
+  {
+    "icon_code": "100-fill",
+    "icon_name": "晴填充"
+  },
+  {
+    "icon_code": "101",
+    "icon_name": "多云"
+  },
+  {
+    "icon_code": "101-fill",
+    "icon_name": "多云填充"
+  },
+  {
+    "icon_code": "102",
+    "icon_name": "少云"
+  },
+  {
+    "icon_code": "102-fill",
+    "icon_name": "很少有云填充"
+  },
+  {
+    "icon_code": "103",
+    "icon_name": "部分多云"
+  },
+  {
+    "icon_code": "103-fill",
+    "icon_name": "部分多云填充"
+  },
+  {
+    "icon_code": "104",
+    "icon_name": "阴"
+  },
+  {
+    "icon_code": "104-fill",
+    "icon_name": "阴填充"
+  },
+  {
+    "icon_code": "150",
+    "icon_name": "晴夜"
+  },
+  {
+    "icon_code": "150-fill",
+    "icon_name": "晴夜填充"
+  },
+  {
+    "icon_code": "151",
+    "icon_name": "多云夜"
+  },
+  {
+    "icon_code": "151-fill",
+    "icon_name": "多云夜填充"
+  },
+  {
+    "icon_code": "152",
+    "icon_name": "少云夜"
+  },
+  {
+    "icon_code": "152-fill",
+    "icon_name": "少云夜填"
+  },
+  {
+    "icon_code": "153",
+    "icon_name": "部分多云夜"
+  },
+  {
+    "icon_code": "153-fill",
+    "icon_name": "多云夜"
+  },
+  {
+    "icon_code": "153",
+    "icon_name": "阴夜"
+  },
+  {
+    "icon_code": "300",
+    "icon_name": "阵雨"
+  },
+  {
+    "icon_code": "300-fill",
+    "icon_name": "阵雨填充"
+  },
+  {
+    "icon_code": "301",
+    "icon_name": "大雨"
+  },
+  {
+    "icon_code": "301-fill",
+    "icon_name": "大雨"
+  },
+  {
+    "icon_code": "302",
+    "icon_name": "雷阵雨"
+  },
+  {
+    "icon_code": "302-fill",
+    "icon_name": "雷阵雨填充"
+  },
+  {
+    "icon_code": "303",
+    "icon_name": "强雷暴"
+  },
+  {
+    "icon_code": "303-fill",
+    "icon_name": "强雷暴天气"
+  },
+  {
+    "icon_code": "304",
+    "icon_name": "雷阵雨有冰雹"
+  },
+  {
+    "icon_code": "304-fill",
+    "icon_name": "雷阵雨有冰雹-fill"
+  },
+  {
+    "icon_code": "305",
+    "icon_name": "小雨"
+  },
+  {
+    "icon_code": "305-fill",
+    "icon_name": "小雨填充"
+  },
+  {
+    "icon_code": "306",
+    "icon_name": "中雨"
+  },
+  {
+    "icon_code": "306-fill",
+    "icon_name": "中雨填充"
+  },
+  {
+    "icon_code": "307",
+    "icon_name": "大雨"
+  },
+  {
+    "icon_code": "307-fill",
+    "icon_name": "大雨填充"
+  },
+  {
+    "icon_code": "308",
+    "icon_name": "极端降雨"
+  },
+  {
+    "icon_code": "308-fill",
+    "icon_name": "极端雨水填充"
+  },
+  {
+    "icon_code": "309",
+    "icon_name": "细雨"
+  },
+  {
+    "icon_code": "309-fill",
+    "icon_name": "细雨霏霏"
+  },
+  {
+    "icon_code": "310",
+    "icon_name": "暴雨"
+  },
+  {
+    "icon_code": "310-fill",
+    "icon_name": "暴雨填充"
+  },
+  {
+    "icon_code": "311",
+    "icon_name": "大暴雨"
+  },
+  {
+    "icon_code": "311-fill",
+    "icon_name": "大暴雨填充"
+  },
+  {
+    "icon_code": "312",
+    "icon_name": "特大暴雨"
+  },
+  {
+    "icon_code": "312-fill",
+    "icon_name": "特大暴雨填充"
+  },
+  {
+    "icon_code": "313",
+    "icon_name": "冻雨"
+  },
+  {
+    "icon_code": "313-fill",
+    "icon_name": "冻雨填充"
+  },
+  {
+    "icon_code": "314",
+    "icon_name": "小到中雨"
+  },
+  {
+    "icon_code": "314-fill",
+    "icon_name": "小到中雨-fill"
+  },
+  {
+    "icon_code": "315",
+    "icon_name": "中到大雨"
+  },
+  {
+    "icon_code": "315-fill",
+    "icon_name": "中到大雨-fill"
+  },
+  {
+    "icon_code": "316",
+    "icon_name": "大到暴雨"
+  },
+  {
+    "icon_code": "316-fill",
+    "icon_name": "大到暴雨-fill"
+  },
+  {
+    "icon_code": "317",
+    "icon_name": "暴雨到大暴雨"
+  },
+  {
+    "icon_code": "317-fill",
+    "icon_name": "暴雨到大暴雨填充"
+  },
+  {
+    "icon_code": "318",
+    "icon_name": "大暴雨到特大暴雨"
+  },
+  {
+    "icon_code": "318-fill",
+    "icon_name": "大暴雨到特大暴雨填充"
+  },
+  {
+    "icon_code": "350",
+    "icon_name": "阵雨夜"
+  },
+  {
+    "icon_code": "350-fill",
+    "icon_name": "阵雨夜"
+  },
+  {
+    "icon_code": "351",
+    "icon_name": "大雨夜"
+  },
+  {
+    "icon_code": "351-fill",
+    "icon_name": "大雨夜"
+  },
+  {
+    "icon_code": "399",
+    "icon_name": "雨"
+  },
+  {
+    "icon_code": "399-fill",
+    "icon_name": "雨水填充"
+  },
+  {
+    "icon_code": "400",
+    "icon_name": "小雪"
+  },
+  {
+    "icon_code": "400-fill",
+    "icon_name": "小雪填充"
+  },
+  {
+    "icon_code": "401",
+    "icon_name": "中雪"
+  },
+  {
+    "icon_code": "401-fill",
+    "icon_name": "中雪-fill"
+  },
+  {
+    "icon_code": "402",
+    "icon_name": "大雪"
+  },
+  {
+    "icon_code": "402-fill",
+    "icon_name": "大雪填充"
+  },
+  {
+    "icon_code": "403",
+    "icon_name": "暴雪"
+  },
+  {
+    "icon_code": "403-fill",
+    "icon_name": "暴雪填充"
+  },
+  {
+    "icon_code": "404",
+    "icon_name": "雨夹雪"
+  },
+  {
+    "icon_code": "404-fill",
+    "icon_name": "雨夹雪填充"
+  },
+  {
+    "icon_code": "405",
+    "icon_name": "雨雪"
+  },
+  {
+    "icon_code": "405-fill",
+    "icon_name": "雨雪填充"
+  },
+  {
+    "icon_code": "406",
+    "icon_name": "阵雪"
+  },
+  {
+    "icon_code": "406-fill",
+    "icon_name": "阵雪-fill"
+  },
+  {
+    "icon_code": "407",
+    "icon_name": "雪花纷飞"
+  },
+  {
+    "icon_code": "407-fill",
+    "icon_name": "雪花填充"
+  },
+  {
+    "icon_code": "408",
+    "icon_name": "小雪到中雪"
+  },
+  {
+    "icon_code": "408-fill",
+    "icon_name": "小雪到中雪-fill"
+  },
+  {
+    "icon_code": "409",
+    "icon_name": "中雪到大雪"
+  },
+  {
+    "icon_code": "409-fill",
+    "icon_name": "中雪到大雪-fill"
+  },
+  {
+    "icon_code": "410",
+    "icon_name": "大雪到暴雪"
+  },
+  {
+    "icon_code": "410-fill",
+    "icon_name": "大雪到暴雪-fill"
+  },
+  {
+    "icon_code": "456",
+    "icon_name": "阵雪夜"
+  },
+  {
+    "icon_code": "456-fill",
+    "icon_name": "阵雪夜"
+  },
+  {
+    "icon_code": "457",
+    "icon_name": "雪夜"
+  },
+  {
+    "icon_code": "457-fill",
+    "icon_name": "雪夜"
+  },
+  {
+    "icon_code": "499",
+    "icon_name": "雪"
+  },
+  {
+    "icon_code": "499-fill",
+    "icon_name": "雪填充"
+  },
+  {
+    "icon_code": "500",
+    "icon_name": "雾"
+  },
+  {
+    "icon_code": "500-fill",
+    "icon_name": "雾填充"
+  },
+  {
+    "icon_code": "501",
+    "icon_name": "雾蒙蒙"
+  },
+  {
+    "icon_code": "501-fill",
+    "icon_name": "雾状填充"
+  },
+  {
+    "icon_code": "502",
+    "icon_name": "霾"
+  },
+  {
+    "icon_code": "502-fill",
+    "icon_name": "霾填充"
+  },
+  {
+    "icon_code": "503",
+    "icon_name": "扬沙"
+  },
+  {
+    "icon_code": "503-fill",
+    "icon_name": "扬沙-fill"
+  },
+  {
+    "icon_code": "504",
+    "icon_name": "浮尘"
+  },
+  {
+    "icon_code": "504-fill",
+    "icon_name": "浮尘填充"
+  },
+  {
+    "icon_code": "507",
+    "icon_name": "沙尘暴"
+  },
+  {
+    "icon_code": "507-fill",
+    "icon_name": "沙尘暴填充"
+  },
+  {
+    "icon_code": "508",
+    "icon_name": "强沙尘暴"
+  },
+  {
+    "icon_code": "508-fill",
+    "icon_name": "强沙尘暴填充"
+  },
+  {
+    "icon_code": "509",
+    "icon_name": "浓雾"
+  },
+  {
+    "icon_code": "509-fill",
+    "icon_name": "浓雾填充"
+  },
+  {
+    "icon_code": "510",
+    "icon_name": "强浓雾"
+  },
+  {
+    "icon_code": "510-fill",
+    "icon_name": "强浓雾填充"
+  },
+  {
+    "icon_code": "511",
+    "icon_name": "中度霾"
+  },
+  {
+    "icon_code": "511-fill",
+    "icon_name": "中度霾填充"
+  },
+  {
+    "icon_code": "512",
+    "icon_name": "重度霾"
+  },
+  {
+    "icon_code": "512-fill",
+    "icon_name": "重度霾填充"
+  },
+  {
+    "icon_code": "513",
+    "icon_name": "严重霾"
+  },
+  {
+    "icon_code": "513-fill",
+    "icon_name": "严重霾填充"
+  },
+  {
+    "icon_code": "514",
+    "icon_name": "大雾"
+  },
+  {
+    "icon_code": "514-fill",
+    "icon_name": "大雾填充"
+  },
+  {
+    "icon_code": "515",
+    "icon_name": "特强浓雾"
+  },
+  {
+    "icon_code": "515-fill",
+    "icon_name": "特强浓雾填充"
+  },
+  {
+    "icon_code": "800",
+    "icon_name": "新月"
+  },
+  {
+    "icon_code": "801",
+    "icon_name": "正在上蜡的新月"
+  },
+  {
+    "icon_code": "802",
+    "icon_name": "第一季度"
+  },
+  {
+    "icon_code": "803",
+    "icon_name": "上蜡长臂猿"
+  },
+  {
+    "icon_code": "804",
+    "icon_name": "满月"
+  },
+  {
+    "icon_code": "805",
+    "icon_name": "渐行渐远"
+  },
+  {
+    "icon_code": "806",
+    "icon_name": "上一季度"
+  },
+  {
+    "icon_code": "807",
+    "icon_name": "月牙形"
+  },
+  {
+    "icon_code": "900",
+    "icon_name": "hot"
+  },
+  {
+    "icon_code": "900-fill",
+    "icon_name": "热填充"
+  },
+  {
+    "icon_code": "901",
+    "icon_name": "冷"
+  },
+  {
+    "icon_code": "901-fill",
+    "icon_name": "冷填充"
+  },
+  {
+    "icon_code": "999",
+    "icon_name": "无"
+  },
+  {
+    "icon_code": "999-fill",
+    "icon_name": "未知填充"
+  },
+  {
+    "icon_code": "1001",
+    "icon_name": "台风"
+  },
+  {
+    "icon_code": "1002",
+    "icon_name": "龙卷风"
+  },
+  {
+    "icon_code": "1003",
+    "icon_name": "暴雨"
+  },
+  {
+    "icon_code": "1004",
+    "icon_name": "暴风雪"
+  },
+  {
+    "icon_code": "1005",
+    "icon_name": "寒潮"
+  },
+  {
+    "icon_code": "1006",
+    "icon_name": "大风"
+  },
+  {
+    "icon_code": "1007",
+    "icon_name": "沙尘暴警告"
+  },
+  {
+    "icon_code": "1008",
+    "icon_name": "低温冻结"
+  },
+  {
+    "icon_code": "1009",
+    "icon_name": "高温"
+  },
+  {
+    "icon_code": "1010",
+    "icon_name": "热浪"
+  },
+  {
+    "icon_code": "1011",
+    "icon_name": "干热空气"
+  },
+  {
+    "icon_code": "1012",
+    "icon_name": "下击暴击"
+  },
+  {
+    "icon_code": "1013",
+    "icon_name": "雪崩"
+  },
+  {
+    "icon_code": "1014",
+    "icon_name": "闪电"
+  },
+  {
+    "icon_code": "1015",
+    "icon_name": "您好"
+  },
+  {
+    "icon_code": "1016",
+    "icon_name": "frost"
+  },
+  {
+    "icon_code": "1017",
+    "icon_name": "大雾警告"
+  },
+  {
+    "icon_code": "1018",
+    "icon_name": "低空风切变"
+  },
+  {
+    "icon_code": "1019",
+    "icon_name": "雾霾警告"
+  },
+  {
+    "icon_code": "1020",
+    "icon_name": "雷雨"
+  },
+  {
+    "icon_code": "1021",
+    "icon_name": "道路结冰"
+  },
+  {
+    "icon_code": "1022",
+    "icon_name": "干旱"
+  },
+  {
+    "icon_code": "1023",
+    "icon_name": "海上大风"
+  },
+  {
+    "icon_code": "1024",
+    "icon_name": "中暑"
+  },
+  {
+    "icon_code": "1025",
+    "icon_name": "野火"
+  },
+  {
+    "icon_code": "1026",
+    "icon_name": "草原之火"
+  },
+  {
+    "icon_code": "1027",
+    "icon_name": "冻结"
+  },
+  {
+    "icon_code": "1028",
+    "icon_name": "太空天气"
+  },
+  {
+    "icon_code": "1029",
+    "icon_name": "严重空气污染"
+  },
+  {
+    "icon_code": "1030",
+    "icon_name": "低温雨雪"
+  },
+  {
+    "icon_code": "1031",
+    "icon_name": "强对流"
+  },
+  {
+    "icon_code": "1032",
+    "icon_name": "臭氧"
+  },
+  {
+    "icon_code": "1033",
+    "icon_name": "大雪警告"
+  },
+  {
+    "icon_code": "1034",
+    "icon_name": "冷警告"
+  },
+  {
+    "icon_code": "1035",
+    "icon_name": "持续降雨"
+  },
+  {
+    "icon_code": "1036",
+    "icon_name": "内涝"
+  },
+  {
+    "icon_code": "1037",
+    "icon_name": "地质灾害"
+  },
+  {
+    "icon_code": "1038",
+    "icon_name": "强降雨"
+  },
+  {
+    "icon_code": "1039",
+    "icon_name": "温度严重下降"
+  },
+  {
+    "icon_code": "1040",
+    "icon_name": "雪灾"
+  },
+  {
+    "icon_code": "1041",
+    "icon_name": "野火草原"
+  },
+  {
+    "icon_code": "1042",
+    "icon_name": "医学气象学"
+  },
+  {
+    "icon_code": "1043",
+    "icon_name": "雷雨"
+  },
+  {
+    "icon_code": "1044",
+    "icon_name": "学校关闭"
+  },
+  {
+    "icon_code": "1045",
+    "icon_name": "工厂关闭"
+  },
+  {
+    "icon_code": "1046",
+    "icon_name": "海上风险"
+  },
+  {
+    "icon_code": "1047",
+    "icon_name": "春尘"
+  },
+  {
+    "icon_code": "1048",
+    "icon_name": "下降温度"
+  },
+  {
+    "icon_code": "1049",
+    "icon_name": "台风和暴雨"
+  },
+  {
+    "icon_code": "1050",
+    "icon_name": "严寒"
+  },
+  {
+    "icon_code": "1051",
+    "icon_name": "沙尘"
+  },
+  {
+    "icon_code": "1052",
+    "icon_name": "海上雷雨"
+  },
+  {
+    "icon_code": "1053",
+    "icon_name": "海雾"
+  },
+  {
+    "icon_code": "1054",
+    "icon_name": "海雷"
+  },
+  {
+    "icon_code": "1055",
+    "icon_name": "海上台风"
+  },
+  {
+    "icon_code": "1056",
+    "icon_name": "低温"
+  },
+  {
+    "icon_code": "1057",
+    "icon_name": "道路冰雪"
+  },
+  {
+    "icon_code": "1058",
+    "icon_name": "雷雨大风"
+  },
+  {
+    "icon_code": "1059",
+    "icon_name": "持续低温"
+  },
+  {
+    "icon_code": "1060",
+    "icon_name": "低可见性"
+  },
+  {
+    "icon_code": "1061",
+    "icon_name": "强烈灰尘"
+  },
+  {
+    "icon_code": "1062",
+    "icon_name": "海上大风"
+  },
+  {
+    "icon_code": "1063",
+    "icon_name": "短时强阵雨"
+  },
+  {
+    "icon_code": "1064",
+    "icon_name": "短暂的大雨"
+  },
+  {
+    "icon_code": "1065",
+    "icon_name": "海雾"
+  },
+  {
+    "icon_code": "1066",
+    "icon_name": "中暑情况"
+  },
+  {
+    "icon_code": "1067",
+    "icon_name": "重污染天气"
+  },
+  {
+    "icon_code": "1068",
+    "icon_name": "一氧化碳中毒天气条件"
+  },
+  {
+    "icon_code": "1069",
+    "icon_name": "呼吸系统疾病天气预报"
+  },
+  {
+    "icon_code": "1071",
+    "icon_name": "肠道疾病天气预报"
+  },
+  {
+    "icon_code": "1072",
+    "icon_name": "心血管疾病天气预报"
+  },
+  {
+    "icon_code": "1073",
+    "icon_name": "洪水天气风险"
+  },
+  {
+    "icon_code": "1074",
+    "icon_name": "重污染天气条件"
+  },
+  {
+    "icon_code": "1075",
+    "icon_name": "城市洪水天气风险"
+  },
+  {
+    "icon_code": "1076",
+    "icon_name": "洪水天气风险"
+  },
+  {
+    "icon_code": "1077",
+    "icon_name": "野火天气风险"
+  },
+  {
+    "icon_code": "1078",
+    "icon_name": "气象干旱"
+  },
+  {
+    "icon_code": "1079",
+    "icon_name": "农业天气风险"
+  },
+  {
+    "icon_code": "1080",
+    "icon_name": "强烈季风"
+  },
+  {
+    "icon_code": "1081",
+    "icon_name": "导线上结冰"
+  },
+  {
+    "icon_code": "1082",
+    "icon_name": "中风天气风险"
+  },
+  {
+    "icon_code": "1084",
+    "icon_name": "野火草原风险"
+  },
+  {
+    "icon_code": "1085",
+    "icon_name": "雷雨大风"
+  },
+  {
+    "icon_code": "1086",
+    "icon_name": "低温冻结"
+  },
+  {
+    "icon_code": "1087",
+    "icon_name": "低温损坏"
+  },
+  {
+    "icon_code": "1088",
+    "icon_name": "国家农业气象风险"
+  },
+  {
+    "icon_code": "1089",
+    "icon_name": "冬小麦的干热风风险"
+  },
+  {
+    "icon_code": "1101",
+    "icon_name": "洪水"
+  },
+  {
+    "icon_code": "1302",
+    "icon_name": "泥流"
+  },
+  {
+    "icon_code": "1402",
+    "icon_name": "风暴潮"
+  },
+  {
+    "icon_code": "1601",
+    "icon_name": "天气很热"
+  },
+  {
+    "icon_code": "1602",
+    "icon_name": "强烈季风信号"
+  },
+  {
+    "icon_code": "1603",
+    "icon_name": "滑坡"
+  },
+  {
+    "icon_code": "1604",
+    "icon_name": "热带气旋"
+  },
+  {
+    "icon_code": "1605",
+    "icon_name": "火灾危险"
+  },
+  {
+    "icon_code": "1606",
+    "icon_name": "新界北部洪水泛滥"
+  },
+  {
+    "icon_code": "1607",
+    "icon_name": "寒冷天气"
+  },
+  {
+    "icon_code": "1701",
+    "icon_name": "冷涌咨询"
+  },
+  {
+    "icon_code": "1702",
+    "icon_name": "风"
+  },
+  {
+    "icon_code": "1703",
+    "icon_name": "雨"
+  },
+  {
+    "icon_code": "2001",
+    "icon_name": "风"
+  },
+  {
+    "icon_code": "2002",
+    "icon_name": "冰雪"
+  },
+  {
+    "icon_code": "2003",
+    "icon_name": "雾"
+  },
+  {
+    "icon_code": "2004",
+    "icon_name": "沿海事件"
+  },
+  {
+    "icon_code": "2005",
+    "icon_name": "森林火灾"
+  },
+  {
+    "icon_code": "2006",
+    "icon_name": "下雨警告"
+  },
+  {
+    "icon_code": "2007",
+    "icon_name": "暴雨洪水"
+  },
+  {
+    "icon_code": "2008",
+    "icon_name": "冻雨结冰"
+  },
+  {
+    "icon_code": "2009",
+    "icon_name": "地面霜"
+  },
+  {
+    "icon_code": "2010",
+    "icon_name": "扬起灰尘的风"
+  },
+  {
+    "icon_code": "2011",
+    "icon_name": "强风"
+  },
+  {
+    "icon_code": "2012",
+    "icon_name": "热天"
+  },
+  {
+    "icon_code": "2013",
+    "icon_name": "温暖夜"
+  },
+  {
+    "icon_code": "2014",
+    "icon_name": "寒冷的日子"
+  },
+  {
+    "icon_code": "2015",
+    "icon_name": "雷雨和闪电"
+  },
+  {
+    "icon_code": "2016",
+    "icon_name": "冰雹"
+  },
+  {
+    "icon_code": "2017",
+    "icon_name": "海域警告"
+  },
+  {
+    "icon_code": "2018",
+    "icon_name": "渔民警告"
+  },
+  {
+    "icon_code": "2019",
+    "icon_name": "低湿度"
+  },
+  {
+    "icon_code": "2020",
+    "icon_name": "积雨"
+  },
+  {
+    "icon_code": "2021",
+    "icon_name": "危险冲浪警告"
+  },
+  {
+    "icon_code": "2022",
+    "icon_name": "海上风警告"
+  },
+  {
+    "icon_code": "2023",
+    "icon_name": "道路天气警报"
+  },
+  {
+    "icon_code": "2024",
+    "icon_name": "雷霆雨"
+  },
+  {
+    "icon_code": "2025",
+    "icon_name": "雷雨"
+  },
+  {
+    "icon_code": "2026",
+    "icon_name": "破坏性风"
+  },
+  {
+    "icon_code": "2027",
+    "icon_name": "速度火灾条件"
+  },
+  {
+    "icon_code": "2028",
+    "icon_name": "天气预报"
+  },
+  {
+    "icon_code": "9998",
+    "icon_name": "恶劣天气警告"
+  },
+  {
+    "icon_code": "9999",
+    "icon_name": "警告默认值"
+  }
+]
