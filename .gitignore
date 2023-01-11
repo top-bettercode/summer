@@ -13,7 +13,7 @@ classes
 .gradletasknamecache
 
 
-link.sh
+publish-plugin.sh
 
 /web/src/test/resources/application-test.yml
 /tools/weixin/src/test/resources/application.yml
