@@ -1,6 +1,7 @@
 package top.bettercode.summer.security.authorization;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,30 +63,15 @@ public class RequestMappingAuthorizationManager implements
         Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
         Set<String> authorities = new HashSet<>();
         if (securityProperties.ignored(pattern)) {
-          if (securityService.supportsAnonymous()) {
-            authorities.add(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
-          } else {
-            authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
-          }
+          authorities.add(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
         } else {
           Set<ConfigAuthority> authoritySet = AnnotatedUtils
               .getAnnotations(handlerMethod, ConfigAuthority.class);
-          if (authoritySet.isEmpty()) {
-            authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
-          } else {
+          if (!authoritySet.isEmpty()) {
             for (ConfigAuthority authority : authoritySet) {
               for (String s : authority.value()) {
-                s = s.trim();
                 Assert.hasText(s, "权限标记不能为空");
-                if (DefaultAuthority.ROLE_ANONYMOUS_VALUE.equals(s)) {
-                  if (securityService.supportsAnonymous()) {
-                    authorities.add(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
-                  } else {
-                    authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
-                  }
-                } else {
-                  authorities.add(s);
-                }
+                authorities.add(s);
               }
             }
           }
@@ -117,7 +103,10 @@ public class RequestMappingAuthorizationManager implements
       RequestMatcher matcher = requestMatcher.getKey();
       MatchResult matchResult = matcher.matcher(request);
       if (matchResult.isMatch()) {
-        Set<String> authorities = requestMatcher.getValue();
+        Set<String> authorities = new HashSet<>(requestMatcher.getValue());
+        if (authorities.isEmpty()) {
+          authorities = Collections.singleton(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
+        }
         if (log.isDebugEnabled()) {
           log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
               StringUtils.collectionToCommaDelimitedString(userAuthorities),
@@ -125,7 +114,12 @@ public class RequestMappingAuthorizationManager implements
               authorities);
         }
         if (authorities.contains(DefaultAuthority.ROLE_ANONYMOUS_VALUE)) {
-          return ALLOW;
+          if (securityService.supportsAnonymous()) {
+            return ALLOW;
+          } else {
+            authorities.remove(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
+            authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
+          }
         }
         boolean granted = isGranted(authentication.get(), authorities);
         return new AuthorizationDecision(granted);
