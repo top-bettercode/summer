@@ -119,6 +119,13 @@ public class RequestMappingAuthorizationManager implements
           } else {
             authorities.remove(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
             authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
+
+            if (log.isDebugEnabled()) {
+              log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
+                  StringUtils.collectionToCommaDelimitedString(userAuthorities),
+                  request.getServletPath(),
+                  authorities);
+            }
           }
         }
         boolean granted = isGranted(authentication.get(), authorities);
@@ -163,18 +170,19 @@ public class RequestMappingAuthorizationManager implements
           String method = methodUrl[0].toUpperCase();
           String url = methodUrl[1];
           for (String u : url.split("\\|")) {
+            AntPathRequestMatcher urlMatcher = new AntPathRequestMatcher(u);
             if (StringUtils.hasText(method)) {
-              for (String m : method.split("\\|")) {
-                Assert.isNull(configAuthorities.get(new AntPathRequestMatcher(u)),
+                Assert.isNull(configAuthorities.get(urlMatcher),
                     "\"" + u + "\"对应RequestMapping不包含请求方法描述，请使用通用路径\"" + u
                         + "\"配置权限");
+              for (String m : method.split("\\|")) {
                 Set<String> authorities = configAuthorities.computeIfAbsent(
                     new AntPathRequestMatcher(u, m), k -> new HashSet<>());
                 authorities.add(configAttribute);
               }
             } else {
               Set<String> authorities = configAuthorities.computeIfAbsent(
-                  new AntPathRequestMatcher(u), k -> new HashSet<>());
+                  urlMatcher, k -> new HashSet<>());
               authorities.add(configAttribute);
             }
           }
