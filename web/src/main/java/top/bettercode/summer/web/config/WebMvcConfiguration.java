@@ -56,7 +56,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
@@ -365,7 +365,7 @@ public class WebMvcConfiguration {
       }
 
       @NoRequestLogging
-      @GetMapping(value = "/captcha.jpg", name = "图片验证码")
+      @RequestMapping(value = "/captcha.jpg", name = "图片验证码")
       public void captcha(HttpServletRequest request, HttpServletResponse response, String loginId)
           throws IOException {
 

@@ -149,13 +149,19 @@ public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
     ).andExpect(status().isOk());
   }
 
-  protected void download(RequestBuilder requestBuilder) throws Exception {
-    download(mockMvc.perform(requestBuilder));
+  protected void download(RequestBuilder requestBuilder, String fileName) throws Exception {
+    download(mockMvc.perform(requestBuilder), "build/" + fileName);
   }
 
-  protected void download(ResultActions perform) throws Exception {
+  protected void download(RequestBuilder requestBuilder) throws Exception {
+    download(mockMvc.perform(requestBuilder), null);
+  }
+
+  protected void download(ResultActions perform, String fileName) throws Exception {
     MvcResult result = perform.andExpect(status().isOk()).andReturn();
-    String fileName = getFileName(result);
+    if (fileName == null) {
+      fileName = getFileName(result);
+    }
     StreamUtils.copy(result.getResponse().getContentAsByteArray(),
         Files.newOutputStream(Paths.get(fileName)));
     try {
