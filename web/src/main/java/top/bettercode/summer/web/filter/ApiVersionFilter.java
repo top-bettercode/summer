@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.OncePerRequestFilter;
-import top.bettercode.summer.web.config.SummerWebProperties;
 
 /**
  * 支持PUT DELETE form提交
@@ -20,13 +19,13 @@ public class ApiVersionFilter extends OncePerRequestFilter implements Ordered {
   /**
    * Higher order to ensure the filter is applied before Spring Security.
    */
-  public static final int DEFAULT_ORDER = -9900;
+  public static final int DEFAULT_ORDER = Ordered.HIGHEST_PRECEDENCE + 1;
   private int order = DEFAULT_ORDER;
 
-  private final SummerWebProperties summerWebProperties;
+  private final ApiVersionService apiVersionService;
 
-  public ApiVersionFilter(SummerWebProperties summerWebProperties) {
-    this.summerWebProperties = summerWebProperties;
+  public ApiVersionFilter(ApiVersionService apiVersionService) {
+    this.apiVersionService = apiVersionService;
   }
 
   @Override
@@ -47,8 +46,8 @@ public class ApiVersionFilter extends OncePerRequestFilter implements Ordered {
   protected void doFilterInternal(@NotNull final HttpServletRequest request,
       HttpServletResponse response,
       FilterChain filterChain) throws IOException, ServletException {
-    response.setHeader(summerWebProperties.getVersionName(), summerWebProperties.getVersion());
-    response.setHeader(summerWebProperties.getVersionNoName(), summerWebProperties.getVersionNo());
+    response.setHeader(apiVersionService.getVersionName(), apiVersionService.getVersion());
+    response.setHeader(apiVersionService.getVersionNoName(), apiVersionService.getVersionNo());
     filterChain.doFilter(request, response);
   }
 
