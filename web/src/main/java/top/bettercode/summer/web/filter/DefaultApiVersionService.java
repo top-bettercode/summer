@@ -5,7 +5,7 @@ import top.bettercode.summer.web.config.SummerWebProperties;
 /**
  * @author Peter Wu
  */
-public class DefaultApiVersionService implements ApiVersionService{
+public class DefaultApiVersionService implements IApiVersionService {
 
   private final SummerWebProperties summerWebProperties;
 

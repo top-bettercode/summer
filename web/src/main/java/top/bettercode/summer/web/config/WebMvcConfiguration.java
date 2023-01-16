@@ -73,7 +73,7 @@ import top.bettercode.summer.web.error.ErrorAttributes;
 import top.bettercode.summer.web.error.IErrorHandler;
 import top.bettercode.summer.web.error.IErrorRespEntityHandler;
 import top.bettercode.summer.web.filter.ApiVersionFilter;
-import top.bettercode.summer.web.filter.ApiVersionService;
+import top.bettercode.summer.web.filter.IApiVersionService;
 import top.bettercode.summer.web.filter.DefaultApiVersionService;
 import top.bettercode.summer.web.filter.OrderedHiddenHttpMethodFilter;
 import top.bettercode.summer.web.filter.OrderedHttpPutFormContentFilter;
@@ -112,7 +112,7 @@ public class WebMvcConfiguration {
 
   @ConditionalOnMissingBean
   @Bean
-  public ApiVersionService apiVersionService() {
+  public IApiVersionService apiVersionService() {
     return new DefaultApiVersionService(summerWebProperties);
   }
 
@@ -121,7 +121,7 @@ public class WebMvcConfiguration {
    * 响应增加api version
    */
   @Bean
-  public ApiVersionFilter apiVersionFilter(ApiVersionService apiVersionService) {
+  public ApiVersionFilter apiVersionFilter(IApiVersionService apiVersionService) {
     return new ApiVersionFilter(apiVersionService);
   }
 

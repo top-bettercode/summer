@@ -3,7 +3,7 @@ package top.bettercode.summer.web.filter;
 /**
  * @author Peter Wu
  */
-public interface ApiVersionService {
+public interface IApiVersionService {
 
   String getVersionName();
 

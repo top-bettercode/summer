@@ -22,9 +22,9 @@ public class ApiVersionFilter extends OncePerRequestFilter implements Ordered {
   public static final int DEFAULT_ORDER = Ordered.HIGHEST_PRECEDENCE + 1;
   private int order = DEFAULT_ORDER;
 
-  private final ApiVersionService apiVersionService;
+  private final IApiVersionService apiVersionService;
 
-  public ApiVersionFilter(ApiVersionService apiVersionService) {
+  public ApiVersionFilter(IApiVersionService apiVersionService) {
     this.apiVersionService = apiVersionService;
   }
 
