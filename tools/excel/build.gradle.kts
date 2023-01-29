@@ -14,6 +14,8 @@ dependencies {
 
     compileOnly("org.dhatim:fastexcel-reader")
     testImplementation("org.dhatim:fastexcel-reader")
+    compileOnly("org.apache.poi:poi-ooxml")
+    testImplementation("org.apache.poi:poi-ooxml")
 
     testImplementation(project(":test"))
 }

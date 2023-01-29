@@ -47,11 +47,11 @@ public class ExcelTest {
         .setData(list, excelFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
-    openExcel("/build/export.xlsx");
+    openExcel("build/export.xlsx");
   }
 
   private static void openExcel(String x) throws IOException {
-//    Runtime.getRuntime().exec(new String[]{"xdg-open", System.getProperty("user.dir") + x});
+//    Runtime.getRuntime().exec(new String[]{"xdg-open", System.getProperty("user.dir") + "/" + x});
   }
 
   private final ExcelField<DataBean, ?>[] excelMergeFields = ArrayUtil.of(
@@ -75,7 +75,7 @@ public class ExcelTest {
         .setMergeData(list, excelMergeFields).finish();
     long e = System.currentTimeMillis();
     System.err.println(e - s);
-    openExcel("/build/export.xlsx");
+    openExcel("build/export.xlsx");
   }
 
 
@@ -93,7 +93,7 @@ public class ExcelTest {
     ExcelExport.of("build/template.xlsx").sheet("表格1").dataValidation(1, "1,2,3")
         .template(excelFields)
         .finish();
-    openExcel("/build/template.xlsx");
+    openExcel("build/template.xlsx");
   }
 
   public static class DataBean {

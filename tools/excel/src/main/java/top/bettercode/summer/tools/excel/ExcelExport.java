@@ -92,21 +92,21 @@ public class ExcelExport {
 
 
   /**
-   * @param os Output stream eventually holding the serialized workbook.
+   * @param outputStream Output stream eventually holding the serialized workbook.
    * @return ExcelExport
    */
-  public static ExcelExport of(OutputStream os) {
-    return new ExcelExport(os);
+  public static ExcelExport of(OutputStream outputStream) {
+    return new ExcelExport(outputStream);
   }
 
 
   /**
    * 构造函数
    *
-   * @param os Output stream eventually holding the serialized workbook.
+   * @param outputStream Output stream eventually holding the serialized workbook.
    */
-  private ExcelExport(OutputStream os) {
-    this.workbook = new Workbook(os, "", "1.0");
+  private ExcelExport(OutputStream outputStream) {
+    this.workbook = new Workbook(outputStream, "", "1.0");
   }
 
   /**
@@ -260,7 +260,7 @@ public class ExcelExport {
       T e = converter.convert(iterator.next());
       boolean lastRow = !iterator.hasNext();
       for (ExcelField<T, ?> excelField : excelFields) {
-        setCell(new ExcelCell(r, c, firstRow, lastRow, excelField, e));
+        setCell(new ExcelCell<>(r, c, firstRow, lastRow, excelField, e));
         c++;
       }
       c = firstColumn;
@@ -269,7 +269,8 @@ public class ExcelExport {
     return this;
   }
 
-  private void setCell(ExcelCell excelCell) {
+  @SuppressWarnings("unchecked")
+  private <T> void setCell(ExcelCell<T> excelCell) {
     int column = excelCell.getColumn();
     int row = excelCell.getRow();
     StyleSetter style = sheet.style(row, column);
@@ -283,6 +284,9 @@ public class ExcelExport {
 
     if (excelCell.isFillColor()) {
       style.fillColor("F8F8F7");
+    }
+    if (excelCell.getHeight() != -1) {
+      sheet.rowHeight(row, excelCell.getHeight());
     }
     style.set();
 
@@ -305,6 +309,10 @@ public class ExcelExport {
         sheet.value(row, column, TimestampUtil.convertDate((LocalDate) cellValue));
       } else if (cellValue instanceof ZonedDateTime) {
         sheet.value(row, column, TimestampUtil.convertZonedDateTime((ZonedDateTime) cellValue));
+      } else if (cellValue instanceof ExcelCellHandler) {
+        sheet.value(excelCell.getRow(), column);
+        ExcelCellHandler<T> cellHandler = (ExcelCellHandler<T>) cellValue;
+        cellHandler.handle(excelCell);
       } else {
         throw new IllegalArgumentException("No supported cell type for " + cellValue.getClass());
       }
@@ -359,7 +367,7 @@ public class ExcelExport {
       T e = converter.convert(iterator.next());
       boolean lastRow = !iterator.hasNext();
 
-      List<ExcelRangeCell> cells;
+      List<ExcelRangeCell<T>> cells;
       if (mergeFirstColumn) {
         cells = null;
       } else {
@@ -390,7 +398,8 @@ public class ExcelExport {
             lastRangeTops.put(mergeIndex, r);
           }
 
-          ExcelRangeCell rangeCell = new ExcelRangeCell(r, c, index, firstRow, lastRow, excelField,
+          ExcelRangeCell<T> rangeCell = new ExcelRangeCell<>(r, c, index, firstRow, lastRow,
+              excelField,
               e, newRange, lastRangeTop);
           if (mergeFirstColumn) {
             setRangeCell(rangeCell);
@@ -400,7 +409,8 @@ public class ExcelExport {
 
           mergeIndex++;
         } else {
-          ExcelRangeCell rangeCell = new ExcelRangeCell(r, c, index, firstRow, lastRow, excelField,
+          ExcelRangeCell<T> rangeCell = new ExcelRangeCell<>(r, c, index, firstRow, lastRow,
+              excelField,
               e, false, firstRow);
           if (mergeFirstColumn) {
             setRangeCell(rangeCell);
@@ -411,7 +421,7 @@ public class ExcelExport {
         c++;
       }
       if (!mergeFirstColumn) {
-        for (ExcelRangeCell cell : cells) {
+        for (ExcelRangeCell<T> cell : cells) {
           cell.setIndex(index);
           setRangeCell(cell);
         }
@@ -422,7 +432,7 @@ public class ExcelExport {
     return this;
   }
 
-  private void setRangeCell(ExcelRangeCell excelCell) {
+  private <T> void setRangeCell(ExcelRangeCell<T> excelCell) {
     int column = excelCell.getColumn();
     setCell(excelCell);
 

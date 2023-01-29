@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.excel;
 /**
  * @author Peter Wu
  */
-public class ExcelCell {
+public class ExcelCell<T> {
 
   /**
    * 默认日期格式
@@ -33,17 +33,19 @@ public class ExcelCell {
   protected boolean fillColor;
   private final String align;
   private final double width;
+  private final double height;
   private final String numberingFormat;
   protected Object cellValue;
+  private final T entity;
   protected final boolean indexColumn;
   private final boolean dateField;
 
-  public <T> ExcelCell(int row, int column, int firstRow, boolean lastRow,
+  public ExcelCell(int row, int column, int firstRow, boolean lastRow,
       ExcelField<T, ?> excelField, T entity) {
     this(row, column, lastRow, row - firstRow + 1, excelField, entity);
   }
 
-  public <T> ExcelCell(int row, int column, boolean lastRow, int index,
+  public ExcelCell(int row, int column, boolean lastRow, int index,
       ExcelField<T, ?> excelField, T entity) {
     this.row = row;
     this.column = column;
@@ -52,8 +54,10 @@ public class ExcelCell {
     this.fillColor = index % 2 == 0;
     this.align = excelField.align().name();
     this.width = excelField.width();
+    this.height = excelField.height();
     this.numberingFormat = excelField.numberingFormat();
     this.indexColumn = excelField.isIndexColumn();
+    this.entity = entity;
     if (this.indexColumn) {
       this.cellValue = index;
     } else {
@@ -100,11 +104,19 @@ public class ExcelCell {
     return width;
   }
 
+  public double getHeight() {
+    return height;
+  }
+
   public String getNumberingFormat() {
     return numberingFormat;
   }
 
   public Object getCellValue() {
     return cellValue;
+  }
+
+  public T getEntity() {
+    return entity;
   }
 }

@@ -76,7 +76,10 @@ public class ExcelField<T, P> {
    * 列宽度，-1表示自动计算
    */
   private double width = -1;
-
+  /**
+   * 行高
+   */
+  private double height = -1;
 
   /**
    * 默认值
@@ -312,49 +315,54 @@ public class ExcelField<T, P> {
   private ExcelField(String title, ExcelConverter<T, P> propertyGetter) {
     this.title = title;
     this.propertyGetter = propertyGetter;
-    try {
-      Method writeReplace = propertyGetter.getClass().getDeclaredMethod("writeReplace");
-      writeReplace.setAccessible(true);
-      SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(propertyGetter);
-      String implMethodName = serializedLambda.getImplMethodName();
 
-      MethodSignature methodSignature = SignatureAttribute
-          .toMethodSignature(serializedLambda.getInstantiatedMethodType());
-      entityType = (Class<T>) ClassUtils
-          .forName(methodSignature.getParameterTypes()[0].jvmTypeName(), null);
-      propertyType = ClassUtils.forName(methodSignature.getReturnType().jvmTypeName(), null);
-      propertyName = resolvePropertyName(implMethodName);
-      if (!propertyName.contains("lambda$new$")) {
-        try {
-          Method writeMethod;
+    if (!(propertyGetter instanceof ExcelCellHandler)) {
+      try {
+        Method writeReplace = propertyGetter.getClass().getDeclaredMethod("writeReplace");
+        writeReplace.setAccessible(true);
+        SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(propertyGetter);
+        String implMethodName = serializedLambda.getImplMethodName();
+
+        MethodSignature methodSignature = SignatureAttribute
+            .toMethodSignature(serializedLambda.getInstantiatedMethodType());
+        entityType = (Class<T>) ClassUtils
+            .forName(methodSignature.getParameterTypes()[0].jvmTypeName(), null);
+        propertyType = ClassUtils.forName(methodSignature.getReturnType().jvmTypeName(), null);
+        propertyName = resolvePropertyName(implMethodName);
+        if (!propertyName.contains("lambda$new$")) {
           try {
-            writeMethod = entityType
-                .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
-          } catch (NoSuchMethodException e) {
-            if (ClassUtils.isPrimitiveWrapper(propertyType)) {
-              propertyType = primitiveWrapperTypeMap.get(propertyType);
+            Method writeMethod;
+            try {
               writeMethod = entityType
                   .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
-            } else {
-              throw e;
+            } catch (NoSuchMethodException e) {
+              if (ClassUtils.isPrimitiveWrapper(propertyType)) {
+                propertyType = primitiveWrapperTypeMap.get(propertyType);
+                writeMethod = entityType
+                    .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
+              } else {
+                throw e;
+              }
             }
+            Method fWriteMethod = writeMethod;
+            this.propertySetter = (obj, property) -> ReflectionUtils.invokeMethod(fWriteMethod, obj,
+                property);
+          } catch (NoSuchMethodException e) {
+            Logger log = LoggerFactory.getLogger(ExcelField.class);
+            if (log.isDebugEnabled()) {
+              log.debug("自动识别属性{} setter方法失败", propertyName);
+            }
+            propertyName = null;
+            propertySetter = null;
+            entityType = null;
           }
-          Method fWriteMethod = writeMethod;
-          this.propertySetter = (obj, property) -> ReflectionUtils.invokeMethod(fWriteMethod, obj,
-              property);
-        } catch (NoSuchMethodException e) {
-          Logger log = LoggerFactory.getLogger(ExcelField.class);
-          if (log.isDebugEnabled()) {
-            log.debug("自动识别属性{} setter方法失败", propertyName);
-          }
-          propertyName = null;
-          propertySetter = null;
-          entityType = null;
         }
+      } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+               ClassNotFoundException | BadBytecode e) {
+        throw new ExcelException(title + "属性解析错误", e);
       }
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
-             ClassNotFoundException | BadBytecode e) {
-      throw new ExcelException(title + "属性解析错误", e);
+    } else {
+      propertyType = ExcelCellHandler.class;
     }
 
     init();
@@ -502,6 +510,8 @@ public class ExcelField<T, P> {
         return buffer.toString();
       } else if (Collection.class.isAssignableFrom(propertyType)) {
         return StringUtils.collectionToCommaDelimitedString((Collection<?>) property);
+      } else if (propertyType == ExcelCellHandler.class) {
+        return property;
       } else {
         return StringUtil.valueOf(property);
       }
@@ -579,6 +589,12 @@ public class ExcelField<T, P> {
     this.width = width;
     return this;
   }
+
+  public ExcelField<T, P> height(double height) {
+    this.height = height;
+    return this;
+  }
+
 
   /**
    * 设为需要合并
@@ -685,6 +701,10 @@ public class ExcelField<T, P> {
 
   double width() {
     return width;
+  }
+
+  double height() {
+    return height;
   }
 
   boolean isMerge() {

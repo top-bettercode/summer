@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.excel;
 /**
  * @author Peter Wu
  */
-public class ExcelRangeCell extends ExcelCell {
+public class ExcelRangeCell<T> extends ExcelCell<T> {
 
   private final boolean newRange;
   private final boolean mergeLastRange;
@@ -12,7 +12,7 @@ public class ExcelRangeCell extends ExcelCell {
   private final int lastRangeBottom;
   private final int firstRow;
 
-  public <T> ExcelRangeCell(int row, int column, int index, int firstRow, boolean lastRow,
+  public ExcelRangeCell(int row, int column, int index, int firstRow, boolean lastRow,
       ExcelField<T, ?> excelField, T entity,
       boolean newRange, int lastRangeTop) {
     super(row, column, lastRow, index, excelField, entity);
@@ -42,6 +42,10 @@ public class ExcelRangeCell extends ExcelCell {
 
   public boolean needRange() {
     return mergeLastRange && merge;
+  }
+
+  public boolean isMerge() {
+    return merge;
   }
 
   //--------------------------------------------
