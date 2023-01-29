@@ -38,8 +38,8 @@ dependencies {
         api("org.asciidoctor:asciidoctorj-diagram:2.2.3")
         api("org.asciidoctor:asciidoctorj-pdf:2.3.3")
 
-        api("org.dhatim:fastexcel:0.14.0")
-        api("org.dhatim:fastexcel-reader:0.14.0")
+        api("org.dhatim:fastexcel:0.14.4")
+        api("org.dhatim:fastexcel-reader:0.14.4")
         api("org.apache.poi:poi-ooxml:5.2.3")
 
         api("org.mybatis:mybatis:3.5.11")
@@ -66,7 +66,7 @@ dependencies {
         api("commons-codec:commons-codec:1.15")
         api("org.json:json:20220924")
         api("org.javassist:javassist:3.29.2-GA")
-        api("org.dom4j:dom4j:2.1.1")
+        api("org.dom4j:dom4j:2.1.4")
         api("org.jsoup:jsoup:1.15.3")
         api("org.atteo:evo-inflector:1.3")
         api("com.github.axet:kaptcha:0.0.9")
