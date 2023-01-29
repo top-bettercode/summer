@@ -22,6 +22,11 @@ public class ExcelImageCellHandler<T> implements ExcelCellHandler<T> {
   private static final long serialVersionUID = 1L;
 
   private final List<ExcelCell<T>> cells = new ArrayList<>();
+  private ExcelConverter<T, byte[]> imageGetter;
+
+  public void setImageGetter(ExcelConverter<T, byte[]> imageGetter) {
+    this.imageGetter = imageGetter;
+  }
 
   @Override
   public void handle(ExcelCell<T> cell) {
@@ -33,16 +38,16 @@ public class ExcelImageCellHandler<T> implements ExcelCellHandler<T> {
     return this;
   }
 
-  public void setImage(String filename, ExcelConverter<T, byte[]> imageGetter)
+  public void setImage(String filename)
       throws IOException {
-    setImage(Paths.get(filename).toFile(), imageGetter);
+    setImage(Paths.get(filename).toFile());
   }
 
-  public void setImage(File file, ExcelConverter<T, byte[]> imageGetter) throws IOException {
-    setImage(file, imageGetter, 0);
+  public void setImage(File file) throws IOException {
+    setImage(file, 0);
   }
 
-  public void setImage(File file, ExcelConverter<T, byte[]> imageGetter, int sheetIndex)
+  public void setImage(File file, int sheetIndex)
       throws IOException {
     XSSFWorkbook wb = new XSSFWorkbook(Files.newInputStream(file.toPath()));
     XSSFSheet sheet = wb.getSheetAt(sheetIndex);
@@ -53,18 +58,18 @@ public class ExcelImageCellHandler<T> implements ExcelCellHandler<T> {
       if (cell instanceof ExcelRangeCell) {
         ExcelRangeCell<T> rangeCell = (ExcelRangeCell<T>) cell;
         if (rangeCell.needRange()) {
-          drawImage(cell, wb, sheet, drawing, helper, imageGetter, cell.getColumn(),
+          drawImage(cell, wb, sheet, drawing, helper, cell.getColumn(),
               rangeCell.getLastRangeTop(), rangeCell.getLastRangeBottom() + 1);
           if (rangeCell.isLastRow()) {
-            drawImage(cell, wb, sheet, drawing, helper, imageGetter, cell.getColumn(),
+            drawImage(cell, wb, sheet, drawing, helper, cell.getColumn(),
                 cell.getRow(), cell.getRow() + 1);
           }
         } else if (!rangeCell.isMerge()) {
-          drawImage(cell, wb, sheet, drawing, helper, imageGetter, cell.getColumn(), cell.getRow(),
+          drawImage(cell, wb, sheet, drawing, helper, cell.getColumn(), cell.getRow(),
               cell.getRow() + 1);
         }
       } else {
-        drawImage(cell, wb, sheet, drawing, helper, imageGetter, cell.getColumn(), cell.getRow(),
+        drawImage(cell, wb, sheet, drawing, helper, cell.getColumn(), cell.getRow(),
             cell.getRow() + 1);
       }
     }
@@ -77,9 +82,7 @@ public class ExcelImageCellHandler<T> implements ExcelCellHandler<T> {
 
 
   private void drawImage(ExcelCell<T> cell, XSSFWorkbook wb, XSSFSheet sheet,
-      Drawing<XSSFShape> drawing, CreationHelper helper, ExcelConverter<T, byte[]> imageGetter,
-      int column, int top,
-      int bottom) {
+      Drawing<XSSFShape> drawing, CreationHelper helper, int column, int top, int bottom) {
     int pictureIdx = wb.addPicture(imageGetter.convert(cell.getEntity()),
         XSSFWorkbook.PICTURE_TYPE_PNG);
     ClientAnchor anchor = helper.createClientAnchor();

@@ -113,7 +113,7 @@ public class ExcelImageTest {
         .setMergeData(list, excelMergeFields).finish();
     long e = System.currentTimeMillis();
 
-    cellHandler.setImage(filename, from -> {
+    cellHandler.setImageGetter(from -> {
       try {
         InputStream inputStream = new ClassPathResource("ico.jpeg").getInputStream();
         byte[] bytes = IOUtils.toByteArray(inputStream);
@@ -123,6 +123,7 @@ public class ExcelImageTest {
         throw new RuntimeException(ex);
       }
     });
+    cellHandler.setImage(filename);
     System.err.println(e - s);
 
     openExcel(filename);
