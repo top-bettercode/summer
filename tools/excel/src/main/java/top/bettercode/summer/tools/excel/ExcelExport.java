@@ -500,8 +500,7 @@ public class ExcelExport {
    * @param heightUnits set height to n points in twips = n * 20 example: 60*20;
    * @throws IOException IOException
    */
-  public void setImage(
-      int widthUnits, short heightUnits) throws IOException {
+  public void setImage(int widthUnits, short heightUnits) throws IOException {
     setImage(sheet.getName(), widthUnits, heightUnits);
   }
 
