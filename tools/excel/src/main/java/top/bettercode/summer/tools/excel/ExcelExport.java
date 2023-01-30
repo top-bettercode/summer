@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.excel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,6 +41,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 public class ExcelExport {
 
+
+  private final ByteArrayOutputStream imageByteArrayOutputStream;
+
+  private final OutputStream outputStream;
+
   /**
    * 工作薄对象
    */
@@ -66,6 +73,8 @@ public class ExcelExport {
   private boolean includeDataValidation = false;
 
   private final ColumnWidths columnWidths = new ColumnWidths();
+
+  private final List<ExcelCell<?>> imageCells = new ArrayList<>();
 
 
   /**
@@ -99,6 +108,22 @@ public class ExcelExport {
     return new ExcelExport(outputStream);
   }
 
+  public static ExcelExport withImage(OutputStream outputStream) {
+    return new ExcelExport(outputStream, new ByteArrayOutputStream());
+  }
+
+
+  /**
+   * 构造函数
+   *
+   * @param outputStream          Output stream eventually holding the serialized workbook.
+   * @param byteArrayOutputStream byteArrayOutputStream
+   */
+  private ExcelExport(OutputStream outputStream, ByteArrayOutputStream byteArrayOutputStream) {
+    this.imageByteArrayOutputStream = byteArrayOutputStream;
+    this.outputStream = outputStream;
+    this.workbook = new Workbook(byteArrayOutputStream, "", "1.0");
+  }
 
   /**
    * 构造函数
@@ -106,6 +131,8 @@ public class ExcelExport {
    * @param outputStream Output stream eventually holding the serialized workbook.
    */
   private ExcelExport(OutputStream outputStream) {
+    this.imageByteArrayOutputStream = null;
+    this.outputStream = null;
     this.workbook = new Workbook(outputStream, "", "1.0");
   }
 
@@ -269,13 +296,13 @@ public class ExcelExport {
     return this;
   }
 
-  @SuppressWarnings("unchecked")
   private <T> void setCell(ExcelCell<T> excelCell) {
     int column = excelCell.getColumn();
     int row = excelCell.getRow();
     StyleSetter style = sheet.style(row, column);
-    String numberingFormat = excelCell.getNumberingFormat();
-    style.horizontalAlignment(excelCell.getAlign())
+    ExcelField<T, ?> excelField = excelCell.getExcelField();
+    String numberingFormat = excelField.numberingFormat();
+    style.horizontalAlignment(excelField.align().name())
         .verticalAlignment(Alignment.center.name())
         .wrapText(wrapText)
         .format(numberingFormat)
@@ -285,8 +312,8 @@ public class ExcelExport {
     if (excelCell.isFillColor()) {
       style.fillColor("F8F8F7");
     }
-    if (excelCell.getHeight() != -1) {
-      sheet.rowHeight(row, excelCell.getHeight());
+    if (excelField.height() != -1) {
+      sheet.rowHeight(row, excelField.height());
     }
     style.set();
 
@@ -294,6 +321,9 @@ public class ExcelExport {
       Object cellValue = excelCell.getCellValue();
       if (cellValue == null) {
         sheet.value(row, column);
+      } else if (excelField.isImageColumn()) {
+        sheet.value(excelCell.getRow(), column);
+        imageCells.add(excelCell);
       } else if (cellValue instanceof String) {
         sheet.value(row, column, (String) cellValue);
       } else if (cellValue instanceof Number) {
@@ -309,10 +339,6 @@ public class ExcelExport {
         sheet.value(row, column, TimestampUtil.convertDate((LocalDate) cellValue));
       } else if (cellValue instanceof ZonedDateTime) {
         sheet.value(row, column, TimestampUtil.convertZonedDateTime((ZonedDateTime) cellValue));
-      } else if (cellValue instanceof ExcelCellHandler) {
-        sheet.value(excelCell.getRow(), column);
-        ExcelCellHandler<T> cellHandler = (ExcelCellHandler<T>) cellValue;
-        cellHandler.handle(excelCell);
       } else {
         throw new IllegalArgumentException("No supported cell type for " + cellValue.getClass());
       }
@@ -320,10 +346,10 @@ public class ExcelExport {
       sheet.value(excelCell.getRow(), column);
     }
 
-    double width = excelCell.getWidth();
+    double width = excelField.width();
     if (width == -1) {
       Object cellValue = excelCell.getCellValue();
-      columnWidths.put(column, excelCell.isDateField() ? numberingFormat : cellValue);
+      columnWidths.put(column, excelField.isDateField() ? numberingFormat : cellValue);
       if (excelCell.isLastRow()) {
         sheet.width(column, columnWidths.width(column));
       }
@@ -363,19 +389,17 @@ public class ExcelExport {
     boolean mergeFirstColumn = excelFields[0].isMerge();
     Map<Integer, Object> lastMergeIds = new HashMap<>();
     Map<Integer, Integer> lastRangeTops = new HashMap<>();
+    T preEntity = null;
     while (iterator.hasNext()) {
       T e = converter.convert(iterator.next());
       boolean lastRow = !iterator.hasNext();
 
-      List<ExcelRangeCell<T>> cells;
-      if (mergeFirstColumn) {
-        cells = null;
-      } else {
-        cells = new ArrayList<>();
-      }
       int mergeIndex = 0;
+      List<ExcelRangeCell<T>> indexCells = mergeFirstColumn ? null : new ArrayList<>();
+      boolean merge;
       for (ExcelField<T, ?> excelField : excelFields) {
-        if (excelField.isMerge()) {
+        merge = excelField.isMerge();
+        if (merge) {
           Object mergeIdValue = excelField.mergeId(e);
           Object lastMergeId = lastMergeIds.get(mergeIndex);
           boolean newRange = lastMergeId == null || !lastMergeId.equals(mergeIdValue);
@@ -383,12 +407,10 @@ public class ExcelExport {
             lastMergeIds.put(mergeIndex, mergeIdValue);
           }
 
-          if (mergeIndex == 0) {
-            if (newRange) {
-              index++;
-            }
+          if (mergeIndex == 0 && newRange) {
+            index++;
           }
-          if (lastRangeTops.getOrDefault(0, firstRow) == r) {
+          if (lastRangeTops.getOrDefault(0, firstRow) == r) {//以第一个合并列为大分隔
             newRange = true;
           }
 
@@ -399,34 +421,29 @@ public class ExcelExport {
           }
 
           ExcelRangeCell<T> rangeCell = new ExcelRangeCell<>(r, c, index, firstRow, lastRow,
-              excelField,
-              e, newRange, lastRangeTop);
-          if (mergeFirstColumn) {
-            setRangeCell(rangeCell);
-          } else {
-            cells.add(rangeCell);
-          }
+              newRange, lastRangeTop, excelField, preEntity, e);
+          setRangeCell(rangeCell);
 
           mergeIndex++;
         } else {
           ExcelRangeCell<T> rangeCell = new ExcelRangeCell<>(r, c, index, firstRow, lastRow,
-              excelField,
-              e, false, firstRow);
-          if (mergeFirstColumn) {
-            setRangeCell(rangeCell);
+              false, r, excelField, preEntity, e);
+          if (!mergeFirstColumn && !merge && excelField.isIndexColumn()) {
+            indexCells.add(rangeCell);
           } else {
-            cells.add(rangeCell);
+            setRangeCell(rangeCell);
           }
         }
         c++;
       }
       if (!mergeFirstColumn) {
-        for (ExcelRangeCell<T> cell : cells) {
-          cell.setIndex(index);
-          setRangeCell(cell);
+        for (ExcelRangeCell<T> indexCell : indexCells) {
+          indexCell.setFillColor(index);
+          setRangeCell(indexCell);
         }
       }
       c = firstColumn;
+      preEntity = e;
       r++;
     }
     return this;
@@ -439,8 +456,9 @@ public class ExcelExport {
     if (excelCell.needRange()) {
       sheet.range(excelCell.getLastRangeTop(), column, excelCell.getLastRangeBottom(), column)
           .merge();
-      double width = excelCell.getWidth();
-      String numberingFormat = excelCell.getNumberingFormat();
+      ExcelField<T, ?> excelField = excelCell.getExcelField();
+      double width = excelField.width();
+      String numberingFormat = excelField.numberingFormat();
       if (width == -1) {
         sheet.width(column, columnWidths.width(column));
       } else {
@@ -449,7 +467,7 @@ public class ExcelExport {
       StyleSetter style = sheet
           .range(excelCell.getLastRangeTop(), column, excelCell.getLastRangeBottom(), column)
           .style();
-      style.horizontalAlignment(excelCell.getAlign())
+      style.horizontalAlignment(excelField.align().name())
           .verticalAlignment(Alignment.center.name())
           .wrapText(wrapText)
           .format(numberingFormat)
@@ -472,8 +490,32 @@ public class ExcelExport {
    *
    * @throws IOException IOException
    */
-  public void finish() throws IOException {
+  public ExcelExport finish() throws IOException {
     workbook.finish();
+    return this;
+  }
+
+  /**
+   * @param widthUnits  set width to n character widths = count characters * 256 example: 20*256;
+   * @param heightUnits set height to n points in twips = n * 20 example: 60*20;
+   * @throws IOException IOException
+   */
+  public void setImage(
+      int widthUnits, short heightUnits) throws IOException {
+    setImage(sheet.getName(), widthUnits, heightUnits);
+  }
+
+  /**
+   * @param sheetName   sheetName
+   * @param widthUnits  set width to n character widths = count characters * 256 example: 20*256;
+   * @param heightUnits set height to n points in twips = n * 20 example: 60*20;
+   * @throws IOException IOException
+   */
+  public void setImage(String sheetName, int widthUnits, short heightUnits) throws IOException {
+    Assert.notNull(imageByteArrayOutputStream, "不是支持图片插入的导出");
+    ExcelImageCellWriterUtil.setImage(sheetName, imageCells,
+        new ByteArrayInputStream(imageByteArrayOutputStream.toByteArray()), outputStream,
+        widthUnits, heightUnits);
   }
 
   /**

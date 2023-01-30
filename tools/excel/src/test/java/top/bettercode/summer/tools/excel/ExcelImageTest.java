@@ -3,9 +3,9 @@ package top.bettercode.summer.tools.excel;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -17,7 +17,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import top.bettercode.summer.tools.lang.util.ArrayUtil;
-import top.bettercode.summer.tools.lang.util.RandomUtil;
 
 /**
  * @author Peter Wu
@@ -82,14 +81,20 @@ public class ExcelImageTest {
 
 
   private static void openExcel(String x) throws IOException {
-//    Runtime.getRuntime().exec(new String[]{"xdg-open", System.getProperty("user.dir") + "/" + x});
+    Runtime.getRuntime().exec(new String[]{"xdg-open", System.getProperty("user.dir") + "/" + x});
   }
 
 
   @Test
   public void testMergeExportWithImage() throws IOException {
-    ExcelImageCellHandler<DataBean> cellHandler = new ExcelImageCellHandler<>();
 
+    ExcelConverter<DataBean, InputStream> excelConverter = from -> {
+      try {
+        return new ClassPathResource("ico.jpeg").getInputStream();
+      } catch (IOException ex) {
+        throw new RuntimeException(ex);
+      }
+    };
     ExcelField<DataBean, ?>[] excelMergeFields = ArrayUtil.of(
         ExcelField.<DataBean, Integer>index("序号"),
         ExcelField.of("编码", DataBean::getIntCode).mergeBy(DataBean::getIntCode),
@@ -97,9 +102,8 @@ public class ExcelImageTest {
         ExcelField.of("名称", from -> new String[]{"abc", "1"}),
         ExcelField.of("描述", DataBean::getName),
         ExcelField.of("描述C", DataBean::getDate),
-        ExcelField.of("图片1", cellHandler)
-            .mergeBy(DataBean::getIntCode).width(5),
-        ExcelField.of("图片2", cellHandler).width(5)
+        ExcelField.image("图片1", excelConverter).mergeBy(DataBean::getIntCode).width(5),
+        ExcelField.image("图片2", excelConverter).width(5)
     );
 
     List<DataBean> list = new ArrayList<>();
@@ -108,125 +112,21 @@ public class ExcelImageTest {
       list.add(bean);
     }
     long s = System.currentTimeMillis();
+    System.err.println("=======");
+
     String filename = "build/export.xlsx";
-    ExcelExport.of(filename).sheet("表格")
-        .setMergeData(list, excelMergeFields).finish();
+
+    ExcelExport.withImage(Files.newOutputStream(Paths.get(filename))).sheet("表格")
+        .setMergeData(list, excelMergeFields)
+        .finish()
+        .setImage(20 * 256, (short) (60 * 20));
+    System.err.println("=======");
     long e = System.currentTimeMillis();
 
-    cellHandler.setImageGetter(from -> {
-      try {
-        InputStream inputStream = new ClassPathResource("ico.jpeg").getInputStream();
-        byte[] bytes = IOUtils.toByteArray(inputStream);
-        inputStream.close();
-        return bytes;
-      } catch (IOException ex) {
-        throw new RuntimeException(ex);
-      }
-    });
-    cellHandler.setImage(filename);
     System.err.println(e - s);
 
     openExcel(filename);
   }
 
 
-  public static class DataBean {
-
-    private Integer intCode;
-    private Integer integer;
-    private Long longl;
-    private Double doublel;
-    private Float floatl;
-    private String name;
-    private BigDecimal num;
-    private Date date;
-
-    public DataBean() {
-      intCode = 1;
-      integer = 2;
-      longl = new Date().getTime();
-      doublel = 4.4;
-      floatl = 5.5f;
-      num = new BigDecimal("0." + RandomUtil.nextInt(2));
-      name = "名称";
-      date = new Date();
-    }
-
-    public DataBean(Integer index) {
-      intCode = 1 + index / 3;
-      integer = 2 + index / 2;
-      longl = new Date().getTime() + index * 10000;
-      doublel = 4.4 + index;
-      floatl = 5.5f + index;
-      num = new BigDecimal("0." + index);
-      name = "名称" + index;
-      date = new Date();
-    }
-
-    public BigDecimal getNum() {
-      return num;
-    }
-
-    public void setNum(BigDecimal num) {
-      this.num = num;
-    }
-
-    public Integer getIntCode() {
-      return intCode;
-    }
-
-    public void setIntCode(Integer intCode) {
-      this.intCode = intCode;
-    }
-
-    public Integer getInteger() {
-      return integer;
-    }
-
-    public void setInteger(Integer integer) {
-      this.integer = integer;
-    }
-
-    public Long getLongl() {
-      return longl;
-    }
-
-    public void setLongl(Long longl) {
-      this.longl = longl;
-    }
-
-    public Double getDoublel() {
-      return doublel;
-    }
-
-    public DataBean setDoublel(Double doublel) {
-      this.doublel = doublel;
-      return this;
-    }
-
-    public Float getFloatl() {
-      return floatl;
-    }
-
-    public DataBean setFloatl(Float floatl) {
-      this.floatl = floatl;
-      return this;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public void setName(String name) {
-      this.name = name;
-    }
-
-    public Date getDate() {
-      return date;
-    }
-
-    public void setDate(Date date) {
-      this.date = date;
-    }
-  }
 }

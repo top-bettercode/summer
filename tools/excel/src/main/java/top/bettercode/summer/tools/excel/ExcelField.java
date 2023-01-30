@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.excel;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Array;
@@ -31,7 +32,6 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import top.bettercode.summer.tools.lang.util.BooleanUtil;
 import top.bettercode.summer.tools.lang.util.MoneyUtil;
-import top.bettercode.summer.tools.lang.util.StringUtil;
 import top.bettercode.summer.tools.lang.util.TimeUtil;
 import top.bettercode.summer.web.support.code.CodeServiceHolder;
 import top.bettercode.summer.web.support.code.ICodeService;
@@ -102,7 +102,11 @@ public class ExcelField<T, P> {
   /**
    * 序号字段
    */
-  private boolean indexColumn = false;
+  private final boolean indexColumn;
+  /**
+   * 图片字段
+   */
+  private final boolean imageColumn;
   /**
    * 获取实体属性
    */
@@ -142,9 +146,7 @@ public class ExcelField<T, P> {
 
   //--------------------------------------------
   public static <T, P> ExcelField<T, P> index(String title) {
-    ExcelField<T, P> excelField = new ExcelField<>(title);
-    excelField.indexColumn();
-    return excelField;
+    return new ExcelField<>(title, true, false);
   }
 
   /**
@@ -157,7 +159,11 @@ public class ExcelField<T, P> {
    * @return Excel字段描述
    */
   public static <T, P> ExcelField<T, P> of(String title, ExcelConverter<T, P> propertyGetter) {
-    return new ExcelField<>(title, propertyGetter);
+    return new ExcelField<>(title, propertyGetter, false, false);
+  }
+
+  public static <T, P> ExcelField<T, P> image(String title, ExcelConverter<T, P> propertyGetter) {
+    return new ExcelField<>(title, propertyGetter, false, true);
   }
 
   /**
@@ -172,7 +178,7 @@ public class ExcelField<T, P> {
    */
   public static <T, P> ExcelField<T, P> of(String title, Class<P> propertyType,
       ExcelConverter<T, P> propertyGetter) {
-    return new ExcelField<>(title, propertyType, propertyGetter);
+    return new ExcelField<>(title, propertyType, propertyGetter, false, false);
   }
 
 
@@ -189,7 +195,8 @@ public class ExcelField<T, P> {
    */
   public static <T, P> ExcelField<T, P> of(String title, Class<P> propertyType,
       ExcelConverter<T, P> propertyGetter, ExcelCellSetter<T, P> propertySetter) {
-    return new ExcelField<>(title, propertyType, propertyGetter).setter(propertySetter);
+    return new ExcelField<>(title, propertyType, propertyGetter, false, false).setter(
+        propertySetter);
   }
 
   //--------------------------------------------
@@ -312,59 +319,57 @@ public class ExcelField<T, P> {
   }
 
   @SuppressWarnings("unchecked")
-  private ExcelField(String title, ExcelConverter<T, P> propertyGetter) {
+  private ExcelField(String title, ExcelConverter<T, P> propertyGetter,
+      boolean indexColumn, boolean imageColumn) {
     this.title = title;
     this.propertyGetter = propertyGetter;
 
-    if (!(propertyGetter instanceof ExcelCellHandler)) {
-      try {
-        Method writeReplace = propertyGetter.getClass().getDeclaredMethod("writeReplace");
-        writeReplace.setAccessible(true);
-        SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(propertyGetter);
-        String implMethodName = serializedLambda.getImplMethodName();
+    try {
+      Method writeReplace = propertyGetter.getClass().getDeclaredMethod("writeReplace");
+      writeReplace.setAccessible(true);
+      SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(propertyGetter);
+      String implMethodName = serializedLambda.getImplMethodName();
 
-        MethodSignature methodSignature = SignatureAttribute
-            .toMethodSignature(serializedLambda.getInstantiatedMethodType());
-        entityType = (Class<T>) ClassUtils
-            .forName(methodSignature.getParameterTypes()[0].jvmTypeName(), null);
-        propertyType = ClassUtils.forName(methodSignature.getReturnType().jvmTypeName(), null);
-        propertyName = resolvePropertyName(implMethodName);
-        if (!propertyName.contains("lambda$new$")) {
+      MethodSignature methodSignature = SignatureAttribute
+          .toMethodSignature(serializedLambda.getInstantiatedMethodType());
+      entityType = (Class<T>) ClassUtils
+          .forName(methodSignature.getParameterTypes()[0].jvmTypeName(), null);
+      propertyType = ClassUtils.forName(methodSignature.getReturnType().jvmTypeName(), null);
+      propertyName = resolvePropertyName(implMethodName);
+      if (!propertyName.contains("lambda$new$")) {
+        try {
+          Method writeMethod;
           try {
-            Method writeMethod;
-            try {
+            writeMethod = entityType
+                .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
+          } catch (NoSuchMethodException e) {
+            if (ClassUtils.isPrimitiveWrapper(propertyType)) {
+              propertyType = primitiveWrapperTypeMap.get(propertyType);
               writeMethod = entityType
                   .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
-            } catch (NoSuchMethodException e) {
-              if (ClassUtils.isPrimitiveWrapper(propertyType)) {
-                propertyType = primitiveWrapperTypeMap.get(propertyType);
-                writeMethod = entityType
-                    .getMethod("set" + StringUtils.capitalize(propertyName), propertyType);
-              } else {
-                throw e;
-              }
+            } else {
+              throw e;
             }
-            Method fWriteMethod = writeMethod;
-            this.propertySetter = (obj, property) -> ReflectionUtils.invokeMethod(fWriteMethod, obj,
-                property);
-          } catch (NoSuchMethodException e) {
-            Logger log = LoggerFactory.getLogger(ExcelField.class);
-            if (log.isDebugEnabled()) {
-              log.debug("自动识别属性{} setter方法失败", propertyName);
-            }
-            propertyName = null;
-            propertySetter = null;
-            entityType = null;
           }
+          Method fWriteMethod = writeMethod;
+          this.propertySetter = (obj, property) -> ReflectionUtils.invokeMethod(fWriteMethod, obj,
+              property);
+        } catch (NoSuchMethodException e) {
+          Logger log = LoggerFactory.getLogger(ExcelField.class);
+          if (log.isDebugEnabled()) {
+            log.debug("自动识别属性{} setter方法失败", propertyName);
+          }
+          propertyName = null;
+          propertySetter = null;
+          entityType = null;
         }
-      } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
-               ClassNotFoundException | BadBytecode e) {
-        throw new ExcelException(title + "属性解析错误", e);
       }
-    } else {
-      propertyType = ExcelCellHandler.class;
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+             ClassNotFoundException | BadBytecode e) {
+      throw new ExcelException(title + "属性解析错误", e);
     }
-
+    this.indexColumn = indexColumn;
+    this.imageColumn = imageColumn;
     init();
   }
 
@@ -376,17 +381,22 @@ public class ExcelField<T, P> {
    * @param propertyType   属性字段类型
    * @param propertyGetter 属性获取方法
    */
-  private ExcelField(String title, Class<P> propertyType, ExcelConverter<T, P> propertyGetter) {
+  private ExcelField(String title, Class<P> propertyType, ExcelConverter<T, P> propertyGetter,
+      boolean indexColumn, boolean imageColumn) {
     this.title = title;
     this.propertyType = propertyType;
     this.propertyGetter = propertyGetter;
+    this.indexColumn = indexColumn;
+    this.imageColumn = imageColumn;
 
     init();
   }
 
 
-  private ExcelField(String title) {
+  private ExcelField(String title, boolean indexColumn, boolean imageColumn) {
     this.title = title;
+    this.indexColumn = indexColumn;
+    this.imageColumn = imageColumn;
     this.numberingFormat = ExcelCell.DEFAULT_NUMBERING_FORMAT;
   }
 
@@ -510,10 +520,10 @@ public class ExcelField<T, P> {
         return buffer.toString();
       } else if (Collection.class.isAssignableFrom(propertyType)) {
         return StringUtils.collectionToCommaDelimitedString((Collection<?>) property);
-      } else if (propertyType == ExcelCellHandler.class) {
+      } else if (imageColumn) {
         return property;
       } else {
-        return StringUtil.valueOf(property);
+        return String.valueOf(property);
       }
     };
 
@@ -605,16 +615,6 @@ public class ExcelField<T, P> {
   public ExcelField<T, P> mergeBy(ExcelConverter<T, ?> mergeGetter) {
     this.merge = true;
     this.mergeGetter = mergeGetter;
-    return this;
-  }
-
-  /**
-   * 设为序列字段
-   *
-   * @return ExcelField
-   */
-  private ExcelField<T, P> indexColumn() {
-    this.indexColumn = true;
     return this;
   }
 
@@ -713,5 +713,9 @@ public class ExcelField<T, P> {
 
   boolean isIndexColumn() {
     return indexColumn;
+  }
+
+  public boolean isImageColumn() {
+    return imageColumn;
   }
 }

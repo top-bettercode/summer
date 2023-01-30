@@ -28,52 +28,40 @@ public class ExcelCell<T> {
 
   private final int row;
   private final int column;
-
   private final boolean lastRow;
-  protected boolean fillColor;
-  private final String align;
-  private final double width;
-  private final double height;
-  private final String numberingFormat;
-  protected Object cellValue;
+  private boolean fillColor;
+  private final Object cellValue;
   private final T entity;
-  protected final boolean indexColumn;
-  private final boolean dateField;
+  private final ExcelField<T, ?> excelField;
 
   public ExcelCell(int row, int column, int firstRow, boolean lastRow,
       ExcelField<T, ?> excelField, T entity) {
-    this(row, column, lastRow, row - firstRow + 1, excelField, entity);
+    this(row, column, lastRow, row - firstRow + 1, (row - firstRow + 1) % 2 == 0, excelField,
+        entity);
   }
 
-  public ExcelCell(int row, int column, boolean lastRow, int index,
+  public ExcelCell(int row, int column, boolean lastRow, int index, boolean fillColor,
       ExcelField<T, ?> excelField, T entity) {
     this.row = row;
     this.column = column;
     this.lastRow = lastRow;
-    this.dateField = excelField.isDateField();
-    this.fillColor = index % 2 == 0;
-    this.align = excelField.align().name();
-    this.width = excelField.width();
-    this.height = excelField.height();
-    this.numberingFormat = excelField.numberingFormat();
-    this.indexColumn = excelField.isIndexColumn();
+    this.fillColor = fillColor;
+    this.excelField = excelField;
     this.entity = entity;
-    if (this.indexColumn) {
+
+    if (this.excelField.isIndexColumn()) {
       this.cellValue = index;
     } else {
       this.cellValue = excelField.toCellValue(entity);
     }
   }
 
-  public boolean needSetValue() {
-    return true;
+  public void setFillColor(int index) {
+    this.fillColor = index % 2 == 0;
   }
 
-  public void setIndex(int index) {
-    this.fillColor = index % 2 == 0;
-    if (indexColumn) {
-      this.cellValue = index;
-    }
+  public boolean needSetValue() {
+    return true;
   }
 
   public int getRow() {
@@ -88,28 +76,9 @@ public class ExcelCell<T> {
     return lastRow;
   }
 
-  public boolean isDateField() {
-    return dateField;
-  }
 
   public boolean isFillColor() {
     return fillColor;
-  }
-
-  public String getAlign() {
-    return align;
-  }
-
-  public double getWidth() {
-    return width;
-  }
-
-  public double getHeight() {
-    return height;
-  }
-
-  public String getNumberingFormat() {
-    return numberingFormat;
   }
 
   public Object getCellValue() {
@@ -118,5 +87,9 @@ public class ExcelCell<T> {
 
   public T getEntity() {
     return entity;
+  }
+
+  public ExcelField<T, ?> getExcelField() {
+    return excelField;
   }
 }
