@@ -81,7 +81,7 @@ public class ExcelImageTest {
 
 
   private static void openExcel(String x) throws IOException {
-    Runtime.getRuntime().exec(new String[]{"xdg-open", System.getProperty("user.dir") + "/" + x});
+//    Runtime.getRuntime().exec(new String[]{"xdg-open", System.getProperty("user.dir") + "/" + x});
   }
 
 
@@ -102,8 +102,7 @@ public class ExcelImageTest {
         ExcelField.of("名称", from -> new String[]{"abc", "1"}),
         ExcelField.of("描述", DataBean::getName),
         ExcelField.of("描述C", DataBean::getDate),
-        ExcelField.image("图片1", excelConverter).mergeBy(DataBean::getIntCode).width(20)
-            .height(80),
+        ExcelField.image("图片1", excelConverter).mergeBy(DataBean::getIntCode).width(10),
         ExcelField.image("图片2", excelConverter).width(10).height(40)
     );
 

@@ -32,7 +32,7 @@ public class ExcelImageCellWriterUtil {
             drawImage(((ExcelRangeCell<?>) cell).getPreCellValue(), wb, sheet, drawing, helper,
                 cell.getColumn(),
                 rangeCell.getLastRangeTop(),
-                rangeCell.getLastRangeBottom() + 1);
+                rangeCell.getLastRangeTop() + 1);
             if (rangeCell.isLastRow()) {
               drawImage(cell.getCellValue(), wb, sheet, drawing, helper,
                   cell.getColumn(),
@@ -41,7 +41,7 @@ public class ExcelImageCellWriterUtil {
           } else if (rangeCell.isLastRow()) {
             drawImage(cell.getCellValue(), wb, sheet, drawing, helper,
                 cell.getColumn(),
-                rangeCell.getLastRangeTop(), rangeCell.getLastRangeBottom() + 1);
+                rangeCell.getLastRangeTop(), rangeCell.getLastRangeTop() + 1);
           }
         } else {
           drawImage(cell.getCellValue(), wb, sheet, drawing, helper,

@@ -48,7 +48,7 @@ public class ExcelTest {
   }
 
   private static void openExcel(String x) throws IOException {
-    Runtime.getRuntime().exec(new String[]{"xdg-open", System.getProperty("user.dir") + "/" + x});
+//    Runtime.getRuntime().exec(new String[]{"xdg-open", System.getProperty("user.dir") + "/" + x});
   }
 
   private final ExcelField<DataBean, ?>[] excelMergeFields = ArrayUtil.of(
