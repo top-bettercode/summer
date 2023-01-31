@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.Arrays;
@@ -139,9 +138,9 @@ public class ExcelField<T, P> {
    */
   protected String propertyName;
   /**
-   * 日期格式
+   * 是否时间日期字段
    */
-  protected DateTimeFormatter dateTimeFormatter;
+  protected boolean dateField;
 
   //--------------------------------------------
   public static <T, P> ExcelField<T, P> index(String title) {
@@ -214,7 +213,7 @@ public class ExcelField<T, P> {
   }
 
   public ExcelField<T, P> millis(String pattern) {
-    this.dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+    this.numberingFormat = pattern;
     return this;
   }
 
@@ -411,19 +410,13 @@ public class ExcelField<T, P> {
       } else if (propertyType == Float.class || propertyType == float.class) {
         this.numberingFormat = "0.00";
       } else if (propertyType == LocalDate.class) {
+        this.dateField = true;
         this.numberingFormat = ExcelCell.DEFAULT_DATE_NUMBERING_FORMAT;
       } else if (propertyType == Date.class || propertyType == LocalDateTime.class) {
+        this.dateField = true;
         this.numberingFormat = ExcelCell.DEFAULT_DATE_TIME_NUMBERING_FORMAT;
       } else {
         this.numberingFormat = ExcelCell.DEFAULT_NUMBERING_FORMAT;
-      }
-    }
-
-    if (dateTimeFormatter == null) {
-      if (propertyType == LocalDate.class) {
-        dateTimeFormatter = DateTimeFormatter.ofPattern(ExcelCell.DEFAULT_DATE_PATTERN);
-      } else if (propertyType == Date.class || propertyType == LocalDateTime.class) {
-        dateTimeFormatter = DateTimeFormatter.ofPattern(ExcelCell.DEFAULT_DATE_TIME_PATTERN);
       }
     }
 
@@ -443,7 +436,10 @@ public class ExcelField<T, P> {
           if (cellValue instanceof LocalDateTime) {
             return TimeUtil.of((LocalDateTime) cellValue).toMillis();
           } else {
-            return TimeUtil.parse(String.valueOf(cellValue), dateTimeFormatter)
+            return TimeUtil.parse(String.valueOf(cellValue), new DateTimeFormatterBuilder()
+                    .appendPattern(numberingFormat)
+                    .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                    .toFormatter())
                 .toMillis();
           }
         } else {
@@ -471,20 +467,29 @@ public class ExcelField<T, P> {
         if (cellValue instanceof LocalDateTime) {
           return TimeUtil.of((LocalDateTime) cellValue).toDate();
         } else {
-          return TimeUtil.parse(String.valueOf(cellValue), dateTimeFormatter).toDate();
+          return TimeUtil.parse(String.valueOf(cellValue), new DateTimeFormatterBuilder()
+              .appendPattern(numberingFormat)
+              .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+              .toFormatter()).toDate();
         }
       } else if (propertyType == LocalDateTime.class) {
         if (cellValue instanceof LocalDateTime) {
           return cellValue;
         } else {
-          return TimeUtil.parse(String.valueOf(cellValue), dateTimeFormatter)
+          return TimeUtil.parse(String.valueOf(cellValue), new DateTimeFormatterBuilder()
+                  .appendPattern(numberingFormat)
+                  .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                  .toFormatter())
               .toLocalDateTime();
         }
       } else if (propertyType == LocalDate.class) {
         if (cellValue instanceof LocalDateTime) {
           return ((LocalDateTime) cellValue).toLocalDate();
         } else {
-          return TimeUtil.parse(String.valueOf(cellValue), dateTimeFormatter)
+          return TimeUtil.parse(String.valueOf(cellValue), new DateTimeFormatterBuilder()
+                  .appendPattern(numberingFormat)
+                  .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                  .toFormatter())
               .toLocalDate();
         }
       }
@@ -576,19 +581,6 @@ public class ExcelField<T, P> {
     return this;
   }
 
-  public ExcelField<T, P> dateTimeFormatter(DateTimeFormatter dateTimeFormatter) {
-    this.dateTimeFormatter = dateTimeFormatter;
-    return this;
-  }
-
-  public ExcelField<T, P> pattern(String pattern) {
-    this.dateTimeFormatter = new DateTimeFormatterBuilder()
-        .appendPattern(pattern)
-        .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-        .toFormatter();
-    return this;
-  }
-
   public ExcelField<T, P> align(Alignment align) {
     this.align = align;
     return this;
@@ -674,7 +666,7 @@ public class ExcelField<T, P> {
   }
 
   boolean isDateField() {
-    return dateTimeFormatter != null;
+    return dateField;
   }
 
   //--------------------------------------------
