@@ -74,7 +74,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/template.xlsx\", name = \"导入模板\")")
 
                 import("top.bettercode.util.excel.ExcelExport")
-                +"ExcelExport.export(\"${remarks}导入模板\", excelExport -> excelExport.sheet(\"sheet1\").template(excelFields));"
+                +"ExcelExport.sheet(\"${remarks}导入模板\", excelExport -> excelExport.template(excelFields));"
             }
 
             //import
