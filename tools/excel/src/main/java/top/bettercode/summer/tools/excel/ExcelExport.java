@@ -70,6 +70,7 @@ public class ExcelExport {
    * 是否包含批注
    */
   private boolean includeComment = false;
+  private boolean finish = false;
   private boolean includeDataValidation = false;
 
   private final ColumnWidths columnWidths = new ColumnWidths();
@@ -487,20 +488,24 @@ public class ExcelExport {
 
   /**
    * 输出数据流
-   *
-   * @throws IOException IOException
    */
-  public ExcelExport finish() throws IOException {
-    workbook.finish();
+  public ExcelExport finish() {
+    if (!finish) {
+      try {
+        workbook.finish();
+        finish = true;
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
     return this;
   }
 
   /**
    * @param widthUnits  set width to n character widths = count characters * 256 example: 20*256;
    * @param heightUnits set height to n points in twips = n * 20 example: 60*20;
-   * @throws IOException IOException
    */
-  public void setImage(int widthUnits, short heightUnits) throws IOException {
+  public void setImage(int widthUnits, short heightUnits) {
     setImage(sheet.getName(), widthUnits, heightUnits);
   }
 
@@ -508,9 +513,8 @@ public class ExcelExport {
    * @param sheetName   sheetName
    * @param widthUnits  set width to n character widths = count characters * 256 example: 20*256;
    * @param heightUnits set height to n points in twips = n * 20 example: 60*20;
-   * @throws IOException IOException
    */
-  public void setImage(String sheetName, int widthUnits, short heightUnits) throws IOException {
+  public void setImage(String sheetName, int widthUnits, int heightUnits) {
     Assert.notNull(imageByteArrayOutputStream, "不是支持图片插入的导出");
     ExcelImageCellWriterUtil.setImage(sheetName, imageCells,
         new ByteArrayInputStream(imageByteArrayOutputStream.toByteArray()), outputStream,
@@ -617,13 +621,9 @@ public class ExcelExport {
   public static void cache(HttpServletRequest request, HttpServletResponse response,
       String fileName, String fileKey, Consumer<ExcelExport> consumer) throws IOException {
     cacheOutput(request, response, fileName, fileKey, outputStream -> {
-      try {
-        ExcelExport excelExport = ExcelExport.of(outputStream);
-        consumer.accept(excelExport);
-        excelExport.finish();
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+      ExcelExport excelExport = ExcelExport.of(outputStream);
+      consumer.accept(excelExport);
+      excelExport.finish();
     });
   }
 

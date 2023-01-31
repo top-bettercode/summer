@@ -19,47 +19,51 @@ public class ExcelImageCellWriterUtil {
 
   public static void setImage(String sheetName, List<ExcelCell<?>> imageCells,
       InputStream inputStream, OutputStream outputStream, int widthUnits,
-      short heightUnits)
-      throws IOException {
-    XSSFWorkbook wb = new XSSFWorkbook(inputStream);
-    XSSFSheet sheet = wb.getSheet(sheetName);
-    CreationHelper helper = wb.getCreationHelper();
-    Drawing<XSSFShape> drawing = sheet.createDrawingPatriarch();
+      int heightUnits) {
+    try {
+      XSSFWorkbook wb = new XSSFWorkbook(inputStream);
+      XSSFSheet sheet = wb.getSheet(sheetName);
+      CreationHelper helper = wb.getCreationHelper();
+      Drawing<XSSFShape> drawing = sheet.createDrawingPatriarch();
 
-    for (ExcelCell<?> cell : imageCells) {
-      if (cell instanceof ExcelRangeCell) {
-        ExcelRangeCell<?> rangeCell = (ExcelRangeCell<?>) cell;
-        if (rangeCell.needRange()) {
-          drawImage(((ExcelRangeCell<?>) cell).getPreCellValue(), wb, sheet, drawing, helper,
-              cell.getRow(), cell.getColumn(),
-              rangeCell.getLastRangeTop(), rangeCell.getLastRangeBottom() + 1, widthUnits,
-              heightUnits);
-          if (rangeCell.isLastRow()) {
+      for (ExcelCell<?> cell : imageCells) {
+        if (cell instanceof ExcelRangeCell) {
+          ExcelRangeCell<?> rangeCell = (ExcelRangeCell<?>) cell;
+          if (rangeCell.needRange()) {
+            drawImage(((ExcelRangeCell<?>) cell).getPreCellValue(), wb, sheet, drawing, helper,
+                cell.getRow(), cell.getColumn(),
+                rangeCell.getLastRangeTop(), rangeCell.getLastRangeBottom() + 1, widthUnits,
+                heightUnits);
+            if (rangeCell.isLastRow()) {
+              drawImage(cell.getCellValue(), wb, sheet, drawing, helper, cell.getRow(),
+                  cell.getColumn(),
+                  cell.getRow(), cell.getRow() + 1, widthUnits, heightUnits);
+            }
+          } else if (!rangeCell.getExcelField().isMerge()) {
             drawImage(cell.getCellValue(), wb, sheet, drawing, helper, cell.getRow(),
-                cell.getColumn(),
-                cell.getRow(), cell.getRow() + 1, widthUnits, heightUnits);
+                cell.getColumn(), cell.getRow(),
+                cell.getRow() + 1, widthUnits, heightUnits);
           }
-        } else if (!rangeCell.getExcelField().isMerge()) {
+        } else {
           drawImage(cell.getCellValue(), wb, sheet, drawing, helper, cell.getRow(),
-              cell.getColumn(), cell.getRow(),
+              cell.getColumn(),
+              cell.getRow(),
               cell.getRow() + 1, widthUnits, heightUnits);
         }
-      } else {
-        drawImage(cell.getCellValue(), wb, sheet, drawing, helper, cell.getRow(), cell.getColumn(),
-            cell.getRow(),
-            cell.getRow() + 1, widthUnits, heightUnits);
       }
-    }
 
-    wb.write(outputStream);
-    wb.close();
-    outputStream.close();
+      wb.write(outputStream);
+      wb.close();
+      outputStream.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 
   private static void drawImage(Object cellValue, XSSFWorkbook wb, XSSFSheet sheet,
       Drawing<XSSFShape> drawing, CreationHelper helper, int row, int column, int top, int bottom,
-      int widthUnits, short heightUnits)
+      int widthUnits, int heightUnits)
       throws IOException {
     int pictureIdx;
     if (cellValue instanceof byte[]) {
@@ -81,7 +85,7 @@ public class ExcelImageCellWriterUtil {
       sheet.setColumnWidth(column, widthUnits);
     }
     if (heightUnits > 0) {
-      sheet.getRow(row).setHeight(heightUnits);
+      sheet.getRow(row).setHeight((short) heightUnits);
     }
   }
 
