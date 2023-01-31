@@ -5,12 +5,12 @@ package top.bettercode.summer.tools.excel;
  */
 public class ExcelRangeCell<T> extends ExcelCell<T> {
 
-  private final boolean mergeLastRange;
   private final int lastRangeTop;
   private final int lastRangeBottom;
   private final Object preCellValue;
   private final boolean needSetValue;
   private final boolean needRange;
+  private final boolean newRange;
 
   public ExcelRangeCell(int row, int column, int index, int firstRow, boolean lastRow,
       boolean newRange, int lastRangeTop,
@@ -18,13 +18,15 @@ public class ExcelRangeCell<T> extends ExcelCell<T> {
     super(row, column, lastRow, excelField.isMerge() ? index : row - firstRow + 1, index % 2 == 0,
         excelField, entity);
 
+    this.newRange = newRange;
     this.lastRangeTop = lastRangeTop;
-    this.lastRangeBottom = lastRow && !newRange ? row : row - 1;
-    this.mergeLastRange = (newRange || lastRow) && lastRangeBottom > lastRangeTop;
-    this.needSetValue = !getExcelField().isMerge() || newRange;
-    this.needRange = mergeLastRange && getExcelField().isMerge();
 
-    if (this.mergeLastRange && !excelField.isIndexColumn()) {
+    this.lastRangeBottom = newRange ? row - 1 : row;
+    boolean mergeLastRange = (newRange || lastRow) && lastRangeBottom > lastRangeTop;
+    this.needRange = mergeLastRange && getExcelField().isMerge();
+    this.needSetValue = !getExcelField().isMerge() || newRange;
+
+    if (!excelField.isIndexColumn() && newRange && preEntity != null) {
       preCellValue = excelField.toCellValue(preEntity);
     } else {
       preCellValue = null;
@@ -32,6 +34,11 @@ public class ExcelRangeCell<T> extends ExcelCell<T> {
   }
 
   //--------------------------------------------
+
+
+  public boolean newRange() {
+    return newRange;
+  }
 
   public boolean needSetValue() {
     return needSetValue;

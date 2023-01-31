@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -208,6 +209,9 @@ public class ExcelExport {
     // Create header
     {
       for (ExcelField<T, ?> excelField : excelFields) {
+        if (imageByteArrayOutputStream == null && excelField.isImageColumn()) {
+          continue;
+        }
         String t = excelField.title();
         sheet.value(r, c, t);
         double width = excelField.width();
@@ -321,13 +325,15 @@ public class ExcelExport {
     }
     style.set();
 
+    if (excelField.isImageColumn()) {
+      imageCells.add(excelCell);
+    }
     if (excelCell.needSetValue()) {
       Object cellValue = excelCell.getCellValue();
       if (cellValue == null) {
         sheet.value(row, column);
       } else if (excelField.isImageColumn()) {
         sheet.value(excelCell.getRow(), column);
-        imageCells.add(excelCell);
       } else if (cellValue instanceof String) {
         sheet.value(row, column, (String) cellValue);
       } else if (cellValue instanceof Number) {
@@ -390,7 +396,14 @@ public class ExcelExport {
     int firstColumn = c;
 
     int index = 0;
-    boolean mergeFirstColumn = excelFields[0].isMerge();
+    ExcelField<T, ?> firstField = excelFields[0];
+    if (imageByteArrayOutputStream == null) {
+      firstField = Arrays.stream(excelFields).filter(o -> !o.isImageColumn()).findFirst()
+          .orElseThrow(() -> new ExcelException("无可导出项目"));
+    } else {
+      firstField = excelFields[0];
+    }
+    boolean mergeFirstColumn = firstField.isMerge();
     Map<Integer, Object> lastMergeIds = new HashMap<>();
     Map<Integer, Integer> lastRangeTops = new HashMap<>();
     T preEntity = null;

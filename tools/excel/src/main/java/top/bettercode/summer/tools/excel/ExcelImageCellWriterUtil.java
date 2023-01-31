@@ -26,24 +26,25 @@ public class ExcelImageCellWriterUtil {
       Drawing<XSSFShape> drawing = sheet.createDrawingPatriarch();
 
       for (ExcelCell<?> cell : imageCells) {
-        if (cell instanceof ExcelRangeCell) {
+        if (cell instanceof ExcelRangeCell && cell.getExcelField().isMerge()) {
           ExcelRangeCell<?> rangeCell = (ExcelRangeCell<?>) cell;
-          if (rangeCell.needRange()) {
+          if (((ExcelRangeCell<?>) cell).newRange()) {
             drawImage(((ExcelRangeCell<?>) cell).getPreCellValue(), wb, sheet, drawing, helper,
-                cell.getRow(), cell.getColumn(),
-                rangeCell.getLastRangeTop(), rangeCell.getLastRangeBottom() + 1);
+                cell.getColumn(),
+                rangeCell.getLastRangeTop(),
+                rangeCell.getLastRangeBottom() + 1);
             if (rangeCell.isLastRow()) {
-              drawImage(cell.getCellValue(), wb, sheet, drawing, helper, cell.getRow(),
+              drawImage(cell.getCellValue(), wb, sheet, drawing, helper,
                   cell.getColumn(),
                   cell.getRow(), cell.getRow() + 1);
             }
-          } else if (!rangeCell.getExcelField().isMerge()) {
-            drawImage(cell.getCellValue(), wb, sheet, drawing, helper, cell.getRow(),
-                cell.getColumn(), cell.getRow(),
-                cell.getRow() + 1);
+          } else if (rangeCell.isLastRow()) {
+            drawImage(cell.getCellValue(), wb, sheet, drawing, helper,
+                cell.getColumn(),
+                rangeCell.getLastRangeTop(), rangeCell.getLastRangeBottom() + 1);
           }
         } else {
-          drawImage(cell.getCellValue(), wb, sheet, drawing, helper, cell.getRow(),
+          drawImage(cell.getCellValue(), wb, sheet, drawing, helper,
               cell.getColumn(),
               cell.getRow(),
               cell.getRow() + 1);
@@ -60,7 +61,7 @@ public class ExcelImageCellWriterUtil {
 
 
   private static void drawImage(Object cellValue, XSSFWorkbook wb, XSSFSheet sheet,
-      Drawing<XSSFShape> drawing, CreationHelper helper, int row, int column, int top, int bottom)
+      Drawing<XSSFShape> drawing, CreationHelper helper, int column, int top, int bottom)
       throws IOException {
     if (cellValue == null) {
       return;

@@ -102,7 +102,8 @@ public class ExcelImageTest {
         ExcelField.of("名称", from -> new String[]{"abc", "1"}),
         ExcelField.of("描述", DataBean::getName),
         ExcelField.of("描述C", DataBean::getDate),
-        ExcelField.image("图片1", excelConverter).mergeBy(DataBean::getIntCode).width(20).height(80),
+        ExcelField.image("图片1", excelConverter).mergeBy(DataBean::getIntCode).width(20)
+            .height(80),
         ExcelField.image("图片2", excelConverter).width(10).height(40)
     );
 
@@ -111,8 +112,14 @@ public class ExcelImageTest {
       DataBean bean = new DataBean(i);
       list.add(bean);
     }
+    for (int i = 22; i < 25; i++) {
+      DataBean bean = new DataBean();
+      bean.setIntCode(i);
+      list.add(bean);
+    }
+    list.add(new DataBean(25));
+    list.add(new DataBean(25));
     long s = System.currentTimeMillis();
-    System.err.println("=======");
 
     String filename = "build/export.xlsx";
 
@@ -120,7 +127,6 @@ public class ExcelImageTest {
         .setMergeData(list, excelMergeFields)
         .finish()
         .setImage();
-    System.err.println("=======");
     long e = System.currentTimeMillis();
 
     System.err.println(e - s);
