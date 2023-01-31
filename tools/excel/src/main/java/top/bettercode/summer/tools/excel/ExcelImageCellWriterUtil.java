@@ -63,7 +63,7 @@ public class ExcelImageCellWriterUtil {
   private static void drawImage(Object cellValue, XSSFWorkbook wb, XSSFSheet sheet,
       Drawing<XSSFShape> drawing, CreationHelper helper, int column, int top, int bottom)
       throws IOException {
-    if (cellValue == null) {
+    if (cellValue == null || "".equals(cellValue)) {
       return;
     }
     int pictureIdx;
@@ -72,7 +72,8 @@ public class ExcelImageCellWriterUtil {
     } else if (cellValue instanceof InputStream) {
       pictureIdx = wb.addPicture((InputStream) cellValue, XSSFWorkbook.PICTURE_TYPE_PNG);
     } else {
-      throw new ExcelException("图像单元格数据未转换为有效输入格式（byte[] or InputStream）");
+      throw new ExcelException(
+          "图像单元格数据:" + cellValue + "不是有效输入格式（byte[] or InputStream）");
     }
     ClientAnchor anchor = helper.createClientAnchor();
     anchor.setCol1(column);
