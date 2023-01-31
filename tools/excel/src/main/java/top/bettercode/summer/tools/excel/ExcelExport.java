@@ -288,6 +288,9 @@ public class ExcelExport {
       T e = converter.convert(iterator.next());
       boolean lastRow = !iterator.hasNext();
       for (ExcelField<T, ?> excelField : excelFields) {
+        if (imageByteArrayOutputStream == null && excelField.isImageColumn()) {
+          continue;
+        }
         setCell(new ExcelCell<>(r, c, firstRow, lastRow, excelField, e));
         c++;
       }
@@ -399,6 +402,9 @@ public class ExcelExport {
       List<ExcelRangeCell<T>> indexCells = mergeFirstColumn ? null : new ArrayList<>();
       boolean merge;
       for (ExcelField<T, ?> excelField : excelFields) {
+        if (imageByteArrayOutputStream == null && excelField.isImageColumn()) {
+          continue;
+        }
         merge = excelField.isMerge();
         if (merge) {
           Object mergeIdValue = excelField.mergeId(e);
@@ -501,24 +507,18 @@ public class ExcelExport {
     return this;
   }
 
-  /**
-   * @param widthUnits  set width to n character widths = count characters * 256 example: 20*256;
-   * @param heightUnits set height to n points in twips = n * 20 example: 60*20;
-   */
-  public void setImage(int widthUnits, short heightUnits) {
-    setImage(sheet.getName(), widthUnits, heightUnits);
+
+  public void setImage() {
+    setImage(sheet.getName());
   }
 
   /**
-   * @param sheetName   sheetName
-   * @param widthUnits  set width to n character widths = count characters * 256 example: 20*256;
-   * @param heightUnits set height to n points in twips = n * 20 example: 60*20;
+   * @param sheetName sheetName
    */
-  public void setImage(String sheetName, int widthUnits, int heightUnits) {
+  public void setImage(String sheetName) {
     Assert.notNull(imageByteArrayOutputStream, "不是支持图片插入的导出");
     ExcelImageCellWriterUtil.setImage(sheetName, imageCells,
-        new ByteArrayInputStream(imageByteArrayOutputStream.toByteArray()), outputStream,
-        widthUnits, heightUnits);
+        new ByteArrayInputStream(imageByteArrayOutputStream.toByteArray()), outputStream);
   }
 
   /**
@@ -534,26 +534,31 @@ public class ExcelExport {
     Assert.notNull(requestAttributes, "requestAttributes获取失败");
     HttpServletRequest request = requestAttributes.getRequest();
     HttpServletResponse response = requestAttributes.getResponse();
-    export(request, response, fileName, consumer);
-  }
-
-  /**
-   * 输出数据流
-   *
-   * @param request  request
-   * @param response response
-   * @param fileName 输出文件名
-   * @param consumer 处理生成excel
-   * @throws IOException IOException
-   */
-  public static void export(HttpServletRequest request, HttpServletResponse response,
-      String fileName, Consumer<ExcelExport> consumer) throws IOException {
     setResponseHeader(request, response, fileName);
     ExcelExport excelExport = ExcelExport.of(response.getOutputStream());
     consumer.accept(excelExport);
     excelExport.finish();
   }
 
+  /**
+   * 输出数据流
+   *
+   * @param fileName 输出文件名
+   * @param consumer 处理生成excel
+   * @throws IOException IOException
+   */
+  public static void exportWithImage(String fileName, Consumer<ExcelExport> consumer)
+      throws IOException {
+    ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+        .getRequestAttributes();
+    Assert.notNull(requestAttributes, "requestAttributes获取失败");
+    HttpServletRequest request = requestAttributes.getRequest();
+    HttpServletResponse response = requestAttributes.getResponse();
+    setResponseHeader(request, response, fileName);
+    ExcelExport excelExport = ExcelExport.withImage(response.getOutputStream());
+    consumer.accept(excelExport);
+    excelExport.finish();
+  }
 
   /**
    * 输出数据流
@@ -568,20 +573,6 @@ public class ExcelExport {
     Assert.notNull(requestAttributes, "requestAttributes获取失败");
     HttpServletRequest request = requestAttributes.getRequest();
     HttpServletResponse response = requestAttributes.getResponse();
-    sheet(request, response, fileName, consumer);
-  }
-
-  /**
-   * 输出数据流
-   *
-   * @param request  request
-   * @param response response
-   * @param fileName 输出文件名
-   * @param consumer 处理生成excel
-   * @throws IOException IOException
-   */
-  public static void sheet(HttpServletRequest request, HttpServletResponse response,
-      String fileName, Consumer<ExcelExport> consumer) throws IOException {
     setResponseHeader(request, response, fileName);
     ExcelExport excelExport = ExcelExport.of(response.getOutputStream());
     excelExport.sheet("sheet1");
@@ -600,27 +591,7 @@ public class ExcelExport {
    */
   public static void cache(String fileName, String fileKey, Consumer<ExcelExport> consumer)
       throws IOException {
-    ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
-        .getRequestAttributes();
-    Assert.notNull(requestAttributes, "requestAttributes获取失败");
-    HttpServletRequest request = requestAttributes.getRequest();
-    HttpServletResponse response = requestAttributes.getResponse();
-    cache(request, response, fileName, fileKey, consumer);
-  }
-
-  /**
-   * 文件缓存输出
-   *
-   * @param request  request
-   * @param response response
-   * @param fileName 输出文件名
-   * @param fileKey  文件唯一key
-   * @param consumer 处理生成excel
-   * @throws IOException IOException
-   */
-  public static void cache(HttpServletRequest request, HttpServletResponse response,
-      String fileName, String fileKey, Consumer<ExcelExport> consumer) throws IOException {
-    cacheOutput(request, response, fileName, fileKey, outputStream -> {
+    cacheOutput(fileName, fileKey, outputStream -> {
       ExcelExport excelExport = ExcelExport.of(outputStream);
       consumer.accept(excelExport);
       excelExport.finish();
@@ -642,21 +613,6 @@ public class ExcelExport {
     Assert.notNull(requestAttributes, "requestAttributes获取失败");
     HttpServletRequest request = requestAttributes.getRequest();
     HttpServletResponse response = requestAttributes.getResponse();
-    cacheOutput(request, response, fileName, fileKey, consumer);
-  }
-
-  /**
-   * 文件缓存输出
-   *
-   * @param request  request
-   * @param response response
-   * @param fileName 输出文件名
-   * @param fileKey  文件唯一key
-   * @param consumer 处理生成excel至 outputStream
-   * @throws IOException IOException
-   */
-  public static void cacheOutput(HttpServletRequest request, HttpServletResponse response,
-      String fileName, String fileKey, Consumer<OutputStream> consumer) throws IOException {
     setResponseHeader(request, response, fileName);
     String tmpPath = System.getProperty("java.io.tmpdir");
 

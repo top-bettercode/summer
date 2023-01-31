@@ -102,8 +102,8 @@ public class ExcelImageTest {
         ExcelField.of("名称", from -> new String[]{"abc", "1"}),
         ExcelField.of("描述", DataBean::getName),
         ExcelField.of("描述C", DataBean::getDate),
-        ExcelField.image("图片1", excelConverter).mergeBy(DataBean::getIntCode).width(5),
-        ExcelField.image("图片2", excelConverter).width(5)
+        ExcelField.image("图片1", excelConverter).mergeBy(DataBean::getIntCode).width(20).height(80),
+        ExcelField.image("图片2", excelConverter).width(10).height(40)
     );
 
     List<DataBean> list = new ArrayList<>();
@@ -119,7 +119,7 @@ public class ExcelImageTest {
     ExcelExport.withImage(Files.newOutputStream(Paths.get(filename))).sheet("表格")
         .setMergeData(list, excelMergeFields)
         .finish()
-        .setImage(20 * 256, (short) (60 * 20));
+        .setImage();
     System.err.println("=======");
     long e = System.currentTimeMillis();
 

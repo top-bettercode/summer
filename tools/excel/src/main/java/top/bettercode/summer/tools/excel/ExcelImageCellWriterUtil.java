@@ -18,8 +18,7 @@ public class ExcelImageCellWriterUtil {
 
 
   public static void setImage(String sheetName, List<ExcelCell<?>> imageCells,
-      InputStream inputStream, OutputStream outputStream, int widthUnits,
-      int heightUnits) {
+      InputStream inputStream, OutputStream outputStream) {
     try {
       XSSFWorkbook wb = new XSSFWorkbook(inputStream);
       XSSFSheet sheet = wb.getSheet(sheetName);
@@ -32,23 +31,22 @@ public class ExcelImageCellWriterUtil {
           if (rangeCell.needRange()) {
             drawImage(((ExcelRangeCell<?>) cell).getPreCellValue(), wb, sheet, drawing, helper,
                 cell.getRow(), cell.getColumn(),
-                rangeCell.getLastRangeTop(), rangeCell.getLastRangeBottom() + 1, widthUnits,
-                heightUnits);
+                rangeCell.getLastRangeTop(), rangeCell.getLastRangeBottom() + 1);
             if (rangeCell.isLastRow()) {
               drawImage(cell.getCellValue(), wb, sheet, drawing, helper, cell.getRow(),
                   cell.getColumn(),
-                  cell.getRow(), cell.getRow() + 1, widthUnits, heightUnits);
+                  cell.getRow(), cell.getRow() + 1);
             }
           } else if (!rangeCell.getExcelField().isMerge()) {
             drawImage(cell.getCellValue(), wb, sheet, drawing, helper, cell.getRow(),
                 cell.getColumn(), cell.getRow(),
-                cell.getRow() + 1, widthUnits, heightUnits);
+                cell.getRow() + 1);
           }
         } else {
           drawImage(cell.getCellValue(), wb, sheet, drawing, helper, cell.getRow(),
               cell.getColumn(),
               cell.getRow(),
-              cell.getRow() + 1, widthUnits, heightUnits);
+              cell.getRow() + 1);
         }
       }
 
@@ -62,9 +60,11 @@ public class ExcelImageCellWriterUtil {
 
 
   private static void drawImage(Object cellValue, XSSFWorkbook wb, XSSFSheet sheet,
-      Drawing<XSSFShape> drawing, CreationHelper helper, int row, int column, int top, int bottom,
-      int widthUnits, int heightUnits)
+      Drawing<XSSFShape> drawing, CreationHelper helper, int row, int column, int top, int bottom)
       throws IOException {
+    if (cellValue == null) {
+      return;
+    }
     int pictureIdx;
     if (cellValue instanceof byte[]) {
       pictureIdx = wb.addPicture((byte[]) cellValue, XSSFWorkbook.PICTURE_TYPE_PNG);
@@ -79,14 +79,6 @@ public class ExcelImageCellWriterUtil {
     anchor.setCol2(column + 1);
     anchor.setRow2(bottom);
     drawing.createPicture(anchor, pictureIdx);
-
-    if (widthUnits > 0) {
-
-      sheet.setColumnWidth(column, widthUnits);
-    }
-    if (heightUnits > 0) {
-      sheet.getRow(row).setHeight((short) heightUnits);
-    }
   }
 
 }
