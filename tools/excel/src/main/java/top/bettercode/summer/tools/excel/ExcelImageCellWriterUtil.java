@@ -28,11 +28,16 @@ public class ExcelImageCellWriterUtil {
       for (ExcelCell<?> cell : imageCells) {
         if (cell instanceof ExcelRangeCell && cell.getExcelField().isMerge()) {
           ExcelRangeCell<?> rangeCell = (ExcelRangeCell<?>) cell;
+          int lastRangeTop = rangeCell.getLastRangeTop();
+          int rowHeight = rangeCell.getLastRangeBottom() - lastRangeTop;
+          if (rowHeight > 1) {
+            lastRangeTop += rowHeight / 2;
+          }
           if (((ExcelRangeCell<?>) cell).newRange()) {
             drawImage(((ExcelRangeCell<?>) cell).getPreCellValue(), wb, sheet, drawing, helper,
                 cell.getColumn(),
-                rangeCell.getLastRangeTop(),
-                rangeCell.getLastRangeTop() + 1);
+                lastRangeTop,
+                lastRangeTop + 1);
             if (rangeCell.isLastRow()) {
               drawImage(cell.getCellValue(), wb, sheet, drawing, helper,
                   cell.getColumn(),
@@ -41,7 +46,7 @@ public class ExcelImageCellWriterUtil {
           } else if (rangeCell.isLastRow()) {
             drawImage(cell.getCellValue(), wb, sheet, drawing, helper,
                 cell.getColumn(),
-                rangeCell.getLastRangeTop(), rangeCell.getLastRangeTop() + 1);
+                lastRangeTop, lastRangeTop + 1);
           }
         } else {
           drawImage(cell.getCellValue(), wb, sheet, drawing, helper,

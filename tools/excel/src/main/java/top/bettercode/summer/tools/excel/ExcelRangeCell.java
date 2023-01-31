@@ -21,7 +21,7 @@ public class ExcelRangeCell<T> extends ExcelCell<T> {
     this.newRange = newRange;
     this.lastRangeTop = lastRangeTop;
 
-    this.lastRangeBottom = newRange ? row - 1 : row;
+    this.lastRangeBottom = newRange && index > 1 ? row - 1 : row;
     boolean mergeLastRange = (newRange || lastRow) && lastRangeBottom > lastRangeTop;
     this.needRange = mergeLastRange && getExcelField().isMerge();
     this.needSetValue = !getExcelField().isMerge() || newRange;
