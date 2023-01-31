@@ -57,6 +57,8 @@ public class ExcelField<T, P> {
 
   /**
    * 格式
+   * <a
+   * href="https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1">...</a>
    */
   private String format;
 
@@ -210,6 +212,11 @@ public class ExcelField<T, P> {
     return millis(ExcelCell.DEFAULT_DATE_TIME_FORMAT);
   }
 
+  /**
+   * @param format 格式
+   *               https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1
+   * @return this
+   */
   public ExcelField<T, P> millis(String format) {
     this.format = format;
     this.dateField = true;
@@ -560,6 +567,11 @@ public class ExcelField<T, P> {
     return this;
   }
 
+  /**
+   * @param format 格式 <a
+   *               href="https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1">...</a>
+   * @return this
+   */
   public ExcelField<T, P> format(String format) {
     this.format = format;
     return this;
