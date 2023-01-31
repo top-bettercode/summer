@@ -15,7 +15,10 @@ public class ApiSecurityProperties {
 
   private Integer accessTokenValiditySeconds = 60 * 60 * 12; // default 12 hours.
 
-  private Integer userDetailsValiditySeconds = 60 * 60; // default 1 hours.
+  /**
+   * 默认不过期
+   */
+  private Integer userDetailsValiditySeconds = -1;
 
   /**
    * security.url-filter.ignored.
