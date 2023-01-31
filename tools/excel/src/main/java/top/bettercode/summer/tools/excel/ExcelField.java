@@ -207,17 +207,16 @@ public class ExcelField<T, P> {
         .property(cent -> MoneyUtil.toCent((BigDecimal) cent));
   }
 
-  public ExcelField<T, P> millis() {
-    return millis(ExcelCell.DEFAULT_DATE_TIME_FORMAT);
+  public ExcelField<T, P> date() {
+    return date(ExcelCell.DEFAULT_DATE_TIME_FORMAT);
   }
 
   /**
-   * @param format 格式
-   *               <a
+   * @param format 格式 <a
    *               href="https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1">说明...</a>
    * @return this
    */
-  public ExcelField<T, P> millis(String format) {
+  public ExcelField<T, P> date(String format) {
     this.format = format;
     this.dateField = true;
     return this;
