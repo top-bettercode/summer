@@ -109,7 +109,7 @@ object OracleToDDL : ToDDL() {
                                         lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote MODIFY $updateColumnDef;")
                                     if (oldColumn.remarks != column.remarks)
                                         lines.add(
-                                            "COMMENT ON COLUMN $prefixTableName.$quote$tableName$quote.$quote$columnName$quote IS '${
+                                            "COMMENT ON COLUMN $prefixTableName$quote$tableName$quote.$quote$columnName$quote IS '${
                                                 column.remarks.replace(
                                                     "\\",
                                                     "\\\\"
