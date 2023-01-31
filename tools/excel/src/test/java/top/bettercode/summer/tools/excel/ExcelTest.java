@@ -23,7 +23,7 @@ public class ExcelTest {
       ExcelField.index("序号"),
       ExcelField.of("编码1", DataBean::getIntCode),
       ExcelField.of("编码2", DataBean::getInteger),
-      ExcelField.of("编码3", DataBean::getLongl).millis(),
+      ExcelField.of("编码3", DataBean::getLongl),
       ExcelField.of("编码4", DataBean::getDoublel),
       ExcelField.of("编码5", DataBean::getFloatl),
       ExcelField.of("编码6", DataBean::getName),

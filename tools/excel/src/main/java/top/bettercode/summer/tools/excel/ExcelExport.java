@@ -222,7 +222,7 @@ public class ExcelExport {
           sheet.width(c, width);
         }
         setHeaderStyle();
-        sheet.range(r + 1, c, r + 1000, c).style().format(excelField.numberingFormat());
+        sheet.range(r + 1, c, r + 1000, c).style().format(excelField.format());
         if (includeComment) {
           String commentStr = excelField.comment();
           if (StringUtils.hasText(commentStr)) {
@@ -309,11 +309,11 @@ public class ExcelExport {
     int row = excelCell.getRow();
     StyleSetter style = sheet.style(row, column);
     ExcelField<T, ?> excelField = excelCell.getExcelField();
-    String numberingFormat = excelField.numberingFormat();
+    String format = excelField.format();
     style.horizontalAlignment(excelField.align().name())
         .verticalAlignment(Alignment.center.name())
         .wrapText(wrapText)
-        .format(numberingFormat)
+        .format(format)
         .borderStyle("thin")
         .borderColor("000000");
 
@@ -359,7 +359,7 @@ public class ExcelExport {
     double width = excelField.width();
     if (width == -1) {
       Object cellValue = excelCell.getCellValue();
-      columnWidths.put(column, excelField.isDateField() ? numberingFormat : cellValue);
+      columnWidths.put(column, excelField.isDateField() ? format : cellValue);
       if (excelCell.isLastRow()) {
         sheet.width(column, columnWidths.width(column));
       }
@@ -478,7 +478,7 @@ public class ExcelExport {
           .merge();
       ExcelField<T, ?> excelField = excelCell.getExcelField();
       double width = excelField.width();
-      String numberingFormat = excelField.numberingFormat();
+      String format = excelField.format();
       if (width == -1) {
         sheet.width(column, columnWidths.width(column));
       } else {
@@ -490,7 +490,7 @@ public class ExcelExport {
       style.horizontalAlignment(excelField.align().name())
           .verticalAlignment(Alignment.center.name())
           .wrapText(wrapText)
-          .format(numberingFormat)
+          .format(format)
           .borderStyle("thin")
           .borderColor("000000");
 

@@ -8,8 +8,6 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -60,7 +58,7 @@ public class ExcelField<T, P> {
   /**
    * 格式
    */
-  private String numberingFormat;
+  private String format;
 
   /**
    * 导出字段水平对齐方式
@@ -209,11 +207,12 @@ public class ExcelField<T, P> {
   }
 
   public ExcelField<T, P> millis() {
-    return millis(ExcelCell.DEFAULT_DATE_TIME_PATTERN);
+    return millis(ExcelCell.DEFAULT_DATE_TIME_FORMAT);
   }
 
-  public ExcelField<T, P> millis(String pattern) {
-    this.numberingFormat = pattern;
+  public ExcelField<T, P> millis(String format) {
+    this.format = format;
+    this.dateField = true;
     return this;
   }
 
@@ -395,28 +394,28 @@ public class ExcelField<T, P> {
     this.title = title;
     this.indexColumn = indexColumn;
     this.imageColumn = imageColumn;
-    this.numberingFormat = ExcelCell.DEFAULT_NUMBERING_FORMAT;
+    this.format = ExcelCell.DEFAULT_FORMAT;
   }
 
   private void init() {
     Assert.notNull(propertyType, "propertyType 不能为空");
-    if (this.numberingFormat == null) {
+    if (this.format == null) {
       if (propertyType == Integer.class || propertyType == int.class) {
-        this.numberingFormat = "0";
+        this.format = "0";
       } else if (propertyType == Long.class || propertyType == long.class) {
-        this.numberingFormat = "0";
+        this.format = "0";
       } else if (propertyType == Double.class || propertyType == double.class) {
-        this.numberingFormat = "0.00";
+        this.format = "0.00";
       } else if (propertyType == Float.class || propertyType == float.class) {
-        this.numberingFormat = "0.00";
+        this.format = "0.00";
       } else if (propertyType == LocalDate.class) {
         this.dateField = true;
-        this.numberingFormat = ExcelCell.DEFAULT_DATE_NUMBERING_FORMAT;
+        this.format = ExcelCell.DEFAULT_DATE_FORMAT;
       } else if (propertyType == Date.class || propertyType == LocalDateTime.class) {
         this.dateField = true;
-        this.numberingFormat = ExcelCell.DEFAULT_DATE_TIME_NUMBERING_FORMAT;
+        this.format = ExcelCell.DEFAULT_DATE_TIME_FORMAT;
       } else {
-        this.numberingFormat = ExcelCell.DEFAULT_NUMBERING_FORMAT;
+        this.format = ExcelCell.DEFAULT_FORMAT;
       }
     }
 
@@ -436,11 +435,7 @@ public class ExcelField<T, P> {
           if (cellValue instanceof LocalDateTime) {
             return TimeUtil.of((LocalDateTime) cellValue).toMillis();
           } else {
-            return TimeUtil.parse(String.valueOf(cellValue), new DateTimeFormatterBuilder()
-                    .appendPattern(numberingFormat)
-                    .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-                    .toFormatter())
-                .toMillis();
+            throw new ExcelException(cellValue + "转换为毫秒失败");
           }
         } else {
           if (cellValue instanceof String) {
@@ -467,30 +462,19 @@ public class ExcelField<T, P> {
         if (cellValue instanceof LocalDateTime) {
           return TimeUtil.of((LocalDateTime) cellValue).toDate();
         } else {
-          return TimeUtil.parse(String.valueOf(cellValue), new DateTimeFormatterBuilder()
-              .appendPattern(numberingFormat)
-              .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-              .toFormatter()).toDate();
+          throw new ExcelException(cellValue + "转换为Date失败");
         }
       } else if (propertyType == LocalDateTime.class) {
         if (cellValue instanceof LocalDateTime) {
           return cellValue;
         } else {
-          return TimeUtil.parse(String.valueOf(cellValue), new DateTimeFormatterBuilder()
-                  .appendPattern(numberingFormat)
-                  .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-                  .toFormatter())
-              .toLocalDateTime();
+          throw new ExcelException(cellValue + "转换为LocalDateTime失败");
         }
       } else if (propertyType == LocalDate.class) {
         if (cellValue instanceof LocalDateTime) {
           return ((LocalDateTime) cellValue).toLocalDate();
         } else {
-          return TimeUtil.parse(String.valueOf(cellValue), new DateTimeFormatterBuilder()
-                  .appendPattern(numberingFormat)
-                  .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-                  .toFormatter())
-              .toLocalDate();
+          throw new ExcelException(cellValue + "转换为LocalDate失败");
         }
       }
 
@@ -576,8 +560,8 @@ public class ExcelField<T, P> {
     return this;
   }
 
-  public ExcelField<T, P> format(String numberingFormat) {
-    this.numberingFormat = numberingFormat;
+  public ExcelField<T, P> format(String format) {
+    this.format = format;
     return this;
   }
 
@@ -682,8 +666,8 @@ public class ExcelField<T, P> {
     return dataValidation;
   }
 
-  String numberingFormat() {
-    return numberingFormat;
+  String format() {
+    return format;
   }
 
   Alignment align() {

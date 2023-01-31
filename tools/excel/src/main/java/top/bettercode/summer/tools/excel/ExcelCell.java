@@ -8,23 +8,15 @@ public class ExcelCell<T> {
   /**
    * 默认日期格式
    */
-  public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
+  public static final String DEFAULT_DATE_FORMAT = "yyyy-m-dd";
   /**
    * 默认时间格式
    */
-  public static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm";
-  /**
-   * 默认日期格式
-   */
-  public static final String DEFAULT_DATE_NUMBERING_FORMAT = "yyyy-m-dd";
-  /**
-   * 默认时间格式
-   */
-  public static final String DEFAULT_DATE_TIME_NUMBERING_FORMAT = "yyyy-m-dd hh:mm";
+  public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-m-dd hh:mm";
   /**
    * 默认格式
    */
-  public static final String DEFAULT_NUMBERING_FORMAT = "@";
+  public static final String DEFAULT_FORMAT = "@";
 
   private final int row;
   private final int column;
