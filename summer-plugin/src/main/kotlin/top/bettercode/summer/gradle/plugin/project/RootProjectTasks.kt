@@ -167,17 +167,6 @@ object RootProjectTasks {
                     }
                 })
             }
-
-            create("prettyConfig") { t ->
-                t.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        ConfigTool.prettyConfig(
-                            project.file("conf"),
-                            project.subprojects.map { it.file("src/main/resources/application.yml") }
-                                .filter { it.exists() })
-                    }
-                })
-            }
         }
 
     }
