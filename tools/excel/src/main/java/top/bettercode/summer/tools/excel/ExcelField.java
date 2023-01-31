@@ -56,9 +56,8 @@ public class ExcelField<T, P> {
   private String dataValidation = "";
 
   /**
-   * 格式
-   * <a
-   * href="https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1">...</a>
+   * 格式 <a
+   * href="https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1">说明...</a>
    */
   private String format;
 
@@ -214,7 +213,8 @@ public class ExcelField<T, P> {
 
   /**
    * @param format 格式
-   *               https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1
+   *               <a
+   *               href="https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1">说明...</a>
    * @return this
    */
   public ExcelField<T, P> millis(String format) {
@@ -569,7 +569,7 @@ public class ExcelField<T, P> {
 
   /**
    * @param format 格式 <a
-   *               href="https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1">...</a>
+   *               href="https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1">说明...</a>
    * @return this
    */
   public ExcelField<T, P> format(String format) {
