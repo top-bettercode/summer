@@ -212,16 +212,10 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             apiTokenService.validate(userDetails);
 
             if (apiToken.getUserDetailsInstantAt().isExpired()) {//刷新userDetails
-              try {
-                userDetails = apiTokenService.getUserDetails(scope, apiToken.getUsername());
-                apiToken.setUserDetailsInstantAt(apiTokenService.createUserDetailsInstantAt());
-                apiToken.setUserDetails(userDetails);
-                apiTokenRepository.save(apiToken);
-              } catch (Exception e) {
-                SecurityContextHolder.clearContext();
-                apiTokenRepository.remove(apiToken);
-                throw e;
-              }
+              userDetails = apiTokenService.getUserDetails(scope, apiToken.getUsername());
+              apiToken.setUserDetailsInstantAt(apiTokenService.createUserDetailsInstantAt());
+              apiToken.setUserDetails(userDetails);
+              apiTokenRepository.save(apiToken);
             }
 
             Authentication authenticationResult = new UserDetailsAuthenticationToken(userDetails);
@@ -253,6 +247,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
             }
           } catch (Exception failed) {
             SecurityContextHolder.clearContext();
+            apiTokenRepository.remove(apiToken);
             throw failed;
           }
         } else {
