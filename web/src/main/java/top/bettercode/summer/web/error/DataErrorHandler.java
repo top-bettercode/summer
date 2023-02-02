@@ -37,8 +37,9 @@ public class DataErrorHandler extends AbstractErrorHandler {
       }
     } else if (error instanceof DataIntegrityViolationException) {
       String specificCauseMessage = ((DataIntegrityViolationException) error).getMostSpecificCause()
-          .getMessage();
+          .getMessage().trim();
       String notNullRegex = "Column '(.*?)' cannot be null";
+      String notNullRegex1 = "ORA-01400: 无法将 NULL 插入 \\(.+\\.\"(.*?)\"\\)";
       String duplicateRegex = "^Duplicate entry '(.*?)'.*";
       String dataTooLongRegex = "^Data truncation: Data too long for column '(.*?)'.*";
       String outOfRangeRegex = "^Data truncation: Out of range value for column '(.*?)'.*";
@@ -47,6 +48,10 @@ public class DataErrorHandler extends AbstractErrorHandler {
       if (specificCauseMessage.matches(notNullRegex)) {
         String columnName = getText(
             specificCauseMessage.replaceAll(notNullRegex, "$1"));
+        message = getText("notnull", columnName);
+      } else if (specificCauseMessage.matches(notNullRegex1)) {
+        String columnName = getText(
+            specificCauseMessage.replaceAll(notNullRegex1, "$1"));
         message = getText("notnull", columnName);
       } else if (specificCauseMessage.matches(duplicateRegex)) {
         String columnName = getText(
