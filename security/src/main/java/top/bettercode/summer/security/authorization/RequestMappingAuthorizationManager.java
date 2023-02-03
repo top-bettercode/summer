@@ -2,6 +2,7 @@ package top.bettercode.summer.security.authorization;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher.MatchResult;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,8 +45,8 @@ public class RequestMappingAuthorizationManager implements
   private static final AuthorizationDecision DENY = new AuthorizationDecision(false);
   private static final AuthorizationDecision ALLOW = new AuthorizationDecision(true);
   private final Logger log = LoggerFactory.getLogger(RequestMappingAuthorizationManager.class);
-  private final Map<RequestMatcher, Set<String>> defaultConfigAuthorities = new HashMap<>();
-  private Map<RequestMatcher, Set<String>> configAuthorities = new HashMap<>();
+  private final Map<AntPathRequestMatcher, Set<String>> defaultConfigAuthorities = new HashMap<>();
+  private Map<AntPathRequestMatcher, Set<String>> configAuthorities = new HashMap<>();
   private final IResourceService securityService;
 
   // ~ Constructors
@@ -99,44 +100,67 @@ public class RequestMappingAuthorizationManager implements
     }
     Collection<? extends GrantedAuthority> userAuthorities = authentication.get().getAuthorities();
 
-    for (Entry<RequestMatcher, Set<String>> requestMatcher : configAuthorities.entrySet()) {
-      RequestMatcher matcher = requestMatcher.getKey();
-      MatchResult matchResult = matcher.matcher(request);
-      if (matchResult.isMatch()) {
-        Set<String> authorities = new HashSet<>(requestMatcher.getValue());
-        if (authorities.isEmpty()) {
-          authorities = Collections.singleton(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
-        }
+    List<Entry<AntPathRequestMatcher, Set<String>>> matchers = configAuthorities.entrySet().stream()
+        .filter(entry -> entry.getKey().matcher(request).isMatch()).collect(Collectors.toList());
+    if (matchers.isEmpty()) {
+      if (this.log.isTraceEnabled()) {
+        this.log.trace("allow request since did not find matching RequestMatcher");
+      }
+      return ALLOW;
+    }
+    Comparator<String> comparator = new AntPathMatcher().getPatternComparator(
+        getRequestPath(request));
+    matchers.stream()
+        .sorted((o1, o2) -> comparator.compare(o1.getKey().getPattern(), o2.getKey().getPattern()));
+
+    Entry<AntPathRequestMatcher, Set<String>> bestMatch = matchers.get(0);
+    if (matchers.size() > 1) {
+      Entry<AntPathRequestMatcher, Set<String>> secondBestMatch = matchers.get(1);
+      String pattern1 = bestMatch.getKey().getPattern();
+      String pattern2 = secondBestMatch.getKey().getPattern();
+      if (comparator.compare(pattern1, pattern2) == 0) {
+        throw new IllegalStateException("Ambiguous handler methods mapped for HTTP path '" +
+            request.getRequestURL() + "': {" + pattern1 + ", " + pattern2 + "}");
+      }
+    }
+
+    Set<String> authorities = new HashSet<>(bestMatch.getValue());
+    if (authorities.isEmpty()) {
+      authorities = Collections.singleton(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
+    }
+    if (log.isDebugEnabled()) {
+      log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
+          StringUtils.collectionToCommaDelimitedString(userAuthorities),
+          request.getServletPath(),
+          authorities);
+    }
+    if (authorities.contains(DefaultAuthority.ROLE_ANONYMOUS_VALUE)) {
+      if (securityService.supportsAnonymous()) {
+        return ALLOW;
+      } else {
+        authorities.remove(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
+        authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
+
         if (log.isDebugEnabled()) {
           log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
               StringUtils.collectionToCommaDelimitedString(userAuthorities),
               request.getServletPath(),
               authorities);
         }
-        if (authorities.contains(DefaultAuthority.ROLE_ANONYMOUS_VALUE)) {
-          if (securityService.supportsAnonymous()) {
-            return ALLOW;
-          } else {
-            authorities.remove(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
-            authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
-
-            if (log.isDebugEnabled()) {
-              log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
-                  StringUtils.collectionToCommaDelimitedString(userAuthorities),
-                  request.getServletPath(),
-                  authorities);
-            }
-          }
-        }
-        boolean granted = isGranted(authentication.get(), authorities);
-        return new AuthorizationDecision(granted);
       }
     }
-    if (this.log.isTraceEnabled()) {
-      this.log.trace("allow request since did not find matching RequestMatcher");
+    boolean granted = isGranted(authentication.get(), authorities);
+    return new AuthorizationDecision(granted);
+  }
+
+  private String getRequestPath(HttpServletRequest request) {
+    String url = request.getServletPath();
+
+    if (request.getPathInfo() != null) {
+      url += request.getPathInfo();
     }
 
-    return ALLOW;
+    return url;
   }
 
   private boolean isGranted(Authentication authentication, Set<String> authorities) {
@@ -172,9 +196,9 @@ public class RequestMappingAuthorizationManager implements
           for (String u : url.split("\\|")) {
             AntPathRequestMatcher urlMatcher = new AntPathRequestMatcher(u);
             if (StringUtils.hasText(method)) {
-                Assert.isNull(configAuthorities.get(urlMatcher),
-                    "\"" + u + "\"对应RequestMapping不包含请求方法描述，请使用通用路径\"" + u
-                        + "\"配置权限");
+              Assert.isNull(configAuthorities.get(urlMatcher),
+                  "\"" + u + "\"对应RequestMapping不包含请求方法描述，请使用通用路径\"" + u
+                      + "\"配置权限");
               for (String m : method.split("\\|")) {
                 Set<String> authorities = configAuthorities.computeIfAbsent(
                     new AntPathRequestMatcher(u, m), k -> new HashSet<>());
