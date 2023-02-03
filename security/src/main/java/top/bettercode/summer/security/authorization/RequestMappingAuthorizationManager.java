@@ -110,8 +110,9 @@ public class RequestMappingAuthorizationManager implements
     }
     Comparator<String> comparator = new AntPathMatcher().getPatternComparator(
         getRequestPath(request));
-    matchers.stream()
-        .sorted((o1, o2) -> comparator.compare(o1.getKey().getPattern(), o2.getKey().getPattern()));
+    matchers = matchers.stream()
+        .sorted((o1, o2) -> comparator.compare(o1.getKey().getPattern(), o2.getKey().getPattern()))
+        .collect(Collectors.toList());
 
     Entry<AntPathRequestMatcher, Set<String>> bestMatch = matchers.get(0);
     if (matchers.size() > 1) {
