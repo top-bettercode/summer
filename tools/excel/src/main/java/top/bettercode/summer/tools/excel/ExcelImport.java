@@ -90,7 +90,7 @@ public class ExcelImport {
     try {
       workbook = new ReadableWorkbook(is);
     } catch (IOException | ExcelReaderException e) {
-      throw new ExcelException("excel读取失败，仅支持.xlsx格式excel文件", e);
+      throw new ExcelException("Excel读取失败，仅支持.xlsx格式Excel文件", e);
     }
     sheet = workbook.getFirstSheet();
     setRowAndColumn(1, 0);
