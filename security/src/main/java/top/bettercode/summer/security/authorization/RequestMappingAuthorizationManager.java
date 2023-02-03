@@ -128,26 +128,25 @@ public class RequestMappingAuthorizationManager implements
     if (authorities.isEmpty()) {
       authorities = Collections.singleton(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
     }
-    if (log.isDebugEnabled()) {
-      log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
-          StringUtils.collectionToCommaDelimitedString(userAuthorities),
-          request.getServletPath(),
-          authorities);
-    }
     if (authorities.contains(DefaultAuthority.ROLE_ANONYMOUS_VALUE)) {
       if (securityService.supportsAnonymous()) {
-        return ALLOW;
-      } else {
-        authorities.remove(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
-        authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
-
         if (log.isDebugEnabled()) {
           log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
               StringUtils.collectionToCommaDelimitedString(userAuthorities),
               request.getServletPath(),
               authorities);
         }
+        return ALLOW;
+      } else {
+        authorities.remove(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
+        authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
       }
+    }
+    if (log.isDebugEnabled()) {
+      log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
+          StringUtils.collectionToCommaDelimitedString(userAuthorities),
+          request.getServletPath(),
+          authorities);
     }
     boolean granted = isGranted(authentication.get(), authorities);
     return new AuthorizationDecision(granted);
