@@ -11,7 +11,7 @@ allprojects {
     group = "top.bettercode.summer"
     version = "0.0.19-SNAPSHOT"
 
-    if (name != "summer-bom") {
+    if (!arrayOf("summer-bom", "summer-cloud-bom").contains(name)) {
         apply {
             plugin("java")
             plugin("idea")

@@ -14,10 +14,6 @@ import java.util.*
  */
 open class GeneratorExtension(
     /**
-     * 子项目共用数据源
-     */
-    var unitedDatasource: Boolean = true,
-    /**
      * 包名是否自动加项目名区分
      */
     var projectPackage: Boolean = false,

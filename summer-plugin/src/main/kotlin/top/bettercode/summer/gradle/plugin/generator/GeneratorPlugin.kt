@@ -100,9 +100,6 @@ class GeneratorPlugin : Plugin<Project> {
                     configuration
                 }.toSortedMap { o1, o2 -> o1.compareTo(o2) }
 
-            extension.unitedDatasource =
-                (findGeneratorProperty(project, "singleDatasource"))?.toBoolean()
-                    ?: true
             extension.delete = (findGeneratorProperty(project, "delete"))?.toBoolean() ?: false
             extension.projectPackage =
                 (findGeneratorProperty(project, "project-package"))?.toBoolean()
@@ -180,7 +177,8 @@ class GeneratorPlugin : Plugin<Project> {
             extension.generators = (findGeneratorProperty(project, "generators")
                 ?: "").split(",").asSequence().filter { it.isNotBlank() }.distinct()
                 .map {
-                    Class.forName("top.bettercode.summer.gradle.plugin.project.template."+it.trim()).getDeclaredConstructor().newInstance() as Generator
+                    Class.forName("top.bettercode.summer.gradle.plugin.project.template." + it.trim())
+                        .getDeclaredConstructor().newInstance() as Generator
                 }.toList().toTypedArray()
 
             extension.projectIsBoot = project.isBoot
@@ -221,8 +219,8 @@ class GeneratorPlugin : Plugin<Project> {
             }
         }
 
-        if (extension.unitedDatasource) {
-            if (!project.rootProject.tasks.names.contains("print[TableNames]"))
+        if (project.rootProject.file(extension.pumlSrc).exists()) {
+            if (!project.rootProject.tasks.names.contains("pumlReformat"))
                 configPuml(project.rootProject, extension)
         } else {
             configPuml(project, extension)

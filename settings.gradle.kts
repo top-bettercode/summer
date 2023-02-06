@@ -30,3 +30,4 @@ include(":tools:qvod")
 include(":tools:amap")
 
 include(":summer-bom")
+include(":summer-cloud-bom")

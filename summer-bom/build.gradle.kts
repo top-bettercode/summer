@@ -10,12 +10,9 @@ javaPlatform {
 }
 
 dependencies {
-//https://github.com/alibaba/spring-cloud-alibaba/releases
 //https://docs.gradle.org/7.6/userguide/compatibility.html
 //https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-dependencies/2.6.11/spring-boot-dependencies-2.6.11.pom
 
-//    api(platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.1.0"))
-//    api(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.1"))
     api(platform("org.springframework.boot:spring-boot-dependencies:2.6.11"))
     constraints {
         api("org.springframework.boot:spring-boot-gradle-plugin:2.6.11")

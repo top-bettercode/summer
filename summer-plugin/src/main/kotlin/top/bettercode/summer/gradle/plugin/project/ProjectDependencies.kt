@@ -1,5 +1,6 @@
 package top.bettercode.summer.gradle.plugin.project
 
+import isCloud
 import org.gradle.api.Project
 import java.util.concurrent.TimeUnit
 
@@ -20,8 +21,15 @@ object ProjectDependencies {
         }
 
         project.dependencies.apply {
-            add("implementation", platform("top.bettercode.summer:summer-bom:$summerVersion"))
-            add("annotationProcessor", platform("top.bettercode.summer:summer-bom:$summerVersion"))
+            add(
+                "implementation",
+                platform("top.bettercode.summer:${if (project.isCloud) "summer-cloud-bom" else "summer-bom"}:$summerVersion")
+            )
+            add(
+                "annotationProcessor",
+                platform("top.bettercode.summer:${if (project.isCloud) "summer-cloud-bom" else "summer-bom"}:$summerVersion")
+            )
+
             add(
                 "annotationProcessor",
                 "org.springframework.boot:spring-boot-configuration-processor"
