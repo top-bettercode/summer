@@ -31,39 +31,8 @@ object Generators {
      * @param extension 配置
      */
     fun call(extension: GeneratorExtension) {
-        val generators = extension.generators
-        if (generators.isEmpty()) {
-            return
-        }
-        generators.forEach { generator ->
-            generator.setUp(extension)
-        }
-
         extension.run { _, tableHolder ->
-            tableHolder.tables(
-                checkFound = when (extension.dataType) {
-                    top.bettercode.summer.tools.generator.DataType.DATABASE -> {
-                        extension.datasources.size <= 1
-                    }
-
-                    top.bettercode.summer.tools.generator.DataType.PUML -> {
-                        extension.pumlSources.size <= 1
-                    }
-
-                    top.bettercode.summer.tools.generator.DataType.PDM -> {
-                        extension.pdmSources.size <= 1
-                    }
-                }, tableName = extension.tableNames
-            ).forEach { table ->
-                generators.forEach { generator ->
-                    generator.run(table)
-                }
-            }
-        }
-
-        generators.forEach { generator ->
-            generator.preTearDown()
-            generator.tearDown()
+            call(extension, tableHolder)
         }
     }
 

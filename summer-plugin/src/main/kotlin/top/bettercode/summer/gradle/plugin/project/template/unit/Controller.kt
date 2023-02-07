@@ -18,7 +18,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         import(entityType)
 
-        superClass("$basePackageName.support.${projectName.capitalized()}Controller")
+        superClass("$basePackageName.support.${projectClassName}Controller")
 
         annotation("@org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication")
         annotation("@org.springframework.validation.annotation.Validated")

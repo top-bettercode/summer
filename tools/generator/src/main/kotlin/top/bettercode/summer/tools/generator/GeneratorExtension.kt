@@ -116,6 +116,7 @@ open class GeneratorExtension(
      * 相关数据表
      */
     var tableNames: Array<String> = arrayOf(),
+    var excludeTableNames: Array<String> = arrayOf(),
     /**
      * 额外设置
      */
@@ -280,6 +281,15 @@ open class GeneratorExtension(
             }
         }
     }
+
+    val basePackageName: String
+        get() =
+            (if (projectPackage) "${packageName}.${
+                projectName.replace(
+                    '-',
+                    '.'
+                )
+            }" else packageName)
 
     val moduleSize: Int
         get() {

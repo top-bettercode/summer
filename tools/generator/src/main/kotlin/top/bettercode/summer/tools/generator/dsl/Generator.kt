@@ -58,17 +58,16 @@ open class Generator {
 
 
     val basePackageName: String
-        get() =
-            (if (ext.projectPackage) "${ext.packageName}.$projectName" else ext.packageName)
-
+        get() = ext.basePackageName
 
     val packageName: String
         get() {
             var packageName = basePackageName
             if (settings["no-modules"] == null)
-                packageName = "$packageName.${table.module}"
+                packageName =
+                    if (packageName.endsWith(".${table.module}")) packageName else "$packageName.${table.module}"
             return if (ext.userModule && table.subModule.isNotBlank()) {
-                "$packageName.${table.subModule}"
+                if (packageName.endsWith(".${table.subModule}")) packageName else "$packageName.${table.subModule}"
             } else {
                 packageName
             }
@@ -86,7 +85,7 @@ open class Generator {
                     "projectClassName",
                     true
                 )
-            ) table.className + projectName.substring(
+            ) table.className + projectName.replace("-", "").substring(
                 0, if (projectName.length > 5) 5 else projectName.length
             )
                 .capitalized() else table.className

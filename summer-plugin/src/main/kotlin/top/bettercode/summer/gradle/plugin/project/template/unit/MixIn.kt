@@ -17,7 +17,7 @@ val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
             +" */"
         }
         val serializationViews =
-            JavaType("$basePackageName.web.${projectName.capitalized()}SerializationViews")
+            JavaType("$basePackageName.web.${projectClassName.capitalized()}SerializationViews")
         implement(
             JavaType("top.bettercode.summer.web.serializer.MixIn").typeArgument(
                 if (isFullComposite) primaryKeyType else entityType

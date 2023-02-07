@@ -19,9 +19,10 @@ abstract class FileTableHolder(
         val result = mutableListOf<Table>()
         files.forEach { file ->
             if (all) {
-                result.addAll(getTables(file))
+                result.addAll(getTables(file).filter { !ext.excludeTableNames.contains(it.tableName) })
             } else if (result.size < tableNames.size) {
-                result.addAll(getTables(file).filter { table -> tableNames.contains(table.tableName) })
+                result.addAll(getTables(file).filter { !ext.excludeTableNames.contains(it.tableName) }
+                    .filter { table -> tableNames.contains(table.tableName) })
 
                 if (result.size == tableNames.size) {
                     return result

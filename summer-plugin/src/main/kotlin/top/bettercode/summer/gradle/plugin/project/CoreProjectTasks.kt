@@ -33,7 +33,7 @@ object CoreProjectTasks {
                             (Generators.tableNamesWithOutPrefix(gen)).sortedBy { it }.distinct()
                         val serializationViews =
                             Interface(
-                                type = JavaType("${if (gen.projectPackage) "${gen.packageName}.${gen.projectName}" else gen.packageName}.web.CoreSerializationViews"),
+                                type = JavaType("${gen.basePackageName}.web.CoreSerializationViews"),
                                 overwrite = true
                             ).apply {
                                 javadoc {

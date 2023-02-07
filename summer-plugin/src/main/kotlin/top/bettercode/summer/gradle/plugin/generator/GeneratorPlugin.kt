@@ -1,6 +1,7 @@
 package top.bettercode.summer.gradle.plugin.generator
 
 import isBoot
+import isCloud
 import isCore
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
@@ -125,17 +126,16 @@ class GeneratorPlugin : Plugin<Project> {
             extension.rootPath = project.rootDir
             extension.projectDir = project.projectDir
             extension.dir = findGeneratorProperty(project, "dir") ?: "src/main/java"
-            extension.packageName = findGeneratorProperty(project, "packageName")
-                ?: project.findProperty("app.packageName") as? String ?: ""
+            extension.packageName =
+                (findGeneratorProperty(project, "packageName")
+                    ?: project.findProperty("app.packageName") as? String
+                    ?: "")
             extension.userModule =
                 (findGeneratorProperty(project, "userModule"))?.toBoolean() ?: true
             extension.applicationName = project.findProperty("application.name") as? String
                 ?: project.rootProject.name
             extension.projectName =
-                (findGeneratorProperty(project, "projectName") ?: project.name).replace(
-                    "-",
-                    ""
-                )
+                (findGeneratorProperty(project, "projectName") ?: project.name)
             extension.isCore = project.isCore
 
             extension.primaryKeyName = findGeneratorProperty(project, "primaryKeyName") ?: "id"
@@ -173,9 +173,14 @@ class GeneratorPlugin : Plugin<Project> {
                 .distinct()
                 .sortedBy { it }.toList()
                 .toTypedArray()
+            extension.excludeTableNames = (findGeneratorProperty(project, "excludeTableNames")
+                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
+                .distinct()
+                .sortedBy { it }.toList()
+                .toTypedArray()
 
             extension.generators = (findGeneratorProperty(project, "generators")
-                ?: "").split(",").asSequence().filter { it.isNotBlank() }.distinct()
+                ?: "Entity,Service").split(",").asSequence().filter { it.isNotBlank() }.distinct()
                 .map {
                     Class.forName("top.bettercode.summer.gradle.plugin.project.template." + it.trim())
                         .getDeclaredConstructor().newInstance() as Generator
@@ -255,10 +260,7 @@ class GeneratorPlugin : Plugin<Project> {
                             tableHolder.tables(tableName = extension.tableNames)
                         val plantUML = PlantUML(
                             tables[0].subModuleName,
-                            File(
-                                extension.file(extension.pumlSrc),
-                                "database/${module}.puml"
-                            ),
+                            project.file(extension.pumlSrc + "/database/${module}.puml"),
                             null
                         )
                         plantUML.setUp(extension)

@@ -160,7 +160,9 @@ class JDBCConnectionConfiguration(
     override fun tables(checkFound: Boolean, vararg tableName: String): List<Table> {
         val size = tableName.size
         val set = ConcurrentSkipListSet(tableName.toSet())
-        val names = if (tableName.isEmpty()) tableNames() else tableName.distinct()
+        val names = (if (tableName.isEmpty()) tableNames() else tableName.distinct()).filter {
+            !ext.excludeTableNames.contains(it)
+        }
         println("数据表（$size）:${names}")
         val result = ConcurrentLinkedDeque<Table>()
         val map = mutableMapOf<Int, MutableList<String>>()
