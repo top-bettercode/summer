@@ -180,7 +180,8 @@ class GeneratorPlugin : Plugin<Project> {
                 .toTypedArray()
 
             extension.generators = (findGeneratorProperty(project, "generators")
-                ?: "Entity,Service").split(",").asSequence().filter { it.isNotBlank() }.distinct()
+                ?: (if (project.isBoot) "Entity,Service" else "")).split(",").asSequence()
+                .filter { it.isNotBlank() }.distinct()
                 .map {
                     Class.forName("top.bettercode.summer.gradle.plugin.project.template." + it.trim())
                         .getDeclaredConstructor().newInstance() as Generator

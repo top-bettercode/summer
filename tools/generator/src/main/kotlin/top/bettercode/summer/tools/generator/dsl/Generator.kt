@@ -85,11 +85,13 @@ open class Generator {
                     "projectClassName",
                     true
                 )
-            ) table.className + projectName.replace("-", "").substring(
-                0, if (projectName.length > 5) 5 else projectName.length
-            )
-                .capitalized() else table.className
+            ) table.className + shortProjectName else table.className
 
+    val shortProjectName
+        get() =
+            projectName.replace("-", "").substring(
+                0, if (projectName.length > 5) 5 else projectName.length
+            ).capitalized()
 
     val entityName
         get() =
