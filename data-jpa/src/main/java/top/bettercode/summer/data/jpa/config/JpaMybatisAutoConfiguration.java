@@ -20,13 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -43,7 +43,6 @@ import top.bettercode.summer.data.jpa.JpaExtRepository;
 import top.bettercode.summer.data.jpa.querydsl.QuerydslRepository;
 import top.bettercode.summer.data.jpa.support.SimpleJpaExtRepository;
 import top.bettercode.summer.tools.lang.util.ArrayUtil;
-import top.bettercode.summer.web.support.ApplicationContextHolder;
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver;
 
 /**
@@ -87,17 +86,19 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
   }
 
   @Bean
-  public Configuration mybatisConfiguration() throws Exception {
-    return mybatisConfiguration(properties.getConfiguration(), this.properties, this.resourceLoader,
+  public Configuration mybatisConfiguration(ConfigurableListableBeanFactory beanFactory)
+      throws Exception {
+    return mybatisConfiguration(beanFactory, properties.getConfiguration(), this.properties,
+        this.resourceLoader,
         null);
   }
 
-  public static Set<String> findDefaultMapperLocations(GenericApplicationContext applicationContext)
+  public static Set<String> findDefaultMapperLocations(ConfigurableListableBeanFactory beanFactory)
       throws ClassNotFoundException {
     Set<String> packages = new HashSet<>();
-    String[] beanNames = applicationContext.getBeanNamesForAnnotation(SpringBootApplication.class);
+    String[] beanNames = beanFactory.getBeanNamesForAnnotation(SpringBootApplication.class);
     for (String beanName : beanNames) {
-      AbstractBeanDefinition beanDefinition = (AbstractBeanDefinition) applicationContext.getBeanDefinition(
+      AbstractBeanDefinition beanDefinition = (AbstractBeanDefinition) beanFactory.getBeanDefinition(
           beanName);
       if (!beanDefinition.hasBeanClass()) {
         beanDefinition.resolveBeanClass(JpaMybatisAutoConfiguration.class.getClassLoader());
@@ -130,7 +131,8 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
     return mapperLocations;
   }
 
-  public static Configuration mybatisConfiguration(Configuration configuration,
+  public static Configuration mybatisConfiguration(ConfigurableListableBeanFactory beanFactory,
+      Configuration configuration,
       MybatisProperties properties,
       ResourceLoader resourceLoader, String[] mapperLocations) throws Exception {
     Properties configurationProperties = properties.getConfigurationProperties();
@@ -207,9 +209,8 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
     }
 
     if (ArrayUtil.isEmpty(mapperLocations)) {
-      GenericApplicationContext applicationContext = (GenericApplicationContext) ApplicationContextHolder.getApplicationContext();
       Set<String> defaultMapperLocations = JpaMybatisAutoConfiguration.findDefaultMapperLocations(
-          applicationContext);
+          beanFactory);
       mapperLocations = defaultMapperLocations.toArray(new String[0]);
     }
 

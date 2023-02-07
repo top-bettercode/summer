@@ -105,7 +105,8 @@ public class MybatisJpaQuery extends AbstractJpaQuery {
             Collectors.joining(","));
   }
 
-  private static final Pattern ORDER_BY = Pattern.compile(".*order\\s+by\\s+.*", CASE_INSENSITIVE);
+  private static final Pattern ORDER_BY = Pattern.compile("[\\s\\S]*order\\s+by\\s+[\\s\\S]*",
+      CASE_INSENSITIVE);
 
   public static String applySorting(String query, Sort sort) {
     Assert.hasText(query, "Query must not be null or empty!");

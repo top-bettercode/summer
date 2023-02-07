@@ -207,7 +207,7 @@ public class MultiDatasourcesBeanDefinitionRegistryPostProcessor implements
                   BeanUtils.copyProperties(configuration, newConfiguration);
                   configuration = newConfiguration;
                 }
-                return JpaMybatisAutoConfiguration.mybatisConfiguration(configuration,
+                return JpaMybatisAutoConfiguration.mybatisConfiguration(beanFactory, configuration,
                     mybatisProperties, resourceLoader, properties.getMapperLocations());
               } catch (Exception e) {
                 throw new RuntimeException(e);
