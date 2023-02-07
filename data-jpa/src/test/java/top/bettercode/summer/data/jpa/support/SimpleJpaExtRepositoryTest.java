@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.Tuple;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,11 +24,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import top.bettercode.summer.data.jpa.config.JpaMybatisAutoConfiguration;
 import top.bettercode.summer.data.jpa.domain.User;
 import top.bettercode.summer.data.jpa.query.DefaultSpecMatcher;
 import top.bettercode.summer.data.jpa.query.SpecMatcher;
 import top.bettercode.summer.data.jpa.repository.UserRepository;
 import top.bettercode.summer.tools.lang.util.StringUtil;
+import top.bettercode.summer.web.support.ApplicationContextHolder;
 
 /**
  * @author Peter Wu
@@ -72,6 +76,15 @@ public class SimpleJpaExtRepositoryTest {
     System.err.println("--------------------------------------------------------");
     repository.deleteAll();
     repository.cleanRecycleBin();
+  }
+
+  @Test
+  void findDefaultMapperLocations() throws ClassNotFoundException {
+    GenericApplicationContext applicationContext = (GenericApplicationContext) ApplicationContextHolder.getApplicationContext();
+
+    Set<String> defaultMapperLocations = JpaMybatisAutoConfiguration.findDefaultMapperLocations(
+        applicationContext);
+    System.err.println(defaultMapperLocations);
   }
 
   @Test

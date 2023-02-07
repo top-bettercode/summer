@@ -67,10 +67,18 @@ class JDBCConnectionConfiguration(
             return if (field.isNullOrBlank()) {
                 when {
                     isOracle -> username.uppercase(Locale.getDefault())
-                    databaseDriver == DatabaseDriver.MYSQL -> url.replace(
-                        Regex("jdbc:mysql://[^/]*/(.*)?\\??.*"),
-                        "$1"
-                    )
+                    databaseDriver == DatabaseDriver.MYSQL -> {
+                        val pattern1 = Regex("jdbc:mysql://[^/]*/(.*)?\\?.+")
+                        if (url.matches(pattern1))
+                            url.replace(
+                                pattern1,
+                                "$1"
+                            ) else url.replace(
+                            Regex("jdbc:mysql://[^/]*/(.*)"),
+                            "$1"
+                        )
+                    }
+
                     databaseDriver == DatabaseDriver.H2 -> "PUBLIC"
                     else -> field
                 }

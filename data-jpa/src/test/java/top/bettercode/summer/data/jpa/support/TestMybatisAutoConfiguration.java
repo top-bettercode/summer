@@ -23,13 +23,13 @@ import top.bettercode.summer.tools.lang.util.ArrayUtil;
 
 @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter({DataSourceAutoConfiguration.class})
-public class MybatisAutoConfiguration implements InitializingBean {
+public class TestMybatisAutoConfiguration implements InitializingBean {
 
   private final MybatisProperties properties;
   private final ResourceLoader resourceLoader;
 
 
-  public MybatisAutoConfiguration(MybatisProperties properties,
+  public TestMybatisAutoConfiguration(MybatisProperties properties,
       ResourceLoader resourceLoader) {
     this.properties = properties;
     this.resourceLoader = resourceLoader;

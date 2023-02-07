@@ -3,7 +3,9 @@ package top.bettercode.summer.data.jpa.config;
 import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -18,10 +20,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -32,7 +38,13 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
+import top.bettercode.summer.data.jpa.BaseRepository;
+import top.bettercode.summer.data.jpa.JpaExtRepository;
+import top.bettercode.summer.data.jpa.querydsl.QuerydslRepository;
+import top.bettercode.summer.data.jpa.support.SimpleJpaExtRepository;
 import top.bettercode.summer.tools.lang.util.ArrayUtil;
+import top.bettercode.summer.web.support.ApplicationContextHolder;
+import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver;
 
 /**
  * {@link EnableAutoConfiguration Auto-Configuration} for Mybatis.
@@ -45,7 +57,7 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
   private static final ResourcePatternResolver RESOURCE_PATTERN_RESOLVER = new PathMatchingResourcePatternResolver();
   private static final MetadataReaderFactory METADATA_READER_FACTORY = new CachingMetadataReaderFactory();
-
+  private static final PackageScanClassResolver PACKAGE_SCAN_CLASS_RESOLVER = new PackageScanClassResolver();
   private final MybatisProperties properties;
   private final ResourceLoader resourceLoader;
 
@@ -78,6 +90,44 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
   public Configuration mybatisConfiguration() throws Exception {
     return mybatisConfiguration(properties.getConfiguration(), this.properties, this.resourceLoader,
         null);
+  }
+
+  public static Set<String> findDefaultMapperLocations(GenericApplicationContext applicationContext)
+      throws ClassNotFoundException {
+    Set<String> packages = new HashSet<>();
+    String[] beanNames = applicationContext.getBeanNamesForAnnotation(SpringBootApplication.class);
+    for (String beanName : beanNames) {
+      AbstractBeanDefinition beanDefinition = (AbstractBeanDefinition) applicationContext.getBeanDefinition(
+          beanName);
+      if (!beanDefinition.hasBeanClass()) {
+        beanDefinition.resolveBeanClass(JpaMybatisAutoConfiguration.class.getClassLoader());
+      }
+      Class<?> beanClass = beanDefinition.getBeanClass();
+      SpringBootApplication annotation = AnnotatedElementUtils.findMergedAnnotation(beanClass,
+          SpringBootApplication.class);
+      for (Class<?> packageClass : Objects.requireNonNull(annotation).scanBasePackageClasses()) {
+        packages.add(packageClass.getPackage().getName());
+      }
+      packages.addAll(Arrays.asList(annotation.scanBasePackages()));
+      packages.add(beanClass.getPackage().getName());
+    }
+    Set<Class<?>> implementations = PACKAGE_SCAN_CLASS_RESOLVER.findImplementations(
+        JpaExtRepository.class, packages.toArray(new String[0]));
+    Set<String> excludeMapperLocations = new HashSet<>();
+    excludeMapperLocations.add(BaseRepository.class.getPackage().getName());
+    excludeMapperLocations.add(QuerydslRepository.class.getPackage().getName());
+    excludeMapperLocations.add(SimpleJpaExtRepository.class.getPackage().getName());
+    Set<String> mapperLocations = new HashSet<>();
+//    classpath*:/@app.packagePath@/modules/*/*/*.xml
+    for (Class<?> implementation : implementations) {
+      String name = implementation.getPackage().getName();
+      if (!excludeMapperLocations.contains(name)) {
+        mapperLocations.add(
+            "classpath*:/" + name.replace(".", "/") + "/*.xml");
+      }
+    }
+
+    return mapperLocations;
   }
 
   public static Configuration mybatisConfiguration(Configuration configuration,
@@ -154,6 +204,13 @@ public class JpaMybatisAutoConfiguration implements InitializingBean {
 
     if (ArrayUtil.isEmpty(mapperLocations)) {
       mapperLocations = properties.getMapperLocations();
+    }
+
+    if (ArrayUtil.isEmpty(mapperLocations)) {
+      GenericApplicationContext applicationContext = (GenericApplicationContext) ApplicationContextHolder.getApplicationContext();
+      Set<String> defaultMapperLocations = JpaMybatisAutoConfiguration.findDefaultMapperLocations(
+          applicationContext);
+      mapperLocations = defaultMapperLocations.toArray(new String[0]);
     }
 
     Resource[] mapperResources = resolveMapperLocations(mapperLocations);
