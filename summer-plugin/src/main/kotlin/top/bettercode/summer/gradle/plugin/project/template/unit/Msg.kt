@@ -2,6 +2,9 @@ package top.bettercode.summer.gradle.plugin.project.template.unit
 
 import org.atteo.evo.inflector.English
 import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
+import top.bettercode.summer.tools.generator.dom.java.JavaType
+import top.bettercode.summer.tools.generator.dom.java.element.InnerInterface
+import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.unit.PropertiesUnit
 
 /**
@@ -31,5 +34,12 @@ val msg: ProjectGenerator.(PropertiesUnit) -> Unit = { unit ->
                 this[it.columnName] = remark
             }
         }
+    }
+}
+
+val coreSerializationViews: ProjectGenerator.(Interface) -> Unit = { unit ->
+    unit.apply {
+        innerInterface(InnerInterface(JavaType("Get${pathName}List")))
+        innerInterface(InnerInterface(JavaType("Get${pathName}Info")))
     }
 }

@@ -24,34 +24,6 @@ object CoreProjectTasks {
     fun config(project: Project) {
 
         project.tasks.apply {
-            create("gen[SerializationViews]") { t ->
-                t.group = GeneratorPlugin.genGroup
-                t.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                        val tableNames =
-                            (Generators.tableNamesWithOutPrefix(gen)).sortedBy { it }.distinct()
-                        val serializationViews =
-                            Interface(
-                                type = JavaType("${gen.basePackageName}.web.CoreSerializationViews"),
-                                overwrite = true
-                            ).apply {
-                                javadoc {
-                                    +"/**"
-                                    +" * 模型属性 json SerializationViews"
-                                    +" */"
-                                }
-                                this.visibility = JavaVisibility.PUBLIC
-                                tableNames.forEach {
-                                    val pathName = GeneratorExtension.javaName(it, true)
-                                    innerInterface(InnerInterface(JavaType("Get${pathName}List")))
-                                    innerInterface(InnerInterface(JavaType("Get${pathName}Info")))
-                                }
-                            }
-                        serializationViews.writeTo(project.projectDir)
-                    }
-                })
-            }
             create("print[Mapper]") {
                 it.group = GeneratorPlugin.printGroup
                 it.doLast(object : Action<Task> {

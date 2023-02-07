@@ -172,9 +172,10 @@ class DatabaseMetaData(
                 databaseDriver
             )
         ) {
+            val quoteMark: String = "`"
             try {
                 val prepareStatement =
-                    databaseMetaData.connection.prepareStatement("SHOW COLUMNS FROM $tableName")
+                    databaseMetaData.connection.prepareStatement("SHOW COLUMNS FROM $quoteMark$tableName$quoteMark")
                 prepareStatement.queryTimeout = 5
                 prepareStatement.executeQuery().map {
                     val find = columns.find { it.columnName == getString(1) }

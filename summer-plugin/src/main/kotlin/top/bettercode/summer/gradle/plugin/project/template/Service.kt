@@ -46,6 +46,10 @@ open class Service(private val overwrite: Boolean = false) : ProjectGenerator() 
             +interfaze(mixInType, overwrite = overwrite) {
                 mixIn(this)
             }
+            if (serializationViewsType != coreSerializationViewsType)
+                +interfaze(serializationViewsType, overwrite = false) {
+                    serializationViews(this)
+                }
         }
     }
 }

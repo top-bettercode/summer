@@ -18,7 +18,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         import(entityType)
 
-        superClass("$basePackageName.support.${shortProjectName}Controller")
+        superClass(appControllerType)
 
         annotation("@org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication")
         annotation("@org.springframework.validation.annotation.Validated")
@@ -247,3 +247,13 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     }
 
 }
+
+val appController: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
+    unit.apply {
+        superClass =
+            JavaType("top.bettercode.summer.data.jpa.web.PageController")
+
+        implement(serializationViewsType)
+    }
+}
+

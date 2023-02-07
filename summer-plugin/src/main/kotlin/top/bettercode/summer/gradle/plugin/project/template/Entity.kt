@@ -1,7 +1,8 @@
 package top.bettercode.summer.gradle.plugin.project.template
 
-import top.bettercode.summer.gradle.plugin.project.template.*
 import top.bettercode.summer.gradle.plugin.project.template.unit.*
+import top.bettercode.summer.tools.generator.dom.java.element.Interface
+import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.unit.PropertiesUnit
 
 /**
@@ -10,15 +11,20 @@ import top.bettercode.summer.tools.generator.dom.unit.PropertiesUnit
 class Entity : ProjectGenerator() {
 
     override fun setUp() {
-        if (isCore) {
-            add(properties(msgName, true) { load(ext.projectDir) })
-        }
+        add(properties(msgName, true) { load(ext.projectDir) })
+        add(interfaze(coreSerializationViewsType, true) {
+            javadoc {
+                +"/**"
+                +" * 模型属性 json SerializationViews"
+                +" */"
+            }
+            this.visibility = JavaVisibility.PUBLIC
+        })
     }
 
     override fun content() {
-        if (isCore) {
-            msg(this[msgName] as PropertiesUnit)
-        }
+        msg(this[msgName] as PropertiesUnit)
+        coreSerializationViews(this[coreSerializationViewsType.unitName] as Interface)
 
         //entityClass
         +clazz(entityType, true) {

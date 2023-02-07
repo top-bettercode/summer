@@ -15,7 +15,7 @@ import java.io.File
 interface CompilationUnit : GenUnit {
 
     override val name: String
-        get() = "${type.fullyQualifiedNameWithoutTypeParameters.replace(".", File.separator)}.java"
+        get() = type.unitName
 
     override val write: File.(String?) -> Boolean
         get() = {

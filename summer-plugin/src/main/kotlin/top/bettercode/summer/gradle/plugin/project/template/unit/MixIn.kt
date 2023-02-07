@@ -16,12 +16,10 @@ val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
             +" * $remarks"
             +" */"
         }
-        val serializationViews =
-            JavaType("$basePackageName.web.${shortProjectName.capitalized()}SerializationViews")
         implement(
             JavaType("top.bettercode.summer.web.serializer.MixIn").typeArgument(
                 if (isFullComposite) primaryKeyType else entityType
-            ), methodInfoType, serializationViews
+            ), methodInfoType, serializationViewsType
         )
 
         if (!isFullComposite) {
@@ -82,5 +80,16 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
                 annotation("@Override")
             }
         }
+    }
+}
+
+val serializationViews: ProjectGenerator.(Interface) -> Unit = { unit ->
+    unit.apply {
+        javadoc {
+            +"/**"
+            +" * 模型属性 json SerializationViews"
+            +" */"
+        }
+        implement(coreSerializationViewsType)
     }
 }

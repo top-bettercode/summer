@@ -65,9 +65,9 @@ open class Generator {
             var packageName = basePackageName
             if (settings["no-modules"] == null)
                 packageName =
-                    if (packageName.endsWith(".${table.module}")) packageName else "$packageName.${table.module}"
+                    if (packageName.endsWith(".${table.module}") || packageName.contains(".${table.module}.")) packageName else "$packageName.${table.module}"
             return if (ext.userModule && table.subModule.isNotBlank()) {
-                if (packageName.endsWith(".${table.subModule}")) packageName else "$packageName.${table.subModule}"
+                "$packageName.${table.subModule}"
             } else {
                 packageName
             }

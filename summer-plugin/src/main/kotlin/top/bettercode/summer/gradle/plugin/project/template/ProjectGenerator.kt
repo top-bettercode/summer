@@ -67,8 +67,9 @@ abstract class ProjectGenerator : Generator() {
 
     val msgName: String
         get() {
-            return "${if (isCore) "core-" else ""}messages.properties"
+            return "core-messages.properties"
         }
+
     val mapperXmlName
         get() = "${
             repositoryType.fullyQualifiedNameWithoutTypeParameters.replace(
@@ -100,9 +101,13 @@ abstract class ProjectGenerator : Generator() {
             }MethodInfo"
         )
     val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
+    val coreSerializationViewsType get() = JavaType("${basePackageName}.web.CoreSerializationViews")
+    val serializationViewsType get() = JavaType("$basePackageName.web.${shortProjectName.capitalized()}SerializationViews")
     val mixInType get() = JavaType("$packageName.${modulePackage("MixIn")}.${projectClassName}MixIn")
+    val appControllerType get() = JavaType("$basePackageName.support.${shortProjectName}Controller")
     val controllerType get() = JavaType("$packageName.${modulePackage("Controller")}.${projectClassName}Controller")
     val controllerTestType get() = JavaType("$packageName.${modulePackage("ControllerTest")}.${projectClassName}ControllerTest")
+    val baseWebTestType get() = JavaType("$basePackageName.support.BaseWebTest")
     val iserviceType get() = JavaType("$packageName.${modulePackage("Service")}.I${projectClassName}Service")
     val serviceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}Service")
     val testServiceType get() = JavaType("$packageName.${modulePackage("Service")}.${projectClassName}TestService")

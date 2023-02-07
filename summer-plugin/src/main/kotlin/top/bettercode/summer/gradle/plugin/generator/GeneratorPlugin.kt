@@ -49,10 +49,10 @@ class GeneratorPlugin : Plugin<Project> {
 
             val entries = project.properties.filter { it.key.startsWith("datasource.") }.entries
             extension.datasources =
-                (mapOf(defaultModuleName to (entries.filter { it.key.split('.').size == 2 }
-                    .associateBy({ it.key.substringAfter("datasource.") }, { it.value })
-                        )
-                ) + entries.filter { it.key.split('.').size == 3 }.groupBy {
+                ((if (project.properties.containsKey("datasource.url")) mapOf(defaultModuleName to (entries.filter {
+                    it.key.split('.').size == 2
+                }.associateBy({ it.key.substringAfter("datasource.") }, { it.value }))
+                ) else emptyMap()) + entries.filter { it.key.split('.').size == 3 }.groupBy {
                     it.key.substringAfter("datasource.").substringBefore(".")
                 }.mapValues { entry ->
                     entry.value.groupBy({ it.key.substringAfter("datasource.${entry.key}.") },

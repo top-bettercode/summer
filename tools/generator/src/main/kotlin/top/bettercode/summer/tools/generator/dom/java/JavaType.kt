@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.generator.dom.java
 
+import java.io.File
 import java.util.*
 
 /**
@@ -48,6 +49,9 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
         typeArguments = ArrayList()
         parse(fullTypeSpecification)
     }
+
+    val unitName: String
+        get() = "${fullyQualifiedNameWithoutTypeParameters.replace(".", File.separator)}.java"
 
     /**
      * Returns the fully qualified name - including any generic type parameters.

@@ -17,7 +17,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         annotation("@org.junit.jupiter.api.DisplayName(\"${remarks}\")")
         annotation("@org.springframework.transaction.annotation.Transactional")
-        superClass("$basePackageName.support.BaseWebTest")
+        superClass(baseWebTestType)
 
         import("org.junit.jupiter.api.MethodOrderer.OrderAnnotation")
         if (isCompositePrimaryKey)
@@ -196,4 +196,11 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
     }
 }
+
+val baseWebTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
+    unit.apply {
+        superClass = JavaType("top.bettercode.summer.test.BaseWebAuthTest")
+    }
+}
+
 

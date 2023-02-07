@@ -174,7 +174,9 @@ open class GeneratorExtension(
             JavaTypeResolver.forceBigDecimals = value
         }
 
-    val defaultDatasource: JDBCConnectionConfiguration by lazy { datasources[defaultModuleName]!! }
+    val defaultDatasource: JDBCConnectionConfiguration by lazy {
+        datasources[defaultModuleName] ?: datasources.values.first()
+    }
 
     /**
      * PlantUML 脚本目录
