@@ -19,6 +19,7 @@ dependencies {
     constraints {
         api("com.alibaba:druid-spring-boot-starter:1.2.15")
         api("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.0")
+        api("io.seata:seata-server:1.5.0")
     }
 }
 

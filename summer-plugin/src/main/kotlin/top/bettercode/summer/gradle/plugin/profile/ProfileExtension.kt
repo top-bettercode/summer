@@ -162,53 +162,25 @@ open class ProfileExtension(
                         project.file("${profile.configDir}/$profilesDefaultActive.yml")
                     val yaml = Yaml()
                     if (defaultConfigYmlFile.exists()) {
-                        props.putAll(
-                            parseYml(
-                                yaml.loadAs(
-                                    defaultConfigYmlFile.inputStream(),
-                                    Map::class.java
-                                )
-                            )
-                        )
+                        loadYml(defaultConfigYmlFile, yaml, props)
                     }
                     if (profilesActive != profilesDefaultActive) {
                         val activeYmlFile =
                             project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
                         if (activeYmlFile.exists()) {
-                            props.putAll(
-                                parseYml(
-                                    yaml.loadAs(
-                                        activeYmlFile.inputStream(),
-                                        Map::class.java
-                                    )
-                                )
-                            )
+                            loadYml(activeYmlFile, yaml, props)
                         }
                     }
                     val defaultConfigYamlFile =
                         project.file("${profile.configDir}/$profilesDefaultActive.yaml")
                     if (defaultConfigYamlFile.exists()) {
-                        props.putAll(
-                            parseYml(
-                                yaml.loadAs(
-                                    defaultConfigYamlFile.inputStream(),
-                                    Map::class.java
-                                )
-                            )
-                        )
+                        loadYml(defaultConfigYamlFile, yaml, props)
                     }
                     if (profilesActive != profilesDefaultActive) {
                         val activeYamlFile =
                             project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
                         if (activeYamlFile.exists()) {
-                            props.putAll(
-                                parseYml(
-                                    yaml.loadAs(
-                                        activeYamlFile.inputStream(),
-                                        Map::class.java
-                                    )
-                                )
-                            )
+                            loadYml(activeYamlFile, yaml, props)
                         }
                     }
                     val defaultConfigFile =
@@ -254,6 +226,23 @@ open class ProfileExtension(
                 }
                 return props
             }
+
+        private fun loadYml(
+            defaultConfigYmlFile: File,
+            yaml: Yaml,
+            props: Properties
+        ) {
+            val readText = defaultConfigYmlFile.readText()
+            if (readText.isNotBlank()) {
+                val yml = parseYml(
+                    yaml.loadAs(
+                        readText,
+                        Map::class.java
+                    )
+                )
+                props.putAll(yml)
+            }
+        }
 
         private fun parseYml(
             map: Map<*, *>,
