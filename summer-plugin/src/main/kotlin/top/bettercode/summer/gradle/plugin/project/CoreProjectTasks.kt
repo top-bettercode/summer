@@ -6,8 +6,6 @@ import org.gradle.api.Task
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.JavaType
-import top.bettercode.summer.tools.generator.dom.java.element.InnerInterface
-import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
@@ -30,7 +28,7 @@ object CoreProjectTasks {
                     override fun execute(it: Task) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
                         gen.generators = arrayOf(MapperPrint())
-                        Generators.call(gen)
+                        Generators.callInAllModule(gen)
                     }
                 })
             }
@@ -40,7 +38,7 @@ object CoreProjectTasks {
                     override fun execute(it: Task) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
                         gen.generators = arrayOf(MybatisWherePrint())
-                        Generators.call(gen)
+                        Generators.callInAllModule(gen)
                     }
                 })
             }
@@ -51,7 +49,7 @@ object CoreProjectTasks {
                     override fun execute(it: Task) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
                         gen.generators = arrayOf(SetterPrint(true))
-                        Generators.call(gen)
+                        Generators.callInAllModule(gen)
                     }
                 })
             }
@@ -62,7 +60,7 @@ object CoreProjectTasks {
                     override fun execute(it: Task) {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
                         gen.generators = arrayOf(ExcelCodePrint())
-                        Generators.call(gen)
+                        Generators.callInAllModule(gen)
                     }
                 })
             }
@@ -74,7 +72,7 @@ object CoreProjectTasks {
                         val gen = project.extensions.getByType(GeneratorExtension::class.java)
                         gen.generators = arrayOf(dbDoc)
                         gen.tableNames = emptyArray()
-                        Generators.call(gen)
+                        Generators.callInAllModule(gen)
                     }
                 })
             }
@@ -86,7 +84,7 @@ object CoreProjectTasks {
                         //生成 properties
                         gen.tableNames = emptyArray()
                         gen.generators = arrayOf(DicCodeProperties())
-                        Generators.call(gen)
+                        Generators.callInAllModule(gen)
                         //生成
                         DicCodeGen(project).run()
                     }

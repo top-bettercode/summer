@@ -6,6 +6,7 @@ import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.InnerInterface
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
 import top.bettercode.summer.tools.generator.dom.unit.PropertiesUnit
+import top.bettercode.summer.tools.lang.capitalized
 
 /**
  * @author Peter Wu
@@ -39,7 +40,7 @@ val msg: ProjectGenerator.(PropertiesUnit) -> Unit = { unit ->
 
 val coreSerializationViews: ProjectGenerator.(Interface) -> Unit = { unit ->
     unit.apply {
-        innerInterface(InnerInterface(JavaType("Get${pathName}List")))
-        innerInterface(InnerInterface(JavaType("Get${pathName}Info")))
+        innerInterface(InnerInterface(JavaType("Get${pathName.capitalized()}List")))
+        innerInterface(InnerInterface(JavaType("Get${pathName.capitalized()}Info")))
     }
 }

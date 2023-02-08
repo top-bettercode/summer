@@ -1,7 +1,6 @@
 package top.bettercode.summer.gradle.plugin.generator
 
 import isBoot
-import isCloud
 import isCore
 import net.sourceforge.plantuml.FileFormat
 import net.sourceforge.plantuml.FileFormatOption
@@ -197,13 +196,7 @@ class GeneratorPlugin : Plugin<Project> {
                 task.group = genGroup
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
-                        extension.run { module, tableHolder ->
-                            println("生成$module")
-                            Generators.call(
-                                project.extensions.getByType(GeneratorExtension::class.java),
-                                tableHolder
-                            )
-                        }
+                        Generators.callInAllModule(project.extensions.getByType(GeneratorExtension::class.java))
                     }
                 })
             }

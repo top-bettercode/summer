@@ -67,10 +67,8 @@ object SubProjectTasks {
                         task.group = "gen entity"
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                ext.run { _, tableHolder ->
-                                    ext.generators = arrayOf(Entity())
-                                    Generators.call(ext, tableHolder)
-                                }
+                                ext.generators = arrayOf(Entity())
+                                Generators.callInAllModule(ext)
                             }
                         })
                     }
@@ -78,10 +76,8 @@ object SubProjectTasks {
                         task.group = "gen controller"
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                ext.run { _, tableHolder ->
-                                    ext.generators = arrayOf(Controller())
-                                    Generators.call(ext, tableHolder)
-                                }
+                                ext.generators = arrayOf(Controller())
+                                Generators.callInAllModule(ext)
                             }
                         })
                     }
@@ -127,10 +123,8 @@ object SubProjectTasks {
                         task.group = "gen entity"
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                ext.run { _, tableHolder ->
-                                    ext.generators = arrayOf(Entity())
-                                    Generators.call(ext, tableHolder)
-                                }
+                                ext.generators = arrayOf(Entity())
+                                Generators.callInAllModule(ext)
                             }
                         })
                     }
@@ -138,10 +132,8 @@ object SubProjectTasks {
                         task.group = "gen service"
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                ext.run { _, tableHolder ->
-                                    ext.generators = arrayOf(Service())
-                                    Generators.call(ext, tableHolder)
-                                }
+                                ext.generators = arrayOf(Service())
+                                Generators.callInAllModule(ext)
                             }
                         })
                     }
@@ -149,10 +141,8 @@ object SubProjectTasks {
                         task.group = "gen controller"
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                ext.run { _, tableHolder ->
-                                    ext.generators = arrayOf(Controller())
-                                    Generators.call(ext, tableHolder)
-                                }
+                                ext.generators = arrayOf(Controller())
+                                Generators.callInAllModule(ext)
                             }
                         })
                     }

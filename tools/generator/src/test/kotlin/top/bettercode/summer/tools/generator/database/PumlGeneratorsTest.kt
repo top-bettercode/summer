@@ -23,6 +23,6 @@ class PumlGeneratorsTest {
     fun gen() {
         extension.generators = arrayOf(
         )
-        Generators.call(extension)
+        Generators.callInAllModule(extension)
     }
 }

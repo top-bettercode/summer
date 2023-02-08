@@ -39,7 +39,7 @@ class GeneratorsTest {
             PlantUML(null, File("build/gen/puml/database.puml"), null)
         )
         extension.dataType = top.bettercode.summer.tools.generator.DataType.PDM
-        Generators.call(extension)
+        Generators.callInAllModule(extension)
     }
 
     @Test
