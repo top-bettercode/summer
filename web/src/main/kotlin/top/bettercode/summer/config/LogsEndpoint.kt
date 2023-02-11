@@ -1,6 +1,5 @@
 package top.bettercode.summer.config
 
-import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.core.CoreConstants
 import org.slf4j.ILoggerFactory
@@ -284,45 +283,43 @@ class LogsEndpoint(
                     writer.println(prettyMessageHTMLLayout.fileHeader)
                     writer.println(prettyMessageHTMLLayout.getLogsHeader())
 
-                    var msg = StringBuilder("")
-                    var level: String? = null
                     val lines = if ("gz".equals(logFile.extension, true)) {
                         GZIPInputStream(FileInputStream(logFile)).bufferedReader().lines()
                     } else {
                         logFile.readLines().stream()
                     }
-                    lines.forEach {
-                        val m = it.substringAfter(" ", "").substringAfter(" ", "").trimStart()
-                        val llevel = when {
-                            m.startsWith(Level.TRACE.levelStr) -> Level.TRACE.levelStr
-                            m.startsWith(Level.DEBUG.levelStr) -> Level.DEBUG.levelStr
-                            m.startsWith(Level.INFO.levelStr) -> Level.INFO.levelStr
-                            m.startsWith(Level.WARN.levelStr) -> Level.WARN.levelStr
-                            m.startsWith(Level.ERROR.levelStr) -> Level.ERROR.levelStr
-                            m.startsWith(Level.OFF.levelStr) -> Level.OFF.levelStr
-                            else -> null
-                        }
-                        if (llevel != null) {
+                    val regrex =
+                        Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\d+) +--- +\\[([a-z0-9\\-]+)] +(\\S+) +:(.*)")
+
+                    var msg = StringBuilder("")
+                    lateinit var level: String
+
+                    lines.forEach { line ->
+                        val matchResult = regrex.matchEntire(line)
+                        if (matchResult != null) {
+                            val groupValues = matchResult.groupValues
+
                             if (msg.isNotBlank()) {
                                 writer.println(
                                     prettyMessageHTMLLayout.doLayout(
-                                        msg.toString(), level
-                                            ?: Level.INFO.levelStr
+                                        msg.toString(),
+                                        level
                                     )
                                 )
                             }
-                            msg = java.lang.StringBuilder(it)
-                            level = llevel
+                            msg = java.lang.StringBuilder(line)
+                            level = groupValues[2]
                         } else {
                             msg.append(CoreConstants.LINE_SEPARATOR)
-                            msg.append(it)
+                            msg.append(line)
                         }
                     }
                     if (msg.isNotBlank()) {
                         writer.println(
                             prettyMessageHTMLLayout.doLayout(
-                                msg.toString(), level
-                                    ?: Level.INFO.levelStr, true
+                                msg.toString(),
+                                level,
+                                true
                             )
                         )
                     }
