@@ -396,7 +396,7 @@ public class ExcelExport {
     int firstColumn = c;
 
     int index = 0;
-    ExcelField<T, ?> firstField = excelFields[0];
+    ExcelField<T, ?> firstField;
     if (imageByteArrayOutputStream == null) {
       firstField = Arrays.stream(excelFields).filter(o -> !o.isImageColumn()).findFirst()
           .orElseThrow(() -> new ExcelException("无可导出项目"));
