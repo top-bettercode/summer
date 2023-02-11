@@ -396,21 +396,20 @@ class LogsEndpoint(
 
                 files.sortWith(comparator)
                 files.forEach {
+                    val millis = it.lastModified()
+                    val lastModify =
+                        if (millis == 0L) "-" else TimeUtil.of(millis).format(dateTimeFormatter)
                     if (it.isDirectory) {
                         writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${
-                                TimeUtil.of(
-                                    it.lastModified()
-                                ).format(dateTimeFormatter)
-                            }       -"
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        $lastModify       -"
                         )
                     } else {
                         writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        ${
-                                TimeUtil.of(
-                                    it.lastModified()
-                                ).format(dateTimeFormatter)
-                            }       ${prettyValue(it.length())}"
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        $lastModify       ${
+                                prettyValue(
+                                    it.length()
+                                )
+                            }"
                         )
                     }
                 }
@@ -430,21 +429,26 @@ class LogsEndpoint(
      * @return 易读的值
      */
     private fun prettyValue(value: Long): String {
-        var newValue = value.toDouble()
-        var index = 0
-        var lastValue = 0.0
-        while (newValue / 1024 >= 1 && index < units.size - 1) {
-            lastValue = newValue
-            newValue /= 1024
-            index++
+        if (value == 0L) {
+            return "-"
+        } else {
+            var newValue = value.toDouble()
+            var index = 0
+            var lastValue = 0.0
+            while (newValue / 1024 >= 1 && index < units.size - 1) {
+                lastValue = newValue
+                newValue /= 1024
+                index++
+            }
+            var newScale = index - 2
+            newScale = max(newScale, 0)
+            val result =
+                if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(
+                    BigDecimal(1024), RoundingMode.UP
+                )
+                    .setScale(newScale, RoundingMode.UP).toString()
+            return trimTrailing(result) + units[index]
         }
-        var newScale = index - 2
-        newScale = max(newScale, 0)
-        val result = if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(
-            BigDecimal(1024), RoundingMode.UP
-        )
-            .setScale(newScale, RoundingMode.UP).toString()
-        return trimTrailing(result) + units[index]
     }
 
     private fun trimTrailing(value: String): String {
