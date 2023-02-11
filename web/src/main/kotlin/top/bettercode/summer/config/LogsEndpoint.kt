@@ -18,15 +18,12 @@ import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
-import java.io.FileInputStream
-import java.io.OutputStream
+import java.io.InputStream
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
+import java.util.zip.GZIPOutputStream
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import kotlin.math.max
@@ -89,7 +86,7 @@ class LogsEndpoint(
     fun path(@Selector(match = Selector.Match.ALL_REMAINING) path: String) {
         if ("real-time" != path) {
             val paths = path.split(",")
-            if (paths[0] == "download") {
+            if (paths[0] == "daily") {
                 val today = TimeUtil.now().format("yyyy-MM-dd")
                 if (paths.size == 1) {
                     val filenames =
@@ -110,28 +107,19 @@ class LogsEndpoint(
                     val files =
                         File(loggingFilesPath).listFiles { _, filename -> filename.startsWith("all-$logPattern") || matchCurrent && filename == "all.log" }
 
-                    if (files != null) {
-                        val fileName = "$logPattern.zip"
-                        val agent = request.getHeader("USER-AGENT")
+                    if (!files.isNullOrEmpty()) {
+                        files.sortWith(compareBy { it.lastModified() })
 
-                        val newFileName: String =
-                            if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
-                                URLEncoder.encode(fileName, "UTF-8")
-                            } else {
-                                fileName
-                            }
-                        response.setHeader(
-                            "Content-Disposition",
-                            "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
-                                fileName,
-                                "UTF-8"
+                        val logMsgs = mutableListOf<LogMsg>()
+                        files.forEach { file ->
+                            logMsgs.addAll(
+                                readLogMsgs(
+                                    file.inputStream(),
+                                    "gz".equals(file.extension, true)
+                                )
                             )
-                        )
-                        response.contentType = "application/octet-stream; charset=utf-8"
-                        response.setHeader("Pragma", "No-cache")
-                        response.setHeader("Cache-Control", "no-cache")
-                        response.setDateHeader("Expires", 0)
-                        zipFiles(files, response.outputStream)
+                        }
+                        showLogFile(response, logPattern, logMsgs)
                     } else {
                         response.sendError(HttpStatus.NOT_FOUND.value(), "no log file match")
                     }
@@ -139,7 +127,8 @@ class LogsEndpoint(
             } else {
                 val file = File(loggingFilesPath, path.replace(",", "/"))
                 if (file.isFile) {
-                    showLogFile(response, file)
+                    val logMsgs = readLogMsgs(file.inputStream(), "gz".equals(file.extension, true))
+                    showLogFile(response, file.name, logMsgs)
                 } else {
                     index(file.listFiles(), request, response, false)
                 }
@@ -258,90 +247,77 @@ class LogsEndpoint(
         }
     }
 
-    private fun zipFiles(srcFiles: Array<File>, outputStream: OutputStream) {
-        val zipOutputStream = ZipOutputStream(outputStream)
-        for (srcFile in srcFiles) {
-            zipOutputStream.putNextEntry(ZipEntry(srcFile.name))
-            zipOutputStream.write(srcFile.readBytes())
-        }
-        zipOutputStream.closeEntry()
-        zipOutputStream.close()
-    }
+    private fun showLogFile(response: HttpServletResponse, name: String, logMsgs: List<LogMsg>?) {
+        if (logMsgs.isNullOrEmpty()) {
+            response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
+        } else {
+            response.contentType = "text/html;charset=utf-8"
+            response.setHeader("Pragma", "No-cache")
+            response.setHeader("Cache-Control", "no-cache")
+            response.setHeader("Transfer-Encoding", "chunked")
+            response.setHeader("Content-Encoding", "gzip")
+            response.setDateHeader("Expires", 0)
+            val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
+            prettyMessageHTMLLayout.title = name
+            prettyMessageHTMLLayout.context = loggerContext
+            prettyMessageHTMLLayout.start()
+            GZIPOutputStream(response.outputStream).bufferedWriter().use { writer ->
+                writer.appendLine(prettyMessageHTMLLayout.fileHeader)
+                writer.appendLine(prettyMessageHTMLLayout.getLogsHeader())
 
-    private fun showLogFile(response: HttpServletResponse, logFile: File) {
-        if (logFile.exists()) {
-            if (logFile.isFile) {
-                response.contentType = "text/html;charset=utf-8"
-                response.setHeader("Pragma", "No-cache")
-                response.setHeader("Cache-Control", "no-cache")
-                response.setDateHeader("Expires", 0)
-                val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
-                prettyMessageHTMLLayout.title = logFile.name
-                prettyMessageHTMLLayout.context = loggerContext
-                prettyMessageHTMLLayout.start()
-                response.writer.use { writer ->
-                    writer.println(prettyMessageHTMLLayout.fileHeader)
-                    writer.println(prettyMessageHTMLLayout.getLogsHeader())
+                logMsgs.forEach {
+                    writer.appendLine(
+                        prettyMessageHTMLLayout.doLayout(it.msg, it.level)
+                    )
+                }
 
-                    val lines = if ("gz".equals(logFile.extension, true)) {
-                        GZIPInputStream(FileInputStream(logFile)).bufferedReader().lines()
-                    } else {
-                        logFile.readLines().stream()
-                    }
-                    val regrex =
-                        Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\d+) +--- +\\[([a-z0-9\\-]+)] +(\\S+) +:(.*)")
-
-                    var msg = StringBuilder("")
-                    lateinit var level: String
-
-                    lines.forEach { line ->
-                        val matchResult = regrex.matchEntire(line)
-                        if (matchResult != null) {
-                            val groupValues = matchResult.groupValues
-
-                            if (msg.isNotBlank()) {
-                                writer.println(
-                                    prettyMessageHTMLLayout.doLayout(
-                                        msg.toString(),
-                                        level
-                                    )
-                                )
-                            }
-                            msg = java.lang.StringBuilder(line)
-                            level = groupValues[2]
-                        } else {
-                            msg.append(CoreConstants.LINE_SEPARATOR)
-                            msg.append(line)
-                        }
-                    }
-                    if (msg.isNotBlank()) {
-                        writer.println(
-                            prettyMessageHTMLLayout.doLayout(
-                                msg.toString(),
-                                level,
-                                true
-                            )
-                        )
-                    }
-                    writer.println(prettyMessageHTMLLayout.presentationFooter)
-                    writer.println(
-                        """
+                writer.appendLine(prettyMessageHTMLLayout.presentationFooter)
+                writer.appendLine(
+                    """
 <script type="text/javascript">
     if(!location.hash){
         window.location.href = '#last';
     }
 </script>
 """
-                    )
-
-                    writer.println(prettyMessageHTMLLayout.fileFooter)
-                }
-            } else {
-                response.sendError(HttpStatus.CONFLICT.value(), "Path is directory")
+                )
+                writer.appendLine(prettyMessageHTMLLayout.fileFooter)
             }
-        } else {
-            response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
         }
+    }
+
+    private fun readLogMsgs(inputStream: InputStream, gzip: Boolean = false): List<LogMsg> {
+        val lines = if (gzip) {
+            GZIPInputStream(inputStream).bufferedReader().lines()
+        } else {
+            inputStream.bufferedReader().lines()
+        }
+        val regrex =
+            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\d+) +--- +\\[([a-z0-9\\-]+)] +(\\S+) +:(.*)")
+
+        val msgs = mutableListOf<LogMsg>()
+        var msg = StringBuilder("")
+        lateinit var level: String
+
+        lines.forEach { line ->
+            val matchResult = regrex.matchEntire(line)
+            if (matchResult != null) {
+                val groupValues = matchResult.groupValues
+
+                if (msg.isNotBlank()) {
+                    msgs.add(LogMsg(level, msg.toString()))
+                }
+                msg = java.lang.StringBuilder(line)
+                level = groupValues[2]
+            } else {
+                msg.append(CoreConstants.LINE_SEPARATOR)
+                msg.append(line)
+            }
+        }
+        if (msg.isNotBlank()) {
+            msgs.add(LogMsg(level, msg.toString()))
+        }
+        return msgs
     }
 
     private val comparator: Comparator<File> = LogFileNameComparator()
@@ -377,11 +353,6 @@ class LogsEndpoint(
                 if (!root)
                     writer.println("<a href=\"$upPath\">../</a>")
                 else {
-                    writer.println(
-                        "<a style=\"display:inline-block;width:100px;\" href=\"$path/download\">下载/</a>                                        ${
-                            TimeUtil.now().format(dateTimeFormatter)
-                        }       -"
-                    )
                     if (useWebSocket) {
                         writer.println(
                             "<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${
@@ -389,6 +360,11 @@ class LogsEndpoint(
                             }       -"
                         )
                     }
+                    writer.println(
+                        "<a style=\"display:inline-block;width:100px;\" href=\"$path/daily\">daily/</a>                                        ${
+                            TimeUtil.now().format(dateTimeFormatter)
+                        }       -"
+                    )
                 }
 
                 files.sortWith(comparator)
