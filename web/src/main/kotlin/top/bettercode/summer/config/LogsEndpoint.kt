@@ -20,10 +20,14 @@ import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
 import java.io.FileInputStream
+import java.io.OutputStream
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import kotlin.math.max
@@ -79,18 +83,67 @@ class LogsEndpoint(
 
     @ReadOperation
     fun root() {
-        index(File(loggingFilesPath), request, response, true)
+        index(File(loggingFilesPath).listFiles(), request, response, true)
     }
 
     @ReadOperation
     fun path(@Selector(match = Selector.Match.ALL_REMAINING) path: String) {
         if ("real-time" != path) {
-            response.contentType = "text/plain;charset=UTF-8"
-            val file = File(loggingFilesPath, path.replace(",", "/"))
-            if (file.isFile) {
-                showLogFile(response, file)
+            val paths = path.split(",")
+            if (paths[0] == "download") {
+                val today = TimeUtil.now().format("yyyy-MM-dd")
+                if (paths.size == 1) {
+                    val filenames =
+                        File(loggingFilesPath).listFiles { _, filename -> filename.startsWith("all-") }
+                            ?.map {
+                                it.nameWithoutExtension.replace(
+                                    Regex("all-(\\d{4}-\\d{2}-\\d{2})-\\d+"),
+                                    "$1"
+                                )
+                            }?.toMutableSet() ?: mutableSetOf()
+                    if (!filenames.contains(today)) {
+                        filenames.add(today)
+                    }
+                    index(filenames.map { File(it) }.toTypedArray(), request, response, false)
+                } else if (paths.size == 2) {
+                    val logPattern = paths[1]
+                    val matchCurrent = today.startsWith(logPattern)
+                    val files =
+                        File(loggingFilesPath).listFiles { _, filename -> filename.startsWith("all-$logPattern") || matchCurrent && filename == "all.log" }
+
+                    if (files != null) {
+                        val fileName = "$logPattern.zip"
+                        val agent = request.getHeader("USER-AGENT")
+
+                        val newFileName: String =
+                            if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
+                                URLEncoder.encode(fileName, "UTF-8")
+                            } else {
+                                fileName
+                            }
+                        response.setHeader(
+                            "Content-Disposition",
+                            "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
+                                fileName,
+                                "UTF-8"
+                            )
+                        )
+                        response.contentType = "application/octet-stream; charset=utf-8"
+                        response.setHeader("Pragma", "No-cache")
+                        response.setHeader("Cache-Control", "no-cache")
+                        response.setDateHeader("Expires", 0)
+                        zipFiles(files, response.outputStream)
+                    } else {
+                        response.sendError(HttpStatus.NOT_FOUND.value(), "no log file match")
+                    }
+                }
             } else {
-                index(file, request, response, false)
+                val file = File(loggingFilesPath, path.replace(",", "/"))
+                if (file.isFile) {
+                    showLogFile(response, file)
+                } else {
+                    index(file.listFiles(), request, response, false)
+                }
             }
         } else {
             if (useWebSocket) {
@@ -206,6 +259,15 @@ class LogsEndpoint(
         }
     }
 
+    private fun zipFiles(srcFiles: Array<File>, outputStream: OutputStream) {
+        val zipOutputStream = ZipOutputStream(outputStream)
+        for (srcFile in srcFiles) {
+            zipOutputStream.putNextEntry(ZipEntry(srcFile.name))
+            zipOutputStream.write(srcFile.readBytes())
+        }
+        zipOutputStream.closeEntry()
+        zipOutputStream.close()
+    }
 
     private fun showLogFile(response: HttpServletResponse, logFile: File) {
         if (logFile.exists()) {
@@ -288,12 +350,12 @@ class LogsEndpoint(
     private val comparator: Comparator<File> = LogFileNameComparator()
 
     private fun index(
-        file: File,
+        files: Array<File>?,
         request: HttpServletRequest,
         response: HttpServletResponse,
         root: Boolean
     ) {
-        if (file.exists()) {
+        if (!files.isNullOrEmpty()) {
             val servletPath = request.servletPath
             val endsWith = servletPath.endsWith("/")
             val upPath = if (endsWith) "../" else "./"
@@ -317,17 +379,23 @@ class LogsEndpoint(
 
                 if (!root)
                     writer.println("<a href=\"$upPath\">../</a>")
-                else if (useWebSocket) {
+                else {
                     writer.println(
-                        "<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${
+                        "<a style=\"display:inline-block;width:100px;\" href=\"$path/download\">下载/</a>                                        ${
                             TimeUtil.now().format(dateTimeFormatter)
                         }       -"
                     )
+                    if (useWebSocket) {
+                        writer.println(
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${
+                                TimeUtil.now().format(dateTimeFormatter)
+                            }       -"
+                        )
+                    }
                 }
 
-                val listFiles = file.listFiles()
-                listFiles?.sortWith(comparator)
-                listFiles?.forEach {
+                files.sortWith(comparator)
+                files.forEach {
                     if (it.isDirectory) {
                         writer.println(
                             "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        ${
