@@ -191,31 +191,13 @@ class GeneratorPlugin : Plugin<Project> {
 
         val extension = project.extensions.getByType(GeneratorExtension::class.java)
 
-        if (extension.moduleSize > 1)
-            project.tasks.create("gen[[[All]") { task ->
-                task.group = genGroup
-                task.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        Generators.callInAllModule(project.extensions.getByType(GeneratorExtension::class.java))
-                    }
-                })
-            }
-
-        extension.run { module, tableHolder ->
-            val prefix = if (defaultModuleName == module) "" else "[[${
-                module.capitalized()
-            }]"
-            project.tasks.create("gen${prefix}") { task ->
-                task.group = genGroup
-                task.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        Generators.call(
-                            project.extensions.getByType(GeneratorExtension::class.java),
-                            tableHolder
-                        )
-                    }
-                })
-            }
+        project.tasks.create("gen") { task ->
+            task.group = "gen code"
+            task.doLast(object : Action<Task> {
+                override fun execute(it: Task) {
+                    Generators.callInAllModule(project.extensions.getByType(GeneratorExtension::class.java))
+                }
+            })
         }
 
         if (project.rootProject.file(extension.pumlSrc).exists()) {
