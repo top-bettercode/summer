@@ -20,7 +20,7 @@ class Docker : Plugin<Project> {
     override fun apply(project: Project) {
         project.tasks.apply {
             create("buildDockerCompose") {
-                it.dependsOn("processResources", "gen[DbScript]")
+                it.dependsOn("processResources", "genDbScript")
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         project.copy { copySpec ->

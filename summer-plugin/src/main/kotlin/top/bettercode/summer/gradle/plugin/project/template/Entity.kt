@@ -12,19 +12,10 @@ class Entity : ProjectGenerator() {
 
     override fun setUp() {
         add(properties(msgName, true) { load(ext.projectDir) })
-        add(interfaze(coreSerializationViewsType, true) {
-            javadoc {
-                +"/**"
-                +" * 模型属性 json SerializationViews"
-                +" */"
-            }
-            this.visibility = JavaVisibility.PUBLIC
-        })
     }
 
     override fun content() {
         msg(this[msgName] as PropertiesUnit)
-        coreSerializationViews(this[coreSerializationViewsType.unitName] as Interface)
 
         //entityClass
         +clazz(entityType, true) {

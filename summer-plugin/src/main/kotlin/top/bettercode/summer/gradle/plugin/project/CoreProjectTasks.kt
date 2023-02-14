@@ -4,6 +4,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
+import top.bettercode.summer.gradle.plugin.project.template.*
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
@@ -22,7 +23,20 @@ object CoreProjectTasks {
     fun config(project: Project) {
 
         project.tasks.apply {
-            create("print[Mapper]") {
+
+            create("genAllSerializationViews") { t ->
+                t.group = GeneratorPlugin.genGroup
+                t.doLast(object : Action<Task> {
+                    override fun execute(it: Task) {
+                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
+                        gen.tableNames = emptyArray()
+                        gen.generators = arrayOf(SerializationViews())
+                        Generators.callInAllModule(gen)
+                    }
+                })
+            }
+
+            create("printMapper") {
                 it.group = GeneratorPlugin.printGroup
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
@@ -32,7 +46,7 @@ object CoreProjectTasks {
                     }
                 })
             }
-            create("print[MybatisWhere]") {
+            create("printMybatisWhere") {
                 it.group = GeneratorPlugin.printGroup
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
@@ -43,7 +57,7 @@ object CoreProjectTasks {
                 })
             }
 
-            create("print[Setter]") {
+            create("printSetter") {
                 it.group = GeneratorPlugin.printGroup
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
@@ -54,7 +68,7 @@ object CoreProjectTasks {
                 })
             }
 
-            create("print[ExcelCode]") {
+            create("printExcelCode") {
                 it.group = GeneratorPlugin.printGroup
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
@@ -64,7 +78,7 @@ object CoreProjectTasks {
                     }
                 })
             }
-            create("gen[DbDoc]") {
+            create("genDbDoc") {
                 it.group = GeneratorPlugin.genGroup
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
@@ -76,7 +90,7 @@ object CoreProjectTasks {
                     }
                 })
             }
-            create("gen[DicCode]") {
+            create("genDicCode") {
                 it.group = GeneratorPlugin.genGroup
                 it.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
@@ -90,7 +104,7 @@ object CoreProjectTasks {
                     }
                 })
             }
-            create("gen[ErrorCode]") { t ->
+            create("genErrorCode") { t ->
                 t.group = GeneratorPlugin.genGroup
                 t.doLast(object : Action<Task> {
                     override fun execute(it: Task) {

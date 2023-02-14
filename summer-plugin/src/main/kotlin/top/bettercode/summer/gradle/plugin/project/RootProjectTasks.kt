@@ -106,7 +106,7 @@ object RootProjectTasks {
                 }
             }
 
-            create("gen[DbScript]") { t ->
+            create("genDbScript") { t ->
                 t.group = GeneratorPlugin.genGroup
                 t.doLast(object : Action<Task> {
                     override fun execute(it: Task) {

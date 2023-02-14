@@ -1,4 +1,4 @@
-package top.bettercode.summer.gradle.plugin.project
+package top.bettercode.summer.gradle.plugin.project.template
 
 import org.gradle.api.Project
 import top.bettercode.summer.gradle.plugin.autodoc.AsciidocGenerator

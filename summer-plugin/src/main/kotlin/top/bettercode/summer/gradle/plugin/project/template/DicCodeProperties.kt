@@ -1,4 +1,4 @@
-package top.bettercode.summer.gradle.plugin.project
+package top.bettercode.summer.gradle.plugin.project.template
 
 import top.bettercode.summer.tools.generator.dom.unit.PropertiesUnit
 import top.bettercode.summer.tools.generator.dsl.Generator

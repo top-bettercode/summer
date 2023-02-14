@@ -1,6 +1,4 @@
-package top.bettercode.summer.gradle.plugin.project
-
-import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
+package top.bettercode.summer.gradle.plugin.project.template
 
 /**
  * @author Peter Wu

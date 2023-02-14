@@ -21,7 +21,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
 
-        project.tasks.create("gen[PackageInfo]") { task ->
+        project.tasks.create("genPackageInfo") { task ->
             task.group = GeneratorPlugin.genGroup
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
@@ -101,7 +101,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
             })
         }
 
-        project.tasks.create("gen[PackageInfoDoc]") { task ->
+        project.tasks.create("genPackageInfoDoc") { task ->
             task.group = GeneratorPlugin.genGroup
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
