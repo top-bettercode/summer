@@ -1,5 +1,9 @@
 package top.bettercode.summer.tools.weixin.config;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import top.bettercode.summer.tools.weixin.support.WechatToken;
 
@@ -8,6 +12,7 @@ import top.bettercode.summer.tools.weixin.support.WechatToken;
  */
 public interface ICorpProperties extends IWexinProperties {
 
+  Logger log = LoggerFactory.getLogger(ICorpProperties.class);
   String OAUTH_URL = "/wechat/corpOauth";
 
   String getAppBaseUrl();
@@ -31,9 +36,18 @@ public interface ICorpProperties extends IWexinProperties {
   default String wechatUrl(WechatToken wechatToken, boolean forceLogin, String state) {
     String token = wechatToken == null ? "" : wechatToken.getAccessToken();
     String openId = wechatToken == null ? "" : wechatToken.getOpenId();
+    String msg = wechatToken == null ? "" : wechatToken.getMsg();
+    String encodeMsg;
+    try {
+      encodeMsg = URLEncoder.encode(msg, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      log.warn(e.getMessage(), e);
+      encodeMsg = "";
+    }
+
     return getWechatBaseUrl() + getWechatWebOauthUrl() + "?access_token=" + token + "&"
         + OPEN_ID_NAME + "=" + openId + "&hasBound=" + (StringUtils.hasText(token)) + "&forceLogin="
-        + forceLogin + "&state=" + (state == null ? "" : state) + "&_timer="
+        + forceLogin + "&state=" + (state == null ? "" : state) + "&msg=" + encodeMsg + "&_timer="
         + System.currentTimeMillis();
   }
 

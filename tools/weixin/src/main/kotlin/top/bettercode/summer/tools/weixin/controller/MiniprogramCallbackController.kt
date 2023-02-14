@@ -34,14 +34,20 @@ class MiniprogramCallbackController(
         return try {
             val jsSession =
                 miniprogramClient.jscode2session(code).decrypt(encryptedData, iv)
-            val result = if (jsSession.isOk) WechatToken() else wechatService.miniOauth(jsSession)
+            val result = if (jsSession.isOk)
+                try {
+                    wechatService.miniOauth(jsSession)
+                } catch (e: Exception) {
+                    log.warn(e.message, e)
+                    WechatToken(e.message)
+                } else WechatToken()
             result.openId = jsSession.openid
             result.unionId = jsSession.unionid
             result.hasBound = result.accessToken.isNullOrBlank().not()
             ok(result)
         } catch (e: Exception) {
             log.error("授权失败", e)
-            val result = WechatToken()
+            val result = WechatToken(e.message)
             result.accessToken = null
             result.openId = null
             result.hasBound = false

@@ -28,21 +28,30 @@ class OffiaccountCallbackController(
     @GetMapping(value = ["/oauth"], name = "公众号OAuth回调接口")
     fun oauth(code: String?, state: String?): String {
         plainTextError()
-        var token: WechatToken? = null
-        try {
-            val accessToken =
-                if (code.isNullOrBlank()) null else offiaccountClient.getWebPageAccessToken(code)
-            token = if (accessToken?.isOk == true) wechatService.oauth(
-                accessToken,
-                (if (offiaccountClient.properties.userUnionid) offiaccountClient.getSnsapiUserinfo(
-                    accessToken.accessToken!!,
-                    accessToken.openid!!
-                ) else null)
-            ) else null
-            token?.openId = accessToken?.openid
-        } catch (e: Exception) {
-            log.warn("token获取失败", e)
-        }
+        val token: WechatToken =
+            try {
+                val accessToken =
+                    if (code.isNullOrBlank()) null else offiaccountClient.getWebPageAccessToken(code)
+                val token = if (accessToken?.isOk == true)
+                    try {
+                        wechatService.oauth(
+                            accessToken,
+                            (if (offiaccountClient.properties.userUnionid) offiaccountClient.getSnsapiUserinfo(
+                                accessToken.accessToken!!,
+                                accessToken.openid!!
+                            ) else null)
+                        )
+                    } catch (e: Exception) {
+                        log.warn(e.message, e)
+                        WechatToken(e.message)
+                    }
+                else WechatToken(accessToken?.errmsg)
+                token.openId = accessToken?.openid
+                token
+            } catch (e: Exception) {
+                log.warn("token获取失败", e)
+                WechatToken(e.message)
+            }
         return offiaccountClient.properties.redirectUrl(token, wechatService.forceLogin(), state)
     }
 

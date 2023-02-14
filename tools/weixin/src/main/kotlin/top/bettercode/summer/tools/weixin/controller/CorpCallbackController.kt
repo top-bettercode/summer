@@ -25,15 +25,22 @@ class CorpCallbackController(
     @GetMapping(value = ["/corpOauth"], name = "企业号OAuth回调接口")
     fun oauth(code: String?, state: String?): String {
         plainTextError()
-        var token: WechatToken? = null
-        try {
-            val accessToken =
-                if (code.isNullOrBlank()) null else corpClient.getWebPageAccessToken(code)
-            token = if (accessToken?.isOk == true) wechatService.corpOauth(accessToken) else null
-            token?.openId = accessToken?.openid
-        } catch (e: Exception) {
-            log.warn("token获取失败", e)
-        }
+        val token: WechatToken =
+            try {
+                val accessToken =
+                    if (code.isNullOrBlank()) null else corpClient.getWebPageAccessToken(code)
+                val token = if (accessToken?.isOk == true) try {
+                    wechatService.corpOauth(accessToken)
+                } catch (e: Exception) {
+                    log.warn(e.message, e)
+                    WechatToken(e.message)
+                } else WechatToken(accessToken?.errmsg)
+                token.openId = accessToken?.openid
+                token
+            } catch (e: Exception) {
+                log.warn("token获取失败", e)
+                WechatToken(e.message)
+            }
         return corpClient.properties.redirectUrl(token, wechatService.forceLogin(), state)
     }
 

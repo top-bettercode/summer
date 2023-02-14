@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.weixin.config.IWexinProperties
  *
  * @author Peter Wu
  */
-class WechatToken : HashMap<String, Any?>() {
+class WechatToken() : HashMap<String, Any?>() {
 
     init {
         this["access_token"] = ""
@@ -16,6 +16,7 @@ class WechatToken : HashMap<String, Any?>() {
         this["scope"] = ""
         this["unionid"] = ""
         this["hasBound"] = false
+        this["msg"] = ""
     }
 
     var accessToken: String?
@@ -54,6 +55,16 @@ class WechatToken : HashMap<String, Any?>() {
         set(value) {
             put("hasBound", value)
         }
+
+    var msg: String
+        get() = get("msg") as String
+        set(value) {
+            put("msg", value)
+        }
+
+    constructor(msg: String?) : this() {
+        this.msg = msg?:""
+    }
 
     companion object {
         private const val serialVersionUID: Long = 1L
