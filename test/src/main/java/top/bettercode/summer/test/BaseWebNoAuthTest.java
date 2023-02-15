@@ -22,14 +22,12 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -52,7 +50,6 @@ import top.bettercode.summer.web.support.ApplicationContextHolder;
  *
  * @author Peter Wu
  */
-@ExtendWith(value = {SpringExtension.class})
 @SpringBootTest
 @TestPropertySource(properties = {
     "summer.security.enabled=false"
