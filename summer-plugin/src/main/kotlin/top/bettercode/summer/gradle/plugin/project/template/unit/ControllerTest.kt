@@ -78,6 +78,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         if (!isFullComposite) {
+            import("org.junit.jupiter.api.Assertions")
             //info
             method("info", JavaType.voidPrimitiveInstance) {
 //                javadoc {
@@ -90,6 +91,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
                     primaryKeyName.capitalized()
                 }();"
+                +"Assertions.assertNotNull(userId);"
                 +""
                 +"perform(get(\"/$pathName/info\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
@@ -173,7 +175,6 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             //delete
-            staticImport("org.junit.jupiter.api.Assertions.assertFalse")
             method("delete", JavaType.voidPrimitiveInstance) {
 //                javadoc {
 //                    +"// ${remarks}删除"
@@ -189,7 +190,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"perform(get(\"/$pathName/delete\")"
                 2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
                 +");"
-                +"assertFalse(${projectEntityName}Service.existsById(${primaryKeyName}));"
+                +"Assertions.assertFalse(${projectEntityName}Service.existsById(${primaryKeyName}));"
             }
 
 

@@ -317,13 +317,10 @@ class GeneratorPlugin : Plugin<Project> {
                         )
                         val src = extension.file(extension.pumlSrc)
                         val pdm = extension.file(extension.pdmSrc)
-                        val out = project.rootProject.file("${extension.sqlOutput}/ddl")
                         if (src.exists())
                             task.inputs.dir(src)
                         if (pdm.exists())
                             task.inputs.file(pdm)
-                        if (out.exists())
-                            task.outputs.dir(out)
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
                                 MysqlToDDL.useQuote = extension.sqlQuote
@@ -355,7 +352,11 @@ class GeneratorPlugin : Plugin<Project> {
                                         throw IllegalArgumentException("不支持的数据库")
                                     }
                                 }
-                                output.writeTo(project.rootDir)
+                                output.writeTo(
+                                    if (project.file(extension.sqlOutput)
+                                            .exists()
+                                    ) project.projectDir else project.rootDir
+                                )
                             }
                         })
                     }
@@ -421,7 +422,11 @@ class GeneratorPlugin : Plugin<Project> {
                                         }
                                     }
                                 }
-                                unit.writeTo(project.rootDir)
+                                unit.writeTo(
+                                    if (project.file(extension.sqlOutput)
+                                            .exists()
+                                    ) project.projectDir else project.rootDir
+                                )
                             }
                         })
                     }

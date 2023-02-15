@@ -66,7 +66,7 @@ class ProjectPlugin : Plugin<Project> {
             //tasks
             SubProjectTasks.config(subProject)
 
-            if (subProject.isCore) {
+            if (subProject.isCore || subProject.isCloud) {
                 CoreProjectTasks.config(subProject)
             }
         }

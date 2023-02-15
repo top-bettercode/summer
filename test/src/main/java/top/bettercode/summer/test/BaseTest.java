@@ -12,7 +12,8 @@ import top.bettercode.summer.web.support.ApplicationContextHolder;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestPropertySource(properties = {
-    "summer.security.enabled=false"
+    "summer.security.enabled=false",
+    "seata.enabled=false",
 })
 public abstract class BaseTest extends BaseLogTest {
 
