@@ -293,11 +293,11 @@ class LogsEndpoint(
             inputStream.bufferedReader().lines()
         }
         val regrex =
-            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\d+) +--- +\\[([a-z0-9\\-]+)] +(\\S+) +:(.*)")
+            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\d+) +--- +\\[([a-zA-Z0-9 \\-]+)] +(\\S+) +:(.*)")
 
         val msgs = mutableListOf<LogMsg>()
         var msg = StringBuilder("")
-        lateinit var level: String
+        var level = "DEFAULT"
 
         lines.forEach { line ->
             val matchResult = regrex.matchEntire(line)
