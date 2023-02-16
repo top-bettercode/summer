@@ -9,6 +9,7 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.boot.actuate.endpoint.annotation.Selector
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.env.Environment
+import org.springframework.data.redis.connection.lettuce.LettuceConnection.PipeliningFlushPolicy.buffered
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.util.Assert
@@ -21,6 +22,7 @@ import java.io.File
 import java.io.InputStream
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
@@ -102,7 +104,13 @@ class LogsEndpoint(
                     }
                     index(filenames.map { File(it) }.toTypedArray(), request, response, false)
                 } else if (paths.size == 2) {
-                    val logPattern = paths[1]
+                    var logPattern = paths[1]
+                    val html =
+                        if (logPattern.endsWith(".html")) {
+                            logPattern = logPattern.substringBeforeLast(".html")
+                            true
+                        } else false
+
                     val matchCurrent = today.startsWith(logPattern)
                     val files =
                         File(loggingFilesPath).listFiles { _, filename -> filename.startsWith("all-$logPattern") || matchCurrent && filename == "all.log" }
@@ -110,16 +118,52 @@ class LogsEndpoint(
                     if (!files.isNullOrEmpty()) {
                         files.sortWith(compareBy { it.lastModified() })
 
-                        val logMsgs = mutableListOf<LogMsg>()
-                        files.forEach { file ->
-                            logMsgs.addAll(
-                                readLogMsgs(
-                                    file.inputStream(),
-                                    "gz".equals(file.extension, true)
+                        if (html) {
+                            val logMsgs = mutableListOf<LogMsg>()
+                            files.forEach { file ->
+                                logMsgs.addAll(
+                                    readLogMsgs(
+                                        file.inputStream(),
+                                        "gz".equals(file.extension, true)
+                                    )
+                                )
+                            }
+                            showLogFile(response, logPattern, logMsgs)
+                        } else {
+                            val fileName = "$logPattern.log.gz"
+                            val agent = request.getHeader("USER-AGENT")
+
+                            val newFileName: String =
+                                if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
+                                    URLEncoder.encode(fileName, "UTF-8")
+                                } else {
+                                    fileName
+                                }
+                            response.setHeader(
+                                "Content-Disposition",
+                                "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
+                                    fileName,
+                                    "UTF-8"
                                 )
                             )
+                            response.contentType = "application/octet-stream; charset=utf-8"
+                            response.setHeader("Pragma", "No-cache")
+                            response.setHeader("Cache-Control", "no-cache")
+                            response.setDateHeader("Expires", 0)
+
+                            GZIPOutputStream(response.outputStream).buffered().use { bos ->
+                                files.forEach { file ->
+                                    bos.write(
+                                        if ("gz".equals(
+                                                file.extension,
+                                                true
+                                            )
+                                        ) GZIPInputStream(file.inputStream()).readBytes() else file.inputStream()
+                                            .readBytes()
+                                    )
+                                }
+                            }
                         }
-                        showLogFile(response, logPattern, logMsgs)
                     } else {
                         response.sendError(HttpStatus.NOT_FOUND.value(), "no log file match")
                     }
