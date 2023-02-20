@@ -39,6 +39,10 @@ public class QvodProperties {
    * 视频后续任务处理操作任务流模板
    */
   private String procedure;
+  /**
+   * 转码模板
+   */
+  private Long[] templateIds;
 
   /**
    * 上传签名有效时长，单位：秒 有效时长最大取值为7776000，即90天。默认2小时.
@@ -120,6 +124,14 @@ public class QvodProperties {
 
   public void setProcedure(String procedure) {
     this.procedure = procedure;
+  }
+
+  public Long[] getTemplateIds() {
+    return templateIds;
+  }
+
+  public void setTemplateIds(Long[] templateIds) {
+    this.templateIds = templateIds;
   }
 
   public long getUploadValidSeconds() {

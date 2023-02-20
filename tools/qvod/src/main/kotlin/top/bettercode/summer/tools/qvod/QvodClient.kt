@@ -342,7 +342,10 @@ open class QvodClient(
         req.fileId = fileId
 
         req.mediaProcessTask = MediaProcessTaskInput()
-        req.mediaProcessTask.transcodeTaskSet = templateId.map {
+        val templateIds =
+            if (templateId.isNotEmpty()) templateId.toTypedArray() else properties.templateIds
+
+        req.mediaProcessTask.transcodeTaskSet = templateIds.map {
             val transcodeTaskInput = TranscodeTaskInput()
             transcodeTaskInput.definition = it
             transcodeTaskInput
