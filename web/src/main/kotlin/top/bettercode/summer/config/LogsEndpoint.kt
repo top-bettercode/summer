@@ -3,6 +3,7 @@ package top.bettercode.summer.config
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.core.CoreConstants
 import org.slf4j.ILoggerFactory
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
@@ -298,20 +299,21 @@ class LogsEndpoint(
             response.contentType = "text/html;charset=utf-8"
             response.setHeader("Pragma", "No-cache")
             response.setHeader("Cache-Control", "no-cache")
-            response.setHeader("Transfer-Encoding", "chunked")
             response.setHeader("Content-Encoding", "gzip")
             response.setDateHeader("Expires", 0)
             val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
             prettyMessageHTMLLayout.title = name
             prettyMessageHTMLLayout.context = loggerContext
             prettyMessageHTMLLayout.start()
-            GZIPOutputStream(response.outputStream).bufferedWriter().use { writer ->
+            val gzipOutputStream = GZIPOutputStream(response.outputStream).bufferedWriter()
+            gzipOutputStream.use { writer ->
                 writer.appendLine(prettyMessageHTMLLayout.fileHeader)
                 writer.appendLine(prettyMessageHTMLLayout.getLogsHeader())
 
-                logMsgs.forEach {
+                val size = logMsgs.size
+                logMsgs.forEachIndexed { index, it ->
                     writer.appendLine(
-                        prettyMessageHTMLLayout.doLayout(it.msg, it.level)
+                        prettyMessageHTMLLayout.doLayout(it.msg, it.level, index == size - 1)
                     )
                 }
 
@@ -327,6 +329,8 @@ class LogsEndpoint(
                 )
                 writer.appendLine(prettyMessageHTMLLayout.fileFooter)
             }
+            gzipOutputStream.flush()
+            response.flushBuffer()
         }
     }
 
@@ -432,6 +436,7 @@ class LogsEndpoint(
                 }
                 writer.println("</pre><hr></body>\n</html>")
             }
+            response.flushBuffer()
         } else {
             response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
         }
