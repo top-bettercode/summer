@@ -83,7 +83,7 @@ public class SimpleJpaExtRepositoryTest {
     GenericApplicationContext applicationContext = (GenericApplicationContext) ApplicationContextHolder.getApplicationContext();
 
     Set<String> defaultMapperLocations = JpaMybatisAutoConfiguration.findDefaultMapperLocations(
-        applicationContext);
+        applicationContext.getBeanFactory());
     System.err.println(defaultMapperLocations);
   }
 

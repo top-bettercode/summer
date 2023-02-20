@@ -39,7 +39,7 @@ class QvodClientTest : BaseTest() {
 
     @Test
     fun processMedia() {
-        qvodClient.processMedia("387702304900182040")
+        qvodClient.processMediaAiReview("387702304900182040")
         //{
         //  "taskId" : "1313291945-procedurev2-8fbc7e646955b66e751a585153cc5706tt0",
         //  "requestId" : "824a12f8-306b-4cda-ae9e-6697bb4672e5"

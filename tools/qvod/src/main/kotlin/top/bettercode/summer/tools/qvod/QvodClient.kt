@@ -337,7 +337,55 @@ open class QvodClient(
      *
      * https://cloud.tencent.com/document/product/266/33427
      */
-    fun processMedia(fileId: String): ProcessMediaResponse {
+    fun processMediaTranscode(fileId: String, vararg templateId: Long): ProcessMediaResponse {
+        val req = ProcessMediaRequest()
+        req.fileId = fileId
+
+        req.mediaProcessTask = MediaProcessTaskInput()
+        req.mediaProcessTask.transcodeTaskSet = templateId.map {
+            val transcodeTaskInput = TranscodeTaskInput()
+            transcodeTaskInput.definition = it
+            transcodeTaskInput
+        }.toTypedArray()
+
+        req.subAppId = properties.appId
+
+        req.sessionId = UUID.randomUUID().toString()
+        val start = System.currentTimeMillis()
+        var durationMillis: Long? = null
+
+        var resp: ProcessMediaResponse? = null
+        var throwable: Throwable? = null
+        try {
+            resp = vodClient.ProcessMedia(req)
+            durationMillis = System.currentTimeMillis() - start
+            return resp
+        } catch (e: Exception) {
+            throwable = e
+            throw e
+        } finally {
+            if (durationMillis == null) {
+                durationMillis = System.currentTimeMillis() - start
+            }
+            log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
+                "DURATION MILLIS : {}\n{}\n\n{}",
+                durationMillis,
+                StringUtil.json(req, true),
+                if (resp == null) StringUtil.valueOf(
+                    throwable,
+                    true
+                ) else StringUtil.json(resp, true)
+            )
+        }
+    }
+
+    /**
+     * 音视频审核
+     *
+     * https://cloud.tencent.com/document/product/266/33427
+     */
+    fun processMediaAiReview(fileId: String): ProcessMediaResponse {
         val req = ProcessMediaRequest()
         req.fileId = fileId
         val aiContentReviewTaskInput = AiContentReviewTaskInput()
