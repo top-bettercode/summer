@@ -223,15 +223,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
 
             setAllFileAppender(context, fileLogPattern, filesProperties, rootLevel, logFile)
 
-            setRootFileAppender(
-                context,
-                fileLogPattern,
-                filesProperties,
-                rootLevel,
-                spilts.keys,
-                markers.keys,
-                levels
-            )
+//            setRootFileAppender( context, fileLogPattern, filesProperties, rootLevel, spilts.keys, markers.keys, levels )
 
             for ((key, value) in markers) {
                 setMarkerFileAppender(context, fileLogPattern, filesProperties, key, value)
