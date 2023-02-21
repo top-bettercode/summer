@@ -123,7 +123,7 @@ class LogsEndpoint(
                                 logMsgs.addAll(
                                     readLogMsgs(
                                         file.inputStream(),
-                                        "gz".equals(file.extension, true)
+                                        "gz" == file.extension
                                     )
                                 )
                             }
@@ -173,7 +173,7 @@ class LogsEndpoint(
                     file = File(loggingFilesPath, "all.log")
                 }
                 if (file.isFile) {
-                    val logMsgs = readLogMsgs(file.inputStream(), "gz".equals(file.extension, true))
+                    val logMsgs = readLogMsgs(file.inputStream(), "gz" == file.extension)
                     showLogFile(response, file.name, logMsgs)
                 } else {
                     index(file.listFiles(), request, response, false)

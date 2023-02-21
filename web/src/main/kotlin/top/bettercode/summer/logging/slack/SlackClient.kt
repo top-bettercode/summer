@@ -116,18 +116,19 @@ class SlackClient(
 
             val anchor = PrettyMessageHTMLLayout.anchor(message.last())
             val path = File(logsPath)
+            val namePattern = "all-${TimeUtil.now().format("yyyy-MM-dd")}-"
             val files =
-                path.listFiles { file, filename -> filename.startsWith("all-") && file.nameWithoutExtension != "all" }
+                path.listFiles { file -> file.name.startsWith(namePattern) && file.extension == "gz" }
             files?.sortBy { -it.lastModified() }
-            val existFilename = files?.first()?.nameWithoutExtension
+            val existFilename = files?.firstOrNull()?.nameWithoutExtension
 
-            val filename = if (existFilename != null) {
-                val name1 = existFilename.substringBeforeLast("-")
-                val name2 = existFilename.substringAfterLast("-").toInt() + 1
-                "$name1-$name2"
-            } else {
-                "all-${TimeUtil.now().format("yyyy-MM-dd")}-0"
-            }
+            val filename = "$namePattern${
+                if (existFilename != null) {
+                    existFilename.substringAfter(namePattern).toInt() + 1
+                } else {
+                    0
+                }
+            }"
 
             val linkTitle = "${filename}.gz#$anchor"
 
