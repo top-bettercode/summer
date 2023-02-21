@@ -3,14 +3,12 @@ package top.bettercode.summer.config
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.core.CoreConstants
 import org.slf4j.ILoggerFactory
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.boot.actuate.endpoint.annotation.Selector
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.env.Environment
-import org.springframework.data.redis.connection.lettuce.LettuceConnection.PipeliningFlushPolicy.buffered
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.util.Assert
