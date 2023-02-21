@@ -168,7 +168,10 @@ class LogsEndpoint(
                     }
                 }
             } else {
-                val file = File(loggingFilesPath, path.replace(",", "/"))
+                var file = File(loggingFilesPath, path.replace(",", "/"))
+                if (!file.exists() && file.name.startsWith("all-")) {
+                    file = File(loggingFilesPath, "all.log")
+                }
                 if (file.isFile) {
                     val logMsgs = readLogMsgs(file.inputStream(), "gz".equals(file.extension, true))
                     showLogFile(response, file.name, logMsgs)

@@ -22,7 +22,6 @@ import java.io.File
  */
 class SlackClient(
     private val authToken: String,
-    private val logAll: Boolean,
     private val managementPath: String
 ) {
 
@@ -99,65 +98,46 @@ class SlackClient(
         title: String,
         initialComment: String,
         message: List<String>,
-        logsPath: String?
+        logsPath: String
     ): Boolean {
         val params = LinkedMultiValueMap<String, Any>()
         params.add("token", authToken)
         params.add("channel", channel)
-        val hasFilesPath = !logsPath.isNullOrBlank()
 
-        val anchor = PrettyMessageHTMLLayout.anchor(message.last())
-        val fileName = "alarm/${anchor}.log"
-        val linkTitle = "${fileName}#last"
-        if (hasFilesPath && message.isNotEmpty()) {
-            val file = File(logsPath, fileName)
-            if (!file.parentFile.exists()) {
-                file.parentFile.mkdirs()
-            }
-            file.writeText(message.joinToString(""))
-        }
         val apiHost = try {
             top.bettercode.summer.logging.LoggingUtil.apiHost
         } catch (e: Exception) {
             null
         }
-        if (!hasFilesPath || apiHost == null) {
+        if (apiHost == null) {
             return filesUpload(channel, timeStamp, title, initialComment, message)
         } else {
             params["text"] = "$title:\n$initialComment"
 
-            val logUrl = apiHost + managementPath
-            if (message.isNotEmpty()) {
-                if (logAll) {
-                    params["attachments"] = arrayOf(
-                        mapOf(
-                            "title" to linkTitle,
-                            "title_link" to "$logUrl/logs/${fileName}#last"
-                        ),
-                        mapOf(
-                            "title" to "all#$anchor",
-                            "title_link" to "$logUrl/logs/all.log#$anchor"
-                        )
-                    )
-                } else {
-                    params["attachments"] =
-                        arrayOf(
-                            mapOf(
-                                "title" to linkTitle,
-                                "title_link" to "$logUrl/logs/${fileName}#last"
-                            )
-                        )
-                }
+            val anchor = PrettyMessageHTMLLayout.anchor(message.last())
+            val path = File(logsPath)
+            val files =
+                path.listFiles { file, filename -> filename.startsWith("all-") && file.nameWithoutExtension != "all" }
+            files?.sortBy { -it.lastModified() }
+            val existFilename = files?.first()?.nameWithoutExtension
+
+            val filename = if (existFilename != null) {
+                val name1 = existFilename.substringBeforeLast("-")
+                val name2 = existFilename.substringAfterLast("-").toInt() + 1
+                "$name1-$name2"
             } else {
-                if (logAll)
-                    params["attachments"] =
-                        arrayOf(
-                            mapOf(
-                                "title" to "all.log#last",
-                                "title_link" to "$logUrl/logs/all.log#last"
-                            )
-                        )
+                "all-${TimeUtil.now().format("yyyy-MM-dd")}-0"
             }
+
+            val linkTitle = "${filename}.gz#$anchor"
+
+            val logUrl = apiHost + managementPath
+            params["attachments"] = arrayOf(
+                mapOf(
+                    "title" to linkTitle,
+                    "title_link" to "$logUrl/logs/${linkTitle}"
+                )
+            )
 
             if (log.isTraceEnabled) {
                 log.trace("slack params:{}", params)

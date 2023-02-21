@@ -5,15 +5,13 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.logback.AlarmAppender
-import java.io.File
 
 open class SlackAppender(
     private val properties: top.bettercode.summer.logging.SlackProperties,
     private val warnSubject: String,
-    private val logsPath: String?,
+    private val logsPath: String,
     managementPath: String,
-    logPattern: String,
-    logAll: Boolean
+    logPattern: String
 ) : AlarmAppender(
     properties.cyclicBufferSize,
     properties.cacheSeconds,
@@ -23,17 +21,11 @@ open class SlackAppender(
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
-    private val slackClient: SlackClient = SlackClient(properties.authToken, logAll, managementPath)
+    private val slackClient: SlackClient = SlackClient(properties.authToken, managementPath)
 
     override fun start() {
         if (slackClient.channelExist(properties.channel)) {
             super.start()
-            if (!logsPath.isNullOrBlank()) {
-                val file = File(logsPath, "alarm")
-                if (!file.exists()) {
-                    file.mkdirs()
-                }
-            }
         }
     }
 

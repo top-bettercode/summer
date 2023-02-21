@@ -18,10 +18,6 @@ public class FilesProperties {
    * 是否启动时滚动日志
    */
   private boolean rolloverOnStart = true;
-  /**
-   * 记录所有日志于一个文件
-   */
-  private boolean logAll = true;
 
   public String getPath() {
     return path;
@@ -53,13 +49,5 @@ public class FilesProperties {
 
   public void setRolloverOnStart(boolean rolloverOnStart) {
     this.rolloverOnStart = rolloverOnStart;
-  }
-
-  public boolean isLogAll() {
-    return logAll;
-  }
-
-  public void setLogAll(boolean logAll) {
-    this.logAll = logAll;
   }
 }
