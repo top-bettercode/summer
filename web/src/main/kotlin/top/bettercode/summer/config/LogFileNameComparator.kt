@@ -15,26 +15,37 @@ class LogFileNameComparator : Comparator<File> {
                 o1.name.compareTo(o2.name)
             } else {
                 try {
-                    val name1 = o1.nameWithoutExtension.split('-', ':', '.')
-                    val name2 = o2.nameWithoutExtension.split('-', ':', '.')
-                    val size1 = name1.size
-                    val size2 = name2.size
-                    if (size1 > size2)
-                        name1.forEachIndexed { i, s1 ->
-                            if (i >= size2) return 1
-                            val s2 = name2[i]
-                            val compareTo1 = compareStr(s1, s2)
-                            if (compareTo1 != 0)
-                                return compareTo1
+                    if (o1.exists() && o2.exists()) {
+                        val name1 = o1.nameWithoutExtension.substringBefore("-")
+                        val name2 = o2.nameWithoutExtension.substringBefore("-")
+                        val compareTo1 = name1.compareTo(name2)
+                        return if (compareTo1 != 0) {
+                            compareTo1
+                        } else {
+                            o2.lastModified().compareTo(o1.lastModified())
                         }
-                    else
-                        name2.forEachIndexed { i, s2 ->
-                            if (i >= size1) return -1
-                            val s1 = name1[i]
-                            val compareTo1 = compareStr(s1, s2)
-                            if (compareTo1 != 0)
-                                return compareTo1
-                        }
+                    } else {
+                        val name1 = o1.nameWithoutExtension.split('-', ':', '.')
+                        val name2 = o2.nameWithoutExtension.split('-', ':', '.')
+                        val size1 = name1.size
+                        val size2 = name2.size
+                        if (size1 > size2)
+                            name1.forEachIndexed { i, s1 ->
+                                if (i >= size2) return 1
+                                val s2 = name2[i]
+                                val compareTo1 = compareStr(s1, s2)
+                                if (compareTo1 != 0)
+                                    return compareTo1
+                            }
+                        else
+                            name2.forEachIndexed { i, s2 ->
+                                if (i >= size1) return -1
+                                val s1 = name1[i]
+                                val compareTo1 = compareStr(s1, s2)
+                                if (compareTo1 != 0)
+                                    return compareTo1
+                            }
+                    }
                     0
                 } catch (e: Exception) {
                     o1.name.compareTo(o2.name)

@@ -303,7 +303,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         start(context, encoder)
 
         val name = LoggingSystem.ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
-        val logFile = (filesProperties.path + File.separator + name)
+        val logFile = (filesProperties.path + File.separator + "root" + File.separator + name)
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
 
