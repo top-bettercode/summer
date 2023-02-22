@@ -20,7 +20,7 @@ public class GB2260ControllerTest extends BaseWebNoAuthTest {
   void select() throws Exception {
     perform(
         get("/divisions/select")
-            .param("code", "")
+            .param("code", "1101")
     );
   }
 

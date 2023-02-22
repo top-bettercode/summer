@@ -23,7 +23,7 @@ object GB2260 {
                         ) && it.key.endsWith("00") && it.key != code
                     }
             if (cities.isEmpty() && codes.any { it.key.startsWith(code.trimEnd('0')) && it.key != code }) {
-                cities = mapOf(code to "市辖区")
+                cities = mapOf(code.substring(0, 2) + "0100" to name)
             }
             val cityDivisions = cities.map { (cityCode, cityName) ->
                 val counties = codes
@@ -32,17 +32,17 @@ object GB2260 {
                         val division =
                             Division(countyCode, countyName, listOf(name, cityName), emptyList())
                         divisions[countyCode] = division
-                        divisionNames[if ("市辖区" != cityName) listOf(
-                            name,
-                            cityName,
-                            countyName
-                        ) else listOf(name, countyName)] = division
+                        if (name != cityName)
+                            divisionNames[listOf(name, cityName, countyName)] = division
+                        else {
+                            divisionNames[listOf(name, countyName)] = division
+                            divisionNames[listOf(name, cityName, countyName)] = division
+                        }
                         division
                     }.sortedBy { it.code }
                 val division = Division(cityCode, cityName, listOf(name), counties)
                 divisions[cityCode] = division
-                if ("市辖区" != cityName)
-                    divisionNames[listOf(name, cityName)] = division
+                divisionNames[listOf(name, cityName)] = division
                 division
             }.sortedBy { it.code }
             val division = Division(code, name, emptyList(), cityDivisions)
