@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import top.bettercode.summer.logging.annotation.RequestLogging
+import top.bettercode.summer.security.authorize.Anonymous
 import top.bettercode.summer.tools.weixin.support.IWechatService
 import top.bettercode.summer.tools.weixin.support.WechatToken
 import top.bettercode.summer.tools.weixin.support.corp.ICorpClient
@@ -12,6 +13,7 @@ import top.bettercode.summer.web.BaseController
 
 @ConditionalOnWebApplication
 @Controller
+@Anonymous
 @RequestMapping(value = ["/wechat"], name = "微信")
 class CorpCallbackController(
     private val wechatService: IWechatService,

@@ -17,26 +17,26 @@ class CallbackControllerTest : BaseWebNoAuthTest() {
 
     @Test
     fun miniOauth() {
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/wechat/miniOauth")
+        perform(
+            post("/wechat/miniOauth")
 //                .param("code", "xxx")
-        ).andExpect(MockMvcResultMatchers.status().isOk)
+        )
     }
 
     @Test
     fun miniPhoneOauth() {
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/wechat/miniPhoneOauth")
+        perform(
+            post("/wechat/miniPhoneOauth")
 //                .param("code", "xxx")
-        ).andExpect(MockMvcResultMatchers.status().isOk)
+        )
     }
 
 
     @Test
     fun jsSignUrl() {
-        mockMvc.perform(
-            MockMvcRequestBuilders.get("/wechat/jsSign")
+        perform(
+            get("/wechat/jsSign")
                 .param("url", "https://xxx.com")
-        ).andExpect(MockMvcResultMatchers.status().isOk)
+        )
     }
 }

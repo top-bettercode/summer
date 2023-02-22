@@ -11,16 +11,16 @@ import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import top.bettercode.summer.security.authorize.Anonymous;
-import top.bettercode.summer.security.support.AuthenticationHelper;
 import top.bettercode.summer.security.authorize.ClientAuthorize;
-import top.bettercode.summer.security.support.SecurityParameterNames;
 import top.bettercode.summer.security.config.ApiSecurityProperties;
+import top.bettercode.summer.security.support.AuthenticationHelper;
+import top.bettercode.summer.security.support.SecurityParameterNames;
 import top.bettercode.summer.test.autodoc.Autodoc;
 import top.bettercode.summer.tools.lang.operation.HttpOperation;
 import top.bettercode.summer.web.AnnotatedUtils;
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder;
 
-@ConditionalOnClass(Anonymous.class)
+@ConditionalOnClass(ApiSecurityProperties.class)
 @Configuration(proxyBeanMethods = false)
 public class AutodocAuthWebMvcConfigurer implements AutoDocRequestHandler {
 

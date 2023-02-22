@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import top.bettercode.summer.logging.annotation.RequestLogging
+import top.bettercode.summer.security.authorize.Anonymous
 import top.bettercode.summer.tools.weixin.support.IWechatService
 import top.bettercode.summer.tools.weixin.support.WechatToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.IOffiaccountClient
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotBlank
 
 @ConditionalOnWebApplication
 @Controller
+@Anonymous
 @RequestMapping(value = ["/wechat"], name = "微信")
 class OffiaccountCallbackController(
     private val wechatService: IWechatService,

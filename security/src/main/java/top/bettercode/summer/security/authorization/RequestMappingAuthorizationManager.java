@@ -29,6 +29,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.util.pattern.PathPattern;
 import top.bettercode.summer.security.IResource;
 import top.bettercode.summer.security.IResourceService;
+import top.bettercode.summer.security.authorize.Anonymous;
 import top.bettercode.summer.security.authorize.ConfigAuthority;
 import top.bettercode.summer.security.authorize.DefaultAuthority;
 import top.bettercode.summer.security.config.ApiSecurityProperties;
@@ -64,7 +65,7 @@ public class RequestMappingAuthorizationManager implements
         Set<RequestMethod> methods = mappingInfo.getMethodsCondition().getMethods();
         Set<String> authorities = new HashSet<>();
         if (securityProperties.ignored(pattern)) {
-          authorities.add(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
+          authorities.add(Anonymous.ROLE_ANONYMOUS_VALUE);
         } else {
           Set<ConfigAuthority> authoritySet = AnnotatedUtils
               .getAnnotations(handlerMethod, ConfigAuthority.class);
@@ -129,7 +130,7 @@ public class RequestMappingAuthorizationManager implements
     if (authorities.isEmpty()) {
       authorities = Collections.singleton(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
     }
-    if (authorities.contains(DefaultAuthority.ROLE_ANONYMOUS_VALUE)) {
+    if (authorities.contains(Anonymous.ROLE_ANONYMOUS_VALUE)) {
       if (securityService.supportsAnonymous()) {
         if (log.isDebugEnabled()) {
           log.debug("权限检查，当前用户权限：{}，当前资源({})需要以下权限之一：{}",
@@ -139,7 +140,7 @@ public class RequestMappingAuthorizationManager implements
         }
         return ALLOW;
       } else {
-        authorities.remove(DefaultAuthority.ROLE_ANONYMOUS_VALUE);
+        authorities.remove(Anonymous.ROLE_ANONYMOUS_VALUE);
         authorities.add(DefaultAuthority.DEFAULT_AUTHENTICATED_VALUE);
       }
     }

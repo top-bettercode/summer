@@ -10,11 +10,11 @@ import top.bettercode.summer.tools.lang.util.StringUtil
 @Disabled
 class SlackClientTest {
 
-    private val slackClient = SlackClient("", true, "/actuator")
+    private val slackClient = SlackClient("",  "/actuator")
 
     @Test
     fun errorToken() {
-        println(StringUtil.valueOf(SlackClient("xoxb-", true, "/actuator").channelsList(), true))
+        println(StringUtil.valueOf(SlackClient("xoxb-",  "/actuator").channelsList(), true))
     }
 
     @Test
