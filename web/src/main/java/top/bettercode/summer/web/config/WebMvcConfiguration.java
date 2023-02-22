@@ -83,6 +83,7 @@ import top.bettercode.summer.web.kaptcha.KaptchaProperties;
 import top.bettercode.summer.web.resolver.ApiExceptionHandlerExceptionResolver;
 import top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter;
 import top.bettercode.summer.web.serializer.MixIn;
+import top.bettercode.summer.web.support.gb2260.GB2260Controller;
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver;
 
 /**
@@ -109,6 +110,10 @@ public class WebMvcConfiguration {
     this.jacksonExtProperties = jacksonExtProperties;
   }
 
+  @Bean
+  public GB2260Controller gb2260Controller() {
+    return new GB2260Controller();
+  }
 
   @ConditionalOnMissingBean
   @Bean
