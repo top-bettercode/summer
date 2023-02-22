@@ -21,6 +21,10 @@ data class Division(
      */
     val level: Int,
     /**
+     * 是否直辖市
+     */
+    val municipality: Boolean,
+    /**
      * 父节点名称
      */
     @JsonView(DivisionView::class)
@@ -35,28 +39,50 @@ data class Division(
     /**
      * 是否叶子节点
      */
-    @JsonView(DivisionView::class)
-    val leaf: Boolean = children.isEmpty()
+    @get:JsonView(DivisionView::class)
+    val leaf: Boolean by lazy { children.isEmpty() }
+
 
     /**
      * 省
      */
-    val province: String = if (level == 1) name else parentNames.first()
+    val province: String by lazy { if (level == 1) name else parentNames.first() }
 
     /**
      * 市
      */
-    val prefecture: String? = when (level) {
-        1 -> null
-        3 -> parentNames.last()
-        else -> name
+    val prefecture: String? by lazy {
+        when (level) {
+            1 -> null
+            2 -> name
+            else -> parentNames.last()
+        }
     }
 
     /**
      * 区县
      */
-    val county: String? = if (level == 3) name else null
+    val county: String? by lazy { if (level == 3) name else null }
 
+    /**
+     * 代码
+     */
+    fun codes(vnode: Boolean): List<String> = when (level) {
+        1 -> listOf(code)
+        2 -> listOf(code.substring(0, 2) + "0000", code)
+        else -> if (!vnode && parentNames.size == 1)
+            listOf(code.substring(0, 2) + "0000", code)
+        else listOf(
+            code.substring(0, 2) + "0000",
+            code.substring(0, 4) + "00",
+            code
+        )
+    }
+
+    /**
+     * 名称
+     */
+    val names: List<String> by lazy { parentNames + name }
 
     override fun toString(): String {
         return "${parentNames.joinToString("")}$name"

@@ -20,8 +20,15 @@ class GB2260Controller : BaseController() {
             ok(GB2260.provinces)
         else {
             val provinces = GB2260.provinces.map {
-                if (it.children.size == 1 && it.children[0].name == it.name) {
-                    Division(it.code, it.name, it.level, it.parentNames, it.children[0].children)
+                if (it.municipality) {
+                    Division(
+                        it.code,
+                        it.name,
+                        it.level,
+                        true,
+                        it.parentNames,
+                        it.children[0].children
+                    )
                 } else {
                     it
                 }
@@ -39,7 +46,7 @@ class GB2260Controller : BaseController() {
             val code1 = String.format("%-6s", code).replace(" ", "0")
             val division = GB2260.getDivision(code1)
             val divisions = division.children
-            if (!vnode && divisions.size == 1 && divisions[0].name == division.name) {
+            if (!vnode && division.municipality) {
                 ok(divisions[0].children)
             } else {
                 ok(divisions)
