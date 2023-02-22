@@ -46,8 +46,8 @@ data class Division(
     /**
      * 市
      */
-    val prefecture: String = when (level) {
-        1 -> ""
+    val prefecture: String? = when (level) {
+        1 -> null
         3 -> parentNames.last()
         else -> name
     }
@@ -55,7 +55,7 @@ data class Division(
     /**
      * 区县
      */
-    val county: String = if (level == 3) name else ""
+    val county: String? = if (level == 3) name else null
 
 
     override fun toString(): String {

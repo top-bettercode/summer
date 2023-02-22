@@ -48,4 +48,22 @@ class GB2260Test {
             )
         )
     }
+
+    @Test
+    fun info() {
+        var division = GB2260.getDivision("130000")
+        System.err.println(division.province)
+        System.err.println(division.prefecture)
+        System.err.println(division.county)
+        System.err.println("==========================")
+        division = GB2260.getDivision("130700")
+        System.err.println(division.province)
+        System.err.println(division.prefecture)
+        System.err.println(division.county)
+        System.err.println("==========================")
+        division = GB2260.getDivision("130728")
+        System.err.println(division.province)
+        System.err.println(division.prefecture)
+        System.err.println(division.county)
+    }
 }
