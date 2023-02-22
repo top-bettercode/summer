@@ -13,14 +13,17 @@ public class GB2260ControllerTest extends BaseWebNoAuthTest {
 
   @Test
   void list() throws Exception {
-    perform(get("/divisions/list"));
+    perform(get("/divisions/list")
+        .param("vnode","false")
+    );
   }
 
   @Test
   void select() throws Exception {
     perform(
         get("/divisions/select")
-            .param("code", "1101")
+            .param("code", "110000")
+            .param("vnode","false")
     );
   }
 

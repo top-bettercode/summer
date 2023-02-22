@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import top.bettercode.summer.security.authorize.Anonymous
 import top.bettercode.summer.web.BaseController
 
@@ -13,19 +14,35 @@ import top.bettercode.summer.web.BaseController
 class GB2260Controller : BaseController() {
 
     @GetMapping(value = ["/list"], name = "列表（全）")
-    fun list(): Any {
-        return ok(GB2260.provinces)
+    fun list(@RequestParam(defaultValue = "false") vnode: Boolean = false): Any {
+        return if (vnode)
+            ok(GB2260.provinces)
+        else {
+            val provinces = GB2260.provinces.map {
+                if (it.children.size == 1 && it.children[0].name == it.name) {
+                    Division(it.code, it.name, it.parentNames, it.children[0].children)
+                } else {
+                    it
+                }
+            }
+            ok(provinces)
+        }
     }
 
     @JsonView(DivisionView::class)
     @GetMapping(value = ["/select"], name = "列表")
-    fun select(code: String?): Any {
+    fun select(code: String?, @RequestParam(defaultValue = "false") vnode: Boolean = false): Any {
         return if (code.isNullOrBlank()) {
             ok(GB2260.provinces)
         } else {
             val code1 = String.format("%-6s", code).replace(" ", "0")
-            val divisions = GB2260.getDivision(code1).children
-            return ok(divisions)
+            val division = GB2260.getDivision(code1)
+            val divisions = division.children
+            if (!vnode && divisions.size == 1 && divisions[0].name == division.name) {
+                ok(divisions[0].children)
+            } else {
+                ok(divisions)
+            }
         }
     }
 

@@ -26,23 +26,29 @@ object GB2260 {
                 cities = mapOf(code.substring(0, 2) + "0100" to name)
             }
             val cityDivisions = cities.map { (cityCode, cityName) ->
+                val vnode = name == cityName
                 val counties = codes
                     .filter { it.key.startsWith(cityCode.trimEnd('0')) && it.key != cityCode }
                     .map { (countyCode, countyName) ->
                         val division =
-                            Division(countyCode, countyName, listOf(name, cityName), emptyList())
+                            Division(
+                                countyCode,
+                                countyName,
+                                if (vnode) listOf(name) else listOf(name, cityName),
+                                emptyList()
+                            )
                         divisions[countyCode] = division
-                        if (name != cityName)
+                        if (!vnode)
                             divisionNames[listOf(name, cityName, countyName)] = division
                         else {
                             divisionNames[listOf(name, countyName)] = division
-                            divisionNames[listOf(name, cityName, countyName)] = division
                         }
                         division
                     }.sortedBy { it.code }
                 val division = Division(cityCode, cityName, listOf(name), counties)
                 divisions[cityCode] = division
-                divisionNames[listOf(name, cityName)] = division
+                if (!vnode)
+                    divisionNames[listOf(name, cityName)] = division
                 division
             }.sortedBy { it.code }
             val division = Division(code, name, emptyList(), cityDivisions)
