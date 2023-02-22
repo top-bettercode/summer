@@ -11,49 +11,55 @@ object GB2260 {
     @JvmStatic
     val provinces: List<Division> by lazy {
         val codes = Settings.areaCode.all()
-        codes.filter { it.key.endsWith("0000") }.map { (code, name) ->
-            var cities =
+        codes.filter { it.key.endsWith("0000") }.map { (provinceCode, provinceName) ->
+            var prefectures =
                 codes
                     .filter {
                         it.key.startsWith(
-                            code.substring(
+                            provinceCode.substring(
                                 0,
                                 2
                             )
-                        ) && it.key.endsWith("00") && it.key != code
+                        ) && it.key.endsWith("00") && it.key != provinceCode
                     }
-            if (cities.isEmpty() && codes.any { it.key.startsWith(code.trimEnd('0')) && it.key != code }) {
-                cities = mapOf(code.substring(0, 2) + "0100" to name)
+            if (prefectures.isEmpty() && codes.any { it.key.startsWith(provinceCode.trimEnd('0')) && it.key != provinceCode }) {
+                prefectures = mapOf(provinceCode.substring(0, 2) + "0100" to provinceName)
             }
-            val cityDivisions = cities.map { (cityCode, cityName) ->
-                val vnode = name == cityName
+            val prefectureDivisions = prefectures.map { (prefectureCode, prefectureName) ->
+                val vnode = provinceName == prefectureName
                 val counties = codes
-                    .filter { it.key.startsWith(cityCode.trimEnd('0')) && it.key != cityCode }
+                    .filter { it.key.startsWith(prefectureCode.trimEnd('0')) && it.key != prefectureCode }
                     .map { (countyCode, countyName) ->
                         val division =
                             Division(
                                 countyCode,
                                 countyName,
-                                if (vnode) listOf(name) else listOf(name, cityName),
+                                3,
+                                if (vnode) listOf(provinceName) else listOf(
+                                    provinceName,
+                                    prefectureName
+                                ),
                                 emptyList()
                             )
                         divisions[countyCode] = division
                         if (!vnode)
-                            divisionNames[listOf(name, cityName, countyName)] = division
+                            divisionNames[listOf(provinceName, prefectureName, countyName)] =
+                                division
                         else {
-                            divisionNames[listOf(name, countyName)] = division
+                            divisionNames[listOf(provinceName, countyName)] = division
                         }
                         division
                     }.sortedBy { it.code }
-                val division = Division(cityCode, cityName, listOf(name), counties)
-                divisions[cityCode] = division
+                val division =
+                    Division(prefectureCode, prefectureName, 2, listOf(provinceName), counties)
+                divisions[prefectureCode] = division
                 if (!vnode)
-                    divisionNames[listOf(name, cityName)] = division
+                    divisionNames[listOf(provinceName, prefectureName)] = division
                 division
             }.sortedBy { it.code }
-            val division = Division(code, name, emptyList(), cityDivisions)
-            divisions[code] = division
-            divisionNames[listOf(name)] = division
+            val division = Division(provinceCode, provinceName, 1, emptyList(), prefectureDivisions)
+            divisions[provinceCode] = division
+            divisionNames[listOf(provinceName)] = division
             division
         }.sortedBy { it.code }
     }

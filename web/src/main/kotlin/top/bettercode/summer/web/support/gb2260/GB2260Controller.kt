@@ -13,6 +13,7 @@ import top.bettercode.summer.web.BaseController
 @RequestMapping(value = ["/divisions"], name = "行政区划")
 class GB2260Controller : BaseController() {
 
+    @JsonView(AllDivisionView::class)
     @GetMapping(value = ["/list"], name = "列表（全）")
     fun list(@RequestParam(defaultValue = "false") vnode: Boolean = false): Any {
         return if (vnode)
@@ -20,7 +21,7 @@ class GB2260Controller : BaseController() {
         else {
             val provinces = GB2260.provinces.map {
                 if (it.children.size == 1 && it.children[0].name == it.name) {
-                    Division(it.code, it.name, it.parentNames, it.children[0].children)
+                    Division(it.code, it.name, it.level, it.parentNames, it.children[0].children)
                 } else {
                     it
                 }
