@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
 import top.bettercode.summer.web.BaseController
 
@@ -13,6 +14,7 @@ import top.bettercode.summer.web.BaseController
 @RequestMapping(value = ["/divisions"], name = "行政区划")
 class GB2260Controller : BaseController() {
 
+    @RequestLogging(includeResponseBody = false)
     @JsonView(AllDivisionView::class)
     @GetMapping(value = ["/list"], name = "列表（全）")
     fun list(@RequestParam(defaultValue = "false") vnode: Boolean = false): Any {
@@ -37,6 +39,7 @@ class GB2260Controller : BaseController() {
         }
     }
 
+    @RequestLogging(includeResponseBody = false)
     @JsonView(DivisionView::class)
     @GetMapping(value = ["/select"], name = "列表")
     fun select(code: String?, @RequestParam(defaultValue = "false") vnode: Boolean = false): Any {
