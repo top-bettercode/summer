@@ -17,10 +17,11 @@ object OracleToDDL : ToDDL() {
         extension: GeneratorExtension
     ) {
         out.appendLine("$commentPrefix ${extension.datasources[module]!!.url.substringBefore("?")}")
+        out.appendLine()
         if (tables != oldTables) {
             val prefixTableName =
                 if (extension.enable("include-schema")) {
-                    "${extension.datasource(module).schema}."
+                    "$quote${extension.datasource(module).schema}$quote."
                 } else {
                     ""
                 }
