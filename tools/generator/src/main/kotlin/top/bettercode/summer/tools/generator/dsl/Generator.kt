@@ -216,14 +216,14 @@ open class Generator {
 
     val pathName: String get() = table.pathName
 
-    fun setting(key: String): Any? = settings[key]
+    fun setting(key: String): Any? = ext.setting(key)
 
     fun setting(key: String, default: String): String {
-        return settings[key] ?: return default
+        return ext.setting(key, default)
     }
 
     fun enable(key: String, default: Boolean = true): Boolean {
-        return setting(key, default.toString()) == "true"
+        return ext.enable(key, default)
     }
 
     fun modulePackage(name: String): String {

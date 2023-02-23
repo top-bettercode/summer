@@ -15,9 +15,10 @@ object MysqlToDDL : ToDDL() {
         out: Writer,
         extension: GeneratorExtension
     ) {
+        out.appendLine("$commentPrefix ${extension.datasources[module]!!.url.substringBefore("?")}")
         if (tables != oldTables) {
             val prefixTableName =
-                if (extension.settings["include-schema"] == "true") {
+                if (extension.enable("include-schema")) {
                     "${extension.datasource(module).schema}."
                 } else {
                     ""

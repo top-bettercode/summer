@@ -386,11 +386,11 @@ class GeneratorPlugin : Plugin<Project> {
                                     )
                                 val allTables = mutableListOf<Table>()
                                 unit.use { pw ->
+                                    val jdbc = extension.datasources[module]
+                                        ?: throw IllegalStateException("未配置${module}模块数据库信息")
                                     val tables =
                                         tableHolder.tables(tableName = extension.tableNames)
                                     allTables.addAll(tables)
-                                    val jdbc = extension.datasources[module]
-                                        ?: throw IllegalStateException("未配置${module}模块数据库信息")
                                     val tableNames = tables.map { it.tableName }
                                     val oldTables = if (databaseFile.exists()) {
                                         PumlConverter.toTables(databaseFile) {

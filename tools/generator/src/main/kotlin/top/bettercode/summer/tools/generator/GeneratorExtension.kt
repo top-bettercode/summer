@@ -123,6 +123,17 @@ open class GeneratorExtension(
     var settings: MutableMap<String, String> = mutableMapOf()
 ) {
 
+
+    fun setting(key: String): Any? = settings[key]
+
+    fun setting(key: String, default: String): String {
+        return settings[key] ?: return default
+    }
+
+    fun enable(key: String, default: Boolean = true): Boolean {
+        return setting(key, default.toString()) == "true"
+    }
+
     /**
      * JDBC连接配置
      */
