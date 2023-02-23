@@ -8,6 +8,7 @@ import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.ddl.MysqlToDDL
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
+import top.bettercode.summer.tools.lang.capitalized
 
 
 /**
@@ -46,7 +47,7 @@ object RootProjectTasks {
             val jenkinsAuth = project.findProperty("jenkins.auth")?.toString()
             if (jobs.isNotEmpty() && !jenkinsAuth.isNullOrBlank() && !jenkinsServer.isNullOrBlank()) {
                 val jenkins = Jenkins(jenkinsServer, jenkinsAuth)
-                create("build[[All]") {
+                create("buildAll") {
                     it.group = "jenkins"
                     it.doLast(object : Action<Task> {
                         override fun execute(it: Task) {
@@ -60,7 +61,7 @@ object RootProjectTasks {
                 }
                 jobs.forEach { (env, jobNames) ->
                     if (env != "default") {
-                        create("build[$env]") {
+                        create("build${env.capitalized()}") {
                             it.group = "jenkins"
                             it.doLast(object : Action<Task> {
                                 override fun execute(it: Task) {
@@ -75,9 +76,9 @@ object RootProjectTasks {
                         val jobTaskName = jobName.replace(
                             "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
                             ""
-                        )
-                        val envName = if (env == "default") "" else "[$env]"
-                        create("build$envName[$jobTaskName]") {
+                        ).capitalized()
+                        val envName = if (env == "default") "" else env.capitalized()
+                        create("build$envName$jobTaskName") {
                             it.group = "jenkins"
                             it.doLast(object : Action<Task> {
                                 override fun execute(it: Task) {
@@ -85,7 +86,7 @@ object RootProjectTasks {
                                 }
                             })
                         }
-                        create("lastBuildInfo$envName[$jobTaskName]") {
+                        create("lastBuildInfo$envName$jobTaskName") {
                             it.group = "jenkins"
                             it.doLast(object : Action<Task> {
                                 override fun execute(it: Task) {
@@ -93,7 +94,7 @@ object RootProjectTasks {
                                 }
                             })
                         }
-                        create("description$envName[$jobTaskName]") {
+                        create("description$envName$jobTaskName") {
                             it.group = "jenkins"
                             it.doLast(object : Action<Task> {
                                 override fun execute(it: Task) {
