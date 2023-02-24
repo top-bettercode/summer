@@ -1,8 +1,5 @@
 package top.bettercode.summer.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import java.util.Locale;
 import java.util.function.Supplier;
 import javax.servlet.ServletContext;
@@ -13,13 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.StringUtils;
 import top.bettercode.summer.tools.lang.util.ParameterUtil;
-import top.bettercode.summer.tools.lang.util.Sha1DigestUtil;
 import top.bettercode.summer.web.error.ErrorAttributes;
 import top.bettercode.summer.web.exception.ResourceNotFoundException;
 import top.bettercode.summer.web.support.DeviceUtil;
@@ -44,42 +37,6 @@ public class BaseController extends Response {
   private ServletContext servletContext;
   @Autowired
   private MessageSource messageSource;
-
-  /**
-   * 支持客户端缓存
-   *
-   * @param object object
-   * @return 200 ResponseEntity
-   */
-  protected ResponseEntity<?> cacheable(Object object) {
-    return cacheable(object, null);
-  }
-
-  /**
-   * 支持客户端缓存
-   *
-   * @param serializationView serializationView
-   * @param object            object
-   * @return 200 ResponseEntity
-   */
-  protected ResponseEntity<?> cacheable(Object object, Class<?> serializationView) {
-    try {
-      ObjectMapper objectMapper = mappingJackson2HttpMessageConverter.getObjectMapper();
-      ObjectWriter objectWriter;
-      if (serializationView != null) {
-        objectWriter = objectMapper.writerWithView(serializationView);
-      } else {
-        objectWriter = objectMapper.writer();
-      }
-      String body = objectWriter.writeValueAsString(object);
-      HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-      httpHeaders.setETag("\"".concat(Sha1DigestUtil.shaHex(body)).concat("\""));
-      return ResponseEntity.ok().headers(cacheControl(httpHeaders)).body(body);
-    } catch (JsonProcessingException e) {
-      return ok(object);
-    }
-  }
 
   public void plainTextError() {
     request.setAttribute(ErrorAttributes.IS_PLAIN_TEXT_ERROR, true);

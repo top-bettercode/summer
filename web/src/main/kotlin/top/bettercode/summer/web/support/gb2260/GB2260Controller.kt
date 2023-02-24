@@ -18,8 +18,8 @@ class GB2260Controller : BaseController() {
     @JsonView(AllDivisionView::class)
     @GetMapping(value = ["/list"], name = "列表（全）")
     fun list(@RequestParam(defaultValue = "false") vnode: Boolean = false): Any {
-        return if (vnode)
-            ok(GB2260.provinces)
+        val divisions = if (vnode)
+            GB2260.provinces
         else {
             val provinces = GB2260.provinces.map {
                 if (it.municipality) {
@@ -35,26 +35,29 @@ class GB2260Controller : BaseController() {
                     it
                 }
             }
-            ok(provinces)
+            provinces
         }
+        return ok(divisions)
     }
 
     @RequestLogging(includeResponseBody = false)
     @JsonView(DivisionView::class)
     @GetMapping(value = ["/select"], name = "列表")
     fun select(code: String?, @RequestParam(defaultValue = "false") vnode: Boolean = false): Any {
-        return if (code.isNullOrBlank()) {
-            ok(GB2260.provinces)
+
+        val divisions = if (code.isNullOrBlank()) {
+            GB2260.provinces
         } else {
             val code1 = String.format("%-6s", code).replace(" ", "0")
             val division = GB2260.getDivision(code1)
-            val divisions = division.children
+            val children = division.children
             if (!vnode && division.municipality) {
-                ok(divisions[0].children)
+                children[0].children
             } else {
-                ok(divisions)
+                children
             }
         }
+        return ok(divisions)
     }
 
 }
