@@ -24,6 +24,7 @@ data class Division(
      * 是否直辖市
      */
     val municipality: Boolean,
+    val vnode: Boolean,
     /**
      * 父节点名称
      */
@@ -54,7 +55,7 @@ data class Division(
     val prefecture: String? by lazy {
         when (level) {
             1 -> null
-            2 -> name
+            2 -> if (vnode) parentNames.first() else name
             else -> parentNames.last()
         }
     }

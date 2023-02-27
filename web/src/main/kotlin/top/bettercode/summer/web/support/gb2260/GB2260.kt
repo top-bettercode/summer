@@ -29,21 +29,22 @@ object GB2260 {
                 } else false
 
             val prefectureDivisions = prefectures.map { (prefectureCode, prefectureName) ->
-                val vnode = provinceName == prefectureName
+                val vnode = "市辖区" == prefectureName
                 val counties = codes
                     .filter { it.key.startsWith(prefectureCode.trimEnd('0')) && it.key != prefectureCode }
                     .map { (countyCode, countyName) ->
                         val division =
                             Division(
-                                countyCode,
-                                countyName,
-                                3,
-                                false,
-                                if (vnode) listOf(provinceName) else listOf(
+                                code = countyCode,
+                                name = countyName,
+                                level = 3,
+                                municipality = false,
+                                vnode = false,
+                                parentNames = if (vnode) listOf(provinceName) else listOf(
                                     provinceName,
                                     prefectureName
                                 ),
-                                emptyList()
+                                children = emptyList()
                             )
                         divisions[countyCode] = division
                         if (!vnode)
@@ -56,12 +57,13 @@ object GB2260 {
                     }.sortedBy { it.code }
                 val division =
                     Division(
-                        prefectureCode,
-                        prefectureName,
-                        2,
-                        false,
-                        listOf(provinceName),
-                        counties
+                        code = prefectureCode,
+                        name = prefectureName,
+                        level = 2,
+                        municipality = false,
+                        vnode = vnode,
+                        parentNames = listOf(provinceName),
+                        children = counties
                     )
                 divisions[prefectureCode] = division
                 if (!vnode)
@@ -69,12 +71,13 @@ object GB2260 {
                 division
             }.sortedBy { it.code }
             val division = Division(
-                provinceCode,
-                provinceName,
-                1,
-                municipality,
-                emptyList(),
-                prefectureDivisions
+                code = provinceCode,
+                name = provinceName,
+                level = 1,
+                municipality = municipality,
+                vnode = false,
+                parentNames = emptyList(),
+                children = prefectureDivisions
             )
             divisions[provinceCode] = division
             divisionNames[listOf(provinceName)] = division
