@@ -24,7 +24,7 @@ object GB2260 {
                     }
             val municipality =
                 if (prefectures.isEmpty() && codes.any { it.key.startsWith(provinceCode.trimEnd('0')) && it.key != provinceCode }) {
-                    prefectures = mapOf(provinceCode.substring(0, 2) + "0100" to provinceName)
+                    prefectures = mapOf(provinceCode.substring(0, 2) + "0100" to "市辖区")
                     true
                 } else false
 
