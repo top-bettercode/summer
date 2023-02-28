@@ -8,6 +8,13 @@ import top.bettercode.summer.tools.lang.property.Settings
  */
 object GB2260 {
 
+    val vnodeName = "市辖区"
+
+    @JvmStatic
+    fun isVnode(prefectureName: String?): Boolean {
+        return vnodeName == prefectureName
+    }
+
     @JvmStatic
     val provinces: List<Division> by lazy {
         val codes = Settings.areaCode.all()
@@ -24,12 +31,12 @@ object GB2260 {
                     }
             val municipality =
                 if (prefectures.isEmpty() && codes.any { it.key.startsWith(provinceCode.trimEnd('0')) && it.key != provinceCode }) {
-                    prefectures = mapOf(provinceCode.substring(0, 2) + "0100" to "市辖区")
+                    prefectures = mapOf(provinceCode.substring(0, 2) + "0100" to vnodeName)
                     true
                 } else false
 
             val prefectureDivisions = prefectures.map { (prefectureCode, prefectureName) ->
-                val vnode = "市辖区" == prefectureName
+                val vnode = isVnode(prefectureName)
                 val counties = codes
                     .filter { it.key.startsWith(prefectureCode.trimEnd('0')) && it.key != prefectureCode }
                     .map { (countyCode, countyName) ->
