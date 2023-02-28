@@ -77,7 +77,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             method(
-                "nullPropertySetWithDefaults",
+                "nullWithDefaults",
                 entityType
             ) {
                 javadoc {
@@ -105,7 +105,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         method(
-            "nullPropertySetFrom",
+            "nullFrom",
             entityType
         ) {
             javadoc {
@@ -131,7 +131,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         method(
-            "propertySetFrom",
+            "from",
             entityType
         ) {
             javadoc {

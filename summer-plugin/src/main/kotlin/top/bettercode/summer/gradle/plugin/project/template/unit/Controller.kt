@@ -208,7 +208,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"$className $entityName = ${if (isFullComposite) "new $className(form.getEntity())" else "form.getEntity()"};"
                 +""
                 if (defaultColumns.isNotEmpty())
-                    +"$entityName.nullPropertySetWithDefaults();"
+                    +"$entityName.nullWithDefaults();"
                 +"${projectEntityName}Service.save($entityName);"
                 +"return noContent();"
             }
@@ -221,7 +221,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"${primaryKeyType.shortName} $primaryKeyName = form.get${primaryKeyName.capitalized()}();"
                 +"$className $entityName = ${projectEntityName}Service.findById(${primaryKeyName}).orElseThrow(notFound());"
                 +""
-                +"$entityName.propertySetFrom(form);"
+                +"$entityName.from(form);"
                 +"${projectEntityName}Service.save($entityName);"
                 +"return noContent();"
             }

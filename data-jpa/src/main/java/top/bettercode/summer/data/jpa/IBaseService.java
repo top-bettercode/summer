@@ -27,7 +27,7 @@ public interface IBaseService<T, ID, M extends BaseRepository<T, ID>> {
    * @return 结果
    * @deprecated 不建议再使用, 请使用以下方式替代
    * <p>
-   * entity.nullPropertySetFrom(exist);
+   * entity.nullFrom(exist);
    * <p>
    * save(entity);
    * <p>
