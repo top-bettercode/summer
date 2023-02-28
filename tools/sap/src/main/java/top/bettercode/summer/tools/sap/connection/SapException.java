@@ -13,7 +13,8 @@ public class SapException extends RuntimeException {
   }
 
   public SapException(Throwable cause) {
-    super("SAP系统：" + cause.getMessage(), cause);
+    super((cause instanceof SapException || cause instanceof SapSysException) ? cause.getMessage()
+        : ("SAP系统：" + cause.getMessage()), cause);
   }
 
   public SapException(String message, Throwable cause) {

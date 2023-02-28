@@ -15,8 +15,4 @@ public class SapSysException extends RuntimeException {
     super("SAP系统：" + message);
   }
 
-  public SapSysException(Throwable cause) {
-    super("SAP系统：" + cause.getMessage(), cause);
-  }
-
 }
