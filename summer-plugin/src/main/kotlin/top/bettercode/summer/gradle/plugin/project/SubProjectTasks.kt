@@ -65,15 +65,6 @@ object SubProjectTasks {
                 if (project.isBoot) {
                     val group = "gen $prefix code"
 
-                    create("gen$prefix") { task ->
-                        task.group = group
-                        task.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                Generators.call(ext, tableHolder)
-                            }
-                        })
-                    }
-
                     create("gen${prefix}SerializationViews") { t ->
                         t.group = group
                         t.doLast(object : Action<Task> {

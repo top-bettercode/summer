@@ -29,31 +29,12 @@ object CoreProjectTasks {
             val prefix = "Core"
             val group = "gen $prefix code"
 
-            create("gen$prefix") { task ->
-                task.group = group
-                task.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        Generators.callInAllModule(ext)
-                    }
-                })
-            }
-
-            create("gen${prefix}SerializationViews") { t ->
-                t.group = group
-                t.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        ext.tableNames = emptyArray()
-                        ext.generators = arrayOf(SerializationViews())
-                        Generators.callInAllModule(ext)
-                    }
-                })
-            }
-
             project.tasks.create("gen${prefix}Entity") { task ->
                 task.group = group
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
-                        ext.generators = arrayOf(Entity())
+                        ext.tableNames = emptyArray()
+                        ext.generators = arrayOf(Entity(), SerializationViews())
                         Generators.callInAllModule(ext)
                     }
                 })

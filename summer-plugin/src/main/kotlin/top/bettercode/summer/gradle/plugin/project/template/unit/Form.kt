@@ -67,9 +67,28 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 } else {
                     annotation("@javax.validation.constraints.NotNull${if (autoIncrement) "(groups = UpdateConstraint.class)" else ""}")
                 }
-                +"return this.entity.get${
-                    primaryKeyName.capitalized()
-                }();"
+                if (isCompositePrimaryKey) {
+                    +"$primaryKeyClassName $primaryKeyName=this.entity.get${
+                        primaryKeyName.capitalized()
+                    }();"
+                    +"if ($primaryKeyName == null) {"
+                    +"return null;"
+                    +"} else {"
+                    +"if (${
+                        primaryKeys.joinToString(" && ") {
+                            "$primaryKeyName.get${it.javaName.capitalized()}() == null"
+                        }
+                    }) {"
+                    +"return null;"
+                    +"} else {"
+                    +"return $primaryKeyName;"
+                    +"}"
+                    +"}"
+                } else {
+                    +"return this.entity.get${
+                        primaryKeyName.capitalized()
+                    }();"
+                }
             }
 
             //primaryKey setter
@@ -85,7 +104,7 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         val filterColumns =
-            columns.filter { it.javaName != primaryKeyName && !it.testIgnored }
+            columns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
         filterColumns
             .forEach {
                 //getter
