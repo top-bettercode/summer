@@ -43,6 +43,10 @@ public class QvodProperties {
    * 转码模板
    */
   private Long[] templateIds;
+  /**
+   * 图片即时处理模板ID
+   */
+  private String picTemplateId;
 
   /**
    * 上传签名有效时长，单位：秒 有效时长最大取值为7776000，即90天。默认2小时.
@@ -132,6 +136,14 @@ public class QvodProperties {
 
   public void setTemplateIds(Long[] templateIds) {
     this.templateIds = templateIds;
+  }
+
+  public String getPicTemplateId() {
+    return picTemplateId;
+  }
+
+  public void setPicTemplateId(String picTemplateId) {
+    this.picTemplateId = picTemplateId;
   }
 
   public long getUploadValidSeconds() {
