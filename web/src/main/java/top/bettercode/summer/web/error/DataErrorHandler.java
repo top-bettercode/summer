@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.error;
 
+import java.sql.SQLRecoverableException;
 import java.util.Map;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
@@ -109,7 +110,8 @@ public class DataErrorHandler extends AbstractErrorHandler {
       } else {
         message = detailMessage;
       }
-    } else if (error instanceof DataAccessResourceFailureException) {
+    } else if (error instanceof DataAccessResourceFailureException
+        || error instanceof SQLRecoverableException) {
       Throwable cause = error.getCause();
       if (cause != null && "org.hibernate.exception.JDBCConnectionException".equals(
           cause.getClass().getName())) {
