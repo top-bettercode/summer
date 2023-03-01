@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.io.IOException
 import java.util.*
+import java.util.stream.Collectors
+import java.util.stream.Stream
 
 /**
  * 增加 图片即时处理 链接
@@ -20,28 +22,53 @@ import java.util.*
 @JacksonStdImpl
 class QvodImageProcessSerializer @JvmOverloads constructor(
     private val picTemplateId: String = "",
-) : StdScalarSerializer<String>(
-    String::class.java, false
+    private val separator: String = "",
+) : StdScalarSerializer<Any>(
+    Any::class.java, false
 ), ContextualSerializer {
 
 
     private val qvodClient: QvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)
 
     @Throws(IOException::class)
-    override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
+    override fun serialize(value: Any, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeObject(value)
 
         val fieldName = gen.outputContext.currentName
-        gen.writeStringField(
-            "${fieldName}Thumb",
-            "$value!${picTemplateId.ifBlank { qvodClient.properties.picTemplateId }}.jpg"
-        )
+        if (value is String) {
+            if (separator.isEmpty()) {
+                gen.writeStringField("${fieldName}Thumb", process(value))
+            } else {
+                val split =
+                    value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                genCollection(gen, fieldName, Arrays.stream(split))
+            }
+        } else if (value is Array<*>) {
+            genCollection(gen, fieldName, Arrays.stream(value))
+        } else if (value is Collection<*>) {
+            genCollection(gen, fieldName, value.stream())
+        } else {
+            throw UnsupportedOperationException()
+        }
+    }
 
+    private fun process(value: Any) =
+        "$value!${picTemplateId.ifBlank { qvodClient.properties.picTemplateId }}.jpg"
+
+    @Throws(IOException::class)
+    private fun genCollection(
+        gen: JsonGenerator, fieldName: String, stream: Stream<*>
+    ) {
+        val urls = stream.map { it?.toString()?.trim() }
+            .filter { !it.isNullOrBlank() }
+            .map { process(it!!) }.collect(Collectors.toList())
+        val urlFieldName = fieldName + "Thumb"
+        gen.writeObjectField(urlFieldName, urls)
     }
 
     @Throws(IOException::class)
     override fun serializeWithType(
-        value: String, gen: JsonGenerator, provider: SerializerProvider,
+        value: Any, gen: JsonGenerator, provider: SerializerProvider,
         typeSer: TypeSerializer
     ) {
         serialize(value, gen, provider)
@@ -55,7 +82,7 @@ class QvodImageProcessSerializer @JvmOverloads constructor(
             val annotation = property.getAnnotation(QvodImageProcess::class.java)
                 ?: throw RuntimeException("未注解@" + QvodImageProcess::class.java.name)
             return QvodImageProcessSerializer(
-                annotation.value
+                annotation.value, annotation.separator
             )
         }
         return this

@@ -73,9 +73,9 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
     private fun genCollection(
         value: Any, gen: JsonGenerator, fieldName: String, stream: Stream<*>
     ) {
-        val urls = stream.map { obj: Any? -> mapper.mapper(obj) }
-            .filter { str: String? -> StringUtils.hasText(str) }
-            .map { s: String -> return@map qvodClient.antiLeechUrl(s) }.collect(Collectors.toList())
+        val urls = stream.map { mapper.mapper(it) }
+            .filter { !it.isNullOrBlank() }
+            .map { qvodClient.antiLeechUrl(it) }.collect(Collectors.toList())
         gen.writeObject(value)
         val urlFieldName = fieldName + "Alurls"
         gen.writeObjectField(urlFieldName, urls)

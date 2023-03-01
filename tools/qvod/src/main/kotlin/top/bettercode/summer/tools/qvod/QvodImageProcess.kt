@@ -27,4 +27,8 @@ annotation class QvodImageProcess(
      */
     val value: String = "",
 
+    /**
+     * @return 字符串分隔符, 字符串以分隔符分隔后序列化
+     */
+    val separator: String = "",
 )
