@@ -106,9 +106,9 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             //saveBody
             method("saveBody", JavaType.voidPrimitiveInstance) {
                 javadoc {
-                    +"// 优先使用 ${remarks}保存(application/json)"
+                    +"// 优先使用 ${remarks}保存(json)"
                 }
-                annotation("@org.junit.jupiter.api.DisplayName(\"保存(application/json)\")")
+                annotation("@org.junit.jupiter.api.DisplayName(\"保存(json)\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(3)")
                 exception(JavaType("Exception"))
@@ -148,9 +148,9 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             //saveForm
             method("saveForm", JavaType.voidPrimitiveInstance) {
 //                javadoc {
-//                    +"// ${remarks}保存(application/x-www-form-urlencoded)"
+//                    +"// ${remarks}保存(form)"
 //                }
-                annotation("@org.junit.jupiter.api.DisplayName(\"保存(application/x-www-form-urlencoded)\")")
+                annotation("@org.junit.jupiter.api.DisplayName(\"保存(form)\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(4)")
                 exception(JavaType("Exception"))

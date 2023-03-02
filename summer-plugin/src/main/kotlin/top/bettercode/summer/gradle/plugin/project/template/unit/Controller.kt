@@ -155,7 +155,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             method("saveBody", JavaType.objectInstance) {
                 annotation("@top.bettercode.summer.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_JSON_VALUE, name = \"保存(application/json)\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_JSON_VALUE, name = \"保存(json)\")")
                 parameter {
                     annotation("@org.springframework.web.bind.annotation.RequestBody")
                     import("top.bettercode.summer.web.validator.CreateConstraint")
@@ -171,7 +171,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             method("saveForm", JavaType.objectInstance) {
                 annotation("@top.bettercode.summer.web.form.FormDuplicateCheck")
                 annotation("@org.springframework.transaction.annotation.Transactional")
-                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, name = \"保存(application/x-www-form-urlencoded)\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/save\", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, name = \"保存(form)\")")
                 parameter {
                     import("top.bettercode.summer.web.validator.CreateConstraint")
                     annotation("@org.springframework.validation.annotation.Validated({Default.class, CreateConstraint.class})")
