@@ -50,6 +50,7 @@ class RequestLoggingFilter(
     companion object {
         const val ALARM_LOG_MARKER = "alarm"
         const val NO_ALARM_LOG_MARKER = "no_alarm"
+        const val NOT_IN_ALL = "not_in_all"
         const val OPERATION_MARKER = "operation"
         const val IS_OPERATION_MARKER = "is_operation"
     }

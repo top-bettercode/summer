@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import org.springframework.util.Base64Utils
 import org.springframework.util.DigestUtils
+import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.lang.util.StringUtil
@@ -501,8 +502,10 @@ open class QvodClient(
             if (durationMillis == null) {
                 durationMillis = System.currentTimeMillis() - start
             }
+            val marker = MarkerFactory.getDetachedMarker(LOG_MARKER)
+            marker.add(MarkerFactory.getMarker(RequestLoggingFilter.NOT_IN_ALL))
             log.info(
-                MarkerFactory.getMarker(LOG_MARKER),
+                marker,
                 "DURATION MILLIS : {}\n{}\n\n{}",
                 durationMillis,
                 StringUtil.json(req, true),
@@ -578,8 +581,10 @@ open class QvodClient(
             if (durationMillis == null) {
                 durationMillis = System.currentTimeMillis() - start
             }
+            val marker = MarkerFactory.getDetachedMarker(LOG_MARKER)
+            marker.add(MarkerFactory.getMarker(RequestLoggingFilter.NOT_IN_ALL))
             log.info(
-                MarkerFactory.getMarker(LOG_MARKER),
+                marker,
                 "DURATION MILLIS : {}\n{}\n\n{}",
                 durationMillis,
                 StringUtil.json(req, true),

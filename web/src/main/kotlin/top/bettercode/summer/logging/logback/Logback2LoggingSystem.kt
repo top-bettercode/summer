@@ -35,11 +35,8 @@ import org.springframework.boot.logging.logback.LogbackLoggingSystem
 import org.springframework.core.env.Environment
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
-import top.bettercode.summer.logging.FilesProperties
-import top.bettercode.summer.logging.LoggingUtil
+import top.bettercode.summer.logging.*
 import top.bettercode.summer.logging.LoggingUtil.existProperty
-import top.bettercode.summer.logging.LogstashTcpSocketProperties
-import top.bettercode.summer.logging.SlackProperties
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.logging.slack.SlackAppender
 import top.bettercode.summer.logging.websocket.WebSocketAppender
@@ -263,6 +260,30 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         val logFilePath = logFile?.toString() ?: (filesProperties.path + File.separator + "all")
         appender.file = "$logFilePath.log"
         setRollingPolicy(appender, context, filesProperties, logFilePath)
+
+
+        val filter = object : AbstractMatcherFilter<ILoggingEvent>() {
+
+            override fun decide(event: ILoggingEvent): FilterReply {
+                if (!isStarted) {
+                    return FilterReply.NEUTRAL
+                }
+
+                val eventMarker = event.marker
+                if (eventMarker != null) {
+                    if (eventMarker.contains(RequestLoggingFilter.NOT_IN_ALL)) {
+                        return onMismatch
+                    }
+                }
+
+                return onMatch
+            }
+        }
+        filter.onMatch = FilterReply.ACCEPT
+        filter.onMismatch = FilterReply.DENY
+        start(context, filter)
+        appender.addFilter(filter)
+
         start(context, appender)
         synchronized(context.configurationLock) {
             val logger = context.getLogger(LoggingSystem.ROOT_LOGGER_NAME)
