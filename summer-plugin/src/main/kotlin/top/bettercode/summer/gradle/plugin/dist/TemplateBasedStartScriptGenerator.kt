@@ -21,7 +21,8 @@ class TemplateBasedStartScriptGenerator(
     private val project: Project,
     private val dist: DistExtension,
     private val windows: Boolean,
-    private val includeJdk: Boolean
+    private val includeJdk: Boolean,
+    private val includeNative: Boolean
 ) : TemplateBasedScriptGenerator {
     private val lineSeparator: String =
         if (windows) TextUtil.getWindowsLineSeparator() else TextUtil.getUnixLineSeparator()
@@ -129,10 +130,18 @@ class TemplateBasedStartScriptGenerator(
             }
         }
         if (!windows) {
+
             text = StringBuilder(text).insert(
                 text.indexOf("# Use the maximum available") - 1,
                 "DEFAULT_JVM_OPTS=`eval echo \\\$DEFAULT_JVM_OPTS`\n"
             ).toString()
+
+            if (includeNative) {
+                text = StringBuilder(text).insert(
+                    text.indexOf("# Use the maximum available") - 1,
+                    "\nexport LD_LIBRARY_PATH=\\\$APP_HOME/native\n"
+                ).toString()
+            }
         }
 
         return StringBackedTextResource(

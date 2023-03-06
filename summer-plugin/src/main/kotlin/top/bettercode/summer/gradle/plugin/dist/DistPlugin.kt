@@ -21,6 +21,7 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.findDistProperty
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.jvmArgs
+import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.nativeLibArgs
 import top.bettercode.summer.tools.lang.util.OS
 import java.io.File
 import java.math.BigInteger
@@ -253,7 +254,7 @@ class DistPlugin : Plugin<Project> {
 
             val distributionTask =
                 distributionTasks.find {
-                    taskNames.contains(it.path)
+                    taskNames.contains(it.path) || taskNames.contains(":" + it.name)
                 }
             project.rootProject.allprojects { p ->
                 p.tasks.named("jar") { task ->
@@ -397,13 +398,19 @@ class DistPlugin : Plugin<Project> {
         if (application != null) {
             application.applicationDefaultJvmArgs += jvmArgs
             application.applicationDefaultJvmArgs = application.applicationDefaultJvmArgs.distinct()
-
+            val includeNative = jvmArgs.contains(project.nativeLibArgs)
             project.tasks.getByName("startScripts") { task ->
                 task as CreateStartScripts
                 task.unixStartScriptGenerator =
-                    StartScript.startScriptGenerator(project, dist, false, includeJre)
+                    StartScript.startScriptGenerator(
+                        project,
+                        dist,
+                        false,
+                        includeJre,
+                        includeNative
+                    )
                 task.windowsStartScriptGenerator =
-                    StartScript.startScriptGenerator(project, dist, true, includeJre)
+                    StartScript.startScriptGenerator(project, dist, true, includeJre, includeNative)
 
                 task.inputs.file(project.rootProject.file("gradle.properties"))
                 if (!task.mainClass.isPresent) {

@@ -10,19 +10,19 @@ import org.springframework.core.io.ClassPathResource;
 import top.bettercode.summer.tools.lang.util.OS;
 
 /**
- * Jco native library extractor and loader.
+ * native library extractor and loader.
  */
-public class JcoLoader {
+public class SapNativeLibLoader {
 
-  private static final Logger log = LoggerFactory.getLogger(JcoLoader.class);
-
+  private static final Logger log = LoggerFactory.getLogger(SapNativeLibLoader.class);
+  private static final String LIB_NAME = "Jco";
 
   /**
-   * Extract and load native jco library in the provided folder.
+   * Extract and load native library in the provided folder.
    *
    * @throws Exception The provisioning failure exception.
    */
-  public static synchronized void loadJco()
+  public static synchronized void loadNativeLib()
       throws Exception {
     File targetFolder = new File(
         System.getProperty("user.dir") + File.separator + "build" + File.separator + "native");
@@ -51,34 +51,34 @@ public class JcoLoader {
 
     String libraryPath = targetFolder.getAbsolutePath();
 
-    String JCO_NATIVE_SYSTEM_PROPERTY = "java.library.path";
-    String jcoSystemNativePath = System.getProperty(JCO_NATIVE_SYSTEM_PROPERTY);
+    String nativeSystemProperty = "java.library.path";
+    String systemNativePath = System.getProperty(nativeSystemProperty);
     String pathSeparator;
     if (OS.WINDOWS.isCurrentOs()) {
       pathSeparator = ";";
     } else {
       pathSeparator = ":";
     }
-    if (!jcoSystemNativePath.contains(pathSeparator + libraryPath)
-        && !jcoSystemNativePath.startsWith(libraryPath + pathSeparator)) {
-      jcoSystemNativePath += pathSeparator + libraryPath;
-      System.setProperty(JCO_NATIVE_SYSTEM_PROPERTY, jcoSystemNativePath);
+    if (!systemNativePath.contains(pathSeparator + libraryPath)
+        && !systemNativePath.startsWith(libraryPath + pathSeparator)) {
+      systemNativePath += pathSeparator + libraryPath;
+      System.setProperty(nativeSystemProperty, systemNativePath);
     }
 
-    log.info("Jco system native path: " + System.getProperty(JCO_NATIVE_SYSTEM_PROPERTY));
+    log.info(LIB_NAME + " system native path: " + System.getProperty(nativeSystemProperty));
 
-    if (isJcoAlreadyLoaded()) {
-      log.info("Jco library is already loaded.");
+    if (isAlreadyLoaded()) {
+      log.info(LIB_NAME + " library is already loaded.");
     }
   }
 
 
-  private static boolean isJcoAlreadyLoaded() {
+  private static boolean isAlreadyLoaded() {
     try {
       JCoRuntime runtime = JCoRuntimeFactory.getRuntime();
       return runtime != null;
     } catch (Exception e) {
-      log.error("Failed to load Jco library", e);
+      log.error("Failed to load " + LIB_NAME + " library", e);
       return false;
     }
   }

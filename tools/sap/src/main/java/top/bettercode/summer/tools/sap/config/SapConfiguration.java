@@ -17,7 +17,7 @@ import top.bettercode.summer.tools.sap.connection.SapService;
 public class SapConfiguration {
 
   public SapConfiguration() throws Exception {
-    JcoLoader.loadJco();
+    SapNativeLibLoader.loadNativeLib();
   }
 
   @Bean

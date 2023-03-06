@@ -13,9 +13,10 @@ object StartScript {
         project: Project,
         dist: DistExtension,
         windows: Boolean,
-        includeJdk: Boolean
+        includeJdk: Boolean,
+        includeNative: Boolean
     ): TemplateBasedScriptGenerator {
-        return TemplateBasedStartScriptGenerator(project, dist, windows, includeJdk)
+        return TemplateBasedStartScriptGenerator(project, dist, windows, includeJdk,includeNative)
     }
 
 
