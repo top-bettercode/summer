@@ -3,8 +3,6 @@ font:
   catalog:
     merge: true
     simfang: simfang.ttf
-  fallbacks:
-    - Noto Serif
 base:
   text-align: left
   font-color: #000000
