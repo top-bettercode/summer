@@ -2,7 +2,11 @@ extends: default
 font:
   catalog:
     merge: true
-    custfont: simfang.ttf
+    custfont:
+      normal: simfang.ttf
+      bold: simfang.ttf
+      italic: simfang.ttf
+      bold_italic: simfang.ttf
   fallbacks: simfang.ttf
 codespan:
   font-family: $base-font-family
