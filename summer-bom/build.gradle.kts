@@ -32,8 +32,8 @@ dependencies {
         api("com.oracle.database.security:osdt_cert:21.7.0.0")
 
         api("org.asciidoctor:asciidoctorj:2.5.7")
-        api("org.asciidoctor:asciidoctorj-diagram:2.2.3")
-        api("org.asciidoctor:asciidoctorj-pdf:2.3.3")
+        api("org.asciidoctor:asciidoctorj-diagram:2.2.4")
+        api("org.asciidoctor:asciidoctorj-pdf:2.3.4")
 
         api("org.dhatim:fastexcel:0.14.4")
         api("org.dhatim:fastexcel-reader:0.14.4")
