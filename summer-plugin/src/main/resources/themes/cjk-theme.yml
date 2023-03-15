@@ -2,16 +2,21 @@ extends: default
 font:
   catalog:
     merge: true
-    simfang: simfang.ttf
+    custfont: simfang.ttf
+  fallbacks: simfang.ttf
 base:
   text-align: left
   font-color: #000000
-  font-family: simfang
-heading:
-  font-color: #000000
+  font-family: custfont
 codespan:
-  font-family: simfang
+  font-family: $base-font-family
 kbd:
-  font-family: $codespan-font-family
+  font-family: $base-font-family
 code:
-  font-family: $codespan-font-family
+  font-family: $base-font-family
+
+table:
+  header-cell:
+    background-color: #F0F0F0
+    font-color: #1A1A1A
+    font-style: bold
