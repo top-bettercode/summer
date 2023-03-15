@@ -229,7 +229,12 @@ object InitField {
         val fields = columns.flatMapTo(mutableSetOf()) { column ->
             var type =
                 if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits > 0) ",${column.decimalDigits}" else ""})" else column.javaType.shortNameWithoutTypeArguments
-            if (column.javaType.shortNameWithoutTypeArguments == "Date")//前端统一传毫秒数
+            if (column.javaType.shortNameWithoutTypeArguments in arrayOf(
+                    "Date",
+                    "LocalDate",
+                    "LocalDateTime"
+                )
+            )//前端统一传毫秒数
                 type = "Long"
             setOf(
                 Field(
