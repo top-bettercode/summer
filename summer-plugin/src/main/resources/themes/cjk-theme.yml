@@ -4,10 +4,6 @@ font:
     merge: true
     custfont: simfang.ttf
   fallbacks: simfang.ttf
-base:
-  text-align: left
-  font-color: #000000
-  font-family: custfont
 codespan:
   font-family: $base-font-family
 kbd:
@@ -15,6 +11,10 @@ kbd:
 code:
   font-family: $base-font-family
 
+base:
+  text-align: left
+  font-color: #000000
+  font-family: custfont
 table:
   header-cell:
     background-color: #F0F0F0
