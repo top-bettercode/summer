@@ -22,29 +22,14 @@ class LogFileNameComparator : Comparator<File> {
                         return if (compareTo1 != 0) {
                             compareTo1
                         } else {
-                            o2.lastModified().compareTo(o1.lastModified())
+                            val compareTo2 = o2.lastModified().compareTo(o1.lastModified())
+                            if (compareTo2 != 0)
+                                compareTo2
+                            else
+                                compareFile(o1, o2)
                         }
                     } else {
-                        val name1 = o1.nameWithoutExtension.split('-', ':', '.')
-                        val name2 = o2.nameWithoutExtension.split('-', ':', '.')
-                        val size1 = name1.size
-                        val size2 = name2.size
-                        if (size1 > size2)
-                            name1.forEachIndexed { i, s1 ->
-                                if (i >= size2) return 1
-                                val s2 = name2[i]
-                                val compareTo1 = compareStr(s1, s2)
-                                if (compareTo1 != 0)
-                                    return compareTo1
-                            }
-                        else
-                            name2.forEachIndexed { i, s2 ->
-                                if (i >= size1) return -1
-                                val s1 = name1[i]
-                                val compareTo1 = compareStr(s1, s2)
-                                if (compareTo1 != 0)
-                                    return compareTo1
-                            }
+                        compareFile(o1, o2)
                     }
                     0
                 } catch (e: Exception) {
@@ -53,6 +38,30 @@ class LogFileNameComparator : Comparator<File> {
             }
         } else
             compareTo
+    }
+
+    private fun compareFile(o1: File, o2: File): Int {
+        val name1 = o1.nameWithoutExtension.split('-', ':', '.')
+        val name2 = o2.nameWithoutExtension.split('-', ':', '.')
+        val size1 = name1.size
+        val size2 = name2.size
+        if (size1 > size2)
+            name1.forEachIndexed { i, s1 ->
+                if (i >= size2) return 1
+                val s2 = name2[i]
+                val compareTo1 = compareStr(s1, s2)
+                if (compareTo1 != 0)
+                    return compareTo1
+            }
+        else
+            name2.forEachIndexed { i, s2 ->
+                if (i >= size1) return -1
+                val s1 = name1[i]
+                val compareTo1 = compareStr(s1, s2)
+                if (compareTo1 != 0)
+                    return compareTo1
+            }
+        return 0
     }
 
     private fun compareStr(s1: String, s2: String): Int {

@@ -173,8 +173,12 @@ class LogsEndpoint(
                     file = File(loggingFilesPath, "all.log")
                 }
                 if (file.isFile) {
-                    val logMsgs = readLogMsgs(file.inputStream(), "gz" == file.extension)
-                    showLogFile(response, file.name, logMsgs)
+                    if (!file.exists()) {
+                        response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
+                    } else {
+                        val logMsgs = readLogMsgs(file.inputStream(), "gz" == file.extension)
+                        showLogFile(response, file.name, logMsgs)
+                    }
                 } else {
                     index(file.listFiles(), request, response, false)
                 }
@@ -294,45 +298,43 @@ class LogsEndpoint(
     }
 
     private fun showLogFile(response: HttpServletResponse, name: String, logMsgs: List<LogMsg>?) {
-        if (logMsgs.isNullOrEmpty()) {
-            response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
-        } else {
-            response.contentType = "text/html;charset=utf-8"
-            response.setHeader("Pragma", "No-cache")
-            response.setHeader("Cache-Control", "no-cache")
-            response.setHeader("Content-Encoding", "gzip")
-            response.setDateHeader("Expires", 0)
-            val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
-            prettyMessageHTMLLayout.title = name
-            prettyMessageHTMLLayout.context = loggerContext
-            prettyMessageHTMLLayout.start()
-            val gzipOutputStream = GZIPOutputStream(response.outputStream).bufferedWriter()
-            gzipOutputStream.use { writer ->
-                writer.appendLine(prettyMessageHTMLLayout.fileHeader)
-                writer.appendLine(prettyMessageHTMLLayout.getLogsHeader())
+        response.contentType = "text/html;charset=utf-8"
+        response.setHeader("Pragma", "No-cache")
+        response.setHeader("Cache-Control", "no-cache")
+        response.setHeader("Content-Encoding", "gzip")
+        response.setDateHeader("Expires", 0)
+        val prettyMessageHTMLLayout = PrettyMessageHTMLLayout()
+        prettyMessageHTMLLayout.title = name
+        prettyMessageHTMLLayout.context = loggerContext
+        prettyMessageHTMLLayout.start()
+        val gzipOutputStream = GZIPOutputStream(response.outputStream).bufferedWriter()
+        gzipOutputStream.use { writer ->
+            writer.appendLine(prettyMessageHTMLLayout.fileHeader)
+            writer.appendLine(prettyMessageHTMLLayout.getLogsHeader())
 
+            if (!logMsgs.isNullOrEmpty()) {
                 val size = logMsgs.size
                 logMsgs.forEachIndexed { index, it ->
                     writer.appendLine(
                         prettyMessageHTMLLayout.doLayout(it.msg, it.level, index == size - 1)
                     )
                 }
+            }
 
-                writer.appendLine(prettyMessageHTMLLayout.presentationFooter)
-                writer.appendLine(
-                    """
+            writer.appendLine(prettyMessageHTMLLayout.presentationFooter)
+            writer.appendLine(
+                """
 <script type="text/javascript">
     if(!location.hash){
         window.location.href = '#last';
     }
 </script>
 """
-                )
-                writer.appendLine(prettyMessageHTMLLayout.fileFooter)
-            }
-            gzipOutputStream.flush()
-            response.flushBuffer()
+            )
+            writer.appendLine(prettyMessageHTMLLayout.fileFooter)
         }
+        gzipOutputStream.flush()
+        response.flushBuffer()
     }
 
     private fun readLogMsgs(inputStream: InputStream, gzip: Boolean = false): List<LogMsg> {
