@@ -1,5 +1,6 @@
 package top.bettercode.summer.config
 
+import top.bettercode.summer.web.form.IFormkeyService.log
 import java.io.File
 
 /**
@@ -19,7 +20,7 @@ class LogFileNameComparator : Comparator<File> {
                         val name1 = o1.nameWithoutExtension.substringBefore("-")
                         val name2 = o2.nameWithoutExtension.substringBefore("-")
                         val compareTo1 = name1.compareTo(name2)
-                        return if (compareTo1 != 0) {
+                        if (compareTo1 != 0) {
                             compareTo1
                         } else {
                             val compareTo2 = o2.lastModified().compareTo(o1.lastModified())
@@ -31,7 +32,6 @@ class LogFileNameComparator : Comparator<File> {
                     } else {
                         compareFile(o1, o2)
                     }
-                    0
                 } catch (e: Exception) {
                     o1.name.compareTo(o2.name)
                 }
