@@ -50,7 +50,7 @@ public class RequestLoggingProperties {
   /**
    * Comma-separated list of paths to exclude from the default logging paths.
    */
-  private String[] ignored = {"*.js", "*.gif", "*.jpg", "*.png", "*.css", "*.ico"};
+  private String[] ignored = {"/**/*.js", "/**/*.gif", "/**/*.jpg", "/**/*.png", "/**/*.css", "/**/*.ico"};
   /**
    * 额外包含的需要记录日志的路径
    */
