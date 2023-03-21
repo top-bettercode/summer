@@ -2,7 +2,7 @@
 ### wu template
 .gradle
 build
-/tools/ctp-mdapi-jna
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -28,3 +28,4 @@ publish-plugin.sh
 /tools/rapidauth/src/test/resources/application.yml
 /tools/amap/src/test/resources/application.yml
 /tools/ctp-mdapi/src/test/resources/application.yml
+/tools/ctp-mdapi-jna
