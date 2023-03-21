@@ -74,6 +74,8 @@ dependencies {
         api("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
         api("com.google.code.findbugs:annotations:3.0.1")
 
+//        api("net.java.dev.jna:jna:5.13.0")
+
         api(project(":env"))
         api(project(":web"))
         api(project(":data-jpa"))

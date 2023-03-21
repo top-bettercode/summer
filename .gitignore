@@ -2,7 +2,7 @@
 ### wu template
 .gradle
 build
-
+/tools/ctp-mdapi-jna
 ### IntelliJ IDEA ###
 .idea
 *.iws
