@@ -2,7 +2,6 @@ package top.bettercode.summer.web;
 
 
 import java.util.Date;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,6 @@ import top.bettercode.summer.web.validator.ChinaCell;
 /**
  * @author Peter Wu
  */
-@SpringBootApplication
 @RestController
 @Validated
 public class WebTestController extends BaseController {

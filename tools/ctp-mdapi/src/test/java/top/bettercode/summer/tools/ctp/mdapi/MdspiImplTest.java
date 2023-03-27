@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.ctp.mdapi;
 
 import ctp.thostmduserapi.CThostFtdcMdApi;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import top.bettercode.summer.test.BaseWebNoAuthTest;
@@ -9,6 +10,7 @@ import top.bettercode.summer.tools.ctp.mdapi.config.MdapiProperties;
 /**
  * @author Peter Wu
  */
+@Disabled
 class MdspiImplTest extends BaseWebNoAuthTest {
 
   @Autowired

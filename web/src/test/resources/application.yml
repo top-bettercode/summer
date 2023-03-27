@@ -43,6 +43,4 @@ server:
   servlet:
     context-path: /npk
 #      - 10.13.3.119:4560
-spring:
-  profiles:
-    active: test
+#spring.profiles.active: test

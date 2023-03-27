@@ -21,6 +21,4 @@ summer:
 server:
   servlet:
     context-path: /npk
-spring:
-  profiles:
-    active: test
+#spring.profiles.active: test

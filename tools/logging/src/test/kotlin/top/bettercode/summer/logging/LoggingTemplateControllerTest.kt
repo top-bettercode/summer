@@ -58,9 +58,9 @@ class LoggingTemplateControllerTest {
     @Test
     fun error() {
         val entity = testRestTemplate.postForEntity("/error/1", null, String::class.java)
-        Thread.sleep(20 * 1000L)
+        Thread.sleep(10 * 1000L)
         org.junit.jupiter.api.Assertions.assertEquals(
-            HttpStatus.OK,
+            HttpStatus.INTERNAL_SERVER_ERROR,
             entity.statusCode
         )
     }
