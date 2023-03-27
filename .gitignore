@@ -28,4 +28,5 @@ publish-plugin.sh
 /tools/rapidauth/src/test/resources/application.yml
 /tools/amap/src/test/resources/application.yml
 /tools/ctp-mdapi/src/test/resources/application.yml
+/tools/logging/src/test/resources/application-test.yml
 /tools/ctp-mdapi-jna

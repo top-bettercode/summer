@@ -37,7 +37,7 @@ import top.bettercode.summer.security.token.IRevokeTokenService;
 import top.bettercode.summer.security.token.MultipleBearerTokenResolver;
 import top.bettercode.summer.tools.lang.operation.HttpOperation;
 import top.bettercode.summer.tools.lang.util.ArrayUtil;
-import top.bettercode.summer.web.AnnotatedUtils;
+import top.bettercode.summer.tools.lang.util.AnnotatedUtils;
 import top.bettercode.summer.web.RespEntity;
 import top.bettercode.summer.web.config.SummerWebProperties;
 import top.bettercode.summer.web.exception.UnauthorizedException;

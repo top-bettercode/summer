@@ -33,7 +33,7 @@ import top.bettercode.summer.security.authorize.Anonymous;
 import top.bettercode.summer.security.authorize.ConfigAuthority;
 import top.bettercode.summer.security.authorize.DefaultAuthority;
 import top.bettercode.summer.security.config.ApiSecurityProperties;
-import top.bettercode.summer.web.AnnotatedUtils;
+import top.bettercode.summer.tools.lang.util.AnnotatedUtils;
 
 /**
  * 自定义权限过滤

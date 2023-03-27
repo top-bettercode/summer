@@ -1,0 +1,26 @@
+logging:
+  level:
+    root: debug
+    org: warn
+    com: warn
+    io: warn
+    _org: warn
+    sun: warn
+summer:
+  logging:
+    request:
+      include-request-body: true
+      include-response-body: true
+      encrypt-headers:
+        - token
+      encrypt-parameters:
+        - password
+      ignored-error-status-code: 401, 403, 404, 405, 406,422
+      force-record: true
+      timeout-alarm-seconds: 2
+server:
+  servlet:
+    context-path: /npk
+spring:
+  profiles:
+    active: test

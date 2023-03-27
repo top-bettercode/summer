@@ -1,7 +1,6 @@
 package top.bettercode.summer.logging
 
 import ch.qos.logback.classic.Level
-import net.logstash.logback.marker.Markers
 import org.apache.catalina.connector.ClientAbortException
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
@@ -25,9 +24,8 @@ import top.bettercode.summer.tools.lang.operation.HttpOperation.REQUEST_DATE_TIM
 import top.bettercode.summer.tools.lang.operation.HttpOperation.REQUEST_LOG_MARKER
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletRequestWrapper
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletResponseWrapper
-import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils
-import top.bettercode.summer.web.servlet.HandlerMethodContextHolder
+import top.bettercode.summer.tools.lang.util.StringUtil
 import java.io.IOException
 import java.time.LocalDateTime
 import javax.servlet.FilterChain
@@ -51,8 +49,6 @@ class RequestLoggingFilter(
         const val ALARM_LOG_MARKER = "alarm"
         const val NO_ALARM_LOG_MARKER = "no_alarm"
         const val NOT_IN_ALL = "not_in_all"
-        const val OPERATION_MARKER = "operation"
-        const val IS_OPERATION_MARKER = "is_operation"
     }
 
     private val log = LoggerFactory.getLogger(RequestLoggingFilter::class.java)
@@ -149,19 +145,6 @@ class RequestLoggingFilter(
                     marker.add(MarkerFactory.getMarker(ALARM_LOG_MARKER))
                     marker.add(AlarmMarker(initialComment, timeoutMsg))
                     msg = "$initialComment${timeoutMsg}\n$msg"
-                }
-                if (LoggingUtil.existProperty(
-                        environment,
-                        "summer.logging.logstash.destinations[0]"
-                    )
-                ) {
-                    marker.add(
-                        Markers.appendRaw(
-                            OPERATION_MARKER,
-                            operation.toString(config.copy(format = false))
-                        ).and(Markers.append("title", LoggingUtil.warnSubject(environment)))
-                    )
-                    marker.add(Markers.append(IS_OPERATION_MARKER, true))
                 }
                 if ((error == null || error is ClientAbortException) && !requestTimeout) {
                     log.info(marker, msg)

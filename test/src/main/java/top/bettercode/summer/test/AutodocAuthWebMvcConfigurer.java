@@ -17,7 +17,7 @@ import top.bettercode.summer.security.support.AuthenticationHelper;
 import top.bettercode.summer.security.support.SecurityParameterNames;
 import top.bettercode.summer.test.autodoc.Autodoc;
 import top.bettercode.summer.tools.lang.operation.HttpOperation;
-import top.bettercode.summer.web.AnnotatedUtils;
+import top.bettercode.summer.tools.lang.util.AnnotatedUtils;
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder;
 
 @ConditionalOnClass(ApiSecurityProperties.class)

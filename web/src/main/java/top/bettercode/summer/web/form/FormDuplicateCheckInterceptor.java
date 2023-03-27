@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.method.HandlerMethod;
-import top.bettercode.summer.web.AnnotatedUtils;
+import top.bettercode.summer.tools.lang.util.AnnotatedUtils;
 import top.bettercode.summer.web.servlet.NotErrorHandlerInterceptor;
 
 /**

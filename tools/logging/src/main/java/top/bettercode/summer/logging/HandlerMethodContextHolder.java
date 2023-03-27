@@ -1,4 +1,4 @@
-package top.bettercode.summer.web.servlet;
+package top.bettercode.summer.logging;
 
 import java.lang.annotation.Annotation;
 import javax.servlet.http.HttpServletRequest;

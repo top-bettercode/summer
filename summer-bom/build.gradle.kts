@@ -1,3 +1,4 @@
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.include
 import top.bettercode.summer.gradle.plugin.publish.AbstractPublishPlugin
 
 plugins {
@@ -99,6 +100,7 @@ dependencies {
         api(project(":tools:qvod"))
         api(project(":tools:sap"))
         api(project(":tools:ctp-mdapi"))
+        api(project(":tools:logging"))
     }
 }
 
