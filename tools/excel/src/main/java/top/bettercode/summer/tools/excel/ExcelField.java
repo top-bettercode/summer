@@ -70,6 +70,12 @@ public class ExcelField<T, P> {
   private Alignment align = Alignment.center;
 
   /**
+   * 是否自动换行
+   */
+  private boolean wrapText = true;
+
+
+  /**
    * 列宽度，-1表示自动计算
    */
   private double width = -1;
@@ -591,6 +597,10 @@ public class ExcelField<T, P> {
     return this;
   }
 
+  public ExcelField<T, P> wrapText(boolean wrapText) {
+    this.wrapText = wrapText;
+    return this;
+  }
 
   /**
    * 设为需要合并
@@ -683,6 +693,10 @@ public class ExcelField<T, P> {
 
   Alignment align() {
     return align;
+  }
+
+  boolean wrapText() {
+    return wrapText;
   }
 
   double width() {

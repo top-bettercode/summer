@@ -64,10 +64,6 @@ public class ExcelExport {
    */
   private int c = 0;
   /**
-   * 是否自动换行
-   */
-  private boolean wrapText = false;
-  /**
    * 是否包含批注
    */
   private boolean includeComment = false;
@@ -200,11 +196,6 @@ public class ExcelExport {
     return sheet;
   }
 
-  public ExcelExport wrapText(boolean wrapText) {
-    this.wrapText = wrapText;
-    return this;
-  }
-
   public <T> void createHeader(ExcelField<T, ?>[] excelFields) {
     // Create header
     {
@@ -312,7 +303,7 @@ public class ExcelExport {
     String format = excelField.format();
     style.horizontalAlignment(excelField.align().name())
         .verticalAlignment(Alignment.center.name())
-        .wrapText(wrapText)
+        .wrapText(excelField.wrapText())
         .format(format)
         .borderStyle("thin")
         .borderColor("000000");
@@ -489,7 +480,7 @@ public class ExcelExport {
           .style();
       style.horizontalAlignment(excelField.align().name())
           .verticalAlignment(Alignment.center.name())
-          .wrapText(wrapText)
+          .wrapText(excelField.wrapText())
           .format(format)
           .borderStyle("thin")
           .borderColor("000000");
