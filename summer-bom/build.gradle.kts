@@ -99,7 +99,7 @@ dependencies {
         api(project(":tools:jpush"))
         api(project(":tools:qvod"))
         api(project(":tools:sap"))
-        api(project(":tools:ctp-mdapi"))
+        api(project(":tools:ctp-api"))
         api(project(":tools:logging"))
     }
 }
