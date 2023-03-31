@@ -1,6 +1,7 @@
 package top.bettercode.summer.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,18 +18,19 @@ import top.bettercode.summer.web.support.code.ICodeService;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SerializerConfiguration {
 
-  public SerializerConfiguration(Environment environment,
-      ObjectMapper objectMapper,
-      JacksonExtProperties jacksonExtProperties) {
-    UrlSerializer.setEnvironment(environment);
-    objectMapper.setSerializerFactory(objectMapper.getSerializerFactory()
-        .withSerializerModifier(
-            new CustomNullSerializerModifier(jacksonExtProperties)));
-  }
+    public SerializerConfiguration(Environment environment,
+                                   ObjectMapper objectMapper,
+                                   JacksonExtProperties jacksonExtProperties) {
+        UrlSerializer.setEnvironment(environment);
+        objectMapper.setSerializerFactory(objectMapper.getSerializerFactory()
+                .withSerializerModifier(
+                        new CustomNullSerializerModifier(jacksonExtProperties)));
+    }
 
-  @Bean("defaultCodeService")
-  public ICodeService defaultCodeService() {
-    return CodeServiceHolder.PROPERTIES_CODESERVICE;
-  }
+    @ConditionalOnMissingBean(name = CodeServiceHolder.DEFAULT_BEAN_NAME)
+    @Bean(CodeServiceHolder.DEFAULT_BEAN_NAME)
+    public ICodeService defaultCodeService() {
+        return CodeServiceHolder.PROPERTIES_CODESERVICE;
+    }
 
 }
