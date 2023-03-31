@@ -30,14 +30,16 @@ class TraderSpiImplTest extends BaseWebNoAuthTest {
 
         //    查询持仓（汇总）
         CThostFtdcQryInvestorPositionField qryInvestorPositionField = new CThostFtdcQryInvestorPositionField();
-//    m_traderapi.ReqQryInvestorPosition(qryInvestorPositionField, 0);
+//        traderApi.ReqQryInvestorPosition(qryInvestorPositionField, 0);
 //    查询持仓明细
         CThostFtdcQryInvestorPositionDetailField field = new CThostFtdcQryInvestorPositionDetailField();
 //    field.setBrokerID(properties.getBrokerId());
 //    field.setInvestorID(properties.getUserId());
 //    field.setInstrumentID("SP a2307&a2309");
-        traderApi.ReqQryInvestorPositionDetail(field, 0);
+//        traderApi.ReqQryInvestorPositionDetail(field, 0);
 
+        CThostFtdcQryInvestorPositionCombineDetailField combineDetailField=new CThostFtdcQryInvestorPositionCombineDetailField();
+        traderApi.ReqQryInvestorPositionCombineDetail(combineDetailField,0);
 
         //资金账户
         CThostFtdcQryTradingAccountField qryTradingAccount = new CThostFtdcQryTradingAccountField();
@@ -45,7 +47,14 @@ class TraderSpiImplTest extends BaseWebNoAuthTest {
         qryTradingAccount.setCurrencyID(properties.getCurrencyId());
 
         qryTradingAccount.setInvestorID(properties.getUserId());
-//    m_traderapi.ReqQryTradingAccount(qryTradingAccount, 1);
+//        traderApi.ReqQryTradingAccount(qryTradingAccount, 1);
+
+        CThostFtdcQryInstrumentField ftdcQryInstrumentField = new CThostFtdcQryInstrumentField();
+        ftdcQryInstrumentField.setInstrumentID("ci2303");
+        ftdcQryInstrumentField.setExchangeID("GFEX");
+//        ftdcQryInstrumentField.setExchangeInstID("");
+//        ftdcQryInstrumentField.setProductID("");
+//        traderApi.ReqQryInstrument(ftdcQryInstrumentField,0);
 
         traderApi.Join();
 
