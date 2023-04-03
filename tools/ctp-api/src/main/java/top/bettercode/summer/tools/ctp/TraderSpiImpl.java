@@ -134,6 +134,7 @@ public class TraderSpiImpl extends CThostFtdcTraderSpi {
      *   "accountID" : "99683265"
      * }
      * </pre>
+     *
      * @param pTradingAccount
      * @param pRspInfo
      * @param nRequestID
@@ -204,6 +205,7 @@ public class TraderSpiImpl extends CThostFtdcTraderSpi {
      * }
      *
      * </pre>
+     *
      * @param cThostFtdcInvestorPositionField
      * @param cThostFtdcRspInfoField
      * @param i
@@ -213,7 +215,7 @@ public class TraderSpiImpl extends CThostFtdcTraderSpi {
     public void OnRspQryInvestorPosition(
             CThostFtdcInvestorPositionField cThostFtdcInvestorPositionField,
             CThostFtdcRspInfoField cThostFtdcRspInfoField, int i, boolean b) {
-        log.info("查询持仓（汇总）：\\n{},{}\n{}\n\n{}\n", i, b
+        log.info("查询持仓（汇总）：\n{},{}\n{}\n\n{}\n", i, b
                 , StringUtil.json(cThostFtdcInvestorPositionField, true)
                 , StringUtil.json(cThostFtdcRspInfoField, true));
 
@@ -273,6 +275,7 @@ public class TraderSpiImpl extends CThostFtdcTraderSpi {
      *   "investUnitID" : ""
      * }
      * </pre>
+     *
      * @param cThostFtdcInvestorPositionDetailField
      * @param cThostFtdcRspInfoField
      * @param i
@@ -280,7 +283,7 @@ public class TraderSpiImpl extends CThostFtdcTraderSpi {
      */
     @Override
     public void OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetailField cThostFtdcInvestorPositionDetailField, CThostFtdcRspInfoField cThostFtdcRspInfoField, int i, boolean b) {
-        log.info("查询持仓明细：\\n{},{}\n{}\n\n{}\n", i, b
+        log.info("查询持仓明细：\n{},{}\n{}\n\n{}\n", i, b
                 , StringUtil.json(cThostFtdcInvestorPositionDetailField, true)
                 , StringUtil.json(cThostFtdcRspInfoField, true));
     }
@@ -314,6 +317,7 @@ public class TraderSpiImpl extends CThostFtdcTraderSpi {
      *   "reserve2" : "SP a2307&a2309"
      * }
      * </pre>
+     *
      * @param cThostFtdcInvestorPositionCombineDetailField
      * @param cThostFtdcRspInfoField
      * @param i
@@ -321,7 +325,7 @@ public class TraderSpiImpl extends CThostFtdcTraderSpi {
      */
     @Override
     public void OnRspQryInvestorPositionCombineDetail(CThostFtdcInvestorPositionCombineDetailField cThostFtdcInvestorPositionCombineDetailField, CThostFtdcRspInfoField cThostFtdcRspInfoField, int i, boolean b) {
-        log.info("查询组合持仓明细：\\n{},{}\n{}\n\n{}\n", i, b
+        log.info("查询组合持仓明细：\n{},{}\n{}\n\n{}\n", i, b
                 , StringUtil.json(cThostFtdcInvestorPositionCombineDetailField, true)
                 , StringUtil.json(cThostFtdcRspInfoField, true));
     }
@@ -367,6 +371,7 @@ public class TraderSpiImpl extends CThostFtdcTraderSpi {
      *   "productID" : "ci"
      * }
      * </pre>
+     *
      * @param cThostFtdcInstrumentField
      * @param cThostFtdcRspInfoField
      * @param i
@@ -375,8 +380,16 @@ public class TraderSpiImpl extends CThostFtdcTraderSpi {
     @Override
     public void OnRspQryInstrument(CThostFtdcInstrumentField cThostFtdcInstrumentField, CThostFtdcRspInfoField cThostFtdcRspInfoField, int i, boolean b) {
 
-        log.info("查询合约：\\n{},{}\n{}\n\n{}\n", i, b
+        log.info("查询合约：\n{},{}\n{}\n\n{}\n", i, b
                 , StringUtil.json(cThostFtdcInstrumentField, true)
                 , StringUtil.json(cThostFtdcRspInfoField, true));
+    }
+
+    @Override
+    public void OnRspQryTrade(CThostFtdcTradeField cThostFtdcTradeField, CThostFtdcRspInfoField cThostFtdcRspInfoField, int i, boolean b) {
+        log.info("查询成交：\n{},{}\n{}\n\n{}\n", i, b
+                , StringUtil.json(cThostFtdcTradeField, true)
+                , StringUtil.json(cThostFtdcRspInfoField, true));
+
     }
 }

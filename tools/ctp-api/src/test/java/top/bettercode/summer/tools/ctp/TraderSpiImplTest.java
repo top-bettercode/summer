@@ -30,17 +30,25 @@ class TraderSpiImplTest extends BaseWebNoAuthTest {
 
         //    查询持仓（汇总）
         CThostFtdcQryInvestorPositionField qryInvestorPositionField = new CThostFtdcQryInvestorPositionField();
-//        traderApi.ReqQryInvestorPosition(qryInvestorPositionField, 0);
+        traderApi.ReqQryInvestorPosition(qryInvestorPositionField, 0);
 //    查询持仓明细
         CThostFtdcQryInvestorPositionDetailField field = new CThostFtdcQryInvestorPositionDetailField();
 //    field.setBrokerID(properties.getBrokerId());
 //    field.setInvestorID(properties.getUserId());
-//    field.setInstrumentID("SP a2307&a2309");
+//    field.setInstrumentID("SPC lh2305&m2309");
 //        traderApi.ReqQryInvestorPositionDetail(field, 0);
 
-        CThostFtdcQryInvestorPositionCombineDetailField combineDetailField=new CThostFtdcQryInvestorPositionCombineDetailField();
-        traderApi.ReqQryInvestorPositionCombineDetail(combineDetailField,0);
+        CThostFtdcQryInvestorPositionCombineDetailField combineDetailField = new CThostFtdcQryInvestorPositionCombineDetailField();
+//        traderApi.ReqQryInvestorPositionCombineDetail(combineDetailField,0);
 
+        //查询成交记录
+        CThostFtdcQryTradeField ftdcQryTradeField = new CThostFtdcQryTradeField();
+        ftdcQryTradeField.setBrokerID(properties.getBrokerId());
+//        ftdcQryTradeField.setInvestorID(properties.getUserId());
+        ftdcQryTradeField.setTradeTimeStart("20210101");
+        ftdcQryTradeField.setTradeTimeEnd("20230401");
+//        traderApi.ReqQryTrade(ftdcQryTradeField, 0);
+//
         //资金账户
         CThostFtdcQryTradingAccountField qryTradingAccount = new CThostFtdcQryTradingAccountField();
         qryTradingAccount.setBrokerID(properties.getBrokerId());
