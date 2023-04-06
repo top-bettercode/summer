@@ -2,6 +2,7 @@ package top.bettercode.summer.gradle.plugin.dist
 
 import com.github.alexeylisyutenko.windowsserviceplugin.*
 import org.apache.tools.ant.taskdefs.Get
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -22,6 +23,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.findDistProperty
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.jvmArgs
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.nativeLibArgs
+import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.nativePath
 import top.bettercode.summer.tools.lang.util.OS
 import java.io.File
 import java.math.BigInteger
@@ -44,7 +46,7 @@ class DistPlugin : Plugin<Project> {
 
         project.extensions.configure(DistExtension::class.java) {
             it.windows = (project.findDistProperty("windows"))?.toBoolean()
-                ?: OS.WINDOWS.isCurrentOs
+                    ?: OS.WINDOWS.isCurrentOs
             it.unwrapResources = project.findDistProperty("unwrap-resources")?.toBoolean() ?: true
             it.autoStart = project.findDistProperty("auto-start")?.toBoolean() ?: true
             it.includeJdk = project.findDistProperty("include-jdk")?.toBoolean() ?: false
@@ -55,8 +57,8 @@ class DistPlugin : Plugin<Project> {
             it.prevArchiveSrc = project.findDistProperty("prev-archive-src") ?: ""
             it.jvmArgs = (project.findDistProperty("jvm-args") ?: "").split(" +".toRegex())
             it.excludeUnWrapResources = (project.findDistProperty("exclude-unwrap-resources")
-                ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories").split(
-                ","
+                    ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories").split(
+                    ","
             )
         }
         val dist = project.extensions.getByType(DistExtension::class.java)
@@ -68,34 +70,34 @@ class DistPlugin : Plugin<Project> {
             project.extensions.configure(WindowsServicePluginConfiguration::class.java) {
                 val isX64 = project.findDistProperty("x64")?.toBoolean() != false
                 it.outputDir = (project.findDistProperty("windows-service.output-dir"))
-                    ?: "windows-service-${if (isX64) "x64" else "x86"}/${project.name}"
+                        ?: "windows-service-${if (isX64) "x64" else "x86"}/${project.name}"
                 val arch = project.findDistProperty("windows-service.architecture")
                 it.architecture = if (arch.isNullOrBlank()) {
                     (if (isX64) Architecture.AMD64 else Architecture.X86)
                 } else Architecture.valueOf(arch)
                 it.displayName = (project.findDistProperty("windows-service.display-name"))
-                    ?: project.name
+                        ?: project.name
                 it.description = (project.findDistProperty("windows-service.description"))
-                    ?: project.description
+                        ?: project.description
                 it.startClass = (project.findDistProperty("windows-service.start-class"))
-                    ?: project.findDistProperty("main-class-name")
+                        ?: project.findDistProperty("main-class-name")
                 it.startMethod = project.findDistProperty("windows-service.start-method")
-                    ?: "main"
+                        ?: "main"
                 it.startParams = project.findDistProperty("windows-service.start-params")
-                    ?: "start"
+                        ?: "start"
                 it.stopClass = (project.findDistProperty("windows-service.stop-class"))
-                    ?: project.findDistProperty("main-class-name")
+                        ?: project.findDistProperty("main-class-name")
                 it.stopMethod = project.findDistProperty("windows-service.stop-method")
-                    ?: "main"
+                        ?: "main"
                 it.stopParams = project.findDistProperty("windows-service.stop-params")
-                    ?: "stop"
+                        ?: "stop"
                 val startup = project.findDistProperty("windows-service.startup")
                 it.startup = if (startup.isNullOrBlank()) Startup.AUTO else Startup.valueOf(startup)
                 it.interactive =
-                    project.findDistProperty("windows-service.interactive")?.toBoolean()
-                        ?: false
+                        project.findDistProperty("windows-service.interactive")?.toBoolean()
+                                ?: false
                 it.dependsOn = (project.findDistProperty("windows-service.depends-on")
-                    ?: "").split(";")
+                        ?: "").split(";")
                 it.environment = project.findDistProperty("windows-service.environment") ?: ""
                 it.libraryPath = project.findDistProperty("windows-service.library-path")
                 it.javaHome = project.findDistProperty("windows-service.java-home")
@@ -110,22 +112,22 @@ class DistPlugin : Plugin<Project> {
                     }
                 }
                 it.jvmOptions = (project.findDistProperty("windows-service.jvm-options")
-                    ?: "").split(" +".toRegex())
+                        ?: "").split(" +".toRegex())
                 it.jvmOptions9 = (project.findDistProperty("windows-service.jvm-options-9")
-                    ?: "").split(" +".toRegex())
+                        ?: "").split(" +".toRegex())
                 it.jvmMs = project.findDistProperty("windows-service.jvm-ms")?.toIntOrNull()
                 it.jvmMx = project.findDistProperty("windows-service.jvm-mx")?.toIntOrNull()
                 it.jvmSs = project.findDistProperty("windows-service.jvm-ss")?.toIntOrNull()
                 it.stopTimeout =
-                    project.findDistProperty("windows-service.stop-timeout")?.toIntOrNull()
+                        project.findDistProperty("windows-service.stop-timeout")?.toIntOrNull()
                 it.logPath = project.findDistProperty("windows-service.log-path") ?: "logs"
                 it.logPrefix = project.findDistProperty("windows-service.log-prefix") ?: "service"
                 it.logLevel = LogLevel.valueOf(
-                    project.findDistProperty("windows-service.log-level")
-                        ?: "INFO"
+                        project.findDistProperty("windows-service.log-level")
+                                ?: "INFO"
                 )
                 it.logJniMessages =
-                    project.findDistProperty("windows-service.log-jni-messages")?.toIntOrNull()
+                        project.findDistProperty("windows-service.log-jni-messages")?.toIntOrNull()
                 it.stdOutput = project.findDistProperty("windows-service.std-output")
                 it.stdError = project.findDistProperty("windows-service.std-error")
                 it.pidFile = project.findDistProperty("windows-service.pid-file")
@@ -147,13 +149,13 @@ class DistPlugin : Plugin<Project> {
 
             if (dist.windows) {
                 val createWindowsServiceTaskName =
-                    WindowsServicePlugin.getCREATE_WINDOWS_SERVICE_TASK_NAME()
+                        WindowsServicePlugin.getCREATE_WINDOWS_SERVICE_TASK_NAME()
                 named(createWindowsServiceTaskName) { task ->
                     task as WindowsServicePluginTask
 
                     task.inputs.file(project.rootProject.file("gradle.properties"))
                     task.automaticClasspath =
-                        project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
+                            project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
                     task.doLast(object : Action<Task> {
                         override fun execute(it: Task) {
                             val outputDirectory = task.outputDirectory
@@ -172,11 +174,11 @@ class DistPlugin : Plugin<Project> {
                             }
                             val installScript = File(outputDirectory, "${project.name}-install.bat")
                             var installScriptText = installScript.readText()
-                                .replace("%APP_HOME%lib\\conf;", "%APP_HOME%conf;")
+                                    .replace("%APP_HOME%lib\\conf;", "%APP_HOME%conf;")
                             if (dist.autoStart) {
                                 installScriptText = installScriptText.replace(
-                                    "if \"%OS%\"==\"Windows_NT\" endlocal",
-                                    "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
+                                        "if \"%OS%\"==\"Windows_NT\" endlocal",
+                                        "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
                                 )
                             }
                             installScript.writeText(installScriptText)
@@ -186,7 +188,7 @@ class DistPlugin : Plugin<Project> {
                 create("windowsServiceZip", Zip::class.java) {
                     it.dependsOn(createWindowsServiceTaskName)
                     val createTask =
-                        project.tasks.getByName(createWindowsServiceTaskName) as WindowsServicePluginTask
+                            project.tasks.getByName(createWindowsServiceTaskName) as WindowsServicePluginTask
                     it.group = createTask.group
                     it.from(createTask.outputDirectory)
                     if (includeJre)
@@ -200,18 +202,18 @@ class DistPlugin : Plugin<Project> {
                     create("windowsServiceUpdate") {
                         it.dependsOn(createWindowsServiceTaskName)
                         val createTask =
-                            project.tasks.getByName(createWindowsServiceTaskName) as WindowsServicePluginTask
+                                project.tasks.getByName(createWindowsServiceTaskName) as WindowsServicePluginTask
                         it.group = createTask.group
                         it.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
                                 val updateDir =
-                                    File(createTask.outputDirectory.parentFile, "update")
+                                        File(createTask.outputDirectory.parentFile, "update")
                                 compareUpdate(
-                                    project,
-                                    updateDir,
-                                    project.file(dist.prevArchiveSrc),
-                                    createTask.outputDirectory,
-                                    true
+                                        project,
+                                        updateDir,
+                                        project.file(dist.prevArchiveSrc),
+                                        createTask.outputDirectory,
+                                        true
                                 )
                             }
                         })
@@ -220,7 +222,7 @@ class DistPlugin : Plugin<Project> {
                     create("windowsServiceUpdateZip", Zip::class.java) {
                         it.dependsOn("windowsServiceUpdate")
                         val createTask =
-                            project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
+                                project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
                         it.group = createTask.group
                         val updateDir = File(createTask.outputDirectory.parentFile, "update")
                         it.from(updateDir)
@@ -245,17 +247,17 @@ class DistPlugin : Plugin<Project> {
                 })
             }
             val taskNames =
-                gradle.startParameter.taskNames.map {
-                    var name = it
-                    if (currentProject != project.rootProject) name =
-                        currentProject.tasks.getByName(name).path
-                    if (name.startsWith(":")) name else ":$name"
-                }
+                    gradle.startParameter.taskNames.map {
+                        var name = it
+                        if (currentProject != project.rootProject) name =
+                                currentProject.tasks.getByName(name).path
+                        if (name.startsWith(":")) name else ":$name"
+                    }
 
             val distributionTask =
-                distributionTasks.find {
-                    taskNames.contains(it.path) || taskNames.contains(":" + it.name)
-                }
+                    distributionTasks.find {
+                        taskNames.contains(it.path) || taskNames.contains(":" + it.name)
+                    }
             project.rootProject.allprojects { p ->
                 p.tasks.named("jar") { task ->
                     task as Jar
@@ -265,32 +267,32 @@ class DistPlugin : Plugin<Project> {
                             val resources = mutableMapOf<String, String>()
                             task.exclude { file ->
                                 @Suppress("UnstableApiUsage") val destinationDir =
-                                    (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
+                                        (p.tasks.getByName(PROCESS_RESOURCES_TASK_NAME) as ProcessResources).destinationDir
                                 if (file.file.absolutePath.startsWith(destinationDir.absolutePath)) {
                                     val fileParentPath = destinationDir.absolutePath + "/"
                                     if (!file.isDirectory) {
                                         val exclude =
-                                            !dist.excludeUnWrapResources.contains(file.path)
+                                                !dist.excludeUnWrapResources.contains(file.path)
                                         if (exclude) resources[file.file.absolutePath] =
-                                            if (file.file.parentFile == destinationDir) "" else
-                                                file.file.parentFile.absolutePath.substringAfter(
-                                                    fileParentPath
-                                                )
+                                                if (file.file.parentFile == destinationDir) "" else
+                                                    file.file.parentFile.absolutePath.substringAfter(
+                                                            fileParentPath
+                                                    )
                                         exclude
                                     } else {
                                         var exclude = true
                                         file.file.walkTopDown().filter { it.isFile }.forEach {
                                             val path = it.path.substringAfter(fileParentPath)
                                             val contains =
-                                                dist.excludeUnWrapResources.contains(path)
+                                                    dist.excludeUnWrapResources.contains(path)
                                             if (contains) {
                                                 exclude = false
                                             } else {
                                                 resources[it.absolutePath] =
-                                                    if (it.parentFile == destinationDir) "" else
-                                                        it.parentFile.absolutePath.substringAfter(
-                                                            fileParentPath
-                                                        )
+                                                        if (it.parentFile == destinationDir) "" else
+                                                            it.parentFile.absolutePath.substringAfter(
+                                                                    fileParentPath
+                                                            )
                                             }
                                         }
 
@@ -311,10 +313,10 @@ class DistPlugin : Plugin<Project> {
                                                 }
                                             }
                                             spec.into(
-                                                File(
-                                                    distributionTask.project.buildDir,
-                                                    "conf"
-                                                ).absolutePath
+                                                    File(
+                                                            distributionTask.project.buildDir,
+                                                            "conf"
+                                                    ).absolutePath
                                             )
                                         }
                                     }
@@ -324,11 +326,11 @@ class DistPlugin : Plugin<Project> {
                     }
                     task.manifest {
                         it.attributes(
-                            mapOf(
-                                "Manifest-Version" to p.version,
-                                "Implementation-Title" to "${p.rootProject.name}${p.path}",
-                                "Implementation-Version" to p.version
-                            )
+                                mapOf(
+                                        "Manifest-Version" to p.version,
+                                        "Implementation-Title" to "${p.rootProject.name}${p.path}",
+                                        "Implementation-Version" to p.version
+                                )
                         )
                     }
                 }
@@ -336,7 +338,7 @@ class DistPlugin : Plugin<Project> {
 
             if (project.plugins.findPlugin(DistributionPlugin::class.java) != null) {
                 val distribution = project.extensions.getByType(DistributionContainer::class.java)
-                    .getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
+                        .getAt(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
                 distribution.contents { copySpec ->
 
                     if (dist.unwrapResources)
@@ -368,11 +370,11 @@ class DistPlugin : Plugin<Project> {
                                 val dest = project.file("" + project.buildDir + "/install")
                                 val updateDir = File(dest, "update")
                                 compareUpdate(
-                                    project,
-                                    updateDir,
-                                    project.file(dist.prevArchiveSrc),
-                                    File(dest, distribution.distributionBaseName.get()),
-                                    false
+                                        project,
+                                        updateDir,
+                                        project.file(dist.prevArchiveSrc),
+                                        File(dest, distribution.distributionBaseName.get()),
+                                        false
                                 )
                             }
                         })
@@ -402,15 +404,15 @@ class DistPlugin : Plugin<Project> {
             project.tasks.getByName("startScripts") { task ->
                 task as CreateStartScripts
                 task.unixStartScriptGenerator =
-                    StartScript.startScriptGenerator(
-                        project,
-                        dist,
-                        false,
-                        includeJre,
-                        includeNative
-                    )
+                        StartScript.startScriptGenerator(
+                                project,
+                                dist,
+                                false,
+                                includeJre,
+                                includeNative
+                        )
                 task.windowsStartScriptGenerator =
-                    StartScript.startScriptGenerator(project, dist, true, includeJre, includeNative)
+                        StartScript.startScriptGenerator(project, dist, true, includeJre, includeNative)
 
                 task.inputs.file(project.rootProject.file("gradle.properties"))
                 if (!task.mainClass.isPresent) {
@@ -430,13 +432,16 @@ class DistPlugin : Plugin<Project> {
                 task.jvmArgs = application.applicationDefaultJvmArgs.toList()
             else
                 task.jvmArgs = jvmArgs.toList()
+            if (Os.isFamily(Os.FAMILY_UNIX))
+                task.environment("LD_LIBRARY_PATH", project.file(project.nativePath))
+
         }
     }
 
     private fun includeJre(
-        copySpec: CopySpec,
-        dist: DistExtension,
-        project: Project
+            copySpec: CopySpec,
+            dist: DistExtension,
+            project: Project
     ) {
         val jdkArchive = dist.jdkArchive
         if (!jdkArchive.exists()) {
@@ -447,16 +452,16 @@ class DistPlugin : Plugin<Project> {
             get.setSkipExisting(true)
             println("download:${url}")
             get.doGet(
-                url, jdkArchive, 2,
-                Get.VerboseProgress(System.out)
+                    url, jdkArchive, 2,
+                    Get.VerboseProgress(System.out)
             )
         }
         println("packaging jdk:$jdkArchive")
         copySpec.from(
-            if (jdkArchive.extension == "zip")
-                project.zipTree(jdkArchive)
-            else
-                project.tarTree(jdkArchive)
+                if (jdkArchive.extension == "zip")
+                    project.zipTree(jdkArchive)
+                else
+                    project.tarTree(jdkArchive)
         ) { spec ->
             spec.include("*/jre/**")
             spec.eachFile {
@@ -472,11 +477,11 @@ class DistPlugin : Plugin<Project> {
     }
 
     private fun compareUpdate(
-        project: Project,
-        updateDir: File,
-        oldDir: File,
-        newDir: File,
-        isWindows: Boolean
+            project: Project,
+            updateDir: File,
+            oldDir: File,
+            newDir: File,
+            isWindows: Boolean
     ) {
         updateDir.deleteRecursively()
         updateDir.mkdirs()
@@ -496,7 +501,7 @@ class DistPlugin : Plugin<Project> {
             deleteFileList.printWriter().use { pw ->
                 olds.forEach {
                     val subPath =
-                        it.absolutePath.substringAfter(oldDir.absolutePath + File.separator)
+                            it.absolutePath.substringAfter(oldDir.absolutePath + File.separator)
                     val newFile = File(newDir, subPath)
                     if (!newFile.exists()) {
                         pw.println(subPath)

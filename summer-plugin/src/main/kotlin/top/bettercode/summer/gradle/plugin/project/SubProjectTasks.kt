@@ -1,11 +1,9 @@
 package top.bettercode.summer.gradle.plugin.project
 
 import isBoot
-import isCore
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.JavaCompile
@@ -13,8 +11,6 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.application.tasks.CreateStartScripts
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
-import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.jvmArgs
-import top.bettercode.summer.gradle.plugin.generator.GeneratorPlugin
 import top.bettercode.summer.gradle.plugin.project.template.Controller
 import top.bettercode.summer.gradle.plugin.project.template.Entity
 import top.bettercode.summer.gradle.plugin.project.template.SerializationViews
@@ -32,21 +28,10 @@ object SubProjectTasks {
 
     fun config(project: Project) {
         project.tasks.apply {
-            val jvmArgs = project.jvmArgs
-
-            val application = project.extensions.findByType(JavaApplication::class.java)
-            if (application != null) {
-                application.applicationDefaultJvmArgs += jvmArgs
-                application.applicationDefaultJvmArgs =
-                    application.applicationDefaultJvmArgs.distinct()
-            }
-
             named("test", Test::class.java) {
                 it.useJUnitPlatform()
                 it.reports.html.required.set(false)
                 it.reports.junitXml.required.set(false)
-                if (application != null) it.jvmArgs = application.applicationDefaultJvmArgs.toList()
-                else it.jvmArgs = jvmArgs.toList()
             }
 
             named("build") {
