@@ -11,7 +11,7 @@ public class TraderSpiImpl extends CThostFtdcTraderSpi {
     private final Logger log = LoggerFactory.getLogger(TraderSpiImpl.class);
 
     private final CtpProperties properties;
-    private CThostFtdcTraderApi traderApi;
+    private final CThostFtdcTraderApi traderApi;
 
     private boolean userLogin;
 

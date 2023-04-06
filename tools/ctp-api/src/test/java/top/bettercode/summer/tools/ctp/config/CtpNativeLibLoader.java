@@ -28,6 +28,9 @@ public class CtpNativeLibLoader {
       System.loadLibrary("thosttraderapi_se");
       System.loadLibrary("thostmduserapi_se");
       System.loadLibrary("thostapi_wrap");
+//      System.load("/data/repositories/bettercode/default/summer/tools/ctp-api/native/cp/libthostmduserapi_se.so");
+//      System.load("/data/repositories/bettercode/default/summer/tools/ctp-api/native/cp/libthosttraderapi_se.so");
+//      System.load("/data/repositories/bettercode/default/summer/tools/ctp-api/native/cp/libthostapi_wrap.so");
       return true;
     } catch (Exception e) {
       log.error("Failed to load " + LIB_NAME + " library", e);

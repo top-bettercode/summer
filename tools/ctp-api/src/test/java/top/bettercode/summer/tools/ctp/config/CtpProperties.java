@@ -17,11 +17,11 @@ public class CtpProperties {
    */
   private String traderRegisterFront;
   /**
-   * 期货公司的会员号
+   * 经纪公司代码
    */
   private String brokerId;
   /**
-   * 投资者在该期货公司的客户号
+   * 用户代码
    */
   private String userId;
   /**
@@ -29,11 +29,11 @@ public class CtpProperties {
    */
   private String password;
   /**
-   * 产品标识
+   * App代码
    */
   private String appId;
   /**
-   * 产品授权码
+   * 认证码
    */
   private String authCode;
   /**
