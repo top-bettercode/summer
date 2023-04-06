@@ -31,8 +31,8 @@ open class Generator {
     val Column.docRemark: String
         get() = "${
             (if (remark.isBlank()) "" else (if (softDelete) remark.split(Regex("[:：,， (（]"))[0] else remark.replace(
-                "@",
-                "\\@"
+                    "@",
+                    "\\@"
             )))
         }${if (columnDef == null || softDelete) "" else " 默认值：${if (columnDef!!.isBlank()) "'$columnDef'" else columnDef}"}"
 
@@ -65,7 +65,7 @@ open class Generator {
             var packageName = basePackageName
             if (settings["no-modules"] == null)
                 packageName =
-                    if (packageName.endsWith(".${table.module}") || packageName.contains(".${table.module}.")) packageName else "$packageName.${table.module}"
+                        if (packageName.endsWith(".${table.module}") || packageName.contains(".${table.module}.")) packageName else "$packageName.${table.module}"
             return if (ext.userModule && table.subModule.isNotBlank()) {
                 "$packageName.${table.subModule}"
             } else {
@@ -82,15 +82,15 @@ open class Generator {
     val projectClassName
         get() =
             if (enable(
-                    "projectClassName",
-                    true
-                )
+                            "projectClassName",
+                            true
+                    )
             ) table.className + shortProjectName else table.className
 
     val shortProjectName
         get() =
             projectName.replace("-", "").substring(
-                0, if (projectName.length > 5) 5 else projectName.length
+                    0, if (projectName.length > 5) 5 else projectName.length
             ).capitalized()
 
     val entityName
@@ -127,8 +127,8 @@ open class Generator {
             val primaryKeys = table.primaryKeys
             return if (primaryKeys.isEmpty()) {
                 val primaryKey =
-                    columns.find { it.columnName.equals(ext.primaryKeyName, true) }
-                        ?: columns.find { it.remark.contains("主键") }
+                        columns.find { it.columnName.equals(ext.primaryKeyName, true) }
+                                ?: columns.find { it.remark.contains("主键") }
                 if (primaryKey != null) {
                     listOf(primaryKey)
                 } else {
@@ -183,10 +183,10 @@ open class Generator {
                 if (primaryKey.sequence.isNotBlank()) JavaType("java.lang.Long") else primaryKey.javaType
             } else {
                 JavaType(
-                    "$packageName.${modulePackage("Entity")}.${
-                        if (isFullComposite) table.className
-                        else "${table.className}Key"
-                    }"
+                        "$packageName.${modulePackage("Entity")}.${
+                            if (isFullComposite) table.className
+                            else "${table.className}Key"
+                        }"
                 )
             }
 
@@ -262,92 +262,92 @@ open class Generator {
     }
 
     fun file(
-        name: String,
-        overwrite: Boolean = true,
-        sourceSet: SourceSet = SourceSet.ROOT,
-        directorySet: DirectorySet = DirectorySet.RESOURCES,
-        apply: FileUnit.() -> Unit = { }
+            name: String,
+            overwrite: Boolean = true,
+            sourceSet: SourceSet = SourceSet.ROOT,
+            directorySet: DirectorySet = DirectorySet.RESOURCES,
+            apply: FileUnit.() -> Unit = { }
     ): FileUnit {
         return FileUnit(
-            name = name,
-            overwrite = overwrite,
-            sourceSet = sourceSet,
-            directorySet = directorySet
+                name = name,
+                overwrite = overwrite,
+                sourceSet = sourceSet,
+                directorySet = directorySet
         ).apply(apply)
     }
 
     fun properties(
-        name: String,
-        overwrite: Boolean = false,
-        sourceSet: SourceSet = SourceSet.MAIN,
-        directorySet: DirectorySet = DirectorySet.RESOURCES,
-        apply: PropertiesUnit.() -> Unit = { }
+            name: String,
+            overwrite: Boolean = false,
+            sourceSet: SourceSet = SourceSet.MAIN,
+            directorySet: DirectorySet = DirectorySet.RESOURCES,
+            apply: PropertiesUnit.() -> Unit = { }
     ): PropertiesUnit {
         return PropertiesUnit(
-            name = name,
-            overwrite = overwrite,
-            sourceSet = sourceSet,
-            directorySet = directorySet
+                name = name,
+                overwrite = overwrite,
+                sourceSet = sourceSet,
+                directorySet = directorySet
         ).apply(apply)
     }
 
     fun packageInfo(
-        type: JavaType,
-        overwrite: Boolean = false,
-        sourceSet: SourceSet = SourceSet.MAIN,
-        directorySet: DirectorySet = DirectorySet.JAVA,
-        apply: PackageInfo.() -> Unit = { }
+            type: JavaType,
+            overwrite: Boolean = false,
+            sourceSet: SourceSet = SourceSet.MAIN,
+            directorySet: DirectorySet = DirectorySet.JAVA,
+            apply: PackageInfo.() -> Unit = { }
     ): PackageInfo {
         return PackageInfo(
-            type = type,
-            overwrite = overwrite,
-            sourceSet = sourceSet,
-            directorySet = directorySet
+                type = type,
+                overwrite = overwrite,
+                sourceSet = sourceSet,
+                directorySet = directorySet
         ).apply(apply)
     }
 
 
     fun interfaze(
-        type: JavaType,
-        overwrite: Boolean = false,
-        sourceSet: SourceSet = SourceSet.MAIN,
-        visibility: JavaVisibility = JavaVisibility.PUBLIC,
-        apply: Interface.() -> Unit = { }
+            type: JavaType,
+            overwrite: Boolean = false,
+            sourceSet: SourceSet = SourceSet.MAIN,
+            visibility: JavaVisibility = JavaVisibility.PUBLIC,
+            apply: Interface.() -> Unit = { }
     ): Interface {
         return Interface(
-            type = type,
-            overwrite = overwrite,
-            sourceSet = sourceSet,
-            visibility = visibility
+                type = type,
+                overwrite = overwrite,
+                sourceSet = sourceSet,
+                visibility = visibility
         ).apply(apply)
     }
 
     fun clazz(
-        type: JavaType,
-        overwrite: Boolean = false,
-        sourceSet: SourceSet = SourceSet.MAIN,
-        visibility: JavaVisibility = JavaVisibility.PUBLIC,
-        apply: TopLevelClass.() -> Unit = { }
+            type: JavaType,
+            overwrite: Boolean = false,
+            sourceSet: SourceSet = SourceSet.MAIN,
+            visibility: JavaVisibility = JavaVisibility.PUBLIC,
+            apply: TopLevelClass.() -> Unit = { }
     ): TopLevelClass {
         return TopLevelClass(
-            type = type,
-            overwrite = overwrite,
-            sourceSet = sourceSet,
-            visibility = visibility
+                type = type,
+                overwrite = overwrite,
+                sourceSet = sourceSet,
+                visibility = visibility
         ).apply(apply)
     }
 
 
     fun enum(
-        type: JavaType,
-        overwrite: Boolean = false,
-        sourceSet: SourceSet = SourceSet.MAIN,
-        apply: TopLevelEnumeration.() -> Unit = { }
+            type: JavaType,
+            overwrite: Boolean = false,
+            sourceSet: SourceSet = SourceSet.MAIN,
+            apply: TopLevelEnumeration.() -> Unit = { }
     ): TopLevelEnumeration {
         return TopLevelEnumeration(
-            type = type,
-            overwrite = overwrite,
-            sourceSet = sourceSet
+                type = type,
+                overwrite = overwrite,
+                sourceSet = sourceSet
         ).apply(apply)
     }
 
@@ -390,30 +390,32 @@ open class Generator {
 
     }
 
-
-    fun Column.dicCodes(ext: GeneratorExtension): DicCodes? {
-        return if (isCodeField) {
-            val codeType = if (columnName.contains("_") || ext.commonCodeTypes.any {
+    val Column.codeType: String
+        get() = if (columnName.contains("_") || ext.commonCodeTypes.any {
                     it.equals(
-                        columnName,
-                        true
+                            columnName,
+                            true
                     )
                 }) javaName else (className + javaName.capitalized()).decapitalized()
+
+    fun Column.dicCodes(): DicCodes? {
+        return if (isCodeField) {
+            val codeType = codeType
             val prettyRemarks = prettyRemarks
             val codeTypeName = prettyRemarks.substringBefore('(')
 
             val dicCodes = DicCodes(
-                codeType,
-                codeTypeName,
-                JavaType.stringInstance != javaType
+                    codeType,
+                    codeTypeName,
+                    JavaType.stringInstance != javaType
             )
             prettyRemarks.substringAfter('(').substringBeforeLast(')').trim('?', '.')
-                .split(";").filter { it.isNotBlank() }
-                .forEach { item: String ->
-                    val code = item.substringBefore(":").trim().trim(',', '，').trim()
-                    val name = item.substringAfter(":").trim().trim(',', '，').trim()
-                    dicCodes.codes[code] = name
-                }
+                    .split(";").filter { it.isNotBlank() }
+                    .forEach { item: String ->
+                        val code = item.substringBefore(":").trim().trim(',', '，').trim()
+                        val name = item.substringAfter(":").trim().trim(',', '，').trim()
+                        dicCodes.codes[code] = name
+                    }
 
             return dicCodes
         } else {
@@ -425,7 +427,7 @@ open class Generator {
         get() = when {
             columnDef == null || "CURRENT_TIMESTAMP".equals(columnDef, true) ->
                 when {
-                    isCodeField && !asBoolean -> dicCodes(ext)!!.codes.keys.first()
+                    isCodeField && !asBoolean -> dicCodes()!!.codes.keys.first()
                     else ->
                         when (javaType) {
                             JavaType("java.math.BigDecimal") -> java.math.BigDecimal("1.0")
@@ -453,7 +455,7 @@ open class Generator {
             initializationString.isNullOrBlank() -> {
                 when {
                     isCodeField && !asBoolean -> {
-                        val value = dicCodes(ext)!!.codes.keys.first()
+                        val value = dicCodes()!!.codes.keys.first()
                         if (JavaType.stringInstance == javaType) "\"$value\"" else "$value"
                     }
 
@@ -486,6 +488,11 @@ open class Generator {
                         JavaType("java.time.LocalDateTime") -> {
                             unit?.import("java.time.LocalDateTime")
                             "LocalDateTime.now()"
+                        }
+
+                        JavaType("java.math.BigDecimal") -> {
+                            unit?.import("java.math.BigDecimal")
+                            "new BigDecimal(\"1\")"
                         }
 
                         PrimitiveTypeWrapper.booleanInstance -> "false"
@@ -521,9 +528,9 @@ open class Generator {
                 JavaType.stringInstance -> "\"$columnDef\""
                 else -> {
                     if ("CURRENT_TIMESTAMP".equals(columnDef, true) || "SYSDATE".equals(
-                            columnDef,
-                            true
-                        )
+                                    columnDef,
+                                    true
+                            )
                     ) {
                         when (javaType) {
                             JavaType("java.sql.Timestamp") -> {
@@ -576,6 +583,17 @@ open class Generator {
 
 
     companion object {
+
+        fun enumClassName(codeType: String): String {
+            return codeType.split("_").joinToString("") {
+                if (codeType.matches(Regex(".*[a-z].*")))
+                    it.capitalized()
+                else
+                    it.lowercase(Locale.getDefault())
+                            .capitalized()
+            }
+        }
+
         fun toBoolean(obj: Any?): Boolean {
             when (obj) {
                 is Boolean -> return obj
@@ -587,12 +605,12 @@ open class Generator {
                         1 -> {
                             val ch0 = obj[0]
                             if (ch0 == 'y' || ch0 == 'Y' ||
-                                ch0 == 't' || ch0 == 'T' || ch0 == '1'
+                                    ch0 == 't' || ch0 == 'T' || ch0 == '1'
                             ) {
                                 return true
                             }
                             if (ch0 == 'n' || ch0 == 'N' ||
-                                ch0 == 'f' || ch0 == 'F' || ch0 == '0'
+                                    ch0 == 'f' || ch0 == 'F' || ch0 == '0'
                             ) {
                                 return false
                             }
@@ -614,14 +632,14 @@ open class Generator {
                             val ch1 = obj[1]
                             val ch2 = obj[2]
                             if ((ch0 == 'y' || ch0 == 'Y') &&
-                                (ch1 == 'e' || ch1 == 'E') &&
-                                (ch2 == 's' || ch2 == 'S')
+                                    (ch1 == 'e' || ch1 == 'E') &&
+                                    (ch2 == 's' || ch2 == 'S')
                             ) {
                                 return true
                             }
                             if ((ch0 == 'o' || ch0 == 'O') &&
-                                (ch1 == 'f' || ch1 == 'F') &&
-                                (ch2 == 'f' || ch2 == 'F')
+                                    (ch1 == 'f' || ch1 == 'F') &&
+                                    (ch2 == 'f' || ch2 == 'F')
                             ) {
                                 return false
                             }
@@ -633,9 +651,9 @@ open class Generator {
                             val ch2 = obj[2]
                             val ch3 = obj[3]
                             if ((ch0 == 't' || ch0 == 'T') &&
-                                (ch1 == 'r' || ch1 == 'R') &&
-                                (ch2 == 'u' || ch2 == 'U') &&
-                                (ch3 == 'e' || ch3 == 'E')
+                                    (ch1 == 'r' || ch1 == 'R') &&
+                                    (ch2 == 'u' || ch2 == 'U') &&
+                                    (ch3 == 'e' || ch3 == 'E')
                             ) {
                                 return true
                             }
@@ -648,10 +666,10 @@ open class Generator {
                             val ch3 = obj[3]
                             val ch4 = obj[4]
                             if ((ch0 == 'f' || ch0 == 'F') &&
-                                (ch1 == 'a' || ch1 == 'A') &&
-                                (ch2 == 'l' || ch2 == 'L') &&
-                                (ch3 == 's' || ch3 == 'S') &&
-                                (ch4 == 'e' || ch4 == 'E')
+                                    (ch1 == 'a' || ch1 == 'A') &&
+                                    (ch2 == 'l' || ch2 == 'L') &&
+                                    (ch3 == 's' || ch3 == 'S') &&
+                                    (ch4 == 'e' || ch4 == 'E')
                             ) {
                                 return false
                             }

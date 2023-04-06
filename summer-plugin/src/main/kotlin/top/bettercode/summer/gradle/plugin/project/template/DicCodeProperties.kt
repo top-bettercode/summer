@@ -17,7 +17,7 @@ class DicCodeProperties : Generator() {
         (this[name] as PropertiesUnit).apply {
             columns.forEach { col ->
                 if (col.isCodeField) {
-                    val dicCodes = col.dicCodes(ext)!!
+                    val dicCodes = col.dicCodes()!!
                     val codeType = dicCodes.type
                     val size = dicCodes.codes.size
                     if (!codeTypes.contains(codeType) || (codeTypes[codeType] ?: 0) > size) {

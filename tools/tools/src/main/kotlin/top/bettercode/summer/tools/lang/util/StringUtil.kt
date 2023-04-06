@@ -37,55 +37,55 @@ object StringUtil {
         INDENT_OUTPUT_OBJECT_MAPPER.enable(SerializationFeature.INDENT_OUTPUT)
 
         val module: com.fasterxml.jackson.databind.module.SimpleModule =
-            com.fasterxml.jackson.databind.module.SimpleModule()
+                com.fasterxml.jackson.databind.module.SimpleModule()
         module.addSerializer(
-            LocalDate::class.java,
-            object : JsonSerializer<LocalDate>() {
-                @Throws(IOException::class)
-                override fun serialize(
-                    value: LocalDate,
-                    gen: JsonGenerator,
-                    serializers: SerializerProvider
-                ) {
-                    gen.writeNumber(TimeUtil.of(value).toMillis())
-                }
-            })
+                LocalDate::class.java,
+                object : JsonSerializer<LocalDate>() {
+                    @Throws(IOException::class)
+                    override fun serialize(
+                            value: LocalDate,
+                            gen: JsonGenerator,
+                            serializers: SerializerProvider
+                    ) {
+                        gen.writeNumber(TimeUtil.of(value).toMillis())
+                    }
+                })
         module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
             @Throws(IOException::class)
             override fun serialize(
-                value: LocalDateTime, gen: JsonGenerator,
-                serializers: SerializerProvider?
+                    value: LocalDateTime, gen: JsonGenerator,
+                    serializers: SerializerProvider?
             ) {
                 gen.writeNumber(TimeUtil.of(value).toMillis())
             }
         })
 
         module.addDeserializer(
-            LocalDate::class.java,
-            object : JsonDeserializer<LocalDate?>() {
-                override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
-                    val valueAsString = p.valueAsString
-                    return if (valueAsString.isNullOrBlank())
-                        null
-                    else
-                        TimeUtil.toLocalDate(valueAsString.toLong())
-                }
-            })
+                LocalDate::class.java,
+                object : JsonDeserializer<LocalDate?>() {
+                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
+                        val valueAsString = p.valueAsString
+                        return if (valueAsString.isNullOrBlank())
+                            null
+                        else
+                            TimeUtil.toLocalDate(valueAsString.toLong())
+                    }
+                })
 
         module.addDeserializer(
-            LocalDateTime::class.java,
-            object : JsonDeserializer<LocalDateTime?>() {
-                override fun deserialize(
-                    p: JsonParser,
-                    ctxt: DeserializationContext
-                ): LocalDateTime? {
-                    val valueAsString = p.valueAsString
-                    return if (valueAsString.isNullOrBlank())
-                        null
-                    else
-                        return TimeUtil.toLocalDateTime(p.valueAsString.toLong())
-                }
-            })
+                LocalDateTime::class.java,
+                object : JsonDeserializer<LocalDateTime?>() {
+                    override fun deserialize(
+                            p: JsonParser,
+                            ctxt: DeserializationContext
+                    ): LocalDateTime? {
+                        val valueAsString = p.valueAsString
+                        return if (valueAsString.isNullOrBlank())
+                            null
+                        else
+                            return TimeUtil.toLocalDateTime(p.valueAsString.toLong())
+                    }
+                })
 
 
         OBJECT_MAPPER.registerModule(module)
@@ -102,8 +102,8 @@ object StringUtil {
         var i = 1
         while (i < buf.length - 1) {
             if (Character.isLowerCase(buf[i - 1]) &&
-                Character.isUpperCase(buf[i]) &&
-                Character.isLowerCase(buf[i + 1])
+                    Character.isUpperCase(buf[i]) &&
+                    Character.isLowerCase(buf[i + 1])
             ) {
                 buf.insert(i++, '_')
             }
@@ -168,19 +168,19 @@ object StringUtil {
                 when (c) {
                     '{', '[' -> {
                         ret.append(c).append(newline)
-                            .append(String.format("%" + indentWidth.let { indent += it; indent } + "s",
-                                ""))
+                                .append(String.format("%" + indentWidth.let { indent += it; indent } + "s",
+                                        ""))
                         i++
                         continue@loop
                     }
 
                     '}', ']' -> {
                         ret.append(newline)
-                            .append(if (indentWidth.let { indent -= it; indent } > 0) String.format(
-                                "%" + indent + "s",
-                                ""
-                            ) else "")
-                            .append(c)
+                                .append(if (indentWidth.let { indent -= it; indent } > 0) String.format(
+                                        "%" + indent + "s",
+                                        ""
+                                ) else "")
+                                .append(c)
                         i++
                         continue@loop
                     }
@@ -193,7 +193,7 @@ object StringUtil {
 
                     ',' -> {
                         ret.append(c).append(newline)
-                            .append(if (indent > 0) String.format("%" + indent + "s", "") else "")
+                                .append(if (indent > 0) String.format("%" + indent + "s", "") else "")
                         i++
                         continue@loop
                     }
@@ -315,8 +315,8 @@ object StringUtil {
      * @return 分割后数组
      */
     private fun splitWorker(
-        str: String?, separatorChars: String?, max: Int,
-        preserveAllTokens: Boolean
+            str: String?, separatorChars: String?, max: Int,
+            preserveAllTokens: Boolean
     ): Array<String>? {
         // Performance tuned for 2.0 (JDK1.4)
         // Direct code is quicker than StringTokenizer.
@@ -535,9 +535,9 @@ object StringUtil {
     @JvmStatic
     fun trimMoneyTrailing(value: String): String {
         return if (value.contains(".")) StringUtils.trimTrailingCharacter(
-            StringUtils.trimTrailingCharacter(
-                value, '0'
-            ), '.'
+                StringUtils.trimTrailingCharacter(
+                        value, '0'
+                ), '.'
         ) else value
     }
 
@@ -577,13 +577,13 @@ object StringUtil {
             else if (toIntOrNull1 != null && toIntOrNull2 == null)
                 return 1
             var v2 = toIntOrNull2
-                ?: versionTails.indexOf(
-                    version2s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
-                )
+                    ?: versionTails.indexOf(
+                            version2s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                    )
             var v1 = toIntOrNull1
-                ?: versionTails.indexOf(
-                    version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
-                )
+                    ?: versionTails.indexOf(
+                            version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                    )
             if (v1 != -1 && v1 == v2 && toIntOrNull1 == null && toIntOrNull2 == null) {
                 v2 = version2s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
                 v1 = version1s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
@@ -602,6 +602,29 @@ object StringUtil {
             // 相等 比较下一组值
         }
         return 0
+    }
+
+    @JvmStatic
+    fun underscoreName(name: String): String {
+        if (name.matches(Regex(".*[a-z].*"))) {
+            val result = StringBuilder()
+            if (name.isNotEmpty()) {
+                // 将第一个字符处理成大写
+                result.append(name.substring(0, 1).uppercase(Locale.getDefault()))
+                // 循环处理其余字符
+                for (i in 1 until name.length) {
+                    val s = name.substring(i, i + 1)
+                    // 在大写字母前添加下划线
+                    if (s == s.uppercase(Locale.getDefault()) && !Character.isDigit(s[0]) && s[0] != '_') {
+                        result.append("_")
+                    }
+                    // 其他字符直接转成大写
+                    result.append(s.uppercase(Locale.getDefault()))
+                }
+            }
+            return result.toString()
+        } else
+            return name
     }
 
 }

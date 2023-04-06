@@ -4,6 +4,7 @@ import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.Interface
+import top.bettercode.summer.tools.generator.dsl.Generator.Companion.enumClassName
 import top.bettercode.summer.tools.lang.capitalized
 
 /**
@@ -17,16 +18,16 @@ val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
             +" */"
         }
         implement(
-            JavaType("top.bettercode.summer.web.serializer.MixIn").typeArgument(
-                if (isFullComposite) primaryKeyType else entityType
-            ), methodInfoType, serializationViewsType
+                JavaType("top.bettercode.summer.web.serializer.MixIn").typeArgument(
+                        if (isFullComposite) primaryKeyType else entityType
+                ), methodInfoType, serializationViewsType
         )
 
         if (!isFullComposite) {
             //primaryKey getter
             method(
-                "get${primaryKeyName.capitalized()}",
-                primaryKeyType
+                    "get${primaryKeyName.capitalized()}",
+                    primaryKeyType
             ) {
                 javadoc {
                     +"/**"
@@ -50,8 +51,8 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
     interfaze.apply {
         if (it.jsonViewIgnored)
             method(
-                "get${it.javaName.capitalized()}",
-                it.javaType
+                    "get${it.javaName.capitalized()}",
+                    it.javaType
             ) {
                 annotation("@com.fasterxml.jackson.annotation.JsonIgnore")
                 annotation("@Override")
@@ -60,21 +61,15 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
         //code
         if (!it.softDelete && it.isCodeField) {
             method(
-                "get${it.javaName.capitalized()}",
-                it.javaType
+                    "get${it.javaName.capitalized()}",
+                    it.javaType
             ) {
                 if (it.columnName.contains("_") || it.softDelete)
                     annotation("@top.bettercode.summer.web.serializer.annotation.JsonCode")
                 else {
-                    import(
-                        "${
-                            (ext.packageName + ".support.dic." + className + it.javaName.capitalized())
-                        }Enum"
-                    )
-                    annotation(
-                        "@top.bettercode.summer.web.serializer.annotation.JsonCode(${
-                            (className + it.javaName.capitalized())
-                        }Enum.ENUM_NAME)"
+                    import("${(ext.packageName + ".support.dic." + enumClassName(it.codeType))}Enum")
+
+                    annotation("@top.bettercode.summer.web.serializer.annotation.JsonCode(${enumClassName(it.codeType)}Enum.ENUM_NAME)"
                     )
                 }
                 annotation("@Override")

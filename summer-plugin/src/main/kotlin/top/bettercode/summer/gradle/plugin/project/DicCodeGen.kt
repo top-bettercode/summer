@@ -12,8 +12,9 @@ import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.DicCodes
+import top.bettercode.summer.tools.generator.dsl.Generator.Companion.enumClassName
 import top.bettercode.summer.tools.lang.decapitalized
-import java.io.File
+import top.bettercode.summer.tools.lang.util.StringUtil
 import java.util.*
 
 
@@ -35,7 +36,7 @@ class DicCodeGen(private val project: Project) {
             val props = Properties()
             props.load(dicCodeFile.inputStream())
             val collectionType = TypeFactory.defaultInstance()
-                .constructCollectionType(LinkedHashSet::class.java, Field::class.java)
+                    .constructCollectionType(LinkedHashSet::class.java, Field::class.java)
             addFields("doc/request.parameters.yml", props, collectionType)
             addFields("doc/response.content.yml", props, collectionType)
         }
@@ -49,7 +50,7 @@ class DicCodeGen(private val project: Project) {
             val field = Field()
             field.name = t.type
             field.description =
-                "${t.name}(${t.codes.entries.joinToString { "${it.key}:${it.value}" }})"
+                    "${t.name}(${t.codes.entries.joinToString { "${it.key}:${it.value}" }})"
             field.type = if (t.isInt) "Integer" else "String"
             fields.add(field)
         }
@@ -74,14 +75,14 @@ class DicCodeGen(private val project: Project) {
                 val isInt = "Int" == properties.getProperty("$codeType|TYPE")
                 val dicCode = map.computeIfAbsent(codeType) {
                     DicCodes(
-                        codeType,
-                        properties.getProperty(codeType),
-                        isInt
+                            codeType,
+                            properties.getProperty(codeType),
+                            isInt
                     )
                 }
                 val codeKey =
-                    if (code.startsWith("0") && code.length > 1) code else (code.toIntOrNull()
-                        ?: code)
+                        if (code.startsWith("0") && code.length > 1) code else (code.toIntOrNull()
+                                ?: code)
                 dicCode.codes[codeKey] = properties.getProperty(key)
             }
         }
@@ -111,23 +112,17 @@ class DicCodeGen(private val project: Project) {
                 +"|$codeType|$codeTypeName\n"
                 docText.appendLine(".$codeTypeName($codeType)")
                 docText.appendLine(
-                    """|===
+                        """|===
             | 编码 | 说明
             """
                 )
-                val className = codeType.split("_").joinToString("") {
-                    if (codeType.matches(Regex(".*[a-z].*")))
-                        it.capitalized()
-                    else
-                        it.lowercase(Locale.getDefault())
-                            .capitalized()
-                }
+                val className = enumClassName(codeType)
 
                 val isIntCode = v.isInt
                 val fieldType =
-                    if (isIntCode) JavaType.intPrimitiveInstance else JavaType.stringInstance
+                        if (isIntCode) JavaType.intPrimitiveInstance else JavaType.stringInstance
                 val fieldType2 =
-                    if (isIntCode) JavaType("java.lang.Integer") else JavaType.stringInstance
+                        if (isIntCode) JavaType("java.lang.Integer") else JavaType.stringInstance
 
                 //
                 val enumType = JavaType("$packageName.support.dic.${className}Enum")
@@ -144,25 +139,25 @@ class DicCodeGen(private val project: Project) {
                     v.codes.forEach { (code, name) ->
                         docText.appendLine("|$code|$name")
 
-                        val codeFieldName = underscoreName(
-                            if (code is Int || code.toString()
-                                    .startsWith("0") && code.toString().length > 1
-                            ) {
-                                "CODE_${code.toString().replace("-", "MINUS_")}"
-                            } else if (code.toString().isBlank()) {
-                                "BLANK"
-                            } else {
-                                (code as String).replace("-", "_").replace(".", "_")
-                            }
+                        val codeFieldName = StringUtil.underscoreName(
+                                if (code is Int || code.toString()
+                                                .startsWith("0") && code.toString().length > 1
+                                ) {
+                                    "CODE_${code.toString().replace("-", "MINUS_")}"
+                                } else if (code.toString().isBlank()) {
+                                    "BLANK"
+                                } else {
+                                    (code as String).replace("-", "_").replace(".", "_")
+                                }
                         ).replace(Regex("_+"), "_")
                         innerInterface.apply {
                             visibility = JavaVisibility.PUBLIC
                             val initializationString =
-                                if (isIntCode) code.toString() else "\"$code\""
+                                    if (isIntCode) code.toString() else "\"$code\""
                             field(
-                                codeFieldName,
-                                fieldType,
-                                initializationString
+                                    codeFieldName,
+                                    fieldType,
+                                    initializationString
                             ) {
                                 visibility = JavaVisibility.DEFAULT
                                 javadoc {
@@ -184,18 +179,18 @@ class DicCodeGen(private val project: Project) {
                         //auth
                         if ("auth" == codeType) {
                             val authName =
-                                PinyinHelper.convertToPinyinString(
-                                    name,
-                                    "_",
-                                    PinyinFormat.WITHOUT_TONE
-                                ).split('_').joinToString("") {
-                                    it.capitalized()
-                                }
+                                    PinyinHelper.convertToPinyinString(
+                                            name,
+                                            "_",
+                                            PinyinFormat.WITHOUT_TONE
+                                    ).split('_').joinToString("") {
+                                        it.capitalized()
+                                    }
 
                             val authClassName = "Auth${authName}"
                             Interface(
-                                type = JavaType("$packageName.security.auth.$authClassName"),
-                                overwrite = true
+                                    type = JavaType("$packageName.security.auth.$authClassName"),
+                                    overwrite = true
                             ).apply {
                                 isAnnotation = true
                                 javadoc {
@@ -221,11 +216,11 @@ class DicCodeGen(private val project: Project) {
                     }
 
                     field(
-                        "ENUM_NAME",
-                        JavaType.stringInstance,
-                        "\"$codeType\"",
-                        true,
-                        JavaVisibility.PUBLIC
+                            "ENUM_NAME",
+                            JavaType.stringInstance,
+                            "\"$codeType\"",
+                            true,
+                            JavaVisibility.PUBLIC
                     ) {
                         isStatic = true
                         javadoc {
@@ -257,9 +252,9 @@ class DicCodeGen(private val project: Project) {
                         +"return nameOf(code);"
                     }
                     method(
-                        "equals",
-                        JavaType.booleanPrimitiveInstance,
-                        Parameter("code", fieldType2)
+                            "equals",
+                            JavaType.booleanPrimitiveInstance,
+                            Parameter("code", fieldType2)
                     ) {
                         javadoc {
                             +"/**"
@@ -340,30 +335,6 @@ class DicCodeGen(private val project: Project) {
         }
     }
 
-    companion object {
-
-        fun underscoreName(name: String): String {
-            if (name.matches(Regex(".*[a-z].*"))) {
-                val result = StringBuilder()
-                if (name.isNotEmpty()) {
-                    // 将第一个字符处理成大写
-                    result.append(name.substring(0, 1).uppercase(Locale.getDefault()))
-                    // 循环处理其余字符
-                    for (i in 1 until name.length) {
-                        val s = name.substring(i, i + 1)
-                        // 在大写字母前添加下划线
-                        if (s == s.uppercase(Locale.getDefault()) && !Character.isDigit(s[0]) && s[0] != '_') {
-                            result.append("_")
-                        }
-                        // 其他字符直接转成大写
-                        result.append(s.uppercase(Locale.getDefault()))
-                    }
-                }
-                return result.toString()
-            } else
-                return name
-        }
-    }
 }
 
 
