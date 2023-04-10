@@ -16,6 +16,9 @@ dependencies {
 
     api(platform("org.springframework.boot:spring-boot-dependencies:2.6.13"))
     constraints {
+        api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KotlinVersion.CURRENT}")
+        api("org.jetbrains.kotlin:kotlin-allopen:${KotlinVersion.CURRENT}")
+
         api("org.springframework.boot:spring-boot-gradle-plugin:2.6.13")
         api("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
         api("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")

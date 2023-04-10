@@ -7,6 +7,9 @@ dependencies {
 
     api(gradleApi())
 
+    api("org.jetbrains.kotlin:kotlin-gradle-plugin")
+    api("org.jetbrains.kotlin:kotlin-allopen")
+
     api("org.springframework.boot:spring-boot-gradle-plugin")
 
     api("top.bettercode.summer:windows-service-plugin")
