@@ -98,8 +98,8 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +");"
             }
 
-            val filterColumns = columns.filter { !it.testIgnored }
-            val filterOtherColumns = otherColumns.filter { !it.testIgnored }
+            val filterColumns = columns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
+            val filterOtherColumns = otherColumns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
 
             import("org.springframework.http.MediaType")
 
@@ -113,8 +113,9 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.Order(3)")
                 exception(JavaType("Exception"))
                 import(primaryKeyType)
+                import(formType)
                 if (isFullComposite) {
-                    +"$className $entityName = new $className();"
+                    +"${formType.shortName} $entityName = new ${formType.shortName}();"
                     +""
                     filterColumns.forEach {
                         +"$entityName.set${
@@ -126,7 +127,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         primaryKeyName.capitalized()
                     }();"
                     +""
-                    +"$className $entityName = new $className();"
+                    +"${formType.shortName} $entityName = new ${formType.shortName}();"
                     +"$entityName.set${
                         primaryKeyName.capitalized()
                     }(${primaryKeyName});"
