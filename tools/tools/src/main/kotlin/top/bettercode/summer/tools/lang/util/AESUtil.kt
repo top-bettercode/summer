@@ -35,6 +35,28 @@ object AESUtil {
     }
 
     /**
+     * AES加密
+     *
+     * @param content 内容
+     * @param password 密钥
+     * @param algorithm 算法
+     * @return 加密后数据
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun encrypt(content: String, password: String, algorithm: String = AES): String {
+        val cipher: Cipher = if (algorithm.endsWith("PKCS7Padding")) {
+            Cipher.getInstance(algorithm, "BC")
+        } else {
+            Cipher.getInstance(algorithm)
+        }
+        cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(password.toByteArray(), "AES"))
+        val bytes = cipher.doFinal(content.toByteArray())
+        return String(Hex.encode(bytes))
+    }
+
+
+    /**
      * AES解密
      *
      * @param content 加密内容
@@ -55,6 +77,26 @@ object AESUtil {
     }
 
     /**
+     * AES解密
+     *
+     * @param content 加密内容
+     * @param password 密钥
+     * @param algorithm 算法
+     * @return 解密后数据
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun decrypt(content: String, password: String, algorithm: String = AES): String {
+        val cipher = if (algorithm.endsWith("PKCS7Padding")) {
+            Cipher.getInstance(algorithm, "BC")
+        } else {
+            Cipher.getInstance(algorithm)
+        }
+        cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(password.toByteArray(), "AES"))
+        return String(cipher.doFinal(Hex.decode(content)))
+    }
+
+    /**
      * AES加密
      *
      * @param content 内容
@@ -66,10 +108,10 @@ object AESUtil {
     @JvmOverloads
     @JvmStatic
     fun encrypt(
-        content: ByteArray,
-        password: String,
-        ivStr: ByteArray,
-        algorithm: String = AES
+            content: ByteArray,
+            password: String,
+            ivStr: ByteArray,
+            algorithm: String = AES
     ): ByteArray {
         val cipher = if (algorithm.endsWith("PKCS7Padding")) {
             Cipher.getInstance(algorithm, "BC")
@@ -93,10 +135,10 @@ object AESUtil {
     @JvmOverloads
     @JvmStatic
     fun decrypt(
-        content: ByteArray,
-        password: String,
-        ivStr: ByteArray,
-        algorithm: String = AES
+            content: ByteArray,
+            password: String,
+            ivStr: ByteArray,
+            algorithm: String = AES
     ): ByteArray {
         val cipher = if (algorithm.endsWith("PKCS7Padding")) {
             Cipher.getInstance(algorithm, "BC")
