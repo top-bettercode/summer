@@ -168,8 +168,9 @@ class DistPlugin : Plugin<Project> {
 
 
                             if (includeJre) {
-                                project.copy { copySpec ->
-                                    includeJre(copySpec, dist, project)
+                                project.copy { spec ->
+                                    includeJre(spec, dist, project)
+                                    spec.into(outputDirectory.absolutePath)
                                 }
                             }
                             val installScript = File(outputDirectory, "${project.name}-install.bat")
@@ -178,7 +179,7 @@ class DistPlugin : Plugin<Project> {
                             if (dist.autoStart) {
                                 installScriptText = installScriptText.replace(
                                         "if \"%OS%\"==\"Windows_NT\" endlocal",
-                                        "if \"%OS%\"==\"Windows_NT\" endlocal\nnet start ${task.configuration.displayName}"
+                                        "if \"%OS%\"==\"Windows_NT\" endlocal${System.lineSeparator()} net start ${task.configuration.displayName}"
                                 )
                             }
                             installScript.writeText(installScriptText)
