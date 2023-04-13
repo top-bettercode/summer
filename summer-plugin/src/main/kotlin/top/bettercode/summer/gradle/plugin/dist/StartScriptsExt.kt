@@ -21,7 +21,8 @@ object StartScriptsExt {
   <executable>%BASE%\bin\${project.name}.bat</executable>
   
   <startmode>${if (dist.autoStart) "Automatic" else "Manual"}</startmode>
-  <stoparguments>stop</stoparguments>
+  <waithint>3 sec</waithint>
+  <stoptimeout>2 sec</stoptimeout>
   <log mode="none"/>
   
 </service>
