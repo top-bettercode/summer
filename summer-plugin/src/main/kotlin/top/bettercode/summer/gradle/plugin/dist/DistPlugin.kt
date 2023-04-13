@@ -1,6 +1,5 @@
 package top.bettercode.summer.gradle.plugin.dist
 
-import com.github.alexeylisyutenko.windowsserviceplugin.*
 import org.apache.tools.ant.taskdefs.Get
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Action
@@ -20,6 +19,8 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.springframework.core.io.ClassPathResource
+import org.springframework.util.StreamUtils
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.findDistProperty
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.jvmArgs
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.nativeLibArgs
@@ -65,78 +66,6 @@ class DistPlugin : Plugin<Project> {
 
         val includeJre = dist.includeJdk
 
-        if (dist.windows) {
-            project.plugins.apply(WindowsServicePlugin::class.java)
-            project.extensions.configure(WindowsServicePluginConfiguration::class.java) {
-                val isX64 = project.findDistProperty("x64")?.toBoolean() != false
-                it.outputDir = (project.findDistProperty("windows-service.output-dir"))
-                        ?: "windows-service-${if (isX64) "x64" else "x86"}/${project.name}"
-                val arch = project.findDistProperty("windows-service.architecture")
-                it.architecture = if (arch.isNullOrBlank()) {
-                    (if (isX64) Architecture.AMD64 else Architecture.X86)
-                } else Architecture.valueOf(arch)
-                it.displayName = (project.findDistProperty("windows-service.display-name"))
-                        ?: project.name
-                it.description = (project.findDistProperty("windows-service.description"))
-                        ?: project.description
-                it.startClass = (project.findDistProperty("windows-service.start-class"))
-                        ?: project.findDistProperty("main-class-name")
-                it.startMethod = project.findDistProperty("windows-service.start-method")
-                        ?: "main"
-                it.startParams = project.findDistProperty("windows-service.start-params")
-                        ?: "start"
-                it.stopClass = (project.findDistProperty("windows-service.stop-class"))
-                        ?: project.findDistProperty("main-class-name")
-                it.stopMethod = project.findDistProperty("windows-service.stop-method")
-                        ?: "main"
-                it.stopParams = project.findDistProperty("windows-service.stop-params")
-                        ?: "stop"
-                val startup = project.findDistProperty("windows-service.startup")
-                it.startup = if (startup.isNullOrBlank()) Startup.AUTO else Startup.valueOf(startup)
-                it.interactive =
-                        project.findDistProperty("windows-service.interactive")?.toBoolean()
-                                ?: false
-                it.dependsOn = (project.findDistProperty("windows-service.depends-on")
-                        ?: "").split(";")
-                it.environment = project.findDistProperty("windows-service.environment") ?: ""
-                it.libraryPath = project.findDistProperty("windows-service.library-path")
-                it.javaHome = project.findDistProperty("windows-service.java-home")
-                if (it.javaHome.isNullOrBlank() && includeJre)
-                    it.javaHome = "\"%APP_HOME%jdk\""
-                it.jvm = project.findDistProperty("windows-service.jvm")
-                if (it.jvm.isNullOrBlank()) {
-                    it.jvm = if (includeJre) {
-                        "\"%APP_HOME%jdk\\bin\\server\\jvm.dll\""
-                    } else {
-                        "auto"
-                    }
-                }
-                it.jvmOptions = (project.findDistProperty("windows-service.jvm-options")
-                        ?: "").split(" +".toRegex())
-                it.jvmOptions9 = (project.findDistProperty("windows-service.jvm-options-9")
-                        ?: "").split(" +".toRegex())
-                it.jvmMs = project.findDistProperty("windows-service.jvm-ms")?.toIntOrNull()
-                it.jvmMx = project.findDistProperty("windows-service.jvm-mx")?.toIntOrNull()
-                it.jvmSs = project.findDistProperty("windows-service.jvm-ss")?.toIntOrNull()
-                it.stopTimeout =
-                        project.findDistProperty("windows-service.stop-timeout")?.toIntOrNull()
-                it.logPath = project.findDistProperty("windows-service.log-path") ?: "logs"
-                it.logPrefix = project.findDistProperty("windows-service.log-prefix") ?: "service"
-                it.logLevel = LogLevel.valueOf(
-                        project.findDistProperty("windows-service.log-level")
-                                ?: "INFO"
-                )
-                it.logJniMessages =
-                        project.findDistProperty("windows-service.log-jni-messages")?.toIntOrNull()
-                it.stdOutput = project.findDistProperty("windows-service.std-output")
-                it.stdError = project.findDistProperty("windows-service.std-error")
-                it.pidFile = project.findDistProperty("windows-service.pid-file")
-                it.serviceUser = project.findDistProperty("windows-service.service-user")
-                it.servicePassword = project.findDistProperty("windows-service.service-password")
-            }
-        }
-
-
         project.tasks.apply {
 
             named("jar") { task ->
@@ -145,92 +74,6 @@ class DistPlugin : Plugin<Project> {
 
             named("compileJava") {
                 it.dependsOn(PROCESS_RESOURCES_TASK_NAME)
-            }
-
-            if (dist.windows) {
-                val createWindowsServiceTaskName =
-                        WindowsServicePlugin.getCREATE_WINDOWS_SERVICE_TASK_NAME()
-                named(createWindowsServiceTaskName) { task ->
-                    task as WindowsServicePluginTask
-
-                    task.inputs.file(project.rootProject.file("gradle.properties"))
-                    task.automaticClasspath =
-                            project.files(task.automaticClasspath).from("%APP_HOME%\\conf")
-                    task.doLast(object : Action<Task> {
-                        override fun execute(it: Task) {
-                            val outputDirectory = task.outputDirectory
-
-                            if (dist.unwrapResources)
-                                project.copy { spec ->
-                                    spec.from(File(project.buildDir, "conf").absolutePath)
-                                    spec.into(File(outputDirectory, "conf").absolutePath)
-                                }
-
-
-                            if (includeJre) {
-                                project.copy { spec ->
-                                    includeJre(spec, dist, project)
-                                    spec.into(outputDirectory.absolutePath)
-                                }
-                            }
-                            val installScript = File(outputDirectory, "${project.name}-install.bat")
-                            var installScriptText = installScript.readText()
-                                    .replace("%APP_HOME%lib\\conf;", "%APP_HOME%conf;")
-                            if (dist.autoStart) {
-                                installScriptText = installScriptText.replace(
-                                        "if \"%OS%\"==\"Windows_NT\" endlocal",
-                                        "if \"%OS%\"==\"Windows_NT\" endlocal${System.lineSeparator()} net start ${task.configuration.displayName}"
-                                )
-                            }
-                            installScript.writeText(installScriptText)
-                        }
-                    })
-                }
-                create("windowsServiceZip", Zip::class.java) {
-                    it.dependsOn(createWindowsServiceTaskName)
-                    val createTask =
-                            project.tasks.getByName(createWindowsServiceTaskName) as WindowsServicePluginTask
-                    it.group = createTask.group
-                    it.from(createTask.outputDirectory)
-                    if (includeJre)
-                        it.archiveFileName.set("${project.name}-windows-${if (dist.isX64) "x64" else "x86"}-${project.version}.zip")
-                    else
-                        it.archiveFileName.set("${project.name}-windows-${project.version}.zip")
-                    it.destinationDirectory.set(createTask.outputDirectory.parentFile)
-                }
-
-                if (dist.prevArchiveSrc.isNotBlank()) {
-                    create("windowsServiceUpdate") {
-                        it.dependsOn(createWindowsServiceTaskName)
-                        val createTask =
-                                project.tasks.getByName(createWindowsServiceTaskName) as WindowsServicePluginTask
-                        it.group = createTask.group
-                        it.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                val updateDir =
-                                        File(createTask.outputDirectory.parentFile, "update")
-                                compareUpdate(
-                                        project,
-                                        updateDir,
-                                        project.file(dist.prevArchiveSrc),
-                                        createTask.outputDirectory,
-                                        true
-                                )
-                            }
-                        })
-                    }
-
-                    create("windowsServiceUpdateZip", Zip::class.java) {
-                        it.dependsOn("windowsServiceUpdate")
-                        val createTask =
-                                project.tasks.getByName("createWindowsService") as WindowsServicePluginTask
-                        it.group = createTask.group
-                        val updateDir = File(createTask.outputDirectory.parentFile, "update")
-                        it.from(updateDir)
-                        it.archiveFileName.set("${project.name}-windows-update-${project.version}.zip")
-                        it.destinationDirectory.set(createTask.outputDirectory.parentFile)
-                    }
-                }
             }
 
         }
@@ -243,8 +86,7 @@ class DistPlugin : Plugin<Project> {
                 if (it.projectDir.absolutePath == gradle.startParameter.currentDir.absolutePath)
                     currentProject = it
                 distributionTasks.addAll(it.tasks.filter { task ->
-                    task.group == "distribution" ||
-                            task.group == WindowsServicePlugin.getPLUGIN_GROUP()
+                    task.group == "distribution"
                 })
             }
             val taskNames =
@@ -357,6 +199,11 @@ class DistPlugin : Plugin<Project> {
                         distribution.distributionBaseName.set("${project.name}-${if (dist.isX64) "x64" else "x86"}")
                     } else {
                         distribution.distributionBaseName.set(project.name)
+                    }
+                    if (dist.windows) {
+                        //WinSW
+                        val winSWFile = File(project.buildDir, "service/${project.name}.exe")
+                        DistPlugin::class.java.getResourceAsStream("/WinSW.NET461.exe")?.copyTo(winSWFile.outputStream())
                     }
                     copySpec.from(File(project.buildDir, "service").absolutePath)
                 }

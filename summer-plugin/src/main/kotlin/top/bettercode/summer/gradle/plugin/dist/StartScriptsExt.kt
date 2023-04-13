@@ -10,9 +10,27 @@ import java.io.File
 object StartScriptsExt {
 
     fun ext(project: Project, dist: DistExtension) {
+        val appName = (if (project.rootProject != project) "${project.rootProject.name}-" else "") + project.name
+        if (dist.windows) {
+            writeServiceFile(
+                    project, "${project.name}.xml", """
+<service>
+  <id>$appName</id>
+  <name>${project.rootProject.description ?: appName}</name>
+  <description>${project.rootProject.description ?: appName}</description>
+  <executable>%BASE%\bin\${project.name}.bat</executable>
+  
+  <startmode>${if (dist.autoStart) "Automatic" else "Manual"}</startmode>
+  <stoparguments>stop</stoparguments>
+  <log mode="none"/>
+  
+</service>
+            """, false
+            )
+        }
         //run.sh
         writeServiceFile(
-            project, "run.sh", """
+                project, "run.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -40,7 +58,7 @@ object StartScriptsExt {
 
         //startup.sh
         writeServiceFile(
-            project, "startup.sh", """
+                project, "startup.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -69,7 +87,7 @@ object StartScriptsExt {
 
         //shutdown.sh
         writeServiceFile(
-            project, "shutdown.sh", """
+                project, "shutdown.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -102,7 +120,7 @@ object StartScriptsExt {
         )
         //${project.name}-install
         writeServiceFile(
-            project, "${project.name}-install", """
+                project, "${project.name}-install", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -132,12 +150,12 @@ object StartScriptsExt {
             case "\${'$'}1" in
               start)
                     # Start daemon.
-                    echo "Starting ${project.name}";
+                    echo "Starting $appName";
                     ${'$'}APP_HOME/startup.sh
                     ;;
               stop)
                     # Stop daemons.
-                    echo "Shutting down ${project.name}";
+                    echo "Shutting down $appName";
                     ${'$'}APP_HOME/shutdown.sh
                     ;;
               restart)
@@ -153,19 +171,19 @@ object StartScriptsExt {
             
             exit 0
             EOF
-              ) | sudo tee /etc/init.d/${project.name}
-              sudo chmod +x /etc/init.d/${project.name}
-              sudo chkconfig ${project.name} on
+              ) | sudo tee /etc/init.d/$appName
+              sudo chmod +x /etc/init.d/$appName
+              sudo chkconfig $appName on
               ${
-                if (dist.autoStart) """
-              sudo service ${project.name} start
+            if (dist.autoStart) """
+              sudo service $appName start
               """.trimIndent() else ""
-            }
+        }
             else
               (
                 cat <<EOF
             [Unit]
-            Description=${project.name}
+            Description=$appName
             After=network.target
             
             [Service]
@@ -178,31 +196,31 @@ object StartScriptsExt {
             [Install]
             WantedBy=multi-user.target
             EOF
-              ) | sudo tee /etc/systemd/system/${project.name}.service
+              ) | sudo tee /etc/systemd/system/$appName.service
               sudo systemctl daemon-reload
-              sudo systemctl enable ${project.name}.service
+              sudo systemctl enable $appName.service
               ${
-                if (dist.autoStart) """
-              sudo systemctl start ${project.name}.service
+            if (dist.autoStart) """
+              sudo systemctl start $appName.service
               """.trimIndent() else ""
-            }
+        }
             fi
             """
         )
 
         //${project.name}-uninstall
         writeServiceFile(
-            project, "${project.name}-uninstall", """
+                project, "${project.name}-uninstall", """
             #!/usr/bin/env sh
             
             if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
-              sudo service ${project.name} stop
-              sudo chkconfig ${project.name} off
-              sudo rm -f /etc/init.d/${project.name}
+              sudo service $appName stop
+              sudo chkconfig $appName off
+              sudo rm -f /etc/init.d/$appName
             else
-              sudo systemctl stop ${project.name}.service
-              sudo systemctl disable ${project.name}.service
-              sudo rm -f /etc/systemd/system/${project.name}.service
+              sudo systemctl stop $appName.service
+              sudo systemctl disable $appName.service
+              sudo rm -f /etc/systemd/system/$appName.service
             fi
             """
         )
@@ -210,10 +228,10 @@ object StartScriptsExt {
 
 
     private fun writeServiceFile(
-        project: Project,
-        fileName: String,
-        text: String,
-        executable: Boolean = true
+            project: Project,
+            fileName: String,
+            text: String,
+            executable: Boolean = true
     ) {
         val serviceScript = File(project.buildDir, "service/$fileName")
         if (!serviceScript.parentFile.exists()) {

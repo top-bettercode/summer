@@ -12,8 +12,6 @@ dependencies {
 
     api("org.springframework.boot:spring-boot-gradle-plugin")
 
-    api("top.bettercode.summer:windows-service-plugin")
-
     api("org.yaml:snakeyaml")
     api("net.sourceforge.plantuml:plantuml")
     api("org.atteo:evo-inflector")

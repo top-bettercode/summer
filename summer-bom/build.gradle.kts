@@ -23,8 +23,6 @@ dependencies {
         api("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
         api("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
 
-        api("top.bettercode.summer:windows-service-plugin:1.2.0-SNAPSHOT")
-
         api("com.gradle.publish:plugin-publish-plugin:1.1.0")
         api("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
