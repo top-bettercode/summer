@@ -1,10 +1,8 @@
 package top.bettercode.summer.logging
 
 import ch.qos.logback.classic.Level
-import jdk.internal.org.jline.utils.Status.getStatus
 import net.logstash.logback.marker.Markers
 import org.apache.catalina.connector.ClientAbortException
-import org.apache.tomcat.jni.SSL.getError
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
@@ -27,8 +25,8 @@ import top.bettercode.summer.tools.lang.operation.HttpOperation.REQUEST_DATE_TIM
 import top.bettercode.summer.tools.lang.operation.HttpOperation.REQUEST_LOG_MARKER
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletRequestWrapper
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletResponseWrapper
-import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils
+import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.exception.BusinessException
 import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder
