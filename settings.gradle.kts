@@ -30,8 +30,6 @@ include(":tools:amap")
 include(":tools:logging")
 
 include(":tools:sap")
-include(":tools:ctp-api")
-//include(":tools:ctp-mdapi-jna")
 
 include(":summer-bom")
 include(":summer-cloud-bom")
