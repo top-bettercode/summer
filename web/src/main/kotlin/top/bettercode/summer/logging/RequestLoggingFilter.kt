@@ -1,8 +1,10 @@
 package top.bettercode.summer.logging
 
 import ch.qos.logback.classic.Level
+import jdk.internal.org.jline.utils.Status.getStatus
 import net.logstash.logback.marker.Markers
 import org.apache.catalina.connector.ClientAbortException
+import org.apache.tomcat.jni.SSL.getError
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
@@ -27,6 +29,8 @@ import top.bettercode.summer.tools.lang.trace.TraceHttpServletRequestWrapper
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletResponseWrapper
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils
+import top.bettercode.summer.web.exception.BusinessException
+import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder
 import java.io.IOException
 import java.time.LocalDateTime
@@ -43,8 +47,8 @@ import javax.servlet.http.HttpServletResponse
  * @since 0.0.1
  */
 class RequestLoggingFilter(
-    private val properties: RequestLoggingProperties,
-    private val handlers: List<RequestLoggingHandler>
+        private val properties: RequestLoggingProperties,
+        private val handlers: List<RequestLoggingHandler>
 ) : OncePerRequestFilter(), Ordered {
 
     companion object {
@@ -61,8 +65,8 @@ class RequestLoggingFilter(
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
-        request: HttpServletRequest, response: HttpServletResponse,
-        filterChain: FilterChain
+            request: HttpServletRequest, response: HttpServletResponse,
+            filterChain: FilterChain
     ) {
 //        ignored
         val uri = request.servletPath
@@ -80,7 +84,7 @@ class RequestLoggingFilter(
         }
         val responseToUse: HttpServletResponse = if (properties.isIncludeResponseBody) {
             TraceHttpServletResponseWrapper(
-                response
+                    response
             )
         } else {
             response
@@ -93,9 +97,9 @@ class RequestLoggingFilter(
     }
 
     private fun record(
-        requestToUse: HttpServletRequest,
-        responseToUse: HttpServletResponse,
-        uri: String
+            requestToUse: HttpServletRequest,
+            responseToUse: HttpServletResponse,
+            uri: String
     ) {
         if (!isAsyncStarted(requestToUse)) {
             val handler = HandlerMethodContextHolder.getHandler(requestToUse)
@@ -114,11 +118,11 @@ class RequestLoggingFilter(
 
 
                 val operation = Operation(
-                    collectionName = config.collectionName,
-                    name = config.operationName,
-                    protocol = requestToUse.protocol,
-                    request = operationRequest,
-                    response = operationResponse
+                        collectionName = config.collectionName,
+                        name = config.operationName,
+                        protocol = requestToUse.protocol,
+                        request = operationRequest,
+                        response = operationResponse
                 )
 
                 handlers.forEach {
@@ -136,12 +140,12 @@ class RequestLoggingFilter(
                     marker.add(MarkerFactory.getDetachedMarker(config.logMarker))
                 }
                 val requestTimeout =
-                    !config.ignoredTimeout && config.timeoutAlarmSeconds > 0 && handler != null && operation.duration / 1000 > config.timeoutAlarmSeconds && !include(
-                        properties.ignoredTimeoutPath,
-                        uri
-                    )
+                        !config.ignoredTimeout && config.timeoutAlarmSeconds > 0 && handler != null && operation.duration / 1000 > config.timeoutAlarmSeconds && !include(
+                                properties.ignoredTimeoutPath,
+                                uri
+                        )
                 val uriName =
-                    "${operation.collectionName}${if (operation.collectionName.isNotBlank() && operation.name.isNotBlank()) "/" else ""}${operation.name}"
+                        "${operation.collectionName}${if (operation.collectionName.isNotBlank() && operation.name.isNotBlank()) "/" else ""}${operation.name}"
                 val restUri = requestToUse.servletPath
                 if (requestTimeout) {
                     val initialComment = "$uriName($restUri)：请求响应速度慢"
@@ -151,15 +155,15 @@ class RequestLoggingFilter(
                     msg = "$initialComment${timeoutMsg}\n$msg"
                 }
                 if (LoggingUtil.existProperty(
-                        environment,
-                        "summer.logging.logstash.destinations[0]"
-                    )
+                                environment,
+                                "summer.logging.logstash.destinations[0]"
+                        )
                 ) {
                     marker.add(
-                        Markers.appendRaw(
-                            OPERATION_MARKER,
-                            operation.toString(config.copy(format = false))
-                        ).and(Markers.append("title", LoggingUtil.warnSubject(environment)))
+                            Markers.appendRaw(
+                                    OPERATION_MARKER,
+                                    operation.toString(config.copy(format = false))
+                            ).and(Markers.append("title", LoggingUtil.warnSubject(environment)))
                     )
                     marker.add(Markers.append(IS_OPERATION_MARKER, true))
                 }
@@ -167,17 +171,25 @@ class RequestLoggingFilter(
                     log.info(marker, msg)
                 } else {
                     if (error != null &&
-                        ((isDebugEnabled && !properties.ignoredErrorStatusCode.contains(
-                            httpStatusCode
-                        ))
-                                || httpStatusCode >= 500)
+                            ((isDebugEnabled && !properties.ignoredErrorStatusCode.contains(
+                                    httpStatusCode
+                            ))
+                                    || httpStatusCode >= 500)
                     ) {
                         val initialComment =
-                            "$uriName($restUri)：$httpStatusCode|${
-                                getMessage(requestAttributes) ?: "${error.javaClass.name}:${
-                                    error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
+                                "$uriName($restUri)：${
+                                    if (httpStatusCode == 200) {
+                                        when (error) {
+                                            is BusinessException -> error.code
+                                            is SystemException -> error.code
+                                            else -> httpStatusCode
+                                        }
+                                    } else httpStatusCode
+                                }|${
+                                    getMessage(requestAttributes) ?: "${error.javaClass.name}:${
+                                        error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
+                                    }"
                                 }"
-                            }"
                         marker.add(AlarmMarker(initialComment))
                         if (config.includeTrace)
                             log.error(marker, msg)
@@ -191,28 +203,28 @@ class RequestLoggingFilter(
     }
 
     private fun requestLoggingConfig(
-        request: HttpServletRequest,
-        handler: HandlerMethod?
+            request: HttpServletRequest,
+            handler: HandlerMethod?
     ): RequestLoggingConfig {
         var bestPattern = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE)
         if ((environment.getProperty("server.error.path") ?: environment.getProperty("error.path")
-            ?: "/error") == bestPattern
+                ?: "/error") == bestPattern
         ) {
             bestPattern = null
         }
         request.setAttribute(
-            HttpOperation.BEST_MATCHING_PATTERN_ATTRIBUTE,
-            bestPattern
+                HttpOperation.BEST_MATCHING_PATTERN_ATTRIBUTE,
+                bestPattern
         )
 
         return if (handler != null) {
             val collectionName = AnnotatedElementUtils.getMergedAnnotation(
-                handler.beanType,
-                RequestMapping::class.java
+                    handler.beanType,
+                    RequestMapping::class.java
             )?.name ?: ""
             val operationName = handler.getMethodAnnotation(RequestMapping::class.java)?.name ?: ""
             val requestLoggingAnno =
-                AnnotatedUtils.getAnnotation(handler, RequestLogging::class.java)
+                    AnnotatedUtils.getAnnotation(handler, RequestLogging::class.java)
 
             var encryptHeaders = requestLoggingAnno?.encryptHeaders
             if (encryptHeaders.isNullOrEmpty()) {
@@ -227,55 +239,55 @@ class RequestLoggingFilter(
                 timeoutAlarmSeconds = properties.timeoutAlarmSeconds
             }
             RequestLoggingConfig(
-                includeRequestBody = properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false,
-                includeResponseBody = properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false,
-                includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false,
-                encryptHeaders = encryptHeaders ?: arrayOf(),
-                encryptParameters = encryptParameters ?: arrayOf(),
-                format = properties.isFormat,
-                ignoredTimeout = requestLoggingAnno?.ignoredTimeout == true,
-                timeoutAlarmSeconds = timeoutAlarmSeconds,
-                logMarker = requestLoggingAnno?.logMarker ?: REQUEST_LOG_MARKER,
-                collectionName = collectionName,
-                operationName = operationName
+                    includeRequestBody = properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false,
+                    includeResponseBody = properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false,
+                    includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false,
+                    encryptHeaders = encryptHeaders ?: arrayOf(),
+                    encryptParameters = encryptParameters ?: arrayOf(),
+                    format = properties.isFormat,
+                    ignoredTimeout = requestLoggingAnno?.ignoredTimeout == true,
+                    timeoutAlarmSeconds = timeoutAlarmSeconds,
+                    logMarker = requestLoggingAnno?.logMarker ?: REQUEST_LOG_MARKER,
+                    collectionName = collectionName,
+                    operationName = operationName
             )
         } else
             RequestLoggingConfig(
-                includeRequestBody = properties.isIncludeRequestBody,
-                includeResponseBody = properties.isIncludeResponseBody,
-                includeTrace = properties.isIncludeTrace,
-                encryptHeaders = properties.encryptHeaders,
-                encryptParameters = properties.encryptParameters,
-                format = properties.isFormat,
-                ignoredTimeout = false,
-                timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
-                logMarker = REQUEST_LOG_MARKER,
-                collectionName = "",
-                operationName = ""
+                    includeRequestBody = properties.isIncludeRequestBody,
+                    includeResponseBody = properties.isIncludeResponseBody,
+                    includeTrace = properties.isIncludeTrace,
+                    encryptHeaders = properties.encryptHeaders,
+                    encryptParameters = properties.encryptParameters,
+                    format = properties.isFormat,
+                    ignoredTimeout = false,
+                    timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
+                    logMarker = REQUEST_LOG_MARKER,
+                    collectionName = "",
+                    operationName = ""
             )
     }
 
 
     private fun needRecord(
-        request: HttpServletRequest,
-        handler: HandlerMethod?,
-        error: Throwable?,
-        httpStatusCode: Int,
-        uri: String
+            request: HttpServletRequest,
+            handler: HandlerMethod?,
+            error: Throwable?,
+            httpStatusCode: Int,
+            uri: String
     ): Boolean {
         return if (properties.isForceRecord || handler != null ||
-            include(properties.includePath, uri)
-            || includeError(error) || !HttpStatus.valueOf(httpStatusCode).is2xxSuccessful
+                include(properties.includePath, uri)
+                || includeError(error) || !HttpStatus.valueOf(httpStatusCode).is2xxSuccessful
         ) {
             if (handler != null) {
                 handler::class.java.simpleName != "WebMvcEndpointHandlerMethod" && (!AnnotatedUtils.hasAnnotation(
-                    handler,
-                    NoRequestLogging::class.java
+                        handler,
+                        NoRequestLogging::class.java
                 )) && useAnnotationMethodHandler(
-                    request
+                        request
                 ) && (properties.handlerTypePrefix.isEmpty() || properties.handlerTypePrefix.any {
                     handler.beanType.name.packageMatches(
-                        it
+                            it
                     )
                 })
             } else true
@@ -293,7 +305,7 @@ class RequestLoggingFilter(
     }
 
     private fun String.packageMatches(regex: String) =
-        matches(Regex("^" + regex.replace(".", "\\.").replace("*", ".+") + ".*$"))
+            matches(Regex("^" + regex.replace(".", "\\.").replace("*", ".+") + ".*$"))
 
 
     private fun includeError(error: Throwable?): Boolean {
@@ -324,8 +336,8 @@ class RequestLoggingFilter(
 
     private fun getError(requestAttributes: RequestAttributes): Throwable? {
         return getAttribute<Throwable>(
-            requestAttributes,
-            DefaultErrorAttributes::class.java.name + ".ERROR"
+                requestAttributes,
+                DefaultErrorAttributes::class.java.name + ".ERROR"
         )
     }
 
