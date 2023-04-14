@@ -203,7 +203,7 @@ class DistPlugin : Plugin<Project> {
                     if (dist.windows) {
                         //WinSW
                         val winSWFile = File(project.buildDir, "service/${project.name}.exe")
-                        DistPlugin::class.java.getResourceAsStream("/WinSW.NET461.exe")?.copyTo(winSWFile.outputStream())
+                        DistPlugin::class.java.getResourceAsStream("/WinSW.NET461.exe")?.copyTo(winSWFile.apply { parentFile.mkdirs() }.outputStream())
                     }
                     copySpec.from(File(project.buildDir, "service").absolutePath)
                 }

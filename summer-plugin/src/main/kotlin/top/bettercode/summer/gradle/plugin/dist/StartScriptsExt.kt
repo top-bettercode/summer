@@ -24,14 +24,94 @@ object StartScriptsExt {
   <waithint>3 sec</waithint>
   <stoptimeout>2 sec</stoptimeout>
   <log mode="none"/>
-  
 </service>
             """, false
             )
-        }
-        //run.sh
-        writeServiceFile(
-                project, "run.sh", """
+            writeServiceFile(
+                    project, "run.bat", """
+@if "%DEBUG%"=="" @echo off
+
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+
+set DIRNAME=%~dp0
+if "%DIRNAME%"=="" set DIRNAME=.\
+
+@rem Execute app
+%DIRNAME%bin\${project.name}.bat
+            """
+            )
+
+            writeServiceFile(
+                    project, "startup.bat", """
+@if "%DEBUG%"=="" @echo off
+
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+
+set DIRNAME=%~dp0
+if "%DIRNAME%"=="" set DIRNAME=.\
+
+@rem start app
+%DIRNAME%${project.name}.exe start
+            """
+            )
+
+            writeServiceFile(
+                    project, "shutdown.bat", """
+@if "%DEBUG%"=="" @echo off
+
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+
+set DIRNAME=%~dp0
+if "%DIRNAME%"=="" set DIRNAME=.\
+
+@rem stop app
+%DIRNAME%${project.name}.exe stop
+            """
+            )
+
+            writeServiceFile(
+                    project, "${project.name}-install.bat", """
+@if "%DEBUG%"=="" @echo off
+
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+
+set DIRNAME=%~dp0
+if "%DIRNAME%"=="" set DIRNAME=.\
+
+@rem install service
+%DIRNAME%${project.name}.exe install
+
+@rem start app
+%DIRNAME%${project.name}.exe start
+            """
+            )
+
+            writeServiceFile(
+                    project, "${project.name}-uninstall.bat", """
+@if "%DEBUG%"=="" @echo off
+
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+
+set DIRNAME=%~dp0
+if "%DIRNAME%"=="" set DIRNAME=.\
+
+@rem stop app
+%DIRNAME%${project.name}.exe stop
+
+@rem uninstall service
+%DIRNAME%${project.name}.exe uninstall
+            """
+            )
+
+        } else {
+            //run.sh
+            writeServiceFile(
+                    project, "run.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -55,11 +135,11 @@ object StartScriptsExt {
             mkdir -p "${'$'}APP_HOME/logs"
             ${'$'}APP_HOME/bin/${project.name}
             """
-        )
+            )
 
-        //startup.sh
-        writeServiceFile(
-                project, "startup.sh", """
+            //startup.sh
+            writeServiceFile(
+                    project, "startup.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -84,11 +164,11 @@ object StartScriptsExt {
             nohup "${'$'}APP_HOME/bin/${project.name}" 1>/dev/null 2>"${'$'}APP_HOME/logs/error.log" &
             ps ax|grep ${'$'}APP_HOME/ |grep -v grep|awk '{ print ${'$'}1 }'
             """
-        )
+            )
 
-        //shutdown.sh
-        writeServiceFile(
-                project, "shutdown.sh", """
+            //shutdown.sh
+            writeServiceFile(
+                    project, "shutdown.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -118,10 +198,10 @@ object StartScriptsExt {
                 done
             fi
             """
-        )
-        //${project.name}-install
-        writeServiceFile(
-                project, "${project.name}-install", """
+            )
+            //${project.name}-install
+            writeServiceFile(
+                    project, "${project.name}-install.sh", """
             #!/usr/bin/env sh
             
             # Attempt to set APP_HOME
@@ -176,10 +256,10 @@ object StartScriptsExt {
               sudo chmod +x /etc/init.d/$appName
               sudo chkconfig $appName on
               ${
-            if (dist.autoStart) """
+                if (dist.autoStart) """
               sudo service $appName start
               """.trimIndent() else ""
-        }
+            }
             else
               (
                 cat <<EOF
@@ -201,17 +281,17 @@ object StartScriptsExt {
               sudo systemctl daemon-reload
               sudo systemctl enable $appName.service
               ${
-            if (dist.autoStart) """
+                if (dist.autoStart) """
               sudo systemctl start $appName.service
               """.trimIndent() else ""
-        }
+            }
             fi
             """
-        )
+            )
 
-        //${project.name}-uninstall
-        writeServiceFile(
-                project, "${project.name}-uninstall", """
+            //${project.name}-uninstall
+            writeServiceFile(
+                    project, "${project.name}-uninstall.sh", """
             #!/usr/bin/env sh
             
             if [ -z "${'$'}(whereis systemctl | cut -d':' -f2)" ]; then
@@ -224,7 +304,8 @@ object StartScriptsExt {
               sudo rm -f /etc/systemd/system/$appName.service
             fi
             """
-        )
+            )
+        }
     }
 
 
