@@ -24,6 +24,36 @@ public interface IFormkeyService {
 
     Logger log = LoggerFactory.getLogger(IFormkeyService.class);
 
+    default boolean checkRequest(HttpServletRequest request, String formKeyName, boolean autoFormKey, long expireSeconds, String message) {
+        return checkRequest(request, formKeyName, autoFormKey, expireSeconds, message, null, null);
+    }
+
+    default boolean checkRequest(HttpServletRequest request, String formKeyName, boolean autoFormKey, long expireSeconds, String message, String[] ignoreHeaders, String[] ignoreParams) {
+        String formkey = getFormkey(request, formKeyName, autoFormKey);
+        if (formkey == null) {
+            return true;
+        } else if (exist(formkey, expireSeconds)) {
+            throw new FormDuplicateException(
+                    message);
+        } else {
+            request.setAttribute(FormDuplicateCheckInterceptor.FORM_KEY, formkey);
+            return true;
+        }
+
+
+    }
+
+    default void cleanKey(HttpServletRequest request) {
+        String formkey = (String) request.getAttribute(FormDuplicateCheckInterceptor.FORM_KEY);
+        if (formkey != null) {
+            remove(formkey);
+            if (log.isTraceEnabled()) {
+                log.trace("{} remove:{}", request.getRequestURI(), formkey);
+            }
+        }
+
+    }
+
     @Nullable
     default String getFormkey(HttpServletRequest request, String formKeyName, boolean autoFormKey) {
         return getFormkey(request, formKeyName, autoFormKey, null, null);
