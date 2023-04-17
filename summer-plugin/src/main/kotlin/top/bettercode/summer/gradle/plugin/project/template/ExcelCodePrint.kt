@@ -21,8 +21,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                 columns.forEachIndexed { i, it ->
                     val code =
                         if (it.isCodeField) {
-                            if (it.columnName.contains("_") || it.softDelete) ".code()" else ".code(${
-                                (className + it.javaName.capitalized())
+                            if (it.columnName.contains("_") || it.softDelete) ".code()" else ".code(${it.codeType.capitalized()
                             }Enum.ENUM_NAME)"
                         } else {
                             ""
