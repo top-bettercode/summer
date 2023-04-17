@@ -14,7 +14,6 @@ import org.gradle.internal.io.IoUtils
 import org.gradle.jvm.application.scripts.JavaAppStartScriptGenerationDetails
 import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
 import org.gradle.util.internal.TextUtil
-import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.nativeLibArgs
 import java.io.*
 
 class TemplateBasedStartScriptGenerator(
@@ -46,8 +45,9 @@ class TemplateBasedStartScriptGenerator(
                     if (!windows)
                         defaultJvmOpts += urandomOpt
 
-            if (defaultJvmOpts.contains(project.nativeLibArgs)) {
-                defaultJvmOpts.remove(project.nativeLibArgs)
+            val nativeLibArgs = dist.nativeLibArgs(project)
+            if (defaultJvmOpts.contains(nativeLibArgs)) {
+                defaultJvmOpts.remove(nativeLibArgs)
                 defaultJvmOpts += if (windows)
                     "-Djava.library.path=%APP_HOME%\\native"
                 else

@@ -19,12 +19,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.springframework.core.io.ClassPathResource
-import org.springframework.util.StreamUtils
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.findDistProperty
-import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.jvmArgs
-import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.nativeLibArgs
-import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.nativePath
 import top.bettercode.summer.tools.lang.util.OS
 import java.io.File
 import java.math.BigInteger
@@ -45,19 +40,19 @@ class DistPlugin : Plugin<Project> {
         project.extensions.create("dist", DistExtension::class.java)
 
 
-        project.extensions.configure(DistExtension::class.java) {
-            it.windows = (project.findDistProperty("windows"))?.toBoolean()
+        project.extensions.configure(DistExtension::class.java) { dist ->
+            dist.windows = (project.findDistProperty("windows"))?.toBoolean()
                     ?: OS.WINDOWS.isCurrentOs
-            it.unwrapResources = project.findDistProperty("unwrap-resources")?.toBoolean() ?: true
-            it.autoStart = project.findDistProperty("auto-start")?.toBoolean() ?: true
-            it.includeJdk = project.findDistProperty("include-jdk")?.toBoolean() ?: false
-            it.urandom = (project.findDistProperty("urandom") ?: "false").toBoolean()
-            it.nativePath = project.findDistProperty("native-path") ?: "native"
-            it.runUser = project.findDistProperty("run-user") ?: ""
-            it.jdkArchiveSrc = project.findDistProperty("jdk-archive-src") ?: ""
-            it.prevArchiveSrc = project.findDistProperty("prev-archive-src") ?: ""
-            it.jvmArgs = (project.findDistProperty("jvm-args") ?: "").split(" +".toRegex())
-            it.excludeUnWrapResources = (project.findDistProperty("exclude-unwrap-resources")
+            dist.unwrapResources = project.findDistProperty("unwrap-resources")?.toBoolean() ?: true
+            dist.autoStart = project.findDistProperty("auto-start")?.toBoolean() ?: true
+            dist.includeJdk = project.findDistProperty("include-jdk")?.toBoolean() ?: false
+            dist.urandom = (project.findDistProperty("urandom") ?: "false").toBoolean()
+            dist.nativePath = project.findDistProperty("native-path") ?: "native"
+            dist.runUser = project.findDistProperty("run-user") ?: ""
+            dist.jdkArchiveSrc = project.findDistProperty("jdk-archive-src") ?: ""
+            dist.prevArchiveSrc = project.findDistProperty("prev-archive-src") ?: ""
+            dist.jvmArgs = (project.findDistProperty("jvm-args") ?: "").split(" +".toRegex()).filter { it.isNotBlank() }
+            dist.excludeUnWrapResources = (project.findDistProperty("exclude-unwrap-resources")
                     ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories").split(
                     ","
             )
@@ -200,11 +195,7 @@ class DistPlugin : Plugin<Project> {
                     } else {
                         distribution.distributionBaseName.set(project.name)
                     }
-                    if (dist.windows) {
-                        //WinSW
-                        val winSWFile = File(project.buildDir, "service/${project.name}.exe")
-                        DistPlugin::class.java.getResourceAsStream("/WinSW.NET461.exe")?.copyTo(winSWFile.apply { parentFile.mkdirs() }.outputStream())
-                    }
+
                     copySpec.from(File(project.buildDir, "service").absolutePath)
                 }
 
@@ -240,49 +231,49 @@ class DistPlugin : Plugin<Project> {
                     }
                 }
             }
-        }
-        val jvmArgs = project.jvmArgs
+            val jvmArgs = dist.jvmArgs(project)
 
-        val application = project.extensions.findByType(JavaApplication::class.java)
+            val application = project.extensions.findByType(JavaApplication::class.java)
 
-        if (application != null) {
-            application.applicationDefaultJvmArgs += jvmArgs
-            application.applicationDefaultJvmArgs = application.applicationDefaultJvmArgs.distinct()
-            val includeNative = jvmArgs.contains(project.nativeLibArgs)
-            project.tasks.getByName("startScripts") { task ->
-                task as CreateStartScripts
-                task.unixStartScriptGenerator =
-                        StartScript.startScriptGenerator(
-                                project,
-                                dist,
-                                false,
-                                includeJre,
-                                includeNative
-                        )
-                task.windowsStartScriptGenerator =
-                        StartScript.startScriptGenerator(project, dist, true, includeJre, includeNative)
+            if (application != null) {
+                application.applicationDefaultJvmArgs += jvmArgs
+                application.applicationDefaultJvmArgs = application.applicationDefaultJvmArgs.distinct()
+                val includeNative = jvmArgs.contains(dist.nativeLibArgs(project))
+                project.tasks.getByName("startScripts") { task ->
+                    task as CreateStartScripts
+                    task.unixStartScriptGenerator =
+                            StartScript.startScriptGenerator(
+                                    project,
+                                    dist,
+                                    false,
+                                    includeJre,
+                                    includeNative
+                            )
+                    task.windowsStartScriptGenerator =
+                            StartScript.startScriptGenerator(project, dist, true, includeJre, includeNative)
 
-                task.inputs.file(project.rootProject.file("gradle.properties"))
-                if (!task.mainClass.isPresent) {
-                    task.mainClass.set(project.findDistProperty("main-class-name"))
-                }
-                task.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        StartScriptsExt.ext(project, dist)
+                    task.inputs.file(project.rootProject.file("gradle.properties"))
+                    if (!task.mainClass.isPresent) {
+                        task.mainClass.set(project.findDistProperty("main-class-name"))
                     }
-                })
+                    task.doLast(object : Action<Task> {
+                        override fun execute(it: Task) {
+                            StartScriptsExt.ext(project, dist)
+                        }
+                    })
+                }
             }
-        }
 
-        project.tasks.getByName("test") { task ->
-            task as Test
-            if (application != null)
-                task.jvmArgs = application.applicationDefaultJvmArgs.toList()
-            else
-                task.jvmArgs = jvmArgs.toList()
-            if (Os.isFamily(Os.FAMILY_UNIX))
-                task.environment("LD_LIBRARY_PATH", project.file(project.nativePath))
+            project.tasks.getByName("test") { task ->
+                task as Test
+                if (application != null)
+                    task.jvmArgs = application.applicationDefaultJvmArgs.toList()
+                else
+                    task.jvmArgs = jvmArgs.toList()
+                if (Os.isFamily(Os.FAMILY_UNIX))
+                    task.environment("LD_LIBRARY_PATH", project.file(dist.nativePath))
 
+            }
         }
     }
 

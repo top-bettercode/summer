@@ -56,41 +56,30 @@ open class DistExtension(
 
     internal val isX64: Boolean get() = jdkArchiveSrc.contains("x64")
 
+    fun nativeLibArgs(project: Project): String {
+        return "-Djava.library.path=${project.file(nativePath).absolutePath}"
+    }
+
+    fun jvmArgs(project: Project): Set<String> {
+        val jvmArgs = jvmArgs.toMutableSet()
+        val encoding = "-Dfile.encoding=UTF-8"
+        jvmArgs += encoding
+        if (Os.isFamily(Os.FAMILY_UNIX) && urandom) {
+            jvmArgs += "-Djava.security.egd=file:/dev/urandom"
+        }
+        if (project.extensions.findByName("profile") != null) {
+            jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
+        }
+        if (project.file(nativePath).exists()) {
+            jvmArgs += nativeLibArgs(project)
+        }
+        return jvmArgs
+    }
+
     companion object {
-
-        val Project.jvmArgs: Set<String>
-            get() {
-                val jvmArgs =
-                        (findDistProperty("jvm-args") ?: "").split(" +".toRegex())
-                                .filter { it.isNotBlank() }
-                                .toMutableSet()
-                val encoding = "-Dfile.encoding=UTF-8"
-                jvmArgs += encoding
-                if (Os.isFamily(Os.FAMILY_UNIX) && (findDistProperty("urandom")
-                                ?: "false").toBoolean()
-                ) {
-                    jvmArgs += "-Djava.security.egd=file:/dev/urandom"
-                }
-                if (project.extensions.findByName("profile") != null) {
-                    jvmArgs += "-Dspring.profiles.active=${project.profilesActive}"
-                }
-                if (project.file(nativePath).exists()) {
-                    jvmArgs += nativeLibArgs
-                }
-                return jvmArgs
-            }
-
-
         fun Project.findDistProperty(key: String) =
                 (findProperty("dist.${name}.$key") as? String ?: findProperty("dist.$key") as? String)
 
-        val Project.nativePath: String
-            get() = findDistProperty("native-path") ?: "native"
-
-        internal val Project.nativeLibArgs: String
-            get() {
-                return "-Djava.library.path=${this.file(nativePath).absolutePath}"
-            }
 
     }
 }
