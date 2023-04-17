@@ -30,17 +30,18 @@ public interface IFormkeyService {
 
     default boolean checkRequest(HttpServletRequest request, String formKeyName, boolean autoFormKey, long expireSeconds, String message, String[] ignoreHeaders, String[] ignoreParams) {
         String formkey = getFormkey(request, formKeyName, autoFormKey);
+        return checkRequest(request, formkey, expireSeconds, message);
+    }
+
+    default boolean checkRequest(HttpServletRequest request, String formkey, long expireSeconds, String message) {
         if (formkey == null) {
             return true;
         } else if (exist(formkey, expireSeconds)) {
-            throw new FormDuplicateException(
-                    message);
+            throw new FormDuplicateException(message);
         } else {
             request.setAttribute(FormDuplicateCheckInterceptor.FORM_KEY, formkey);
             return true;
         }
-
-
     }
 
     default void cleanKey(HttpServletRequest request) {
