@@ -1,10 +1,11 @@
 package top.bettercode.summer.tools.excel;
 
+import top.bettercode.summer.tools.lang.util.CharUtil;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
-import top.bettercode.summer.tools.lang.util.CharUtil;
 
 /**
  * @author Peter Wu
@@ -24,19 +25,24 @@ public class ColumnWidths {
 
   public void put(Integer column, Object val) {
     if (val != null) {
-      double width = 0;
-      for (char c1 : val.toString().toCharArray()) {
-        if (CharUtil.isChinese(c1)) {
-          width += 1.5;
-        } else {
-          width += 1;
-        }
-      }
-      width += 20.0 / 7;
+      double width = getWidth(val);
       width = Math
           .max(colWidths.getOrDefault(column, 0.0), width);
       colWidths.put(column, width);
     }
+  }
+
+  public static double getWidth(Object val) {
+    double width = 0;
+    for (char c1 : val.toString().toCharArray()) {
+      if (CharUtil.isChinese(c1)) {
+        width += 1.5;
+      } else {
+        width += 1;
+      }
+    }
+    width += 20.0 / 7;
+    return width;
   }
 
   public Double width(Integer column) {
