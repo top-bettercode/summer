@@ -73,7 +73,7 @@ public interface IFormkeyService {
                 ServletServerHttpRequest servletServerHttpRequest = new ServletServerHttpRequest(
                         request);
                 MultiValueMap<String, String> httpHeaders = new LinkedMultiValueMap<>(servletServerHttpRequest.getHeaders());
-                if (ignoreHeaders == null) {
+                if (ignoreHeaders != null) {
                     for (String ignoreHeader : ignoreHeaders) {
                         httpHeaders.remove(ignoreHeader);
                     }
