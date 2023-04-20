@@ -21,21 +21,21 @@ import javax.validation.constraints.NotBlank
 @Validated
 @RequestMapping(value = ["/wechat"], name = "微信")
 class MiniprogramCallbackController(
-    private val wechatService: IWechatService,
-    private val miniprogramClient: IMiniprogramClient
+        private val wechatService: IWechatService,
+        private val miniprogramClient: IMiniprogramClient
 ) : BaseController() {
 
     @RequestLogging(ignoredTimeout = true)
     @ResponseBody
     @PostMapping(
-        value = ["\${summer.wechat.mini.oauth-mapping-path:/miniOauth}"],
-        name = "小程序code2Session授权接口"
+            value = ["\${summer.wechat.mini.oauth-mapping-path:/miniOauth}"],
+            name = "小程序code2Session授权接口"
     )
     fun miniOauth(@NotBlank code: String, encryptedData: String?, iv: String?): Any {
         log.debug("code:{}", code)
         return try {
             val jsSession =
-                miniprogramClient.jscode2session(code).decrypt(encryptedData, iv)
+                    miniprogramClient.jscode2session(code).decrypt(encryptedData, iv)
             val result = if (jsSession.isOk)
                 try {
                     wechatService.miniOauth(jsSession)
@@ -43,15 +43,15 @@ class MiniprogramCallbackController(
                     log.warn(e.message, e)
                     WechatToken(e.message)
                 } else WechatToken()
-            result.openId = jsSession.openid
-            result.unionId = jsSession.unionid
-            result.hasBound = result.accessToken.isNullOrBlank().not()
+            result.openId = jsSession.openid ?: ""
+            result.unionId = jsSession.unionid ?: ""
+            result.hasBound = result.accessToken.isBlank().not()
             ok(result)
         } catch (e: Exception) {
             log.error("授权失败", e)
             val result = WechatToken(e.message)
-            result.accessToken = null
-            result.openId = null
+            result.accessToken = ""
+            result.openId = ""
             result.hasBound = false
             ok(result)
         }
@@ -69,7 +69,7 @@ class MiniprogramCallbackController(
         Assert.notNull(phoneInfo, "获取手机号失败")
         log.info("phoneInfo:{}", phoneInfo)
         val result = wechatService.phoneOauth(phoneInfo!!)
-        result.hasBound = result.accessToken.isNullOrBlank().not()
+        result.hasBound = result.accessToken.isBlank().not()
         return ok(result)
     }
 

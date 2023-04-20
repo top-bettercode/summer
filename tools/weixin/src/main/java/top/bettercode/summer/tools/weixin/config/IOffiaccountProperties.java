@@ -40,13 +40,7 @@ public interface IOffiaccountProperties extends IWexinProperties {
 
     default String wechatUrl(WechatToken wechatToken, boolean forceLogin, String state) {
         String token = wechatToken == null ? "" : wechatToken.getAccessToken();
-        if (token == null) {
-            token="";
-        }
         String openId = wechatToken == null ? "" : wechatToken.getOpenId();
-        if (openId == null) {
-            openId = "";
-        }
         String msg = wechatToken == null ? "" : wechatToken.getMsg();
         String encodeMsg;
         try {

@@ -16,8 +16,8 @@ import top.bettercode.summer.web.BaseController
 @Anonymous
 @RequestMapping(value = ["/wechat"], name = "微信")
 class CorpCallbackController(
-    private val wechatService: IWechatService,
-    private val corpClient: ICorpClient
+        private val wechatService: IWechatService,
+        private val corpClient: ICorpClient
 ) : BaseController() {
 
     /*
@@ -28,21 +28,21 @@ class CorpCallbackController(
     fun oauth(code: String?, state: String?): String {
         plainTextError()
         val token: WechatToken =
-            try {
-                val accessToken =
-                    if (code.isNullOrBlank()) null else corpClient.getWebPageAccessToken(code)
-                val token = if (accessToken?.isOk == true) try {
-                    wechatService.corpOauth(accessToken)
+                try {
+                    val accessToken =
+                            if (code.isNullOrBlank()) null else corpClient.getWebPageAccessToken(code)
+                    val token = if (accessToken?.isOk == true) try {
+                        wechatService.corpOauth(accessToken)
+                    } catch (e: Exception) {
+                        log.warn(e.message, e)
+                        WechatToken(e.message)
+                    } else WechatToken(accessToken?.errmsg)
+                    token.openId = accessToken?.openid ?: ""
+                    token
                 } catch (e: Exception) {
-                    log.warn(e.message, e)
+                    log.warn("token获取失败", e)
                     WechatToken(e.message)
-                } else WechatToken(accessToken?.errmsg)
-                token.openId = accessToken?.openid
-                token
-            } catch (e: Exception) {
-                log.warn("token获取失败", e)
-                WechatToken(e.message)
-            }
+                }
         return corpClient.properties.redirectUrl(token, wechatService.forceLogin(), state)
     }
 

@@ -19,8 +19,8 @@ class WechatToken() : HashMap<String, Any?>() {
         this["msg"] = ""
     }
 
-    var accessToken: String?
-        get() = get("access_token") as String?
+    var accessToken: String
+        get() = get("access_token") as String
         set(value) {
             put("access_token", value)
         }
@@ -35,8 +35,8 @@ class WechatToken() : HashMap<String, Any?>() {
         set(value) {
             put("refresh_token", value)
         }
-    var openId: String?
-        get() = get(IWexinProperties.OPEN_ID_NAME) as String?
+    var openId: String
+        get() = get(IWexinProperties.OPEN_ID_NAME) as String
         set(value) {
             put(IWexinProperties.OPEN_ID_NAME, value)
         }
@@ -45,8 +45,8 @@ class WechatToken() : HashMap<String, Any?>() {
         set(value) {
             put("scope", value)
         }
-    var unionId: String?
-        get() = get("unionid") as String?
+    var unionId: String
+        get() = get("unionid") as String
         set(value) {
             put("unionid", value)
         }
@@ -63,7 +63,7 @@ class WechatToken() : HashMap<String, Any?>() {
         }
 
     constructor(msg: String?) : this() {
-        this.msg = msg?:""
+        this.msg = msg ?: ""
     }
 
     companion object {

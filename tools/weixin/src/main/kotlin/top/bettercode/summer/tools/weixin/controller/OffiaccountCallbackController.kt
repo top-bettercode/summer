@@ -19,8 +19,8 @@ import javax.validation.constraints.NotBlank
 @Anonymous
 @RequestMapping(value = ["/wechat"], name = "微信")
 class OffiaccountCallbackController(
-    private val wechatService: IWechatService,
-    private val offiaccountClient: IOffiaccountClient
+        private val wechatService: IWechatService,
+        private val offiaccountClient: IOffiaccountClient
 ) : BaseController() {
 
     /*
@@ -31,29 +31,29 @@ class OffiaccountCallbackController(
     fun oauth(code: String?, state: String?): String {
         plainTextError()
         val token: WechatToken =
-            try {
-                val accessToken =
-                    if (code.isNullOrBlank()) null else offiaccountClient.getWebPageAccessToken(code)
-                val token = if (accessToken?.isOk == true)
-                    try {
-                        wechatService.oauth(
-                            accessToken,
-                            (if (offiaccountClient.properties.userUnionid) offiaccountClient.getSnsapiUserinfo(
-                                accessToken.accessToken!!,
-                                accessToken.openid!!
-                            ) else null)
-                        )
-                    } catch (e: Exception) {
-                        log.warn(e.message, e)
-                        WechatToken(e.message)
-                    }
-                else WechatToken(accessToken?.errmsg)
-                token.openId = accessToken?.openid
-                token
-            } catch (e: Exception) {
-                log.warn("token获取失败", e)
-                WechatToken(e.message)
-            }
+                try {
+                    val accessToken =
+                            if (code.isNullOrBlank()) null else offiaccountClient.getWebPageAccessToken(code)
+                    val token = if (accessToken?.isOk == true)
+                        try {
+                            wechatService.oauth(
+                                    accessToken,
+                                    (if (offiaccountClient.properties.userUnionid) offiaccountClient.getSnsapiUserinfo(
+                                            accessToken.accessToken!!,
+                                            accessToken.openid!!
+                                    ) else null)
+                            )
+                        } catch (e: Exception) {
+                            log.warn(e.message, e)
+                            WechatToken(e.message)
+                        }
+                    else WechatToken(accessToken?.errmsg)
+                    token.openId = accessToken?.openid ?: ""
+                    token
+                } catch (e: Exception) {
+                    log.warn("token获取失败", e)
+                    WechatToken(e.message)
+                }
         return offiaccountClient.properties.redirectUrl(token, wechatService.forceLogin(), state)
     }
 
@@ -70,7 +70,7 @@ class OffiaccountCallbackController(
     @GetMapping(name = "公众号验证回调")
     fun access(signature: String?, echostr: String?, timestamp: String?, nonce: String?): Any? {
         if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || offiaccountClient
-                .shaHex(offiaccountClient.properties.token, timestamp, nonce) != signature
+                        .shaHex(offiaccountClient.properties.token, timestamp, nonce) != signature
         ) {
             log.warn("非法请求.")
             return false
@@ -81,26 +81,26 @@ class OffiaccountCallbackController(
     @ResponseBody
     @PostMapping(name = "公众号事件推送")
     fun receive(
-        signature: String?, timestamp: String?,
-        nonce: String?, openid: String?, encrypt_type: String?, msg_signature: String?,
-        content: String?
+            signature: String?, timestamp: String?,
+            nonce: String?, openid: String?, encrypt_type: String?, msg_signature: String?,
+            content: String?
     ): String? {
         if (timestamp.isNullOrBlank() || nonce.isNullOrBlank() || openid.isNullOrBlank() || encrypt_type.isNullOrBlank() || msg_signature.isNullOrBlank() || content.isNullOrBlank()
-            || offiaccountClient.shaHex(
-                offiaccountClient.properties.token,
-                timestamp,
-                nonce
-            ) != signature
+                || offiaccountClient.shaHex(
+                        offiaccountClient.properties.token,
+                        timestamp,
+                        nonce
+                ) != signature
         ) {
             log.warn("非法请求.")
         } else {
             wechatService.receive(
-                timestamp,
-                nonce,
-                openid,
-                encrypt_type,
-                msg_signature,
-                content
+                    timestamp,
+                    nonce,
+                    openid,
+                    encrypt_type,
+                    msg_signature,
+                    content
             )
         }
         return null
