@@ -20,24 +20,24 @@ import java.util.concurrent.TimeUnit
  * @author Peter Wu
  */
 open class WeixinClient<T : IWexinProperties>(
-    val properties: T,
-    collectionName: String,
-    name: String,
-    logMarker: String
+        val properties: T,
+        collectionName: String,
+        name: String,
+        logMarker: String
 ) :
-    ApiTemplate(
-        collectionName,
-        name,
-        logMarker,
-        properties.connectTimeout,
-        properties.readTimeout
-    ) {
+        ApiTemplate(
+                collectionName,
+                name,
+                logMarker,
+                properties.connectTimeout,
+                properties.readTimeout
+        ) {
 
     private var lastAppId = properties.appId
 
     protected val cache =
-        Caffeine.newBuilder().expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
-            .maximumSize(1000).build<String, CachedValue>()
+            Caffeine.newBuilder().expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
+                    .maximumSize(1000).build<String, CachedValue>()
 
 
     companion object {
@@ -46,15 +46,15 @@ open class WeixinClient<T : IWexinProperties>(
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-            object : MappingJackson2HttpMessageConverter() {
-                override fun canRead(mediaType: MediaType?): Boolean {
-                    return true
-                }
+                object : MappingJackson2HttpMessageConverter() {
+                    override fun canRead(mediaType: MediaType?): Boolean {
+                        return true
+                    }
 
-                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
-                    return true
+                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                        return true
+                    }
                 }
-            }
         val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
@@ -68,17 +68,17 @@ open class WeixinClient<T : IWexinProperties>(
         val cachedValue = cache.getIfPresent(baseAccessTokenKey)
         return if (cachedValue == null || cachedValue.expired) {
             val accessToken = getForObject<BasicAccessToken>(
-                properties.basicAccessTokenUrl,
-                getAppId(),
-                getSecret()
+                    properties.basicAccessTokenUrl,
+                    getAppId(),
+                    getSecret()
             )
             if (accessToken.isOk) {
                 cache.put(
-                    baseAccessTokenKey,
-                    CachedValue(
-                        accessToken.accessToken!!,
-                        LocalDateTime.now().plusSeconds(accessToken.expiresIn!!.toLong())
-                    )
+                        baseAccessTokenKey,
+                        CachedValue(
+                                accessToken.accessToken!!,
+                                LocalDateTime.now().plusSeconds(accessToken.expiresIn!!.toLong())
+                        )
                 )
                 accessToken.accessToken
             } else if (retries < properties.maxRetries && accessToken.errcode != 40164) {
