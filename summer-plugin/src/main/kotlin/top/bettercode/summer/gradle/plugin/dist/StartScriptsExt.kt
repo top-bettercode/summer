@@ -1,6 +1,7 @@
 package top.bettercode.summer.gradle.plugin.dist
 
 import org.gradle.api.Project
+import profilesActive
 import java.io.File
 import java.nio.charset.Charset
 
@@ -11,7 +12,7 @@ import java.nio.charset.Charset
 object StartScriptsExt {
 
     fun ext(project: Project, dist: DistExtension) {
-        val appName = (if (project.rootProject != project) "${project.rootProject.name}-" else "") + project.name
+        val appName = (if (project.rootProject != project) "${project.rootProject.name}-" else "") + project.name + "-" + project.profilesActive
         if (dist.windows) {
             //WinSW
             val winSWFile = File(project.buildDir, "service/${project.name}.exe")
