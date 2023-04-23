@@ -1,10 +1,7 @@
 package top.bettercode.summer.test;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.Base64Utils;
@@ -20,7 +17,11 @@ import top.bettercode.summer.tools.lang.operation.HttpOperation;
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils;
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder;
 
-@ConditionalOnClass(ApiSecurityProperties.class)
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
+@ConditionalOnBean(ApiSecurityProperties.class)
 @Configuration(proxyBeanMethods = false)
 public class AutodocAuthWebMvcConfigurer implements AutoDocRequestHandler {
 
