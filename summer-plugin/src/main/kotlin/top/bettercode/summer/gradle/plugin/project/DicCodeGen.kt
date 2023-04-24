@@ -51,7 +51,7 @@ class DicCodeGen(private val project: Project) {
             field.name = t.type
             field.description =
                     "${t.name}(${t.codes.entries.joinToString { "${it.key}:${it.value}" }})"
-            field.type = if (t.isInt) "Integer" else "String"
+            field.type = t.javaType.shortNameWithoutTypeArguments
             fields.add(field)
         }
         fields.addAll(AutodocUtil.yamlMapper.readValue(file, collectionType))
@@ -72,12 +72,12 @@ class DicCodeGen(private val project: Project) {
             if (key.contains(".")) {
                 codeType = key.substringBefore(".")
                 val code = key.substringAfter(".")
-                val isInt = "Int" == properties.getProperty("$codeType|TYPE")
+                val javaType = properties.getProperty("$codeType|TYPE")
                 val dicCode = map.computeIfAbsent(codeType) {
                     DicCodes(
                             codeType,
                             properties.getProperty(codeType),
-                            isInt
+                            JavaType(javaType)
                     )
                 }
                 val codeKey =
@@ -118,11 +118,7 @@ class DicCodeGen(private val project: Project) {
                 )
                 val className = enumClassName(codeType)
 
-                val isIntCode = v.isInt
-                val fieldType =
-                        if (isIntCode) JavaType.intPrimitiveInstance else JavaType.stringInstance
-                val fieldType2 =
-                        if (isIntCode) JavaType("java.lang.Integer") else JavaType.stringInstance
+                val fieldType = v.javaType
 
                 //
                 val enumType = JavaType("$packageName.support.dic.${className}Enum")
@@ -153,7 +149,11 @@ class DicCodeGen(private val project: Project) {
                         innerInterface.apply {
                             visibility = JavaVisibility.PUBLIC
                             val initializationString =
-                                    if (isIntCode) code.toString() else "\"$code\""
+                                    when (fieldType) {
+                                        JavaType.stringInstance -> "\"$code\""
+                                        JavaType.charPrimitiveInstance -> "(char) $code"
+                                        else -> code.toString()
+                                    }
                             field(
                                     codeFieldName,
                                     fieldType,
@@ -254,7 +254,7 @@ class DicCodeGen(private val project: Project) {
                     method(
                             "equals",
                             JavaType.booleanPrimitiveInstance,
-                            Parameter("code", fieldType2)
+                            Parameter("code", fieldType.primitiveTypeWrapper ?: fieldType)
                     ) {
                         javadoc {
                             +"/**"
@@ -262,12 +262,12 @@ class DicCodeGen(private val project: Project) {
                             +" * @return code 是否相等"
                             +" */"
                         }
-                        if (isIntCode)
+                        if (fieldType.isPrimitive)
                             +"return code != null && this.code == code;"
                         else
                             +"return this.code.equals(code);"
                     }
-                    method("enumOf", enumType, Parameter("code", fieldType2)) {
+                    method("enumOf", enumType, Parameter("code", fieldType.primitiveTypeWrapper ?: fieldType)) {
                         javadoc {
                             +"/**"
                             +" * 根据标识码查询对应枚举"
@@ -281,7 +281,7 @@ class DicCodeGen(private val project: Project) {
                         +"return null;"
                         +"}"
                         +"for (${className}Enum ${className.decapitalized()}Enum : values()) {"
-                        if (isIntCode)
+                        if (fieldType.isPrimitive)
                             +"if (${className.decapitalized()}Enum.code == code) {"
                         else
                             +"if (${className.decapitalized()}Enum.code.equals(code)) {"
@@ -290,7 +290,8 @@ class DicCodeGen(private val project: Project) {
                         +"}"
                         +"return null;"
                     }
-                    method("nameOf", JavaType.stringInstance, Parameter("code", fieldType2)) {
+                    method("nameOf", JavaType.stringInstance, Parameter("code", fieldType.primitiveTypeWrapper
+                            ?: fieldType)) {
                         javadoc {
                             +"/**"
                             +" * 根据标识码查询对应名称"
@@ -305,7 +306,8 @@ class DicCodeGen(private val project: Project) {
                         +"}"
                         +"return CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getName(code);"
                     }
-                    method("codeOf", fieldType2, Parameter("name", JavaType.stringInstance)) {
+                    method("codeOf", fieldType.primitiveTypeWrapper
+                            ?: fieldType, Parameter("name", JavaType.stringInstance)) {
                         javadoc {
                             +"/**"
                             +" * 根据标识码名称查询对应标识码"
@@ -318,10 +320,7 @@ class DicCodeGen(private val project: Project) {
                         +"if (name == null) {"
                         +"return null;"
                         +"}"
-                        if (isIntCode)
-                            +"return (Integer) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
-                        else
-                            +"return (String) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
+                        +"return (${fieldType.shortName}) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
                     }
                 }
                 docText.appendLine("|===")

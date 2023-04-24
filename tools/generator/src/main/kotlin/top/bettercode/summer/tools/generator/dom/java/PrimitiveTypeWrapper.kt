@@ -11,45 +11,55 @@ class PrimitiveTypeWrapper
  * the method that returns the wrapped primitive
  */
 private constructor(
-    fullyQualifiedName: String,
-    private val toPrimitiveMethod: String
+        fullyQualifiedName: String,
+        val primitiveType: JavaType,
+        private val toPrimitiveMethod: String
 ) : JavaType(fullyQualifiedName) {
     companion object {
         val booleanInstance: PrimitiveTypeWrapper = PrimitiveTypeWrapper(
-            "java.lang.Boolean",
-            "booleanValue()"
+                "java.lang.Boolean",
+                JavaType.booleanPrimitiveInstance,
+                "booleanValue()"
         )
         val byteInstance: PrimitiveTypeWrapper = PrimitiveTypeWrapper(
-            "java.lang.Byte",
-            "byteValue()"
+                "java.lang.Byte",
+                JavaType.bytePrimitiveInstance,
+                "byteValue()"
         )
         val characterInstance: PrimitiveTypeWrapper = PrimitiveTypeWrapper(
-            "java.lang.Character",
-            "charValue()"
+                "java.lang.Character",
+                JavaType.charPrimitiveInstance,
+                "charValue()"
         )
         val doubleInstance: PrimitiveTypeWrapper = PrimitiveTypeWrapper(
-            "java.lang.Double",
-            "doubleValue()"
+                "java.lang.Double",
+                JavaType.doublePrimitiveInstance,
+                "doubleValue()"
         )
         val floatInstance: PrimitiveTypeWrapper = PrimitiveTypeWrapper(
-            "java.lang.Float",
-            "floatValue()"
+                "java.lang.Float",
+                JavaType.floatPrimitiveInstance,
+                "floatValue()"
         )
         val integerInstance: PrimitiveTypeWrapper = PrimitiveTypeWrapper(
-            "java.lang.Integer",
-            "intValue()"
+                "java.lang.Integer",
+                JavaType.intPrimitiveInstance,
+                "intValue()"
         )
         val longInstance: PrimitiveTypeWrapper = PrimitiveTypeWrapper(
-            "java.lang.Long",
-            "longValue()"
+                "java.lang.Long",
+                JavaType.longPrimitiveInstance,
+                "longValue()"
         )
         val shortInstance: PrimitiveTypeWrapper = PrimitiveTypeWrapper(
-            "java.lang.Short",
-            "shortValue()"
+                "java.lang.Short",
+                JavaType.shortPrimitiveInstance,
+                "shortValue()"
         )
         val voidInstance: PrimitiveTypeWrapper = PrimitiveTypeWrapper(
-            "java.lang.Void",
-            ""
+                "java.lang.Void",
+                JavaType.voidPrimitiveInstance,
+                ""
         )
     }
 }

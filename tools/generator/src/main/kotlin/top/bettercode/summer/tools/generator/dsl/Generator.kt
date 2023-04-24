@@ -6,6 +6,7 @@ import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.dom.java.JavaType
+import top.bettercode.summer.tools.generator.dom.java.PrimitiveTypeMap
 import top.bettercode.summer.tools.generator.dom.java.PrimitiveTypeWrapper
 import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.*
@@ -407,7 +408,7 @@ open class Generator {
             val dicCodes = DicCodes(
                     codeType,
                     codeTypeName,
-                    JavaType.stringInstance != javaType
+                    (javaType as? PrimitiveTypeWrapper)?.primitiveType ?: javaType
             )
             prettyRemarks.substringAfter('(').substringBeforeLast(')').trim('?', '.')
                     .split(";").filter { it.isNotBlank() }
@@ -456,7 +457,7 @@ open class Generator {
                 when {
                     isCodeField && !asBoolean -> {
                         val value = dicCodes()!!.codes.keys.first()
-                        if (JavaType.stringInstance == javaType) "\"$value\"" else "$value"
+                        if (JavaType.stringInstance == javaType) "\"$value\"" else if (PrimitiveTypeWrapper.characterInstance == javaType) "(char) $value" else "$value"
                     }
 
                     else -> when (javaType) {
@@ -499,6 +500,7 @@ open class Generator {
                         PrimitiveTypeWrapper.doubleInstance -> "1.0"
                         PrimitiveTypeWrapper.longInstance -> "1L"
                         PrimitiveTypeWrapper.integerInstance -> "1"
+                        PrimitiveTypeWrapper.characterInstance -> "(char) 1"
                         PrimitiveTypeWrapper.shortInstance -> "new Short(\"1\")"
                         PrimitiveTypeWrapper.byteInstance -> "new Byte(\"1\")"
                         JavaType("byte[]") -> "new byte[0]"

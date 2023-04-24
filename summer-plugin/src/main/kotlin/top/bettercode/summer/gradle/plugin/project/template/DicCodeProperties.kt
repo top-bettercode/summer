@@ -23,7 +23,7 @@ class DicCodeProperties : Generator() {
                     if (!codeTypes.contains(codeType) || (codeTypes[codeType] ?: 0) > size) {
                         codeTypes[codeType] = size
                         this[codeType] = dicCodes.name
-                        this["$codeType|TYPE"] = if (dicCodes.isInt) "Int" else "String"
+                        this["$codeType|TYPE"] = dicCodes.javaType.fullyQualifiedNameWithoutTypeParameters
                         dicCodes.codes.forEach {
                             this["$codeType.${it.key}"] = it.value
                         }

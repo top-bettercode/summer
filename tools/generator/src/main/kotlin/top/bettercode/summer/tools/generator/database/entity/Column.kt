@@ -3,6 +3,7 @@ package top.bettercode.summer.tools.generator.database.entity
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.JavaTypeResolver
+import top.bettercode.summer.tools.generator.dom.java.PrimitiveTypeWrapper
 import java.util.*
 
 /**
@@ -11,56 +12,56 @@ import java.util.*
  * @author Peter Wu
  */
 data class Column(
-    val tableCat: String?,
-    val tableSchem: String?,
-    /**
-     * 数据库字段名
-     */
-    val columnName: String,
-    /**
-     * 数据库字段类型
-     */
-    var typeName: String,
-    /**
-     * 字段类型
-     */
-    val dataType: Int?,
-    /**
-     * DECIMAL_DIGITS
-     */
-    var decimalDigits: Int,
-    /**
-     * COLUMN_SIZE
-     */
-    var columnSize: Int,
-    /**
-     * 注释说明
-     */
-    val remarks: String,
-    /**
-     * 是否可为空
-     */
-    var nullable: Boolean,
-    /**
-     * 默认值
-     */
-    var columnDef: String?,
-    var extra: String = "",
-    var unique: Boolean = false,
-    var indexed: Boolean = false,
-    var isPrimary: Boolean = false,
-    var unsigned: Boolean = false,
-    var isForeignKey: Boolean = false,
-    var pktableName: String? = null,
-    var pkcolumnName: String? = null,
-    var autoIncrement: Boolean = false,
-    val idgenerator: String = "",
-    val sequence: String = "",
-    val sequenceStartWith: Int = 1,
-    var generatedColumn: Boolean = false,
-    var version: Boolean = false,
-    var softDelete: Boolean = false,
-    var asBoolean: Boolean = false,
+        val tableCat: String?,
+        val tableSchem: String?,
+        /**
+         * 数据库字段名
+         */
+        val columnName: String,
+        /**
+         * 数据库字段类型
+         */
+        var typeName: String,
+        /**
+         * 字段类型
+         */
+        val dataType: Int?,
+        /**
+         * DECIMAL_DIGITS
+         */
+        var decimalDigits: Int,
+        /**
+         * COLUMN_SIZE
+         */
+        var columnSize: Int,
+        /**
+         * 注释说明
+         */
+        val remarks: String,
+        /**
+         * 是否可为空
+         */
+        var nullable: Boolean,
+        /**
+         * 默认值
+         */
+        var columnDef: String?,
+        var extra: String = "",
+        var unique: Boolean = false,
+        var indexed: Boolean = false,
+        var isPrimary: Boolean = false,
+        var unsigned: Boolean = false,
+        var isForeignKey: Boolean = false,
+        var pktableName: String? = null,
+        var pkcolumnName: String? = null,
+        var autoIncrement: Boolean = false,
+        val idgenerator: String = "",
+        val sequence: String = "",
+        val sequenceStartWith: Int = 1,
+        var generatedColumn: Boolean = false,
+        var version: Boolean = false,
+        var softDelete: Boolean = false,
+        var asBoolean: Boolean = false,
 ) {
     init {
         if ("null".equals(columnDef, true)) {
@@ -70,19 +71,19 @@ data class Column(
 
     private val codeRemarks: String by lazy {
         remarks.replace('（', '(').replace('）', ')').replace('：', ':')
-            .replace(Regex(" *: *"), ":").replace(Regex(" +"), " ")
-            .replace('；', ';').replace(' ', ';').replace(Regex(";+"), ";")
+                .replace(Regex(" *: *"), ":").replace(Regex(" +"), " ")
+                .replace('；', ';').replace(' ', ';').replace(Regex(";+"), ";")
     }
 
     private val oldCodeRemarks: String by lazy {
         codeRemarks.replace('，', ',')
-            .replace(Regex(",+"), ",")
+                .replace(Regex(",+"), ",")
     }
 
     val prettyRemarks: String by lazy {
         when {
             oldCodeRemarks.matches(Regex(".*\\((.*:.*[, ]?)+\\).*")) && !oldCodeRemarks.contains(
-                ";"
+                    ";"
             ) -> {
                 oldCodeRemarks.replace(",", ";")
             }
@@ -98,7 +99,7 @@ data class Column(
     }
 
     val isCodeField: Boolean by lazy {
-        codeRemarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
+        javaType != PrimitiveTypeWrapper.booleanInstance && codeRemarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
     }
 
     val originJavaType: JavaType
@@ -109,8 +110,8 @@ data class Column(
 
     val defaultDesc: String by lazy {
         val isString = typeName.startsWith("VARCHAR", true) || typeName.startsWith(
-            "TEXT",
-            true
+                "TEXT",
+                true
         ) || typeName.startsWith("TINYTEXT", true) || typeName.startsWith("MEDIUMTEXT", true)
         if (columnDef == null) "" else {
             val qt = if (isString) "'" else ""
@@ -209,20 +210,20 @@ data class Column(
 
     val containsSize: Boolean by lazy {
         columnSize > 0 && !arrayOf(
-            "java.lang.Object",
-            "byte[]",
-            "java.util.Date",
-            "java.time.OffsetTime",
-            "java.time.OffsetDateTime",
-            "java.time.LocalDate",
-            "java.time.LocalTime",
-            "java.time.LocalDateTime"
+                "java.lang.Object",
+                "byte[]",
+                "java.util.Date",
+                "java.time.OffsetTime",
+                "java.time.OffsetDateTime",
+                "java.time.LocalDate",
+                "java.time.LocalTime",
+                "java.time.LocalDateTime"
         ).contains(javaType.fullyQualifiedName) && !arrayOf(
-            "TINYTEXT",
-            "MEDIUMTEXT",
-            "TEXT",
-            "CLOB",
-            "NCLOB"
+                "TINYTEXT",
+                "MEDIUMTEXT",
+                "TEXT",
+                "CLOB",
+                "NCLOB"
         ).contains(typeName.uppercase(Locale.getDefault()))
     }
 
