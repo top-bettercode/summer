@@ -12,7 +12,7 @@ import java.nio.charset.Charset
 object StartScriptsExt {
 
     fun ext(project: Project, dist: DistExtension) {
-        val appName = (if (project.rootProject != project) "${project.rootProject.name}-" else "") + project.name + "-" + project.profilesActive
+        val appName = (if (project.rootProject != project) "${project.rootProject.name}-" else "") + project.name
         if (dist.windows) {
             //WinSW
             val winSWFile = File(project.buildDir, "service/${project.name}.exe")
