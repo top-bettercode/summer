@@ -72,7 +72,7 @@ class DicCodeGen(private val project: Project) {
             if (key.contains(".")) {
                 codeType = key.substringBefore(".")
                 val code = key.substringAfter(".")
-                val javaType = properties.getProperty("$codeType|TYPE")
+                val javaType = properties.getProperty("$codeType|TYPE") ?: "java.lang.String"
                 val dicCode = map.computeIfAbsent(codeType) {
                     DicCodes(
                             codeType,
