@@ -8,6 +8,7 @@ import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.PrimitiveTypeMap
 import top.bettercode.summer.tools.generator.dom.java.PrimitiveTypeWrapper
+import top.bettercode.summer.tools.generator.dom.java.PrimitiveTypeWrapperMap
 import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.*
 import top.bettercode.summer.tools.lang.capitalized
@@ -408,7 +409,7 @@ open class Generator {
             val dicCodes = DicCodes(
                     codeType,
                     codeTypeName,
-                    (javaType as? PrimitiveTypeWrapper)?.primitiveType ?: javaType
+                    PrimitiveTypeWrapperMap.getType(javaType.fullyQualifiedNameWithoutTypeParameters) ?: javaType
             )
             prettyRemarks.substringAfter('(').substringBeforeLast(')').trim('?', '.')
                     .split(";").filter { it.isNotBlank() }

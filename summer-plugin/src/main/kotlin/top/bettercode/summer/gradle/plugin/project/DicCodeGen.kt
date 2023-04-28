@@ -325,7 +325,10 @@ class DicCodeGen(private val project: Project) {
                         +"if (name == null) {"
                         +"return null;"
                         +"}"
-                        +"return (${fieldType.shortName}) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
+                        +"return (${
+                            (fieldType.primitiveTypeWrapper
+                                    ?: fieldType).shortNameWithoutTypeArguments
+                        }) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
                     }
                 }
                 docText.appendLine("|===")
