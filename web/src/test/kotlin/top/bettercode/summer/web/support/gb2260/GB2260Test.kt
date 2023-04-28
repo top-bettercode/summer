@@ -18,7 +18,7 @@ class GB2260Test {
 
     @Test
     fun getDivision() {
-        System.err.println(StringUtil.json(GB2260.getDivision("130700"), true))
+        System.err.println(StringUtil.json(GB2260.getDivision("411523"), true))
         System.err.println("=============================================================")
         System.err.println(StringUtil.json(GB2260.getDivision("130728"), true))
     }
