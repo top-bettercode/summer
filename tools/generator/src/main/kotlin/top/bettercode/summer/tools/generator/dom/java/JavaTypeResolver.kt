@@ -191,8 +191,6 @@ object JavaTypeResolver {
                 ) == answer)
         ) {
             JavaType(java.lang.Integer::class.java.name)
-        } else if (Types.CHAR == column.dataType && column.columnSize == 1) {
-            JavaType(java.lang.Character::class.java.name)
         } else
             answer
     }
