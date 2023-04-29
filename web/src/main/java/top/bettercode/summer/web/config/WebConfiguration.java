@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import top.bettercode.summer.web.support.gb2260.GB2260Controller;
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver;
 
 /**
@@ -20,4 +21,8 @@ public class WebConfiguration {
     return new PackageScanClassResolver(applicationContext.getClassLoader());
   }
 
+  @Bean
+  public GB2260Controller gb2260Controller() {
+    return new GB2260Controller();
+  }
 }
