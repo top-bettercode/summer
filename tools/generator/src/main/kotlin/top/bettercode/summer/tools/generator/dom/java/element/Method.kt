@@ -26,7 +26,7 @@ class Method : JavaElement() {
      *
      * The returnType to set.
      */
-    var returnType: JavaType = JavaType.voidPrimitiveInstance
+    var returnType: JavaType = JavaType.void
 
     /** The name.  */
     /**

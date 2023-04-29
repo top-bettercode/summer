@@ -61,7 +61,7 @@ abstract class InnerUnit(
     }
 
     fun serialVersionUID() {
-        field("serialVersionUID", JavaType.longPrimitiveInstance) {
+        field("serialVersionUID", JavaType.long) {
             isStatic = true
             isFinal = true
             initializationString = "1L"
@@ -95,10 +95,10 @@ abstract class InnerUnit(
     }
 
     fun method(
-        name: String,
-        returnType: JavaType = JavaType.voidPrimitiveInstance,
-        vararg parameter: Parameter,
-        visibility: JavaVisibility = JavaVisibility.PUBLIC
+            name: String,
+            returnType: JavaType = JavaType.void,
+            vararg parameter: Parameter,
+            visibility: JavaVisibility = JavaVisibility.PUBLIC
     ) {
         val method = Method()
         method.name = name
@@ -109,11 +109,11 @@ abstract class InnerUnit(
     }
 
     fun method(
-        name: String,
-        returnType: JavaType = JavaType.voidPrimitiveInstance,
-        vararg parameter: Parameter,
-        visibility: JavaVisibility = JavaVisibility.PUBLIC,
-        closure: Method.() -> Unit
+            name: String,
+            returnType: JavaType = JavaType.void,
+            vararg parameter: Parameter,
+            visibility: JavaVisibility = JavaVisibility.PUBLIC,
+            closure: Method.() -> Unit
     ) {
         val method = Method()
         method.name = name

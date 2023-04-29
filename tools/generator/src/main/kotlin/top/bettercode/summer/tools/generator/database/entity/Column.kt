@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.generator.database.entity
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.JavaTypeResolver
-import top.bettercode.summer.tools.generator.dom.java.PrimitiveTypeWrapper
 import java.util.*
 
 /**
@@ -99,7 +98,7 @@ data class Column(
     }
 
     val isCodeField: Boolean by lazy {
-        javaType != PrimitiveTypeWrapper.booleanInstance && codeRemarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
+        javaType != JavaType.booleanWrapper && codeRemarks.matches(Regex(".*\\((.*:.*[; ]?)+\\).*"))
     }
 
     val originJavaType: JavaType

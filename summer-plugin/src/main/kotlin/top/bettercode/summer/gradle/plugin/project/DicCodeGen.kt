@@ -74,7 +74,7 @@ class DicCodeGen(private val project: Project) {
                 val code = key.substringAfter(".")
                 var javaType = properties.getProperty("$codeType|TYPE") ?: "java.lang.String"
                 if (javaType == "Int") {
-                    javaType = JavaType.intPrimitiveInstance.fullyQualifiedNameWithoutTypeParameters
+                    javaType = JavaType.int.fullyQualifiedNameWithoutTypeParameters
                 } else if (javaType == "String") {
                     javaType = JavaType.stringInstance.fullyQualifiedNameWithoutTypeParameters
                 }
@@ -156,7 +156,7 @@ class DicCodeGen(private val project: Project) {
                             val initializationString =
                                     when (fieldType) {
                                         JavaType.stringInstance -> "\"$code\""
-                                        JavaType.charPrimitiveInstance -> "(char) $code"
+                                        JavaType.char -> "(char) $code"
                                         else -> code.toString()
                                     }
                             field(
@@ -258,7 +258,7 @@ class DicCodeGen(private val project: Project) {
                     }
                     method(
                             "equals",
-                            JavaType.booleanPrimitiveInstance,
+                            JavaType.boolean,
                             Parameter("code", fieldType.primitiveTypeWrapper ?: fieldType)
                     ) {
                         javadoc {

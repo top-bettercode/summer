@@ -99,7 +99,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 initializationString += "  )"
             }
             //export
-            method("export", JavaType.voidPrimitiveInstance) {
+            method("export", JavaType.void) {
                 this.exception(JavaType("java.io.IOException"))
                 annotation("@top.bettercode.summer.logging.annotation.RequestLogging(includeResponseBody = false, ignoredTimeout = true)")
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/export.xlsx\", name = \"导出\")")

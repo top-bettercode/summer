@@ -26,6 +26,8 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
     var isPrimitive: Boolean = false
         private set
 
+    var isPrimitiveWrapper: Boolean = false
+
     var isArray: Boolean = false
         private set
 
@@ -34,7 +36,14 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
      *
      * @return Returns the wrapperClass.
      */
-    var primitiveTypeWrapper: PrimitiveTypeWrapper? = null
+    var primitiveTypeWrapper: JavaType? = null
+
+    /**
+     * Gets the  primitive type.
+     *
+     * @return Returns the primitiveType.
+     */
+    var primitiveType: JavaType? = null
 
     val typeArguments: MutableList<JavaType>
 
@@ -137,12 +146,12 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
                 sb.append(packageName)
                 sb.append('.')
                 sb.append(
-                    calculateActualImport(
-                        shortNameWithoutTypeArguments.substring(
-                            0,
-                            index
+                        calculateActualImport(
+                                shortNameWithoutTypeArguments.substring(
+                                        0,
+                                        index
+                                )
                         )
-                    )
                 )
                 answer.add(sb.toString())
             }
@@ -292,7 +301,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
         if (fullyQualifiedNameWithoutTypeParameters.contains(".")) {
             packageName = fullyQualifiedNameWithoutTypeParameters.substringBeforeLast(".")
             shortNameWithoutTypeArguments = fullyQualifiedNameWithoutTypeParameters
-                .substring(packageName.length + 1)
+                    .substring(packageName.length + 1)
             val index = shortNameWithoutTypeArguments.lastIndexOf('.')
             if (index != -1) {
                 shortNameWithoutTypeArguments = shortNameWithoutTypeArguments.substring(index + 1)
@@ -305,49 +314,106 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
             packageName = ""
 
             when (fullyQualifiedNameWithoutTypeParameters) {
+                "void" -> {
+                    isPrimitive = true
+                    primitiveTypeWrapper = voidWrapper
+                }
+
                 "byte" -> {
                     isPrimitive = true
-                    primitiveTypeWrapper = PrimitiveTypeWrapper.byteInstance
+                    primitiveTypeWrapper = byteWrapper
                 }
 
                 "short" -> {
                     isPrimitive = true
-                    primitiveTypeWrapper = PrimitiveTypeWrapper.shortInstance
+                    primitiveTypeWrapper = shortWrapper
                 }
 
                 "int" -> {
                     isPrimitive = true
-                    primitiveTypeWrapper = PrimitiveTypeWrapper.integerInstance
+                    primitiveTypeWrapper = intWrapper
                 }
 
                 "long" -> {
                     isPrimitive = true
-                    primitiveTypeWrapper = PrimitiveTypeWrapper.longInstance
+                    primitiveTypeWrapper = longWrapper
                 }
 
                 "char" -> {
                     isPrimitive = true
-                    primitiveTypeWrapper = PrimitiveTypeWrapper.characterInstance
+                    primitiveTypeWrapper = charWrapper
                 }
 
                 "float" -> {
                     isPrimitive = true
-                    primitiveTypeWrapper = PrimitiveTypeWrapper.floatInstance
+                    primitiveTypeWrapper = floatWrapper
                 }
 
                 "double" -> {
                     isPrimitive = true
-                    primitiveTypeWrapper = PrimitiveTypeWrapper.doubleInstance
+                    primitiveTypeWrapper = doubleWrapper
                 }
 
                 "boolean" -> {
                     isPrimitive = true
-                    primitiveTypeWrapper = PrimitiveTypeWrapper.booleanInstance
+                    primitiveTypeWrapper = booleanWrapper
                 }
 
                 else -> {
                     isPrimitive = false
                     primitiveTypeWrapper = null
+                }
+            }
+
+            when (fullyQualifiedNameWithoutTypeParameters) {
+                "java.lang.Void" -> {
+                    isPrimitiveWrapper = true
+                    primitiveType = void
+                }
+
+                "java.lang.Integer" -> {
+                    isPrimitiveWrapper = true
+                    primitiveType = int
+                }
+
+                "java.lang.Byte" -> {
+                    isPrimitiveWrapper = true
+                    primitiveType = byte
+                }
+
+                "java.lang.Short" -> {
+                    isPrimitiveWrapper = true
+                    primitiveType = short
+                }
+
+                "java.lang.Long" -> {
+                    isPrimitiveWrapper = true
+                    primitiveType = long
+                }
+
+                "java.lang.Character" -> {
+                    isPrimitiveWrapper = true
+                    primitiveType = char
+                }
+
+                "java.lang.Float" -> {
+                    isPrimitiveWrapper = true
+                    primitiveType = float
+                }
+
+                "java.lang.Double" -> {
+                    isPrimitiveWrapper = true
+                    primitiveType = double
+                }
+
+                "java.lang.Boolean" -> {
+                    isPrimitiveWrapper = true
+                    primitiveType = boolean
+                }
+
+                else -> {
+                    isPrimitiveWrapper = false
+                    primitiveType = null
                 }
             }
         }
@@ -375,7 +441,7 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
             } else if ("," == token) {
                 if (openCount == 0) {
                     typeArguments
-                        .add(JavaType(sb.toString()))
+                            .add(JavaType(sb.toString()))
                     sb.setLength(0)
                 } else {
                     sb.append(token)
@@ -400,15 +466,26 @@ open class JavaType(fullTypeSpecification: String) : Comparable<JavaType> {
 
         private const val JAVA_LANG = "java.lang"
 
-        val voidPrimitiveInstance: JavaType by lazy { JavaType("void") }
-        val intPrimitiveInstance: JavaType by lazy { JavaType("int") }
-        val longPrimitiveInstance: JavaType by lazy { JavaType("long") }
-        val booleanPrimitiveInstance: JavaType by lazy { JavaType("boolean") }
-        val charPrimitiveInstance: JavaType by lazy { JavaType("char") }
-        val bytePrimitiveInstance: JavaType by lazy { JavaType("byte") }
-        val shortPrimitiveInstance: JavaType by lazy { JavaType("short") }
-        val floatPrimitiveInstance: JavaType by lazy { JavaType("float") }
-        val doublePrimitiveInstance: JavaType by lazy { JavaType("double") }
+        @JvmStatic
+        val void: JavaType by lazy { JavaType("void") }
+        val int: JavaType by lazy { JavaType("int") }
+        val long: JavaType by lazy { JavaType("long") }
+        val boolean: JavaType by lazy { JavaType("boolean") }
+        val char: JavaType by lazy { JavaType("char") }
+        val byte: JavaType by lazy { JavaType("byte") }
+        val short: JavaType by lazy { JavaType("short") }
+        val float: JavaType by lazy { JavaType("float") }
+        val double: JavaType by lazy { JavaType("double") }
+
+        val voidWrapper: JavaType by lazy { JavaType("java.lang.Void") }
+        val intWrapper: JavaType by lazy { JavaType("java.lang.Integer") }
+        val longWrapper: JavaType by lazy { JavaType("java.lang.Long") }
+        val booleanWrapper: JavaType by lazy { JavaType("java.lang.Boolean") }
+        val charWrapper: JavaType by lazy { JavaType("java.lang.Character") }
+        val byteWrapper: JavaType by lazy { JavaType("java.lang.Byte") }
+        val shortWrapper: JavaType by lazy { JavaType("java.lang.Short") }
+        val floatWrapper: JavaType by lazy { JavaType("java.lang.Float") }
+        val doubleWrapper: JavaType by lazy { JavaType("java.lang.Double") }
 
         // always return a new instance because the type may be parameterized
 

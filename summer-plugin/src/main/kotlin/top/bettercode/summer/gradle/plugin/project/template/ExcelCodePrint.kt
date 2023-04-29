@@ -40,7 +40,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                 initializationString += "  )"
             }
             //export
-            method("export", JavaType.voidPrimitiveInstance) {
+            method("export", JavaType.void) {
                 this.exception(JavaType("java.io.IOException"))
                 annotation("@top.bettercode.summer.logging.annotation.RequestLogging(includeResponseBody = false, ignoredTimeout = true)")
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/export.xlsx\", name = \"导出\")")
@@ -66,7 +66,7 @@ open class ExcelCodePrint : ProjectGenerator() {
             }
 
             //template
-            method("template", JavaType.voidPrimitiveInstance) {
+            method("template", JavaType.void) {
                 this.exception(JavaType("java.io.IOException"))
                 annotation("@top.bettercode.summer.logging.annotation.RequestLogging(includeResponseBody = false, ignoredTimeout = true)")
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/template.xlsx\", name = \"导入模板\")")
@@ -90,7 +90,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                 +"return noContent();"
             }
 
-            method("export", JavaType.voidPrimitiveInstance) {
+            method("export", JavaType.void) {
 //                javadoc {
 //                    +"// ${remarks}导出"
 //                }
@@ -104,7 +104,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                 +");"
             }
 
-            method("template", JavaType.voidPrimitiveInstance) {
+            method("template", JavaType.void) {
                 annotation("@org.junit.jupiter.api.DisplayName(\"导入模板\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(1)")
@@ -113,7 +113,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                 +");"
             }
 
-            method("importTemplate", JavaType.voidPrimitiveInstance) {
+            method("importTemplate", JavaType.void) {
                 annotation("@org.junit.jupiter.api.DisplayName(\"导入\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(1)")

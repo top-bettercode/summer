@@ -6,9 +6,6 @@ import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.dom.java.JavaType
-import top.bettercode.summer.tools.generator.dom.java.PrimitiveTypeMap
-import top.bettercode.summer.tools.generator.dom.java.PrimitiveTypeWrapper
-import top.bettercode.summer.tools.generator.dom.java.PrimitiveTypeWrapperMap
 import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.*
 import top.bettercode.summer.tools.lang.capitalized
@@ -409,7 +406,7 @@ open class Generator {
             val dicCodes = DicCodes(
                     codeType,
                     codeTypeName,
-                    PrimitiveTypeWrapperMap.getType(javaType.fullyQualifiedNameWithoutTypeParameters) ?: javaType
+                    javaType.primitiveType ?: javaType
             )
             prettyRemarks.substringAfter('(').substringBeforeLast(')').trim('?', '.')
                     .split(";").filter { it.isNotBlank() }
@@ -439,10 +436,10 @@ open class Generator {
                             JavaType("java.sql.Time") -> (System.currentTimeMillis())
                             JavaType("java.time.LocalDate") -> (System.currentTimeMillis())
                             JavaType("java.time.LocalDateTime") -> (System.currentTimeMillis())
-                            PrimitiveTypeWrapper.booleanInstance -> false
-                            PrimitiveTypeWrapper.doubleInstance -> 1.0
-                            PrimitiveTypeWrapper.longInstance -> 1L
-                            PrimitiveTypeWrapper.integerInstance -> 1
+                            JavaType.booleanWrapper -> false
+                            JavaType.doubleWrapper -> 1.0
+                            JavaType.longWrapper -> 1L
+                            JavaType.intWrapper -> 1
                             JavaType.stringInstance -> remark.replace("\\", "\\\\")
                             else -> 1
                         }
@@ -458,7 +455,7 @@ open class Generator {
                 when {
                     isCodeField && !asBoolean -> {
                         val value = dicCodes()!!.codes.keys.first()
-                        if (JavaType.stringInstance == javaType) "\"$value\"" else if (PrimitiveTypeWrapper.characterInstance == javaType) "(char) $value" else "$value"
+                        if (JavaType.stringInstance == javaType) "\"$value\"" else if (JavaType.charWrapper == javaType) "(char) $value" else "$value"
                     }
 
                     else -> when (javaType) {
@@ -497,13 +494,13 @@ open class Generator {
                             "new BigDecimal(\"1\")"
                         }
 
-                        PrimitiveTypeWrapper.booleanInstance -> "false"
-                        PrimitiveTypeWrapper.doubleInstance -> "1.0"
-                        PrimitiveTypeWrapper.longInstance -> "1L"
-                        PrimitiveTypeWrapper.integerInstance -> "1"
-                        PrimitiveTypeWrapper.characterInstance -> "(char) 1"
-                        PrimitiveTypeWrapper.shortInstance -> "new Short(\"1\")"
-                        PrimitiveTypeWrapper.byteInstance -> "new Byte(\"1\")"
+                        JavaType.booleanWrapper -> "false"
+                        JavaType.doubleWrapper -> "1.0"
+                        JavaType.longWrapper -> "1L"
+                        JavaType.intWrapper -> "1"
+                        JavaType.charWrapper -> "(char) 1"
+                        JavaType.shortWrapper -> "new Short(\"1\")"
+                        JavaType.byteWrapper -> "new Byte(\"1\")"
                         JavaType("byte[]") -> "new byte[0]"
                         JavaType.stringInstance -> "\"${remark.replace("\\", "\\\\")}\""
                         else -> "1"
@@ -518,10 +515,10 @@ open class Generator {
     fun Column.initializationString(unit: CompilationUnit?, importType: Boolean = true): String? {
         return if (columnDef != null) {
             when (javaType) {
-                PrimitiveTypeWrapper.booleanInstance -> toBoolean(columnDef).toString()
-                PrimitiveTypeWrapper.longInstance -> "${columnDef}L"
-                PrimitiveTypeWrapper.doubleInstance -> "${columnDef}D"
-                PrimitiveTypeWrapper.floatInstance -> "${columnDef}F"
+                JavaType.booleanWrapper -> toBoolean(columnDef).toString()
+                JavaType.longWrapper -> "${columnDef}L"
+                JavaType.doubleWrapper -> "${columnDef}D"
+                JavaType.floatWrapper -> "${columnDef}F"
                 JavaType("java.math.BigDecimal") -> {
                     if (importType)
                         unit?.import("java.math.BigDecimal")

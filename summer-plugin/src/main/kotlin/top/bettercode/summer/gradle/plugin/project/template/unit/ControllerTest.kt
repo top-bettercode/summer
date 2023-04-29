@@ -33,7 +33,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         //beforeEach
-        method("beforeEach", JavaType.voidPrimitiveInstance) {
+        method("beforeEach", JavaType.void) {
             annotation("@Override")
             exception(JavaType("Exception"))
             +"tableNames(${className}.TABLE_NAME);"
@@ -41,7 +41,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
 
         //list
-        method("list", JavaType.voidPrimitiveInstance) {
+        method("list", JavaType.void) {
 //            javadoc {
 //                +"// ${remarks}列表"
 //            }
@@ -61,7 +61,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         val excel = enable("excel", false)
         if (excel) {
             //export
-            method("export", JavaType.voidPrimitiveInstance) {
+            method("export", JavaType.void) {
 //                javadoc {
 //                    +"// ${remarks}导出"
 //                }
@@ -80,7 +80,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         if (!isFullComposite) {
             import("org.junit.jupiter.api.Assertions")
             //info
-            method("info", JavaType.voidPrimitiveInstance) {
+            method("info", JavaType.void) {
 //                javadoc {
 //                    +"// ${remarks}详情"
 //                }
@@ -104,7 +104,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             import("org.springframework.http.MediaType")
 
             //saveBody
-            method("saveBody", JavaType.voidPrimitiveInstance) {
+            method("saveBody", JavaType.void) {
                 javadoc {
                     +"// 优先使用 ${remarks}保存(json)"
                 }
@@ -147,7 +147,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             //saveForm
-            method("saveForm", JavaType.voidPrimitiveInstance) {
+            method("saveForm", JavaType.void) {
 //                javadoc {
 //                    +"// ${remarks}保存(form)"
 //                }
@@ -176,7 +176,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             //delete
-            method("delete", JavaType.voidPrimitiveInstance) {
+            method("delete", JavaType.void) {
 //                javadoc {
 //                    +"// ${remarks}删除"
 //                }

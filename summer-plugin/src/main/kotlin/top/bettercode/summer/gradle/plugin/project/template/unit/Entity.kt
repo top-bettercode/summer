@@ -309,7 +309,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         //equals
         method(
             "equals",
-            JavaType.booleanPrimitiveInstance,
+            JavaType.boolean,
             Parameter("o", JavaType.objectInstance)
         ) {
             annotation("@Override")
@@ -355,7 +355,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         //hashCode
-        method("hashCode", JavaType.intPrimitiveInstance) {
+        method("hashCode", JavaType.int) {
             annotation("@Override")
             if (isCompositePrimaryKey) {
                 +"return Objects.hash(${
