@@ -38,7 +38,6 @@ spring:
       - top.bettercode.summer.web.config.CorsConfiguration
       - top.bettercode.summer.logging.websocket.WebsocketConfiguration
       - top.bettercode.summer.config.EndpointAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
       - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketMessagingAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.amqp.RabbitHealthContributorAutoConfiguration
