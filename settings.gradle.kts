@@ -27,7 +27,6 @@ include(":tools:weather")
 include(":tools:jpush")
 include(":tools:qvod")
 include(":tools:amap")
-include(":tools:logging")
 
 include(":tools:sap")
 

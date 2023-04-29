@@ -100,7 +100,6 @@ dependencies {
         api(project(":tools:jpush"))
         api(project(":tools:qvod"))
         api(project(":tools:sap"))
-        api(project(":tools:logging"))
     }
 }
 
