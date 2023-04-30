@@ -89,7 +89,6 @@ import java.util.*;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 @ConditionalOnProperty(prefix = "summer.web", name = "enable", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties({SummerWebProperties.class, JacksonExtProperties.class})
 @AutoConfigureBefore({ErrorMvcAutoConfiguration.class, JacksonAutoConfiguration.class})
 public class WebMvcConfiguration {
 
