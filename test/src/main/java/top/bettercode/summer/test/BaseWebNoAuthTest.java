@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
@@ -27,7 +28,6 @@ import top.bettercode.summer.logging.RequestLoggingFilter;
 import top.bettercode.summer.logging.RequestLoggingProperties;
 import top.bettercode.summer.test.autodoc.Autodoc;
 import top.bettercode.summer.web.config.SummerWebProperties;
-import top.bettercode.summer.web.error.CustomErrorController;
 import top.bettercode.summer.web.support.ApplicationContextHolder;
 
 import java.io.File;
@@ -66,7 +66,7 @@ public abstract class BaseWebNoAuthTest extends MockMvcRequestBuilders {
     @Autowired
     private SummerWebProperties webProperties;
     @Autowired
-    private CustomErrorController errorController;
+    private BasicErrorController errorController;
     @Autowired
     protected RequestLoggingProperties requestLoggingProperties;
     protected final ObjectMapper objectMapper = new ObjectMapper();

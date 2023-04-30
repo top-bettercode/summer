@@ -1,26 +1,9 @@
 package top.bettercode.summer.test;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ErrorPageRegistrar;
 import org.springframework.boot.web.server.ErrorPageRegistry;
@@ -31,7 +14,14 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import top.bettercode.summer.tools.lang.util.StringUtil;
 import top.bettercode.summer.web.config.SummerWebProperties;
-import top.bettercode.summer.web.error.CustomErrorController;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * A Servlet {@link Filter} that provides an {@link ErrorPageRegistry} for non-embedded applications
@@ -96,11 +86,11 @@ public class TestErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
 
   };
 
-  private final CustomErrorController errorController;
+  private final BasicErrorController errorController;
   private final SummerWebProperties summerWebProperties;
 
-  public TestErrorPageFilter(CustomErrorController errorController,
-      SummerWebProperties summerWebProperties) {
+  public TestErrorPageFilter(BasicErrorController errorController,
+                             SummerWebProperties summerWebProperties) {
     this.errorController = errorController;
     this.summerWebProperties = summerWebProperties;
   }
