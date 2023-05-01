@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 @ConfigurationProperties("summer.management.auth")
 public class ManagementAuthProperties {
 
-    private String[] pattern = {};
+    private String[] pattern = new String[0];
     /**
      * 访问授权有效时间，单位：秒
      */

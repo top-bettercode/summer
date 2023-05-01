@@ -10,8 +10,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("summer.logging.slack")
 public class SlackProperties {
 
-  private String[] logger = {"root"};
-  private String[] ignoredWarnLogger = {};
+  private String[] logger = new String[]{"root"};
+  private String[] ignoredWarnLogger = new String[0];
   private String authToken;
   private String channel;
   private String timeoutChannel = "timeout";

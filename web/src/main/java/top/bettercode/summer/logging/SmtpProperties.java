@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("summer.logging.smtp")
 public class SmtpProperties {
 
-  private String[] logger = {"root"};
+  private String[] logger = new String[]{"root"};
   private String from;
   private String marker;
   private String to;

@@ -42,7 +42,7 @@ public class RequestLoggingProperties {
   /**
    * 忽略超时接口
    */
-  private String[] ignoredTimeoutPath = {};
+  private String[] ignoredTimeoutPath = new String[0];
   /**
    * 需要记录日志的 Controller类名前缀.如果为空记录所有 Controller类.
    */
@@ -54,7 +54,7 @@ public class RequestLoggingProperties {
   /**
    * 额外包含的需要记录日志的路径
    */
-  private String[] includePath = {};
+  private String[] includePath = new String[0];
   /**
    * 加密参数名
    */
@@ -66,7 +66,7 @@ public class RequestLoggingProperties {
   /**
    * 过滤不记录为ERROR日志的状态码
    */
-  private Integer[] ignoredErrorStatusCode = {401, 403, 404, 405, 406};
+  private Integer[] ignoredErrorStatusCode = new Integer[]{401, 403, 404, 405, 406};
 
   //--------------------------------------------
 

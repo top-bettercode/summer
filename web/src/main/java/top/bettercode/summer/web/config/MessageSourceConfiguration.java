@@ -1,14 +1,8 @@
 package top.bettercode.summer.web.config;
 
-import java.time.Duration;
-import java.util.Set;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionMessage;
-import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.SearchStrategy;
-import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.MessageSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -26,6 +20,9 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
+import java.util.Set;
+
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnMissingBean(value = MessageSource.class, search = SearchStrategy.CURRENT)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
@@ -35,7 +32,7 @@ public class MessageSourceConfiguration {
 
   public static final String BASE_MESSAGES = "base-messages";
   public static final String CORE_MESSAGES = "core-messages";
-  private static final Resource[] NO_RESOURCES = {};
+  private static final Resource[] NO_RESOURCES = new Resource[0];
 
   @Bean
   @ConfigurationProperties(prefix = "spring.messages")

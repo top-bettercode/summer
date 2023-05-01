@@ -12,8 +12,8 @@ javaPlatform {
 dependencies {
 //https://github.com/alibaba/spring-cloud-alibaba/releases
 
-    api(platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.5.0"))
-    api(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.5"))
+    api(enforcedPlatform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.5.0"))
+    api(enforcedPlatform("org.springframework.cloud:spring-cloud-dependencies:2021.0.5"))
     api(platform(project(":summer-bom")))
 
     constraints {

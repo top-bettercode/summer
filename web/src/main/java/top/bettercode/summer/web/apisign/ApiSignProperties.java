@@ -27,7 +27,7 @@ public class ApiSignProperties {
   /**
    * 需要验证签名的 Controller类名前缀.
    */
-  private String[] handlerTypePrefix = {};
+  private String[] handlerTypePrefix = new String[0];
   /**
    * 签名参数名.
    */

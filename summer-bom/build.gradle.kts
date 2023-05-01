@@ -1,4 +1,3 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.include
 import top.bettercode.summer.gradle.plugin.publish.AbstractPublishPlugin
 
 plugins {
@@ -14,7 +13,7 @@ dependencies {
 //https://docs.gradle.org/7.5.1/userguide/compatibility.html
 //https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-dependencies/2.6.13/spring-boot-dependencies-2.6.13.pom
 
-    api(platform("org.springframework.boot:spring-boot-dependencies:2.6.13"))
+    api(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:2.6.13"))
     constraints {
         api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KotlinVersion.CURRENT}")
         api("org.jetbrains.kotlin:kotlin-allopen:${KotlinVersion.CURRENT}")
