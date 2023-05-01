@@ -1,13 +1,5 @@
 package top.bettercode.summer.data.jpa.support;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.Tuple;
 import org.hibernate.query.NativeQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -31,6 +23,11 @@ import top.bettercode.summer.data.jpa.query.SpecMatcher;
 import top.bettercode.summer.data.jpa.repository.UserRepository;
 import top.bettercode.summer.tools.lang.util.StringUtil;
 import top.bettercode.summer.web.support.ApplicationContextHolder;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.Tuple;
+import java.util.*;
 
 /**
  * @author Peter Wu

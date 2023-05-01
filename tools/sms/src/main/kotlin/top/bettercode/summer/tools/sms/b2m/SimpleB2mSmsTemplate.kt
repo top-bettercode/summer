@@ -246,7 +246,7 @@ class SimpleB2mSmsTemplate(
             execute(
                 b2mProperties.url + "/report/retrieveReport", HttpMethod.POST,
                 requestCallback,
-                responseEntityExtractor(String::class.java)
+                responseEntityExtractor<String>(String::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)

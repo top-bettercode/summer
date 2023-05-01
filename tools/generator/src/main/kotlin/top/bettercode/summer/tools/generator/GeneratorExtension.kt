@@ -13,114 +13,114 @@ import java.util.*
  * @author Peter Wu
  */
 open class GeneratorExtension(
-    /**
-     * 包名是否自动加项目名区分
-     */
-    var projectPackage: Boolean = false,
-    /**
-     * 是否是主项目
-     */
-    var projectIsBoot: Boolean = false,
+        /**
+         * 包名是否自动加项目名区分
+         */
+        var projectPackage: Boolean = false,
+        /**
+         * 是否是主项目
+         */
+        var projectIsBoot: Boolean = false,
 
-    /**
-     * 生成文件基础路径,项目路径
-     */
-    var projectDir: File = File("").absoluteFile,
-    /**
-     * 基础路径下相对路径
-     */
-    var dir: String = "",
+        /**
+         * 生成文件基础路径,项目路径
+         */
+        var projectDir: File = File("").absoluteFile,
+        /**
+         * 基础路径下相对路径
+         */
+        var dir: String = "",
 
-    /**
-     * 数据源类型，默认数据库
-     */
-    var dataType: DataType = DataType.DATABASE,
-    /**
-     * pdm文件路径
-     */
-    var pdmSrc: String = "pdm",
-    /**
-     * PlantUML 图片类型
-     */
-    var pumlDiagramFormat: String = "PNG",
-    /**
-     * SQL 脚本目录
-     */
-    var sqlOutput: String = "database",
-    var sqlQuote: Boolean = true,
-    /**
-     * 覆盖所有已生成文件
-     */
-    var replaceAll: Boolean = true,
+        /**
+         * 数据源类型，默认数据库
+         */
+        var dataType: DataType = DataType.DATABASE,
+        /**
+         * pdm文件路径
+         */
+        var pdmSrc: String = "pdm",
+        /**
+         * PlantUML 图片类型
+         */
+        var pumlDiagramFormat: String = "PNG",
+        /**
+         * SQL 脚本目录
+         */
+        var sqlOutput: String = "database",
+        var sqlQuote: Boolean = true,
+        /**
+         * 覆盖所有已生成文件
+         */
+        var replaceAll: Boolean = true,
 
-    /**
-     * 删除模式，为true时不生成文件，删除已生成的文件
-     */
-    var delete: Boolean = false,
-    /**
-     * 生成SQL时是否生成外键相关语句
-     */
-    var useForeignKey: Boolean = false,
-    /**
-     * 生成代码包名
-     */
-    var packageName: String = "",
-    /**
-     * 使用子模块
-     */
-    var userModule: Boolean = true,
-    /**
-     * 更新Sql时生成删除表语句
-     */
-    var dropTablesWhenUpdate: Boolean = false,
-    /**
-     * 更新Sql时生成删除字段语句
-     */
-    var dropColumnsWhenUpdate: Boolean = false,
+        /**
+         * 删除模式，为true时不生成文件，删除已生成的文件
+         */
+        var delete: Boolean = false,
+        /**
+         * 生成SQL时是否生成外键相关语句
+         */
+        var useForeignKey: Boolean = false,
+        /**
+         * 生成代码包名
+         */
+        var packageName: String = "",
+        /**
+         * 使用子模块
+         */
+        var userModule: Boolean = true,
+        /**
+         * 更新Sql时生成删除表语句
+         */
+        var dropTablesWhenUpdate: Boolean = false,
+        /**
+         * 更新Sql时生成删除字段语句
+         */
+        var dropColumnsWhenUpdate: Boolean = false,
 
-    var applicationName: String = "",
+        var applicationName: String = "",
 
-    var projectName: String = "",
+        var projectName: String = "",
 
-    var isCore: Boolean = false,
-    /**
-     * 注释说明
-     */
-    var remarks: String = "",
-    /**
-     * 手动主键名
-     */
-    var primaryKeyName: String = "id",
-    /**
-     * 逻辑删除字段名
-     */
-    var softDeleteColumnName: String = "deleted",
-    /**
-     * 逻辑删除使用布尔值
-     */
-    var softDeleteAsBoolean: Boolean = true,
-    /**
-     * 缩进
-     */
-    var indent: String = JavaElement.defaultIndent,
-    /**
-     * 模板
-     */
-    var generators: Array<Generator> = arrayOf(),
+        var isCore: Boolean = false,
+        /**
+         * 注释说明
+         */
+        var remarks: String = "",
+        /**
+         * 手动主键名
+         */
+        var primaryKeyName: String = "id",
+        /**
+         * 逻辑删除字段名
+         */
+        var softDeleteColumnName: String = "deleted",
+        /**
+         * 逻辑删除使用布尔值
+         */
+        var softDeleteAsBoolean: Boolean = true,
+        /**
+         * 缩进
+         */
+        var indent: String = JavaElement.defaultIndent,
+        /**
+         * 模板
+         */
+        var generators: Array<Generator> = arrayOf(),
 
-    /**
-     * 公共状态码
-     */
-    var commonCodeTypes: Array<String> = arrayOf(),
-    /**
-     * 相关数据表
-     */
-    var tableNames: Array<String> = arrayOf(),
-    var excludeTableNames: Array<String> = arrayOf(),
-    /**
-     * 额外设置
-     */
-    var settings: MutableMap<String, String> = mutableMapOf()
+        /**
+         * 公共状态码
+         */
+        var commonCodeTypes: Array<String> = arrayOf(),
+        /**
+         * 相关数据表
+         */
+        var tableNames: Array<String> = arrayOf(),
+        var excludeTableNames: Array<String> = arrayOf(),
+        /**
+         * 额外设置
+         */
+        var settings: MutableMap<String, String> = mutableMapOf()
 ) {
 
 
@@ -242,35 +242,35 @@ open class GeneratorExtension(
 
     val pumlSources: Map<String, List<File>> by lazy {
         file(pumlSrc).listFiles()?.filter { it.isDirectory && "database" != it.name }
-            ?.associateBy(
-                {
-                    if ("src" == it.name) {
-                        defaultModuleName
-                    } else it.name
-                }
-            ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
-            ?: emptyMap()
+                ?.associateBy(
+                        {
+                            if ("src" == it.name) {
+                                defaultModuleName
+                            } else it.name
+                        }
+                ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
+                ?: emptyMap()
     }
 
     val pdmSources: Map<String, List<File>> by lazy {
         file(pdmSrc).listFiles()?.filter { it.isDirectory && "database" != it.name }
-            ?.associateBy(
-                { if ("src" == it.name) "modules" else it.name }
-            ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "pdm" }.toList() }
-            ?.toSortedMap { o1, o2 -> o1.compareTo(o2) }
-            ?: TreeMap()
+                ?.associateBy(
+                        { if ("src" == it.name) "modules" else it.name }
+                ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "pdm" }.toList() }
+                ?.toSortedMap(kotlin.Comparator { o1, o2 -> o1.compareTo(o2) })
+                ?: TreeMap()
     }
 
     val pumlDatabaseSources: Map<String, List<File>> by lazy {
         file(pumlSrc).listFiles()?.filter { "database" == it.name }
-            ?.associateBy({
-                if ("src" == it.name) {
-                    defaultModuleName
-                } else it.name
-            }
-            ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
-            ?.toSortedMap { o1, o2 -> o1.compareTo(o2) }
-            ?: TreeMap()
+                ?.associateBy({
+                    if ("src" == it.name) {
+                        defaultModuleName
+                    } else it.name
+                }
+                ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
+                ?.toSortedMap(kotlin.Comparator { o1, o2 -> o1.compareTo(o2) })
+                ?: TreeMap()
     }
 
     fun <T> run(dataType: DataType = this.dataType, function: (String, TableHolder) -> T): List<T> {
@@ -299,8 +299,8 @@ open class GeneratorExtension(
         get() =
             (if (projectPackage) "${packageName}.${
                 projectName.replace(
-                    '-',
-                    '.'
+                        '-',
+                        '.'
                 )
             }" else packageName)
 

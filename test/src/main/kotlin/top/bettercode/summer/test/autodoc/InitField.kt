@@ -132,7 +132,7 @@ object InitField {
         needFixFields: Set<Field>,
         wrap: Boolean = false,
         onlyDesc: Boolean = false,
-        fuzzy: Boolean = false,
+        fuzzy: Boolean = false
     ) {
         fixFieldTree(
             needFixFields,

@@ -20,7 +20,7 @@ object Generators {
         return extension.run { module, tableHolder ->
             tableHolder.tableNames().map { tableName ->
                 (extension.datasource(module)).fixTableName(
-                    tableName
+                        tableName
                 )
             }
         }.flatten().sortedBy { it }
@@ -41,19 +41,19 @@ object Generators {
 
         extension.run { _, tableHolder ->
             tableHolder.tables(
-                checkFound = when (extension.dataType) {
-                    top.bettercode.summer.tools.generator.DataType.DATABASE -> {
-                        extension.datasources.size <= 1
-                    }
+                    checkFound = when (extension.dataType) {
+                        top.bettercode.summer.tools.generator.DataType.DATABASE -> {
+                            extension.datasources.size <= 1
+                        }
 
-                    top.bettercode.summer.tools.generator.DataType.PUML -> {
-                        extension.pumlSources.size <= 1
-                    }
+                        top.bettercode.summer.tools.generator.DataType.PUML -> {
+                            extension.pumlSources.size <= 1
+                        }
 
-                    top.bettercode.summer.tools.generator.DataType.PDM -> {
-                        extension.pdmSources.size <= 1
-                    }
-                }, tableName = extension.tableNames
+                        top.bettercode.summer.tools.generator.DataType.PDM -> {
+                            extension.pdmSources.size <= 1
+                        }
+                    }, tableName = *extension.tableNames
             ).forEach { table ->
                 generators.forEach { generator ->
                     generator.run(table)
@@ -77,19 +77,19 @@ object Generators {
         }
 
         tableHolder.tables(
-            checkFound = when (extension.dataType) {
-                top.bettercode.summer.tools.generator.DataType.DATABASE -> {
-                    extension.datasources.size <= 1
-                }
+                checkFound = when (extension.dataType) {
+                    top.bettercode.summer.tools.generator.DataType.DATABASE -> {
+                        extension.datasources.size <= 1
+                    }
 
-                top.bettercode.summer.tools.generator.DataType.PUML -> {
-                    extension.pumlSources.size <= 1
-                }
+                    top.bettercode.summer.tools.generator.DataType.PUML -> {
+                        extension.pumlSources.size <= 1
+                    }
 
-                top.bettercode.summer.tools.generator.DataType.PDM -> {
-                    extension.pdmSources.size <= 1
-                }
-            }, tableName = extension.tableNames
+                    top.bettercode.summer.tools.generator.DataType.PDM -> {
+                        extension.pdmSources.size <= 1
+                    }
+                }, tableName = *extension.tableNames
         ).forEach { table ->
             generators.forEach { generator ->
                 generator.run(table)

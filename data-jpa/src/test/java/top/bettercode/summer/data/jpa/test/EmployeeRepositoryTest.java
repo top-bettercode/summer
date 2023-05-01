@@ -1,9 +1,5 @@
 package top.bettercode.summer.data.jpa.test;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +14,11 @@ import top.bettercode.summer.data.jpa.domain.User;
 import top.bettercode.summer.data.jpa.query.DefaultSpecMatcher;
 import top.bettercode.summer.data.jpa.repository.EmployeeRepository;
 import top.bettercode.summer.data.jpa.repository.UserRepository;
+
+import javax.persistence.EntityManager;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Peter Wu

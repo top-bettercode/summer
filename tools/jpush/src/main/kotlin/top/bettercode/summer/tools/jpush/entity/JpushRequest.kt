@@ -20,5 +20,5 @@ data class JpushRequest @JvmOverloads constructor(
     var cid: String? = null,
 
     @field:JsonProperty("platform")
-    val platform: String = "all",
+    val platform: String = "all"
 )

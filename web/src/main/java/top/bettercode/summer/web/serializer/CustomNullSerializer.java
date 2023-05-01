@@ -55,7 +55,7 @@ public class CustomNullSerializer extends StdSerializer<Object> {
         String fieldName = outputContext.getCurrentName();
         Object defaultValue = this.defaultValue;
         if ("".equals(this.defaultValue) && StringUtils.hasText(this.fieldName)) {
-            Object o = gen.currentValue();
+            Object o = gen.getCurrentValue();
             DirectFieldAccessFallbackBeanWrapper beanWrapper = new DirectFieldAccessFallbackBeanWrapper(
                     o);
             defaultValue = beanWrapper.getPropertyValue(this.fieldName);

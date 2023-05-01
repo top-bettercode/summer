@@ -14,17 +14,17 @@ import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver;
  * @since 0.1.14
  */
 @AutoConfigureBefore({JacksonAutoConfiguration.class})
-@EnableConfigurationProperties({SummerWebProperties.class })
+@EnableConfigurationProperties({SummerWebProperties.class, JacksonExtProperties.class})
 @Configuration(proxyBeanMethods = false)
 public class WebConfiguration {
 
-  @Bean
-  public PackageScanClassResolver packageScanClassResolver(ApplicationContext applicationContext) {
-    return new PackageScanClassResolver(applicationContext.getClassLoader());
-  }
+    @Bean
+    public PackageScanClassResolver packageScanClassResolver(ApplicationContext applicationContext) {
+        return new PackageScanClassResolver(applicationContext.getClassLoader());
+    }
 
-  @Bean
-  public GB2260Controller gb2260Controller() {
-    return new GB2260Controller();
-  }
+    @Bean
+    public GB2260Controller gb2260Controller() {
+        return new GB2260Controller();
+    }
 }

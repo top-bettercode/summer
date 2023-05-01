@@ -21,7 +21,7 @@ class GeneratorsTest {
         projectDir = File("build/resources/test/"),
         dir = "gen/java",
         packageName = "com.bettercode.test",
-        replaceAll = true,
+        replaceAll = true
     )
 
     init {

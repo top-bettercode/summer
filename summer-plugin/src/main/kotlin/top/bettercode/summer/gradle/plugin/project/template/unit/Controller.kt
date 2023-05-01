@@ -1,10 +1,10 @@
 package top.bettercode.summer.gradle.plugin.project.template.unit
 
-import org.gradle.configurationcache.extensions.capitalized
 import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
 import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.Parameter
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
+import top.bettercode.summer.tools.lang.capitalized
 
 /**
  * @author Peter Wu

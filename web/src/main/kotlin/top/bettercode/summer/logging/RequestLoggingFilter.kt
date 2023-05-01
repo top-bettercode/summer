@@ -180,9 +180,9 @@ class RequestLoggingFilter(
                                         when (error) {
                                             is BusinessException -> error.code
                                             is SystemException -> error.code
-                                            else -> httpStatusCode
+                                            else -> httpStatusCode.toString()
                                         }
-                                    } else httpStatusCode
+                                    } else httpStatusCode.toString()
                                 }|${
                                     getMessage(requestAttributes) ?: "${error.javaClass.name}:${
                                         error.message ?: HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase

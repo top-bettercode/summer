@@ -8,7 +8,7 @@ fun CharSequence.capitalized(): String =
         isEmpty() -> ""
         else -> get(0).let { initial ->
             when {
-                initial.isLowerCase() -> initial.titlecase(Locale.getDefault()) + substring(1)
+                initial.isLowerCase() -> initial.uppercaseChar() + substring(1)
                 else -> toString()
             }
         }
@@ -19,7 +19,7 @@ fun CharSequence.decapitalized(): String =
         isEmpty() -> ""
         else -> get(0).let { initial ->
             when {
-                initial.isUpperCase() -> initial.lowercase(Locale.getDefault()) + substring(1)
+                initial.isUpperCase() -> initial.lowercaseChar() + substring(1)
                 else -> toString()
             }
         }

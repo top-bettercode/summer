@@ -274,7 +274,7 @@ object PumlConverter {
                 if (it is Table) {
                     plantUML.run(it)
                 } else {
-                    plantUML.appendlnText(it.toString())
+                    plantUML.appendLineText(it.toString())
                 }
             }
             plantUML.tearDown()

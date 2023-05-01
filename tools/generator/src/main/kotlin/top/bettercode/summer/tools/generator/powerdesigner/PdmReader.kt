@@ -126,7 +126,7 @@ object PdmReader {
             val columnId = columnEle.attribute("Id").value
             val cname = columnEle.element(QName("Name", aNamespace))?.textTrim
             val ccode = columnEle.element(QName("Code", aNamespace))?.textTrim
-            val cDataType = columnEle.element(QName("DataType", aNamespace))?.textTrim ?: ""
+            val cDataType = columnEle.element(QName("DataType", aNamespace))?.textTrim ?: "varchar(255)"
             val cLength = columnEle.element(QName("Length", aNamespace))?.textTrim?.toInt() ?: 0
             val cPrecision = columnEle.element(QName("Precision", aNamespace))?.textTrim?.toInt()
                 ?: 0

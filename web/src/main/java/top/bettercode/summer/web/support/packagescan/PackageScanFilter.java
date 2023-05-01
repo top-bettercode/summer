@@ -3,6 +3,7 @@ package top.bettercode.summer.web.support.packagescan;
 /**
  * Filter that can be used with the {@link PackageScanClassResolver} resolver.
  */
+@FunctionalInterface
 public interface PackageScanFilter {
 
   /**

@@ -1,9 +1,7 @@
 package top.bettercode.summer.gradle.plugin.dist
 
 import org.gradle.api.Project
-import profilesActive
 import java.io.File
-import java.nio.charset.Charset
 
 /**
  *
@@ -31,7 +29,7 @@ object StartScriptsExt {
   <stoptimeout>2 sec</stoptimeout>
   <log mode="none"/>
 </service>
-            """, executable = false, windows = true
+            """, executable = false
             )
             writeServiceFile(
                     project, "run.bat", """
@@ -45,7 +43,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
 
 @rem Execute app
 %DIRNAME%bin\${project.name}.bat
-            """, executable = true, windows = true
+            """, executable = true
             )
 
             writeServiceFile(
@@ -60,7 +58,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
 
 @rem start app
 %DIRNAME%${project.name}.exe start
-            """, executable = true, windows = true
+            """, executable = true
             )
 
             writeServiceFile(
@@ -75,7 +73,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
 
 @rem stop app
 %DIRNAME%${project.name}.exe stop
-            """, executable = true, windows = true
+            """, executable = true
             )
 
             writeServiceFile(
@@ -93,7 +91,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
 
 @rem start app
 %DIRNAME%${project.name}.exe start
-            """, executable = true, windows = true
+            """, executable = true
             )
 
             writeServiceFile(
@@ -111,7 +109,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
 
 @rem uninstall service
 %DIRNAME%${project.name}.exe uninstall
-            """, executable = true, windows = true
+            """, executable = true
             )
 
         } else {
@@ -319,8 +317,7 @@ if "%DIRNAME%"=="" set DIRNAME=.\
             project: Project,
             fileName: String,
             text: String,
-            executable: Boolean = true,
-            windows: Boolean = false
+            executable: Boolean = true
     ) {
         val serviceScript = File(project.buildDir, "service/$fileName")
         if (!serviceScript.parentFile.exists()) {

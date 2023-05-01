@@ -22,7 +22,7 @@ import java.util.stream.Stream
 @JacksonStdImpl
 class QvodImageProcessSerializer @JvmOverloads constructor(
     private val picTemplateId: String = "",
-    private val separator: String = "",
+    private val separator: String = ""
 ) : StdScalarSerializer<Any>(
     Any::class.java, false
 ), ContextualSerializer {

@@ -24,9 +24,9 @@ import java.time.LocalTime
  */
 @LogMarker(LOG_MARKER)
 open class WeatherClient(
-    private val properties: WeatherProperties
+        private val properties: WeatherProperties
 ) : ApiTemplate(
-    "第三方平台", "天气数据", LOG_MARKER, properties.connectTimeout, properties.readTimeout
+        "第三方平台", "天气数据", LOG_MARKER, properties.connectTimeout, properties.readTimeout
 ) {
     companion object {
         const val LOG_MARKER = "weather"
@@ -34,15 +34,15 @@ open class WeatherClient(
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-            object : MappingJackson2HttpMessageConverter() {
-                override fun canRead(@Nullable mediaType: MediaType?): Boolean {
-                    return true
-                }
+                object : MappingJackson2HttpMessageConverter() {
+                    override fun canRead(@Nullable mediaType: MediaType?): Boolean {
+                        return true
+                    }
 
-                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
-                    return true
+                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                        return true
+                    }
                 }
-            }
         val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
@@ -53,7 +53,7 @@ open class WeatherClient(
 
     @JvmOverloads
     fun isNight(
-        time: LocalTime = LocalTime.now(TimeUtil.DEFAULT_ZONE_ID)
+            time: LocalTime = LocalTime.now(TimeUtil.DEFAULT_ZONE_ID)
     ): Boolean {
         return properties.nightStartTime.hour <= time.hour && time.hour <= properties.nightEndTime.hour
     }
@@ -61,21 +61,21 @@ open class WeatherClient(
     fun type(): Map<String, WeatherType> {
         val defaultInstance = TypeFactory.defaultInstance()
         val javaType = defaultInstance.constructParametricType(
-            WeatherResponse::class.java,
-            defaultInstance.constructMapType(
-                Map::class.java,
-                String::class.java,
-                WeatherType::class.java
-            )
+                WeatherResponse::class.java,
+                defaultInstance.constructMapType(
+                        Map::class.java,
+                        String::class.java,
+                        WeatherType::class.java
+                )
         )
         val entity: ResponseEntity<WeatherResponse<Map<String, WeatherType>>> = try {
             execute(
-                properties.url + "/?app=weather.wtype&appkey={0}&sign={1}&format=json",
-                HttpMethod.GET,
-                null,
-                responseEntityExtractor(javaType),
-                properties.appKey,
-                properties.sign
+                    properties.url + "/?app=weather.wtype&appkey={0}&sign={1}&format=json",
+                    HttpMethod.GET,
+                    null,
+                    responseEntityExtractor<WeatherResponse<Map<String, WeatherType>>>(javaType),
+                    properties.appKey,
+                    properties.sign
             )
         } catch (e: Exception) {
             throw WeatherException(e)
@@ -96,17 +96,17 @@ open class WeatherClient(
 
     fun query(ip: String): WeatherResult {
         val javaType = TypeFactory.defaultInstance().constructParametricType(
-            WeatherResponse::class.java, WeatherResult::class.java
+                WeatherResponse::class.java, WeatherResult::class.java
         )
         val entity: ResponseEntity<WeatherResponse<WeatherResult>> = try {
             execute(
-                properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&cityIp={2}",
-                HttpMethod.GET,
-                null,
-                responseEntityExtractor(javaType),
-                properties.appKey,
-                properties.sign,
-                ip
+                    properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&cityIp={2}",
+                    HttpMethod.GET,
+                    null,
+                    responseEntityExtractor<WeatherResponse<WeatherResult>>(javaType),
+                    properties.appKey,
+                    properties.sign,
+                    ip
             )
         } catch (e: Exception) {
             throw WeatherException(e)
@@ -127,18 +127,18 @@ open class WeatherClient(
 
     fun query(longitude: Double, latitude: Double): WeatherResult {
         val javaType = TypeFactory.defaultInstance().constructParametricType(
-            WeatherResponse::class.java, WeatherResult::class.java
+                WeatherResponse::class.java, WeatherResult::class.java
         )
         val entity: ResponseEntity<WeatherResponse<WeatherResult>> = try {
             execute(
-                properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&wgs84ll={2},{3}",
-                HttpMethod.GET,
-                null,
-                responseEntityExtractor(javaType),
-                properties.appKey,
-                properties.sign,
-                longitude,
-                latitude
+                    properties.url + "/?app=weather.realtime&appkey={0}&sign={1}&format=json&wgs84ll={2},{3}",
+                    HttpMethod.GET,
+                    null,
+                    responseEntityExtractor<WeatherResponse<WeatherResult>>(javaType),
+                    properties.appKey,
+                    properties.sign,
+                    longitude,
+                    latitude
             )
         } catch (e: Exception) {
             throw WeatherException(e)

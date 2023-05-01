@@ -60,7 +60,7 @@ data class Column(
         var generatedColumn: Boolean = false,
         var version: Boolean = false,
         var softDelete: Boolean = false,
-        var asBoolean: Boolean = false,
+        var asBoolean: Boolean = false
 ) {
     init {
         if ("null".equals(columnDef, true)) {

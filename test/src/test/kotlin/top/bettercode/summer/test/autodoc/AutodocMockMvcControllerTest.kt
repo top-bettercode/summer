@@ -12,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import top.bettercode.summer.test.BaseWebNoAuthTest
 import java.io.FileReader
 import javax.sql.DataSource
 
@@ -21,12 +22,7 @@ import javax.sql.DataSource
  *
  * @author Peter Wu
  */
-@ExtendWith(value = [SpringExtension::class])
-@WebMvcTest(ClientTokenController::class)
-@DisplayName("token")
-class AutodocMockMvcControllerTest {
-    @Autowired
-    lateinit var mockMvc: MockMvc
+class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
 
     @Autowired
     lateinit var dataSource: DataSource
@@ -44,9 +40,9 @@ class AutodocMockMvcControllerTest {
     fun test0Index() {
         Autodoc.requiredHeaders("sign")
         mockMvc.perform(
-            get("/clientTokens")
-                .param("page", "1")
-                .param("size", "5")
+                get("/clientTokens")
+                        .param("page", "1")
+                        .param("size", "5")
         ).andExpect(status().isOk)
     }
 
@@ -54,9 +50,9 @@ class AutodocMockMvcControllerTest {
     @Throws(Exception::class)
     fun token() {
         mockMvc.perform(
-            post("/oauth/token")
-                .param("page", "1")
-                .param("size", "5")
+                post("/oauth/token")
+                        .param("page", "1")
+                        .param("size", "5")
         ).andExpect(status().isOk)
     }
 
@@ -70,8 +66,8 @@ class AutodocMockMvcControllerTest {
     @Throws(Exception::class)
     fun test2Create() {
         mockMvc.perform(
-            post("/clientTokens").contentType(MediaType.APPLICATION_JSON)
-                .content("[{}]")
+                post("/clientTokens").contentType(MediaType.APPLICATION_JSON)
+                        .content("[{}]")
 //                .param("map", "{\"a\":1}")
 //                .param("list", "[{\"a\":1}]")
 //                .param("tokenId", "test")
@@ -79,25 +75,25 @@ class AutodocMockMvcControllerTest {
 //                .param("authenticationId", "1")
 //                .param("userName", "test")
 //                .param("clientId", "1")
-        ).andExpect(status().isCreated)
+        ).andExpect(status().isOk)
     }
 
     @Test
     @Throws(Exception::class)
     fun test3Update() {
         mockMvc.perform(
-            put("/clientTokens/1")
-                .param("tokenId", "test")
-                .param("token", "1")
-                .param("userName", "test")
-                .param("clientId", "1")
+                put("/clientTokens/1")
+                        .param("tokenId", "test")
+                        .param("token", "1")
+                        .param("userName", "test")
+                        .param("clientId", "1")
         ).andExpect(status().isOk)
     }
 
     @Test
     @Throws(Exception::class)
     fun test4Delete() {
-        mockMvc.perform(delete("/clientTokens/1")).andExpect(status().isNoContent)
+        mockMvc.perform(delete("/clientTokens/1")).andExpect(status().isOk)
     }
 
 }

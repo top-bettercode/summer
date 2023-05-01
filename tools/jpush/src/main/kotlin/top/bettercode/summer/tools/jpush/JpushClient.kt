@@ -74,7 +74,7 @@ open class JpushClient(
             execute(
                 properties.url + "/push", HttpMethod.POST,
                 requestCallback,
-                responseEntityExtractor(JpushResponse::class.java)
+                responseEntityExtractor<JpushResponse>(JpushResponse::class.java)
             )
         } catch (e: Exception) {
             if (e is HttpClientErrorException) {
@@ -111,7 +111,7 @@ open class JpushClient(
             execute(
                 properties.url + "/push/cid?count={0}", HttpMethod.GET,
                 requestCallback,
-                responseEntityExtractor(JpushCidResponse::class.java),
+                responseEntityExtractor<JpushCidResponse>(JpushCidResponse::class.java),
                 count
             )
         } catch (e: Exception) {

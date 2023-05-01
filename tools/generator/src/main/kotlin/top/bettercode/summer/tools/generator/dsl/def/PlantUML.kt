@@ -101,7 +101,7 @@ ASBOOLEAN
         )
     }
 
-    fun appendlnText(text: String) {
+    fun appendLineText(text: String) {
         destFile.appendText(text + "\n")
     }
 }

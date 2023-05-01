@@ -25,28 +25,28 @@ import java.util.*
  * 亿美软通短信平台 接口请求
  */
 class B2mSmsTemplate(
-    private val b2mProperties: B2mSmsProperties
+        private val b2mProperties: B2mSmsProperties
 ) : SmsTemplate(
-    "第三方平台",
-    "亿美软通短信平台",
-    LOG_MARKER_STR,
-    b2mProperties.connectTimeout,
-    b2mProperties.readTimeout,
-    { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) },
-    { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) }
+        "第三方平台",
+        "亿美软通短信平台",
+        LOG_MARKER_STR,
+        b2mProperties.connectTimeout,
+        b2mProperties.readTimeout,
+        { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) },
+        { bytes -> ungzip(decrypt(bytes, b2mProperties.secretKey)) }
 ) {
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-            object : MappingJackson2HttpMessageConverter() {
-                override fun canRead(mediaType: MediaType?): Boolean {
-                    return true
-                }
+                object : MappingJackson2HttpMessageConverter() {
+                    override fun canRead(mediaType: MediaType?): Boolean {
+                        return true
+                    }
 
-                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
-                    return true
+                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                        return true
+                    }
                 }
-            }
         val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
@@ -69,9 +69,9 @@ class B2mSmsTemplate(
      */
     @JvmOverloads
     fun sendSms(
-        cell: String,
-        content: String,
-        mock: Boolean = b2mProperties.mock
+            cell: String,
+            content: String,
+            mock: Boolean = b2mProperties.mock
     ): B2mResponse<B2mRespData> {
         return sendSms(Collections.singletonMap(cell, content), mock)
     }
@@ -87,8 +87,8 @@ class B2mSmsTemplate(
      */
     @JvmOverloads
     fun sendSms(
-        content: Map<String, String>,
-        mock: Boolean = b2mProperties.mock
+            content: Map<String, String>,
+            mock: Boolean = b2mProperties.mock
     ): B2mResponse<B2mRespData> {
         if (mock)
             return B2mResponse()
@@ -99,13 +99,13 @@ class B2mSmsTemplate(
         val smses: MutableList<Map<String, Any>> = mutableListOf()
         content.forEach { (key: String, value: String) ->
             smses.add(
-                mapOf<String, Any>(
-                    //          "customSmsId" to "",
-                    //          "timerTime" to "",
-                    //          "extendedCode" to "",
-                    "mobile" to key,
-                    "content" to value
-                )
+                    mapOf<String, Any>(
+                            //          "customSmsId" to "",
+                            //          "timerTime" to "",
+                            //          "extendedCode" to "",
+                            "mobile" to key,
+                            "content" to value
+                    )
             )
         }
         params["smses"] = smses
@@ -116,14 +116,14 @@ class B2mSmsTemplate(
         data = gzip(data)
         data = encrypt(data, b2mProperties.secretKey)
         val requestCallback = httpEntityCallback<Any>(
-            HttpEntity(data, headers),
-            ByteArray::class.java
+                HttpEntity(data, headers),
+                ByteArray::class.java
         )
         val entity: ResponseEntity<ByteArray> = try {
             execute(
-                b2mProperties.url + "/inter/sendPersonalityAllSMS", HttpMethod.POST,
-                requestCallback,
-                responseEntityExtractor(ByteArray::class.java)
+                    b2mProperties.url + "/inter/sendPersonalityAllSMS", HttpMethod.POST,
+                    requestCallback,
+                    responseEntityExtractor<ByteArray>(ByteArray::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)
@@ -136,10 +136,10 @@ class B2mSmsTemplate(
                 respData = decrypt(respData!!, b2mProperties.secretKey)
                 respData = ungzip(respData)
                 val datas: List<B2mRespData> = readJson<MutableList<B2mRespData>>(
-                    respData,
-                    TypeFactory.defaultInstance().constructCollectionType(
-                        MutableList::class.java, B2mRespData::class.java
-                    )
+                        respData,
+                        TypeFactory.defaultInstance().constructCollectionType(
+                                MutableList::class.java, B2mRespData::class.java
+                        )
                 )
                 B2mResponse(datas)
             } else {
@@ -175,14 +175,14 @@ class B2mSmsTemplate(
         data = gzip(data)
         data = encrypt(data, b2mProperties.secretKey)
         val requestCallback = httpEntityCallback<Any>(
-            HttpEntity(data, headers),
-            ByteArray::class.java
+                HttpEntity(data, headers),
+                ByteArray::class.java
         )
         val entity: ResponseEntity<ByteArray> = try {
             execute(
-                b2mProperties.url + "/inter/getReport", HttpMethod.POST,
-                requestCallback,
-                responseEntityExtractor(ByteArray::class.java)
+                    b2mProperties.url + "/inter/getReport", HttpMethod.POST,
+                    requestCallback,
+                    responseEntityExtractor<ByteArray>(ByteArray::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)
@@ -195,10 +195,10 @@ class B2mSmsTemplate(
                 respData = decrypt(respData!!, b2mProperties.secretKey)
                 respData = ungzip(respData)
                 readJson<List<B2mSendReport>>(
-                    respData,
-                    TypeFactory.defaultInstance().constructCollectionType(
-                        MutableList::class.java, B2mSendReport::class.java
-                    )
+                        respData,
+                        TypeFactory.defaultInstance().constructCollectionType(
+                                MutableList::class.java, B2mSendReport::class.java
+                        )
                 )
             } else {
                 val message = B2mResponse.getMessage(code)

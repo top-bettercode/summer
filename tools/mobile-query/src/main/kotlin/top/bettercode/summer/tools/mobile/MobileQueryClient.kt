@@ -81,7 +81,7 @@ open class MobileQueryClient(
             execute(
                 properties.url, HttpMethod.POST,
                 requestCallback,
-                responseEntityExtractor(QueryResponse::class.java)
+                responseEntityExtractor<QueryResponse>(QueryResponse::class.java)
             )
         } catch (e: Exception) {
             throw QueryException(e)

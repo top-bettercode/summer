@@ -16,9 +16,9 @@ object RandomUtil {
     @JvmStatic
     fun uuid(): String {
         return TimeUtil.now()
-            .format(DateTimeFormatter.ofPattern("yyyyMMddHH")) + String.format(
-            "%010d",
-            abs(UUID.randomUUID().toString().hashCode())
+                .format(DateTimeFormatter.ofPattern("yyyyMMddHH")) + String.format(
+                "%010d",
+                abs(UUID.randomUUID().toString().hashCode())
         )
     }
 
@@ -59,11 +59,11 @@ object RandomUtil {
         return if (chars == null) {
             next(count, 0, 0, letters = false, numbers = false, chars = null, random = RANDOM)
         } else next(
-            count, 0, chars.size,
-            letters = false,
-            numbers = false,
-            chars = chars,
-            random = RANDOM
+                count, 0, chars.size,
+                letters = false,
+                numbers = false,
+                chars = chars,
+                random = RANDOM
         )
     }
 
@@ -81,8 +81,8 @@ object RandomUtil {
      */
     @JvmStatic
     fun next(
-        count: Int, start: Int, end: Int, letters: Boolean,
-        numbers: Boolean, chars: CharArray?, random: Random
+            count: Int, start: Int, end: Int, letters: Boolean,
+            numbers: Boolean, chars: CharArray?, random: Random
     ): String {
         var c = count
         var s = start
@@ -91,8 +91,8 @@ object RandomUtil {
             return ""
         } else if (c < 0) {
             throw IllegalArgumentException(
-                "Requested next string length " + c
-                        + " is less than 0."
+                    "Requested next string length " + c
+                            + " is less than 0."
             )
         }
         if (s == 0 && e == 0) {
@@ -114,8 +114,8 @@ object RandomUtil {
                 chars[random.nextInt(gap) + s]
             }
             if (letters && Character.isLetter(ch)
-                || numbers && Character.isDigit(ch)
-                || !letters && !numbers
+                    || numbers && Character.isDigit(ch)
+                    || !letters && !numbers
             ) {
                 if (ch.code in 56320..57343) {
                     if (c == 0) {

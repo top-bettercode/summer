@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.gradle.api.Project
-import org.gradle.configurationcache.extensions.capitalized
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.generator.dom.java.JavaType
@@ -13,8 +12,10 @@ import top.bettercode.summer.tools.generator.dom.java.element.*
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.DicCodes
 import top.bettercode.summer.tools.generator.dsl.Generator.Companion.enumClassName
+import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
 import top.bettercode.summer.tools.lang.util.StringUtil
+import java.io.Serializable
 import java.util.*
 
 
@@ -85,7 +86,7 @@ class DicCodeGen(private val project: Project) {
                             JavaType(javaType)
                     )
                 }
-                val codeKey =
+                val codeKey: Serializable =
                         if (code.startsWith("0") && code.length > 1) code else (code.toIntOrNull()
                                 ?: code)
                 dicCode.codes[codeKey] = properties.getProperty(key)
