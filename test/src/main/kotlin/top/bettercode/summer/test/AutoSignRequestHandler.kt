@@ -1,7 +1,7 @@
 package top.bettercode.summer.test
 
-import top.bettercode.summer.web.apisign.ApiSignAlgorithm
-import top.bettercode.summer.web.apisign.ApiSignProperties
+import top.bettercode.summer.apisign.ApiSignAlgorithm
+import top.bettercode.summer.apisign.ApiSignProperties
 
 /**
  *

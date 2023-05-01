@@ -15,6 +15,7 @@ import org.springframework.core.env.Environment
 import org.springframework.core.io.ResourceLoader
 import org.springframework.core.type.AnnotatedTypeMetadata
 import org.springframework.util.StringUtils
+import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -80,7 +81,7 @@ class EndpointAutoConfiguration {
     fun logsEndpoint(
         @Value("\${summer.logging.files.path}") loggingFilesPath: String,
         environment: Environment,
-        websocketProperties: top.bettercode.summer.logging.WebsocketProperties,
+        websocketProperties: WebsocketProperties,
         serverProperties: ServerProperties,
         @Autowired(required = false) request: HttpServletRequest,
         @Autowired(required = false) response: HttpServletResponse

@@ -25,10 +25,10 @@ import kotlin.reflect.full.primaryConstructor
  */
 @JacksonStdImpl
 class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
-    private val separator: String = "",
-    private val mapperType: KClass<out JsonUrlMapper>? = null
+        private val separator: String = "",
+        private val mapperType: KClass<out JsonUrlMapper>? = null
 ) : StdScalarSerializer<Any>(
-    Any::class.java, false
+        Any::class.java, false
 ), ContextualSerializer {
 
     private val mapper: JsonUrlMapper
@@ -43,21 +43,21 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
             jsonUrlMapper
         }
 
-    private val qvodClient: QvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)
+    private val qvodClient: QvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)!!
 
     @Throws(IOException::class)
     override fun serialize(value: Any, gen: JsonGenerator, provider: SerializerProvider) {
         val fieldName = gen.outputContext.currentName
         val urlFieldName = fieldName + "Alurl"
         if (value is String) {
-            var url = value
+            var url: String = value
             if (separator.isEmpty()) {
-                url = mapper.mapper(url)
+                url = mapper.mapper(url)!!
                 gen.writeObject(url)
                 gen.writeStringField(urlFieldName, qvodClient.antiLeechUrl(url))
             } else {
                 val split =
-                    value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                        value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 genCollection(value, gen, fieldName, Arrays.stream(split))
             }
         } else if (value is Array<*>) {
@@ -71,11 +71,11 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
 
     @Throws(IOException::class)
     private fun genCollection(
-        value: Any, gen: JsonGenerator, fieldName: String, stream: Stream<*>
+            value: Any, gen: JsonGenerator, fieldName: String, stream: Stream<*>
     ) {
         val urls = stream.map { mapper.mapper(it) }
-            .filter { !it.isNullOrBlank() }
-            .map { qvodClient.antiLeechUrl(it) }.collect(Collectors.toList())
+                .filter { !it.isNullOrBlank() }
+                .map { qvodClient.antiLeechUrl(it!!) }.collect(Collectors.toList())
         gen.writeObject(value)
         val urlFieldName = fieldName + "Alurls"
         gen.writeObjectField(urlFieldName, urls)
@@ -83,21 +83,21 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
 
     @Throws(IOException::class)
     override fun serializeWithType(
-        value: Any, gen: JsonGenerator, provider: SerializerProvider,
-        typeSer: TypeSerializer
+            value: Any, gen: JsonGenerator, provider: SerializerProvider,
+            typeSer: TypeSerializer
     ) {
         serialize(value, gen, provider)
     }
 
     override fun createContextual(
-        prov: SerializerProvider,
-        property: BeanProperty?
+            prov: SerializerProvider,
+            property: BeanProperty?
     ): JsonSerializer<*> {
         if (property != null) {
             val annotation = property.getAnnotation(QvodAntiLeechUrl::class.java)
-                ?: throw RuntimeException("未注解@" + QvodAntiLeechUrl::class.java.name)
+                    ?: throw RuntimeException("未注解@" + QvodAntiLeechUrl::class.java.name)
             return QvodAntiLeechUrlSerializer(
-                annotation.separator
+                    annotation.separator
             )
         }
         return this
@@ -106,7 +106,7 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
     companion object {
         private const val serialVersionUID: Long = 1L
         private val defaultMapper: JsonUrlMapper = object :
-            JsonUrlMapper {}
+                JsonUrlMapper {}
         private val mapperCache: MutableMap<KClass<out JsonUrlMapper>, JsonUrlMapper?> = HashMap()
     }
 }

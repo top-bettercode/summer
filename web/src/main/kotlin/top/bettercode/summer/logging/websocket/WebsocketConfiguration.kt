@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.socket.server.standard.ServerEndpointExporter
+import top.bettercode.summer.logging.WebsocketProperties
 
 /**
  * 自动增加请求日志过滤器
@@ -30,8 +31,8 @@ class WebsocketConfiguration {
     }
 
     @Bean
-    fun webSocketController(): WebSocketController {
-        return WebSocketController()
+    fun webSocketController(websocketProperties: WebsocketProperties): WebSocketController {
+        return WebSocketController(websocketProperties)
     }
 
 }

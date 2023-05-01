@@ -22,8 +22,8 @@ import top.bettercode.summer.security.ApiTokenService;
 import top.bettercode.summer.security.IResourceService;
 import top.bettercode.summer.security.token.IRevokeTokenService;
 import top.bettercode.summer.security.authorization.RequestMappingAuthorizationManager;
-import top.bettercode.summer.web.config.CorsProperties;
-import top.bettercode.summer.web.config.SummerWebProperties;
+import top.bettercode.summer.web.properties.CorsProperties;
+import top.bettercode.summer.web.properties.SummerWebProperties;
 import top.bettercode.summer.web.form.IFormkeyService;
 
 @Configuration(proxyBeanMethods = false)

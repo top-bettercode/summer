@@ -16,8 +16,8 @@ import top.bettercode.summer.logging.RequestLoggingConfiguration
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
-import top.bettercode.summer.web.apisign.ApiSignProperties
-import top.bettercode.summer.web.config.SummerWebProperties
+import top.bettercode.summer.apisign.ApiSignProperties
+import top.bettercode.summer.web.properties.SummerWebProperties
 import javax.annotation.PostConstruct
 
 /**
@@ -58,8 +58,8 @@ class AutodocConfiguration {
 
     @Bean
     fun autodocHandler(
-        signProperties: ApiSignProperties,
-        summerWebProperties: SummerWebProperties
+            signProperties: ApiSignProperties,
+            summerWebProperties: SummerWebProperties
     ): AutodocHandler {
         val datasources: MutableMap<String, JDBCConnectionConfiguration> = Binder.get(
             environment

@@ -26,7 +26,7 @@ object LoggingUtil {
         val printer = PrintWriter(uriWriter)
         val serverProperties = ApplicationContextHolder.getBean(ServerProperties::class.java)
         Assert.notNull(serverProperties, "serverProperties must not be null")
-        val serverPort = serverProperties.port ?: 8080
+        val serverPort = serverProperties!!.port ?: 8080
         printer.printf("%s://%s", RequestConverter.SCHEME_HTTP, IPAddressUtil.inet4Address)
         if (serverPort != RequestConverter.STANDARD_PORT_HTTP) {
             printer.printf(":%d", serverPort)

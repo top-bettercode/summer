@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import top.bettercode.summer.tools.lang.util.StringUtil;
-import top.bettercode.summer.web.config.SummerWebProperties;
+import top.bettercode.summer.web.properties.SummerWebProperties;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

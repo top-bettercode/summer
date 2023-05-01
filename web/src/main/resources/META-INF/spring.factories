@@ -1,6 +1,11 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-top.bettercode.summer.web.config.WebMvcConfiguration,\
+top.bettercode.summer.web.config.summer.WebMvcConfiguration,\
+top.bettercode.summer.web.config.summer.SummerWebMvcConfigurer,\
+top.bettercode.summer.web.config.summer.ErrorHandlerConfiguration,\
+top.bettercode.summer.web.config.summer.ObjectMapperBuilderCustomizer,\
+top.bettercode.summer.web.config.SerializerConfiguration,\
+top.bettercode.summer.web.config.KaptchaConfiguration,\
 top.bettercode.summer.web.config.XmlSerializerConfiguration,\
 top.bettercode.summer.web.config.MessageSourceConfiguration,\
 top.bettercode.summer.web.config.WebConfiguration,\
@@ -10,11 +15,11 @@ top.bettercode.summer.web.config.SummerCaffeineCacheConfiguration,\
 top.bettercode.summer.web.config.AsyncConfiguration,\
 top.bettercode.summer.web.config.SchedulingConfiguration,\
 top.bettercode.summer.web.servlet.HandlerMethodContextHolderConfiguration,\
-top.bettercode.summer.web.ApplicationContextHolderConfiguration,\
+top.bettercode.summer.web.config.ApplicationContextHolderConfiguration,\
 top.bettercode.summer.logging.RequestLoggingConfiguration,\
 top.bettercode.summer.logging.websocket.WebsocketConfiguration,\
 top.bettercode.summer.config.EndpointAutoConfiguration,\
-top.bettercode.summer.web.apisign.ApiSignConfiguration
+top.bettercode.summer.apisign.ApiSignConfiguration
 
 org.springframework.boot.env.EnvironmentPostProcessor=\
 top.bettercode.summer.config.ConfigEnvironmentPostProcessor

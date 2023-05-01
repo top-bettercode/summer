@@ -1,6 +1,5 @@
 package top.bettercode.summer.config
 
-import top.bettercode.summer.web.form.IFormkeyService.log
 import java.io.File
 
 /**

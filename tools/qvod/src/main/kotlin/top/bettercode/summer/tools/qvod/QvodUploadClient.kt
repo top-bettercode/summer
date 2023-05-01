@@ -1,19 +1,14 @@
 package top.bettercode.summer.tools.qvod
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.qcloud.vod.VodUploadClient
 import com.qcloud.vod.model.VodUploadRequest
 import com.qcloud.vod.model.VodUploadResponse
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
-import org.springframework.http.MediaType
-import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.lang.Nullable
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.qvod.QvodUploadClient.Companion.LOG_MARKER
-import top.bettercode.summer.web.form.IFormkeyService.log
-import top.bettercode.summer.web.support.client.ApiTemplate
 import java.io.File
 
 
@@ -26,6 +21,8 @@ import java.io.File
 open class QvodUploadClient(
     val properties: QvodProperties
 ) {
+
+    private val log: Logger = LoggerFactory.getLogger(QvodUploadClient::class.java)
 
     companion object {
         const val LOG_MARKER = "qvod"

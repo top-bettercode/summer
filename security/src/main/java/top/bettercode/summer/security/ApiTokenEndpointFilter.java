@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +32,7 @@ import top.bettercode.summer.tools.lang.operation.HttpOperation;
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils;
 import top.bettercode.summer.tools.lang.util.ArrayUtil;
 import top.bettercode.summer.web.RespEntity;
-import top.bettercode.summer.web.config.SummerWebProperties;
+import top.bettercode.summer.web.properties.SummerWebProperties;
 import top.bettercode.summer.web.exception.UnauthorizedException;
 import top.bettercode.summer.web.form.FormDuplicateCheckInterceptor;
 import top.bettercode.summer.web.form.IFormkeyService;
@@ -117,7 +116,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
         ApiTokenRepository apiTokenRepository = apiTokenService.getApiTokenRepository();
         ApiSecurityProperties securityProperties = apiTokenService.getSecurityProperties();
         if (this.tokenEndpointMatcher.matches(request)) {
-            formkeyService.checkRequest(request, summerWebProperties.getFormKeyName(), true, -1, FormDuplicateCheckInterceptor.DEFAULT_MESSAGE);
+            formkeyService.checkRequest(request, summerWebProperties.formKeyName, true, -1, FormDuplicateCheckInterceptor.DEFAULT_MESSAGE);
             try {
                 authenticateBasic(request);
                 String grantType = request.getParameter(SecurityParameterNames.GRANT_TYPE);
@@ -229,7 +228,7 @@ public final class ApiTokenEndpointFilter extends OncePerRequestFilter {
                             }
                             if (summerWebProperties.wrapEnable(request)) {
                                 RespEntity<Object> respEntity = new RespEntity<>();
-                                respEntity.setStatus(String.valueOf(HttpStatus.NO_CONTENT.value()));
+                                respEntity.status = String.valueOf(HttpStatus.NO_CONTENT.value());
                                 objectMapper.writeValue(response.getOutputStream(), respEntity);
                             } else {
                                 response.flushBuffer();

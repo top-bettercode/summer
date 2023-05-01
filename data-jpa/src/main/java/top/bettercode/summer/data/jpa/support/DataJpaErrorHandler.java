@@ -58,7 +58,7 @@ public class DataJpaErrorHandler extends AbstractErrorHandler {
       }
     }
     if (StringUtils.hasText(message)) {
-      respEntity.setMessage(message);
+      respEntity.message = message;
     }
   }
 }

@@ -27,7 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 import top.bettercode.summer.logging.RequestLoggingFilter;
 import top.bettercode.summer.logging.RequestLoggingProperties;
 import top.bettercode.summer.test.autodoc.Autodoc;
-import top.bettercode.summer.web.config.SummerWebProperties;
+import top.bettercode.summer.web.properties.SummerWebProperties;
 import top.bettercode.summer.web.support.ApplicationContextHolder;
 
 import java.io.File;

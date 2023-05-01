@@ -56,7 +56,7 @@ public class ExcelErrorHandler extends AbstractErrorHandler {
       message = firstError.getKey() + separator + firstError.getValue();
     }
     if (StringUtils.hasText(message)) {
-      respEntity.setMessage(message);
+      respEntity.message = message;
     }
   }
 }

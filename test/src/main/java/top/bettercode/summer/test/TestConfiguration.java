@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import top.bettercode.summer.web.apisign.ApiSignConfiguration;
-import top.bettercode.summer.web.apisign.ApiSignProperties;
+import top.bettercode.summer.apisign.ApiSignConfiguration;
+import top.bettercode.summer.apisign.ApiSignProperties;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 plugins {
     `java-library`
 //    id("com.eriwen.gradle.js") version "2.14.1"
@@ -5,11 +7,14 @@ plugins {
 
 apply {
     plugin("org.jetbrains.kotlin.jvm")
+    plugin("org.jetbrains.kotlin.kapt")
     plugin("org.jetbrains.kotlin.plugin.spring")
     plugin("summer.kotlin-publish")
 }
 
 dependencies {
+    "kapt"(platform(project(":summer-bom")))
+    "kapt"("org.springframework.boot:spring-boot-configuration-processor")
     api(project(":tools:tools"))
     api("org.jetbrains.kotlin:kotlin-reflect")
 
@@ -54,8 +59,8 @@ tasks {
 //        mustRunAfter("minifyJs")
 //    }
 
-    "jar"(Jar::class) {
+//    "jar"(Jar::class) {
 //        dependsOn("minifyJs")
-    }
+//    }
 }
 

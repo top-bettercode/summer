@@ -1,6 +1,7 @@
 package top.bettercode.summer.logging.websocket
 
 import org.slf4j.LoggerFactory
+import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
@@ -8,7 +9,7 @@ import javax.websocket.*
 import javax.websocket.server.ServerEndpoint
 
 @ServerEndpoint("/websocket/logging")
-class WebSocketController {
+class WebSocketController(private val websocketProperties: WebsocketProperties) {
 
     private val log = LoggerFactory.getLogger(WebSocketController::class.java)
 
@@ -51,9 +52,6 @@ class WebSocketController {
 
     companion object {
         private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
-        private val websocketProperties: top.bettercode.summer.logging.WebsocketProperties by lazy {
-            ApplicationContextHolder.getBean(top.bettercode.summer.logging.WebsocketProperties::class.java)
-        }
 
         @Throws(IOException::class)
         fun send(message: String?) {

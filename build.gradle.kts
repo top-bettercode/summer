@@ -55,7 +55,6 @@ allprojects {
 //            runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
 
             annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-            compileOnly("org.springframework.boot:spring-boot-configuration-processor")
 
             compileOnly("com.google.code.findbugs:annotations")
         }

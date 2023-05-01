@@ -24,7 +24,7 @@ import org.springframework.core.annotation.Order
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(
     RequestLoggingProperties::class,
-    top.bettercode.summer.logging.WebsocketProperties::class
+    WebsocketProperties::class
 )
 class RequestLoggingConfiguration {
 

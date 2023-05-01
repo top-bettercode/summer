@@ -21,7 +21,7 @@ class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
     private val qvodClient: QvodClient
 
     init {
-        qvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)
+        qvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)!!
     }
 
     @Throws(IOException::class)

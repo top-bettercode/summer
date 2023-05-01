@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import top.bettercode.summer.test.autodoc.AutodocHandler.Companion.prerequestExec
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
-import top.bettercode.summer.web.apisign.ApiSignProperties
+import top.bettercode.summer.apisign.ApiSignProperties
 import java.io.File
 
 /**
@@ -22,7 +22,7 @@ class ConvertTest {
                     val docOperation =
                         AutodocUtil.yamlMapper.readValue(file, DocOperation::class.java)
                     val signProperties =
-                        ApiSignProperties()
+                            ApiSignProperties()
                     signProperties.clientSecret = "Ir6LrHh73VBz"
                     docOperation.prerequest = prerequestExec(docOperation, signProperties)
                     AutodocUtil.yamlMapper.writeValue(

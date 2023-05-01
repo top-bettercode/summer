@@ -61,6 +61,19 @@ class RequestLoggingFilter(
 
     private val isDebugEnabled: Boolean by lazy { Level.toLevel(environment.getProperty("logging.level.root")) == Level.DEBUG }
 
+
+    //--------------------------------------------
+    private val antPathMatcher = AntPathMatcher()
+
+    fun RequestLoggingProperties.matchIgnored(uri: String): Boolean {
+        for (pattern in ignored) {
+            if (antPathMatcher.match(pattern, uri)) {
+                return true
+            }
+        }
+        return false
+    }
+
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
             request: HttpServletRequest, response: HttpServletResponse,
