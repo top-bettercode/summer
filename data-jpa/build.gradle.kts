@@ -2,11 +2,8 @@ plugins {
     `java-library`
 }
 
-apply {
-    plugin("summer.publish")
-}
-
 dependencies {
+
     api(project(":web"))
 
     //data

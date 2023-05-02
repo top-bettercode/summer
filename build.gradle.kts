@@ -11,16 +11,27 @@ allprojects {
     group = "top.bettercode.summer"
     version = "0.0.19-SNAPSHOT"
 
-    if (!arrayOf("summer-bom", "summer-cloud-bom").contains(name)) {
+
+    val isBomProject = arrayOf(
+            "summer-bom",
+            "summer-cloud-bom"
+    ).contains(name)
+
+    val isPluginProject = name.endsWith("-plugin")
+
+    val isJavaProject = arrayOf(
+            "data-jpa",
+            "env",
+            "security",
+            "excel",
+            "sap",
+            "ueditor"
+    ).contains(name)
+
+    if (!isBomProject) {
         apply {
             plugin("java")
             plugin("idea")
-            if (name.endsWith("-plugin")) {
-                plugin("org.jetbrains.kotlin.jvm")
-                plugin("summer.plugin-publish")
-            } else {
-                plugin("org.springframework.boot")
-            }
         }
 
         idea {
@@ -51,12 +62,53 @@ allprojects {
 
         dependencies {
             implementation(platform(project(":summer-bom")))
-            annotationProcessor(platform(project(":summer-bom")))
-//            runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
-
-            annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+            //runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
 
             compileOnly("com.google.code.findbugs:annotations")
+        }
+
+
+        if (isPluginProject) {
+            apply {
+                plugin("org.jetbrains.kotlin.jvm")
+                plugin("summer.plugin-publish")
+            }
+        } else {
+            apply {
+                plugin("org.springframework.boot")
+            }
+            tasks {
+                "jar"(Jar::class) {
+                    enabled = true
+                    archiveClassifier.convention("")
+                }
+                "bootJar" {
+                    enabled = false
+                }
+            }
+
+            if (isJavaProject) {
+                apply {
+                    plugin("summer.publish")
+                }
+
+                dependencies {
+                    annotationProcessor(platform(project(":summer-bom")))
+                    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+                }
+            } else {
+                apply {
+                    plugin("org.jetbrains.kotlin.jvm")
+                    plugin("org.jetbrains.kotlin.kapt")
+                    plugin("org.jetbrains.kotlin.plugin.spring")
+                    plugin("summer.kotlin-publish")
+                }
+
+                dependencies {
+                    "kapt"(platform(project(":summer-bom")))
+                    "kapt"("org.springframework.boot:spring-boot-configuration-processor")
+                }
+            }
         }
 
         tasks {
@@ -79,16 +131,6 @@ allprojects {
                 kotlinOptions {
                     jvmTarget = javaVersion.toString()
                     freeCompilerArgs = listOf("-Xjvm-default=all")
-                }
-            }
-
-            if (!name.endsWith("-plugin")) {
-                "jar"(Jar::class) {
-                    enabled = true
-                    archiveClassifier.convention("")
-                }
-                "bootJar" {
-                    enabled = false
                 }
             }
         }
