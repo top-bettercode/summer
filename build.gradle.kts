@@ -23,8 +23,6 @@ allprojects {
             "data-jpa",
             "env",
             "security",
-            "excel",
-            "sap",
             "ueditor"
     ).contains(name)
 

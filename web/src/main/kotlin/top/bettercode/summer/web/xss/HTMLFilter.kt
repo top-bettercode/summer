@@ -366,8 +366,8 @@ class HTMLFilter {
         } else ""
     }
 
-    private fun processParamProtocol(s: String): String {
-        var s = s
+    private fun processParamProtocol(str: String): String {
+        var s = str
         s = decodeEntities(s)
         val m = P_PROTOCOL.matcher(s)
         if (m.find()) {
