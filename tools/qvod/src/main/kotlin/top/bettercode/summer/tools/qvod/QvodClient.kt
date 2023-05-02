@@ -59,7 +59,7 @@ open class QvodClient(
         val original =
             "secretId=${properties.secretId}&currentTimeStamp=$currentTimeStamp&expireTime=${currentTimeStamp + properties.uploadValidSeconds}&random=${
                 RandomUtil.nextInt(9)
-            }&classId=${properties.classId}&procedure=${properties.procedure ?: ""}&vodSubAppId=${properties.appId}"
+            }&classId=${properties.classId}&procedure=${properties.procedure}&vodSubAppId=${properties.appId}"
         if (log.isDebugEnabled) {
             log.debug(MarkerFactory.getMarker(LOG_MARKER), "original signature:{}", original)
         }

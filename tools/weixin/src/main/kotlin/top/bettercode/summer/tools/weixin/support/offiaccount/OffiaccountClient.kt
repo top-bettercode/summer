@@ -5,7 +5,7 @@ import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
-import top.bettercode.summer.tools.weixin.config.IOffiaccountProperties
+import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*

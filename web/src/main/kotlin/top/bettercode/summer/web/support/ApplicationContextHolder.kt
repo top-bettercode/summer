@@ -25,34 +25,34 @@ class ApplicationContextHolder : ApplicationContextAware {
             private set
 
         @Throws(BeansException::class)
-        fun <T> getBean(s: String?, aClass: Class<T>?): T? {
+        fun <T> getBean(s: String, aClass: Class<T>): T? {
             return if (applicationContext == null) null else applicationContext!!.getBean(s, aClass)
         }
 
         @Throws(BeansException::class)
-        fun <T> getBean(aClass: Class<T>?): T? {
+        fun <T> getBean(aClass: Class<T>): T? {
             return if (applicationContext == null) null else applicationContext!!.getBean(aClass)
         }
 
         @Throws(NoSuchMessageException::class)
-        fun getMessage(s: String?, objects: Array<Any?>?, locale: Locale?): String? {
+        fun getMessage(s: String, objects: Array<Any?>?, locale: Locale): String? {
             return if (applicationContext == null) null else applicationContext!!.getMessage(s, objects, locale)
         }
 
         @JvmStatic
-        fun getProperty(key: String?): String? {
+        fun getProperty(key: String): String? {
             return if (applicationContext == null) null else applicationContext!!.environment.getProperty(key)
         }
 
-        fun getProperty(key: String?, defaultValue: String?): String? {
+        fun getProperty(key: String, defaultValue: String): String? {
             return if (applicationContext == null) null else applicationContext!!.environment.getProperty(key, defaultValue)
         }
 
-        fun <T> getProperty(key: String?, targetType: Class<T>): T? {
+        fun <T> getProperty(key: String, targetType: Class<T>): T? {
             return if (applicationContext == null) null else applicationContext!!.environment.getProperty(key, targetType)
         }
 
-        fun <T> getProperty(key: String?, targetType: Class<T>, defaultValue: T): T? {
+        fun <T> getProperty(key: String, targetType: Class<T>, defaultValue: T): T? {
             return if (applicationContext == null) null else applicationContext!!.environment.getProperty(key, targetType, defaultValue)
         }
 

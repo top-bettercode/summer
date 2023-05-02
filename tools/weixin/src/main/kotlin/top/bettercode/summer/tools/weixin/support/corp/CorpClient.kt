@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.weixin.support.corp
 import org.slf4j.MarkerFactory
 import org.springframework.web.client.getForObject
 import top.bettercode.summer.logging.annotation.LogMarker
-import top.bettercode.summer.tools.weixin.config.ICorpProperties
+import top.bettercode.summer.tools.weixin.properties.ICorpProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient
 import top.bettercode.summer.tools.weixin.support.corp.CorpClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.corp.entity.CorpWebPageAccessToken

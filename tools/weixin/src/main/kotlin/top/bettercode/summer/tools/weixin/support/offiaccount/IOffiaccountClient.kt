@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.weixin.support.offiaccount
 
-import top.bettercode.summer.tools.weixin.config.IOffiaccountProperties
+import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
 
 /**

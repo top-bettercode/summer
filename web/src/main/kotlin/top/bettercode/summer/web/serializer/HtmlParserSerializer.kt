@@ -32,15 +32,15 @@ class HtmlParserSerializer : StdScalarSerializer<String>, ContextualSerializer {
 
     @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
-        var value: String? = value
-        if (StringUtils.hasText(value)) {
-            value = if (length == -1) {
-                parseHtml(value)
+        var v: String? = value
+        if (StringUtils.hasText(v)) {
+            v = if (length == -1) {
+                parseHtml(v)
             } else {
-                subParseHtml(value, length)
+                subParseHtml(v, length)
             }
         }
-        gen.writeString(value)
+        gen.writeString(v)
     }
 
     @Throws(JsonMappingException::class)

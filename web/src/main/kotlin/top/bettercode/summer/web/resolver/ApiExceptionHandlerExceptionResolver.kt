@@ -14,7 +14,7 @@ class ApiExceptionHandlerExceptionResolver(private val summerWebProperties: Summ
         super.afterPropertiesSet()
 
         // Retrieve actual handlers to use as delegate
-        val oldHandlers = returnValueHandlers
+        val oldHandlers = returnValueHandlers!!
 
         // Set up ResourceProcessingHandlerMethodResolver to delegate to originally configured ones
         val newHandlers: MutableList<HandlerMethodReturnValueHandler> = ArrayList()

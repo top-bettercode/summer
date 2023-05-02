@@ -47,14 +47,14 @@ open class DataDicBean {
     }
 
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (o !is top.bettercode.summer.test.web.DataDicBean) {
+        if (other !is DataDicBean) {
             return false
         }
-        val that = o
+        val that = other
         return number1 == that.number1 && number2 == that.number2 && number22 == that.number22 && number3 == that.number3 && number4 == that.number4 && name == that.name && code == that.code && intCode == that.intCode && price == that.price && path == that.path && path1 == that.path1 && desc == that.desc && paths == that.paths && Arrays.equals(pathArray, that.pathArray)
     }
 

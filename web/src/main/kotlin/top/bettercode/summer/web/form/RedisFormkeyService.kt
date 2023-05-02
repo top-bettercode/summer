@@ -8,7 +8,7 @@ import java.time.Duration
 /**
  * @author Peter Wu
  */
-class RedisFormkeyService(connectionFactory: RedisConnectionFactory?, private val redisCacheName: String,
+class RedisFormkeyService(connectionFactory: RedisConnectionFactory, private val redisCacheName: String,
                           expireSeconds: Long) : IFormkeyService {
     private val redisCacheWriter: RedisCacheWriter
     private val expireSeconds: Duration

@@ -60,14 +60,14 @@ class PagedResources<T> {
                     totalPages, totalElements, size)
         }
 
-        override fun equals(o: Any?): Boolean {
-            if (this === o) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
-            if (o !is PageMetadata) {
+            if (other !is PageMetadata) {
                 return false
             }
-            val that = o
+            val that = other
             return number == that.number && size == that.size && totalPages == that.totalPages && totalElements == that.totalElements
         }
 

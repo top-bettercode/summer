@@ -133,7 +133,7 @@ class ErrorAttributes(private val errorProperties: ErrorProperties,
                              error: Throwable?) {
         request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, httpStatusCode,
                 RequestAttributes.SCOPE_REQUEST)
-        request.setAttribute(DefaultErrorAttributes::class.java.name + ".ERROR", error, RequestAttributes.SCOPE_REQUEST)
+        error?.let { request.setAttribute(DefaultErrorAttributes::class.java.name + ".ERROR", it, RequestAttributes.SCOPE_REQUEST) }
         request
                 .setAttribute(WebUtils.ERROR_MESSAGE_ATTRIBUTE, message, RequestAttributes.SCOPE_REQUEST)
     }
@@ -165,7 +165,8 @@ class ErrorAttributes(private val errorProperties: ErrorProperties,
     }
 
     private fun <T> getAttribute(requestAttributes: RequestAttributes, name: String): T? {
-        return requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST) as? T
+        @Suppress("UNCHECKED_CAST")
+        return requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST) as T?
     }
 
     /**

@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets
 @ConfigurationProperties("summer.management.auth")
 class ManagementAuthProperties {
     //--------------------------------------------
-    var pattern = arrayOfNulls<String>(0)
+    var pattern = arrayOf<String>()
 
     /**
      * 访问授权有效时间，单位：秒

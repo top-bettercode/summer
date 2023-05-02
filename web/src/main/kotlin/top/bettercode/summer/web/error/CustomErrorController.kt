@@ -75,9 +75,9 @@ class CustomErrorController(
                 getErrorAttributeOptions(request, MediaType.ALL))
         val status = getStatus(request)
         val requestAttributes = RequestContextHolder
-                .getRequestAttributes() as ServletRequestAttributes
+                .getRequestAttributes() as ServletRequestAttributes?
         if (requestAttributes != null) {
-            setCors(request, requestAttributes.response)
+            setCors(request, requestAttributes.response!!)
         }
         response!!.status = status.value()
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

@@ -6,6 +6,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
+import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.context.request.NativeWebRequest
@@ -28,9 +29,8 @@ class ApiHandlerMethodReturnValueHandler(
     }
 
     @Throws(Exception::class)
-    override fun handleReturnValue(returnValue: Any, returnType: MethodParameter,
-                                   mavContainer: ModelAndViewContainer, webRequest: NativeWebRequest) {
-        var returnValue = returnValue
+    override fun handleReturnValue(@Nullable returnValue: Any?, returnType: MethodParameter, mavContainer: ModelAndViewContainer, webRequest: NativeWebRequest) {
+        var returnVal = returnValue
         val typeContainingClass = returnType.containingClass
         val parameterType = returnType.parameterType
         if (Void.TYPE != parameterType
@@ -40,53 +40,53 @@ class ApiHandlerMethodReturnValueHandler(
                         && !RequestEntity::class.java.isAssignableFrom(parameterType)))) {
 
             //异常信息处理
-            val isResponseEntity = returnValue is ResponseEntity<*>
-            var body = if (isResponseEntity) (returnValue as ResponseEntity<*>).body else returnValue
+            val isResponseEntity = returnVal is ResponseEntity<*>
+            var body = if (isResponseEntity) (returnVal as ResponseEntity<*>).body else returnVal
             val nativeResponse = webRequest.getNativeResponse(HttpServletResponse::class.java)
             Assert.notNull(nativeResponse, "HttpServletResponse 为 null")
             if (body is Throwable) {
                 val respEntity = errorAttributes.getErrorAttributes(body, webRequest)
-                body = respEntity!!
-                var statusCode = if (isResponseEntity) (returnValue as ResponseEntity<*>).statusCode else null
+                body = respEntity
+                var statusCode = if (isResponseEntity) (returnVal as ResponseEntity<*>).statusCode else null
                 val httpStatusCode = respEntity.httpStatusCode
                 if (httpStatusCode != null) {
                     statusCode = HttpStatus.valueOf(httpStatusCode)
                 }
-                nativeResponse.status = statusCode!!.value()
-                returnValue = if (isResponseEntity) {
+                nativeResponse!!.status = statusCode!!.value()
+                returnVal = if (isResponseEntity) {
                     ResponseEntity
                             .status(statusCode)
-                            .headers((returnValue as ResponseEntity<*>).headers)
+                            .headers((returnVal as ResponseEntity<*>).headers)
                             .body<Any>(body)
                 } else {
                     body
                 }
             }
-            if (summerWebProperties.wrapEnable(webRequest) && !(returnValue is IRespEntity || returnValue is HttpEntity<*> && returnValue
+            if (summerWebProperties.wrapEnable(webRequest) && !(returnVal is IRespEntity || returnVal is HttpEntity<*> && returnVal
                             .body is IRespEntity)
                     && supportsRewrapType(returnType)) {
-                var value = returnValue
-                if (returnValue is HttpEntity<*>) {
-                    value = returnValue.body
-                    returnValue = HttpEntity(rewrapResult(value),
-                            returnValue.headers)
+                var value = returnVal
+                if (returnVal is HttpEntity<*>) {
+                    value = returnVal.body
+                    returnVal = HttpEntity(rewrapResult(value),
+                            returnVal.headers)
                 } else {
-                    returnValue = rewrapResult(value)
+                    returnVal = rewrapResult(value)
                 }
             }
             if (summerWebProperties.okEnable(webRequest)) {
-                nativeResponse.status = HttpStatus.OK.value()
-                if (returnValue is ResponseEntity<*>) {
-                    val statusCode = returnValue.statusCode.value()
+                nativeResponse!!.status = HttpStatus.OK.value()
+                if (returnVal is ResponseEntity<*>) {
+                    val statusCode = returnVal.statusCode.value()
                     if (statusCode != 404 && statusCode != 405) {
-                        returnValue = ResponseEntity.ok()
-                                .headers(returnValue.headers)
-                                .body(returnValue.body)
+                        returnVal = ResponseEntity.ok()
+                                .headers(returnVal.headers)
+                                .body(returnVal.body)
                     }
                 }
             }
         }
-        delegate.handleReturnValue(returnValue, returnType, mavContainer, webRequest)
+        delegate.handleReturnValue(returnVal, returnType, mavContainer, webRequest)
     }
 
     fun supportsRewrapType(returnType: MethodParameter): Boolean {
@@ -100,7 +100,7 @@ class ApiHandlerMethodReturnValueHandler(
         } else false
     }
 
-    private fun rewrapResult(originalValue: Any): Any {
+    private fun rewrapResult(originalValue: Any?): Any {
         return RespEntity(originalValue)
     }
 }

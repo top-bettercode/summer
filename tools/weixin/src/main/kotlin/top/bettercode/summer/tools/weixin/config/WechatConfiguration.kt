@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import top.bettercode.summer.tools.weixin.controller.OffiaccountCallbackController
+import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.IWechatService
 import top.bettercode.summer.tools.weixin.support.offiaccount.IOffiaccountClient
 import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient

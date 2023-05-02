@@ -39,12 +39,13 @@ class MessageSourceConfiguration {
         val messageNames = StringUtils.commaDelimitedListToSet(
                 StringUtils.trimAllWhitespace(basename))
         val defaultMessagesName = "messages"
-        if (messageNames.contains(defaultMessagesName) && ResourceBundleCondition.getResources(applicationContext.classLoader, defaultMessagesName).size == 0) {
+        val classLoader = applicationContext.classLoader!!
+        if (messageNames.contains(defaultMessagesName) && ResourceBundleCondition.getResources(classLoader, defaultMessagesName).size == 0) {
             messageNames.remove(defaultMessagesName)
         }
         messageNames.add(BASE_MESSAGES)
         if (!messageNames.contains(CORE_MESSAGES)) {
-            val resources = ResourceBundleCondition.getResources(applicationContext.classLoader, CORE_MESSAGES)
+            val resources = ResourceBundleCondition.getResources(classLoader, CORE_MESSAGES)
             if (resources.size > 0 && resources[0]!!.exists()) {
                 messageNames.add(CORE_MESSAGES)
             }
@@ -87,7 +88,7 @@ class MessageSourceConfiguration {
                     .forCondition("ResourceBundle")
             for (name in StringUtils.commaDelimitedListToStringArray(
                     StringUtils.trimAllWhitespace(basename))) {
-                for (resource in getResources(context.classLoader, name)) {
+                for (resource in getResources(context.classLoader!!, name)) {
                     if (resource!!.exists()) {
                         return ConditionOutcome
                                 .match(message.found("bundle").items(resource))

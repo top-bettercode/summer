@@ -6,14 +6,14 @@ class EmbeddedIdBean {
     var name: String? = null
     var intCode: Int? = null
     var price: Long? = null
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (o !is EmbeddedIdBean) {
+        if (other !is EmbeddedIdBean) {
             return false
         }
-        val that = o
+        val that = other
         return name == that.name && intCode == that.intCode && price == that.price
     }
 

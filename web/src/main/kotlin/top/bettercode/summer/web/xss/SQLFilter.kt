@@ -14,18 +14,18 @@ object SQLFilter {
      * @return str
      */
     fun sqlInject(str: String): String? {
-        var str = str
-        if (!StringUtils.hasText(str)) {
+        var s = str
+        if (!StringUtils.hasText(s)) {
             return null
         }
         //去掉'|"|;|\字符
-        str = StringUtils.replace(str, "'", "")
-        str = StringUtils.replace(str, "\"", "")
-        str = StringUtils.replace(str, ";", "")
-        str = StringUtils.replace(str, "\\", "")
+        s = StringUtils.replace(s, "'", "")
+        s = StringUtils.replace(s, "\"", "")
+        s = StringUtils.replace(s, ";", "")
+        s = StringUtils.replace(s, "\\", "")
 
         //转换成小写
-        str = str.lowercase(Locale.getDefault())
+        s = s.lowercase(Locale.getDefault())
 
         //非法字符
         val keywords = arrayOf("master", "truncate", "insert", "select", "delete", "update", "declare",
@@ -33,8 +33,8 @@ object SQLFilter {
 
         //判断是否包含非法字符
         for (keyword in keywords) {
-            require(!str.contains(keyword)) { "包含非法字符" }
+            require(!s.contains(keyword)) { "包含非法字符" }
         }
-        return str
+        return s
     }
 }

@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.weixin.support
 
-import top.bettercode.summer.tools.weixin.config.IWexinProperties
+import top.bettercode.summer.tools.weixin.properties.IWexinProperties
 
 /**
  *

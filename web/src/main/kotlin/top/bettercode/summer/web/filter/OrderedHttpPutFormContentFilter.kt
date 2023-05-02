@@ -91,7 +91,7 @@ class OrderedHttpPutFormContentFilter : OncePerRequestFilter(), Ordered {
             formParameters = parameters ?: LinkedMultiValueMap()
         }
 
-        override fun getParameter(name: String): String {
+        override fun getParameter(name: String): String? {
             val queryStringValue = super.getParameter(name)
             val formValue = formParameters.getFirst(name)
             return queryStringValue ?: formValue

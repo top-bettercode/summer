@@ -100,6 +100,7 @@ class Setting private constructor(private val source: PropertySource) {
                 return@MethodInterceptor methodProxy.invokeSuper(o, objects)
             }
         })
+        @Suppress("UNCHECKED_CAST")
         return enhancer.create() as T
     }
 

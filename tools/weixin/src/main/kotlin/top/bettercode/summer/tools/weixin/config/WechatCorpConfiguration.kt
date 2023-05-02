@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import top.bettercode.summer.tools.weixin.properties.ICorpProperties
 import top.bettercode.summer.tools.weixin.support.IWechatService
 import top.bettercode.summer.tools.weixin.support.corp.CorpClient
 import top.bettercode.summer.tools.weixin.support.corp.ICorpClient

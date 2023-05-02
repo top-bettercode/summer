@@ -39,7 +39,7 @@ class WebRestTemplateTest {
 
     @Test
     fun optionserror() {
-        val httpMethods = restTemplate!!.optionsForAllow("/errors")
+        val httpMethods = restTemplate.optionsForAllow("/errors")
         println(httpMethods)
     }
 

@@ -29,7 +29,7 @@ class ApiSignProperties {
     /**
      * 需要验证签名的 Controller类名前缀.
      */
-    var handlerTypePrefix = arrayOfNulls<String>(0)
+    var handlerTypePrefix = arrayOf<String>()
 
     /**
      * 签名参数名.
@@ -61,7 +61,7 @@ class ApiSignProperties {
         }
         val name = beanType.name
         for (typePrefix in handlerTypePrefix) {
-            if (name.matches(("^" + typePrefix!!.replace(".", "\\.").replace("*", ".+") + ".*$").toRegex())) {
+            if (name.matches(("^" + typePrefix.replace(".", "\\.").replace("*", ".+") + ".*$").toRegex())) {
                 return true
             }
         }

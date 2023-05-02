@@ -61,7 +61,7 @@ class XssHttpServletRequestWrapper(
     override fun getParameter(name: String): String {
         var value = super.getParameter(xssEncode(name))
         if (StringUtils.hasText(value)) {
-            value = xssEncode(value)!!
+            value = xssEncode(value)
         }
         return value
     }
@@ -72,7 +72,7 @@ class XssHttpServletRequestWrapper(
             return null
         }
         for (i in parameters.indices) {
-            parameters[i] = xssEncode(parameters[i])!!
+            parameters[i] = xssEncode(parameters[i])
         }
         return parameters
     }
@@ -93,7 +93,7 @@ class XssHttpServletRequestWrapper(
     override fun getHeader(name: String): String {
         var value = super.getHeader(xssEncode(name))
         if (StringUtils.hasText(value)) {
-            value = xssEncode(value)!!
+            value = xssEncode(value)
         }
         return value
     }

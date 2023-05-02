@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.weixin.support.corp
 
-import top.bettercode.summer.tools.weixin.config.ICorpProperties
+import top.bettercode.summer.tools.weixin.properties.ICorpProperties
 import top.bettercode.summer.tools.weixin.support.corp.entity.CorpWebPageAccessToken
 
 /**

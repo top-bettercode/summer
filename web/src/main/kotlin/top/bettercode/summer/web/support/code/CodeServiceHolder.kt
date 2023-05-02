@@ -21,7 +21,7 @@ object CodeServiceHolder {
     operator fun get(beanName: String): ICodeService {
         val codeService = CODE_SERVICE_MAP.computeIfAbsent(
                 if (StringUtils.hasText(beanName)) beanName else DEFAULT_BEAN_NAME
-        ) { s: String? -> ApplicationContextHolder.Companion.getBean<ICodeService>(s, ICodeService::class.java) }
+        ) { s: String -> ApplicationContextHolder.Companion.getBean<ICodeService>(s, ICodeService::class.java) }
         return codeService ?: PROPERTIES_CODESERVICE
     }
 }
