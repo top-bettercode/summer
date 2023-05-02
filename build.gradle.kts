@@ -23,7 +23,6 @@ allprojects {
             "data-jpa",
             "env",
             "security",
-            "ueditor"
     ).contains(name)
 
     if (!isBomProject) {
