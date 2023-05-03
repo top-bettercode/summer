@@ -96,7 +96,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                     apiTokenService.beforeLogin(request, grantType, scope)
                     val username = request.getParameter(SecurityParameterNames.Companion.USERNAME)
                     Assert.hasText(username, "用户名不能为空")
-                    val password = request.getParameter(SecurityParameterNames.Companion.PWDNAME)
+                    val password = request.getParameter(SecurityParameterNames.Companion.PASSWORD)
                     Assert.hasText(password, "密码不能为空")
                     val userDetails = apiTokenService.getUserDetails(scope, username)
                     Assert.isTrue(passwordEncoder.matches(password, userDetails.password),
