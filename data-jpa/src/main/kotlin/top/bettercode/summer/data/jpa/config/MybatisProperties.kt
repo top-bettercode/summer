@@ -1,0 +1,78 @@
+package top.bettercode.summer.data.jpa.config
+
+import org.apache.ibatis.session.Configuration
+import org.apache.ibatis.type.TypeHandler
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.NestedConfigurationProperty
+import top.bettercode.summer.data.jpa.config.MybatisProperties
+import java.util.*
+
+/**
+ * Configuration properties for MyBatis.
+ *
+ * @author Eddú Meléndez
+ * @author Kazuki Shimizu
+ */
+@ConfigurationProperties(prefix = MybatisProperties.MYBATIS_PREFIX)
+class MybatisProperties {
+    /**
+     * Location of MyBatis xml config file.
+     */
+    var configLocation: String? = null
+
+    /**
+     * Locations of MyBatis mapper files.
+     */
+    var mapperLocations: Array<String> = arrayOf()
+
+    /**
+     * Packages to search type aliases. (Package delimiters are ",; \t\n")
+     */
+    var typeAliasesPackage: String? = null
+    var typeAliases: Array<Class<*>> = arrayOf()
+
+    /**
+     * The super class for filtering type alias. If this not specifies, the MyBatis deal as type alias
+     * all classes that searched from typeAliasesPackage.
+     */
+    var typeAliasesSuperType: Class<*>? = null
+
+    /**
+     * Packages to search for type handlers. (Package delimiters are ",; \t\n")
+     */
+    var typeHandlersPackage: String? = null
+    var typeHandlerClasses: Array<Class<TypeHandler<*>>> = arrayOf()
+        private set
+
+    /**
+     * Indicates whether perform presence check of the MyBatis xml config file.
+     */
+    var isCheckConfigLocation = false
+
+    /**
+     * Externalized properties for MyBatis configuration.
+     */
+    var configurationProperties: Properties? = null
+
+    /**
+     * 结果集转换是否使用 TupleTransformer
+     */
+    var useTupleTransformer = false
+
+    /**
+     * A Configuration object for customize default settings. If [.configLocation] is specified,
+     * this property is not used.
+     */
+    @NestedConfigurationProperty
+    var configuration: Configuration? = null
+    fun setTypeHandlerClasses(
+            typeHandlerClasses: Array<Class<TypeHandler<*>>>,
+    ): MybatisProperties {
+        this.typeHandlerClasses = typeHandlerClasses
+        return this
+    }
+
+    companion object {
+        const val MYBATIS_PREFIX = "spring.data.jpa.mybatis"
+    }
+}

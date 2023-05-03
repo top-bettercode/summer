@@ -19,11 +19,10 @@ allprojects {
 
     val isPluginProject = name.endsWith("-plugin")
 
-    val isJavaProject = arrayOf(
-            "data-jpa",
-            "env",
-            "security",
-    ).contains(name)
+//    val isJavaProject = arrayOf(
+//    ).contains(name)
+
+    val isJavaProject = false
 
     if (!isBomProject) {
         apply {

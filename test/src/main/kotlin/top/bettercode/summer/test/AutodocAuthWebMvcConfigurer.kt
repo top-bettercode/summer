@@ -22,7 +22,7 @@ class AutodocAuthWebMvcConfigurer(
     override fun handle(request: AutoDocHttpServletRequest) {
         val handler = getHandler(request)
         if (handler != null) {
-            val username = AuthenticationHelper.getUsername()
+            val username = AuthenticationHelper.username
             username.ifPresent { request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME, username.get()) }
             var requiredHeaders = requiredHeaders
             val url = request.requestURI
