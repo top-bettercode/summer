@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.weixin.properties
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.weixin.support.WechatToken
@@ -24,8 +25,7 @@ interface ICorpProperties : IWexinProperties {
         val token = wechatToken?.accessToken ?: ""
         val openId = wechatToken?.openId ?: ""
         val msg = wechatToken?.msg ?: ""
-        val encodeMsg: String
-        encodeMsg = try {
+        val encodeMsg: String = try {
             URLEncoder.encode(msg, "UTF-8")
         } catch (e: UnsupportedEncodingException) {
             log.warn(e.message, e)
@@ -38,7 +38,7 @@ interface ICorpProperties : IWexinProperties {
     }
 
     companion object {
-        val log = LoggerFactory.getLogger(ICorpProperties::class.java)
+        val log: Logger = LoggerFactory.getLogger(ICorpProperties::class.java)
         const val OAUTH_URL = "/wechat/corpOauth"
     }
 }

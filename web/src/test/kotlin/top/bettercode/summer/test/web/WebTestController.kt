@@ -26,12 +26,12 @@ import java.util.*
 class WebTestController : BaseController() {
     @FormDuplicateCheck
     @RequestMapping(value = ["/webtest"])
-    fun test(@Validated form: top.bettercode.summer.test.web.DataDicBean, @Cent cent: Long?, a: Date?, @ChinaCell cell: String?): Any {
+    fun test(@Validated form: DataDicBean, @Cent cent: Long?, a: Date?, @ChinaCell cell: String?): Any {
         System.err.println(a)
         System.err.println(cent)
         System.err.println(form.price)
         System.err.println(valueOf(form, true))
-        val dataDicBean = top.bettercode.summer.test.web.DataDicBean()
+        val dataDicBean = DataDicBean()
         dataDicBean.code = "code"
         dataDicBean.intCode = 1
         dataDicBean.path = "/abc.jpg"

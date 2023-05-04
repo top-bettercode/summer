@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.web")
-class SummerWebProperties {
+open class SummerWebProperties {
     /**
      * 项目名称.
      */

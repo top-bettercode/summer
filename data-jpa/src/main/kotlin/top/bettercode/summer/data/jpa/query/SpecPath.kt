@@ -95,9 +95,9 @@ class SpecPath<T, M : SpecMatcher<T, M>>(
             }
             if (trimspec != null && value is String) {
                 when (trimspec) {
-                    Trimspec.LEADING -> value = StringUtils.trimLeadingWhitespace(value as String)
-                    Trimspec.TRAILING -> value = StringUtils.trimTrailingWhitespace(value as String)
-                    Trimspec.BOTH -> value = StringUtils.trimWhitespace(value as String)
+                    Trimspec.LEADING -> value = StringUtils.trimLeadingWhitespace(value)
+                    Trimspec.TRAILING -> value = StringUtils.trimTrailingWhitespace(value)
+                    Trimspec.BOTH -> value = StringUtils.trimWhitespace(value)
                     else -> {}
                 }
             }
@@ -338,7 +338,7 @@ class SpecPath<T, M : SpecMatcher<T, M>>(
 
     @SafeVarargs
     fun <E> `in`(vararg value: E): M {
-        return withMatcher(Arrays.asList(*value), PathMatcher.IN)
+        return withMatcher(listOf(*value), PathMatcher.IN)
     }
 
     fun `in`(value: Collection<*>?): M {
@@ -347,7 +347,7 @@ class SpecPath<T, M : SpecMatcher<T, M>>(
 
     @SafeVarargs
     fun <E> notIn(vararg value: E): M {
-        return withMatcher(Arrays.asList(*value), PathMatcher.NOT_IN)
+        return withMatcher(listOf(*value), PathMatcher.NOT_IN)
     }
 
     fun notIn(value: Collection<*>?): M {

@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.form
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpMethod
 import org.springframework.http.server.ServletServerHttpRequest
@@ -111,6 +112,6 @@ interface IFormkeyService {
     fun remove(formkey: String)
 
     companion object {
-        val log = LoggerFactory.getLogger(IFormkeyService::class.java)
+        val log: Logger = LoggerFactory.getLogger(IFormkeyService::class.java)
     }
 }

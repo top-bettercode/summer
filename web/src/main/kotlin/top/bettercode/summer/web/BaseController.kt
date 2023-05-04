@@ -1,5 +1,6 @@
 package top.bettercode.summer.web
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletResponse
  */
 @ConditionalOnWebApplication
 open class BaseController : Response() {
-    protected val log = LoggerFactory.getLogger(javaClass)
+    protected val log: Logger = LoggerFactory.getLogger(javaClass)
 
     @Autowired(required = false)
     protected var request: HttpServletRequest? = null

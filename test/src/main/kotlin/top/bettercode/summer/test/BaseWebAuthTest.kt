@@ -21,8 +21,7 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
     @Throws(Exception::class)
     public override fun defaultBeforeEach() {
         beforeEach()
-        val userDetails: UserDetails
-        userDetails = if (userDetailsService is ScopeUserDetailsService) {
+        val userDetails: UserDetails = if (userDetailsService is ScopeUserDetailsService) {
             (userDetailsService as ScopeUserDetailsService).loadUserByScopeAndUsername(scope,
                     username)
         } else {

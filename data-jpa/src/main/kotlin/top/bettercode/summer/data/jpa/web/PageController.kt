@@ -15,7 +15,7 @@ import java.util.stream.Collectors
 /**
  * @author Peter Wu
  */
-class PageController : BaseController() {
+open class PageController : BaseController() {
     @Autowired
     private val properties: SpringDataWebProperties? = null
     override fun of(`object`: Any): RespExtra<*>? {
@@ -58,7 +58,7 @@ class PageController : BaseController() {
             val size = collection.size
             PagedResources<Collection<*>>(PageMetadata(number.toLong(), size.toLong(), 1, size.toLong()), collection)
         } else if (`object` != null && `object`.javaClass.isArray) {
-            val array = `object` as Array<Any>
+            val array = `object` as Array<*>
             val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0
             val size = array.size
             PagedResources(PageMetadata(number.toLong(), size.toLong(), 1, size.toLong()), array)

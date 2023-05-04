@@ -10,7 +10,7 @@ import top.bettercode.summer.tools.lang.util.ArrayUtil.isEmpty
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.security")
-class ApiSecurityProperties {
+open class ApiSecurityProperties {
     var refreshTokenValiditySeconds = 60 * 60 * 24 * 30 // default 30 days.
     var accessTokenValiditySeconds = 60 * 60 * 12 // default 12 hours.
 

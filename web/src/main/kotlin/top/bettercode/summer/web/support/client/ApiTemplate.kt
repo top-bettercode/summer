@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.support.client
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpMethod
 import org.springframework.http.client.ClientHttpRequest
@@ -22,7 +23,7 @@ open class ApiTemplate @JvmOverloads constructor(
         private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
         private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
 ) : RestTemplate() {
-    protected val log = LoggerFactory.getLogger(this.javaClass)
+    protected val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     constructor(connectTimeout: Int, readTimeout: Int) : this("", "", connectTimeout, readTimeout)
     constructor(collectionName: String?, name: String?, connectTimeout: Int, readTimeout: Int) : this(collectionName, name, null, connectTimeout, readTimeout)

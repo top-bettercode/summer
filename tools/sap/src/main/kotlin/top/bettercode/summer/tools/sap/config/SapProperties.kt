@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties("jco.client")
-class SapProperties {
+open class SapProperties {
     var ashost: String? = null
     var sysnr: String? = null
     var client: String? = null

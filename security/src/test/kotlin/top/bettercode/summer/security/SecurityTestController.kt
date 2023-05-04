@@ -25,7 +25,7 @@ class SecurityTestController : BaseController() {
     @RequestMapping(value = ["/testAuth"])
     fun testAuth(): Any {
         val authentication = AuthenticationHelper.principal
-        System.err.println("-----------------------")
+        System.err.println("-----------------------$authentication")
         return ok("success")
     }
 

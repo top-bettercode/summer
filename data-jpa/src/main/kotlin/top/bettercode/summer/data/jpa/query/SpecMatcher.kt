@@ -41,7 +41,7 @@ open class SpecMatcher<T, M : SpecMatcher<T, M>> protected constructor(
     override fun toPredicate(
             root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder,
     ): Predicate? {
-        if (!orders.isEmpty()) {
+        if (orders.isNotEmpty()) {
             val orders = orders.stream().map<Order> { o: Sort.Order ->
                 val path: Path<*>? = SpecPath.toPath<T>(root, o.property)
                 if (o.direction.isDescending) cb.desc(path) else cb.asc(path)
@@ -118,18 +118,13 @@ open class SpecMatcher<T, M : SpecMatcher<T, M>> protected constructor(
     }
 
     fun all(other: T?, consumer: Consumer<M>): M {
-        return try {
-            @Suppress("UNCHECKED_CAST") val otherMatcher = typed.javaClass.declaredConstructors[0].newInstance(SpecMatcherMode.ALL, other) as M
-            consumer.accept(otherMatcher)
-            specPredicates[UUID.randomUUID().toString()] = otherMatcher
-            typed
-        } catch (e: NoSuchMethodException) {
-            throw RuntimeException(e)
-        } catch (e: IllegalAccessException) {
-            throw RuntimeException(e)
-        } catch (e: InvocationTargetException) {
-            throw RuntimeException(e)
-        }
+
+        val constructor = typed.javaClass.declaredConstructors[0]
+        constructor.isAccessible = true
+        @Suppress("UNCHECKED_CAST") val otherMatcher = constructor.newInstance(SpecMatcherMode.ALL, other) as M
+        consumer.accept(otherMatcher)
+        specPredicates[UUID.randomUUID().toString()] = otherMatcher
+        return typed
     }
 
     fun any(consumer: Consumer<M>): M {
@@ -137,19 +132,12 @@ open class SpecMatcher<T, M : SpecMatcher<T, M>> protected constructor(
     }
 
     fun any(other: T?, consumer: Consumer<M>): M {
-        return try {
-            val javaClass = typed.javaClass
-            @Suppress("UNCHECKED_CAST") val otherMatcher = typed.javaClass.declaredConstructors[0].newInstance(SpecMatcherMode.ANY, other) as M
-            consumer.accept(otherMatcher)
-            specPredicates[UUID.randomUUID().toString()] = otherMatcher
-            typed
-        } catch (e: NoSuchMethodException) {
-            throw RuntimeException(e)
-        } catch (e: IllegalAccessException) {
-            throw RuntimeException(e)
-        } catch (e: InvocationTargetException) {
-            throw RuntimeException(e)
-        }
+        val constructor = typed.javaClass.declaredConstructors[0]
+        constructor.isAccessible = true
+        @Suppress("UNCHECKED_CAST") val otherMatcher = constructor.newInstance(SpecMatcherMode.ANY, other) as M
+        consumer.accept(otherMatcher)
+        specPredicates[UUID.randomUUID().toString()] = otherMatcher
+        return typed
     }
 
     //--------------------------------------------
@@ -237,7 +225,7 @@ open class SpecMatcher<T, M : SpecMatcher<T, M>> protected constructor(
 
     @SafeVarargs
     fun <E> `in`(propertyName: String, vararg value: E): M {
-        return withMatcher(propertyName, Arrays.asList(*value), PathMatcher.IN)
+        return withMatcher(propertyName, listOf(*value), PathMatcher.IN)
     }
 
     fun `in`(propertyName: String, value: Collection<*>?): M {
@@ -246,7 +234,7 @@ open class SpecMatcher<T, M : SpecMatcher<T, M>> protected constructor(
 
     @SafeVarargs
     fun <E> notIn(propertyName: String, vararg value: E): M {
-        return withMatcher(propertyName, Arrays.asList(*value), PathMatcher.NOT_IN)
+        return withMatcher(propertyName, listOf(*value), PathMatcher.NOT_IN)
     }
 
     fun notIn(propertyName: String, value: Collection<*>?): M {

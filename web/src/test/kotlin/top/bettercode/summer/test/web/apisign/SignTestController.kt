@@ -1,4 +1,4 @@
-package top.bettercode.api.sign
+package top.bettercode.summer.test.web.apisign
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.web.bind.annotation.RequestMapping

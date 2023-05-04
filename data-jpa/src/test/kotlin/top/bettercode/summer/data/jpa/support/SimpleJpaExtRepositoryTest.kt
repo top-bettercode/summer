@@ -13,11 +13,13 @@ import org.springframework.data.domain.Example
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import top.bettercode.summer.data.jpa.config.JpaMybatisAutoConfiguration
 import top.bettercode.summer.data.jpa.domain.*
 import top.bettercode.summer.data.jpa.query.DefaultSpecMatcher
 import top.bettercode.summer.data.jpa.query.SpecMatcher
+import top.bettercode.summer.data.jpa.query.SpecPath.Companion.containing
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
 import top.bettercode.summer.web.support.ApplicationContextHolder.Companion.applicationContext
@@ -129,7 +131,7 @@ class SimpleJpaExtRepositoryTest {
     fun save1() {
         val dave = User("Dave", "Matthews")
         repository.save(dave)
-        val id = dave.id
+        val id = dave.id!!
         val update = User()
         update.id = id
         update.firstName = "Dave22"
@@ -144,10 +146,11 @@ class SimpleJpaExtRepositoryTest {
     fun save() {
         val dave = User("Dave", "Matthews")
         repository.save(dave)
-        val id = dave.id
+        val id = dave.id!!
         val update = User()
         update.id = id
         update.firstName = "Dave22"
+        @Suppress("DEPRECATION")
         repository.dynamicSave(update)
         val optionalUser = repository.findById(id)
         optionalUser.ifPresent { x: User? -> System.err.println(x) }
@@ -274,14 +277,17 @@ class SimpleJpaExtRepositoryTest {
         Assertions.assertFalse(optionalUser.isPresent)
     }
 
-    @get:Test
-    val byId: Unit
-        get() {
-            var optionalUser = repository.getById(carterId)
-            Assertions.assertNotNull(optionalUser)
+    @Test
+    fun testbyId() {
+        var optionalUser = repository.getById(carterId)
+        Assertions.assertNotNull(optionalUser)
+
+        Assertions.assertThrows(JpaObjectRetrievalFailureException::class.java
+        ) {
             optionalUser = repository.getById(daveId)
-            Assertions.assertNull(optionalUser)
         }
+
+    }
 
     @Test
     fun findAll() {
@@ -298,7 +304,7 @@ class SimpleJpaExtRepositoryTest {
 
     @Test
     fun findAll2() {
-        val spec: Specification<User>? = null
+//        val spec: Specification<User>? = null
         //    Assertions .assertEquals(2, repository.findAll(PageRequest.of(0, 2)).getContent().size());
 //    Assertions .assertEquals(3, repository.findAll(PageRequest.of(0, 5)).getContent().size());
 //    Assertions .assertEquals(2, repository.findAll(spec,PageRequest.of(0, 2)).getContent().size());
@@ -333,6 +339,43 @@ class SimpleJpaExtRepositoryTest {
                             .containing("firstName", " Cart ").specPath("firstName").trim()
                 }
                 .desc("firstName").asc("lastName")
+        val all = repository.findAll(matcher)
+        System.err.println(valueOf(all, true))
+    }
+
+    @Test
+    fun findAll351() {
+        val matcher: SpecMatcher<User?, DefaultSpecMatcher<User?>> = DefaultSpecMatcher.matching<User?>()
+                .specPath("lastName").containing("Beauford")
+                .all { specMatcher: DefaultSpecMatcher<User?> ->
+                    specMatcher.equal("id", carterId)
+                            .containing("firstName", " Cart ").specPath("firstName").trim()
+                }
+                .desc("firstName").asc("lastName")
+        val all = repository.findAll(matcher)
+        System.err.println(valueOf(all, true))
+    }
+
+    @Test
+    fun findAll36() {
+        val matcher: UserMatcher =
+                UserMatcher.matching().lastName().containing("Beauford")
+                        .any { matcher: UserMatcher ->
+                            matcher.id().equal(carterId).firstName()
+                                    .containing(" Cart ").firstName().trim()
+                        }.firstName().desc().lastName().asc()
+        val all = repository.findAll(matcher)
+        System.err.println(valueOf(all, true))
+    }
+
+    @Test
+    fun findAll361() {
+        val matcher: UserMatcher =
+                UserMatcher.matching().lastName().containing("Beauford")
+                        .all { matcher: UserMatcher ->
+                            matcher.id().equal(carterId).firstName()
+                                    .containing(" Cart ").firstName().trim()
+                        }.firstName().desc().lastName().asc()
         val all = repository.findAll(matcher)
         System.err.println(valueOf(all, true))
     }
@@ -393,7 +436,7 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findRecycleAll1() {
         Assertions.assertTrue(
-                repository.findAllFromRecycleBin { root: Root<User?>, query: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                repository.findAllFromRecycleBin { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder
                             .equal(root.get<Any>("firstName"), "Dave")
                 }.iterator().hasNext())
@@ -402,7 +445,7 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun existsRecycle() {
         Assertions
-                .assertTrue(repository.existsInRecycleBin { root: Root<User?>, query: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                .assertTrue(repository.existsInRecycleBin { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder
                             .equal(root.get<Any>("firstName"), "Dave")
                 })
@@ -416,7 +459,7 @@ class SimpleJpaExtRepositoryTest {
         query.setParameter(1, "Carter")
         query.setParameter(2, "Carter")
         query.setParameter(3, "Beauford1")
-        val nativeQuery = query.unwrap(NativeQuery::class.java)
+//        val nativeQuery = query.unwrap(NativeQuery::class.java)
         //    nativeQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 //    nativeQuery.addScalar("first_name", StringType.INSTANCE);
 //    nativeQuery.addScalar("last_name", StringType.INSTANCE);

@@ -112,7 +112,7 @@ class MultipleBearerTokenResolver {
 
         private fun resolveFromRequestParameters(request: HttpServletRequest, tokenName: String): String? {
             val values = request.getParameterValues(tokenName)
-            return if (values == null || values.size == 0) {
+            return if (values == null || values.isEmpty()) {
                 null
             } else values[0]
         }

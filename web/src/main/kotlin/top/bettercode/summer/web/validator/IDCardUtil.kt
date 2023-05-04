@@ -135,7 +135,7 @@ object IDCardUtil {
     private fun getPowerSum(bit: IntArray): Int {
         var sum = 0
         if (power.size != bit.size) {
-            return sum
+            return 0
         }
         for (i in bit.indices) {
             for (j in power.indices) {

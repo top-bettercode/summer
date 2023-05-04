@@ -26,14 +26,14 @@ open class BaseUser {
         this.lastName = lastName
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (o !is BaseUser) {
+        if (other !is BaseUser) {
             return false
         }
-        val baseUser = o
+        val baseUser = other
         return id == baseUser.id && firstName == baseUser.firstName && lastName == baseUser.lastName && deleted == baseUser.deleted
     }
 

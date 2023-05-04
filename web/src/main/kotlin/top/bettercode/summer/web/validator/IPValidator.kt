@@ -15,7 +15,7 @@ class IPValidator : ConstraintValidator<IP?, String?> {
     override fun initialize(constraintAnnotation: IP?) {}
     override fun isValid(charSequence: String?,
                          constraintValidatorContext: ConstraintValidatorContext): Boolean {
-        return if (charSequence == null || charSequence.length == 0) {
+        return if (charSequence == null || charSequence.isEmpty()) {
             true
         } else isValidInet4Address(charSequence) || isValidInet6Address(charSequence)
     }

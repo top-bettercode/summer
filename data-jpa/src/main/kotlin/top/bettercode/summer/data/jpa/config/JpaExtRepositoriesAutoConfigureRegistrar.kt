@@ -40,7 +40,7 @@ internal class JpaExtRepositoriesAutoConfigureRegistrar : AbstractRepositoryConf
                 .getProperty("spring.data.jpa.repositories.bootstrap-mode")
         if (StringUtils.hasText(property)) {
             bootstrapMode = BootstrapMode
-                    .valueOf(property.uppercase())
+                    .valueOf(property!!.uppercase())
         }
     }
 

@@ -28,9 +28,9 @@ object DefaultAuthority {
     }
 
     fun addDefaultAuthority(
-            vararg authorities: GrantedAuthority?
+            vararg authorities: GrantedAuthority
     ): Collection<GrantedAuthority> {
-        val objects = HashSet(Arrays.asList(*authorities))
+        val objects = HashSet(listOf(*authorities))
         objects.add(DEFAULT_GRANTED_AUTHORITY)
         return objects
     }

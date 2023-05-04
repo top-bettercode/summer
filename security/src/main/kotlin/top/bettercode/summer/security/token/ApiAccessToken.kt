@@ -7,7 +7,7 @@ import java.io.Serializable
 import java.time.Instant
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class ApiAccessToken : Serializable {
+open class ApiAccessToken : Serializable {
     @JsonProperty("token_type")
     var tokenType: String? = null
 

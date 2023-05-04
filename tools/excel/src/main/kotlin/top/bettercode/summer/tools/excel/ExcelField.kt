@@ -33,7 +33,7 @@ import kotlin.reflect.jvm.javaType
  * @param <P> 属性类型
  * @param <T> 实体类型
 </T></P> */
-class ExcelField<T, P : Any?> {
+open class ExcelField<T, P : Any?> {
     /**
      * 导出字段标题
      */
@@ -60,7 +60,7 @@ class ExcelField<T, P : Any?> {
      *
      * Define horizontal alignment. [here](https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx).
      */
-    private var align = Alignment.center
+    private var align = Alignment.CENTER
 
     /**
      * 是否自动换行
@@ -655,7 +655,7 @@ class ExcelField<T, P : Any?> {
         if (propertyName != null) {
             val constraintViolations = validator
                     .validateProperty<Any>(obj, propertyName, *validateGroups)
-            if (!constraintViolations.isEmpty()) {
+            if (constraintViolations.isNotEmpty()) {
                 throw ConstraintViolationException(constraintViolations)
             }
         }

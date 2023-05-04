@@ -123,7 +123,7 @@ class OrderedHttpPutFormContentFilter : OncePerRequestFilter(), Ordered {
                 formValues.toTypedArray<String>()
             } else {
                 val result: MutableList<String> = ArrayList()
-                result.addAll(Arrays.asList(*queryStringValues))
+                result.addAll(listOf(*queryStringValues))
                 result.addAll(formValues)
                 result.toTypedArray<String>()
             }

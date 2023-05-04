@@ -217,8 +217,8 @@ object CaptchaUtil {
         val phase = random.nextInt(2)
 
         for (i in 0 until h1) {
-            val d = (period shr 1).toDouble() * sin(
-                i.toDouble() / period.toDouble() + 6.2831853071795862 * phase.toDouble() / frames.toDouble()
+            val d = (period.shr(1)).toDouble() * sin(
+                i.toDouble() / period.toDouble() + "6.2831853071795862".toDouble() * phase.toDouble() / frames.toDouble()
             )
             g.copyArea(0, i, w1, 1, d.toInt(), 0)
             g.color = color
@@ -244,7 +244,7 @@ object CaptchaUtil {
         val phase = 7
         for (i in 0 until w1) {
             val d = (period shr 1).toDouble() * sin(
-                i.toDouble() / period.toDouble() + 6.2831853071795862 * phase.toDouble() / frames.toDouble()
+                i.toDouble() / period.toDouble() + "6.2831853071795862".toDouble() * phase.toDouble() / frames.toDouble()
             )
             g.copyArea(i, 0, 1, h1, 0, d.toInt())
             g.color = color

@@ -4,7 +4,6 @@ import org.apache.ibatis.session.Configuration
 import org.apache.ibatis.type.TypeHandler
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.NestedConfigurationProperty
-import top.bettercode.summer.data.jpa.config.MybatisProperties
 import java.util.*
 
 /**
@@ -14,7 +13,7 @@ import java.util.*
  * @author Kazuki Shimizu
  */
 @ConfigurationProperties(prefix = MybatisProperties.MYBATIS_PREFIX)
-class MybatisProperties {
+open class MybatisProperties {
     /**
      * Location of MyBatis xml config file.
      */
@@ -47,7 +46,7 @@ class MybatisProperties {
     /**
      * Indicates whether perform presence check of the MyBatis xml config file.
      */
-    var isCheckConfigLocation = false
+    var checkConfigLocation = false
 
     /**
      * Externalized properties for MyBatis configuration.

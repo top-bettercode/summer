@@ -23,8 +23,8 @@ import java.util.*
 class QuerydslJpaExtPredicateExecutorTest {
     @Autowired
     lateinit var repository: UserRepository
-    var daveId: Int? = null
-    var carterId: Int? = null
+    var daveId: Int=0
+    var carterId: Int = 0
     @BeforeEach
     fun setUp() {
         val dave = User("Dave", "Matthews")
@@ -35,9 +35,9 @@ class QuerydslJpaExtPredicateExecutorTest {
         repository.save(carter)
         carter = User("Carter", "Beauford")
         repository.save(carter)
-        daveId = dave1.id
+        daveId = dave1.id!!
         repository.delete(dave)
-        carterId = carter.id
+        carterId = carter.id!!
     }
 
     @AfterEach
@@ -87,10 +87,10 @@ class QuerydslJpaExtPredicateExecutorTest {
     @Test
     fun findAll4() {
         Assertions.assertEquals(1,
-                repository.findAll(QUser.user.firstName!!.eq("Carter"), PageRequest.of(0, 1)).getContent()
+                repository.findAll(QUser.user.firstName!!.eq("Carter"), PageRequest.of(0, 1)).content
                         .size)
         Assertions.assertEquals(2,
-                repository.findAll(QUser.user.firstName!!.eq("Carter"), PageRequest.of(0, 5)).getContent()
+                repository.findAll(QUser.user.firstName.eq("Carter"), PageRequest.of(0, 5)).content
                         .size)
     }
 
@@ -145,11 +145,11 @@ class QuerydslJpaExtPredicateExecutorTest {
         repository.deleteById(daveId)
         Assertions.assertEquals(1,
                 repository.findAllFromRecycleBin(QUser.user.firstName!!.eq("Dave"), PageRequest.of(0, 1))
-                        .getContent()
+                        .content
                         .size)
         Assertions.assertEquals(2,
-                repository.findAllFromRecycleBin(QUser.user.firstName!!.eq("Dave"), PageRequest.of(0, 5))
-                        .getContent()
+                repository.findAllFromRecycleBin(QUser.user.firstName.eq("Dave"), PageRequest.of(0, 5))
+                        .content
                         .size)
     }
 

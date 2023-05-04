@@ -20,7 +20,7 @@ internal class ArraySerializerTest {
     @Test
     @Throws(Exception::class)
     fun serialize() {
-        val bean = top.bettercode.summer.test.web.StringArrayBean()
+        val bean = StringArrayBean()
         bean.setAry("a,b,c,")
         val actual = objectMapper.writeValueAsString(bean)
         System.err.println(actual)
@@ -30,7 +30,7 @@ internal class ArraySerializerTest {
     @Test
     @Throws(Exception::class)
     fun serialize1() {
-        val bean = top.bettercode.summer.test.web.StringArrayBean()
+        val bean = StringArrayBean()
         bean.setAry("a,b,c")
         val actual = objectMapper.writeValueAsString(bean)
         System.err.println(actual)

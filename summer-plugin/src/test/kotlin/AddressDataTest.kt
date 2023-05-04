@@ -75,6 +75,6 @@ class AddressDataTest {
         }
     }
 
-    private fun getName(addressData: Properties, parent_code: String) =
-        (addressData[parent_code] as? String)?.trim()
+    private fun getName(addressData: Properties, parentCode: String) =
+        (addressData[parentCode] as? String)?.trim()
 }

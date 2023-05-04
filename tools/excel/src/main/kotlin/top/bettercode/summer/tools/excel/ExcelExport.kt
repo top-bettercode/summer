@@ -179,8 +179,8 @@ class ExcelExport {
 
     private fun setHeaderStyle() {
         sheet!!.style(r, c)
-                .horizontalAlignment(Alignment.center.name)
-                .verticalAlignment(Alignment.center.name)
+                .horizontalAlignment(Alignment.CENTER.value)
+                .verticalAlignment(Alignment.CENTER.value)
                 .bold()
                 .fillColor("808080")
                 .fontColor("FFFFFF")
@@ -246,8 +246,8 @@ class ExcelExport {
         val style = sheet!!.style(row, column)
         val excelField = excelCell.excelField
         val format = excelField.format()
-        style.horizontalAlignment(excelField.align().name)
-                .verticalAlignment(Alignment.center.name)
+        style.horizontalAlignment(excelField.align().value)
+                .verticalAlignment(Alignment.CENTER.value)
                 .wrapText(excelField.wrapText())
                 .format(format)
                 .borderStyle("thin")
@@ -328,8 +328,7 @@ class ExcelExport {
         val firstRow = r
         val firstColumn = c
         var index = 0
-        val firstField: ExcelField<T, *>
-        firstField = if (imageByteArrayOutputStream == null) {
+        val firstField: ExcelField<T, *> = if (imageByteArrayOutputStream == null) {
             Arrays.stream(excelFields).filter { o: ExcelField<T, *> -> !o.isImageColumn }.findFirst()
                     .orElseThrow { ExcelException("无可导出项目") }
         } else {
@@ -412,8 +411,8 @@ class ExcelExport {
             val style = sheet!!
                     .range(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column)
                     .style()
-            style.horizontalAlignment(excelField.align().name)
-                    .verticalAlignment(Alignment.center.name)
+            style.horizontalAlignment(excelField.align().value)
+                    .verticalAlignment(Alignment.CENTER.value)
                     .wrapText(excelField.wrapText())
                     .format(format)
                     .borderStyle("thin")
@@ -624,8 +623,7 @@ class ExcelExport {
                                       fileName: String) {
             response.reset()
             val agent = request.getHeader("USER-AGENT")
-            val newFileName: String
-            newFileName = if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
+            val newFileName: String = if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
                 URLEncoder.encode(fileName, "UTF-8")
             } else {
                 fileName

@@ -14,11 +14,10 @@ internal class SapCostServiceTest {
     @Autowired
     var sapCostService: SapCostService? = null
 
-    @get:Test
-    @get:Disabled
-    val costs: Unit
-        get() {
-            val costs = sapCostService!!.costs
-            System.err.println(costs)
-        }
+    @Test
+    @Disabled
+    fun testGetCosts(): Unit {
+        val costs = sapCostService!!.costs
+        System.err.println(costs)
+    }
 }

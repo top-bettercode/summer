@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.logging.slack")
-class SlackProperties {
+open class SlackProperties {
     var logger = arrayOf("root")
     var ignoredWarnLogger = arrayOf<String>()
     var authToken: String = ""

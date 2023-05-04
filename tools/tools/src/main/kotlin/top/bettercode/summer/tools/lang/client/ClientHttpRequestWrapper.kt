@@ -124,7 +124,7 @@ class ClientHttpRequestWrapper(
         return OutputStreamWrapper(request.body)
     }
 
-    private inner class OutputStreamWrapper constructor(private val delegate: OutputStream) :
+    private inner class OutputStreamWrapper(private val delegate: OutputStream) :
         OutputStream() {
         @Throws(IOException::class)
         override fun write(b: Int) {

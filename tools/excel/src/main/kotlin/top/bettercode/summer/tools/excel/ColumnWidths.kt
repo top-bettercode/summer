@@ -6,6 +6,7 @@ import java.math.RoundingMode
 import kotlin.collections.HashMap
 import kotlin.collections.MutableMap
 import kotlin.collections.set
+import kotlin.math.max
 
 /**
  * @author Peter Wu
@@ -15,8 +16,7 @@ class ColumnWidths @JvmOverloads constructor(private val maxWidth: Int = 50) {
     fun put(column: Int, `val`: Any?) {
         if (`val` != null) {
             var width = getWidth(`val`)
-            width = Math
-                    .max(colWidths.getOrDefault(column, 0.0), width)
+            width = max(colWidths.getOrDefault(column, 0.0), width)
             colWidths[column] = width
         }
     }

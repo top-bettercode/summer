@@ -20,7 +20,9 @@ import top.bettercode.summer.tools.lang.util.BeanUtil.nullFrom
 import java.util.*
 import java.util.function.Function
 import javax.persistence.EntityManager
+import javax.persistence.EntityNotFoundException
 import javax.persistence.criteria.*
+import kotlin.math.min
 
 /**
  * @author Peter Wu
@@ -30,7 +32,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         private val entityInformation: JpaEntityInformation<T, ID>, final override val entityManager: EntityManager,
 ) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), JpaExtRepository<T, ID> {
     private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")
-    private val provider: PersistenceProvider
+    private val provider: PersistenceProvider = PersistenceProvider.fromEntityManager(entityManager)
     private val extJpaSupport: ExtJpaSupport
     private val escapeCharacter = EscapeCharacter.DEFAULT
     private val notDeleted: Any?
@@ -39,15 +41,14 @@ class SimpleJpaExtRepository<T : Any, ID>(
     private val deletedSpec: Specification<T>
 
     init {
-        this.provider = PersistenceProvider.fromEntityManager(entityManager)
         extJpaSupport = DefaultExtJpaSupport(jpaExtProperties, domainClass)
         notDeleted = extJpaSupport.softDeletedFalseValue
         deleted = extJpaSupport.softDeletedTrueValue
-        notDeletedSpec = Specification { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+        notDeletedSpec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
             builder.equal(
                     root.get<Any>(extJpaSupport.softDeletedPropertyName), notDeleted)
         }
-        deletedSpec = Specification { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+        deletedSpec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
             builder.equal(
                     root.get<Any>(extJpaSupport.softDeletedPropertyName), deleted)
         }
@@ -58,7 +59,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return if (String::class.java == idType) {
             val id = entityInformation.getId(entity)
             if ("" == id) {
-                DirectFieldAccessFallbackBeanWrapper(entity!!).setPropertyValue(
+                DirectFieldAccessFallbackBeanWrapper(entity).setPropertyValue(
                         entityInformation.idAttribute.name, null)
                 true
             } else {
@@ -168,6 +169,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         var mdc = false
         try {
             mdc = mdcPutId(".deleteInBatch")
+            @Suppress("DEPRECATION")
             super<SimpleJpaRepository>.deleteInBatch(entities)
         } finally {
             cleanMdc(mdc)
@@ -219,7 +221,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             if (predicate != null) {
                 criteriaUpdate.where(predicate)
             }
-            val beanWrapper = DirectFieldAccessFallbackBeanWrapper(s!!)
+            val beanWrapper = DirectFieldAccessFallbackBeanWrapper(s)
             for (attribute in root.model.singularAttributes) {
                 val attributeName = attribute.name
                 val attributeValue = beanWrapper.getPropertyValue(attributeName) ?: continue
@@ -266,7 +268,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 val optional = findById(entityInformation.getId(s)!!)
                 if (optional.isPresent) {
                     val exist = optional.get()
-                    s!!.nullFrom(exist)
+                    s.nullFrom(exist)
                     entityManager.merge(s)
                 } else {
                     entityManager.persist(s)
@@ -364,7 +366,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         try {
             mdc = mdcPutId(".deleteAllByIdInBatch")
             if (extJpaSupport.supportSoftDeleted()) {
-                softDelete { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection<ID?>(ids)) }
+                softDelete { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection<ID?>(ids)) }
             } else {
                 super.deleteAllByIdInBatch(ids)
             }
@@ -452,7 +454,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return try {
             mdc = mdcPutId(".findById")
             if (extJpaSupport.supportSoftDeleted()) {
-                var spec = Specification { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder.equal(
                             root[entityInformation.idAttribute], id)
                 }
@@ -492,12 +494,12 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return try {
             mdc = mdcPutId(".getById")
             if (extJpaSupport.supportSoftDeleted()) {
-                var spec = Specification { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder.equal(
                             root[entityInformation.idAttribute], id)
                 }
                 spec = spec.and(notDeletedSpec)
-                super.findOne(spec).orElse(null)
+                super.findOne(spec).orElseThrow { EntityNotFoundException("Unable to find $domainClass with id $id") }
             } else {
                 super.getById(id)
             }
@@ -511,7 +513,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return try {
             mdc = mdcPutId(".existsById")
             if (extJpaSupport.supportSoftDeleted()) {
-                var spec = Specification { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder.equal(
                             root[entityInformation.idAttribute], id)
                 }
@@ -529,8 +531,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         var mdc = false
         return try {
             mdc = mdcPutId(".findAll")
-            val result: List<T>
-            result = if (extJpaSupport.supportSoftDeleted()) {
+            val result: List<T> = if (extJpaSupport.supportSoftDeleted()) {
                 super.findAll(notDeletedSpec)
             } else {
                 super.findAll()
@@ -548,7 +549,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         var mdc = false
         return try {
             mdc = mdcPutId(".findAllById")
-            var spec = Specification { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection<ID?>(ids)) }
+            var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection<ID?>(ids)) }
             if (extJpaSupport.supportSoftDeleted()) {
                 spec = spec.and(notDeletedSpec)
             }
@@ -566,8 +567,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         var mdc = false
         return try {
             mdc = mdcPutId(".findAll")
-            val result: List<T>
-            result = if (extJpaSupport.supportSoftDeleted()) {
+            val result: List<T> = if (extJpaSupport.supportSoftDeleted()) {
                 super.findAll(notDeletedSpec, sort)
             } else {
                 super.findAll(sort)
@@ -585,8 +585,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         var mdc = false
         return try {
             mdc = mdcPutId(".findAll")
-            val result: Page<T>
-            result = if (extJpaSupport.supportSoftDeleted()) {
+            val result: Page<T> = if (extJpaSupport.supportSoftDeleted()) {
                 super.findAll(notDeletedSpec, pageable)
             } else {
                 super.findAll(pageable)
@@ -778,7 +777,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             sqlLog.debug("{} rows retrieved", content.size)
         }
         return PageableList(content, pageable,
-                Math.min(pageable.pageSize, content.size).toLong())
+                min(pageable.pageSize, content.size).toLong())
     }
 
     override fun findHardAll(spec: Specification<T>?, pageable: Pageable): Page<T> {
@@ -965,7 +964,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         if (sqlLog.isDebugEnabled) {
             sqlLog.debug("{} rows retrieved", content.size)
         }
-        return PageableList(content, pageable, Math.min(pageable.pageSize, content.size).toLong())
+        return PageableList(content, pageable, min(pageable.pageSize, content.size).toLong())
     }
 
     override fun <S : T> findAll(example: Example<S>, sort: Sort): List<S> {
@@ -1007,8 +1006,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         var mdc = false
         return try {
             mdc = mdcPutId(".count")
-            val count: Long
-            count = if (extJpaSupport.supportSoftDeleted()) {
+            val count: Long = if (extJpaSupport.supportSoftDeleted()) {
                 val softDeleteName = extJpaSupport.softDeletedPropertyName
                 val queryString = String.format(QueryUtils.COUNT_QUERY_STRING + " WHERE " + EQUALS_CONDITION_STRING,
                         provider.countQueryPlaceholder, entityInformation.entityName, "x",
@@ -1151,7 +1149,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return try {
             mdc = mdcPutId(".findByIdFromRecycleBin")
             if (extJpaSupport.supportSoftDeleted()) {
-                var spec = Specification { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder.equal(root[entityInformation.idAttribute], id)
                 }
                 spec = spec.and(deletedSpec)
@@ -1170,7 +1168,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             mdc = mdcPutId(".findAllByIdFromRecycleBin")
             val result: List<T>
             if (extJpaSupport.supportSoftDeleted()) {
-                var spec = Specification { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection<ID?>(ids)) }
+                var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection<ID?>(ids)) }
                 spec = spec.and(deletedSpec)
                 result = super.findAll(spec)
             } else {
@@ -1215,8 +1213,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         var mdc = false
         return try {
             mdc = mdcPutId(".findAllFromRecycleBin")
-            val result: List<T>
-            result = if (extJpaSupport.supportSoftDeleted()) {
+            val result: List<T> = if (extJpaSupport.supportSoftDeleted()) {
                 super.findAll(deletedSpec)
             } else {
                 emptyList()
@@ -1254,8 +1251,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         var mdc = false
         return try {
             mdc = mdcPutId(".findAllFromRecycleBin")
-            val result: Page<T>
-            result = if (extJpaSupport.supportSoftDeleted()) {
+            val result: Page<T> = if (extJpaSupport.supportSoftDeleted()) {
                 super.findAll(deletedSpec, pageable)
             } else {
                 Page.empty(pageable)
@@ -1274,8 +1270,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         var mdc = false
         return try {
             mdc = mdcPutId(".findAllFromRecycleBin")
-            val result: List<T>
-            result = if (extJpaSupport.supportSoftDeleted()) {
+            val result: List<T> = if (extJpaSupport.supportSoftDeleted()) {
                 super.findAll(deletedSpec, sort)
             } else {
                 emptyList()

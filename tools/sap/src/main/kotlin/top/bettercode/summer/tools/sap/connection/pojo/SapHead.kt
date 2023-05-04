@@ -62,7 +62,7 @@ class SapHead {
      * 字符字段，8 个字符长度
      */
     @SapField("SDATE")
-    var sdate = dateFormat.format(Date())
+    var sdate: String? = dateFormat.format(Date())
         private set
     /**
      * @return 长度为6的字符字段
@@ -71,7 +71,7 @@ class SapHead {
      * 长度为6的字符字段
      */
     @SapField("STIME")
-    var stime = timeFormate.format(Date())
+    var stime: String? = timeFormate.format(Date())
         private set
     /**
      * @return 长度为 40 的字符型字段

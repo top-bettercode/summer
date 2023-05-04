@@ -584,7 +584,7 @@ object StringUtil {
                     ?: versionTails.indexOf(
                             version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
                     )
-            if (v1 != -1 && v1 == v2 && toIntOrNull1 == null && toIntOrNull2 == null) {
+            if (v1 != -1 && v1 == v2 && toIntOrNull1 == null) {
                 v2 = version2s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
                 v1 = version1s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
             }

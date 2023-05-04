@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.kaptcha")
-class KaptchaProperties {
+open class KaptchaProperties {
     //--------------------------------------------
     var border = "no"
     var textproducerFontColor = "black"

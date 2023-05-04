@@ -11,7 +11,7 @@ import org.springframework.util.SystemPropertyUtils
 import java.io.IOException
 import java.util.*
 
-class PackageScanClassResolver @JvmOverloads constructor(classLoader: ClassLoader? = ClassUtils.getDefaultClassLoader()) {
+open class PackageScanClassResolver @JvmOverloads constructor(classLoader: ClassLoader? = ClassUtils.getDefaultClassLoader()) {
     private val log = LoggerFactory.getLogger(PackageScanClassResolver::class.java)
     private var scanFilters: MutableSet<PackageScanFilter>? = null
     private val allClassesByPackage: MutableMap<String, MutableSet<Class<*>>> = HashMap()
@@ -42,8 +42,7 @@ class PackageScanClassResolver @JvmOverloads constructor(classLoader: ClassLoade
             return emptySet()
         }
         if (log.isTraceEnabled) {
-            log.trace("Searching for implementations of " + parent.name + " in packages: " + Arrays
-                    .asList(*packageNames))
+            log.trace("Searching for implementations of " + parent.name + " in packages: " + listOf(*packageNames))
         }
         val test = getCompositeFilter(AssignableToPackageScanFilter(parent))
         return findByFilter(test, *packageNames)
@@ -128,7 +127,7 @@ class PackageScanClassResolver @JvmOverloads constructor(classLoader: ClassLoade
     protected fun addFoundClass(type: Class<*>) {
         if (type.getPackage() != null) {
             val packageName = type.getPackage().name
-            val packageNameParts = Arrays.asList(*packageName.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+            val packageNameParts = listOf(*packageName.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
             for (i in packageNameParts.indices) {
                 val thisPackage = StringUtils.join(packageNameParts.subList(0, i + 1), '/')
                 addFoundClass(thisPackage, type)

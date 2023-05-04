@@ -3,7 +3,7 @@ package top.bettercode.summer.data.jpa.query
 /**
  * @author Peter Wu
  */
-class DefaultSpecMatcher<T> protected constructor(matcherMode: SpecMatcherMode, probe: T?) : SpecMatcher<T, DefaultSpecMatcher<T>>(matcherMode, probe) {
+open class DefaultSpecMatcher<T> protected constructor(matcherMode: SpecMatcherMode, probe: T?) : SpecMatcher<T, DefaultSpecMatcher<T>>(matcherMode, probe) {
     companion object {
         private const val serialVersionUID = 1L
 

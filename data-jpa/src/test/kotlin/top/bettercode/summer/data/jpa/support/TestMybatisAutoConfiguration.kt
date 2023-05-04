@@ -16,7 +16,6 @@ import org.springframework.util.ObjectUtils
 import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.config.JpaMybatisAutoConfiguration
 import top.bettercode.summer.data.jpa.config.MybatisProperties
-import top.bettercode.summer.tools.lang.util.ArrayUtil.isEmpty
 import java.util.stream.Stream
 import javax.sql.DataSource
 
@@ -31,7 +30,7 @@ class TestMybatisAutoConfiguration(
     }
 
     private fun checkConfigFileExists() {
-        if (properties.isCheckConfigLocation && StringUtils
+        if (properties.checkConfigLocation && StringUtils
                         .hasText(properties.configLocation)) {
             val resource = resourceLoader.getResource(properties.configLocation!!)
             Assert.state(resource.exists(),

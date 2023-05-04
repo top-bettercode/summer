@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponseWrapper
  * @author Peter Wu
  * @since 0.0.1
  */
-class TraceHttpServletResponseWrapper constructor(response: HttpServletResponse) :
+class TraceHttpServletResponseWrapper(response: HttpServletResponse) :
     HttpServletResponseWrapper(response) {
 
     private val byteArrayOutputStream = ByteArrayOutputStream()

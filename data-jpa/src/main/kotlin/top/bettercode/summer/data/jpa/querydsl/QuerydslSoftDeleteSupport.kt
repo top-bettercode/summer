@@ -10,7 +10,7 @@ import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
 /**
  * @author Peter Wu
  */
-class QuerydslSoftDeleteSupport<T>(
+open class QuerydslSoftDeleteSupport<T>(
         jpaExtProperties: JpaExtProperties, domainClass: Class<*>,
         entityPath: EntityPath<T>?
 ) : DefaultExtJpaSupport(jpaExtProperties, domainClass) {

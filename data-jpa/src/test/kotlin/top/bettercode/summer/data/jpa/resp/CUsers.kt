@@ -9,14 +9,14 @@ import java.util.*
 class CUsers {
     var firstName: String? = null
     var lastName: List<LastName>? = null
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (o !is CUsers) {
+        if (other !is CUsers) {
             return false
         }
-        val cUsers = o
+        val cUsers = other
         return firstName == cUsers.firstName && lastName == cUsers.lastName
     }
 

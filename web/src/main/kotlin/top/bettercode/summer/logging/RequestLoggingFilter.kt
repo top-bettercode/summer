@@ -88,12 +88,12 @@ class RequestLoggingFilter(
 
         request.setAttribute(REQUEST_DATE_TIME, LocalDateTime.now())
 
-        val requestToUse: HttpServletRequest = if (properties.isIncludeRequestBody) {
+        val requestToUse: HttpServletRequest = if (properties.includeRequestBody) {
             TraceHttpServletRequestWrapper(request)
         } else {
             request
         }
-        val responseToUse: HttpServletResponse = if (properties.isIncludeResponseBody) {
+        val responseToUse: HttpServletResponse = if (properties.includeResponseBody) {
             TraceHttpServletResponseWrapper(
                     response
             )
@@ -250,12 +250,12 @@ class RequestLoggingFilter(
                 timeoutAlarmSeconds = properties.timeoutAlarmSeconds
             }
             RequestLoggingConfig(
-                    includeRequestBody = properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false,
-                    includeResponseBody = properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false,
-                    includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false,
+                    includeRequestBody = properties.includeRequestBody && requestLoggingAnno?.includeRequestBody != false,
+                    includeResponseBody = properties.includeResponseBody && requestLoggingAnno?.includeResponseBody != false,
+                    includeTrace = properties.includeTrace && requestLoggingAnno?.includeTrace != false,
                     encryptHeaders = encryptHeaders,
                     encryptParameters = encryptParameters,
-                    format = properties.isFormat,
+                    format = properties.format,
                     ignoredTimeout = requestLoggingAnno?.ignoredTimeout == true,
                     timeoutAlarmSeconds = timeoutAlarmSeconds,
                     logMarker = requestLoggingAnno?.logMarker ?: REQUEST_LOG_MARKER,
@@ -264,12 +264,12 @@ class RequestLoggingFilter(
             )
         } else
             RequestLoggingConfig(
-                    includeRequestBody = properties.isIncludeRequestBody,
-                    includeResponseBody = properties.isIncludeResponseBody,
-                    includeTrace = properties.isIncludeTrace,
+                    includeRequestBody = properties.includeRequestBody,
+                    includeResponseBody = properties.includeResponseBody,
+                    includeTrace = properties.includeTrace,
                     encryptHeaders = properties.encryptHeaders,
                     encryptParameters = properties.encryptParameters,
-                    format = properties.isFormat,
+                    format = properties.format,
                     ignoredTimeout = false,
                     timeoutAlarmSeconds = properties.timeoutAlarmSeconds,
                     logMarker = REQUEST_LOG_MARKER,
@@ -286,7 +286,7 @@ class RequestLoggingFilter(
             httpStatusCode: Int,
             uri: String
     ): Boolean {
-        return if (properties.isForceRecord || handler != null ||
+        return if (properties.forceRecord || handler != null ||
                 include(properties.includePath, uri)
                 || includeError(error) || !HttpStatus.valueOf(httpStatusCode).is2xxSuccessful
         ) {

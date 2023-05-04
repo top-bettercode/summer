@@ -12,10 +12,10 @@ open class ExcelCell<T>(val row: Int, val column: Int, val isLastRow: Boolean, i
             entity)
 
     init {
-        if (excelField.isIndexColumn) {
-            cellValue = index
+        cellValue = if (excelField.isIndexColumn) {
+            index
         } else {
-            cellValue = excelField.toCellValue(entity)
+            excelField.toCellValue(entity)
         }
     }
 

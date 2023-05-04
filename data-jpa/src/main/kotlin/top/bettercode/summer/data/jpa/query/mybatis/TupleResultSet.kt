@@ -19,10 +19,9 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     private var currentRow = 0
     private var currentCloumn = 0
     private val maxRow: Int
-    private val resultSetMetaData: TupleResultSetMetaData
+    private val resultSetMetaData: TupleResultSetMetaData = TupleResultSetMetaData(tuples)
 
     init {
-        resultSetMetaData = TupleResultSetMetaData(tuples)
         maxRow = tuples.size
     }
 

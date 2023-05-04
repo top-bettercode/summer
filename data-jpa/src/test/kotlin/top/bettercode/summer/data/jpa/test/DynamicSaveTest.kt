@@ -41,7 +41,7 @@ class DynamicSaveTest {
     fun dynamicSaveTest() {
         var dave = User("Wu", "Matthews")
         dave = repository.save(dave)
-        val id = dave.id
+        val id = dave.id!!
         var optionalUser = repository.findById(id)
         Assertions.assertTrue(optionalUser.isPresent)
         optionalUser.ifPresent { user: User? ->
@@ -51,6 +51,7 @@ class DynamicSaveTest {
         dave = User()
         dave.id = id
         dave.lastName = "MM"
+        @Suppress("DEPRECATION")
         repository.dynamicSave(dave)
         optionalUser = repository.findById(id)
         Assertions.assertTrue(optionalUser.isPresent)
@@ -64,7 +65,7 @@ class DynamicSaveTest {
     fun staticSaveTest() {
         var dave = StaticUser(null, "Matthews")
         dave = staticUserRepository!!.save(dave)
-        val optionalUser = staticUserRepository!!.findById(dave.id)
+        val optionalUser = staticUserRepository!!.findById(dave.id!!)
         Assertions.assertTrue(optionalUser.isPresent)
         optionalUser.ifPresent { user: StaticUser? ->
             System.err.println(user)

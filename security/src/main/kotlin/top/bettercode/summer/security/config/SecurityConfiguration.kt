@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse
 class SecurityConfiguration(
         private val corsProperties: CorsProperties,
         private val securityProperties: ApiSecurityProperties, private val apiTokenService: ApiTokenService,
-        @param:Autowired(required = false) private val revokeTokenService: IRevokeTokenService,
+        @param:Autowired(required = false) private val revokeTokenService: IRevokeTokenService?,
         private val summerWebProperties: SummerWebProperties,
         private val objectMapper: ObjectMapper, private val passwordEncoder: PasswordEncoder, private val formkeyService: IFormkeyService,
 ) {
@@ -66,7 +66,7 @@ class SecurityConfiguration(
         if (securityProperties.frameOptionsDisable) {
             http.headers().frameOptions().disable()
         }
-        if (corsProperties.isEnable) {
+        if (corsProperties.enable) {
             http.cors()
         }
         http.csrf().disable()

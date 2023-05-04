@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -13,7 +14,7 @@ import java.util.function.Supplier
  * @author Peter Wu
  */
 open class BaseService<T, ID, M : BaseRepository<T, ID>>(override val repository: M) : IBaseService<T, ID, M> {
-    protected val log = LoggerFactory.getLogger(javaClass)
+    protected val log: Logger? = LoggerFactory.getLogger(javaClass)
 
     protected fun notFound(): Supplier<out RuntimeException?> {
         return BaseController.notFound()
@@ -29,6 +30,7 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(override val repository
 
     @Deprecated("")
     override fun <S : T> dynamicSave(s: S): S? {
+        @Suppress("DEPRECATION")
         return repository.dynamicSave(s)
     }
 

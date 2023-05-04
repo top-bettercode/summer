@@ -40,20 +40,20 @@ class MessageSourceConfiguration {
                 StringUtils.trimAllWhitespace(basename))
         val defaultMessagesName = "messages"
         val classLoader = applicationContext.classLoader!!
-        if (messageNames.contains(defaultMessagesName) && ResourceBundleCondition.getResources(classLoader, defaultMessagesName).size == 0) {
+        if (messageNames.contains(defaultMessagesName) && ResourceBundleCondition.getResources(classLoader, defaultMessagesName).isEmpty()) {
             messageNames.remove(defaultMessagesName)
         }
         messageNames.add(BASE_MESSAGES)
         if (!messageNames.contains(CORE_MESSAGES)) {
             val resources = ResourceBundleCondition.getResources(classLoader, CORE_MESSAGES)
-            if (resources.size > 0 && resources[0]!!.exists()) {
+            if (resources.isNotEmpty() && resources[0]!!.exists()) {
                 messageNames.add(CORE_MESSAGES)
             }
         }
         basename = StringUtils.collectionToCommaDelimitedString(messageNames)
         messageSourceProperties.basename = basename
         val messageSource = ResourceBundleMessageSource()
-        if (!messageNames.isEmpty()) {
+        if (messageNames.isNotEmpty()) {
             messageSource.setBasenames(*messageNames.toTypedArray<String?>())
         }
         if (messageSourceProperties.encoding != null) {

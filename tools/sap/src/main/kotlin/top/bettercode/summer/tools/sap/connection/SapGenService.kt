@@ -177,8 +177,7 @@ class SapGenService(private val sapService: SapService) {
                     value = jCoField.value
                 } catch (ignored: Exception) {
                 }
-                val jCoFieldType = jCoField.type
-                when (jCoFieldType) {
+                when (val jCoFieldType = jCoField.type) {
                     0, 6, 29 -> {
                         type = stringInstance
                         if (value != null && "" != value) {

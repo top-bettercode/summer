@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.qvod")
-class QvodProperties {
+open class QvodProperties {
     /**
      * 点播帐号APP ID
      */

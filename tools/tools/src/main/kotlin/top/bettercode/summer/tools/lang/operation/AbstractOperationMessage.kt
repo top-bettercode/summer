@@ -32,9 +32,7 @@ abstract class AbstractOperationMessage(
         if (other !is AbstractOperationMessage) return false
 
         if (headers != other.headers) return false
-        if (!content.contentEquals(other.content)) return false
-
-        return true
+        return content.contentEquals(other.content)
     }
 
     override fun hashCode(): Int {

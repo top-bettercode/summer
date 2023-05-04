@@ -96,7 +96,7 @@ class NoCommitScriptRunner(private val connection: Connection) {
     }
 
     private fun checkForMissingLineTerminator(command: StringBuilder?) {
-        if (command != null && command.toString().trim { it <= ' ' }.length > 0) {
+        if (command != null && command.toString().trim { it <= ' ' }.isNotEmpty()) {
             throw RuntimeException(
                     "Line missing end-of-line terminator ($delimiter) => $command")
         }
@@ -117,7 +117,7 @@ class NoCommitScriptRunner(private val connection: Connection) {
             println(command)
             executeStatement(command.toString())
             command.setLength(0)
-        } else if (trimmedLine.length > 0) {
+        } else if (trimmedLine.isNotEmpty()) {
             command.append(line)
             command.append(LINE_SEPARATOR)
         }

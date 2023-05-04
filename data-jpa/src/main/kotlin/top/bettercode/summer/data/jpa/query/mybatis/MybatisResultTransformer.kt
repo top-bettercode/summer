@@ -93,10 +93,10 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : 
 
         override fun <X> get(i: Int, type: Class<X>): X? {
             val untyped = get(i)
-            return if (untyped != null) type.cast(untyped) else null
+            return type.cast(untyped)
         }
 
-        override fun get(i: Int): Any? {
+        override fun get(i: Int): Any {
             require(i >= 0) { "requested tuple index must be greater than zero" }
             require(i < aliasToValue.size) { "requested tuple index exceeds actual tuple size" }
             return tuple[i]

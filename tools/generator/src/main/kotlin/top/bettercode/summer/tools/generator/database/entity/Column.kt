@@ -133,9 +133,7 @@ data class Column(
         if (pkcolumnName != other.pkcolumnName) return false
         if (generatedColumn != other.generatedColumn) return false
         if (unsigned != other.unsigned) return false
-        if (autoIncrement != other.autoIncrement) return false
-
-        return true
+        return autoIncrement == other.autoIncrement
     }
 
     private fun columnDefEquals(columnDef: String?, columnDef1: String?): Boolean {

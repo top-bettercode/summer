@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponseWrapper
  * @author Andy Wilkinson
  * @since 2.0.0
  */
-class TestErrorPageFilter(private val errorController: BasicErrorController?,
+open class TestErrorPageFilter(private val errorController: BasicErrorController?,
                           private val summerWebProperties: SummerWebProperties?) : Filter, ErrorPageRegistry, Ordered {
     private var global: String? = null
     private val statuses: MutableMap<Int, String> = HashMap()
@@ -232,7 +232,7 @@ class TestErrorPageFilter(private val errorController: BasicErrorController?,
         return Ordered.HIGHEST_PRECEDENCE + 1
     }
 
-    private class ErrorWrapperResponse internal constructor(response: HttpServletResponse?) : HttpServletResponseWrapper(response) {
+    private class ErrorWrapperResponse(response: HttpServletResponse?) : HttpServletResponseWrapper(response) {
         private var status = 0
         var message: String? = null
             private set
@@ -263,9 +263,9 @@ class TestErrorPageFilter(private val errorController: BasicErrorController?,
         }
 
         private fun sendErrorIfNecessary() {
-            if (hasErrorToSend && !isCommitted) {
+//            if (hasErrorToSend && !isCommitted) {
 //        ((HttpServletResponse) getResponse()).sendError(this.status, this.message);
-            }
+//            }
         }
 
         fun hasErrorToSend(): Boolean {

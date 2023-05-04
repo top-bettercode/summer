@@ -1,4 +1,4 @@
-package top.bettercode.api.sign
+package top.bettercode.summer.test.web.apisign
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -22,7 +22,7 @@ import top.bettercode.summer.apisign.ApiSignConfiguration
         "summer.web.ok-enable=false",
         "summer.auto-sign.enabled=false",
         "summer.sign.clientSecret=abcd",
-        "summer.sign.handler-type-prefix=top.bettercode.api.sign.SignTestController",
+    "summer.sign.handler-type-prefix=top.bettercode.summer.test.web.apisign.SignTestController",
         "logging.level.root=debug"
     ], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )

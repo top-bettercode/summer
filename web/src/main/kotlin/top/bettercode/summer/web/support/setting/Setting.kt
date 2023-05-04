@@ -18,11 +18,7 @@ import java.lang.reflect.Method
  * @author Peter Wu
  */
 class Setting private constructor(private val source: PropertySource) {
-    private val conversionService: ConversionService
-
-    init {
-        conversionService = ApplicationConversionService.getSharedInstance()
-    }
+    private val conversionService: ConversionService = ApplicationConversionService.getSharedInstance()
 
     operator fun get(key: String?): String? {
         return source[key!!]
@@ -81,9 +77,9 @@ class Setting private constructor(private val source: PropertySource) {
         enhancer.setSuperclass(target)
         enhancer.setCallback(MethodInterceptor { o: Any, method: Method, objects: Array<Any>, methodProxy: MethodProxy ->
             val methodName = method.name
-            if (methodName.startsWith("get") && objects.size == 0) {
+            if (methodName.startsWith("get") && objects.isEmpty()) {
                 return@MethodInterceptor get(name, o, method, objects, methodProxy, methodName.substring(3))
-            } else if (methodName.startsWith("is") && objects.size == 0) {
+            } else if (methodName.startsWith("is") && objects.isEmpty()) {
                 return@MethodInterceptor get(name, o, method, objects, methodProxy, methodName.substring(2))
             } else if (methodName.startsWith("set") && objects.size == 1) {
                 val result = methodProxy.invokeSuper(o, objects)

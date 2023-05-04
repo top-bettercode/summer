@@ -10,12 +10,12 @@ import java.time.Duration
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.logging.socket")
-class SocketLoggingProperties {
+open class SocketLoggingProperties {
     /**
      * The includeCallerData option takes a boolean value. If true, the caller data will be available
      * to the remote host. By default no caller data is sent to the server.
      */
-    var isIncludeCallerData = false
+    var includeCallerData = false
 
     /**
      * The port number of the remote server.
@@ -28,7 +28,7 @@ class SocketLoggingProperties {
      * is 30 seconds. Setting this option to zero turns off reconnection capability. Note that in case
      * of successful connection to the server, there will be no connector thread present.
      */
-    var reconnectionDelay = Duration.ofSeconds(30)
+    var reconnectionDelay: Duration = Duration.ofSeconds(30)
 
     /**
      * The queueSize property takes an integer (greater than zero) representing the number of logging
@@ -49,7 +49,7 @@ class SocketLoggingProperties {
      * events. This may occur if the remote host is persistently slow accepting events. The default
      * value of this option is 100 milliseconds.
      */
-    var eventDelayLimit = Duration.ofMillis(100)
+    var eventDelayLimit: Duration = Duration.ofMillis(100)
 
     /**
      * The host name of the server.

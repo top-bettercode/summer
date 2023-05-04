@@ -35,11 +35,11 @@ class JsonDefaultSerializerTest {
     @Test
     @Throws(JsonProcessingException::class)
     fun serialize() {
-        objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMin::class.java)
+        objectMapper.addMixIn(DataDicBean::class.java, DataDicBeanMin::class.java)
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         objectMapper.setSerializerFactory(objectMapper.serializerFactory
                 .withSerializerModifier(CustomNullSerializerModifier(jacksonExtProperties)))
-        var dicBean = top.bettercode.summer.test.web.DataDicBean()
+        var dicBean = DataDicBean()
         Assertions.assertEquals(
                 "{\"number1\":0,\"number22\":null,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"http://127.0.0.1/default.jpg\",\"path1\":\"\"}",
                 objectMapper.writeValueAsString(dicBean))
@@ -49,7 +49,7 @@ class JsonDefaultSerializerTest {
         Assertions.assertEquals(
                 "{\"number1\":100,\"number22\":null,\"price\":0,\"path\":\"/a.jpg\",\"pathUrl\":\"http://127.0.0.1/a.jpg\",\"path1\":\"/b.jpg\"}",
                 objectMapper.writeValueAsString(dicBean))
-        dicBean = top.bettercode.summer.test.web.DataDicBean()
+        dicBean = DataDicBean()
         dicBean.number2 = BigDecimal(10)
         Assertions.assertEquals(
                 "{\"number1\":0,\"number2\":10.000,\"number22\":10,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"http://127.0.0.1/default.jpg\",\"path1\":\"\"}",
@@ -60,11 +60,11 @@ class JsonDefaultSerializerTest {
     @Throws(JsonProcessingException::class)
     fun defSerialize() {
         val objectMapper = ObjectMapper()
-        objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMin::class.java)
+        objectMapper.addMixIn(DataDicBean::class.java, DataDicBeanMin::class.java)
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         objectMapper.setSerializerFactory(objectMapper.serializerFactory
                 .withSerializerModifier(CustomNullSerializerModifier(jacksonExtProperties)))
-        val dicBean = top.bettercode.summer.test.web.DataDicBean()
+        val dicBean = DataDicBean()
         Assertions.assertEquals(
                 "{\"number1\":0,\"number22\":null,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"http://127.0.0.1/default.jpg\",\"path1\":\"\"}",
                 objectMapper.writeValueAsString(dicBean))

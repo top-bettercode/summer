@@ -31,10 +31,10 @@ import javax.servlet.RequestDispatcher
  * @author Peter Wu
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
-class ErrorAttributes(private val errorProperties: ErrorProperties,
-                      private val errorHandlers: List<IErrorHandler>?,
-                      private val errorRespEntityHandler: IErrorRespEntityHandler?,
-                      private val messageSource: MessageSource, private val summerWebProperties: SummerWebProperties) : DefaultErrorAttributes() {
+open class ErrorAttributes(private val errorProperties: ErrorProperties,
+                           private val errorHandlers: List<IErrorHandler>?,
+                           private val errorRespEntityHandler: IErrorRespEntityHandler?,
+                           private val messageSource: MessageSource, private val summerWebProperties: SummerWebProperties) : DefaultErrorAttributes() {
     override fun getErrorAttributes(webRequest: WebRequest,
                                     options: ErrorAttributeOptions): Map<String?, Any?> {
         val error = getError(webRequest)
@@ -107,7 +107,7 @@ class ErrorAttributes(private val errorProperties: ErrorProperties,
         setErrorInfo(webRequest, httpStatusCode, message, error)
         respEntity.status = statusCode
         respEntity.message = message
-        if (!errors.isEmpty()) {
+        if (errors.isNotEmpty()) {
             respEntity.errors = errors
         }
         return errorRespEntityHandler?.handle(webRequest, respEntity) ?: respEntity

@@ -8,7 +8,7 @@ import top.bettercode.summer.tools.lang.property.Settings
  */
 object GB2260 {
 
-    val vnodeName = "市辖区"
+    const val vnodeName = "市辖区"
 
     @JvmStatic
     fun isVnode(prefectureName: String?): Boolean {

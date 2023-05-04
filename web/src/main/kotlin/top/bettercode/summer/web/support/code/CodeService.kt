@@ -15,7 +15,7 @@ class CodeService(private val propertiesSource: PropertiesSource) : ICodeService
     override fun getDicCodes(codeType: String): DicCodes? {
         return cache[codeType, { type: String ->
             DicCodes(type, propertiesSource[type],
-                    propertiesSource.mapOf(type, "Int" == propertiesSource["$type|TYPE"]))
+                    propertiesSource.mapOf(type, propertiesSource["$type|TYPE"]))
         }]
     }
 }

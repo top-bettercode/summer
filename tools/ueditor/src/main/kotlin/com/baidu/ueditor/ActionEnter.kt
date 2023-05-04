@@ -7,11 +7,7 @@ import org.springframework.util.Assert
 import javax.servlet.http.HttpServletRequest
 
 class ActionEnter {
-    private val configManager: ConfigManager?
-
-    init {
-        configManager = ConfigManager.instance
-    }
+    private val configManager: ConfigManager? = ConfigManager.instance
 
     fun exec(request: HttpServletRequest, uploader: IUploader): String? {
         val callbackName = request.getParameter("callback")

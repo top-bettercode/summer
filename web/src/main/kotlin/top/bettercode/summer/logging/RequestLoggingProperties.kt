@@ -8,37 +8,37 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.logging.request")
-class RequestLoggingProperties {
+open class RequestLoggingProperties {
     //--------------------------------------------
     /**
      * 是否启用
      */
-    var isEnabled = true
+    var enabled = true
 
     /**
      * 是否包含请求体
      */
-    var isIncludeRequestBody = true
+    var includeRequestBody = true
 
     /**
      * 是否包含响应体
      */
-    var isIncludeResponseBody = true
+    var includeResponseBody = true
 
     /**
      * 是否包含错误追踪栈
      */
-    var isIncludeTrace = true
+    var includeTrace = true
 
     /**
      * 是否格式化日志
      */
-    var isFormat = true
+    var format = true
 
     /**
      * 强制记录日志
      */
-    var isForceRecord = false
+    var forceRecord = false
 
     /**
      * 请求超时警报时间秒数

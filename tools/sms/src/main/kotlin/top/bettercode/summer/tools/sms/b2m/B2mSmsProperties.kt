@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.sms.b2m")
-class B2mSmsProperties {
+open class B2mSmsProperties {
     var url = "http://www.btom.cn:8080"
     var appId: String = ""
     var secretKey: String = ""

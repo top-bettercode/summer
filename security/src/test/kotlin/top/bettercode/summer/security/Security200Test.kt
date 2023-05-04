@@ -43,12 +43,12 @@ class Security200Test {
     var apiSecurityProperties: ApiSecurityProperties? = null
     val objectMapper = ObjectMapper()
     val username = "root"
-    val password = DigestUtils.md5DigestAsHex("123456".toByteArray())
+    val password: String? = DigestUtils.md5DigestAsHex("123456".toByteArray())
     @BeforeEach
     fun setUp() {
         collectionName = "登录授权"
         requiredHeaders(HttpHeaders.AUTHORIZATION)
-        clientRestTemplate = restTemplate!!.withBasicAuth(apiSecurityProperties!!.clientId,
+        clientRestTemplate = restTemplate.withBasicAuth(apiSecurityProperties!!.clientId,
                 apiSecurityProperties!!.clientSecret)
     }
 

@@ -34,15 +34,10 @@ import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.util.ClassUtils
 import org.springframework.util.ObjectUtils
 import org.springframework.util.StringUtils
-import java.lang.Boolean
 import java.util.stream.Collectors
 import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
-import kotlin.Any
-import kotlin.Exception
-import kotlin.RuntimeException
 import kotlin.String
-import kotlin.Throws
 
 class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegistryPostProcessor, ResourceLoaderAware, EnvironmentAware {
     private val log = LoggerFactory.getLogger(
@@ -102,7 +97,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                 }
                 var beanDefinition = beanDefinitionBuilder.beanDefinition
                 beanDefinition.isSynthetic = true
-                beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE)
+                beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, true)
                 factory.registerBeanDefinition(dataSourceBeanName, beanDefinition)
 
                 //entityManagerFactory
@@ -148,7 +143,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                 beanDefinitionBuilder.addDependsOn(dataSourceBeanName)
                 beanDefinition = beanDefinitionBuilder.beanDefinition
                 beanDefinition.isSynthetic = true
-                beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE)
+                beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, true)
                 factory.registerBeanDefinition(entityManagerFactoryBeanName, beanDefinition)
 
                 //transactionManager
@@ -174,7 +169,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                 beanDefinitionBuilder.addDependsOn(entityManagerFactoryBeanName)
                 beanDefinition = beanDefinitionBuilder.beanDefinition
                 beanDefinition.isSynthetic = true
-                beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE)
+                beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, true)
                 factory.registerBeanDefinition(transactionManagerBeanName, beanDefinition)
 
                 // mybatisConfiguration
@@ -204,7 +199,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                 }
                 beanDefinition = beanDefinitionBuilder.beanDefinition
                 beanDefinition.isSynthetic = true
-                beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE)
+                beanDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, true)
                 factory.registerBeanDefinition(mybatisConfigurationRef, beanDefinition)
             }
         }
@@ -229,7 +224,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
         return customizers
     }
 
-    private class NamingStrategiesHibernatePropertiesCustomizer internal constructor(
+    private class NamingStrategiesHibernatePropertiesCustomizer(
             private val physicalNamingStrategy: PhysicalNamingStrategy?,
             private val implicitNamingStrategy: ImplicitNamingStrategy?,
     ) : HibernatePropertiesCustomizer {

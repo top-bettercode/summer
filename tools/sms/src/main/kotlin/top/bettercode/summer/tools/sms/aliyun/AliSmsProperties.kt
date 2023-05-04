@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.sms.aliyun
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "summer.sms.aliyun")
-class AliSmsProperties {
+open class AliSmsProperties {
     //--------------------------------------------
     var url = "https://dysmsapi.aliyuncs.com"
     var accessKeyId: String? = null

@@ -49,11 +49,11 @@ class AutodocConfiguration {
 
     @PostConstruct
     fun init() {
-        requestLoggingProperties.isFormat = true
-        requestLoggingProperties.isForceRecord = true
-        requestLoggingProperties.isIncludeRequestBody = true
-        requestLoggingProperties.isIncludeResponseBody = true
-        requestLoggingProperties.isIncludeTrace = true
+        requestLoggingProperties.format = true
+        requestLoggingProperties.forceRecord = true
+        requestLoggingProperties.includeRequestBody = true
+        requestLoggingProperties.includeResponseBody = true
+        requestLoggingProperties.includeTrace = true
     }
 
     @Bean

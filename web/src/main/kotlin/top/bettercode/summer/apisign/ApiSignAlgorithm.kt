@@ -7,7 +7,6 @@ import org.springframework.util.MultiValueMap
 import org.springframework.util.StringUtils
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import top.bettercode.summer.apisign.ApiSignProperties
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -75,7 +74,7 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
                 }
                 throw IllegalSignException()
             }
-            if (properties.isVerifyUserAgent) {
+            if (properties.verifyUserAgent) {
                 val signUserAgent =
                         signUserAgent(request.getHeader(HttpHeaders.USER_AGENT)).substring(16, 24)
                 if (!sign.substring(16, 24).equals(signUserAgent, ignoreCase = true)) {
@@ -254,7 +253,7 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
      * @return request 是否跳过
      */
     private fun skip(request: HttpServletRequest): Boolean {
-        return if (properties.isCanSkip) {
+        return if (properties.canSkip) {
             request.getAttribute("SKIP_SIGN") as? Boolean ?: false
         } else {
             false

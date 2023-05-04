@@ -22,8 +22,8 @@ class CodeSerializerTest {
     fun serializeInt() {
         val objectMapper = ObjectMapper()
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-        objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBean3::class.java)
-        var dicBean = top.bettercode.summer.test.web.DataDicBean()
+        objectMapper.addMixIn(DataDicBean::class.java, DataDicBean3::class.java)
+        var dicBean = DataDicBean()
         dicBean.name = "张三"
         val string = objectMapper.writeValueAsString(dicBean)
         Assertions.assertEquals("{\"name\":\"张三\"}", string)
@@ -40,8 +40,8 @@ class CodeSerializerTest {
     fun serializeString() {
         val objectMapper = ObjectMapper()
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-        objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMin::class.java)
-        var dicBean = top.bettercode.summer.test.web.DataDicBean()
+        objectMapper.addMixIn(DataDicBean::class.java, DataDicBeanMin::class.java)
+        var dicBean = DataDicBean()
         dicBean.name = "张三"
         val string = objectMapper.writeValueAsString(dicBean)
         Assertions.assertEquals("{\"name\":\"张三\"}", string)
@@ -67,7 +67,7 @@ class CodeSerializerTest {
             }
     }
 
-    internal open class DataDicBean2 : top.bettercode.summer.test.web.DataDicBean() {
+    internal open class DataDicBean2 : DataDicBean() {
         override var intCode: Int?
             get() = super.intCode
             set(intCode) {

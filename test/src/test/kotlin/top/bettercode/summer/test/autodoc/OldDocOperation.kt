@@ -71,9 +71,7 @@ class OldDocOperation(
         if (other !is OldDocOperation) return false
 
         if (collectionName != other.collectionName) return false
-        if (name != other.name) return false
-
-        return true
+        return name == other.name
     }
 
     override fun hashCode(): Int {

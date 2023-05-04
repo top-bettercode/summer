@@ -33,12 +33,11 @@ class CountSqlParser {
    */
     fun getSmartCountSql(sql: String?, countColumn: String): String {
         //解析SQL
-        val stmt: Statement
         //特殊sql不需要去掉order by时，使用注释前缀
         if (sql!!.contains(KEEP_ORDERBY)) {
             return getSimpleCountSql(sql, countColumn)
         }
-        stmt = try {
+        val stmt: Statement = try {
             CCJSqlParserUtil.parse(sql)
         } catch (e: Throwable) {
             //无法解析的用一般方法返回count语句
@@ -91,17 +90,17 @@ class CountSqlParser {
     fun sqlToCount(select: Select, name: String) {
         val selectBody = select.selectBody
         // 是否能简化count查询
-        val COUNT_ITEM: MutableList<SelectItem> = ArrayList()
-        COUNT_ITEM.add(SelectExpressionItem(Column("count($name)")))
+        val countItems: MutableList<SelectItem> = ArrayList()
+        countItems.add(SelectExpressionItem(Column("count($name)")))
         if (selectBody is PlainSelect && isSimpleCount(selectBody)) {
-            selectBody.selectItems = COUNT_ITEM
+            selectBody.selectItems = countItems
         } else {
             val plainSelect = PlainSelect()
             val subSelect = SubSelect()
             subSelect.selectBody = selectBody
             subSelect.alias = TABLE_ALIAS
             plainSelect.fromItem = subSelect
-            plainSelect.selectItems = COUNT_ITEM
+            plainSelect.selectItems = countItems
             select.selectBody = plainSelect
         }
     }
@@ -133,19 +132,19 @@ class CountSqlParser {
                 if (expression is Function) {
                     val name = expression.name
                     if (name != null) {
-                        val NAME = name.uppercase(Locale.getDefault())
-                        if (skipFunctions.contains(NAME)) {
+                        val name1 = name.uppercase(Locale.getDefault())
+                        if (skipFunctions.contains(name1)) {
                             //go on
-                        } else if (falseFunctions.contains(NAME)) {
+                        } else if (falseFunctions.contains(name1)) {
                             return false
                         } else {
                             for (aggregateFunction in AGGREGATE_FUNCTIONS) {
-                                if (NAME.startsWith(aggregateFunction)) {
-                                    falseFunctions.add(NAME)
+                                if (name1.startsWith(aggregateFunction)) {
+                                    falseFunctions.add(name1)
                                     return false
                                 }
                             }
-                            skipFunctions.add(NAME)
+                            skipFunctions.add(name1)
                         }
                     }
                 } else if (expression is Parenthesis
@@ -210,7 +209,7 @@ class CountSqlParser {
    * 处理WithItem
    */
     fun processWithItemsList(withItemsList: List<WithItem>?) {
-        if (withItemsList != null && withItemsList.size > 0) {
+        if (withItemsList != null && withItemsList.isNotEmpty()) {
             for (item in withItemsList) {
                 if (item.subSelect != null) {
                     processSelectBody(item.subSelect.selectBody)
@@ -223,30 +222,35 @@ class CountSqlParser {
    * 处理子查询
    */
     fun processFromItem(fromItem: FromItem?) {
-        if (fromItem is SubJoin) {
-            val subJoin = fromItem
-            if (subJoin.joinList != null && subJoin.joinList.size > 0) {
-                for (join in subJoin.joinList) {
-                    if (join.rightItem != null) {
-                        processFromItem(join.rightItem)
+        when (fromItem) {
+            is SubJoin -> {
+                if (fromItem.joinList != null && fromItem.joinList.size > 0) {
+                    for (join in fromItem.joinList) {
+                        if (join.rightItem != null) {
+                            processFromItem(join.rightItem)
+                        }
                     }
                 }
+                if (fromItem.left != null) {
+                    processFromItem(fromItem.left)
+                }
             }
-            if (subJoin.left != null) {
-                processFromItem(subJoin.left)
+
+            is SubSelect -> {
+                if (fromItem.selectBody != null) {
+                    processSelectBody(fromItem.selectBody)
+                }
             }
-        } else if (fromItem is SubSelect) {
-            val subSelect = fromItem
-            if (subSelect.selectBody != null) {
-                processSelectBody(subSelect.selectBody)
+
+            is ValuesList -> {
             }
-        } else if (fromItem is ValuesList) {
-        } else if (fromItem is LateralSubSelect) {
-            val lateralSubSelect = fromItem
-            if (lateralSubSelect.subSelect != null) {
-                val subSelect = lateralSubSelect.subSelect
-                if (subSelect.selectBody != null) {
-                    processSelectBody(subSelect.selectBody)
+
+            is LateralSubSelect -> {
+                if (fromItem.subSelect != null) {
+                    val subSelect = fromItem.subSelect
+                    if (subSelect.selectBody != null) {
+                        processSelectBody(subSelect.selectBody)
+                    }
                 }
             }
         }
@@ -270,12 +274,12 @@ class CountSqlParser {
 
     companion object {
         const val KEEP_ORDERBY = "/*keep orderby*/"
-        private val TABLE_ALIAS: Alias
+        private val TABLE_ALIAS: Alias = Alias("table_count")
 
         /**
          * 聚合函数，以下列函数开头的都认为是聚合函数
          */
-        private val AGGREGATE_FUNCTIONS: MutableSet<String> = HashSet(Arrays.asList(
+        private val AGGREGATE_FUNCTIONS: MutableSet<String> = HashSet(listOf(
                 *("APPROX_COUNT_DISTINCT," +
                         "ARRAY_AGG," +
                         "AVG," +
@@ -347,8 +351,7 @@ class CountSqlParser {
 
         //</editor-fold>
         init {
-            TABLE_ALIAS = Alias("table_count")
-            TABLE_ALIAS.setUseAs(false)
+            TABLE_ALIAS.isUseAs = false
         }
 
         /*

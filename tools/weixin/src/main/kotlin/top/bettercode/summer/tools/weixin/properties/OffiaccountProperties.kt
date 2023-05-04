@@ -6,10 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.wechat")
-class OffiaccountProperties : WexinProperties(), IOffiaccountProperties {
+open class OffiaccountProperties : WexinProperties(), IOffiaccountProperties {
     //--------------------------------------------
     override var userUnionid = false
-        private set
 
     /**
      * 项目部署的URL地址
@@ -25,8 +24,5 @@ class OffiaccountProperties : WexinProperties(), IOffiaccountProperties {
      * 微信前端授权页面地址
      */
     override var wechatWebOauthUrl = ""
-    fun setUserUnionid(userUnionid: Boolean): OffiaccountProperties {
-        this.userUnionid = userUnionid
-        return this
-    }
+
 }

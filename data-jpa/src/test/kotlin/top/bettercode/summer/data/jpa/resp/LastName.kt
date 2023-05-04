@@ -5,14 +5,14 @@ import java.util.*
 class LastName {
     var lastName: String? = null
     var isDeleted = false
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (o !is LastName) {
+        if (other !is LastName) {
             return false
         }
-        val lastName1 = o
+        val lastName1 = other
         return isDeleted == lastName1.isDeleted && lastName == lastName1.lastName
     }
 

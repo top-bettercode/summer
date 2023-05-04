@@ -35,7 +35,7 @@ class AssignableToPackageScanFilter : PackageScanFilter {
         for (parent in parents) {
             sb.append(parent.simpleName).append(", ")
         }
-        sb.setLength(if (sb.length > 0) sb.length - 2 else 0)
+        sb.setLength(if (sb.isNotEmpty()) sb.length - 2 else 0)
         return "is assignable to $sb"
     }
 }

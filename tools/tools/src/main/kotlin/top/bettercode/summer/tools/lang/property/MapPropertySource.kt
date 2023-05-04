@@ -34,8 +34,8 @@ open class MapPropertySource(protected val source: MutableMap<String, String>) :
         return map
     }
 
-    override fun mapOf(name: String, javaTypeName: String): Map<Serializable, String> {
-        var typeName = javaTypeName
+    override fun mapOf(name: String, javaTypeName: String?): Map<Serializable, String> {
+        var typeName = javaTypeName ?: "java.lang.String"
         if (typeName == "Int") {
             typeName = "int"
         } else if ("String" == typeName) {

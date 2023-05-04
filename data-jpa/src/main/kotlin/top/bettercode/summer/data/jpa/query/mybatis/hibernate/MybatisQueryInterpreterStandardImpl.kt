@@ -6,7 +6,7 @@ import org.hibernate.loader.custom.CustomLoader
 import org.hibernate.loader.custom.CustomQuery
 
 class MybatisQueryInterpreterStandardImpl(sessionFactory: SessionFactoryImplementor?) : NativeQueryInterpreterStandardImpl(sessionFactory) {
-    @Suppress("deprecation")
+    @Deprecated("Deprecated in Java")
     override fun createCustomLoader(
             customQuery: CustomQuery,
             sessionFactory: SessionFactoryImplementor

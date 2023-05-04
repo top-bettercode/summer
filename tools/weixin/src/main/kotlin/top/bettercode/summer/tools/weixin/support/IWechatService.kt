@@ -43,11 +43,11 @@ interface IWechatService {
             timestamp: String,
             nonce: String,
             openid: String,
-            encrypt_type: String,
-            msg_signature: String,
+            encryptType: String,
+            msgSignature: String,
             content: String
     ) {
-        logger.warn("$timestamp $nonce $openid $encrypt_type $msg_signature receive message: $content")
+        logger.warn("$timestamp $nonce $openid $encryptType $msgSignature receive message: $content")
     }
 
 }

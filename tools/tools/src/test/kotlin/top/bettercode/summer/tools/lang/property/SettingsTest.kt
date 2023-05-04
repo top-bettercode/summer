@@ -12,7 +12,7 @@ class SettingsTest {
 
     @Test
     fun getDicCode() {
-        Settings.dicCode.all().forEach { k, v ->
+        Settings.dicCode.all().forEach { (k, v) ->
             System.err.println("$k:$v")
         }
     }

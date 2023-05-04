@@ -29,7 +29,7 @@ class ReversePatternValidator : ConstraintValidator<ReversePattern, CharSequence
 
     override fun isValid(value: CharSequence?,
                          constraintValidatorContext: ConstraintValidatorContext): Boolean {
-        if (value == null || value.length == 0) {
+        if (value == null || value.isEmpty()) {
             return true
         }
         val m = pattern!!.matcher(value)

@@ -21,8 +21,8 @@ class RespExtra<T>(@get:JsonView(Any::class)
         return this
     }
 
-    fun extraPOJO(POJO: Any?): RespExtra<T> {
-        extraPOJO = POJO
+    fun extraPOJO(any: Any?): RespExtra<T> {
+        extraPOJO = any
         return this
     }
 

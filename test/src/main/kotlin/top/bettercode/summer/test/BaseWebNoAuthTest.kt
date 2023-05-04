@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
@@ -46,7 +47,7 @@ import java.util.*
 @SpringBootTest
 @TestPropertySource(properties = ["summer.security.enabled=false", "seata.enabled=false"])
 abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
-    protected val log = LoggerFactory.getLogger(javaClass)
+    protected val log: Logger? = LoggerFactory.getLogger(javaClass)
 
     protected lateinit var mockMvc: MockMvc
 
@@ -74,21 +75,21 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     @Throws(Exception::class)
     fun setup() {
         //--------------------------------------------
-        requestLoggingProperties.isForceRecord = true
-        requestLoggingProperties.isIncludeRequestBody = true
-        requestLoggingProperties.isIncludeResponseBody = true
-        requestLoggingProperties.isFormat = true
+        requestLoggingProperties.forceRecord = true
+        requestLoggingProperties.includeRequestBody = true
+        requestLoggingProperties.includeResponseBody = true
+        requestLoggingProperties.format = true
         mockMvc = mockMvcBuilder().build()
         defaultBeforeEach()
         System.err.println("------------------------------------------------------")
     }
 
     @Throws(Exception::class)
-    protected open fun defaultBeforeEach() {
+    protected fun defaultBeforeEach() {
     }
 
     @Throws(Exception::class)
-    protected open fun beforeEach() {
+    protected fun beforeEach() {
     }
 
     protected fun embeddedDatabase(): Boolean {

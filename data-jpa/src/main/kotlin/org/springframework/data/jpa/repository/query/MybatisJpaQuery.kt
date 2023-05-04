@@ -19,10 +19,10 @@ import java.util.regex.Pattern
 import java.util.stream.Collectors
 import javax.persistence.*
 
-class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager?) : AbstractJpaQuery(method, em) {
+class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJpaQuery(method, em) {
     private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")
     private val metadataCache = QueryMetadataCache()
-    private val mappedStatement: MappedStatement?
+    private val mappedStatement: MappedStatement
     private val countMappedStatement: MappedStatement?
     private val countSqlParser = CountSqlParser()
     private var nestedResultMapType: NestedResultMapType? = null
@@ -31,8 +31,8 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager?) : AbstractJ
     private val querySize: Int?
 
     init {
-        mappedStatement = method.mappedStatement
-        val sqlCommandType = mappedStatement!!.sqlCommandType
+        mappedStatement = method.mappedStatement!!
+        val sqlCommandType = mappedStatement.sqlCommandType
         isModifyingQuery = SqlCommandType.UPDATE == sqlCommandType || SqlCommandType.DELETE == sqlCommandType || SqlCommandType.INSERT == sqlCommandType
         MybatisResultSetHandler.Companion.validateResultMaps(mappedStatement)
         resultTransformer = MybatisResultTransformer(mappedStatement)
@@ -72,7 +72,6 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager?) : AbstractJ
         }
     }
 
-    @Suppress("deprecation")
     public override fun doCreateQuery(accessor: JpaParametersParameterAccessor): Query {
         val parameterBinder = parameterBinder.get() as MybatisParameterBinder
         val mybatisParam = parameterBinder.bindParameterObject(accessor)
@@ -83,6 +82,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager?) : AbstractJ
         val sortedQueryString = applySorting(queryString,
                 if (sort.isUnsorted && size != null) size.sort else sort)
         val query = entityManager.createNativeQuery(sortedQueryString)
+        @Suppress("DEPRECATION")
         query.unwrap(NativeQuery::class.java).setResultTransformer(resultTransformer)
         val metadata = metadataCache.getMetadata(sortedQueryString,
                 query)
@@ -106,7 +106,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager?) : AbstractJ
 
     override fun getExecution(): JpaQueryExecution {
         val method = queryMethod
-        val sqlLogId = mappedStatement!!.id
+        val sqlLogId = mappedStatement.id
         return if (method.isPageQuery) {
             object : PagedExecution() {
                 override fun doExecute(
@@ -258,10 +258,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager?) : AbstractJ
             }
         } else {
             object : SingleEntityExecution() {
-                override fun doExecute(
-                        query: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor,
-                ): Any ?{
+                override fun doExecute(query: AbstractJpaQuery, accessor: JpaParametersParameterAccessor): Any? {
                     return try {
                         MDC.put("id", sqlLogId)
                         val result: Any? = super.doExecute(query, accessor)

@@ -15,7 +15,7 @@ class DestinationDataProviderImpl : DestinationDataProvider {
         if (!StringUtils.hasText(destName)) {
             throw NullPointerException("Destinantion name is empty.")
         }
-        check(provider.size != 0) { "Data provider is empty." }
+        check(provider.isNotEmpty()) { "Data provider is empty." }
         return provider[destName]!!
     }
 

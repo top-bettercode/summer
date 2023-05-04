@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.cache.caffeine")
-class CaffeineCacheProperties {
+open class CaffeineCacheProperties {
     /**
      * 存储缓存配置,key:name ,value:spec [CaffeineSpec]
      */

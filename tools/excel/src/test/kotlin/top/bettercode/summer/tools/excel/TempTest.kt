@@ -21,11 +21,11 @@ class TempTest {
     }
 
     private fun getString(i: Int): String {
-        var i = i
+        var i1 = i
         val chars = StringBuilder()
         do {
-            chars.append(('A'.code + i % 26).toChar())
-        } while ((i / 26 - 1).also { i = it } >= 0)
+            chars.append(('A'.code + i1 % 26).toChar())
+        } while ((i1 / 26 - 1).also { i1 = it } >= 0)
         return chars.reverse().toString()
     }
 }

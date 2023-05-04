@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package top.bettercode.summer.data.jpa.support
 
 import org.hibernate.type.descriptor.java.JavaTypeDescriptor
@@ -7,9 +9,9 @@ import org.springframework.util.ClassUtils
 /**
  * @author Peter Wu
  */
-@Suppress("deprecation")
 object JpaUtil {
     private val TYPE_DESCRIPTOR_REGISTRY = JavaTypeDescriptorRegistry.INSTANCE
+
     @Suppress("UNCHECKED_CAST")
     fun <T> convert(source: Any?, targetType: Class<T>?): T? {
         return if (source != null && !targetType!!.isInstance(source)) {

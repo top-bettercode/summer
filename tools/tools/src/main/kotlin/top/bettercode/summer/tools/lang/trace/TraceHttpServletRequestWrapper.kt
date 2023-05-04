@@ -22,8 +22,7 @@ class TraceHttpServletRequestWrapper
  *
  * @param request The request to wrap
  * @throws IllegalArgumentException if the request is null
- */
-constructor(val request: HttpServletRequest) : HttpServletRequestWrapper(request) {
+ */(val request: HttpServletRequest) : HttpServletRequestWrapper(request) {
     private val byteArrayOutputStream = ByteArrayOutputStream()
     private var servletInputStream: TraceServletInputStream? = null
     private var servletReader: BufferedReader? = null

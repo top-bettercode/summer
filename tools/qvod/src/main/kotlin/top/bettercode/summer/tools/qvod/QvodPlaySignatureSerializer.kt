@@ -18,11 +18,7 @@ import java.util.*
 class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
     String::class.java, false
 ) {
-    private val qvodClient: QvodClient
-
-    init {
-        qvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)!!
-    }
+    private val qvodClient: QvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)!!
 
     @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {

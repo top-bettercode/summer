@@ -57,7 +57,7 @@ class ExcelImport private constructor(`is`: InputStream) {
         } catch (e: ExcelReaderException) {
             throw ExcelException("Excel读取失败，仅支持.xlsx格式Excel文件", e)
         }
-        sheet = workbook.getFirstSheet()
+        sheet = workbook.firstSheet
         setRowAndColumn(1, 0)
         log.debug("Initialize success.")
     }
@@ -225,7 +225,7 @@ class ExcelImport private constructor(`is`: InputStream) {
             }
         }
         return if (notAllBlank) {
-            if (!rowErrors.isEmpty()) {
+            if (rowErrors.isNotEmpty()) {
                 val exception = rowErrors[0].exception
                 throw ExcelImportException(exception.message, rowErrors, exception)
             }

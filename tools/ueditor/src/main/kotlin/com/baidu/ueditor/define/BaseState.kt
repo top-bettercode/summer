@@ -38,7 +38,7 @@ class BaseState : State {
         info = AppInfo.getStateInfo(infoCode)
     }
 
-    override fun toJSONString(): String? {
+    override fun toJSONString(): String {
         return this.toString()
     }
 

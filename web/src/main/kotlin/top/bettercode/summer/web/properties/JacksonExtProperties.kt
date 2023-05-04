@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.spring.jackson")
-class JacksonExtProperties {
+open class JacksonExtProperties {
     /**
      * xml root name.
      */

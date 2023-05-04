@@ -46,7 +46,7 @@ class DivisionSerializer @JvmOverloads constructor(private val vnode: Boolean = 
     }
 
     override fun isEmpty(prov: SerializerProvider, value: String): Boolean {
-        return value.length == 0
+        return value.isEmpty()
     }
 
     @Throws(IOException::class)

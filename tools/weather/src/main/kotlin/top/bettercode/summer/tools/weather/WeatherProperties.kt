@@ -7,7 +7,7 @@ import java.time.LocalTime
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.weather")
-class WeatherProperties {
+open class WeatherProperties {
     /**
      * 接口地址
      */
@@ -28,12 +28,12 @@ class WeatherProperties {
     /**
      * 晚上起始时间
      */
-    var nightStartTime = LocalTime.of(18, 0)
+    var nightStartTime: LocalTime = LocalTime.of(18, 0)
 
     /**
      * 晚上结束时间
      */
-    var nightEndTime = LocalTime.of(6, 0)
+    var nightEndTime: LocalTime = LocalTime.of(6, 0)
 
     /**
      * 请求连接超时时间毫秒数

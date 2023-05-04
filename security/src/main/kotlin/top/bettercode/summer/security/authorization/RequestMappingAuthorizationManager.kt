@@ -50,7 +50,7 @@ class RequestMappingAuthorizationManager(
                     authorities.add(Anonymous.ROLE_ANONYMOUS_VALUE)
                 } else {
                     val authoritySet = getAnnotations(handlerMethod!!, ConfigAuthority::class.java)
-                    if (!authoritySet.isEmpty()) {
+                    if (authoritySet.isNotEmpty()) {
                         for (authority in authoritySet) {
                             for (s in authority.value) {
                                 Assert.hasText(s, "权限标记不能为空")

@@ -15,44 +15,45 @@ package top.bettercode.summer.tools.excel
  * Distributed 	Distributed Horizontal Alignment. When the item is serialized out as xml, its value is "distributed".
 </pre> *
  */
-enum class Alignment {
+enum class Alignment(val value: String) {
     /**
      * 默认
      */
-    general,
+    GENERAL("general"),
 
     /**
      * 左对齐
      */
-    left,
+    LEFT("left"),
 
     /**
      * 居中
      */
-    center,
+    CENTER("center"),
 
     /**
      * 右对齐
      */
-    right,
+    RIGHT("right"),
 
     /**
      * 填充
      */
-    fill,
+    FILL("fill"),
 
     /**
      * 两端对齐
      */
-    justify,
+    JUSTIFY("justify"),
 
     /**
      * 中心连续
      */
-    centerContinuous,
+    CENTER_CONTINUOUS("centerContinuous"),
 
     /**
      * 分散
      */
-    distributed
+    DISTRIBUTED("distributed");
+
 }

@@ -46,7 +46,7 @@ class ObjectMapperBuilderCustomizer : Jackson2ObjectMapperBuilderCustomizer {
                jacksonExtProperties: JacksonExtProperties): Module {
         val module = SimpleModule()
         val packages: MutableSet<String> = HashSet(
-                Arrays.asList(*jacksonExtProperties.mixInAnnotationBasePackages))
+                listOf(*jacksonExtProperties.mixInAnnotationBasePackages))
         val beanNames = applicationContext.getBeanNamesForAnnotation(SpringBootApplication::class.java)
         for (beanName in beanNames) {
             val beanDefinition = applicationContext.getBeanDefinition(
@@ -61,7 +61,7 @@ class ObjectMapperBuilderCustomizer : Jackson2ObjectMapperBuilderCustomizer {
             for (packageClass in Objects.requireNonNull<SpringBootApplication>(annotation).scanBasePackageClasses) {
                 packages.add(packageClass::class.java.getPackage().name)
             }
-            packages.addAll(Arrays.asList(*annotation.scanBasePackages))
+            packages.addAll(listOf(*annotation.scanBasePackages))
             packages.add(beanClass.getPackage().name)
         }
         val allSubClasses = packageScanClassResolver

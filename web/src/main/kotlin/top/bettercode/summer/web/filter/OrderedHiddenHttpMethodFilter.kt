@@ -49,9 +49,9 @@ class OrderedHiddenHttpMethodFilter : HiddenHttpMethodFilter(), Ordered {
                                   response: HttpServletResponse, filterChain: FilterChain) {
         val paramValue = request.getParameter(this.methodParam)
         if (StringUtils.hasLength(paramValue)) {
-            val _method = request.method
+            val method1 = request.method
             val method = paramValue.uppercase()
-            if ("POST" == _method && "PUT" == method || "GET" == _method && "DELETE" == method) {
+            if ("POST" == method1 && "PUT" == method || "GET" == method1 && "DELETE" == method) {
                 val wrapper: HttpServletRequest = HttpMethodRequestWrapper(
                         request, method)
                 filterChain.doFilter(wrapper, response)

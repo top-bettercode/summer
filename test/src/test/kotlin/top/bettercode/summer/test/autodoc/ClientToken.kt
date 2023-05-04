@@ -46,9 +46,7 @@ data class ClientToken(
         if (!Arrays.equals(token, other.token)) return false
         if (authenticationId != other.authenticationId) return false
         if (userName != other.userName) return false
-        if (clientId != other.clientId) return false
-
-        return true
+        return clientId == other.clientId
     }
 
     override fun hashCode(): Int {

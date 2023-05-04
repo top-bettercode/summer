@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.logging.smtp")
-class SmtpProperties {
+open class SmtpProperties {
     var logger = arrayOf("root")
     var from: String? = null
     var marker: String? = null
@@ -19,11 +19,11 @@ class SmtpProperties {
     var localhost: String? = null
     var host: String? = null
     var port = 25
-    var isStarttls = false
-    var isSsl = false
-    var isSessionViaJNDI = false
+    var starttls = false
+    var ssl = false
+    var sessionViaJNDI = false
     var jndiLocation = "java:comp/env/mail/Session"
-    var isIncludeCallerData = false
-    var isAsynchronousSending = true
+    var includeCallerData = false
+    var asynchronousSending = true
     var charsetEncoding = "UTF-8"
 }

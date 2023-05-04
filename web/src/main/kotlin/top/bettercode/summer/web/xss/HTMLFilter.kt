@@ -110,21 +110,21 @@ class HTMLFilter {
      */
     constructor() {
         vAllowed = HashMap()
-        val a_atts = ArrayList<String>()
-        a_atts.add("href")
-        a_atts.add("target")
-        vAllowed["a"] = a_atts
-        val img_atts = ArrayList<String>()
-        img_atts.add("src")
-        img_atts.add("width")
-        img_atts.add("height")
-        img_atts.add("alt")
-        vAllowed["img"] = img_atts
-        val no_atts = ArrayList<String>()
-        vAllowed["b"] = no_atts
-        vAllowed["strong"] = no_atts
-        vAllowed["i"] = no_atts
-        vAllowed["em"] = no_atts
+        val aAtts = ArrayList<String>()
+        aAtts.add("href")
+        aAtts.add("target")
+        vAllowed["a"] = aAtts
+        val imgAtts = ArrayList<String>()
+        imgAtts.add("src")
+        imgAtts.add("width")
+        imgAtts.add("height")
+        imgAtts.add("alt")
+        vAllowed["img"] = imgAtts
+        val noAtts = ArrayList<String>()
+        vAllowed["b"] = noAtts
+        vAllowed["strong"] = noAtts
+        vAllowed["i"] = noAtts
+        vAllowed["em"] = noAtts
         vSelfClosingTags = arrayOf("img")
         vNeedClosingTags = arrayOf("a", "b", "strong", "i", "em")
         vDisallowed = arrayOf()
@@ -151,7 +151,8 @@ class HTMLFilter {
      *
      * @param conf map containing configuration. keys match field names.
      */
-    constructor(conf: Map<String?, Any?>) {
+    @Suppress("UNCHECKED_CAST")
+    constructor(conf: Map<String, Any?>) {
         assert(conf.containsKey("vAllowed")) { "configuration requires vAllowed" }
         assert(conf.containsKey("vSelfClosingTags")) { "configuration requires vSelfClosingTags" }
         assert(conf.containsKey("vNeedClosingTags")) { "configuration requires vNeedClosingTags" }
@@ -160,7 +161,7 @@ class HTMLFilter {
         assert(conf.containsKey("vProtocolAtts")) { "configuration requires vProtocolAtts" }
         assert(conf.containsKey("vRemoveBlanks")) { "configuration requires vRemoveBlanks" }
         assert(conf.containsKey("vAllowedEntities")) { "configuration requires vAllowedEntities" }
-        vAllowed = Collections.unmodifiableMap(conf["vAllowed"] as HashMap<String, List<String>>?)
+        vAllowed = Collections.unmodifiableMap(conf["vAllowed"] as HashMap<String, List<String>>)
         vSelfClosingTags = conf["vSelfClosingTags"] as Array<String>?
         vNeedClosingTags = conf["vNeedClosingTags"] as Array<String>?
         vDisallowed = conf["vDisallowed"] as Array<String>?
@@ -190,7 +191,7 @@ class HTMLFilter {
      * @param input text (i.e. submitted by a user) than may contain html
      * @return "clean" version of input, with only valid, whitelisted html elements allowed
      */
-    fun filter(input: String?): String {
+    fun filter(input: String): String {
         reset()
         var s = input
         debug("************************************************")
@@ -209,7 +210,7 @@ class HTMLFilter {
         return s
     }
 
-    private fun escapeComments(s: String?): String {
+    private fun escapeComments(s: String): String {
         val m = P_COMMENTS.matcher(s)
         val buf = StringBuffer()
         if (m.find()) {
@@ -344,7 +345,7 @@ class HTMLFilter {
                 if (inArray(name, vNeedClosingTags)) {
                     ending = ""
                 }
-                if (ending == null || ending.length < 1) {
+                if (ending == null || ending.isEmpty()) {
                     if (vTagCounts.containsKey(name)) {
                         vTagCounts[name] = vTagCounts[name]!! + 1
                     } else {
@@ -416,7 +417,7 @@ class HTMLFilter {
         return s1
     }
 
-    private fun validateEntities(s: String?): String {
+    private fun validateEntities(s: String): String {
         val buf = StringBuffer()
 
         // validate entities throughout the string

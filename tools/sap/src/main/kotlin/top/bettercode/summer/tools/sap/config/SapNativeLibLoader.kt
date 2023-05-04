@@ -42,8 +42,7 @@ object SapNativeLibLoader {
         val libraryPath = targetFolder.absolutePath
         val nativeSystemProperty = "java.library.path"
         var systemNativePath = System.getProperty(nativeSystemProperty)
-        val pathSeparator: String
-        pathSeparator = if (OS.WINDOWS.isCurrentOs) {
+        val pathSeparator: String = if (OS.WINDOWS.isCurrentOs) {
             ";"
         } else {
             ":"
@@ -55,16 +54,16 @@ object SapNativeLibLoader {
         }
         log.info(LIB_NAME + " system native path: " + System.getProperty(nativeSystemProperty))
         if (isAlreadyLoaded) {
-            log.info(LIB_NAME + " library is already loaded.")
+            log.info("$LIB_NAME library is already loaded.")
         }
     }
 
     private val isAlreadyLoaded: Boolean
-        private get() = try {
+        get() = try {
             val runtime = JCoRuntimeFactory.getRuntime()
             runtime != null
         } catch (e: Exception) {
-            log.error("Failed to load " + LIB_NAME + " library", e)
+            log.error("Failed to load $LIB_NAME library", e)
             false
         }
 }

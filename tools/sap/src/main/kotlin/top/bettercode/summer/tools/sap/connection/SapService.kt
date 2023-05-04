@@ -69,14 +69,14 @@ class SapService(properties: SapProperties) {
         return this
     }
 
-    operator fun <T : ISapReturn?> invoke(functionName: String, data: Any?,
-                                          returnClass: Class<T>): T {
+    operator fun <T : ISapReturn> invoke(functionName: String, data: Any?,
+                                         returnClass: Class<T>): T {
         return invoke(functionName, data, returnClass, true)
     }
 
-    operator fun <T : ISapReturn?> invoke(functionName: String, data: Any?,
-                                          returnClass: Class<T>,
-                                          checkError: Boolean): T {
+    operator fun <T : ISapReturn> invoke(functionName: String, data: Any?,
+                                         returnClass: Class<T>,
+                                         checkError: Boolean): T {
         var function: JCoFunction? = null
         val result: T
         var throwable: Throwable? = null
@@ -91,8 +91,7 @@ class SapService(properties: SapProperties) {
                 parseInputParamObject(function, data)
             }
             function.execute(destination)
-            val out: JCoRecord
-            out = if (returnClass.isAnnotationPresent(SapStructure::class.java)) {
+            val out: JCoRecord = if (returnClass.isAnnotationPresent(SapStructure::class.java)) {
                 val struAnn = returnClass.getAnnotation(SapStructure::class.java)
                 function.exportParameterList.getStructure(struAnn.value)
             } else {
@@ -100,8 +99,8 @@ class SapService(properties: SapProperties) {
             }
             result = toBean(function, out, returnClass)
             durationMillis = System.currentTimeMillis() - start
-            if (!checkError || result!!.isOk) {
-                isSuccess = result!!.isSuccess
+            if (!checkError || result.isOk) {
+                isSuccess = result.isSuccess
                 result
             } else {
                 val msgText = result.message
@@ -215,12 +214,12 @@ class SapService(properties: SapProperties) {
             val fv = beanWrapper.getPropertyValue(field.name)
             fieldName = field.name
             if (fv == null && filterNullFiled) {
-                log.info(LOG_MARKER, "Not Setting SAP param: $fieldName is $fv")
+                log.info(LOG_MARKER, "Not Setting SAP param: $fieldName is null")
             } else if (field.isAnnotationPresent(SapStructure::class.java)) {
                 val struAnn = field.getAnnotation(SapStructure::class.java)
                 val struJco = input.getStructure(struAnn.value)
                 val map = toSapParamMap(fv)
-                if (map != null && !map.isEmpty()) {
+                if (!map.isNullOrEmpty()) {
                     for ((key, value) in map) {
                         struJco.setValue(key, value)
                     }
@@ -235,13 +234,12 @@ class SapService(properties: SapProperties) {
                     val objList = fv as List<Any>
                     for (obj in objList) {
                         table.appendRow()
-                        var map: Map<String, Any?>?
-                        map = if (obj is Map<*, *>) {
+                        val map: Map<String, Any?>? = if (obj is Map<*, *>) {
                             obj as Map<String, Any?>
                         } else {
                             toSapParamMap(obj)
                         }
-                        if (map != null && !map.isEmpty()) {
+                        if (!map.isNullOrEmpty()) {
                             for ((key, value) in map) {
                                 table.setValue(key, value)
                             }
@@ -261,7 +259,7 @@ class SapService(properties: SapProperties) {
     }
 
     @Throws(InstantiationException::class, IllegalAccessException::class, IntrospectionException::class, IllegalArgumentException::class, InvocationTargetException::class, NoSuchMethodException::class)
-    private fun <T : Any?> toBean(function: JCoFunction?, out: JCoRecord, returnClass: Class<T>): T {
+    private fun <T : Any> toBean(function: JCoFunction?, out: JCoRecord, returnClass: Class<T>): T {
         val result = returnClass.getDeclaredConstructor().newInstance()
         val beanWrapper = BeanWrapperImpl(result)
         ReflectionUtils.doWithFields(returnClass) { field: Field ->
@@ -318,7 +316,7 @@ class SapService(properties: SapProperties) {
                 element = row as T
             } else {
                 element = elementClass.getDeclaredConstructor().newInstance() as T
-                val fields: Array<Field> = element.javaClass.getDeclaredFields()
+                val fields: Array<Field> = element.javaClass.declaredFields
                 val beanWrapper = BeanWrapperImpl(element)
                 for (fld in table) {
                     for (field in fields) {

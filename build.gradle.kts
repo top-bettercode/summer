@@ -9,7 +9,7 @@ val javaVersion = JavaVersion.VERSION_1_8
 
 allprojects {
     group = "top.bettercode.summer"
-    version = "0.0.19-SNAPSHOT"
+    version = "0.0.20-SNAPSHOT"
 
 
     val isBomProject = arrayOf(

@@ -9,12 +9,12 @@ import top.bettercode.summer.tools.lang.util.RandomUtil.nextString
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.logging.websocket")
-class WebsocketProperties {
+open class WebsocketProperties {
     //--------------------------------------------
     /**
      * 是否启用
      */
-    var isEnabled = true
+    var enabled = true
 
     /**
      * 认证token

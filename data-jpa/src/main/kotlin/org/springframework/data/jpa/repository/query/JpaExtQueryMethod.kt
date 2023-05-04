@@ -26,8 +26,7 @@ class JpaExtQueryMethod(
     init {
         querySize = Lazy.of { AnnotatedElementUtils.findMergedAnnotation(method, QuerySize::class.java) }
         statementId = method.declaringClass.name + "." + method.name
-        val mappedStatement: MappedStatement?
-        mappedStatement = try {
+        val mappedStatement: MappedStatement? = try {
             configuration!!.getMappedStatement(statementId)
         } catch (e: Exception) {
             null

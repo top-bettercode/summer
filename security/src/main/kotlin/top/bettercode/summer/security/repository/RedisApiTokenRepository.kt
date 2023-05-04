@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils
 import top.bettercode.summer.security.token.ApiToken
 import java.lang.reflect.Method
 import java.nio.charset.StandardCharsets
-import java.util.*
+import kotlin.math.max
 
 class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFactory: RedisConnectionFactory, prefix: String = "") : ApiTokenRepository {
     private val log = LoggerFactory.getLogger(RedisApiTokenRepository::class.java)
@@ -24,12 +24,12 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
         } else {
             API_AUTH
         }
-        if (springDataRedis_2_0) {
-            loadRedisConnectionMethods_2_0()
+        if (springdataredis20) {
+            loadredisconnectionmethods20()
         }
     }
 
-    private fun loadRedisConnectionMethods_2_0() {
+    private fun loadredisconnectionmethods20() {
         redisconnectionset20 = ReflectionUtils.findMethod(
                 RedisConnection::class.java, "set", ByteArray::class.java, ByteArray::class.java)
     }
@@ -60,14 +60,14 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
                             ACCESS_TOKEN + exist.accessToken.tokenValue)
                     val existRefreshKey = serializeKey(
                             REFRESH_TOKEN + exist.refreshToken.tokenValue)
-                    if (!Arrays.equals(existAccessKey, accessKey)) {
+                    if (!existAccessKey.contentEquals(accessKey)) {
                         conn.keyCommands().del(existAccessKey)
                     }
-                    if (!Arrays.equals(existRefreshKey, refreshKey)) {
+                    if (!existRefreshKey.contentEquals(refreshKey)) {
                         conn.keyCommands().del(existRefreshKey)
                     }
                 }
-                if (springDataRedis_2_0) {
+                if (springdataredis20) {
                     try {
                         redisconnectionset20!!.invoke(conn, accessKey, idKey)
                         redisconnectionset20!!.invoke(conn, refreshKey, idKey)
@@ -81,11 +81,11 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
                     conn.stringCommands()[refreshKey] = idKey
                     conn.stringCommands()[idKey] = auth
                 }
-                val access_expires_in = apiToken.accessToken.expires_in
-                val refresh_expires_in = apiToken.refreshToken.expires_in
-                conn.keyCommands().expire(accessKey, access_expires_in.toLong())
-                conn.keyCommands().expire(refreshKey, refresh_expires_in.toLong())
-                conn.keyCommands().expire(idKey, Math.max(access_expires_in, refresh_expires_in).toLong())
+                val accessExpiresIn = apiToken.accessToken.expires_in
+                val refreshExpiresIn = apiToken.refreshToken.expires_in
+                conn.keyCommands().expire(accessKey, accessExpiresIn.toLong())
+                conn.keyCommands().expire(refreshKey, refreshExpiresIn.toLong())
+                conn.keyCommands().expire(idKey, max(accessExpiresIn, refreshExpiresIn).toLong())
                 conn.closePipeline()
             }
         } catch (e: Exception) {
@@ -202,7 +202,7 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
         private const val ID = "id:"
         private const val ACCESS_TOKEN = "access_token:"
         private const val REFRESH_TOKEN = "refresh_token:"
-        private val springDataRedis_2_0 = ClassUtils.isPresent(
+        private val springdataredis20 = ClassUtils.isPresent(
                 "org.springframework.data.redis.connection.RedisStandaloneConfiguration",
                 RedisApiTokenRepository::class.java.classLoader)
     }

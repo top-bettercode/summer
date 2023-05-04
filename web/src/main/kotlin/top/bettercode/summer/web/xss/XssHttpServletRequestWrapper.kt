@@ -68,7 +68,7 @@ class XssHttpServletRequestWrapper(
 
     override fun getParameterValues(name: String): Array<String>? {
         val parameters = super.getParameterValues(name)
-        if (parameters == null || parameters.size == 0) {
+        if (parameters == null || parameters.isEmpty()) {
             return null
         }
         for (i in parameters.indices) {
@@ -98,7 +98,7 @@ class XssHttpServletRequestWrapper(
         return value
     }
 
-    private fun xssEncode(input: String?): String {
+    private fun xssEncode(input: String): String {
         return htmlFilter.filter(input)
     }
 

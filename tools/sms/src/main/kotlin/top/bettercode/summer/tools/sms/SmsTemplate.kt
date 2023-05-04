@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.sms
 
+import org.slf4j.Marker
 import org.slf4j.MarkerFactory
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.web.support.client.ApiTemplate
@@ -19,6 +20,6 @@ abstract class SmsTemplate : ApiTemplate {
 
     companion object {
         const val LOG_MARKER_STR = "sms"
-        val LOG_MARKER = MarkerFactory.getMarker(LOG_MARKER_STR)
+        val LOG_MARKER: Marker? = MarkerFactory.getMarker(LOG_MARKER_STR)
     }
 }

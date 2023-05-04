@@ -35,7 +35,7 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
         return refereceList != null && refereceList!!.size > 0
     }
 
-    @Deprecated("Deprecated in Java")
+    @Deprecated("Deprecated in Java", ReplaceWith("hasReferences()"))
     override fun hasChildren(): Boolean {
         return hasReferences()
     }

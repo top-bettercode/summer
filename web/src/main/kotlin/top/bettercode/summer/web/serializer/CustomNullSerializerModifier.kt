@@ -24,7 +24,7 @@ class CustomNullSerializerModifier(
                     extendedValue = annotation.extended
                     fieldName = annotation.fieldName
                 }
-                if (defaultValue != null || fieldName != null || config.defaultPropertyInclusion.valueInclusion != JsonInclude.Include.NON_NULL) {
+                if (defaultValue != null || config.defaultPropertyInclusion.valueInclusion != JsonInclude.Include.NON_NULL) {
                     writer.assignNullSerializer(CustomNullSerializer(writer, defaultValue, fieldName,
                             extendedValue,
                             jacksonExtProperties))

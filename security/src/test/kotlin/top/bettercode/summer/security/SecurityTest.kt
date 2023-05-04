@@ -44,7 +44,7 @@ class SecurityTest {
     var apiSecurityProperties: ApiSecurityProperties? = null
     val objectMapper = ObjectMapper()
     var username = "root"
-    val password = DigestUtils.md5DigestAsHex("123456".toByteArray())
+    val password: String? = DigestUtils.md5DigestAsHex("123456".toByteArray())
 
     @BeforeEach
     fun setUp() {
@@ -115,7 +115,7 @@ class SecurityTest {
         name = "撤销accessToken"
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer $accessToken"
-        val entity2 = restTemplate!!.exchange("/oauth/token",
+        val entity2 = restTemplate.exchange("/oauth/token",
                 HttpMethod.DELETE, HttpEntity<Any>(httpHeaders),
                 String::class.java)
         Assertions.assertEquals(HttpStatus.NO_CONTENT, entity2.statusCode)
@@ -173,7 +173,7 @@ class SecurityTest {
 
     @Test
     fun testNoAuth() {
-        val entity = restTemplate!!.getForEntity("/testNoAuth", String::class.java)
+        val entity = restTemplate.getForEntity("/testNoAuth", String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
     }
 

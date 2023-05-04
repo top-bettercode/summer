@@ -38,11 +38,11 @@ class JpaExtRepositoriesAutoConfiguration {
         return EntityManagerFactoryBuilderCustomizer { builder: EntityManagerFactoryBuilder -> builder.setBootstrapExecutor(taskExecutor.getIfAvailable()) }
     }
 
-    private class BootstrapExecutorCondition internal constructor() : AnyNestedCondition(ConfigurationPhase.REGISTER_BEAN) {
+    private class BootstrapExecutorCondition : AnyNestedCondition(ConfigurationPhase.REGISTER_BEAN) {
         @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = ["bootstrap-mode"], havingValue = "deferred")
-        internal class DeferredBootstrapMode
+        class DeferredBootstrapMode
 
         @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = ["bootstrap-mode"], havingValue = "lazy")
-        internal class LazyBootstrapMode
+        class LazyBootstrapMode
     }
 }

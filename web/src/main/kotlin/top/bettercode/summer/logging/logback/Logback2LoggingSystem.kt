@@ -88,7 +88,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         if (existProperty(environment, "summer.logging.smtp.host")) {
             synchronized(context.configurationLock) {
                 val smtpProperties = Binder.get(environment).bind(
-                        "summer.logging.smtp", top.bettercode.summer.logging.SmtpProperties::class.java
+                        "summer.logging.smtp", SmtpProperties::class.java
                 ).get()
                 val levelMailAppender = mailAppender(context, smtpProperties, warnSubject)
                 val mailMarker = smtpProperties.marker
@@ -176,7 +176,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             synchronized(context.configurationLock) {
                 val socketProperties = Binder.get(environment).bind(
                         "summer.logging.socket",
-                        top.bettercode.summer.logging.SocketLoggingProperties::class.java
+                        SocketLoggingProperties::class.java
                 ).get()
                 val socketAppender = if (socketProperties.ssl == null) socketAppender(
                         context, socketProperties
@@ -497,7 +497,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             filesProperties: FilesProperties,
             logFile: String
     ) {
-        if (filesProperties.isRolloverOnStart) appender.rollingPolicy =
+        if (filesProperties.rolloverOnStart) appender.rollingPolicy =
                 StartAndSizeAndTimeBasedRollingPolicy<ILoggingEvent>().apply {
                     fileNamePattern = "$logFile-%d{yyyy-MM-dd}-%i.gz"
                     maxFileSize = FileSize.valueOf(filesProperties.maxFileSize)
@@ -520,7 +520,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
      */
     private fun mailAppender(
             context: LoggerContext,
-            smtpProperties: top.bettercode.summer.logging.SmtpProperties,
+            smtpProperties: SmtpProperties,
             warnSubject: String,
             mailMarker: String? = null
     ): Appender<ILoggingEvent> {
@@ -537,11 +537,11 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             password = smtpProperties.password
             from = smtpProperties.from
             addTo(smtpProperties.to)
-            isAsynchronousSending = smtpProperties.isAsynchronousSending
-            isIncludeCallerData = smtpProperties.isIncludeCallerData
-            isSTARTTLS = smtpProperties.isStarttls
-            isSSL = smtpProperties.isSsl
-            isSessionViaJNDI = smtpProperties.isSessionViaJNDI
+            isAsynchronousSending = smtpProperties.asynchronousSending
+            isIncludeCallerData = smtpProperties.includeCallerData
+            isSTARTTLS = smtpProperties.starttls
+            isSSL = smtpProperties.ssl
+            isSessionViaJNDI = smtpProperties.sessionViaJNDI
             charsetEncoding = smtpProperties.charsetEncoding
             subject = warnSubject
 
@@ -577,13 +577,13 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
      */
     private fun socketAppender(
             context: LoggerContext,
-            socketProperties: top.bettercode.summer.logging.SocketLoggingProperties
+            socketProperties: SocketLoggingProperties
     ): Appender<ILoggingEvent> {
         val appender = SocketAppender()
         with(appender) {
             this.context = context
             name = "socket"
-            setIncludeCallerData(socketProperties.isIncludeCallerData)
+            setIncludeCallerData(socketProperties.includeCallerData)
             port = socketProperties.port
             reconnectionDelay =
                     ch.qos.logback.core.util.Duration(socketProperties.reconnectionDelay.toMillis())
@@ -601,13 +601,13 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
      */
     private fun sslSocketAppender(
             context: LoggerContext,
-            socketProperties: top.bettercode.summer.logging.SocketLoggingProperties
+            socketProperties: SocketLoggingProperties
     ): Appender<ILoggingEvent> {
         val appender = SSLSocketAppender()
         with(appender) {
             this.context = context
             name = "socket"
-            setIncludeCallerData(socketProperties.isIncludeCallerData)
+            setIncludeCallerData(socketProperties.includeCallerData)
             port = socketProperties.port
             reconnectionDelay =
                     ch.qos.logback.core.util.Duration(socketProperties.reconnectionDelay.toMillis())
@@ -631,7 +631,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         with(appender) {
             this.context = context
             name = "logstashTcpSocket"
-            isIncludeCallerData = socketProperties.isIncludeCallerData
+            isIncludeCallerData = socketProperties.includeCallerData
             reconnectionDelay = socketProperties.reconnectionDelay
             ringBufferSize = socketProperties.ringBufferSize
             socketProperties.destinations?.forEach { addDestination(it) }

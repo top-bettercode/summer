@@ -8,7 +8,7 @@ import top.bettercode.summer.tools.generator.DataType
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.autodoc.gen")
-class GenProperties : AutodocExtension() {
+open class GenProperties : AutodocExtension() {
     /**
      * 是否启用
      */

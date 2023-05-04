@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.logging")
-class LoggingProperties {
+open class LoggingProperties {
     /**
      * 日志报警标题.
      */

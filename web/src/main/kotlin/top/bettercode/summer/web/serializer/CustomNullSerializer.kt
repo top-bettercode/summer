@@ -22,11 +22,10 @@ import java.util.*
  */
 class CustomNullSerializer(private val writer: BeanPropertyWriter, private val defaultValue: String?,
                            private val fieldName: String?, private val extendedValue: String?, private val jacksonExtProperties: JacksonExtProperties) : StdSerializer<Any>(Any::class.java) {
-    private val type: Class<*>
+    private val type: Class<*> = writer.type.rawClass
     private val isArray: Boolean
 
     init {
-        type = writer.type.rawClass
         isArray = type.isArray || MutableCollection::class.java.isAssignableFrom(type) && !MutableMap::class.java
                 .isAssignableFrom(type)
     }

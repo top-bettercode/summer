@@ -30,11 +30,8 @@ import top.bettercode.summer.data.jpa.BaseRepository
 import top.bettercode.summer.data.jpa.JpaExtRepository
 import top.bettercode.summer.data.jpa.querydsl.QuerydslRepository
 import top.bettercode.summer.data.jpa.support.SimpleJpaExtRepository
-import top.bettercode.summer.tools.lang.util.ArrayUtil.isEmpty
-import top.bettercode.summer.tools.lang.util.ArrayUtil.isNotEmpty
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 import java.io.IOException
-import java.lang.Package.getPackage
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.stream.Stream
@@ -59,7 +56,7 @@ class JpaMybatisAutoConfiguration(
     }
 
     private fun checkConfigFileExists() {
-        if (properties.isCheckConfigLocation && StringUtils
+        if (properties.checkConfigLocation && StringUtils
                         .hasText(properties.configLocation)) {
             val resource = resourceLoader.getResource(properties.configLocation!!)
             Assert.state(resource.exists(),
@@ -98,7 +95,7 @@ class JpaMybatisAutoConfiguration(
                 for (packageClass in Objects.requireNonNull<SpringBootApplication>(annotation).scanBasePackageClasses) {
                     packages.add(packageClass.java.getPackage().name)
                 }
-                packages.addAll(Arrays.asList(*annotation!!.scanBasePackages))
+                packages.addAll(listOf(*annotation!!.scanBasePackages))
                 packages.add(beanClass.getPackage().name)
             }
             val implementations = PACKAGE_SCAN_CLASS_RESOLVER.findImplementations(
@@ -207,7 +204,7 @@ class JpaMybatisAutoConfiguration(
             } else if (configurationProperties != null) {
                 configuration1.variables.putAll(configurationProperties)
             }
-            if (mapperResources.size == 0) {
+            if (mapperResources.isEmpty()) {
                 if (log.isInfoEnabled) {
                     log.info(
                             "Property 'mapperLocations' was specified but matching resources are not found.")

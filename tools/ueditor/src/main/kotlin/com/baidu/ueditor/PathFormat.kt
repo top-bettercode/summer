@@ -103,9 +103,8 @@ object PathFormat {
 
     private fun getRandom(pattern: String): String {
         var pattern1 = pattern
-        val length: Int
         pattern1 = pattern1.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1].trim { it <= ' ' }
-        length = pattern1.toInt()
+        val length: Int = pattern1.toInt()
         return (Math.random().toString() + "").replace(".", "").substring(0, length)
     }
 }

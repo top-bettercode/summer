@@ -42,11 +42,9 @@ class StringArrayBean {
     var ary: String? = null
         private set
     var paths1: List<String>? = null
-        get() = field
-        set
     var pathArray1: Array<String>? = null
 
-    fun setAry(ary: String?): top.bettercode.summer.test.web.StringArrayBean {
+    fun setAry(ary: String?): StringArrayBean {
         this.ary = ary
         return this
     }
@@ -55,7 +53,7 @@ class StringArrayBean {
         if (this === other) {
             return true
         }
-        if (other !is top.bettercode.summer.test.web.StringArrayBean) {
+        if (other !is StringArrayBean) {
             return false
         }
         val that = other

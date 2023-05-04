@@ -45,8 +45,8 @@ internal class PartTreeJpaExtQuery internal constructor(
             validate(tree, parameters, method.toString())
             countQuery = CountQueryPreparer(recreationRequired)
             query = if (tree.isCountProjection) countQuery else QueryPreparer(recreationRequired)
-        } catch (o_O: Exception) {
-            throw IllegalArgumentException(String.format("Failed to create query for method %s! %s", method, o_O.message), o_O)
+        } catch (e: Exception) {
+            throw IllegalArgumentException(String.format("Failed to create query for method %s! %s", method, e.message), e)
         }
     }
 
@@ -122,7 +122,7 @@ internal class PartTreeJpaExtQuery internal constructor(
      * @author Oliver Gierke
      * @author Thomas Darimont
      */
-    private open inner class QueryPreparer internal constructor(recreateQueries: Boolean) {
+    private open inner class QueryPreparer(recreateQueries: Boolean) {
         @Nullable
         private var cachedCriteriaQuery: CriteriaQuery<*>? = null
 
@@ -246,12 +246,11 @@ internal class PartTreeJpaExtQuery internal constructor(
      * @author Oliver Gierke
      * @author Thomas Darimont
      */
-    private inner class CountQueryPreparer internal constructor(recreateQueries: Boolean) : QueryPreparer(recreateQueries) {
+    private inner class CountQueryPreparer(recreateQueries: Boolean) : QueryPreparer(recreateQueries) {
         override fun createCreator(@Nullable accessor: JpaParametersParameterAccessor?): JpaQueryCreator {
             val entityManager = entityManager
             val builder = entityManager.criteriaBuilder
-            val provider: ParameterMetadataProvider
-            provider = accessor?.let { ParameterMetadataProvider(builder, it, escape) }
+            val provider: ParameterMetadataProvider = accessor?.let { ParameterMetadataProvider(builder, it, escape) }
                     ?: ParameterMetadataProvider(builder, parameters, escape)
             return JpaExtCountQueryCreator(tree,
                     queryMethod.resultProcessor.returnedType, builder, provider,

@@ -34,9 +34,7 @@ data class RequestLoggingConfig(
         if (timeoutAlarmSeconds != other.timeoutAlarmSeconds) return false
         if (logMarker != other.logMarker) return false
         if (collectionName != other.collectionName) return false
-        if (operationName != other.operationName) return false
-
-        return true
+        return operationName == other.operationName
     }
 
     override fun hashCode(): Int {

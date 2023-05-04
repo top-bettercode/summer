@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.logging.files")
-class FilesProperties {
+open class FilesProperties {
     var path: String? = null
     var maxFileSize = "10MB"
     var maxHistory = CoreConstants.UNBOUND_HISTORY
@@ -17,5 +17,5 @@ class FilesProperties {
     /**
      * 是否启动时滚动日志
      */
-    var isRolloverOnStart = true
+    var rolloverOnStart = true
 }

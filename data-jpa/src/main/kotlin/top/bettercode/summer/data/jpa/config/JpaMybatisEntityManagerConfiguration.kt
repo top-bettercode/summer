@@ -13,7 +13,7 @@ import javax.persistence.EntityManager
  * @author Peter Wu
  */
 @Configuration(proxyBeanMethods = false)
-class JpaMybatisEntityManagerConfiguration @Suppress("deprecation") constructor(
+class JpaMybatisEntityManagerConfiguration constructor(
         entityManagers: List<EntityManager>,
         mybatisProperties: MybatisProperties
 ) {
@@ -22,16 +22,10 @@ class JpaMybatisEntityManagerConfiguration @Suppress("deprecation") constructor(
             entityManagers.forEach(Consumer { entityManager: EntityManager ->
                 val factoryImplementor = entityManager.entityManagerFactory
                         .unwrap(SessionFactoryImplementor::class.java)
-                val queryPlanCache = factoryImplementor.queryPlanCache
-                try {
-                    val field = QueryPlanCache::class.java.getDeclaredField("nativeQueryInterpreter")
-                    field.isAccessible = true
-                    field[queryPlanCache] = MybatisQueryInterpreterStandardImpl(factoryImplementor)
-                } catch (e: NoSuchFieldException) {
-                    throw RuntimeException(e)
-                } catch (e: IllegalAccessException) {
-                    throw RuntimeException(e)
-                }
+                @Suppress("DEPRECATION") val queryPlanCache = factoryImplementor.queryPlanCache
+                val field = QueryPlanCache::class.java.getDeclaredField("nativeQueryInterpreter")
+                field.isAccessible = true
+                field[queryPlanCache] = MybatisQueryInterpreterStandardImpl(factoryImplementor)
             })
         }
     }

@@ -59,15 +59,13 @@ class DefaultErrorHandler(messageSource: MessageSource,
         } else if (error is UnsatisfiedServletRequestParameterException) {
             val paramConditionGroups = error.paramConditionGroups
             val sb = StringBuilder("参数不匹配:")
-            var i = 0
-            for (conditions in paramConditionGroups) {
+            for ((i, conditions) in paramConditionGroups.withIndex()) {
                 if (i > 0) {
                     sb.append(" OR ")
                 }
                 sb.append('"')
                 sb.append(StringUtils.arrayToDelimitedString(conditions, ", "))
                 sb.append('"')
-                i++
             }
             message = sb.toString()
         } else if (error is BusinessException) {

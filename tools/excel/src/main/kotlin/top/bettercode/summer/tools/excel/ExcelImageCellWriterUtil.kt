@@ -61,8 +61,7 @@ object ExcelImageCellWriterUtil {
         if (cellValue == null || "" == cellValue) {
             return
         }
-        val pictureIdx: Int
-        pictureIdx = when (cellValue) {
+        val pictureIdx: Int = when (cellValue) {
             is ByteArray -> {
                 wb.addPicture(cellValue as ByteArray?, XSSFWorkbook.PICTURE_TYPE_PNG)
             }

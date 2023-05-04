@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class ExcelImportException(message: String?,
-                           val errors: List<CellError>, e: Throwable?) : Exception(errors.map { "${it.columnName}${it.row}:$message" }.joinToString(","), e) {
+                           val errors: List<CellError>, e: Throwable?) : Exception(errors.joinToString(",") { "${it.columnName}${it.row}:$message" }, e) {
 
     class CellError
     /**

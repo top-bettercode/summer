@@ -32,12 +32,12 @@ class FileManager(conf: Map<String, Any?>?) {
         if (!dir.isDirectory) {
             return BaseState(false, AppInfo.NOT_DIRECTORY)
         }
-        val list = listFiles(dir,
+        val list: Collection<Any?> = listFiles(dir,
                 { pathname: File -> allowFiles.contains(pathname.path) }, true)
         state = if (index < 0 || index > list.size) {
             MultiState(true)
         } else {
-            val fileList = Arrays.copyOfRange<Any>(list.toTypedArray(), index, index + count)
+            val fileList = list.toTypedArray().copyOfRange(index, index + count)
             getState(fileList)
         }
         state.putInfo("start", index.toLong())

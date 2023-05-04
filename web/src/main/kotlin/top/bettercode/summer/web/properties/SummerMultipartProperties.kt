@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.multipart")
-class SummerMultipartProperties {
+open class SummerMultipartProperties {
     //--------------------------------------------
     /**
      * 文件保存路径
@@ -21,7 +21,7 @@ class SummerMultipartProperties {
     /**
      * 保留原文件名
      */
-    var isKeepOriginalFilename = false
+    var keepOriginalFilename = false
 
     /**
      * 默认文件分类

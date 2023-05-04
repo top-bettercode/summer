@@ -231,7 +231,7 @@ enum class DatabaseDriver(
                 for (driver in values()) {
                     for (urlPrefix in driver.urlPrefixes) {
                         val prefix = ":$urlPrefix:"
-                        if (driver !== DatabaseDriver.UNKNOWN && urlWithoutPrefix.startsWith(
+                        if (driver !== UNKNOWN && urlWithoutPrefix.startsWith(
                                 prefix
                             )
                         ) {
@@ -240,7 +240,7 @@ enum class DatabaseDriver(
                     }
                 }
             }
-            return DatabaseDriver.UNKNOWN
+            return UNKNOWN
         }
 
         /**
@@ -256,7 +256,7 @@ enum class DatabaseDriver(
                     }
                 }
             }
-            return DatabaseDriver.UNKNOWN
+            return UNKNOWN
         }
     }
 

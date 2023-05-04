@@ -19,14 +19,14 @@ class EmployeeKey : Serializable {
         this.id2 = id2
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (o !is EmployeeKey) {
+        if (other !is EmployeeKey) {
             return false
         }
-        val that = o
+        val that = other
         return id == that.id && id2 == that.id2
     }
 

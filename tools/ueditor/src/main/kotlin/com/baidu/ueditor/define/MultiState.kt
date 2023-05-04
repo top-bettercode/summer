@@ -39,7 +39,7 @@ class MultiState : State {
         infoMap[name] = `val`
     }
 
-    override fun toJSONString(): String? {
+    override fun toJSONString(): String {
         var stateVal = if (isSuccess) AppInfo.getStateInfo(AppInfo.SUCCESS) else info
         val builder = StringBuilder()
         builder.append("{\"state\": \"").append(stateVal).append("\"")

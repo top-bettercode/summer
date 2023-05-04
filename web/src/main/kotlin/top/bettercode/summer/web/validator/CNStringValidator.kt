@@ -13,7 +13,7 @@ class CNStringValidator : ConstraintValidator<CNString?, String?> {
     override fun initialize(constraintAnnotation: CNString?) {}
     override fun isValid(charSequence: String?,
                          constraintValidatorContext: ConstraintValidatorContext): Boolean {
-        if (charSequence == null || charSequence.length == 0) {
+        if (charSequence == null || charSequence.isEmpty()) {
             return true
         }
         for (c in charSequence.toCharArray()) {

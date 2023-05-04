@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonView
 import org.springframework.util.Assert
 import java.util.*
+import kotlin.math.ceil
 
 class PagedResources<T> {
     @get:JsonView(Any::class)
@@ -52,7 +53,7 @@ class PagedResources<T> {
             this.totalElements = totalElements
         }
 
-        constructor(number: Long, size: Long, totalElements: Long) : this(number, size, if (size == 0L) 0 else Math.ceil(totalElements.toDouble() / size.toDouble()).toLong(),
+        constructor(number: Long, size: Long, totalElements: Long) : this(number, size, if (size == 0L) 0 else ceil(totalElements.toDouble() / size.toDouble()).toLong(),
                 totalElements)
 
         override fun toString(): String {

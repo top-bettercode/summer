@@ -94,20 +94,20 @@ constructor(inputStream: Any) {
     /**
      * 根据最小高宽 自动缩放
      *
-     * @param min_width -1 表示不限制
-     * @param min_hight -1 表示不限制
+     * @param minWidth -1 表示不限制
+     * @param minHight -1 表示不限制
      * @return ImageBuilder
      */
-    fun autoScale(min_width: Int, min_hight: Int): ImageBuilder {
-        if (this.width <= min_width || this.height <= min_hight) {
+    fun autoScale(minWidth: Int, minHight: Int): ImageBuilder {
+        if (this.width <= minWidth || this.height <= minHight) {
             return scale(1.0)
         } else {
-            val w = min_width * 1.0 / this.width
-            val h = min_hight * 1.0 / this.height
-            if (min_hight == -1) {
+            val w = minWidth * 1.0 / this.width
+            val h = minHight * 1.0 / this.height
+            if (minHight == -1) {
                 return scale(w)
             }
-            return if (min_width == -1) {
+            return if (minWidth == -1) {
                 scale(h)
             } else scale(if (w > h) w else h)
         }

@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets
  * @author Peter Wu
  */
 @ConfigurationProperties("summer.management.auth")
-class ManagementAuthProperties {
+open class ManagementAuthProperties {
     //--------------------------------------------
     var pattern = arrayOf<String>()
 
