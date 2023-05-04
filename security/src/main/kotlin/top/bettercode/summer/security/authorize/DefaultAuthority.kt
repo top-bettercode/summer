@@ -10,11 +10,17 @@ import java.util.*
  */
 object DefaultAuthority {
     const val DEFAULT_AUTHENTICATED_VALUE = "authenticated"
+
+    @JvmField
     var DEFAULT_GRANTED_AUTHORITY: GrantedAuthority = SimpleGrantedAuthority(
             DEFAULT_AUTHENTICATED_VALUE)
-    var DEFAULT_AUTHENTICATED = SecurityConfig(
-            DEFAULT_AUTHENTICATED_VALUE)
+
+    @JvmField
+    var DEFAULT_AUTHENTICATED = SecurityConfig(DEFAULT_AUTHENTICATED_VALUE)
+
+    @JvmField
     val ROLE_ANONYMOUS = SecurityConfig(Anonymous.ROLE_ANONYMOUS_VALUE)
+
     fun isDefaultAuthority(authority: String): Boolean {
         return DEFAULT_GRANTED_AUTHORITY.authority == authority
     }

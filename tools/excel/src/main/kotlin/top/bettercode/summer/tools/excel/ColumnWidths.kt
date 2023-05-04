@@ -30,6 +30,7 @@ class ColumnWidths @JvmOverloads constructor(private val maxWidth: Int = 50) {
     }
 
     companion object {
+        @JvmStatic
         fun getWidth(`val`: Any): Double {
             var width = 0.0
             for (c1 in `val`.toString().toCharArray()) {

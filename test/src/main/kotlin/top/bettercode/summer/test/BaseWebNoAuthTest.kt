@@ -176,6 +176,7 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
                 classPathResource.inputStream)
     }
 
+    @JvmOverloads
     @Throws(JsonProcessingException::class)
     protected fun json(`object`: Any?, incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL): String {
         return objectMapper.setSerializationInclusion(incl).writeValueAsString(`object`)
