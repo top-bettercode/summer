@@ -27,6 +27,6 @@ class XmlSerializerConfiguration(
                 xmlMapper.serializationConfig.withRootName(jacksonExtProperties.xmlRootName))
         xmlMapper.configure(
                 ToXmlGenerator.Feature.WRITE_XML_DECLARATION,
-                jacksonExtProperties.writeXmlDeclaration)
+                jacksonExtProperties.isWriteXmlDeclaration)
     }
 }

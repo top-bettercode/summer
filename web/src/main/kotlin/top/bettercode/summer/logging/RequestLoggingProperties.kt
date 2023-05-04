@@ -13,32 +13,32 @@ open class RequestLoggingProperties {
     /**
      * 是否启用
      */
-    var enabled = true
+    var isEnabled = true
 
     /**
      * 是否包含请求体
      */
-    var includeRequestBody = true
+    var isIncludeRequestBody = true
 
     /**
      * 是否包含响应体
      */
-    var includeResponseBody = true
+    var isIncludeResponseBody = true
 
     /**
      * 是否包含错误追踪栈
      */
-    var includeTrace = true
+    var isIncludeTrace = true
 
     /**
      * 是否格式化日志
      */
-    var format = true
+    var isFormat = true
 
     /**
      * 强制记录日志
      */
-    var forceRecord = false
+    var isForceRecord = false
 
     /**
      * 请求超时警报时间秒数

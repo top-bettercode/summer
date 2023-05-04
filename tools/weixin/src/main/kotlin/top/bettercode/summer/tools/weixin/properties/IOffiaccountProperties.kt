@@ -11,7 +11,7 @@ import java.net.URLEncoder
  * @author Peter Wu
  */
 interface IOffiaccountProperties : IWexinProperties {
-    val userUnionid: Boolean
+    val useUnionid: Boolean
         get() = false
     val appBaseUrl: String?
     val wechatBaseUrl: String?

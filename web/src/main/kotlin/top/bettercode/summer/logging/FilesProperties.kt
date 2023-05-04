@@ -17,5 +17,5 @@ open class FilesProperties {
     /**
      * 是否启动时滚动日志
      */
-    var rolloverOnStart = true
+    var isRolloverOnStart = true
 }

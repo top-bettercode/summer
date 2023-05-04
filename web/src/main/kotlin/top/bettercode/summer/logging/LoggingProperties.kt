@@ -26,17 +26,12 @@ open class LoggingProperties {
     /**
      * Log levels.Stored in different files, respectively.
      */
-    var spiltLevel: Array<String>?=null
+    var spiltLevel: Array<String>? = null
 
     /**
      * 是否启用日志浏览功能.
      */
-    var showEnabled = true
+    var isShowEnabled = true
     var apiHost: String? = null
-        private set
 
-    fun setApiHost(apiHost: String?): LoggingProperties {
-        this.apiHost = apiHost
-        return this
-    }
 }

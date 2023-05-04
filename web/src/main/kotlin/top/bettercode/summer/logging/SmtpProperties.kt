@@ -19,11 +19,11 @@ open class SmtpProperties {
     var localhost: String? = null
     var host: String? = null
     var port = 25
-    var starttls = false
-    var ssl = false
-    var sessionViaJNDI = false
+    var isStarttls = false
+    var isSsl = false
+    var isSessionViaJNDI = false
     var jndiLocation = "java:comp/env/mail/Session"
-    var includeCallerData = false
-    var asynchronousSending = true
+    var isIncludeCallerData = false
+    var isAsynchronousSending = true
     var charsetEncoding = "UTF-8"
 }

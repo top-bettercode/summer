@@ -60,13 +60,13 @@ class SecurityConfiguration(
             access: AuthorizationManager<RequestAuthorizationContext?>?,
     ): SecurityFilterChain {
         val securityProperties = apiTokenService.securityProperties
-        if (securityProperties.supportClientCache) {
+        if (securityProperties.isSupportClientCache) {
             http.headers().cacheControl().disable()
         }
-        if (securityProperties.frameOptionsDisable) {
+        if (securityProperties.isFrameOptionsDisable) {
             http.headers().frameOptions().disable()
         }
-        if (corsProperties.enable) {
+        if (corsProperties.isEnable) {
             http.cors()
         }
         http.csrf().disable()

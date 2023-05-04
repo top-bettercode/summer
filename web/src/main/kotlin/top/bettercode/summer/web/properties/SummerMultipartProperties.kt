@@ -21,7 +21,7 @@ open class SummerMultipartProperties {
     /**
      * 保留原文件名
      */
-    var keepOriginalFilename = false
+    var isKeepOriginalFilename = false
 
     /**
      * 默认文件分类

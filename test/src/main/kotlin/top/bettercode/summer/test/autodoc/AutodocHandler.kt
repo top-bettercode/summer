@@ -55,7 +55,7 @@ class AutodocHandler(
         if (Autodoc.enable) {
             try {
                 val disableOnException =
-                    Autodoc.disableOnException ?: genProperties.disableOnException
+                    Autodoc.disableOnException ?: genProperties.isDisableOnException
                 if (disableOnException && operation.response.stackTrace.isNotBlank()) {
                     return
                 }
@@ -189,7 +189,7 @@ class AutodocHandler(
                 InitField.init(
                     docOperation,
                     extension,
-                    summerWebProperties.wrapEnable,
+                    summerWebProperties.isWrapEnable,
                     defaultValueHeaders,
                     defaultValueParams
                 )

@@ -12,12 +12,12 @@ open class GenProperties : AutodocExtension() {
     /**
      * 是否启用
      */
-    var enable = true
+    var isEnable = true
 
     /**
      * 异常时是否不生成文档
      */
-    var disableOnException = true
+    var isDisableOnException = true
 
     /**
      * 数据源类型

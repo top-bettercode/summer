@@ -69,7 +69,7 @@ open class JpushClient(
                 throw JpushException("获取cid失败")
             }
         }
-        request.options = Options(properties.timeToLive, properties.apnsProduction)
+        request.options = Options(properties.timeToLive, properties.isAapnsProduction)
         val entity: ResponseEntity<JpushResponse> = try {
             execute(
                 properties.url + "/push", HttpMethod.POST,

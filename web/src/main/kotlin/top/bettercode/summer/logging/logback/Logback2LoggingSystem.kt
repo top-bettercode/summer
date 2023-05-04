@@ -497,7 +497,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             filesProperties: FilesProperties,
             logFile: String
     ) {
-        if (filesProperties.rolloverOnStart) appender.rollingPolicy =
+        if (filesProperties.isRolloverOnStart) appender.rollingPolicy =
                 StartAndSizeAndTimeBasedRollingPolicy<ILoggingEvent>().apply {
                     fileNamePattern = "$logFile-%d{yyyy-MM-dd}-%i.gz"
                     maxFileSize = FileSize.valueOf(filesProperties.maxFileSize)
@@ -537,11 +537,11 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
             password = smtpProperties.password
             from = smtpProperties.from
             addTo(smtpProperties.to)
-            isAsynchronousSending = smtpProperties.asynchronousSending
-            isIncludeCallerData = smtpProperties.includeCallerData
-            isSTARTTLS = smtpProperties.starttls
-            isSSL = smtpProperties.ssl
-            isSessionViaJNDI = smtpProperties.sessionViaJNDI
+            isAsynchronousSending = smtpProperties.isAsynchronousSending
+            isIncludeCallerData = smtpProperties.isIncludeCallerData
+            isSTARTTLS = smtpProperties.isStarttls
+            isSSL = smtpProperties.isSsl
+            isSessionViaJNDI = smtpProperties.isSessionViaJNDI
             charsetEncoding = smtpProperties.charsetEncoding
             subject = warnSubject
 
@@ -583,7 +583,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         with(appender) {
             this.context = context
             name = "socket"
-            setIncludeCallerData(socketProperties.includeCallerData)
+            setIncludeCallerData(socketProperties.isIncludeCallerData)
             port = socketProperties.port
             reconnectionDelay =
                     ch.qos.logback.core.util.Duration(socketProperties.reconnectionDelay.toMillis())
@@ -607,7 +607,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         with(appender) {
             this.context = context
             name = "socket"
-            setIncludeCallerData(socketProperties.includeCallerData)
+            setIncludeCallerData(socketProperties.isIncludeCallerData)
             port = socketProperties.port
             reconnectionDelay =
                     ch.qos.logback.core.util.Duration(socketProperties.reconnectionDelay.toMillis())
@@ -631,7 +631,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         with(appender) {
             this.context = context
             name = "logstashTcpSocket"
-            isIncludeCallerData = socketProperties.includeCallerData
+            isIncludeCallerData = socketProperties.isIncludeCallerData
             reconnectionDelay = socketProperties.reconnectionDelay
             ringBufferSize = socketProperties.ringBufferSize
             socketProperties.destinations?.forEach { addDestination(it) }

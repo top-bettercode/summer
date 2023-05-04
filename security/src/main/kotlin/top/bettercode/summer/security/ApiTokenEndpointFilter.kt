@@ -71,7 +71,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         tokenEndpointMatcher = AntPathRequestMatcher(tokenEndpointUri, HttpMethod.POST.name)
         revokeTokenEndpointMatcher = AntPathRequestMatcher(tokenEndpointUri,
                 HttpMethod.DELETE.name)
-        bearerTokenResolver.setCompatibleAccessToken(securityProperties.compatibleAccessToken)
+        bearerTokenResolver.setCompatibleAccessToken(securityProperties.isCompatibleAccessToken)
     }
 
     @Throws(ServletException::class, IOException::class)

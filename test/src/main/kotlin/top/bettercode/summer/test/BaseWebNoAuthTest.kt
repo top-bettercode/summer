@@ -75,10 +75,10 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     @Throws(Exception::class)
     fun setup() {
         //--------------------------------------------
-        requestLoggingProperties.forceRecord = true
-        requestLoggingProperties.includeRequestBody = true
-        requestLoggingProperties.includeResponseBody = true
-        requestLoggingProperties.format = true
+        requestLoggingProperties.isForceRecord = true
+        requestLoggingProperties.isIncludeRequestBody = true
+        requestLoggingProperties.isIncludeResponseBody = true
+        requestLoggingProperties.isFormat = true
         mockMvc = mockMvcBuilder().build()
         defaultBeforeEach()
         System.err.println("------------------------------------------------------")

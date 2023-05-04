@@ -74,7 +74,7 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
                 }
                 throw IllegalSignException()
             }
-            if (properties.verifyUserAgent) {
+            if (properties.isVerifyUserAgent) {
                 val signUserAgent =
                         signUserAgent(request.getHeader(HttpHeaders.USER_AGENT)).substring(16, 24)
                 if (!sign.substring(16, 24).equals(signUserAgent, ignoreCase = true)) {
@@ -253,7 +253,7 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
      * @return request 是否跳过
      */
     private fun skip(request: HttpServletRequest): Boolean {
-        return if (properties.canSkip) {
+        return if (properties.isCanSkip) {
             request.getAttribute("SKIP_SIGN") as? Boolean ?: false
         } else {
             false

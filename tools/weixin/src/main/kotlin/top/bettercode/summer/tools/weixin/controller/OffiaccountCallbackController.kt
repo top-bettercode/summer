@@ -38,7 +38,7 @@ class OffiaccountCallbackController(
                         try {
                             wechatService.oauth(
                                     accessToken,
-                                    (if (offiaccountClient.properties.userUnionid) offiaccountClient.getSnsapiUserinfo(
+                                    (if (offiaccountClient.properties.useUnionid) offiaccountClient.getSnsapiUserinfo(
                                             accessToken.accessToken!!,
                                             accessToken.openid!!
                                     ) else null)

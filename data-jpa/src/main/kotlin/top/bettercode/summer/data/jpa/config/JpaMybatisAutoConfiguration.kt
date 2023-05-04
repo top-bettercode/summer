@@ -56,7 +56,7 @@ class JpaMybatisAutoConfiguration(
     }
 
     private fun checkConfigFileExists() {
-        if (properties.checkConfigLocation && StringUtils
+        if (properties.isCheckConfigLocation && StringUtils
                         .hasText(properties.configLocation)) {
             val resource = resourceLoader.getResource(properties.configLocation!!)
             Assert.state(resource.exists(),

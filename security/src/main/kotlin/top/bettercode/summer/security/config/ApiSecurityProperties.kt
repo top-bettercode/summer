@@ -3,8 +3,6 @@ package top.bettercode.summer.security.config
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.util.AntPathMatcher
-import top.bettercode.summer.tools.lang.util.ArrayUtil.contains
-import top.bettercode.summer.tools.lang.util.ArrayUtil.isEmpty
 
 /**
  * @author Peter Wu
@@ -28,13 +26,13 @@ open class ApiSecurityProperties {
     /**
      * 是否禁用同源策略.
      */
-    var frameOptionsDisable = true
-    var supportClientCache = true
+    var isFrameOptionsDisable = true
+    var isSupportClientCache = true
     //--------------------------------------------
     /**
      * 登录时是否踢出前一个登录用户,全局配置
      */
-    var loginKickedOut = false
+    var isLoginKickedOut = false
 
     /**
      * 登录时是否踢出前一个登录用户，针对特殊scope
@@ -44,7 +42,7 @@ open class ApiSecurityProperties {
     /**
      * 是否兼容旧toekn名称
      */
-    var compatibleAccessToken = false
+    var isCompatibleAccessToken = false
     var clientId: String? = null
     var clientSecret: String? = null
 
@@ -68,6 +66,6 @@ open class ApiSecurityProperties {
     }
 
     fun needKickedOut(scope: String): Boolean {
-        return loginKickedOut || loginKickedOutScopes.contains(scope)
+        return isLoginKickedOut || loginKickedOutScopes.contains(scope)
     }
 }

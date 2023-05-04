@@ -46,7 +46,7 @@ open class MybatisProperties {
     /**
      * Indicates whether perform presence check of the MyBatis xml config file.
      */
-    var checkConfigLocation = false
+    var isCheckConfigLocation = false
 
     /**
      * Externalized properties for MyBatis configuration.

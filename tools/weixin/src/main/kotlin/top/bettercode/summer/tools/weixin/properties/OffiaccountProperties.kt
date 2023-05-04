@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties(prefix = "summer.wechat")
 open class OffiaccountProperties : WexinProperties(), IOffiaccountProperties {
     //--------------------------------------------
-    override var userUnionid = false
+    override var useUnionid = false
 
     /**
      * 项目部署的URL地址

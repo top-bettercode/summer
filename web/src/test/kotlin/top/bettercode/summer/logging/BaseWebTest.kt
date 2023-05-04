@@ -26,9 +26,9 @@ abstract class BaseWebTest {
     @BeforeEach
     fun setup() {
         val properties = RequestLoggingProperties()
-        properties.includeRequestBody = true
-        properties.includeResponseBody = true
-        properties.format = true
+        properties.isIncludeRequestBody = true
+        properties.isIncludeResponseBody = true
+        properties.isFormat = true
         properties.encryptHeaders = arrayOf("token")
         properties.encryptParameters = arrayOf("password")
         mockMvc = webAppContextSetup(context).addFilter<DefaultMockMvcBuilder>(

@@ -14,7 +14,7 @@ open class WebsocketProperties {
     /**
      * 是否启用
      */
-    var enabled = true
+    var isEnabled = true
 
     /**
      * 认证token

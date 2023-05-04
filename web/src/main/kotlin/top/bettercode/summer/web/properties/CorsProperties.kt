@@ -9,7 +9,7 @@ import org.springframework.web.cors.CorsConfiguration
  */
 @ConfigurationProperties("summer.security.cors")
 open class CorsProperties : CorsConfiguration() {
-    var enable = true
+    var isEnable = true
     var path = "/**"
 
     init {

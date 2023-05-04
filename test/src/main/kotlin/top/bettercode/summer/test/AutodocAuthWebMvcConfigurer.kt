@@ -32,7 +32,7 @@ class AutodocAuthWebMvcConfigurer(
             if (!hasAnnotation<Anonymous>(handler, Anonymous::class.java)
                     && !securityProperties.ignored(url) || isClientAuth) {
                 requiredHeaders = HashSet(requiredHeaders)
-                if (securityProperties.compatibleAccessToken) {
+                if (securityProperties.isCompatibleAccessToken) {
                     requiredHeaders.add(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN)
                 } else {
                     requiredHeaders.add(HttpHeaders.AUTHORIZATION)
@@ -47,7 +47,7 @@ class AutodocAuthWebMvcConfigurer(
                             (securityProperties.clientId + ":"
                                     + securityProperties.clientSecret).toByteArray()))
                 } else {
-                    if (securityProperties.compatibleAccessToken) {
+                    if (securityProperties.isCompatibleAccessToken) {
                         val authorization = request.getHeader(
                                 SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN)
                         if (!StringUtils.hasText(authorization)) {

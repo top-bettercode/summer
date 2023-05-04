@@ -19,12 +19,12 @@ open class ApiSignProperties {
     /**
      * 是否验证 userAgent.
      */
-    var verifyUserAgent = false
+    var isVerifyUserAgent = false
 
     /**
      * 是否可跳过验证.
      */
-    var canSkip = true
+    var isCanSkip = true
     //--------------------------------------------
     /**
      * 需要验证签名的 Controller类名前缀.
@@ -42,7 +42,7 @@ open class ApiSignProperties {
     var clientSecret: String? = null
     val isSimple: Boolean
         //--------------------------------------------
-        get() = !verifyUserAgent && allowableClientTimeDifference <= 0
+        get() = !isVerifyUserAgent && allowableClientTimeDifference <= 0
 
     fun requiredSign(handler: Any?): Boolean {
         if (handler !is HandlerMethod) {

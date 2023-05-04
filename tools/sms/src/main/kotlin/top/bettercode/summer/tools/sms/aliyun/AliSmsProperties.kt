@@ -13,7 +13,7 @@ open class AliSmsProperties {
     /**
      * 模拟发送
      */
-    var mock = false
+    var isMock = false
 
     /**
      * 请求连接超时时间毫秒数

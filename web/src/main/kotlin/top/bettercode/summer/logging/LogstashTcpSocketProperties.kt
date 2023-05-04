@@ -19,7 +19,7 @@ open class LogstashTcpSocketProperties {
      * The includeCallerData option takes a boolean value. If true, the caller data will be available
      * to the remote host. By default no caller data is sent to the server.
      */
-    var includeCallerData = false
+    var isIncludeCallerData = false
 
     /**
      * Destinations to which to attempt to send logs, in order of preference.

@@ -18,12 +18,12 @@ open class SummerWebProperties {
     /**
      * 响应结果是否包一层{\"data\":52,\"message\":\"\",\"status\":\"200\"}样式的格式.
      */
-    var wrapEnable = true
+    var isWrapEnable = true
 
     /**
      * http响应状态码统一为200.
      */
-    var okEnable = true
+    var isOkEnable = true
 
     /**
      * 接口版本号header参数名称.
@@ -77,7 +77,7 @@ open class SummerWebProperties {
         return if (StringUtils.hasText(wrapResponse)) {
             "true" == wrapResponse
         } else {
-            wrapEnable
+            isWrapEnable
         }
     }
 
@@ -86,7 +86,7 @@ open class SummerWebProperties {
         return if (StringUtils.hasText(wrapResponse)) {
             "true" == wrapResponse
         } else {
-            wrapEnable
+            isWrapEnable
         }
     }
 
@@ -95,7 +95,7 @@ open class SummerWebProperties {
         return if (StringUtils.hasText(okResponse)) {
             "true" == okResponse
         } else {
-            okEnable
+            isOkEnable
         }
     }
 
@@ -104,7 +104,7 @@ open class SummerWebProperties {
         return if (StringUtils.hasText(okResponse)) {
             "true" == okResponse
         } else {
-            okEnable
+            isOkEnable
         }
     }
 }

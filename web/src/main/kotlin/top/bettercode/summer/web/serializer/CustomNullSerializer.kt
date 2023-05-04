@@ -42,7 +42,7 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter, private val d
             defaultValue = beanWrapper.getPropertyValue(this.fieldName!!)
         }
         if (defaultValue == null) {
-            if (jacksonExtProperties.defaultEmpty) {
+            if (jacksonExtProperties.isDefaultEmpty) {
                 serializeJsonCode(value, gen, provider, fieldName)
             } else {
                 gen.writeNull()

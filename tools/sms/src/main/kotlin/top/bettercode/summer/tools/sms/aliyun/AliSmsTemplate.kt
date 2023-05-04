@@ -78,7 +78,7 @@ class AliSmsTemplate(
     fun sendSms(
         templateCode: String, phoneNumber: String, signName: String,
         templateParam: Map<String, String>,
-        mock: Boolean = aliSmsProperties.mock
+        mock: Boolean = aliSmsProperties.isMock
     ): AliSmsResponse {
         return sendSms(templateCode, listOf(AliSmsReq(phoneNumber, signName, templateParam)), mock)
     }
@@ -94,7 +94,7 @@ class AliSmsTemplate(
     fun sendSms(
         templateCode: String,
         aliSmsReq: AliSmsReq,
-        mock: Boolean = aliSmsProperties.mock
+        mock: Boolean = aliSmsProperties.isMock
     ): AliSmsResponse {
         return sendSms(templateCode, listOf(aliSmsReq), mock)
     }
@@ -119,7 +119,7 @@ class AliSmsTemplate(
     fun sendSms(
         templateCode: String,
         aliSmsReqs: List<AliSmsReq>,
-        mock: Boolean = aliSmsProperties.mock
+        mock: Boolean = aliSmsProperties.isMock
     ): AliSmsResponse {
         if (mock)
             return AliSmsResponse()
