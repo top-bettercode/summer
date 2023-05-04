@@ -17,7 +17,7 @@ class ApiToken : Serializable {
     constructor()
     constructor(
             scope: String?, accessToken: Token,
-            refreshToken: Token, userDetailsInstantAt: InstantAt, userDetails: UserDetails,
+            refreshToken: Token, userDetailsInstantAt: InstantAt, userDetails: UserDetails
     ) {
         this.scope = scope
         this.accessToken = accessToken

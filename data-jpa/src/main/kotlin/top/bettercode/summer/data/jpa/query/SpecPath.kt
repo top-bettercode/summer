@@ -12,7 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder.Trimspec
 /**
  * @author Peter Wu
  */
-class SpecPath<T, M : SpecMatcher<T, M>>(
+class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
         private val specMatcher: M,
         /**
          * name of the attribute
@@ -35,7 +35,7 @@ class SpecPath<T, M : SpecMatcher<T, M>>(
         return toPath(root, propertyName)
     }
 
-    @Suppress("UNCHECKED_CAST", "TYPE_MISMATCH_WARNING", "UPPER_BOUND_VIOLATED_WARNING")
+    @Suppress("UNCHECKED_CAST")
     override fun toPredicate(root: Root<T>, criteriaBuilder: CriteriaBuilder): Predicate? {
         if (isIgnoredPath) {
             return null
@@ -73,14 +73,14 @@ class SpecPath<T, M : SpecMatcher<T, M>>(
                     Assert.isTrue(value is BetweenValue<*>,
                             "BETWEEN matcher with wrong value")
                     val betweenValue = value as BetweenValue<*>
-                    return criteriaBuilder.between<Comparable<*>>(path as Expression<Comparable<*>>, betweenValue.first,
-                            betweenValue.second)
+                    return criteriaBuilder.between<Comparable<Comparable<*>>>(path as Expression<Comparable<Comparable<*>>>, betweenValue.first as Comparable<Comparable<*>>,
+                            betweenValue.second as Comparable<Comparable<*>>)
                 }
 
-                PathMatcher.GT -> return criteriaBuilder.greaterThan<Comparable<*>>(path as Expression<Comparable<*>>, value as Comparable<*>)
-                PathMatcher.GE -> return criteriaBuilder.greaterThanOrEqualTo<Comparable<*>>(path as Expression<Comparable<*>>, value as Comparable<*>)
-                PathMatcher.LT -> return criteriaBuilder.lessThan<Comparable<*>>(path as Expression<Comparable<*>>, value as Comparable<*>)
-                PathMatcher.LE -> return criteriaBuilder.lessThanOrEqualTo<Comparable<*>>(path as Expression<Comparable<*>>, value as Comparable<*>)
+                PathMatcher.GT -> return criteriaBuilder.greaterThan<Comparable<Comparable<*>>>(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
+                PathMatcher.GE -> return criteriaBuilder.greaterThanOrEqualTo<Comparable<Comparable<*>>>(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
+                PathMatcher.LT -> return criteriaBuilder.lessThan<Comparable<Comparable<*>>>(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
+                PathMatcher.LE -> return criteriaBuilder.lessThanOrEqualTo<Comparable<Comparable<*>>>(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
                 else -> {}
             }
         }
@@ -107,7 +107,7 @@ class SpecPath<T, M : SpecMatcher<T, M>>(
                 PathMatcher.IN -> {
                     Assert.isTrue(value is Collection<*>, "IN matcher with wrong value")
                     val collect = (value as Collection<*>).stream()
-                            .map { s: Any ?-> if (ignoreCase) s.toString().lowercase(Locale.getDefault()) else s.toString() }
+                            .map { s: Any? -> if (ignoreCase) s.toString().lowercase(Locale.getDefault()) else s.toString() }
                             .collect(Collectors.toList())
                     return stringExpression.`in`(collect)
                 }
@@ -300,7 +300,7 @@ class SpecPath<T, M : SpecMatcher<T, M>>(
         return withMatcher(value, PathMatcher.LE)
     }
 
-    fun <Y : Comparable<Y>?> between(first: Y, second: Y): M {
+    fun <Y : Comparable<Y>> between(first: Y, second: Y): M {
         return withMatcher(BetweenValue(first, second), PathMatcher.BETWEEN)
     }
 

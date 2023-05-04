@@ -1,6 +1,5 @@
 package top.bettercode.summer.data.jpa.support
 
-import org.hibernate.query.NativeQuery
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -19,7 +18,6 @@ import top.bettercode.summer.data.jpa.config.JpaMybatisAutoConfiguration
 import top.bettercode.summer.data.jpa.domain.*
 import top.bettercode.summer.data.jpa.query.DefaultSpecMatcher
 import top.bettercode.summer.data.jpa.query.SpecMatcher
-import top.bettercode.summer.data.jpa.query.SpecPath.Companion.containing
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
 import top.bettercode.summer.web.support.ApplicationContextHolder.Companion.applicationContext
@@ -58,7 +56,7 @@ class SimpleJpaExtRepositoryTest {
         repository.save(carter)
         Collections.addAll(batch, dave, dave1)
         daveId = dave.id!!
-        Collections.addAll(batchIds, daveId, dave1.id)
+        batchIds.addAll(arrayListOf(daveId, dave1.id!!))
         repository.delete(dave)
         carterId = carter.id!!
         System.err.println("--------------------------------------------------------")
@@ -436,19 +434,19 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findRecycleAll1() {
         Assertions.assertTrue(
-                repository.findAllFromRecycleBin { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                repository.findAllFromRecycleBin(Specification{ root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder
                             .equal(root.get<Any>("firstName"), "Dave")
-                }.iterator().hasNext())
+                }).iterator().hasNext())
     }
 
     @Test
     fun existsRecycle() {
         Assertions
-                .assertTrue(repository.existsInRecycleBin { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                .assertTrue(repository.existsInRecycleBin (Specification{ root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder
                             .equal(root.get<Any>("firstName"), "Dave")
-                })
+                }))
     }
 
     @Test

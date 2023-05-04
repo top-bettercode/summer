@@ -65,7 +65,7 @@ open class MybatisProperties {
     @NestedConfigurationProperty
     var configuration: Configuration? = null
     fun setTypeHandlerClasses(
-            typeHandlerClasses: Array<Class<TypeHandler<*>>>,
+            typeHandlerClasses: Array<Class<TypeHandler<*>>>
     ): MybatisProperties {
         this.typeHandlerClasses = typeHandlerClasses
         return this

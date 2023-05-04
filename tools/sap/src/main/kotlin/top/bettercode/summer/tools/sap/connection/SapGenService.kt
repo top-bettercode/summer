@@ -125,7 +125,7 @@ class SapGenService(private val sapService: SapService) {
         val topLevelClass = TopLevelClass(
                 classType, true, SourceSet.ROOT, JavaVisibility.PUBLIC)
         var write = false
-        for (jCoField in jCoFields) {
+        loop@ for (jCoField in jCoFields) {
             val jcoFieldName = jCoField!!.name
             val description = jCoField.description
             var fieldName = javaName(jcoFieldName, false)
@@ -151,7 +151,7 @@ class SapGenService(private val sapService: SapService) {
                         topLevelClass.superClass(JavaType(
                                 "top.bettercode.summer.tools.sap.connection.pojo.SapReturn").typeArgument(
                                 "top.bettercode.summer.tools.sap.connection.pojo.RkEsMessage"))
-                        continue
+                        continue@loop
                     }
 
                     else -> {

@@ -37,6 +37,14 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
     private val connection: RedisConnection
         get() = connectionFactory.connection
 
+    private fun <T> RedisConnection.use(run: (RedisConnection) -> T?): T? {
+        try {
+            return run(this)
+        } finally {
+            this.close()
+        }
+    }
+
     private fun serializeKey(`object`: String): ByteArray {
         return (keyPrefix + `object`).toByteArray(StandardCharsets.UTF_8)
     }
@@ -144,7 +152,7 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
     }
 
     private fun findByIdKey(idKey: ByteArray): ApiToken? {
-        connection.use { conn -> return getApiToken(idKey, conn) }
+        return connection.use { conn -> return@use getApiToken(idKey, conn) }
     }
 
     private fun getApiToken(idKey: ByteArray, conn: RedisConnection): ApiToken? {
@@ -172,9 +180,9 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
     override fun findByAccessToken(accessToken: String?): ApiToken? {
         try {
             val accessKey = serializeKey(ACCESS_TOKEN + accessToken)
-            connection.use { conn ->
+            return connection.use { conn ->
                 val bytes = conn.stringCommands()[accessKey]
-                return if (JdkSerializationSerializer.isEmpty(bytes)) {
+                return@use if (JdkSerializationSerializer.isEmpty(bytes)) {
                     null
                 } else getApiToken(bytes!!, conn)
             }
@@ -186,9 +194,9 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
     override fun findByRefreshToken(refreshToken: String): ApiToken? {
         try {
             val refreshKey = serializeKey(REFRESH_TOKEN + refreshToken)
-            connection.use { conn ->
+            return connection.use { conn ->
                 val bytes = conn.stringCommands()[refreshKey]
-                return if (JdkSerializationSerializer.isEmpty(bytes)) {
+                return@use if (JdkSerializationSerializer.isEmpty(bytes)) {
                     null
                 } else getApiToken(bytes!!, conn)
             }

@@ -7,6 +7,6 @@ import javax.persistence.criteria.Root
 /**
  * @author Peter Wu
  */
-interface SpecPredicate<T, M : SpecMatcher<T, M>> {
+interface SpecPredicate<T : Any?, M : SpecMatcher<T, M>> {
     fun toPredicate(root: Root<T>, criteriaBuilder: CriteriaBuilder): Predicate?
 }

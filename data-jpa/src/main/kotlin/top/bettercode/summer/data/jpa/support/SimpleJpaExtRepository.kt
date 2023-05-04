@@ -5,7 +5,8 @@ import org.slf4j.MDC
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.provider.PersistenceProvider
-import org.springframework.data.jpa.repository.query.*
+import org.springframework.data.jpa.repository.query.EscapeCharacter
+import org.springframework.data.jpa.repository.query.QueryUtils
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
@@ -21,7 +22,9 @@ import java.util.*
 import java.util.function.Function
 import javax.persistence.EntityManager
 import javax.persistence.EntityNotFoundException
-import javax.persistence.criteria.*
+import javax.persistence.criteria.CriteriaBuilder
+import javax.persistence.criteria.CriteriaQuery
+import javax.persistence.criteria.Root
 import kotlin.math.min
 
 /**
@@ -29,7 +32,7 @@ import kotlin.math.min
  */
 class SimpleJpaExtRepository<T : Any, ID>(
         jpaExtProperties: JpaExtProperties,
-        private val entityInformation: JpaEntityInformation<T, ID>, final override val entityManager: EntityManager,
+        private val entityInformation: JpaEntityInformation<T, ID>, final override val entityManager: EntityManager
 ) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), JpaExtRepository<T, ID> {
     private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")
     private val provider: PersistenceProvider = PersistenceProvider.fromEntityManager(entityManager)
@@ -60,7 +63,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             val id = entityInformation.getId(entity)
             if ("" == id) {
                 DirectFieldAccessFallbackBeanWrapper(entity).setPropertyValue(
-                        entityInformation.idAttribute.name, null)
+                        entityInformation.idAttribute!!.name, null)
                 true
             } else {
                 entityIsNew(entity, dynamicSave)

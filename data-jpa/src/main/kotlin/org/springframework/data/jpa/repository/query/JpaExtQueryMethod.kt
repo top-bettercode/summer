@@ -17,7 +17,7 @@ class JpaExtQueryMethod(
         method: Method,
         metadata: RepositoryMetadata,
         factory: ProjectionFactory,
-        extractor: QueryExtractor, configuration: Configuration?,
+        extractor: QueryExtractor, configuration: Configuration?
 ) : JpaQueryMethod(method, metadata, factory, extractor) {
     val statementId: String
     val mappedStatement: MappedStatement?

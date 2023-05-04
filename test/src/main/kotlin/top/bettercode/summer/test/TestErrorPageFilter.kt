@@ -233,7 +233,7 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
     }
 
     private class ErrorWrapperResponse(response: HttpServletResponse?) : HttpServletResponseWrapper(response) {
-        private var status = 0
+        private var status1 = 0
         var message: String? = null
             private set
         private var hasErrorToSend = false
@@ -242,7 +242,7 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
         }
 
         override fun sendError(status: Int, message: String) {
-            this.status = status
+            this.status1 = status
             this.message = message
             hasErrorToSend = true
             // Do not call super because the container may prevent us from handling the
@@ -251,7 +251,7 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
 
         override fun getStatus(): Int {
             return if (hasErrorToSend) {
-                status
+                status1
             } else super.getStatus()
             // If there was no error we need to trust the wrapped response
         }

@@ -75,8 +75,7 @@ class DataErrorHandler(messageSource: MessageSource,
                 val columnName = getText(specificCauseMessage.replace(incorrectRegex.toRegex(), "$2"))
                 message = columnName + "格式不正确"
             } else {
-                message = Objects.requireNonNull(e.rootCause)
-                        .message
+                message = e.rootCause?.message
             }
         } else if (e is UncategorizedSQLException) {
             val detailMessage = e.sqlException.message

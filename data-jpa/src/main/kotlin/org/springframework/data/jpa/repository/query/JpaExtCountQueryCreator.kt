@@ -18,7 +18,7 @@ internal class JpaExtCountQueryCreator(
         type: ReturnedType,
         builder: CriteriaBuilder,
         provider: ParameterMetadataProvider,
-        private val softDeleteSupport: ExtJpaSupport,
+        private val softDeleteSupport: ExtJpaSupport
 ) : JpaCountQueryCreator(tree, type, builder, provider) {
     override fun complete(@Nullable predicate: Predicate?, sort: Sort, query: CriteriaQuery<out Any>, builder: CriteriaBuilder, root: Root<*>): CriteriaQuery<out Any> {
         var predicate1: Predicate? = predicate

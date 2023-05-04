@@ -8,7 +8,7 @@ import top.bettercode.summer.security.token.ApiToken
 class InMemoryApiTokenRepository(
         private val tokenMap: MutableMap<String, ApiToken?>,
         private val accessTokenMap: MutableMap<String?, String>,
-        private val refreshTokenMap: MutableMap<String?, String>,
+        private val refreshTokenMap: MutableMap<String?, String>
 ) : ApiTokenRepository {
     override fun save(apiToken: ApiToken) {
         val scope = apiToken.scope

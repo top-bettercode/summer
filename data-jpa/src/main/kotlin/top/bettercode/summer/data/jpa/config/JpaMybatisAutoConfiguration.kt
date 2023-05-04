@@ -43,7 +43,7 @@ import java.util.stream.Stream
 @ConditionalOnMissingBean(MultiDatasourcesBeanDefinitionRegistryPostProcessor::class)
 class JpaMybatisAutoConfiguration(
         private val properties: MybatisProperties,
-        private val resourceLoader: ResourceLoader, @Autowired(required = false) hikari: HikariDataSource?,
+        private val resourceLoader: ResourceLoader, @Autowired(required = false) hikari: HikariDataSource?
 ) : InitializingBean {
     init {
         if (hikari != null && log.isInfoEnabled) {
@@ -121,7 +121,7 @@ class JpaMybatisAutoConfiguration(
                 beanFactory: ConfigurableListableBeanFactory,
                 configuration: org.apache.ibatis.session.Configuration?,
                 properties: MybatisProperties,
-                resourceLoader: ResourceLoader?, mapperLocations: Array<String>?,
+                resourceLoader: ResourceLoader?, mapperLocations: Array<String>?
         ): org.apache.ibatis.session.Configuration {
             var configuration1 = configuration
             var mapperLocations1 = mapperLocations

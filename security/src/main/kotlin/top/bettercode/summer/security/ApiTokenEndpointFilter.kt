@@ -45,7 +45,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         revokeTokenService: IRevokeTokenService?,
         objectMapper: ObjectMapper,
         formkeyService: IFormkeyService,
-        tokenEndpointUri: String? = DEFAULT_TOKEN_ENDPOINT_URI,
+        tokenEndpointUri: String? = DEFAULT_TOKEN_ENDPOINT_URI
 ) : OncePerRequestFilter() {
     private val log = LoggerFactory.getLogger(ApiTokenEndpointFilter::class.java)
     private val tokenEndpointMatcher: RequestMatcher
@@ -78,7 +78,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
     override fun doFilterInternal(
             request: HttpServletRequest,
             response: HttpServletResponse,
-            filterChain: FilterChain,
+            filterChain: FilterChain
     ) {
         val apiTokenRepository = apiTokenService.apiTokenRepository
         val securityProperties = apiTokenService.securityProperties

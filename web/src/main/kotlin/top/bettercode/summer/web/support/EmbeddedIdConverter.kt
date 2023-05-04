@@ -28,7 +28,7 @@ object EmbeddedIdConverter {
         return getPropertyDescriptors(clazz).stream()
                 .map<String>(Function<PropertyDescriptor, String> { o: PropertyDescriptor ->
                     ApplicationContextHolder.conversionService.convert<String>(
-                            ReflectionUtils.invokeMethod(o.readMethod, embeddedId), String::class.java)
+                            ReflectionUtils.invokeMethod(o.readMethod, embeddedId), String::class.java)!!
                 })
                 .collect(Collectors.joining(delimiter))
     }

@@ -111,7 +111,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             object : PagedExecution() {
                 override fun doExecute(
                         repositoryQuery: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor,
+                        accessor: JpaParametersParameterAccessor
                 ): Any {
                     return try {
                         MDC.put("id", sqlLogId)
@@ -166,7 +166,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             object : CollectionExecution() {
                 override fun doExecute(
                         query: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor,
+                        accessor: JpaParametersParameterAccessor
                 ): Any {
                     return try {
                         MDC.put("id", sqlLogId)
@@ -184,7 +184,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             object : ModifyingExecution(method, entityManager) {
                 override fun doExecute(
                         query: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor,
+                        accessor: JpaParametersParameterAccessor
                 ): Any {
                     return try {
                         MDC.put("id", sqlLogId)
@@ -202,7 +202,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             object : ProcedureExecution() {
                 override fun doExecute(
                         jpaQuery: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor,
+                        accessor: JpaParametersParameterAccessor
                 ): Any {
                     return try {
                         MDC.put("id", sqlLogId)
@@ -216,7 +216,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             object : StreamExecution() {
                 override fun doExecute(
                         query: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor,
+                        accessor: JpaParametersParameterAccessor
                 ): Any {
                     return try {
                         MDC.put("id", sqlLogId)
@@ -230,7 +230,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             object : SlicedExecution() {
                 override fun doExecute(
                         query: AbstractJpaQuery,
-                        accessor: JpaParametersParameterAccessor,
+                        accessor: JpaParametersParameterAccessor
                 ): Any {
                     return try {
                         MDC.put("id", sqlLogId)

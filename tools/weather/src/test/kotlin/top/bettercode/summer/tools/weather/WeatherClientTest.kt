@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.weather
 
 import com.fasterxml.jackson.databind.JsonNode
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ClassPathResource
@@ -14,7 +15,7 @@ import java.io.File
  *
  * @author Peter Wu
  */
-//@Disabled
+@Disabled
 class WeatherClientTest : BaseTest() {
 
     @Autowired

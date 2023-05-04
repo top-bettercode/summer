@@ -4,12 +4,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.support.SqlLobValue
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.Assert
-import top.bettercode.summer.security.repository.JdbcApiTokenRepository
 import top.bettercode.summer.security.token.ApiToken
-import top.bettercode.summer.tools.lang.util.ArrayUtil.isEmpty
 import java.sql.ResultSet
 import java.sql.Types
 import javax.sql.DataSource
@@ -95,13 +94,13 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
     private fun getApiToken(param: String?, selectStatement: String): ApiToken? {
         return try {
             val apiToken = jdbcTemplate.queryForObject<ApiToken>(selectStatement,
-                    { rs: ResultSet, _: Int ->
+                    RowMapper<ApiToken> { rs: ResultSet, _: Int ->
                         val bytes = rs.getBytes(1)
                         if (JdkSerializationSerializer.Companion.isEmpty(bytes)) {
-                            return@queryForObject null
+                            return@RowMapper null
                         }
                         try {
-                            return@queryForObject jdkSerializationSerializer.deserialize(bytes) as ApiToken
+                            return@RowMapper jdkSerializationSerializer.deserialize(bytes) as ApiToken
                         } catch (e: Exception) {
                             log.warn("apiToken反序列化失败", e)
                             try {
@@ -114,7 +113,7 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
                             } catch (ex: Exception) {
                                 log.warn("apiToken删除失败", ex)
                             }
-                            return@queryForObject null
+                            return@RowMapper null
                         }
                     }, param)
             if (log.isDebugEnabled) {

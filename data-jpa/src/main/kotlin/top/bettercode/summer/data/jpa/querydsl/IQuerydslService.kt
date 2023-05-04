@@ -19,7 +19,7 @@ interface IQuerydslService<T, ID, M : QuerydslRepository<T, ID>> : IBaseService<
     fun findAll(vararg orderSpecifiers: OrderSpecifier<*>?): Iterable<T>
     fun findAll(predicate: Predicate, pageable: Pageable): Page<T>
     fun findAll(
-            predicate: Predicate, pageable: Pageable, vararg defaultOrderSpecifiers: OrderSpecifier<*>?,
+            predicate: Predicate, pageable: Pageable, vararg defaultOrderSpecifiers: OrderSpecifier<*>?
     ): Page<T>
 
     fun findAll(pageable: Pageable, vararg defaultOrderSpecifiers: OrderSpecifier<*>?): Page<T>

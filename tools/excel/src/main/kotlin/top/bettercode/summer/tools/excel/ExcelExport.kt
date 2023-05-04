@@ -588,7 +588,7 @@ class ExcelExport {
          */
         @Throws(IOException::class)
         @JvmStatic
-        fun cacheOutput(fileName: String, fileKey: String, consumer: Consumer<OutputStream>) {
+        fun cacheOutput(fileName: String, fileKey: String, consumer: (OutputStream) -> ExcelExport) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
             Assert.notNull(requestAttributes, "requestAttributes获取失败")
@@ -604,7 +604,7 @@ class ExcelExport {
                     dir.mkdirs()
                 }
                 val tmpFile = File(file.toString() + "-" + UUID.randomUUID())
-                Files.newOutputStream(tmpFile.toPath()).use { outputStream -> consumer.accept(outputStream) }
+                Files.newOutputStream(tmpFile.toPath()).use { outputStream -> consumer(outputStream) }
                 tmpFile.renameTo(file)
             }
             StreamUtils.copy(Files.newInputStream(file.toPath()), response.outputStream)

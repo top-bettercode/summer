@@ -22,6 +22,7 @@ class ApplicationContextHolder : ApplicationContextAware {
     companion object {
         @JvmStatic
         var applicationContext: ApplicationContext? = null
+            @JvmName("setApplicationContext1")
             private set
 
         @Throws(BeansException::class)

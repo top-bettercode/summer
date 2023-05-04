@@ -17,8 +17,8 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
 
     companion object {
         fun anchor(msg: String): String =
-                msg.substringBefore(" ---").split(' ').filter { it.isNotBlank() }.joinToString("-")
-                        .lowercase(Locale.getDefault())
+            msg.substringBefore(" ---").split(' ').filter { it.isNotBlank() }.joinToString("-")
+                .lowercase(Locale.getDefault())
     }
 
     init {

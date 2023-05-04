@@ -10,7 +10,8 @@ import java.util.*
 /**
  * @author Peter Wu
  */
-interface IBaseService<T, ID, M : BaseRepository<T, ID>?> {
+interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
+
     val repository: M
     fun <S : T> save(s: S): S
     fun <S : T> save(s: S, spec: Specification<T>): Int

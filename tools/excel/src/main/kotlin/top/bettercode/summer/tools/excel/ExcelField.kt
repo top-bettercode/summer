@@ -251,7 +251,7 @@ open class ExcelField<T, P : Any?> {
 
     constructor(
             title: String, propertyGetter: ExcelConverter<T, P?>,
-            indexColumn: Boolean, imageColumn: Boolean,
+            indexColumn: Boolean, imageColumn: Boolean
     ) {
         this.title = title
         this.propertyGetter = propertyGetter
@@ -298,8 +298,12 @@ open class ExcelField<T, P : Any?> {
                             }
                         }
                         val fWriteMethod = writeMethod
-                        propertySetter = ExcelCellSetter { obj: T, property: P? ->
-                            ReflectionUtils.invokeMethod(fWriteMethod, obj, property)
+                        propertySetter = object : ExcelCellSetter<T, P?> {
+                            private val serialVersionUID: Long = 1L
+
+                            override fun set(entity: T, property: P?) {
+                                ReflectionUtils.invokeMethod(fWriteMethod, entity, property)
+                            }
                         }
                     } catch (e: NoSuchMethodException) {
                         val log = LoggerFactory.getLogger(ExcelField::class.java)
@@ -337,7 +341,7 @@ open class ExcelField<T, P : Any?> {
      */
     private constructor(
             title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>,
-            indexColumn: Boolean, imageColumn: Boolean,
+            indexColumn: Boolean, imageColumn: Boolean
     ) {
         this.title = title
         this.propertyType = propertyType
@@ -644,7 +648,7 @@ open class ExcelField<T, P : Any?> {
      */
     fun setProperty(
             obj: T, cellValue: Any?, validator: Validator,
-            validateGroups: Array<Class<*>>,
+            validateGroups: Array<Class<*>>
     ) {
         val property: P? = if (isEmptyCell(cellValue)) {
             defaultValue
@@ -738,7 +742,7 @@ open class ExcelField<T, P : Any?> {
         @JvmStatic
         fun <T, P> of(
                 title: String, propertyType: Class<P>,
-                propertyGetter: ExcelConverter<T, P?>,
+                propertyGetter: ExcelConverter<T, P?>
         ): ExcelField<T, P> {
             return ExcelField(title, propertyType, propertyGetter, false, false)
         }
@@ -757,7 +761,7 @@ open class ExcelField<T, P : Any?> {
         @JvmStatic
         fun <T, P> of(
                 title: String, propertyType: Class<P>,
-                propertyGetter: ExcelConverter<T, P?>, propertySetter: ExcelCellSetter<T, P?>,
+                propertyGetter: ExcelConverter<T, P?>, propertySetter: ExcelCellSetter<T, P?>
         ): ExcelField<T, P> {
             return ExcelField(title, propertyType, propertyGetter, false, false).setter(
                     propertySetter)

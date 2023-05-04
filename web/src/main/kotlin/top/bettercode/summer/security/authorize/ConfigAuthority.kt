@@ -11,7 +11,7 @@ import java.lang.annotation.Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
 @MustBeDocumented
-@JvmRepeatable(ConfigAuthority.List::class)
+@Repeatable
 annotation class ConfigAuthority(
         /**
          * @return 需要的权限标识，有任意其中一个即可，不能为null或空白字符串

@@ -31,25 +31,25 @@ class GenPackageinfoPlugin : Plugin<Project> {
                         ).java.srcDirs.forEach { srcDir ->
                             srcDir.walkTopDown().filter { it.isDirectory }.forEach { packageDir ->
                                 val listFiles =
-                                    packageDir.listFiles()
-                                        ?.filter { it.name != "package-info.java" }
+                                        packageDir.listFiles()
+                                                ?.filter { it.name != "package-info.java" }
                                 if (listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile } || packageDir.name == "response")) {
                                     val packageinfo =
-                                        packageDir.absolutePath.replace(
-                                            srcDir.absolutePath + File.separator,
-                                            ""
-                                        )
-                                            .replace(File.separator, ".")
+                                            packageDir.absolutePath.replace(
+                                                    srcDir.absolutePath + File.separator,
+                                                    ""
+                                            )
+                                                    .replace(File.separator, ".")
                                     val file = File(packageDir, "package-info.java")
                                     val packageInfoFile = PackageInfo(
-                                        JavaType("$packageinfo.package-info"),
-                                        overwrite = file.exists() && (file.readLines().size == 1 || file.readText()
-                                            .replace(
-                                                """/**
+                                            JavaType("$packageinfo.package-info"),
+                                            overwrite = file.exists() && (file.readLines().size == 1 || file.readText()
+                                                    .replace(
+                                                            """/**
  * 
  */
 """, ""
-                                            ).startsWith("package"))
+                                                    ).startsWith("package"))
                                     )
                                     packageInfoFile.apply {
                                         javadoc {
@@ -66,25 +66,25 @@ class GenPackageinfoPlugin : Plugin<Project> {
                         val srcDir = subProject.file("src/main/kotlin")
                         srcDir.walkTopDown().filter { it.isDirectory }.forEach { packageDir ->
                             val listFiles =
-                                packageDir.listFiles()?.filter { it.name != "package-info.java" }
+                                    packageDir.listFiles()?.filter { it.name != "package-info.java" }
                             if (listFiles != null && (listFiles.count() > 1 || listFiles.any { it.isFile } || packageDir.name == "response")) {
                                 val packageinfo =
-                                    packageDir.absolutePath.replace(
-                                        srcDir.absolutePath + File.separator,
-                                        ""
-                                    )
-                                        .replace(File.separator, ".")
+                                        packageDir.absolutePath.replace(
+                                                srcDir.absolutePath + File.separator,
+                                                ""
+                                        )
+                                                .replace(File.separator, ".")
                                 val file = File(packageDir, "package-info.kt")
                                 val packageInfoFile = PackageInfo(
-                                    type = JavaType("$packageinfo.package-info"),
-                                    directorySet = DirectorySet.KOTLIN,
-                                    overwrite = file.exists() && (file.readLines().size == 1 || file.readText()
-                                        .replace(
-                                            """/**
+                                        type = JavaType("$packageinfo.package-info"),
+                                        directorySet = DirectorySet.KOTLIN,
+                                        overwrite = file.exists() && (file.readLines().size == 1 || file.readText()
+                                                .replace(
+                                                        """/**
  * 
  */
 """, ""
-                                        ).startsWith("package"))
+                                                ).startsWith("package"))
                                 )
                                 packageInfoFile.apply {
                                     javadoc {
@@ -108,7 +108,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
                     val regex = Regex(".*/\\*\\*(.*)\\*/.*", RegexOption.DOT_MATCHES_ALL)
                     val pregex = Regex("package ([^;]*);?")
                     val dest = FileUnit(
-                        name = "doc/项目目录及包目录说明.adoc"
+                            name = "doc/项目目录及包目录说明.adoc"
                     )
                     dest.apply {
                         val projects = project.allprojects.filter { p ->
@@ -130,13 +130,13 @@ class GenPackageinfoPlugin : Plugin<Project> {
                         +"|==="
                         +"| 项目目录 | 描述"
                         project.projectDir.walkTopDown()
-                            .filter { it.isFile && ("README.md" == it.name) }
-                            .sortedBy { it.parentFile.absolutePath.substringAfter(project.projectDir.absolutePath + "/") }
-                            .forEach {
-                                +"| ${it.parentFile.absolutePath.substringAfter(project.projectDir.absolutePath + "/")} | ${
-                                    it.readText().trim()
-                                }"
-                            }
+                                .filter { it.isFile && ("README.md" == it.name) }
+                                .sortedBy { it.parentFile.absolutePath.substringAfter(project.projectDir.absolutePath + "/") }
+                                .forEach {
+                                    +"| ${it.parentFile.absolutePath.substringAfter(project.projectDir.absolutePath + "/")} | ${
+                                        it.readText().trim()
+                                    }"
+                                }
                         +"|==="
                         +""
 
@@ -145,7 +145,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
 
                         projects.forEach { p ->
                             val files = p.projectDir.walkTopDown()
-                                .filter { it.isFile && ("package-info.kt" == it.name || "package-info.java" == it.name) }
+                                    .filter { it.isFile && ("package-info.kt" == it.name || "package-info.java" == it.name) }
                             if (files.any()) {
                                 val projectPath = if (p == project.rootProject) {
                                     "主项目"
@@ -164,7 +164,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
                                 files.forEach { file ->
                                     +"| ${
                                         file.readLines().find { it.matches(pregex) }!!
-                                            .replace(pregex, "$1")
+                                                .replace(pregex, "$1")
                                     } | ${
                                         file.readText().replace(regex, "$1").replace("*", "").trim()
                                     }"

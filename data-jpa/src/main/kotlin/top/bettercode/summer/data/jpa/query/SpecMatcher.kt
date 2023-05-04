@@ -8,28 +8,25 @@ import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.query.SpecPath.BetweenValue
-import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.function.Consumer
-import java.util.function.Function
 import java.util.stream.Collectors
 import javax.persistence.criteria.*
 import javax.persistence.metamodel.Attribute
 import javax.persistence.metamodel.Attribute.PersistentAttributeType
 import javax.persistence.metamodel.ManagedType
-import kotlin.reflect.full.functions
 
 /**
  * @author Peter Wu
  */
-open class SpecMatcher<T, M : SpecMatcher<T, M>> protected constructor(
+open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
 //--------------------------------------------
-        val matchMode: SpecMatcherMode, probe: T?,
+        val matchMode: SpecMatcherMode, probe: T?
 ) : Specification<T>, SpecPredicate<T, M> {
     private val specPredicates: MutableMap<String, SpecPredicate<T, M>> = LinkedHashMap()
     private val orders: MutableList<Sort.Order> = ArrayList()
     private val typed: M
-    private val probe: T?
+    private val probe: Any?
 
     //--------------------------------------------
     init {
@@ -39,7 +36,7 @@ open class SpecMatcher<T, M : SpecMatcher<T, M>> protected constructor(
     }
 
     override fun toPredicate(
-            root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder,
+            root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder
     ): Predicate? {
         if (orders.isNotEmpty()) {
             val orders = orders.stream().map<Order> { o: Sort.Order ->
@@ -113,29 +110,29 @@ open class SpecMatcher<T, M : SpecMatcher<T, M>> protected constructor(
     }
 
     //--------------------------------------------
-    fun all(consumer: Consumer<M>): M {
-        return this.all(null, consumer)
+    fun all(matcher: (M) -> M): M {
+        return this.all(null, matcher)
     }
 
-    fun all(other: T?, consumer: Consumer<M>): M {
+    fun all(other: T?, matcher: (M) -> M): M {
 
         val constructor = typed.javaClass.declaredConstructors[0]
         constructor.isAccessible = true
         @Suppress("UNCHECKED_CAST") val otherMatcher = constructor.newInstance(SpecMatcherMode.ALL, other) as M
-        consumer.accept(otherMatcher)
+        matcher(otherMatcher)
         specPredicates[UUID.randomUUID().toString()] = otherMatcher
         return typed
     }
 
-    fun any(consumer: Consumer<M>): M {
-        return this.any(null, consumer)
+    fun any(matcher: (M) -> M): M {
+        return this.any(null, matcher)
     }
 
-    fun any(other: T?, consumer: Consumer<M>): M {
+    fun any(other: T?, matcher: (M) -> M): M {
         val constructor = typed.javaClass.declaredConstructors[0]
         constructor.isAccessible = true
         @Suppress("UNCHECKED_CAST") val otherMatcher = constructor.newInstance(SpecMatcherMode.ANY, other) as M
-        consumer.accept(otherMatcher)
+        matcher(otherMatcher)
         specPredicates[UUID.randomUUID().toString()] = otherMatcher
         return typed
     }
@@ -186,7 +183,7 @@ open class SpecMatcher<T, M : SpecMatcher<T, M>> protected constructor(
 
     fun <Y : Comparable<Y>?> between(
             propertyName: String, first: Y,
-            second: Y,
+            second: Y
     ): M {
         return withMatcher(propertyName, BetweenValue(first, second), PathMatcher.BETWEEN)
     }

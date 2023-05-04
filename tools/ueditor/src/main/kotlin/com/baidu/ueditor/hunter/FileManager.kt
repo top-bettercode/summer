@@ -5,10 +5,9 @@ import com.baidu.ueditor.define.AppInfo
 import com.baidu.ueditor.define.BaseState
 import com.baidu.ueditor.define.MultiState
 import com.baidu.ueditor.define.State
-import top.bettercode.summer.tools.lang.util.ArrayUtil.contains
 import top.bettercode.summer.tools.lang.util.FileUtil.listFiles
 import java.io.File
-import java.util.*
+import java.io.FileFilter
 
 class FileManager(conf: Map<String, Any?>?) {
     private val dir: String
@@ -33,7 +32,7 @@ class FileManager(conf: Map<String, Any?>?) {
             return BaseState(false, AppInfo.NOT_DIRECTORY)
         }
         val list: Collection<Any?> = listFiles(dir,
-                { pathname: File -> allowFiles.contains(pathname.path) }, true)
+                FileFilter { pathname: File -> allowFiles.contains(pathname.path) }, true)
         state = if (index < 0 || index > list.size) {
             MultiState(true)
         } else {

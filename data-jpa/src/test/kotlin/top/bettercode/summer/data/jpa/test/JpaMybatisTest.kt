@@ -227,7 +227,7 @@ class JpaMybatisTest {
     @Test
     @Transactional(readOnly = true)
     fun selectMybatisStream() {
-        repository.selectMybatisStream("Carter", null).use { users -> users.forEach { x: User? -> System.err.println(x) } }
+        repository.selectMybatisStream("Carter", null).forEach { x: User? -> System.err.println(x) }
     }
 
     val countDownLatch = CountDownLatch(200)

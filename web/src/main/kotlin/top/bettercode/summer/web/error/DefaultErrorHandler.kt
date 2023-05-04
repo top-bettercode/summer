@@ -90,7 +90,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
         var message: String?
         for (fieldError in fieldErrors) {
             var defaultMessage = fieldError.defaultMessage
-            if (Objects.requireNonNull(defaultMessage).contains("required type")) {
+            if (defaultMessage?.contains("required type") == true) {
                 defaultMessage = fieldError.code?.let { getText(it) }
             }
             val regrex = "^.*threw exception; nested exception is .*: (.*)$"

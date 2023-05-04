@@ -208,7 +208,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
     private fun determineHibernatePropertiesCustomizers(
             physicalNamingStrategy: PhysicalNamingStrategy?, implicitNamingStrategy: ImplicitNamingStrategy?,
             beanFactory: ConfigurableListableBeanFactory,
-            hibernatePropertiesCustomizers: List<HibernatePropertiesCustomizer>,
+            hibernatePropertiesCustomizers: List<HibernatePropertiesCustomizer>
     ): List<HibernatePropertiesCustomizer> {
         val customizers: MutableList<HibernatePropertiesCustomizer> = ArrayList()
         if (ClassUtils.isPresent("org.hibernate.resource.beans.container.spi.BeanContainer",
@@ -226,7 +226,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
 
     private class NamingStrategiesHibernatePropertiesCustomizer(
             private val physicalNamingStrategy: PhysicalNamingStrategy?,
-            private val implicitNamingStrategy: ImplicitNamingStrategy?,
+            private val implicitNamingStrategy: ImplicitNamingStrategy?
     ) : HibernatePropertiesCustomizer {
         override fun customize(hibernateProperties: MutableMap<String, Any>) {
             if (physicalNamingStrategy != null) {
