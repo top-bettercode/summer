@@ -49,7 +49,7 @@ interface PropertySource {
 
     fun mapOf(name: String): Map<String, String>
 
-    fun mapOf(name: String, isInt: Boolean): Map<Serializable, String>
+    fun mapOf(name: String, javaTypeName: String): Map<Serializable, String>
 
     fun all(): Map<String, String>
 

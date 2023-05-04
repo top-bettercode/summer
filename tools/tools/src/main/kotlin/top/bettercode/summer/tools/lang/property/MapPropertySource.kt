@@ -1,11 +1,15 @@
 package top.bettercode.summer.tools.lang.property
 
+import org.springframework.core.convert.ConversionService
+import org.springframework.core.convert.support.DefaultConversionService
 import java.io.Serializable
 
 /**
  * @author Peter Wu
  */
 open class MapPropertySource(protected val source: MutableMap<String, String>) : PropertySource {
+
+    private val conversionService: ConversionService = DefaultConversionService()
 
     override fun get(key: String): String? {
         return source[key]
@@ -30,15 +34,33 @@ open class MapPropertySource(protected val source: MutableMap<String, String>) :
         return map
     }
 
-    override fun mapOf(name: String, isInt: Boolean): Map<Serializable, String> {
+    override fun mapOf(name: String, javaTypeName: String): Map<Serializable, String> {
+        var typeName = javaTypeName
+        if (typeName == "Int") {
+            typeName = "int"
+        } else if ("String" == typeName) {
+            typeName = "java.lang.String"
+        }
+        val type: Class<*> = when (typeName) {
+            "boolean" -> Boolean::class.javaPrimitiveType!!
+            "byte" -> Byte::class.javaPrimitiveType!!
+            "short" -> Short::class.javaPrimitiveType!!
+            "int" -> Int::class.javaPrimitiveType!!
+            "long" -> Long::class.javaPrimitiveType!!
+            "float" -> Float::class.javaPrimitiveType!!
+            "double" -> Double::class.javaPrimitiveType!!
+            else -> Class.forName(typeName)
+        }
+
         val map: MutableMap<Serializable, String> = HashMap()
         source.forEach { (k: String, v: String) ->
             val prefix = "$name."
             if (k.startsWith(prefix)) {
                 val key = k.substring(prefix.length)
-                if (isInt)
-                    map[key.toInt()] = v
-                else
+                if (conversionService.canConvert(String::class.java, type)) {
+                    val newKey = conversionService.convert(key, type) as Serializable
+                    map[newKey] = v
+                } else
                     map[key] = v
             }
         }
