@@ -4,6 +4,7 @@ import groovy.util.Node
 import groovy.util.NodeList
 import org.gradle.api.*
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.internal.GradleInternal
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
@@ -34,8 +35,8 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
 
     companion object {
         fun conifgRepository(
-            project: Project,
-            p: PublishingExtension
+                project: Project,
+                p: PublishingExtension,
         ) {
             project.findProperty("mavenRepos")?.toString()?.split(",")?.forEach {
                 var mavenRepoName = project.findProperty("$it.name") as? String ?: it
@@ -45,13 +46,13 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
 
                 if (project.version.toString().endsWith("SNAPSHOT")) {
                     mavenRepoName = project.findProperty("$it.snapshots.name") as? String
-                        ?: mavenRepoName
+                            ?: mavenRepoName
                     mavenRepoUrl = project.findProperty("$it.snapshots.url") as? String
-                        ?: mavenRepoUrl
+                            ?: mavenRepoUrl
                     mavenRepoUsername = project.findProperty("$it.snapshots.username") as? String
-                        ?: mavenRepoUsername
+                            ?: mavenRepoUsername
                     mavenRepoPassword = project.findProperty("$it.snapshots.password") as? String
-                        ?: mavenRepoPassword
+                            ?: mavenRepoPassword
                 }
                 if (mavenRepoUrl != null)
                     p.repositories { handler ->
@@ -117,13 +118,20 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
                 } else {
                     mavenPublication.from(project.components.getByName("java"))
                 }
+                val gradle = project.gradle as GradleInternal
 
-                mavenPublication.artifact(project.tasks.getByName("sourcesJar")) {
-                    it.classifier = "sources"
-                }
+                val taskNames =
+                        gradle.startParameter.taskNames.map {
+                            it.substringAfterLast(":")
+                        }
+                if (!taskNames.contains("publish")) {
+                    mavenPublication.artifact(project.tasks.getByName("sourcesJar")) {
+                        it.classifier = "sources"
+                    }
 
-                mavenPublication.artifact(project.tasks.getByName("javadocJar")) {
-                    it.classifier = "javadoc"
+                    mavenPublication.artifact(project.tasks.getByName("javadocJar")) {
+                        it.classifier = "javadoc"
+                    }
                 }
 
                 mavenPublication.pom.withXml(configurePomXml(project, projectUrl, projectVcsUrl))
@@ -134,9 +142,9 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
         if (project.hasProperty("signing.keyId"))
             project.extensions.getByType(SigningExtension::class.java).apply {
                 sign(
-                    project.extensions.getByType(PublishingExtension::class.java).publications.findByName(
-                        "mavenJava"
-                    )
+                        project.extensions.getByType(PublishingExtension::class.java).publications.findByName(
+                                "mavenJava"
+                        )
                 )
             }
 
@@ -148,9 +156,9 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
      * 配置pom.xml相关信息
      */
     protected fun configurePomXml(
-        project: Project,
-        projectUrl: String?,
-        projectVcsUrl: String?
+            project: Project,
+            projectUrl: String?,
+            projectVcsUrl: String?,
     ): (XmlProvider) -> Unit {
         return {
             val root = it.asNode()
@@ -162,8 +170,8 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
                     appendNode("packaging", if (project.plugins.hasPlugin("war")) "war" else "jar")
                 appendNode("name", project.name)
                 appendNode(
-                    "description",
-                    if (!project.description.isNullOrBlank()) project.description else project.name
+                        "description",
+                        if (!project.description.isNullOrBlank()) project.description else project.name
                 )
                 if (!projectUrl.isNullOrBlank())
                     appendNode("url", projectUrl)
@@ -182,7 +190,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
                     val scm = appendNode("scm")
                     scm.appendNode("url", projectVcsUrl)
                     val tag =
-                        if (projectVcsUrl.contains("git")) "git" else if (projectVcsUrl.contains("svn")) "svn" else projectVcsUrl
+                            if (projectVcsUrl.contains("git")) "git" else if (projectVcsUrl.contains("svn")) "svn" else projectVcsUrl
                     scm.appendNode("connection", "scm:$tag:$projectVcsUrl")
                     scm.appendNode("developerConnection", "scm:$tag:$projectVcsUrl")
                 }
@@ -212,19 +220,19 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
             it.dependsOn("classes")
             it.archiveClassifier.set("sources")
             it.from(
-                project.extensions.getByType(JavaPluginExtension::class.java).sourceSets.getByName(
-                    SourceSet.MAIN_SOURCE_SET_NAME
-                ).allSource
+                    project.extensions.getByType(JavaPluginExtension::class.java).sourceSets.getByName(
+                            SourceSet.MAIN_SOURCE_SET_NAME
+                    ).allSource
             )
         }
         project.tasks.named("jar", Jar::class.java) {
             it.manifest { manifest ->
                 manifest.attributes(
-                    mapOf(
-                        "Manifest-Version" to project.version,
-                        "Implementation-Title" to "${project.rootProject.name}${project.path}",
-                        "Implementation-Version" to project.version
-                    )
+                        mapOf(
+                                "Manifest-Version" to project.version,
+                                "Implementation-Title" to "${project.rootProject.name}${project.path}",
+                                "Implementation-Version" to project.version
+                        )
                 )
             }
         }
