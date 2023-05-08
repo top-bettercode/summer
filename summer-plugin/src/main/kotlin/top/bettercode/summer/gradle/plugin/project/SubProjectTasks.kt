@@ -4,6 +4,7 @@ import isBoot
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.JavaCompile
@@ -91,6 +92,12 @@ object SubProjectTasks {
                 }
             }
 
+            withType(JavaExec::class.java) {
+                System.getProperties().forEach { t, u ->
+                    it.systemProperty(t as String, u)
+                }
+            }
+
             if (project.isBoot) {
                 create("resolveMainClass") {
                     it.dependsOn("bootJarMainClassName")
@@ -98,10 +105,10 @@ object SubProjectTasks {
                         override fun execute(it: Task) {
                             project.tasks.findByName("startScripts").apply {
                                 this as CreateStartScripts
-                                if (!mainClass.isPresent) {
+                                if (!this.mainClass.isPresent) {
                                     val bootJar = project.tasks.getByName("bootJar")
                                     bootJar as BootJar
-                                    mainClass.set(bootJar.mainClass)
+                                    this.mainClass.set(bootJar.mainClass)
                                 }
                             }
                         }
@@ -109,11 +116,6 @@ object SubProjectTasks {
                 }
                 named("startScripts") { task ->
                     task.dependsOn("resolveMainClass")
-                }
-                named("bootRun", BootRun::class.java) {
-                    System.getProperties().forEach { t, u ->
-                        it.systemProperty(t as String, u)
-                    }
                 }
                 named("bootJar", BootJar::class.java) {
                     it.launchScript()

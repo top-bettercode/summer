@@ -1,5 +1,6 @@
 package top.bettercode.summer.gradle.plugin.dist
 
+import isBoot
 import org.apache.tools.ant.taskdefs.Get
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Action
@@ -14,11 +15,14 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.plugins.JavaPlugin.PROCESS_RESOURCES_TASK_NAME
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.gradle.process.JavaForkOptions
+import org.springframework.boot.gradle.tasks.run.BootRun
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.findDistProperty
 import top.bettercode.summer.tools.lang.util.OS
 import java.io.File
@@ -272,7 +276,11 @@ class DistPlugin : Plugin<Project> {
                     task.jvmArgs = jvmArgs.toList()
                 if (Os.isFamily(Os.FAMILY_UNIX))
                     task.environment("LD_LIBRARY_PATH", project.file(dist.nativePath))
+            }
 
+            project.tasks.withType(JavaExec::class.java) { task ->
+                if (Os.isFamily(Os.FAMILY_UNIX))
+                    task.environment("LD_LIBRARY_PATH", project.file(dist.nativePath))
             }
         }
     }

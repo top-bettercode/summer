@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    api(project(":tools:generator"))
-
     api(gradleApi())
+
+    api(project(":tools:generator"))
 
     api("org.jetbrains.kotlin:kotlin-gradle-plugin")
     api("org.jetbrains.kotlin:kotlin-allopen")
