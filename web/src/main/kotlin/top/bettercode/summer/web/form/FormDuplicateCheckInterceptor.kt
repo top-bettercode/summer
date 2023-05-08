@@ -24,7 +24,7 @@ class FormDuplicateCheckInterceptor(private val formkeyService: IFormkeyService,
         if (e == null) {
             e = getError(request!!)
         }
-        if (e != null) {
+        if (e != null && request != null) {
             formkeyService.cleanKey(request)
         }
     }

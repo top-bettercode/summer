@@ -39,9 +39,11 @@ interface IFormkeyService {
         }
     }
 
-    fun cleanKey(request: HttpServletRequest?) {
-        val formkey = request!!.getAttribute(FormDuplicateCheckInterceptor.Companion.FORM_KEY) as String
-        remove(formkey)
+    fun cleanKey(request: HttpServletRequest) {
+        val formkey = request.getAttribute(FormDuplicateCheckInterceptor.FORM_KEY) as String?
+        if (formkey != null) {
+            remove(formkey)
+        }
         if (log.isTraceEnabled) {
             log.trace("{} remove:{}", request.requestURI, formkey)
         }
