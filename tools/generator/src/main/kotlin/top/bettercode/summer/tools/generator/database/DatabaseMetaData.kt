@@ -19,7 +19,7 @@ import java.util.*
 
 
 class DatabaseMetaData(
-    private val datasource: JDBCConnectionConfiguration
+        private val datasource: JDBCConnectionConfiguration
 ) : AutoCloseable {
 
     private var databaseMetaData: java.sql.DatabaseMetaData
@@ -85,8 +85,8 @@ class DatabaseMetaData(
      * @return 数据表名
      */
     fun tableNames(): List<String> {
-        return databaseMetaData.getTables(datasource.catalog, datasource.schema, null, null)
-            .map { getString("TABLE_NAME") }.sortedBy { it }
+        return databaseMetaData.getTables(datasource.catalog, datasource.schema, null, arrayOf("TABLE"))
+                .map { getString("TABLE_NAME") }.sortedBy { it }
     }
 
     /**
@@ -100,7 +100,7 @@ class DatabaseMetaData(
         val databaseProductName = databaseMetaData.databaseProductName
         tableName.current { curentSchema, curentTableName ->
             val tables =
-                databaseMetaData.getTables(datasource.catalog, curentSchema, curentTableName, null)
+                    databaseMetaData.getTables(datasource.catalog, curentSchema, curentTableName, null)
             table = tables.toTable(call)
         }
         if (table == null) {
@@ -141,15 +141,15 @@ class DatabaseMetaData(
                     indexes = mutableListOf()
                 }
                 val table = Table(
-                    productName = databaseMetaData.databaseProductName,
-                    catalog = tableCat ?: datasource.catalog,
-                    schema = schema ?: datasource.schema,
-                    tableName = name,
-                    tableType = tableType,
-                    remarks = remarks?.trim() ?: "",
-                    primaryKeyNames = primaryKeyNames,
-                    indexes = indexes,
-                    pumlColumns = columns.toMutableList()
+                        productName = databaseMetaData.databaseProductName,
+                        catalog = tableCat ?: datasource.catalog,
+                        schema = schema ?: datasource.schema,
+                        tableName = name,
+                        tableType = tableType,
+                        remarks = remarks?.trim() ?: "",
+                        primaryKeyNames = primaryKeyNames,
+                        indexes = indexes,
+                        pumlColumns = columns.toMutableList()
                 )
                 call(table)
                 return table
@@ -163,19 +163,19 @@ class DatabaseMetaData(
 
     private fun fixColumns(tableName: String, columns: MutableList<Column>) {
         val databaseDriver =
-            DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
+                DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
         if (arrayOf(
-                DatabaseDriver.MYSQL,
-                DatabaseDriver.MARIADB,
-                DatabaseDriver.H2
-            ).contains(
-                databaseDriver
-            )
+                        DatabaseDriver.MYSQL,
+                        DatabaseDriver.MARIADB,
+                        DatabaseDriver.H2
+                ).contains(
+                        databaseDriver
+                )
         ) {
             val quoteMark: String = "`"
             try {
                 val prepareStatement =
-                    databaseMetaData.connection.prepareStatement("SHOW COLUMNS FROM $quoteMark$tableName$quoteMark")
+                        databaseMetaData.connection.prepareStatement("SHOW COLUMNS FROM $quoteMark$tableName$quoteMark")
                 prepareStatement.queryTimeout = 5
                 prepareStatement.executeQuery().map {
                     val find = columns.find { it.columnName == getString(1) }
@@ -187,7 +187,7 @@ class DatabaseMetaData(
                             if (find.extra.contains("AUTO_INCREMENT", true)) {
                                 find.autoIncrement = true
                                 find.extra = find.extra.replace("AUTO_INCREMENT", "", true)
-                                    .replace("  ", " ", true).trim()
+                                        .replace("  ", " ", true).trim()
                             }
                         } catch (ignore: Exception) {
                         }
@@ -214,16 +214,16 @@ class DatabaseMetaData(
         tableName.current { curentSchema, curentTableName ->
             if (columnNames.isEmpty()) {
                 databaseMetaData.getColumns(datasource.catalog, curentSchema, curentTableName, null)
-                    .map {
-                        fillColumn(columns)
-                    }
+                        .map {
+                            fillColumn(columns)
+                        }
             } else {
                 columnNames.forEach {
                     databaseMetaData.getColumns(
-                        datasource.catalog,
-                        curentSchema,
-                        curentTableName,
-                        it
+                            datasource.catalog,
+                            curentSchema,
+                            curentTableName,
+                            it
                     ).map {
                         fillColumn(columns)
                     }
@@ -234,9 +234,9 @@ class DatabaseMetaData(
     }
 
     private fun fixImportedKeys(
-        curentSchema: String?,
-        curentTableName: String,
-        columns: MutableList<Column>
+            curentSchema: String?,
+            curentTableName: String,
+            columns: MutableList<Column>
     ) {
         databaseMetaData.getImportedKeys(datasource.catalog, curentSchema, curentTableName).map {
             val find = columns.find { it.columnName == getString("FKCOLUMN_NAME") }!!
@@ -269,25 +269,25 @@ class DatabaseMetaData(
         val decimalDigits = getInt("DECIMAL_DIGITS")
         val def = getString("COLUMN_DEF")
         val columnDef =
-            if (def != null && def.isNotEmpty() && def.isBlank()) " " else def?.trim('\'')?.trim()
-                ?.trim()
+                if (def != null && def.isNotEmpty() && def.isBlank()) " " else def?.trim('\'')?.trim()
+                        ?.trim()
         val columnSize = getInt("COLUMN_SIZE")
         val remarks = getString("REMARKS")?.replace("[\t\n\r]", "")?.trim()
-            ?: ""
+                ?: ""
         val tableCat = getString("TABLE_CAT") ?: datasource.catalog
         val tableSchem = getString("TABLE_SCHEM") ?: datasource.schema
         val column = Column(
-            tableCat = tableCat,
-            tableSchem = tableSchem,
-            columnName = columnName,
-            typeName = typeName,
-            dataType = dataType,
-            decimalDigits = decimalDigits,
-            columnSize = columnSize,
-            remarks = remarks,
-            nullable = nullable,
-            columnDef = columnDef,
-            unsigned = typeName.contains("UNSIGNED", true)
+                tableCat = tableCat,
+                tableSchem = tableSchem,
+                columnName = columnName,
+                typeName = typeName,
+                dataType = dataType,
+                decimalDigits = decimalDigits,
+                columnSize = columnSize,
+                remarks = remarks,
+                nullable = nullable,
+                columnDef = columnDef,
+                unsigned = typeName.contains("UNSIGNED", true)
         )
         if (supportsIsAutoIncrement) {
             column.autoIncrement = "YES" == getString("IS_AUTOINCREMENT")
@@ -327,23 +327,23 @@ class DatabaseMetaData(
         val indexes = mutableListOf<Indexed>()
         tableName.current { curentSchema, curentTableName ->
             databaseMetaData.getIndexInfo(
-                datasource.catalog,
-                curentSchema,
-                curentTableName,
-                false,
-                false
+                    datasource.catalog,
+                    curentSchema,
+                    curentTableName,
+                    false,
+                    false
             )
-                .map {
-                    val indexName = getString("INDEX_NAME")
-                    if (!indexName.isNullOrBlank() && !"PRIMARY".equals(indexName, true)) {
-                        var indexed = indexes.find { it.name == indexName }
-                        if (indexed == null) {
-                            indexed = Indexed(indexName, !getBoolean("NON_UNIQUE"))
-                            indexes.add(indexed)
+                    .map {
+                        val indexName = getString("INDEX_NAME")
+                        if (!indexName.isNullOrBlank() && !"PRIMARY".equals(indexName, true)) {
+                            var indexed = indexes.find { it.name == indexName }
+                            if (indexed == null) {
+                                indexed = Indexed(indexName, !getBoolean("NON_UNIQUE"))
+                                indexes.add(indexed)
+                            }
+                            indexed.columnName.add(getString("COLUMN_NAME"))
                         }
-                        indexed.columnName.add(getString("COLUMN_NAME"))
                     }
-                }
         }
         return indexes
     }
