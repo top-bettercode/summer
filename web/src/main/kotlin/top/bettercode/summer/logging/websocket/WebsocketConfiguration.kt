@@ -17,10 +17,10 @@ import top.bettercode.summer.logging.WebsocketProperties
 @ConditionalOnWebApplication
 @ConditionalOnClass(org.springframework.web.socket.server.standard.ServerEndpointExporter::class)
 @ConditionalOnProperty(
-    prefix = "summer.logging.websocket",
-    name = ["enabled"],
-    havingValue = "true",
-    matchIfMissing = true
+        prefix = "summer.logging.websocket",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
 )
 @Configuration(proxyBeanMethods = false)
 class WebsocketConfiguration {
@@ -31,8 +31,8 @@ class WebsocketConfiguration {
     }
 
     @Bean
-    fun webSocketController(websocketProperties: WebsocketProperties): WebSocketController {
-        return WebSocketController(websocketProperties)
+    fun webSocketController(): WebSocketController {
+        return WebSocketController()
     }
 
 }

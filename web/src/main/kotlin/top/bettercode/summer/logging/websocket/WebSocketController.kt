@@ -9,7 +9,7 @@ import javax.websocket.*
 import javax.websocket.server.ServerEndpoint
 
 @ServerEndpoint("/websocket/logging")
-class WebSocketController(private val websocketProperties: WebsocketProperties) {
+class WebSocketController {
 
     private val log = LoggerFactory.getLogger(WebSocketController::class.java)
 
@@ -52,6 +52,9 @@ class WebSocketController(private val websocketProperties: WebsocketProperties) 
 
     companion object {
         private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
+        private val websocketProperties: WebsocketProperties by lazy {
+            ApplicationContextHolder.getBean(WebsocketProperties::class.java)!!
+        }
 
         @Throws(IOException::class)
         fun send(message: String?) {
