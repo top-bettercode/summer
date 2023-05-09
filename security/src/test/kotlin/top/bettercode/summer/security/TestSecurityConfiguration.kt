@@ -23,11 +23,9 @@ class TestSecurityConfiguration {
     //  }
     @Bean
     fun revokeTokenService(): IRevokeTokenService {
-        return object : IRevokeTokenService {
-            override fun revokeToken(principal: UserDetails) {
-                System.err
-                        .println(valueOf(principal, true))
-            }
+        return IRevokeTokenService { principal ->
+            System.err
+                    .println(valueOf(principal, true))
         }
     }
 

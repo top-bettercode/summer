@@ -23,7 +23,7 @@ class ChinaCellValidator : ConstraintValidator<ChinaCell, String?> {
 
     override fun isValid(charSequence: String?,
                          constraintValidatorContext: ConstraintValidatorContext): Boolean {
-        return if (charSequence == null || charSequence.isEmpty()) {
+        return if (charSequence.isNullOrEmpty()) {
             true
         } else when (model) {
             CellUtil.Model.ALL -> isChinaCell(charSequence)

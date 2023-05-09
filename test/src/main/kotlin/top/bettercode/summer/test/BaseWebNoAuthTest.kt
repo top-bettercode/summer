@@ -121,7 +121,7 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
         var contentDisposition = result.response.getHeader("Content-Disposition")
         contentDisposition = URLDecoder
                 .decode(
-                        Objects.requireNonNull(contentDisposition)
+                        contentDisposition!!
                                 .replace(".*filename\\*=UTF-8''(.*?)".toRegex(), "$1"), "UTF-8")
         return "build/$contentDisposition"
     }

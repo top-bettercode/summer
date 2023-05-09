@@ -39,7 +39,7 @@ import javax.persistence.EntityManager
  *
  * @author Peter Wu
  */
-open class JpaExtRepositoryFactory(
+class JpaExtRepositoryFactory(
         entityManager: EntityManager,
         configuration: Configuration, jpaExtProperties: JpaExtProperties
 ) : RepositoryFactorySupport() {

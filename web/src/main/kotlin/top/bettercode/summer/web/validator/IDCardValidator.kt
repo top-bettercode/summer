@@ -6,7 +6,7 @@ import javax.validation.ConstraintValidatorContext
 class IDCardValidator : ConstraintValidator<IDCard?, String?> {
     override fun initialize(annotation: IDCard?) {}
     override fun isValid(value: String?, context: ConstraintValidatorContext): Boolean {
-        return value == null || value.isEmpty() || IDCardUtil.validate(value)
+        return value.isNullOrEmpty() || IDCardUtil.validate(value)
     }
 
     companion object {

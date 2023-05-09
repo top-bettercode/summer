@@ -23,12 +23,8 @@ import java.util.*
 class CustomNullSerializer(private val writer: BeanPropertyWriter, private val defaultValue: String?,
                            private val fieldName: String?, private val extendedValue: String?, private val jacksonExtProperties: JacksonExtProperties) : StdSerializer<Any>(Any::class.java) {
     private val type: Class<*> = writer.type.rawClass
-    private val isArray: Boolean
-
-    init {
-        isArray = type.isArray || MutableCollection::class.java.isAssignableFrom(type) && !MutableMap::class.java
-                .isAssignableFrom(type)
-    }
+    private val isArray: Boolean = type.isArray || MutableCollection::class.java.isAssignableFrom(type) && !MutableMap::class.java
+            .isAssignableFrom(type)
 
     @Throws(IOException::class)
     override fun serialize(value: Any?, gen: JsonGenerator, provider: SerializerProvider) {

@@ -190,7 +190,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
      * @param produces the media type produced (or `MediaType.ALL`)
      * @return if the stacktrace attribute should be included
      */
-    protected fun isIncludeStackTrace(request: WebRequest, produces: MediaType?): Boolean {
+    protected fun isIncludeStackTrace(request: WebRequest, @Suppress("UNUSED_PARAMETER") produces: MediaType?): Boolean {
         return when (errorProperties.includeStacktrace) {
             IncludeAttribute.ALWAYS -> true
             IncludeAttribute.ON_PARAM -> getTraceParameter(request)

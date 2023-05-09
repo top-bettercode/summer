@@ -141,7 +141,7 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
             val softDeleteProperties = jpaExtProperties.softDelete
             val propertyDescriptor = BeanUtils
                     .getPropertyDescriptor(domainClass, softDeletedPropertyName!!)!!
-            softDeletedWriteMethod = Objects.requireNonNull(propertyDescriptor).writeMethod
+            softDeletedWriteMethod = propertyDescriptor.writeMethod
             softDeletedReadMethod = propertyDescriptor.readMethod
             softDeletedTrueValue = if ("" != trueValue) {
                 trueValue
@@ -200,7 +200,7 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
         }
     }
 
-    override fun supportSoftDeleted(): Boolean {
+    final override fun supportSoftDeleted(): Boolean {
         return supportSoftDeleted
     }
 

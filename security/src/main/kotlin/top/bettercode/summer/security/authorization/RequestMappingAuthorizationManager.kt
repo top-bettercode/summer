@@ -41,7 +41,7 @@ class RequestMappingAuthorizationManager(
     // ===================================================================================================
     init {
         handlerMapping.handlerMethods.forEach { (mappingInfo: RequestMappingInfo, handlerMethod: HandlerMethod?) ->
-            for (pathPattern in Objects.requireNonNull(mappingInfo.pathPatternsCondition)
+            for (pathPattern in mappingInfo.pathPatternsCondition!!
                     .patterns) {
                 val pattern = pathPattern.patternString
                 val methods = mappingInfo.methodsCondition.methods

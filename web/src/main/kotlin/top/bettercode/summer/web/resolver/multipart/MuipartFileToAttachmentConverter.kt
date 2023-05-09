@@ -31,7 +31,7 @@ class MuipartFileToAttachmentConverter(private val multipartProperties: SummerMu
         return try {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
-            val request = Objects.requireNonNull(requestAttributes).request
+            val request = requestAttributes.request
             val name = source.name
             require(!source.isEmpty) { "不能上传空文件" }
             var fileType: String? = request.getAttribute(FILE_TYPE_PARAM_TYPE) as String
@@ -99,7 +99,7 @@ class MuipartFileToAttachmentConverter(private val multipartProperties: SummerMu
     fun cleanFile() {
         val requestAttributes = RequestContextHolder
                 .getRequestAttributes() as ServletRequestAttributes
-        val request = Objects.requireNonNull(requestAttributes).request
+        val request = requestAttributes.request
         @Suppress("UNCHECKED_CAST") val files = request
                 .getAttribute(REQUEST_FILES) as MultiValueMap<String, Attachment>?
         if (files != null) {

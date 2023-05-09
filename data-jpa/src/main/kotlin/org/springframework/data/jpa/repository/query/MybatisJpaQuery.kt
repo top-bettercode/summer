@@ -172,7 +172,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         MDC.put("id", sqlLogId)
                         val result = super.doExecute(query, accessor) as List<*>
                         if (sqlLog.isDebugEnabled) {
-                            sqlLog.debug("{} rows retrieved", Objects.requireNonNull(result).size)
+                            sqlLog.debug("{} rows retrieved", result.size)
                         }
                         result
                     } finally {
@@ -247,7 +247,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                         }
                         val result = super.doExecute(query, accessor) as SliceImpl<*>
                         if (sqlLog.isDebugEnabled) {
-                            sqlLog.debug("total: {} rows", Objects.requireNonNull(result).numberOfElements)
+                            sqlLog.debug("total: {} rows", result.numberOfElements)
                             sqlLog.debug("{} rows retrieved", result.size)
                         }
                         result
@@ -258,6 +258,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             }
         } else {
             object : SingleEntityExecution() {
+                @Suppress("WRONG_NULLABILITY_FOR_JAVA_OVERRIDE")
                 override fun doExecute(query: AbstractJpaQuery, accessor: JpaParametersParameterAccessor): Any? {
                     return try {
                         MDC.put("id", sqlLogId)

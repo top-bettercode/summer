@@ -670,13 +670,11 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         private val packageScanClassResolver = PackageScanClassResolver()
         val defaultSpiltMarkers: List<String>
                 by lazy {
-                    val clazzs: Set<Class<*>> = packageScanClassResolver.findByFilter(object : PackageScanFilter {
-                        override fun matches(type: Class<*>): Boolean {
-                            return try {
-                                type.isAnnotationPresent(LogMarker::class.java)
-                            } catch (e: Exception) {
-                                false
-                            }
+                    val clazzs: Set<Class<*>> = packageScanClassResolver.findByFilter({ type ->
+                        try {
+                            type.isAnnotationPresent(LogMarker::class.java)
+                        } catch (e: Exception) {
+                            false
                         }
                     }, "top.bettercode.summer"
                     )

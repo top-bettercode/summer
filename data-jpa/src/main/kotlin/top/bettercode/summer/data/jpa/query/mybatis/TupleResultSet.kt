@@ -18,12 +18,8 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
     private var closed = false
     private var currentRow = 0
     private var currentCloumn = 0
-    private val maxRow: Int
+    private val maxRow: Int = tuples.size
     private val resultSetMetaData: TupleResultSetMetaData = TupleResultSetMetaData(tuples)
-
-    init {
-        maxRow = tuples.size
-    }
 
     @Throws(SQLException::class)
     override fun next(): Boolean {

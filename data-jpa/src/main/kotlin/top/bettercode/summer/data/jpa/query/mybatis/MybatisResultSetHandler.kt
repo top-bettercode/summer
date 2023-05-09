@@ -31,9 +31,9 @@ import java.sql.SQLException
  */
 open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedStatement: MappedStatement?, private val resultHandler: ResultHandler<Any?>? = null) {
     private val configuration: Configuration = mappedStatement!!.configuration
-    private val typeHandlerRegistry: TypeHandlerRegistry
-    private val objectFactory: ObjectFactory
-    private val reflectorFactory: ReflectorFactory
+    private val typeHandlerRegistry: TypeHandlerRegistry = configuration.typeHandlerRegistry
+    private val objectFactory: ObjectFactory = configuration.objectFactory
+    private val reflectorFactory: ReflectorFactory = configuration.reflectorFactory
 
     // nested resultmaps
     private val nestedResultObjects: MutableMap<CacheKey, Any?> = HashMap()
@@ -59,12 +59,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
             val column: String, val property: String, val typeHandler: TypeHandler<*>,
             val primitive: Boolean
     )
-
-    init {
-        typeHandlerRegistry = configuration.typeHandlerRegistry
-        objectFactory = configuration.objectFactory
-        reflectorFactory = configuration.reflectorFactory
-    }
 
     //
     // HANDLE RESULT SETS
@@ -344,7 +338,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     @Throws(SQLException::class)
     private fun getPropertyMappingValue(
             rs: ResultSet, metaResultObject: MetaObject,
-            propertyMapping: ResultMapping, lazyLoader: ResultLoaderMap, columnPrefix: String?
+            propertyMapping: ResultMapping, @Suppress("UNUSED_PARAMETER") lazyLoader: ResultLoaderMap, columnPrefix: String?
     ): Any? {
         return if (propertyMapping.nestedQueryId != null) {
             throw UnsupportedOperationException()
@@ -696,7 +690,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     }
 
     private fun prependPrefix(columnName: String?, prefix: String?): String? {
-        return if (columnName == null || columnName.isEmpty() || prefix == null || prefix.isEmpty()) {
+        return if (columnName.isNullOrEmpty() || prefix.isNullOrEmpty()) {
             columnName
         } else prefix + columnName
     }

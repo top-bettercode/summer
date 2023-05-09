@@ -18,8 +18,8 @@ interface ScopeUserDetailsService : UserDetailsService {
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String): UserDetails {
         val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
-        val request = Objects.requireNonNull(requestAttributes).request
-        val scope = request.getParameter(SecurityParameterNames.Companion.SCOPE)
+        val request = requestAttributes.request
+        val scope = request.getParameter(SecurityParameterNames.SCOPE)
         Assert.hasText(scope, "scope 不能为空")
         return loadUserByScopeAndUsername(scope, username)
     }

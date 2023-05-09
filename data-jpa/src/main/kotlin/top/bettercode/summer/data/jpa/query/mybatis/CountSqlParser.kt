@@ -209,7 +209,7 @@ class CountSqlParser {
    * 处理WithItem
    */
     fun processWithItemsList(withItemsList: List<WithItem>?) {
-        if (withItemsList != null && withItemsList.isNotEmpty()) {
+        if (!withItemsList.isNullOrEmpty()) {
             for (item in withItemsList) {
                 if (item.subSelect != null) {
                     processSelectBody(item.subSelect.selectBody)

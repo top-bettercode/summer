@@ -707,7 +707,7 @@ open class ExcelField<T, P : Any?> {
         //--------------------------------------------
         @JvmStatic
         fun <T, P> index(title: String): ExcelField<T, P> {
-            return ExcelField(title, true, false)
+            return ExcelField(title, indexColumn = true, imageColumn = false)
         }
 
         /**

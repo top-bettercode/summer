@@ -24,14 +24,9 @@ internal class MybatisParameterBinder(
         private val parameters: JpaParameters,
         private val mappedStatement: MappedStatement
 ) : ParameterBinder(parameters, emptyList()) {
-    private val typeHandlerRegistry: TypeHandlerRegistry
+    private val typeHandlerRegistry: TypeHandlerRegistry = mappedStatement.configuration.typeHandlerRegistry
     private val configuration: Configuration = mappedStatement.configuration
 
-    init {
-        typeHandlerRegistry = mappedStatement.configuration.typeHandlerRegistry
-    }
-
-    @Deprecated("")
     override fun <T : Query?> bind(
             jpaQuery: T, metadata: QueryParameterSetter.QueryMetadata,
             accessor: JpaParametersParameterAccessor
@@ -46,7 +41,6 @@ internal class MybatisParameterBinder(
     ) {
     }
 
-    @Deprecated("")
     public override fun bindAndPrepare(
             query: Query, metadata: QueryParameterSetter.QueryMetadata,
             accessor: JpaParametersParameterAccessor
@@ -79,7 +73,10 @@ internal class MybatisParameterBinder(
                     }
                     try {
                         val position = i + 1
-                        errorHandling.execute { query.setParameter(position, value) }
+                        errorHandling.execute {
+                            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                            query.setParameter(position, value)
+                        }
                     } catch (e: Exception) {
                         throw TypeException(
                                 "Could not set parameters for mapping: $parameterMapping. Cause: $e", e)
