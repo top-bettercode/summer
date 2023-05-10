@@ -11,7 +11,7 @@ import java.util.*
  * @author Peter Wu
  */
 open class TimeUtil(
-    private val localDateTime: LocalDateTime
+        private val localDateTime: LocalDateTime
 ) {
 
     /**
@@ -48,8 +48,8 @@ open class TimeUtil(
      */
     val firstDayOfQuarter: TimeUtil by lazy {
         of(
-            localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().value)
-                .with(TemporalAdjusters.firstDayOfMonth())
+                localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().value)
+                        .with(TemporalAdjusters.firstDayOfMonth())
         )
     }
 
@@ -60,8 +60,8 @@ open class TimeUtil(
      */
     val firstDayOfNextQuarter: TimeUtil by lazy {
         of(
-            localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().plus(3).value)
-                .with(TemporalAdjusters.firstDayOfMonth())
+                localDateTime.withMonth(localDateTime.month.firstMonthOfQuarter().plus(3).value)
+                        .with(TemporalAdjusters.firstDayOfMonth())
         )
     }
 
@@ -72,9 +72,9 @@ open class TimeUtil(
      */
     val lastDayOfQuarter: TimeUtil by lazy {
         of(
-            localDateTime
-                .withMonth(localDateTime.month.firstMonthOfQuarter().plus(2).value)
-                .with(TemporalAdjusters.lastDayOfMonth())
+                localDateTime
+                        .withMonth(localDateTime.month.firstMonthOfQuarter().plus(2).value)
+                        .with(TemporalAdjusters.lastDayOfMonth())
         )
     }
 
@@ -117,6 +117,10 @@ open class TimeUtil(
     @JvmOverloads
     fun toInstant(zoneId: ZoneId = DEFAULT_ZONE_ID): Instant {
         return localDateTime.atZone(zoneId).toInstant()
+    }
+
+    fun toLocalTime(): LocalTime {
+        return localDateTime.toLocalTime()
     }
 
     fun toLocalDateTime(): LocalDateTime {
@@ -171,7 +175,7 @@ open class TimeUtil(
         @JvmStatic
         fun parse(text: CharSequence, formatter: String): TimeUtil {
             return parse(
-                text, DateTimeFormatterBuilder()
+                    text, DateTimeFormatterBuilder()
                     .appendPattern(formatter)
                     .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
                     .toFormatter()
@@ -191,12 +195,12 @@ open class TimeUtil(
         @JvmStatic
         fun parseDate(text: CharSequence, formatter: String): TimeUtil {
             return of(
-                LocalDate.parse(
-                    text, DateTimeFormatterBuilder()
-                        .appendPattern(formatter)
-                        .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-                        .toFormatter()
-                )
+                    LocalDate.parse(
+                            text, DateTimeFormatterBuilder()
+                            .appendPattern(formatter)
+                            .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                            .toFormatter()
+                    )
             )
         }
 
@@ -234,7 +238,7 @@ open class TimeUtil(
         @JvmStatic
         fun of(calendar: Calendar): TimeUtil {
             return TimeUtil(
-                LocalDateTime.ofInstant(calendar.toInstant(), calendar.timeZone.toZoneId())
+                    LocalDateTime.ofInstant(calendar.toInstant(), calendar.timeZone.toZoneId())
             )
         }
 
