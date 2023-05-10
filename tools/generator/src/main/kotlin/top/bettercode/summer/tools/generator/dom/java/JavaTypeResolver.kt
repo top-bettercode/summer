@@ -16,6 +16,7 @@ object JavaTypeResolver {
     var useJSR310Types: Boolean = true
 
     private val typeMap: MutableMap<Int, JdbcTypeInformation> = HashMap()
+    private val javaTypeMap: MutableMap<JavaType, String> = HashMap()
     private val typeNameMap: MutableMap<String, Int> = HashMap()
     private val typeNames: PropertiesSource = Settings.jdbcTypeName
 
@@ -169,6 +170,24 @@ object JavaTypeResolver {
         typeMap.forEach { (t, u) ->
             typeNameMap[u.jdbcTypeName] = t
         }
+        javaTypeMap[JavaType("java.time.OffsetDateTime")] = "TIMESTAMP_WITH_TIMEZONE"
+        javaTypeMap[JavaType("java.time.OffsetTime")] = "TIME_WITH_TIMEZONE"
+        javaTypeMap[JavaType("byte[]")] = "VARBINARY"
+        javaTypeMap[JavaType(java.util.Date::class.java.name)] = "DATE"
+        javaTypeMap[JavaType(java.lang.Boolean::class.java.name)] = "BOOLEAN"
+        javaTypeMap[JavaType(java.lang.Character::class.java.name)] = "CHAR"
+        javaTypeMap[JavaType(java.lang.String::class.java.name)] = "VARCHAR"
+        javaTypeMap[JavaType(java.lang.Byte::class.java.name)] = "TINYINT"
+        javaTypeMap[JavaType(java.lang.Short::class.java.name)] = "SMALLINT"
+        javaTypeMap[JavaType(java.lang.Float::class.java.name)] = "FLOAT"
+        javaTypeMap[JavaType(java.lang.Double::class.java.name)] = "DOUBLE"
+        javaTypeMap[JavaType(java.lang.Integer::class.java.name)] = "INTEGER"
+        javaTypeMap[JavaType(java.lang.Long::class.java.name)] = "BIGINT"
+        javaTypeMap[JavaType(java.math.BigDecimal::class.java.name)] = "DECIMAL"
+    }
+
+    fun calculateJdbcTypeName(javaType: JavaType): String {
+        return javaTypeMap.getOrDefault(javaType, "VARCHAR")
     }
 
     private fun calculateJdbcTypeName(typeName: String): String {
