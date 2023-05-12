@@ -16,7 +16,7 @@ class RespEntity<T> : IRespEntity, Serializable {
     @JvmField
     @JsonView(Any::class)
     @JsonProperty(KEY_STATUS)
-    var status: String = HttpStatus.OK.value().toString()
+    var status: String? = null
 
     @JvmField
     @JsonProperty(KEY_MESSAGE)
@@ -101,13 +101,13 @@ class RespEntity<T> : IRespEntity, Serializable {
         const val KEY_ERRORS = "errors"
         fun assertOk(respEntity: RespEntity<*>) {
             if (!respEntity.isOk) {
-                throw SystemException(respEntity.status, respEntity.message)
+                throw SystemException(respEntity.status!!, respEntity.message)
             }
         }
 
         fun assertOk(respEntity: RespEntity<*>, message: String?) {
             if (!respEntity.isOk) {
-                throw SystemException(respEntity.status, message)
+                throw SystemException(respEntity.status!!, message)
             }
         }
 
