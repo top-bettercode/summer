@@ -13,8 +13,12 @@ import java.util.function.Supplier
 /**
  * @author Peter Wu
  */
-open class BaseService<T, ID, M : BaseRepository<T, ID>>(override val repository: M) : IBaseService<T, ID, M> {
+open class BaseService<T, ID, M : BaseRepository<T, ID>>(
+        @JvmField
+        protected val repository: M
+) : IBaseService<T, ID, M> {
     protected val log: Logger? = LoggerFactory.getLogger(javaClass)
+
 
     protected fun notFound(): Supplier<out RuntimeException?> {
         return BaseController.notFound()
@@ -22,6 +26,10 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(override val repository
 
     protected fun notFound(msg: String?): Supplier<out RuntimeException?> {
         return BaseController.notFound(msg)
+    }
+
+    override fun getRepository(): M {
+        return repository
     }
 
     override fun <S : T> save(s: S, spec: Specification<T>): Int {

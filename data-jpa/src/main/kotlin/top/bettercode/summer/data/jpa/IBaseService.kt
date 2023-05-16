@@ -12,7 +12,8 @@ import java.util.*
  */
 interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
 
-    val repository: M
+    fun getRepository(): M
+
     fun <S : T> save(s: S): S
     fun <S : T> save(s: S, spec: Specification<T>): Int
 
