@@ -71,6 +71,9 @@ object MysqlToDDL : ToDDL() {
                                 oldColumns.remove(oldPrimaryKey)
                                 columns.remove(primaryKey)
                             }
+                        }else if(oldPrimaryKeys != primaryKeys){
+                            lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote DROP PRIMARY KEY;")
+                            lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ADD PRIMARY KEY(${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }});")
                         }
 
                         val oldColumnNames = oldColumns.map { it.columnName }
