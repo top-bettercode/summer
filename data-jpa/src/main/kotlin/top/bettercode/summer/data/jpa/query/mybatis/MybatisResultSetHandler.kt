@@ -638,7 +638,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     private fun createPrimitiveResultObject(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
             columnPrefix: String?
-    ): Any {
+    ): Any? {
         val resultType = resultMap.type
         val columnName: String? = if (resultMap.resultMappings.isNotEmpty()) {
             val resultMappingList = resultMap.resultMappings
