@@ -1,6 +1,7 @@
 package top.bettercode.summer.data.jpa.repository
 
 import org.apache.ibatis.annotations.Select
+import org.apache.ibatis.annotations.SelectProvider
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -45,6 +46,17 @@ interface UserRepository : JpaExtRepository<User?, Int?>, QuerydslPredicateExecu
 
     @Select("select * from t_user where deleted = 0")
     fun selectByMybatisSize(size: Size?): List<User?>?
+
+    @SelectProvider(type = UserSqlProvider::class, method = "selectByMybatisSize")
+    fun selectByMybatisProviderSize(size: Size?): List<User?>?
+
+    class UserSqlProvider {
+        fun selectByMybatisSize(size: Size?): String {
+            // language=SQL
+            return "select * from t_user where deleted = 0"
+        }
+    }
+
     fun selectMybatisIfParam(firstName: String?, lastName: String?): List<User?>?
     fun selectMybatisStream(firstName: String?, lastName: String?): Stream<User?>
     fun selectByMybatisMap(param: Map<String, String>?): List<User?>?

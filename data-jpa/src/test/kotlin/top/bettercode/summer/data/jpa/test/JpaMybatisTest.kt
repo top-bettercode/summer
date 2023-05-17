@@ -211,6 +211,17 @@ class JpaMybatisTest {
         Assertions.assertEquals(2, users.size)
     }
 
+    //test selectByMybatisProviderSize
+    @Test
+    fun selectByMybatisProviderSize() {
+        val users = repository.selectByMybatisProviderSize(Size.of(2))
+        for (user in users!!) {
+            System.err.println(user)
+        }
+        System.err.println("===========" + users.size)
+        Assertions.assertEquals(2, users.size)
+    }
+
     @Test
     fun selectMybatisIfParam() {
         val users = repository.selectMybatisIfParam("Carter", "Beauford1")
