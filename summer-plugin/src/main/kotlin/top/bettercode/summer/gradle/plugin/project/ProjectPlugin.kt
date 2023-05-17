@@ -6,6 +6,8 @@ import isCore
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSet
 import top.bettercode.summer.gradle.plugin.autodoc.AutodocPlugin
 import top.bettercode.summer.gradle.plugin.dist.DistPlugin
 import top.bettercode.summer.gradle.plugin.generator.GenPackageinfoPlugin
@@ -34,7 +36,12 @@ class ProjectPlugin : Plugin<Project> {
                 idea.module {
                     it.isDownloadJavadoc = false
                     it.isDownloadSources = true
+
+                    val sourceSets = subProject.extensions.getByType(JavaPluginExtension::class.java).sourceSets
+                    it.outputDir = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).java.classesDirectory.get().asFile
+                    it.testOutputDir = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME).java.classesDirectory.get().asFile
                 }
+
             }
 
             //java
