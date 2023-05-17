@@ -17,7 +17,7 @@ internal class CollectionUtilTest {
     @Test
     fun divideList() {
         val list = listOf("1", "2", "3", "4", "5", "6", "7")
-        System.err.println(StringUtil.valueOf(CollectionUtil.divideList(list, 2), true))
+        System.err.println(StringUtil.valueOf(CollectionUtil.divideList(list, 5), true))
     }
 
 }

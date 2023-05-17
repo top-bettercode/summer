@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.lang.util
 
 import java.lang.Integer.min
-import kotlin.math.ceil
 
 
 /**
@@ -11,15 +10,16 @@ import kotlin.math.ceil
 object CollectionUtil {
 
     @JvmStatic
-    fun <T> divideList(list: List<T>, parts: Int): List<List<T>>? {
-        val dividedLists: MutableList<List<T>> = ArrayList()
+    fun <T> divideList(list: List<T>, parts: Int): List<List<T>> {
+        val dividedLists: MutableList<List<T>> = mutableListOf()
         val size = list.size
-        val chunkSize = ceil(size.toDouble() / parts).toInt()
-        var i = 0
-        while (i < size) {
-            val end = size.coerceAtMost(i + chunkSize)
-            dividedLists.add(list.subList(i, end))
-            i += chunkSize
+        val chunkSize = size / parts
+        var remainder = size % parts // 原始列表大小除以份数的余数
+        var start = 0
+        for (i in 0 until parts) {
+            val end = start + chunkSize + if (remainder-- > 0) 1 else 0
+            dividedLists.add(list.subList(start, end))
+            start = end
         }
         return dividedLists
     }
