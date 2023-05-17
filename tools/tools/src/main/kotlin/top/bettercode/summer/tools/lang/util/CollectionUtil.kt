@@ -1,6 +1,8 @@
 package top.bettercode.summer.tools.lang.util
 
 import java.lang.Integer.min
+import kotlin.math.ceil
+
 
 /**
  *
@@ -9,12 +11,26 @@ import java.lang.Integer.min
 object CollectionUtil {
 
     @JvmStatic
+    fun <T> divideList(list: List<T>, parts: Int): List<List<T>>? {
+        val dividedLists: MutableList<List<T>> = ArrayList()
+        val size = list.size
+        val chunkSize = ceil(size.toDouble() / parts).toInt()
+        var i = 0
+        while (i < size) {
+            val end = size.coerceAtMost(i + chunkSize)
+            dividedLists.add(list.subList(i, end))
+            i += chunkSize
+        }
+        return dividedLists
+    }
+
+    @JvmStatic
     fun <T> partition(list: List<T>, maxLength: Int): List<List<T>> {
         val listSize = list.size
         return if (listSize > maxLength) {
             val result = mutableListOf<List<T>>()
             val size =
-                if (listSize % maxLength == 0) listSize / maxLength else listSize / maxLength + 1
+                    if (listSize % maxLength == 0) listSize / maxLength else listSize / maxLength + 1
             for (i in 0 until size) {
                 result.add(list.subList(i * maxLength, min((i + 1) * maxLength, listSize)))
             }
@@ -130,16 +146,16 @@ object CollectionUtil {
      */
     @JvmStatic
     fun <K, V> mapOf(
-        k1: K,
-        v1: V,
-        k2: K,
-        v2: V,
-        k3: K,
-        v3: V,
-        k4: K,
-        v4: V,
-        k5: K,
-        v5: V
+            k1: K,
+            v1: V,
+            k2: K,
+            v2: V,
+            k3: K,
+            v3: V,
+            k4: K,
+            v4: V,
+            k5: K,
+            v5: V
     ): Map<K, V> {
         return mapOf(k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5)
     }
@@ -169,12 +185,12 @@ object CollectionUtil {
      */
     @JvmStatic
     fun <K, V> mapOf(
-        k1: K, v1: V, k2: K, v2: V, k3: K, v3: V, k4: K, v4: V, k5: K, v5: V,
-        k6: K, v6: V
+            k1: K, v1: V, k2: K, v2: V, k3: K, v3: V, k4: K, v4: V, k5: K, v5: V,
+            k6: K, v6: V
     ): Map<K, V> {
         return kotlin.collections.mapOf(
-            k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5,
-            k6 to v6
+                k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5,
+                k6 to v6
         )
     }
 
@@ -205,12 +221,12 @@ object CollectionUtil {
      */
     @JvmStatic
     fun <K, V> mapOf(
-        k1: K, v1: V, k2: K, v2: V, k3: K, v3: V, k4: K, v4: V, k5: K, v5: V,
-        k6: K, v6: V, k7: K, v7: V
+            k1: K, v1: V, k2: K, v2: V, k3: K, v3: V, k4: K, v4: V, k5: K, v5: V,
+            k6: K, v6: V, k7: K, v7: V
     ): Map<K, V> {
         return mapOf(
-            k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5,
-            k6 to v6, k7 to v7
+                k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5,
+                k6 to v6, k7 to v7
         )
     }
 
@@ -243,12 +259,12 @@ object CollectionUtil {
      */
     @JvmStatic
     fun <K, V> mapOf(
-        k1: K, v1: V, k2: K, v2: V, k3: K, v3: V, k4: K, v4: V, k5: K, v5: V,
-        k6: K, v6: V, k7: K, v7: V, k8: K, v8: V
+            k1: K, v1: V, k2: K, v2: V, k3: K, v3: V, k4: K, v4: V, k5: K, v5: V,
+            k6: K, v6: V, k7: K, v7: V, k8: K, v8: V
     ): Map<K, V> {
         return kotlin.collections.mapOf(
-            k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5,
-            k6 to v6, k7 to v7, k8 to v8
+                k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5,
+                k6 to v6, k7 to v7, k8 to v8
         )
     }
 
@@ -283,12 +299,12 @@ object CollectionUtil {
      */
     @JvmStatic
     fun <K, V> mapOf(
-        k1: K, v1: V, k2: K, v2: V, k3: K, v3: V, k4: K, v4: V, k5: K, v5: V,
-        k6: K, v6: V, k7: K, v7: V, k8: K, v8: V, k9: K, v9: V
+            k1: K, v1: V, k2: K, v2: V, k3: K, v3: V, k4: K, v4: V, k5: K, v5: V,
+            k6: K, v6: V, k7: K, v7: V, k8: K, v8: V, k9: K, v9: V
     ): Map<K, V> {
         return mapOf(
-            k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5,
-            k6 to v6, k7 to v7, k8 to v8, k9 to v9
+                k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5,
+                k6 to v6, k7 to v7, k8 to v8, k9 to v9
         )
     }
 
@@ -325,12 +341,12 @@ object CollectionUtil {
      */
     @JvmStatic
     fun <K, V> mapOf(
-        k1: K, v1: V, k2: K, v2: V, k3: K, v3: V, k4: K, v4: V, k5: K, v5: V,
-        k6: K, v6: V, k7: K, v7: V, k8: K, v8: V, k9: K, v9: V, k10: K, v10: V
+            k1: K, v1: V, k2: K, v2: V, k3: K, v3: V, k4: K, v4: V, k5: K, v5: V,
+            k6: K, v6: V, k7: K, v7: V, k8: K, v8: V, k9: K, v9: V, k10: K, v10: V
     ): Map<K, V> {
         return kotlin.collections.mapOf(
-            k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5,
-            k6 to v6, k7 to v7, k8 to v8, k9 to v9, k10 to v10
+                k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5,
+                k6 to v6, k7 to v7, k8 to v8, k9 to v9, k10 to v10
         )
     }
 
