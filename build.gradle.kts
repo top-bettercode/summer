@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -98,6 +99,13 @@ allprojects {
                     plugin("org.jetbrains.kotlin.kapt")
                     plugin("org.jetbrains.kotlin.plugin.spring")
                     plugin("summer.kotlin-publish")
+                }
+
+                extensions.configure(KaptExtension::class) {
+                    arguments {
+                        arg("org.springframework.boot.configurationprocessor.additionalMetadataLocations",
+                                "$projectDir/src/main/resources")
+                    }
                 }
 
                 dependencies {
