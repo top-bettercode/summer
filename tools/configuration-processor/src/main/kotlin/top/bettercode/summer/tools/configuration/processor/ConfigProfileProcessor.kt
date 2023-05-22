@@ -118,11 +118,9 @@ class ConfigProfileProcessor : AbstractProcessor() {
     }
 
     private fun replaceConfigs(dir: File, confs: Map<String, String>) {
-        dir.walkTopDown().filter { it.extension in arrayOf("yml", "yaml", "properties", "xml", "conf") }.forEach {
-            val resourceName = it.absolutePath.substringAfter(dir.absolutePath)
+        dir.parentFile.walkTopDown().filter { it.extension in arrayOf("yml", "yaml", "properties", "xml", "conf") }.forEach {
             //替换文件中的@key@配置为confs 中对应的 value
-            val file = processingEnv.getFiler().getResource(StandardLocation.CLASS_OUTPUT, "", resourceName).toUri().toPath().toFile()
-            file.writeText(it.readText().replace(Regex("""@(.+?)@""")) { matchResult ->
+            it.writeText(it.readText().replace(Regex("""@(.+?)@""")) { matchResult ->
                 confs[matchResult.groupValues[1]] ?: matchResult.value
             })
         }
