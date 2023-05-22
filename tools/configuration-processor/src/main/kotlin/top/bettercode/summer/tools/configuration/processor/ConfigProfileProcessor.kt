@@ -18,7 +18,7 @@ class ConfigProfileProcessor : AbstractProcessor() {
             return true
         }
 
-        val file = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", "temp").toUri().toPath().toFile()
+        val file = processingEnv.filer.createResource(StandardLocation.CLASS_OUTPUT, "", "temp").toUri().toPath().toFile()
         val configsDir = file.parentFile
         val userDir = findWalkDownTopConf(file, "src")!!.parentFile
         file.delete()
@@ -104,7 +104,7 @@ class ConfigProfileProcessor : AbstractProcessor() {
     }
 
     private fun debug(msg: String) {
-        processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", "log.txt").toUri().toPath().toFile().writeText(msg)
+        processingEnv.filer.createResource(StandardLocation.CLASS_OUTPUT, "", "log.txt").toUri().toPath().toFile().writeText(msg)
     }
 
     private fun yamlToConfs(conf: Map<String, Any>, configs: MutableMap<String, String>, prefix: String = "") {
