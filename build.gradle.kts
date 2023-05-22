@@ -100,13 +100,13 @@ allprojects {
                     plugin("org.jetbrains.kotlin.plugin.spring")
                     plugin("summer.kotlin-publish")
                 }
-
-                extensions.configure(KaptExtension::class) {
-                    arguments {
-                        arg("org.springframework.boot.configurationprocessor.additionalMetadataLocations",
-                                "$projectDir/src/main/resources")
+                if (file("src/main/resources/META-INF/additional-spring-configuration-metadata.json").exists())
+                    extensions.configure(KaptExtension::class) {
+                        arguments {
+                            arg("org.springframework.boot.configurationprocessor.additionalMetadataLocations",
+                                    "$projectDir/src/main/resources")
+                        }
                     }
-                }
 
                 dependencies {
                     "kapt"(platform(project(":summer-bom")))
