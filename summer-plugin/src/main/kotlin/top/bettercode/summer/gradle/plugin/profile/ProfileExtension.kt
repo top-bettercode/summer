@@ -9,22 +9,22 @@ import java.util.*
  * @author Peter Wu
  */
 open class ProfileExtension(
-    var matchFiles: Set<String> = setOf(
-        "**/*.yml",
-        "**/*.yaml",
-        "**/*.properties",
-        "**/*.xml",
-        "**/*.conf"
-    ),
-    var configDir: String = "conf",
-    var configFile: String = "",
-    var activeFileSuffix: String = "",
-    var beginToken: String = "@",
-    var endToken: String = "@",
-    var extraVersion: Boolean = false,
-    var excludeOther: Boolean = true,
-    var closure: MutableSet<Project.(ProfileExtension) -> Unit> = mutableSetOf(),
-    val profileClosure: MutableMap<String, MutableSet<Project.(ProfileExtension) -> Unit>> = mutableMapOf()
+        var matchFiles: Set<String> = setOf(
+                "**/*.yml",
+                "**/*.yaml",
+                "**/*.properties",
+                "**/*.xml",
+                "**/*.conf"
+        ),
+        var configDir: String = "conf",
+        var configFile: String = "",
+        var activeFileSuffix: String = "",
+        var beginToken: String = "@",
+        var endToken: String = "@",
+        var extraVersion: Boolean = false,
+        var excludeOther: Boolean = true,
+        var closure: MutableSet<Project.(ProfileExtension) -> Unit> = mutableSetOf(),
+        val profileClosure: MutableMap<String, MutableSet<Project.(ProfileExtension) -> Unit>> = mutableMapOf()
 ) {
 
     companion object {
@@ -43,37 +43,37 @@ open class ProfileExtension(
                 array.add(rootProject.file("gradle.properties"))
                 configProject { project ->
                     val defaultConfigYmlFile =
-                        project.file("${profile.configDir}/$profilesDefaultActive.yml")
+                            project.file("${profile.configDir}/$profilesDefaultActive.yml")
                     if (defaultConfigYmlFile.exists()) {
                         array.add(defaultConfigYmlFile)
                     }
                     if (profilesActive != profilesDefaultActive) {
                         val activeYmlFile =
-                            project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
+                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
                         if (activeYmlFile.exists()) {
                             array.add(activeYmlFile)
                         }
                     }
                     val defaultConfigYamlFile =
-                        project.file("${profile.configDir}/$profilesDefaultActive.yaml")
+                            project.file("${profile.configDir}/$profilesDefaultActive.yaml")
                     if (defaultConfigYamlFile.exists()) {
                         array.add(defaultConfigYamlFile)
                     }
                     if (profilesActive != profilesDefaultActive) {
                         val activeYamlFile =
-                            project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
+                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
                         if (activeYamlFile.exists()) {
                             array.add(activeYamlFile)
                         }
                     }
                     val defaultConfigFile =
-                        project.file("${profile.configDir}/$profilesDefaultActive.properties")
+                            project.file("${profile.configDir}/$profilesDefaultActive.properties")
                     if (defaultConfigFile.exists()) {
                         array.add(defaultConfigFile)
                     }
                     if (profilesActive != profilesDefaultActive) {
                         val activeFile =
-                            project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
+                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
                         if (activeFile.exists()) {
                             array.add(activeFile)
                         }
@@ -92,10 +92,10 @@ open class ProfileExtension(
                     if (configFile.exists()) {
                         set.addAll(configFile.listFiles()?.filter { it.isFile }?.map {
                             if (profile.activeFileSuffix.isNotBlank()) it.nameWithoutExtension.substringBeforeLast(
-                                profile.activeFileSuffix
+                                    profile.activeFileSuffix
                             ) else it.nameWithoutExtension
                         }
-                            ?: emptySet())
+                                ?: emptySet())
                     }
                 }
                 return set
@@ -142,56 +142,61 @@ open class ProfileExtension(
                 props["summer.web.project-name"] = name
                 props["summer.web.version"] = "v${version}"
                 props["summer.web.version-no"] = String.format(
-                    "%-9s",
-                    version.toString().split(".")
-                        .joinToString("") { String.format("%03d", it.toInt()) }
+                        "%-9s",
+                        version.toString().split(".")
+                                .joinToString("") { String.format("%03d", it.toInt()) }
                 ).replace(" ", "0").trimStart('0')
                 val gradleProperties = rootProject.file("gradle.properties")
                 if (gradleProperties.exists()) {
                     props.load(gradleProperties.inputStream())
-                    props.keys.forEach { t ->
-                        val k = t as String
-                        if (rootProject.hasProperty(k))
-                            props[k] = rootProject.properties[k]
-                    }
+                }
+                val gradleuserHomeProperties = File(gradle.gradleUserHomeDir, "gradle.properties")
+                if (gradleuserHomeProperties.exists()) {
+                    props.load(gradleuserHomeProperties.inputStream())
+                }
+
+                props.keys.forEach { t ->
+                    val k = t as String
+                    if (rootProject.hasProperty(k))
+                        props[k] = rootProject.properties[k]
                 }
 
                 val profile = extensions.getByType(ProfileExtension::class.java)
                 configProject { project ->
                     val defaultConfigYmlFile =
-                        project.file("${profile.configDir}/$profilesDefaultActive.yml")
+                            project.file("${profile.configDir}/$profilesDefaultActive.yml")
                     val yaml = Yaml()
                     if (defaultConfigYmlFile.exists()) {
                         loadYml(defaultConfigYmlFile, yaml, props)
                     }
                     if (profilesActive != profilesDefaultActive) {
                         val activeYmlFile =
-                            project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
+                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yml")
                         if (activeYmlFile.exists()) {
                             loadYml(activeYmlFile, yaml, props)
                         }
                     }
                     val defaultConfigYamlFile =
-                        project.file("${profile.configDir}/$profilesDefaultActive.yaml")
+                            project.file("${profile.configDir}/$profilesDefaultActive.yaml")
                     if (defaultConfigYamlFile.exists()) {
                         loadYml(defaultConfigYamlFile, yaml, props)
                     }
                     if (profilesActive != profilesDefaultActive) {
                         val activeYamlFile =
-                            project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
+                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.yaml")
                         if (activeYamlFile.exists()) {
                             loadYml(activeYamlFile, yaml, props)
                         }
                     }
                     val defaultConfigFile =
-                        project.file("${profile.configDir}/$profilesDefaultActive.properties")
+                            project.file("${profile.configDir}/$profilesDefaultActive.properties")
                     if (defaultConfigFile.exists()) {
                         props.load(defaultConfigFile.inputStream())
                     }
 
                     if (profilesActive != profilesDefaultActive) {
                         val activeFile =
-                            project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
+                                project.file("${profile.configDir}/$profilesActive${profile.activeFileSuffix}.properties")
                         if (activeFile.exists()) {
                             props.load(activeFile.inputStream())
                         }
@@ -228,26 +233,26 @@ open class ProfileExtension(
             }
 
         private fun loadYml(
-            defaultConfigYmlFile: File,
-            yaml: Yaml,
-            props: Properties
+                defaultConfigYmlFile: File,
+                yaml: Yaml,
+                props: Properties
         ) {
             val readText = defaultConfigYmlFile.readText()
             if (readText.isNotBlank()) {
                 val yml = parseYml(
-                    yaml.loadAs(
-                        readText,
-                        Map::class.java
-                    )
+                        yaml.loadAs(
+                                readText,
+                                Map::class.java
+                        )
                 )
                 props.putAll(yml)
             }
         }
 
         private fun parseYml(
-            map: Map<*, *>,
-            result: MutableMap<Any, Any> = mutableMapOf(),
-            prefix: String = ""
+                map: Map<*, *>,
+                result: MutableMap<Any, Any> = mutableMapOf(),
+                prefix: String = ""
         ): MutableMap<Any, Any> {
             map.forEach { (k, u) ->
                 if (u != null) {

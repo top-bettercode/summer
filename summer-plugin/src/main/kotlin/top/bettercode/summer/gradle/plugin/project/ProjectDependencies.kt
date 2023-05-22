@@ -25,6 +25,9 @@ object ProjectDependencies {
             add("annotationProcessor", platform("top.bettercode.summer:${if (project.isCloud) "summer-cloud-bom" else "summer-bom"}:$summerVersion"))
 
             add("annotationProcessor", "org.springframework.boot:spring-boot-configuration-processor")
+            add("compileOnly", "top.bettercode.summer:configuration-processor")
+            add("annotationProcessor", "top.bettercode.summer:configuration-processor")
+
             add("compileOnly", "com.google.code.findbugs:annotations")
         }
     }

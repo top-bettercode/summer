@@ -27,8 +27,9 @@ include(":tools:weather")
 include(":tools:jpush")
 include(":tools:qvod")
 include(":tools:amap")
-
 include(":tools:sap")
+include(":tools:configuration-processor")
+
 
 include(":summer-bom")
 include(":summer-cloud-bom")

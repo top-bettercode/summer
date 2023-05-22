@@ -12,6 +12,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.application.tasks.CreateStartScripts
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
+import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profileFiles
 import top.bettercode.summer.gradle.plugin.project.template.Controller
 import top.bettercode.summer.gradle.plugin.project.template.Entity
 import top.bettercode.summer.gradle.plugin.project.template.SerializationViews
@@ -43,7 +44,16 @@ object SubProjectTasks {
                 it.options.compilerArgs.add("-Xlint:unchecked")
                 it.options.compilerArgs.add("-parameters")
                 it.options.encoding = "UTF-8"
+                it.inputs.files(*project.profileFiles)
             }
+
+            named("compileTestJava", JavaCompile::class.java) {
+                it.options.compilerArgs.add("-Xlint:unchecked")
+                it.options.compilerArgs.add("-parameters")
+                it.options.encoding = "UTF-8"
+                it.inputs.files(*project.profileFiles)
+            }
+
             val ext = project.extensions.getByType(GeneratorExtension::class.java)
             ext.run { module, tableHolder ->
                 val prefix = module.capitalized()
