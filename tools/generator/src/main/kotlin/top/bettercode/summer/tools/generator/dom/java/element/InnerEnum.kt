@@ -173,6 +173,7 @@ open class InnerEnum(type: JavaType) : InnerUnit(type) {
         newLine(sb)
         indent(sb, indentLevelInner)
         sb.append('}')
+        newLine(sb)
 
         return sb.toString()
     }

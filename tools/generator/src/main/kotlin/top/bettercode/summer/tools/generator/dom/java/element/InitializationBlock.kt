@@ -79,6 +79,7 @@ class InitializationBlock @JvmOverloads constructor(private var isStatic: Boolea
         newLine(sb)
         indent(sb, indentLevelInner)
         sb.append('}')
+        newLine(sb)
 
         return sb.toString()
     }

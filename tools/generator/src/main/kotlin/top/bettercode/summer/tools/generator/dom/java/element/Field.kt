@@ -15,8 +15,10 @@ class Field : JavaElement() {
 
         addFormattedJavadoc(sb, indentLevel)
         addFormattedAnnotations(sb, indentLevel)
-
-        indent(sb, indentLevel)
+        if (annotations.size == 1)
+            sb.append(" ")
+        else
+            indent(sb, indentLevel)
         sb.append(visibility.value)
 
         if (isStatic) {

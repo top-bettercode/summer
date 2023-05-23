@@ -27,9 +27,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         annotation("@javax.persistence.EntityListeners(AuditingEntityListener.class)")
 
         javadoc {
-            +"/**"
-            +" * $remarks 对应数据库表名：$tableName"
-            +" */"
+            +"/** $remarks 对应数据库表名：$tableName */"
         }
         implement {
             +"java.io.Serializable"
@@ -47,9 +45,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             isStatic = true
             isFinal = true
             javadoc {
-                +"/**"
-                +" * 对应数据库表名"
-                +" */"
+                +"/** 对应数据库表名 */"
             }
         }
 
@@ -81,9 +77,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 entityType
             ) {
                 javadoc {
-                    +"/**"
-                    +" * 如果属性为null，设置默认值"
-                    +" */"
+                    +"/** 如果属性为null，设置默认值 */"
                 }
                 defaultColumns.forEach {
                     if (isFullComposite || isCompositePrimaryKey && it.isPrimary) {
@@ -135,9 +129,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             entityType
         ) {
             javadoc {
-                +"/**"
-                +" * 从form表单对象更新实体属性"
-                +" */"
+                +"/** 从form表单对象更新实体属性 */"
             }
             parameter(JavaType.objectInstance, "form")
             import("org.springframework.beans.BeanUtils")
@@ -151,9 +143,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             if (primaryKeys.size == 1) {
                 if (primaryKey.remark.isNotBlank() || primaryKey.columnDef != null)
                     javadoc {
-                        +"/**"
-                        +" * ${primaryKey.docRemark}"
-                        +" */"
+                        +"/** ${primaryKey.docRemark} */"
                     }
 
                 annotation("@javax.persistence.Id")
@@ -177,9 +167,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation(columnAnnotation(primaryKey))
             } else {
                 javadoc {
-                    +"/**"
-                    +" * ${remarks}主键"
-                    +" */"
+                    +"/** ${remarks}主键 */"
                 }
                 annotation("@javax.persistence.EmbeddedId")
             }
@@ -190,9 +178,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             primaryKeyType
         ) {
             javadoc {
-                +"/**"
-                +" * ${remarks}主键"
-                +" */"
+                +"/** ${remarks}主键 */"
             }
             +"return ${primaryKeyName};"
         }
@@ -252,9 +238,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             field(it.javaName, it.javaType) {
                 if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
-                        +"/**"
-                        +" * ${it.docRemark}"
-                        +" */"
+                        +"/** ${it.docRemark} */"
                     }
                 if (it.columnDef != null)
                     annotation("@org.hibernate.annotations.ColumnDefault(\"${it.columnDef}\")")

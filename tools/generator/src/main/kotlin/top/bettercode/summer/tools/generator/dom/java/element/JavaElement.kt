@@ -81,10 +81,16 @@ abstract class JavaElement {
      * the indent level
      */
     fun addFormattedAnnotations(sb: StringBuilder, indentLevel: Int) {
-        for (annotation in annotations) {
+        val single = annotations.size == 1 && this is Field
+        if (single) {
             indent(sb, indentLevel)
-            sb.append(annotation)
-            newLine(sb)
+            sb.append(annotations[0])
+        } else {
+            for (annotation in annotations) {
+                indent(sb, indentLevel)
+                sb.append(annotation)
+                newLine(sb)
+            }
         }
     }
 
