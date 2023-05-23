@@ -5,13 +5,12 @@ import com.querydsl.core.types.Predicate
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import top.bettercode.summer.data.jpa.IBaseService
 import java.util.*
 
 /**
  * @author Peter Wu
  */
-interface IQuerydslService<T, ID, M : QuerydslRepository<T, ID>> : IBaseService<T, ID, M> {
+interface IQuerydslService<T, ID, M : QuerydslRepository<T, ID>> {
     fun findOne(predicate: Predicate): Optional<T>
     fun findAll(predicate: Predicate): Iterable<T>
     fun findAll(predicate: Predicate, sort: Sort): Iterable<T>
