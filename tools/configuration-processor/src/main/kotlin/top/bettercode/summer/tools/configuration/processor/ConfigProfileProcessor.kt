@@ -8,7 +8,6 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 import javax.tools.StandardLocation
-import kotlin.io.path.toPath
 
 // 定义一个注解处理器类，实现Processor接口，并使用@SupportedAnnotationTypes注解指定要处理的注解类型
 class ConfigProfileProcessor : AbstractProcessor() {
@@ -18,7 +17,7 @@ class ConfigProfileProcessor : AbstractProcessor() {
             return true
         }
 
-        val file = processingEnv.filer.createResource(StandardLocation.CLASS_OUTPUT, "", "temp").toUri().toPath().toFile()
+        val file = File(processingEnv.filer.createResource(StandardLocation.CLASS_OUTPUT, "", "temp").toUri().toURL().file)
         val configsDir = file.parentFile
         val userDir = findWalkDownTopConf(file, "src")!!.parentFile
         file.delete()
@@ -104,7 +103,7 @@ class ConfigProfileProcessor : AbstractProcessor() {
     }
 
     private fun debug(msg: String) {
-        processingEnv.filer.createResource(StandardLocation.CLASS_OUTPUT, "", "log.txt").toUri().toPath().toFile().writeText(msg)
+        File(processingEnv.filer.createResource(StandardLocation.CLASS_OUTPUT, "", "log.txt").toUri().toURL().file).writeText(msg)
     }
 
     private fun yamlToConfs(conf: Map<String, Any>, configs: MutableMap<String, String>, prefix: String = "") {
