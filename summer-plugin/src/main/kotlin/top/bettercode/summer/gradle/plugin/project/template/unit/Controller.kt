@@ -12,9 +12,7 @@ import top.bettercode.summer.tools.lang.capitalized
 val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            +"/**"
-            +" * $remarks 接口"
-            +" */"
+            +"/** $remarks 接口 */"
         }
         import(entityType)
 

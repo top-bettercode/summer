@@ -13,9 +13,7 @@ val service: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         annotation("@org.springframework.stereotype.Service")
         javadoc {
-            +"/**"
-            +" * $remarks 服务层实现"
-            +" */"
+            +"/** $remarks 服务层实现 */"
         }
         superClass =
             JavaType("top.bettercode.summer.data.jpa.BaseService").typeArgument(
@@ -37,9 +35,7 @@ val service: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 val iservice: ProjectGenerator.(Interface) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            +"/**"
-            +" * $remarks 服务层接口"
-            +" */"
+            +"/** $remarks 服务层接口 */"
         }
         val superInterface =
             JavaType("top.bettercode.summer.data.jpa.IBaseService").typeArgument(

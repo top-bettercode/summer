@@ -9,9 +9,7 @@ import top.bettercode.summer.tools.generator.dom.java.element.PackageInfo
 val modulePackageInfo: ProjectGenerator.(PackageInfo) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            +"/**"
-            +" * ${table.subModuleName}"
-            +" */"
+            +"/** ${table.subModuleName} */"
         }
     }
 }
@@ -19,9 +17,7 @@ val modulePackageInfo: ProjectGenerator.(PackageInfo) -> Unit = { unit ->
 val packageInfo: ProjectGenerator.(PackageInfo) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            +"/**"
-            +" * $remarks"
-            +" */"
+            +"/** $remarks */"
         }
     }
 }

@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.generator.dom.java.element
 
+import ch.qos.logback.classic.spi.ThrowableProxyUtil.indent
 import top.bettercode.summer.tools.generator.dom.java.Annotations
 import top.bettercode.summer.tools.generator.dom.java.StringOperator
 
@@ -80,17 +81,11 @@ abstract class JavaElement {
      * @param indentLevel
      * the indent level
      */
-    fun addFormattedAnnotations(sb: StringBuilder, indentLevel: Int) {
-        val single = annotations.size == 1 && this is Field
-        if (single) {
+    open fun addFormattedAnnotations(sb: StringBuilder, indentLevel: Int) {
+        for (annotation in annotations) {
             indent(sb, indentLevel)
-            sb.append(annotations[0])
-        } else {
-            for (annotation in annotations) {
-                indent(sb, indentLevel)
-                sb.append(annotation)
-                newLine(sb)
-            }
+            sb.append(annotation)
+            newLine(sb)
         }
     }
 

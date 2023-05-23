@@ -10,15 +10,22 @@ class Field : JavaElement() {
     var isTransient: Boolean = false
     var isVolatile: Boolean = false
 
+    private fun isSingle(): Boolean {
+        return annotations.size == 1 && !annotations[0].contains("(")
+    }
+
     override fun getFormattedContent(indentLevel: Int, compilationUnit: CompilationUnit): String {
         val sb = StringBuilder()
 
         addFormattedJavadoc(sb, indentLevel)
-        addFormattedAnnotations(sb, indentLevel)
-        if (annotations.size == 1)
-            sb.append(" ")
-        else
+        if (isSingle()) {
             indent(sb, indentLevel)
+            sb.append(annotations[0])
+            sb.append(" ")
+        } else {
+            addFormattedAnnotations(sb, indentLevel)
+            indent(sb, indentLevel)
+        }
         sb.append(visibility.value)
 
         if (isStatic) {

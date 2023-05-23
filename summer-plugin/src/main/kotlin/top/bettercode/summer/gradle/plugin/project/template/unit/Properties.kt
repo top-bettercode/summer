@@ -22,9 +22,7 @@ val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
                     visibility = JavaVisibility.DEFAULT
                     if (it.remark.isNotBlank() || it.columnDef != null)
                         javadoc {
-                            +"/**"
-                            +" * ${it.docRemark}"
-                            +" */"
+                            +"/** ${it.docRemark} */"
                         }
                 }
             }
@@ -33,9 +31,7 @@ val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
                 visibility = JavaVisibility.DEFAULT
                 if (primaryKey.remark.isNotBlank() || primaryKey.columnDef != null)
                     javadoc {
-                        +"/**"
-                        +" * ${primaryKey.docRemark}"
-                        +" */"
+                        +"/** ${primaryKey.docRemark} */"
                     }
             }
         }
@@ -44,9 +40,7 @@ val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
                 visibility = JavaVisibility.DEFAULT
                 if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
-                        +"/**"
-                        +" * ${it.docRemark}"
-                        +" */"
+                        +"/** ${it.docRemark} */"
                     }
             }
         }

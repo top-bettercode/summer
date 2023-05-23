@@ -18,9 +18,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         visibility = JavaVisibility.PUBLIC
         annotation("@javax.persistence.Embeddable")
         javadoc {
-            +"/**"
-            +" * $remarks 主键 对应表名：$tableName"
-            +" */"
+            +"/** $remarks 主键 对应表名：$tableName */"
         }
         implement {
             +"java.io.Serializable"
@@ -33,9 +31,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 isStatic = true
                 isFinal = true
                 javadoc {
-                    +"/**"
-                    +" * 对应数据库表名"
-                    +" */"
+                    +"/** 对应数据库表名 */"
                 }
             }
 
@@ -71,9 +67,7 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             field(it.javaName, it.javaType) {
                 if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
-                        +"/**"
-                        +" * ${it.docRemark}"
-                        +" */"
+                        +"/** ${it.docRemark} */"
                     }
                 annotation(columnAnnotation(it))
                 if (it.columnDef != null)
@@ -129,15 +123,15 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             primaryKeys.forEachIndexed { index, column ->
                 when (index) {
                     0 -> {
-                        +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                        +"return Objects.equals(${column.javaName}, that.${column.javaName})"
                     }
 
                     size - 1 -> {
-                        +"    Objects.equals(${column.javaName}, that.${column.javaName});"
+                        +"    && Objects.equals(${column.javaName}, that.${column.javaName});"
                     }
 
                     else -> {
-                        +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                        +"    && Objects.equals(${column.javaName}, that.${column.javaName})"
                     }
                 }
             }

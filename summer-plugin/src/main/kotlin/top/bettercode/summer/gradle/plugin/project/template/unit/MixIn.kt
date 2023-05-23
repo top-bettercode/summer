@@ -13,9 +13,7 @@ import top.bettercode.summer.tools.lang.capitalized
 val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            +"/**"
-            +" * $remarks"
-            +" */"
+            +"/** $remarks */"
         }
         implement(
                 JavaType("top.bettercode.summer.web.serializer.MixIn").typeArgument(
@@ -30,9 +28,7 @@ val mixIn: ProjectGenerator.(Interface) -> Unit = { unit ->
                     primaryKeyType
             ) {
                 javadoc {
-                    +"/**"
-                    +" * ${remarks}主键"
-                    +" */"
+                    +"/** ${remarks}主键 */"
                 }
                 annotation("@com.fasterxml.jackson.annotation.JsonView(Object.class)")
                 if (isCompositePrimaryKey)
@@ -81,9 +77,7 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
 val serializationViews: ProjectGenerator.(Interface) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            +"/**"
-            +" * 模型属性 json SerializationViews"
-            +" */"
+            +"/** 模型属性 json SerializationViews */"
         }
         implement(coreSerializationViewsType)
     }

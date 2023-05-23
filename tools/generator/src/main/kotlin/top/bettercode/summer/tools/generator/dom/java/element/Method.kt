@@ -230,43 +230,46 @@ class Method : JavaElement() {
             sb.append(';')
         } else {
             sb.append(" {")
-            indentLevelInner++
 
-            val listIter = bodyLines.listIterator()
-            while (listIter.hasNext()) {
-                val line = listIter.next()
-                if (line.startsWith("}")) {
-                    indentLevelInner--
+            if (bodyLines.isNotEmpty()) {
+                indentLevelInner++
+
+                val listIter = bodyLines.listIterator()
+                while (listIter.hasNext()) {
+                    val line = listIter.next()
+                    if (line.startsWith("}")) {
+                        indentLevelInner--
+                    }
+
+                    newLine(sb)
+                    indent(sb, indentLevelInner)
+                    sb.append(line)
+
+                    if (line.endsWith("{") && !line.startsWith("switch")  //$NON-NLS-2$
+                            || line.endsWith(":")
+                    ) {
+                        indentLevelInner++
+                    }
+
+                    if (line.startsWith("break")) {
+                        // if the next line is '}', then don't outdent
+                        if (listIter.hasNext()) {
+                            val nextLine = listIter.next()
+                            if (nextLine.startsWith("}")) {
+                                indentLevelInner++
+                            }
+
+                            // set back to the previous element
+                            listIter.previous()
+                        }
+                        indentLevelInner--
+                    }
                 }
 
+                indentLevelInner--
                 newLine(sb)
                 indent(sb, indentLevelInner)
-                sb.append(line)
-
-                if (line.endsWith("{") && !line.startsWith("switch")  //$NON-NLS-2$
-                    || line.endsWith(":")
-                ) {
-                    indentLevelInner++
-                }
-
-                if (line.startsWith("break")) {
-                    // if the next line is '}', then don't outdent
-                    if (listIter.hasNext()) {
-                        val nextLine = listIter.next()
-                        if (nextLine.startsWith("}")) {
-                            indentLevelInner++
-                        }
-
-                        // set back to the previous element
-                        listIter.previous()
-                    }
-                    indentLevelInner--
-                }
             }
-
-            indentLevelInner--
-            newLine(sb)
-            indent(sb, indentLevelInner)
             sb.append('}')
         }
 

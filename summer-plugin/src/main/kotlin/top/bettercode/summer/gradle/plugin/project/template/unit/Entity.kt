@@ -322,15 +322,15 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     otherColumns.forEachIndexed { index, column ->
                         when (index) {
                             0 -> {
-                                +"return Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                                +"return Objects.equals(${column.javaName}, that.${column.javaName})"
                             }
 
                             size - 1 -> {
-                                +"    Objects.equals(${column.javaName}, that.${column.javaName});"
+                                +"    && Objects.equals(${column.javaName}, that.${column.javaName});"
                             }
 
                             else -> {
-                                +"    Objects.equals(${column.javaName}, that.${column.javaName}) &&"
+                                +"    && Objects.equals(${column.javaName}, that.${column.javaName})"
                             }
                         }
                     }

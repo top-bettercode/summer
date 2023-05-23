@@ -11,17 +11,13 @@ import top.bettercode.summer.tools.lang.capitalized
 val methodInfo: ProjectGenerator.(Interface) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            +"/**"
-            +" * $remarks"
-            +" */"
+            +"/** $remarks */"
         }
         if (isCompositePrimaryKey) {
             //primaryKey getter
             method("get${primaryKeyName.capitalized()}", primaryKeyType) {
                 javadoc {
-                    +"/**"
-                    +" * ${remarks}主键"
-                    +" */"
+                    +"/** ${remarks}主键 */"
                 }
             }
         }

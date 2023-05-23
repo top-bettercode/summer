@@ -14,9 +14,7 @@ import top.bettercode.summer.tools.lang.decapitalized
 val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            +"/**"
-            +" * $remarks 表单"
-            +" */"
+            +"/** $remarks 表单 */"
         }
 
         val entityType = if (isFullComposite) primaryKeyType else entityType

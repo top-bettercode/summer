@@ -10,9 +10,7 @@ val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         annotation("@org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication")
         annotation("@org.springframework.stereotype.Service")
         javadoc {
-            +"/**"
-            +" * $remarks 测试服务层"
-            +" */"
+            +"/** $remarks 测试服务层 */"
         }
         field("${projectEntityName}Service", if (interfaceService) iserviceType else serviceType) {
             annotation("@org.springframework.beans.factory.annotation.Autowired")

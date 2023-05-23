@@ -13,9 +13,7 @@ import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            +"/**"
-            +" * $remarks SpecMatcher"
-            +" */"
+            +"/** $remarks SpecMatcher */"
         }
 
         superClass(

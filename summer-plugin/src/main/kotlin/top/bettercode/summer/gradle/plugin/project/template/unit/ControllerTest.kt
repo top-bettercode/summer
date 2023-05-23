@@ -11,9 +11,7 @@ import top.bettercode.summer.tools.lang.capitalized
 val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
     unit.apply {
         javadoc {
-            +"/**"
-            +" * $remarks 控制层测试"
-            +" */"
+            +"/** $remarks 控制层测试 */"
         }
         annotation("@org.junit.jupiter.api.DisplayName(\"${remarks}\")")
         annotation("@org.springframework.transaction.annotation.Transactional")
