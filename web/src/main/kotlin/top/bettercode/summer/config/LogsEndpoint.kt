@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.StringUtils
@@ -34,32 +35,32 @@ import kotlin.math.max
  */
 @Endpoint(id = "logs")
 class LogsEndpoint(
-    private val loggingFilesPath: String,
-    environment: Environment,
-    private val websocketProperties: WebsocketProperties,
-    private val serverProperties: ServerProperties,
-    private val request: HttpServletRequest,
-    private val response: HttpServletResponse
+        private val loggingFilesPath: String,
+        environment: Environment,
+        private val websocketProperties: WebsocketProperties,
+        private val serverProperties: ServerProperties,
+        private val request: HttpServletRequest,
+        private val response: HttpServletResponse
 ) {
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
-        "org.springframework.web.socket.server.standard.ServerEndpointExporter",
-        LogsEndpoint::class.java.classLoader
+            "org.springframework.web.socket.server.standard.ServerEndpointExporter",
+            LogsEndpoint::class.java.classLoader
     ) && ("true" == environment.getProperty("summer.logging.websocket.enabled") || environment.getProperty(
-        "summer.logging.websocket.enabled"
+            "summer.logging.websocket.enabled"
     ).isNullOrBlank())
     private val loggerContext: LoggerContext by lazy {
         val factory = LoggerFactory.getILoggerFactory()
         Assert.isInstanceOf(
-            LoggerContext::class.java, factory,
-            String.format(
-                "LoggerFactory is not a Logback LoggerContext but Logback is on "
-                        + "the classpath. Either remove Logback or the competing "
-                        + "implementation (%s loaded from %s). If you are using "
-                        + "WebLogic you will need to add 'org.slf4j' to "
-                        + "prefer-application-packages in WEB-INF/weblogic.xml",
-                factory.javaClass, getLocation(factory)
-            )
+                LoggerContext::class.java, factory,
+                String.format(
+                        "LoggerFactory is not a Logback LoggerContext but Logback is on "
+                                + "the classpath. Either remove Logback or the competing "
+                                + "implementation (%s loaded from %s). If you are using "
+                                + "WebLogic you will need to add 'org.slf4j' to "
+                                + "prefer-application-packages in WEB-INF/weblogic.xml",
+                        factory.javaClass, getLocation(factory)
+                )
         )
         factory as LoggerContext
     }
@@ -84,20 +85,20 @@ class LogsEndpoint(
     }
 
     @ReadOperation
-    fun path(@Selector(match = Selector.Match.ALL_REMAINING) path: String) {
+    fun path(@Selector(match = Selector.Match.ALL_REMAINING) path: String, @Nullable collapse: Boolean?) {
         if ("real-time" != path) {
             val paths = path.split(",")
             if (paths[0] == "daily") {
                 val today = TimeUtil.now().format("yyyy-MM-dd")
                 if (paths.size == 1) {
                     val filenames =
-                        File(loggingFilesPath).listFiles { _, filename -> filename.startsWith("all-") }
-                            ?.map {
-                                it.nameWithoutExtension.replace(
-                                    Regex("all-(\\d{4}-\\d{2}-\\d{2})-\\d+"),
-                                    "$1"
-                                )
-                            }?.toMutableSet() ?: mutableSetOf()
+                            File(loggingFilesPath).listFiles { _, filename -> filename.startsWith("all-") }
+                                    ?.map {
+                                        it.nameWithoutExtension.replace(
+                                                Regex("all-(\\d{4}-\\d{2}-\\d{2})-\\d+"),
+                                                "$1"
+                                        )
+                                    }?.toMutableSet() ?: mutableSetOf()
                     if (!filenames.contains(today)) {
                         filenames.add(today)
                     }
@@ -105,14 +106,14 @@ class LogsEndpoint(
                 } else if (paths.size == 2) {
                     var logPattern = paths[1]
                     val html =
-                        if (logPattern.endsWith(".html")) {
-                            logPattern = logPattern.substringBeforeLast(".html")
-                            true
-                        } else false
+                            if (logPattern.endsWith(".html")) {
+                                logPattern = logPattern.substringBeforeLast(".html")
+                                true
+                            } else false
 
                     val matchCurrent = today.startsWith(logPattern)
                     val files =
-                        File(loggingFilesPath).listFiles { _, filename -> filename.startsWith("all-$logPattern") || matchCurrent && filename == "all.log" }
+                            File(loggingFilesPath).listFiles { _, filename -> filename.startsWith("all-$logPattern") || matchCurrent && filename == "all.log" }
 
                     if (!files.isNullOrEmpty()) {
                         files.sortWith(compareBy { it.lastModified() })
@@ -121,29 +122,29 @@ class LogsEndpoint(
                             val logMsgs = mutableListOf<LogMsg>()
                             files.forEach { file ->
                                 logMsgs.addAll(
-                                    readLogMsgs(
-                                        file.inputStream(),
-                                        "gz" == file.extension
-                                    )
+                                        readLogMsgs(
+                                                file.inputStream(),
+                                                "gz" == file.extension
+                                        )
                                 )
                             }
-                            showLogFile(response, logPattern, logMsgs)
+                            showLogFile(response, logPattern, logMsgs, collapse)
                         } else {
                             val fileName = "$logPattern.log.gz"
                             val agent = request.getHeader("USER-AGENT")
 
                             val newFileName: String =
-                                if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
-                                    URLEncoder.encode(fileName, "UTF-8")
-                                } else {
-                                    fileName
-                                }
+                                    if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
+                                        URLEncoder.encode(fileName, "UTF-8")
+                                    } else {
+                                        fileName
+                                    }
                             response.setHeader(
-                                "Content-Disposition",
-                                "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
-                                    fileName,
-                                    "UTF-8"
-                                )
+                                    "Content-Disposition",
+                                    "attachment;filename=$newFileName;filename*=UTF-8''" + URLEncoder.encode(
+                                            fileName,
+                                            "UTF-8"
+                                    )
                             )
                             response.contentType = "application/octet-stream; charset=utf-8"
                             response.setHeader("Pragma", "No-cache")
@@ -153,12 +154,12 @@ class LogsEndpoint(
                             GZIPOutputStream(response.outputStream).buffered().use { bos ->
                                 files.forEach { file ->
                                     bos.write(
-                                        if ("gz".equals(
-                                                file.extension,
-                                                true
-                                            )
-                                        ) GZIPInputStream(file.inputStream()).readBytes() else file.inputStream()
-                                            .readBytes()
+                                            if ("gz".equals(
+                                                            file.extension,
+                                                            true
+                                                    )
+                                            ) GZIPInputStream(file.inputStream()).readBytes() else file.inputStream()
+                                                    .readBytes()
                                     )
                                 }
                             }
@@ -177,7 +178,7 @@ class LogsEndpoint(
                         response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
                     } else {
                         val logMsgs = readLogMsgs(file.inputStream(), "gz" == file.extension)
-                        showLogFile(response, file.name, logMsgs)
+                        showLogFile(response, file.name, logMsgs, collapse)
                     }
                 } else {
                     index(file.listFiles(), request, response, false)
@@ -186,8 +187,8 @@ class LogsEndpoint(
         } else {
             if (useWebSocket) {
                 val wsUrl =
-                    "ws://" + request.getHeader(HttpHeaders.HOST)
-                        .substringBefore(":") + ":" + serverProperties.port + request.contextPath + "/websocket/logging"
+                        "ws://" + request.getHeader(HttpHeaders.HOST)
+                                .substringBefore(":") + ":" + serverProperties.port + request.contextPath + "/websocket/logging"
                 response.contentType = "text/html;charset=utf-8"
                 response.setHeader("Pragma", "No-cache")
                 response.setHeader("Cache-Control", "no-cache")
@@ -201,7 +202,7 @@ class LogsEndpoint(
                     writer.println(prettyMessageHTMLLayout.getLogsHeader())
                     writer.println(prettyMessageHTMLLayout.presentationFooter)
                     writer.println(
-                        """
+                            """
 <script type="text/javascript">
   
   function getScrollTop() {
@@ -297,7 +298,7 @@ class LogsEndpoint(
         }
     }
 
-    private fun showLogFile(response: HttpServletResponse, name: String, logMsgs: List<LogMsg>?) {
+    private fun showLogFile(response: HttpServletResponse, name: String, logMsgs: List<LogMsg>?, collapse: Boolean?) {
         response.contentType = "text/html;charset=utf-8"
         response.setHeader("Pragma", "No-cache")
         response.setHeader("Cache-Control", "no-cache")
@@ -316,14 +317,14 @@ class LogsEndpoint(
                 val size = logMsgs.size
                 logMsgs.forEachIndexed { index, it ->
                     writer.appendLine(
-                        prettyMessageHTMLLayout.doLayout(it.msg, it.level, index == size - 1)
+                            prettyMessageHTMLLayout.doLayout(it.msg, it.level, collapse, index == size - 1)
                     )
                 }
             }
 
             writer.appendLine(prettyMessageHTMLLayout.presentationFooter)
             writer.appendLine(
-                """
+                    """
 <script type="text/javascript">
     if(!location.hash){
         window.location.href = '#last';
@@ -344,7 +345,7 @@ class LogsEndpoint(
             inputStream.bufferedReader().lines()
         }
         val regrex =
-            Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\d+) +--- +\\[([a-zA-Z0-9 \\-]+)] +(\\S+) +:(.*)")
+                Regex("(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}) +([A-Z]+) +(\\d+) +--- +\\[([a-zA-Z0-9 \\-]+)] +(\\S+) +:(.*)")
 
         val msgs = mutableListOf<LogMsg>()
         var msg = StringBuilder("")
@@ -374,10 +375,10 @@ class LogsEndpoint(
     private val comparator: Comparator<File> = LogFileNameComparator()
 
     private fun index(
-        files: Array<File>?,
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        root: Boolean
+            files: Array<File>?,
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            root: Boolean
     ) {
         if (!files.isNullOrEmpty()) {
             val servletPath = request.servletPath
@@ -392,7 +393,7 @@ class LogsEndpoint(
                 var dir = servletPath.substringAfterLast("/logs")
                 dir = if (dir.startsWith("/")) dir else "/$dir"
                 writer.println(
-                    """
+                        """
 <html>
 <head><title>Index of $dir</title></head>
 <body>"""
@@ -406,15 +407,15 @@ class LogsEndpoint(
                 else {
                     if (useWebSocket) {
                         writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${
-                                TimeUtil.now().format(dateTimeFormatter)
-                            }       -"
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${
+                                    TimeUtil.now().format(dateTimeFormatter)
+                                }       -"
                         )
                     }
                     writer.println(
-                        "<a style=\"display:inline-block;width:100px;\" href=\"$path/daily\">daily/</a>                                        ${
-                            TimeUtil.now().format(dateTimeFormatter)
-                        }       -"
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/daily\">daily/</a>                                        ${
+                                TimeUtil.now().format(dateTimeFormatter)
+                            }       -"
                     )
                 }
 
@@ -422,18 +423,18 @@ class LogsEndpoint(
                 files.forEach {
                     val millis = it.lastModified()
                     val lastModify =
-                        if (millis == 0L) "-" else TimeUtil.of(millis).format(dateTimeFormatter)
+                            if (millis == 0L) "-" else TimeUtil.of(millis).format(dateTimeFormatter)
                     if (it.isDirectory) {
                         writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        $lastModify       -"
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        $lastModify       -"
                         )
                     } else {
                         writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        $lastModify       ${
-                                prettyValue(
-                                    it.length()
-                                )
-                            }"
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        $lastModify       ${
+                                    prettyValue(
+                                            it.length()
+                                    )
+                                }"
                         )
                     }
                 }
@@ -468,21 +469,21 @@ class LogsEndpoint(
             var newScale = index - 2
             newScale = max(newScale, 0)
             val result =
-                if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(
-                    BigDecimal(1024), RoundingMode.UP
-                )
-                    .setScale(newScale, RoundingMode.UP).toString()
+                    if (lastValue == 0.0) newValue.toString() else BigDecimal(lastValue).divide(
+                            BigDecimal(1024), RoundingMode.UP
+                    )
+                            .setScale(newScale, RoundingMode.UP).toString()
             return trimTrailing(result) + units[index]
         }
     }
 
     private fun trimTrailing(value: String): String {
         return if (value.contains(".")) StringUtils
-            .trimTrailingCharacter(
-                StringUtils.trimTrailingCharacter(
-                    value, '0'
-                ), '.'
-            ) else value
+                .trimTrailingCharacter(
+                        StringUtils.trimTrailingCharacter(
+                                value, '0'
+                        ), '.'
+                ) else value
     }
 
 }

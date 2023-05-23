@@ -7,6 +7,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.CoreConstants.LINE_SEPARATOR
 import ch.qos.logback.core.helpers.Transform
 import ch.qos.logback.core.pattern.Converter
+import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.util.*
 
@@ -17,8 +18,8 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
 
     companion object {
         fun anchor(msg: String): String =
-            msg.substringBefore(" ---").split(' ').filter { it.isNotBlank() }.joinToString("-")
-                .lowercase(Locale.getDefault())
+                msg.substringBefore(" ---").split(' ').filter { it.isNotBlank() }.joinToString("-")
+                        .lowercase(Locale.getDefault())
     }
 
     init {
@@ -106,8 +107,8 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
     }
 
     private fun appendEventToBuffer(
-        buf: StringBuilder, c: Converter<ILoggingEvent>,
-        event: ILoggingEvent
+            buf: StringBuilder, c: Converter<ILoggingEvent>,
+            event: ILoggingEvent
     ) {
         buf.append("<td class=\"")
         when {
@@ -126,7 +127,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
     }
 
 
-    fun doLayout(msg: String, level: String, last: Boolean = false): String {
+    fun doLayout(msg: String, level: String, collapse: Boolean?, last: Boolean = false): String {
         val buf = StringBuilder()
         startNewTableIfLimitReached(buf)
 
@@ -152,9 +153,27 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
             Level.valueOf(level).isGreaterOrEqual(Level.ERROR) -> buf.append("Exception")
             else -> buf.append("Message")
         }
-        buf.append("\"><pre>")
-        buf.append(Transform.escapeTags(msg))
-        buf.append("</pre></td>")
+        buf.append("\">")
+
+        val escapeMsg = Transform.escapeTags(msg)
+        if (collapse == true) {
+            buf.append("<details>")
+            buf.append("<summary>")
+            buf.append("<pre>")
+            buf.append(escapeMsg.substringBefore(HttpOperation.separatorLine))
+            buf.append("</pre>")
+            buf.append("</summary>")
+            buf.append("<pre>")
+            buf.append(escapeMsg.substringAfter(HttpOperation.separatorLine))
+            buf.append("</pre>")
+            buf.append("</details>")
+        } else {
+            buf.append("<pre>")
+            buf.append(escapeMsg)
+            buf.append("</pre>")
+        }
+
+        buf.append("</td>")
         buf.append(LINE_SEPARATOR)
         buf.append("</tr>")
         buf.append(LINE_SEPARATOR)

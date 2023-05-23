@@ -22,6 +22,7 @@ object HttpOperation {
 
     @JvmField
     val REQUEST_LOGGING_USERNAME = HttpOperation::class.java.name + ".username"
+    const val separatorLine = "------------------------------------------------------------"
 
     fun toString(
         output: Operation,
@@ -30,7 +31,6 @@ object HttpOperation {
         responseDecrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val stringBuilder = StringBuilder("")
-        val separatorLine = "------------------------------------------------------------"
         val marginLine = "============================================================"
         stringBuilder.appendLine(marginLine)
         if (output.collectionName.isNotBlank() || output.name.isNotBlank()) {
