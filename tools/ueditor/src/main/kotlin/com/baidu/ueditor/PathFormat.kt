@@ -59,7 +59,7 @@ object PathFormat {
 
     private fun getString(pattern: String): String {
         var pattern1 = pattern
-        pattern1 = pattern1.lowercase(Locale.getDefault())
+        pattern1 = pattern1.toLowerCase(Locale.getDefault())
 
         // time 处理
         if (pattern1.contains(TIME)) {

@@ -228,7 +228,7 @@ open class Generator {
     fun modulePackage(name: String): String {
         val onePackage = enable("onePackage", true)
         return if (onePackage)
-            table.entityName.lowercase(Locale.getDefault())
+            table.entityName.toLowerCase(Locale.getDefault())
         else when (name) {
             "Domain" -> "domain"
             "QueryDsl" -> "querydsl"
@@ -243,7 +243,7 @@ open class Generator {
             "Service" -> "service"
             "ServiceImpl" -> "service.impl"
             "Repository" -> "repository"
-            else -> table.entityName.lowercase(Locale.getDefault())
+            else -> table.entityName.toLowerCase(Locale.getDefault())
         }
     }
 
@@ -589,7 +589,7 @@ open class Generator {
                 if (codeType.matches(Regex(".*[a-z].*")))
                     it.capitalized()
                 else
-                    it.lowercase(Locale.getDefault())
+                    it.toLowerCase(Locale.getDefault())
                             .capitalized()
             }
         }

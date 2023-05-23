@@ -24,7 +24,7 @@ object IPAddressUtil {
         get() {
             val interfaces = NetworkInterface.getNetworkInterfaces()
             return interfaces.toList().filter { !it.isLoopback && it.isUp && !it.isVirtual }
-                    .minByOrNull { it.index }?.inetAddresses?.toList()
+                    .minBy { it.index }?.inetAddresses?.toList()
                     ?.filterIsInstance<Inet4Address>()?.firstOrNull()?.let { return it.hostAddress }
                     ?: "127.0.0.1"
         }

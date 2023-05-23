@@ -321,20 +321,20 @@ class LogsEndpoint(
         prettyMessageHTMLLayout.start()
         val gzipOutputStream = GZIPOutputStream(response.outputStream).bufferedWriter()
         gzipOutputStream.use { writer ->
-            writer.appendLine(prettyMessageHTMLLayout.fileHeader)
-            writer.appendLine(prettyMessageHTMLLayout.getLogsHeader())
+            writer.appendln(prettyMessageHTMLLayout.fileHeader)
+            writer.appendln(prettyMessageHTMLLayout.getLogsHeader())
 
             if (!logMsgs.isNullOrEmpty()) {
                 val size = logMsgs.size
                 logMsgs.forEachIndexed { index, it ->
-                    writer.appendLine(
+                    writer.appendln(
                             prettyMessageHTMLLayout.doLayout(it.msg, it.level, collapse, index == size - 1)
                     )
                 }
             }
 
-            writer.appendLine(prettyMessageHTMLLayout.presentationFooter)
-            writer.appendLine(
+            writer.appendln(prettyMessageHTMLLayout.presentationFooter)
+            writer.appendln(
                     """
 <script type="text/javascript">
     if(!location.hash){
@@ -343,7 +343,7 @@ class LogsEndpoint(
 </script>
 """
             )
-            writer.appendLine(prettyMessageHTMLLayout.fileFooter)
+            writer.appendln(prettyMessageHTMLLayout.fileFooter)
         }
         gzipOutputStream.flush()
         response.flushBuffer()

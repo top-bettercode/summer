@@ -3,6 +3,7 @@ package top.bettercode.summer.security
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import top.bettercode.summer.security.token.IRevokeTokenService
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
@@ -22,9 +23,11 @@ class TestSecurityConfiguration {
     //  }
     @Bean
     fun revokeTokenService(): IRevokeTokenService {
-        return IRevokeTokenService { principal ->
-            System.err
-                    .println(valueOf(principal, true))
+        return object : IRevokeTokenService {
+            override fun revokeToken(principal: UserDetails) {
+                System.err
+                        .println(valueOf(principal, true))
+            }
         }
     }
 

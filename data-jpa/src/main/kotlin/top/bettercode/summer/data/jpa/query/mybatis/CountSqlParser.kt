@@ -132,7 +132,7 @@ class CountSqlParser {
                 if (expression is Function) {
                     val name = expression.name
                     if (name != null) {
-                        val name1 = name.uppercase(Locale.getDefault())
+                        val name1 = name.toUpperCase(Locale.getDefault())
                         if (skipFunctions.contains(name1)) {
                             //go on
                         } else if (falseFunctions.contains(name1)) {
@@ -360,7 +360,7 @@ class CountSqlParser {
             if (StringUtils.hasText(functions)) {
                 val funs = functions.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 for (`fun` in funs) {
-                    AGGREGATE_FUNCTIONS.add(`fun`.uppercase(Locale.getDefault()))
+                    AGGREGATE_FUNCTIONS.add(`fun`.toUpperCase(Locale.getDefault()))
                 }
             }
         }

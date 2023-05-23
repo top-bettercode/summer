@@ -168,7 +168,7 @@ object RequestConverter {
         val request: ServletRequest = unwrap(servletRequest)
 
         val parts = ArrayList<OperationRequestPart>()
-        if (request is HttpServletRequest && request.contentType?.lowercase(Locale.getDefault())
+        if (request is HttpServletRequest && request.contentType?.toLowerCase(Locale.getDefault())
                         ?.startsWith("multipart/") == true
         )
             parts.addAll(extractServletRequestParts(request))

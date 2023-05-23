@@ -10,8 +10,7 @@ val javaVersion = JavaVersion.VERSION_1_8
 
 allprojects {
     group = "top.bettercode.summer"
-    version = "0.0.20-SNAPSHOT"
-
+    version = "0.0.20.hs8-SNAPSHOT"
 
     val isBomProject = arrayOf(
             "summer-bom",
@@ -123,7 +122,7 @@ allprojects {
             }
 
             withType(JavaCompile::class) {
-//                this.outputs.upToDateWhen { false }
+                this.outputs.upToDateWhen { false }
                 options.compilerArgs.add("-Xlint:deprecation")
                 options.compilerArgs.add("-Xlint:unchecked")
                 options.compilerArgs.add("-parameters")
@@ -132,11 +131,11 @@ allprojects {
             }
 
             withType(KotlinCompile::class) {
-//                this.outputs.upToDateWhen { false }
+                this.outputs.upToDateWhen { false }
                 incremental = true
                 kotlinOptions {
                     jvmTarget = javaVersion.toString()
-                    freeCompilerArgs = listOf("-Xjvm-default=all")
+                    freeCompilerArgs = listOf("-Xjvm-default=enable")
                 }
             }
         }

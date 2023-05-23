@@ -5,7 +5,6 @@ import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerMapping
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
-import org.springframework.web.util.ServletRequestPathUtils
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.getAnnotation
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.hasAnnotation
 import javax.servlet.http.HttpServletRequest
@@ -35,9 +34,9 @@ object HandlerMethodContextHolder {
             if (handlerMethod != null) {
                 return handlerMethod
             }
-            if (!ServletRequestPathUtils.hasParsedRequestPath(request)) {
-                ServletRequestPathUtils.parseAndCache(request)
-            }
+//            if (!ServletRequestPathUtils.hasParsedRequestPath(request)) {
+//                ServletRequestPathUtils.parseAndCache(request)
+//            }
             val handlerExecutionChain = handlerMapping!!.getHandler(request)
             if (handlerExecutionChain != null) {
                 handler = handlerExecutionChain.handler

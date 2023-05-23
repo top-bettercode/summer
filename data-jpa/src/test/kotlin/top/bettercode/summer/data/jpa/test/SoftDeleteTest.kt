@@ -70,7 +70,7 @@ class SoftDeleteTest {
 
     @Test
     fun methdQuery() {
-        repository.deleteAllInBatch(batch)
+        repository.deleteInBatch(batch)
         var users = repository.findByLastName("Matthews")
         System.err.println(users)
         Assertions.assertEquals(0, users!!.size)

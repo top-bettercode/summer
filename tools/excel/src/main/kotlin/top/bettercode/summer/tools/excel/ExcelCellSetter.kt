@@ -9,7 +9,7 @@ import java.io.Serializable
  * @param <P> 属性
 </P></T> */
 @FunctionalInterface
-fun interface ExcelCellSetter<T, P> : Serializable {
+interface ExcelCellSetter<T, P> : Serializable {
 
     operator fun set(entity: T, property: P?)
 

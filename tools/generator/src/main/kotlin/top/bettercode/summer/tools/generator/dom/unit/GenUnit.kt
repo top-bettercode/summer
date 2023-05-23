@@ -22,8 +22,8 @@ interface GenUnit {
             val file = File(name)
             return if (file.isAbsolute || SourceSet.ROOT == sourceSet) file else {
                 File(
-                        "src/${sourceSet.name.lowercase(Locale.getDefault())}/${
-                            directorySet.name.lowercase(
+                        "src/${sourceSet.name.toLowerCase(Locale.getDefault())}/${
+                            directorySet.name.toLowerCase(
                                     Locale.getDefault()
                             )
                         }/$name"

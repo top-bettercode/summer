@@ -103,7 +103,7 @@ object StringUtil {
             }
             i++
         }
-        return buf.toString().lowercase(Locale.ROOT)
+        return buf.toString().toLowerCase(Locale.ROOT)
     }
 
     /**
@@ -583,11 +583,11 @@ object StringUtil {
                 return 1
             var v2 = toIntOrNull2
                     ?: versionTails.indexOf(
-                            version2s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                            version2s[i].replace(versionTailRegex, "$1").toUpperCase(Locale.getDefault())
                     )
             var v1 = toIntOrNull1
                     ?: versionTails.indexOf(
-                            version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                            version1s[i].replace(versionTailRegex, "$1").toUpperCase(Locale.getDefault())
                     )
             if (v1 != -1 && v1 == v2 && toIntOrNull1 == null) {
                 v2 = version2s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
@@ -615,16 +615,16 @@ object StringUtil {
             val result = StringBuilder()
             if (name.isNotEmpty()) {
                 // 将第一个字符处理成大写
-                result.append(name.substring(0, 1).uppercase(Locale.getDefault()))
+                result.append(name.substring(0, 1).toUpperCase(Locale.getDefault()))
                 // 循环处理其余字符
                 for (i in 1 until name.length) {
                     val s = name.substring(i, i + 1)
                     // 在大写字母前添加下划线
-                    if (s == s.uppercase(Locale.getDefault()) && !Character.isDigit(s[0]) && s[0] != '_') {
+                    if (s == s.toUpperCase(Locale.getDefault()) && !Character.isDigit(s[0]) && s[0] != '_') {
                         result.append("_")
                     }
                     // 其他字符直接转成大写
-                    result.append(s.uppercase(Locale.getDefault()))
+                    result.append(s.toUpperCase(Locale.getDefault()))
                 }
             }
             return result.toString()

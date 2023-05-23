@@ -90,7 +90,7 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
             if (ignoreCase) {
                 stringExpression = criteriaBuilder.lower(stringExpression)
                 if (value is String) {
-                    value = value.toString().lowercase(Locale.getDefault())
+                    value = value.toString().toLowerCase(Locale.getDefault())
                 }
             }
             if (trimspec != null && value is String) {
@@ -107,7 +107,7 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
                 PathMatcher.IN -> {
                     Assert.isTrue(value is Collection<*>, "IN matcher with wrong value")
                     val collect = (value as Collection<*>).stream()
-                            .map { s: Any? -> if (ignoreCase) s.toString().lowercase(Locale.getDefault()) else s.toString() }
+                            .map { s: Any? -> if (ignoreCase) s.toString().toLowerCase(Locale.getDefault()) else s.toString() }
                             .collect(Collectors.toList())
                     return stringExpression.`in`(collect)
                 }
@@ -115,7 +115,7 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
                 PathMatcher.NOT_IN -> {
                     Assert.isTrue(value is Collection<*>, "IN matcher with wrong value")
                     val notInCollect = (value as Collection<*>).stream()
-                            .map { s: Any? -> if (ignoreCase) s.toString().lowercase(Locale.getDefault()) else s.toString() }
+                            .map { s: Any? -> if (ignoreCase) s.toString().toLowerCase(Locale.getDefault()) else s.toString() }
                             .collect(Collectors.toList())
                     return criteriaBuilder.not(stringExpression.`in`(notInCollect))
                 }

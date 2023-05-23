@@ -151,7 +151,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
                 } else if (primaryKey.idgenerator.isNotBlank()) {
                     val generatorStrategy =
-                            (setting(primaryKey.idgenerator.lowercase(Locale.getDefault())) as? String)
+                            (setting(primaryKey.idgenerator.toLowerCase(Locale.getDefault())) as? String)
                                     ?: "uuid2"
                     val generator = generatorStrategy.substringAfterLast(".")
                             .substringBeforeLast("Generator")

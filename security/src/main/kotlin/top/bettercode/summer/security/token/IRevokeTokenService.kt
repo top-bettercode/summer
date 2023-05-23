@@ -5,6 +5,6 @@ import org.springframework.security.core.userdetails.UserDetails
 /**
  * @author Peter Wu
  */
-fun interface IRevokeTokenService {
+interface IRevokeTokenService {
     fun revokeToken(principal: UserDetails)
 }

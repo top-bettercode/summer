@@ -33,7 +33,7 @@ class FileUnit(
             }
 
     operator fun String.unaryPlus() {
-        appendLine(this)
+        appendln(this)
     }
 
 }

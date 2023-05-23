@@ -4,7 +4,7 @@ import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.java.element.PackageInfo
@@ -26,7 +26,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     project.allprojects { subProject ->
-                        subProject.extensions.getByType(JavaPluginExtension::class.java).sourceSets.getByName(
+                        subProject.convention.getByType(JavaPluginConvention::class.java).sourceSets.getByName(
                                 SourceSet.MAIN_SOURCE_SET_NAME
                         ).java.srcDirs.forEach { srcDir ->
                             srcDir.walkTopDown().filter { it.isDirectory }.forEach { packageDir ->

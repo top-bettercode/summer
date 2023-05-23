@@ -17,8 +17,10 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import top.bettercode.summer.security.ApiTokenService
 import top.bettercode.summer.security.IResourceService
+import top.bettercode.summer.security.authorization.URLFilterInvocationSecurityMetadataSource
 import top.bettercode.summer.security.repository.ApiTokenRepository
 import top.bettercode.summer.security.repository.InMemoryApiTokenRepository
 import top.bettercode.summer.security.support.ApiSecurityErrorHandler
@@ -26,14 +28,20 @@ import top.bettercode.summer.security.token.ApiToken
 import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 import javax.servlet.http.HttpServletRequest
-import kotlin.math.max
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(ApiSecurityProperties::class)
 class ApiSecurityConfiguration(
-        private val securityProperties: ApiSecurityProperties
-) {
+        private val securityProperties: ApiSecurityProperties) {
+    @Bean
+    fun securityMetadataSource(
+            resourceService: IResourceService,
+            requestMappingHandlerMapping: RequestMappingHandlerMapping): URLFilterInvocationSecurityMetadataSource {
+        return URLFilterInvocationSecurityMetadataSource(resourceService,
+                requestMappingHandlerMapping, securityProperties)
+    }
+
     @ConditionalOnMissingBean(IResourceService::class)
     @Bean
     fun resourceService(): IResourceService {
@@ -51,18 +59,14 @@ class ApiSecurityConfiguration(
     }
 
     @Bean
-    fun apiTokenService(
-            apiAuthorizationService: ApiTokenRepository,
-            userDetailsService: UserDetailsService
-    ): ApiTokenService {
+    fun apiTokenService(apiAuthorizationService: ApiTokenRepository,
+                        userDetailsService: UserDetailsService): ApiTokenService {
         return ApiTokenService(securityProperties, apiAuthorizationService, userDetailsService)
     }
 
     @Bean
-    fun securityOAuth2ErrorHandler(
-            messageSource: MessageSource,
-            @Autowired(required = false) request: HttpServletRequest?
-    ): ApiSecurityErrorHandler {
+    fun securityOAuth2ErrorHandler(messageSource: MessageSource,
+                                   @Autowired(required = false) request: HttpServletRequest?): ApiSecurityErrorHandler {
         return ApiSecurityErrorHandler(messageSource, request)
     }
 
@@ -70,7 +74,7 @@ class ApiSecurityConfiguration(
     @Bean
     fun apiAuthorizationService(): ApiTokenRepository {
         val cache = Caffeine.newBuilder()
-                .expireAfterWrite(max(securityProperties.accessTokenValiditySeconds,
+                .expireAfterWrite(Math.max(securityProperties.accessTokenValiditySeconds,
                         securityProperties.refreshTokenValiditySeconds).toLong(), TimeUnit.SECONDS)
                 .maximumSize(10000).build<String, ApiToken>()
         val accessTokenBuild = Caffeine.newBuilder()

@@ -29,10 +29,6 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return BaseController.notFound(msg)
     }
 
-    override fun getRepository(): M {
-        return repository
-    }
-
     override fun <S : T> save(s: S, spec: Specification<T>): Int {
         return repository.save(s, spec)
     }
@@ -45,10 +41,6 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
 
     override fun delete(spec: Specification<T>): Int {
         return repository.delete(spec)
-    }
-
-    override fun deleteAllById(ids: Iterable<ID>) {
-        repository.deleteAllById(ids)
     }
 
     override fun exists(spec: Specification<T>): Boolean {
@@ -91,8 +83,8 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository.saveAll(entities)
     }
 
-    override fun deleteAllInBatch(entities: Iterable<T>) {
-        repository.deleteAllInBatch(entities)
+    override fun deleteInBatch(entities: Iterable<T>) {
+        repository.deleteInBatch(entities)
     }
 
     override fun deleteAllInBatch() {

@@ -25,7 +25,7 @@ class ExcelImportException(message: String?,
                 var i = column
                 val chars = StringBuilder()
                 do {
-                    chars.append(('A'.code + i % 26).toChar())
+                    chars.append(('A'.toInt() + i % 26).toChar())
                 } while ((i / 26 - 1).also { i = it } >= 0)
                 return chars.reverse().toString()
             }

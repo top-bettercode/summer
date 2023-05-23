@@ -160,7 +160,7 @@ open class GeneratorExtension(
         @JvmStatic
         fun javaName(str: String, capitalize: Boolean = false): String {
             val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") { s ->
-                s.lowercase(Locale.getDefault()).capitalized()
+                s.toLowerCase(Locale.getDefault()).capitalized()
             }
             return if (capitalize) s else s.decapitalized()
         }

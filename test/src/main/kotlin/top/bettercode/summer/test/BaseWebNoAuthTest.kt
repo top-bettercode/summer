@@ -133,10 +133,7 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
 
     private fun getFileName(result: MvcResult): String {
         var contentDisposition = result.response.getHeader("Content-Disposition")
-        contentDisposition = URLDecoder
-                .decode(
-                        contentDisposition!!
-                                .replace(".*filename\\*=UTF-8''(.*?)".toRegex(), "$1"), "UTF-8")
+        contentDisposition = URLDecoder.decode(contentDisposition!!.replace(".*filename\\*=UTF-8''(.*?)".toRegex(), "$1"), "UTF-8")
         return "build/$contentDisposition"
     }
 
@@ -163,7 +160,7 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
                 Files.newOutputStream(Paths.get(name)))
         try {
             val filePath = System.getProperty("user.dir") + File.separator + name
-            if (System.getProperties().getProperty("os.name").lowercase(Locale.getDefault()).startsWith("win")) {
+            if (System.getProperties().getProperty("os.name").toLowerCase(Locale.getDefault()).startsWith("win")) {
                 Runtime.getRuntime()
                         .exec(arrayOf("rundll32", "url.dll,FileProtocolHandler", filePath))
             } else {

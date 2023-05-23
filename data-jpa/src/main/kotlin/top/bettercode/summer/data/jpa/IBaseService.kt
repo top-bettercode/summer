@@ -11,8 +11,6 @@ import java.util.*
  */
 interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
 
-    fun getRepository(): M
-
     fun <S : T> save(s: S): S
     fun <S : T> save(s: S, spec: Specification<T>): Int
 
@@ -34,10 +32,9 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
     fun delete(t: T)
     fun deleteById(id: ID)
     fun delete(spec: Specification<T>): Int
-    fun deleteAllById(ids: Iterable<ID>)
     fun deleteAll(entities: Iterable<T>)
     fun deleteAll()
-    fun deleteAllInBatch(entities: Iterable<T>)
+    fun deleteInBatch(entities: Iterable<T>)
     fun deleteAllInBatch()
     fun count(): Long
     fun findById(id: ID): Optional<T>

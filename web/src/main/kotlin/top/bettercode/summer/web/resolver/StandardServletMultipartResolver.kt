@@ -26,7 +26,7 @@ class StandardServletMultipartResolver : MultipartResolver {
         if (RequestMethod.POST.name == method || (RequestMethod.PUT.name
                         == method)) { //支持PUT方法
             val contentType = request.contentType
-            return contentType != null && contentType.lowercase(Locale.getDefault()).startsWith("multipart/")
+            return contentType != null && contentType.toLowerCase(Locale.getDefault()).startsWith("multipart/")
         }
         return false
     }

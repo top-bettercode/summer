@@ -41,10 +41,11 @@ open class PageController : BaseController() {
     protected fun <T, R> ok(`object`: Page<T>, mapper: Function<in T, out R?>?): ResponseEntity<*> {
         val number = if (properties!!.pageable.isOneIndexedParameters) `object`.number + 1 else `object`.number
         val content = `object`.content
+        val collect = content.stream().map(mapper).collect(Collectors.toList())
         return super.ok(
                 PagedResources(PageMetadata(number.toLong(), `object`.size.toLong(), `object`.totalPages.toLong(),
                         `object`.totalElements),
-                        content.stream().map(mapper).collect(Collectors.toList())))
+                        collect))
     }
 
     protected fun page(`object`: Any?): ResponseEntity<*> {

@@ -70,7 +70,7 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : 
             this.tuple = tuple
             for (i in tuple.indices) {
                 aliasToValue[aliases[i]] = tuple[i]
-                aliasReferences[aliases[i].lowercase(Locale.getDefault())] = aliases[i]
+                aliasReferences[aliases[i].toLowerCase(Locale.getDefault())] = aliases[i]
             }
         }
 
@@ -80,7 +80,7 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : 
         }
 
         override fun get(alias: String): Any? {
-            val aliasReference = aliasReferences[alias.lowercase(Locale.getDefault())]
+            val aliasReference = aliasReferences[alias.toLowerCase(Locale.getDefault())]
             if (aliasReference != null && aliasToValue.containsKey(aliasReference)) {
                 return aliasToValue[aliasReference]
             }

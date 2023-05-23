@@ -27,15 +27,15 @@ object EscapeUtil {
                     || Character.isUpperCase(j)
             ) {
                 tmp.append(j)
-            } else if (j.code < 256) {
+            } else if (j.toInt() < 256) {
                 tmp.append("%")
-                if (j.code < 16) {
+                if (j.toInt() < 16) {
                     tmp.append("0")
                 }
-                tmp.append(j.code.toString(16))
+                tmp.append(j.toInt().toString(16))
             } else {
                 tmp.append("%u")
-                tmp.append(j.code.toString(16).uppercase(Locale.getDefault()))
+                tmp.append(j.toInt().toString(16).toUpperCase(Locale.getDefault()))
             }
             i++
         }

@@ -42,6 +42,7 @@ import top.bettercode.summer.logging.websocket.WebSocketAppender
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
+import top.bettercode.summer.web.support.packagescan.PackageScanFilter
 import java.io.File
 import java.nio.charset.Charset
 import java.util.*
@@ -214,7 +215,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
                     .bind("summer.logging.spilt-level", Bindable.setOf(String::class.java))
                     .orElseGet { setOf() }
 
-            val rootName = LoggingSystem.ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
+            val rootName = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase(Locale.getDefault())
             spilts.remove(rootName)
 
             setAllFileAppender(context, fileLogPattern, filesProperties, rootLevel, logFile)
@@ -314,7 +315,7 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         appender.encoder = encoder
         start(context, encoder)
 
-        val name = LoggingSystem.ROOT_LOGGER_NAME.lowercase(Locale.getDefault())
+        val name = LoggingSystem.ROOT_LOGGER_NAME.toLowerCase(Locale.getDefault())
         val logFile = (filesProperties.path + File.separator + "root" + File.separator + name)
         appender.file = "$logFile.log"
         setRollingPolicy(appender, context, filesProperties, logFile)
@@ -669,11 +670,13 @@ open class Logback2LoggingSystem(classLoader: ClassLoader) : LogbackLoggingSyste
         private val packageScanClassResolver = PackageScanClassResolver()
         val defaultSpiltMarkers: List<String>
                 by lazy {
-                    val clazzs: Set<Class<*>> = packageScanClassResolver.findByFilter({ type ->
-                        try {
-                            type.isAnnotationPresent(LogMarker::class.java)
-                        } catch (e: Exception) {
-                            false
+                    val clazzs: Set<Class<*>> = packageScanClassResolver.findByFilter(object : PackageScanFilter {
+                        override fun matches(type: Class<*>): Boolean {
+                            return try {
+                                type.isAnnotationPresent(LogMarker::class.java)
+                            } catch (e: Exception) {
+                                false
+                            }
                         }
                     }, "top.bettercode.summer"
                     )

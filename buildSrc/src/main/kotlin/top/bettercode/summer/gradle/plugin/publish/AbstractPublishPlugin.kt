@@ -6,7 +6,7 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
@@ -15,8 +15,6 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
 import org.gradle.plugins.signing.SigningExtension
-import org.jetbrains.dokka.DokkaVersion
-import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URI
 
 /**
@@ -36,7 +34,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
     companion object {
         fun conifgRepository(
                 project: Project,
-                p: PublishingExtension,
+                p: PublishingExtension
         ) {
             project.findProperty("mavenRepos")?.toString()?.split(",")?.forEach {
                 var mavenRepoName = project.findProperty("$it.name") as? String ?: it
@@ -84,10 +82,10 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
      * 配置dokkaDoc
      */
     protected fun dokkaTask(project: Project) {
-        val dokkaJavadoc = project.tasks.findByName("dokkaJavadoc")
-        dokkaJavadoc as DokkaTask
-        dokkaJavadoc.offlineMode.set(true)
-        dokkaJavadoc.plugins.dependencies.add(project.dependencies.create("org.jetbrains.dokka:kotlin-as-java-plugin:${DokkaVersion.version}"))
+//        val dokkaJavadoc = project.tasks.findByName("dokkaJavadoc")
+//        dokkaJavadoc as DokkaTask
+//        dokkaJavadoc.offlineMode.set(true)
+//        dokkaJavadoc.plugins.dependencies.add(project.dependencies.create("org.jetbrains.dokka:kotlin-as-java-plugin:${DokkaVersion.version}"))
     }
 
     /**
@@ -158,7 +156,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
     protected fun configurePomXml(
             project: Project,
             projectUrl: String?,
-            projectVcsUrl: String?,
+            projectVcsUrl: String?
     ): (XmlProvider) -> Unit {
         return {
             val root = it.asNode()
@@ -220,7 +218,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
             it.dependsOn("classes")
             it.archiveClassifier.set("sources")
             it.from(
-                    project.extensions.getByType(JavaPluginExtension::class.java).sourceSets.getByName(
+                    project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(
                             SourceSet.MAIN_SOURCE_SET_NAME
                     ).allSource
             )
