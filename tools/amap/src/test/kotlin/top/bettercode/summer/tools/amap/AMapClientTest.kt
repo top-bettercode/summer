@@ -22,4 +22,9 @@ internal class AMapClientTest : BaseTest() {
         System.err.println(regeo)
     }
 
+    @Test
+    fun geo() {
+        val geo = amapClient.geo("河南省洛阳市偃师区")
+        System.err.println(geo)
+    }
 }

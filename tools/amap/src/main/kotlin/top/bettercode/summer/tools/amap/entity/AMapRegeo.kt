@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.amap.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class AmapRegeo(
+data class AMapRegeo(
     @field:JsonProperty("status")
     val status: String? = null,
 

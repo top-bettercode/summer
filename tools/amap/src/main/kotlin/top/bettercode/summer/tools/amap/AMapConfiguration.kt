@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Configuration
 /**
  * @author Peter Wu
  */
-@EnableConfigurationProperties(AmapProperties::class)
+@EnableConfigurationProperties(AMapProperties::class)
 @Configuration(proxyBeanMethods = false)
-class AmapConfiguration {
+class AMapConfiguration {
 
     @Bean
-    fun aMapClient(amapProperties: AmapProperties): AMapClient {
+    fun aMapClient(amapProperties: AMapProperties): AMapClient {
         return AMapClient(amapProperties)
     }
 

@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.amap
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "summer.amap")
-open class AmapProperties {
+open class AMapProperties {
     //--------------------------------------------
     var url = "https://restapi.amap.com/v3"
     var key: String? = null

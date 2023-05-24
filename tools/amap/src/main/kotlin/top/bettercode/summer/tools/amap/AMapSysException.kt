@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
  * @author Peter Wu
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-class AmapSysException(message: String) : IllegalArgumentException("高德地图：$message") {
+class AMapSysException(message: String) : IllegalArgumentException("高德地图：$message") {
     companion object {
         private const val serialVersionUID = 1L
     }

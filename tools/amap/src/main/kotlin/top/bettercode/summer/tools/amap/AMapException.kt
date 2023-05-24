@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.amap
 /**
  * @author Peter Wu
  */
-class AmapException : RuntimeException {
+class AMapException : RuntimeException {
     @JvmOverloads
     constructor(message: String? = "高德地图请求失败") : super(message)
 
