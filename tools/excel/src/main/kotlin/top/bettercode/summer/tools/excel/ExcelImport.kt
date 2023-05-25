@@ -192,7 +192,7 @@ class ExcelImport private constructor(`is`: InputStream) {
         }
         val dataList: MutableList<E> = ArrayList()
         for (row in sheet!!.openStream().filter { row: Row -> row.rowNum > this.row }
-                .collect(Collectors.toList<Row>())) {
+                .collect(Collectors.toList())) {
             if (row != null) {
                 val e = readRow(cls, excelFields, row, converter)
                 if (e != null) {
