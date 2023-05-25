@@ -152,10 +152,8 @@ open class ExcelField<T, P : Any?> {
     //--------------------------------------------
     @JvmOverloads
     fun yuan(scale: Int = 2): ExcelField<T, P> {
-        return cell { property: P -> toYun((property as Long), scale).toPlainString() }
-                .property { yun: Any ->
-                    @Suppress("UNCHECKED_CAST")
-                    toCent(yun as BigDecimal) as P
+        return cell { property: P -> toYun((property as Long), scale).toPlainString() }.property { yun: Any ->
+                    @Suppress("UNCHECKED_CAST") toCent(yun as BigDecimal) as P
                 }
     }
 
@@ -191,9 +189,7 @@ open class ExcelField<T, P : Any?> {
                 val code = property.toString()
                 if (code.contains(",")) {
                     val split = code.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                    return@cell StringUtils.arrayToCommaDelimitedString(
-                            Arrays.stream<String>(split).map<String> { s: String -> codeService.getDicCodes(codeType)!!.getName(s.trim { it <= ' ' }) }
-                                    .toArray())
+                    return@cell StringUtils.arrayToCommaDelimitedString(Arrays.stream<String>(split).map<String> { s: String -> codeService.getDicCodes(codeType)!!.getName(s.trim { it <= ' ' }) }.toArray())
                 } else {
                     return@cell codeService.getDicCodes(codeType)!!.getName(code)
                 }
@@ -209,13 +205,11 @@ open class ExcelField<T, P : Any?> {
         val codeService = CodeServiceHolder[codeServiceRef]
         return if (cellValue.contains(",")) {
             val split = cellValue.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            StringUtils.arrayToCommaDelimitedString(
-                    Arrays.stream(split).map { s: String ->
-                        val code = codeService.getDicCodes(codeType)!!.getCode(s.trim { it <= ' ' })
-                                ?: throw IllegalArgumentException("无\"$s\"对应的类型")
-                        code
-                    }
-                            .toArray()) as P?
+            StringUtils.arrayToCommaDelimitedString(Arrays.stream(split).map { s: String ->
+                val code = codeService.getDicCodes(codeType)!!.getCode(s.trim { it <= ' ' })
+                        ?: throw IllegalArgumentException("无\"$s\"对应的类型")
+                code
+            }.toArray()) as P?
         } else {
             val code = codeService.getDicCodes(codeType)!!.getCode(cellValue)
                     ?: throw IllegalArgumentException("无\"$cellValue\"对应的类型")
@@ -249,10 +243,7 @@ open class ExcelField<T, P : Any?> {
         return this
     }
 
-    constructor(
-            title: String, propertyGetter: ExcelConverter<T, P?>,
-            indexColumn: Boolean, imageColumn: Boolean
-    ) {
+    constructor(title: String, propertyGetter: ExcelConverter<T, P?>, indexColumn: Boolean, imageColumn: Boolean) {
         this.title = title
         this.propertyGetter = propertyGetter
         try {
@@ -264,8 +255,7 @@ open class ExcelField<T, P : Any?> {
                 val get = field.get(propertyGetter)
                 if (get is PropertyReference) {
                     propertyType = get.returnType.javaType as Class<*>
-                    @Suppress("UNCHECKED_CAST")
-                    entityType = (get.owner as KClass<*>).java as Class<T>
+                    @Suppress("UNCHECKED_CAST") entityType = (get.owner as KClass<*>).java as Class<T>
                     propertyName = get.name
                 }
             }
@@ -274,25 +264,20 @@ open class ExcelField<T, P : Any?> {
                 writeReplace.isAccessible = true
                 val serializedLambda = writeReplace.invoke(propertyGetter) as SerializedLambda
                 val implMethodName = serializedLambda.implMethodName
-                val methodSignature = SignatureAttribute
-                        .toMethodSignature(serializedLambda.instantiatedMethodType)
+                val methodSignature = SignatureAttribute.toMethodSignature(serializedLambda.instantiatedMethodType)
                 propertyType = ClassUtils.forName(methodSignature.returnType.jvmTypeName(), null)
                 propertyName = resolvePropertyName(implMethodName)
-                @Suppress("UNCHECKED_CAST")
-                entityType = ClassUtils
-                        .forName(methodSignature.parameterTypes[0].jvmTypeName(), null) as Class<T>
+                @Suppress("UNCHECKED_CAST") entityType = ClassUtils.forName(methodSignature.parameterTypes[0].jvmTypeName(), null) as Class<T>
                 //$lamda-0
                 if (!propertyName!!.contains("lambda\$new$") && !propertyName!!.contains("\$lambda")) {
                     try {
                         var writeMethod: Method
                         try {
-                            writeMethod = entityType!!
-                                    .getMethod("set" + StringUtils.capitalize(propertyName!!), propertyType)
+                            writeMethod = entityType!!.getMethod("set" + StringUtils.capitalize(propertyName!!), propertyType)
                         } catch (e: NoSuchMethodException) {
                             if (ClassUtils.isPrimitiveWrapper(propertyType!!)) {
-                                propertyType = primitiveWrapperTypeMap[propertyType]
-                                writeMethod = entityType!!
-                                        .getMethod("set" + StringUtils.capitalize(propertyName!!), propertyType)
+                                propertyType = primitiveWrapperTypeMap[propertyType!!]
+                                writeMethod = entityType!!.getMethod("set" + StringUtils.capitalize(propertyName!!), propertyType)
                             } else {
                                 throw e
                             }
@@ -339,10 +324,7 @@ open class ExcelField<T, P : Any?> {
      * @param propertyType   属性字段类型
      * @param propertyGetter 属性获取方法
      */
-    private constructor(
-            title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>,
-            indexColumn: Boolean, imageColumn: Boolean
-    ) {
+    private constructor(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, indexColumn: Boolean, imageColumn: Boolean) {
         this.title = title
         this.propertyType = propertyType
         this.propertyGetter = propertyGetter
@@ -394,8 +376,7 @@ open class ExcelField<T, P : Any?> {
             }
         }
         propertyConverter = { cellValue: Any? ->
-            @Suppress("UNCHECKED_CAST")
-            when (propertyType) {
+            @Suppress("UNCHECKED_CAST") when (propertyType) {
                 String::class.java -> {
                     cellValue.toString()
                 }
@@ -407,8 +388,7 @@ open class ExcelField<T, P : Any?> {
                 Int::class.javaObjectType, Int::class.javaPrimitiveType -> {
                     if (cellValue is String) {
                         BigDecimal(cellValue).toInt()
-                    } else
-                        (cellValue as BigDecimal).toInt()
+                    } else (cellValue as BigDecimal).toInt()
                 }
 
                 Long::class.javaObjectType, Long::class.javaPrimitiveType -> when {
@@ -646,10 +626,7 @@ open class ExcelField<T, P : Any?> {
      * @param validator      参数验证
      * @param validateGroups 参数验证组
      */
-    fun setProperty(
-            obj: T, cellValue: Any?, validator: Validator,
-            validateGroups: Array<Class<*>>
-    ) {
+    fun setProperty(obj: T, cellValue: Any?, validator: Validator, validateGroups: Array<Class<*>>) {
         val property: P? = if (isEmptyCell(cellValue)) {
             defaultValue
         } else {
@@ -657,8 +634,7 @@ open class ExcelField<T, P : Any?> {
         }
         propertySetter?.let { it[obj] = property }
         if (propertyName != null) {
-            val constraintViolations = validator
-                    .validateProperty<Any>(obj, propertyName, *validateGroups)
+            val constraintViolations = validator.validateProperty<Any>(obj, propertyName, *validateGroups)
             if (constraintViolations.isNotEmpty()) {
                 throw ConstraintViolationException(constraintViolations)
             }
@@ -666,8 +642,7 @@ open class ExcelField<T, P : Any?> {
     }
 
     fun isEmptyCell(cellValue: Any?): Boolean {
-        return cellValue == null || cellValue is CharSequence && !StringUtils.hasText(
-                cellValue as CharSequence?)
+        return cellValue == null || cellValue is CharSequence && !StringUtils.hasText(cellValue as CharSequence?)
     }
 
     //--------------------------------------------
@@ -740,10 +715,7 @@ open class ExcelField<T, P : Any?> {
          * @return Excel字段描述
         </T></P> */
         @JvmStatic
-        fun <T, P> of(
-                title: String, propertyType: Class<P>,
-                propertyGetter: ExcelConverter<T, P?>
-        ): ExcelField<T, P> {
+        fun <T, P> of(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>): ExcelField<T, P> {
             return ExcelField(title, propertyType, propertyGetter, false, false)
         }
 
@@ -759,27 +731,23 @@ open class ExcelField<T, P : Any?> {
          * @return Excel字段描述
         </T></P> */
         @JvmStatic
-        fun <T, P> of(
-                title: String, propertyType: Class<P>,
-                propertyGetter: ExcelConverter<T, P?>, propertySetter: ExcelCellSetter<T, P?>
-        ): ExcelField<T, P> {
-            return ExcelField(title, propertyType, propertyGetter, false, false).setter(
-                    propertySetter)
+        fun <T, P> of(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, propertySetter: ExcelCellSetter<T, P?>): ExcelField<T, P> {
+            return ExcelField(title, propertyType, propertyGetter, false, false).setter(propertySetter)
         }
 
         //--------------------------------------------
-        private val primitiveWrapperTypeMap: MutableMap<Class<*>?, Class<*>?> = IdentityHashMap(8)
+        val primitiveWrapperTypeMap: MutableMap<Class<*>, Class<*>> = IdentityHashMap(8)
 
         init {
-            primitiveWrapperTypeMap[Boolean::class.java] = Boolean::class.javaPrimitiveType
-            primitiveWrapperTypeMap[Byte::class.java] = Byte::class.javaPrimitiveType
-            primitiveWrapperTypeMap[Char::class.java] = Char::class.javaPrimitiveType
-            primitiveWrapperTypeMap[Double::class.java] = Double::class.javaPrimitiveType
-            primitiveWrapperTypeMap[Float::class.java] = Float::class.javaPrimitiveType
-            primitiveWrapperTypeMap[Int::class.java] = Int::class.javaPrimitiveType
-            primitiveWrapperTypeMap[Long::class.java] = Long::class.javaPrimitiveType
-            primitiveWrapperTypeMap[Short::class.java] = Short::class.javaPrimitiveType
-            primitiveWrapperTypeMap[Void::class.java] = Void.TYPE
+            primitiveWrapperTypeMap[Boolean::class.javaObjectType] = Boolean::class.javaPrimitiveType!!
+            primitiveWrapperTypeMap[Byte::class.javaObjectType] = Byte::class.javaPrimitiveType!!
+            primitiveWrapperTypeMap[Char::class.javaObjectType] = Char::class.javaPrimitiveType!!
+            primitiveWrapperTypeMap[Double::class.javaObjectType] = Double::class.javaPrimitiveType!!
+            primitiveWrapperTypeMap[Float::class.javaObjectType] = Float::class.javaPrimitiveType!!
+            primitiveWrapperTypeMap[Int::class.javaObjectType] = Int::class.javaPrimitiveType!!
+            primitiveWrapperTypeMap[Long::class.javaObjectType] = Long::class.javaPrimitiveType!!
+            primitiveWrapperTypeMap[Short::class.javaObjectType] = Short::class.javaPrimitiveType!!
+            primitiveWrapperTypeMap[Void::class.javaObjectType] = Void.TYPE
         }
     }
 }
