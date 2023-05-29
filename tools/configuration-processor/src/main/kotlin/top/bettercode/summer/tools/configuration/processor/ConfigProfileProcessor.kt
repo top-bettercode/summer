@@ -19,7 +19,8 @@ class ConfigProfileProcessor : AbstractProcessor() {
 
         val file = File(processingEnv.filer.createResource(StandardLocation.CLASS_OUTPUT, "", "temp").toUri().toURL().file)
         val configsDir = file.parentFile
-        val userDir = findWalkDownTopConf(file, "src")!!.parentFile
+        val topConf = findWalkDownTopConf(file, "src") ?: return true
+        val userDir = topConf.parentFile
         file.delete()
         //读取gradle.properties
         val gradleProperties = Properties()
