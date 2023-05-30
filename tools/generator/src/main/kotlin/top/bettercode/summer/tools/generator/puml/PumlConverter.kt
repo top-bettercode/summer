@@ -58,12 +58,11 @@ object PumlConverter {
                             line.substringAfter(if (uniqueMult) "'UNIQUE" else "'INDEX").trim()
                         indexes.add(
                             Indexed(
-                                "${if (uniqueMult) "IDX_UK" else "IDX"}_${
-                                    columnNames.split(",").joinToString("_") { cname ->
-                                        cname.replace(tableName, "").replace("_", "")
-                                            .takeLast(7)
-                                    }
-                                }", uniqueMult, columnNames.split(",").toMutableList()
+                                    name = "${if (uniqueMult) "IDX_UK" else "IDX"}_${
+                                        columnNames.split(",").joinToString("_") { cname ->
+                                            cname.replace(tableName, "").replace("_", "")
+                                        }
+                                    }", unique = uniqueMult, columnName = columnNames.split(",").toMutableList()
                             )
                         )
                     } else if ("}" == line) {
@@ -203,23 +202,23 @@ object PumlConverter {
                         if (unique)
                             indexes.add(
                                 Indexed(
-                                    "UK_${
-                                        tableName.replace("_", "").takeLast(7)
-                                    }_${
-                                        columnName.replace(tableName, "").replace("_", "")
-                                            .replace(",", "").takeLast(7)
-                                    }", true, mutableListOf(columnName)
+                                        name = "UK_${
+                                            tableName.replace("_", "")
+                                        }_${
+                                            columnName.replace(tableName, "").replace("_", "")
+                                                    .replace(",", "")
+                                        }", unique = true, columnName = mutableListOf(columnName)
                                 )
                             )
                         if (indexed)
                             indexes.add(
                                 Indexed(
-                                    "IDX_${
-                                        tableName.replace("_", "").takeLast(7)
-                                    }_${
-                                        columnName.replace(tableName, "").replace("_", "")
-                                            .replace(",", "").takeLast(7)
-                                    }", false, mutableListOf(columnName)
+                                        name = "IDX_${
+                                            tableName.replace("_", "")
+                                        }_${
+                                            columnName.replace(tableName, "").replace("_", "")
+                                                    .replace(",", "")
+                                        }", unique = false, columnName = mutableListOf(columnName)
                                 )
                             )
                         if (pk) {
