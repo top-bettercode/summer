@@ -112,11 +112,16 @@ class DatabaseMetaData(
     private fun ResultSet.toTable(call: (Table) -> Unit = {}): Table? {
         try {
             while (next()) {
+                if (datasource.debug)
+                    debug("table", this.metaData)
+
                 val schema = getString("TABLE_SCHEM")
                 val name = getString("TABLE_NAME")
                 val tableCat = getString("TABLE_CAT")
                 val tableType = getString("TABLE_TYPE")
                 val remarks = getString("REMARKS")
+                val engine: String = getString("ENGINE") //获取表的ENGINE
+
                 val columns = columns(name)
                 fixImportedKeys(schema, name, columns)
                 fixColumns(name, columns)
@@ -149,7 +154,8 @@ class DatabaseMetaData(
                         remarks = remarks?.trim() ?: "",
                         primaryKeyNames = primaryKeyNames,
                         indexes = indexes,
-                        pumlColumns = columns.toMutableList()
+                        pumlColumns = columns.toMutableList(),
+                        engine = engine
                 )
                 call(table)
                 return table

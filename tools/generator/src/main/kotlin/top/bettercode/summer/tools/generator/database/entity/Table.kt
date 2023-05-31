@@ -11,41 +11,42 @@ import top.bettercode.summer.tools.lang.decapitalized
  * @author Peter Wu
  */
 data class Table(
-    val productName: String,
-    val catalog: String?,
-    val schema: String?,
-    /**
-     * 表名
-     */
-    val tableName: String,
-    /**
-     * 表类型
-     */
-    val tableType: String,
-    /**
-     * 注释说明
-     */
-    var remarks: String,
-    /**
-     * 主键
-     */
-    var primaryKeyNames: List<String>,
-    val indexes: MutableList<Indexed>,
-    /**
-     * 字段
-     */
-    var pumlColumns: List<Any>,
-    val subModule: String = "database",
-    val subModuleName: String = "database",
-    val physicalOptions: String = ""
+        val productName: String,
+        val catalog: String?,
+        val schema: String?,
+        /**
+         * 表名
+         */
+        val tableName: String,
+        /**
+         * 表类型
+         */
+        val tableType: String,
+        /**
+         * 注释说明
+         */
+        var remarks: String,
+        /**
+         * 主键
+         */
+        var primaryKeyNames: List<String>,
+        val indexes: MutableList<Indexed>,
+        /**
+         * 字段
+         */
+        var pumlColumns: List<Any>,
+        val subModule: String = "database",
+        val subModuleName: String = "database",
+        val physicalOptions: String = "",
+        val engine: String = "",
 ) {
 
     val primaryKeys: MutableList<Column>
     val columns: MutableList<Column> =
-        pumlColumns.asSequence().filter { it is Column }.map {
-            val col = it as Column
-            col
-        }.toMutableList()
+            pumlColumns.asSequence().filter { it is Column }.map {
+                val col = it as Column
+                col
+            }.toMutableList()
 
     init {
         val iterator = indexes.iterator()
@@ -61,7 +62,7 @@ data class Table(
             }
         }
         primaryKeys =
-            columns.asSequence().filter { primaryKeyNames.contains(it.columnName) }.toMutableList()
+                columns.asSequence().filter { primaryKeyNames.contains(it.columnName) }.toMutableList()
         primaryKeys.forEach {
             it.isPrimary = true
             it.indexed = true
