@@ -11,9 +11,9 @@ import java.util.*
  * @since 0.0.41
  */
 class PlantUML(
-    private val umlModuleName: String?,
-    private val destFile: File,
-    private val remarksProperties: Properties?
+        private val umlModuleName: String?,
+        private val destFile: File,
+        private val remarksProperties: Properties?
 ) : Generator() {
 
     private val fklines = mutableListOf<String>()
@@ -21,14 +21,14 @@ class PlantUML(
     override fun setUp() {
         destFile.parentFile.mkdirs()
         println(
-            "${if (destFile.exists()) "覆盖" else "生成"}：${
-                destFile.absolutePath.substringAfter(
-                    (ext.rootPath ?: ext.projectDir).absolutePath + File.separator
-                )
-            }"
+                "${if (destFile.exists()) "覆盖" else "生成"}：${
+                    destFile.absolutePath.substringAfter(
+                            (ext.rootPath ?: ext.projectDir).absolutePath + File.separator
+                    )
+                }"
         )
         destFile.writeText(
-            """PK
+                """PK
 FK
 UNIQUE
 INDEX
@@ -48,7 +48,7 @@ ASBOOLEAN
             println("数据库对象的命名最好不要超过 32 个字符")
         }
         destFile.appendText(
-            """entity $tableName {
+                """entity $tableName {
     $remarks
     ==
 """
@@ -76,14 +76,14 @@ ASBOOLEAN
         }
         table.indexes.filter { it.columnName.size > 1 }.forEach {
             destFile.appendText(
-                "    '${if (it.unique) "UNIQUE" else "INDEX"} ${
-                    it.columnName.joinToString(
-                        ","
-                    )
-                }\n"
+                    "    '${if (it.unique) "UNIQUE" else "INDEX"} ${
+                        it.columnName.joinToString(
+                                ","
+                        )
+                    }\n"
             )
         }
-        if (table.engine.isNotBlank()) {
+        if (table.engine.isNotBlank() && !"InnoDB".equals(table.engine, true)) {
             destFile.appendText("    'ENGINE = ${table.engine}\n")
         }
         destFile.appendText("}\n\n")
@@ -98,7 +98,7 @@ ASBOOLEAN
             destFile.appendText("\n")
 
         destFile.appendText(
-            """
+                """
                 |@enduml
             """.trimMargin()
         )
