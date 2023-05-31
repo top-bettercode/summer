@@ -86,12 +86,15 @@ object MysqlToDDL : ToDDL() {
                             }
                         }
                         if (extension.datasources[module]?.queryIndex == true) updateIndexes(prefixTableName, oldTable, table, lines, dropColumnNames)
+
+                        if (!oldTable.engine.equals(table.engine, true)) lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ENGINE ${table.engine};")
+
+                        //out change
                         if (lines.isNotEmpty()) {
                             out.appendLine("$commentPrefix $tableName")
                             lines.forEach { out.appendLine(it) }
                             out.appendLine()
                         }
-                        if (!oldTable.engine.equals(table.engine, true)) lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ENGINE ${table.engine};")
 
                     }
                 }
