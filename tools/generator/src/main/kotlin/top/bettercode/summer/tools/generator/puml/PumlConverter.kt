@@ -67,7 +67,7 @@ object PumlConverter {
                                 )
                         )
                     } else if (line.startsWith("'ENGINE")) {
-                        engine = line.substringAfter("'ENGINE").trim()
+                        engine = line.substringAfter("=").trim()
                     } else if ("}" == line) {
                         val table = Table(
                                 productName = top.bettercode.summer.tools.generator.DataType.PUML.name,

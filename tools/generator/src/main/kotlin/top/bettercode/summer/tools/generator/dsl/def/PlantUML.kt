@@ -83,6 +83,9 @@ ASBOOLEAN
                 }\n"
             )
         }
+        if (table.engine.isNotBlank()) {
+            destFile.appendText("    'ENGINE = ${table.engine}\n")
+        }
         destFile.appendText("}\n\n")
 
     }
