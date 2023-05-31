@@ -40,6 +40,8 @@ interface UserRepository : JpaExtRepository<User?, Int?>, QuerydslPredicateExecu
     fun selectResultFirst3(user: User?): AUser?
     fun selectResultMap3(user: User?, pageable: Pageable?): Page<AUser?>?
     fun selectMybatisAll(): List<User?>?
+    fun selectMybatisAllVal(): List<User?>?
+    fun selectMybatisAllVal2(): List<User?>?
     fun selectMybatisMapList(): List<Map<String?, String?>?>?
     fun selectMybatisMap(): Map<String?, String?>?
     fun selectMybatisAll(pageable: Pageable?): Page<User?>?

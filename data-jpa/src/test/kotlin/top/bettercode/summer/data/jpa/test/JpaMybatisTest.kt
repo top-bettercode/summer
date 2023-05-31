@@ -151,6 +151,28 @@ class JpaMybatisTest {
         Assertions.assertEquals(4, users!!.size)
     }
 
+//    @Test
+    fun selectMybatisAllVal() {
+        val users = repository.selectMybatisAllVal()
+        System.err.println(valueOf(users, true))
+        val users1 = sqlSession
+                .selectList<Any?>(UserRepository::class.java.name + ".selectMybatisAllVal")
+        System.err.println(valueOf(users1, true))
+        Assertions.assertIterableEquals(users, users1)
+        Assertions.assertEquals(4, users!!.size)
+    }
+
+//    @Test
+    fun selectMybatisAllVal2() {
+        val users = repository.selectMybatisAllVal2()
+        System.err.println(valueOf(users, true))
+        val users1 = sqlSession
+                .selectList<Any?>(UserRepository::class.java.name + ".selectMybatisAllVal2")
+        System.err.println(valueOf(users1, true))
+        Assertions.assertIterableEquals(users, users1)
+        Assertions.assertEquals(4, users!!.size)
+    }
+
     @Test
     fun selectMybatisMapList() {
         val users = repository.selectMybatisMapList()
