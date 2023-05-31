@@ -37,7 +37,7 @@ object MysqlToDDL : ToDDL() {
                             table.remarks.replace("\\", "\\\\")
                         }';")
 
-                        if (oldTable.engine != table.engine) lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ENGINE ${table.engine};")
+                        if (!oldTable.engine.equals(table.engine, true)) lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ENGINE ${table.engine};")
 
                         val oldColumns = oldTable.columns
                         val columns = table.columns

@@ -36,7 +36,7 @@ object PumlConverter {
         var tableName = ""
         var isField = false
         var isUml = false
-        var engine = ""
+        var engine: String? = null
         var subModuleName: String? = null
         pumlFile.readLines().forEach {
             if (it.isNotBlank()) {
@@ -81,7 +81,7 @@ object PumlConverter {
                                 pumlColumns = pumlColumns,
                                 subModule = pumlFile.nameWithoutExtension,
                                 subModuleName = subModuleName ?: "database",
-                                engine = engine
+                                engine = engine ?: "InnoDB"
                         )
                         call(table)
                         tables.add(table)
@@ -91,6 +91,7 @@ object PumlConverter {
                         pumlColumns = mutableListOf()
                         tableName = ""
                         remarks = ""
+                        engine = null
                         isField = false
                     } else if (!line.startsWith("'")) {
                         val lineDef = line.trim().split("--")

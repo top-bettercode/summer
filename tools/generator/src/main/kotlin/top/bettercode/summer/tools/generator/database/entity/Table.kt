@@ -84,6 +84,7 @@ data class Table(
         if (other !is Table) return false
 
         if (tableName != other.tableName) return false
+        if (engine != other.engine) return false
         if (remarks != other.remarks) return false
         if (physicalOptions != other.physicalOptions) return false
         if (primaryKeyNames.size != other.primaryKeyNames.size || (primaryKeyNames - other.primaryKeyNames.toSet()).isNotEmpty() || (other.primaryKeyNames - primaryKeyNames.toSet()).isNotEmpty()) return false
@@ -93,6 +94,7 @@ data class Table(
 
     override fun hashCode(): Int {
         var result = tableName.hashCode()
+        result = 31 * result + engine.hashCode()
         result = 31 * result + remarks.hashCode()
         result = 31 * result + physicalOptions.hashCode()
         result = 31 * result + primaryKeyNames.hashCode()

@@ -120,7 +120,7 @@ class DatabaseMetaData(
                 val tableCat = getString("TABLE_CAT")
                 val tableType = getString("TABLE_TYPE")
                 val remarks = getString("REMARKS")
-                val engine: String = getString("ENGINE") //获取表的ENGINE
+                val engine: String = getEngine(name)
 
                 val columns = columns(name)
                 fixImportedKeys(schema, name, columns)
@@ -166,6 +166,33 @@ class DatabaseMetaData(
         }
     }
 
+    private fun getEngine(tableName: String): String {
+        val databaseDriver =
+                DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
+        var engine = ""
+        if (arrayOf(
+                        DatabaseDriver.MYSQL,
+                        DatabaseDriver.MARIADB,
+                        DatabaseDriver.H2
+                ).contains(
+                        databaseDriver
+                )
+        ) {
+            val quoteMark = "'"
+            try {
+                val prepareStatement =
+                        databaseMetaData.connection.prepareStatement("SHOW TABLE STATUS LIKE $quoteMark$tableName$quoteMark")
+                prepareStatement.queryTimeout = 5
+                prepareStatement.executeQuery().map {
+                    engine = getString("Engine")
+                    return@map
+                }
+            } catch (e: Exception) {
+                System.err.println("查询表引擎出错:${e.message}")
+            }
+        }
+        return engine
+    }
 
     private fun fixColumns(tableName: String, columns: MutableList<Column>) {
         val databaseDriver =
