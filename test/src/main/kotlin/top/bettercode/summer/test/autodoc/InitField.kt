@@ -28,19 +28,19 @@ import java.io.File
 object InitField {
 
     private val contentWrapFields: Set<String> =
-        setOf("status", "message", "data", "trace", "errors")
+            setOf("status", "message", "data", "trace", "errors")
     private val fieldDescBundle: PropertiesSource = PropertiesSource.of("field-desc-replace")
     private val messageFields =
-        setOf(Field(name = "lines", description = "行信息")) + PropertiesSource.of("messages").all()
-            .map { Field(name = it.key, description = it.value) }
-            .toSet()
+            setOf(Field(name = "lines", description = "行信息")) + PropertiesSource.of("messages").all()
+                    .map { Field(name = it.key, description = it.value) }
+                    .toSet()
 
     fun init(
-        operation: DocOperation,
-        extension: GeneratorExtension,
-        wrap: Boolean,
-        defaultValueHeaders: Map<String, String>,
-        defaultValueParams: Map<String, String>
+            operation: DocOperation,
+            extension: GeneratorExtension,
+            wrap: Boolean,
+            defaultValueHeaders: Map<String, String>,
+            defaultValueParams: Map<String, String>
     ) {
         val request = operation.request as DocOperationRequest
         val response = operation.response as DocOperationResponse
@@ -129,49 +129,49 @@ object InitField {
     }
 
     private fun Set<Field>.fix(
-        needFixFields: Set<Field>,
-        wrap: Boolean = false,
-        onlyDesc: Boolean = false,
-        fuzzy: Boolean = false
+            needFixFields: Set<Field>,
+            wrap: Boolean = false,
+            onlyDesc: Boolean = false,
+            fuzzy: Boolean = false
     ) {
         fixFieldTree(
-            needFixFields,
-            hasDesc = false,
-            userDefault = false,
-            wrap = wrap,
-            onlyDesc = onlyDesc,
-            fuzzy = fuzzy
+                needFixFields,
+                hasDesc = false,
+                userDefault = false,
+                wrap = wrap,
+                onlyDesc = onlyDesc,
+                fuzzy = fuzzy
         )
     }
 
     private fun GeneratorExtension.fixFields(
-        fn: (Set<Field>, Boolean) -> Boolean
+            fn: (Set<Field>, Boolean) -> Boolean
     ) {
         if (fn(messageFields, true)) return
 
         val ext = this
 
         val fixFields =
-            { sources: Map<String, List<File>>, toTables: (file: File, module: String) -> List<Table> ->
-                sources.forEach all@{ (module, files) ->
-                    files.forEach { file ->
-                        val tables = toTables(file, module)
-                        for (tableName in Autodoc.tableNames) {
-                            val table = tables.find { it.tableName == tableName }
-                            if (table != null) {
+                { sources: Map<String, List<File>>, toTables: (file: File, module: String) -> List<Table> ->
+                    sources.forEach all@{ (module, files) ->
+                        files.forEach { file ->
+                            val tables = toTables(file, module)
+                            for (tableName in Autodoc.tableNames) {
+                                val table = tables.find { it.tableName == tableName }
+                                if (table != null) {
+                                    if (fn(table.fields(), false)) {
+                                        return@all
+                                    }
+                                }
+                            }
+                            for (table in tables.filter { !Autodoc.tableNames.contains(it.tableName) }) {
                                 if (fn(table.fields(), false)) {
                                     return@all
                                 }
                             }
                         }
-                        for (table in tables.filter { !Autodoc.tableNames.contains(it.tableName) }) {
-                            if (fn(table.fields(), false)) {
-                                return@all
-                            }
-                        }
                     }
                 }
-            }
         when (dataType) {
             DataType.DATABASE -> {
                 datasources.forEach { (module, jdbc) ->
@@ -228,28 +228,28 @@ object InitField {
     private fun Table.fields(): Set<Field> {
         val fields = columns.flatMapTo(mutableSetOf()) { column ->
             var type =
-                if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits > 0) ",${column.decimalDigits}" else ""})" else column.javaType.shortNameWithoutTypeArguments
+                    if (column.containsSize) "${column.javaType.shortNameWithoutTypeArguments}(${column.columnSize}${if (column.decimalDigits > 0) ",${column.decimalDigits}" else ""})" else column.javaType.shortNameWithoutTypeArguments
             if (column.javaType.shortNameWithoutTypeArguments in arrayOf(
-                    "Date",
-                    "LocalDate",
-                    "LocalDateTime"
-                )
+                            "Date",
+                            "LocalDate",
+                            "LocalDateTime"
+                    )
             )//前端统一传毫秒数
                 type = "Long"
             setOf(
-                Field(
-                    column.javaName, type, column.remarks, column.columnDef
-                        ?: "", "", required = column.nullable
-                ), Field(
+                    Field(
+                            column.javaName, type, column.remarks, column.columnDef
+                            ?: "", "", required = column.nullable
+                    ), Field(
                     column.columnName, type, column.remarks, column.columnDef
-                        ?: "", "", required = column.nullable
-                )
+                    ?: "", "", required = column.nullable
+            )
             )
         }
         fields.addAll(fields.map {
             Field(
-                name = English.plural(it.name),
-                description = it.description
+                    name = English.plural(it.name),
+                    description = it.description
             )
         })
         fields.add(Field(name = entityName, description = remarks))
@@ -260,10 +260,10 @@ object InitField {
             if (primaryKeys.size > 1) {
                 fields.add(Field(name = entityName + "Key", description = remarks + "主键"))
                 fields.add(
-                    Field(
-                        name = English.plural(entityName + "Key"),
-                        description = remarks + "主键"
-                    )
+                        Field(
+                                name = English.plural(entityName + "Key"),
+                                description = remarks + "主键"
+                        )
                 )
             }
         }
@@ -314,23 +314,23 @@ object InitField {
     }
 
     private fun Set<Field>.fixFieldTree(
-        needFixFields: Set<Field>,
-        hasDesc: Boolean = true,
-        userDefault: Boolean = true,
-        wrap: Boolean = false,
-        onlyDesc: Boolean = false,
-        fuzzy: Boolean = false
+            needFixFields: Set<Field>,
+            hasDesc: Boolean = true,
+            userDefault: Boolean = true,
+            wrap: Boolean = false,
+            onlyDesc: Boolean = false,
+            fuzzy: Boolean = false
     ) {
         needFixFields.forEach { field ->
-            val findField =
-                fixField(
+            val findField = fixField(
                     field = field,
                     hasDesc = hasDesc,
                     userDefault = userDefault,
                     wrap = wrap,
                     onlyDesc = onlyDesc,
                     fuzzy = fuzzy
-                )
+            )
+
             fieldDescBundle.all().forEach { (k, v) ->
                 field.description = field.description.replace(k, v)
             }
@@ -341,23 +341,23 @@ object InitField {
     }
 
     private fun Set<Field>.fixField(
-        field: Field,
-        hasDesc: Boolean = false,
-        coverType: Boolean = true,
-        userDefault: Boolean = true,
-        wrap: Boolean = false,
-        onlyDesc: Boolean = false,
-        fuzzy: Boolean = false
+            field: Field,
+            hasDesc: Boolean = false,
+            coverType: Boolean = true,
+            userDefault: Boolean = true,
+            wrap: Boolean = false,
+            onlyDesc: Boolean = false,
+            fuzzy: Boolean = false
     ): Field? {
         val findField = this.findPossibleField(
-            name = field.name,
-            type = field.value.type,
-            hasDesc = hasDesc,
-            fuzzy = fuzzy
+                name = field.name,
+                type = field.value.type,
+                hasDesc = hasDesc,
+                fuzzy = fuzzy
         )
         if (findField != null && (field.canCover || field.description.isBlank() || !findField.canCover) && (!wrap || !contentWrapFields.contains(
-                field.name
-            ))
+                        field.name
+                ))
         ) {
             if (onlyDesc) {
                 if (findField.description.isNotBlank())
@@ -384,9 +384,7 @@ object InitField {
 
     private fun Set<Field>.blankField(canConver: Boolean = true): Set<Field> {
         return filter {
-            it.description.isBlank() || canConver && it.canCover || it.children.anyblank(
-                canConver
-            )
+            it.isBlank(canConver) || it.children.anyblank(canConver)
         }.toSet()
     }
 
@@ -397,17 +395,16 @@ object InitField {
 
 
     private fun Set<Field>.anyblank(canConver: Boolean): Boolean {
-        return any {
-            it.description.isBlank() || canConver && it.canCover || it.children.anyblank(
-                canConver
-            )
-        }
+        return any { it.isBlank(canConver) || it.children.anyblank(canConver) }
     }
+
+    private fun Field.isBlank(canConver: Boolean) =
+            description.isBlank() || canConver && canCover
 
 
     fun Map<String, Any?>.toFields(
-        fields: Set<Field>,
-        expand: Boolean = false
+            fields: Set<Field>,
+            expand: Boolean = false
     ): LinkedHashSet<Field> {
         return this.mapTo(LinkedHashSet()) { (k, v) ->
             val field = fields.field(k, v)
@@ -425,10 +422,10 @@ object InitField {
 
     fun Collection<OperationRequestPart>.toFields(fields: Set<Field>): LinkedHashSet<Field> {
         return this.mapTo(
-            LinkedHashSet()
+                LinkedHashSet()
         ) {
             fields.field(it.name, it.contentAsString)
-                .apply { partType = if (it.submittedFileName == null) "text" else "file" }
+                    .apply { partType = if (it.submittedFileName == null) "text" else "file" }
         }
     }
 
@@ -448,36 +445,36 @@ object InitField {
     }
 
     private fun Set<Field>.findPossibleField(
-        name: String,
-        type: String,
-        hasDesc: Boolean = false,
-        fuzzy: Boolean = false
+            name: String,
+            type: String,
+            hasDesc: Boolean = false,
+            fuzzy: Boolean = false
     ): Field? {
         return this.findField(name = name, type = type, hasDesc = hasDesc)
-            ?: if (fuzzy) this.findFuzzyField(
-                name = name,
-                type = type,
-                hasDesc = hasDesc
-            ) else null
+                ?: if (fuzzy) this.findFuzzyField(
+                        name = name,
+                        type = type,
+                        hasDesc = hasDesc
+                ) else null
     }
 
 
     private fun Set<Field>.findFuzzyField(
-        name: String,
-        type: String,
-        hasDesc: Boolean = false
+            name: String,
+            type: String,
+            hasDesc: Boolean = false
     ): Field? {
         val newName = when {
             name.endsWith("Name") -> name.substringBeforeLast("Name")
+            name.endsWith("Path") -> name.substringBeforeLast("Path")
             name.endsWith("Url") -> name.substringBeforeLast("Url")
             name.endsWith("Urls") -> name.substringBeforeLast("Urls")
-            name.endsWith("Path") -> name.substringBeforeLast("Path")
             name.startsWith("start") -> name.substringAfter("start")
-                .decapitalized()
+                    .decapitalized()
 
             name.endsWith("Start") -> name.substringBeforeLast("Start")
             name.startsWith("end") -> name.substringAfter("end")
-                .decapitalized()
+                    .decapitalized()
 
             name.endsWith("End") -> name.substringBeforeLast("End")
             name.endsWith("Pct") -> name.substringBeforeLast("Pct")
@@ -509,15 +506,15 @@ object InitField {
     private fun Set<Field>.findField(name: String, type: String, hasDesc: Boolean = false): Field? {
         val set = (if (hasDesc) this.filter { it.description.isNotBlank() } else this)
         val field = (set.find { it.name == name && it.type.substringBefore("(") == type }?.copy()
-            ?: (set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }
-                ?.copy()
-                ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(") == type }
-                    ?.copy())
-            ?: set.find {
-                it.name.equals(name, true) && it.type.substringBefore("(").equals(type, true)
-            }?.copy())
-            ?: set.find { it.name == name }?.copy()
-            ?: set.find { it.name.equals(name, true) }?.copy()
+                ?: (set.find { it.name == name && it.type.substringBefore("(").equals(type, true) }
+                        ?.copy()
+                        ?: set.find { it.name.equals(name, true) && it.type.substringBefore("(") == type }
+                                ?.copy())
+                ?: set.find {
+                    it.name.equals(name, true) && it.type.substringBefore("(").equals(type, true)
+                }?.copy())
+                ?: set.find { it.name == name }?.copy()
+                ?: set.find { it.name.equals(name, true) }?.copy()
         return field?.apply { this.name = name }
     }
 
