@@ -34,7 +34,7 @@ class MuipartFileToAttachmentConverter(private val multipartProperties: SummerMu
             val request = requestAttributes.request
             val name = source.name
             require(!source.isEmpty) { "不能上传空文件" }
-            var fileType: String? = request.getAttribute(FILE_TYPE_PARAM_TYPE) as String
+            var fileType: String? = request.getAttribute(FILE_TYPE_PARAM_TYPE) as String?
             if (fileType == null) {
                 @Suppress("UNCHECKED_CAST") val values = (request
                         .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as Map<String, String>).values
