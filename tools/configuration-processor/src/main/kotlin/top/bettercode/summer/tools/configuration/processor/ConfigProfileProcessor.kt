@@ -50,9 +50,11 @@ class ConfigProfileProcessor : AbstractProcessor() {
         if (confDir != null) {
             val profilesDefaultActive = confDir.listFiles()?.firstOrNull { it.nameWithoutExtension == "default" }
 
-            val active = System.getProperty("profiles.active") ?: System.getProperty("P")
+            var active = System.getProperty("profiles.active") ?: System.getProperty("P")
             ?: gradleProperties.getProperty("profiles.active") ?: "default"
-
+            if (active.isBlank()) {
+                active = "default"
+            }
             val filter = confDir.listFiles()?.filter { it.nameWithoutExtension.startsWith(active) }
             confFile = if (filter.isNullOrEmpty() || filter.size > 1) {
                 System.err.println("未找到适合的profiles.active:${active}配置文件" + (if (profilesDefaultActive != null) ",使用${profilesDefaultActive}默认配置" else ""))
