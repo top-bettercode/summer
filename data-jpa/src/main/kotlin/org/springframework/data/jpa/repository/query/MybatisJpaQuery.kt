@@ -84,8 +84,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         val query = entityManager.createNativeQuery(sortedQueryString)
         @Suppress("DEPRECATION")
         query.unwrap(NativeQuery::class.java).setResultTransformer(resultTransformer)
-        val metadata = metadataCache.getMetadata(sortedQueryString,
-                query)
+        val metadata = metadataCache.getMetadata(sortedQueryString, query)
         // it is ok to reuse the binding contained in the ParameterBinder although we create a new query String because the
         // parameters in the query do not change.
         if (querySize != null) {
