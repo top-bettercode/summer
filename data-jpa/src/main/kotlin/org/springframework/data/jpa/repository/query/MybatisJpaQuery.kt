@@ -75,7 +75,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         val parameterBinder = parameterBinder.get() as MybatisParameterBinder
         val mybatisParam = parameterBinder.bindParameterObject(accessor)
         val boundSql = mybatisParam.boundSql
-        val queryString = boundSql.sql.replace(sqlValRegex, sqlValReplacement)
+        val queryString = boundSql.sql
 
         val sort = accessor.sort
         val size = mybatisParam.size
@@ -276,10 +276,6 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
     }
 
     companion object {
-
-        val sqlValRegex = Regex("\\s*\\\\?:=")
-        val sqlValReplacement = " \\\\:="
-
 
         fun convertOrderBy(sort: Sort?): String? {
             return if (sort == null || !sort.isSorted) {

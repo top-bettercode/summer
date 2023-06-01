@@ -3,6 +3,7 @@ package top.bettercode.summer.data.jpa.test
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.data.jpa.repository.query.MybatisJpaQuery
+import top.bettercode.summer.tools.generator.dom.java.Annotations.Companion.regex
 
 /**
  *
@@ -10,8 +11,9 @@ import org.springframework.data.jpa.repository.query.MybatisJpaQuery
  */
 class TempTest {
 
-    val regex = MybatisJpaQuery.sqlValRegex
-    val replacement = MybatisJpaQuery.sqlValReplacement
+    val sqlValRegex = Regex("\\s*\\\\?:=")
+    val sqlValReplacement = " \\\\:="
+
 
     @Test
     fun test() {
@@ -27,9 +29,9 @@ class TempTest {
         from t_user u,
              (select @val \:= 0) t
         where deleted = 0"""
-        val res1 = bef.replace(regex, replacement)
+        val res1 = bef.replace(sqlValRegex, sqlValReplacement)
         Assertions.assertEquals(res, res1)
-        val res2 = res.replace(regex, replacement)
+        val res2 = res.replace(sqlValRegex, sqlValReplacement)
         Assertions.assertEquals(res, res2)
     }
 
@@ -37,9 +39,9 @@ class TempTest {
     fun test2() {
         val bef = """select first_name, last_name, @val := @val + 1 as version from t_user u, (select @val := 0) t where deleted = 0"""
         val res = """select first_name, last_name, @val \:= @val + 1 as version from t_user u, (select @val \:= 0) t where deleted = 0"""
-        val res1 = bef.replace(regex, replacement)
+        val res1 = bef.replace(sqlValRegex, sqlValReplacement)
         Assertions.assertEquals(res, res1)
-        val res2 = res.replace(regex, replacement)
+        val res2 = res.replace(sqlValRegex, sqlValReplacement)
         Assertions.assertEquals(res, res2)
     }
 }
