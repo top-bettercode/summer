@@ -112,7 +112,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                             HibernateProperties::class.java)
                     val jpaProperties = beanFactory.getBean(JpaProperties::class.java)
                     val mappingResourceList = jpaProperties.mappingResources
-                    val mappingResources = if (!ObjectUtils.isEmpty(mappingResourceList)) StringUtils.toStringArray(mappingResourceList) else null
+                    val mappingResources = if (!ObjectUtils.isEmpty(mappingResourceList)) StringUtils.toStringArray(mappingResourceList) else emptyArray()
                     val physicalNamingStrategy = beanFactory.getBeanProvider(PhysicalNamingStrategy::class.java)
                     val implicitNamingStrategy = beanFactory.getBeanProvider(
                             ImplicitNamingStrategy::class.java)

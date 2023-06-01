@@ -14,6 +14,12 @@ object ProjectDependencies {
 
     fun config(project: Project) {
         project.configurations.apply {
+            filter {
+                arrayOf("implementation", "testImplementation").contains(it.name)
+            }.forEach {
+                it.exclude(mapOf("group" to "com.vaadin.external.google", "module" to "android-json"))
+            }
+
             if ("false" != project.findProperty("dependencies.disable-cache"))
                 all {
                     it.resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)

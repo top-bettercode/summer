@@ -45,7 +45,7 @@ class MybatisQuery(
         return query.firstResult
     }
 
-    override fun setHint(hintName: String, value: Any): Query {
+    override fun setHint(hintName: String, value: Any?): Query {
         return query.setHint(hintName, value)
     }
 
@@ -53,77 +53,77 @@ class MybatisQuery(
         return query.hints
     }
 
-    override fun <T> setParameter(param: Parameter<T>, value: T): Query {
+    override fun <T> setParameter(param: Parameter<T>, value: T?): Query {
         return query.setParameter(param, value)
     }
 
     override fun setParameter(
             param: Parameter<Calendar>,
-            value: Calendar, temporalType: TemporalType
+            value: Calendar?, temporalType: TemporalType
     ): Query {
         return query.setParameter(param, value, temporalType)
     }
 
     override fun setParameter(
-            param: Parameter<Date>, value: Date,
+            param: Parameter<Date>, value: Date?,
             temporalType: TemporalType
     ): Query {
         return query.setParameter(param, value, temporalType)
     }
 
-    override fun setParameter(name: String, value: Any): Query {
+    override fun setParameter(name: String, value: Any?): Query {
         return query.setParameter(name, value)
     }
 
     override fun setParameter(
-            name: String, value: Calendar,
+            name: String, value: Calendar?,
             temporalType: TemporalType
     ): Query {
         return query.setParameter(name, value, temporalType)
     }
 
     override fun setParameter(
-            name: String, value: Date,
+            name: String, value: Date?,
             temporalType: TemporalType
     ): Query {
         return query.setParameter(name, value, temporalType)
     }
 
-    override fun setParameter(position: Int, value: Any): Query {
+    override fun setParameter(position: Int, value: Any?): Query {
         return query.setParameter(position, value)
     }
 
     override fun setParameter(
-            position: Int, value: Calendar,
+            position: Int, value: Calendar?,
             temporalType: TemporalType
     ): Query {
         return query.setParameter(position, value, temporalType)
     }
 
     override fun setParameter(
-            position: Int, value: Date,
+            position: Int, value: Date?,
             temporalType: TemporalType
     ): Query {
         return query.setParameter(position, value, temporalType)
     }
 
-    override fun getParameters(): Set<Parameter<*>> {
+    override fun getParameters(): Set<Parameter<*>>? {
         return query.parameters
     }
 
-    override fun getParameter(name: String): Parameter<*> {
+    override fun getParameter(name: String): Parameter<*>? {
         return query.getParameter(name)
     }
 
-    override fun <T> getParameter(name: String, type: Class<T>): Parameter<T> {
+    override fun <T> getParameter(name: String, type: Class<T>): Parameter<T>? {
         return query.getParameter(name, type)
     }
 
-    override fun getParameter(position: Int): Parameter<*> {
+    override fun getParameter(position: Int): Parameter<*>? {
         return query.getParameter(position)
     }
 
-    override fun <T> getParameter(position: Int, type: Class<T>): Parameter<T> {
+    override fun <T> getParameter(position: Int, type: Class<T>): Parameter<T>? {
         return query.getParameter(position, type)
     }
 
@@ -131,15 +131,15 @@ class MybatisQuery(
         return query.isBound(param)
     }
 
-    override fun <T> getParameterValue(param: Parameter<T>): T {
+    override fun <T> getParameterValue(param: Parameter<T>): T? {
         return query.getParameterValue(param)
     }
 
-    override fun getParameterValue(name: String): Any {
+    override fun getParameterValue(name: String): Any? {
         return query.getParameterValue(name)
     }
 
-    override fun getParameterValue(position: Int): Any {
+    override fun getParameterValue(position: Int): Any? {
         return query.getParameterValue(position)
     }
 

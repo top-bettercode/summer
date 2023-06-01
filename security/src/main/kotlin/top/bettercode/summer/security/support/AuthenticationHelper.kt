@@ -15,6 +15,8 @@ object AuthenticationHelper {
          * @return 授权信息
          */
         get() = SecurityContextHolder.getContext().authentication
+
+    @JvmStatic
     val principal: UserDetails?
         /**
          * @return 授权信息
@@ -29,6 +31,8 @@ object AuthenticationHelper {
             }
             return null
         }
+
+    @JvmStatic
     val username: Optional<String>
         get() {
             val authentication = authentication
@@ -52,6 +56,7 @@ object AuthenticationHelper {
         return hasAuthority(authentication.authorities, authority)
     }
 
+    @JvmStatic
     fun hasAuthority(
             authorities: Collection<GrantedAuthority>,
             authority: String
@@ -68,6 +73,7 @@ object AuthenticationHelper {
      * @param authority 权限
      * @return 授权信息是否包含指定权限
      */
+    @JvmStatic
     fun hasAuthority(authority: String): Boolean {
         val authentication = authentication
                 ?: return false

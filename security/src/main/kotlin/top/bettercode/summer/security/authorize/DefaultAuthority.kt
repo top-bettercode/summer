@@ -21,18 +21,22 @@ object DefaultAuthority {
     @JvmField
     val ROLE_ANONYMOUS = SecurityConfig(Anonymous.ROLE_ANONYMOUS_VALUE)
 
+    @JvmStatic
     fun isDefaultAuthority(authority: String): Boolean {
         return DEFAULT_GRANTED_AUTHORITY.authority == authority
     }
 
+    @JvmStatic
     fun isDefaultAuthority(authority: GrantedAuthority): Boolean {
         return DEFAULT_GRANTED_AUTHORITY == authority
     }
 
+    @JvmStatic
     fun defaultAuthority(): Collection<GrantedAuthority> {
         return setOf(DEFAULT_GRANTED_AUTHORITY)
     }
 
+    @JvmStatic
     fun addDefaultAuthority(
             vararg authorities: GrantedAuthority
     ): Collection<GrantedAuthority> {
@@ -41,6 +45,7 @@ object DefaultAuthority {
         return objects
     }
 
+    @JvmStatic
     fun addDefaultAuthority(
             vararg authorities: String?
     ): Collection<GrantedAuthority> {
@@ -52,6 +57,7 @@ object DefaultAuthority {
         return objects
     }
 
+    @JvmStatic
     fun addDefaultAuthority(
             authorities: Collection<String?>
     ): Collection<GrantedAuthority> {

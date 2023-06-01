@@ -17,6 +17,7 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         @JvmField
         protected val repository: M
 ) : IBaseService<T, ID, M> {
+    @JvmField
     protected val log: Logger? = LoggerFactory.getLogger(javaClass)
 
 

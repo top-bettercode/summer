@@ -25,11 +25,15 @@ import javax.servlet.http.HttpServletResponse
  */
 @ConditionalOnWebApplication
 open class BaseController : Response() {
+
+    @JvmField
     protected val log: Logger = LoggerFactory.getLogger(javaClass)
 
+    @JvmField
     @Autowired(required = false)
     protected var request: HttpServletRequest? = null
 
+    @JvmField
     @Autowired(required = false)
     protected var response: HttpServletResponse? = null
 

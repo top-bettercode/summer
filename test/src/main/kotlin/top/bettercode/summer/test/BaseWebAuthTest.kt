@@ -13,11 +13,12 @@ import top.bettercode.summer.security.userdetails.ScopeUserDetailsService
  * @author Peter Wu
  */
 abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
-    protected var username = "root"
-    protected var scope = "app"
+    var username = "root"
+    var scope = "app"
 
     @Autowired
     var userDetailsService: UserDetailsService? = null
+
     @Throws(Exception::class)
     public override fun defaultBeforeEach() {
         beforeEach()

@@ -33,6 +33,7 @@ object ActionMap {
         )
     }
 
+    @JvmStatic
     fun getType(key: String): Int? {
         return mapping[key]
     }

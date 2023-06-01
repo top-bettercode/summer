@@ -12,6 +12,7 @@ object FileType {
         }
     }
 
+    @JvmStatic
     fun getSuffix(key: String): String? {
         return types[key]
     }
@@ -19,6 +20,7 @@ object FileType {
     /*
    * 根据给定的文件名,获取其后缀信息
    */
+    @JvmStatic
     fun getSuffixByFilename(filename: String): String {
         return filename.substring(filename.lastIndexOf(".")).lowercase(Locale.getDefault())
     }
