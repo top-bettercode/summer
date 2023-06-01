@@ -27,11 +27,7 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : 
     }
 
     fun transformListResultSet(resultSet: ResultSet): List<*>? {
-        return try {
-            transformListResultSet(resultSet, resultSet.fetchSize)
-        } catch (e: SQLException) {
-            throw RuntimeException(e)
-        }
+        return transformListResultSet(resultSet, resultSet.fetchSize)
     }
 
     fun transformListResultSet(resultSet: ResultSet?, maxRows: Int): List<*>? {

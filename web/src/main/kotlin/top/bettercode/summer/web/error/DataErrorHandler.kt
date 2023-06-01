@@ -111,9 +111,7 @@ class DataErrorHandler(messageSource: MessageSource,
             if (message != null) {
                 if (message.contains("Socket read timed out")) {
                     message = "datasource.request.timeout"
-                }
-                if (message.contains("Unable to acquire JDBC Connection") || message.contains(
-                                "Connection is not available")) {
+                } else if (message.contains("Unable to acquire JDBC Connection") || message.contains("Connection is not available")) {
                     message = "Unable to acquire JDBC Connection"
                 }
             }
