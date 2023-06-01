@@ -334,7 +334,7 @@ open class QvodClient(
     }
 
     /**
-     * 音视频审核
+     * 音视频转码
      *
      * https://cloud.tencent.com/document/product/266/33427
      */
