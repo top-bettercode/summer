@@ -250,9 +250,9 @@ class RequestLoggingFilter(
                 timeoutAlarmSeconds = properties.timeoutAlarmSeconds
             }
             RequestLoggingConfig(
-                    includeRequestBody = properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false,
-                    includeResponseBody = properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false,
-                    includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false,
+                    includeRequestBody = properties.isIncludeRequestBody && requestLoggingAnno?.includeRequestBody != false || properties.isForceRecord,
+                    includeResponseBody = properties.isIncludeResponseBody && requestLoggingAnno?.includeResponseBody != false || properties.isForceRecord,
+                    includeTrace = properties.isIncludeTrace && requestLoggingAnno?.includeTrace != false || properties.isForceRecord,
                     encryptHeaders = encryptHeaders,
                     encryptParameters = encryptParameters,
                     format = properties.isFormat,
