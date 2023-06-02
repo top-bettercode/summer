@@ -54,7 +54,8 @@ object MysqlToDDL : ToDDL() {
                                 columns.remove(primaryKey)
                             }
                         } else if (oldPrimaryKeys != primaryKeys) {
-                            lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote DROP PRIMARY KEY;")
+                            if (oldPrimaryKeys.isNotEmpty())
+                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote DROP PRIMARY KEY;")
                             if (table.primaryKeyNames.isNotEmpty()) {
                                 lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ADD PRIMARY KEY(${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }});")
                             }
