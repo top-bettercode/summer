@@ -43,23 +43,6 @@ object MysqlToDDL : ToDDL() {
                         val oldPrimaryKeys = oldTable.primaryKeys
                         val primaryKeys = table.primaryKeys
 
-                        if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1) {
-                            val oldPrimaryKey = oldPrimaryKeys[0]
-                            val primaryKey = primaryKeys[0]
-                            if (oldPrimaryKey != primaryKey) {
-                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
-                                    columnDef(primaryKey, quote)
-                                } COMMENT '${primaryKey.remarks.replace("\\", "\\\\")}';")
-                                oldColumns.remove(oldPrimaryKey)
-                                columns.remove(primaryKey)
-                            }
-                        } else if (oldPrimaryKeys != primaryKeys) {
-                            if (oldPrimaryKeys.isNotEmpty())
-                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote DROP PRIMARY KEY;")
-                            if (table.primaryKeyNames.isNotEmpty()) {
-                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ADD PRIMARY KEY(${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }});")
-                            }
-                        }
 
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
@@ -86,6 +69,26 @@ object MysqlToDDL : ToDDL() {
                                 }
                             }
                         }
+
+                        if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1) {
+                            val oldPrimaryKey = oldPrimaryKeys[0]
+                            val primaryKey = primaryKeys[0]
+                            if (oldPrimaryKey != primaryKey) {
+                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
+                                    columnDef(primaryKey, quote)
+                                } COMMENT '${primaryKey.remarks.replace("\\", "\\\\")}';")
+                                oldColumns.remove(oldPrimaryKey)
+                                columns.remove(primaryKey)
+                            }
+                        } else if (oldPrimaryKeys != primaryKeys) {
+                            if (oldPrimaryKeys.isNotEmpty())
+                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote DROP PRIMARY KEY;")
+                            if (table.primaryKeyNames.isNotEmpty()) {
+                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ADD PRIMARY KEY(${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }});")
+                            }
+                        }
+
+
                         if (extension.datasources[module]?.queryIndex == true) updateIndexes(prefixTableName, oldTable, table, lines, dropColumnNames)
 
                         if (!oldTable.engine.equals(table.engine, true)) lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ENGINE ${table.engine};")
