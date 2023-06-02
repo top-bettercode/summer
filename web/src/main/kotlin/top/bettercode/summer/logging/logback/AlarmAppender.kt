@@ -21,11 +21,11 @@ import java.util.concurrent.TimeUnit
 
 
 abstract class AlarmAppender(
-    private val cyclicBufferSize: Int,
-    private val cacheSeconds: Long,
-    private val timeoutCacheSeconds: Long,
-    private val ignoredWarnLogger: Array<String>,
-    private val logPattern: String
+        private val cyclicBufferSize: Int,
+        private val cacheSeconds: Long,
+        private val timeoutCacheSeconds: Long,
+        private val ignoredWarnLogger: Array<String>,
+        private val logPattern: String
 ) : AppenderBase<ILoggingEvent>() {
 
     companion object {
@@ -47,10 +47,10 @@ abstract class AlarmAppender(
 
     override fun start() {
         cacheMap = Caffeine.newBuilder().expireAfterWrite(cacheSeconds, TimeUnit.SECONDS)
-            .maximumSize(1000).build<String, Int>().asMap()
-        timeoutCacheMap =
-            Caffeine.newBuilder().expireAfterWrite(timeoutCacheSeconds, TimeUnit.SECONDS)
                 .maximumSize(1000).build<String, Int>().asMap()
+        timeoutCacheMap =
+                Caffeine.newBuilder().expireAfterWrite(timeoutCacheSeconds, TimeUnit.SECONDS)
+                        .maximumSize(1000).build<String, Int>().asMap()
 
         val alarmEvaluator = object : EventEvaluatorBase<ILoggingEvent>() {
             override fun evaluate(event: ILoggingEvent): Boolean {
@@ -61,9 +61,9 @@ abstract class AlarmAppender(
                     }
                 }
                 return (event.level.levelInt >= Level.ERROR_INT || event.marker?.contains(
-                    RequestLoggingFilter.ALARM_LOG_MARKER
+                        RequestLoggingFilter.ALARM_LOG_MARKER
                 ) == true || event.formattedMessage.matches(Regex("^Started .*? in .*? seconds \\(.*?\\)$"))) && (event.marker == null || !event.marker.contains(
-                    RequestLoggingFilter.NO_ALARM_LOG_MARKER
+                        RequestLoggingFilter.NO_ALARM_LOG_MARKER
                 ))
             }
         }
@@ -132,7 +132,7 @@ abstract class AlarmAppender(
     private fun findAlarmMarker(marker: Marker?): AlarmMarker? {
         if (marker != null) {
             return marker.iterator().asSequence().findLast { it is AlarmMarker }
-                ?.let { it as AlarmMarker }
+                    ?.let { it as AlarmMarker }
         }
         return null
     }
@@ -152,8 +152,9 @@ abstract class AlarmAppender(
                 if (e == event)
                     alarmMarker = marker
                 initialComment = marker?.name
-                    ?: (if (tp != null) "${tp.className}:${tp.message}" else e.formattedMessage)
-                            ?: ""
+                        ?: (if (tp != null) "${tp.className}:${tp.message ?: event.message}" else e.formattedMessage
+                                ?: event.message)
+                                ?: ""
             }
         }
 
@@ -192,10 +193,10 @@ abstract class AlarmAppender(
     }
 
     private fun send(
-        timeStamp: Long,
-        initialComment: String,
-        message: List<String>,
-        timeout: Boolean
+            timeStamp: Long,
+            initialComment: String,
+            message: List<String>,
+            timeout: Boolean
     ) {
         if (sendErrorCount > 0)
             Thread.sleep(2 * 1000L)
@@ -211,15 +212,15 @@ abstract class AlarmAppender(
     }
 
     abstract fun sendMessage(
-        timeStamp: Long,
-        initialComment: String,
-        message: List<String>,
-        timeout: Boolean
+            timeStamp: Long,
+            initialComment: String,
+            message: List<String>,
+            timeout: Boolean
     ): Boolean
 
     internal inner class SenderRunnable(
-        private val cyclicBuffer: CyclicBuffer<ILoggingEvent>,
-        private val e: ILoggingEvent
+            private val cyclicBuffer: CyclicBuffer<ILoggingEvent>,
+            private val e: ILoggingEvent
     ) : Runnable {
         override fun run() {
             sendBuffer(cyclicBuffer, e)
