@@ -39,6 +39,18 @@ object CoreProjectTasks {
                     }
                 })
             }
+
+            project.tasks.create("gen${prefix}Form") { task ->
+                task.group = group
+                task.doLast(object : Action<Task> {
+                    override fun execute(it: Task) {
+                        ext.tableNames = emptyArray()
+                        ext.generators = arrayOf(Form())
+                        Generators.callInAllModule(ext)
+                    }
+                })
+            }
+
             project.tasks.create("gen${prefix}Service") { task ->
                 task.group = group
                 task.doLast(object : Action<Task> {
@@ -133,8 +145,8 @@ object CoreProjectTasks {
                         if (file.exists()) {
                             val gen = project.extensions.getByType(GeneratorExtension::class.java)
                             val clazz = TopLevelClass(
-                                type = JavaType("${gen.packageName}.support.ErrorCode"),
-                                overwrite = true
+                                    type = JavaType("${gen.packageName}.support.ErrorCode"),
+                                    overwrite = true
                             )
 
                             val properties = Properties()
@@ -149,11 +161,11 @@ object CoreProjectTasks {
                                 }
                                 properties.forEach { k, v ->
                                     field(
-                                        "CODE_$k",
-                                        JavaType.stringInstance,
-                                        "\"$k\"",
-                                        true,
-                                        JavaVisibility.PUBLIC
+                                            "CODE_$k",
+                                            JavaType.stringInstance,
+                                            "\"$k\"",
+                                            true,
+                                            JavaVisibility.PUBLIC
                                     ) {
                                         isStatic = true
                                         javadoc {

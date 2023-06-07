@@ -13,10 +13,7 @@ import org.gradle.jvm.application.tasks.CreateStartScripts
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profileFiles
-import top.bettercode.summer.gradle.plugin.project.template.Controller
-import top.bettercode.summer.gradle.plugin.project.template.Entity
-import top.bettercode.summer.gradle.plugin.project.template.SerializationViews
-import top.bettercode.summer.gradle.plugin.project.template.Service
+import top.bettercode.summer.gradle.plugin.project.template.*
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.lang.capitalized
@@ -81,15 +78,17 @@ object SubProjectTasks {
                             }
                         })
                     }
-                    project.tasks.create("gen${prefix}Controller") { task ->
+
+                    project.tasks.create("gen${prefix}Form") { task ->
                         task.group = group
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                ext.generators = arrayOf(Controller())
+                                ext.generators = arrayOf(Form())
                                 Generators.call(ext, tableHolder)
                             }
                         })
                     }
+
                     project.tasks.create("gen${prefix}Service") { task ->
                         task.group = group
                         task.doLast(object : Action<Task> {
@@ -99,6 +98,28 @@ object SubProjectTasks {
                             }
                         })
                     }
+
+                    project.tasks.create("gen${prefix}Controller") { task ->
+                        task.group = group
+                        task.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                ext.generators = arrayOf(Controller())
+                                Generators.call(ext, tableHolder)
+                            }
+                        })
+                    }
+
+                    project.tasks.create("gen${prefix}") { task ->
+                        task.group = group
+                        task.dependsOn(":core:genCoreEntity")
+                        task.doLast(object : Action<Task> {
+                            override fun execute(it: Task) {
+                                ext.generators = arrayOf(Form(), Service(), Controller())
+                                Generators.call(ext, tableHolder)
+                            }
+                        })
+                    }
+
                 }
             }
 

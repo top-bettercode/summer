@@ -34,22 +34,5 @@ open class Service(private val overwrite: Boolean = false) : ProjectGenerator() 
             service(this)
         }
 
-        +clazz(testServiceType, overwrite = overwrite, sourceSet = SourceSet.TEST) {
-            testService(this)
-        }
-
-        if (!isCore) {
-            //form
-            +clazz(formType, overwrite = overwrite) {
-                form(this)
-            }
-            +interfaze(mixInType, overwrite = overwrite) {
-                mixIn(this)
-            }
-            if (serializationViewsType != coreSerializationViewsType)
-                +interfaze(serializationViewsType, overwrite = false) {
-                    serializationViews(this)
-                }
-        }
     }
 }

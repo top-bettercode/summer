@@ -10,6 +10,9 @@ import top.bettercode.summer.tools.generator.dom.unit.SourceSet
 open class Controller(private val overwrite: Boolean = false) : ProjectGenerator() {
 
     override fun content() {
+        +clazz(testServiceType, overwrite = overwrite, sourceSet = SourceSet.TEST) {
+            testService(this)
+        }
 
         +clazz(appControllerType, overwrite = false) {
             appController(this)
@@ -25,12 +28,6 @@ open class Controller(private val overwrite: Boolean = false) : ProjectGenerator
 
         +clazz(controllerTestType, overwrite = overwrite, sourceSet = SourceSet.TEST) {
             controllerTest(this)
-        }
-        if (isCore) {
-            //form
-            +clazz(formType, overwrite = overwrite) {
-                form(this)
-            }
         }
     }
 }
