@@ -183,16 +183,18 @@ class DicCodeGen(private val project: Project) {
                         }
 
                         //auth
-                        if ("auth" == codeType) {
-                            val authName =
-                                    PinyinHelper.convertToPinyinString(
-                                            name,
-                                            "_",
-                                            PinyinFormat.WITHOUT_TONE
-                                    ).split('_').joinToString("") {
-                                        it.capitalized()
-                                    }
+                        if ("auth" == codeType || "securityScope" == codeType) {
+                            val directory = if ("auth" == codeType) project.rootProject.project("admin").projectDir else project.projectDir
+                            val authName = if ("auth" == codeType)
+                                PinyinHelper.convertToPinyinString(
+                                        name,
+                                        "_",
+                                        PinyinFormat.WITHOUT_TONE
+                                ).split('_').joinToString("") {
+                                    it.capitalized()
+                                } else code.toString().capitalized()
 
+                            val codeTypeClassName = codeType.capitalized()
                             val authClassName = "Auth${authName}"
                             Interface(
                                     type = JavaType("$packageName.security.auth.$authClassName"),
@@ -214,10 +216,10 @@ class DicCodeGen(private val project: Project) {
                                 annotation("@java.lang.annotation.Inherited")
                                 annotation("@java.lang.annotation.Documented")
 
-                                import("$packageName.support.dic.AuthEnum.AuthConst")
+                                import("$packageName.support.dic.${codeTypeClassName}Enum.${codeTypeClassName}Const")
                                 annotation("@top.bettercode.summer.security.authorize.ConfigAuthority(${className}Const.$codeFieldName)")
 
-                            }.writeTo(project.rootProject.project("admin").projectDir)
+                            }.writeTo(directory)
                         }
                     }
 
