@@ -150,10 +150,11 @@ open class ExcelField<T, P : Any?> {
         protected set
 
     //--------------------------------------------
+    @Suppress("UNCHECKED_CAST")
     @JvmOverloads
     fun yuan(scale: Int = 2): ExcelField<T, P> {
         return cell { property: P -> toYun((property as Long), scale).toPlainString() }.property { yun: Any ->
-                    @Suppress("UNCHECKED_CAST") toCent(yun as BigDecimal) as P
+                    toCent(yun as BigDecimal) as P
                 }
     }
 
@@ -243,6 +244,7 @@ open class ExcelField<T, P : Any?> {
         return this
     }
 
+    @Suppress("UNCHECKED_CAST")
     constructor(title: String, propertyGetter: ExcelConverter<T, P?>, indexColumn: Boolean, imageColumn: Boolean) {
         this.title = title
         this.propertyGetter = propertyGetter
@@ -255,7 +257,7 @@ open class ExcelField<T, P : Any?> {
                 val get = field.get(propertyGetter)
                 if (get is PropertyReference) {
                     propertyType = get.returnType.javaType as Class<*>
-                    @Suppress("UNCHECKED_CAST") entityType = (get.owner as KClass<*>).java as Class<T>
+                    entityType = (get.owner as KClass<*>).java as Class<T>
                     propertyName = get.name
                 }
             }
@@ -267,7 +269,7 @@ open class ExcelField<T, P : Any?> {
                 val methodSignature = SignatureAttribute.toMethodSignature(serializedLambda.instantiatedMethodType)
                 propertyType = ClassUtils.forName(methodSignature.returnType.jvmTypeName(), null)
                 propertyName = resolvePropertyName(implMethodName)
-                @Suppress("UNCHECKED_CAST") entityType = ClassUtils.forName(methodSignature.parameterTypes[0].jvmTypeName(), null) as Class<T>
+                entityType = ClassUtils.forName(methodSignature.parameterTypes[0].jvmTypeName(), null) as Class<T>
                 //$lamda-0
                 if (!propertyName!!.contains("lambda\$new$") && !propertyName!!.contains("\$lambda")) {
                     try {
@@ -340,6 +342,7 @@ open class ExcelField<T, P : Any?> {
         format = ExcelCell.DEFAULT_FORMAT
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun init() {
         Assert.notNull(propertyType, "propertyType 不能为空")
         if (format == null) {
@@ -376,7 +379,7 @@ open class ExcelField<T, P : Any?> {
             }
         }
         propertyConverter = { cellValue: Any? ->
-            @Suppress("UNCHECKED_CAST") when (propertyType) {
+            when (propertyType) {
                 String::class.java -> {
                     cellValue.toString()
                 }
@@ -696,12 +699,12 @@ open class ExcelField<T, P : Any?> {
         </T></P> */
         @JvmStatic
         fun <T, P> of(title: String, propertyGetter: ExcelConverter<T, P?>): ExcelField<T, P> {
-            return ExcelField(title, propertyGetter, false, false)
+            return ExcelField(title, propertyGetter, indexColumn = false, imageColumn = false)
         }
 
         @JvmStatic
         fun <T, P> image(title: String, propertyGetter: ExcelConverter<T, P?>): ExcelField<T, P> {
-            return ExcelField(title, propertyGetter, false, true)
+            return ExcelField(title, propertyGetter, indexColumn = false, imageColumn = true)
         }
 
         /**
@@ -716,7 +719,7 @@ open class ExcelField<T, P : Any?> {
         </T></P> */
         @JvmStatic
         fun <T, P> of(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>): ExcelField<T, P> {
-            return ExcelField(title, propertyType, propertyGetter, false, false)
+            return ExcelField(title, propertyType, propertyGetter, indexColumn = false, imageColumn = false)
         }
 
         /**
@@ -732,7 +735,7 @@ open class ExcelField<T, P : Any?> {
         </T></P> */
         @JvmStatic
         fun <T, P> of(title: String, propertyType: Class<P>, propertyGetter: ExcelConverter<T, P?>, propertySetter: ExcelCellSetter<T, P?>): ExcelField<T, P> {
-            return ExcelField(title, propertyType, propertyGetter, false, false).setter(propertySetter)
+            return ExcelField(title, propertyType, propertyGetter, indexColumn = false, imageColumn = false).setter(propertySetter)
         }
 
         //--------------------------------------------
