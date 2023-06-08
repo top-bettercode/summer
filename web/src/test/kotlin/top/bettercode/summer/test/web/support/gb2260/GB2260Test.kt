@@ -1,16 +1,12 @@
 package top.bettercode.summer.test.web.support.gb2260
 
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
-
 import org.junit.jupiter.api.Test
 import org.springframework.web.client.RestTemplate
 import top.bettercode.summer.tools.lang.property.PropertiesSource
-import top.bettercode.summer.tools.lang.property.Settings
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.support.gb2260.GB2260
-import java.util.Properties
-import kotlin.io.path.toPath
+import java.io.File
 
 /**
  *
@@ -22,7 +18,7 @@ class GB2260Test {
     @Test
     fun testReplenishLngLat() {
         val propertiesSource = PropertiesSource.of("area")
-        val file = GB2260Test::class.java.getResource("/areaCode.properties").toURI().toPath().toFile()
+        val file = file()
         //new Lines
         val lines = mutableListOf<String>()
         file.readLines().forEachIndexed { index, s ->
@@ -39,11 +35,15 @@ class GB2260Test {
         file.writeText(lines.joinToString("\n"))
     }
 
+    private fun file() =
+            File(GB2260Test::class.java.getResource("/areaCode.properties")?.toURI()?.toURL()?.file
+                    ?: throw Exception("areaCode.properties not found"))
+
     @Disabled
     @Test
-    fun testReplenishLngLat2(){
+    fun testReplenishLngLat2() {
         val template = RestTemplate()
-        val file = GB2260Test::class.java.getResource("/areaCode.properties").toURI().toPath().toFile()
+        val file = file()
         //new Lines
         val lines = mutableListOf<String>()
         file.readLines().forEachIndexed { index, s ->

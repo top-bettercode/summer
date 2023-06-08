@@ -38,7 +38,7 @@ data class Table(
         val subModule: String = "database",
         val subModuleName: String = "database",
         val physicalOptions: String = "",
-        val engine: String = "",
+        val engine: String = ""
 ) {
 
     val primaryKeys: MutableList<Column>
