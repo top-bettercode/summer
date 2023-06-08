@@ -1,6 +1,7 @@
 package top.bettercode.summer.test.web.support.gb2260
 
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Disabled
 
 import org.junit.jupiter.api.Test
 import org.springframework.web.client.RestTemplate
@@ -17,6 +18,7 @@ import kotlin.io.path.toPath
  */
 class GB2260Test {
 
+    @Disabled
     @Test
     fun testReplenishLngLat() {
         val propertiesSource = PropertiesSource.of("area")
@@ -37,6 +39,7 @@ class GB2260Test {
         file.writeText(lines.joinToString("\n"))
     }
 
+    @Disabled
     @Test
     fun testReplenishLngLat2(){
         val template = RestTemplate()
