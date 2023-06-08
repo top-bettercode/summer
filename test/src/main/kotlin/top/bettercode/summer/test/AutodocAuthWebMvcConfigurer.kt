@@ -10,6 +10,7 @@ import top.bettercode.summer.security.authorize.ClientAuthorize
 import top.bettercode.summer.security.config.ApiSecurityProperties
 import top.bettercode.summer.security.support.AuthenticationHelper
 import top.bettercode.summer.security.support.SecurityParameterNames
+import top.bettercode.summer.test.autodoc.Autodoc
 import top.bettercode.summer.test.autodoc.Autodoc.requiredHeaders
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.hasAnnotation
@@ -40,6 +41,9 @@ class AutodocAuthWebMvcConfigurer(
                 needAuth = true
                 requiredHeaders(*requiredHeaders.toTypedArray<String>())
                 //set required end
+            }
+            if (Autodoc.requiredHeaders.contains(HttpHeaders.AUTHORIZATION)) {
+                needAuth = true
             }
             if (needAuth) {
                 if (isClientAuth) {

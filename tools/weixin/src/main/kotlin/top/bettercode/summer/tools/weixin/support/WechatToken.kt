@@ -16,7 +16,8 @@ class WechatToken() : HashMap<String, Any?>() {
         this["scope"] = ""
         this["unionid"] = ""
         this["hasBound"] = false
-        this["msg"] = ""
+        this["isOk"] = true
+        this["message"] = ""
     }
 
     var accessToken: String
@@ -56,14 +57,17 @@ class WechatToken() : HashMap<String, Any?>() {
             put("hasBound", value)
         }
 
-    var msg: String
-        get() = get("msg") as String
+    var message: String
+        get() = get("message") as String
         set(value) {
-            put("msg", value)
+            put("message", value)
+            if (value.isNotBlank())
+                put("isOk", false)
         }
 
-    constructor(msg: String?) : this() {
-        this.msg = msg ?: ""
+
+    constructor(message: String?) : this() {
+        this.message = message ?: ""
     }
 
     companion object {

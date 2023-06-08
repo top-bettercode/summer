@@ -25,16 +25,19 @@ class ApplicationContextHolder : ApplicationContextAware {
             @JvmName("setApplicationContext1")
             private set
 
+        @JvmStatic
         @Throws(BeansException::class)
         fun <T> getBean(s: String, aClass: Class<T>): T? {
             return if (applicationContext == null) null else applicationContext!!.getBean(s, aClass)
         }
 
+        @JvmStatic
         @Throws(BeansException::class)
         fun <T> getBean(aClass: Class<T>): T? {
             return if (applicationContext == null) null else applicationContext!!.getBean(aClass)
         }
 
+        @JvmStatic
         @Throws(NoSuchMessageException::class)
         fun getMessage(s: String, objects: Array<Any?>?, locale: Locale): String? {
             return if (applicationContext == null) null else applicationContext!!.getMessage(s, objects, locale)
@@ -45,14 +48,17 @@ class ApplicationContextHolder : ApplicationContextAware {
             return if (applicationContext == null) null else applicationContext!!.environment.getProperty(key)
         }
 
+        @JvmStatic
         fun getProperty(key: String, defaultValue: String): String? {
             return if (applicationContext == null) null else applicationContext!!.environment.getProperty(key, defaultValue)
         }
 
+        @JvmStatic
         fun <T> getProperty(key: String, targetType: Class<T>): T? {
             return if (applicationContext == null) null else applicationContext!!.environment.getProperty(key, targetType)
         }
 
+        @JvmStatic
         fun <T> getProperty(key: String, targetType: Class<T>, defaultValue: T): T? {
             return if (applicationContext == null) null else applicationContext!!.environment.getProperty(key, targetType, defaultValue)
         }
@@ -60,6 +66,8 @@ class ApplicationContextHolder : ApplicationContextAware {
         @JvmStatic
         val conversionService: ConversionService
             get() = if (applicationContext == null) DefaultConversionService() else applicationContext!!.getBean(ConversionService::class.java)
+
+        @JvmStatic
         val requestAttributes: Optional<ServletRequestAttributes>
             get() {
                 val requestAttributes = RequestContextHolder

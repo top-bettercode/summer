@@ -24,7 +24,7 @@ interface ICorpProperties : IWexinProperties {
     fun wechatUrl(wechatToken: WechatToken?, forceLogin: Boolean, state: String?): String {
         val token = wechatToken?.accessToken ?: ""
         val openId = wechatToken?.openId ?: ""
-        val msg = wechatToken?.msg ?: ""
+        val msg = wechatToken?.message ?: ""
         val encodeMsg: String = try {
             URLEncoder.encode(msg, "UTF-8")
         } catch (e: UnsupportedEncodingException) {
