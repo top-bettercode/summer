@@ -169,7 +169,7 @@ object OracleToDDL : ToDDL() {
         if (delIndexes.isNotEmpty()) {
             delIndexes.forEach {
                 if (!dropColumnNames.containsAll(it.columnName))
-                    lines.add("DROP INDEX $quote${it.name}$quote;")
+                    lines.add("DROP INDEX $quote${it.name(table.fixTableName)}$quote;")
             }
         }
         val newIndexes = table.indexes - oldTable.indexes.toSet()
@@ -177,7 +177,7 @@ object OracleToDDL : ToDDL() {
             newIndexes.forEach { indexed ->
                 if (indexed.unique) {
                     lines.add(
-                        "CREATE UNIQUE INDEX $quote${indexed.name}$quote ON $prefixTableName$quote$tableName$quote (${
+                        "CREATE UNIQUE INDEX $quote${indexed.name(table.fixTableName)}$quote ON $prefixTableName$quote$tableName$quote (${
                             indexed.columnName.joinToString(
                                 ","
                             ) { "$quote$it$quote" }
@@ -185,7 +185,7 @@ object OracleToDDL : ToDDL() {
                     )
                 } else {
                     lines.add(
-                        "CREATE INDEX $quote${indexed.name}$quote ON $prefixTableName$quote$tableName$quote (${
+                        "CREATE INDEX $quote${indexed.name(table.fixTableName)}$quote ON $prefixTableName$quote$tableName$quote (${
                             indexed.columnName.joinToString(
                                 ","
                             ) { "$quote$it$quote" }

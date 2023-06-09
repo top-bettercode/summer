@@ -57,14 +57,7 @@ object PumlConverter {
                     if (uniqueMult || line.startsWith("'INDEX")) {
                         val columnNames =
                                 line.substringAfter(if (uniqueMult) "'UNIQUE" else "'INDEX").trim()
-                        indexes.add(
-                                Indexed(
-                                        name = "${if (uniqueMult) "IDX_UK" else "IDX"}_${
-                                            columnNames.split(",").joinToString("_") { cname ->
-                                                cname.replace(tableName, "").replace("_", "")
-                                            }
-                                        }", unique = uniqueMult, columnName = columnNames.split(",").toMutableList()
-                                )
+                        indexes.add(Indexed(unique = uniqueMult, columnName = columnNames.split(",").toMutableList())
                         )
                     } else if (line.startsWith("'ENGINE")) {
                         engine = line.substringAfter("=").trim()
@@ -205,27 +198,9 @@ object PumlConverter {
                                 sequenceStartWith = sequenceStartWith
                         )
                         if (unique)
-                            indexes.add(
-                                    Indexed(
-                                            name = "UK_${
-                                                tableName.replace("_", "")
-                                            }_${
-                                                columnName.replace(tableName, "").replace("_", "")
-                                                        .replace(",", "")
-                                            }", unique = true, columnName = mutableListOf(columnName)
-                                    )
-                            )
+                            indexes.add(Indexed(unique = true, columnName = mutableListOf(columnName)))
                         if (indexed)
-                            indexes.add(
-                                    Indexed(
-                                            name = "IDX_${
-                                                tableName.replace("_", "")
-                                            }_${
-                                                columnName.replace(tableName, "").replace("_", "")
-                                                        .replace(",", "")
-                                            }", unique = false, columnName = mutableListOf(columnName)
-                                    )
-                            )
+                            indexes.add(Indexed(unique = false, columnName = mutableListOf(columnName)))
                         if (pk) {
                             primaryKeyNames.add(column.columnName)
                         }

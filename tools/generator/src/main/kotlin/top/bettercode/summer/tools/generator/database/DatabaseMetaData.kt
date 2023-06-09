@@ -369,7 +369,7 @@ class DatabaseMetaData(
                     .map {
                         val indexName = getString("INDEX_NAME")
                         if (!indexName.isNullOrBlank() && !"PRIMARY".equals(indexName, true)) {
-                            var indexed = indexes.find { it.name == indexName }
+                            var indexed = indexes.find { it.name(datasource.fixTableName(tableName)) == indexName }
                             if (indexed == null) {
                                 indexed = Indexed(indexName, !getBoolean("NON_UNIQUE"))
                                 indexes.add(indexed)

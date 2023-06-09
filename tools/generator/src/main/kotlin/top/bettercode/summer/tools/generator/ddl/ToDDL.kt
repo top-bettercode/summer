@@ -35,12 +35,12 @@ abstract class ToDDL : IToDDL {
     }
 
     protected open fun appendKeys(
-        table: Table,
-        hasPrimary: Boolean,
-        pw: Writer,
-        quote: String,
-        tableName: String,
-        useForeignKey: Boolean = false
+            table: Table,
+            hasPrimary: Boolean,
+            pw: Writer,
+            quote: String,
+            tableName: String,
+            useForeignKey: Boolean = false
     ) {
         val fks = table.columns.filter { it.isForeignKey }
         if (hasPrimary)
@@ -50,21 +50,21 @@ abstract class ToDDL : IToDDL {
             fks.forEachIndexed { index, column ->
                 val columnName = column.columnName
                 pw.appendLine(
-                    "  CONSTRAINT ${
-                        foreignKeyName(
-                            tableName,
-                            columnName
-                        )
-                    } FOREIGN KEY ($quote$columnName$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote)${if (index < lastFksIndex) "," else ""}"
+                        "  CONSTRAINT ${
+                            foreignKeyName(
+                                    tableName,
+                                    columnName
+                            )
+                        } FOREIGN KEY ($quote$columnName$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote)${if (index < lastFksIndex) "," else ""}"
                 )
             }
         }
     }
 
     protected fun foreignKeyName(tableName: String, columnName: String) =
-        "${quote}FK_${tableName.replace("_", "").takeLast(7)}_${
-            columnName.replace(tableName, "").replace("_", "").replace(",", "").takeLast(7)
-        }$quote"
+            "${quote}FK_${tableName.replace("_", "").takeLast(7)}_${
+                columnName.replace(tableName, "").replace("_", "").replace(",", "").takeLast(7)
+            }$quote"
 
 
     protected fun appendIndexes(prefixTableName: String, table: Table, pw: Writer, quote: String) {
@@ -72,37 +72,37 @@ abstract class ToDDL : IToDDL {
         table.indexes.forEach { t ->
             if (t.unique) {
                 pw.appendLine(
-                    "CREATE UNIQUE INDEX ${t.name} ON $prefixTableName$quote$tableName$quote (${
-                        t.columnName.joinToString(
-                            ","
-                        ) { "$quote$it$quote" }
-                    });"
+                        "CREATE UNIQUE INDEX ${t.name(table.fixTableName)} ON $prefixTableName$quote$tableName$quote (${
+                            t.columnName.joinToString(
+                                    ","
+                            ) { "$quote$it$quote" }
+                        });"
                 )
             } else {
                 pw.appendLine(
-                    "CREATE INDEX ${t.name} ON $prefixTableName$quote$tableName$quote (${
-                        t.columnName.joinToString(
-                            ","
-                        ) { "$quote$it$quote" }
-                    });"
+                        "CREATE INDEX ${t.name(table.fixTableName)} ON $prefixTableName$quote$tableName$quote (${
+                            t.columnName.joinToString(
+                                    ","
+                            ) { "$quote$it$quote" }
+                        });"
                 )
             }
         }
     }
 
     protected open fun updateIndexes(
-        prefixTableName: String,
-        oldTable: Table,
-        table: Table,
-        lines: MutableList<String>,
-        dropColumnNames: List<String>
+            prefixTableName: String,
+            oldTable: Table,
+            table: Table,
+            lines: MutableList<String>,
+            dropColumnNames: List<String>
     ) {
         val tableName = table.tableName
         val delIndexes = oldTable.indexes - table.indexes.toSet()
         if (delIndexes.isNotEmpty()) {
             delIndexes.forEach {
                 if (!dropColumnNames.containsAll(it.columnName))
-                    lines.add("DROP INDEX $quote${it.name}$quote ON $prefixTableName$quote$tableName$quote;")
+                    lines.add("DROP INDEX $quote${it.name(table.fixTableName)}$quote ON $prefixTableName$quote$tableName$quote;")
             }
         }
         val newIndexes = table.indexes - oldTable.indexes.toSet()
@@ -110,19 +110,19 @@ abstract class ToDDL : IToDDL {
             newIndexes.forEach { indexed ->
                 if (indexed.unique) {
                     lines.add(
-                        "CREATE UNIQUE INDEX $quote${indexed.name}$quote ON $prefixTableName$quote$tableName$quote (${
-                            indexed.columnName.joinToString(
-                                ","
-                            ) { "$quote$it$quote" }
-                        });"
+                            "CREATE UNIQUE INDEX $quote${indexed.name(table.fixTableName)}$quote ON $prefixTableName$quote$tableName$quote (${
+                                indexed.columnName.joinToString(
+                                        ","
+                                ) { "$quote$it$quote" }
+                            });"
                     )
                 } else {
                     lines.add(
-                        "CREATE INDEX $quote${indexed.name}$quote ON $prefixTableName$quote$tableName$quote (${
-                            indexed.columnName.joinToString(
-                                ","
-                            ) { "$quote$it$quote" }
-                        });"
+                            "CREATE INDEX $quote${indexed.name(table.fixTableName)}$quote ON $prefixTableName$quote$tableName$quote (${
+                                indexed.columnName.joinToString(
+                                        ","
+                                ) { "$quote$it$quote" }
+                            });"
                     )
                 }
             }
@@ -130,11 +130,11 @@ abstract class ToDDL : IToDDL {
     }
 
     protected fun updateFk(
-        prefixTableName: String,
-        column: Column,
-        oldColumn: Column,
-        lines: MutableList<String>,
-        tableName: String
+            prefixTableName: String,
+            column: Column,
+            oldColumn: Column,
+            lines: MutableList<String>,
+            tableName: String
     ) {
         if (useForeignKey && (column.isForeignKey != oldColumn.isForeignKey || column.pktableName != oldColumn.pktableName || column.pkcolumnName != oldColumn.pkcolumnName)) {
             if (oldColumn.isForeignKey) {
@@ -142,60 +142,60 @@ abstract class ToDDL : IToDDL {
             }
             if (column.isForeignKey) {
                 lines.add(
-                    "ALTER TABLE $prefixTableName$quote$tableName$quote ADD CONSTRAINT ${
-                        foreignKeyName(
-                            tableName,
-                            column.columnName
-                        )
-                    } FOREIGN KEY ($quote${column.columnName}$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote);"
+                        "ALTER TABLE $prefixTableName$quote$tableName$quote ADD CONSTRAINT ${
+                            foreignKeyName(
+                                    tableName,
+                                    column.columnName
+                            )
+                        } FOREIGN KEY ($quote${column.columnName}$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote);"
                 )
             }
         }
     }
 
     protected fun addFk(
-        prefixTableName: String,
-        column: Column,
-        lines: MutableList<String>,
-        tableName: String,
-        columnName: String
+            prefixTableName: String,
+            column: Column,
+            lines: MutableList<String>,
+            tableName: String,
+            columnName: String
     ) {
         if (useForeignKey && column.isForeignKey)
             lines.add(
-                "ALTER TABLE $prefixTableName$quote$tableName$quote ADD CONSTRAINT ${
-                    foreignKeyName(
-                        tableName,
-                        column.columnName
-                    )
-                } FOREIGN KEY ($quote$columnName$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote);"
+                    "ALTER TABLE $prefixTableName$quote$tableName$quote ADD CONSTRAINT ${
+                        foreignKeyName(
+                                tableName,
+                                column.columnName
+                        )
+                    } FOREIGN KEY ($quote$columnName$quote) REFERENCES $quote${column.pktableName}$quote ($quote${column.pkcolumnName}$quote);"
             )
     }
 
     protected fun dropFk(
-        prefixTableName: String,
-        oldColumns: MutableList<Column>,
-        dropColumnNames: List<String>,
-        lines: MutableList<String>,
-        tableName: String
+            prefixTableName: String,
+            oldColumns: MutableList<Column>,
+            dropColumnNames: List<String>,
+            lines: MutableList<String>,
+            tableName: String
     ) {
         if (useForeignKey)
             oldColumns.filter { it.isForeignKey && dropColumnNames.contains(it.columnName) }
-                .forEach { column ->
-                    lines.add(dropFkStatement(prefixTableName, tableName, column.columnName))
-                }
+                    .forEach { column ->
+                        lines.add(dropFkStatement(prefixTableName, tableName, column.columnName))
+                    }
     }
 
     protected open fun dropFkStatement(
-        prefixTableName: String,
-        tableName: String,
-        columnName: String
+            prefixTableName: String,
+            tableName: String,
+            columnName: String
     ) =
-        "ALTER TABLE $prefixTableName$quote$tableName$quote DROP CONSTRAINT ${
-            foreignKeyName(
-                tableName,
-                columnName
-            )
-        };"
+            "ALTER TABLE $prefixTableName$quote$tableName$quote DROP CONSTRAINT ${
+                foreignKeyName(
+                        tableName,
+                        columnName
+                )
+            };"
 
     override fun toDDL(tables: List<Table>, out: FileUnit) {
         if (tables.isNotEmpty()) {

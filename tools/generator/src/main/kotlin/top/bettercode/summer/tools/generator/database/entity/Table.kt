@@ -123,4 +123,5 @@ data class Table(
 
     val pathName: String get() = entityName
 
+    val fixTableName: String get() = datasource.fixTableName(tableName)
 }

@@ -12,7 +12,7 @@ object MysqlToDDL : ToDDL() {
         out.appendLine("$commentPrefix ${extension.datasources[module]!!.url.substringBefore("?")}")
         out.appendLine()
         if (tables != oldTables) {
-            val prefixTableName = if (extension.enable("include-schema")) {
+            val schema = if (extension.enable("include-schema")) {
                 "$quote${extension.datasource(module).schema}$quote."
             } else {
                 ""
@@ -21,19 +21,19 @@ object MysqlToDDL : ToDDL() {
             val oldTableNames = oldTables.map { it.tableName }
             if (extension.dropTablesWhenUpdate) (oldTableNames - tableNames.toSet()).filter { "api_token" != it }.forEach {
                 out.appendLine("$commentPrefix DROP $it")
-                out.appendLine("DROP TABLE IF EXISTS $prefixTableName$quote$it$quote;")
+                out.appendLine("DROP TABLE IF EXISTS $schema$quote$it$quote;")
                 out.appendLine()
             }
             val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
                 val tableName = table.tableName
                 if (newTableNames.contains(tableName)) {
-                    appendTable(prefixTableName, table, out)
+                    appendTable(schema, table, out)
                 } else {
                     val oldTable = oldTables.find { it.tableName == tableName }!!
                     if (oldTable != table) {
                         val lines = mutableListOf<String>()
-                        if (oldTable.remarks != table.remarks) lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote COMMENT '${
+                        if (oldTable.remarks != table.remarks) lines.add("ALTER TABLE $schema$quote$tableName$quote COMMENT '${
                             table.remarks.replace("\\", "\\\\")
                         }';")
 
@@ -48,24 +48,24 @@ object MysqlToDDL : ToDDL() {
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames.toSet()
                         if (extension.dropColumnsWhenUpdate) dropColumnNames.forEach {
-                            lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote DROP COLUMN $quote$it$quote;")
+                            lines.add("ALTER TABLE $schema$quote$tableName$quote DROP COLUMN $quote$it$quote;")
                         }
-                        dropFk(prefixTableName, oldColumns, dropColumnNames, lines, tableName)
+                        dropFk(schema, oldColumns, dropColumnNames, lines, tableName)
                         val newColumnNames = columnNames - oldColumnNames.toSet()
                         columns.forEach { column ->
                             val columnName = column.columnName
                             if (newColumnNames.contains(columnName)) {
-                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ADD COLUMN ${
+                                lines.add("ALTER TABLE $schema$quote$tableName$quote ADD COLUMN ${
                                     columnDef(column, quote)
                                 } COMMENT '${column.remarks.replace("\\", "\\\\")}';")
-                                addFk(prefixTableName, column, lines, tableName, columnName)
+                                addFk(schema, column, lines, tableName, columnName)
                             } else {
                                 val oldColumn = oldColumns.find { it.columnName == columnName }!!
                                 if (column != oldColumn) {
-                                    lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote MODIFY ${
+                                    lines.add("ALTER TABLE $schema$quote$tableName$quote MODIFY ${
                                         columnDef(column, quote)
                                     } COMMENT '${column.remarks.replace("\\", "\\\\")}';")
-                                    updateFk(prefixTableName, column, oldColumn, lines, tableName)
+                                    updateFk(schema, column, oldColumn, lines, tableName)
                                 }
                             }
                         }
@@ -74,7 +74,7 @@ object MysqlToDDL : ToDDL() {
                             val oldPrimaryKey = oldPrimaryKeys[0]
                             val primaryKey = primaryKeys[0]
                             if (oldPrimaryKey != primaryKey) {
-                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
+                                lines.add("ALTER TABLE $schema$quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
                                     columnDef(primaryKey, quote)
                                 } COMMENT '${primaryKey.remarks.replace("\\", "\\\\")}';")
                                 oldColumns.remove(oldPrimaryKey)
@@ -82,16 +82,16 @@ object MysqlToDDL : ToDDL() {
                             }
                         } else if (oldPrimaryKeys != primaryKeys) {
                             if (oldPrimaryKeys.isNotEmpty())
-                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote DROP PRIMARY KEY;")
+                                lines.add("ALTER TABLE $schema$quote$tableName$quote DROP PRIMARY KEY;")
                             if (table.primaryKeyNames.isNotEmpty()) {
-                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ADD PRIMARY KEY(${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }});")
+                                lines.add("ALTER TABLE $schema$quote$tableName$quote ADD PRIMARY KEY(${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }});")
                             }
                         }
 
 
-                        if (extension.datasources[module]?.queryIndex == true) updateIndexes(prefixTableName, oldTable, table, lines, dropColumnNames)
+                        if (extension.datasources[module]?.queryIndex == true) updateIndexes(schema, oldTable, table, lines, dropColumnNames)
 
-                        if (!oldTable.engine.equals(table.engine, true)) lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ENGINE ${table.engine};")
+                        if (!oldTable.engine.equals(table.engine, true)) lines.add("ALTER TABLE $schema$quote$tableName$quote ENGINE ${table.engine};")
 
                         //out change
                         if (lines.isNotEmpty()) {

@@ -17,8 +17,8 @@ import java.io.File
 object PdmReader {
 
     fun read(
-        pdmFile: File,
-        call: (Table) -> Unit = {}
+            pdmFile: File,
+            call: (Table) -> Unit = {}
     ): List<Table> {
         val saxReader = SAXReader()
         val document = saxReader.read(pdmFile)
@@ -46,13 +46,13 @@ object PdmReader {
                     val tableElement = tablesEle.elements(QName("Table", oNamespace))
                     tableElement.forEach {
                         tables.add(
-                            readTable(
-                                it,
-                                aNamespace,
-                                cNamespace,
-                                oNamespace,
-                                call
-                            )
+                                readTable(
+                                        it,
+                                        aNamespace,
+                                        cNamespace,
+                                        oNamespace,
+                                        call
+                                )
                         )
                     }
                 }
@@ -71,16 +71,16 @@ object PdmReader {
     }
 
     private fun readTable(
-        tableElement: Element,
-        aNamespace: Namespace,
-        cNamespace: Namespace,
-        oNamespace: Namespace,
-        call: (Table) -> Unit = {}
+            tableElement: Element,
+            aNamespace: Namespace,
+            cNamespace: Namespace,
+            oNamespace: Namespace,
+            call: (Table) -> Unit = {}
     ): Table {
         val name = tableElement.element(QName("Name", aNamespace))?.textTrim ?: ""
         val code = tableElement.element(QName("Code", aNamespace))?.textTrim
         val physicalOptions = tableElement.element(QName("PhysicalOptions", aNamespace))?.textTrim
-            ?: ""
+                ?: ""
         //解析主键
         val primaryKeyEle = tableElement.element(QName("PrimaryKey", cNamespace))
         val pkRefs = ArrayList<String>()
@@ -91,7 +91,7 @@ object PdmReader {
             }
         }
         val columnElements =
-            tableElement.element(QName("Columns", cNamespace)).elements(QName("Column", oNamespace))
+                tableElement.element(QName("Columns", cNamespace)).elements(QName("Column", oNamespace))
         val indexes = mutableListOf<Indexed>()
         val keysEle = tableElement.element(QName("Keys", cNamespace))
         val pkIds = ArrayList<String>()
@@ -100,16 +100,16 @@ object PdmReader {
             for (keyEle in keyEleList) {
                 val id = keyEle.attribute("Id")
                 val list = keyEle.element(QName("Key.Columns", cNamespace))
-                    .elements(QName("Column", oNamespace))
+                        .elements(QName("Column", oNamespace))
                 if (!pkRefs.contains(id.value)) {
                     Indexed(
-                        tableElement.element(QName("Code", aNamespace)).textTrim,
-                        false,
-                        list.map { c ->
-                            columnElements.find {
-                                it.attribute("Id").value == c.attribute("Ref").value
-                            }!!.element(QName("Code", aNamespace)).textTrim
-                        }.toMutableList()
+                            tableElement.element(QName("Code", aNamespace)).textTrim,
+                            false,
+                            list.map { c ->
+                                columnElements.find {
+                                    it.attribute("Id").value == c.attribute("Ref").value
+                                }!!.element(QName("Code", aNamespace)).textTrim
+                            }.toMutableList()
                     )
                 } else {
                     for (element in list) {
@@ -129,10 +129,10 @@ object PdmReader {
             val cDataType = columnEle.element(QName("DataType", aNamespace))?.textTrim ?: "varchar(255)"
             val cLength = columnEle.element(QName("Length", aNamespace))?.textTrim?.toInt() ?: 0
             val cPrecision = columnEle.element(QName("Precision", aNamespace))?.textTrim?.toInt()
-                ?: 0
+                    ?: 0
             val cComment = columnEle.element(QName("Comment", aNamespace))?.textTrim
             val cDefaultValue =
-                columnEle.element(QName("DefaultValue", aNamespace))?.textTrim?.trim()?.trim('\'')
+                    columnEle.element(QName("DefaultValue", aNamespace))?.textTrim?.trim()?.trim('\'')
             val nullable = columnEle.element(QName("Column.Mandatory", aNamespace))?.textTrim
             val identity = columnEle.element(QName("Identity", aNamespace))?.textTrim == "1"
 
@@ -141,26 +141,26 @@ object PdmReader {
             }
             val typeName = cDataType.substringBefore("(")
             val column = Column(
-                tableCat = null,
-                columnName = ccode!!,
-                remarks = cComment
-                    ?: cname
-                    ?: "",
-                typeName = typeName,
-                dataType = JavaTypeResolver.calculateDataType(typeName),
-                columnSize = cLength,
-                decimalDigits = cPrecision,
-                nullable = nullable?.toBoolean()
-                    ?: true,
-                unique = false,
-                indexed = false,
-                columnDef = cDefaultValue,
-                extra = "",
-                tableSchem = null,
-                isForeignKey = false,
-                pktableName = "",
-                pkcolumnName = "",
-                autoIncrement = identity
+                    tableCat = null,
+                    columnName = ccode!!,
+                    remarks = cComment
+                            ?: cname
+                            ?: "",
+                    typeName = typeName,
+                    dataType = JavaTypeResolver.calculateDataType(typeName),
+                    columnSize = cLength,
+                    decimalDigits = cPrecision,
+                    nullable = nullable?.toBoolean()
+                            ?: true,
+                    unique = false,
+                    indexed = false,
+                    columnDef = cDefaultValue,
+                    extra = "",
+                    tableSchem = null,
+                    isForeignKey = false,
+                    pktableName = "",
+                    pkcolumnName = "",
+                    autoIncrement = identity
             )
             if (pkIds.contains(columnId)) {
                 column.isPrimary = true
@@ -170,16 +170,16 @@ object PdmReader {
         }
 
         val table = Table(
-            productName = top.bettercode.summer.tools.generator.DataType.PUML.name,
-            catalog = null,
-            schema = null,
-            tableName = code!!,
-            tableType = "",
-            remarks = name,
-            primaryKeyNames = primaryKeyNames,
-            indexes = indexes,
-            pumlColumns = columns,
-            physicalOptions = physicalOptions
+                productName = top.bettercode.summer.tools.generator.DataType.PUML.name,
+                catalog = null,
+                schema = null,
+                tableName = code!!,
+                tableType = "",
+                remarks = name,
+                primaryKeyNames = primaryKeyNames,
+                indexes = indexes,
+                pumlColumns = columns,
+                physicalOptions = physicalOptions
         )
         call(table)
         return table
