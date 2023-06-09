@@ -371,7 +371,7 @@ class DatabaseMetaData(
                         if (!indexName.isNullOrBlank() && !"PRIMARY".equals(indexName, true)) {
                             var indexed = indexes.find { it.name(datasource.fixTableName(tableName)) == indexName }
                             if (indexed == null) {
-                                indexed = Indexed(indexName, !getBoolean("NON_UNIQUE"))
+                                indexed = Indexed(!getBoolean("NON_UNIQUE"))
                                 indexes.add(indexed)
                             }
                             indexed.columnName.add(getString("COLUMN_NAME"))

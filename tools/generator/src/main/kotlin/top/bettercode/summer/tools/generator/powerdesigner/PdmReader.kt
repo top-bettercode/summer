@@ -103,7 +103,6 @@ object PdmReader {
                         .elements(QName("Column", oNamespace))
                 if (!pkRefs.contains(id.value)) {
                     Indexed(
-                            tableElement.element(QName("Code", aNamespace)).textTrim,
                             false,
                             list.map { c ->
                                 columnElements.find {
