@@ -11,7 +11,6 @@ import top.bettercode.summer.security.config.ApiSecurityProperties
 import top.bettercode.summer.security.support.AuthenticationHelper
 import top.bettercode.summer.security.support.SecurityParameterNames
 import top.bettercode.summer.test.autodoc.Autodoc
-import top.bettercode.summer.test.autodoc.Autodoc.requiredHeaders
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.hasAnnotation
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder.getHandler
@@ -25,12 +24,12 @@ class AutodocAuthWebMvcConfigurer(
         if (handler != null) {
             val username = AuthenticationHelper.username
             username.ifPresent { request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME, username.get()) }
-            var requiredHeaders = requiredHeaders
+            var requiredHeaders = Autodoc.requiredHeaders
             val url = request.requestURI
             var needAuth = false
             //set required
             val isClientAuth = hasAnnotation(handler, ClientAuthorize::class.java)
-            if (!hasAnnotation<Anonymous>(handler, Anonymous::class.java)
+            if (!hasAnnotation(handler, Anonymous::class.java)
                     && !securityProperties.ignored(url) || isClientAuth) {
                 requiredHeaders = HashSet(requiredHeaders)
                 if (securityProperties.isCompatibleAccessToken) {
@@ -39,14 +38,17 @@ class AutodocAuthWebMvcConfigurer(
                     requiredHeaders.add(HttpHeaders.AUTHORIZATION)
                 }
                 needAuth = true
-                requiredHeaders(*requiredHeaders.toTypedArray<String>())
+                Autodoc.requiredHeaders(*requiredHeaders.toTypedArray<String>())
                 //set required end
+            }
+            if (Autodoc.requireAuthorization) {
+                Autodoc.requiredHeaders(HttpHeaders.AUTHORIZATION)
             }
             if (Autodoc.requiredHeaders.contains(HttpHeaders.AUTHORIZATION)) {
                 needAuth = true
             }
             if (needAuth) {
-                if (isClientAuth) {
+                if (isClientAuth && !Autodoc.requireAuthorization) {
                     request.header(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils.encodeToString(
                             (securityProperties.clientId + ":"
                                     + securityProperties.clientSecret).toByteArray()))

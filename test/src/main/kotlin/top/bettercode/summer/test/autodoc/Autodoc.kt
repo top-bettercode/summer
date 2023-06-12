@@ -67,6 +67,11 @@ object Autodoc {
     @JvmStatic
     var disableOnException: Boolean? = null
 
+    /**
+     * 是否需要授权
+     */
+    @JvmStatic
+    var requireAuthorization: Boolean = false
 
     /**
      * 字段描述
@@ -123,6 +128,14 @@ object Autodoc {
     @JvmStatic
     fun requiredHeaders(vararg header: String) {
         requiredHeaders = header.toSet()
+    }
+
+    /**
+     * 设置是否需要授权
+     */
+    @JvmStatic
+    fun requireAuthorization() {
+        requireAuthorization = true
     }
 
     /**
