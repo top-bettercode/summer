@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.*
@@ -29,6 +30,7 @@ import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.test.autodoc.Autodoc
 import top.bettercode.summer.test.autodoc.Autodoc.requiredParameters
+import top.bettercode.summer.web.config.summer.ObjectMapperBuilderCustomizer
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.support.ApplicationContextHolder.Companion.getProperty
 import java.io.File
@@ -69,7 +71,13 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     @Autowired
     protected lateinit var requestLoggingProperties: RequestLoggingProperties
 
-    protected val objectMapper = ObjectMapper()
+    protected val objectMapper: ObjectMapper
+
+    init {
+        val objectMapperBuilder = Jackson2ObjectMapperBuilder.json()
+        ObjectMapperBuilderCustomizer().customize(objectMapperBuilder)
+        objectMapper = objectMapperBuilder.build()
+    }
 
     @BeforeEach
     @Throws(Exception::class)
