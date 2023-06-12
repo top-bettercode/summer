@@ -40,7 +40,7 @@ object MysqlToDDL : ToDDL() {
 
                         val oldColumns = oldTable.columns
                         val columns = table.columns
-                        val oldPrimaryKeys = oldTable.primaryKeys
+                        val oldPrimaryKeys = oldTable.primaryKeys.toMutableSet()
                         val primaryKeys = table.primaryKeys
 
 
@@ -49,6 +49,7 @@ object MysqlToDDL : ToDDL() {
                         val dropColumnNames = oldColumnNames - columnNames.toSet()
                         if (extension.dropColumnsWhenUpdate) dropColumnNames.forEach {
                             lines.add("ALTER TABLE $schema$quote$tableName$quote DROP COLUMN $quote$it$quote;")
+                            oldPrimaryKeys.removeIf { pk -> pk.columnName == it }
                         }
                         dropFk(schema, oldColumns, dropColumnNames, lines, tableName)
                         val newColumnNames = columnNames - oldColumnNames.toSet()
@@ -71,7 +72,7 @@ object MysqlToDDL : ToDDL() {
                         }
 
                         if (oldPrimaryKeys.size == 1 && primaryKeys.size == 1) {
-                            val oldPrimaryKey = oldPrimaryKeys[0]
+                            val oldPrimaryKey = oldPrimaryKeys.first()
                             val primaryKey = primaryKeys[0]
                             if (oldPrimaryKey != primaryKey) {
                                 lines.add("ALTER TABLE $schema$quote$tableName$quote CHANGE $quote${oldPrimaryKey.columnName}$quote ${
