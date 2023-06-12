@@ -24,6 +24,7 @@ import top.bettercode.summer.security.repository.InMemoryApiTokenRepository
 import top.bettercode.summer.security.support.ApiSecurityErrorHandler
 import top.bettercode.summer.security.token.ApiToken
 import java.io.IOException
+import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 import javax.servlet.http.HttpServletRequest
 import kotlin.math.max
@@ -43,6 +44,10 @@ class ApiSecurityConfiguration(
     @ConditionalOnMissingBean(PasswordEncoder::class)
     @Bean
     fun passwordEncoder(): PasswordEncoder {
+        val secureRandomSeed = securityProperties.secureRandomSeed
+        if (!secureRandomSeed.isNullOrBlank()) {
+            return BCryptPasswordEncoder(-1, SecureRandom(secureRandomSeed.toByteArray()))
+        }
         return BCryptPasswordEncoder()
     }
 

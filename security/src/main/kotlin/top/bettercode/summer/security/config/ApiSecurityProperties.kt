@@ -51,6 +51,8 @@ open class ApiSecurityProperties {
      */
     var supportScopes: Array<String> = arrayOf("app")
 
+    var secureRandomSeed: String? = null
+
     //--------------------------------------------
     fun ignored(path: String): Boolean {
         if (urlFilterIgnored.isEmpty()) {
