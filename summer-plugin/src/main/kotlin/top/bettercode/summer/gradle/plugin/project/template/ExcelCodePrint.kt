@@ -28,7 +28,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                             if (it.isCodeField) {
                                 if (it.columnName.contains("_") || it.softDelete) ".code()" else ".code(${
                                     it.codeType.capitalized()
-                                }Enum.ENUM_NAME)"
+                                }Enum.ENUM_NAME).dataValidation(${it.dicCodes()!!.codes.values.joinToString(", ") { s -> "\"$s\"" }})"
                             } else {
                                 ""
                             }
