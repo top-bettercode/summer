@@ -103,7 +103,7 @@ object SubProjectTasks {
                         task.group = group
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                ext.generators = arrayOf(Controller())
+                                ext.generators = arrayOf(Form(), Controller())
                                 Generators.call(ext, tableHolder)
                             }
                         })
