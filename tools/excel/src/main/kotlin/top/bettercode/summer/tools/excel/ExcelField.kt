@@ -47,7 +47,7 @@ open class ExcelField<T, P : Any?> {
     /**
      * 有效数据范围“,”分隔
      */
-    private var dataValidation = ""
+    private var dataValidation: Array<out String> = emptyArray()
 
     /**
      * 格式 [说明...](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1)
@@ -154,8 +154,8 @@ open class ExcelField<T, P : Any?> {
     @JvmOverloads
     fun yuan(scale: Int = 2): ExcelField<T, P> {
         return cell { property: P -> toYun((property as Long), scale).toPlainString() }.property { yun: Any ->
-                    toCent(yun as BigDecimal) as P
-                }
+            toCent(yun as BigDecimal) as P
+        }
     }
 
     /**
@@ -548,7 +548,7 @@ open class ExcelField<T, P : Any?> {
         return this
     }
 
-    fun dataValidation(dataValidation: String): ExcelField<T, P> {
+    fun dataValidation(vararg dataValidation: String): ExcelField<T, P> {
         this.dataValidation = dataValidation
         return this
     }
@@ -657,7 +657,7 @@ open class ExcelField<T, P : Any?> {
         return comment
     }
 
-    fun dataValidation(): String {
+    fun dataValidation(): Array<out String> {
         return dataValidation
     }
 

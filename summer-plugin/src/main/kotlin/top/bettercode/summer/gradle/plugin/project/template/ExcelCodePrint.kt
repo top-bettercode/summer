@@ -10,29 +10,35 @@ open class ExcelCodePrint : ProjectGenerator() {
 
     override fun call() {
         val code = clazz(controllerType) {
+
+            val formClassName = formType.shortName
+
+            val filterColumns = columns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
+
             import("top.bettercode.summer.tools.lang.util.ArrayUtil")
             field(
-                "excelFields",
-                JavaType("top.bettercode.util.excel.ExcelField<${if (isFullComposite) primaryKeyClassName else className}, ?>[]"),
-                isFinal = true
+                    "excelFields",
+                    JavaType("top.bettercode.util.excel.ExcelField<${formClassName}, ?>[]"),
+                    isFinal = true
             ) {
                 initializationString = "ArrayUtil.of(\n"
-                val size = columns.size
-                columns.forEachIndexed { i, it ->
+                val size = filterColumns.size
+                filterColumns.forEachIndexed { i, it ->
                     val code =
-                        if (it.isCodeField) {
-                            if (it.columnName.contains("_") || it.softDelete) ".code()" else ".code(${it.codeType.capitalized()
-                            }Enum.ENUM_NAME)"
-                        } else {
-                            ""
-                        }
+                            if (it.isCodeField) {
+                                if (it.columnName.contains("_") || it.softDelete) ".code()" else ".code(${
+                                    it.codeType.capitalized()
+                                }Enum.ENUM_NAME)"
+                            } else {
+                                ""
+                            }
                     val propertyGetter =
-                        "${if (isFullComposite) primaryKeyClassName else className}::get${it.javaName.capitalized()}"
+                            "${formClassName}::get${it.javaName.capitalized()}"
                     initializationString += "      ExcelField.of(\"${
                         it.remark.split(
-                            Regex(
-                                "[:：,， (（]"
-                            )
+                                Regex(
+                                        "[:：,， (（]"
+                                )
                         )[0]
                     }\", $propertyGetter)${code}${if (i == size - 1) "" else ","}\n"
                 }
@@ -79,14 +85,16 @@ open class ExcelCodePrint : ProjectGenerator() {
             method("importTemplate", JavaType.objectInstance) {
                 this.exception(JavaType("java.lang.Exception"))
                 annotation("@top.bettercode.summer.logging.annotation.RequestLogging(includeRequestBody = false, ignoredTimeout = true)")
-                annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/import\", name = \"导入\")")
+                annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/import\", name = \"导入\")")
                 parameter {
                     type = JavaType("org.springframework.web.multipart.MultipartFile")
                     name = "file"
                 }
 
-                +"List<${formType.shortName}> list = ExcelImport.of(file).validateGroups(Default.class, CreateConstraint.class).getData(excelFields);"
-
+                +"List<$formClassName> list = ExcelImport.of(file).validateGroups(Default.class, CreateConstraint.class).getData(excelFields);"
+                +"for (UserAdminForm form : list) {"
+                +"create(form);"
+                +"}"
                 +"return noContent();"
             }
 

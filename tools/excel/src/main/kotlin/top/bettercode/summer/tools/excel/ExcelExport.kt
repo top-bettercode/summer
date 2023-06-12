@@ -165,9 +165,9 @@ class ExcelExport {
                         sheet!!.comment(r, c, commentStr)
                     }
                 }
-                if (includeDataValidation && StringUtils.hasText(excelField.dataValidation())) {
+                if (includeDataValidation && excelField.dataValidation().isNotEmpty()) {
                     val listDataValidation = AbsoluteListDataValidation(
-                            sheet!!.range(r + 1, c, Worksheet.MAX_ROWS - 1, c), excelField.dataValidation())
+                            sheet!!.range(r + 1, c, Worksheet.MAX_ROWS - 1, c), excelField.dataValidation().joinToString(","))
                     listDataValidation.add(sheet!!)
                 }
                 c++
