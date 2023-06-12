@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
+import top.bettercode.summer.security.authorize.ClientAuthorize
 import top.bettercode.summer.tools.weixin.support.IWechatService
 import top.bettercode.summer.tools.weixin.support.WechatToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.IOffiaccountClient
@@ -60,6 +61,7 @@ class OffiaccountCallbackController(
     /*
    * js签名
    */
+    @ClientAuthorize
     @ResponseBody
     @GetMapping(value = ["/jsSign"], name = "公众号js签名")
     fun jsSignUrl(@NotBlank url: String): Any {

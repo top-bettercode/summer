@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
+import top.bettercode.summer.security.authorize.ClientAuthorize
 import top.bettercode.summer.tools.weixin.support.IWechatService
 import top.bettercode.summer.tools.weixin.support.WechatToken
 import top.bettercode.summer.tools.weixin.support.miniprogram.IMiniprogramClient
@@ -17,7 +18,6 @@ import javax.validation.constraints.NotBlank
 
 @ConditionalOnWebApplication
 @Controller
-@Anonymous
 @Validated
 @RequestMapping(value = ["/wechat"], name = "微信")
 class MiniprogramCallbackController(
@@ -25,6 +25,7 @@ class MiniprogramCallbackController(
         private val miniprogramClient: IMiniprogramClient
 ) : BaseController() {
 
+    @ClientAuthorize
     @RequestLogging(ignoredTimeout = true)
     @ResponseBody
     @PostMapping(
@@ -58,6 +59,7 @@ class MiniprogramCallbackController(
     }
 
 
+    @ClientAuthorize
     @RequestLogging(ignoredTimeout = true)
     @ResponseBody
     @PostMapping(value = ["/miniPhoneOauth"], name = "小程序手机号授权接口")
