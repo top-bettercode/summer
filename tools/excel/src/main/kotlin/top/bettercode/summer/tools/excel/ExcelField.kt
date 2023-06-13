@@ -347,19 +347,19 @@ open class ExcelField<T, P : Any?> {
         Assert.notNull(propertyType, "propertyType 不能为空")
         if (format == null) {
             when (propertyType) {
-                Int::class.javaObjectType, Int::class.javaPrimitiveType -> {
+                Int::class.javaObjectType, Int::class.javaPrimitiveType, Int::class.java -> {
                     format = "0"
                 }
 
-                Long::class.javaObjectType, Long::class.javaPrimitiveType -> {
+                Long::class.javaObjectType, Long::class.javaPrimitiveType, Long::class.java -> {
                     format = "0"
                 }
 
-                Double::class.javaObjectType, Double::class.javaPrimitiveType -> {
+                Double::class.javaObjectType, Double::class.javaPrimitiveType, Double::class.java -> {
                     format = "0.00"
                 }
 
-                Float::class.javaObjectType, Float::class.javaPrimitiveType -> {
+                Float::class.javaObjectType, Float::class.javaPrimitiveType, Float::class.java -> {
                     format = "0.00"
                 }
 
@@ -384,17 +384,17 @@ open class ExcelField<T, P : Any?> {
                     cellValue.toString()
                 }
 
-                Boolean::class.javaObjectType, Boolean::class.javaPrimitiveType -> {
+                Boolean::class.javaObjectType, Boolean::class.javaPrimitiveType, Boolean::class.java -> {
                     cellValue as? Boolean ?: toBoolean(cellValue.toString())
                 }
 
-                Int::class.javaObjectType, Int::class.javaPrimitiveType -> {
+                Int::class.javaObjectType, Int::class.javaPrimitiveType, Int::class.java -> {
                     if (cellValue is String) {
                         BigDecimal(cellValue).toInt()
                     } else (cellValue as BigDecimal).toInt()
                 }
 
-                Long::class.javaObjectType, Long::class.javaPrimitiveType -> when {
+                Long::class.javaObjectType, Long::class.javaPrimitiveType, Long::class.java -> when {
                     isDateField -> {
                         when (cellValue) {
                             is LocalDateTime -> {
@@ -428,7 +428,7 @@ open class ExcelField<T, P : Any?> {
                     }
                 }
 
-                Double::class.javaObjectType, Double::class.javaPrimitiveType -> {
+                Double::class.javaObjectType, Double::class.javaPrimitiveType, Double::class.java -> {
                     when (cellValue) {
                         is String -> {
                             BigDecimal(cellValue).toDouble()
@@ -438,7 +438,7 @@ open class ExcelField<T, P : Any?> {
                     }
                 }
 
-                Float::class.javaObjectType, Float::class.javaPrimitiveType -> {
+                Float::class.javaObjectType, Float::class.javaPrimitiveType, Float::class.java -> {
                     when (cellValue) {
                         is String -> {
                             BigDecimal(cellValue).toFloat()
@@ -486,13 +486,13 @@ open class ExcelField<T, P : Any?> {
         cellConverter = { property: P ->
             if (propertyType == String::class.java || propertyType == Date::class.java) {
                 property
-            } else if (propertyType == Boolean::class.javaPrimitiveType || propertyType == Boolean::class.java) {
+            } else if (propertyType == Boolean::class.javaPrimitiveType || propertyType == Boolean::class.javaObjectType || propertyType == Boolean::class.java) {
                 if (property as Boolean) "是" else "否"
             } else if (propertyType == LocalDate::class.java) {
                 of((property as LocalDate)).toDate()
             } else if (propertyType == LocalDateTime::class.java) {
                 of((property as LocalDateTime)).toDate()
-            } else if (isDateField && (propertyType == Long::class.java || propertyType == Long::class.javaPrimitiveType)) {
+            } else if (isDateField && (propertyType == Long::class.javaObjectType || propertyType == Long::class.javaPrimitiveType || propertyType == Long::class.java)) {
                 of((property as Long)).toDate()
             } else if (propertyType != null && ClassUtils.isPrimitiveOrWrapper(propertyType!!)) {
                 property

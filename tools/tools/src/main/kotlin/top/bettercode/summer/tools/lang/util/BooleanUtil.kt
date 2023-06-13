@@ -25,12 +25,12 @@ object BooleanUtil {
             1 -> {
                 val ch0 = str[0]
                 if (ch0 == 'y' || ch0 == 'Y' ||
-                    ch0 == 't' || ch0 == 'T' || ch0 == '1'
+                    ch0 == 't' || ch0 == 'T' || ch0 == '1' || ch0 == '是'
                 ) {
                     return java.lang.Boolean.TRUE
                 }
                 if (ch0 == 'n' || ch0 == 'N' ||
-                    ch0 == 'f' || ch0 == 'F' || ch0 == '0'
+                    ch0 == 'f' || ch0 == 'F' || ch0 == '0' || ch0 == '否'
                 ) {
                     return java.lang.Boolean.FALSE
                 }
