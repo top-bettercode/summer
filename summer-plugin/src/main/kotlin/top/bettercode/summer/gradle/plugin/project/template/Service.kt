@@ -34,5 +34,9 @@ open class Service(private val overwrite: Boolean = false) : ProjectGenerator() 
             service(this)
         }
 
+        +clazz(testServiceType, overwrite = overwrite, sourceSet = SourceSet.TEST) {
+            testService(this)
+        }
+
     }
 }
