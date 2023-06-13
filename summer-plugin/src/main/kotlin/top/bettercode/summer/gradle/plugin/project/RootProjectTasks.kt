@@ -171,10 +171,25 @@ object RootProjectTasks {
                                 "database/update.sql"
                         )
                         updateFile.apply {
+                            val gen = project.extensions.getByType(GeneratorExtension::class.java)
+                            val commentPrefix = when (gen.defaultDatasource.databaseDriver) {
+                                DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                    MysqlToDDL.commentPrefix
+                                }
+
+                                else -> {
+                                    "--"
+                                }
+                            }
+                            +"$commentPrefix ${gen.defaultDatasource.url.substringBefore("?")}"
+
                             val updateDdl =
                                     project.rootProject.file("database/update/v${project.version}.sql")
                             if (updateDdl.exists()) {
-                                +updateDdl.readText()
+                                updateDdl.readLines().forEach {
+                                    if (!it.startsWith("$commentPrefix jdbc:mysql"))
+                                        +it
+                                }
                                 +""
                             }
 
