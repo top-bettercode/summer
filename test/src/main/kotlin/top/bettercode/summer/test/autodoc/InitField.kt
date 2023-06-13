@@ -466,6 +466,7 @@ object InitField {
     ): Field? {
         val newName = when {
             name.endsWith("Name") -> name.substringBeforeLast("Name")
+            name.endsWith("Desc") -> name.substringBeforeLast("Desc")
             name.endsWith("Path") -> name.substringBeforeLast("Path")
             name.endsWith("Url") -> name.substringBeforeLast("Url")
             name.endsWith("Urls") -> name.substringBeforeLast("Urls")
@@ -497,6 +498,8 @@ object InitField {
                 field.description = "结束" + field.description
             if (name.endsWith("Psign"))
                 field.description = "播放器签名"
+            if (name.endsWith("Desc"))
+                field.description = "描述"
             if (name.endsWith("Alurl") || name.endsWith("Alurls"))
                 field.description += "防盗链URL"
         }
