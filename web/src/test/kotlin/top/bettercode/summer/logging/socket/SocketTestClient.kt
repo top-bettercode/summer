@@ -14,7 +14,6 @@ import java.net.URL
 class SocketTestClient {
 
     @Test
-    @Throws(Exception::class)
     fun request() {
         val url = URL("http://127.0.0.1:4560")
         val con = url.openConnection() as HttpURLConnection
@@ -34,7 +33,6 @@ class SocketTestClient {
     }
 
     @Test
-    @Throws(Exception::class)
     fun requestByTemplate() {
         val restTemplate = RestTemplate()
 
@@ -49,7 +47,6 @@ class SocketTestClient {
     }
 
     @Test
-    @Throws(Exception::class)
     fun socket() {
 
         var client: Socket? = null

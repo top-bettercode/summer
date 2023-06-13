@@ -74,7 +74,6 @@ class RequestLoggingFilter(
         return false
     }
 
-    @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
             request: HttpServletRequest, response: HttpServletResponse,
             filterChain: FilterChain

@@ -20,7 +20,6 @@ class HideSerializerTest {
 
     val objectMapper = ObjectMapper()
     @Test
-    @Throws(JsonProcessingException::class)
     fun test() {
         val user = User()
         user.password = "1"

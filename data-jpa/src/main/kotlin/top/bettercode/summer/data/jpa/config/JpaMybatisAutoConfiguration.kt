@@ -66,7 +66,6 @@ class JpaMybatisAutoConfiguration(
     }
 
     @Bean
-    @Throws(Exception::class)
     fun mybatisConfiguration(beanFactory: ConfigurableListableBeanFactory): org.apache.ibatis.session.Configuration? {
         return mybatisConfiguration(beanFactory, properties.configuration, properties,
                 resourceLoader,
@@ -79,8 +78,7 @@ class JpaMybatisAutoConfiguration(
         private val METADATA_READER_FACTORY: MetadataReaderFactory = CachingMetadataReaderFactory()
         private val PACKAGE_SCAN_CLASS_RESOLVER = PackageScanClassResolver()
 
-        @Throws(ClassNotFoundException::class)
-        fun findDefaultMapperLocations(beanFactory: ConfigurableListableBeanFactory): Set<String> {
+            fun findDefaultMapperLocations(beanFactory: ConfigurableListableBeanFactory): Set<String> {
             val packages: MutableSet<String> = HashSet()
             val beanNames = beanFactory.getBeanNamesForAnnotation(SpringBootApplication::class.java)
             for (beanName in beanNames) {
@@ -116,8 +114,7 @@ class JpaMybatisAutoConfiguration(
             return mapperLocations
         }
 
-        @Throws(Exception::class)
-        fun mybatisConfiguration(
+            fun mybatisConfiguration(
                 beanFactory: ConfigurableListableBeanFactory,
                 configuration: org.apache.ibatis.session.Configuration?,
                 properties: MybatisProperties,
@@ -246,8 +243,7 @@ class JpaMybatisAutoConfiguration(
             }
         }
 
-        @Throws(IOException::class)
-        private fun scanClasses(packagePatterns: String?, assignableType: Class<*>?): Set<Class<*>> {
+            private fun scanClasses(packagePatterns: String?, assignableType: Class<*>?): Set<Class<*>> {
             val classes: MutableSet<Class<*>> = HashSet()
             val packagePatternArray = StringUtils.tokenizeToStringArray(packagePatterns,
                     ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS)

@@ -21,7 +21,6 @@ import java.io.IOException
 @JacksonStdImpl
 class DivisionSerializer @JvmOverloads constructor(private val vnode: Boolean = false) : StdScalarSerializer<String>(String::class.java, false), ContextualSerializer {
     private val log = LoggerFactory.getLogger(DivisionSerializer::class.java)
-    @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeString(value)
         val outputContext = gen.outputContext
@@ -36,7 +35,6 @@ class DivisionSerializer @JvmOverloads constructor(private val vnode: Boolean = 
         }
     }
 
-    @Throws(JsonMappingException::class)
     override fun createContextual(prov: SerializerProvider, property: BeanProperty?): JsonSerializer<*> {
         if (property != null) {
             val annotation = property.getAnnotation(JsonDivision::class.java)
@@ -49,7 +47,6 @@ class DivisionSerializer @JvmOverloads constructor(private val vnode: Boolean = 
         return value.isEmpty()
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(value: String, gen: JsonGenerator, provider: SerializerProvider,
                                    typeSer: TypeSerializer) {
         serialize(value, gen, provider)

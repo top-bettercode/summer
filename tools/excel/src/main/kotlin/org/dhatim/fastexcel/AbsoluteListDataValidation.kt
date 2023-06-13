@@ -91,7 +91,6 @@ internal class AbsoluteListDataValidation
      * @param w Output writer.
      * @throws IOException If an I/O error occurs.
      */
-    @Throws(IOException::class)
     override fun write(w: Writer) {
         w
                 .append("<dataValidation sqref=\"")

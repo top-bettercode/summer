@@ -34,7 +34,6 @@ class SapGenService(private val sapService: SapService) {
         return this
     }
 
-    @Throws(JCoException::class, IOException::class)
     fun gen(pojoName: String, functionName: String) {
         outputDir.deleteRecursively()
         val function = sapService.getFunction(functionName)

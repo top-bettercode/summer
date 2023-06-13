@@ -74,7 +74,6 @@ class SecurityErrorTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun accessTokenError() {
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "password")

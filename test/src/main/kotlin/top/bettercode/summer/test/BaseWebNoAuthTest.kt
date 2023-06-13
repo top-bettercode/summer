@@ -80,7 +80,6 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     }
 
     @BeforeEach
-    @Throws(Exception::class)
     fun setup() {
         //--------------------------------------------
         requestLoggingProperties.isForceRecord = true
@@ -92,11 +91,9 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
         System.err.println("------------------------------------------------------")
     }
 
-    @Throws(Exception::class)
     protected fun defaultBeforeEach() {
     }
 
-    @Throws(Exception::class)
     protected fun beforeEach() {
     }
 
@@ -119,12 +116,10 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
         return ResultMatcher { result: MvcResult -> Assertions.assertEquals(contentAsJsonNode(result)["status"].asInt(), status) }
     }
 
-    @Throws(IOException::class)
     protected fun contentAsJsonNode(result: MvcResult): JsonNode {
         return objectMapper.readTree(result.response.contentAsByteArray)
     }
 
-    @Throws(UnsupportedEncodingException::class)
     private fun getFileName(result: MvcResult): String {
         var contentDisposition = result.response.getHeader("Content-Disposition")
         contentDisposition = URLDecoder
@@ -134,29 +129,24 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
         return "build/$contentDisposition"
     }
 
-    @Throws(Exception::class)
     protected fun perform(requestBuilder: RequestBuilder): ResultActions {
         return mockMvc.perform(requestBuilder
         ).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(contentStatusIsOk())
     }
 
-    @Throws(Exception::class)
     protected fun performRest(requestBuilder: RequestBuilder): ResultActions {
         return mockMvc.perform(requestBuilder
         ).andExpect(MockMvcResultMatchers.status().isOk())
     }
 
-    @Throws(Exception::class)
     protected fun download(requestBuilder: RequestBuilder, fileName: String) {
         download(mockMvc.perform(requestBuilder), "build/$fileName")
     }
 
-    @Throws(Exception::class)
     protected fun download(requestBuilder: RequestBuilder) {
         download(mockMvc.perform(requestBuilder), null)
     }
 
-    @Throws(Exception::class)
     protected fun download(perform: ResultActions, fileName: String?) {
         var name = fileName
         val result = perform.andExpect(MockMvcResultMatchers.status().isOk()).andReturn()
@@ -177,7 +167,6 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
         }
     }
 
-    @Throws(IOException::class)
     protected fun file(name: String, classPath: String): MockMultipartFile {
         val classPathResource = ClassPathResource(classPath)
         return MockMultipartFile(name, classPathResource.filename, null,
@@ -185,7 +174,6 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     }
 
     @JvmOverloads
-    @Throws(JsonProcessingException::class)
     protected fun json(`object`: Any?, incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL): String {
         return objectMapper.setSerializationInclusion(incl).writeValueAsString(`object`)
     }

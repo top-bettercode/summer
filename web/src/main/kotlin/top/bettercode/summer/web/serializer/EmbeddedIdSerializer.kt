@@ -15,12 +15,10 @@ import java.io.IOException
 
 @JacksonStdImpl
 class EmbeddedIdSerializer @JvmOverloads constructor(private val delimiter: String = EmbeddedIdConverter.DELIMITER) : StdScalarSerializer<Any>(Any::class.java), ContextualSerializer {
-    @Throws(IOException::class)
     override fun serialize(value: Any, gen: JsonGenerator, provider: SerializerProvider?) {
         gen.writeString(toString(value, delimiter))
     }
 
-    @Throws(JsonMappingException::class)
     override fun createContextual(prov: SerializerProvider, property: BeanProperty?): JsonSerializer<*> {
         if (property != null) {
             val annotation = property.getAnnotation(JsonEmbeddedId::class.java)

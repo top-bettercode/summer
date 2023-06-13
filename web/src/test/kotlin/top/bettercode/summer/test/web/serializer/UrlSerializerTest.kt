@@ -38,7 +38,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeExtend() {
         objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMinExtend::class.java)
         val dicBean = top.bettercode.summer.test.web.DataDicBean()
@@ -56,7 +55,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serialize() {
         objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMin::class.java)
         val dicBean = top.bettercode.summer.test.web.DataDicBean()
@@ -74,7 +72,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeArrayStringExtend() {
         objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMinStringExtend::class.java)
         val dicBean = top.bettercode.summer.test.web.DataDicBean()
@@ -88,7 +85,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeArrayString() {
         objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMinString::class.java)
         val dicBean = top.bettercode.summer.test.web.DataDicBean()
@@ -101,7 +97,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeArrayStringExtendAsMap() {
         objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMinStringExtendAsMap::class.java)
         val dicBean = top.bettercode.summer.test.web.DataDicBean()
@@ -120,7 +115,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeArrayStringAsMap() {
         objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMinStringAsMap::class.java)
         val dicBean = top.bettercode.summer.test.web.DataDicBean()
@@ -135,7 +129,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeArrayExtend() {
         objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMinExtend::class.java)
         val dicBean = top.bettercode.summer.test.web.DataDicBean()
@@ -152,7 +145,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeArray() {
         objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMin::class.java)
         val dicBean = top.bettercode.summer.test.web.DataDicBean()
@@ -169,7 +161,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeCollectionExtend() {
         objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMinExtend::class.java)
         val dicBean = top.bettercode.summer.test.web.DataDicBean()
@@ -186,7 +177,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeCollection() {
         objectMapper.addMixIn(top.bettercode.summer.test.web.DataDicBean::class.java, DataDicBeanMin::class.java)
         val dicBean = top.bettercode.summer.test.web.DataDicBean()

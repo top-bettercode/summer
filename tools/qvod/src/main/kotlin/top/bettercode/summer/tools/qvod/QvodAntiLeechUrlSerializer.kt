@@ -45,7 +45,6 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
 
     private val qvodClient: QvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)!!
 
-    @Throws(IOException::class)
     override fun serialize(value: Any, gen: JsonGenerator, provider: SerializerProvider) {
         val fieldName = gen.outputContext.currentName
         val urlFieldName = fieldName + "Alurl"
@@ -69,7 +68,6 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
         }
     }
 
-    @Throws(IOException::class)
     private fun genCollection(
             value: Any, gen: JsonGenerator, fieldName: String, stream: Stream<*>
     ) {
@@ -81,7 +79,6 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
         gen.writeObjectField(urlFieldName, urls)
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(
             value: Any, gen: JsonGenerator, provider: SerializerProvider,
             typeSer: TypeSerializer

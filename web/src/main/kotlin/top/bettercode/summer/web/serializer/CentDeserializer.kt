@@ -10,7 +10,6 @@ import java.io.IOException
  * @author Peter Wu
  */
 class CentDeserializer : JsonDeserializer<Long>() {
-    @Throws(IOException::class)
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Long {
         return toCent(p.valueAsString)
     }

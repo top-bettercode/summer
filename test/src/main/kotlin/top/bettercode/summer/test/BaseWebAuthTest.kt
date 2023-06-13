@@ -19,7 +19,6 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
     @Autowired
     var userDetailsService: UserDetailsService? = null
 
-    @Throws(Exception::class)
     public override fun defaultBeforeEach() {
         beforeEach()
         val userDetails: UserDetails = if (userDetailsService is ScopeUserDetailsService) {

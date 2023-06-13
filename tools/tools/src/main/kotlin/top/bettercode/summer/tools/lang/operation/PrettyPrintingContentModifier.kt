@@ -49,8 +49,7 @@ object PrettyPrintingContentModifier {
 
     private interface PrettyPrinter {
 
-        @Throws(Exception::class)
-        fun prettyPrint(content: ByteArray): ByteArray
+            fun prettyPrint(content: ByteArray): ByteArray
 
     }
 
@@ -84,8 +83,7 @@ object PrettyPrintingContentModifier {
             }
         }
 
-        @Throws(Exception::class)
-        override fun prettyPrint(content: ByteArray): ByteArray {
+            override fun prettyPrint(content: ByteArray): ByteArray {
             val transformer = transformerFactory.newTransformer()
             transformer.setOutputProperty(OutputKeys.INDENT, "yes")
             transformer.setOutputProperty(
@@ -100,8 +98,7 @@ object PrettyPrintingContentModifier {
             return transformed.toByteArray()
         }
 
-        @Throws(ParserConfigurationException::class, SAXException::class)
-        private fun createSaxSource(original: ByteArray): SAXSource {
+            private fun createSaxSource(original: ByteArray): SAXSource {
             val parser = parserFactory.newSAXParser()
             val xmlReader = parser.xmlReader
             xmlReader.errorHandler = errorListener
@@ -112,8 +109,7 @@ object PrettyPrintingContentModifier {
 
     private class JsonPrettyPrinter : PrettyPrinter {
 
-        @Throws(IOException::class)
-        override fun prettyPrint(content: ByteArray): ByteArray {
+            override fun prettyPrint(content: ByteArray): ByteArray {
             StringUtil.OBJECT_MAPPER.readTree(content)
             return StringUtil.prettyJson(String(content))!!.toByteArray()
         }

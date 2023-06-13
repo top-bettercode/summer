@@ -70,8 +70,7 @@ class ErrorHandlerConfiguration {
                 return "text/html;charset=utf-8"
             }
 
-            @Throws(Exception::class)
-            override fun render(@Nullable model: MutableMap<String, *>?, request: HttpServletRequest, response: HttpServletResponse) {
+                    override fun render(@Nullable model: MutableMap<String, *>?, request: HttpServletRequest, response: HttpServletResponse) {
                 if (response.contentType == null) {
                     response.contentType = contentType
                 }

@@ -32,7 +32,6 @@ object FileUtil {
      * @return FileInputStream
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     @JvmStatic
     fun openInputStream(file: File): FileInputStream {
         if (file.exists()) {
@@ -50,7 +49,6 @@ object FileUtil {
 
     //-----------------------------------------------------------------------
 
-    @Throws(IOException::class)
     @JvmStatic
     fun openOutputStream(file: File, append: Boolean): FileOutputStream {
         if (file.exists()) {
@@ -104,7 +102,6 @@ object FileUtil {
 
     //-----------------------------------------------------------------------
 
-    @Throws(IOException::class)
     @JvmStatic
     fun readLines(input: InputStream, encoding: Charset): List<String> {
         val reader = BufferedReader(InputStreamReader(input, toCharset(encoding)))
@@ -117,7 +114,6 @@ object FileUtil {
         return list
     }
 
-    @Throws(IOException::class)
     @JvmOverloads
     @JvmStatic
     fun readLines(file: File, encoding: Charset = Charset.defaultCharset()): List<String> {
@@ -135,31 +131,26 @@ object FileUtil {
         }
     }
 
-    @Throws(IOException::class)
     @JvmStatic
     fun readLines(file: File, encoding: String): List<String> {
         return readLines(file, toCharset(encoding))
     }
 
-    @Throws(IOException::class)
     @JvmStatic
     fun writeLines(file: File, encoding: String, lines: Collection<*>, append: Boolean) {
         writeLines(file, encoding, lines, null, append)
     }
 
-    @Throws(IOException::class)
     @JvmStatic
     fun writeLines(file: File, lines: Collection<*>) {
         writeLines(file, null, lines, null, false)
     }
 
-    @Throws(IOException::class)
     @JvmStatic
     fun writeLines(file: File, lines: Collection<*>, append: Boolean) {
         writeLines(file, null, lines, null, append)
     }
 
-    @Throws(IOException::class)
     @JvmStatic
     fun writeLines(
         lines: Collection<*>?, lineEnding: String?, output: OutputStream,
@@ -181,7 +172,6 @@ object FileUtil {
         }
     }
 
-    @Throws(IOException::class)
     @JvmOverloads
     @JvmStatic
     fun writeLines(
@@ -205,13 +195,11 @@ object FileUtil {
         }
     }
 
-    @Throws(IOException::class)
     @JvmStatic
     fun writeLines(file: File, lines: Collection<*>, lineEnding: String) {
         writeLines(file, null, lines, lineEnding, false)
     }
 
-    @Throws(IOException::class)
     @JvmStatic
     fun writeLines(file: File, lines: Collection<*>, lineEnding: String, append: Boolean) {
         writeLines(file, null, lines, lineEnding, append)

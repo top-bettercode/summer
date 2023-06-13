@@ -233,7 +233,6 @@ class JpaMybatisTupleTest {
     val countDownLatch = CountDownLatch(200)
 
     @Test
-    @Throws(Exception::class)
     fun selectMybatisIfParamAsynchronous() {
         val errors: MutableList<Throwable> = ArrayList()
         for (i in 0..99) {

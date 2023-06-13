@@ -37,23 +37,19 @@ class ClientHttpResponseWrapper(private val response: ClientHttpResponse) : Clie
         return response.headers
     }
 
-    @Throws(IOException::class)
     override fun getBody(): InputStream {
         return ByteArrayInputStream(content)
     }
 
 
-    @Throws(IOException::class)
     override fun getStatusCode(): HttpStatus {
         return response.statusCode
     }
 
-    @Throws(IOException::class)
     override fun getRawStatusCode(): Int {
         return response.rawStatusCode
     }
 
-    @Throws(IOException::class)
     override fun getStatusText(): String {
         return response.statusText
     }

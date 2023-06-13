@@ -57,7 +57,6 @@ class UrlSerializer @JvmOverloads constructor(private val formatExpression: Stri
             jsonUrlMapper
         }
 
-    @Throws(IOException::class)
     override fun serialize(value: Any, gen: JsonGenerator, provider: SerializerProvider) {
         var v = value
         val type: Class<*> = v.javaClass
@@ -95,7 +94,6 @@ class UrlSerializer @JvmOverloads constructor(private val formatExpression: Stri
         }
     }
 
-    @Throws(IOException::class)
     private fun genCollection(value: Any, gen: JsonGenerator, mapper: JsonUrlMapper?,
                               stream: Stream<*>) {
         val urls = stream.map { obj: Any? -> mapper!!.mapper(obj) }.filter { str: String? -> StringUtils.hasText(str) }
@@ -119,7 +117,6 @@ class UrlSerializer @JvmOverloads constructor(private val formatExpression: Stri
         }
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(value: Any, gen: JsonGenerator, provider: SerializerProvider,
                                    typeSer: TypeSerializer) {
         serialize(value, gen, provider)

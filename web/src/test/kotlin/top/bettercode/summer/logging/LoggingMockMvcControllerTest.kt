@@ -15,7 +15,6 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     private val requestBody = "///////////////////////request_body///////////////////////"
 
     @Test
-    @Throws(Exception::class)
     fun test() {
         mockMvc.perform(
             post("/test")
@@ -31,7 +30,6 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testGet() {
         mockMvc.perform(
             get("/test")
@@ -47,7 +45,6 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testGet1() {
         mockMvc.perform(
             get("/test")
@@ -58,7 +55,6 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testGet2() {
         mockMvc.perform(
             get("/test")
@@ -73,7 +69,6 @@ class LoggingMockMvcControllerTest : BaseWebTest() {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testPostForm() {
         mockMvc.perform(
             post("/test")

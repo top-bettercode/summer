@@ -109,7 +109,6 @@ class NoCommitScriptRunner(private val connection: Connection) {
         }
     }
 
-    @Throws(SQLException::class)
     private fun handleLine(command: StringBuilder, line: String) {
         val trimmedLine = line.trim { it <= ' ' }
         when {
@@ -145,7 +144,6 @@ class NoCommitScriptRunner(private val connection: Connection) {
         return !fullLineDelimiter && trimmedLine.contains(delimiter) || fullLineDelimiter && trimmedLine == delimiter
     }
 
-    @Throws(SQLException::class)
     fun executeStatement(command: String) {
         var hasResults = false
         val statement = connection.createStatement()

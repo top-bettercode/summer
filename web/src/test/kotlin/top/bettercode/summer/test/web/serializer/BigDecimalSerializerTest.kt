@@ -19,7 +19,6 @@ class BigDecimalSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeBigDecimal() {
         val objectMapper = ObjectMapper()
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)

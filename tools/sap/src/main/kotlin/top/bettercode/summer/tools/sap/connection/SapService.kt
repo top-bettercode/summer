@@ -50,11 +50,9 @@ class SapService(properties: SapProperties) {
         return props
     }
 
-    @get:Throws(JCoException::class)
     private val destination: JCoDestination
         get() = JCoDestinationManager.getDestination(ABAP_AS_POOLED)
 
-    @Throws(JCoException::class)
     fun getFunction(functionName: String?): JCoFunction {
         return destination.repository.getFunction(functionName)
     }
@@ -204,7 +202,6 @@ class SapService(properties: SapProperties) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    @Throws(IllegalAccessException::class, IllegalArgumentException::class)
     private fun parseInputParamObject(function: JCoFunction?, data: Any) {
         val input = function!!.importParameterList
         val fields = data.javaClass.declaredFields
@@ -258,7 +255,6 @@ class SapService(properties: SapProperties) {
         }
     }
 
-    @Throws(InstantiationException::class, IllegalAccessException::class, IntrospectionException::class, IllegalArgumentException::class, InvocationTargetException::class, NoSuchMethodException::class)
     private fun <T : Any> toBean(function: JCoFunction?, out: JCoRecord, returnClass: Class<T>): T {
         val result = returnClass.getDeclaredConstructor().newInstance()
         val beanWrapper = BeanWrapperImpl(result)
@@ -298,7 +294,6 @@ class SapService(properties: SapProperties) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    @Throws(InstantiationException::class, IllegalAccessException::class, IllegalArgumentException::class, InvocationTargetException::class, IntrospectionException::class, NoSuchMethodException::class)
     private fun <T : Any> toList(table: JCoTable, classType: Type): List<T?> {
         val tableList: MutableList<T?> = ArrayList()
         val params = (classType as ParameterizedType).actualTypeArguments
@@ -336,7 +331,6 @@ class SapService(properties: SapProperties) {
         return tableList
     }
 
-    @Throws(IllegalAccessException::class, IllegalArgumentException::class)
     private fun toSapParamMap(obj: Any?): Map<String, Any?>? {
         if (obj == null) {
             return null

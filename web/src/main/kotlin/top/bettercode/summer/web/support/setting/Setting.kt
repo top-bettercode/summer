@@ -100,7 +100,6 @@ class Setting private constructor(private val source: PropertySource) {
         return enhancer.create() as T
     }
 
-    @Throws(Throwable::class)
     private operator fun get(name: String, o: Any, method: Method, objects: Array<Any>,
                              methodProxy: MethodProxy, propertyName: String): Any? {
         var pName = propertyName

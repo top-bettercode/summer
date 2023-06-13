@@ -11,7 +11,6 @@ import top.bettercode.summer.web.serializer.annotation.JsonRawValuePlus
  */
 class RawValuePlusSerializerTest {
     @Test
-    @Throws(Exception::class)
     fun serialize() {
         val objectMapper = ObjectMapper()
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT)

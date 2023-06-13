@@ -14,7 +14,6 @@ import java.util.*
  * @author Peter Wu
  */
 class ApplicationContextHolder : ApplicationContextAware {
-    @Throws(BeansException::class)
     override fun setApplicationContext(applicationContext: ApplicationContext) {
         Companion.applicationContext = applicationContext
     }
@@ -26,20 +25,17 @@ class ApplicationContextHolder : ApplicationContextAware {
             private set
 
         @JvmStatic
-        @Throws(BeansException::class)
-        fun <T> getBean(s: String, aClass: Class<T>): T? {
+            fun <T> getBean(s: String, aClass: Class<T>): T? {
             return if (applicationContext == null) null else applicationContext!!.getBean(s, aClass)
         }
 
         @JvmStatic
-        @Throws(BeansException::class)
-        fun <T> getBean(aClass: Class<T>): T? {
+            fun <T> getBean(aClass: Class<T>): T? {
             return if (applicationContext == null) null else applicationContext!!.getBean(aClass)
         }
 
         @JvmStatic
-        @Throws(NoSuchMessageException::class)
-        fun getMessage(s: String, objects: Array<Any?>?, locale: Locale): String? {
+            fun getMessage(s: String, objects: Array<Any?>?, locale: Locale): String? {
             return if (applicationContext == null) null else applicationContext!!.getMessage(s, objects, locale)
         }
 

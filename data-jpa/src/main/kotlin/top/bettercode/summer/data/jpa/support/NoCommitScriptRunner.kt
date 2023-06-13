@@ -102,7 +102,6 @@ class NoCommitScriptRunner(private val connection: Connection) {
         }
     }
 
-    @Throws(SQLException::class)
     private fun handleLine(command: StringBuilder, line: String) {
         val trimmedLine = line.trim { it <= ' ' }
         if (lineIsComment(trimmedLine)) {
@@ -133,7 +132,6 @@ class NoCommitScriptRunner(private val connection: Connection) {
                 == delimiter)
     }
 
-    @Throws(SQLException::class)
     fun executeStatement(command: String) {
         var hasResults = false
         val statement = connection.createStatement()

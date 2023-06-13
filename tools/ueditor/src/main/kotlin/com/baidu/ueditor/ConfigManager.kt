@@ -103,7 +103,6 @@ class ConfigManager private constructor() {
         return result
     }
 
-    @Throws(IOException::class)
     private fun readFile(inputStream: InputStream): String {
         val builder = StringBuilder()
         try {

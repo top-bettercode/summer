@@ -10,7 +10,6 @@ import java.math.BigDecimal
 
 @JacksonStdImpl
 class CentSerializer : NumberSerializer(Long::class.java) {
-    @Throws(IOException::class)
     override fun serialize(value: Number, gen: JsonGenerator,
                            provider: SerializerProvider) {
         gen.writeString(toYun(BigDecimal(value.toString()), newScale).toString())

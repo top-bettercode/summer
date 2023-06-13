@@ -44,7 +44,6 @@ class OrderedHiddenHttpMethodFilter : HiddenHttpMethodFilter(), Ordered {
         this.order = order
     }
 
-    @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest,
                                   response: HttpServletResponse, filterChain: FilterChain) {
         val paramValue = request.getParameter(this.methodParam)

@@ -21,7 +21,6 @@ import java.io.IOException
 class ArraySerializer @JvmOverloads constructor(
         private val useExtensionField: Boolean = true,
         private val separator: String = ",") : StdScalarSerializer<String>(String::class.java, false), ContextualSerializer {
-    @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
         if (useExtensionField) {
             gen.writeString(value)
@@ -35,7 +34,6 @@ class ArraySerializer @JvmOverloads constructor(
         }
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(value: String, gen: JsonGenerator, provider: SerializerProvider,
                                    typeSer: TypeSerializer) {
         serialize(value, gen, provider)

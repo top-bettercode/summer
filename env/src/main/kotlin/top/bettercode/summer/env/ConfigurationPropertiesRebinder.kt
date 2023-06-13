@@ -24,7 +24,6 @@ class ConfigurationPropertiesRebinder(private val beans: ConfigurationProperties
     private var applicationContext: ApplicationContext? = null
     private val errors: MutableMap<String?, Exception> = ConcurrentHashMap()
 
-    @Throws(BeansException::class)
     override fun setApplicationContext(applicationContext: ApplicationContext) {
         this.applicationContext = applicationContext
     }

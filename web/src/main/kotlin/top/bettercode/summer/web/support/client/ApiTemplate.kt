@@ -38,7 +38,6 @@ open class ApiTemplate @JvmOverloads constructor(
         requestFactory = clientHttpRequestFactory
     }
 
-    @Throws(IOException::class)
     override fun createRequest(url: URI, method: HttpMethod): ClientHttpRequest {
         return if (log.isInfoEnabled) {
             ClientHttpRequestWrapper(collectionName!!, name!!, logMarker,

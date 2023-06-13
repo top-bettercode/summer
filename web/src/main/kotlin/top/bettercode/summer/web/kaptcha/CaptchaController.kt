@@ -19,7 +19,6 @@ class CaptchaController(private val producer: Producer,
 
     @NoRequestLogging
     @RequestMapping(value = ["/captcha.jpg"], name = "图片验证码")
-    @Throws(IOException::class)
     fun captcha(request: HttpServletRequest, response: HttpServletResponse, loginId: String?) {
 
         //生成文字验证码

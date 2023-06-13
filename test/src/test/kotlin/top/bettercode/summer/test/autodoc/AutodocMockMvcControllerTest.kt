@@ -36,7 +36,6 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
 
     @DisplayName("列表1")
     @Test
-    @Throws(Exception::class)
     fun test0Index() {
         Autodoc.requiredHeaders("sign")
         mockMvc.perform(
@@ -47,7 +46,6 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
     }
 
     @Test
-    @Throws(Exception::class)
     fun token() {
         mockMvc.perform(
                 post("/oauth/token")
@@ -57,13 +55,11 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
     }
 
     @Test
-    @Throws(Exception::class)
     fun test1Show() {
         mockMvc.perform(get("/clientTokens/1")).andExpect(status().isOk)
     }
 
     @Test
-    @Throws(Exception::class)
     fun test2Create() {
         mockMvc.perform(
                 post("/clientTokens").contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +75,6 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
     }
 
     @Test
-    @Throws(Exception::class)
     fun test3Update() {
         mockMvc.perform(
                 put("/clientTokens/1")
@@ -91,7 +86,6 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
     }
 
     @Test
-    @Throws(Exception::class)
     fun test4Delete() {
         mockMvc.perform(delete("/clientTokens/1")).andExpect(status().isOk)
     }

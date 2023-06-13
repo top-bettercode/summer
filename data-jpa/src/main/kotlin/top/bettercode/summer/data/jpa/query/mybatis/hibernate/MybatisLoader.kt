@@ -18,7 +18,6 @@ import java.sql.SQLException
  */
 class MybatisLoader(customQuery: CustomQuery?, factory: SessionFactoryImplementor?) : CustomLoader(customQuery, factory) {
     private var mybatisQuery = false
-    @Throws(QueryException::class)
     override fun getResultList(results: List<*>, resultTransformer: ResultTransformer?): List<*> {
         return if (mybatisQuery) {
             results
@@ -27,7 +26,6 @@ class MybatisLoader(customQuery: CustomQuery?, factory: SessionFactoryImplemento
         }
     }
 
-    @Throws(HibernateException::class)
     override fun loadSingleRow(
             resultSet: ResultSet, session: SharedSessionContractImplementor,
             queryParameters: QueryParameters, returnProxies: Boolean
@@ -40,7 +38,6 @@ class MybatisLoader(customQuery: CustomQuery?, factory: SessionFactoryImplemento
         }
     }
 
-    @Throws(SQLException::class)
     override fun processResultSet(
             rs: ResultSet, queryParameters: QueryParameters,
             session: SharedSessionContractImplementor, returnProxies: Boolean,
@@ -56,7 +53,6 @@ class MybatisLoader(customQuery: CustomQuery?, factory: SessionFactoryImplemento
         }
     }
 
-    @Throws(SQLException::class)
     override fun executeQueryStatement(
             queryParameters: QueryParameters,
             scroll: Boolean, afterLoadActions: List<AfterLoadAction>,

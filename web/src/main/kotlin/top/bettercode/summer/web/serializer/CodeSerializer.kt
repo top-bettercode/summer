@@ -35,7 +35,6 @@ class CodeSerializer(codeServiceRef: String?, private val codeType: String, priv
         codeService = CodeServiceHolder[codeServiceRef!!]
     }
 
-    @Throws(IOException::class)
     override fun serialize(value: Serializable, gen: JsonGenerator, provider: SerializerProvider) {
         val outputContext = gen.outputContext
         val fieldName = outputContext.currentName
@@ -66,7 +65,6 @@ class CodeSerializer(codeServiceRef: String?, private val codeType: String, priv
         } else codeType
     }
 
-    @Throws(JsonMappingException::class)
     override fun createContextual(prov: SerializerProvider, property: BeanProperty?): JsonSerializer<*> {
         if (property != null) {
             val annotation = property.getAnnotation(JsonCode::class.java)
@@ -77,7 +75,6 @@ class CodeSerializer(codeServiceRef: String?, private val codeType: String, priv
         return prov.findNullValueSerializer(null)
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(value: Serializable, gen: JsonGenerator,
                                    provider: SerializerProvider,
                                    typeSer: TypeSerializer) {

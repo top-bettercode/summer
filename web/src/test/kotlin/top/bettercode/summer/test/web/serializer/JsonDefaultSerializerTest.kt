@@ -33,7 +33,6 @@ class JsonDefaultSerializerTest {
     }
 
     @Test
-    @Throws(JsonProcessingException::class)
     fun serialize() {
         objectMapper.addMixIn(DataDicBean::class.java, DataDicBeanMin::class.java)
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
@@ -57,7 +56,6 @@ class JsonDefaultSerializerTest {
     }
 
     @Test
-    @Throws(JsonProcessingException::class)
     fun defSerialize() {
         val objectMapper = ObjectMapper()
         objectMapper.addMixIn(DataDicBean::class.java, DataDicBeanMin::class.java)

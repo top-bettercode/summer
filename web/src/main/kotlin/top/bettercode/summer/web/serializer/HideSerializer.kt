@@ -42,7 +42,6 @@ class HideSerializer @JvmOverloads constructor(private val beginKeep: Int = 0, p
         return value
     }
 
-    @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeString(convert(value))
     }
@@ -60,7 +59,6 @@ class HideSerializer @JvmOverloads constructor(private val beginKeep: Int = 0, p
         return !StringUtils.hasText(value)
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(value: String?, gen: JsonGenerator, provider: SerializerProvider,
                                    typeSer: TypeSerializer) {
         gen.writeString(value)

@@ -461,8 +461,7 @@ class ExcelExport {
          * @return ExcelExport
          * @throws FileNotFoundException FileNotFoundException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun of(filename: String): ExcelExport {
             return ExcelExport(Files.newOutputStream(Paths.get(filename)))
         }
@@ -472,8 +471,7 @@ class ExcelExport {
          * @return ExcelExport
          * @throws FileNotFoundException FileNotFoundException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun of(file: File): ExcelExport {
             val parentFile = file.parentFile
             if (!parentFile.exists()) {
@@ -503,8 +501,7 @@ class ExcelExport {
          * @param consumer 处理生成excel
          * @throws IOException IOException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun export(fileName: String, consumer: Consumer<ExcelExport?>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
@@ -524,8 +521,7 @@ class ExcelExport {
          * @param consumer 处理生成excel
          * @throws IOException IOException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun exportWithImage(fileName: String, consumer: Consumer<ExcelExport?>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
@@ -545,8 +541,7 @@ class ExcelExport {
          * @param consumer 处理生成excel
          * @throws IOException IOException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun sheet(fileName: String, consumer: Consumer<ExcelExport?>) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
@@ -568,8 +563,7 @@ class ExcelExport {
          * @param consumer 处理生成excel
          * @throws IOException IOException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun cache(fileName: String, fileKey: String, consumer: Consumer<ExcelExport?>) {
             cacheOutput(fileName, fileKey) { outputStream: OutputStream ->
                 val excelExport = of(outputStream)
@@ -586,8 +580,7 @@ class ExcelExport {
          * @param consumer 处理生成excel至 outputStream
          * @throws IOException IOException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun cacheOutput(fileName: String, fileKey: String, consumer: (OutputStream) -> ExcelExport) {
             val requestAttributes = RequestContextHolder
                     .getRequestAttributes() as ServletRequestAttributes
@@ -618,8 +611,7 @@ class ExcelExport {
          * @param fileName 输出文件名
          * @throws IOException IOException
          */
-        @Throws(IOException::class)
-        private fun setResponseHeader(request: HttpServletRequest, response: HttpServletResponse,
+            private fun setResponseHeader(request: HttpServletRequest, response: HttpServletResponse,
                                       fileName: String) {
             response.reset()
             val agent = request.getHeader("USER-AGENT")

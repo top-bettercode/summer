@@ -20,7 +20,6 @@ object ImageUtil {
      * @return 图像
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     fun readImage(file: File): BufferedImage {
         return ImageIO.read(file)
     }
@@ -32,7 +31,6 @@ object ImageUtil {
      * @return 图像
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     @JvmStatic
     fun readImage(inputStream: InputStream): BufferedImage {
         val image = ImageIO.read(inputStream) // 构造Image对象
@@ -49,7 +47,6 @@ object ImageUtil {
      * @return 是否成功
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     @JvmStatic
     fun writeImage(im: RenderedImage, formatName: String, file: File): Boolean {
         return ImageIO.write(im, formatName, file)
@@ -64,7 +61,6 @@ object ImageUtil {
      * @return 是否成功
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     @JvmStatic
     fun writeImage(im: RenderedImage, formatName: String, outputStream: OutputStream): Boolean {
         return ImageIO.write(im, formatName, outputStream)
@@ -77,7 +73,6 @@ object ImageUtil {
      * @return ImageBuilder
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     @JvmStatic
     fun builder(fileName: String): ImageBuilder {
         return ImageBuilder(File(fileName))
@@ -90,7 +85,6 @@ object ImageUtil {
      * @return ImageBuilder
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     @JvmStatic
     fun builder(file: File): ImageBuilder {
         return ImageBuilder(file)
@@ -103,7 +97,6 @@ object ImageUtil {
      * @return ImageBuilder
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     @JvmStatic
     fun builder(inputStream: InputStream): ImageBuilder {
         return ImageBuilder(inputStream)

@@ -23,7 +23,6 @@ class CustomUserDetailsService : UserDetailsService {
      * @return UserDetails
      * @throws UsernameNotFoundException 未找到用户
      */
-    @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String): UserDetails {
         if ("disableUsername" == username) {
             throw IllegalUserException("帐户已禁用")

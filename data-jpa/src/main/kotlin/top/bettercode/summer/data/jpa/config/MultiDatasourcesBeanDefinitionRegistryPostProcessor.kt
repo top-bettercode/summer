@@ -45,7 +45,6 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
     private var resourceLoader: ResourceLoader? = null
     private var environment: Environment? = null
 
-    @Throws(BeansException::class)
     override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
         val dataSources = Binder.get(
                 environment).bind("summer.datasource.multi.datasources", Bindable
@@ -238,7 +237,6 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
         }
     }
 
-    @Throws(BeansException::class)
     override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {
     }
 

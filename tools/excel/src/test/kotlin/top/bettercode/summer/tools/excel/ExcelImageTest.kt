@@ -19,7 +19,6 @@ import java.nio.file.Paths
  */
 class ExcelImageTest {
     @Test
-    @Throws(Exception::class)
     fun imageCellTest() {
         val wb = XSSFWorkbook()
         val sheet = wb.createSheet("My Sample Excel")
@@ -74,7 +73,6 @@ class ExcelImageTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun testMergeExportWithImage() {
         val excelConverter = ExcelConverter{ _: DataBean ->
             try {

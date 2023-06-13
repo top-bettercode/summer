@@ -18,7 +18,6 @@ class CodeSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeInt() {
         val objectMapper = ObjectMapper()
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
@@ -36,7 +35,6 @@ class CodeSerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serializeString() {
         val objectMapper = ObjectMapper()
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)

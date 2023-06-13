@@ -32,7 +32,6 @@ class StandardServletMultipartResolver : MultipartResolver {
         return false
     }
 
-    @Throws(MultipartException::class)
     override fun resolveMultipart(request: HttpServletRequest): MultipartHttpServletRequest {
         return StandardMultipartHttpServletRequest(request, resolveLazily)
     }

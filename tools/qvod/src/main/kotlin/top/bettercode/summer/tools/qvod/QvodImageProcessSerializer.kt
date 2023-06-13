@@ -30,7 +30,6 @@ class QvodImageProcessSerializer @JvmOverloads constructor(
 
     private val qvodClient: QvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)!!
 
-    @Throws(IOException::class)
     override fun serialize(value: Any, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeObject(value)
 
@@ -55,7 +54,6 @@ class QvodImageProcessSerializer @JvmOverloads constructor(
     private fun process(value: Any) =
         "$value!${picTemplateId.ifBlank { qvodClient.properties.picTemplateId }}.jpg"
 
-    @Throws(IOException::class)
     private fun genCollection(
         gen: JsonGenerator, fieldName: String, stream: Stream<*>
     ) {
@@ -66,7 +64,6 @@ class QvodImageProcessSerializer @JvmOverloads constructor(
         gen.writeObjectField(urlFieldName, urls)
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(
         value: Any, gen: JsonGenerator, provider: SerializerProvider,
         typeSer: TypeSerializer

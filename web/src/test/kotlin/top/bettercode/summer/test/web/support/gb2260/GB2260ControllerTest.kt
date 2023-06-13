@@ -12,7 +12,6 @@ import top.bettercode.summer.web.*
 @SpringBootTest(classes = [TestApplication::class])
 class GB2260ControllerTest : BaseWebNoAuthTest() {
     @Test
-    @Throws(Exception::class)
     fun list() {
         perform(get("/divisions/list")
                 .param("vnode", "false")
@@ -20,7 +19,6 @@ class GB2260ControllerTest : BaseWebNoAuthTest() {
     }
 
     @Test
-    @Throws(Exception::class)
     fun select() {
         perform(
                 get("/divisions/select")

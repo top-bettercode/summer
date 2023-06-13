@@ -93,7 +93,6 @@ object CaptchaUtil {
      * @param code 验证码
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     @JvmStatic
     fun generateImage(w: Int, h: Int, os: OutputStream, code: String) {
         val verifySize = code.length

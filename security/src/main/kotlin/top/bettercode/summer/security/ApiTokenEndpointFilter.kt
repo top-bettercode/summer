@@ -74,7 +74,6 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         bearerTokenResolver.setCompatibleAccessToken(securityProperties.isCompatibleAccessToken)
     }
 
-    @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
             request: HttpServletRequest,
             response: HttpServletResponse,

@@ -17,7 +17,6 @@ import java.math.RoundingMode
 class BigDecimalSerializer @JvmOverloads constructor(private val scale: Int = 2, private val divisor: BigDecimal? = null, private val roundingMode: RoundingMode = RoundingMode.HALF_UP, private val toPlainString: Boolean = false,
                                                      private val reduceFraction: Boolean = false,
                                                      private val percent: Boolean = false) : StdScalarSerializer<BigDecimal>(BigDecimal::class.java), ContextualSerializer {
-    @Throws(IOException::class)
     override fun serialize(value: BigDecimal, gen: JsonGenerator, provider: SerializerProvider?) {
         var scale = scale
         var content = value

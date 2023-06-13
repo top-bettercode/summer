@@ -20,7 +20,6 @@ object SapNativeLibLoader {
      * @throws Exception The provisioning failure exception.
      */
     @Synchronized
-    @Throws(Exception::class)
     fun loadNativeLib() {
         val targetFolder = File(
                 System.getProperty("user.dir") + File.separator + "build" + File.separator + "native")

@@ -28,7 +28,6 @@ class ApiHandlerMethodReturnValueHandler(
         return delegate.supportsReturnType(returnType)
     }
 
-    @Throws(Exception::class)
     override fun handleReturnValue(@Nullable returnValue: Any?, returnType: MethodParameter, mavContainer: ModelAndViewContainer, webRequest: NativeWebRequest) {
         var returnVal = returnValue
         val typeContainingClass = returnType.containingClass

@@ -28,7 +28,6 @@ class ApiVersionFilter(private val apiVersionService: IApiVersionService) : Once
         this.order = order
     }
 
-    @Throws(IOException::class, ServletException::class)
     override fun doFilterInternal(request: HttpServletRequest,
                                   response: HttpServletResponse,
                                   filterChain: FilterChain) {

@@ -167,7 +167,6 @@ object RequestConverter {
         return cookies
     }
 
-    @Throws(IOException::class, ServletException::class)
     private fun extractParts(servletRequest: HttpServletRequest): List<OperationRequestPart> {
         val request: ServletRequest = unwrap(servletRequest)
 
@@ -189,7 +188,6 @@ object RequestConverter {
             servletRequest
     }
 
-    @Throws(IOException::class, ServletException::class)
     private fun extractServletRequestParts(
         servletRequest: HttpServletRequest
     ): List<OperationRequestPart> {
@@ -200,7 +198,6 @@ object RequestConverter {
         return parts
     }
 
-    @Throws(IOException::class)
     private fun createOperationRequestPart(part: Part): OperationRequestPart {
         val partHeaders = extractHeaders(part)
         val contentTypeHeader = partHeaders[HttpHeaders.CONTENT_TYPE]
@@ -223,7 +220,6 @@ object RequestConverter {
         )
     }
 
-    @Throws(IOException::class)
     private fun extractMultipartRequestParts(multipartRequest: MultipartHttpServletRequest): List<OperationRequestPart> {
         val parts = ArrayList<OperationRequestPart>()
         for (entry in multipartRequest.multiFileMap.entries) {
@@ -234,7 +230,6 @@ object RequestConverter {
         return parts
     }
 
-    @Throws(IOException::class)
     private fun createOperationRequestPart(file: MultipartFile): OperationRequestPart {
         val partHeaders = HttpHeaders()
         if (StringUtils.hasText(file.contentType)) {

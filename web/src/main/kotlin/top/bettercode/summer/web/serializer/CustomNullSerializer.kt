@@ -26,7 +26,6 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter, private val d
     private val isArray: Boolean = type.isArray || MutableCollection::class.java.isAssignableFrom(type) && !MutableMap::class.java
             .isAssignableFrom(type)
 
-    @Throws(IOException::class)
     override fun serialize(value: Any?, gen: JsonGenerator, provider: SerializerProvider) {
         val outputContext = gen.outputContext
         val fieldName = outputContext.currentName
@@ -80,7 +79,6 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter, private val d
         }
     }
 
-    @Throws(IOException::class)
     private fun serializeJsonCode(value: Any?, gen: JsonGenerator, provider: SerializerProvider,
                                   fieldName: String): Boolean {
         val jsonCode = writer.getAnnotation(JsonCode::class.java)
@@ -94,7 +92,6 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter, private val d
         return false
     }
 
-    @Throws(IOException::class)
     private fun serializeExtend(gen: JsonGenerator, fieldName: String,
                                 defaultEmpty: Boolean) {
         val value = if (StringUtils.hasText(extendedValue)) extendedValue else if (defaultEmpty) "" else null
@@ -126,7 +123,6 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter, private val d
         }
     }
 
-    @Throws(IOException::class)
     fun serializeNull(gen: JsonGenerator, type: Class<*>, value: Any?) {
         if (type == String::class.java) {
             gen.writeString("")
@@ -139,7 +135,6 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter, private val d
         }
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(value: Any, gen: JsonGenerator, provider: SerializerProvider,
                                    typeSer: TypeSerializer) {
         serialize(value, gen, provider)

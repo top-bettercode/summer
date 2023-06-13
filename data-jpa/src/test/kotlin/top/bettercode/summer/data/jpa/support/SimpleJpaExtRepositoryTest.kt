@@ -70,7 +70,6 @@ class SimpleJpaExtRepositoryTest {
     }
 
     @Test
-    @Throws(ClassNotFoundException::class)
     fun findDefaultMapperLocations() {
         val applicationContext = applicationContext as GenericApplicationContext?
         val defaultMapperLocations = JpaMybatisAutoConfiguration.findDefaultMapperLocations(

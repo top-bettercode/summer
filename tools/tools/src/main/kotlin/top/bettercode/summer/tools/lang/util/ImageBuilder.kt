@@ -12,7 +12,7 @@ import kotlin.math.ceil
 /**
  * 图像Builder
  */
-class ImageBuilder @Throws(IOException::class)
+class ImageBuilder
 constructor(inputStream: Any) {
 
     private var bufferedImage: BufferedImage
@@ -201,7 +201,6 @@ constructor(inputStream: Any) {
      * @return 文件
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     fun toFile(fileName: String): Boolean {
         return ImageUtil.writeImage(bufferedImage, formatName, File(fileName))
     }
@@ -213,7 +212,6 @@ constructor(inputStream: Any) {
      * @return 文件
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     fun toFile(file: File): Boolean {
         return ImageUtil.writeImage(bufferedImage, formatName, file)
     }
@@ -225,7 +223,6 @@ constructor(inputStream: Any) {
      * @return 是否成功
      * @throws IOException IOException
      */
-    @Throws(IOException::class)
     fun toOutputStream(os: OutputStream): Boolean {
         return ImageUtil.writeImage(bufferedImage, formatName, os)
     }
@@ -238,9 +235,9 @@ constructor(inputStream: Any) {
      */
     fun outputFormat(formatName: String): ImageBuilder {
         if (formatName.isNotBlank() && !this.formatName.equals(
-                formatName,
-                ignoreCase = true
-            )
+                        formatName,
+                        ignoreCase = true
+                )
         ) {
             /*
        * Note: The following code is a workaround for the JPEG writer
@@ -255,10 +252,10 @@ constructor(inputStream: Any) {
        * will be produced before saving.
        */
             if (formatName.equals("jpg", ignoreCase = true) || formatName.equals(
-                    "jpeg",
-                    ignoreCase = true
-                ) || formatName
-                    .equals("bmp", ignoreCase = true)
+                            "jpeg",
+                            ignoreCase = true
+                    ) || formatName
+                            .equals("bmp", ignoreCase = true)
             ) {
                 bufferedImage = copy(bufferedImage, BufferedImage.TYPE_INT_RGB)
             }

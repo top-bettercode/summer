@@ -46,7 +46,6 @@ class ImageInfo {
         ByteArrayInputStream(bytes).use { `is` -> processStream(`is`) }
     }
 
-    @Throws(IOException::class)
     private fun processStream(`is`: InputStream) {
         val c1 = `is`.read()
         val c2 = `is`.read()
@@ -125,7 +124,6 @@ class ImageInfo {
         }
     }
 
-    @Throws(IOException::class)
     private fun readInt(`is`: InputStream, noOfBytes: Int, bigEndian: Boolean): Int {
         var ret = 0
         var sv = if (bigEndian) (noOfBytes - 1) * 8 else 0

@@ -15,7 +15,6 @@ internal class SapGenServiceTest {
     @Autowired
     var sapGenService: SapGenService? = null
     @Test
-    @Throws(JCoException::class, IOException::class)
     fun gen() {
 //    sapGenService.gen("STOCK", "ZRFC_STOCK_001");
         sapGenService!!.gen("COST", "ZRFC_OA_COST")

@@ -55,7 +55,6 @@ object ExcelImageCellWriterUtil {
         }
     }
 
-    @Throws(IOException::class)
     private fun drawImage(cellValue: Any?, wb: XSSFWorkbook, drawing: Drawing<XSSFShape>,
                           helper: CreationHelper, column: Int, top: Int, bottom: Int) {
         if (cellValue == null || "" == cellValue) {

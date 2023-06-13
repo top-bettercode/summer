@@ -54,7 +54,6 @@ class SecurityTest {
                 apiSecurityProperties!!.clientSecret)
     }
 
-    @Throws(Exception::class)
     private fun getApiAccessToken(tag: String?): ApiAccessToken {
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "password")
@@ -76,7 +75,6 @@ class SecurityTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun accessToken() {
         description = ""
         name = "获取accessToken"
@@ -90,7 +88,6 @@ class SecurityTest {
      * 刷新token
      */
     @Test
-    @Throws(Exception::class)
     fun refreshToken() {
         disable()
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
@@ -107,7 +104,6 @@ class SecurityTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun revokeToken() {
         disable()
         val accessToken = getApiAccessToken("revokeToken").accessToken
@@ -122,7 +118,6 @@ class SecurityTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun auth() {
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getApiAccessToken("auth").accessToken
@@ -132,7 +127,6 @@ class SecurityTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun authInParam() {
         val httpHeaders = HttpHeaders()
         val entity = restTemplate
@@ -143,7 +137,6 @@ class SecurityTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun authority() {
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getApiAccessToken("authority").accessToken
@@ -153,7 +146,6 @@ class SecurityTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun noauthority() {
         username = "peter"
         val httpHeaders = HttpHeaders()
@@ -178,7 +170,6 @@ class SecurityTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testNoAuthWithToken() {
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getApiAccessToken("testNoAuthWithToken").accessToken
@@ -188,7 +179,6 @@ class SecurityTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testPublicSource() {
         val httpHeaders = HttpHeaders()
         //    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiToken().getAccessToken());
@@ -199,7 +189,6 @@ class SecurityTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testStaticSource() {
         val httpHeaders = HttpHeaders()
         //    httpHeaders.set(HttpHeaders.AUTHORIZATION, "bearer " + getApiToken().getAccessToken());

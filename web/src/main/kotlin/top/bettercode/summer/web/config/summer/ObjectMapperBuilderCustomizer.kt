@@ -40,7 +40,6 @@ class ObjectMapperBuilderCustomizer : Jackson2ObjectMapperBuilderCustomizer {
     private val log = LoggerFactory.getLogger(ObjectMapperBuilderCustomizer::class.java)
 
     @Bean
-    @Throws(ClassNotFoundException::class)
     fun module(applicationContext: GenericApplicationContext,
                packageScanClassResolver: PackageScanClassResolver,
                jacksonExtProperties: JacksonExtProperties): Module {
@@ -88,15 +87,13 @@ class ObjectMapperBuilderCustomizer : Jackson2ObjectMapperBuilderCustomizer {
 
         //LocalDate 配置
         jacksonObjectMapperBuilder.serializerByType(LocalDate::class.java, object : JsonSerializer<LocalDate?>() {
-            @Throws(IOException::class)
-            override fun serialize(value: LocalDate?, gen: JsonGenerator, serializers: SerializerProvider) {
+                    override fun serialize(value: LocalDate?, gen: JsonGenerator, serializers: SerializerProvider) {
                 gen.writeNumber(of(value!!).toMillis())
             }
         })
         jacksonObjectMapperBuilder.deserializerByType(LocalDate::class.java,
                 object : JsonDeserializer<LocalDate?>() {
-                    @Throws(IOException::class)
-                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
+                                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
                         val asString = p.valueAsString
                         return if (StringUtils.hasText(asString)) {
                             of(asString.toLong()).toLocalDate()
@@ -108,16 +105,14 @@ class ObjectMapperBuilderCustomizer : Jackson2ObjectMapperBuilderCustomizer {
         //LocalDateTime 配置
         jacksonObjectMapperBuilder
                 .serializerByType(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime?>() {
-                    @Throws(IOException::class)
-                    override fun serialize(value: LocalDateTime?, gen: JsonGenerator,
+                                    override fun serialize(value: LocalDateTime?, gen: JsonGenerator,
                                            serializers: SerializerProvider) {
                         gen.writeNumber(of(value!!).toMillis())
                     }
                 })
         jacksonObjectMapperBuilder.deserializerByType(LocalDateTime::class.java,
                 object : JsonDeserializer<LocalDateTime?>() {
-                    @Throws(IOException::class)
-                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDateTime? {
+                                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDateTime? {
                         val asString = p.valueAsString
                         return if (StringUtils.hasText(asString)) {
                             of(asString.toLong()).toLocalDateTime()

@@ -159,7 +159,6 @@ object IDCardUtil {
     /**
      * 将字符数组转为整型数组
      */
-    @Throws(NumberFormatException::class)
     private fun converCharToInt(c: CharArray): IntArray {
         val a = IntArray(c.size)
         var k = 0

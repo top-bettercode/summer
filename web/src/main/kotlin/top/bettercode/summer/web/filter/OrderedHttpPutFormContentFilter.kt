@@ -49,15 +49,13 @@ class OrderedHttpPutFormContentFilter : OncePerRequestFilter(), Ordered {
         formConverter.setCharset(charset)
     }
 
-    @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest,
                                   response: HttpServletResponse,
                                   filterChain: FilterChain) {
         if (("PUT" == request.method || "DELETE" == request.method || ("PATCH"
                         == request.method)) && isFormContentType(request)) {
             val inputMessage: HttpInputMessage = object : ServletServerHttpRequest(request) {
-                @Throws(IOException::class)
-                override fun getBody(): InputStream {
+                            override fun getBody(): InputStream {
                     return request.inputStream
                 }
             }

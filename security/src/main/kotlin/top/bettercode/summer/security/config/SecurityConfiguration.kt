@@ -54,7 +54,6 @@ class SecurityConfiguration(
     }
 
     @Bean
-    @Throws(Exception::class)
     fun configure(
             http: HttpSecurity,
             access: AuthorizationManager<RequestAuthorizationContext?>?,

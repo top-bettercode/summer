@@ -28,7 +28,6 @@ class ExcelTest {
     )
 
     @Test
-    @Throws(IOException::class)
     fun testExport() {
         val list: MutableList<DataBean> = ArrayList()
         for (i in 0..7) {
@@ -53,7 +52,6 @@ class ExcelTest {
     )
 
     @Test
-    @Throws(IOException::class)
     fun testMergeExport() {
         val list: MutableList<DataBean> = ArrayList()
         for (i in 0..21) {
@@ -70,7 +68,6 @@ class ExcelTest {
 
     @Order(1)
     @Test
-    @Throws(Exception::class)
     fun testImport() {
 //    testExport();
         val list = ExcelImport.of(ClassPathResource("template.xlsx").inputStream).setColumn(1)
@@ -81,7 +78,6 @@ class ExcelTest {
 
     @Order(0)
     @Test
-    @Throws(IOException::class)
     fun testTemplate() {
         ExcelExport.of("build/template.xlsx").sheet("表格1").dataValidation(1, "1,2,3")
                 .template(excelFields)

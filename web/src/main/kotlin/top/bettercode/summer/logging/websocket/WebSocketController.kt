@@ -56,8 +56,7 @@ class WebSocketController {
             ApplicationContextHolder.getBean(WebsocketProperties::class.java)!!
         }
 
-        @Throws(IOException::class)
-        fun send(message: String?) {
+            fun send(message: String?) {
             for (session in sessions.values) {
                 if (session.isOpen) {
                     session.basicRemote.sendText(message)

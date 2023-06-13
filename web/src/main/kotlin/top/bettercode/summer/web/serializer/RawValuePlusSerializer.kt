@@ -7,7 +7,6 @@ import org.springframework.util.StringUtils
 import java.io.IOException
 
 class RawValuePlusSerializer<T> : RawSerializer<T>(String::class.java) {
-    @Throws(IOException::class)
     override fun serialize(value: T, gen: JsonGenerator, provider: SerializerProvider) {
         val content = value.toString()
         if (StringUtils.hasText(content)) {

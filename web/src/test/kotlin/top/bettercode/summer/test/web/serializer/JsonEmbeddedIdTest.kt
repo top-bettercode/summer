@@ -43,7 +43,6 @@ class JsonEmbeddedIdTest {
 
     val objectMapper = ObjectMapper()
     @Test
-    @Throws(JsonProcessingException::class)
     fun test() {
         val user = User()
         val key = UserKey("1,2")

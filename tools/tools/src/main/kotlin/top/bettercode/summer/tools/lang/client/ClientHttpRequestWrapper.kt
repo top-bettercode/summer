@@ -29,7 +29,6 @@ class ClientHttpRequestWrapper(
     private val log = LoggerFactory.getLogger(ClientHttpRequestWrapper::class.java)
     val record = ByteArrayOutputStream()
 
-    @Throws(IOException::class)
     override fun execute(): ClientHttpResponse {
         val dateTime =
             if (log.isInfoEnabled) {
@@ -119,15 +118,13 @@ class ClientHttpRequestWrapper(
         return request.headers
     }
 
-    @Throws(IOException::class)
     override fun getBody(): OutputStream {
         return OutputStreamWrapper(request.body)
     }
 
     private inner class OutputStreamWrapper(private val delegate: OutputStream) :
         OutputStream() {
-        @Throws(IOException::class)
-        override fun write(b: Int) {
+            override fun write(b: Int) {
             delegate.write(b)
             record.write(b)
         }

@@ -41,8 +41,7 @@ object StringUtil {
         module.addSerializer(
                 LocalDate::class.java,
                 object : JsonSerializer<LocalDate>() {
-                    @Throws(IOException::class)
-                    override fun serialize(
+                                    override fun serialize(
                             value: LocalDate,
                             gen: JsonGenerator,
                             serializers: SerializerProvider
@@ -51,8 +50,7 @@ object StringUtil {
                     }
                 })
         module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
-            @Throws(IOException::class)
-            override fun serialize(
+                    override fun serialize(
                     value: LocalDateTime, gen: JsonGenerator,
                     serializers: SerializerProvider?
             ) {
@@ -453,7 +451,6 @@ object StringUtil {
         return GZIPInputStream(ByteArrayInputStream(data)).readBytes()
     }
 
-    @Throws(IOException::class)
     @JvmStatic
     fun copyToString(`in`: InputStream, charset: Charset): String {
         val reader = InputStreamReader(`in`, charset)

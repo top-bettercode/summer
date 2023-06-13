@@ -41,7 +41,6 @@ class TestMybatisAutoConfiguration(
 
     @Bean
     @ConditionalOnMissingBean
-    @Throws(Exception::class)
     fun sqlSessionFactory(dataSource: DataSource?): SqlSessionFactory? {
         val factory = SqlSessionFactoryBean()
         factory.setDataSource(dataSource)

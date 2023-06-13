@@ -18,7 +18,6 @@ internal class ArraySerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serialize() {
         val bean = StringArrayBean()
         bean.setAry("a,b,c,")
@@ -28,7 +27,6 @@ internal class ArraySerializerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun serialize1() {
         val bean = StringArrayBean()
         bean.setAry("a,b,c")

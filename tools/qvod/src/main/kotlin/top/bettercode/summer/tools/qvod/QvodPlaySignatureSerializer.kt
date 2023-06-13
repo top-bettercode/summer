@@ -20,7 +20,6 @@ class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
 ) {
     private val qvodClient: QvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)!!
 
-    @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeObject(value)
         val fileIdName = gen.outputContext.currentName
@@ -34,7 +33,6 @@ class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
         gen.writeObjectField("qvodAppID", appId)
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(
         value: String, gen: JsonGenerator, provider: SerializerProvider, typeSer: TypeSerializer
     ) {

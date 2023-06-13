@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component
 class ConfigurationPropertiesBeans : BeanPostProcessor, ApplicationContextAware {
     private val beans: MutableMap<String, ConfigurationPropertiesBean> = HashMap()
     private var applicationContext: ApplicationContext? = null
-    @Throws(BeansException::class)
     override fun setApplicationContext(applicationContext: ApplicationContext) {
         this.applicationContext = applicationContext
         if (applicationContext.autowireCapableBeanFactory is ConfigurableListableBeanFactory) {
@@ -35,7 +34,6 @@ class ConfigurationPropertiesBeans : BeanPostProcessor, ApplicationContextAware 
         }
     }
 
-    @Throws(BeansException::class)
     override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any {
         val propertiesBean = ConfigurationPropertiesBean.get(
                 applicationContext, bean,
@@ -46,7 +44,6 @@ class ConfigurationPropertiesBeans : BeanPostProcessor, ApplicationContextAware 
         return bean
     }
 
-    @Throws(BeansException::class)
     override fun postProcessAfterInitialization(bean: Any, beanName: String): Any {
         return bean
     }

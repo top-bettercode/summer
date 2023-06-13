@@ -22,7 +22,6 @@ class AutoDocFilter(
         return Ordered.HIGHEST_PRECEDENCE
     }
 
-    @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,

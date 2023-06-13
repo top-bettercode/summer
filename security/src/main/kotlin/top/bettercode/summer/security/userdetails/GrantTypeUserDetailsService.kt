@@ -9,6 +9,5 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 interface GrantTypeUserDetailsService : UserDetailsService {
-    @Throws(UsernameNotFoundException::class)
     fun loadUserByGrantTypeAndRequest(grantType: String?, request: HttpServletRequest?): UserDetails
 }

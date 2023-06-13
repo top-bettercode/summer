@@ -30,7 +30,6 @@ class HtmlParserSerializer : StdScalarSerializer<String>, ContextualSerializer {
         this.length = length
     }
 
-    @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
         var v: String? = value
         if (StringUtils.hasText(v)) {
@@ -43,7 +42,6 @@ class HtmlParserSerializer : StdScalarSerializer<String>, ContextualSerializer {
         gen.writeString(v)
     }
 
-    @Throws(JsonMappingException::class)
     override fun createContextual(prov: SerializerProvider, property: BeanProperty?): JsonSerializer<*> {
         if (property != null && String::class.java.isAssignableFrom(property.type.rawClass)) {
             val htmlParser = property.getAnnotation(JsonHtmlParser::class.java)
@@ -57,7 +55,6 @@ class HtmlParserSerializer : StdScalarSerializer<String>, ContextualSerializer {
         return !StringUtils.hasText(value)
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(value: String, gen: JsonGenerator, provider: SerializerProvider,
                                    typeSer: TypeSerializer) {
         serialize(value, gen, provider)

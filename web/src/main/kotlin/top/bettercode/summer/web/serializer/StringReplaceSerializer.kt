@@ -30,7 +30,6 @@ class StringReplaceSerializer : StdScalarSerializer<String>, ContextualSerialize
         this.replacement = replacement
     }
 
-    @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeString(if (StringUtils.hasText(value) && StringUtils.hasText(target)) value
                 .replace(target, replacement) else value)
@@ -49,7 +48,6 @@ class StringReplaceSerializer : StdScalarSerializer<String>, ContextualSerialize
         return !StringUtils.hasText(value)
     }
 
-    @Throws(IOException::class)
     override fun serializeWithType(value: String, gen: JsonGenerator, provider: SerializerProvider,
                                    typeSer: TypeSerializer) {
         serialize(value, gen, provider)

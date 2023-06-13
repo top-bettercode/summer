@@ -18,7 +18,6 @@ class RequestContentReadFilter : OncePerRequestFilter(), Ordered {
         return Ordered.HIGHEST_PRECEDENCE + 2
     }
 
-    @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,

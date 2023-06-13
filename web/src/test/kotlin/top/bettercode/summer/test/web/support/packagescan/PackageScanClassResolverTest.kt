@@ -17,7 +17,6 @@ class PackageScanClassResolverTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun findResource() {
         val target = "*/**/*"
         val resources = PathMatchingResourcePatternResolver(

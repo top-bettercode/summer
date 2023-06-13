@@ -20,7 +20,6 @@ class NavFilter(
     private val resourceLoader: ResourceLoader
 ) : OncePerRequestFilter(), Ordered {
 
-    @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,

@@ -13,9 +13,7 @@ import java.util.*
  * @author Peter Wu
  */
 interface ScopeUserDetailsService : UserDetailsService {
-    @Throws(UsernameNotFoundException::class)
     fun loadUserByScopeAndUsername(scope: String?, username: String?): UserDetails
-    @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String): UserDetails {
         val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
         val request = requestAttributes.request

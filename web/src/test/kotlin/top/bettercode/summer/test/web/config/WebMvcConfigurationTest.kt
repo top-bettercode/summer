@@ -10,7 +10,6 @@ import top.bettercode.summer.test.BaseWebNoAuthTest
 internal class WebMvcConfigurationTest : BaseWebNoAuthTest() {
     @Disabled
     @Test
-    @Throws(Exception::class)
     fun test() {
         download(get("/captcha.jpg"), "captcha.jpg")
     }

@@ -10,7 +10,6 @@ import java.io.IOException
  * @author Peter Wu
  */
 class KilogramDeserializer : JsonDeserializer<Long>() {
-    @Throws(IOException::class)
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Long {
         return toGram(p.valueAsString)
     }

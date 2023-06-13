@@ -91,8 +91,7 @@ class ApiSecurityConfiguration(
         override fun customize(jacksonObjectMapperBuilder: Jackson2ObjectMapperBuilder) {
             jacksonObjectMapperBuilder.serializerByType(GrantedAuthority::class.java,
                     object : JsonSerializer<GrantedAuthority>() {
-                        @Throws(IOException::class)
-                        override fun serialize(
+                                            override fun serialize(
                                 value: GrantedAuthority, gen: JsonGenerator,
                                 serializers: SerializerProvider,
                         ) {

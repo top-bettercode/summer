@@ -126,7 +126,6 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @throws ExcelImportException   ExcelImportException
      * @throws InstantiationException InstantiationException
     </E></F> */
-    @Throws(Exception::class)
     fun <F, E> getData(excelFields: Array<ExcelField<F, *>>): List<E> {
         return getData<F, E>(getEntityType(excelFields), excelFields)
     }
@@ -144,7 +143,6 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @throws ExcelImportException   ExcelImportException
      * @throws InstantiationException InstantiationException
     </E></F> */
-    @Throws(Exception::class)
     fun <F, E> getData(excelFields: Array<ExcelField<F, *>>, converter: (F) -> E): List<E> {
         return getData<F, E>(getEntityType(excelFields), excelFields, converter)
     }
@@ -162,7 +160,6 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @throws ExcelImportException   ExcelImportException
      * @throws InstantiationException InstantiationException
     </E></F> */
-    @Throws(Exception::class)
     fun <F, E> getData(cls: Class<F>?, excelFields: Array<ExcelField<F, *>>): List<E> {
         return getData(cls, excelFields) { o: F ->
             @Suppress("UNCHECKED_CAST")
@@ -184,7 +181,6 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @throws ExcelImportException   ExcelImportException
      * @throws InstantiationException InstantiationException
     </E></F> */
-    @Throws(Exception::class)
     fun <F, E> getData(cls: Class<F>?, excelFields: Array<ExcelField<F, *>>,
                        converter: (F) -> E): List<E> {
         if (sheet == null) {
@@ -203,7 +199,6 @@ class ExcelImport private constructor(`is`: InputStream) {
         return dataList
     }
 
-    @Throws(Exception::class)
     fun <F, E> readRow(cls: Class<F>?, excelFields: Array<ExcelField<F, *>>, row: Row,
                        converter: (F) -> E): E? {
         var notAllBlank = false
@@ -273,8 +268,7 @@ class ExcelImport private constructor(`is`: InputStream) {
          * @return ExcelImport
          * @throws IOException IOException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun of(fileName: String): ExcelImport {
             return of(Files.newInputStream(Paths.get(fileName)))
         }
@@ -284,8 +278,7 @@ class ExcelImport private constructor(`is`: InputStream) {
          * @return ExcelImport
          * @throws IOException IOException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun of(file: File): ExcelImport {
             return of(Files.newInputStream(file.toPath()))
         }
@@ -295,8 +288,7 @@ class ExcelImport private constructor(`is`: InputStream) {
          * @return ExcelImport
          * @throws IOException IOException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun of(multipartFile: MultipartFile): ExcelImport {
             return of(multipartFile.inputStream)
         }
@@ -306,8 +298,7 @@ class ExcelImport private constructor(`is`: InputStream) {
          * @return ExcelImport
          * @throws IOException IOException
          */
-        @Throws(IOException::class)
-        @JvmStatic
+            @JvmStatic
         fun of(`is`: InputStream): ExcelImport {
             return ExcelImport(`is`)
         }

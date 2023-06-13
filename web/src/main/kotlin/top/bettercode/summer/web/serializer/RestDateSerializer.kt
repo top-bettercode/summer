@@ -27,7 +27,6 @@ class RestDateSerializer : StdScalarSerializer<Date>(Date::class.java, false) {
         return createSchemaNode("number", true)
     }
 
-    @Throws(IOException::class)
     override fun serialize(value: Date, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeNumber(daysOfTwo(Date(), value))
     }

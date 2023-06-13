@@ -63,7 +63,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     //
     // HANDLE RESULT SETS
     //
-    @Throws(SQLException::class)
     fun handleResultSets(resultSet: ResultSet?, maxRows: Int): List<*> {
         ErrorContext.instance().activity("handling results").`object`(mappedStatement!!.id)
         val multipleResults: MutableList<Any> = ArrayList()
@@ -82,7 +81,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return collapseSingleResultList(multipleResults)
     }
 
-    @Throws(SQLException::class)
     private fun getResultSet(rs: ResultSet?): ResultSetWrapper? {
         return if (rs != null) ResultSetWrapper(rs, configuration) else null
     }
@@ -99,7 +97,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         nestedResultObjects.clear()
     }
 
-    @Throws(SQLException::class)
     private fun handleResultSet(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
             multipleResults: MutableList<Any>, parentMapping: ResultMapping?, rowBounds: RowBounds
@@ -129,7 +126,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     //
     // HANDLE ROWS FOR SIMPLE RESULTMAP
     //
-    @Throws(SQLException::class)
     fun handleRowValues(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
             resultHandler: ResultHandler<Any?>?, rowBounds: RowBounds, parentMapping: ResultMapping?
@@ -161,7 +157,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         }
     }
 
-    @Throws(SQLException::class)
     private fun handleRowValuesForSimpleResultMap(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
             resultHandler: ResultHandler<Any?>?, rowBounds: RowBounds, parentMapping: ResultMapping?
@@ -177,7 +172,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         }
     }
 
-    @Throws(SQLException::class)
     private fun storeObject(
             resultHandler: ResultHandler<Any?>?,
             resultContext: DefaultResultContext<Any?>, rowValue: Any?, parentMapping: ResultMapping?,
@@ -202,7 +196,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return !context.isStopped && context.resultCount < rowBounds.limit
     }
 
-    @Throws(SQLException::class)
     private fun skipRows(rs: ResultSet, rowBounds: RowBounds) {
         if (rs.type != ResultSet.TYPE_FORWARD_ONLY) {
             if (rowBounds.offset != RowBounds.NO_ROW_OFFSET) {
@@ -220,7 +213,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     //
     // GET VALUE FROM ROW FOR SIMPLE RESULT MAP
     //
-    @Throws(SQLException::class)
     private fun getRowValue(rsw: ResultSetWrapper?, resultMap: ResultMap, columnPrefix: String?): Any? {
         val lazyLoader = ResultLoaderMap()
         var rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix)
@@ -241,7 +233,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     //
     // GET VALUE FROM ROW FOR NESTED RESULT MAP
     //
-    @Throws(SQLException::class)
     private fun getRowValue(
             rsw: ResultSetWrapper?, resultMap: ResultMap, combinedKey: CacheKey,
             columnPrefix: String?, partialObject: Any?
@@ -297,7 +288,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     //
     // PROPERTY MAPPINGS
     //
-    @Throws(SQLException::class)
     private fun applyPropertyMappings(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
             metaObject: MetaObject, lazyLoader: ResultLoaderMap, columnPrefix: String?
@@ -335,7 +325,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return foundValues
     }
 
-    @Throws(SQLException::class)
     private fun getPropertyMappingValue(
             rs: ResultSet, metaResultObject: MetaObject,
             propertyMapping: ResultMapping, @Suppress("UNUSED_PARAMETER") lazyLoader: ResultLoaderMap, columnPrefix: String?
@@ -352,7 +341,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         }
     }
 
-    @Throws(SQLException::class)
     private fun createAutomaticMappings(
             rsw: ResultSetWrapper?,
             resultMap: ResultMap, metaObject: MetaObject, columnPrefix: String?
@@ -399,7 +387,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return autoMapping
     }
 
-    @Throws(SQLException::class)
     private fun applyAutomaticMappings(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
             metaObject: MetaObject, columnPrefix: String?
@@ -423,7 +410,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     }
 
     // MULTIPLE RESULT SETS
-    @Throws(SQLException::class)
     private fun linkToParents(rs: ResultSet, parentMapping: ResultMapping, rowValue: Any?) {
         val parentKey = createKeyForMultipleResults(rs, parentMapping, parentMapping.column,
                 parentMapping.foreignColumn)
@@ -437,7 +423,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         }
     }
 
-    @Throws(SQLException::class)
     private fun addPendingChildRelation(
             rs: ResultSet, metaResultObject: MetaObject,
             parentMapping: ResultMapping
@@ -461,7 +446,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         }
     }
 
-    @Throws(SQLException::class)
     private fun createKeyForMultipleResults(
             rs: ResultSet, resultMapping: ResultMapping,
             names: String?, columns: String?
@@ -485,7 +469,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     //
     // INSTANTIATION & CONSTRUCTOR MAPPING
     //
-    @Throws(SQLException::class)
     private fun createResultObject(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
             lazyLoader: ResultLoaderMap, columnPrefix: String?
@@ -511,7 +494,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return resultObject
     }
 
-    @Throws(SQLException::class)
     private fun createResultObject(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
             constructorArgTypes: MutableList<Class<*>>, constructorArgs: MutableList<Any?>, columnPrefix: String?
@@ -566,7 +548,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return if (foundValues) objectFactory.create(resultType, constructorArgTypes, constructorArgs) else null
     }
 
-    @Throws(SQLException::class)
     private fun createByConstructorSignature(
             rsw: ResultSetWrapper?, resultType: Class<*>,
             constructorArgTypes: MutableList<Class<*>>, constructorArgs: MutableList<Any?>
@@ -588,7 +569,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
                 "No constructor found in " + resultType.name + " matching " + rsw!!.classNames)
     }
 
-    @Throws(SQLException::class)
     private fun createUsingConstructor(
             rsw: ResultSetWrapper?, resultType: Class<*>,
             constructorArgTypes: MutableList<Class<*>>, constructorArgs: MutableList<Any?>, constructor: Constructor<*>
@@ -634,7 +614,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return true
     }
 
-    @Throws(SQLException::class)
     private fun createPrimitiveResultObject(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
             columnPrefix: String?
@@ -654,7 +633,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     //
     // DISCRIMINATOR
     //
-    @Throws(SQLException::class)
     fun resolveDiscriminatedResultMap(
             rs: ResultSet, resultMap: ResultMap,
             columnPrefix: String?
@@ -679,7 +657,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return resultMap1
     }
 
-    @Throws(SQLException::class)
     private fun getDiscriminatorValue(
             rs: ResultSet, discriminator: Discriminator,
             columnPrefix: String?
@@ -698,7 +675,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     //
     // HANDLE NESTED RESULT MAPS
     //
-    @Throws(SQLException::class)
     private fun handleRowValuesForNestedResultMap(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
             resultHandler: ResultHandler<Any?>?, rowBounds: RowBounds, parentMapping: ResultMapping?
@@ -795,7 +771,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return if (columnPrefixBuilder.isEmpty()) null else columnPrefixBuilder.toString().uppercase()
     }
 
-    @Throws(SQLException::class)
     private fun anyNotNullColumnHasValue(
             resultMapping: ResultMapping, columnPrefix: String?,
             rsw: ResultSetWrapper?
@@ -822,7 +797,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return true
     }
 
-    @Throws(SQLException::class)
     private fun getNestedResultMap(rs: ResultSet, nestedResultMapId: String, columnPrefix: String?): ResultMap {
         val nestedResultMap = configuration.getResultMap(nestedResultMapId)
         return resolveDiscriminatedResultMap(rs, nestedResultMap, columnPrefix)
@@ -831,7 +805,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     //
     // UNIQUE RESULT KEY
     //
-    @Throws(SQLException::class)
     private fun createRowKey(resultMap: ResultMap, rsw: ResultSetWrapper?, columnPrefix: String?): CacheKey {
         val cacheKey = CacheKey()
         cacheKey.update(resultMap.id)
@@ -871,7 +844,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         return resultMappings
     }
 
-    @Throws(SQLException::class)
     private fun createRowKeyForMappedProperties(
             resultMap: ResultMap, rsw: ResultSetWrapper?,
             cacheKey: CacheKey, resultMappings: List<ResultMapping>, columnPrefix: String?
@@ -893,7 +865,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         }
     }
 
-    @Throws(SQLException::class)
     private fun createRowKeyForUnmappedProperties(
             resultMap: ResultMap, rsw: ResultSetWrapper?,
             cacheKey: CacheKey, columnPrefix: String?
@@ -920,7 +891,6 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         }
     }
 
-    @Throws(SQLException::class)
     private fun createRowKeyForMap(rsw: ResultSetWrapper?, cacheKey: CacheKey) {
         val columnNames = rsw!!.columnNames
         for (columnName in columnNames) {

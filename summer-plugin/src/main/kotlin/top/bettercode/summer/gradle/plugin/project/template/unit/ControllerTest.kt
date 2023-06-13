@@ -33,7 +33,6 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         //beforeEach
         method("beforeEach", JavaType.void) {
             annotation("@Override")
-            exception(JavaType("Exception"))
             +"tableNames(${className}.TABLE_NAME);"
         }
 
@@ -46,7 +45,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             annotation("@org.junit.jupiter.api.DisplayName(\"列表\")")
             annotation("@org.junit.jupiter.api.Test")
             annotation("@org.junit.jupiter.api.Order(0)")
-            exception(JavaType("Exception"))
+
             +"$testInsertName();"
             +""
             +"perform(get(\"/$pathName/list\")"
@@ -66,7 +65,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.DisplayName(\"导出\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(1)")
-                exception(JavaType("Exception"))
+
                 +"$testInsertName();"
                 +""
                 +"download(get(\"/$pathName/export.xlsx\")"
@@ -85,7 +84,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.DisplayName(\"详情\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(2)")
-                exception(JavaType("Exception"))
+
                 +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
                     primaryKeyName.capitalized()
                 }();"
@@ -109,7 +108,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.DisplayName(\"保存(json)\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(3)")
-                exception(JavaType("Exception"))
+
                 import(primaryKeyType)
                 import(formType)
                 if (isFullComposite) {
@@ -152,7 +151,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.DisplayName(\"保存(form)\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(4)")
-                exception(JavaType("Exception"))
+
                 if (isFullComposite) {
                     +"perform(post(\"/$pathName/save\")"
                     filterColumns.forEach {
@@ -181,7 +180,6 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 annotation("@org.junit.jupiter.api.DisplayName(\"删除\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(6)")
-                exception(JavaType("Exception"))
                 +"$primaryKeyClassName $primaryKeyName = $testInsertName().get${
                     primaryKeyName.capitalized()
                 }();"

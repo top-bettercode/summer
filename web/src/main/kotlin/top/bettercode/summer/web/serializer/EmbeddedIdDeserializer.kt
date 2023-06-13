@@ -17,7 +17,6 @@ import java.io.IOException
  */
 class EmbeddedIdDeserializer @JvmOverloads constructor(private val delimiter: String = EmbeddedIdConverter.DELIMITER) : JsonDeserializer<Any?>(), ContextualDeserializer {
     private val log = LoggerFactory.getLogger(EmbeddedIdDeserializer::class.java)
-    @Throws(IOException::class)
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Any? {
         try {
             val currentValue = p.currentValue
@@ -31,7 +30,6 @@ class EmbeddedIdDeserializer @JvmOverloads constructor(private val delimiter: St
         return null
     }
 
-    @Throws(JsonMappingException::class)
     override fun createContextual(ctxt: DeserializationContext, property: BeanProperty?): JsonDeserializer<*> {
         var delimiter: String
         if (property != null) {

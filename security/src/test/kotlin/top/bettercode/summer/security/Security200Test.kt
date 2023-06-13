@@ -52,7 +52,6 @@ class Security200Test {
                 apiSecurityProperties!!.clientSecret)
     }
 
-    @Throws(Exception::class)
     private fun getApiAccessToken(tag: String?): ApiAccessToken {
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "password")
@@ -71,7 +70,6 @@ class Security200Test {
     }
 
     @Test
-    @Throws(Exception::class)
     fun accessToken() {
         description = ""
         name = "获取accessToken"
@@ -85,7 +83,6 @@ class Security200Test {
      * 刷新token
      */
     @Test
-    @Throws(Exception::class)
     fun refreshToken() {
         disable()
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
@@ -102,7 +99,6 @@ class Security200Test {
     }
 
     @Test
-    @Throws(Exception::class)
     fun revokeToken() {
         disable()
         val accessToken = getApiAccessToken("revokeToken").accessToken
@@ -117,7 +113,6 @@ class Security200Test {
     }
 
     @Test
-    @Throws(Exception::class)
     fun auth() {
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getApiAccessToken("auth").accessToken

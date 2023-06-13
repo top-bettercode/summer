@@ -38,117 +38,94 @@ class TupleResultSetMetaData(tuples: List<Tuple>) : ResultSetMetaData {
         return columnNames.indexOf(columnName)
     }
 
-    @Throws(SQLException::class)
     override fun getColumnCount(): Int {
         return columnNames.size
     }
 
-    @Throws(SQLException::class)
     override fun isAutoIncrement(i: Int): Boolean {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun isCaseSensitive(i: Int): Boolean {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun isSearchable(i: Int): Boolean {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun isCurrency(i: Int): Boolean {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun isNullable(i: Int): Int {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun isSigned(i: Int): Boolean {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun getColumnDisplaySize(i: Int): Int {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun getColumnLabel(i: Int): String {
         return columnNames[i - 1]
     }
 
-    @Throws(SQLException::class)
     override fun getColumnName(i: Int): String {
         return columnNames[i - 1]
     }
 
-    @Throws(SQLException::class)
     override fun getSchemaName(i: Int): String {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun getPrecision(i: Int): Int {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun getScale(i: Int): Int {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun getTableName(i: Int): String {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun getCatalogName(i: Int): String {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun getColumnType(i: Int): Int {
         return jdbcTypes[i - 1].TYPE_CODE
     }
 
-    @Throws(SQLException::class)
     override fun getColumnTypeName(i: Int): String {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun isReadOnly(i: Int): Boolean {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun isWritable(i: Int): Boolean {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun isDefinitelyWritable(i: Int): Boolean {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun getColumnClassName(i: Int): String {
         return classNames[i - 1]
     }
 
-    @Throws(SQLException::class)
     override fun <T> unwrap(aClass: Class<T>): T {
         throw SQLFeatureNotSupportedException()
     }
 
-    @Throws(SQLException::class)
     override fun isWrapperFor(aClass: Class<*>?): Boolean {
         throw SQLFeatureNotSupportedException()
     }

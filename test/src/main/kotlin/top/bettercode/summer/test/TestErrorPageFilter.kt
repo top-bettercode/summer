@@ -38,8 +38,7 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
     private val statuses: MutableMap<Int, String> = HashMap()
     private val exceptions: MutableMap<Class<*>, String> = HashMap()
     private val delegate: OncePerRequestFilter = object : OncePerRequestFilter() {
-        @Throws(IOException::class)
-        override fun doFilterInternal(
+            override fun doFilterInternal(
                 request: HttpServletRequest, response: HttpServletResponse,
                 chain: FilterChain) {
             this@TestErrorPageFilter.doFilter(request, response, chain)
@@ -50,17 +49,14 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
         }
     }
 
-    @Throws(ServletException::class)
     override fun init(filterConfig: FilterConfig) {
         delegate.init(filterConfig)
     }
 
-    @Throws(IOException::class, ServletException::class)
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         delegate.doFilter(request, response, chain)
     }
 
-    @Throws(IOException::class)
     private fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val wrapped = ErrorWrapperResponse(response)
         try {
@@ -84,7 +80,6 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
         }
     }
 
-    @Throws(IOException::class)
     private fun handleErrorStatus(request: HttpServletRequest, response: HttpServletResponse,
                                   status: Int, message: String?) {
         if (response.isCommitted) {
@@ -96,7 +91,6 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
         handleError(request, response)
     }
 
-    @Throws(IOException::class)
     private fun handleError(request: HttpServletRequest, response: HttpServletResponse) {
         val responseEntity = errorController!!.error(request)
         if (summerWebProperties!!.okEnable(request)) {
@@ -106,7 +100,6 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
         response.flushBuffer()
     }
 
-    @Throws(IOException::class)
     private fun handleException(request: HttpServletRequest, response: HttpServletResponse,
                                 wrapped: ErrorWrapperResponse,
                                 ex: Throwable) {
@@ -117,7 +110,6 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
         forwardToErrorPage(request, wrapped, ex)
     }
 
-    @Throws(IOException::class)
     private fun forwardToErrorPage(request: HttpServletRequest, response: HttpServletResponse,
                                    ex: Throwable) {
         setErrorAttributes(request, 500, ex.message)
@@ -198,7 +190,6 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
         request.setAttribute(ERROR_REQUEST_URI, request.requestURI)
     }
 
-    @Throws(IOException::class, ServletException::class)
     private fun rethrow(ex: Throwable) {
         if (ex is RuntimeException) {
             throw ex
@@ -256,8 +247,7 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
             // If there was no error we need to trust the wrapped response
         }
 
-        @Throws(IOException::class)
-        override fun flushBuffer() {
+            override fun flushBuffer() {
             sendErrorIfNecessary()
             super.flushBuffer()
         }
@@ -272,14 +262,12 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
             return hasErrorToSend
         }
 
-        @Throws(IOException::class)
-        override fun getWriter(): PrintWriter {
+            override fun getWriter(): PrintWriter {
             sendErrorIfNecessary()
             return super.getWriter()
         }
 
-        @Throws(IOException::class)
-        override fun getOutputStream(): ServletOutputStream {
+            override fun getOutputStream(): ServletOutputStream {
             sendErrorIfNecessary()
             return super.getOutputStream()
         }
