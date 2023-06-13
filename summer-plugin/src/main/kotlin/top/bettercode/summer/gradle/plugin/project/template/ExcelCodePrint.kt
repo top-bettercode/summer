@@ -47,7 +47,6 @@ open class ExcelCodePrint : ProjectGenerator() {
             }
             //export
             method("export", JavaType.void) {
-                this.exception(JavaType("java.io.IOException"))
                 annotation("@top.bettercode.summer.logging.annotation.RequestLogging(includeResponseBody = false, ignoredTimeout = true)")
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/export.xlsx\", name = \"导出\")")
                 parameter {
@@ -73,7 +72,6 @@ open class ExcelCodePrint : ProjectGenerator() {
 
             //template
             method("template", JavaType.void) {
-                this.exception(JavaType("java.io.IOException"))
                 annotation("@top.bettercode.summer.logging.annotation.RequestLogging(includeResponseBody = false, ignoredTimeout = true)")
                 annotation("@org.springframework.web.bind.annotation.GetMapping(value = \"/template.xlsx\", name = \"导入模板\")")
 
@@ -83,7 +81,6 @@ open class ExcelCodePrint : ProjectGenerator() {
 
             //import
             method("importTemplate", JavaType.objectInstance) {
-                this.exception(JavaType("java.lang.Exception"))
                 annotation("@top.bettercode.summer.logging.annotation.RequestLogging(includeRequestBody = false, ignoredTimeout = true)")
                 annotation("@org.springframework.web.bind.annotation.PostMapping(value = \"/import\", name = \"导入\")")
                 parameter {
@@ -105,7 +102,6 @@ open class ExcelCodePrint : ProjectGenerator() {
                 annotation("@org.junit.jupiter.api.DisplayName(\"导出\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(1)")
-                exception(JavaType("Exception"))
                 +"$testInsertName();"
                 +"download(get(\"/$pathName/export.xlsx\")"
                 2 + ".param(\"sort\", \"\")"
@@ -116,7 +112,6 @@ open class ExcelCodePrint : ProjectGenerator() {
                 annotation("@org.junit.jupiter.api.DisplayName(\"导入模板\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(1)")
-                exception(JavaType("Exception"))
                 +"download(get(\"/$pathName/template.xlsx\")"
                 +");"
             }
@@ -125,7 +120,6 @@ open class ExcelCodePrint : ProjectGenerator() {
                 annotation("@org.junit.jupiter.api.DisplayName(\"导入\")")
                 annotation("@org.junit.jupiter.api.Test")
                 annotation("@org.junit.jupiter.api.Order(1)")
-                exception(JavaType("Exception"))
                 +"perform(multipart(\"/$pathName/import\")."
                 2 + "file(file(\"file\", \"${remarks}导入数据.xlsx\"))"
                 +");"
