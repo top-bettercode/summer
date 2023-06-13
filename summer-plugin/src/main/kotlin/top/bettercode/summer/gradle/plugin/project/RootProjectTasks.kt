@@ -20,14 +20,14 @@ object RootProjectTasks {
     fun config(project: Project) {
         project.tasks.apply {
             val jenkinsJobs = project.findProperty("jenkins.jobs")?.toString()?.split(",")
-                ?.filter { it.isNotBlank() }
-            val jenkinsDevJobs = project.findProperty("jenkins.dev.jobs")?.toString()?.split(",")
-                ?.filter { it.isNotBlank() }
-            val jenkinsTestJobs = project.findProperty("jenkins.test.jobs")?.toString()?.split(",")
-                ?.filter { it.isNotBlank() }
-            val jenkinsOtherJobs =
-                project.findProperty("jenkins.other.jobs")?.toString()?.split(",")
                     ?.filter { it.isNotBlank() }
+            val jenkinsDevJobs = project.findProperty("jenkins.dev.jobs")?.toString()?.split(",")
+                    ?.filter { it.isNotBlank() }
+            val jenkinsTestJobs = project.findProperty("jenkins.test.jobs")?.toString()?.split(",")
+                    ?.filter { it.isNotBlank() }
+            val jenkinsOtherJobs =
+                    project.findProperty("jenkins.other.jobs")?.toString()?.split(",")
+                            ?.filter { it.isNotBlank() }
 
             val jobs = mutableMapOf<String, List<String>>()
             if (!jenkinsJobs.isNullOrEmpty()) {
@@ -74,8 +74,8 @@ object RootProjectTasks {
                     }
                     jobNames.forEach { jobName ->
                         val jobTaskName = jobName.replace(
-                            "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
-                            ""
+                                "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
+                                ""
                         ).capitalized()
                         val envName = if (env == "default") "" else env.capitalized()
                         create("build$envName$jobTaskName") {
@@ -111,8 +111,9 @@ object RootProjectTasks {
                 t.group = GeneratorPlugin.genGroup
                 t.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
+                        //init.sql
                         val destFile = FileUnit(
-                            "database/init.sql"
+                                "database/init.sql"
                         )
                         destFile.apply {
                             val gen = project.extensions.getByType(GeneratorExtension::class.java)
@@ -140,31 +141,62 @@ object RootProjectTasks {
                             }
 
                             val mysqlSecuritySchema =
-                                project.rootProject.file("database/security/security-mysql-schema.sql")
+                                    project.rootProject.file("database/security/security-mysql-schema.sql")
                             if (gen.defaultDatasource.databaseDriver == DatabaseDriver.MYSQL && mysqlSecuritySchema.exists()) {
                                 +mysqlSecuritySchema.readText()
                                 +""
                             }
 
                             val oracleSecuritySchema =
-                                project.rootProject.file("database/security/security-oracle-schema.sql")
+                                    project.rootProject.file("database/security/security-oracle-schema.sql")
                             if (gen.defaultDatasource.databaseDriver == DatabaseDriver.ORACLE && oracleSecuritySchema.exists()) {
                                 +oracleSecuritySchema.readText()
                                 +""
                             }
 
                             project.rootProject.file("database/ddl").listFiles()
-                                ?.filter { it.isFile }
-                                ?.forEach {
-                                    +it.readText()
-                                }
+                                    ?.filter { it.isFile }
+                                    ?.forEach {
+                                        +it.readText()
+                                    }
                             project.rootProject.file("database/init").listFiles()
-                                ?.filter { it.isFile }
-                                ?.forEach {
-                                    +it.readText()
-                                }
+                                    ?.filter { it.isFile }
+                                    ?.forEach {
+                                        +it.readText()
+                                    }
                         }
                         destFile.writeTo(project.rootDir)
+                        //update.sql
+                        val updateFile = FileUnit(
+                                "database/update.sql"
+                        )
+                        updateFile.apply {
+                            val gen = project.extensions.getByType(GeneratorExtension::class.java)
+                            val commentPrefix = when (gen.defaultDatasource.databaseDriver) {
+                                DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                    MysqlToDDL.commentPrefix
+                                }
+
+                                else -> {
+                                    "--"
+                                }
+                            }
+
+                            val updateDdl =
+                                    project.rootProject.file("database/update/v${project.version}.sql")
+                            if (updateDdl.exists()) {
+                                +updateDdl.readText()
+                                +""
+                            }
+
+                            project.rootProject.file("database/update-data").listFiles()
+                                    ?.filter { it.isFile }
+                                    ?.forEach {
+                                        +it.readText()
+                                    }
+                        }
+                        updateFile.writeTo(project.rootDir)
+
                     }
                 })
             }
