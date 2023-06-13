@@ -43,6 +43,8 @@ if "%DIRNAME%"=="" set DIRNAME=.\
 
 @rem Execute app
 %DIRNAME%bin\${project.name}.bat
+
+pause
             """, executable = true
             )
 
