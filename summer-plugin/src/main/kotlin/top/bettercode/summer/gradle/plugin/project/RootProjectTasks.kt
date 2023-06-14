@@ -129,6 +129,7 @@ object RootProjectTasks {
                             +"$commentPrefix ${
                                 project.rootProject.file("database/database.sql").readText()
                             }"
+                            +"$commentPrefix use ${gen.defaultDatasource.schema};"
 
                             when (gen.defaultDatasource.databaseDriver) {
                                 DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
@@ -182,6 +183,7 @@ object RootProjectTasks {
                                 }
                             }
                             +"$commentPrefix ${gen.defaultDatasource.url.substringBefore("?")}"
+                            +"$commentPrefix use ${gen.defaultDatasource.schema};"
 
                             val updateDdl =
                                     project.rootProject.file("database/update/v${project.version}.sql")

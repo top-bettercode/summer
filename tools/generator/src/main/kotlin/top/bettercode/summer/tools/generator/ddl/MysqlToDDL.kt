@@ -9,7 +9,8 @@ object MysqlToDDL : ToDDL() {
     override val commentPrefix: String = "#"
 
     override fun toDDLUpdate(module: String, oldTables: List<Table>, tables: List<Table>, out: Writer, extension: GeneratorExtension) {
-        out.appendLine("$commentPrefix ${extension.datasources[module]!!.url.substringBefore("?")}")
+        out.appendLine("$commentPrefix ${extension.datasource(module).url.substringBefore("?")}")
+        out.appendLine("$commentPrefix use ${extension.datasource(module).schema};")
         out.appendLine()
         if (tables != oldTables) {
             val schema = if (extension.enable("include-schema")) {
