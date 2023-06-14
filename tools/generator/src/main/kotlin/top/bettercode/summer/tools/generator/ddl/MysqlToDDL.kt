@@ -128,7 +128,7 @@ object MysqlToDDL : ToDDL() {
         }
 
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
-        pw.appendLine(") DEFAULT CHARSET = utf8mb4 ${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
+        pw.appendLine(") DEFAULT CHARSET = utf8mb4${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
             table.remarks.replace("\\", "\\\\")
         }'${if (table.engine.isNotBlank()) " ENGINE = ${table.engine};" else ""};")
 
