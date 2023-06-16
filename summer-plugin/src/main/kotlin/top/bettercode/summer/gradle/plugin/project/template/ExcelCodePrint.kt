@@ -60,7 +60,7 @@ open class ExcelCodePrint : ProjectGenerator() {
                 }
 
                 +"${matcherType.shortName} matcher = ${matcherType.shortName}.matching(${entityName});"
-                +"Iterable<$className> results = ${projectEntityName}Service.findAll(matcher, sort);"
+                +"List<$className> results = ${projectEntityName}Service.findAll(matcher, sort);"
                 import("top.bettercode.util.excel.ExcelExport")
                 +"ExcelExport.sheet(\"$remarks\", excelExport -> excelExport.setData(${
                     if (isFullComposite) {
