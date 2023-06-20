@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.generator.puml
 
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
+import top.bettercode.summer.tools.generator.PumlTableHolder
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Indexed
 import top.bettercode.summer.tools.generator.database.entity.Table
@@ -291,6 +292,18 @@ object PumlConverter {
                 }
             }
 
+        }
+    }
+
+    fun toDatabase(extension: GeneratorExtension) {
+        val remarksProperties = Properties()
+        val remarksFile = extension.file("puml/remarks.properties")
+        if (remarksFile.exists()) {
+            remarksProperties.load(remarksFile.inputStream())
+        }
+        (extension.pumlSources + extension.pumlDatabaseSources).forEach { (module, files) ->
+            val tables = PumlTableHolder(extension, module, files).tables(false)
+            compile(extension, tables, extension.file(extension.pumlSrc + "/database/$module.puml"), remarksProperties)
         }
     }
 

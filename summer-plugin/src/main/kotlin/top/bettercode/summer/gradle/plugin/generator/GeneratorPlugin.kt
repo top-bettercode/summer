@@ -98,7 +98,7 @@ class GeneratorPlugin : Plugin<Project> {
                                         .filter { it.isNotBlank() }.toTypedArray()
 
                         configuration
-                    }.toSortedMap(kotlin.Comparator { o1, o2 -> o1.compareTo(o2) })
+                    }.toSortedMap { o1, o2 -> o1.compareTo(o2) }
 
             extension.delete = (findGeneratorProperty(project, "delete"))?.toBoolean() ?: false
             extension.projectPackage =
@@ -245,6 +245,15 @@ class GeneratorPlugin : Plugin<Project> {
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     PumlConverter.reformat(extension)
+                }
+            })
+        }
+
+        project.tasks.create("pumlToDatabase") { task ->
+            task.group = pumlGroup
+            task.doLast(object : Action<Task> {
+                override fun execute(it: Task) {
+                    PumlConverter.toDatabase(extension)
                 }
             })
         }
