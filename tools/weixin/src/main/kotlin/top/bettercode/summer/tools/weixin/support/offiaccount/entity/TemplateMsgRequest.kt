@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.weixin.support.offiaccount.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class TemplateMsgRequest @JvmOverloads constructor(
+data class TemplateMsgRequest<T> @JvmOverloads constructor(
 
     @field:JsonProperty("touser")
     val touser: String,
@@ -11,7 +11,7 @@ data class TemplateMsgRequest @JvmOverloads constructor(
     val templateId: String,
 
     @field:JsonProperty("data")
-    val data: Map<String, Data>,
+    val data: T,
 
     @field:JsonProperty("url")
     val url: String? = null,

@@ -20,12 +20,12 @@ import java.util.*
  */
 @LogMarker(LOG_MARKER)
 class OffiaccountClient(properties: IOffiaccountProperties) :
-    WeixinClient<IOffiaccountProperties>(
-        properties,
-        "第三方平台",
-        "微信公众号",
-        LOG_MARKER
-    ), IOffiaccountClient {
+        WeixinClient<IOffiaccountProperties>(
+                properties,
+                "第三方平台",
+                "微信公众号",
+                LOG_MARKER
+        ), IOffiaccountClient {
 
     companion object {
         const val jsapiTicketKey: String = "jsapi_ticket"
@@ -34,12 +34,12 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
 
     init {
         val url =
-            "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s#wechat_redirect"
+                "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s#wechat_redirect"
         val authenticationUrl = String.format(
-            url,
-            getAppId(),
-            URLEncoder.encode(properties.oauthUrl, "UTF-8"),
-            "snsapi_userinfo"
+                url,
+                getAppId(),
+                URLEncoder.encode(properties.oauthUrl, "UTF-8"),
+                "snsapi_userinfo"
         )
         log.info(MarkerFactory.getMarker(logMarker), "authenticationUrl:{}", authenticationUrl)
     }
@@ -52,16 +52,16 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         val cachedValue = cache.getIfPresent(jsapiTicketKey)
         return if (cachedValue == null || cachedValue.expired) {
             val jsapiTicket = getForObject<JsapiTicket>(
-                "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
-                getBaseAccessToken()
+                    "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
+                    getBaseAccessToken()
             )
             if (jsapiTicket.isOk) {
                 cache.put(
-                    jsapiTicketKey,
-                    CachedValue(
-                        jsapiTicket.ticket!!,
-                        LocalDateTime.now().plusSeconds(jsapiTicket.expiresIn!!.toLong())
-                    )
+                        jsapiTicketKey,
+                        CachedValue(
+                                jsapiTicket.ticket!!,
+                                LocalDateTime.now().plusSeconds(jsapiTicket.expiresIn!!.toLong())
+                        )
                 )
                 jsapiTicket.ticket
             } else if (40001 == jsapiTicket.errcode) {
@@ -79,10 +79,10 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
 
     override fun getWebPageAccessToken(code: String): WebPageAccessToken {
         return getForObject(
-            "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code",
-            getAppId(),
-            getSecret(),
-            code
+                "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code",
+                getAppId(),
+                getSecret(),
+                code
         )
     }
 
@@ -91,27 +91,27 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
     }
 
     override fun getSnsapiUserinfo(
-        accessToken: String,
-        openid: String,
-        lang: String
+            accessToken: String,
+            openid: String,
+            lang: String
     ): SnsapiUserinfo {
         return getForObject(
-            "https://api.weixin.qq.com/sns/userinfo?access_token={0}&openid={1}&lang={2}",
-            accessToken,
-            openid,
-            lang
+                "https://api.weixin.qq.com/sns/userinfo?access_token={0}&openid={1}&lang={2}",
+                accessToken,
+                openid,
+                lang
         )
     }
 
-    override fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult {
+    override fun <T> sendTemplateMsg(request: TemplateMsgRequest<T>): MsgResult {
         return sendTemplateMsg(request, 1)
     }
 
-    override fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int): MsgResult {
+    override fun <T> sendTemplateMsg(request: TemplateMsgRequest<T>, retries: Int): MsgResult {
         val result = postForObject<MsgResult>(
-            "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
-            request,
-            getBaseAccessToken()
+                "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
+                request,
+                getBaseAccessToken()
         )
         return if (result.isOk) {
             result
@@ -136,10 +136,10 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         val jsapiTicket = getJsapiTicket()
         //注意这里参数名必须全部小写，且必须有序
         val signature = Sha1DigestUtil.shaHex(
-            "jsapi_ticket=" + jsapiTicket +
-                    "&noncestr=" + nonceStr +
-                    "&timestamp=" + timestamp +
-                    "&url=" + url
+                "jsapi_ticket=" + jsapiTicket +
+                        "&noncestr=" + nonceStr +
+                        "&timestamp=" + timestamp +
+                        "&url=" + url
         )
 
         return JsapiSignature(signature, getAppId(), nonceStr, timestamp)

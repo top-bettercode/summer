@@ -36,7 +36,7 @@ internal class OffiaccountClientTest : BaseTest() {
     @Test
     fun getWebPageAccessToken() {
         val result =
-            offiaccountClient.getWebPageAccessToken("001HKjFa19niJC0qn4Ga1dZNir0HKjFZ")
+                offiaccountClient.getWebPageAccessToken("001HKjFa19niJC0qn4Ga1dZNir0HKjFZ")
         System.err.println(StringUtil.valueOf(result, true))
     }
 
@@ -50,19 +50,19 @@ internal class OffiaccountClientTest : BaseTest() {
     @Test
     fun sendTemplateMsg() {
         val request = TemplateMsgRequest(
-            "",
-            "",
-            mapOf(
-                "first" to Data("抱歉，您参与的竞拍未中标！"),
-                "keyword1" to Data("xxxxx"),
-                "keyword2" to Data(
-                    TimeUtil.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                            + "至" + TimeUtil.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                ),
-                "keyword3" to Data("25.5")
-            )
+                "",
+                "",
+                mapOf(
+                        "first" to Data("抱歉，您参与的竞拍未中标！"),
+                        "keyword1" to Data("xxxxx"),
+                        "keyword2" to Data(
+                                TimeUtil.now()
+                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                                        + "至" + TimeUtil.now()
+                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                        ),
+                        "keyword3" to Data("25.5")
+                )
         )
         val result = offiaccountClient.sendTemplateMsg(request)
         System.err.println(StringUtil.valueOf(result, true))

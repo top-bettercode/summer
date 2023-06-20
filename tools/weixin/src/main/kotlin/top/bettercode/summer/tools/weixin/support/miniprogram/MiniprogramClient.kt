@@ -17,12 +17,12 @@ import top.bettercode.summer.tools.weixin.support.miniprogram.entity.SubscribeMs
  */
 @LogMarker(LOG_MARKER)
 class MiniprogramClient(properties: IMiniprogramProperties) :
-    WeixinClient<IMiniprogramProperties>(
-        properties,
-        "第三方平台",
-        "微信公众号",
-        LOG_MARKER
-    ), IMiniprogramClient {
+        WeixinClient<IMiniprogramProperties>(
+                properties,
+                "第三方平台",
+                "微信公众号",
+                LOG_MARKER
+        ), IMiniprogramClient {
 
     companion object {
         const val LOG_MARKER = "wxmini"
@@ -30,10 +30,10 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
 
     override fun jscode2session(code: String): JsSession {
         return getForObject(
-            "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
-            getAppId(),
-            getSecret(),
-            code
+                "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
+                getAppId(),
+                getSecret(),
+                code
         )
     }
 
@@ -43,9 +43,9 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
 
     override fun getuserphonenumber(code: String, retries: Int): PhoneInfoResp {
         val result = postForObject<PhoneInfoResp>(
-            "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}",
-            mapOf("code" to code),
-            getBaseAccessToken()
+                "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={0}",
+                mapOf("code" to code),
+                getBaseAccessToken()
         )
         return if (result.isOk) {
             result
@@ -59,15 +59,15 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         }
     }
 
-    override fun sendSubscribeMsg(request: SubscribeMsgRequest): WeixinResponse {
+    override fun <T> sendSubscribeMsg(request: SubscribeMsgRequest<T>): WeixinResponse {
         return sendSubscribeMsg(request, 1)
     }
 
-    override fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int): WeixinResponse {
+    override fun <T> sendSubscribeMsg(request: SubscribeMsgRequest<T>, retries: Int): WeixinResponse {
         val result = postForObject<WeixinResponse>(
-            "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={0}",
-            request,
-            getBaseAccessToken()
+                "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={0}",
+                request,
+                getBaseAccessToken()
         )
         return if (result.isOk) {
             result
