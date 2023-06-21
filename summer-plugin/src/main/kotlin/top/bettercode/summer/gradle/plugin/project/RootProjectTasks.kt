@@ -192,7 +192,7 @@ object RootProjectTasks {
                                 +"$commentPrefix use ${gen.defaultDatasource.schema};"
                             }
                             +""
-                            project.rootProject.file("database/update-data").listFiles()
+                            project.rootProject.file("database/update-data/v${project.version}").listFiles()
                                     ?.filter { it.isFile }
                                     ?.forEach {
                                         +it.readText()
