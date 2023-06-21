@@ -182,19 +182,16 @@ object RootProjectTasks {
                                     "--"
                                 }
                             }
-                            +"$commentPrefix ${gen.defaultDatasource.url.substringBefore("?")}"
-                            +"$commentPrefix use ${gen.defaultDatasource.schema};"
 
                             val updateDdl =
                                     project.rootProject.file("database/update/v${project.version}.sql")
                             if (updateDdl.exists()) {
-                                updateDdl.readLines().forEach {
-                                    if (!it.startsWith("$commentPrefix jdbc:mysql"))
-                                        +it
-                                }
-                                +""
+                                +updateDdl.readText()
+                            } else {
+                                +"$commentPrefix ${gen.defaultDatasource.url.substringBefore("?")}"
+                                +"$commentPrefix use ${gen.defaultDatasource.schema};"
                             }
-
+                            +""
                             project.rootProject.file("database/update-data").listFiles()
                                     ?.filter { it.isFile }
                                     ?.forEach {
