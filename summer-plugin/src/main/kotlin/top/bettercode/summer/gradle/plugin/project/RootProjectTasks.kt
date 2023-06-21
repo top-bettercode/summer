@@ -111,95 +111,115 @@ object RootProjectTasks {
                 t.group = GeneratorPlugin.genGroup
                 t.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
-                        //init.sql
-                        val destFile = FileUnit(
-                                "database/init.sql"
-                        )
-                        destFile.apply {
-                            val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                            val commentPrefix = when (gen.defaultDatasource.databaseDriver) {
-                                DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
-                                    MysqlToDDL.commentPrefix
-                                }
+                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
+                        gen.run { module, _ ->
+                            val datasource = gen.datasource(module)
 
-                                else -> {
-                                    "--"
-                                }
-                            }
-                            +"$commentPrefix ${
-                                project.rootProject.file("database/database.sql").readText()
-                            }"
-                            +"$commentPrefix use ${gen.defaultDatasource.schema};"
-
-                            when (gen.defaultDatasource.databaseDriver) {
-                                DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
-                                    +""
-                                    +"SET NAMES 'utf8';"
-                                    +""
-                                }
-
-                                else -> {}
-                            }
-
-                            val mysqlSecuritySchema =
-                                    project.rootProject.file("database/security/security-mysql-schema.sql")
-                            if (gen.defaultDatasource.databaseDriver == DatabaseDriver.MYSQL && mysqlSecuritySchema.exists()) {
-                                +mysqlSecuritySchema.readText()
-                                +""
-                            }
-
-                            val oracleSecuritySchema =
-                                    project.rootProject.file("database/security/security-oracle-schema.sql")
-                            if (gen.defaultDatasource.databaseDriver == DatabaseDriver.ORACLE && oracleSecuritySchema.exists()) {
-                                +oracleSecuritySchema.readText()
-                                +""
-                            }
-
-                            val schema = project.rootProject.file("database/ddl/schema.sql")
-                            if (schema.exists()) {
-                                +schema.readText()
-                                +""
-                            }
-                            project.rootProject.file("database/init").listFiles()
-                                    ?.filter { it.isFile }
-                                    ?.forEach {
-                                        +it.readText()
+                            val isDefault = gen.isDefaultModule(module)
+                            val suffix = if (isDefault) "" else "-$module"
+                            //init.sql
+                            val destFile = FileUnit(
+                                    "database/init$suffix.sql"
+                            )
+                            destFile.apply {
+                                val commentPrefix = when (datasource.databaseDriver) {
+                                    DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                        MysqlToDDL.commentPrefix
                                     }
-                        }
-                        destFile.writeTo(project.rootDir)
-                        //update.sql
-                        val updateFile = FileUnit(
-                                "database/update.sql"
-                        )
-                        updateFile.apply {
-                            val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                            val commentPrefix = when (gen.defaultDatasource.databaseDriver) {
-                                DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
-                                    MysqlToDDL.commentPrefix
-                                }
 
-                                else -> {
-                                    "--"
-                                }
-                            }
-
-                            val updateDdl =
-                                    project.rootProject.file("database/update/v${project.version}.sql")
-                            if (updateDdl.exists()) {
-                                +updateDdl.readText()
-                            } else {
-                                +"$commentPrefix ${gen.defaultDatasource.url.substringBefore("?")}"
-                                +"$commentPrefix use ${gen.defaultDatasource.schema};"
-                            }
-                            +""
-                            project.rootProject.file("database/update-data/v${project.version}").listFiles()
-                                    ?.filter { it.isFile }
-                                    ?.forEach {
-                                        +it.readText()
+                                    else -> {
+                                        "--"
                                     }
-                        }
-                        updateFile.writeTo(project.rootDir)
+                                }
+                                val databaseFile = project.rootProject.file("database/database$suffix.sql")
+                                if (databaseFile.exists()) {
+                                    +"$commentPrefix ${
+                                        databaseFile.readText()
+                                    }"
+                                }
 
+                                when (datasource.databaseDriver) {
+                                    DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                        +"$commentPrefix use ${datasource.schema};"
+                                        +""
+                                        +"SET NAMES 'utf8';"
+                                        +""
+                                    }
+
+                                    else -> {}
+                                }
+
+                                if (isDefault) {
+                                    val mysqlSecuritySchema =
+                                            project.rootProject.file("database/security/security-mysql-schema.sql")
+                                    if (datasource.databaseDriver == DatabaseDriver.MYSQL && mysqlSecuritySchema.exists()) {
+                                        +mysqlSecuritySchema.readText()
+                                        +""
+                                    }
+
+                                    val oracleSecuritySchema =
+                                            project.rootProject.file("database/security/security-oracle-schema.sql")
+                                    if (datasource.databaseDriver == DatabaseDriver.ORACLE && oracleSecuritySchema.exists()) {
+                                        +oracleSecuritySchema.readText()
+                                        +""
+                                    }
+                                }
+
+                                val schema = project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}.sql")
+                                if (schema.exists()) {
+                                    +schema.readText()
+                                    +""
+                                }
+                                project.rootProject.file("database/init/$module").listFiles()
+                                        ?.filter { it.isFile }
+                                        ?.forEach {
+                                            +it.readText()
+                                        }
+                            }
+                            destFile.writeTo(project.rootDir)
+                            //update.sql
+                            val updateFile = FileUnit(
+                                    "database/update$suffix.sql"
+                            )
+                            updateFile.apply {
+                                val commentPrefix = when (datasource.databaseDriver) {
+                                    DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                        MysqlToDDL.commentPrefix
+                                    }
+
+                                    else -> {
+                                        "--"
+                                    }
+                                }
+
+                                val updateDdl =
+                                        project.rootProject.file("database/update/v${project.version}${
+                                            if (isDefault) "" else "-${module}"
+                                        }")
+                                if (updateDdl.exists()) {
+                                    +updateDdl.readText()
+                                } else {
+                                    +"$commentPrefix ${datasource.url.substringBefore("?")}"
+                                    when (datasource.databaseDriver) {
+                                        DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                            +"$commentPrefix use ${datasource.schema};"
+                                        }
+
+                                        else -> {
+                                        }
+                                    }
+                                }
+                                +""
+                                project.rootProject.file("database/update-data/v${project.version}${
+                                    if (isDefault) "" else "-${module}"
+                                }").listFiles()
+                                        ?.filter { it.isFile }
+                                        ?.forEach {
+                                            +it.readText()
+                                        }
+                            }
+                            updateFile.writeTo(project.rootDir)
+                        }
                     }
                 })
             }

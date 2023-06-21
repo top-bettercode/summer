@@ -20,7 +20,6 @@ import top.bettercode.summer.tools.generator.ddl.OracleToDDL
 import top.bettercode.summer.tools.generator.ddl.SqlLiteToDDL
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.Generator
-import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
 import top.bettercode.summer.tools.generator.puml.PumlConverter
 import top.bettercode.summer.tools.lang.capitalized
@@ -200,9 +199,8 @@ class GeneratorPlugin : Plugin<Project> {
     }
 
     private fun configPuml(project: Project, extension: GeneratorExtension) {
-
         extension.run { module, tableHolder ->
-            val prefix = if (defaultModuleName == module) "" else "[${
+            val prefix = if (extension.isDefaultModule(module)) "" else "[${
                 module.capitalized()
             }]"
             project.tasks.create("printTableNames${prefix}") { task ->
@@ -216,7 +214,7 @@ class GeneratorPlugin : Plugin<Project> {
             }
         }
         extension.run(if (extension.pdmSources.isNotEmpty()) top.bettercode.summer.tools.generator.DataType.PDM else top.bettercode.summer.tools.generator.DataType.DATABASE) { module, tableHolder ->
-            val prefix = if (defaultModuleName == module) "" else "[${
+            val prefix = if (extension.isDefaultModule(module)) "" else "[${
                 module.capitalized()
             }]"
             project.tasks.create("toPuml${prefix}") { task ->
@@ -303,10 +301,11 @@ class GeneratorPlugin : Plugin<Project> {
             val datasourceModules = extension.datasources.keys
             extension.run { module, tableHolder ->
                 if (datasourceModules.contains(module)) {
-                    val prefix = if (defaultModuleName == module) "" else "[${
+                    val defaultModule = extension.isDefaultModule(module)
+                    val suffix = if (defaultModule) "" else "[${
                         module.capitalized()
                     }]"
-                    project.tasks.create("toDDL${prefix}") { task ->
+                    project.tasks.create("toDDL${suffix}") { task ->
                         task.group = pumlGroup
                         task.inputs.files(
                                 File(project.gradle.gradleUserHomeDir, "gradle.properties"),
@@ -324,7 +323,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 OracleToDDL.useQuote = extension.sqlQuote
                                 MysqlToDDL.useForeignKey = extension.useForeignKey
                                 OracleToDDL.useForeignKey = extension.useForeignKey
-                                val sqlName = if (defaultModuleName == module) "schema" else module
+                                val sqlName = if (defaultModule) "schema" else module
                                 val output = FileUnit("${extension.sqlOutput}/ddl/$sqlName.sql")
                                 val jdbc = extension.datasources[module]
                                         ?: throw IllegalStateException("未配置${module}模块数据库信息")
@@ -357,7 +356,7 @@ class GeneratorPlugin : Plugin<Project> {
                             }
                         })
                     }
-                    project.tasks.create("toDDLUpdate${prefix}") { task ->
+                    project.tasks.create("toDDLUpdate${suffix}") { task ->
                         task.group = pumlGroup
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
@@ -378,7 +377,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 val unit =
                                         FileUnit(
                                                 "${extension.sqlOutput}/update/v${project.version}${
-                                                    if (extension.isDefaultModule(module)) "" else "-${module}"
+                                                    if (defaultModule) "" else "-${module}"
                                                 }.sql"
                                         )
                                 val allTables = mutableListOf<Table>()
@@ -427,9 +426,9 @@ class GeneratorPlugin : Plugin<Project> {
                             }
                         })
                     }
-                    project.tasks.create("pumlBuild${prefix}") {
+                    project.tasks.create("pumlBuild${suffix}") {
                         it.group = pumlGroup
-                        it.dependsOn("toDDLUpdate${prefix}", "toDDL${prefix}")
+                        it.dependsOn("toDDLUpdate${suffix}", "toDDL${suffix}")
                     }
                 }
             }
