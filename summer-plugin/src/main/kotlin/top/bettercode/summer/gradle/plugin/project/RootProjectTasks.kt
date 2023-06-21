@@ -155,11 +155,11 @@ object RootProjectTasks {
                                 +""
                             }
 
-                            project.rootProject.file("database/ddl").listFiles()
-                                    ?.filter { it.isFile }
-                                    ?.forEach {
-                                        +it.readText()
-                                    }
+                            val schema = project.rootProject.file("database/ddl/schema.sql")
+                            if (schema.exists()) {
+                                +schema.readText()
+                                +""
+                            }
                             project.rootProject.file("database/init").listFiles()
                                     ?.filter { it.isFile }
                                     ?.forEach {
