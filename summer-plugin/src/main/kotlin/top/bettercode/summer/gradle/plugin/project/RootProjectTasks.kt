@@ -193,9 +193,7 @@ object RootProjectTasks {
                                 }
 
                                 val updateDdl =
-                                        project.rootProject.file("database/update/v${project.version}${
-                                            if (isDefault) "" else "-${module}"
-                                        }")
+                                        project.rootProject.file("database/update/v${project.version}$suffix.sql")
                                 if (updateDdl.exists()) {
                                     +updateDdl.readText()
                                 } else {
@@ -210,9 +208,7 @@ object RootProjectTasks {
                                     }
                                 }
                                 +""
-                                project.rootProject.file("database/update-data/v${project.version}${
-                                    if (isDefault) "" else "-${module}"
-                                }").listFiles()
+                                project.rootProject.file("database/update-data/v${project.version}$suffix").listFiles()
                                         ?.filter { it.isFile }
                                         ?.forEach {
                                             +it.readText()
