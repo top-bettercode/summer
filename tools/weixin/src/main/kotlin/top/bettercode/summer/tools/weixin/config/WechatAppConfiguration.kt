@@ -19,6 +19,7 @@ class WechatAppConfiguration(private val miniprogramProperties: IMiniprogramProp
         return MiniprogramClient(miniprogramProperties)
     }
 
+    @ConditionalOnBean(IWechatService::class)
     @ConditionalOnWebApplication
     @Bean
     fun miniprogramCallbackController(

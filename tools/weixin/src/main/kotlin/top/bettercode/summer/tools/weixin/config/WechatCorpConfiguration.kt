@@ -18,6 +18,7 @@ class WechatCorpConfiguration(private val corpProperties: ICorpProperties) {
         return CorpClient(corpProperties)
     }
 
+    @ConditionalOnBean(IWechatService::class)
     @ConditionalOnWebApplication
     @Bean
     fun corpCallbackController(

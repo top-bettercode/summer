@@ -19,6 +19,7 @@ class WechatConfiguration(private val offiaccountProperties: IOffiaccountPropert
         return OffiaccountClient(offiaccountProperties)
     }
 
+    @ConditionalOnBean(IWechatService::class)
     @ConditionalOnWebApplication
     @Bean
     fun offiaccountCallbackController(
