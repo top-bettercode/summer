@@ -61,7 +61,7 @@ class OffiaccountCallbackController(
     /*
    * js签名
    */
-    @ClientAuthorize
+//    @ClientAuthorize
     @ResponseBody
     @GetMapping(value = ["/jsSign"], name = "公众号js签名")
     fun jsSignUrl(@NotBlank url: String): Any {
