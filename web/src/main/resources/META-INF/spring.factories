@@ -3,6 +3,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 top.bettercode.summer.web.config.summer.WebMvcConfiguration,\
 top.bettercode.summer.web.config.summer.SummerWebMvcConfigurer,\
 top.bettercode.summer.web.config.summer.ErrorHandlerConfiguration,\
+top.bettercode.summer.web.config.summer.DataErrorHandlerConfiguration,\
 top.bettercode.summer.web.config.summer.ObjectMapperBuilderCustomizer,\
 top.bettercode.summer.web.config.SerializerConfiguration,\
 top.bettercode.summer.web.config.KaptchaConfiguration,\
