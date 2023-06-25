@@ -5,7 +5,7 @@ import top.bettercode.summer.web.properties.SummerWebProperties
 /**
  * @author Peter Wu
  */
-class DefaultApiVersionService(private val summerWebProperties: SummerWebProperties) : IApiVersionService {
+open class DefaultApiVersionService(private val summerWebProperties: SummerWebProperties) : IApiVersionService {
     override val versionName: String
         get() = summerWebProperties.versionName
     override val version: String

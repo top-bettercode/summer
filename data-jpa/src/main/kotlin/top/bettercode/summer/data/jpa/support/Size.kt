@@ -9,10 +9,12 @@ import org.springframework.data.domain.Sort
 class Size private constructor(val size: Int, val sort: Sort) {
 
     companion object {
+        @JvmStatic
         fun of(pageable: Pageable): Size {
             return of(pageable.pageSize, pageable.sort)
         }
 
+        @JvmStatic
         @JvmOverloads
         fun of(size: Int, sort: Sort = Sort.unsorted()): Size {
             return Size(size, sort)
