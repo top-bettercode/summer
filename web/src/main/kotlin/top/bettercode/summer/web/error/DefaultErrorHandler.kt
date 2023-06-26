@@ -41,9 +41,11 @@ class DefaultErrorHandler(messageSource: MessageSource,
             val fieldErrors = error.fieldErrors
             message = handleFieldError(errors, fieldErrors, separator)
         } else if (error is ConversionFailedException) {
-            message = getText("typeMismatch",
-                    error.value,
-                    error.targetType)
+            val targetType = error.targetType.type.name
+            val code = "typeMismatch.$targetType"
+            message = getText(code, error.value)
+            if (message == code)
+                message = getText("typeMismatch.type", error.value, targetType)
         } else if (error is ConstraintViolationException) { //数据验证
             constraintViolationException(error, respEntity, errors,
                     separator)
@@ -99,6 +101,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 defaultMessage = getText(defaultMessage)
             }
             val field = fieldError.field
+            val rejectedValue = "(${fieldError.rejectedValue})"
             var msg: String? = null
             if (fieldError.contains(ConstraintViolation::class.java)) {
                 val violation = fieldError.unwrap(ConstraintViolation::class.java)
@@ -108,13 +111,13 @@ class DefaultErrorHandler(messageSource: MessageSource,
             }
             if (msg == null) {
                 msg = if (field.contains(".")) {
-                    (getText(field.substring(field.lastIndexOf('.') + 1)) + separator
+                    (getText(field.substring(field.lastIndexOf('.') + 1)) + rejectedValue + separator
                             + defaultMessage)
                 } else {
-                    getText(field) + separator + defaultMessage
+                    getText(field) + rejectedValue + separator + defaultMessage
                 }
             }
-            errors[field] = msg
+            errors[field] = rejectedValue + msg
         }
         message = errors.values.iterator().next()
         if (!StringUtils.hasText(message)) {

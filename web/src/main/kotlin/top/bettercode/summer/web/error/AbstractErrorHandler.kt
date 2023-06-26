@@ -19,7 +19,7 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
     override fun getText(code: Any, vararg args: Any?): String {
         val codeString = code.toString()
         return messageSource.getMessage(codeString, args, codeString,
-                if (request == null) Locale.CHINA else request.locale)?:""
+                if (request == null) Locale.CHINA else request.locale) ?: ""
     }
 
     fun getProperty(constraintViolation: ConstraintViolation<*>): String {
@@ -42,11 +42,12 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
         val constraintViolations = error.constraintViolations
         for (constraintViolation in constraintViolations) {
             val property = getProperty(constraintViolation)
+            val invalidValue = "(${constraintViolation.invalidValue})"
             val msg: String? = if (constraintViolation.constraintDescriptor.payload
                             .contains(NoPropertyPath::class.java)) {
                 constraintViolation.message
             } else {
-                getText(property) + separator + constraintViolation.message
+                getText(property) + invalidValue + separator + constraintViolation.message
             }
             errors[property] = msg
         }
