@@ -2,6 +2,9 @@ package top.bettercode.summer.tools.weixin.support.miniprogram.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
+/**
+ * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/subscribe-message/sendMessage.html
+ */
 data class SubscribeMsgRequest<T> @JvmOverloads constructor(
 
     @field:JsonProperty("touser")

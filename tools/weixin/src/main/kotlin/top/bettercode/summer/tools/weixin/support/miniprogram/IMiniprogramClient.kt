@@ -17,7 +17,13 @@ interface IMiniprogramClient {
 
     fun getuserphonenumber(code: String, retries: Int): PhoneInfoResp
 
+    /**
+     * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/subscribe-message/sendMessage.html
+     */
     fun <T> sendSubscribeMsg(request: SubscribeMsgRequest<T>): WeixinResponse
 
+    /**
+     * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/subscribe-message/sendMessage.html
+     */
     fun <T> sendSubscribeMsg(request: SubscribeMsgRequest<T>, retries: Int): WeixinResponse
 }
