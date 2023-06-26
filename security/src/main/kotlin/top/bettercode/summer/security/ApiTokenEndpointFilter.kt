@@ -222,7 +222,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                 }
             }
         }
-        throw BadCredentialsException("basic authentication 认证失败")
+        throw BadCredentialsException("Unauthorized")
     }
 
     private fun decode(base64Token: ByteArray): ByteArray {
