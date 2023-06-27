@@ -27,11 +27,11 @@ class ExcelErrorHandler(messageSource: MessageSource?,
                         cellError.columnName)
                 val title = cellError.title
                 val exception = cellError.exception
-                val value = cellError.value
+                val value = if (cellError.value == null) "" else "[${cellError.value}]"
                 if (exception is ConstraintViolationException) {
                     for (constraintViolation in exception
                             .constraintViolations) {
-                        errors[key] = title + ": [" + value + "]" + constraintViolation.message
+                        errors[key] = title + ": " + value + constraintViolation.message
                     }
                 } else {
                     var msg = exception.message
@@ -41,7 +41,7 @@ class ExcelErrorHandler(messageSource: MessageSource?,
                             msg = msg.replace(msgRegex.toRegex(), "$1") + "不是有效的日期格式"
                         }
                     }
-                    errors[key] = title + ": [" + value + "]" + getText(msg!!)
+                    errors[key] = title + ": " + value + getText(msg!!)
                 }
             }
             val (key, value) = errors.entries.iterator().next()
