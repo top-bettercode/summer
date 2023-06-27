@@ -14,7 +14,6 @@ import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.exception.BusinessException
 import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.validator.NoPropertyPath
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.validation.ConstraintViolation
 import javax.validation.ConstraintViolationException
@@ -101,7 +100,8 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 defaultMessage = getText(defaultMessage)
             }
             val field = fieldError.field
-            val rejectedValue = if (fieldError.rejectedValue == null) "" else "[${fieldError.rejectedValue}]"
+            val rejectedValue = fieldError.rejectedValue
+            val rejectedValuedesc = if (rejectedValue == null || (rejectedValue is String && rejectedValue.isBlank())) "" else "[$rejectedValue]"
             var msg: String? = null
             if (fieldError.contains(ConstraintViolation::class.java)) {
                 val violation = fieldError.unwrap(ConstraintViolation::class.java)
@@ -111,9 +111,9 @@ class DefaultErrorHandler(messageSource: MessageSource,
             }
             if (msg == null) {
                 msg = if (field.contains(".")) {
-                    (getText(field.substring(field.lastIndexOf('.') + 1)) + separator + rejectedValue + defaultMessage)
+                    (getText(field.substring(field.lastIndexOf('.') + 1)) + separator + rejectedValuedesc + defaultMessage)
                 } else {
-                    getText(field) + separator + rejectedValue + defaultMessage
+                    getText(field) + separator + rejectedValuedesc + defaultMessage
                 }
             }
             errors[field] = msg
