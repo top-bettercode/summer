@@ -26,21 +26,22 @@ class ExcelErrorHandler(messageSource: MessageSource?,
                 val key = getText(cellError.message, cellError.row,
                         cellError.columnName)
                 val title = cellError.title
-                val value = cellError.exception
-                if (value is ConstraintViolationException) {
-                    for (constraintViolation in value
+                val exception = cellError.exception
+                val value = cellError.value
+                if (exception is ConstraintViolationException) {
+                    for (constraintViolation in exception
                             .constraintViolations) {
-                        errors[key] = title + ": " + constraintViolation.message
+                        errors[key] = title + ": [" + value + "]" + constraintViolation.message
                     }
                 } else {
-                    var msg = value.message
-                    if (value is DateTimeParseException) {
+                    var msg = exception.message
+                    if (exception is DateTimeParseException) {
                         val msgRegex = "Text '(.*?)' could not be parsed at index (\\d+)"
                         if (msg!!.matches(msgRegex.toRegex())) {
                             msg = msg.replace(msgRegex.toRegex(), "$1") + "不是有效的日期格式"
                         }
                     }
-                    errors[key] = title + ": " + getText(msg!!)
+                    errors[key] = title + ": [" + value + "]" + getText(msg!!)
                 }
             }
             val (key, value) = errors.entries.iterator().next()
