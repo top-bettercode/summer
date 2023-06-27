@@ -42,12 +42,12 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
         val constraintViolations = error.constraintViolations
         for (constraintViolation in constraintViolations) {
             val property = getProperty(constraintViolation)
-            val invalidValue = "(${constraintViolation.invalidValue})"
-            val msg: String? = if (constraintViolation.constraintDescriptor.payload
+            val invalidValue = "[${constraintViolation.invalidValue}]"
+            val msg: String = if (constraintViolation.constraintDescriptor.payload
                             .contains(NoPropertyPath::class.java)) {
-                constraintViolation.message
+                invalidValue + getText((constraintViolation.message ?: "data.valid.failed"))
             } else {
-                getText(property) + invalidValue + separator + constraintViolation.message
+                getText(property) + separator + invalidValue + getText(constraintViolation.message)
             }
             errors[property] = msg
         }

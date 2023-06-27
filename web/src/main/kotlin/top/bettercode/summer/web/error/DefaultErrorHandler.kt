@@ -42,7 +42,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
             message = handleFieldError(errors, fieldErrors, separator)
         } else if (error is ConversionFailedException) {
             val targetType = error.targetType.type.name
-            val code = "typeMismatch.$targetType"
+            val code = "typeMismatch.type.$targetType"
             message = getText(code, error.value)
             if (message == code)
                 message = getText("typeMismatch.type", error.value, targetType)
@@ -101,7 +101,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 defaultMessage = getText(defaultMessage)
             }
             val field = fieldError.field
-            val rejectedValue = "(${fieldError.rejectedValue})"
+            val rejectedValue = "[${fieldError.rejectedValue}]"
             var msg: String? = null
             if (fieldError.contains(ConstraintViolation::class.java)) {
                 val violation = fieldError.unwrap(ConstraintViolation::class.java)
@@ -111,13 +111,12 @@ class DefaultErrorHandler(messageSource: MessageSource,
             }
             if (msg == null) {
                 msg = if (field.contains(".")) {
-                    (getText(field.substring(field.lastIndexOf('.') + 1)) + rejectedValue + separator
-                            + defaultMessage)
+                    (getText(field.substring(field.lastIndexOf('.') + 1)) + separator + rejectedValue + defaultMessage)
                 } else {
-                    getText(field) + rejectedValue + separator + defaultMessage
+                    getText(field) + separator + rejectedValue + defaultMessage
                 }
             }
-            errors[field] = rejectedValue + msg
+            errors[field] = msg
         }
         message = errors.values.iterator().next()
         if (!StringUtils.hasText(message)) {
