@@ -30,12 +30,17 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
     }
 
     override fun jscode2session(code: String): JsSession {
-        return getForObject(
+        val session = getForObject<JsSession>(
                 "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
                 getAppId(),
                 getSecret(),
                 code
         )
+        return if (session.isOk) {
+            session
+        } else {
+            throw WeixinException("获取session失败：errcode:${session.errcode},errmsg:${session.errmsg}", session)
+        }
     }
 
     override fun getuserphonenumber(code: String): PhoneInfoResp {
