@@ -5,6 +5,7 @@ import org.springframework.web.client.postForObject
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.weixin.properties.IMiniprogramProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient
+import top.bettercode.summer.tools.weixin.support.WeixinException
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
 import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.JsSession
@@ -55,7 +56,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         } else if (retries < properties.maxRetries) {
             getuserphonenumber(code, retries + 1)
         } else {
-            throw RuntimeException("手机授权失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+            throw WeixinException("手机授权失败：errcode:${result.errcode},errmsg:${result.errmsg}", result)
         }
     }
 
@@ -80,7 +81,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
             log.warn("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {
-            throw RuntimeException("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+            throw WeixinException("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}", result)
         }
     }
 

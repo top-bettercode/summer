@@ -7,6 +7,7 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.Sha1DigestUtil
 import top.bettercode.summer.tools.weixin.properties.IOffiaccountProperties
 import top.bettercode.summer.tools.weixin.support.WeixinClient
+import top.bettercode.summer.tools.weixin.support.WeixinException
 import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.*
 import java.net.URLEncoder
@@ -70,7 +71,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
             } else if (retries < properties.maxRetries) {
                 getJsapiTicket(retries + 1)
             } else {
-                throw RuntimeException("获取jsapiTicket失败：errcode:${jsapiTicket.errcode},errmsg:${jsapiTicket.errmsg}")
+                throw WeixinException("获取jsapiTicket失败：errcode:${jsapiTicket.errcode},errmsg:${jsapiTicket.errmsg}", jsapiTicket)
             }
         } else {
             cachedValue.value
@@ -124,7 +125,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
             log.warn("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {
-            throw RuntimeException("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+            throw WeixinException("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}", result)
         }
     }
 

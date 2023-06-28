@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
-import top.bettercode.summer.tools.weixin.support.IWechatService
-import top.bettercode.summer.tools.weixin.support.WechatToken
+import top.bettercode.summer.tools.weixin.support.IWeixinService
+import top.bettercode.summer.tools.weixin.support.WeixinToken
 import top.bettercode.summer.tools.weixin.support.corp.ICorpClient
 import top.bettercode.summer.web.BaseController
 
@@ -16,7 +16,7 @@ import top.bettercode.summer.web.BaseController
 @Anonymous
 @RequestMapping(value = ["/wechat"], name = "微信")
 class CorpCallbackController(
-        private val wechatService: IWechatService,
+        private val wechatService: IWeixinService,
         private val corpClient: ICorpClient
 ) : BaseController() {
 
@@ -27,7 +27,7 @@ class CorpCallbackController(
     @GetMapping(value = ["/corpOauth"], name = "企业号OAuth回调接口")
     fun oauth(code: String?, state: String?): String {
         plainTextError()
-        val token: WechatToken =
+        val token: WeixinToken =
                 try {
                     val accessToken =
                             if (code.isNullOrBlank()) null else corpClient.getWebPageAccessToken(code)
@@ -35,13 +35,13 @@ class CorpCallbackController(
                         wechatService.corpOauth(accessToken)
                     } catch (e: Exception) {
                         log.warn(e.message, e)
-                        WechatToken(e.message)
-                    } else WechatToken(accessToken?.errmsg)
+                        WeixinToken(e.message)
+                    } else WeixinToken(accessToken?.errmsg)
                     token.openId = accessToken?.openid ?: ""
                     token
                 } catch (e: Exception) {
                     log.warn("token获取失败", e)
-                    WechatToken(e.message)
+                    WeixinToken(e.message)
                 }
         return corpClient.properties.redirectUrl(token, wechatService.forceLogin(), state)
     }

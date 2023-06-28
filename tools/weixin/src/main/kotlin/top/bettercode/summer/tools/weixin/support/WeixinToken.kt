@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.weixin.properties.IWexinProperties
  *
  * @author Peter Wu
  */
-class WechatToken() : HashMap<String, Any?>() {
+class WeixinToken() : HashMap<String, Any?>() {
 
     init {
         this["access_token"] = ""

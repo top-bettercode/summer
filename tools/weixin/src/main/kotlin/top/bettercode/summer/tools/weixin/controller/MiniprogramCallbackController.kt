@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
-import top.bettercode.summer.tools.weixin.support.IWechatService
-import top.bettercode.summer.tools.weixin.support.WechatToken
+import top.bettercode.summer.tools.weixin.support.IWeixinService
+import top.bettercode.summer.tools.weixin.support.WeixinToken
 import top.bettercode.summer.tools.weixin.support.miniprogram.IMiniprogramClient
 import top.bettercode.summer.web.BaseController
 import javax.validation.constraints.NotBlank
@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank
 @Validated
 @RequestMapping(value = ["/wechat"], name = "微信")
 class MiniprogramCallbackController(
-        private val wechatService: IWechatService,
+        private val wechatService: IWeixinService,
         private val miniprogramClient: IMiniprogramClient
 ) : BaseController() {
 
@@ -42,15 +42,15 @@ class MiniprogramCallbackController(
                     wechatService.miniOauth(jsSession)
                 } catch (e: Exception) {
                     log.warn(e.message, e)
-                    WechatToken(e.message)
-                } else WechatToken()
+                    WeixinToken(e.message)
+                } else WeixinToken()
             result.openId = jsSession.openid ?: ""
             result.unionId = jsSession.unionid ?: ""
             result.hasBound = result.accessToken.isBlank().not()
             ok(result)
         } catch (e: Exception) {
             log.error("授权失败", e)
-            val result = WechatToken(e.message)
+            val result = WeixinToken(e.message)
             result.accessToken = ""
             result.openId = ""
             result.hasBound = false

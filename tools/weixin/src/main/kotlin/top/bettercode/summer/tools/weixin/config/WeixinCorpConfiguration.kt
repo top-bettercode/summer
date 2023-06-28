@@ -5,25 +5,25 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import top.bettercode.summer.tools.weixin.properties.ICorpProperties
-import top.bettercode.summer.tools.weixin.support.IWechatService
+import top.bettercode.summer.tools.weixin.support.IWeixinService
 import top.bettercode.summer.tools.weixin.support.corp.CorpClient
 import top.bettercode.summer.tools.weixin.support.corp.ICorpClient
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnBean(ICorpProperties::class)
-class WechatCorpConfiguration(private val corpProperties: ICorpProperties) {
+class WeixinCorpConfiguration(private val corpProperties: ICorpProperties) {
 
     @Bean
     fun corpClient(): ICorpClient {
         return CorpClient(corpProperties)
     }
 
-    @ConditionalOnBean(IWechatService::class)
+    @ConditionalOnBean(IWeixinService::class)
     @ConditionalOnWebApplication
     @Bean
     fun corpCallbackController(
-        wechatService: IWechatService,
-        corpClient: ICorpClient
+            wechatService: IWeixinService,
+            corpClient: ICorpClient
     ): top.bettercode.summer.tools.weixin.controller.CorpCallbackController {
         return top.bettercode.summer.tools.weixin.controller.CorpCallbackController(
             wechatService,

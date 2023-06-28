@@ -11,7 +11,7 @@ import top.bettercode.summer.tools.weixin.support.offiaccount.entity.WebPageAcce
 /**
  * @author Peter Wu
  */
-interface IWechatService {
+interface IWeixinService {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
@@ -20,22 +20,22 @@ interface IWechatService {
         return false
     }
 
-    fun miniOauth(jsSession: JsSession): WechatToken {
+    fun miniOauth(jsSession: JsSession): WeixinToken {
         throw UnsupportedOperationException()
     }
 
     fun oauth(
             webPageAccessToken: WebPageAccessToken,
             snsapiUserinfo: SnsapiUserinfo?
-    ): WechatToken {
+    ): WeixinToken {
         throw UnsupportedOperationException()
     }
 
-    fun corpOauth(corpWebPageAccessToken: CorpWebPageAccessToken): WechatToken {
+    fun corpOauth(corpWebPageAccessToken: CorpWebPageAccessToken): WeixinToken {
         throw UnsupportedOperationException()
     }
 
-    fun phoneOauth(phoneInfo: PhoneInfo): WechatToken {
+    fun phoneOauth(phoneInfo: PhoneInfo): WeixinToken {
         throw UnsupportedOperationException()
     }
 

@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import top.bettercode.summer.logging.annotation.RequestLogging
 import top.bettercode.summer.security.authorize.Anonymous
-import top.bettercode.summer.security.authorize.ClientAuthorize
-import top.bettercode.summer.tools.weixin.support.IWechatService
-import top.bettercode.summer.tools.weixin.support.WechatToken
+import top.bettercode.summer.tools.weixin.support.IWeixinService
+import top.bettercode.summer.tools.weixin.support.WeixinToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.IOffiaccountClient
 import top.bettercode.summer.web.BaseController
 import javax.validation.constraints.NotBlank
@@ -20,7 +19,7 @@ import javax.validation.constraints.NotBlank
 @Anonymous
 @RequestMapping(value = ["/wechat"], name = "微信")
 class OffiaccountCallbackController(
-        private val wechatService: IWechatService,
+        private val wechatService: IWeixinService,
         private val offiaccountClient: IOffiaccountClient
 ) : BaseController() {
 
@@ -31,7 +30,7 @@ class OffiaccountCallbackController(
     @GetMapping(value = ["/oauth"], name = "公众号OAuth回调接口")
     fun oauth(code: String?, state: String?): String {
         plainTextError()
-        val token: WechatToken =
+        val token: WeixinToken =
                 try {
                     val accessToken =
                             if (code.isNullOrBlank()) null else offiaccountClient.getWebPageAccessToken(code)
@@ -46,14 +45,14 @@ class OffiaccountCallbackController(
                             )
                         } catch (e: Exception) {
                             log.warn(e.message, e)
-                            WechatToken(e.message)
+                            WeixinToken(e.message)
                         }
-                    else WechatToken(accessToken?.errmsg)
+                    else WeixinToken(accessToken?.errmsg)
                     token.openId = accessToken?.openid ?: ""
                     token
                 } catch (e: Exception) {
                     log.warn("token获取失败", e)
-                    WechatToken(e.message)
+                    WeixinToken(e.message)
                 }
         return offiaccountClient.properties.redirectUrl(token, wechatService.forceLogin(), state)
     }

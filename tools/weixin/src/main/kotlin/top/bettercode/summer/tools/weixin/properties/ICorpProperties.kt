@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.weixin.properties
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.StringUtils
-import top.bettercode.summer.tools.weixin.support.WechatToken
+import top.bettercode.summer.tools.weixin.support.WeixinToken
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 
@@ -17,14 +17,14 @@ interface ICorpProperties : IWexinProperties {
     val oauthUrl: String?
         get() = appBaseUrl + OAUTH_URL
 
-    fun redirectUrl(wechatToken: WechatToken?, forceLogin: Boolean, state: String?): String {
-        return "redirect:" + wechatUrl(wechatToken, forceLogin, state)
+    fun redirectUrl(weixinToken: WeixinToken?, forceLogin: Boolean, state: String?): String {
+        return "redirect:" + wechatUrl(weixinToken, forceLogin, state)
     }
 
-    fun wechatUrl(wechatToken: WechatToken?, forceLogin: Boolean, state: String?): String {
-        val token = wechatToken?.accessToken ?: ""
-        val openId = wechatToken?.openId ?: ""
-        val msg = wechatToken?.message ?: ""
+    fun wechatUrl(weixinToken: WeixinToken?, forceLogin: Boolean, state: String?): String {
+        val token = weixinToken?.accessToken ?: ""
+        val openId = weixinToken?.openId ?: ""
+        val msg = weixinToken?.message ?: ""
         val encodeMsg: String = try {
             URLEncoder.encode(msg, "UTF-8")
         } catch (e: UnsupportedEncodingException) {

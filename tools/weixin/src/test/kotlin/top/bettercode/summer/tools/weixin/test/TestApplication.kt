@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.weixin.test
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
-import top.bettercode.summer.tools.weixin.support.IWechatService
+import top.bettercode.summer.tools.weixin.support.IWeixinService
 
 /**
  * @author Peter Wu
@@ -12,8 +12,8 @@ import top.bettercode.summer.tools.weixin.support.IWechatService
 class TestApplication {
 
     @Bean
-    fun wechatService(): IWechatService {
-        return object : IWechatService {
+    fun wechatService(): IWeixinService {
+        return object : IWeixinService {
         }
     }
 

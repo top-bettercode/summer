@@ -1,5 +1,5 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 top.bettercode.summer.tools.weixin.config.PropertiesConfiguration,\
-top.bettercode.summer.tools.weixin.config.WechatConfiguration,\
-top.bettercode.summer.tools.weixin.config.WechatAppConfiguration
+top.bettercode.summer.tools.weixin.config.WeixinConfiguration,\
+top.bettercode.summer.tools.weixin.config.WeixinAppConfiguration
