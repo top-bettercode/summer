@@ -8,5 +8,6 @@ dependencies {
     compileOnly("org.bouncycastle:bcprov-jdk18on")
 
     testImplementation(project(":test"))
+    testImplementation("org.bouncycastle:bcprov-jdk18on")
 }
 
