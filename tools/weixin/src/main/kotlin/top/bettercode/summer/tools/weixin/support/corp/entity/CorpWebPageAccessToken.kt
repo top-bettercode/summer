@@ -1,8 +1,10 @@
 package top.bettercode.summer.tools.weixin.support.corp.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import top.bettercode.summer.tools.weixin.support.WeixinResponse
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class CorpWebPageAccessToken(
         /**
      * 成员UserID。若需要获得用户详情信息，可调用通讯录接口：读取成员。如果是互联企业/企业互联/上下游，则返回的UserId格式如：CorpId/userid
