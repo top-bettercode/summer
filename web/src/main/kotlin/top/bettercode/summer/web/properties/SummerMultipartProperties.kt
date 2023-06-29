@@ -33,5 +33,5 @@ open class SummerMultipartProperties {
      */
     var staticLocations: Array<String> = arrayOf()
         get() = if (field.isNotEmpty()) field else arrayOf(
-                "file:" + if (baseSavePath!!.endsWith("static")) baseSavePath!!.substringBeforeLast("static", baseSavePath!!) else baseSavePath)
+                "file:" + if (baseSavePath!!.endsWith("static")) baseSavePath!!.substringBeforeLast("static") else baseSavePath)
 }
