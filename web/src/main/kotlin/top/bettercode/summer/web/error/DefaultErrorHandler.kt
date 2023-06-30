@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError
 import org.springframework.web.HttpMediaTypeNotAcceptableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.exception.BusinessException
 import top.bettercode.summer.web.exception.SystemException
@@ -39,6 +40,12 @@ class DefaultErrorHandler(messageSource: MessageSource,
         } else if (error is BindException) { //参数错误
             val fieldErrors = error.fieldErrors
             message = handleFieldError(errors, fieldErrors, separator)
+        } else if (error is MethodArgumentTypeMismatchException) {
+            val targetType = error.requiredType.name
+            val code = "typeMismatch.type.$targetType"
+            message = getText(code, error.value)
+            if (message == code)
+                message = getText("typeMismatch.type", error.value, targetType)
         } else if (error is ConversionFailedException) {
             val targetType = error.targetType.type.name
             val code = "typeMismatch.type.$targetType"
