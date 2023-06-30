@@ -91,9 +91,9 @@ class ApiSecurityConfiguration(
         override fun customize(jacksonObjectMapperBuilder: Jackson2ObjectMapperBuilder) {
             jacksonObjectMapperBuilder.serializerByType(GrantedAuthority::class.java,
                     object : JsonSerializer<GrantedAuthority>() {
-                                            override fun serialize(
+                        override fun serialize(
                                 value: GrantedAuthority, gen: JsonGenerator,
-                                serializers: SerializerProvider,
+                                serializers: SerializerProvider
                         ) {
                             gen.writeString(value.authority)
                         }

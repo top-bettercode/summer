@@ -41,11 +41,15 @@ class DefaultErrorHandler(messageSource: MessageSource,
             val fieldErrors = error.fieldErrors
             message = handleFieldError(errors, fieldErrors, separator)
         } else if (error is MethodArgumentTypeMismatchException) {
-            val targetType = error.requiredType.name
-            val code = "typeMismatch.type.$targetType"
-            message = getText(code, error.value)
-            if (message == code)
-                message = getText("typeMismatch.type", error.value, targetType)
+            val targetType = error.requiredType?.name
+            if (targetType != null) {
+                val code = "typeMismatch.type.$targetType"
+                message = getText(code, error.value)
+                if (message == code)
+                    message = getText("typeMismatch.type", error.value, targetType)
+            } else {
+                message = "typeMismatch"
+            }
         } else if (error is ConversionFailedException) {
             val targetType = error.targetType.type.name
             val code = "typeMismatch.type.$targetType"
