@@ -82,7 +82,9 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
             sendSubscribeMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendSubscribeMsg(request, retries + 1)
-        } else if (43004 == result.errcode) {
+        } else if (43004 == result.errcode || 43101 == result.errcode) {
+            //43101 用户拒绝接收消息
+            //43004 需要接收者关注
             log.warn("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {

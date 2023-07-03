@@ -117,11 +117,13 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
+            //40001 access_token无效
             cache.invalidate(baseAccessTokenKey)
             sendTemplateMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendTemplateMsg(request, retries + 1)
         } else if (43004 == result.errcode) {
+            //43004 需要接收者关注
             log.warn("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {
