@@ -19,7 +19,7 @@ open class AdditionalUserDetails : User {
     ) : super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked,
             authorities)
 
-    fun put(key: String, value: Any) {
+    fun put(key: String, value: Any?) {
         additionalInformation[key] = value
     }
 
