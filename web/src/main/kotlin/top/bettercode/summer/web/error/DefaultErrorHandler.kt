@@ -54,6 +54,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
             } else {
                 message = getText(argumentName) + separator + getText("typeMismatch")
             }
+            errors[argumentName] = message
         } else if (error is ConversionFailedException) {
             val targetType = error.targetType.type.name
             val code = "typeMismatch.type.$targetType"
