@@ -70,6 +70,9 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
     }
 
     override fun <T> sendSubscribeMsg(request: SubscribeMsgRequest<T>, retries: Int): WeixinResponse {
+        if (request.miniprogramState == null) {
+            request.miniprogramState = properties.miniprogramState
+        }
         val result = postForObject<WeixinResponse>(
                 "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={0}",
                 request,
