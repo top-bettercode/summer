@@ -41,7 +41,7 @@ object StringUtil {
         module.addSerializer(
                 LocalDate::class.java,
                 object : JsonSerializer<LocalDate>() {
-                                    override fun serialize(
+                    override fun serialize(
                             value: LocalDate,
                             gen: JsonGenerator,
                             serializers: SerializerProvider
@@ -50,7 +50,7 @@ object StringUtil {
                     }
                 })
         module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
-                    override fun serialize(
+            override fun serialize(
                     value: LocalDateTime, gen: JsonGenerator,
                     serializers: SerializerProvider?
             ) {
@@ -270,12 +270,10 @@ object StringUtil {
         if (str == null) {
             return null
         }
-        val l = str.length
-        return if (length in 4 until l) {
-            "${str.substring(0, length - 3)}..."
-        } else {
-            subString(str, length)
-        }
+        return if (str.length <= length) {
+            str
+        } else
+            "${str.substring(0, length)}..."
     }
 
     /**

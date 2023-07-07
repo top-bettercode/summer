@@ -4,6 +4,7 @@ import org.hibernate.validator.internal.engine.path.PathImpl
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.util.StringUtils
+import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.validator.NoPropertyPath
 import java.util.*
@@ -65,6 +66,6 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
                 || (invalidValue is Array<*> && invalidValue.isEmpty())
                 || (invalidValue is Collection<*> && invalidValue.isEmpty())) {
             ""
-        } else "[$invalidValue]"
+        } else "[${StringUtil.subStringWithEllipsis("$invalidValue",20)}]"
     }
 }
