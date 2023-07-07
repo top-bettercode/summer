@@ -55,6 +55,7 @@ object CoreProjectTasks {
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         ext.generators = arrayOf(Service())
+                        Generators.callInAllModule(ext)
                     }
                 })
             }
