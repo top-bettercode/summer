@@ -44,7 +44,6 @@ object CoreProjectTasks {
                 task.group = group
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
-                        ext.tableNames = emptyArray()
                         ext.generators = arrayOf(Form())
                         Generators.callInAllModule(ext)
                     }
