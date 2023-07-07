@@ -117,7 +117,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
             }
             val field = fieldError.field
             val rejectedValue = fieldError.rejectedValue
-            val rejectedValuedesc = if (rejectedValue == null || (rejectedValue is String && rejectedValue.isBlank())) "" else "[$rejectedValue]"
+            val rejectedValuedesc = invalidValue(rejectedValue)
             var msg: String? = null
             if (fieldError.contains(ConstraintViolation::class.java)) {
                 val violation = fieldError.unwrap(ConstraintViolation::class.java)

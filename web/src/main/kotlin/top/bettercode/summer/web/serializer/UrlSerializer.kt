@@ -14,7 +14,6 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import top.bettercode.summer.tools.lang.operation.RequestConverter.getRequestPath
 import top.bettercode.summer.web.serializer.annotation.JsonUrl
-import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.stream.Collectors
@@ -86,7 +85,7 @@ class UrlSerializer @JvmOverloads constructor(private val formatExpression: Stri
         } else if (type.isArray) {
             val array = v as Array<*>
             genCollection(v, gen, mapper, Arrays.stream(array))
-        } else if (MutableCollection::class.java.isAssignableFrom(type)) {
+        } else if (Collection::class.java.isAssignableFrom(type)) {
             val array = v as Collection<*>
             genCollection(v, gen, mapper, array.stream())
         } else {

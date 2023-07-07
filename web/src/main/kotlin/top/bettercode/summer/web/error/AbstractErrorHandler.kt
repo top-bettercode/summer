@@ -43,7 +43,7 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
         for (constraintViolation in constraintViolations) {
             val property = getProperty(constraintViolation)
             val invalidValue = constraintViolation.invalidValue
-            val invalidValueDesc = if (invalidValue == null || (invalidValue is String && invalidValue.isBlank())) "" else "[$invalidValue]"
+            val invalidValueDesc = invalidValue(invalidValue)
             val msg: String = if (constraintViolation.constraintDescriptor.payload
                             .contains(NoPropertyPath::class.java)) {
                 invalidValueDesc + getText((constraintViolation.message ?: "data.valid.failed"))
@@ -57,5 +57,14 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
             message = "data.valid.failed"
         }
         respEntity.message = message
+    }
+
+    protected fun invalidValue(invalidValue: Any?): String {
+        return if (invalidValue == null
+                || (invalidValue is String && invalidValue.isBlank())
+                || (invalidValue is Array<*> && invalidValue.isEmpty())
+                || (invalidValue is Collection<*> && invalidValue.isEmpty())) {
+            ""
+        } else "[$invalidValue]"
     }
 }
