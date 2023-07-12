@@ -35,6 +35,7 @@ object AnnotatedUtils {
     }
 
     @JvmStatic
+    @JvmOverloads
     fun <A : Annotation?> getAnnotations(
             handlerMethod: HandlerMethod,
             annotationType: Class<A>,
