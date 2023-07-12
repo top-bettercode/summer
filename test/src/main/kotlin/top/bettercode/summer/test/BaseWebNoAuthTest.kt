@@ -30,6 +30,7 @@ import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.test.autodoc.Autodoc
 import top.bettercode.summer.test.autodoc.Autodoc.requiredParameters
+import top.bettercode.summer.web.BaseController
 import top.bettercode.summer.web.config.summer.ObjectMapperBuilderCustomizer
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.support.ApplicationContextHolder.Companion.getProperty
@@ -40,6 +41,7 @@ import java.net.URLDecoder
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
+import java.util.function.Supplier
 
 /**
  * mockMvc 基础测试类
@@ -99,6 +101,14 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
 
     protected fun embeddedDatabase(): Boolean {
         return !StringUtils.hasText(getProperty("spring.datasource.url"))
+    }
+
+    protected fun notFound(): Supplier<out RuntimeException?> {
+        return BaseController.notFound()
+    }
+
+    protected fun notFound(msg: String?): Supplier<out RuntimeException?> {
+        return BaseController.notFound(msg)
     }
 
     protected fun mockMvcBuilder(): DefaultMockMvcBuilder {
