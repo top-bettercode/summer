@@ -170,7 +170,7 @@ object RootProjectTasks {
                                     +schema.readText()
                                     +""
                                 }
-                                project.rootProject.file("database/init/$module").listFiles()
+                                project.rootProject.file("database/init/$suffix").listFiles()
                                         ?.filter { it.isFile }
                                         ?.forEach {
                                             +it.readText()
