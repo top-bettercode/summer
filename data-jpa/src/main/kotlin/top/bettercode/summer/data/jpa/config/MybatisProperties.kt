@@ -72,6 +72,6 @@ open class MybatisProperties {
     }
 
     companion object {
-        const val MYBATIS_PREFIX = "spring.data.jpa.mybatis"
+        const val MYBATIS_PREFIX = "summer.data.jpa.mybatis"
     }
 }

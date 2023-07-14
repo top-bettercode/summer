@@ -27,7 +27,6 @@ class DataJpaAutoConfiguration {
 
     @Bean("jpaExtProperties")
     @ConditionalOnMissingBean
-    @ConfigurationProperties("spring.data.jpa.ext")
     fun jpaExtProperties(): JpaExtProperties {
         return JpaExtProperties()
     }

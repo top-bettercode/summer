@@ -1,9 +1,15 @@
 package top.bettercode.summer.data.jpa.config
 
+import org.springframework.boot.context.properties.ConfigurationProperties
+
 /**
  * @author Peter Wu
  */
-class JpaExtProperties {
+@ConfigurationProperties("summer.data.jpa")
+open class JpaExtProperties {
+    /**
+     * 逻辑删除
+     */
     var softDelete = SoftDelete()
 
     class SoftDelete {
