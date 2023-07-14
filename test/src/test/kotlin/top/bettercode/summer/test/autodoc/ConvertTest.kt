@@ -1,5 +1,6 @@
 package top.bettercode.summer.test.autodoc
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.test.autodoc.AutodocHandler.Companion.prerequestExec
 import top.bettercode.summer.tools.autodoc.AutodocUtil
@@ -12,6 +13,8 @@ import java.io.File
  */
 class ConvertTest {
 
+    //处理签名
+    @Disabled
     @Test
     fun convert() {
         File("/data/repositories/bettercode/wintruelife/auction-api/app").walkTopDown()

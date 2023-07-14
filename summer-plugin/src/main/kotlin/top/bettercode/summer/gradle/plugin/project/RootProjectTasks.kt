@@ -219,6 +219,16 @@ object RootProjectTasks {
                     }
                 })
             }
+
+            create("prettyConfig") { t ->
+                t.doLast {
+                    ConfigTool.prettyConfig(
+                            project.file("conf"),
+                            project.subprojects.map { it.file("src/main/resources/application.yml") }
+                                    .filter { it.exists() })
+                }
+            }
+
         }
 
     }
