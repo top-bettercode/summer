@@ -21,9 +21,9 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
     lateinit var userDetailsService: UserDetailsService
 
     override fun setup() {
-        super.setup()
         username = "root"
         scope = "app"
+        super.setup()
     }
 
     public override fun defaultBeforeEach() {
