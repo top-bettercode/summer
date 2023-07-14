@@ -3,7 +3,6 @@ package top.bettercode.summer.test
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.AfterAll
@@ -35,8 +34,6 @@ import top.bettercode.summer.web.config.summer.ObjectMapperBuilderCustomizer
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.support.ApplicationContextHolder.Companion.getProperty
 import java.io.File
-import java.io.IOException
-import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -52,7 +49,8 @@ import java.util.function.Supplier
 @TestPropertySource(properties = ["summer.security.enabled=false", "seata.enabled=false"])
 class BaseWebNoAuthTest : MockMvcRequestBuilders() {
 
-    protected lateinit var log: Logger
+    @JvmField
+    protected final val log: Logger = LoggerFactory.getLogger(javaClass)
 
     protected lateinit var mockMvc: MockMvc
 
@@ -74,15 +72,13 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     @Autowired
     private lateinit var requestLoggingProperties: RequestLoggingProperties
 
-    protected lateinit var objectMapper: ObjectMapper
+    @JvmField
+    protected final val objectMapper: ObjectMapper = Jackson2ObjectMapperBuilder.json().apply { ObjectMapperBuilderCustomizer().customize(this) }.build()
+
 
     @BeforeEach
     fun setup() {
         //--------------------------------------------
-        log = LoggerFactory.getLogger(javaClass)
-
-        objectMapper = Jackson2ObjectMapperBuilder.json().apply { ObjectMapperBuilderCustomizer().customize(this) }.build()
-
         requestLoggingProperties.isForceRecord = true
         requestLoggingProperties.isIncludeRequestBody = true
         requestLoggingProperties.isIncludeResponseBody = true
