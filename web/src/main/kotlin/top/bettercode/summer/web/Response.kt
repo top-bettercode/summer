@@ -15,7 +15,7 @@ open class Response {
      * @param resource resource
      * @return 201 ResponseEntity
      */
-    protected fun created(resource: Any): ResponseEntity<*> {
+    protected open fun created(resource: Any): ResponseEntity<*> {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(resource)
     }
@@ -26,7 +26,7 @@ open class Response {
      * @param resource resource
      * @return 200 ResponseEntity
      */
-    protected fun updated(resource: Any?): ResponseEntity<*> {
+    protected open fun updated(resource: Any?): ResponseEntity<*> {
         return ok(resource)
     }
 
@@ -46,11 +46,11 @@ open class Response {
      * @param message message
      * @return 200 ResponseEntity
      */
-    protected fun message(message: String?): ResponseEntity<*> {
+    protected open fun message(message: String?): ResponseEntity<*> {
         return ok(RespEntity<Any>(HttpStatus.OK.value().toString(), message))
     }
 
-    protected fun message(status: String, message: String?): ResponseEntity<*> {
+    protected open fun message(status: String, message: String?): ResponseEntity<*> {
         return ok(RespEntity<Any>(status, message))
     }
 
@@ -58,7 +58,7 @@ open class Response {
      * @param message message
      * @return 400 ResponseEntity
      */
-    protected fun errorMessage(message: String?): ResponseEntity<*> {
+    protected open fun errorMessage(message: String?): ResponseEntity<*> {
         return ok(RespEntity<Any>(HttpStatus.BAD_REQUEST.value().toString(), message))
     }
 
@@ -67,7 +67,7 @@ open class Response {
      *
      * @return 204
      */
-    protected fun noContent(): ResponseEntity<*> {
+    protected open fun noContent(): ResponseEntity<*> {
         return ResponseEntity.noContent().build<Any>()
     }
 }

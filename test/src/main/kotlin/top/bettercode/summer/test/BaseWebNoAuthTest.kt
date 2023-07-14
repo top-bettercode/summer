@@ -50,8 +50,9 @@ import java.util.function.Supplier
  */
 @SpringBootTest
 @TestPropertySource(properties = ["summer.security.enabled=false", "seata.enabled=false"])
-abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
-    protected val log: Logger? = LoggerFactory.getLogger(javaClass)
+class BaseWebNoAuthTest : MockMvcRequestBuilders() {
+
+    protected lateinit var log: Logger
 
     protected lateinit var mockMvc: MockMvc
 
@@ -71,19 +72,17 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     private lateinit var errorController: BasicErrorController
 
     @Autowired
-    protected lateinit var requestLoggingProperties: RequestLoggingProperties
+    private lateinit var requestLoggingProperties: RequestLoggingProperties
 
-    protected val objectMapper: ObjectMapper
-
-    init {
-        val objectMapperBuilder = Jackson2ObjectMapperBuilder.json()
-        ObjectMapperBuilderCustomizer().customize(objectMapperBuilder)
-        objectMapper = objectMapperBuilder.build()
-    }
+    protected lateinit var objectMapper: ObjectMapper
 
     @BeforeEach
     fun setup() {
         //--------------------------------------------
+        log = LoggerFactory.getLogger(javaClass)
+
+        objectMapper = Jackson2ObjectMapperBuilder.json().apply { ObjectMapperBuilderCustomizer().customize(this) }.build()
+
         requestLoggingProperties.isForceRecord = true
         requestLoggingProperties.isIncludeRequestBody = true
         requestLoggingProperties.isIncludeResponseBody = true
@@ -183,9 +182,14 @@ abstract class BaseWebNoAuthTest : MockMvcRequestBuilders() {
                 classPathResource.inputStream)
     }
 
+
     @JvmOverloads
-    protected fun json(`object`: Any?, incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL): String {
-        return objectMapper.setSerializationInclusion(incl).writeValueAsString(`object`)
+    protected fun json(`object`: Any?, serializationView: Class<*>? = null, incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL): String {
+        val objectMapper = objectMapper.setSerializationInclusion(incl)
+        return if (serializationView != null) {
+            objectMapper.writerWithView(serializationView).writeValueAsString(`object`)
+        } else
+            objectMapper.writeValueAsString(`object`)
     }
 
     protected fun requires(vararg require: String) {

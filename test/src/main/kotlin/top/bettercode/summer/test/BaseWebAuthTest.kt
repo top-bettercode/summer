@@ -13,11 +13,18 @@ import top.bettercode.summer.security.userdetails.ScopeUserDetailsService
  * @author Peter Wu
  */
 abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
-    var username = "root"
-    var scope = "app"
+
+    lateinit var username: String
+    lateinit var scope: String
 
     @Autowired
-    var userDetailsService: UserDetailsService? = null
+    lateinit var userDetailsService: UserDetailsService
+
+    override fun setup() {
+        super.setup()
+        username = "root"
+        scope = "app"
+    }
 
     public override fun defaultBeforeEach() {
         beforeEach()
@@ -25,7 +32,7 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
             (userDetailsService as ScopeUserDetailsService).loadUserByScopeAndUsername(scope,
                     username)
         } else {
-            userDetailsService!!.loadUserByUsername(username)
+            userDetailsService.loadUserByUsername(username)
         }
         SecurityContextHolder.getContext().authentication = UserDetailsAuthenticationToken(userDetails)
     }

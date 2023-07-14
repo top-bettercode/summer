@@ -12,6 +12,7 @@ object DeviceUtil {
      * @param request request
      * @return UserAgent
      */
+    @JvmStatic
     fun getUserAgent(request: HttpServletRequest): String? {
         val headers = request.getHeaders("user-agent")
         return if (headers.hasMoreElements()) {

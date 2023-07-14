@@ -13,22 +13,18 @@ import java.io.Serializable
 class RespEntity<T> : IRespEntity, Serializable {
     override var httpStatusCode: Int? = null
 
-    @JvmField
     @JsonView(Any::class)
     @JsonProperty(KEY_STATUS)
     var status: String? = null
 
-    @JvmField
     @JsonProperty(KEY_MESSAGE)
     @JsonView(Any::class)
     var message: String? = null
 
-    @JvmField
     @JsonProperty(KEY_TRACE)
     @JsonView(Any::class)
     var trace: String? = null
 
-    @JvmField
     @JsonProperty(KEY_ERRORS)
     @JsonView(Any::class)
     var errors: Any? = null
@@ -36,7 +32,6 @@ class RespEntity<T> : IRespEntity, Serializable {
     @JsonProperty(KEY_DATA)
     @JsonView(Any::class)
     var data: T? = null
-        private set
 
     constructor()
     constructor(status: String, message: String?) {
@@ -53,10 +48,6 @@ class RespEntity<T> : IRespEntity, Serializable {
     fun setHttpStatusCode(httpStatusCode: Int) {
         this.httpStatusCode = httpStatusCode
         status = httpStatusCode.toString()
-    }
-
-    fun setData(data: T) {
-        this.data = data
     }
 
     @get:JsonIgnore
