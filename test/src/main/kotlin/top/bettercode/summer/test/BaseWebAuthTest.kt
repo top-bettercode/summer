@@ -1,5 +1,6 @@
 package top.bettercode.summer.test
 
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
@@ -12,7 +13,7 @@ import top.bettercode.summer.security.userdetails.ScopeUserDetailsService
  *
  * @author Peter Wu
  */
-abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
+abstract class BaseWebAuthTest() : BaseWebNoAuthTest() {
 
     lateinit var username: String
     lateinit var scope: String
@@ -20,17 +21,15 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
     @Autowired
     lateinit var userDetailsService: UserDetailsService
 
-    override fun setup() {
+    init {
         username = "root"
         scope = "app"
-        super.setup()
     }
 
     public override fun defaultBeforeEach() {
         beforeEach()
         val userDetails: UserDetails = if (userDetailsService is ScopeUserDetailsService) {
-            (userDetailsService as ScopeUserDetailsService).loadUserByScopeAndUsername(scope,
-                    username)
+            (userDetailsService as ScopeUserDetailsService).loadUserByScopeAndUsername(scope, username)
         } else {
             userDetailsService.loadUserByUsername(username)
         }
