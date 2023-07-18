@@ -6,6 +6,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 import org.springframework.web.client.getForObject
+import top.bettercode.summer.tools.lang.capitalized
 
 /**
  *
@@ -27,30 +28,27 @@ class Jenkins(private val url: String, auth: String) {
         return restTemplate.getForObject("$url/job/${job}/description") ?: ""
     }
 
-    fun build(job: String, env: String = "default") {
-        restTemplate.postForEntity("$url/job/${job}/build", null, String::class.java)
+    fun build(jobName: String, env: String = "default") {
+        restTemplate.postForEntity("$url/job/${jobName}/build", null, String::class.java)
         println("已发送build请求...")
-        val description = description(job)
+        val description = description(jobName)
         if (description.isNotBlank()) {
             println("job 描述信息：")
             println(description)
         }
-        val envName = if (env == "default") "" else "[$env]"
-        println(
-            "如需查看最新build信息，请运行:lastBuildInfo$envName[${
-                job.replace(
-                    "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
-                    ""
-                )
-            }] 任务"
-        )
+        val envName = if (env == "default") "" else env.capitalized()
+        val jobTaskName = jobName.replace(
+                "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
+                ""
+        ).capitalized()
+        println("如需查看最新build信息，请运行:lastBuildInfo$envName$jobTaskName 任务")
     }
 
     fun buildInfo(job: String, id: String = "lastBuild", startIndex: Int = 0) {
         //X-Text-Size: 2565
         //X-More-Data: true
         val entity =
-            restTemplate.getForEntity<String>("$url/job/${job}/$id/logText/progressiveText")
+                restTemplate.getForEntity<String>("$url/job/${job}/$id/logText/progressiveText")
         val body = entity.body ?: ""
         val message = body.substring(startIndex)
         if (message.isNotBlank())
