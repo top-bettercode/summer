@@ -42,7 +42,7 @@ class ExcelErrorHandler(messageSource: MessageSource?,
                             msg = msg.replace(msgRegex.toRegex(), "$1") + "不是有效的日期格式"
                         }
                     }
-                    errors[key] = title + ": " + valueDesc + getText(msg!!)
+                    errors[key] = title + ": " + valueDesc + getText(msg ?: "未知错误")
                 }
             }
             val (key, value) = errors.entries.iterator().next()
