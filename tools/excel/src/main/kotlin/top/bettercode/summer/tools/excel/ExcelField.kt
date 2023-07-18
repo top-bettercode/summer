@@ -402,7 +402,7 @@ open class ExcelField<T, P : Any?> {
                             }
 
                             else -> {
-                                throw ExcelException(cellValue.toString() + "转换为毫秒失败")
+                                throw ExcelException("转换为毫秒数失败")
                             }
                         }
                     }
@@ -455,7 +455,7 @@ open class ExcelField<T, P : Any?> {
                         }
 
                         else -> {
-                            throw ExcelException(cellValue.toString() + "转换为Date失败")
+                            throw ExcelException("转换为时间失败")
                         }
                     }
                 }
@@ -467,7 +467,7 @@ open class ExcelField<T, P : Any?> {
                         }
 
                         else -> {
-                            throw ExcelException(cellValue.toString() + "转换为LocalDateTime失败")
+                            throw ExcelException("转换为时间失败")
                         }
                     }
                 }
@@ -476,7 +476,7 @@ open class ExcelField<T, P : Any?> {
                     if (cellValue is LocalDateTime) {
                         cellValue.toLocalDate()
                     } else {
-                        throw ExcelException(cellValue.toString() + "转换为LocalDate失败")
+                        throw ExcelException("转换为日期失败")
                     }
                 }
 
