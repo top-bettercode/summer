@@ -15,7 +15,6 @@ import top.bettercode.summer.web.support.code.CodeServiceHolder
 import top.bettercode.summer.web.support.code.ICodeService
 
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnWebApplication
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class SerializerConfiguration(environment: Environment,
                               objectMapper: ObjectMapper,

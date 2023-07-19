@@ -10,7 +10,11 @@ summer:
     slack:
       ignored-warn-logger:
         - org.springframework.security.oauth2.provider.endpoint.TokenEndpoint
-
+  data:
+    jpa:
+      mybatis:
+        configuration:
+          map-underscore-to-camel-case: true
 
 spring:
   security:
@@ -41,10 +45,6 @@ spring:
     web:
       pageable:
         one-indexed-parameters: true
-    jpa:
-      mybatis:
-        configuration:
-          map-underscore-to-camel-case: true
 
   jpa:
     open-in-view: false
