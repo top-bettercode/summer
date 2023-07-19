@@ -152,6 +152,11 @@ open class TimeUtil(
         }
 
         @JvmStatic
+        fun format(localDateTime: LocalDateTime, pattern: String): String {
+            return localDateTime.format(DateTimeFormatter.ofPattern(pattern))
+        }
+
+        @JvmStatic
         fun format(timeStamp: Long): String {
             return of(timeStamp).format(dateFormatter)
         }
@@ -173,10 +178,10 @@ open class TimeUtil(
         }
 
         @JvmStatic
-        fun parse(text: CharSequence, formatter: String): TimeUtil {
+        fun parse(text: CharSequence, pattern: String): TimeUtil {
             return parse(
                     text, DateTimeFormatterBuilder()
-                    .appendPattern(formatter)
+                    .appendPattern(pattern)
                     .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
                     .toFormatter()
             )

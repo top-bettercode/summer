@@ -286,8 +286,6 @@ open class ExcelField<T, P : Any?> {
                         }
                         val fWriteMethod = writeMethod
                         propertySetter = object : ExcelCellSetter<T, P?> {
-                            private val serialVersionUID: Long = 1L
-
                             override fun set(entity: T, property: P?) {
                                 ReflectionUtils.invokeMethod(fWriteMethod, entity, property)
                             }
