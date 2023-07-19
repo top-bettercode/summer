@@ -70,7 +70,7 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     private lateinit var errorController: BasicErrorController
 
     @Autowired
-    private lateinit var requestLoggingProperties: RequestLoggingProperties
+    protected lateinit var requestLoggingProperties: RequestLoggingProperties
 
     @JvmField
     protected final val objectMapper: ObjectMapper = Jackson2ObjectMapperBuilder.json().apply { ObjectMapperBuilderCustomizer().customize(this) }.build()
