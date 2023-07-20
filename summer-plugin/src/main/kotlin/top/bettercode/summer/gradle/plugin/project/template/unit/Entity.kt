@@ -246,7 +246,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (it.javaName == "createdDate" && it.columnDef == null) {
                     annotation("@org.springframework.data.annotation.CreatedDate")
                 }
-                if (it.javaName == "last_modified_date" && it.columnDef == null) {
+                if (it.javaName == "last_modified_date" && !it.extra.contains("ON UPDATE CURRENT_TIMESTAMP")) {
                     annotation("@org.springframework.data.annotation.LastModifiedDate")
                 }
                 if (it.version) {
