@@ -56,8 +56,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         if (defaultColumns.isNotEmpty()) {
             method(
-                "withDefaults",
-                entityType
+                    "withDefaults",
+                    entityType
             ) {
                 isStatic = true
                 javadoc {
@@ -73,8 +73,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
 
             method(
-                "nullWithDefaults",
-                entityType
+                    "nullWithDefaults",
+                    entityType
             ) {
                 javadoc {
                     +"/** 如果属性为null，设置默认值 */"
@@ -84,7 +84,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                         +"if (this.${primaryKeyName}.get${it.javaName.capitalized()}() == null) {"
                         +"this.${primaryKeyName}.set${it.javaName.capitalized()}(${
                             it.initializationString(
-                                this@apply
+                                    this@apply
                             )
                         });"
                         +"}"
@@ -99,8 +99,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         method(
-            "nullFrom",
-            entityType
+                "nullFrom",
+                entityType
         ) {
             javadoc {
                 +"/**"
@@ -125,8 +125,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         method(
-            "from",
-            entityType
+                "from",
+                entityType
         ) {
             javadoc {
                 +"/** 从form表单对象更新实体属性 */"
@@ -151,11 +151,11 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)")
                 } else if (primaryKey.idgenerator.isNotBlank()) {
                     val generatorStrategy =
-                        (setting(primaryKey.idgenerator.lowercase(Locale.getDefault())) as? String)
-                            ?: "uuid2"
+                            (setting(primaryKey.idgenerator.lowercase(Locale.getDefault())) as? String)
+                                    ?: "uuid2"
                     val generator = generatorStrategy.substringAfterLast(".")
-                        .substringBeforeLast("Generator")
-                        .capitalized()
+                            .substringBeforeLast("Generator")
+                            .capitalized()
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
                     annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\")")
                 } else if (primaryKey.sequence.isNotBlank()) {
@@ -174,8 +174,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         //primaryKey getter
         method(
-            "get${primaryKeyName.capitalized()}",
-            primaryKeyType
+                "get${primaryKeyName.capitalized()}",
+                primaryKeyType
         ) {
             javadoc {
                 +"/** ${remarks}主键 */"
@@ -184,9 +184,9 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         //primaryKey setter
         method(
-            "set${primaryKeyName.capitalized()}",
-            entityType,
-            Parameter(primaryKeyName, primaryKeyType)
+                "set${primaryKeyName.capitalized()}",
+                entityType,
+                Parameter(primaryKeyName, primaryKeyType)
         ) {
             javadoc {
                 +"/**"
@@ -204,8 +204,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             primaryKeys.forEach {
                 //getter
                 method(
-                    "get${it.javaName.capitalized()}",
-                    it.javaType
+                        "get${it.javaName.capitalized()}",
+                        it.javaType
                 ) {
                     if (it.remark.isNotBlank() || it.columnDef != null)
                         javadoc {
@@ -217,9 +217,9 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }
                 //setter
                 method(
-                    "set${it.javaName.capitalized()}",
-                    entityType,
-                    Parameter(it.javaName, it.javaType)
+                        "set${it.javaName.capitalized()}",
+                        entityType,
+                        Parameter(it.javaName, it.javaType)
                 ) {
                     javadoc {
                         +"/**"
@@ -243,10 +243,10 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (it.columnDef != null)
                     annotation("@org.hibernate.annotations.ColumnDefault(\"${it.columnDef}\")")
                 annotation(columnAnnotation(it))
-                if (it.javaName == "createdDate") {
+                if (it.javaName == "createdDate" && it.columnDef == null) {
                     annotation("@org.springframework.data.annotation.CreatedDate")
                 }
-                if (it.extra.contains("ON UPDATE CURRENT_TIMESTAMP")) {
+                if (it.javaName == "last_modified_date" && it.columnDef == null) {
                     annotation("@org.springframework.data.annotation.LastModifiedDate")
                 }
                 if (it.version) {
@@ -262,8 +262,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //getter
             method(
-                "get${it.javaName.capitalized()}",
-                it.javaType
+                    "get${it.javaName.capitalized()}",
+                    it.javaType
             ) {
                 if (it.remark.isNotBlank() || it.columnDef != null)
                     javadoc {
@@ -275,9 +275,9 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
             //setter
             method(
-                "set${it.javaName.capitalized()}",
-                entityType,
-                Parameter(it.javaName, it.javaType)
+                    "set${it.javaName.capitalized()}",
+                    entityType,
+                    Parameter(it.javaName, it.javaType)
             ) {
                 javadoc {
                     +"/**"
@@ -292,9 +292,9 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         //equals
         method(
-            "equals",
-            JavaType.boolean,
-            Parameter("o", JavaType.objectInstance)
+                "equals",
+                JavaType.boolean,
+                Parameter("o", JavaType.objectInstance)
         ) {
             annotation("@Override")
             +"if (this == o) {"
@@ -344,7 +344,7 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             if (isCompositePrimaryKey) {
                 +"return Objects.hash(${
                     (listOf(primaryKeyName) + otherColumns.map { it.javaName }).joinToString(
-                        ", "
+                            ", "
                     )
                 });"
             } else {
