@@ -46,7 +46,7 @@ data class JsSession(
             log.error("org.bouncycastle.jce.provider.BouncyCastleProvider 类不存在")
             return this
         }
-        Security.addProvider(Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider").newInstance() as BouncyCastleProvider)
+        Security.addProvider(Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider").getConstructor().newInstance() as BouncyCastleProvider)
 
         //被加密的数据
         val dataByte = Base64.decodeBase64(data)
