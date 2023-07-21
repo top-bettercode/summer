@@ -57,10 +57,11 @@ class DefaultErrorHandler(messageSource: MessageSource,
             errors[argumentName] = message
         } else if (error is ConversionFailedException) {
             val targetType = error.targetType.type.name
-            val code = "typeMismatch.type.$targetType"
-            message = getText(code, error.value)
+            val code = "typeMismatch.$targetType"
+            message = getText(code)
             if (message == code)
-                message = getText("typeMismatch.type", error.value, targetType)
+                message = getText("typeMismatch.type", targetType)
+            message = invalidValue(error.value) + message
         } else if (error is ConstraintViolationException) { //数据验证
             constraintViolationException(error, respEntity, errors,
                     separator)
@@ -107,8 +108,14 @@ class DefaultErrorHandler(messageSource: MessageSource,
         var message: String?
         for (fieldError in fieldErrors) {
             var defaultMessage = fieldError.defaultMessage
-            if (defaultMessage?.contains("required type") == true) {
-                defaultMessage = fieldError.code?.let { getText(it) }
+            if (defaultMessage?.contains("required type") == true && fieldError.codes != null) {
+                for (code in fieldError.codes!!) {
+                    val text = getText(code)
+                    if (text != code) {
+                        defaultMessage = text
+                        break
+                    }
+                }
             }
             val regrex = "^.*threw exception; nested exception is .*: (.*)$"
             if (defaultMessage!!.matches(regrex.toRegex())) {
