@@ -14,6 +14,7 @@ import java.nio.file.Paths
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
@@ -223,7 +224,7 @@ class ExcelImport private constructor(`is`: InputStream) {
             try {
                 excelField.setProperty(o, cellValue, validator, validateGroups)
             } catch (e: Exception) {
-                rowErrors.add(CellError(this.row, column, excelField.title, getValue(cellValue), e))
+                rowErrors.add(CellError(this.row, column, excelField.title, getValue(excelField.propertyType, cellValue), e))
             }
         }
         excelFields.forEachIndexed { index, excelField ->
@@ -232,8 +233,8 @@ class ExcelImport private constructor(`is`: InputStream) {
                 validator?.accept(o)
             } catch (e: Exception) {
                 val column = this.column + index
-                val cellValue = excelField.toCellValue(o)
-                rowErrors.add(CellError(this.row, column, excelField.title, getValue(cellValue), e))
+                val cellValue = getCellValue(excelField, row, column)
+                rowErrors.add(CellError(this.row, column, excelField.title, getValue(excelField.propertyType, cellValue), e))
             }
         }
         return if (notAllBlank) {
@@ -247,21 +248,29 @@ class ExcelImport private constructor(`is`: InputStream) {
         }
     }
 
-    private fun getValue(cellValue: Any?) = when (cellValue) {
+    private fun getValue(propertyType: Class<*>?, cellValue: Any?) = when (cellValue) {
+        is LocalDateTime -> {
+            when (propertyType) {
+                LocalDate::class.java -> {
+                    cellValue.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                }
+
+                else -> {
+                    cellValue.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                }
+            }
+        }
+
+        is LocalDate -> {
+            cellValue.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        }
+
         is Date -> {
             TimeUtil.of(cellValue).format("yyyy-MM-dd HH:mm:ss")
         }
 
-        is LocalDateTime -> {
-            TimeUtil.of(cellValue).format("yyyy-MM-dd HH:mm:ss")
-        }
-
-        is LocalDate -> {
-            TimeUtil.of(cellValue).format("yyyy-MM-dd")
-        }
-
         is ZonedDateTime -> {
-            TimeUtil.of(cellValue.toLocalDateTime()).format("yyyy-MM-dd HH:mm:ss")
+            cellValue.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         }
 
         else -> {
