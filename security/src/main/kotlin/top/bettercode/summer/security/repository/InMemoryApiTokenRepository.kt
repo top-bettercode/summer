@@ -29,10 +29,14 @@ class InMemoryApiTokenRepository(
         tokenMap.remove(id)
     }
 
-    override fun remove(scope: String?, username: String?) {
+    override fun remove(scope: String, username: String) {
         val id = "$scope:$username"
         val authenticationToken = tokenMap[id]
         authenticationToken?.let { remove(it) }
+    }
+
+    override fun remove(scope: String, usernames: List<String>) {
+        usernames.forEach { remove(scope, it) }
     }
 
     override fun findByScopeAndUsername(scope: String, username: String): ApiToken? {
@@ -40,7 +44,7 @@ class InMemoryApiTokenRepository(
         return tokenMap[id]
     }
 
-    override fun findByAccessToken(accessToken: String?): ApiToken? {
+    override fun findByAccessToken(accessToken: String): ApiToken? {
         val id = accessTokenMap[accessToken]
         return if (id != null) {
             tokenMap[id]

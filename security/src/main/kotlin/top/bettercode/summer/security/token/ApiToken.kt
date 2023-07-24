@@ -8,7 +8,7 @@ import java.io.Serializable
  */
 class ApiToken : Serializable {
     //--------------------------------------------
-    var scope: String? = null
+    lateinit var scope: String
     lateinit var accessToken: Token
     lateinit var refreshToken: Token
     lateinit var userDetailsInstantAt: InstantAt
@@ -16,7 +16,7 @@ class ApiToken : Serializable {
 
     constructor()
     constructor(
-            scope: String?, accessToken: Token,
+            scope: String, accessToken: Token,
             refreshToken: Token, userDetailsInstantAt: InstantAt, userDetails: UserDetails
     ) {
         this.scope = scope

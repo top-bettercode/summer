@@ -122,7 +122,7 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
         }
     }
 
-    override fun remove(scope: String?, username: String?) {
+    override fun remove(scope: String, username: String) {
         try {
             val id = "$scope:$username"
             val idKey = serializeKey(ID + id)
@@ -143,6 +143,10 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
         } catch (e: RedisPipelineException) {
             throw RuntimeException("移除授权信息失败", e)
         }
+    }
+
+    override fun remove(scope: String, usernames: List<String>) {
+        usernames.forEach { remove(scope, it) }
     }
 
     override fun findByScopeAndUsername(scope: String, username: String): ApiToken? {
@@ -177,7 +181,7 @@ class RedisApiTokenRepository @JvmOverloads constructor(private val connectionFa
         }
     }
 
-    override fun findByAccessToken(accessToken: String?): ApiToken? {
+    override fun findByAccessToken(accessToken: String): ApiToken? {
         try {
             val accessKey = serializeKey(ACCESS_TOKEN + accessToken)
             return connection.use { conn ->

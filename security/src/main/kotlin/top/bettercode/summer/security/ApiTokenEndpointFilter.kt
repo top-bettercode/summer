@@ -30,11 +30,9 @@ import top.bettercode.summer.web.form.FormDuplicateCheckInterceptor
 import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder.getHandler
-import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.servlet.FilterChain
-import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -146,7 +144,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         } else {
             val accessToken = bearerTokenResolver.resolve(request)
             if (StringUtils.hasText(accessToken)) {
-                val apiToken = apiTokenRepository.findByAccessToken(accessToken)
+                val apiToken = apiTokenRepository.findByAccessToken(accessToken!!)
                 if (apiToken != null && !apiToken.accessToken.isExpired && securityProperties.supportScopes.contains(apiToken.scope)) {
                     try {
                         val scope = apiToken.scope
@@ -191,7 +189,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                 } else {
                     if (apiToken != null) {
                         val scope = apiToken.scope
-                        if (!securityProperties.supportScopes.contains(scope!!)) {
+                        if (!securityProperties.supportScopes.contains(scope)) {
                             logger.warn("不支持token所属scope:$scope")
                         }
                     }

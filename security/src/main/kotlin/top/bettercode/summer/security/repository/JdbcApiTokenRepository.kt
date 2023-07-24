@@ -11,7 +11,9 @@ import org.springframework.util.Assert
 import top.bettercode.summer.security.token.ApiToken
 import java.sql.ResultSet
 import java.sql.Types
+import java.util.*
 import javax.sql.DataSource
+
 
 open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSource?, tableName: String = "api_token") : ApiTokenRepository {
     private val log = LoggerFactory.getLogger(JdbcApiTokenRepository::class.java)
@@ -20,6 +22,7 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
     private val defaultSelectByAccessStatement: String
     private val defaultSelectByRefreshStatement: String
     private val defaultDeleteStatement: String
+    private val defaultBatchDeleteStatement: String
     private val jdkSerializationSerializer = JdkSerializationSerializer()
     private val jdbcTemplate: JdbcTemplate
 
@@ -33,6 +36,7 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
         defaultSelectByAccessStatement = "select authentication,id from $tableName where access_token = ?"
         defaultSelectByRefreshStatement = "select authentication,id from $tableName where refresh_token = ?"
         defaultDeleteStatement = "delete from $tableName where id=?"
+        defaultBatchDeleteStatement = "delete from $tableName where id in "
     }
 
     @Transactional
@@ -64,7 +68,7 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
     }
 
     @Transactional
-    override fun remove(scope: String?, username: String?) {
+    override fun remove(scope: String, username: String) {
         val id = "$scope:$username"
         val update = jdbcTemplate.update(defaultDeleteStatement, id)
         if (log.isDebugEnabled) {
@@ -73,12 +77,23 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
         }
     }
 
+    @Transactional
+    override fun remove(scope: String, usernames: List<String>) {
+        val ids = usernames.map { "$scope:$it" }.toTypedArray()
+        val sql = defaultBatchDeleteStatement + "(${usernames.joinToString(",") { "?" }})"
+        val update = jdbcTemplate.update(sql,  *ids)
+        if (log.isDebugEnabled) {
+            log.debug("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", sql,
+                    ids, update)
+        }
+    }
+
     override fun findByScopeAndUsername(scope: String, username: String): ApiToken? {
         val id = "$scope:$username"
         return getApiToken(id, defaultSelectStatement)
     }
 
-    override fun findByAccessToken(accessToken: String?): ApiToken? {
+    override fun findByAccessToken(accessToken: String): ApiToken? {
         return getApiToken(accessToken, defaultSelectByAccessStatement)
     }
 
@@ -96,7 +111,7 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
             val apiToken = jdbcTemplate.queryForObject<ApiToken>(selectStatement,
                     RowMapper<ApiToken> { rs: ResultSet, _: Int ->
                         val bytes = rs.getBytes(1)
-                        if (JdkSerializationSerializer.Companion.isEmpty(bytes)) {
+                        if (JdkSerializationSerializer.isEmpty(bytes)) {
                             return@RowMapper null
                         }
                         try {
