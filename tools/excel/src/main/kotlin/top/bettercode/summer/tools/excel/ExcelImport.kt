@@ -3,15 +3,23 @@ package top.bettercode.summer.tools.excel
 import org.dhatim.fastexcel.reader.*
 import org.slf4j.LoggerFactory
 import org.springframework.web.multipart.MultipartFile
+import top.bettercode.summer.tools.excel.ExcelImport.Companion.validator
 import top.bettercode.summer.tools.excel.ExcelImportException.CellError
+import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
+import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import javax.validation.Validation
 import javax.validation.groups.Default
+import kotlin.collections.ArrayList
 
 /**
  * 导入Excel文件
@@ -202,21 +210,30 @@ class ExcelImport private constructor(`is`: InputStream) {
     fun <F, E> readRow(cls: Class<F>?, excelFields: Array<ExcelField<F, *>>, row: Row,
                        converter: (F) -> E): E? {
         var notAllBlank = false
-        var column = column
         val o = cls!!.getDeclaredConstructor().newInstance()
         val rowErrors: MutableList<CellError> = ArrayList()
         this.row = row.rowNum
-        for (excelField in excelFields) {
+        for ((index, excelField) in excelFields.withIndex()) {
             if (excelField.isIndexColumn) {
                 continue
             }
-            val cellValue = getCellValue(excelField, row, column++)
+            val column = this.column + index
+            val cellValue = getCellValue(excelField, row, column)
             notAllBlank = notAllBlank || !excelField.isEmptyCell(cellValue)
             try {
                 excelField.setProperty(o, cellValue, validator, validateGroups)
             } catch (e: Exception) {
-                rowErrors.add(CellError(this.row, column - 1, excelField.title(),
-                        cellValue?.toString(), e))
+                rowErrors.add(CellError(this.row, column, excelField.title, getValue(cellValue), e))
+            }
+        }
+        excelFields.forEachIndexed { index, excelField ->
+            val validator = excelField.validator
+            try {
+                validator?.accept(o)
+            } catch (e: Exception) {
+                val column = this.column + index
+                val cellValue = excelField.toCellValue(o)
+                rowErrors.add(CellError(this.row, column, excelField.title, getValue(cellValue), e))
             }
         }
         return if (notAllBlank) {
@@ -227,6 +244,28 @@ class ExcelImport private constructor(`is`: InputStream) {
             converter(o)
         } else {
             null
+        }
+    }
+
+    private fun getValue(cellValue: Any?) = when (cellValue) {
+        is Date -> {
+            TimeUtil.of(cellValue).format("yyyy-MM-dd HH:mm:ss")
+        }
+
+        is LocalDateTime -> {
+            TimeUtil.of(cellValue).format("yyyy-MM-dd HH:mm:ss")
+        }
+
+        is LocalDate -> {
+            TimeUtil.of(cellValue).format("yyyy-MM-dd")
+        }
+
+        is ZonedDateTime -> {
+            TimeUtil.of(cellValue.toLocalDateTime()).format("yyyy-MM-dd HH:mm:ss")
+        }
+
+        else -> {
+            cellValue?.toString()
         }
     }
 
@@ -268,7 +307,7 @@ class ExcelImport private constructor(`is`: InputStream) {
          * @return ExcelImport
          * @throws IOException IOException
          */
-            @JvmStatic
+        @JvmStatic
         fun of(fileName: String): ExcelImport {
             return of(Files.newInputStream(Paths.get(fileName)))
         }
@@ -278,7 +317,7 @@ class ExcelImport private constructor(`is`: InputStream) {
          * @return ExcelImport
          * @throws IOException IOException
          */
-            @JvmStatic
+        @JvmStatic
         fun of(file: File): ExcelImport {
             return of(Files.newInputStream(file.toPath()))
         }
@@ -288,7 +327,7 @@ class ExcelImport private constructor(`is`: InputStream) {
          * @return ExcelImport
          * @throws IOException IOException
          */
-            @JvmStatic
+        @JvmStatic
         fun of(multipartFile: MultipartFile): ExcelImport {
             return of(multipartFile.inputStream)
         }
@@ -298,7 +337,7 @@ class ExcelImport private constructor(`is`: InputStream) {
          * @return ExcelImport
          * @throws IOException IOException
          */
-            @JvmStatic
+        @JvmStatic
         fun of(`is`: InputStream): ExcelImport {
             return ExcelImport(`is`)
         }

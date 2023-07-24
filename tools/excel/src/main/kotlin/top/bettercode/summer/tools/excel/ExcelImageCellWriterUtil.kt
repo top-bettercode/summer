@@ -27,7 +27,7 @@ object ExcelImageCellWriterUtil {
                     if (rowHeight > 1) {
                         lastRangeTop += rowHeight / 2
                     }
-                    if (cell.newRange()) {
+                    if (cell.newRange) {
                         drawImage(cell.preCellValue, wb, drawing, helper, cell.column,
                                 lastRangeTop,
                                 lastRangeTop + 1)

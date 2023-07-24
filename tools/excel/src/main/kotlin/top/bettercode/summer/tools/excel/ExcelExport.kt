@@ -1,6 +1,9 @@
 package top.bettercode.summer.tools.excel
 
-import org.dhatim.fastexcel.*
+import org.dhatim.fastexcel.AbsoluteListDataValidation
+import org.dhatim.fastexcel.TimestampUtil
+import org.dhatim.fastexcel.Workbook
+import org.dhatim.fastexcel.Worksheet
 import org.springframework.util.Assert
 import org.springframework.util.StreamUtils
 import org.springframework.util.StringUtils
@@ -18,13 +21,6 @@ import java.util.*
 import java.util.function.Consumer
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import kotlin.collections.ArrayList
-import kotlin.collections.Collection
-import kotlin.collections.HashMap
-import kotlin.collections.Iterable
-import kotlin.collections.MutableList
-import kotlin.collections.MutableMap
-import kotlin.collections.emptyList
 import kotlin.collections.set
 
 /**
@@ -148,9 +144,9 @@ class ExcelExport {
                 if (imageByteArrayOutputStream == null && excelField.isImageColumn) {
                     continue
                 }
-                val t = excelField.title()
+                val t = excelField.title
                 sheet!!.value(r, c, t)
-                val width = excelField.width()
+                val width = excelField.width
                 if (width == -1.0) {
                     columnWidths.put(c, t)
                     sheet!!.width(c, columnWidths.width(c))
@@ -158,16 +154,16 @@ class ExcelExport {
                     sheet!!.width(c, width)
                 }
                 setHeaderStyle()
-                sheet!!.range(r + 1, c, r + 1000, c).style().format(excelField.format())
+                sheet!!.range(r + 1, c, r + 1000, c).style().format(excelField.format)
                 if (includeComment) {
-                    val commentStr = excelField.comment()
+                    val commentStr = excelField.comment
                     if (StringUtils.hasText(commentStr)) {
                         sheet!!.comment(r, c, commentStr)
                     }
                 }
-                if (includeDataValidation && excelField.dataValidation().isNotEmpty()) {
+                if (includeDataValidation && excelField.dataValidation.isNotEmpty()) {
                     val listDataValidation = AbsoluteListDataValidation(
-                            sheet!!.range(r + 1, c, Worksheet.MAX_ROWS - 1, c), excelField.dataValidation().joinToString(","))
+                            sheet!!.range(r + 1, c, Worksheet.MAX_ROWS - 1, c), excelField.dataValidation.joinToString(","))
                     listDataValidation.add(sheet!!)
                 }
                 c++
@@ -245,18 +241,18 @@ class ExcelExport {
         val row = excelCell.row
         val style = sheet!!.style(row, column)
         val excelField = excelCell.excelField
-        val format = excelField.format()
-        style.horizontalAlignment(excelField.align().value)
+        val format = excelField.format
+        style.horizontalAlignment(excelField.align.value)
                 .verticalAlignment(Alignment.CENTER.value)
-                .wrapText(excelField.wrapText())
+                .wrapText(excelField.wrapText)
                 .format(format)
                 .borderStyle("thin")
                 .borderColor("000000")
         if (excelCell.isFillColor) {
             style.fillColor("F8F8F7")
         }
-        if (excelField.height() != -1.0) {
-            sheet!!.rowHeight(row, excelField.height())
+        if (excelField.height != -1.0) {
+            sheet!!.rowHeight(row, excelField.height)
         }
         style.set()
         if (excelField.isImageColumn) {
@@ -275,21 +271,20 @@ class ExcelExport {
             } else if (cellValue is Boolean) {
                 sheet!!.value(row, column, cellValue)
             } else if (cellValue is Date) {
-                sheet!!.value(row, column, TimestampUtil.convertDate(cellValue))
+                sheet!!.value(row, column, cellValue)
             } else if (cellValue is LocalDateTime) {
-                sheet!!.value(row, column, TimestampUtil.convertDate(
-                        Date.from(cellValue.atZone(ZoneId.systemDefault()).toInstant())))
+                sheet!!.value(row, column, cellValue)
             } else if (cellValue is LocalDate) {
-                sheet!!.value(row, column, TimestampUtil.convertDate(cellValue))
+                sheet!!.value(row, column, cellValue)
             } else if (cellValue is ZonedDateTime) {
-                sheet!!.value(row, column, TimestampUtil.convertZonedDateTime(cellValue))
+                sheet!!.value(row, column, cellValue)
             } else {
                 throw IllegalArgumentException("No supported cell type for " + cellValue.javaClass)
             }
         } else {
             sheet!!.value(excelCell.row, column)
         }
-        val width = excelField.width()
+        val width = excelField.width
         if (width == -1.0) {
             val cellValue = excelCell.cellValue
             columnWidths.put(column, if (excelField.isDateField) format else cellValue)
@@ -397,12 +392,12 @@ class ExcelExport {
     private fun <T> setRangeCell(excelCell: ExcelRangeCell<T>) {
         val column = excelCell.column
         setCell(excelCell)
-        if (excelCell.needRange()) {
+        if (excelCell.needRange) {
             sheet!!.range(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column)
                     .merge()
             val excelField = excelCell.excelField
-            val width = excelField.width()
-            val format = excelField.format()
+            val width = excelField.width
+            val format = excelField.format
             if (width == -1.0) {
                 sheet!!.width(column, columnWidths.width(column))
             } else {
@@ -411,9 +406,9 @@ class ExcelExport {
             val style = sheet!!
                     .range(excelCell.lastRangeTop, column, excelCell.lastRangeBottom, column)
                     .style()
-            style.horizontalAlignment(excelField.align().value)
+            style.horizontalAlignment(excelField.align.value)
                     .verticalAlignment(Alignment.CENTER.value)
-                    .wrapText(excelField.wrapText())
+                    .wrapText(excelField.wrapText)
                     .format(format)
                     .borderStyle("thin")
                     .borderColor("000000")

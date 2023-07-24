@@ -20,6 +20,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import java.util.function.Consumer
 import javax.validation.ConstraintViolationException
 import javax.validation.Validator
 import kotlin.collections.set
@@ -37,22 +38,22 @@ open class ExcelField<T, P : Any?> {
     /**
      * 导出字段标题
      */
-    private val title: String
+    val title: String
 
     /**
      * 导出字段批注
      */
-    private var comment = ""
+    var comment = ""
 
     /**
      * 有效数据范围“,”分隔
      */
-    private var dataValidation: Array<out String> = emptyArray()
+    var dataValidation: Array<out String> = emptyArray()
 
     /**
      * 格式 [说明...](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1)
      */
-    private var format: String? = null
+    var format: String? = null
 
     /**
      * 导出字段水平对齐方式
@@ -60,22 +61,22 @@ open class ExcelField<T, P : Any?> {
      *
      * Define horizontal alignment. [here](https://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.horizontalalignmentvalues(v=office.14).aspx).
      */
-    private var align = Alignment.CENTER
+    var align = Alignment.CENTER
 
     /**
      * 是否自动换行
      */
-    private var wrapText = true
+    var wrapText = true
 
     /**
      * 列宽度，-1表示自动计算
      */
-    private var width = -1.0
+    var width = -1.0
 
     /**
      * 行高
      */
-    private var height = -1.0
+    var height = -1.0
 
     /**
      * 默认值
@@ -124,6 +125,11 @@ open class ExcelField<T, P : Any?> {
     private lateinit var propertyConverter: (Any) -> P?
 
     /**
+     * 属性字段值验证
+     */
+    var validator: Consumer<T>? = null
+
+    /**
      * 属性字段值转单元格值
      */
     private lateinit var cellConverter: (P) -> Any?
@@ -136,7 +142,7 @@ open class ExcelField<T, P : Any?> {
     /**
      * 属性字段类型
      */
-    protected var propertyType: Class<*>? = null
+    var propertyType: Class<*>? = null
 
     /**
      * 属性字段名称
@@ -231,6 +237,11 @@ open class ExcelField<T, P : Any?> {
 
     fun property(propertyConverter: (Any) -> P?): ExcelField<T, P> {
         this.propertyConverter = propertyConverter
+        return this
+    }
+
+    fun validator(validator: Consumer<T>): ExcelField<T, P> {
+        this.validator = validator
         return this
     }
 
@@ -487,9 +498,9 @@ open class ExcelField<T, P : Any?> {
             } else if (propertyType == Boolean::class.javaPrimitiveType || propertyType == Boolean::class.javaObjectType || propertyType == Boolean::class.java) {
                 if (property as Boolean) "是" else "否"
             } else if (propertyType == LocalDate::class.java) {
-                of((property as LocalDate)).toDate()
+                property
             } else if (propertyType == LocalDateTime::class.java) {
-                of((property as LocalDateTime)).toDate()
+                property
             } else if (isDateField && (propertyType == Long::class.javaObjectType || propertyType == Long::class.javaPrimitiveType || propertyType == Long::class.java)) {
                 of((property as Long)).toDate()
             } else if (propertyType != null && ClassUtils.isPrimitiveOrWrapper(propertyType!!)) {
@@ -647,37 +658,6 @@ open class ExcelField<T, P : Any?> {
     }
 
     //--------------------------------------------
-    fun title(): String {
-        return title
-    }
-
-    fun comment(): String {
-        return comment
-    }
-
-    fun dataValidation(): Array<out String> {
-        return dataValidation
-    }
-
-    fun format(): String? {
-        return format
-    }
-
-    fun align(): Alignment {
-        return align
-    }
-
-    fun wrapText(): Boolean {
-        return wrapText
-    }
-
-    fun width(): Double {
-        return width
-    }
-
-    fun height(): Double {
-        return height
-    }
 
     companion object {
         //--------------------------------------------
