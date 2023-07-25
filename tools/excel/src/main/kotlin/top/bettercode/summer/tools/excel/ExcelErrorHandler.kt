@@ -23,8 +23,7 @@ class ExcelErrorHandler(messageSource: MessageSource?,
         if (error is ExcelImportException) {
             val cellErrors = error.errors
             for (cellError in cellErrors) {
-                val key = getText(cellError.message, cellError.row,
-                        cellError.columnName)
+                val key = cellError.columnName + cellError.row
                 val title = cellError.title
                 val exception = cellError.exception
                 val value = cellError.value

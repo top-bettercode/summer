@@ -19,13 +19,6 @@ class ExcelImportException(message: String?,
      * @param exception 异常
      */(val row: Int, val column: Int, val title: String?, val value: String?,
         val exception: Exception) {
-        var message = "excel.cell.typeMismatch"
-            private set
-
-        fun setMessage(message: String): CellError {
-            this.message = message
-            return this
-        }
 
         val columnName: String
             get() {
