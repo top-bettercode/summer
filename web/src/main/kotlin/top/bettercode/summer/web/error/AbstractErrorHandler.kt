@@ -66,6 +66,6 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
                 || (invalidValue is Array<*> && invalidValue.isEmpty())
                 || (invalidValue is Collection<*> && invalidValue.isEmpty())) {
             ""
-        } else "[${StringUtil.subStringWithEllipsis("$invalidValue",20)}]"
+        } else "[${StringUtil.subStringWithEllipsis("$invalidValue", 20)}]"
     }
 }
