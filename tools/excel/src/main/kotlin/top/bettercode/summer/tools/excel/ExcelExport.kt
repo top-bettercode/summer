@@ -560,11 +560,11 @@ class ExcelExport {
          */
         @JvmStatic
         fun cache(fileName: String, fileKey: String, consumer: Consumer<ExcelExport?>) {
-            cacheOutput(fileName, fileKey) { outputStream: OutputStream ->
+            cacheOutput(fileName, fileKey, Consumer { outputStream ->
                 val excelExport = of(outputStream)
                 consumer.accept(excelExport)
                 excelExport.finish()
-            }
+            })
         }
 
         /**
