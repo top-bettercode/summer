@@ -36,7 +36,7 @@ class ConfigProfileProcessor : AbstractProcessor() {
             gradleProperties.load(gradleUserHomePropertiesFile.inputStream())
         }
 
-        val confs = mutableMapOf<String, String>()
+        val confs = mutableMapOf<String, String?>()
         val version = gradleProperties.getProperty("app.version") ?: "1.0"
         confs["summer.web.project-name"] = gradleProperties.getProperty("application.name") ?: "app"
         confs["summer.web.version"] = "v${version}"
@@ -109,17 +109,17 @@ class ConfigProfileProcessor : AbstractProcessor() {
         File(processingEnv.filer.createResource(StandardLocation.CLASS_OUTPUT, "", "log.txt").toUri().toURL().file).writeText(msg)
     }
 
-    private fun yamlToConfs(conf: Map<String, Any>, configs: MutableMap<String, String>, prefix: String = "") {
+    private fun yamlToConfs(conf: Map<String, Any?>, configs: MutableMap<String, String?>, prefix: String = "") {
         conf.forEach { (key, value) ->
             if (value is Map<*, *>) {
                 @Suppress("UNCHECKED_CAST") yamlToConfs(value as Map<String, Any>, configs, "$prefix$key.")
             } else {
-                configs[prefix + key] = value.toString()
+                configs[prefix + key] = value?.toString()
             }
         }
     }
 
-    private fun replaceConfigs(dir: File, confs: Map<String, String>) {
+    private fun replaceConfigs(dir: File, confs: Map<String, String?>) {
         dir.parentFile.walkTopDown().filter { it.extension in arrayOf("yml", "yaml", "properties", "xml", "conf") }.forEach {
             //替换文件中的@key@配置为confs 中对应的 value
             it.writeText(it.readText().replace(Regex("""@(.+?)@""")) { matchResult ->
