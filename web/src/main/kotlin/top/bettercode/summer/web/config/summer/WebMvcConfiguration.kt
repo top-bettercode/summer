@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.config.summer
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -32,6 +33,7 @@ class WebMvcConfiguration {
         return FormkeyService(summerWebProperties.formExpireSeconds)
     }
 
+    @ConditionalOnClass(javax.servlet.Filter::class)
     @ConditionalOnMissingBean(IApiVersionService::class)
     @Bean
     fun apiVersionService(summerWebProperties: SummerWebProperties): IApiVersionService {
@@ -41,6 +43,7 @@ class WebMvcConfiguration {
     /*
      * 响应增加api version
      */
+    @ConditionalOnClass(javax.servlet.Filter::class)
     @Bean
     fun apiVersionFilter(apiVersionService: IApiVersionService): ApiVersionFilter {
         return ApiVersionFilter(apiVersionService)
@@ -49,6 +52,7 @@ class WebMvcConfiguration {
     /*
      * 隐藏方法，网页支持
      */
+    @ConditionalOnClass(javax.servlet.Filter::class)
     @Bean
     fun hiddenHttpMethodFilter(): OrderedHiddenHttpMethodFilter {
         return OrderedHiddenHttpMethodFilter()
@@ -57,6 +61,7 @@ class WebMvcConfiguration {
     /*
      * Put方法，网页支持
      */
+    @ConditionalOnClass(javax.servlet.Filter::class)
     @Bean
     fun putFormContentFilter(): OrderedHttpPutFormContentFilter {
         return OrderedHttpPutFormContentFilter()
