@@ -1,38 +1,20 @@
 package top.bettercode.summer.web.config.summer
 
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.databind.module.SimpleModule
-import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.support.AbstractBeanDefinition
-import org.springframework.boot.autoconfigure.AutoConfigureBefore
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.support.GenericApplicationContext
-import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
-import top.bettercode.summer.web.*
-import top.bettercode.summer.web.error.*
+import top.bettercode.summer.web.error.ErrorAttributes
 import top.bettercode.summer.web.filter.*
 import top.bettercode.summer.web.form.FormkeyService
 import top.bettercode.summer.web.form.IFormkeyService
-import top.bettercode.summer.web.properties.JacksonExtProperties
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.resolver.ApiExceptionHandlerExceptionResolver
 import top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter
-import top.bettercode.summer.web.serializer.MixIn
-import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
-import java.lang.reflect.ParameterizedType
-import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 
 /**
  * Rest MVC 配置
@@ -41,7 +23,6 @@ import kotlin.collections.HashSet
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
-@ConditionalOnProperty(prefix = "summer.web", name = ["enable"], havingValue = "true", matchIfMissing = true)
 class WebMvcConfiguration {
 
 
@@ -81,6 +62,7 @@ class WebMvcConfiguration {
         return OrderedHttpPutFormContentFilter()
     }
 
+    @ConditionalOnProperty(prefix = "summer.web", name = ["enabled"], havingValue = "true", matchIfMissing = true)
     @Bean
     fun webMvcRegistrations(summerWebProperties: SummerWebProperties, errorAttributes: ErrorAttributes): WebMvcRegistrations {
         return object : WebMvcRegistrations {

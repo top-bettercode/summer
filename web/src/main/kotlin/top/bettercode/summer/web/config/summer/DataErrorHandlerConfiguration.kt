@@ -13,7 +13,6 @@ import org.springframework.jdbc.UncategorizedSQLException
 import top.bettercode.summer.web.error.*
 import javax.servlet.http.HttpServletRequest
 
-@ConditionalOnProperty(prefix = "summer.web", name = ["enable"], havingValue = "true", matchIfMissing = true)
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(UncategorizedSQLException::class)
 @AutoConfigureBefore(ErrorMvcAutoConfiguration::class)

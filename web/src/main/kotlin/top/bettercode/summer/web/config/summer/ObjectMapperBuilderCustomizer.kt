@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.support.AbstractBeanDefinition
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
@@ -19,19 +18,15 @@ import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
-import top.bettercode.summer.web.*
-import top.bettercode.summer.web.error.*
-import top.bettercode.summer.web.filter.*
 import top.bettercode.summer.web.properties.JacksonExtProperties
 import top.bettercode.summer.web.serializer.MixIn
+import top.bettercode.summer.web.support.ApplicationContextHolder
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
-import java.io.IOException
 import java.lang.reflect.ParameterizedType
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
-@ConditionalOnProperty(prefix = "summer.web", name = ["enable"], havingValue = "true", matchIfMissing = true)
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureBefore(JacksonAutoConfiguration::class)
 @ConditionalOnWebApplication
@@ -82,44 +77,45 @@ class ObjectMapperBuilderCustomizer : Jackson2ObjectMapperBuilderCustomizer {
     }
 
     override fun customize(jacksonObjectMapperBuilder: Jackson2ObjectMapperBuilder) {
+        if (ApplicationContextHolder.isSummerWebEnabled()) {
+            jacksonObjectMapperBuilder.featuresToEnable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
 
-        jacksonObjectMapperBuilder.featuresToEnable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
-
-        //LocalDate 配置
-        jacksonObjectMapperBuilder.serializerByType(LocalDate::class.java, object : JsonSerializer<LocalDate?>() {
-                    override fun serialize(value: LocalDate?, gen: JsonGenerator, serializers: SerializerProvider) {
-                gen.writeNumber(of(value!!).toMillis())
-            }
-        })
-        jacksonObjectMapperBuilder.deserializerByType(LocalDate::class.java,
-                object : JsonDeserializer<LocalDate?>() {
-                                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
-                        val asString = p.valueAsString
-                        return if (StringUtils.hasText(asString)) {
-                            of(asString.toLong()).toLocalDate()
-                        } else {
-                            null
+            //LocalDate 配置
+            jacksonObjectMapperBuilder.serializerByType(LocalDate::class.java, object : JsonSerializer<LocalDate?>() {
+                override fun serialize(value: LocalDate?, gen: JsonGenerator, serializers: SerializerProvider) {
+                    gen.writeNumber(of(value!!).toMillis())
+                }
+            })
+            jacksonObjectMapperBuilder.deserializerByType(LocalDate::class.java,
+                    object : JsonDeserializer<LocalDate?>() {
+                        override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
+                            val asString = p.valueAsString
+                            return if (StringUtils.hasText(asString)) {
+                                of(asString.toLong()).toLocalDate()
+                            } else {
+                                null
+                            }
                         }
-                    }
-                })
-        //LocalDateTime 配置
-        jacksonObjectMapperBuilder
-                .serializerByType(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime?>() {
-                                    override fun serialize(value: LocalDateTime?, gen: JsonGenerator,
-                                           serializers: SerializerProvider) {
-                        gen.writeNumber(of(value!!).toMillis())
-                    }
-                })
-        jacksonObjectMapperBuilder.deserializerByType(LocalDateTime::class.java,
-                object : JsonDeserializer<LocalDateTime?>() {
-                                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDateTime? {
-                        val asString = p.valueAsString
-                        return if (StringUtils.hasText(asString)) {
-                            of(asString.toLong()).toLocalDateTime()
-                        } else {
-                            null
+                    })
+            //LocalDateTime 配置
+            jacksonObjectMapperBuilder
+                    .serializerByType(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime?>() {
+                        override fun serialize(value: LocalDateTime?, gen: JsonGenerator,
+                                               serializers: SerializerProvider) {
+                            gen.writeNumber(of(value!!).toMillis())
                         }
-                    }
-                })
+                    })
+            jacksonObjectMapperBuilder.deserializerByType(LocalDateTime::class.java,
+                    object : JsonDeserializer<LocalDateTime?>() {
+                        override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDateTime? {
+                            val asString = p.valueAsString
+                            return if (StringUtils.hasText(asString)) {
+                                of(asString.toLong()).toLocalDateTime()
+                            } else {
+                                null
+                            }
+                        }
+                    })
+        }
     }
 }

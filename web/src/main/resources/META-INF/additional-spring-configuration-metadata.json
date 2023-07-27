@@ -15,6 +15,11 @@
       "name": "summer.async.enabled",
       "type": "java.lang.Boolean",
       "description": "Description for summer.async.enabled."
+    },
+    {
+      "name": "summer.web.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Description for summer.web.enabled."
     }
   ],
   "hints": [

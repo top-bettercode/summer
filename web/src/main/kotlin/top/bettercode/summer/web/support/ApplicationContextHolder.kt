@@ -59,6 +59,12 @@ class ApplicationContextHolder : ApplicationContextAware {
             return if (applicationContext == null) null else applicationContext!!.environment.getProperty(key, targetType, defaultValue)
         }
 
+        //是否支持 summer.web.enabled
+        @JvmStatic
+        fun isSummerWebEnabled(): Boolean {
+            return if (applicationContext == null) false else applicationContext!!.environment.getProperty("summer.web.enabled", Boolean::class.java, true)
+        }
+
         @JvmStatic
         val conversionService: ConversionService
             get() = if (applicationContext == null) DefaultConversionService() else applicationContext!!.getBean(ConversionService::class.java)
