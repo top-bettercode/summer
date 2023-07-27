@@ -20,7 +20,8 @@ top.bettercode.summer.web.config.ApplicationContextHolderConfiguration,\
 top.bettercode.summer.logging.RequestLoggingConfiguration,\
 top.bettercode.summer.logging.websocket.WebsocketConfiguration,\
 top.bettercode.summer.config.EndpointAutoConfiguration,\
-top.bettercode.summer.apisign.ApiSignConfiguration
+top.bettercode.summer.apisign.ApiSignConfiguration,\
+top.bettercode.summer.web.config.ControllerConfiguration
 
 org.springframework.boot.env.EnvironmentPostProcessor=\
 top.bettercode.summer.config.ConfigEnvironmentPostProcessor

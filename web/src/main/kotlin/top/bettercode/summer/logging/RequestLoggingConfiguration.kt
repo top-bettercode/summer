@@ -1,5 +1,6 @@
 package top.bettercode.summer.logging
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -16,22 +17,23 @@ import org.springframework.core.annotation.Order
  * @since 0.1.5
  */
 @ConditionalOnProperty(
-    prefix = "summer.logging.request",
-    name = ["enabled"],
-    havingValue = "true",
-    matchIfMissing = true
+        prefix = "summer.logging.request",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
 )
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(
-    RequestLoggingProperties::class,
-    WebsocketProperties::class
+        RequestLoggingProperties::class,
+        WebsocketProperties::class
 )
+@ConditionalOnClass(javax.servlet.Filter::class)
 class RequestLoggingConfiguration {
 
     @Bean
     fun requestLoggingFilter(
-        properties: RequestLoggingProperties,
-        handlers: List<RequestLoggingHandler>?
+            properties: RequestLoggingProperties,
+            handlers: List<RequestLoggingHandler>?
     ): RequestLoggingFilter {
         return RequestLoggingFilter(properties, handlers ?: emptyList())
     }

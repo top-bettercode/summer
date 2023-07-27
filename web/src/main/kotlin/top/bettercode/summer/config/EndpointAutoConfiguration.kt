@@ -23,11 +23,11 @@ import javax.servlet.http.HttpServletResponse
 /**
  * @author Peter Wu
  */
-@ConditionalOnClass(WebEndpointProperties::class)
+@ConditionalOnClass(WebEndpointProperties::class, javax.servlet.Filter::class)
 @ConditionalOnBean(WebEndpointProperties::class)
 @AutoConfigureAfter(WebEndpointAutoConfiguration::class)
 @EnableConfigurationProperties(
-    ManagementAuthProperties::class
+        ManagementAuthProperties::class
 )
 @Configuration(proxyBeanMethods = false)
 class EndpointAutoConfiguration {
@@ -42,12 +42,12 @@ class EndpointAutoConfiguration {
 
     @Bean
     fun navFilter(
-        webEndpointProperties: WebEndpointProperties,
-        resourceLoader: ResourceLoader
+            webEndpointProperties: WebEndpointProperties,
+            resourceLoader: ResourceLoader
     ): NavFilter {
         return NavFilter(
-            webEndpointProperties,
-            resourceLoader
+                webEndpointProperties,
+                resourceLoader
         )
     }
 
@@ -55,14 +55,14 @@ class EndpointAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(ManagementLoginPageGeneratingFilter::class)
     fun managementLoginPageGeneratingFilter(
-        managementAuthProperties: ManagementAuthProperties,
-        webEndpointProperties: WebEndpointProperties
+            managementAuthProperties: ManagementAuthProperties,
+            webEndpointProperties: WebEndpointProperties
     ): ManagementLoginPageGeneratingFilter {
         if (!StringUtils.hasText(managementAuthProperties.password)) {
             managementAuthProperties.password = RandomUtil.nextString2(6)
             log.info(
-                "默认日志访问用户名密码：{}:{}", managementAuthProperties.username,
-                managementAuthProperties.password
+                    "默认日志访问用户名密码：{}:{}", managementAuthProperties.username,
+                    managementAuthProperties.password
             )
         }
         return ManagementLoginPageGeneratingFilter(managementAuthProperties, webEndpointProperties)
@@ -70,29 +70,29 @@ class EndpointAutoConfiguration {
 
 
     @ConditionalOnProperty(
-        prefix = "summer.logging",
-        name = ["show-enabled"],
-        havingValue = "true",
-        matchIfMissing = true
+            prefix = "summer.logging",
+            name = ["show-enabled"],
+            havingValue = "true",
+            matchIfMissing = true
     )
     @Conditional(LogsEndpointCondition::class)
     @ConditionalOnWebApplication
     @Bean
     fun logsEndpoint(
-        @Value("\${summer.logging.files.path}") loggingFilesPath: String,
-        environment: Environment,
-        websocketProperties: WebsocketProperties,
-        serverProperties: ServerProperties,
-        @Autowired(required = false) request: HttpServletRequest,
-        @Autowired(required = false) response: HttpServletResponse
+            @Value("\${summer.logging.files.path}") loggingFilesPath: String,
+            environment: Environment,
+            websocketProperties: WebsocketProperties,
+            serverProperties: ServerProperties,
+            @Autowired(required = false) request: HttpServletRequest,
+            @Autowired(required = false) response: HttpServletResponse
     ): LogsEndpoint {
         return LogsEndpoint(
-            loggingFilesPath,
-            environment,
-            websocketProperties,
-            serverProperties,
-            request,
-            response
+                loggingFilesPath,
+                environment,
+                websocketProperties,
+                serverProperties,
+                request,
+                response
         )
     }
 
