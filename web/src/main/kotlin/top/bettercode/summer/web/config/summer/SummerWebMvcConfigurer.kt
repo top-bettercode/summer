@@ -1,5 +1,6 @@
 package top.bettercode.summer.web.config.summer
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Configuration
@@ -13,11 +14,10 @@ import top.bettercode.summer.web.deprecated.DeprecatedAPIInterceptor
 import top.bettercode.summer.web.form.FormDuplicateCheckInterceptor
 import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
-import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-
+@ConditionalOnProperty(prefix = "summer.web", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 class SummerWebMvcConfigurer(private val formkeyService: IFormkeyService,

@@ -22,10 +22,10 @@ import top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter
  *
  * @author Peter Wu
  */
+@ConditionalOnProperty(prefix = "summer.web", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 class WebMvcConfiguration {
-
 
     @ConditionalOnMissingBean(IFormkeyService::class)
     @Bean
@@ -33,7 +33,6 @@ class WebMvcConfiguration {
         return FormkeyService(summerWebProperties.formExpireSeconds)
     }
 
-    @ConditionalOnClass(javax.servlet.Filter::class)
     @ConditionalOnMissingBean(IApiVersionService::class)
     @Bean
     fun apiVersionService(summerWebProperties: SummerWebProperties): IApiVersionService {
@@ -43,7 +42,6 @@ class WebMvcConfiguration {
     /*
      * 响应增加api version
      */
-    @ConditionalOnClass(javax.servlet.Filter::class)
     @Bean
     fun apiVersionFilter(apiVersionService: IApiVersionService): ApiVersionFilter {
         return ApiVersionFilter(apiVersionService)
@@ -52,7 +50,6 @@ class WebMvcConfiguration {
     /*
      * 隐藏方法，网页支持
      */
-    @ConditionalOnClass(javax.servlet.Filter::class)
     @Bean
     fun hiddenHttpMethodFilter(): OrderedHiddenHttpMethodFilter {
         return OrderedHiddenHttpMethodFilter()
@@ -61,13 +58,11 @@ class WebMvcConfiguration {
     /*
      * Put方法，网页支持
      */
-    @ConditionalOnClass(javax.servlet.Filter::class)
     @Bean
     fun putFormContentFilter(): OrderedHttpPutFormContentFilter {
         return OrderedHttpPutFormContentFilter()
     }
 
-    @ConditionalOnProperty(prefix = "summer.web", name = ["enabled"], havingValue = "true", matchIfMissing = true)
     @Bean
     fun webMvcRegistrations(summerWebProperties: SummerWebProperties, errorAttributes: ErrorAttributes): WebMvcRegistrations {
         return object : WebMvcRegistrations {

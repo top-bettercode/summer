@@ -147,7 +147,7 @@ open class PackageScanClassResolver @JvmOverloads constructor(classLoader: Class
     protected fun getFoundClasses(packageName: String): Set<Class<*>> {
         var name = packageName
         name = name.replace("/", ".")
-        return allClassesByPackage[name]!!
+        return allClassesByPackage[name]?: emptySet()
     }
 
     private fun getCompositeFilter(filter: PackageScanFilter): PackageScanFilter {
