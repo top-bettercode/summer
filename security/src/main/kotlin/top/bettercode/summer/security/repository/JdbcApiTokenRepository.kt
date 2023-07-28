@@ -78,6 +78,7 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
 
     @Transactional
     override fun remove(scope: String, usernames: List<String>) {
+        Assert.notEmpty(usernames, "usernames must not be empty")
         val ids = usernames.map { "$scope:$it" }.toTypedArray()
         val sql = defaultBatchDeleteStatement + "(${usernames.joinToString(",") { "?" }})"
         val update = jdbcTemplate.update(sql, *ids)
