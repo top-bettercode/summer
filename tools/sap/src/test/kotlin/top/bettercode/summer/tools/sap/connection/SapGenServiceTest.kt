@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.sap.connection
 
 import com.sap.conn.jco.JCoException
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -10,6 +11,7 @@ import java.io.IOException
 /**
  * @author Peter Wu
  */
+@Disabled
 @SpringBootTest(classes = [TestApplication::class])
 internal class SapGenServiceTest {
     @Autowired

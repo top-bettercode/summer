@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.amap
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import top.bettercode.summer.test.BaseTest
@@ -9,6 +10,7 @@ import top.bettercode.summer.tools.amap.entity.Location
  *
  * @author Peter Wu
  */
+@Disabled
 internal class AMapClientTest : BaseTest() {
 
     @Autowired

@@ -16,6 +16,10 @@ object ApplicationContextHolder {
     lateinit var applicationContext: ApplicationContext
 
     @JvmStatic
+    val isInitialized: Boolean
+        get() = ::applicationContext.isInitialized
+
+    @JvmStatic
     fun <T> getBean(s: String, aClass: Class<T>): T? {
         return applicationContext.getBean(s, aClass)
     }
@@ -49,9 +53,10 @@ object ApplicationContextHolder {
     fun <T> getProperty(key: String, targetType: Class<T>, defaultValue: T): T? {
         return applicationContext.environment.getProperty(key, targetType, defaultValue)
     }
+
     @JvmStatic
     val conversionService: ConversionService
-        get() = applicationContext.getBean(ConversionService::class.java)
+        get() =if(isInitialized) applicationContext.getBean(ConversionService::class.java) else DefaultConversionService()
 
     @JvmStatic
     val requestAttributes: Optional<ServletRequestAttributes>
