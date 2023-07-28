@@ -70,7 +70,7 @@ class ExcelTest {
     @Test
     fun testImport() {
 //    testExport();
-        val list = ExcelImport.of(ClassPathResource("template.xlsx").inputStream).setColumn(1)
+        val list = ExcelImport.of(ClassPathResource("template.xlsx").inputStream)
                 .getData<DataBean, DataBean>(excelFields)
         println(valueOf(list, true))
         System.err.println(list.size)

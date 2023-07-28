@@ -8,6 +8,13 @@ summer:
   logging:
     files:
       path: build/logs
+  data:
+    jpa:
+      mybatis:
+        configuration:
+          map-underscore-to-camel-case: true
+        mapper-locations: classpath*:/mapper/*.xml
+#        use-tuple-transformer: true
 
 
 spring:
@@ -15,11 +22,7 @@ spring:
     jpa:
       repositories:
         bootstrap-mode: default
-      mybatis:
-        configuration:
-          map-underscore-to-camel-case: true
-        mapper-locations: classpath*:/mapper/*.xml
-#        use-tuple-transformer: true
+
 
   datasource:
     name: scratchdb

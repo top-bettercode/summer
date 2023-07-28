@@ -94,7 +94,6 @@ public class ExcelTest {
     //    testExport();
     List<DataBean> list =
         ExcelImport.of(new ClassPathResource("template.xlsx").getInputStream())
-            .setColumn(1)
             .getData(excelFields);
     System.out.println(StringUtil.valueOf(list, true));
     System.err.println(list.size());
