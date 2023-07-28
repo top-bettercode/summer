@@ -19,7 +19,8 @@
     {
       "name": "summer.web.enabled",
       "type": "java.lang.Boolean",
-      "description": "Description for summer.web.enabled."
+      "description": "Description for summer.web.enabled.",
+      "defaultValue": "true"
     }
   ],
   "hints": [

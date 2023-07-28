@@ -11,8 +11,7 @@ import top.bettercode.summer.web.properties.JacksonExtProperties
 import top.bettercode.summer.web.serializer.annotation.JsonBigDecimal
 import top.bettercode.summer.web.serializer.annotation.JsonCode
 import top.bettercode.summer.web.serializer.annotation.JsonUrl
-import top.bettercode.summer.web.support.ApplicationContextHolder.Companion.conversionService
-import java.io.IOException
+import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.io.Serializable
 import java.math.BigDecimal
 import java.util.*
@@ -51,7 +50,7 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter, private val d
                 return
             }
             val jsonBigDecimal = writer.getAnnotation(JsonBigDecimal::class.java)
-            val `val` = conversionService.convert(defaultValue, type)
+            val `val` = ApplicationContextHolder.conversionService.convert(defaultValue, type)
             if (jsonBigDecimal != null) {
                 val divisor = jsonBigDecimal.divisor
                 BigDecimalSerializer(jsonBigDecimal.scale, if ("" == divisor) null else BigDecimal(divisor), jsonBigDecimal.roundingMode,

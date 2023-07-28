@@ -15,15 +15,17 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import top.bettercode.summer.data.jpa.config.JpaMybatisAutoConfiguration
-import top.bettercode.summer.data.jpa.domain.*
+import top.bettercode.summer.data.jpa.domain.User
+import top.bettercode.summer.data.jpa.domain.UserMatcher
 import top.bettercode.summer.data.jpa.query.DefaultSpecMatcher
 import top.bettercode.summer.data.jpa.query.SpecMatcher
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
-import top.bettercode.summer.web.support.ApplicationContextHolder.Companion.applicationContext
+import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.util.*
 import java.util.function.Consumer
-import javax.persistence.*
+import javax.persistence.EntityManager
+import javax.persistence.Tuple
 import javax.persistence.criteria.CriteriaBuilder
 import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.Root
@@ -71,9 +73,9 @@ class SimpleJpaExtRepositoryTest {
 
     @Test
     fun findDefaultMapperLocations() {
-        val applicationContext = applicationContext as GenericApplicationContext?
+        val applicationContext = ApplicationContextHolder.applicationContext as GenericApplicationContext
         val defaultMapperLocations = JpaMybatisAutoConfiguration.findDefaultMapperLocations(
-                applicationContext!!.beanFactory)
+                applicationContext.beanFactory)
         System.err.println(defaultMapperLocations)
     }
 
@@ -433,7 +435,7 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findRecycleAll1() {
         Assertions.assertTrue(
-                repository.findAllFromRecycleBin(Specification{ root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                repository.findAllFromRecycleBin(Specification { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder
                             .equal(root.get<Any>("firstName"), "Dave")
                 }).iterator().hasNext())
@@ -442,7 +444,7 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun existsRecycle() {
         Assertions
-                .assertTrue(repository.existsInRecycleBin (Specification{ root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                .assertTrue(repository.existsInRecycleBin(Specification { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder
                             .equal(root.get<Any>("firstName"), "Dave")
                 }))

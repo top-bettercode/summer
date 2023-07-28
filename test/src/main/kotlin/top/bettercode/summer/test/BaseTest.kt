@@ -4,7 +4,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestPropertySource
 import org.springframework.util.StringUtils
 import top.bettercode.summer.web.BaseController
-import top.bettercode.summer.web.support.ApplicationContextHolder.Companion.getProperty
+import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.util.function.Supplier
 
 /**
@@ -16,7 +16,7 @@ import java.util.function.Supplier
 @TestPropertySource(properties = ["summer.security.enabled=false", "seata.enabled=false"])
 abstract class BaseTest : BaseLogTest() {
     protected fun embeddedDatabase(): Boolean {
-        return !StringUtils.hasText(getProperty("spring.datasource.url"))
+        return !StringUtils.hasText(ApplicationContextHolder.getProperty("spring.datasource.url"))
     }
 
     protected fun notFound(): Supplier<out RuntimeException?> {

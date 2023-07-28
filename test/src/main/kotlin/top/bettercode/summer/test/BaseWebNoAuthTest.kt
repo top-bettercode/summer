@@ -32,7 +32,7 @@ import top.bettercode.summer.test.autodoc.Autodoc.requiredParameters
 import top.bettercode.summer.web.BaseController
 import top.bettercode.summer.web.config.summer.ObjectMapperBuilderCustomizer
 import top.bettercode.summer.web.properties.SummerWebProperties
-import top.bettercode.summer.web.support.ApplicationContextHolder.Companion.getProperty
+import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.io.File
 import java.net.URLDecoder
 import java.nio.file.Files
@@ -95,7 +95,7 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     }
 
     protected fun embeddedDatabase(): Boolean {
-        return !StringUtils.hasText(getProperty("spring.datasource.url"))
+        return !StringUtils.hasText(ApplicationContextHolder.getProperty("spring.datasource.url"))
     }
 
     protected fun notFound(): Supplier<out RuntimeException?> {
