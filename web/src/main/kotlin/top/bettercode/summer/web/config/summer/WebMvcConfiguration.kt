@@ -22,7 +22,7 @@ import top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter
  *
  * @author Peter Wu
  */
-@ConditionalOnProperty(prefix = "summer.web", name = ["enabled"], havingValue = "true", matchIfMissing = true)
+@ConditionalOnClass(javax.servlet.Filter::class)
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 class WebMvcConfiguration {
@@ -63,6 +63,7 @@ class WebMvcConfiguration {
         return OrderedHttpPutFormContentFilter()
     }
 
+    @ConditionalOnProperty(prefix = "summer.web", name = ["enabled"], havingValue = "true", matchIfMissing = true)
     @Bean
     fun webMvcRegistrations(summerWebProperties: SummerWebProperties, errorAttributes: ErrorAttributes): WebMvcRegistrations {
         return object : WebMvcRegistrations {

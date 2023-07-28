@@ -1,6 +1,5 @@
 package top.bettercode.summer.web.config
 
-import com.fasterxml.jackson.databind.*
 import com.google.code.kaptcha.Producer
 import com.google.code.kaptcha.impl.DefaultKaptcha
 import com.google.code.kaptcha.util.Config
@@ -11,9 +10,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import top.bettercode.summer.web.*
-import top.bettercode.summer.web.error.*
-import top.bettercode.summer.web.filter.*
 import top.bettercode.summer.web.kaptcha.CaptchaController
 import top.bettercode.summer.web.kaptcha.DefaultCaptchaServiceImpl
 import top.bettercode.summer.web.kaptcha.ICaptchaService
