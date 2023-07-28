@@ -1,7 +1,6 @@
 package top.bettercode.summer.web.config.summer
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Configuration
