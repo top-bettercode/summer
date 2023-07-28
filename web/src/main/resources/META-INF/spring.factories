@@ -22,10 +22,8 @@ top.bettercode.summer.logging.websocket.WebsocketConfiguration,\
 top.bettercode.summer.config.EndpointAutoConfiguration,\
 top.bettercode.summer.apisign.ApiSignConfiguration,\
 top.bettercode.summer.web.config.ControllerConfiguration
-
 org.springframework.boot.env.EnvironmentPostProcessor=\
 top.bettercode.summer.config.ConfigEnvironmentPostProcessor
-
 # Logging Systems
 org.springframework.boot.logging.LoggingSystemFactory=\
 top.bettercode.summer.logging.logback.Logback2LoggingSystemFactory,\

@@ -1,15 +1,12 @@
 package top.bettercode.summer.data.jpa.domain;
 
+import java.time.LocalDateTime;
 import top.bettercode.summer.data.jpa.query.PathMatcher;
 import top.bettercode.summer.data.jpa.query.SpecMatcher;
 import top.bettercode.summer.data.jpa.query.SpecMatcherMode;
 import top.bettercode.summer.data.jpa.query.SpecPath;
 
-import java.time.LocalDateTime;
-
-/**
- * 后台用户 SpecMatcher
- */
+/** 后台用户 SpecMatcher */
 public class UserMatcher extends SpecMatcher<User, UserMatcher> {
 
   private static final long serialVersionUID = 1L;

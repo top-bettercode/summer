@@ -8,7 +8,7 @@ import top.bettercode.summer.apisign.ApiSignProperties
  * @author Peter Wu
  */
 class AutoSignRequestHandler(
-    private val apiSignProperties: ApiSignProperties
+        private val apiSignProperties: ApiSignProperties
 ) : AutoDocRequestHandler {
     private val apiSignAlgorithm: ApiSignAlgorithm = ApiSignAlgorithm(apiSignProperties)
 

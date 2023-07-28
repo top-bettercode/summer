@@ -1,7 +1,6 @@
 package top.bettercode.summer.test.web.serializer
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -20,6 +19,7 @@ import java.math.BigDecimal
 class JsonDefaultSerializerTest {
     private val jacksonExtProperties = JacksonExtProperties()
     val objectMapper = ObjectMapper()
+
     @BeforeEach
     fun setUp() {
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)

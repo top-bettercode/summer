@@ -21,10 +21,10 @@ import java.util.stream.Stream
  */
 @JacksonStdImpl
 class QvodImageProcessSerializer @JvmOverloads constructor(
-    private val picTemplateId: String = "",
-    private val separator: String = ""
+        private val picTemplateId: String = "",
+        private val separator: String = ""
 ) : StdScalarSerializer<Any>(
-    Any::class.java, false
+        Any::class.java, false
 ), ContextualSerializer {
 
 
@@ -39,7 +39,7 @@ class QvodImageProcessSerializer @JvmOverloads constructor(
                 gen.writeStringField("${fieldName}Thumb", process(value))
             } else {
                 val split =
-                    value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                        value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 genCollection(gen, fieldName, Arrays.stream(split))
             }
         } else if (value is Array<*>) {
@@ -52,34 +52,34 @@ class QvodImageProcessSerializer @JvmOverloads constructor(
     }
 
     private fun process(value: Any) =
-        "$value!${picTemplateId.ifBlank { qvodClient.properties.picTemplateId }}.jpg"
+            "$value!${picTemplateId.ifBlank { qvodClient.properties.picTemplateId }}.jpg"
 
     private fun genCollection(
-        gen: JsonGenerator, fieldName: String, stream: Stream<*>
+            gen: JsonGenerator, fieldName: String, stream: Stream<*>
     ) {
         val urls = stream.map { it?.toString()?.trim() }
-            .filter { !it.isNullOrBlank() }
-            .map { process(it!!) }.collect(Collectors.toList())
+                .filter { !it.isNullOrBlank() }
+                .map { process(it!!) }.collect(Collectors.toList())
         val urlFieldName = fieldName + "Thumb"
         gen.writeObjectField(urlFieldName, urls)
     }
 
     override fun serializeWithType(
-        value: Any, gen: JsonGenerator, provider: SerializerProvider,
-        typeSer: TypeSerializer
+            value: Any, gen: JsonGenerator, provider: SerializerProvider,
+            typeSer: TypeSerializer
     ) {
         serialize(value, gen, provider)
     }
 
     override fun createContextual(
-        prov: SerializerProvider,
-        property: BeanProperty?
+            prov: SerializerProvider,
+            property: BeanProperty?
     ): JsonSerializer<*> {
         if (property != null) {
             val annotation = property.getAnnotation(QvodImageProcess::class.java)
-                ?: throw RuntimeException("未注解@" + QvodImageProcess::class.java.name)
+                    ?: throw RuntimeException("未注解@" + QvodImageProcess::class.java.name)
             return QvodImageProcessSerializer(
-                annotation.value, annotation.separator
+                    annotation.value, annotation.separator
             )
         }
         return this

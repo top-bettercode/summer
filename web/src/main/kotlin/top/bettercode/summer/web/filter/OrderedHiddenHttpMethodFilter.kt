@@ -4,9 +4,7 @@ import org.springframework.core.Ordered
 import org.springframework.util.Assert
 import org.springframework.util.StringUtils
 import org.springframework.web.filter.HiddenHttpMethodFilter
-import java.io.IOException
 import javax.servlet.FilterChain
-import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
 import javax.servlet.http.HttpServletResponse

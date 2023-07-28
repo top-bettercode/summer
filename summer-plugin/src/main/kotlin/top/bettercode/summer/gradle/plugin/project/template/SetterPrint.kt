@@ -13,30 +13,30 @@ open class SetterPrint(private val randomValue: Boolean) : ProjectGenerator() {
                 println("${primaryKeyType.shortName} $primaryKeyName = new ${primaryKeyType.shortName}();")
                 primaryKeys.forEach {
                     println(
-                        "$primaryKeyName.set${
-                            it.javaName.capitalized()
-                        }(${if (randomValue) it.randomValueToSet() else ""});"
+                            "$primaryKeyName.set${
+                                it.javaName.capitalized()
+                            }(${if (randomValue) it.randomValueToSet() else ""});"
                     )
                 }
                 println(
-                    "$entityName.set${
-                        primaryKeyName.capitalized()
-                    }(${primaryKeyName});"
+                        "$entityName.set${
+                            primaryKeyName.capitalized()
+                        }(${primaryKeyName});"
                 )
             } else
                 primaryKeys.forEach {
                     println(
-                        "$entityName.set${
-                            it.javaName.capitalized()
-                        }(${if (randomValue) it.randomValueToSet() else ""});"
+                            "$entityName.set${
+                                it.javaName.capitalized()
+                            }(${if (randomValue) it.randomValueToSet() else ""});"
                     )
                 }
         }
         otherColumns.filter { !it.version }.forEach {
             println(
-                "$entityName.set${
-                    it.javaName.capitalized()
-                }(${if (randomValue) it.randomValueToSet() else ""});"
+                    "$entityName.set${
+                        it.javaName.capitalized()
+                    }(${if (randomValue) it.randomValueToSet() else ""});"
             )
         }
     }

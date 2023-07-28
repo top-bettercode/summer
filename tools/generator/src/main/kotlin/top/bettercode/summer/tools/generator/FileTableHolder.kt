@@ -8,9 +8,9 @@ import java.io.File
  * @author Peter Wu
  */
 abstract class FileTableHolder(
-    val ext: GeneratorExtension,
-    val module: String,
-    val files: List<File>
+        val ext: GeneratorExtension,
+        val module: String,
+        val files: List<File>
 ) : TableHolder {
 
     override fun tables(checkFound: Boolean, vararg tableName: String): List<Table> {
@@ -22,7 +22,7 @@ abstract class FileTableHolder(
                 result.addAll(getTables(file).filter { !ext.excludeTableNames.contains(it.tableName) })
             } else if (result.size < tableNames.size) {
                 result.addAll(getTables(file).filter { !ext.excludeTableNames.contains(it.tableName) }
-                    .filter { table -> tableNames.contains(table.tableName) })
+                        .filter { table -> tableNames.contains(table.tableName) })
 
                 if (result.size == tableNames.size) {
                     return result
@@ -45,9 +45,9 @@ abstract class FileTableHolder(
     }
 
     abstract fun getTables(
-        file: File, call: (Table) -> Unit = {
-            it.ext = ext
-            it.module = module
-        }
+            file: File, call: (Table) -> Unit = {
+                it.ext = ext
+                it.module = module
+            }
     ): List<Table>
 }

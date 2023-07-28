@@ -53,7 +53,7 @@ v${project.version}
                 +"[plantuml]"
                 +"----"
                 +project.rootProject.file("puml/${if (defaultModuleName == table.module) "src" else table.module}/${table.subModule}.puml")
-                    .readText()
+                        .readText()
                 +"----"
                 currentModuleName = table.subModuleName
             }
@@ -74,7 +74,7 @@ v${project.version}
     override fun tearDown() {
         val fileUnit = this[name] as FileUnit
         val outFile =
-            File(projectDir, "${fileUnit.file.parent}/${fileUnit.file.nameWithoutExtension}.pdf")
+                File(projectDir, "${fileUnit.file.parent}/${fileUnit.file.nameWithoutExtension}.pdf")
         if (setting("dbdoc-pdf") == "true")
             AsciidocGenerator.pdf(fileUnit.outputFile(projectDir), outFile, projectDir)
     }

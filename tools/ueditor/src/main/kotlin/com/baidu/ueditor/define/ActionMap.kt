@@ -1,7 +1,5 @@
 package com.baidu.ueditor.define
 
-import com.baidu.ueditor.define.ActionMap.mapping
-
 /**
  * 定义请求action类型
  *

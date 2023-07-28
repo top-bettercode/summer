@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Intent(
 
-    @field:JsonProperty("url")
-    val url: String
+        @field:JsonProperty("url")
+        val url: String
 )

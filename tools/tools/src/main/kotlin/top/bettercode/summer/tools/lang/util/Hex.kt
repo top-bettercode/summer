@@ -6,7 +6,7 @@ package top.bettercode.summer.tools.lang.util
 object Hex {
 
     private val HEX =
-        charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
+            charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
 
     @JvmStatic
     fun encode(bytes: ByteArray): CharArray {
@@ -30,7 +30,7 @@ object Hex {
 
         if (nChars % 2 != 0) {
             throw IllegalArgumentException(
-                "Hex-encoded string must have an even number of characters"
+                    "Hex-encoded string must have an even number of characters"
             )
         }
 

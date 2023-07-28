@@ -23,9 +23,9 @@ class JpushClientTest : BaseTest() {
     fun send() {
         val extras = mapOf("key" to "value")
         val request = JpushRequest(
-            Audience("123"),
-            Notification("msg", extras),
-            Message("msg", extras)
+                Audience("123"),
+                Notification("msg", extras),
+                Message("msg", extras)
         )
         jpushClient.send(request)
     }

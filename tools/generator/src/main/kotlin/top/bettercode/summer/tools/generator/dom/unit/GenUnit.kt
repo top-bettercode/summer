@@ -22,11 +22,11 @@ interface GenUnit {
             val file = File(name)
             return if (file.isAbsolute || SourceSet.ROOT == sourceSet) file else {
                 File(
-                    "src/${sourceSet.name.lowercase(Locale.getDefault())}/${
-                        directorySet.name.lowercase(
-                            Locale.getDefault()
-                        )
-                    }/$name"
+                        "src/${sourceSet.name.lowercase(Locale.getDefault())}/${
+                            directorySet.name.lowercase(
+                                    Locale.getDefault()
+                            )
+                        }/$name"
                 )
             }
         }
@@ -39,7 +39,7 @@ interface GenUnit {
         val destFile = outputFile(directory)
         val exists = destFile.exists()
         if (!exists ||
-            (overwrite && !destFile.readLines().any { it.contains("[[Don't cover]]") })
+                (overwrite && !destFile.readLines().any { it.contains("[[Don't cover]]") })
         ) {
             destFile.parentFile.mkdirs()
             val oldContent = if (exists) destFile.readText() else ""

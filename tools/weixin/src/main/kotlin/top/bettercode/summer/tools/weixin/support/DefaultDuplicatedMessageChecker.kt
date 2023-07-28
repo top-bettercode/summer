@@ -16,7 +16,7 @@ class DefaultDuplicatedMessageChecker : DuplicatedMessageChecker {
 
     companion object {
         private val cache =
-            Caffeine.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS).maximumSize(10000)
-                .build<String, String>()
+                Caffeine.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS).maximumSize(10000)
+                        .build<String, String>()
     }
 }

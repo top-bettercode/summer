@@ -5,8 +5,8 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 class TraceInputStream(
-    private val delegate: InputStream,
-    private val byteArrayOutputStream: ByteArrayOutputStream
+        private val delegate: InputStream,
+        private val byteArrayOutputStream: ByteArrayOutputStream
 ) : InputStream() {
 
     private var byteArrayInputStream: ByteArrayInputStream? = null

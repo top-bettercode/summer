@@ -27,7 +27,7 @@ internal class CorpClientTest : BaseTest() {
     @Test
     fun getWebPageAccessToken() {
         val result =
-            corpClient.getWebPageAccessToken("001HKjFa19niJC0qn4Ga1dZNir0HKjFZ")
+                corpClient.getWebPageAccessToken("001HKjFa19niJC0qn4Ga1dZNir0HKjFZ")
         System.err.println(StringUtil.valueOf(result, true))
     }
 

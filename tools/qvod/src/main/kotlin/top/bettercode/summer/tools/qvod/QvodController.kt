@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank
 @ConditionalOnWebApplication
 @RequestMapping(value = ["/qvod"], name = "腾讯云")
 class QvodController(
-    private val qvodClient: QvodClient
+        private val qvodClient: QvodClient
 ) : BaseController() {
 
     @ResponseBody

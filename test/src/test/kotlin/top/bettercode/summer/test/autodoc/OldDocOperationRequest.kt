@@ -12,44 +12,44 @@ import top.bettercode.summer.tools.lang.operation.OperationRequest
  * @author Peter Wu
  */
 @JsonPropertyOrder(
-    "uri",
-    "restUri",
-    "uriVariables",
-    "method",
-    "requiredHeaders",
-    "headers",
-    "cookies",
-    "remoteUser",
-    "requiredParameters",
-    "parameters",
-    "parts",
-    "contentAsString"
+        "uri",
+        "restUri",
+        "uriVariables",
+        "method",
+        "requiredHeaders",
+        "headers",
+        "cookies",
+        "remoteUser",
+        "requiredParameters",
+        "parameters",
+        "parts",
+        "contentAsString"
 )
 @JsonIgnoreProperties("createdDate")
 class OldDocOperationRequest(
-    operationRequest: OperationRequest = OperationRequest(),
-    /**
-     * 请求头必填参数
-     */
-    var requiredHeaders: Set<String> = setOf(),
-    /**
-     * 必填参数
-     */
-    var requiredParameters: Set<String> = setOf()
+        operationRequest: OperationRequest = OperationRequest(),
+        /**
+         * 请求头必填参数
+         */
+        var requiredHeaders: Set<String> = setOf(),
+        /**
+         * 必填参数
+         */
+        var requiredParameters: Set<String> = setOf()
 ) : OperationRequest(
-    operationRequest.uri,
-    operationRequest.restUri,
-    operationRequest.uriVariables,
-    operationRequest.method,
-    operationRequest.headers,
-    operationRequest.cookies,
-    operationRequest.remoteUser,
-    operationRequest.parameters,
-    operationRequest.parts.onEach {
-        it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)
-    },
-    operationRequest.content,
-    operationRequest.dateTime
+        operationRequest.uri,
+        operationRequest.restUri,
+        operationRequest.uriVariables,
+        operationRequest.method,
+        operationRequest.headers,
+        operationRequest.cookies,
+        operationRequest.remoteUser,
+        operationRequest.parameters,
+        operationRequest.parts.onEach {
+            it.content = if (it.submittedFileName.isNullOrBlank()) it.content else ByteArray(0)
+        },
+        operationRequest.content,
+        operationRequest.dateTime
 ) {
 
     val docParameters: Map<String, Any?>
@@ -73,7 +73,7 @@ class OldDocOperationRequest(
     fun needAuth(authVariables: Array<String>): Boolean {
         return requiredHeaders.contains("Authorization") || requiredHeaders.contains("authorization") || requiredHeaders.any {
             authVariables.contains(
-                it
+                    it
             )
         } || requiredParameters.any { authVariables.contains(it) }
     }

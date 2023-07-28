@@ -4,13 +4,11 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.BeanProperty
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.web.serializer.annotation.JsonEmbeddedId
 import top.bettercode.summer.web.support.EmbeddedIdConverter
 import top.bettercode.summer.web.support.EmbeddedIdConverter.toEmbeddedId
-import java.io.IOException
 
 /**
  * @author Peter Wu

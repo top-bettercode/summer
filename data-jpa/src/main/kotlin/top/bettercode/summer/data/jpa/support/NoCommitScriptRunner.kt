@@ -3,7 +3,9 @@ package top.bettercode.summer.data.jpa.support
 import java.io.BufferedReader
 import java.io.PrintWriter
 import java.io.Reader
-import java.sql.*
+import java.sql.Connection
+import java.sql.SQLException
+import java.sql.Statement
 import java.util.regex.Pattern
 
 class NoCommitScriptRunner(private val connection: Connection) {

@@ -11,7 +11,6 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.application.tasks.CreateStartScripts
 import org.springframework.boot.gradle.tasks.bundling.BootJar
-import org.springframework.boot.gradle.tasks.run.BootRun
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profileFiles
 import top.bettercode.summer.gradle.plugin.project.template.*
 import top.bettercode.summer.tools.generator.GeneratorExtension

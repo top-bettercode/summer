@@ -15,17 +15,17 @@ data class RequestCookie
  * @param name the name of the cookie
  * @param value the value of the cookie
  */
-    (
-    /**
-     * Returns the name of the cookie.
-     *
-     * the name
-     */
-    var name: String = "",
-    /**
-     * Returns the value of the cookie.
-     *
-     * the value
-     */
-    var value: String = ""
+(
+        /**
+         * Returns the name of the cookie.
+         *
+         * the name
+         */
+        var name: String = "",
+        /**
+         * Returns the value of the cookie.
+         *
+         * the value
+         */
+        var value: String = ""
 )

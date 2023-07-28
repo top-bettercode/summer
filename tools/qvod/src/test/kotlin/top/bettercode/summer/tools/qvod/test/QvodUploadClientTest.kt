@@ -22,8 +22,8 @@ internal class QvodUploadClientTest : BaseTest() {
     @Test
     fun upload() {
         qvodUploadClient.upload(
-            ClassPathResource("test.jpg").file,
-            "LongVideoPreset"
+                ClassPathResource("test.jpg").file,
+                "LongVideoPreset"
         )//387702304899111623
 //        qvodUploadClient.upload(ClassPathResource("test.mp4").file)//387702304900182040
     }

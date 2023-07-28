@@ -8,7 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import top.bettercode.summer.data.jpa.domain.*
+import top.bettercode.summer.data.jpa.domain.StaticUser
+import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.repository.StaticUserRepository
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import javax.sql.DataSource
@@ -24,6 +25,7 @@ class DynamicSaveTest {
 
     @Autowired
     var dataSource: DataSource? = null
+
     @BeforeEach
     fun setUp() {
 //    RunScript.execute(dataSource.getConnection(),

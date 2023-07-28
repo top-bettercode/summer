@@ -24,7 +24,7 @@ object EscapeUtil {
         while (i < src.length) {
             j = src[i]
             if (Character.isDigit(j) || Character.isLowerCase(j)
-                || Character.isUpperCase(j)
+                    || Character.isUpperCase(j)
             ) {
                 tmp.append(j)
             } else if (j.code < 256) {
@@ -60,15 +60,15 @@ object EscapeUtil {
             if (pos == lastPos) {
                 if (src[pos + 1] == 'u') {
                     ch = Integer.parseInt(
-                        src
-                            .substring(pos + 2, pos + 6), 16
+                            src
+                                    .substring(pos + 2, pos + 6), 16
                     ).toChar()
                     tmp.append(ch)
                     lastPos = pos + 6
                 } else {
                     ch = Integer.parseInt(
-                        src
-                            .substring(pos + 1, pos + 3), 16
+                            src
+                                    .substring(pos + 1, pos + 3), 16
                     ).toChar()
                     tmp.append(ch)
                     lastPos = pos + 3

@@ -5,7 +5,7 @@ CREATE TABLE "api_token"
     "id"             VARCHAR(255) NOT NULL,
     "access_token"   VARCHAR(255) NOT NULL,
     "refresh_token"  VARCHAR(255) NOT NULL,
-    "authentication" BLOB NULL,
+    "authentication" BLOB         NULL,
     PRIMARY KEY ("id")
 );
 CREATE UNIQUE INDEX UK_token_access ON "api_token" ("access_token");

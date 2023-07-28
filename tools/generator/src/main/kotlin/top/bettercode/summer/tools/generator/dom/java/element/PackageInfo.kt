@@ -14,17 +14,17 @@ import java.io.File
  * @author Jeff Butler
  */
 class PackageInfo(
-    val type: JavaType,
-    override var overwrite: Boolean = false,
-    override val sourceSet: SourceSet = SourceSet.MAIN,
-    override val directorySet: DirectorySet = DirectorySet.JAVA
+        val type: JavaType,
+        override var overwrite: Boolean = false,
+        override val sourceSet: SourceSet = SourceSet.MAIN,
+        override val directorySet: DirectorySet = DirectorySet.JAVA
 ) : GenUnit {
 
     override val name: String
         get() = "${
             type.fullyQualifiedNameWithoutTypeParameters.replace(
-                ".",
-                File.separator
+                    ".",
+                    File.separator
             )
         }.${if (DirectorySet.JAVA == directorySet) "java" else "kt"}"
 

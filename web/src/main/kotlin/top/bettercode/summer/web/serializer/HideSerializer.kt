@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import org.springframework.util.StringUtils
 import top.bettercode.summer.web.serializer.annotation.JsonHide
-import java.io.IOException
 import java.util.*
 
 /**

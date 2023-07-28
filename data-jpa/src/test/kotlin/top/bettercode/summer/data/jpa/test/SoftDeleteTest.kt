@@ -8,7 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import top.bettercode.summer.data.jpa.domain.*
+import top.bettercode.summer.data.jpa.domain.HardUser
+import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.repository.HardUserRepository
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import java.util.*
@@ -29,6 +30,7 @@ class SoftDeleteTest {
     val batchIds: MutableList<Int?> = ArrayList()
     var daveId: Int = 0
     var carterId: Int = 0
+
     @BeforeEach
     fun setUp() {
         val dave = User("Dave", "Matthews")

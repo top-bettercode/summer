@@ -1,8 +1,8 @@
 package top.bettercode.summer.gradle.plugin.project.template
 
-import top.bettercode.summer.gradle.plugin.project.template.*
-import top.bettercode.summer.gradle.plugin.project.template.unit.*
-import top.bettercode.summer.tools.generator.dom.unit.SourceSet
+import top.bettercode.summer.gradle.plugin.project.template.unit.form
+import top.bettercode.summer.gradle.plugin.project.template.unit.mixIn
+import top.bettercode.summer.gradle.plugin.project.template.unit.serializationViews
 
 /**
  * @author Peter Wu

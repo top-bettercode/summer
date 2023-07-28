@@ -27,7 +27,7 @@ class GenPackageinfoPlugin : Plugin<Project> {
                 override fun execute(it: Task) {
                     project.allprojects { subProject ->
                         subProject.extensions.getByType(JavaPluginExtension::class.java).sourceSets.getByName(
-                            SourceSet.MAIN_SOURCE_SET_NAME
+                                SourceSet.MAIN_SOURCE_SET_NAME
                         ).java.srcDirs.forEach { srcDir ->
                             srcDir.walkTopDown().filter { it.isDirectory }.forEach { packageDir ->
                                 val listFiles =

@@ -26,8 +26,8 @@ class WeixinCorpConfiguration(private val corpProperties: ICorpProperties) {
             corpClient: ICorpClient
     ): top.bettercode.summer.tools.weixin.controller.CorpCallbackController {
         return top.bettercode.summer.tools.weixin.controller.CorpCallbackController(
-            wechatService,
-            corpClient
+                wechatService,
+                corpClient
         )
     }
 

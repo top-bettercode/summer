@@ -18,8 +18,8 @@ import org.springframework.util.LinkedMultiValueMap
  */
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
-    classes = [(TestController::class)],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+        classes = [(TestController::class)],
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @TestPropertySource(properties = ["summer.logging.slack.channel=dev"])
 class LoggingTemplateControllerTest {
@@ -60,8 +60,8 @@ class LoggingTemplateControllerTest {
         val entity = testRestTemplate.postForEntity("/error/1", null, String::class.java)
         Thread.sleep(10 * 1000L)
         org.junit.jupiter.api.Assertions.assertEquals(
-            HttpStatus.OK,
-            entity.statusCode
+                HttpStatus.OK,
+                entity.statusCode
         )
     }
 
@@ -72,9 +72,9 @@ class LoggingTemplateControllerTest {
         val headers = HttpHeaders()
         headers.add("token", "adbcef")
         val entity = testRestTemplate.postForEntity(
-            "/encrypted2",
-            HttpEntity(params, headers),
-            String::class.java
+                "/encrypted2",
+                HttpEntity(params, headers),
+                String::class.java
         )
         org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
     }
@@ -88,9 +88,9 @@ class LoggingTemplateControllerTest {
         val headers = HttpHeaders()
         headers.add("token", "adbcef")
         val entity = testRestTemplate.postForEntity(
-            "/multipart",
-            HttpEntity(params, headers),
-            String::class.java
+                "/multipart",
+                HttpEntity(params, headers),
+                String::class.java
         )
         org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
     }

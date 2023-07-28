@@ -9,7 +9,6 @@ import org.springframework.core.type.AnnotatedTypeMetadata
 import org.springframework.util.StringUtils
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import top.bettercode.summer.apisign.ApiSignProperties
 
 /**
  * 接口签名 自动配置
@@ -50,9 +49,9 @@ class ApiSignConfiguration {
 
         override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
             return (StringUtils.hasText(context.environment.getProperty("summer.sign.client-secret")) || StringUtils.hasText(
-                context.environment.getProperty("summer.sign.clientSecret")
+                    context.environment.getProperty("summer.sign.clientSecret")
             )) && (StringUtils.hasText(context.environment.getProperty("summer.sign.handler-type-prefix")) || StringUtils.hasText(
-                context.environment.getProperty("summer.sign.handlerTypePrefix")
+                    context.environment.getProperty("summer.sign.handlerTypePrefix")
             ))
         }
     }

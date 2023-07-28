@@ -38,7 +38,7 @@ class Docker : Plugin<Project> {
                             copySpec.from(project.file("database"))
                             copySpec.exclude { ft ->
                                 ft.file == project.file("database/update.sql") || ft.file.startsWith(
-                                    project.file("database/doc")
+                                        project.file("database/doc")
                                 ) || ft.file == project.file("database/README.md")
                             }
                             copySpec.into(File(project.buildDir, "docker/database"))
@@ -48,20 +48,20 @@ class Docker : Plugin<Project> {
             }
             create("deployDockerCompose") { task ->
                 val mainProjects =
-                    project.subprojects.flatMap { it.subprojects }.filter { it.isBoot }
+                        project.subprojects.flatMap { it.subprojects }.filter { it.isBoot }
                 val bootProjectNames =
-                    mainProjects.map { ":${it.parent?.name}:${it.name}:installDist" }
-                        .toTypedArray()
+                        mainProjects.map { ":${it.parent?.name}:${it.name}:installDist" }
+                                .toTypedArray()
                 task.dependsOn("buildDockerCompose", *bootProjectNames)
 
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         mainProjects.forEach { p ->
                             File(p.buildDir, "install/${p.name}").renameTo(
-                                File(
-                                    project.buildDir,
-                                    "docker/${p.name}"
-                                )
+                                    File(
+                                            project.buildDir,
+                                            "docker/${p.name}"
+                                    )
                             )
                         }
                     }

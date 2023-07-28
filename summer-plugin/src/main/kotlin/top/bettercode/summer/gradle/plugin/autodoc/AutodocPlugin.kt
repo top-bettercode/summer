@@ -35,8 +35,8 @@ class AutodocPlugin : Plugin<Project> {
             } else
                 File(project.projectDir, path)
             autodocExtension.projectName = findProperty(project, "project-name")
-                ?: project.findProperty("application.name") as? String
-                        ?: "${project.name}接口文档"
+                    ?: project.findProperty("application.name") as? String
+                            ?: "${project.name}接口文档"
             autodocExtension.author = project.findProperty("autodoc.author") as? String ?: "autodoc"
             var version = project.findProperty("autodoc.version") as? String
             if (version.isNullOrBlank()) {
@@ -52,13 +52,13 @@ class AutodocPlugin : Plugin<Project> {
 
             autodocExtension.toclevels = (findProperty(project, "toclevels") ?: "2").toInt()
             autodocExtension.maxResponseTime =
-                (findProperty(project, "max-response-time") ?: "2000").toInt()
+                    (findProperty(project, "max-response-time") ?: "2000").toInt()
 
             autodocExtension.signParam = (findProperty(project, "sign-param") ?: "sign")
 
             val authVariables = (findProperty(project, "auth-variables")
-                ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
-                .toTypedArray()
+                    ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }.toList()
+                    .toTypedArray()
 
             if (authVariables.isNotEmpty()) {
                 autodocExtension.authVariables = authVariables
@@ -67,8 +67,8 @@ class AutodocPlugin : Plugin<Project> {
         val autodoc = project.extensions.findByType(AutodocExtension::class.java)!!
 
         val docOutputDir = File(
-            (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
-            "/META-INF/resources/actuator/doc"
+                (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
+                "/META-INF/resources/actuator/doc"
         )
         if (autodoc.output == null)
             autodoc.output = docOutputDir
@@ -92,15 +92,15 @@ class AutodocPlugin : Plugin<Project> {
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     AutodocPlugin::class.java.getResourceAsStream("/favicon.ico")?.copyTo(
-                        File(
-                            (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
-                            "/META-INF/resources/favicon.ico"
-                        ).apply { parentFile.mkdirs() }.outputStream()
+                            File(
+                                    (project.tasks.getByName("processResources") as ProcessResources).destinationDir.absolutePath,
+                                    "/META-INF/resources/favicon.ico"
+                            ).apply { parentFile.mkdirs() }.outputStream()
                     )
                     AsciidocGenerator.html(
-                        project.extensions.findByType(
-                            AutodocExtension::class.java
-                        )!!
+                            project.extensions.findByType(
+                                    AutodocExtension::class.java
+                            )!!
                     )
                 }
             })
@@ -110,9 +110,9 @@ class AutodocPlugin : Plugin<Project> {
             task.doLast(object : Action<Task> {
                 override fun execute(it: Task) {
                     AsciidocGenerator.pdf(
-                        project.extensions.findByType(
-                            AutodocExtension::class.java
-                        )!!
+                            project.extensions.findByType(
+                                    AutodocExtension::class.java
+                            )!!
                     )
                 }
             })
@@ -146,7 +146,7 @@ class AutodocPlugin : Plugin<Project> {
     }
 
     private fun findProperty(project: Project, key: String) =
-        (project.findProperty("autodoc.${project.name}.$key") as? String
-            ?: project.findProperty("autodoc.$key") as? String)
+            (project.findProperty("autodoc.${project.name}.$key") as? String
+                    ?: project.findProperty("autodoc.$key") as? String)
 
 }

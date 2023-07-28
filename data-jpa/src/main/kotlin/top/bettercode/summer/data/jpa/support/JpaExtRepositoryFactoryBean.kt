@@ -19,7 +19,7 @@ class JpaExtRepositoryFactoryBean<T : JpaExtRepository<Any?, Serializable?>?>(re
     private lateinit var jpaExtProperties: JpaExtProperties
     private lateinit var mybatisConfiguration: Configuration
 
-    fun setJpaExtProperties( jpaExtProperties: JpaExtProperties ) {
+    fun setJpaExtProperties(jpaExtProperties: JpaExtProperties) {
         this.jpaExtProperties = jpaExtProperties
     }
 

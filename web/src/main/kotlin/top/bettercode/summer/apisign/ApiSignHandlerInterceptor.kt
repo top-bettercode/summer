@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse
  * @author Peter Wu
  */
 class ApiSignHandlerInterceptor(private var apiSignAlgorithm: ApiSignAlgorithm) :
-    NotErrorHandlerInterceptor, Ordered {
+        NotErrorHandlerInterceptor, Ordered {
 
     override fun getOrder(): Int {
         return Ordered.HIGHEST_PRECEDENCE + 20

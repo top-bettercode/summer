@@ -1,9 +1,7 @@
 package top.bettercode.summer.gradle.plugin.publish
 
 import com.gradle.publish.PluginBundleExtension
-import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.publish.Publication
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.tasks.GenerateModuleMetadata

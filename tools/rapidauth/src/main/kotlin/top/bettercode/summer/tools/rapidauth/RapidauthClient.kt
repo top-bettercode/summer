@@ -23,13 +23,13 @@ import top.bettercode.summer.web.support.client.ApiTemplate
  */
 @LogMarker(LOG_MARKER)
 open class RapidauthClient(
-    private val properties: RapidauthProperties
+        private val properties: RapidauthProperties
 ) : ApiTemplate(
-    "第三方平台",
-    "腾讯云号码认证",
-    LOG_MARKER,
-    properties.connectTimeout,
-    properties.readTimeout
+        "第三方平台",
+        "腾讯云号码认证",
+        LOG_MARKER,
+        properties.connectTimeout,
+        properties.readTimeout
 ), IRapidauthClient {
 
     companion object {
@@ -38,15 +38,15 @@ open class RapidauthClient(
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-            object : MappingJackson2HttpMessageConverter() {
-                override fun canRead(@Nullable mediaType: MediaType?): Boolean {
-                    return true
-                }
+                object : MappingJackson2HttpMessageConverter() {
+                    override fun canRead(@Nullable mediaType: MediaType?): Boolean {
+                        return true
+                    }
 
-                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
-                    return true
+                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                        return true
+                    }
                 }
-            }
         val objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
@@ -66,16 +66,16 @@ open class RapidauthClient(
 
 
         val requestCallback = httpEntityCallback<Any>(
-            HttpEntity(request),
-            RapidauthResponse::class.java
+                HttpEntity(request),
+                RapidauthResponse::class.java
         )
         val entity: ResponseEntity<RapidauthResponse> = try {
             execute(
-                properties.url, HttpMethod.POST,
-                requestCallback,
-                responseEntityExtractor<RapidauthResponse>(RapidauthResponse::class.java),
-                properties.sdkappid,
-                random
+                    properties.url, HttpMethod.POST,
+                    requestCallback,
+                    responseEntityExtractor<RapidauthResponse>(RapidauthResponse::class.java),
+                    properties.sdkappid,
+                    random
             )
         } catch (e: Exception) {
             throw RapidauthException(e)

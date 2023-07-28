@@ -1,8 +1,6 @@
 package top.bettercode.summer.gradle.plugin.project.template
 
 import top.bettercode.summer.gradle.plugin.project.template.unit.*
-import top.bettercode.summer.tools.generator.dom.java.element.Interface
-import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.unit.PropertiesUnit
 
 /**

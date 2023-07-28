@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.excel
 import org.dhatim.fastexcel.reader.*
 import org.slf4j.LoggerFactory
 import org.springframework.web.multipart.MultipartFile
-import top.bettercode.summer.tools.excel.ExcelImport.Companion.validator
 import top.bettercode.summer.tools.excel.ExcelImportException.CellError
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
@@ -16,11 +15,9 @@ import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import javax.validation.Validation
 import javax.validation.groups.Default
-import kotlin.collections.ArrayList
 
 /**
  * 导入Excel文件

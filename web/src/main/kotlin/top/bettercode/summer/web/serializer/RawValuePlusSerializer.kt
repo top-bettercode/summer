@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.std.RawSerializer
 import org.springframework.util.StringUtils
-import java.io.IOException
 
 class RawValuePlusSerializer<T> : RawSerializer<T>(String::class.java) {
     override fun serialize(value: T, gen: JsonGenerator, provider: SerializerProvider) {

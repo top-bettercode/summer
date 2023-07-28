@@ -10,10 +10,10 @@ import top.bettercode.summer.tools.generator.dom.unit.SourceSet
  * @author Jeff Butler
  */
 class Interface(
-    type: JavaType,
-    override var overwrite: Boolean = false,
-    override val sourceSet: SourceSet = SourceSet.MAIN,
-    override var visibility: JavaVisibility = JavaVisibility.PUBLIC
+        type: JavaType,
+        override var overwrite: Boolean = false,
+        override val sourceSet: SourceSet = SourceSet.MAIN,
+        override var visibility: JavaVisibility = JavaVisibility.PUBLIC
 ) : InnerInterface(type), CompilationUnit {
 
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()

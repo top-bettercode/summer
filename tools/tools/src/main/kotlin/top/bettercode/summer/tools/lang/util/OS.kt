@@ -63,7 +63,7 @@ enum class OS {
             var name = osName
             if (!StringUtils.hasText(name)) {
                 logger.debug(
-                    "JVM system property 'os.name' is undefined. It is therefore not possible to detect the current OS."
+                        "JVM system property 'os.name' is undefined. It is therefore not possible to detect the current OS."
                 )
 
                 // null signals that the current OS is "unknown"

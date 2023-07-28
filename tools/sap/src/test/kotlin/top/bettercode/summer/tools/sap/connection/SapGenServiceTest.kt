@@ -1,12 +1,10 @@
 package top.bettercode.summer.tools.sap.connection
 
-import com.sap.conn.jco.JCoException
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import top.bettercode.summer.tools.sap.TestApplication
-import java.io.IOException
 
 /**
  * @author Peter Wu
@@ -16,6 +14,7 @@ import java.io.IOException
 internal class SapGenServiceTest {
     @Autowired
     var sapGenService: SapGenService? = null
+
     @Test
     fun gen() {
 //    sapGenService.gen("STOCK", "ZRFC_STOCK_001");

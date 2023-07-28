@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.keygen.KeyGenerators
 import top.bettercode.summer.security.config.ApiSecurityProperties
 import top.bettercode.summer.security.repository.ApiTokenRepository
-import top.bettercode.summer.security.support.AuthenticationHelper.username
 import top.bettercode.summer.security.token.ApiAccessToken
 import top.bettercode.summer.security.token.ApiToken
 import top.bettercode.summer.security.token.InstantAt
@@ -138,6 +137,7 @@ class ApiTokenService(
     fun removeApiToken(scope: String, username: String) {
         apiTokenRepository.remove(scope, username)
     }
+
     fun removeApiToken(scope: String, usernames: List<String>) {
         apiTokenRepository.remove(scope, usernames)
     }

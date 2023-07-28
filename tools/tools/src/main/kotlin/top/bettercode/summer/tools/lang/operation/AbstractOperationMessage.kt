@@ -8,9 +8,9 @@ import org.springframework.http.HttpHeaders
  *
  */
 abstract class AbstractOperationMessage(
-    var headers: HttpHeaders = HttpHeaders(),
-    @JsonIgnore
-    var content: ByteArray = ByteArray(0)
+        var headers: HttpHeaders = HttpHeaders(),
+        @JsonIgnore
+        var content: ByteArray = ByteArray(0)
 ) {
 
     val prettyContent: ByteArray

@@ -9,7 +9,6 @@ import org.springframework.util.ClassUtils
 import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.query.SpecPath.BetweenValue
 import java.util.*
-import java.util.function.Consumer
 import java.util.stream.Collectors
 import javax.persistence.criteria.*
 import javax.persistence.metamodel.Attribute

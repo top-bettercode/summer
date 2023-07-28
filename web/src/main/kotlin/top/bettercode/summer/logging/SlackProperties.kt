@@ -12,7 +12,7 @@ open class SlackProperties {
     var logger = arrayOf("root")
     var ignoredWarnLogger = arrayOf<String>()
     var authToken: String = ""
-    var channel: String =""
+    var channel: String = ""
     var timeoutChannel = "timeout"
     var cacheSeconds = 5 * 60L
         private set

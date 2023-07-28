@@ -26,7 +26,7 @@ class PropertiesSource(private vararg val baseName: String) : MapPropertySource(
         for (name in baseName) {
             try {
                 val resourceAsStream = PropertiesSource::class.java
-                    .getResourceAsStream("/$name.properties")
+                        .getResourceAsStream("/$name.properties")
                 if (resourceAsStream != null) {
                     properties.load(resourceAsStream)
                 }

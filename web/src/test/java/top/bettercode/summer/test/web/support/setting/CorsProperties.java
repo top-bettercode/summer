@@ -1,9 +1,8 @@
 package top.bettercode.summer.test.web.support.setting;
 
+import java.util.Collections;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.web.cors.CorsConfiguration;
-
-import java.util.Collections;
 
 /**
  * @author Peter Wu
@@ -18,7 +17,7 @@ public class CorsProperties extends CorsConfiguration {
   public CorsProperties() {
     setAllowedOrigins(Collections.singletonList("*"));
     setAllowedMethods(Collections.singletonList("*"));
-//    setAllowCredentials(true);
+    //    setAllowCredentials(true);
     setAllowedHeaders(Collections.singletonList("*"));
   }
 

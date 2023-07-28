@@ -39,7 +39,7 @@ class ToolTest {
     @Test
     fun regex() {
         val s =
-            "jdbc:mysql://127.0.0.1:3306/stopcar?useUnicode=true&characterEncoding=utf-8&useSSL=false"
+                "jdbc:mysql://127.0.0.1:3306/stopcar?useUnicode=true&characterEncoding=utf-8&useSSL=false"
         val s1 = "jdbc:mysql://127.0.0.1:3306/stopcar"
         System.err.println(s.replace("^.+\\/(.+)\\?.*$", "$1"))
         System.err.println(s1.replace("^.+\\/(.+).*$", "$1"))
@@ -99,7 +99,7 @@ class ToolTest {
             System.err.println(groupValues)
         }
         val sss =
-            "@org.springframework.validation.annotation.Validated"
+                "@org.springframework.validation.annotation.Validated"
         sss.split(Annotations.splitRegex).forEach {
             val groupValues = regex.find(it)?.groupValues
             System.err.println(groupValues)

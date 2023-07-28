@@ -13,8 +13,8 @@ class Logback2LoggingSystemFactory : LoggingSystemFactory {
 
     companion object {
         private val PRESENT = ClassUtils.isPresent(
-            "ch.qos.logback.classic.LoggerContext",
-            Logback2LoggingSystemFactory::class.java.classLoader
+                "ch.qos.logback.classic.LoggerContext",
+                Logback2LoggingSystemFactory::class.java.classLoader
         )
     }
 }

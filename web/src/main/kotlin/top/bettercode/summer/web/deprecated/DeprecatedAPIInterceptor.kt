@@ -25,6 +25,6 @@ class DeprecatedAPIInterceptor(private val messageSource: MessageSource) : NotEr
     private fun getText(request: HttpServletRequest?, code: Any, vararg args: Any): String {
         val codeString = code.toString()
         return messageSource.getMessage(codeString, args, codeString,
-                if (request == null) Locale.CHINA else request.locale)?:""
+                if (request == null) Locale.CHINA else request.locale) ?: ""
     }
 }

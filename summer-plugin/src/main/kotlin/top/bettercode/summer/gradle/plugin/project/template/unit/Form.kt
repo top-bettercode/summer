@@ -48,8 +48,8 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             //primaryKey getter
             method(
-                "get${primaryKeyName.capitalized()}",
-                primaryKeyType
+                    "get${primaryKeyName.capitalized()}",
+                    primaryKeyType
             ) {
                 if (!isCompositePrimaryKey && !primaryKey.autoIncrement && primaryKey.idgenerator.isBlank() && primaryKey.sequence.isBlank()) {
                     if (primaryKey.columnSize > 0 && primaryKey.javaType == JavaType.stringInstance) {
@@ -102,14 +102,14 @@ val form: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         val filterColumns =
-            columns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
+                columns.filter { it.javaName != primaryKeyName && !it.testIgnored && (!it.isPrimary || isFullComposite) }
         filterColumns
-            .forEach {
-                //getter
-                getter(this, it)
-                //setter
-                setter(this, it)
-            }
+                .forEach {
+                    //getter
+                    getter(this, it)
+                    //setter
+                    setter(this, it)
+                }
     }
 }
 
@@ -117,12 +117,12 @@ private val getter: ProjectGenerator.(TopLevelClass, Column) -> Unit = { clazz, 
     clazz.apply {
         //getter
         method(
-            "get${it.javaName.capitalized()}",
-            it.javaType
+                "get${it.javaName.capitalized()}",
+                it.javaType
         ) {
             if (it.columnSize > 0 && it.javaType == JavaType.stringInstance) {
                 import("javax.validation.groups.Default")
-                annotation("@org.hibernate.validator.constraints.Length(${if(!it.nullable) "min = 1, " else ""}max = ${it.columnSize}, groups = Default.class)")
+                annotation("@org.hibernate.validator.constraints.Length(${if (!it.nullable) "min = 1, " else ""}max = ${it.columnSize}, groups = Default.class)")
             }
             if (!it.nullable) {
                 import("top.bettercode.summer.web.validator.CreateConstraint")

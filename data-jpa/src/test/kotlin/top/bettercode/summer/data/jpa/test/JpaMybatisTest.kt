@@ -14,8 +14,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Transactional
-import top.bettercode.summer.data.jpa.domain.*
-import top.bettercode.summer.data.jpa.repository.*
+import top.bettercode.summer.data.jpa.domain.User
+import top.bettercode.summer.data.jpa.repository.Service
+import top.bettercode.summer.data.jpa.repository.UserRepository
 import top.bettercode.summer.data.jpa.support.Size
 import top.bettercode.summer.tools.lang.util.CollectionUtil.mapOf
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
@@ -151,7 +152,7 @@ class JpaMybatisTest {
         Assertions.assertEquals(4, users!!.size)
     }
 
-//    @Test
+    //    @Test
     fun selectMybatisAllVal() {
         val users = repository.selectMybatisAllVal()
         System.err.println(valueOf(users, true))
@@ -162,7 +163,7 @@ class JpaMybatisTest {
         Assertions.assertEquals(4, users!!.size)
     }
 
-//    @Test
+    //    @Test
     fun selectMybatisAllVal2() {
         val users = repository.selectMybatisAllVal2()
         System.err.println(valueOf(users, true))

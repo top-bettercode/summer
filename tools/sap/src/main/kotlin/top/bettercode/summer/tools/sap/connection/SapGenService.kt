@@ -1,7 +1,6 @@
 package top.bettercode.summer.tools.sap.connection
 
 import com.sap.conn.jco.ConversionException
-import com.sap.conn.jco.JCoException
 import com.sap.conn.jco.JCoField
 import org.slf4j.LoggerFactory
 import org.springframework.util.Assert
@@ -18,7 +17,6 @@ import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.generator.dom.unit.SourceSet
 import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier.modifyContent
 import java.io.File
-import java.io.IOException
 import java.nio.file.Files
 import java.util.*
 

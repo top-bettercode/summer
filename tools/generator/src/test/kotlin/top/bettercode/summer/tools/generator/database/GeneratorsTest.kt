@@ -18,10 +18,10 @@ import java.io.FileReader
  */
 class GeneratorsTest {
     private val extension = GeneratorExtension(
-        projectDir = File("build/resources/test/"),
-        dir = "gen/java",
-        packageName = "com.bettercode.test",
-        replaceAll = true
+            projectDir = File("build/resources/test/"),
+            dir = "gen/java",
+            packageName = "com.bettercode.test",
+            replaceAll = true
     )
 
     init {
@@ -36,7 +36,7 @@ class GeneratorsTest {
     @Test
     fun gen() {
         extension.generators = arrayOf(
-            PlantUML(null, File("build/gen/puml/database.puml"), null)
+                PlantUML(null, File("build/gen/puml/database.puml"), null)
         )
         extension.dataType = top.bettercode.summer.tools.generator.DataType.PDM
         Generators.callInAllModule(extension)
@@ -46,7 +46,7 @@ class GeneratorsTest {
     fun tableNames() {
         extension.dataType = top.bettercode.summer.tools.generator.DataType.PDM
         print(
-            "============>" + Generators.tableNames(extension).joinToString(",") + "<============"
+                "============>" + Generators.tableNames(extension).joinToString(",") + "<============"
         )
     }
 
@@ -59,11 +59,11 @@ class GeneratorsTest {
             jdbcDataSource.user = "sa"
             jdbcDataSource.password = "sa"
             RunScript.execute(
-                jdbcDataSource.connection,
-                FileReader(
-                    MetaDataTest::class.java.getResource("/hsql.sql")?.file
-                        ?: throw IllegalStateException("文件不存在")
-                )
+                    jdbcDataSource.connection,
+                    FileReader(
+                            MetaDataTest::class.java.getResource("/hsql.sql")?.file
+                                    ?: throw IllegalStateException("文件不存在")
+                    )
             )
         }
     }

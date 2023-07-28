@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class ManagementLoginPageGeneratingFilter(
-    private val managementAuthProperties: ManagementAuthProperties,
-    private val webEndpointProperties: WebEndpointProperties
+        private val managementAuthProperties: ManagementAuthProperties,
+        private val webEndpointProperties: WebEndpointProperties
 ) : GenericFilterBean() {
     private var loginPageUrl: String = "${webEndpointProperties.basePath}/$DEFAULT_LOGIN_PAGE"
     private var logoutSuccessUrl: String
@@ -31,7 +31,7 @@ class ManagementLoginPageGeneratingFilter(
     private var pwdParameter: String
     private val antPathMatcher = AntPathMatcher()
     private var resolveHiddenInputs =
-        Function<HttpServletRequest, Map<String?, String>> { emptyMap() }
+            Function<HttpServletRequest, Map<String?, String>> { emptyMap() }
 
     /**
      * Sets a Function used to resolve a Map of the hidden inputs where the key is the name of the
@@ -41,7 +41,7 @@ class ManagementLoginPageGeneratingFilter(
      * @param resolveHiddenInputs the function to resolve the inputs
      */
     fun setResolveHiddenInputs(
-        resolveHiddenInputs: Function<HttpServletRequest, Map<String?, String>>
+            resolveHiddenInputs: Function<HttpServletRequest, Map<String?, String>>
     ) {
         Assert.notNull(resolveHiddenInputs, "resolveHiddenInputs cannot be null")
         this.resolveHiddenInputs = resolveHiddenInputs
@@ -104,8 +104,8 @@ class ManagementLoginPageGeneratingFilter(
             val username = request.getParameter(usernameParameter)
             val password = request.getParameter(pwdParameter)
             if (username != null && password != null && (username.trim { it <= ' ' }
-                        == managementAuthProperties.username) && (password
-                        == managementAuthProperties.password)) {
+                            == managementAuthProperties.username) && (password
+                            == managementAuthProperties.password)) {
                 response.setCookie(LOGGER_AUTH_KEY, managementAuthProperties.authKey)
                 val url = request.getCookie(TARGET_URL_KEY) ?: "/"
                 sendRedirect(request, response, url)
@@ -116,8 +116,8 @@ class ManagementLoginPageGeneratingFilter(
         }
         if (matcheLoginPage && "GET" == request.method || loginError || isLogoutSuccess(request)) {
             val loginPageHtml = generateLoginPageHtml(
-                request, loginError,
-                isLogoutSuccess(request), errorMsg
+                    request, loginError,
+                    isLogoutSuccess(request), errorMsg
             )
             response.contentType = "text/html;charset=UTF-8"
             response.setContentLength(loginPageHtml.toByteArray(StandardCharsets.UTF_8).size)
@@ -142,8 +142,8 @@ class ManagementLoginPageGeneratingFilter(
     }
 
     private fun sendRedirect(
-        request: HttpServletRequest, response: HttpServletResponse,
-        url: String
+            request: HttpServletRequest, response: HttpServletResponse,
+            url: String
     ) {
         val redirectUrl = calculateRedirectUrl(request.contextPath, url)
         if (logger.isTraceEnabled) {
@@ -159,12 +159,12 @@ class ManagementLoginPageGeneratingFilter(
     }
 
     private fun generateLoginPageHtml(
-        request: HttpServletRequest, loginError: Boolean,
-        logoutSuccess: Boolean, errorMsg: String
+            request: HttpServletRequest, loginError: Boolean,
+            logoutSuccess: Boolean, errorMsg: String
     ): String {
         val sb = StringBuilder()
         sb.append(
-            """<!DOCTYPE html>
+                """<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -283,15 +283,15 @@ class ManagementLoginPageGeneratingFilter(
         val sb = StringBuilder()
         for ((key, value) in resolveHiddenInputs.apply(request)) {
             sb.append("<input name=\"").append(key).append("\" type=\"hidden\" value=\"")
-                .append(value).append("\" />\n")
+                    .append(value).append("\" />\n")
         }
         return sb.toString()
     }
 
     private fun isLogoutSuccess(request: HttpServletRequest): Boolean {
         return "GET" == request.method && matches(
-            request,
-            logoutSuccessUrl
+                request,
+                logoutSuccessUrl
         )
     }
 
@@ -331,15 +331,15 @@ class ManagementLoginPageGeneratingFilter(
                 return false
             }
             val absoluteUrl = Pattern.compile(
-                "\\A[a-z0-9.+-]+://.*",
-                Pattern.CASE_INSENSITIVE
+                    "\\A[a-z0-9.+-]+://.*",
+                    Pattern.CASE_INSENSITIVE
             )
             return absoluteUrl.matcher(url).matches()
         }
 
         private fun createError(isError: Boolean, message: String): String {
             return if (isError) "<div class=\"alert alert-danger\" role=\"alert\">" + HtmlUtils
-                .htmlEscape(message) + "</div>" else ""
+                    .htmlEscape(message) + "</div>" else ""
         }
 
         private fun createLogoutSuccess(isLogoutSuccess: Boolean): String {

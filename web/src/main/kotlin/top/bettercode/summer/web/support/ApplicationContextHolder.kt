@@ -1,7 +1,6 @@
 package top.bettercode.summer.web.support
 
 import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationContextAware
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.web.context.request.RequestContextHolder
@@ -56,7 +55,7 @@ object ApplicationContextHolder {
 
     @JvmStatic
     val conversionService: ConversionService
-        get() =if(isInitialized) applicationContext.getBean(ConversionService::class.java) else DefaultConversionService()
+        get() = if (isInitialized) applicationContext.getBean(ConversionService::class.java) else DefaultConversionService()
 
     @JvmStatic
     val requestAttributes: Optional<ServletRequestAttributes>

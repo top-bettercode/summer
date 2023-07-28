@@ -154,7 +154,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
     private fun getStatus(requestAttributes: RequestAttributes): HttpStatus {
         val statusCode = getAttribute<Int>(requestAttributes, WebUtils.ERROR_STATUS_CODE_ATTRIBUTE)
         try {
-            return statusCode?.let { HttpStatus.valueOf(it) }?:HttpStatus.INTERNAL_SERVER_ERROR
+            return statusCode?.let { HttpStatus.valueOf(it) } ?: HttpStatus.INTERNAL_SERVER_ERROR
         } catch (ignored: Exception) {
         }
         return HttpStatus.INTERNAL_SERVER_ERROR
@@ -180,7 +180,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
     private fun getText(webRequest: WebRequest?, code: Any?, vararg args: Any): String {
         val codeString = code.toString()
         return messageSource.getMessage(codeString, args, codeString,
-                if (webRequest == null) Locale.CHINA else webRequest.locale)?:""
+                if (webRequest == null) Locale.CHINA else webRequest.locale) ?: ""
     }
 
     /**

@@ -1,6 +1,5 @@
 package top.bettercode.summer.test.web.serializer
 
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.springframework.util.Assert
@@ -42,6 +41,7 @@ class JsonEmbeddedIdTest {
     }
 
     val objectMapper = ObjectMapper()
+
     @Test
     fun test() {
         val user = User()

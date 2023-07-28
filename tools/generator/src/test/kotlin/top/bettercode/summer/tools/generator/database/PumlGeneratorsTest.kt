@@ -11,12 +11,12 @@ import java.io.File
  */
 class PumlGeneratorsTest {
     private val extension = GeneratorExtension(
-        projectDir = File("build"),
-        dir = "gen/java",
-        packageName = "com.bettercode.test",
-        replaceAll = true,
-        dataType = top.bettercode.summer.tools.generator.DataType.PUML,
-        tableNames = arrayOf("OAUTH_CLIENT_DETAILS", "OAUTH_CLIENT_TOKEN")
+            projectDir = File("build"),
+            dir = "gen/java",
+            packageName = "com.bettercode.test",
+            replaceAll = true,
+            dataType = top.bettercode.summer.tools.generator.DataType.PUML,
+            tableNames = arrayOf("OAUTH_CLIENT_DETAILS", "OAUTH_CLIENT_TOKEN")
     )
 
     @Test

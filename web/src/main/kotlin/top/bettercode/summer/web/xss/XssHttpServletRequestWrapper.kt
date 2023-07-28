@@ -5,7 +5,6 @@ import org.springframework.http.MediaType
 import org.springframework.util.StreamUtils
 import org.springframework.util.StringUtils
 import java.io.ByteArrayInputStream
-import java.io.IOException
 import java.nio.charset.StandardCharsets
 import javax.servlet.ReadListener
 import javax.servlet.ServletInputStream

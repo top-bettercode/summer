@@ -54,7 +54,7 @@ object IDCardUtil {
     fun validate(idcard: String?): Boolean {
         var id = idcard ?: return false
         if (id.length == 15) {
-            id = convertFrom15bit(id)?:return false
+            id = convertFrom15bit(id) ?: return false
         }
 
         // 非18位为假

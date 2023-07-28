@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-  <script src="sign.js"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="sign.js"></script>
 </head>
 <body>
 <div id="sign"></div>
 <script>
-  window.signClient({
-    clientSecret: 'abc'
-  });
-  var params = {};
-  params['name'] = 'value';
-  var sign = window.signClient.sign(params);
-  console.info(sign);
-  document.getElementById('sign').innerHTML = sign;
+    window.signClient({
+      clientSecret: 'abc'
+    });
+    var params = {};
+    params['name'] = 'value';
+    var sign = window.signClient.sign(params);
+    console.info(sign);
+    document.getElementById('sign').innerHTML = sign;
 
 </script>
 </body>

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import top.bettercode.summer.test.BaseWebNoAuthTest
 import top.bettercode.summer.test.TestApplication
-import top.bettercode.summer.web.*
 
 /**
  * @author Peter Wu

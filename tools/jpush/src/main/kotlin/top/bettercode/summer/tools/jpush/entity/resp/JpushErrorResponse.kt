@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class JpushErrorResponse(
 
-    @field:JsonProperty("error")
-    val error: Error? = null
+        @field:JsonProperty("error")
+        val error: Error? = null
 )

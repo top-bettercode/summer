@@ -2,8 +2,9 @@ package top.bettercode.summer.data.jpa.query.mybatis
 
 import org.apache.ibatis.type.JdbcType
 import org.hibernate.type.descriptor.sql.JdbcTypeJavaClassMappings
-import java.sql.*
-import javax.persistence.*
+import java.sql.ResultSetMetaData
+import java.sql.SQLFeatureNotSupportedException
+import javax.persistence.Tuple
 
 /**
  * @author Peter Wu

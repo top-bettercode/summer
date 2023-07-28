@@ -5,8 +5,8 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier.modifyContent
 import top.bettercode.summer.test.web.DataDicBean
+import top.bettercode.summer.tools.lang.operation.PrettyPrintingContentModifier.modifyContent
 import java.math.BigDecimal
 
 /**

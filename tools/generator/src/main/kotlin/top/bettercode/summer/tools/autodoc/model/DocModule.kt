@@ -75,8 +75,8 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
         var collectionTree = projectCollections.find { it.name == collectionName }
         if (collectionTree == null) {
             collectionTree = DocCollection(
-                collectionName,
-                dir = File(projectModuleDic, "collection/$collectionName")
+                    collectionName,
+                    dir = File(projectModuleDic, "collection/$collectionName")
             )
             projectCollections.add(collectionTree)
         }
@@ -88,27 +88,27 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
         (rootCollections + projectCollections).forEach { collection ->
             val items = collection.items
             collection.dir.listFiles()
-                ?.filterNot { items.contains(it.nameWithoutExtension) || it.name == "field.yml" }
-                ?.forEach {
-                    it.delete()
-                    println("delete $it")
-                }
+                    ?.filterNot { items.contains(it.nameWithoutExtension) || it.name == "field.yml" }
+                    ?.forEach {
+                        it.delete()
+                        println("delete $it")
+                    }
         }
 
         if (this.rootModuleDic != null) {
             val rootCollectionNames = rootCollections.map { it.name }
             File(this.rootModuleDic, "collection").listFiles()
-                ?.filterNot { rootCollectionNames.contains(it.name) }?.forEach {
-                    it.deleteRecursively()
-                    println("delete $it")
-                }
+                    ?.filterNot { rootCollectionNames.contains(it.name) }?.forEach {
+                        it.deleteRecursively()
+                        println("delete $it")
+                    }
         }
         val subCollectionNames = projectCollections.map { it.name }
         File(projectModuleDic, "collection").listFiles()
-            ?.filterNot { subCollectionNames.contains(it.name) }?.forEach {
-                it.deleteRecursively()
-                println("delete $it")
-            }
+                ?.filterNot { subCollectionNames.contains(it.name) }?.forEach {
+                    it.deleteRecursively()
+                    println("delete $it")
+                }
     }
 
     fun writeToDisk() {
@@ -118,18 +118,18 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
 
     fun postmanEvents(operation: DocOperation, autodoc: AutodocExtension): List<Event> {
         return listOf(
-            Event(
-                "prerequest",
-                Script(exec = operation.prerequest.ifEmpty { defaultPrerequestExec(operation) })
-            ), Event("test", Script(exec = operation.testExec.ifEmpty {
-                defaultPostmanTestExec(operation, autodoc)
-            }))
+                Event(
+                        "prerequest",
+                        Script(exec = operation.prerequest.ifEmpty { defaultPrerequestExec(operation) })
+                ), Event("test", Script(exec = operation.testExec.ifEmpty {
+            defaultPostmanTestExec(operation, autodoc)
+        }))
         )
     }
 
     private fun defaultPostmanTestExec(
-        operation: Operation,
-        autodoc: AutodocExtension
+            operation: Operation,
+            autodoc: AutodocExtension
     ): List<String> {
         val statusCode = operation.response.statusCode
         val exec = mutableListOf<String>()

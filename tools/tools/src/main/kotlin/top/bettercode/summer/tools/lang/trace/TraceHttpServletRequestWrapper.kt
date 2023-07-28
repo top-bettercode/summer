@@ -34,9 +34,9 @@ class TraceHttpServletRequestWrapper
 
     val content: String
         get() = RequestConverter.toString(
-            if (!contentType.isNullOrBlank()) MediaType.parseMediaType(
-                contentType
-            ).charset else null, byteArrayOutputStream.toByteArray()
+                if (!contentType.isNullOrBlank()) MediaType.parseMediaType(
+                        contentType
+                ).charset else null, byteArrayOutputStream.toByteArray()
         )
 
     fun read() {
@@ -66,7 +66,7 @@ class TraceHttpServletRequestWrapper
     override fun getInputStream(): ServletInputStream {
         if (servletInputStream == null) {
             servletInputStream =
-                TraceServletInputStream(super.getInputStream(), byteArrayOutputStream)
+                    TraceServletInputStream(super.getInputStream(), byteArrayOutputStream)
         }
         return servletInputStream!!
     }

@@ -9,7 +9,7 @@ import java.io.File
  * @author Peter Wu
  */
 class PdmTableHolder(ext: GeneratorExtension, module: String, files: List<File>) :
-    FileTableHolder(ext, module, files) {
+        FileTableHolder(ext, module, files) {
 
     override fun getTables(file: File, call: (Table) -> Unit) = PdmReader.read(file, call)
 }

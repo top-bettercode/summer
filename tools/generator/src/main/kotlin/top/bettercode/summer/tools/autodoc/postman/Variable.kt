@@ -8,16 +8,16 @@ import java.util.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder("id", "key", "value", "type", "description")
 class Variable(
-    @JsonProperty("id")
-    var id: String? = UUID.randomUUID().toString(),
-    @JsonProperty("key")
-    var key: String? = null,
-    @JsonProperty("value")
-    var value: String? = null,
-    @JsonProperty("type")
-    var type: String? = null,
-    @JsonProperty("description")
-    var description: String? = null
+        @JsonProperty("id")
+        var id: String? = UUID.randomUUID().toString(),
+        @JsonProperty("key")
+        var key: String? = null,
+        @JsonProperty("value")
+        var value: String? = null,
+        @JsonProperty("type")
+        var type: String? = null,
+        @JsonProperty("description")
+        var description: String? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Building(
 
-    @field:JsonProperty("name")
-    val name: List<Any?>? = null,
+        @field:JsonProperty("name")
+        val name: List<Any?>? = null,
 
-    @field:JsonProperty("type")
-    val type: List<Any?>? = null
+        @field:JsonProperty("type")
+        val type: List<Any?>? = null
 )

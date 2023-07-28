@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
-import java.io.IOException
 import java.lang.reflect.Type
 import java.time.Instant
 import java.time.LocalDateTime

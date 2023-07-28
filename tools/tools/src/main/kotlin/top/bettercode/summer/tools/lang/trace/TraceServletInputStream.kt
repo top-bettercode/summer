@@ -6,8 +6,8 @@ import javax.servlet.ReadListener
 import javax.servlet.ServletInputStream
 
 class TraceServletInputStream(
-    private val delegate: ServletInputStream,
-    private val byteArrayOutputStream: ByteArrayOutputStream
+        private val delegate: ServletInputStream,
+        private val byteArrayOutputStream: ByteArrayOutputStream
 ) : ServletInputStream() {
 
     private var byteArrayInputStream: ByteArrayInputStream? = null

@@ -12,10 +12,10 @@ import java.io.File
  */
 class OracleMetaDataTest {
     private val extension = GeneratorExtension(
-        projectDir = File("build"),
-        dir = "src/test/resources",
-        packageName = "com.bettercode.test",
-        tableNames = arrayOf("PU_CUST_TASK_LIST")
+            projectDir = File("build"),
+            dir = "src/test/resources",
+            packageName = "com.bettercode.test",
+            tableNames = arrayOf("PU_CUST_TASK_LIST")
     )
 
     init {

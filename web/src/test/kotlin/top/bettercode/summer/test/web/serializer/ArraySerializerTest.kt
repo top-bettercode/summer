@@ -12,6 +12,7 @@ import top.bettercode.summer.test.web.StringArrayBean
  */
 internal class ArraySerializerTest {
     val objectMapper = ObjectMapper()
+
     @BeforeEach
     fun setUp() {
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)

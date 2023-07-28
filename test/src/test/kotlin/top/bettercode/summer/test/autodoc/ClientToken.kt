@@ -9,34 +9,34 @@ import javax.validation.constraints.NotNull
  */
 data class ClientToken(
 
-    /**
-     * TOKEN ID
-     */
-    @Length(max = 256)
-    var tokenId: String? = null,
+        /**
+         * TOKEN ID
+         */
+        @Length(max = 256)
+        var tokenId: String? = null,
 
-    /**
-     * TOKEN
-     */
-    var token: ByteArray? = null,
+        /**
+         * TOKEN
+         */
+        var token: ByteArray? = null,
 
-    /**
-     * 权限信息ID
-     */
-    var authenticationId: String? = null,
+        /**
+         * 权限信息ID
+         */
+        var authenticationId: String? = null,
 
-    /**
-     * 用户名
-     */
-    @field:NotNull
-    @Length(max = 256)
-    var userName: String? = null,
+        /**
+         * 用户名
+         */
+        @field:NotNull
+        @Length(max = 256)
+        var userName: String? = null,
 
-    /**
-     * 客户端ID
-     */
-    @field:NotNull(groups = [Create::class])
-    var clientId: Int? = null
+        /**
+         * 客户端ID
+         */
+        @field:NotNull(groups = [Create::class])
+        var clientId: Int? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

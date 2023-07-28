@@ -15,7 +15,7 @@ open class ConfigEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
     private val log: Logger = LoggerFactory.getLogger(ConfigEnvironmentPostProcessor::class.java)
 
     override fun postProcessEnvironment(
-        environment: ConfigurableEnvironment, application: SpringApplication
+            environment: ConfigurableEnvironment, application: SpringApplication
     ) {
         addConfig(environment, "application-core")
         addConfig(environment, "application-default")
@@ -25,8 +25,8 @@ open class ConfigEnvironmentPostProcessor : EnvironmentPostProcessor, Ordered {
         val configResource = ClassPathResource("META-INF/${configName}.yml")
         if (configResource.exists()) {
             val configs = YamlPropertySourceLoader().load(
-                "META-INF/${configName}.yml",
-                configResource
+                    "META-INF/${configName}.yml",
+                    configResource
             )
             configs.forEach {
                 environment.propertySources.addLast(it)

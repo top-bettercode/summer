@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.generator.dom.java.element
 
-import ch.qos.logback.classic.spi.ThrowableProxyUtil.indent
 import top.bettercode.summer.tools.generator.dom.java.Annotations
 import top.bettercode.summer.tools.generator.dom.java.StringOperator
 

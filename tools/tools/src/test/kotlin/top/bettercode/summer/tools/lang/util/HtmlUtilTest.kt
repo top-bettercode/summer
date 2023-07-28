@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test
 class HtmlUtilTest {
 
     private val inputString =
-        HtmlUtilTest::class.java.classLoader.getResourceAsStream("test.html")
-            ?.let { String(it.readBytes()) }
+            HtmlUtilTest::class.java.classLoader.getResourceAsStream("test.html")
+                    ?.let { String(it.readBytes()) }
 
     @Test
     fun parseHtml() {

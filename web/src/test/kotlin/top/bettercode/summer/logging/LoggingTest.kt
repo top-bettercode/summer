@@ -45,13 +45,13 @@ class LoggingTest {
     @Test
     fun param() {
         val parameters =
-            QueryStringParser.parse(URI("https://sapi.k780.com/?app=weather.realtime&cityIp=xx&ag=&appkey=xx&sign=xxx&format=json"))
+                QueryStringParser.parse(URI("https://sapi.k780.com/?app=weather.realtime&cityIp=xx&ag=&appkey=xx&sign=xxx&format=json"))
         System.err.println(parameters)
     }
 
     data class Data(
-        var name: String? = "a",
-        var age: Int? = 11,
-        var data: String? = null
+            var name: String? = "a",
+            var age: Int? = 11,
+            var data: String? = null
     )
 }

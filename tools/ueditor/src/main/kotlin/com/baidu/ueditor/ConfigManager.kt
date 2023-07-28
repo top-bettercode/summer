@@ -3,7 +3,10 @@ package com.baidu.ueditor
 import com.baidu.ueditor.define.ActionMap
 import org.json.JSONObject
 import org.springframework.core.io.ClassPathResource
-import java.io.*
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.UnsupportedEncodingException
 import java.nio.charset.StandardCharsets
 
 /**
@@ -92,7 +95,7 @@ class ConfigManager private constructor() {
     }
 
     private fun getArray(key: String): Array<String?> {
-        val jsonArray = allConfig?.getJSONArray(key)?: return arrayOfNulls(0)
+        val jsonArray = allConfig?.getJSONArray(key) ?: return arrayOfNulls(0)
         val result = arrayOfNulls<String>(jsonArray.length())
         var i = 0
         val len = jsonArray.length()

@@ -15,9 +15,9 @@ val properties: ProjectGenerator.(Interface) -> Unit = { unit ->
         if (isCompositePrimaryKey) {
             primaryKeys.forEach {
                 field(
-                    it.javaName,
-                    JavaType.stringInstance,
-                    "\"${primaryKeyName}.${it.javaName}\""
+                        it.javaName,
+                        JavaType.stringInstance,
+                        "\"${primaryKeyName}.${it.javaName}\""
                 ) {
                     visibility = JavaVisibility.DEFAULT
                     if (it.remark.isNotBlank() || it.columnDef != null)

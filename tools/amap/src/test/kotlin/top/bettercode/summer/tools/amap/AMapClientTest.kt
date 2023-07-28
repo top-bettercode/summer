@@ -19,7 +19,7 @@ internal class AMapClientTest : BaseTest() {
     @Test
     fun regeo() {
         val regeo = amapClient.regeo(
-            Location("104.1762947", "30.8170838")
+                Location("104.1762947", "30.8170838")
         )
         System.err.println(regeo)
     }

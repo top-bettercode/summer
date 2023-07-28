@@ -14,11 +14,11 @@ import javax.sql.DataSource
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = [
-        "summer.web.wrap-enable=false",
-        "summer.web.ok-enable=false",
-        "summer.sign.handler-type-prefix=",
-        "logging.level.root=debug"]
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = [
+    "summer.web.wrap-enable=false",
+    "summer.web.ok-enable=false",
+    "summer.sign.handler-type-prefix=",
+    "logging.level.root=debug"]
 )
 class AutodocTemplateControllerTest {
 

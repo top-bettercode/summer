@@ -19,9 +19,9 @@ object JavaDomUtils {
         }
 
         return if (compilationUnit == null
-            || typeDoesNotRequireImport(fqjt)
-            || typeIsInSamePackage(compilationUnit, fqjt)
-            || typeIsAlreadyImported(compilationUnit, fqjt)
+                || typeDoesNotRequireImport(fqjt)
+                || typeIsInSamePackage(compilationUnit, fqjt)
+                || typeIsAlreadyImported(compilationUnit, fqjt)
         ) {
             fqjt.shortName
         } else {
@@ -30,12 +30,12 @@ object JavaDomUtils {
     }
 
     private fun calculateParameterizedTypeName(
-        compilationUnit: CompilationUnit?,
-        fqjt: JavaType
+            compilationUnit: CompilationUnit?,
+            fqjt: JavaType
     ): String {
         val baseTypeName = calculateTypeName(
-            compilationUnit,
-            JavaType(fqjt.fullyQualifiedNameWithoutTypeParameters)
+                compilationUnit,
+                JavaType(fqjt.fullyQualifiedNameWithoutTypeParameters)
         )
 
         val sb = StringBuilder()
@@ -63,18 +63,18 @@ object JavaDomUtils {
     }
 
     private fun typeIsInSamePackage(
-        compilationUnit: CompilationUnit,
-        fullyQualifiedJavaType: JavaType
+            compilationUnit: CompilationUnit,
+            fullyQualifiedJavaType: JavaType
     ): Boolean {
         return fullyQualifiedJavaType
-            .packageName == compilationUnit.type.packageName
+                .packageName == compilationUnit.type.packageName
     }
 
     private fun typeIsAlreadyImported(
-        compilationUnit: CompilationUnit,
-        fullyQualifiedJavaType: JavaType
+            compilationUnit: CompilationUnit,
+            fullyQualifiedJavaType: JavaType
     ): Boolean {
         return compilationUnit.importedTypes.flatMap { it.importList }
-            .contains(fullyQualifiedJavaType.fullyQualifiedNameWithoutTypeParameters)
+                .contains(fullyQualifiedJavaType.fullyQualifiedNameWithoutTypeParameters)
     }
 }

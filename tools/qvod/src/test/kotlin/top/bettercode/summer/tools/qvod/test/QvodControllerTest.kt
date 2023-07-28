@@ -15,17 +15,17 @@ class QvodControllerTest : BaseWebNoAuthTest() {
     @Test
     fun signature() {
         perform(
-            get("/qvod/signature")
+                get("/qvod/signature")
         )
     }
 
     @Test
     fun antiLeechUrl() {
         perform(
-            post("/qvod/antiLeechUrl").param(
-                "url",
-                "https://1313291945.vod2.myqcloud.com/3306e890vodtranscq1313291945/7a0382da387702307226359579/v.f80000.mp4"
-            )
+                post("/qvod/antiLeechUrl").param(
+                        "url",
+                        "https://1313291945.vod2.myqcloud.com/3306e890vodtranscq1313291945/7a0382da387702307226359579/v.f80000.mp4"
+                )
         )
     }
 

@@ -2,8 +2,6 @@ package top.bettercode.summer.data.jpa.test
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.springframework.data.jpa.repository.query.MybatisJpaQuery
-import top.bettercode.summer.tools.generator.dom.java.Annotations.Companion.regex
 
 /**
  *

@@ -16,27 +16,27 @@ import java.util.*
  * @author Peter Wu
  */
 @JsonPropertyOrder(
-    "fields",
-    "prerequest",
-    "testExec",
-    "description",
-    "request",
-    "response",
-    "protocol"
+        "fields",
+        "prerequest",
+        "testExec",
+        "description",
+        "request",
+        "response",
+        "protocol"
 )
 @JsonIgnoreProperties("collectionName", "name", "duration")
 class OldDocOperation(
-    operation: Operation = Operation(),
-    var description: String = "",
-    var prerequest: List<String> = listOf(),
-    var testExec: List<String> = listOf(),
-    var fields: SortedSet<Field> = TreeSet()
+        operation: Operation = Operation(),
+        var description: String = "",
+        var prerequest: List<String> = listOf(),
+        var testExec: List<String> = listOf(),
+        var fields: SortedSet<Field> = TreeSet()
 ) : Operation(
-    operation.collectionName,
-    operation.name,
-    operation.protocol,
-    if (operation.request::class == OperationRequest::class) OldDocOperationRequest(operation.request) else operation.request,
-    operation.response
+        operation.collectionName,
+        operation.name,
+        operation.protocol,
+        if (operation.request::class == OperationRequest::class) OldDocOperationRequest(operation.request) else operation.request,
+        operation.response
 ) {
 
     @JsonIgnore
@@ -54,7 +54,7 @@ class OldDocOperation(
         name = operation.name
         protocol = operation.protocol
         request = if (operation.request::class == OperationRequest::class) OldDocOperationRequest(
-            operation.request
+                operation.request
         ) else operation.request
         response = operation.response
     }

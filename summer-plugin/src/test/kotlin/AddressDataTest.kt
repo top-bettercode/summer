@@ -24,7 +24,7 @@ class AddressDataTest {
             p.println("delete from $tableName;")
             val addressData = Properties()
             addressData.load(
-                AddressDataTest::class.java.classLoader.getResourceAsStream("address-data.properties")
+                    AddressDataTest::class.java.classLoader.getResourceAsStream("address-data.properties")
             )
             addressData.keys.sortedBy { any -> any.toString() }.forEach {
                 val code = it.toString()
@@ -76,5 +76,5 @@ class AddressDataTest {
     }
 
     private fun getName(addressData: Properties, parentCode: String) =
-        (addressData[parentCode] as? String)?.trim()
+            (addressData[parentCode] as? String)?.trim()
 }

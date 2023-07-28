@@ -2,7 +2,6 @@ package top.bettercode.summer.data.jpa.querydsl
 
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Predicate
-import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable

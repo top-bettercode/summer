@@ -4,14 +4,11 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.xml.sax.ErrorHandler
 import org.xml.sax.InputSource
-import org.xml.sax.SAXException
 import org.xml.sax.SAXParseException
 import top.bettercode.summer.tools.lang.util.StringUtil
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.util.*
-import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParserFactory
 import javax.xml.transform.ErrorListener
 import javax.xml.transform.OutputKeys
@@ -49,7 +46,7 @@ object PrettyPrintingContentModifier {
 
     private interface PrettyPrinter {
 
-            fun prettyPrint(content: ByteArray): ByteArray
+        fun prettyPrint(content: ByteArray): ByteArray
 
     }
 
@@ -83,12 +80,12 @@ object PrettyPrintingContentModifier {
             }
         }
 
-            override fun prettyPrint(content: ByteArray): ByteArray {
+        override fun prettyPrint(content: ByteArray): ByteArray {
             val transformer = transformerFactory.newTransformer()
             transformer.setOutputProperty(OutputKeys.INDENT, "yes")
             transformer.setOutputProperty(
-                "{http://xml.apache.org/xslt}indent-amount",
-                "4"
+                    "{http://xml.apache.org/xslt}indent-amount",
+                    "4"
             )
             transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
             val transformed = ByteArrayOutputStream()
@@ -98,7 +95,7 @@ object PrettyPrintingContentModifier {
             return transformed.toByteArray()
         }
 
-            private fun createSaxSource(original: ByteArray): SAXSource {
+        private fun createSaxSource(original: ByteArray): SAXSource {
             val parser = parserFactory.newSAXParser()
             val xmlReader = parser.xmlReader
             xmlReader.errorHandler = errorListener
@@ -109,7 +106,7 @@ object PrettyPrintingContentModifier {
 
     private class JsonPrettyPrinter : PrettyPrinter {
 
-            override fun prettyPrint(content: ByteArray): ByteArray {
+        override fun prettyPrint(content: ByteArray): ByteArray {
             StringUtil.OBJECT_MAPPER.readTree(content)
             return StringUtil.prettyJson(String(content))!!.toByteArray()
         }
@@ -117,8 +114,8 @@ object PrettyPrintingContentModifier {
     }
 
     private val PRETTY_PRINTERS = Collections
-        .unmodifiableList(
-            listOf(JsonPrettyPrinter(), XmlPrettyPrinter())
-        )
+            .unmodifiableList(
+                    listOf(JsonPrettyPrinter(), XmlPrettyPrinter())
+            )
 
 }

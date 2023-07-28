@@ -8,10 +8,10 @@ import java.io.File
  * @author Peter Wu
  */
 open class PropertiesUnit(
-    override val name: String,
-    override var overwrite: Boolean = false,
-    override val sourceSet: SourceSet = SourceSet.MAIN,
-    override val directorySet: DirectorySet = DirectorySet.RESOURCES
+        override val name: String,
+        override var overwrite: Boolean = false,
+        override val sourceSet: SourceSet = SourceSet.MAIN,
+        override val directorySet: DirectorySet = DirectorySet.RESOURCES
 ) : GenUnit {
     private val properties: SortedProperties = SortedProperties(true)
     override var write: File.(String) -> Boolean = {

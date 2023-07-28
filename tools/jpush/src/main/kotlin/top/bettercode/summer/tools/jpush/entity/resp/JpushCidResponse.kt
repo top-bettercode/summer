@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class JpushCidResponse(
 
-    @field:JsonProperty("cidlist")
-    val cidlist: List<String?>? = null
+        @field:JsonProperty("cidlist")
+        val cidlist: List<String?>? = null
 )

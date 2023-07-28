@@ -1,6 +1,9 @@
 package com.baidu.ueditor
 
-import com.baidu.ueditor.define.*
+import com.baidu.ueditor.define.ActionMap
+import com.baidu.ueditor.define.AppInfo
+import com.baidu.ueditor.define.BaseState
+import com.baidu.ueditor.define.State
 import com.baidu.ueditor.hunter.FileManager
 import com.baidu.ueditor.upload.IUploader
 import org.springframework.util.Assert

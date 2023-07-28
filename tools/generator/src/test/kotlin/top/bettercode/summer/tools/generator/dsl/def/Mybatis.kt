@@ -92,10 +92,10 @@ class Mybatis : Generator() {
                 targetPackage = "mybatis"
             if (targetProject.isNullOrBlank())
                 targetProject =
-                    if (ext.dir.isBlank()) "src/main/resources" else ext.dir.replace(
-                        "java",
-                        "resources"
-                    )
+                        if (ext.dir.isBlank()) "src/main/resources" else ext.dir.replace(
+                                "java",
+                                "resources"
+                        )
             mkdir(targetProject, targetPackage)
         }
 

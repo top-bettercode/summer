@@ -52,10 +52,10 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, ${type.shortName}.class);"
             }
             method(
-                "of",
-                type,
-                Parameter(primaryKeyName, JavaType.stringInstance),
-                Parameter("delimiter", JavaType.stringInstance)
+                    "of",
+                    type,
+                    Parameter(primaryKeyName, JavaType.stringInstance),
+                    Parameter("delimiter", JavaType.stringInstance)
             ) {
                 isStatic = true
                 +"return EmbeddedIdConverter.toEmbeddedId($primaryKeyName, delimiter, ${type.shortName}.class);"
@@ -107,9 +107,9 @@ val compositePrimaryKey: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         //equals
         method(
-            "equals",
-            JavaType.boolean,
-            Parameter("o", JavaType.objectInstance)
+                "equals",
+                JavaType.boolean,
+                Parameter("o", JavaType.objectInstance)
         ) {
             annotation("@Override")
             +"if (this == o) {"

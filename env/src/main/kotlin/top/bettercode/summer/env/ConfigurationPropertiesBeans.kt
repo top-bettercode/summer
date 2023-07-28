@@ -1,10 +1,10 @@
 package top.bettercode.summer.env
 
-import org.springframework.beans.BeansException
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.boot.context.properties.ConfigurationPropertiesBean
-import org.springframework.context.*
+import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationContextAware
 import org.springframework.stereotype.Component
 
 /**
@@ -22,7 +22,7 @@ class ConfigurationPropertiesBeans : BeanPostProcessor, ApplicationContextAware 
             applicationContext.autowireCapableBeanFactory
         }
         if (applicationContext.parent != null && applicationContext.parent
-                ?.autowireCapableBeanFactory is ConfigurableListableBeanFactory) {
+                        ?.autowireCapableBeanFactory is ConfigurableListableBeanFactory) {
             val listable = applicationContext.parent
                     ?.autowireCapableBeanFactory as ConfigurableListableBeanFactory
             val names = listable.getBeanNamesForType(ConfigurationPropertiesBeans::class.java)

@@ -24,9 +24,9 @@ object IPAddressUtil {
         get() {
             val interfaces = NetworkInterface.getNetworkInterfaces()
             return interfaces.toList().filter { !it.isLoopback && it.isUp && !it.isVirtual }
-                .minByOrNull { it.index }?.inetAddresses?.toList()
-                ?.filterIsInstance<Inet4Address>()?.firstOrNull()?.let { return it.hostAddress }
-                ?: "127.0.0.1"
+                    .minByOrNull { it.index }?.inetAddresses?.toList()
+                    ?.filterIsInstance<Inet4Address>()?.firstOrNull()?.let { return it.hostAddress }
+                    ?: "127.0.0.1"
         }
 
     /**
@@ -72,9 +72,9 @@ object IPAddressUtil {
             throw IllegalArgumentException("ipAddress 不能为空")
         }
         return !ipAddress.matches(
-            ("(127\\.0\\.0\\.1)|" + "(localhost)|" + "(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|"
-                    + "(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})|"
-                    + "(192\\.168\\.\\d{1,3}\\.\\d{1,3})").toRegex()
+                ("(127\\.0\\.0\\.1)|" + "(localhost)|" + "(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|"
+                        + "(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})|"
+                        + "(192\\.168\\.\\d{1,3}\\.\\d{1,3})").toRegex()
         )
     }
 
@@ -110,11 +110,11 @@ object IPAddressUtil {
         }
 
         return (strMAC.substring(0, 2) + ":" + strMAC.substring(3, 5) + ":" + strMAC.substring(
-            6,
-            8
+                6,
+                8
         ) + ":"
                 + strMAC.substring(9, 11) + ":" + strMAC.substring(12, 14) + ":" + strMAC
-            .substring(15, 17))
+                .substring(15, 17))
     }
 
 }

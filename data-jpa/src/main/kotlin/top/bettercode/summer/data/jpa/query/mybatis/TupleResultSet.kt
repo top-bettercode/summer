@@ -2,14 +2,15 @@ package top.bettercode.summer.data.jpa.query.mybatis
 
 import org.hibernate.HibernateException
 import top.bettercode.summer.data.jpa.support.JpaUtil
-import java.io.*
+import java.io.InputStream
+import java.io.Reader
 import java.math.BigDecimal
 import java.net.URL
 import java.sql.*
 import java.sql.Array
 import java.sql.Date
 import java.util.*
-import javax.persistence.*
+import javax.persistence.Tuple
 
 /**
  * @author Peter Wu
@@ -157,7 +158,7 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
         return getObject(s, Date::class.java)
     }
 
-    override fun getTime(s: String): Time ?{
+    override fun getTime(s: String): Time? {
         return getObject(s, Time::class.java)
     }
 
@@ -598,7 +599,7 @@ class TupleResultSet(private val tuples: List<Tuple>) : ResultSet {
         return getObject(i, URL::class.java)
     }
 
-    override fun getURL(s: String): URL ?{
+    override fun getURL(s: String): URL? {
         return getObject(s, URL::class.java)
     }
 

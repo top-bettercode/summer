@@ -16,7 +16,7 @@ import java.util.*
  */
 @JacksonStdImpl
 class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
-    String::class.java, false
+        String::class.java, false
 ) {
     private val qvodClient: QvodClient = ApplicationContextHolder.getBean(QvodClient::class.java)!!
 
@@ -34,7 +34,7 @@ class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
     }
 
     override fun serializeWithType(
-        value: String, gen: JsonGenerator, provider: SerializerProvider, typeSer: TypeSerializer
+            value: String, gen: JsonGenerator, provider: SerializerProvider, typeSer: TypeSerializer
     ) {
         serialize(value, gen, provider)
     }

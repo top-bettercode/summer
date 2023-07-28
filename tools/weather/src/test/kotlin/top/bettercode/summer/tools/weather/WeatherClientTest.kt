@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.test.BaseTest
-import top.bettercode.summer.tools.autodoc.AutodocUtil.toMap
 import top.bettercode.summer.tools.lang.util.StringUtil
 import java.io.File
 
@@ -43,35 +42,35 @@ class WeatherClientTest : BaseTest() {
     }
 
     private fun findIcon(
-        node: JsonNode,
-        wtNm: String,
-        icon: String?,
-        night: Boolean
+            node: JsonNode,
+            wtNm: String,
+            icon: String?,
+            night: Boolean
     ) {
         val wt = wtNm + (if (night) "夜" else "")
         var find = node.toList()
-            .find { it.get("icon_name").asText() == wt }
+                .find { it.get("icon_name").asText() == wt }
         if (night && find == null)
             find = node.toList()
-                .find { it.get("icon_name").asText() == wtNm }
+                    .find { it.get("icon_name").asText() == wtNm }
         Assertions.assertNotNull(find, "$wt:未找到")
         val iconCode = find!!.get("icon_code").asText()
         val source = File(ClassPathResource("icons-source").file, "$iconCode.svg")
         val source2 =
-            File(ClassPathResource("icons-resources").file, "${if (night) "n" else "d"}/$icon.png")
+                File(ClassPathResource("icons-resources").file, "${if (night) "n" else "d"}/$icon.png")
         val target = File(ClassPathResource("").file, "icons/${if (night) "n" else "d"}/$icon.svg")
         val target2 =
-            File(ClassPathResource("").file, "icons-zh/${if (night) "n" else "d"}/$wt.svg")
+                File(ClassPathResource("").file, "icons-zh/${if (night) "n" else "d"}/$wt.svg")
         val target2Source =
-            File(ClassPathResource("").file, "icons-zh/${if (night) "n" else "d"}/$wt-s.png")
+                File(ClassPathResource("").file, "icons-zh/${if (night) "n" else "d"}/$wt-s.png")
         if (!target.exists()) {
             if (!target.parentFile.exists()) {
                 target.parentFile.mkdirs()
             }
             source.copyTo(target)
             val replace = target.readText()
-                .replace("fill=\"currentColor\"", "fill=\"white\"")
-                .replace("width=\"16\" height=\"16\"", "width=\"80\" height=\"80\"")
+                    .replace("fill=\"currentColor\"", "fill=\"white\"")
+                    .replace("width=\"16\" height=\"16\"", "width=\"80\" height=\"80\"")
             target.writeText(replace)
         }
         if (!target2.exists()) {
@@ -80,8 +79,8 @@ class WeatherClientTest : BaseTest() {
             }
             source.copyTo(target2)
             val replace = target2.readText()
-                .replace("fill=\"currentColor\"", "fill=\"white\"")
-                .replace("width=\"16\" height=\"16\"", "width=\"80\" height=\"80\"")
+                    .replace("fill=\"currentColor\"", "fill=\"white\"")
+                    .replace("width=\"16\" height=\"16\"", "width=\"80\" height=\"80\"")
             target2.writeText(replace)
         }
         if (source2.exists() && !target2Source.exists()) {

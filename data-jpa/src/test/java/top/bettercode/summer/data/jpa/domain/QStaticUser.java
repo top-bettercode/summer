@@ -10,10 +10,7 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import javax.annotation.Generated;
 
-
-/**
- * QStaticUser is a Querydsl query type for StaticUser
- */
+/** QStaticUser is a Querydsl query type for StaticUser */
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QStaticUser extends EntityPathBase<StaticUser> {
 
@@ -23,16 +20,16 @@ public class QStaticUser extends EntityPathBase<StaticUser> {
 
   public final QBaseUser _super = new QBaseUser(this);
 
-  //inherited
+  // inherited
   public final BooleanPath deleted = _super.deleted;
 
-  //inherited
+  // inherited
   public final StringPath firstName = _super.firstName;
 
-  //inherited
+  // inherited
   public final NumberPath<Integer> id = _super.id;
 
-  //inherited
+  // inherited
   public final StringPath lastName = _super.lastName;
 
   public QStaticUser(String variable) {
@@ -46,6 +43,4 @@ public class QStaticUser extends EntityPathBase<StaticUser> {
   public QStaticUser(PathMetadata metadata) {
     super(StaticUser.class, metadata);
   }
-
 }
-

@@ -1,7 +1,9 @@
 package top.bettercode.summer.gradle.plugin.project.template
 
-import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
-import top.bettercode.summer.gradle.plugin.project.template.unit.*
+import top.bettercode.summer.gradle.plugin.project.template.unit.appController
+import top.bettercode.summer.gradle.plugin.project.template.unit.baseWebTest
+import top.bettercode.summer.gradle.plugin.project.template.unit.controller
+import top.bettercode.summer.gradle.plugin.project.template.unit.controllerTest
 import top.bettercode.summer.tools.generator.dom.unit.SourceSet
 
 /**

@@ -10,7 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import top.bettercode.summer.data.jpa.domain.*
+import top.bettercode.summer.data.jpa.domain.QUser
+import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import java.util.*
 
@@ -23,8 +24,9 @@ import java.util.*
 class QuerydslJpaExtPredicateExecutorTest {
     @Autowired
     lateinit var repository: UserRepository
-    var daveId: Int=0
+    var daveId: Int = 0
     var carterId: Int = 0
+
     @BeforeEach
     fun setUp() {
         val dave = User("Dave", "Matthews")

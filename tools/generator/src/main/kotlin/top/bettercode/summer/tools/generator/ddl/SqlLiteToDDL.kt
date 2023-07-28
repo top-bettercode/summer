@@ -10,26 +10,26 @@ object SqlLiteToDDL : ToDDL() {
     override val commentPrefix: String = "--"
 
     override fun toDDLUpdate(
-        module: String,
-        oldTables: List<Table>,
-        tables: List<Table>,
-        out: Writer,
-        extension: GeneratorExtension
+            module: String,
+            oldTables: List<Table>,
+            tables: List<Table>,
+            out: Writer,
+            extension: GeneratorExtension
     ) {
 
     }
 
     override fun dropFkStatement(
-        prefixTableName: String,
-        tableName: String,
-        columnName: String
+            prefixTableName: String,
+            tableName: String,
+            columnName: String
     ): String =
-        "ALTER TABLE $prefixTableName$quote$tableName$quote DROP FOREIGN KEY ${
-            foreignKeyName(
-                tableName,
-                columnName
-            )
-        };"
+            "ALTER TABLE $prefixTableName$quote$tableName$quote DROP FOREIGN KEY ${
+                foreignKeyName(
+                        tableName,
+                        columnName
+                )
+            };"
 
     override fun columnDef(it: Column, quote: String): String {
         if (it.columnName.isBlank()) {
@@ -48,28 +48,28 @@ object SqlLiteToDDL : ToDDL() {
             pw.appendLine("DROP TABLE IF EXISTS $prefixTableName$quote$tableName$quote;")
 
         pw.appendLine(
-            "CREATE TABLE $prefixTableName$quote$tableName$quote ( -- '${
-                table.remarks.replace(
-                    "\\",
-                    "\\\\"
-                )
-            }'"
+                "CREATE TABLE $prefixTableName$quote$tableName$quote ( -- '${
+                    table.remarks.replace(
+                            "\\",
+                            "\\\\"
+                    )
+                }'"
         )
 
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
             pw.appendLine(
-                "  ${
-                    columnDef(
-                        column,
-                        quote
-                    )
-                } ${if (index < lastIndex) "," else ""} -- '${
-                    column.remarks.replace(
-                        "\\",
-                        "\\\\"
-                    )
-                }'"
+                    "  ${
+                        columnDef(
+                                column,
+                                quote
+                        )
+                    } ${if (index < lastIndex) "," else ""} -- '${
+                        column.remarks.replace(
+                                "\\",
+                                "\\\\"
+                        )
+                    }'"
             )
         }
 

@@ -13,8 +13,8 @@ import org.springframework.web.client.DefaultResponseErrorHandler
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.amap.AMapClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.amap.entity.AMapGeo
-import top.bettercode.summer.tools.amap.entity.Location
 import top.bettercode.summer.tools.amap.entity.AMapRegeo
+import top.bettercode.summer.tools.amap.entity.Location
 import top.bettercode.summer.web.support.client.ApiTemplate
 
 /**

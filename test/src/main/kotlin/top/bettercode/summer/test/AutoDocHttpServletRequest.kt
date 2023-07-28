@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
 
 class AutoDocHttpServletRequest(request: HttpServletRequest?) :
-    HttpServletRequestWrapper(request) {
+        HttpServletRequestWrapper(request) {
 
     val extHeaders: MutableMap<String, Array<out String>> = mutableMapOf()
     val extParams: MutableMap<String, Array<out String>> = mutableMapOf()

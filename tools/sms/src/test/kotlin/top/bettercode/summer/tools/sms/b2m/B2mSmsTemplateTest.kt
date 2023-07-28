@@ -21,6 +21,7 @@ internal class B2mSmsTemplateTest : BaseTest() {
 
     @Value("\${mobile}")
     var mobile: String? = null
+
     @Disabled
     @Test
     fun simpleSendSms() {

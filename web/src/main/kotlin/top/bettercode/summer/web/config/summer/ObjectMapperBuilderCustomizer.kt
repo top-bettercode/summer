@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.support.AbstractBeanDefinition
-import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -20,10 +19,8 @@ import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.util.StringUtils
 import top.bettercode.summer.tools.lang.util.TimeUtil.Companion.of
-import top.bettercode.summer.web.config.ApplicationContextHolderConfiguration
 import top.bettercode.summer.web.properties.JacksonExtProperties
 import top.bettercode.summer.web.serializer.MixIn
-import top.bettercode.summer.web.support.ApplicationContextHolder
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 import java.lang.reflect.ParameterizedType
 import java.time.LocalDate

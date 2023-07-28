@@ -4,9 +4,9 @@ import top.bettercode.summer.tools.generator.dom.java.JavaType
 import top.bettercode.summer.tools.generator.dom.unit.SourceSet
 
 class TopLevelEnumeration(
-    type: JavaType,
-    override var overwrite: Boolean = false,
-    override val sourceSet: SourceSet = SourceSet.MAIN
+        type: JavaType,
+        override var overwrite: Boolean = false,
+        override val sourceSet: SourceSet = SourceSet.MAIN
 ) : InnerEnum(type), CompilationUnit {
 
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()

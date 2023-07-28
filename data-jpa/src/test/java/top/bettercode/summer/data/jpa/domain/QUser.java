@@ -10,10 +10,7 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import javax.annotation.Generated;
 
-
-/**
- * QUser is a Querydsl query type for User
- */
+/** QUser is a Querydsl query type for User */
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QUser extends EntityPathBase<User> {
 
@@ -23,16 +20,16 @@ public class QUser extends EntityPathBase<User> {
 
   public final QBaseUser _super = new QBaseUser(this);
 
-  //inherited
+  // inherited
   public final BooleanPath deleted = _super.deleted;
 
-  //inherited
+  // inherited
   public final StringPath firstName = _super.firstName;
 
-  //inherited
+  // inherited
   public final NumberPath<Integer> id = _super.id;
 
-  //inherited
+  // inherited
   public final StringPath lastName = _super.lastName;
 
   public QUser(String variable) {
@@ -46,6 +43,4 @@ public class QUser extends EntityPathBase<User> {
   public QUser(PathMetadata metadata) {
     super(User.class, metadata);
   }
-
 }
-

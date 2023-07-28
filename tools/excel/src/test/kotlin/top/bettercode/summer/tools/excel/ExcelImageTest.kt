@@ -7,7 +7,6 @@ import org.apache.poi.xssf.usermodel.XSSFShape
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
-import top.bettercode.summer.tools.lang.util.ArrayUtil.of
 import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.file.Files
@@ -74,7 +73,7 @@ class ExcelImageTest {
 
     @Test
     fun testMergeExportWithImage() {
-        val excelConverter = ExcelConverter{ _: DataBean ->
+        val excelConverter = ExcelConverter { _: DataBean ->
             try {
                 ClassPathResource("ico.jpeg").inputStream
             } catch (ex: IOException) {

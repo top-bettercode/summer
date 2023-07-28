@@ -12,11 +12,11 @@ import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
+import top.bettercode.summer.apisign.ApiSignProperties
 import top.bettercode.summer.logging.RequestLoggingConfiguration
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
 import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
-import top.bettercode.summer.apisign.ApiSignProperties
 import top.bettercode.summer.web.properties.SummerWebProperties
 import javax.annotation.PostConstruct
 
@@ -25,9 +25,9 @@ import javax.annotation.PostConstruct
  */
 @ConditionalOnProperty(prefix = "summer.autodoc.gen", name = ["enable"], havingValue = "true")
 @EnableConfigurationProperties(
-    GenProperties::class,
-    ApiSignProperties::class,
-    SummerWebProperties::class
+        GenProperties::class,
+        ApiSignProperties::class,
+        SummerWebProperties::class
 )
 @Configuration(proxyBeanMethods = false)
 @ImportAutoConfiguration(RequestLoggingConfiguration::class)
@@ -62,12 +62,12 @@ class AutodocConfiguration {
             summerWebProperties: SummerWebProperties
     ): AutodocHandler {
         val datasources: MutableMap<String, JDBCConnectionConfiguration> = Binder.get(
-            environment
+                environment
         ).bind<MutableMap<String, JDBCConnectionConfiguration>>(
-            "summer.datasource.multi.datasources", Bindable
+                "summer.datasource.multi.datasources", Bindable
                 .mapOf(
-                    String::class.java,
-                    JDBCConnectionConfiguration::class.java
+                        String::class.java,
+                        JDBCConnectionConfiguration::class.java
                 )
         ).orElse(mutableMapOf())
         datasources.values.forEach { configuration ->
@@ -89,7 +89,7 @@ class AutodocConfiguration {
                     configuration.username = dataSourceProperties!!.determineUsername() ?: ""
                     configuration.password = dataSourceProperties!!.determinePassword() ?: ""
                     configuration.driverClass =
-                        dataSourceProperties!!.determineDriverClassName() ?: ""
+                            dataSourceProperties!!.determineDriverClassName() ?: ""
                     configuration.entityPrefix = genProperties.entityPrefix
                     configuration.tablePrefixes = genProperties.tablePrefixes
                     configuration.tableSuffixes = genProperties.tableSuffixes

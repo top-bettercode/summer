@@ -16,11 +16,11 @@ val service: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"/** $remarks 服务层实现 */"
         }
         superClass =
-            JavaType("top.bettercode.summer.data.jpa.BaseService").typeArgument(
-                entityType,
-                primaryKeyType,
-                repositoryType
-            )
+                JavaType("top.bettercode.summer.data.jpa.BaseService").typeArgument(
+                        entityType,
+                        primaryKeyType,
+                        repositoryType
+                )
 
         if (interfaceService)
             implement(iserviceType)
@@ -38,11 +38,11 @@ val iservice: ProjectGenerator.(Interface) -> Unit = { unit ->
             +"/** $remarks 服务层接口 */"
         }
         val superInterface =
-            JavaType("top.bettercode.summer.data.jpa.IBaseService").typeArgument(
-                entityType,
-                primaryKeyType,
-                repositoryType
-            )
+                JavaType("top.bettercode.summer.data.jpa.IBaseService").typeArgument(
+                        entityType,
+                        primaryKeyType,
+                        repositoryType
+                )
         implement(superInterface)
     }
 }

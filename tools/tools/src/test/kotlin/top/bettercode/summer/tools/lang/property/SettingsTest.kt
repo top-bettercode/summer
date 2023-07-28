@@ -1,7 +1,5 @@
 package top.bettercode.summer.tools.lang.property
 
-import org.junit.jupiter.api.Assertions.*
-
 import org.junit.jupiter.api.Test
 
 /**

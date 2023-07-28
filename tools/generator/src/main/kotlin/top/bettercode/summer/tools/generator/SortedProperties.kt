@@ -109,7 +109,7 @@ class SortedProperties
     override val entries: MutableSet<MutableMap.MutableEntry<Any, Any>>
         get() {
             val sortedEntries: MutableSet<MutableMap.MutableEntry<Any, Any>> =
-                TreeSet(entryComparator)
+                    TreeSet(entryComparator)
             sortedEntries.addAll(super.entries)
             return Collections.synchronizedSet(sortedEntries)
         }
@@ -120,7 +120,7 @@ class SortedProperties
         @JvmField
         val EOL: String = System.lineSeparator()
         private val keyComparator =
-            Comparator.comparing<Any, String> { obj: Any? -> java.lang.String.valueOf(obj) }
+                Comparator.comparing<Any, String> { obj: Any? -> java.lang.String.valueOf(obj) }
         private val entryComparator = java.util.Map.Entry.comparingByKey<Any, Any>(keyComparator)
     }
 }

@@ -1,7 +1,6 @@
 package top.bettercode.summer.env
 
 import org.springframework.aop.support.AopUtils
-import org.springframework.beans.BeansException
 import org.springframework.context.*
 import org.springframework.jmx.export.annotation.ManagedAttribute
 import org.springframework.jmx.export.annotation.ManagedOperation

@@ -26,8 +26,8 @@ class ChangeCharacterSet : Generator() {
             +"# 修改数据库表及字段字符集\n"
             +"ALTER DATABASE ${
                 datasource.url.replace(
-                    Regex(".*/(.+?)\\?.*"),
-                    "$1"
+                        Regex(".*/(.+?)\\?.*"),
+                        "$1"
                 )
             } CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;"
             +""

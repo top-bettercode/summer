@@ -1,18 +1,18 @@
 CREATE TABLE if not exists OAUTH_CLIENT_TOKEN
 (
     TOKEN_ID
-    VARCHAR
-    unique,
+        VARCHAR
+        unique,
     TOKEN
-    LONGVARBINARY,
+        LONGVARBINARY,
     AUTHENTICATION_ID
-    VARCHAR
-    PRIMARY
-    KEY,
+        VARCHAR
+        PRIMARY
+            KEY,
     USER_NAME
-    VARCHAR,
+        VARCHAR,
     CLIENT_ID
-    INTEGER
+        INTEGER
 );
 
 COMMENT

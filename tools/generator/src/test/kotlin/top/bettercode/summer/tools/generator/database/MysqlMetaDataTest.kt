@@ -13,10 +13,10 @@ import java.io.File
  */
 class MysqlMetaDataTest {
     private val extension = GeneratorExtension(
-        projectDir = File("build"),
-        dir = "src/test/resources",
-        packageName = "com.bettercode.test",
-        tableNames = arrayOf("ob_chat_msg")
+            projectDir = File("build"),
+            dir = "src/test/resources",
+            packageName = "com.bettercode.test",
+            tableNames = arrayOf("ob_chat_msg")
     )
 
     init {

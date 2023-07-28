@@ -31,7 +31,7 @@ open class LogstashTcpSocketProperties {
      *
      *
      */
-    var destinations: Array<String>?=null
+    var destinations: Array<String>? = null
 
     /**
      * Time period for which to wait after a connection fails, before attempting to reconnect.

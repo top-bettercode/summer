@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import org.springframework.util.StringUtils
 import top.bettercode.summer.web.serializer.annotation.JsonBigDecimal
-import java.io.IOException
 import java.math.BigDecimal
 import java.math.RoundingMode
 

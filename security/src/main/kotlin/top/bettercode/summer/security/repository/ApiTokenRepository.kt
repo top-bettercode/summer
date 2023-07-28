@@ -8,6 +8,7 @@ interface ApiTokenRepository {
     fun remove(apiToken: ApiToken)
     fun remove(scope: String, username: String)
     fun remove(scope: String, usernames: List<String>)
+
     @Nullable
     fun findByScopeAndUsername(scope: String, username: String): ApiToken?
 

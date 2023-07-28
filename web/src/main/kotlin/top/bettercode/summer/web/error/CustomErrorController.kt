@@ -43,6 +43,7 @@ class CustomErrorController(
 
     @Autowired(required = false)
     private val response: HttpServletResponse? = null
+
     @RequestMapping(produces = ["text/html"])
     override fun errorHtml(request: HttpServletRequest,
                            response: HttpServletResponse): ModelAndView {

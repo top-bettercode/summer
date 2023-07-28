@@ -7,9 +7,9 @@ import top.bettercode.summer.tools.weixin.support.WeixinResponse
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class JsapiTicket(
 
-    @field:JsonProperty("ticket")
-    val ticket: String? = null,
+        @field:JsonProperty("ticket")
+        val ticket: String? = null,
 
-    @field:JsonProperty("expires_in")
-    val expiresIn: Int? = null
+        @field:JsonProperty("expires_in")
+        val expiresIn: Int? = null
 ) : WeixinResponse()

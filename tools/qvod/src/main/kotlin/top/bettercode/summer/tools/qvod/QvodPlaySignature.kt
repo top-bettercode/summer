@@ -11,11 +11,11 @@ import java.lang.annotation.Inherited
  *
  */
 @Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER,
-    AnnotationTarget.FIELD,
-    AnnotationTarget.ANNOTATION_CLASS
+        AnnotationTarget.FUNCTION,
+        AnnotationTarget.PROPERTY_GETTER,
+        AnnotationTarget.PROPERTY_SETTER,
+        AnnotationTarget.FIELD,
+        AnnotationTarget.ANNOTATION_CLASS
 )
 @Retention(AnnotationRetention.RUNTIME)
 @JacksonAnnotationsInside

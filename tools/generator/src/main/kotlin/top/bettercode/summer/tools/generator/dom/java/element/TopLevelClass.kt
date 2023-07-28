@@ -7,10 +7,10 @@ import top.bettercode.summer.tools.generator.dom.unit.SourceSet
  * The Class TopLevelClass.
  */
 open class TopLevelClass(
-    type: JavaType,
-    override var overwrite: Boolean = false,
-    override val sourceSet: SourceSet = SourceSet.MAIN,
-    override var visibility: JavaVisibility = JavaVisibility.PUBLIC
+        type: JavaType,
+        override var overwrite: Boolean = false,
+        override val sourceSet: SourceSet = SourceSet.MAIN,
+        override var visibility: JavaVisibility = JavaVisibility.PUBLIC
 ) : InnerClass(type), CompilationUnit {
 
     override val importedTypes: MutableSet<JavaType> = mutableSetOf()

@@ -26,24 +26,24 @@ object ResponseConverter {
      */
     fun convert(response: HttpServletResponse): OperationResponse {
         val responseWrapper =
-            getResponseWrapper(response, TraceHttpServletResponseWrapper::class.java)
+                getResponseWrapper(response, TraceHttpServletResponseWrapper::class.java)
         return OperationResponse(
-            response.status,
-            extractHeaders(responseWrapper ?: response), responseWrapper?.contentAsByteArray
+                response.status,
+                extractHeaders(responseWrapper ?: response), responseWrapper?.contentAsByteArray
                 ?: byteArrayOf()
         )
     }
 
     fun convert(response: ClientHttpResponseWrapper): OperationResponse {
         return OperationResponse(
-            response.statusCode.value(),
-            response.headers, response.content
+                response.statusCode.value(),
+                response.headers, response.content
         )
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : HttpServletResponseWrapper> getResponseWrapper(
-        response: ServletResponse, responseType: Class<T>
+            response: ServletResponse, responseType: Class<T>
     ): T? {
         return if (responseType.isInstance(response)) {
             response as T

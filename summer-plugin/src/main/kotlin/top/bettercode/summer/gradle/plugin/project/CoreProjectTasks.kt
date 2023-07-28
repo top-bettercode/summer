@@ -1,6 +1,5 @@
 package top.bettercode.summer.gradle.plugin.project
 
-import org.apache.naming.SelectorContext.prefix
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task

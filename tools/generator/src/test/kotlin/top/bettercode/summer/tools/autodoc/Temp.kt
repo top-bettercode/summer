@@ -15,11 +15,11 @@ class Temp {
     @Test
     fun pinyin() {
         println(
-            PinyinHelper.convertToPinyinString(
-                "手势密码新增-、修改",
-                "",
-                PinyinFormat.WITHOUT_TONE
-            ).replace("[^\\x00-\\xff]".toRegex(), "").replace("\\s*|\t|\r|\n".toRegex(), "")
+                PinyinHelper.convertToPinyinString(
+                        "手势密码新增-、修改",
+                        "",
+                        PinyinFormat.WITHOUT_TONE
+                ).replace("[^\\x00-\\xff]".toRegex(), "").replace("\\s*|\t|\r|\n".toRegex(), "")
         )
     }
 

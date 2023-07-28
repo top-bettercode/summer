@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.excel
 import org.junit.jupiter.api.*
 import org.springframework.core.io.ClassPathResource
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
-import java.io.IOException
 
 /**
  * @author Peter Wu

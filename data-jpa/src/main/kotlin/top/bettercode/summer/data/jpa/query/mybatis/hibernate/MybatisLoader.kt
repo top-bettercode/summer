@@ -1,7 +1,5 @@
 package top.bettercode.summer.data.jpa.query.mybatis.hibernate
 
-import org.hibernate.HibernateException
-import org.hibernate.QueryException
 import org.hibernate.engine.spi.QueryParameters
 import org.hibernate.engine.spi.SessionFactoryImplementor
 import org.hibernate.engine.spi.SharedSessionContractImplementor
@@ -11,7 +9,6 @@ import org.hibernate.loader.spi.AfterLoadAction
 import org.hibernate.transform.ResultTransformer
 import top.bettercode.summer.data.jpa.query.mybatis.MybatisResultTransformer
 import java.sql.ResultSet
-import java.sql.SQLException
 
 /**
  * @author Peter Wu

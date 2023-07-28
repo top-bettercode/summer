@@ -10,11 +10,11 @@ import top.bettercode.summer.tools.lang.util.StringUtil
 @Disabled
 class SlackClientTest {
 
-    private val slackClient = SlackClient("",  "/actuator")
+    private val slackClient = SlackClient("", "/actuator")
 
     @Test
     fun errorToken() {
-        println(StringUtil.valueOf(SlackClient("xoxb-",  "/actuator").channelsList(), true))
+        println(StringUtil.valueOf(SlackClient("xoxb-", "/actuator").channelsList(), true))
     }
 
     @Test
@@ -43,31 +43,31 @@ class SlackClientTest {
     @Test
     fun postMessage() {
         println(
-            StringUtil.valueOf(
-                slackClient.postMessage(
-                    "dev",
-                    System.currentTimeMillis(),
-                    "test",
-                    "test",
-                    listOf("123testtest"),
-                    "build"
-                ), true
-            )
+                StringUtil.valueOf(
+                        slackClient.postMessage(
+                                "dev",
+                                System.currentTimeMillis(),
+                                "test",
+                                "test",
+                                listOf("123testtest"),
+                                "build"
+                        ), true
+                )
         )
     }
 
     @Test
     fun filesUpload() {
         println(
-            StringUtil.valueOf(
-                slackClient.filesUpload(
-                    "dev",
-                    System.currentTimeMillis(),
-                    "title",
-                    "initialComment",
-                    listOf("message")
-                ), true
-            )
+                StringUtil.valueOf(
+                        slackClient.filesUpload(
+                                "dev",
+                                System.currentTimeMillis(),
+                                "title",
+                                "initialComment",
+                                listOf("message")
+                        ), true
+                )
         )
     }
 }

@@ -10,33 +10,33 @@ object OracleToDDL : ToDDL() {
     override val commentPrefix: String = "--"
 
     override fun toDDLUpdate(
-        module: String,
-        oldTables: List<Table>,
-        tables: List<Table>,
-        out: Writer,
-        extension: GeneratorExtension
+            module: String,
+            oldTables: List<Table>,
+            tables: List<Table>,
+            out: Writer,
+            extension: GeneratorExtension
     ) {
         out.appendLine("$commentPrefix ${extension.datasources[module]!!.url.substringBefore("?")}")
         out.appendLine()
         if (tables != oldTables) {
             val prefixTableName =
-                if (extension.enable("include-schema")) {
-                    "$quote${extension.datasource(module).schema}$quote."
-                } else {
-                    ""
-                }
+                    if (extension.enable("include-schema")) {
+                        "$quote${extension.datasource(module).schema}$quote."
+                    } else {
+                        ""
+                    }
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
             if (extension.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).filter { "api_token" != it }
-                    .forEach { tableName ->
-                        out.appendLine("$commentPrefix DROP $prefixTableName$tableName")
-                        val primaryKey = oldTables.find { it.tableName == tableName }!!.primaryKey
-                        if (primaryKey?.sequence?.isNotBlank() == true)
-                            out.appendLine("DROP SEQUENCE $prefixTableName$quote${primaryKey.sequence}$quote;")
-                        out.appendLine("DROP TABLE $prefixTableName$quote$tableName$quote;")
-                        out.appendLine()
-                    }
+                        .forEach { tableName ->
+                            out.appendLine("$commentPrefix DROP $prefixTableName$tableName")
+                            val primaryKey = oldTables.find { it.tableName == tableName }!!.primaryKey
+                            if (primaryKey?.sequence?.isNotBlank() == true)
+                                out.appendLine("DROP SEQUENCE $prefixTableName$quote${primaryKey.sequence}$quote;")
+                            out.appendLine("DROP TABLE $prefixTableName$quote$tableName$quote;")
+                            out.appendLine()
+                        }
             val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
                 val tableName = table.tableName
@@ -48,12 +48,12 @@ object OracleToDDL : ToDDL() {
                         val lines = mutableListOf<String>()
                         if (oldTable.remarks != table.remarks)
                             lines.add(
-                                "COMMENT ON TABLE $prefixTableName$quote$tableName$quote IS '${
-                                    table.remarks.replace(
-                                        "\\",
-                                        "\\\\"
-                                    )
-                                }';"
+                                    "COMMENT ON TABLE $prefixTableName$quote$tableName$quote IS '${
+                                        table.remarks.replace(
+                                                "\\",
+                                                "\\\\"
+                                        )
+                                    }';"
                             )
                         val oldColumns = oldTable.columns
                         val columns = table.columns
@@ -73,11 +73,11 @@ object OracleToDDL : ToDDL() {
                         if (extension.dropColumnsWhenUpdate) {
                             if (dropColumnNames.isNotEmpty()) {
                                 lines.add(
-                                    "ALTER TABLE $prefixTableName$quote$tableName$quote DROP (${
-                                        dropColumnNames.joinToString(
-                                            ","
-                                        ) { "$quote$it$quote" }
-                                    });"
+                                        "ALTER TABLE $prefixTableName$quote$tableName$quote DROP (${
+                                            dropColumnNames.joinToString(
+                                                    ","
+                                            ) { "$quote$it$quote" }
+                                        });"
                                 )
                             }
                             dropFk(prefixTableName, oldColumns, dropColumnNames, lines, tableName)
@@ -87,20 +87,20 @@ object OracleToDDL : ToDDL() {
                             val columnName = column.columnName
                             if (newColumnNames.contains(columnName)) {
                                 lines.add(
-                                    "ALTER TABLE $prefixTableName$quote$tableName$quote ADD ${
-                                        columnDef(
-                                            column,
-                                            quote
-                                        )
-                                    };"
+                                        "ALTER TABLE $prefixTableName$quote$tableName$quote ADD ${
+                                            columnDef(
+                                                    column,
+                                                    quote
+                                            )
+                                        };"
                                 )
                                 lines.add(
-                                    "COMMENT ON COLUMN $prefixTableName$quote$tableName$quote.$quote$columnName$quote IS '${
-                                        column.remarks.replace(
-                                            "\\",
-                                            "\\\\"
-                                        )
-                                    }';"
+                                        "COMMENT ON COLUMN $prefixTableName$quote$tableName$quote.$quote$columnName$quote IS '${
+                                            column.remarks.replace(
+                                                    "\\",
+                                                    "\\\\"
+                                            )
+                                        }';"
                                 )
                                 addFk(prefixTableName, column, lines, tableName, columnName)
                             } else {
@@ -111,12 +111,12 @@ object OracleToDDL : ToDDL() {
                                         lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote MODIFY $updateColumnDef;")
                                     if (oldColumn.remarks != column.remarks)
                                         lines.add(
-                                            "COMMENT ON COLUMN $prefixTableName$quote$tableName$quote.$quote$columnName$quote IS '${
-                                                column.remarks.replace(
-                                                    "\\",
-                                                    "\\\\"
-                                                )
-                                            }';"
+                                                "COMMENT ON COLUMN $prefixTableName$quote$tableName$quote.$quote$columnName$quote IS '${
+                                                    column.remarks.replace(
+                                                            "\\",
+                                                            "\\\\"
+                                                    )
+                                                }';"
                                         )
                                     updateFk(prefixTableName, column, oldColumn, lines, tableName)
                                 }
@@ -150,7 +150,7 @@ object OracleToDDL : ToDDL() {
             throw Exception("${it.tableSchem ?: ""}:${it.columnName}:字段类型不能为空")
         }
         val def =
-            "${if (it.typeDesc != old.typeDesc) it.typeDesc else ""}${if (it.defaultDesc != old.defaultDesc) it.defaultDesc else ""}${if (it.extra.isNotBlank() && it.extra != old.extra) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (old.nullable != it.nullable) if (it.nullable) " NULL" else " NOT NULL" else ""}"
+                "${if (it.typeDesc != old.typeDesc) it.typeDesc else ""}${if (it.defaultDesc != old.defaultDesc) it.defaultDesc else ""}${if (it.extra.isNotBlank() && it.extra != old.extra) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (old.nullable != it.nullable) if (it.nullable) " NULL" else " NOT NULL" else ""}"
         return if (def.isBlank()) {
             ""
         } else
@@ -158,11 +158,11 @@ object OracleToDDL : ToDDL() {
     }
 
     override fun updateIndexes(
-        prefixTableName: String,
-        oldTable: Table,
-        table: Table,
-        lines: MutableList<String>,
-        dropColumnNames: List<String>
+            prefixTableName: String,
+            oldTable: Table,
+            table: Table,
+            lines: MutableList<String>,
+            dropColumnNames: List<String>
     ) {
         val tableName = table.tableName
         val delIndexes = oldTable.indexes - table.indexes.toSet()
@@ -177,19 +177,19 @@ object OracleToDDL : ToDDL() {
             newIndexes.forEach { indexed ->
                 if (indexed.unique) {
                     lines.add(
-                        "CREATE UNIQUE INDEX $quote${indexed.name(table.fixTableName)}$quote ON $prefixTableName$quote$tableName$quote (${
-                            indexed.columnName.joinToString(
-                                ","
-                            ) { "$quote$it$quote" }
-                        });"
+                            "CREATE UNIQUE INDEX $quote${indexed.name(table.fixTableName)}$quote ON $prefixTableName$quote$tableName$quote (${
+                                indexed.columnName.joinToString(
+                                        ","
+                                ) { "$quote$it$quote" }
+                            });"
                     )
                 } else {
                     lines.add(
-                        "CREATE INDEX $quote${indexed.name(table.fixTableName)}$quote ON $prefixTableName$quote$tableName$quote (${
-                            indexed.columnName.joinToString(
-                                ","
-                            ) { "$quote$it$quote" }
-                        });"
+                            "CREATE INDEX $quote${indexed.name(table.fixTableName)}$quote ON $prefixTableName$quote$tableName$quote (${
+                                indexed.columnName.joinToString(
+                                        ","
+                                ) { "$quote$it$quote" }
+                            });"
                     )
                 }
             }
@@ -204,7 +204,7 @@ object OracleToDDL : ToDDL() {
             if (table.ext.dropTablesWhenUpdate)
                 pw.appendLine("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
             pw.appendLine(
-                "CREATE SEQUENCE $quote${primaryKey.sequence}$quote INCREMENT BY 1 START WITH ${primaryKey.sequenceStartWith} NOMAXVALUE NOCYCLE CACHE 10;"
+                    "CREATE SEQUENCE $quote${primaryKey.sequence}$quote INCREMENT BY 1 START WITH ${primaryKey.sequenceStartWith} NOMAXVALUE NOCYCLE CACHE 10;"
             )
         }
         pw.appendLine()
@@ -215,12 +215,12 @@ object OracleToDDL : ToDDL() {
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
             pw.appendLine(
-                "  ${
-                    columnDef(
-                        column,
-                        quote
-                    )
-                }${if (index < lastIndex || hasPrimary) "," else ""}"
+                    "  ${
+                        columnDef(
+                                column,
+                                quote
+                        )
+                    }${if (index < lastIndex || hasPrimary) "," else ""}"
             )
         }
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
@@ -228,21 +228,21 @@ object OracleToDDL : ToDDL() {
         appendIndexes(prefixTableName, table, pw, quote)
 
         pw.appendLine(
-            "COMMENT ON TABLE $prefixTableName$quote$tableName$quote IS '${
-                table.remarks.replace(
-                    "\\",
-                    "\\\\"
-                )
-            }';"
+                "COMMENT ON TABLE $prefixTableName$quote$tableName$quote IS '${
+                    table.remarks.replace(
+                            "\\",
+                            "\\\\"
+                    )
+                }';"
         )
         table.columns.forEach {
             pw.appendLine(
-                "COMMENT ON COLUMN $prefixTableName$quote$tableName$quote.$quote${it.columnName}$quote IS '${
-                    it.remarks.replace(
-                        "\\",
-                        "\\\\"
-                    )
-                }';"
+                    "COMMENT ON COLUMN $prefixTableName$quote$tableName$quote.$quote${it.columnName}$quote IS '${
+                        it.remarks.replace(
+                                "\\",
+                                "\\\\"
+                        )
+                    }';"
             )
         }
         pw.appendLine()

@@ -29,11 +29,11 @@ class ClientTokenController {
     fun index(): Any {
         val results = listOf(insert())
         return ok(
-            mapOf(
-                "page" to 1,
-                "size" to 20,
-                "list" to results
-            )
+                mapOf(
+                        "page" to 1,
+                        "size" to 20,
+                        "list" to results
+                )
         )
     }
 

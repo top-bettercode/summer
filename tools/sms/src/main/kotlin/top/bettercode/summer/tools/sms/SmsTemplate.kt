@@ -20,6 +20,7 @@ abstract class SmsTemplate : ApiTemplate {
 
     companion object {
         const val LOG_MARKER_STR = "sms"
+
         @JvmField
         val LOG_MARKER: Marker? = MarkerFactory.getMarker(LOG_MARKER_STR)
     }

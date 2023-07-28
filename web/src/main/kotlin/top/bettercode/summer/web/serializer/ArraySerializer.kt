@@ -9,8 +9,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import org.springframework.util.StringUtils
-import top.bettercode.summer.web.serializer.annotation.*
-import java.io.IOException
+import top.bettercode.summer.web.serializer.annotation.JsonArray
 
 /**
  * JSON序列化url自动补全

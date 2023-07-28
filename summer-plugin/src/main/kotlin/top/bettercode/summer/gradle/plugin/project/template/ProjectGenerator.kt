@@ -16,7 +16,7 @@ abstract class ProjectGenerator : Generator() {
     fun columnAnnotation(column: Column): String {
         val columnDefinition = ""
         var columnAnnotation =
-            "@javax.persistence.Column(name = \"${column.columnName}\"$columnDefinition"
+                "@javax.persistence.Column(name = \"${column.columnName}\"$columnDefinition"
         if (column.columnSize > 0 && column.columnSize != 255) {
             if (column.javaType == JavaType.stringInstance)
                 columnAnnotation += ", length = ${column.columnSize}"
@@ -73,8 +73,8 @@ abstract class ProjectGenerator : Generator() {
     val mapperXmlName
         get() = "${
             repositoryType.fullyQualifiedNameWithoutTypeParameters.replace(
-                ".",
-                "/"
+                    ".",
+                    "/"
             )
         }.xml"
 
@@ -84,21 +84,21 @@ abstract class ProjectGenerator : Generator() {
     val entityType get() = JavaType("$packageName.${modulePackage("Entity")}.${className}")
     val propertiesType
         get() = JavaType(
-            "$packageName.${modulePackage("Properties")}.${
-                table.className
-            }Properties"
+                "$packageName.${modulePackage("Properties")}.${
+                    table.className
+                }Properties"
         )
     val matcherType
         get() = JavaType(
-            "$packageName.${modulePackage("Matcher")}.${
-                table.className
-            }Matcher"
+                "$packageName.${modulePackage("Matcher")}.${
+                    table.className
+                }Matcher"
         )
     val methodInfoType
         get() = JavaType(
-            "$packageName.${modulePackage("MethodInfo")}.${
-                table.className
-            }MethodInfo"
+                "$packageName.${modulePackage("MethodInfo")}.${
+                    table.className
+                }MethodInfo"
         )
     val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
     val coreSerializationViewsType get() = JavaType("${basePackageName}.web.CoreSerializationViews")

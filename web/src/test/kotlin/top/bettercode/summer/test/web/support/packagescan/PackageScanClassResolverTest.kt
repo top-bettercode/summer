@@ -2,7 +2,7 @@ package top.bettercode.summer.test.web.support.packagescan
 
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
-import top.bettercode.summer.web.*
+import top.bettercode.summer.web.Response
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 
 /**
@@ -10,6 +10,7 @@ import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
  */
 class PackageScanClassResolverTest {
     val packageScanClassResolver = PackageScanClassResolver()
+
     @Test
     fun findClass() {
         System.err.println(

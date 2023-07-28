@@ -33,12 +33,12 @@ import javax.servlet.http.HttpServletResponseWrapper
  * @since 2.0.0
  */
 open class TestErrorPageFilter(private val errorController: BasicErrorController?,
-                          private val summerWebProperties: SummerWebProperties?) : Filter, ErrorPageRegistry, Ordered {
+                               private val summerWebProperties: SummerWebProperties?) : Filter, ErrorPageRegistry, Ordered {
     private var global: String? = null
     private val statuses: MutableMap<Int, String> = HashMap()
     private val exceptions: MutableMap<Class<*>, String> = HashMap()
     private val delegate: OncePerRequestFilter = object : OncePerRequestFilter() {
-            override fun doFilterInternal(
+        override fun doFilterInternal(
                 request: HttpServletRequest, response: HttpServletResponse,
                 chain: FilterChain) {
             this@TestErrorPageFilter.doFilter(request, response, chain)
@@ -247,7 +247,7 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
             // If there was no error we need to trust the wrapped response
         }
 
-            override fun flushBuffer() {
+        override fun flushBuffer() {
             sendErrorIfNecessary()
             super.flushBuffer()
         }
@@ -262,12 +262,12 @@ open class TestErrorPageFilter(private val errorController: BasicErrorController
             return hasErrorToSend
         }
 
-            override fun getWriter(): PrintWriter {
+        override fun getWriter(): PrintWriter {
             sendErrorIfNecessary()
             return super.getWriter()
         }
 
-            override fun getOutputStream(): ServletOutputStream {
+        override fun getOutputStream(): ServletOutputStream {
             sendErrorIfNecessary()
             return super.getOutputStream()
         }

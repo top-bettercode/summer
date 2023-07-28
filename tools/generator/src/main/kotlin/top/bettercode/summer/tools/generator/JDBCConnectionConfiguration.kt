@@ -13,17 +13,17 @@ import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.ConcurrentSkipListSet
 
 class JDBCConnectionConfiguration(
-    var url: String = "",
-    var catalog: String? = null,
-    val properties: Properties = Properties().apply {
-        set("remarksReporting", "true") //oracle 读取表注释
-        set("useInformationSchema", "true")//mysql 读取表注释
-        set("nullCatalogMeansCurrent", "true")//mysql 读取表
-        set("characterEncoding", "utf8")
-        set("user", "root")
-        set("password", "root")
-        set("tinyInt1isBit", "false")
-    }
+        var url: String = "",
+        var catalog: String? = null,
+        val properties: Properties = Properties().apply {
+            set("remarksReporting", "true") //oracle 读取表注释
+            set("useInformationSchema", "true")//mysql 读取表注释
+            set("nullCatalogMeansCurrent", "true")//mysql 读取表
+            set("characterEncoding", "utf8")
+            set("user", "root")
+            set("password", "root")
+            set("tinyInt1isBit", "false")
+        }
 ) : TableHolder {
 
     val available: Boolean by lazy { url.isNotBlank() }
@@ -47,7 +47,7 @@ class JDBCConnectionConfiguration(
      */
     fun className(tableName: String): String {
         return javaName(
-            (if (entityPrefix.isBlank()) "" else entityPrefix + "_") + fixTableName(tableName), true
+                (if (entityPrefix.isBlank()) "" else entityPrefix + "_") + fixTableName(tableName), true
         )
     }
 
@@ -71,11 +71,11 @@ class JDBCConnectionConfiguration(
                         val pattern1 = Regex("jdbc:mysql://[^/]*/(.*)?\\?.+")
                         if (url.matches(pattern1))
                             url.replace(
-                                pattern1,
-                                "$1"
+                                    pattern1,
+                                    "$1"
                             ) else url.replace(
-                            Regex("jdbc:mysql://[^/]*/(.*)"),
-                            "$1"
+                                Regex("jdbc:mysql://[^/]*/(.*)"),
+                                "$1"
                         )
                     }
 

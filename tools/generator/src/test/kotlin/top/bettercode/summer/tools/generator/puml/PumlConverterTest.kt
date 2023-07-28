@@ -11,8 +11,8 @@ import java.io.File
  */
 class PumlConverterTest {
     val oraclePuml = File(
-        PumlConverterTest::class.java.getResource("/puml/src/oracle.puml")?.file
-            ?: throw IllegalStateException()
+            PumlConverterTest::class.java.getResource("/puml/src/oracle.puml")?.file
+                    ?: throw IllegalStateException()
     )
 
 
@@ -25,20 +25,20 @@ class PumlConverterTest {
     @Test
     fun compile() {
         PumlConverter.compile(
-            GeneratorExtension(),
-            defaultModuleName,
-            oraclePuml,
-            File("build/gen/puml/database.puml")
+                GeneratorExtension(),
+                defaultModuleName,
+                oraclePuml,
+                File("build/gen/puml/database.puml")
         )
     }
 
     @Test
     fun toMysql() {
         PumlConverter.toMysql(
-            GeneratorExtension(),
-            defaultModuleName,
-            oraclePuml,
-            File("build/gen/puml/database.puml")
+                GeneratorExtension(),
+                defaultModuleName,
+                oraclePuml,
+                File("build/gen/puml/database.puml")
         )
     }
 

@@ -46,8 +46,8 @@ sign: 26d595f645505e93b05354cbf98109df
 ----
 
 或
-[source,options="nowrap"]
 
+[source,options="nowrap"]
 ----
 https://www.xxx.com?page=0&size=25&type=0&showTime=&start=0&limit=25&sign=26d595f645505e93b05354cbf98109df
 ----

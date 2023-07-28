@@ -9,7 +9,6 @@ import org.springframework.core.type.classreading.MetadataReaderFactory
 import org.springframework.util.ClassUtils
 import org.springframework.util.SystemPropertyUtils
 import java.io.IOException
-import java.util.*
 
 open class PackageScanClassResolver @JvmOverloads constructor(classLoader: ClassLoader? = ClassUtils.getDefaultClassLoader()) {
     private val log = LoggerFactory.getLogger(PackageScanClassResolver::class.java)
@@ -147,7 +146,7 @@ open class PackageScanClassResolver @JvmOverloads constructor(classLoader: Class
     protected fun getFoundClasses(packageName: String): Set<Class<*>> {
         var name = packageName
         name = name.replace("/", ".")
-        return allClassesByPackage[name]?: emptySet()
+        return allClassesByPackage[name] ?: emptySet()
     }
 
     private fun getCompositeFilter(filter: PackageScanFilter): PackageScanFilter {

@@ -11,15 +11,15 @@ import top.bettercode.summer.tools.lang.keyword.replace.ReplaceStrategy
  * @author Peter Wu
  */
 class SkipKeywordFilter(
-    root: CharNode = CharNode(),
-    /**
-     * 设置匹配模式
-     */
-    matchType: MatchType = MatchType.LONG,
-    /**
-     * 设置替换策略
-     */
-    strategy: ReplaceStrategy = DefaultReplaceStrategy()
+        root: CharNode = CharNode(),
+        /**
+         * 设置匹配模式
+         */
+        matchType: MatchType = MatchType.LONG,
+        /**
+         * 设置替换策略
+         */
+        strategy: ReplaceStrategy = DefaultReplaceStrategy()
 ) : SimpleKeywordFilter(root, matchType, strategy) {
 
     private val skipChars = HashSet<Char>(0)
@@ -63,20 +63,20 @@ class SkipKeywordFilter(
                     ignoredWords.clear()
                 } else if (containLast && matchShort && lastEnd) {
                     result.append(
-                        strategy
-                            .replaceWith(words.copyOfRange(lastIndex, lastIndex + length))
+                            strategy
+                                    .replaceWith(words.copyOfRange(lastIndex, lastIndex + length))
                     )
                     ignoredWords.clear()
                     last = root
                 } else if (!containLast || end) {
                     if (lastEnd) {
                         result.append(
-                            strategy.replaceWith(
-                                words.copyOfRange(
-                                    lastIndex,
-                                    lastIndex + length
+                                strategy.replaceWith(
+                                        words.copyOfRange(
+                                                lastIndex,
+                                                lastIndex + length
+                                        )
                                 )
-                            )
                         )
                         if (!containLast) {
                             i--
@@ -104,12 +104,12 @@ class SkipKeywordFilter(
                                 }
                                 failLength += count
                                 result.append(
-                                    strategy.replaceWith(
-                                        words.copyOfRange(
-                                            lastIndex,
-                                            lastIndex + failLength
+                                        strategy.replaceWith(
+                                                words.copyOfRange(
+                                                        lastIndex,
+                                                        lastIndex + failLength
+                                                )
                                         )
-                                    )
                                 )
                             }
                         }

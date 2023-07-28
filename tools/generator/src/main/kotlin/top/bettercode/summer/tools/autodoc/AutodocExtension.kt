@@ -11,24 +11,24 @@ import java.io.File
  * @author Peter Wu
  */
 open class AutodocExtension(
-    var apiHost: String = "{apiHost}",
-    var author: String = "autodoc",
-    var version: String = "v1.0",
-    var toclevels: Int = 2,
-    /**
-     * 最大响应时间(单位毫秒)
-     */
-    var maxResponseTime: Int = 2000,
-    var source: File = File("src/doc"),
-    var output: File? = null,
-    var authUri: String = "/oauth/token",
-    var signParam: String = "sign",
-    var authVariables: Array<String> = arrayOf(
-        "data.token_type",
-        "data.access_token",
-        "data.refresh_token"
-    ),
-    var properties: Map<Any, Any?> = emptyMap()
+        var apiHost: String = "{apiHost}",
+        var author: String = "autodoc",
+        var version: String = "v1.0",
+        var toclevels: Int = 2,
+        /**
+         * 最大响应时间(单位毫秒)
+         */
+        var maxResponseTime: Int = 2000,
+        var source: File = File("src/doc"),
+        var output: File? = null,
+        var authUri: String = "/oauth/token",
+        var signParam: String = "sign",
+        var authVariables: Array<String> = arrayOf(
+                "data.token_type",
+                "data.access_token",
+                "data.refresh_token"
+        ),
+        var properties: Map<Any, Any?> = emptyMap()
 ) {
 
     var projectName: String = ""
@@ -98,23 +98,23 @@ open class AutodocExtension(
     }
 
     private fun listAdoc(dic: File, includeReadme: Boolean): List<File> =
-        dic.listFiles { file -> file.isFile && file.extension == "adoc" && file.name != "properties.adoc" && (includeReadme || file.name != "README.adoc") }
-            ?.toList()
-            ?: emptyList()
+            dic.listFiles { file -> file.isFile && file.extension == "adoc" && file.name != "properties.adoc" && (includeReadme || file.name != "README.adoc") }
+                    ?.toList()
+                    ?: emptyList()
 
 
     fun adocFile(moduleName: String) = File(outputFile, "$projectName-$moduleName.adoc")
     fun htmlFile(modulePyName: String) = File(outputFile, "$modulePyName.html")
     fun pdfFile(moduleName: String) = File(outputFile, "$projectName-$moduleName.pdf")
     fun postmanFile(modulePyName: String) = File(
-        outputFile,
-        "${
-            PinyinHelper.convertToPinyinString(
-                projectName,
-                "",
-                PinyinFormat.WITHOUT_TONE
-            )
-        }-$modulePyName.postman_collection.json"
+            outputFile,
+            "${
+                PinyinHelper.convertToPinyinString(
+                        projectName,
+                        "",
+                        PinyinFormat.WITHOUT_TONE
+                )
+            }-$modulePyName.postman_collection.json"
     )
 
     private fun listFileMap(): Map<String, Pair<File?, File?>> {

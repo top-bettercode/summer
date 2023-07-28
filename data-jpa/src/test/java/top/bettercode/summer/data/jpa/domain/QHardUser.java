@@ -10,10 +10,7 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import javax.annotation.Generated;
 
-
-/**
- * QHardUser is a Querydsl query type for HardUser
- */
+/** QHardUser is a Querydsl query type for HardUser */
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QHardUser extends EntityPathBase<HardUser> {
 
@@ -40,6 +37,4 @@ public class QHardUser extends EntityPathBase<HardUser> {
   public QHardUser(PathMetadata metadata) {
     super(HardUser.class, metadata);
   }
-
 }
-

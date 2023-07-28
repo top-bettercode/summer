@@ -17,9 +17,9 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         superClass(
-            JavaType("top.bettercode.summer.data.jpa.query.SpecMatcher").typeArgument(
-                entityType, type
-            )
+                JavaType("top.bettercode.summer.data.jpa.query.SpecMatcher").typeArgument(
+                        entityType, type
+                )
         )
 
         serialVersionUID()
@@ -82,16 +82,16 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         val pathType =
-            JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(
-                entityType, type
-            )
+                JavaType("top.bettercode.summer.data.jpa.query.SpecPath").typeArgument(
+                        entityType, type
+                )
         val matcherType =
-            JavaType("top.bettercode.summer.data.jpa.query.PathMatcher")
+                JavaType("top.bettercode.summer.data.jpa.query.PathMatcher")
         //primaryKey
         if (isCompositePrimaryKey) {
             primaryKeys.forEach {
                 val javaName =
-                    if (it.javaName == "spec") "specField" else it.javaName
+                        if (it.javaName == "spec") "specField" else it.javaName
                 method(javaName, pathType) {
                     javadoc {
                         +"/**"
@@ -102,9 +102,9 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +"return super.specPath(\"${primaryKeyName}.${it.javaName}\");"
                 }
                 method(
-                    javaName,
-                    type,
-                    Parameter(it.javaName, it.javaType)
+                        javaName,
+                        type,
+                        Parameter(it.javaName, it.javaType)
                 ) {
                     javadoc {
                         +"/**"
@@ -117,13 +117,13 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +"return this;"
                 }
                 method(
-                    javaName,
-                    type,
-                    Parameter(it.javaName, it.javaType),
-                    Parameter(
-                        "matcher",
-                        matcherType
-                    )
+                        javaName,
+                        type,
+                        Parameter(it.javaName, it.javaType),
+                        Parameter(
+                                "matcher",
+                                matcherType
+                        )
                 ) {
                     javadoc {
                         +"/**"
@@ -139,12 +139,12 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             }
         } else {
             val javaName =
-                if (primaryKeyName in arrayOf(
-                        "asc",
-                        "desc",
-                        "specPath"
-                    )
-                ) "${primaryKeyName}Field" else primaryKeyName
+                    if (primaryKeyName in arrayOf(
+                                    "asc",
+                                    "desc",
+                                    "specPath"
+                            )
+                    ) "${primaryKeyName}Field" else primaryKeyName
             method(javaName, pathType) {
                 javadoc {
                     +"/**"
@@ -155,9 +155,9 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"return super.specPath(\"${primaryKeyName}\");"
             }
             method(
-                javaName,
-                type,
-                Parameter(primaryKeyName, primaryKeyType)
+                    javaName,
+                    type,
+                    Parameter(primaryKeyName, primaryKeyType)
             ) {
                 javadoc {
                     +"/**"
@@ -170,13 +170,13 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"return this;"
             }
             method(
-                javaName,
-                type,
-                Parameter(primaryKeyName, primaryKeyType),
-                Parameter(
-                    "matcher",
-                    matcherType
-                )
+                    javaName,
+                    type,
+                    Parameter(primaryKeyName, primaryKeyType),
+                    Parameter(
+                            "matcher",
+                            matcherType
+                    )
             ) {
                 javadoc {
                     +"/**"
@@ -194,12 +194,12 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         otherColumns.forEach {
             val javaName =
-                if (it.javaName in arrayOf(
-                        "asc",
-                        "desc",
-                        "specPath"
-                    )
-                ) "${it.javaName}Field" else it.javaName
+                    if (it.javaName in arrayOf(
+                                    "asc",
+                                    "desc",
+                                    "specPath"
+                            )
+                    ) "${it.javaName}Field" else it.javaName
             method(javaName, pathType) {
                 javadoc {
                     +"/**"
@@ -221,11 +221,11 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"return this;"
             }
             method(
-                javaName, type, Parameter(it.javaName, it.javaType),
-                Parameter(
-                    "matcher",
-                    matcherType
-                )
+                    javaName, type, Parameter(it.javaName, it.javaType),
+                    Parameter(
+                            "matcher",
+                            matcherType
+                    )
             ) {
                 javadoc {
                     +"/**"

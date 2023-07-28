@@ -10,10 +10,7 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import javax.annotation.Generated;
 
-
-/**
- * QBaseUser is a Querydsl query type for BaseUser
- */
+/** QBaseUser is a Querydsl query type for BaseUser */
 @Generated("com.querydsl.codegen.SupertypeSerializer")
 public class QBaseUser extends EntityPathBase<BaseUser> {
 
@@ -40,6 +37,4 @@ public class QBaseUser extends EntityPathBase<BaseUser> {
   public QBaseUser(PathMetadata metadata) {
     super(BaseUser.class, metadata);
   }
-
 }
-

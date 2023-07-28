@@ -16,8 +16,8 @@ class StringUtilTest {
     @Test
     fun subString() {
         Assertions.assertEquals("123", StringUtil.subString("1234", 3))
-        Assertions.assertEquals( "123...", StringUtil.subStringWithEllipsis("1234", 3) )
-        Assertions.assertEquals( "1234...", StringUtil.subStringWithEllipsis("123477", 4)
+        Assertions.assertEquals("123...", StringUtil.subStringWithEllipsis("1234", 3))
+        Assertions.assertEquals("1234...", StringUtil.subStringWithEllipsis("123477", 4)
         )
     }
 }

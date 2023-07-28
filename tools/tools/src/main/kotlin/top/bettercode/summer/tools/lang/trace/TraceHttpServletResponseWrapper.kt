@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponseWrapper
  * @since 0.0.1
  */
 class TraceHttpServletResponseWrapper(response: HttpServletResponse) :
-    HttpServletResponseWrapper(response) {
+        HttpServletResponseWrapper(response) {
 
     private val byteArrayOutputStream = ByteArrayOutputStream()
     private var servletOutputStream: ServletOutputStream? = null
@@ -25,7 +25,7 @@ class TraceHttpServletResponseWrapper(response: HttpServletResponse) :
     override fun getOutputStream(): ServletOutputStream {
         if (servletOutputStream == null) {
             servletOutputStream =
-                TraceServletOutputStream(super.getOutputStream(), byteArrayOutputStream)
+                    TraceServletOutputStream(super.getOutputStream(), byteArrayOutputStream)
         }
         return servletOutputStream!!
     }

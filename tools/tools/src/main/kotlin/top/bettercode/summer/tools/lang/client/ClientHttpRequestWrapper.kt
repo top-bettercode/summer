@@ -10,7 +10,6 @@ import org.springframework.http.client.ClientHttpResponse
 import top.bettercode.summer.tools.lang.operation.*
 import top.bettercode.summer.tools.lang.util.StringUtil
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.io.OutputStream
 import java.net.URI
 import java.time.LocalDateTime
@@ -19,21 +18,21 @@ import java.time.LocalDateTime
  * @author Peter Wu
  */
 class ClientHttpRequestWrapper(
-    private val collectionName: String,
-    private val name: String,
-    private val logMarker: String?,
-    private val request: ClientHttpRequest,
-    private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
-    private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
+        private val collectionName: String,
+        private val name: String,
+        private val logMarker: String?,
+        private val request: ClientHttpRequest,
+        private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
+        private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
 ) : ClientHttpRequest {
     private val log = LoggerFactory.getLogger(ClientHttpRequestWrapper::class.java)
     val record = ByteArrayOutputStream()
 
     override fun execute(): ClientHttpResponse {
         val dateTime =
-            if (log.isInfoEnabled) {
-                LocalDateTime.now()
-            } else null
+                if (log.isInfoEnabled) {
+                    LocalDateTime.now()
+                } else null
         var response: ClientHttpResponse? = null
         var stackTrace = ""
         try {
@@ -48,8 +47,8 @@ class ClientHttpRequestWrapper(
             if (log.isInfoEnabled) {
                 var exception: Exception? = null
                 val operationResponse = if (response == null) OperationResponse(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    HttpHeaders.EMPTY, ByteArray(0)
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        HttpHeaders.EMPTY, ByteArray(0)
                 ) else try {
                     ResponseConverter.convert(response as ClientHttpResponseWrapper)
                 } catch (e: Exception) {
@@ -57,31 +56,31 @@ class ClientHttpRequestWrapper(
                         stackTrace = StringUtil.valueOf(e)
                     exception = e
                     OperationResponse(
-                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        HttpHeaders.EMPTY, ByteArray(0)
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            HttpHeaders.EMPTY, ByteArray(0)
                     )
                 }
                 operationResponse.stackTrace = stackTrace
                 val operation = Operation(
-                    collectionName = collectionName,
-                    name = name,
-                    protocol = "HTTP/1.1",
-                    request = RequestConverter.convert(this, dateTime!!),
-                    response = operationResponse
+                        collectionName = collectionName,
+                        name = name,
+                        protocol = "HTTP/1.1",
+                        request = RequestConverter.convert(this, dateTime!!),
+                        response = operationResponse
                 )
                 val msg = operation.toString(
-                    RequestLoggingConfig(
-                        includeRequestBody = true,
-                        includeResponseBody = true,
-                        includeTrace = true,
-                        encryptHeaders = arrayOf(),
-                        encryptParameters = arrayOf(),
-                        format = true,
-                        ignoredTimeout = true,
-                        timeoutAlarmSeconds = -1
-                    ),
-                    requestDecrypt,
-                    responseDecrypt
+                        RequestLoggingConfig(
+                                includeRequestBody = true,
+                                includeResponseBody = true,
+                                includeTrace = true,
+                                encryptHeaders = arrayOf(),
+                                encryptParameters = arrayOf(),
+                                format = true,
+                                ignoredTimeout = true,
+                                timeoutAlarmSeconds = -1
+                        ),
+                        requestDecrypt,
+                        responseDecrypt
                 )
                 val hasException = stackTrace.isNotBlank()
                 if (logMarker.isNullOrBlank()) {
@@ -123,8 +122,8 @@ class ClientHttpRequestWrapper(
     }
 
     private inner class OutputStreamWrapper(private val delegate: OutputStream) :
-        OutputStream() {
-            override fun write(b: Int) {
+            OutputStream() {
+        override fun write(b: Int) {
             delegate.write(b)
             record.write(b)
         }

@@ -8,7 +8,7 @@ import top.bettercode.summer.config.ConfigEnvironmentPostProcessor
 class TestConfigEnvironmentPostProcessor : ConfigEnvironmentPostProcessor(), Ordered {
 
     override fun postProcessEnvironment(
-        environment: ConfigurableEnvironment, application: SpringApplication
+            environment: ConfigurableEnvironment, application: SpringApplication
     ) {
         addConfig(environment, "application-test")
         addConfig(environment, "application-test-default")

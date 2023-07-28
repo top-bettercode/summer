@@ -27,9 +27,11 @@ open class PageController : BaseController() {
             is Page<*> -> {
                 super.ok(pagedResources(`object`))
             }
+
             is PageableList<*> -> {
                 super.ok(pagedResources(`object`.toPage()))
             }
+
             else -> {
                 super.ok(`object`)
             }

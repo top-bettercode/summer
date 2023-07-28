@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import top.bettercode.summer.web.support.KilogramUtil.toGram
-import java.io.IOException
 
 /**
  * @author Peter Wu

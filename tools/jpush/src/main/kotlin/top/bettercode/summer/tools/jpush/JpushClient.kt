@@ -23,9 +23,9 @@ import top.bettercode.summer.web.support.client.ApiTemplate
  */
 @LogMarker(LOG_MARKER)
 open class JpushClient(
-    private val properties: JpushProperties
+        private val properties: JpushProperties
 ) : ApiTemplate(
-    "第三方平台", "极光推送", LOG_MARKER, properties.connectTimeout, properties.readTimeout
+        "第三方平台", "极光推送", LOG_MARKER, properties.connectTimeout, properties.readTimeout
 ) {
 
     companion object {
@@ -36,15 +36,15 @@ open class JpushClient(
 
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
-            object : MappingJackson2HttpMessageConverter() {
-                override fun canRead(@Nullable mediaType: MediaType?): Boolean {
-                    return true
-                }
+                object : MappingJackson2HttpMessageConverter() {
+                    override fun canRead(@Nullable mediaType: MediaType?): Boolean {
+                        return true
+                    }
 
-                override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
-                    return true
+                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                        return true
+                    }
                 }
-            }
         objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
@@ -58,8 +58,8 @@ open class JpushClient(
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
         val requestCallback = httpEntityCallback<Any>(
-            HttpEntity(request, headers),
-            JpushResponse::class.java
+                HttpEntity(request, headers),
+                JpushResponse::class.java
         )
         if (request.cid == null) {
             val cidlist = cid(1).cidlist
@@ -72,15 +72,15 @@ open class JpushClient(
         request.options = Options(properties.timeToLive, properties.isAapnsProduction)
         val entity: ResponseEntity<JpushResponse> = try {
             execute(
-                properties.url + "/push", HttpMethod.POST,
-                requestCallback,
-                responseEntityExtractor<JpushResponse>(JpushResponse::class.java)
+                    properties.url + "/push", HttpMethod.POST,
+                    requestCallback,
+                    responseEntityExtractor<JpushResponse>(JpushResponse::class.java)
             )
         } catch (e: Exception) {
             if (e is HttpClientErrorException) {
                 val errorResponse = objectMapper.readValue(
-                    e.responseBodyAsByteArray,
-                    JpushErrorResponse::class.java
+                        e.responseBodyAsByteArray,
+                        JpushErrorResponse::class.java
                 )
                 val error = errorResponse.error
                 if (error != null) {
@@ -104,21 +104,21 @@ open class JpushClient(
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
         val requestCallback = httpEntityCallback<Any>(
-            HttpEntity(null, headers),
-            JpushCidResponse::class.java
+                HttpEntity(null, headers),
+                JpushCidResponse::class.java
         )
         val entity: ResponseEntity<JpushCidResponse> = try {
             execute(
-                properties.url + "/push/cid?count={0}", HttpMethod.GET,
-                requestCallback,
-                responseEntityExtractor<JpushCidResponse>(JpushCidResponse::class.java),
-                count
+                    properties.url + "/push/cid?count={0}", HttpMethod.GET,
+                    requestCallback,
+                    responseEntityExtractor<JpushCidResponse>(JpushCidResponse::class.java),
+                    count
             )
         } catch (e: Exception) {
             if (e is HttpClientErrorException) {
                 val errorResponse = objectMapper.readValue(
-                    e.responseBodyAsByteArray,
-                    JpushErrorResponse::class.java
+                        e.responseBodyAsByteArray,
+                        JpushErrorResponse::class.java
                 )
                 val error = errorResponse.error
                 if (error != null) {

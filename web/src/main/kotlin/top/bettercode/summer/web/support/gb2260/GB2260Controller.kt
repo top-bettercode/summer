@@ -24,13 +24,13 @@ class GB2260Controller : BaseController() {
             val provinces = GB2260.provinces.map {
                 if (it.municipality) {
                     Division(
-                        code = it.code,
-                        name = it.name,
-                        level = it.level,
-                        municipality = true,
-                        vnode = it.vnode,
-                        parentNames = it.parentNames,
-                        children = it.children[0].children
+                            code = it.code,
+                            name = it.name,
+                            level = it.level,
+                            municipality = true,
+                            vnode = it.vnode,
+                            parentNames = it.parentNames,
+                            children = it.children[0].children
                     )
                 } else {
                     it

@@ -7,7 +7,6 @@ import org.springframework.http.client.ClientHttpRequest
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.web.client.RestTemplate
 import top.bettercode.summer.tools.lang.client.ClientHttpRequestWrapper
-import java.io.IOException
 import java.net.URI
 
 /**

@@ -2,12 +2,10 @@ package top.bettercode.summer.security.userdetails
 
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.util.Assert
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import top.bettercode.summer.security.support.SecurityParameterNames
-import java.util.*
 
 /**
  * @author Peter Wu

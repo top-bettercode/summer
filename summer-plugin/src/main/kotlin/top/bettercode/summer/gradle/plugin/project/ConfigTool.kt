@@ -13,13 +13,13 @@ import java.util.*
 object ConfigTool {
 
     val filterValues = arrayOf(
-        "profiles.active",
-        "application.name",
-        "admin.server.port",
-        "app.server.port",
-        "datasource.url",
-        "datasource.username",
-        "datasource.password"
+            "profiles.active",
+            "application.name",
+            "admin.server.port",
+            "app.server.port",
+            "datasource.url",
+            "datasource.username",
+            "datasource.password"
     )
 
     fun prettyConfig(configDir: File, ymlFiles: List<File>) {
@@ -32,7 +32,7 @@ object ConfigTool {
                 val value = s.substringAfter(":").trim()
                 val itStep = s.substringBefore(":").dropLastWhile { s1 -> s1 != ' ' }.length / 2
                 prefix = if (prefix.isEmpty()) "" else prefix.split(".").subList(0, itStep)
-                    .joinToString(".")
+                        .joinToString(".")
                 prefix = if (prefix.isEmpty()) {
                     key
                 } else {
@@ -68,10 +68,10 @@ object ConfigTool {
                 }
                 if (change) {
                     properties.store(
-                        File(
-                            it.parentFile,
-                            it.nameWithoutExtension + ".properties"
-                        ).outputStream(), ""
+                            File(
+                                    it.parentFile,
+                                    it.nameWithoutExtension + ".properties"
+                            ).outputStream(), ""
                     )
                     it.delete()
                 }
@@ -88,23 +88,23 @@ object ConfigTool {
 
 
     private fun iterateAndProcess(
-        properties: Properties,
-        ymlEntry: Map<String, Any>?,
-        rootKey: String
+            properties: Properties,
+            ymlEntry: Map<String, Any>?,
+            rootKey: String
     ) {
         for (key in ymlEntry!!.keys) {
             val value = ymlEntry[key]
             if (value is Map<*, *>) {
                 @Suppress("UNCHECKED_CAST")
                 (iterateAndProcess(
-                    properties,
-                    value as Map<String, Any>,
-                    if (rootKey.isEmpty()) key else "$rootKey.$key"
+                        properties,
+                        value as Map<String, Any>,
+                        if (rootKey.isEmpty()) key else "$rootKey.$key"
                 ))
             } else {
                 properties.setProperty(
-                    if (rootKey.isEmpty()) key else "$rootKey.$key",
-                    value?.toString() ?: ""
+                        if (rootKey.isEmpty()) key else "$rootKey.$key",
+                        value?.toString() ?: ""
                 )
             }
         }

@@ -17,7 +17,7 @@ val testService: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
 
         val insertName =
-            "insert${pathName.capitalized()}"
+                "insert${pathName.capitalized()}"
 
         //insert
         method(insertName, entityType, visibility = JavaVisibility.PUBLIC) {

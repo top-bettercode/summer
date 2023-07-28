@@ -12,8 +12,9 @@ import org.springframework.data.domain.Sort
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Transactional
-import top.bettercode.summer.data.jpa.domain.*
-import top.bettercode.summer.data.jpa.repository.*
+import top.bettercode.summer.data.jpa.domain.User
+import top.bettercode.summer.data.jpa.repository.Service
+import top.bettercode.summer.data.jpa.repository.UserRepository
 import top.bettercode.summer.data.jpa.support.Size
 import top.bettercode.summer.tools.lang.util.CollectionUtil.mapOf
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf

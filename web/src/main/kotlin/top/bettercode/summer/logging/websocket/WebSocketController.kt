@@ -3,7 +3,6 @@ package top.bettercode.summer.logging.websocket
 import org.slf4j.LoggerFactory
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.web.support.ApplicationContextHolder
-import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import javax.websocket.*
 import javax.websocket.server.ServerEndpoint
@@ -56,7 +55,7 @@ class WebSocketController {
             ApplicationContextHolder.getBean(WebsocketProperties::class.java)!!
         }
 
-            fun send(message: String?) {
+        fun send(message: String?) {
             for (session in sessions.values) {
                 if (session.isOpen) {
                     session.basicRemote.sendText(message)

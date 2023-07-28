@@ -3,8 +3,8 @@ package top.bettercode.summer.tools.mobile.entity
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class QueryResponse(
-    @field:JsonProperty("data")
-    val data: List<DataItem?>? = null
+        @field:JsonProperty("data")
+        val data: List<DataItem?>? = null
 ) {
     val record: RecordItem?
         get() = data?.firstOrNull()?.record?.firstOrNull()

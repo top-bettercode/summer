@@ -9,12 +9,10 @@ import org.springframework.http.server.ServletServerHttpRequest
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.filter.OncePerRequestFilter
-import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.Charset
 import java.util.*
 import javax.servlet.FilterChain
-import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
 import javax.servlet.http.HttpServletResponse
@@ -55,7 +53,7 @@ class OrderedHttpPutFormContentFilter : OncePerRequestFilter(), Ordered {
         if (("PUT" == request.method || "DELETE" == request.method || ("PATCH"
                         == request.method)) && isFormContentType(request)) {
             val inputMessage: HttpInputMessage = object : ServletServerHttpRequest(request) {
-                            override fun getBody(): InputStream {
+                override fun getBody(): InputStream {
                     return request.inputStream
                 }
             }

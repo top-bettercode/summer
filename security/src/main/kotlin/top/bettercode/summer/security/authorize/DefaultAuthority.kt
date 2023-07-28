@@ -3,7 +3,6 @@ package top.bettercode.summer.security.authorize
 import org.springframework.security.access.SecurityConfig
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import java.util.*
 
 /**
  * @author Peter Wu

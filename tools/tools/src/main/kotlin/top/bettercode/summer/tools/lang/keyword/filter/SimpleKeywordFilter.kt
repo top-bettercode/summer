@@ -11,17 +11,17 @@ import top.bettercode.summer.tools.lang.keyword.replace.ReplaceStrategy
  * @author Peter Wu
  */
 open class SimpleKeywordFilter(
-    val root: CharNode = CharNode(),
-    /**
-     * 设置匹配模式
-     */
-    var matchType: MatchType = MatchType.LONG,
-    /**
-     * 设置替换策略
-     */
-    var strategy: ReplaceStrategy = DefaultReplaceStrategy()
+        val root: CharNode = CharNode(),
+        /**
+         * 设置匹配模式
+         */
+        var matchType: MatchType = MatchType.LONG,
+        /**
+         * 设置替换策略
+         */
+        var strategy: ReplaceStrategy = DefaultReplaceStrategy()
 ) :
-    KeywordFilter {
+        KeywordFilter {
 
 
     override fun replace(text: String): String {
@@ -48,13 +48,13 @@ open class SimpleKeywordFilter(
                 result.append(word)
             } else if (containLast && matchShort && lastEnd) {
                 result
-                    .append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
+                        .append(strategy.replaceWith(words.copyOfRange(lastIndex, lastIndex + length)))
                 last = root
             } else if (!containLast || end) {
                 if (lastEnd) {
                     result.append(
-                        strategy
-                            .replaceWith(words.copyOfRange(lastIndex, lastIndex + length))
+                            strategy
+                                    .replaceWith(words.copyOfRange(lastIndex, lastIndex + length))
                     )
                     if (!containLast) {
                         i--
@@ -73,12 +73,12 @@ open class SimpleKeywordFilter(
                             val failLength = failNode!!.length
                             i = lastIndex + failLength - 1
                             result.append(
-                                strategy.replaceWith(
-                                    words.copyOfRange(
-                                        lastIndex,
-                                        lastIndex + failLength
+                                    strategy.replaceWith(
+                                            words.copyOfRange(
+                                                    lastIndex,
+                                                    lastIndex + failLength
+                                            )
                                     )
-                                )
                             )
                         }
                     }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.ser.std.NumberSerializer
 import top.bettercode.summer.web.support.KilogramUtil.toKilogram
-import java.io.IOException
 import java.math.BigDecimal
 
 @JacksonStdImpl

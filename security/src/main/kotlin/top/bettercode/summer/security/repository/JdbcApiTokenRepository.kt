@@ -11,7 +11,6 @@ import org.springframework.util.Assert
 import top.bettercode.summer.security.token.ApiToken
 import java.sql.ResultSet
 import java.sql.Types
-import java.util.*
 import javax.sql.DataSource
 
 
@@ -81,7 +80,7 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
     override fun remove(scope: String, usernames: List<String>) {
         val ids = usernames.map { "$scope:$it" }.toTypedArray()
         val sql = defaultBatchDeleteStatement + "(${usernames.joinToString(",") { "?" }})"
-        val update = jdbcTemplate.update(sql,  *ids)
+        val update = jdbcTemplate.update(sql, *ids)
         if (log.isDebugEnabled) {
             log.debug("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", sql,
                     ids, update)

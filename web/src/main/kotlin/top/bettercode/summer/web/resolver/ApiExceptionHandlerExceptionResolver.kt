@@ -2,8 +2,8 @@ package top.bettercode.summer.web.resolver
 
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver
-import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.error.ErrorAttributes
+import top.bettercode.summer.web.properties.SummerWebProperties
 
 /**
  * @author Peter Wu

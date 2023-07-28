@@ -26,14 +26,14 @@ object RequiredParameters {
         handler?.methodParameters?.forEach {
             val requestHeader = it.getParameterAnnotation(RequestHeader::class.java)
             if (it.hasParameterAnnotation(RequestHeader::class.java) && (it.hasParameterAnnotation(
-                    NotNull::class.java
-                ) || it.hasParameterAnnotation(NotBlank::class.java) || it.hasParameterAnnotation(
-                    NotEmpty::class.java
-                ) || requestHeader?.required == true)
+                            NotNull::class.java
+                    ) || it.hasParameterAnnotation(NotBlank::class.java) || it.hasParameterAnnotation(
+                            NotEmpty::class.java
+                    ) || requestHeader?.required == true)
             ) {
                 if (it.parameterName != null)
                     requiredHeaders[it.parameterName!!] = requestHeader?.defaultValue
-                        ?: ValueConstants.DEFAULT_NONE
+                            ?: ValueConstants.DEFAULT_NONE
             }
         }
         return requiredHeaders
@@ -51,16 +51,16 @@ object RequiredParameters {
         }
         handler?.methodParameters?.forEach {
             existNoAnnoDefaultPageParam =
-                it.parameterType.name == "org.springframework.data.domain.Pageable" && !it.hasParameterAnnotation(
-                    org.springframework.data.web.PageableDefault::class.java
-                )
+                    it.parameterType.name == "org.springframework.data.domain.Pageable" && !it.hasParameterAnnotation(
+                            org.springframework.data.web.PageableDefault::class.java
+                    )
             val requestParam = it.getParameterAnnotation(RequestParam::class.java)
             if (requestParam != null) {
                 defaultValueParams[it.parameterName!!] = requestParam.defaultValue
             }
             if (it.parameterName != null && (it.hasParameterAnnotation(NotNull::class.java) || it.hasParameterAnnotation(
-                    NotBlank::class.java
-                ) || it.hasParameterAnnotation(NotEmpty::class.java) || requestParam?.required == true)
+                            NotBlank::class.java
+                    ) || it.hasParameterAnnotation(NotEmpty::class.java) || requestParam?.required == true)
             ) {
                 requiredParameters.add(it.parameterName!!)
             }
@@ -70,7 +70,7 @@ object RequiredParameters {
                 clazz = clazz.componentType
             } else if (Collection::class.java.isAssignableFrom(clazz)) {
                 clazz =
-                    (it.genericParameterType as ParameterizedType).actualTypeArguments[0] as Class<*>
+                        (it.genericParameterType as ParameterizedType).actualTypeArguments[0] as Class<*>
             }
             if (clazz.classLoader != null) {
                 val validatedAnn = it.getParameterAnnotation(Validated::class.java)
@@ -86,10 +86,10 @@ object RequiredParameters {
 
 
     private fun addRequires(
-        clazz: Class<*>,
-        requires: MutableSet<String>,
-        groups: Array<out KClass<out Any>>,
-        prefix: String = ""
+            clazz: Class<*>,
+            requires: MutableSet<String>,
+            groups: Array<out KClass<out Any>>,
+            prefix: String = ""
     ) {
         val constraintsForClass = validator.getConstraintsForClass(clazz)
         constraintsForClass.constrainedProperties.forEach { pd ->
@@ -105,10 +105,10 @@ object RequiredParameters {
                 pd.constrainedContainerElementTypes.forEach {
                     if (it.elementClass?.classLoader != null) {
                         addRequires(
-                            it.elementClass,
-                            requires,
-                            groups,
-                            "${prefix + pd.propertyName}."
+                                it.elementClass,
+                                requires,
+                                groups,
+                                "${prefix + pd.propertyName}."
                         )
                     }
                 }

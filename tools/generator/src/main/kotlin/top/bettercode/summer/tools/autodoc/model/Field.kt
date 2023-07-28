@@ -9,29 +9,29 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
  * @author Peter Wu
  */
 @JsonPropertyOrder(
-    "name",
-    "type",
-    "description",
-    "defaultVal",
-    "value",
-    "nullable",
-    "canCover",
-    "children"
+        "name",
+        "type",
+        "description",
+        "defaultVal",
+        "value",
+        "nullable",
+        "canCover",
+        "children"
 )
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Field(
-    var name: String = "",
-    var type: String = "",
-    var description: String = " ",
-    var defaultVal: String = "",
-    var value: String = "",
-    var required: Boolean = false,
-    /**
-     * 从数据库生成字段描述时是否可覆盖
-     */
-    var canCover: Boolean = true,
-    var partType: String = "",
-    var children: LinkedHashSet<Field> = LinkedHashSet()
+        var name: String = "",
+        var type: String = "",
+        var description: String = " ",
+        var defaultVal: String = "",
+        var value: String = "",
+        var required: Boolean = false,
+        /**
+         * 从数据库生成字段描述时是否可覆盖
+         */
+        var canCover: Boolean = true,
+        var partType: String = "",
+        var children: LinkedHashSet<Field> = LinkedHashSet()
 ) : Comparable<Field> {
 
     override fun compareTo(other: Field): Int {

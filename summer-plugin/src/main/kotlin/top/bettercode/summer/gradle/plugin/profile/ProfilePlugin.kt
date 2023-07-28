@@ -28,19 +28,19 @@ class ProfilePlugin : Plugin<Project> {
         project.extensions.create("profile", ProfileExtension::class.java)
         project.extensions.configure(ProfileExtension::class.java) {
             it.extraVersion =
-                (project.findProperty("profile.extra-version") as? String)?.toBoolean()
-                    ?: false
+                    (project.findProperty("profile.extra-version") as? String)?.toBoolean()
+                            ?: false
             it.excludeOther =
-                (project.findProperty("profile.exclude-other") as? String)?.toBoolean()
-                    ?: true
+                    (project.findProperty("profile.exclude-other") as? String)?.toBoolean()
+                            ?: true
             it.configDir = (project.findProperty("profile.conf-dir") as? String) ?: "conf"
             it.configFile = (project.findProperty("profile.config-file") as? String) ?: ""
             it.activeFileSuffix = (project.findProperty("profile.active-file-suffix") as? String)
-                ?: ""
+                    ?: ""
             it.beginToken = (project.findProperty("profile.begin-token") as? String) ?: "@"
             it.endToken = (project.findProperty("profile.end-token") as? String) ?: "@"
             it.matchFiles = ((project.findProperty("profile.match-files") as? String)
-                ?: "**/*.yml,**/*.yaml,**/*.properties,**/*.xml,**/*.conf").split(",").toSet()
+                    ?: "**/*.yml,**/*.yaml,**/*.properties,**/*.xml,**/*.conf").split(",").toSet()
         }
         val props = project.profileProperties
         val hashtable = Hashtable<String, String>()
@@ -67,9 +67,9 @@ class ProfilePlugin : Plugin<Project> {
     }
 
     private fun doFilter(
-        @Suppress("UnstableApiUsage") it: ProcessResources,
-        project: Project,
-        hash: Hashtable<String, String>
+            @Suppress("UnstableApiUsage") it: ProcessResources,
+            project: Project,
+            hash: Hashtable<String, String>
     ) {
         it.inputs.property(profilesActiveName, project.profilesActive)
         it.inputs.files(*project.profileFiles)
@@ -78,19 +78,19 @@ class ProfilePlugin : Plugin<Project> {
             override fun execute(it: Task) {
                 if (profile.extraVersion)
                     project.version =
-                        (if ("unspecified" == project.version) project.rootProject.version else project.version).toString() + "." + project.profilesActive.uppercase(
-                            Locale.getDefault()
-                        )
+                            (if ("unspecified" == project.version) project.rootProject.version else project.version).toString() + "." + project.profilesActive.uppercase(
+                                    Locale.getDefault()
+                            )
             }
         })
 
         it.filesMatching(profile.matchFiles) {
             it.filter(
-                mapOf(
-                    "tokens" to hash,
-                    "beginToken" to profile.beginToken,
-                    "endToken" to profile.endToken
-                ), ReplaceTokens::class.java
+                    mapOf(
+                            "tokens" to hash,
+                            "beginToken" to profile.beginToken,
+                            "endToken" to profile.endToken
+                    ), ReplaceTokens::class.java
             )
         }
         if (profile.excludeOther)
@@ -103,7 +103,7 @@ class ProfilePlugin : Plugin<Project> {
             override fun execute(it: Task) {
                 profile.closure.forEach { it(project, profile) }
                 profile.profileClosure.filter { project.profilesActive == it.key }.values.flatten()
-                    .forEach { it(project, profile) }
+                        .forEach { it(project, profile) }
             }
         })
     }

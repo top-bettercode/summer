@@ -10,11 +10,11 @@ import java.lang.annotation.Inherited
  * 注解在url字段上
  */
 @Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER,
-    AnnotationTarget.FIELD,
-    AnnotationTarget.ANNOTATION_CLASS
+        AnnotationTarget.FUNCTION,
+        AnnotationTarget.PROPERTY_GETTER,
+        AnnotationTarget.PROPERTY_SETTER,
+        AnnotationTarget.FIELD,
+        AnnotationTarget.ANNOTATION_CLASS
 )
 @Retention(AnnotationRetention.RUNTIME)
 @JacksonAnnotationsInside
@@ -22,13 +22,13 @@ import java.lang.annotation.Inherited
 @JsonSerialize(using = QvodImageProcessSerializer::class)
 annotation class QvodImageProcess(
 
-    /**
-     * @return 图片即时处理模板ID,默认使用系统配置ID
-     */
-    val value: String = "",
+        /**
+         * @return 图片即时处理模板ID,默认使用系统配置ID
+         */
+        val value: String = "",
 
-    /**
-     * @return 字符串分隔符, 字符串以分隔符分隔后序列化
-     */
-    val separator: String = ""
+        /**
+         * @return 字符串分隔符, 字符串以分隔符分隔后序列化
+         */
+        val separator: String = ""
 )

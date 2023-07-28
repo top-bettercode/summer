@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import top.bettercode.summer.tools.autodoc.operation.DocOperation
 
 data class CombineCollection(
-    private val rootCollection: DocCollection,
-    var projectCollection: DocCollection?
+        private val rootCollection: DocCollection,
+        var projectCollection: DocCollection?
 ) : ICollection {
 
     override val name: String = rootCollection.name
@@ -17,7 +17,7 @@ data class CombineCollection(
                 val operations = mutableListOf<DocOperation>()
                 operations.addAll(rootCollection.operations.filter {
                     !projectCollection!!.operations.contains(
-                        it
+                            it
                     )
                 })
                 operations.addAll(projectCollection!!.operations)

@@ -8,5 +8,5 @@ package top.bettercode.summer.logging.annotation
 @Retention
 @MustBeDocumented
 annotation class LogMarker(
-    val value: String
+        val value: String
 )

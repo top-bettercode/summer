@@ -7,6 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Channel(
-    var id: String? = null,
-    var name: String? = null
+        var id: String? = null,
+        var name: String? = null
 )

@@ -25,10 +25,10 @@ object HttpOperation {
     const val separatorLine = "------------------------------------------------------------"
 
     fun toString(
-        output: Operation,
-        format: Boolean,
-        requestDecrypt: ((ByteArray) -> ByteArray)? = null,
-        responseDecrypt: ((ByteArray) -> ByteArray)? = null
+            output: Operation,
+            format: Boolean,
+            requestDecrypt: ((ByteArray) -> ByteArray)? = null,
+            responseDecrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val stringBuilder = StringBuilder("")
         val marginLine = "============================================================"
@@ -56,10 +56,10 @@ object HttpOperation {
     }
 
     fun toString(
-        request: OperationRequest,
-        protocol: String,
-        format: Boolean,
-        decrypt: ((ByteArray) -> ByteArray)? = null
+            request: OperationRequest,
+            protocol: String,
+            format: Boolean,
+            decrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val stringBuilder = StringBuilder("")
         stringBuilder.appendLine("${request.method} ${getPath(request)} $protocol")
@@ -78,10 +78,10 @@ object HttpOperation {
     }
 
     fun toString(
-        response: OperationResponse,
-        protocol: String,
-        format: Boolean,
-        decrypt: ((ByteArray) -> ByteArray)? = null
+            response: OperationResponse,
+            protocol: String,
+            format: Boolean,
+            decrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val stringBuilder = StringBuilder("")
         stringBuilder.appendLine("$protocol ${response.statusCode} ${HttpStatus.valueOf(response.statusCode).reasonPhrase}")
@@ -105,8 +105,8 @@ object HttpOperation {
     }
 
     fun getRestRequestPath(
-        request: OperationRequest,
-        forceParametersInUri: Boolean = false
+            request: OperationRequest,
+            forceParametersInUri: Boolean = false
     ): String {
         var path = request.restUri
         request.uriVariables.forEach { (t, u) ->
@@ -116,9 +116,9 @@ object HttpOperation {
     }
 
     private fun getPath(
-        request: OperationRequest,
-        forceParametersInUri: Boolean,
-        path: String
+            request: OperationRequest,
+            forceParametersInUri: Boolean,
+            path: String
     ): String {
         var rpath = path
         var queryString = request.uri.rawQuery
@@ -138,7 +138,7 @@ object HttpOperation {
 
     private fun includeParametersInUri(request: OperationRequest): Boolean {
         return (request.method == HttpMethod.GET.name || request.method == HttpMethod.DELETE.name) || (request.content.isEmpty() && !MediaType.APPLICATION_FORM_URLENCODED
-            .isCompatibleWith(request.headers.contentType))
+                .isCompatibleWith(request.headers.contentType))
     }
 
     private fun getHeaders(request: OperationRequest): HttpHeaders {
@@ -148,8 +148,8 @@ object HttpOperation {
             for (value in header.value) {
                 if (HttpHeaders.CONTENT_TYPE == header.key && !request.parts.isEmpty()) {
                     headers.add(
-                        header.key,
-                        String.format("%s; boundary=%s", value, MULTIPART_BOUNDARY)
+                            header.key,
+                            String.format("%s; boundary=%s", value, MULTIPART_BOUNDARY)
                     )
                 } else {
                     headers.add(header.key, value)
@@ -160,8 +160,8 @@ object HttpOperation {
 
         for (cookie in request.cookies) {
             headers.add(
-                HttpHeaders.COOKIE,
-                String.format("%s=%s", cookie.name, cookie.value)
+                    HttpHeaders.COOKIE,
+                    String.format("%s=%s", cookie.name, cookie.value)
             )
         }
 
@@ -172,8 +172,8 @@ object HttpOperation {
     }
 
     private fun getRequestBody(
-        request: OperationRequest,
-        format: Boolean
+            request: OperationRequest,
+            format: Boolean
     ): String {
         val httpRequest = StringWriter()
         val writer = PrintWriter(httpRequest)
@@ -227,14 +227,14 @@ object HttpOperation {
 
     private fun writePart(part: OperationRequestPart, writer: PrintWriter) {
         writePart(
-            part.name, part.contentAsString, part.submittedFileName,
-            part.headers.contentType, writer
+                part.name, part.contentAsString, part.submittedFileName,
+                part.headers.contentType, writer
         )
     }
 
     private fun writePart(
-        name: String, value: String, filename: String?,
-        contentType: MediaType?, writer: PrintWriter
+            name: String, value: String, filename: String?,
+            contentType: MediaType?, writer: PrintWriter
     ) {
         writer.printf("Content-Disposition: form-data; name=%s", name)
         if (StringUtils.hasText(filename)) {
@@ -257,8 +257,8 @@ object HttpOperation {
     }
 
     private fun getResponseBody(
-        response: OperationResponse,
-        format: Boolean
+            response: OperationResponse,
+            format: Boolean
     ): String {
         val content = if (format) response.prettyContentAsString else response.contentAsString
         return if (content.isEmpty()) content else String.format("%n%s", content)

@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Ios @JvmOverloads constructor(
 
-    @field:JsonProperty("alert")
-    val alert: String? = null,
+        @field:JsonProperty("alert")
+        val alert: String? = null,
 
-    @field:JsonProperty("extras")
-    val extras: Map<String, Any?>? = null,
+        @field:JsonProperty("extras")
+        val extras: Map<String, Any?>? = null,
 
-    @field:JsonProperty("sound")
-    val sound: String? = null,
+        @field:JsonProperty("sound")
+        val sound: String? = null,
 
-    @field:JsonProperty("badge")
-    val badge: String = "+1",
+        @field:JsonProperty("badge")
+        val badge: String = "+1",
 
-    @field:JsonProperty("thread-id")
-    val threadId: String? = null
+        @field:JsonProperty("thread-id")
+        val threadId: String? = null
 )

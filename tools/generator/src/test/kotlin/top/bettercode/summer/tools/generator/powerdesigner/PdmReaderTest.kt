@@ -8,14 +8,14 @@ import java.io.File
  */
 class PdmReaderTest {
     private val pdmFile = File(
-        PdmReaderTest::class.java.getResource("/pdm/src/kie.pdm")?.file
-            ?: throw IllegalStateException()
+            PdmReaderTest::class.java.getResource("/pdm/src/kie.pdm")?.file
+                    ?: throw IllegalStateException()
     )
 
     @Test
     fun read() {
         for (table in PdmReader.read(
-            pdmFile
+                pdmFile
         )) {
             println(table)
         }

@@ -13,10 +13,10 @@ val repository: ProjectGenerator.(Interface) -> Unit = { unit ->
             +"/** $remarks 数据层 */"
         }
         implement(
-            JavaType("top.bettercode.summer.data.jpa.BaseRepository").typeArgument(
-                entityType,
-                primaryKeyType
-            )
+                JavaType("top.bettercode.summer.data.jpa.BaseRepository").typeArgument(
+                        entityType,
+                        primaryKeyType
+                )
         )
 
     }

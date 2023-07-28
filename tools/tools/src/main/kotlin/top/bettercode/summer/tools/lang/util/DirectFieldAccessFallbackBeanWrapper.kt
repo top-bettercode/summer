@@ -37,10 +37,10 @@ class DirectFieldAccessFallbackBeanWrapper : BeanWrapperImpl {
             super.getPropertyValue(propertyName)
         } catch (e: NotReadablePropertyException) {
             val field = ReflectionUtils.findField(wrappedClass, propertyName)
-                ?: throw NotReadablePropertyException(
-                    wrappedClass, propertyName,
-                    "Could not find field for property during fallback access!"
-                )
+                    ?: throw NotReadablePropertyException(
+                            wrappedClass, propertyName,
+                            "Could not find field for property during fallback access!"
+                    )
             ReflectionUtils.makeAccessible(field)
             ReflectionUtils.getField(field, wrappedInstance)
         }
@@ -55,10 +55,10 @@ class DirectFieldAccessFallbackBeanWrapper : BeanWrapperImpl {
             super.setPropertyValue(propertyName, value)
         } catch (e: NotWritablePropertyException) {
             val field = ReflectionUtils.findField(wrappedClass, propertyName)
-                ?: throw NotWritablePropertyException(
-                    wrappedClass, propertyName,
-                    "Could not find field for property during fallback access!", e
-                )
+                    ?: throw NotWritablePropertyException(
+                            wrappedClass, propertyName,
+                            "Could not find field for property during fallback access!", e
+                    )
             ReflectionUtils.makeAccessible(field)
             ReflectionUtils.setField(field, wrappedInstance, value)
         }

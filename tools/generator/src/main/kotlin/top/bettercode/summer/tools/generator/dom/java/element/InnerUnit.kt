@@ -5,12 +5,12 @@ import top.bettercode.summer.tools.generator.dom.java.JavaTypeOperator
 import java.util.*
 
 abstract class InnerUnit(
-    /**
-     * Gets the type.
-     *
-     * @return Returns the type.
-     */
-    val type: JavaType
+        /**
+         * Gets the type.
+         *
+         * @return Returns the type.
+         */
+        val type: JavaType
 ) : JavaElement() {
 
     /** The fields.  */
@@ -27,11 +27,11 @@ abstract class InnerUnit(
     }
 
     fun field(
-        name: String,
-        type: JavaType,
-        initializationString: String? = null,
-        isFinal: Boolean = false,
-        visibility: JavaVisibility = JavaVisibility.PRIVATE
+            name: String,
+            type: JavaType,
+            initializationString: String? = null,
+            isFinal: Boolean = false,
+            visibility: JavaVisibility = JavaVisibility.PRIVATE
     ) {
         val field = Field()
         field.type = type
@@ -43,12 +43,12 @@ abstract class InnerUnit(
     }
 
     fun field(
-        name: String,
-        type: JavaType,
-        initializationString: String? = null,
-        isFinal: Boolean = false,
-        visibility: JavaVisibility = JavaVisibility.PRIVATE,
-        closure: Field.() -> Unit
+            name: String,
+            type: JavaType,
+            initializationString: String? = null,
+            isFinal: Boolean = false,
+            visibility: JavaVisibility = JavaVisibility.PRIVATE,
+            closure: Field.() -> Unit
     ) {
         val field = Field()
         field.type = type
@@ -69,8 +69,8 @@ abstract class InnerUnit(
     }
 
     fun constructor(
-        vararg parameter: Parameter,
-        visibility: JavaVisibility = JavaVisibility.PUBLIC
+            vararg parameter: Parameter,
+            visibility: JavaVisibility = JavaVisibility.PUBLIC
     ) {
         val method = Method()
         method.isConstructor = true
@@ -81,9 +81,9 @@ abstract class InnerUnit(
     }
 
     fun constructor(
-        vararg parameter: Parameter,
-        visibility: JavaVisibility = JavaVisibility.PUBLIC,
-        closure: Method.() -> Unit
+            vararg parameter: Parameter,
+            visibility: JavaVisibility = JavaVisibility.PUBLIC,
+            closure: Method.() -> Unit
     ) {
         val method = Method()
         method.isConstructor = true

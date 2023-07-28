@@ -23,21 +23,21 @@ class AsciidocGeneratorTest {
     @Test
     fun cp() {
         File(AutodocExtension::class.java.getResource("/static")!!.file).walkTopDown()
-            .filter { it.isFile }.forEach {
-                val path = it.path.replace(
-                    "/data/repositories/bettercode/default/summer/summer-plugin/src/main/",
-                    ""
-                )
-                System.err.println("AutodocExtension::class.java.getResourceAsStream(\"/$path\").copyTo(File(outputFile, \"$path\").outputStream())")
-            }
+                .filter { it.isFile }.forEach {
+                    val path = it.path.replace(
+                            "/data/repositories/bettercode/default/summer/summer-plugin/src/main/",
+                            ""
+                    )
+                    System.err.println("AutodocExtension::class.java.getResourceAsStream(\"/$path\").copyTo(File(outputFile, \"$path\").outputStream())")
+                }
     }
 
     @Test
     fun name() {
         File(AsciidocGeneratorTest::class.java.getResource("/static/Open+Sans.css")!!.file).readLines()
-            .filter { it.contains("url(https:") }.forEach {
-                println(it.replace(".*url\\((.*?)\\).*".toRegex(), "$1"))
-            }
+                .filter { it.contains("url(https:") }.forEach {
+                    println(it.replace(".*url\\((.*?)\\).*".toRegex(), "$1"))
+                }
     }
 
     @Test

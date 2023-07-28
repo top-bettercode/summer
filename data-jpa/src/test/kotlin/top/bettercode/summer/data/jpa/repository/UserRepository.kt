@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.querydsl.QuerydslPredicateExecutor
 import top.bettercode.summer.data.jpa.JpaExtRepository
-import top.bettercode.summer.data.jpa.domain.*
+import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.querydsl.RecycleQuerydslPredicateExecutor
 import top.bettercode.summer.data.jpa.resp.AUser
 import top.bettercode.summer.data.jpa.resp.CUser

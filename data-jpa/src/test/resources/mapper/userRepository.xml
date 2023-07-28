@@ -107,18 +107,18 @@
 
     <select id="selectMybatisAllVal" resultType="top.bettercode.summer.data.jpa.domain.User">
         select first_name,
-               last_name,
-               (@val := @val + 1) as version
+        last_name,
+        (@val := @val + 1) as version
         from t_user u,
-             (select @val := 0) t
+        (select @val := 0) t
         where deleted = 0
     </select>
     <select id="selectMybatisAllVal2" resultType="top.bettercode.summer.data.jpa.domain.User">
         select first_name,
-               last_name,
-               (@val \:= @val + 1) as version
+        last_name,
+        (@val \:= @val + 1) as version
         from t_user u,
-             (select @val \:= 0) t
+        (select @val \:= 0) t
         where deleted = 0
     </select>
 

@@ -500,7 +500,7 @@ class HTMLFilter {
 
         // @xxx could grow large... maybe use sesat's ReferenceMap
         private val P_REMOVE_PAIR_BLANKS: ConcurrentMap<String, Pattern> = ConcurrentHashMap()
-        private val P_REMOVE_SELF_BLANKS: ConcurrentMap<String, Pattern> =   ConcurrentHashMap()
+        private val P_REMOVE_SELF_BLANKS: ConcurrentMap<String, Pattern> = ConcurrentHashMap()
 
         //---------------------------------------------------------------
         // my versions of some PHP library functions

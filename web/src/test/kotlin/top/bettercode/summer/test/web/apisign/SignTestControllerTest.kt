@@ -17,14 +17,14 @@ import top.bettercode.summer.apisign.ApiSignConfiguration
  */
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
-    classes = [ApiSignConfiguration::class, SignTestController::class], properties = [
-        "summer.web.wrap-enable=false",
-        "summer.web.ok-enable=false",
-        "summer.auto-sign.enabled=false",
-        "summer.sign.clientSecret=abcd",
+        classes = [ApiSignConfiguration::class, SignTestController::class], properties = [
+    "summer.web.wrap-enable=false",
+    "summer.web.ok-enable=false",
+    "summer.auto-sign.enabled=false",
+    "summer.sign.clientSecret=abcd",
     "summer.sign.handler-type-prefix=top.bettercode.summer.test.web.apisign.SignTestController",
-        "logging.level.root=debug"
-    ], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    "logging.level.root=debug"
+], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 class SignTestControllerTest {
 
@@ -37,17 +37,17 @@ class SignTestControllerTest {
     @Test
     fun testGetSuccess() {
         val entity = testRestTemplate.getForEntity(
-            "/testSign?limit=25&page=0&size=25&start=0&type=0&sign=" + api.sign(
-                LinkedMultiValueMap(
-                    mutableMapOf<String, List<String>>(
-                        "limit" to listOf("25"),
-                        "page" to listOf("0"),
-                        "size" to listOf("25"),
-                        "start" to listOf("0"),
-                        "type" to listOf("0")
-                    )
-                )
-            ), String::class.java
+                "/testSign?limit=25&page=0&size=25&start=0&type=0&sign=" + api.sign(
+                        LinkedMultiValueMap(
+                                mutableMapOf<String, List<String>>(
+                                        "limit" to listOf("25"),
+                                        "page" to listOf("0"),
+                                        "size" to listOf("25"),
+                                        "start" to listOf("0"),
+                                        "type" to listOf("0")
+                                )
+                        )
+                ), String::class.java
         )
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
         Assertions.assertEquals("success", entity.body)
@@ -57,8 +57,8 @@ class SignTestControllerTest {
     @Test
     fun testGetFail() {
         val entity = testRestTemplate.getForEntity(
-            "/testSign?limit=25&page=0&size=25&start=0&type=0&sign=",
-            String::class.java
+                "/testSign?limit=25&page=0&size=25&start=0&type=0&sign=",
+                String::class.java
         )
         Assertions.assertEquals(HttpStatus.NOT_ACCEPTABLE, entity.statusCode)
         System.err.println(entity.body)
@@ -67,14 +67,14 @@ class SignTestControllerTest {
     @Test
     fun testPostSuccess() {
         val requestParams = LinkedMultiValueMap(
-            mutableMapOf<String, List<String>>(
-                "limit" to listOf("25"),
-                "page" to listOf("0"),
-                "size" to listOf("25"),
-                "start" to listOf("0"),
-                "type" to listOf("0"),
-                "todoUrl" to listOf("/#/partyMember/edit-applyParty?type=auditing&formId=487")
-            )
+                mutableMapOf<String, List<String>>(
+                        "limit" to listOf("25"),
+                        "page" to listOf("0"),
+                        "size" to listOf("25"),
+                        "start" to listOf("0"),
+                        "type" to listOf("0"),
+                        "todoUrl" to listOf("/#/partyMember/edit-applyParty?type=auditing&formId=487")
+                )
         )
         requestParams["sign"] = listOf(api.sign(requestParams))
         val entity = testRestTemplate.postForEntity("/testSign", requestParams, String::class.java)
@@ -86,13 +86,13 @@ class SignTestControllerTest {
     @Test
     fun testPostFail() {
         val requestParams = LinkedMultiValueMap(
-            mutableMapOf<String, List<String>>(
-                "limit" to listOf("25"),
-                "page" to listOf("0"),
-                "size" to listOf("25"),
-                "start" to listOf("0"),
-                "type" to listOf("0")
-            )
+                mutableMapOf<String, List<String>>(
+                        "limit" to listOf("25"),
+                        "page" to listOf("0"),
+                        "size" to listOf("25"),
+                        "start" to listOf("0"),
+                        "type" to listOf("0")
+                )
         )
         val entity = testRestTemplate.postForEntity("/testSign", requestParams, String::class.java)
         Assertions.assertEquals(HttpStatus.NOT_ACCEPTABLE, entity.statusCode)
@@ -103,8 +103,8 @@ class SignTestControllerTest {
     @Test
     fun testEmptyParamsSuccess() {
         val requestParams = LinkedMultiValueMap(
-            mutableMapOf<String, List<String>>(
-            )
+                mutableMapOf<String, List<String>>(
+                )
         )
         val entity = testRestTemplate.postForEntity("/testSign", requestParams, String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
@@ -115,16 +115,16 @@ class SignTestControllerTest {
     @Test
     fun testSignIgnoreTypeSuccess() {
         val requestParams = LinkedMultiValueMap(
-            mutableMapOf<String, List<String>>(
-                "limit" to listOf("25"),
-                "page" to listOf("0"),
-                "size" to listOf("25"),
-                "start" to listOf("0"),
-                "type" to listOf("0")
-            )
+                mutableMapOf<String, List<String>>(
+                        "limit" to listOf("25"),
+                        "page" to listOf("0"),
+                        "size" to listOf("25"),
+                        "start" to listOf("0"),
+                        "type" to listOf("0")
+                )
         )
         val entity =
-            testRestTemplate.postForEntity("/apiSignIgnore/type", requestParams, String::class.java)
+                testRestTemplate.postForEntity("/apiSignIgnore/type", requestParams, String::class.java)
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
         Assertions.assertEquals("success", entity.body)
         System.err.println(entity.body)
@@ -133,18 +133,18 @@ class SignTestControllerTest {
     @Test
     fun testSignIgnoreMthodSuccess() {
         val requestParams = LinkedMultiValueMap(
-            mutableMapOf<String, List<String>>(
-                "limit" to listOf("25"),
-                "page" to listOf("0"),
-                "size" to listOf("25"),
-                "start" to listOf("0"),
-                "type" to listOf("0")
-            )
+                mutableMapOf<String, List<String>>(
+                        "limit" to listOf("25"),
+                        "page" to listOf("0"),
+                        "size" to listOf("25"),
+                        "start" to listOf("0"),
+                        "type" to listOf("0")
+                )
         )
         val entity = testRestTemplate.postForEntity(
-            "/apiSignIgnore/method",
-            requestParams,
-            String::class.java
+                "/apiSignIgnore/method",
+                requestParams,
+                String::class.java
         )
         Assertions.assertEquals(HttpStatus.OK, entity.statusCode)
         Assertions.assertEquals("success", entity.body)

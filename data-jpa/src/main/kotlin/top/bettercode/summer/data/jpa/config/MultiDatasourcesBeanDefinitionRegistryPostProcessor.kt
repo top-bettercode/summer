@@ -8,7 +8,6 @@ import org.hibernate.cfg.AvailableSettings
 import org.slf4j.LoggerFactory
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils
 import org.springframework.beans.BeanUtils
-import org.springframework.beans.BeansException
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.beans.factory.support.BeanDefinitionBuilder
 import org.springframework.beans.factory.support.BeanDefinitionRegistry

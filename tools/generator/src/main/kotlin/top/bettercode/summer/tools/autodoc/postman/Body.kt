@@ -10,16 +10,16 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder("mode", "formdata")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Body(
-    @JsonProperty("mode")
-    var mode: String? = null,
-    @JsonProperty("raw")
-    var raw: String? = null,
-    @JsonProperty("urlencoded")
-    var urlencoded: List<Urlencoded>? = null,
-    @JsonProperty("formdata")
-    var formdata: List<Formdatum>? = null,
-    @JsonProperty("options")
-    var options: Map<String, Map<String, String>>? = null
+        @JsonProperty("mode")
+        var mode: String? = null,
+        @JsonProperty("raw")
+        var raw: String? = null,
+        @JsonProperty("urlencoded")
+        var urlencoded: List<Urlencoded>? = null,
+        @JsonProperty("formdata")
+        var formdata: List<Formdatum>? = null,
+        @JsonProperty("options")
+        var options: Map<String, Map<String, String>>? = null
 ) {
     companion object {
 

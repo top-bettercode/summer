@@ -32,10 +32,10 @@ abstract class BaseWebTest {
         properties.encryptHeaders = arrayOf("token")
         properties.encryptParameters = arrayOf("password")
         mockMvc = webAppContextSetup(context).addFilter<DefaultMockMvcBuilder>(
-            RequestLoggingFilter(
-                properties,
-                emptyList()
-            )
+                RequestLoggingFilter(
+                        properties,
+                        emptyList()
+                )
         ).build()
     }
 

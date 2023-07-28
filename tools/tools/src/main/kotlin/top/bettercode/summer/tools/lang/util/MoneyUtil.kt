@@ -17,7 +17,7 @@ object MoneyUtil {
     @JvmStatic
     fun toCent(yuan: String): Long {
         return BigDecimal(yuan).setScale(2, RoundingMode.HALF_UP)
-            .multiply(BigDecimal(100)).toLong()
+                .multiply(BigDecimal(100)).toLong()
     }
 
     /**
@@ -27,7 +27,7 @@ object MoneyUtil {
     @JvmStatic
     fun toCent(yuan: BigDecimal): Long {
         return yuan.setScale(2, RoundingMode.HALF_UP)
-            .multiply(BigDecimal(100)).toLong()
+                .multiply(BigDecimal(100)).toLong()
     }
 
 

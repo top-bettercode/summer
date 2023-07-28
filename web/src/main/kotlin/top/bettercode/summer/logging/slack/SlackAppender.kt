@@ -7,17 +7,17 @@ import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.logback.AlarmAppender
 
 open class SlackAppender(
-    private val properties: top.bettercode.summer.logging.SlackProperties,
-    private val warnSubject: String,
-    private val logsPath: String,
-    managementPath: String,
-    logPattern: String
+        private val properties: top.bettercode.summer.logging.SlackProperties,
+        private val warnSubject: String,
+        private val logsPath: String,
+        managementPath: String,
+        logPattern: String
 ) : AlarmAppender(
-    properties.cyclicBufferSize,
-    properties.cacheSeconds,
-    properties.timeoutCacheSeconds,
-    properties.ignoredWarnLogger,
-    logPattern
+        properties.cyclicBufferSize,
+        properties.cacheSeconds,
+        properties.timeoutCacheSeconds,
+        properties.ignoredWarnLogger,
+        logPattern
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(SlackAppender::class.java)
@@ -30,33 +30,33 @@ open class SlackAppender(
     }
 
     override fun sendMessage(
-        timeStamp: Long,
-        initialComment: String,
-        message: List<String>,
-        timeout: Boolean
+            timeStamp: Long,
+            initialComment: String,
+            message: List<String>,
+            timeout: Boolean
     ): Boolean {
         return try {
             val title =
-                "$warnSubject${
-                    try {
-                        "(${top.bettercode.summer.logging.LoggingUtil.apiHost})"
-                    } catch (e: Exception) {
-                        ""
-                    }
-                }"
+                    "$warnSubject${
+                        try {
+                            "(${top.bettercode.summer.logging.LoggingUtil.apiHost})"
+                        } catch (e: Exception) {
+                            ""
+                        }
+                    }"
             slackClient.postMessage(
-                if (timeout) properties.timeoutChannel else properties.channel,
-                timeStamp,
-                title,
-                initialComment,
-                message,
-                logsPath
+                    if (timeout) properties.timeoutChannel else properties.channel,
+                    timeStamp,
+                    title,
+                    initialComment,
+                    message,
+                    logsPath
             )
         } catch (e: Exception) {
             log.error(
-                MarkerFactory.getMarker(RequestLoggingFilter.NO_ALARM_LOG_MARKER),
-                "slack 发送信息失败",
-                e
+                    MarkerFactory.getMarker(RequestLoggingFilter.NO_ALARM_LOG_MARKER),
+                    "slack 发送信息失败",
+                    e
             )
             false
         }

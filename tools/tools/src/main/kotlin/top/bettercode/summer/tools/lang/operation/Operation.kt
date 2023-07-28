@@ -9,49 +9,49 @@ import java.time.temporal.ChronoUnit
  */
 @JsonPropertyOrder("collectionName", "name", "protocol", "duration", "request", "response")
 open class Operation(
-    /**
-     *
-     * 操作集合名称
-     *
-     * @retrun the collectionName
-     */
-    var collectionName: String = "",
-    /**
-     * Returns the name of the operation.
-     *
-     * the name
-     */
-    var name: String = "",
-    /**
-     * Returns the name and version of the protocol the request uses in the form
-     * <i>protocol/majorVersion.minorVersion</i>, for example, HTTP/1.1. For
-     * HTTP servlets, the value returned is the same as the value of the CGI
-     * variable <code>SERVER_PROTOCOL</code>.
-     *
-     * a <code>String</code> containing the protocol name and version
-     *         number
-     */
-    var protocol: String = "",
+        /**
+         *
+         * 操作集合名称
+         *
+         * @retrun the collectionName
+         */
+        var collectionName: String = "",
+        /**
+         * Returns the name of the operation.
+         *
+         * the name
+         */
+        var name: String = "",
+        /**
+         * Returns the name and version of the protocol the request uses in the form
+         * <i>protocol/majorVersion.minorVersion</i>, for example, HTTP/1.1. For
+         * HTTP servlets, the value returned is the same as the value of the CGI
+         * variable <code>SERVER_PROTOCOL</code>.
+         *
+         * a <code>String</code> containing the protocol name and version
+         *         number
+         */
+        var protocol: String = "",
 
-    /**
-     * Returns the request that was sent.
-     *
-     * the request
-     */
-    open var request: OperationRequest = OperationRequest(),
+        /**
+         * Returns the request that was sent.
+         *
+         * the request
+         */
+        open var request: OperationRequest = OperationRequest(),
 
-    /**
-     * Returns the response that was received.
-     *
-     * the response
-     */
-    open var response: OperationResponse = OperationResponse()
+        /**
+         * Returns the response that was received.
+         *
+         * the response
+         */
+        open var response: OperationResponse = OperationResponse()
 ) {
 
     fun toString(
-        config: RequestLoggingConfig,
-        requestDecrypt: ((ByteArray) -> ByteArray)? = null,
-        responseDecrypt: ((ByteArray) -> ByteArray)? = null
+            config: RequestLoggingConfig,
+            requestDecrypt: ((ByteArray) -> ByteArray)? = null,
+            responseDecrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val originHeaders = request.headers
         val originParameters = request.parameters
@@ -96,26 +96,26 @@ open class Operation(
             if (config.includeRequestBody || error || it.submittedFileName.isNullOrBlank()) {
                 it
             } else OperationRequestPart(
-                it.name,
-                it.submittedFileName,
-                it.headers,
-                "unrecorded".toByteArray()
+                    it.name,
+                    it.submittedFileName,
+                    it.headers,
+                    "unrecorded".toByteArray()
             )
         }
 
         request.content =
-            if (config.includeRequestBody || error || originRequestContent.isEmpty()) {
-                originRequestContent
-            } else "unrecorded".toByteArray()
+                if (config.includeRequestBody || error || originRequestContent.isEmpty()) {
+                    originRequestContent
+                } else "unrecorded".toByteArray()
 
 
         response.content =
-            if (config.includeResponseBody || error || originResponseContent.isEmpty()) {
-                originResponseContent
-            } else "unrecorded".toByteArray()
+                if (config.includeResponseBody || error || originResponseContent.isEmpty()) {
+                    originResponseContent
+                } else "unrecorded".toByteArray()
 
         response.stackTrace =
-            if (config.includeTrace || originStackTrace.isBlank()) originStackTrace else "unrecorded"
+                if (config.includeTrace || originStackTrace.isBlank()) originStackTrace else "unrecorded"
 
         val log = HttpOperation.toString(this, config.format, requestDecrypt, responseDecrypt)
 

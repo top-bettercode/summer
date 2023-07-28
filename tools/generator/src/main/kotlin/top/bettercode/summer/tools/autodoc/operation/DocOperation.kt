@@ -16,20 +16,20 @@ import java.io.File
 @JsonPropertyOrder("description", "request", "response", "protocol", "prerequest", "testExec")
 @JsonIgnoreProperties("collectionName", "name", "duration")
 class DocOperation(
-    operation: Operation = Operation(),
-    var description: String = "",
-    var prerequest: List<String> = listOf(),
-    var testExec: List<String> = listOf()
+        operation: Operation = Operation(),
+        var description: String = "",
+        var prerequest: List<String> = listOf(),
+        var testExec: List<String> = listOf()
 ) : Operation(
-    operation.collectionName,
-    operation.name,
-    operation.protocol,
-    if (operation.request::class == DocOperationRequest::class) operation.request else DocOperationRequest(
-        operation.request
-    ),
-    if (operation.response::class == DocOperationResponse::class) operation.response else DocOperationResponse(
-        operation.response
-    )
+        operation.collectionName,
+        operation.name,
+        operation.protocol,
+        if (operation.request::class == DocOperationRequest::class) operation.request else DocOperationRequest(
+                operation.request
+        ),
+        if (operation.response::class == DocOperationResponse::class) operation.response else DocOperationResponse(
+                operation.response
+        )
 ) {
 
     @JsonIgnore

@@ -4,14 +4,14 @@ import top.bettercode.summer.tools.generator.dom.java.JavaDomUtils
 import top.bettercode.summer.tools.generator.dom.java.JavaType
 
 class TypeParameter @JvmOverloads constructor(
-    /**
-     * @return Returns the name.
-     */
-    val name: String,
-    /**
-     * @return Returns the extends types.
-     */
-    val extendsTypes: List<JavaType> = ArrayList()
+        /**
+         * @return Returns the name.
+         */
+        val name: String,
+        /**
+         * @return Returns the extends types.
+         */
+        val extendsTypes: List<JavaType> = ArrayList()
 ) {
 
     fun getFormattedContent(compilationUnit: CompilationUnit?): String {

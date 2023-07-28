@@ -3,7 +3,6 @@ package top.bettercode.summer.web.validator
 import top.bettercode.summer.tools.lang.property.Settings.areaCode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class IDCardInfo(var idcard: String) {
     // 省份

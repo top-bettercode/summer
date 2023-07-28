@@ -14,8 +14,8 @@ object BeanUtil {
 
     @JvmStatic
     fun Any.nullOrEmptyFrom(
-        exist: Any,
-        setEmptyProperty: Boolean = true
+            exist: Any,
+            setEmptyProperty: Boolean = true
     ) {
         Assert.notNull(exist, "exist must not be null")
         Assert.notNull(this, "newEntity must not be null")

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession
  * @author Peter Wu
  */
 open class DefaultCaptchaServiceImpl(@param:Autowired(required = false) protected val httpSession: HttpSession?,
-                                private val kaptchaProperties: KaptchaProperties) : ICaptchaService {
+                                     private val kaptchaProperties: KaptchaProperties) : ICaptchaService {
     override fun save(loginId: String?, text: String?) {
         httpSession!!.setAttribute(Constants.KAPTCHA_SESSION_KEY, text)
         httpSession.setAttribute(Constants.KAPTCHA_SESSION_DATE, Date())

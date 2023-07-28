@@ -25,12 +25,12 @@ object BooleanUtil {
             1 -> {
                 val ch0 = str[0]
                 if (ch0 == 'y' || ch0 == 'Y' ||
-                    ch0 == 't' || ch0 == 'T' || ch0 == '1' || ch0 == '是'
+                        ch0 == 't' || ch0 == 'T' || ch0 == '1' || ch0 == '是'
                 ) {
                     return java.lang.Boolean.TRUE
                 }
                 if (ch0 == 'n' || ch0 == 'N' ||
-                    ch0 == 'f' || ch0 == 'F' || ch0 == '0' || ch0 == '否'
+                        ch0 == 'f' || ch0 == 'F' || ch0 == '0' || ch0 == '否'
                 ) {
                     return java.lang.Boolean.FALSE
                 }
@@ -52,14 +52,14 @@ object BooleanUtil {
                 val ch1 = str[1]
                 val ch2 = str[2]
                 if ((ch0 == 'y' || ch0 == 'Y') &&
-                    (ch1 == 'e' || ch1 == 'E') &&
-                    (ch2 == 's' || ch2 == 'S')
+                        (ch1 == 'e' || ch1 == 'E') &&
+                        (ch2 == 's' || ch2 == 'S')
                 ) {
                     return java.lang.Boolean.TRUE
                 }
                 if ((ch0 == 'o' || ch0 == 'O') &&
-                    (ch1 == 'f' || ch1 == 'F') &&
-                    (ch2 == 'f' || ch2 == 'F')
+                        (ch1 == 'f' || ch1 == 'F') &&
+                        (ch2 == 'f' || ch2 == 'F')
                 ) {
                     return java.lang.Boolean.FALSE
                 }
@@ -71,9 +71,9 @@ object BooleanUtil {
                 val ch2 = str[2]
                 val ch3 = str[3]
                 if ((ch0 == 't' || ch0 == 'T') &&
-                    (ch1 == 'r' || ch1 == 'R') &&
-                    (ch2 == 'u' || ch2 == 'U') &&
-                    (ch3 == 'e' || ch3 == 'E')
+                        (ch1 == 'r' || ch1 == 'R') &&
+                        (ch2 == 'u' || ch2 == 'U') &&
+                        (ch3 == 'e' || ch3 == 'E')
                 ) {
                     return java.lang.Boolean.TRUE
                 }
@@ -86,10 +86,10 @@ object BooleanUtil {
                 val ch3 = str[3]
                 val ch4 = str[4]
                 if ((ch0 == 'f' || ch0 == 'F') &&
-                    (ch1 == 'a' || ch1 == 'A') &&
-                    (ch2 == 'l' || ch2 == 'L') &&
-                    (ch3 == 's' || ch3 == 'S') &&
-                    (ch4 == 'e' || ch4 == 'E')
+                        (ch1 == 'a' || ch1 == 'A') &&
+                        (ch2 == 'l' || ch2 == 'L') &&
+                        (ch3 == 's' || ch3 == 'S') &&
+                        (ch4 == 'e' || ch4 == 'E')
                 ) {
                     return java.lang.Boolean.FALSE
                 }

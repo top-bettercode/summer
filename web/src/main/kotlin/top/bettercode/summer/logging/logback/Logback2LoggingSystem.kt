@@ -42,7 +42,6 @@ import top.bettercode.summer.logging.websocket.WebSocketAppender
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
-import top.bettercode.summer.web.support.packagescan.PackageScanFilter
 import java.io.File
 import java.nio.charset.Charset
 import java.util.*

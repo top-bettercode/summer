@@ -26,4 +26,4 @@ data class UserInfo(
 
         @field:JsonProperty("language")
         val language: String? = null
-        )
+)

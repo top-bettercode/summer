@@ -55,7 +55,7 @@ class InitializationBlock @JvmOverloads constructor(private var isStatic: Boolea
             sb.append(line)
 
             if (line.endsWith("{") && !line.startsWith("switch")
-                || line.endsWith(":")
+                    || line.endsWith(":")
             ) {
                 indentLevelInner++
             }
