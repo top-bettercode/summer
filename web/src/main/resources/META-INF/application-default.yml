@@ -114,6 +114,8 @@ logging:
     org.springframework.web.servlet: warn
     com.ulisesbocchio: warn
     io.lettuce: warn
+    org.redisson.connection.ClientConnectionsEntry: info
+    org.redisson.command.RedisExecutor: info
     org.thymeleaf: warn
     javax.management: warn
     org.quartz: warn
