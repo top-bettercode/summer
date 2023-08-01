@@ -126,7 +126,7 @@ object OracleToDDL : ToDDL() {
                             val oldPrimaryKey = oldPrimaryKeys[0]
                             val primaryKey = primaryKeys[0]
                             if (primaryKey.columnName != oldPrimaryKey.columnName)
-                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ADD PRIMARY KEY(\"$quote${primaryKey.columnName}$quote\" )")
+                                lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ADD PRIMARY KEY($quote${primaryKey.columnName}$quote )")
                         }
 
                         if (extension.datasources[module]?.queryIndex == true)
