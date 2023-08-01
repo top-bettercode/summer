@@ -19,4 +19,4 @@ annotation class FormDuplicateCheck(
         /**
          * @return 提示信息
          */
-        val message: String = FormDuplicateCheckInterceptor.Companion.DEFAULT_MESSAGE)
+        val message: String = FormDuplicateCheckInterceptor.DEFAULT_MESSAGE)
