@@ -87,9 +87,10 @@ data class Table(
         if (engine != other.engine) return false
         if (remarks != other.remarks) return false
         if (physicalOptions != other.physicalOptions) return false
-        if (primaryKeyNames.size != other.primaryKeyNames.size || (primaryKeyNames - other.primaryKeyNames.toSet()).isNotEmpty() || (other.primaryKeyNames - primaryKeyNames.toSet()).isNotEmpty()) return false
-        if (indexes.size != other.indexes.size || (indexes - other.indexes.toSet()).isNotEmpty() || (other.indexes - indexes.toSet()).isNotEmpty()) return false
-        return !(pumlColumns.size != other.pumlColumns.size || (pumlColumns - other.pumlColumns.toSet()).isNotEmpty() || (other.pumlColumns - pumlColumns.toSet()).isNotEmpty())
+        if (primaryKeyNames.toSet() != other.primaryKeyNames.toSet()) return false
+        if (indexes.toSet() != other.indexes.toSet()) return false
+        if (pumlColumns.toSet() != other.pumlColumns.toSet()) return false
+        return true
     }
 
     override fun hashCode(): Int {

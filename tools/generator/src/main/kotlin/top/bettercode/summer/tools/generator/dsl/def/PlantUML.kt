@@ -44,8 +44,8 @@ ASBOOLEAN
     }
 
     override fun call() {
-        if (tableName.length > 32) {
-            println("数据库对象的命名最好不要超过 32 个字符")
+        if (tableName.length > 30) {
+            println("数据库对象的命名最好不要超过 30 个字符")
         }
         destFile.appendText(
                 """entity $tableName {
@@ -57,8 +57,8 @@ ASBOOLEAN
         table.pumlColumns.forEach {
             if (it is Column) {
                 val isPrimary = it.isPrimary
-                if (it.columnName.length > 32) {
-                    println("数据库对象的命名最好不要超过 32 个字符")
+                if (it.columnName.length > 30) {
+                    println("数据库对象的命名最好不要超过 30 个字符")
                 }
                 var prettyRemarks = it.prettyRemarks
                 if (prettyRemarks.isBlank()) {
