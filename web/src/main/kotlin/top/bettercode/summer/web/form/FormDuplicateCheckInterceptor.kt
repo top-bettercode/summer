@@ -5,6 +5,9 @@ import top.bettercode.summer.tools.lang.util.AnnotatedUtils.getAnnotation
 import top.bettercode.summer.web.servlet.NotErrorHandlerInterceptor
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 /**
  * 表单重复检
@@ -15,8 +18,7 @@ class FormDuplicateCheckInterceptor(private val formkeyService: IFormkeyService,
     override fun preHandlerMethod(request: HttpServletRequest?, response: HttpServletResponse?,
                                   handler: HandlerMethod?): Boolean {
         val annotation = getAnnotation(handler!!, FormDuplicateCheck::class.java)
-        return formkeyService.checkRequest(request, formKeyName, annotation != null, annotation?.expireSeconds
-                ?: -1, annotation?.message ?: DEFAULT_MESSAGE)
+        return formkeyService.checkRequest(request, formKeyName, annotation != null, annotation?.expireSeconds?.seconds?.toJavaDuration(), annotation?.message ?: DEFAULT_MESSAGE)
     }
 
     override fun afterCompletionMethod(request: HttpServletRequest?, response: HttpServletResponse?, handler: HandlerMethod?, ex: Throwable?) {

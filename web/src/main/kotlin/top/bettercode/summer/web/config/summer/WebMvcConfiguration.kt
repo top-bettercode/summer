@@ -16,6 +16,7 @@ import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.resolver.ApiExceptionHandlerExceptionResolver
 import top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter
+import kotlin.time.toKotlinDuration
 
 /**
  * Rest MVC 配置
@@ -30,7 +31,7 @@ class WebMvcConfiguration {
     @ConditionalOnMissingBean(IFormkeyService::class)
     @Bean
     fun formkeyService(summerWebProperties: SummerWebProperties): IFormkeyService {
-        return FormkeyService(summerWebProperties.formExpireSeconds)
+        return FormkeyService(summerWebProperties.formKeyTtl)
     }
 
     @ConditionalOnMissingBean(IApiVersionService::class)

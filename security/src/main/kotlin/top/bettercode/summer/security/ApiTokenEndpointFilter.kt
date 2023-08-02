@@ -80,7 +80,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         val apiTokenRepository = apiTokenService.apiTokenRepository
         val securityProperties = apiTokenService.securityProperties
         if (tokenEndpointMatcher.matches(request)) {
-            formkeyService.checkRequest(request, summerWebProperties.formKeyName, true, -1, FormDuplicateCheckInterceptor.DEFAULT_MESSAGE)
+            formkeyService.checkRequest(request, summerWebProperties.formKeyName, true, null, FormDuplicateCheckInterceptor.DEFAULT_MESSAGE)
             try {
                 authenticateBasic(request)
                 val grantType = request.getParameter(SecurityParameterNames.Companion.GRANT_TYPE)
@@ -89,7 +89,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
                 Assert.hasText(scope, "scope 不能为空")
                 Assert.isTrue(securityProperties.supportScopes.contains(scope), "不支持的scope:$scope")
                 val apiToken: ApiToken?
-                if (SecurityParameterNames.Companion.PWDNAME == grantType) {
+                if (SecurityParameterNames.PWDNAME == grantType) {
                     apiTokenService.beforeLogin(request, grantType, scope)
                     val username = request.getParameter(SecurityParameterNames.Companion.USERNAME)
                     Assert.hasText(username, "用户名不能为空")

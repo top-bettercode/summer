@@ -53,6 +53,7 @@ interface UserRepository : JpaExtRepository<User?, Int?>, QuerydslPredicateExecu
     fun selectByMybatisProviderSize(size: Size?): List<User?>?
 
     class UserSqlProvider {
+        @Suppress("UNUSED_PARAMETER")
         fun selectByMybatisSize(size: Size?): String {
             // language=SQL
             return "select * from t_user where deleted = 0"

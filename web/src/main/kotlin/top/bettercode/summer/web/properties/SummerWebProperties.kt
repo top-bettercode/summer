@@ -3,7 +3,10 @@ package top.bettercode.summer.web.properties
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.util.StringUtils
 import org.springframework.web.context.request.NativeWebRequest
+import java.time.Duration
 import javax.servlet.http.HttpServletRequest
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 /**
  * @author Peter Wu
@@ -63,13 +66,12 @@ open class SummerWebProperties {
     /**
      * 表单防重复提交,header参数名称
      */
-    @JvmField
     var formKeyName = "formkey"
     //--------------------------------------------
     /**
      * 表单防重复提交，key有效时间
      */
-    var formExpireSeconds = 5L
+    var formKeyTtl: Duration = 5.seconds.toJavaDuration()
 
     //--------------------------------------------
     fun wrapEnable(request: NativeWebRequest): Boolean {

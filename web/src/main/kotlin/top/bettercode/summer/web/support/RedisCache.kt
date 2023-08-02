@@ -1,6 +1,10 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package top.bettercode.summer.web.support
 
+import org.springframework.cache.Cache
 import org.springframework.cache.support.NullValue
+import org.springframework.cache.support.SimpleValueWrapper
 import org.springframework.core.convert.ConversionFailedException
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.TypeDescriptor
@@ -15,12 +19,14 @@ import org.springframework.data.redis.serializer.RedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
 import org.springframework.data.redis.util.ByteUtils
 import org.springframework.format.support.DefaultFormattingConversionService
+import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.util.ObjectUtils
 import org.springframework.util.ReflectionUtils
 import java.nio.ByteBuffer
 import java.time.Duration
 import java.util.*
+import java.util.concurrent.Callable
 
 /**
  * @author Peter Wu
@@ -29,7 +35,7 @@ class RedisCache @JvmOverloads
 constructor(
         connectionFactory: RedisConnectionFactory,
         private val cacheName: String,
-        expireSeconds: Long,
+        private val ttl: Duration,
         private val allowNullValues: Boolean = false,
         private val usePrefix: Boolean = true,
         private val keyPrefix: CacheKeyPrefix = CacheKeyPrefix.simple(),
@@ -39,18 +45,15 @@ constructor(
     private val binaryNullValue: ByteArray = RedisSerializer.java().serialize(NullValue.INSTANCE)!!
     private val cacheWriter: RedisCacheWriter
     private val conversionService: ConversionService
-    private val expireSeconds: Duration
 
     init {
         cacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory)
         conversionService = DefaultFormattingConversionService()
         RedisCacheConfiguration.registerDefaultConverters(conversionService)
-
-        this.expireSeconds = Duration.ofSeconds(expireSeconds)
     }
 
     @JvmOverloads
-    fun put(key: String, value: Any, expireSeconds: Duration = this.expireSeconds) {
+    fun put(key: String, value: Any, ttl: Duration = this.ttl) {
         val cacheValue = preProcessCacheValue(value)
 
         require(!(!allowNullValues && cacheValue == null)) {
@@ -59,7 +62,7 @@ constructor(
                     cacheName)
         }
 
-        cacheWriter.put(cacheName, createAndConvertCacheKey(key), serializeCacheValue(cacheValue!!), expireSeconds)
+        cacheWriter.put(cacheName, createAndConvertCacheKey(key), serializeCacheValue(cacheValue!!), ttl)
     }
 
 
@@ -69,6 +72,45 @@ constructor(
         check(!(value != null && type != null && !type.isInstance(value))) { "Cached value is not of required type [" + type!!.getName() + "]: " + value }
         return value as T
     }
+
+    operator fun <T : Any> get(key: String, valueLoader: Callable<T>): T {
+        val result: Cache.ValueWrapper? = get(key)
+        return if (result != null) {
+            result.get() as T
+        } else getSynchronized(key, valueLoader)
+    }
+
+    operator fun get(key: String): Cache.ValueWrapper? {
+        return toValueWrapper(lookup(key))
+    }
+
+    /**
+     * Wrap the given store value with a [SimpleValueWrapper], also going
+     * through [.fromStoreValue] conversion. Useful for [.get]
+     * and [.putIfAbsent] implementations.
+     * @param storeValue the original value
+     * @return the wrapped value
+     */
+    @Nullable
+    private fun toValueWrapper(@Nullable storeValue: Any?): Cache.ValueWrapper? {
+        return if (storeValue != null) SimpleValueWrapper(fromStoreValue(storeValue)) else null
+    }
+
+    @Synchronized
+    private fun <T : Any> getSynchronized(key: String, valueLoader: Callable<T>): T {
+        val result: Cache.ValueWrapper? = get(key)
+        if (result != null) {
+            return result.get() as T
+        }
+        val value: T = try {
+            valueLoader.call()
+        } catch (e: Exception) {
+            throw Cache.ValueRetrievalException(key, valueLoader, e)
+        }
+        put(key, value)
+        return value
+    }
+
 
     fun evict(key: String) {
         cacheWriter.remove(cacheName, createAndConvertCacheKey(key))

@@ -11,6 +11,7 @@ import top.bettercode.summer.tools.lang.operation.RequestConverter.getRequestWra
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletRequestWrapper
 import top.bettercode.summer.tools.lang.util.Sha512DigestUtils.shaHex
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
+import java.time.Duration
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -18,20 +19,20 @@ import javax.servlet.http.HttpServletRequest
  */
 interface IFormkeyService {
 
-    fun checkRequest(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, expireSeconds: Long, message: String?): Boolean {
+    fun checkRequest(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, ttl: Duration?, message: String?): Boolean {
         val formkey = getFormkey(request, formKeyName, autoFormKey)
-        return checkRequest(request, formkey, expireSeconds, message)
+        return checkRequest(request, formkey, ttl, message)
     }
 
-    fun checkRequest(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, expireSeconds: Long, message: String?, ignoreHeaders: Array<String>? = null, ignoreParams: Array<String>? = null): Boolean {
+    fun checkRequest(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, ttl: Duration?, message: String?, ignoreHeaders: Array<String>? = null, ignoreParams: Array<String>? = null): Boolean {
         val formkey = getFormkey(request, formKeyName, autoFormKey, ignoreHeaders, ignoreParams)
-        return checkRequest(request, formkey, expireSeconds, message)
+        return checkRequest(request, formkey, ttl, message)
     }
 
-    fun checkRequest(request: HttpServletRequest?, formkey: String?, expireSeconds: Long, message: String?): Boolean {
+    fun checkRequest(request: HttpServletRequest?, formkey: String?, ttl: Duration?, message: String?): Boolean {
         return if (formkey == null) {
             true
-        } else if (exist(formkey, expireSeconds)) {
+        } else if (exist(formkey, ttl)) {
             throw FormDuplicateException(message)
         } else {
             request!!.setAttribute(FormDuplicateCheckInterceptor.Companion.FORM_KEY, formkey)
@@ -110,7 +111,7 @@ interface IFormkeyService {
         return digestFormkey
     }
 
-    fun exist(formkey: String, expireSeconds: Long): Boolean
+    fun exist(formkey: String, ttl: Duration?): Boolean
     fun remove(formkey: String)
 
     companion object {
