@@ -52,6 +52,7 @@ open class ExcelField<T, P : Any?> {
 
     /**
      * 格式 [说明...](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1)
+     * 示例：yyyy"年"m"月"d"日" hh"时"mm"分"ss"秒"
      */
     var format: String? = null
 
