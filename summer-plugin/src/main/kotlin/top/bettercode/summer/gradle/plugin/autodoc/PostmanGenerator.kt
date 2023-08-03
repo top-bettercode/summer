@@ -13,15 +13,6 @@ import top.bettercode.summer.tools.autodoc.postman.Collection
 import top.bettercode.summer.tools.lang.operation.HttpOperation
 import java.io.File
 import java.util.*
-import kotlin.collections.List
-import kotlin.collections.contains
-import kotlin.collections.filter
-import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
-import kotlin.collections.linkedSetOf
-import kotlin.collections.listOf
-import kotlin.collections.map
-import kotlin.collections.toList
 
 /**
  *

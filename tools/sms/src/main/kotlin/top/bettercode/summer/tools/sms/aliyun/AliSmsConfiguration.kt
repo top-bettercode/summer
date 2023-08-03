@@ -18,7 +18,7 @@ class AliSmsConfiguration {
     private val log = LoggerFactory.getLogger(AliSmsConfiguration::class.java)
 
     @Bean
-    fun aliSmsTemplate(aliSmsProperties: AliSmsProperties?): AliSmsTemplate {
-        return AliSmsTemplate(aliSmsProperties!!)
+    fun aliSmsTemplate(aliSmsProperties: AliSmsProperties): AliSmsTemplate {
+        return AliSmsTemplate(aliSmsProperties)
     }
 }

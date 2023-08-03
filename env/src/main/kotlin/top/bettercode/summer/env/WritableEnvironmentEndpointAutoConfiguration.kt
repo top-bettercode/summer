@@ -43,7 +43,7 @@ class WritableEnvironmentEndpointAutoConfiguration(private val properties: Envir
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnAvailableEndpoint
-    fun writableEnvironmentEndpoint(environment: Environment?): WritableEnvironmentEndpoint {
+    fun writableEnvironmentEndpoint(environment: Environment): WritableEnvironmentEndpoint {
         val endpoint = WritableEnvironmentEndpoint(environment)
         val keysToSanitize = properties.keysToSanitize
         if (keysToSanitize != null) {
@@ -55,7 +55,7 @@ class WritableEnvironmentEndpointAutoConfiguration(private val properties: Envir
     @Bean
     @ConditionalOnAvailableEndpoint
     fun writableEnvironmentEndpointWebExtension(
-            endpoint: WritableEnvironmentEndpoint?, environment: EnvironmentManager
+            endpoint: WritableEnvironmentEndpoint, environment: EnvironmentManager
     ): WritableEnvironmentEndpointWebExtension {
         return WritableEnvironmentEndpointWebExtension(endpoint, environment)
     }

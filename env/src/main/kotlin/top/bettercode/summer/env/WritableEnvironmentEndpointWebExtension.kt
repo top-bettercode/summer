@@ -12,7 +12,7 @@ import java.util.*
  */
 @EndpointWebExtension(endpoint = WritableEnvironmentEndpoint::class)
 class WritableEnvironmentEndpointWebExtension(
-        endpoint: WritableEnvironmentEndpoint?,
+        endpoint: WritableEnvironmentEndpoint,
         private var environment: EnvironmentManager
 ) : EnvironmentEndpointWebExtension(endpoint) {
     @WriteOperation

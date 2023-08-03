@@ -7,4 +7,4 @@ import org.springframework.core.env.Environment
  * An extension of the standard [EnvironmentEndpoint] that allows to modify the environment at
  * runtime.
  */
-class WritableEnvironmentEndpoint(environment: Environment?) : EnvironmentEndpoint(environment)
+class WritableEnvironmentEndpoint(environment: Environment) : EnvironmentEndpoint(environment)

@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 class ApiSecurityErrorHandler(
-        messageSource: MessageSource?,
+        messageSource: MessageSource,
         request: HttpServletRequest?
-) : AbstractErrorHandler(messageSource!!, request) {
+) : AbstractErrorHandler(messageSource, request) {
     override fun handlerException(
             error: Throwable, respEntity: RespEntity<*>,
             errors: MutableMap<String?, String?>, separator: String

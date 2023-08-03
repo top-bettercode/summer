@@ -43,7 +43,8 @@ import java.util.stream.Stream
 @ConditionalOnMissingBean(MultiDatasourcesBeanDefinitionRegistryPostProcessor::class)
 class JpaMybatisAutoConfiguration(
         private val properties: MybatisProperties,
-        private val resourceLoader: ResourceLoader, @Autowired(required = false) hikari: HikariDataSource?
+        private val resourceLoader: ResourceLoader,
+        @Autowired(required = false) hikari: HikariDataSource?
 ) : InitializingBean {
     init {
         if (hikari != null && log.isInfoEnabled) {
@@ -66,7 +67,7 @@ class JpaMybatisAutoConfiguration(
     }
 
     @Bean
-    fun mybatisConfiguration(beanFactory: ConfigurableListableBeanFactory): org.apache.ibatis.session.Configuration? {
+    fun mybatisConfiguration(beanFactory: ConfigurableListableBeanFactory): org.apache.ibatis.session.Configuration {
         return mybatisConfiguration(beanFactory, properties.configuration, properties,
                 resourceLoader,
                 null)
@@ -138,7 +139,7 @@ class JpaMybatisAutoConfiguration(
                                 "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration")
                     }
                     configuration1 = org.apache.ibatis.session.Configuration()
-                    Optional.ofNullable(configurationProperties).ifPresent { variables: Properties? -> configuration1.variables = variables }
+                    Optional.ofNullable(configurationProperties).ifPresent { variables: Properties -> configuration1.variables = variables }
                 }
             }
             val typeAliasesPackage = properties.typeAliasesPackage
@@ -146,12 +147,12 @@ class JpaMybatisAutoConfiguration(
                 scanClasses(typeAliasesPackage, properties.typeAliasesSuperType).stream()
                         .filter { clazz: Class<*> -> !clazz.isAnonymousClass }.filter { clazz: Class<*> -> !clazz.isInterface }
                         .filter { clazz: Class<*> -> !clazz.isMemberClass }
-                        .forEach { type: Class<*>? -> configuration1!!.typeAliasRegistry.registerAlias(type) }
+                        .forEach { type: Class<*> -> configuration1!!.typeAliasRegistry.registerAlias(type) }
             }
             val typeAliases = properties.typeAliases
             val finalConfiguration = configuration1
             if (typeAliases.isNotEmpty()) {
-                Stream.of(*typeAliases).forEach { typeAlias: Class<*>? ->
+                Stream.of(*typeAliases).forEach { typeAlias: Class<*> ->
                     finalConfiguration!!.typeAliasRegistry.registerAlias(typeAlias)
                     if (log.isTraceEnabled) {
                         log.trace("Registered type alias: '$typeAlias'")
@@ -164,11 +165,11 @@ class JpaMybatisAutoConfiguration(
                         .filter { clazz: Class<*> -> !clazz.isAnonymousClass }
                         .filter { clazz: Class<*> -> !clazz.isInterface }
                         .filter { clazz: Class<*> -> !Modifier.isAbstract(clazz.modifiers) }
-                        .forEach { typeHandlerClass: Class<*>? -> configuration1!!.typeHandlerRegistry.register(typeHandlerClass) }
+                        .forEach { typeHandlerClass: Class<*> -> configuration1!!.typeHandlerRegistry.register(typeHandlerClass) }
             }
             val typeHandlerClasses = properties.typeHandlerClasses
             if (typeHandlerClasses.isNotEmpty()) {
-                Stream.of(*typeHandlerClasses).forEach { typeHandler: Class<TypeHandler<*>>? ->
+                Stream.of(*typeHandlerClasses).forEach { typeHandler: Class<TypeHandler<*>> ->
                     finalConfiguration!!.typeHandlerRegistry.register(typeHandler)
                     if (log.isTraceEnabled) {
                         log.trace("Registered type handler: '$typeHandler'")

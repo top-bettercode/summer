@@ -12,8 +12,8 @@ import kotlin.collections.set
 /**
  * @author Peter Wu
  */
-class ExcelErrorHandler(messageSource: MessageSource?,
-                        request: HttpServletRequest?) : AbstractErrorHandler(messageSource!!, request) {
+class ExcelErrorHandler(messageSource: MessageSource,
+                        request: HttpServletRequest?) : AbstractErrorHandler(messageSource, request) {
     override fun handlerException(error: Throwable, respEntity: RespEntity<*>,
                                   errors: MutableMap<String?, String?>, separator: String) {
         var message: String? = null

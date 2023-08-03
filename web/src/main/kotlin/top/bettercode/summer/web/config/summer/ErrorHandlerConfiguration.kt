@@ -50,7 +50,7 @@ class ErrorHandlerConfiguration {
 
     @ConditionalOnMissingBean(ErrorController::class)
     @Bean
-    fun customErrorController(errorAttributes: ErrorAttributes?,
+    fun customErrorController(errorAttributes: ErrorAttributes,
                               serverProperties: ServerProperties,
                               @Autowired(required = false) @Qualifier("corsConfigurationSource") corsConfigurationSource: CorsConfigurationSource?): CustomErrorController {
         return CustomErrorController(errorAttributes, serverProperties.error,

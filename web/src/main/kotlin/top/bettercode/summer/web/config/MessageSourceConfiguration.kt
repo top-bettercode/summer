@@ -54,7 +54,7 @@ class MessageSourceConfiguration {
         messageSourceProperties.basename = basename
         val messageSource = ResourceBundleMessageSource()
         if (messageNames.isNotEmpty()) {
-            messageSource.setBasenames(*messageNames.toTypedArray<String?>())
+            messageSource.setBasenames(*messageNames.toTypedArray<String>())
         }
         if (messageSourceProperties.encoding != null) {
             messageSource.setDefaultEncoding(messageSourceProperties.encoding.name())
@@ -100,7 +100,7 @@ class MessageSourceConfiguration {
         }
 
         companion object {
-            private val cache = ConcurrentReferenceHashMap<String, ConditionOutcome?>()
+            private val cache = ConcurrentReferenceHashMap<String, ConditionOutcome>()
             fun getResources(classLoader: ClassLoader, name: String): Array<Resource?> {
                 val target = name.replace('.', '/')
                 return try {

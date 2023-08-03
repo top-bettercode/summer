@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest
 @ConditionalOnWebApplication
 class ExcelConfiguration {
     @Bean
-    fun excelErrorHandler(messageSource: MessageSource?,
+    fun excelErrorHandler(messageSource: MessageSource,
                           @Autowired(required = false) request: HttpServletRequest?): ExcelErrorHandler {
         return ExcelErrorHandler(messageSource, request)
     }

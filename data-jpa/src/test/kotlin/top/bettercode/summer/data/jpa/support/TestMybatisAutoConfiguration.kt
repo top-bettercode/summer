@@ -41,7 +41,7 @@ class TestMybatisAutoConfiguration(
 
     @Bean
     @ConditionalOnMissingBean
-    fun sqlSessionFactory(dataSource: DataSource?): SqlSessionFactory? {
+    fun sqlSessionFactory(dataSource: DataSource): SqlSessionFactory? {
         val factory = SqlSessionFactoryBean()
         factory.setDataSource(dataSource)
         val configLocation = properties.configLocation
@@ -58,7 +58,7 @@ class TestMybatisAutoConfiguration(
         val typeHandlerClasses = properties.typeHandlerClasses
         if (typeHandlerClasses.isNotEmpty()) {
             Stream.of(*typeHandlerClasses)
-                    .forEach { typeHandler: Class<TypeHandler<*>>? -> configuration.typeHandlerRegistry.register(typeHandler) }
+                    .forEach { typeHandler: Class<TypeHandler<*>> -> configuration.typeHandlerRegistry.register(typeHandler) }
         }
         val mapperLocations = JpaMybatisAutoConfiguration.resolveMapperLocations(
                 properties.mapperLocations)
@@ -70,7 +70,7 @@ class TestMybatisAutoConfiguration(
 
     @Bean("sqlSessionTemplate")
     @ConditionalOnMissingBean
-    fun sqlSessionTemplate(sqlSessionFactory: SqlSessionFactory?): SqlSessionTemplate {
+    fun sqlSessionTemplate(sqlSessionFactory: SqlSessionFactory): SqlSessionTemplate {
         return SqlSessionTemplate(sqlSessionFactory)
     }
 }

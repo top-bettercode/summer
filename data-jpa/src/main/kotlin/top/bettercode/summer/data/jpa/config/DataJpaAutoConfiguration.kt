@@ -33,8 +33,8 @@ class DataJpaAutoConfiguration {
     @ConditionalOnWebApplication
     @Bean
     fun ibatisErrorHandler(
-            messageSource: MessageSource?,
-            request: HttpServletRequest?
+            messageSource: MessageSource,
+            request: HttpServletRequest
     ): DataJpaErrorHandler {
         return DataJpaErrorHandler(messageSource, request)
     }

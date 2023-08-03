@@ -16,6 +16,7 @@ class CentSerializer : NumberSerializer(Long::class.java) {
 
     companion object {
         private var newScale = 2
+
         @JvmStatic
         fun setNewScale(newScale: Int) {
             Companion.newScale = newScale

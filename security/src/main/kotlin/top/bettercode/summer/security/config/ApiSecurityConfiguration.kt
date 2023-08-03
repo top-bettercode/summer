@@ -60,7 +60,7 @@ class ApiSecurityConfiguration(
 
     @Bean
     fun securityOAuth2ErrorHandler(
-            messageSource: MessageSource?,
+            messageSource: MessageSource,
             @Autowired(required = false) request: HttpServletRequest?
     ): ApiSecurityErrorHandler {
         return ApiSecurityErrorHandler(messageSource, request)
@@ -72,14 +72,14 @@ class ApiSecurityConfiguration(
         val cache = Caffeine.newBuilder()
                 .expireAfterWrite(max(securityProperties.accessTokenValiditySeconds,
                         securityProperties.refreshTokenValiditySeconds).toLong(), TimeUnit.SECONDS)
-                .maximumSize(10000).build<String, ApiToken?>()
+                .maximumSize(10000).build<String, ApiToken>()
         val accessTokenBuild = Caffeine.newBuilder()
                 .expireAfterWrite(securityProperties.accessTokenValiditySeconds.toLong(), TimeUnit.SECONDS)
-                .maximumSize(10000).build<String?, String>()
+                .maximumSize(10000).build<String, String>()
         val refreshTokenBuild = Caffeine.newBuilder()
                 .expireAfterWrite(
                         securityProperties.refreshTokenValiditySeconds.toLong(), TimeUnit.SECONDS)
-                .maximumSize(10000).build<String?, String>()
+                .maximumSize(10000).build<String, String>()
         return InMemoryApiTokenRepository(cache.asMap(), accessTokenBuild.asMap(),
                 refreshTokenBuild.asMap())
     }

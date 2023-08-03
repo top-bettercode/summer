@@ -7,7 +7,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 class HandlerMethodContextHolderConfiguration(
-        requestMappingHandlerMapping: RequestMappingHandlerMapping?) {
+        requestMappingHandlerMapping: RequestMappingHandlerMapping) {
     init {
         HandlerMethodContextHolder.setHandlerMapping(requestMappingHandlerMapping)
     }

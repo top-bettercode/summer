@@ -24,7 +24,7 @@ class SummerCaffeineCacheConfiguration {
         return CacheManagerCustomizer { cacheManager: CaffeineCacheManager ->
             val caches = caffeineCacheProperties.caches
             if (caches != null) {
-                caches.forEach { (name: String?, spec: String?) ->
+                caches.forEach { (name: String, spec: String) ->
                     cacheManager.registerCustomCache(name,
                             Caffeine.from(spec).build())
                 }

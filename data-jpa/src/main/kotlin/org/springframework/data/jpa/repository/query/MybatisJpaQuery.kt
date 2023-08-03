@@ -16,7 +16,8 @@ import top.bettercode.summer.data.jpa.query.mybatis.*
 import top.bettercode.summer.data.jpa.support.JpaUtil
 import java.util.regex.Pattern
 import java.util.stream.Collectors
-import javax.persistence.*
+import javax.persistence.EntityManager
+import javax.persistence.Query
 
 class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJpaQuery(method, em) {
     private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")

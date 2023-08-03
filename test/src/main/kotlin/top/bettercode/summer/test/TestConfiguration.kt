@@ -17,8 +17,8 @@ class TestConfiguration {
     @ConditionalOnBean(ApiSignProperties::class)
     @ConditionalOnProperty(prefix = "summer.auto-sign", name = ["enabled"], matchIfMissing = true)
     @Bean
-    fun autoSignRequestHandler(apiSignProperties: ApiSignProperties?): AutoSignRequestHandler {
-        return AutoSignRequestHandler(apiSignProperties!!)
+    fun autoSignRequestHandler(apiSignProperties: ApiSignProperties): AutoSignRequestHandler {
+        return AutoSignRequestHandler(apiSignProperties)
     }
 
     @Bean

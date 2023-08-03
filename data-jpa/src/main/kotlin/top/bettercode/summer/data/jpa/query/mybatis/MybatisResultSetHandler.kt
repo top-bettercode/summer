@@ -9,7 +9,10 @@ import org.apache.ibatis.executor.result.DefaultResultContext
 import org.apache.ibatis.executor.result.DefaultResultHandler
 import org.apache.ibatis.executor.result.ResultMapException
 import org.apache.ibatis.executor.resultset.ResultSetWrapper
-import org.apache.ibatis.mapping.*
+import org.apache.ibatis.mapping.Discriminator
+import org.apache.ibatis.mapping.MappedStatement
+import org.apache.ibatis.mapping.ResultMap
+import org.apache.ibatis.mapping.ResultMapping
 import org.apache.ibatis.reflection.MetaClass
 import org.apache.ibatis.reflection.MetaObject
 import org.apache.ibatis.reflection.ReflectorFactory

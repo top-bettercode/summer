@@ -5,7 +5,7 @@ data class Indexed(
         val columnName: MutableList<String> = mutableListOf(),
         val indexName: String? = null
 ) {
-    fun name(tableName: String): String = indexName?:"${if (unique) "IDX_UK" else "IDX"}_${
+    fun name(tableName: String): String = indexName ?: "${if (unique) "IDX_UK" else "IDX"}_${
         tableName.replace("_", "").takeLast(10)
     }_${
         columnName.joinToString("_") { cname ->

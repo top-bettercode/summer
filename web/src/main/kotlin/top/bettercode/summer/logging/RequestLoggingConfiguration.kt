@@ -1,5 +1,6 @@
 package top.bettercode.summer.logging
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -33,7 +34,7 @@ class RequestLoggingConfiguration {
     @Bean
     fun requestLoggingFilter(
             properties: RequestLoggingProperties,
-            handlers: List<RequestLoggingHandler>?
+            @Autowired(required = false) handlers: List<RequestLoggingHandler>?
     ): RequestLoggingFilter {
         return RequestLoggingFilter(properties, handlers ?: emptyList())
     }

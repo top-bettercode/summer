@@ -15,12 +15,12 @@ import org.springframework.context.annotation.Configuration
 @EnableConfigurationProperties(B2mSmsProperties::class)
 class B2mSmsConfiguration {
     @Bean
-    fun simpleB2mSmsTemplate(b2mProperties: B2mSmsProperties?): SimpleB2mSmsTemplate {
-        return SimpleB2mSmsTemplate(b2mProperties!!)
+    fun simpleB2mSmsTemplate(b2mProperties: B2mSmsProperties): SimpleB2mSmsTemplate {
+        return SimpleB2mSmsTemplate(b2mProperties)
     }
 
     @Bean
-    fun b2mTemplate(b2mProperties: B2mSmsProperties?): B2mSmsTemplate {
-        return B2mSmsTemplate(b2mProperties!!)
+    fun b2mTemplate(b2mProperties: B2mSmsProperties): B2mSmsTemplate {
+        return B2mSmsTemplate(b2mProperties)
     }
 }

@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletRequest
  * @author Peter Wu
  */
 class DataJpaErrorHandler(
-        messageSource: MessageSource?,
-        request: HttpServletRequest?
-) : AbstractErrorHandler(messageSource!!, request) {
+        messageSource: MessageSource,
+        request: HttpServletRequest
+) : AbstractErrorHandler(messageSource, request) {
     override fun handlerException(
             error: Throwable, respEntity: RespEntity<*>,
             errors: MutableMap<String?, String?>, separator: String

@@ -56,7 +56,7 @@ class SecurityConfiguration(
     @Bean
     fun configure(
             http: HttpSecurity,
-            access: AuthorizationManager<RequestAuthorizationContext?>?,
+            access: AuthorizationManager<RequestAuthorizationContext>,
     ): SecurityFilterChain {
         val securityProperties = apiTokenService.securityProperties
         if (securityProperties.isSupportClientCache) {
@@ -74,9 +74,9 @@ class SecurityConfiguration(
         http.addFilterBefore(apiTokenEndpointFilter, LogoutFilter::class.java)
         http
                 .sessionManagement().sessionCreationPolicy(securityProperties.sessionCreationPolicy)
-                .and().exceptionHandling { config: ExceptionHandlingConfigurer<HttpSecurity?> ->
-                    config.accessDeniedHandler { _: HttpServletRequest?, _: HttpServletResponse?, accessDeniedException: AccessDeniedException? -> throw accessDeniedException!! }
-                    config.authenticationEntryPoint { _: HttpServletRequest?, _: HttpServletResponse?, authException: AuthenticationException? -> throw authException!! }
+                .and().exceptionHandling { config: ExceptionHandlingConfigurer<HttpSecurity> ->
+                    config.accessDeniedHandler { _: HttpServletRequest, _: HttpServletResponse, accessDeniedException: AccessDeniedException -> throw accessDeniedException }
+                    config.authenticationEntryPoint { _: HttpServletRequest, _: HttpServletResponse, authException: AuthenticationException -> throw authException }
                 }
                 .authorizeHttpRequests()
                 .anyRequest().access(access)
