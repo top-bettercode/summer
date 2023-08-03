@@ -12,6 +12,7 @@ summer:
     jpa:
       mybatis:
         configuration:
+          # noinspection SpringBootApplicationYaml
           map-underscore-to-camel-case: true
         mapper-locations: classpath*:/mapper/*.xml
 #        use-tuple-transformer: true

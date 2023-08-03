@@ -32,7 +32,7 @@ import kotlin.math.max
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(ApiSecurityProperties::class)
 class ApiSecurityConfiguration(
-        private val securityProperties: ApiSecurityProperties,
+        private val securityProperties: ApiSecurityProperties
 ) {
     @ConditionalOnMissingBean(IResourceService::class)
     @Bean
@@ -53,7 +53,7 @@ class ApiSecurityConfiguration(
     @Bean
     fun apiTokenService(
             apiAuthorizationService: ApiTokenRepository,
-            userDetailsService: UserDetailsService,
+            userDetailsService: UserDetailsService
     ): ApiTokenService {
         return ApiTokenService(securityProperties, apiAuthorizationService, userDetailsService)
     }
@@ -61,7 +61,7 @@ class ApiSecurityConfiguration(
     @Bean
     fun securityOAuth2ErrorHandler(
             messageSource: MessageSource?,
-            @Autowired(required = false) request: HttpServletRequest?,
+            @Autowired(required = false) request: HttpServletRequest?
     ): ApiSecurityErrorHandler {
         return ApiSecurityErrorHandler(messageSource, request)
     }

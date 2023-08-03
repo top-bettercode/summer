@@ -66,7 +66,7 @@ class RespEntity<T> : IRespEntity, Serializable {
     }
 
     class RespEntityMap : HashMap<String?, Any?>(), IRespEntity {
-        override val httpStatusCode: Int?
+        override val httpStatusCode: Int
             get() = try {
                 HttpStatus.valueOf((this[KEY_STATUS] as String?)!!.toInt()).value()
             } catch (e: Exception) {

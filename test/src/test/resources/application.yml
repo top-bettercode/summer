@@ -2,7 +2,9 @@ summer:
   autodoc:
     gen:
       enable: true
+      # noinspection SpringBootApplicationYaml
       source: build/doc
+      # noinspection SpringBootApplicationYaml
       output: build/docOutput
   #    postman-tests: false
   sign:

@@ -6,7 +6,6 @@ import java.beans.PropertyDescriptor
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
-import java.util.function.Function
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 
@@ -26,10 +25,10 @@ object EmbeddedIdConverter {
     fun <T : Any> toString(embeddedId: T, delimiter: String?): String {
         val clazz: Class<*> = embeddedId.javaClass
         return getPropertyDescriptors(clazz).stream()
-                .map(Function<PropertyDescriptor, String> { o: PropertyDescriptor ->
+                .map { o: PropertyDescriptor ->
                     ApplicationContextHolder.conversionService.convert(
                             ReflectionUtils.invokeMethod(o.readMethod, embeddedId), String::class.java)!!
-                })
+                }
                 .collect(Collectors.joining(delimiter))
     }
 

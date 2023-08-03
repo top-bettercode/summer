@@ -40,7 +40,7 @@ class ExcelErrorHandler(messageSource: MessageSource?,
                     errors[key] = title + ": " + value + getText(msg ?: "未知错误")
                 }
             }
-            message = errors.entries.joinToString() {
+            message = errors.entries.joinToString {
                 it.key + separator + it.value
             }
         }

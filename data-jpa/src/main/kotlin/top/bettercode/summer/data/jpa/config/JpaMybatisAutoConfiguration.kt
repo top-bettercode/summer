@@ -90,10 +90,10 @@ class JpaMybatisAutoConfiguration(
                 val beanClass = beanDefinition.beanClass
                 val annotation = AnnotatedElementUtils.findMergedAnnotation(beanClass,
                         SpringBootApplication::class.java)
-                for (packageClass in Objects.requireNonNull(annotation).scanBasePackageClasses) {
+                for (packageClass in annotation!!.scanBasePackageClasses) {
                     packages.add(packageClass.java.getPackage().name)
                 }
-                packages.addAll(listOf(*annotation!!.scanBasePackages))
+                packages.addAll(listOf(*annotation.scanBasePackages))
                 packages.add(beanClass.getPackage().name)
             }
             val implementations = PACKAGE_SCAN_CLASS_RESOLVER.findImplementations(

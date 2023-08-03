@@ -335,7 +335,7 @@ class ExcelExport {
             val e = converter(iterator.next())
             val lastRow = !iterator.hasNext()
             var mergeIndex = 0
-            val indexCells: MutableList<ExcelRangeCell<T>>? = if (mergeFirstColumn) null else ArrayList<ExcelRangeCell<T>>()
+            val indexCells: MutableList<ExcelRangeCell<T>>? = if (mergeFirstColumn) null else ArrayList()
             var merge: Boolean
             for (excelField in excelFields) {
                 if (imageByteArrayOutputStream == null && excelField.isImageColumn) {
