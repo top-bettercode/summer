@@ -15,7 +15,6 @@ class KilogramSerializer : NumberSerializer(Long::class.java) {
     }
 
     companion object {
-        private const val serialVersionUID = 1L
         private var newScale = 3
         fun setNewScale(newScale: Int) {
             Companion.newScale = newScale

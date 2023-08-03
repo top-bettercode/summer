@@ -166,9 +166,8 @@ class CountSqlParser {
             if (selectBody is PlainSelect) {
                 processPlainSelect(selectBody)
             } else if (selectBody is WithItem) {
-                val withItem = selectBody
-                if (withItem.subSelect != null) {
-                    processSelectBody(withItem.subSelect.selectBody)
+                if (selectBody.subSelect != null) {
+                    processSelectBody(selectBody.subSelect.selectBody)
                 }
             } else {
                 val operationList = selectBody as SetOperationList

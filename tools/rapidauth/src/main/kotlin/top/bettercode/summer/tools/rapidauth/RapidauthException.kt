@@ -14,7 +14,5 @@ class RapidauthException : RuntimeException {
             writableStackTrace: Boolean
     ) : super(message, cause, enableSuppression, writableStackTrace)
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

@@ -8,11 +8,10 @@ open class InstantAt(val issuedAt: Instant?, val expiresAt: Instant?) : Serializ
     val isExpired: Boolean
         //--------------------------------------------
         get() = expiresAt != null && Instant.now().isAfter(expiresAt)
+    @Suppress("PropertyName")
     val expires_in: Int
         get() = if (expiresAt != null) java.lang.Long.valueOf(
                 (expiresAt.toEpochMilli() - System.currentTimeMillis()) / 1000L).toInt() else -1
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

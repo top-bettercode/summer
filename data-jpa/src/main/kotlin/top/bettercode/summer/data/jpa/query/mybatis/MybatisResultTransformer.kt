@@ -124,7 +124,5 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : 
         }
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

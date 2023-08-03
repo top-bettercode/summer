@@ -35,9 +35,7 @@ class JsonEmbeddedIdTest {
             return "$id,$key"
         }
 
-        companion object {
-            private const val serialVersionUID = 1L
-        }
+        companion object
     }
 
     val objectMapper = ObjectMapper()

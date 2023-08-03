@@ -109,7 +109,7 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
     private fun getApiToken(param: String?, selectStatement: String): ApiToken? {
         return try {
             val apiToken = jdbcTemplate.queryForObject<ApiToken>(selectStatement,
-                    RowMapper<ApiToken> { rs: ResultSet, _: Int ->
+                    RowMapper { rs: ResultSet, _: Int ->
                         val bytes = rs.getBytes(1)
                         if (JdkSerializationSerializer.isEmpty(bytes)) {
                             return@RowMapper null

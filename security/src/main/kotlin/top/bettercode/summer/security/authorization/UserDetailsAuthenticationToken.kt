@@ -19,7 +19,5 @@ class UserDetailsAuthenticationToken(private val userDetails: UserDetails) : Abs
         return userDetails
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

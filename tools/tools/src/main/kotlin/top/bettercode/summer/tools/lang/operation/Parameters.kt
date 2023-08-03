@@ -100,8 +100,6 @@ class Parameters : LinkedMultiValueMap<String, String>() {
 
     }
 
-    companion object {
-        private const val serialVersionUID: Long = 1L
-    }
+    companion object
 
 }

@@ -32,7 +32,7 @@ interface ICorpProperties : IWexinProperties {
             ""
         }
         return (wechatBaseUrl + wechatWebOauthUrl + "?access_token=" + token + "&"
-                + IWexinProperties.Companion.OPEN_ID_NAME + "=" + openId + "&hasBound=" + StringUtils.hasText(token) + "&forceLogin="
+                + IWexinProperties.OPEN_ID_NAME + "=" + openId + "&hasBound=" + StringUtils.hasText(token) + "&forceLogin="
                 + forceLogin + "&state=" + (state ?: "") + "&msg=" + encodeMsg + "&_timer="
                 + System.currentTimeMillis())
     }

@@ -15,7 +15,5 @@ class EnvironmentChangeEvent(
 
     constructor(keys: Set<String>) : this(keys, keys)
 
-    companion object {
-        private const val serialVersionUID: Long = 1L
-    }
+    companion object
 }

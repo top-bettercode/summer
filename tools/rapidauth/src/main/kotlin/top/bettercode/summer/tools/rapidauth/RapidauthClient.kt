@@ -73,7 +73,7 @@ open class RapidauthClient(
             execute(
                     properties.url, HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor<RapidauthResponse>(RapidauthResponse::class.java),
+                    responseEntityExtractor(RapidauthResponse::class.java),
                     properties.sdkappid,
                     random
             )

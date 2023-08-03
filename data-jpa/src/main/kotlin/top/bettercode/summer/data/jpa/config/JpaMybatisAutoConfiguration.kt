@@ -90,7 +90,7 @@ class JpaMybatisAutoConfiguration(
                 val beanClass = beanDefinition.beanClass
                 val annotation = AnnotatedElementUtils.findMergedAnnotation(beanClass,
                         SpringBootApplication::class.java)
-                for (packageClass in Objects.requireNonNull<SpringBootApplication>(annotation).scanBasePackageClasses) {
+                for (packageClass in Objects.requireNonNull(annotation).scanBasePackageClasses) {
                     packages.add(packageClass.java.getPackage().name)
                 }
                 packages.addAll(listOf(*annotation!!.scanBasePackages))
@@ -151,7 +151,7 @@ class JpaMybatisAutoConfiguration(
             val typeAliases = properties.typeAliases
             val finalConfiguration = configuration1
             if (typeAliases.isNotEmpty()) {
-                Stream.of<Class<*>?>(*typeAliases).forEach { typeAlias: Class<*>? ->
+                Stream.of(*typeAliases).forEach { typeAlias: Class<*>? ->
                     finalConfiguration!!.typeAliasRegistry.registerAlias(typeAlias)
                     if (log.isTraceEnabled) {
                         log.trace("Registered type alias: '$typeAlias'")

@@ -1,7 +1,5 @@
 package top.bettercode.summer.tools.lang
 
-import java.util.*
-
 
 fun CharSequence.capitalized(): String =
         when {

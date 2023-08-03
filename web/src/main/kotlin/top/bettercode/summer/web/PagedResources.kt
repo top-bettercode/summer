@@ -68,8 +68,7 @@ class PagedResources<T> {
             if (other !is PageMetadata) {
                 return false
             }
-            val that = other
-            return number == that.number && size == that.size && totalPages == that.totalPages && totalElements == that.totalElements
+            return number == other.number && size == other.size && totalPages == other.totalPages && totalElements == other.totalElements
         }
 
         override fun hashCode(): Int {

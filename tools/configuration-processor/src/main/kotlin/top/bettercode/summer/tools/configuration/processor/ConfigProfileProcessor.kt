@@ -93,7 +93,7 @@ class ConfigProfileProcessor : AbstractProcessor() {
             }
         }
 
-        System.getProperties().forEach { t, u -> confs.put(t.toString(), u.toString()) }
+        System.getProperties().forEach { t, u -> confs[t.toString()] = u.toString() }
 
         val packageName = confs["app.packageName"]
         if (packageName != null) {

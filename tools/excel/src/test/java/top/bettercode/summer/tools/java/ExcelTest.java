@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.java;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.*;
@@ -42,7 +41,7 @@ public class ExcelTest {
           ExcelField.of("编码8", DataBean::getNum));
 
   @Test
-  public void testExport() throws IOException {
+  public void testExport() {
 
     List<top.bettercode.summer.tools.java.DataBean> list = new ArrayList<>();
     for (int i = 0; i < 8; i++) {
@@ -70,7 +69,7 @@ public class ExcelTest {
           ExcelField.of("描述C", top.bettercode.summer.tools.java.DataBean::getDate));
 
   @Test
-  public void testMergeExport() throws IOException {
+  public void testMergeExport() {
     List<top.bettercode.summer.tools.java.DataBean> list = new ArrayList<>();
     for (int i = 0; i < 22; i++) {
       top.bettercode.summer.tools.java.DataBean bean =
@@ -100,7 +99,7 @@ public class ExcelTest {
 
   @Order(0)
   @Test
-  public void testTemplate() throws IOException {
+  public void testTemplate() {
     ExcelExport.of("build/template.xlsx")
         .sheet("表格1")
         .dataValidation(1, "1,2,3")

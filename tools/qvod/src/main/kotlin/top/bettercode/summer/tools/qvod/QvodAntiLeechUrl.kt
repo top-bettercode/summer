@@ -2,7 +2,6 @@ package top.bettercode.summer.tools.qvod
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import org.springframework.core.annotation.AliasFor
 import top.bettercode.summer.web.serializer.JsonUrlMapper
 import java.lang.annotation.Inherited
 import kotlin.reflect.KClass

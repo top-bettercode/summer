@@ -40,7 +40,5 @@ class RestDateSerializer : StdScalarSerializer<Date>(Date::class.java, false) {
         return if (days >= 0) days else 0
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

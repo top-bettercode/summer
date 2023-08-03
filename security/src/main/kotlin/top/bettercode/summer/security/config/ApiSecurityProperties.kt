@@ -20,7 +20,7 @@ open class ApiSecurityProperties {
     /**
      * security.url-filter.ignored.
      */
-    var urlFilterIgnored: Array<String> = arrayOf<String>()
+    var urlFilterIgnored: Array<String> = arrayOf()
     var sessionCreationPolicy = SessionCreationPolicy.STATELESS
 
     /**

@@ -26,8 +26,8 @@ object EmbeddedIdConverter {
     fun <T : Any> toString(embeddedId: T, delimiter: String?): String {
         val clazz: Class<*> = embeddedId.javaClass
         return getPropertyDescriptors(clazz).stream()
-                .map<String>(Function<PropertyDescriptor, String> { o: PropertyDescriptor ->
-                    ApplicationContextHolder.conversionService.convert<String>(
+                .map(Function<PropertyDescriptor, String> { o: PropertyDescriptor ->
+                    ApplicationContextHolder.conversionService.convert(
                             ReflectionUtils.invokeMethod(o.readMethod, embeddedId), String::class.java)!!
                 })
                 .collect(Collectors.joining(delimiter))

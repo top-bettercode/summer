@@ -54,14 +54,13 @@ open class DataDicBean {
         if (other !is DataDicBean) {
             return false
         }
-        val that = other
-        return number1 == that.number1 && number2 == that.number2 && number22 == that.number22 && number3 == that.number3 && number4 == that.number4 && name == that.name && code == that.code && intCode == that.intCode && price == that.price && path == that.path && path1 == that.path1 && desc == that.desc && paths == that.paths && Arrays.equals(pathArray, that.pathArray)
+        return number1 == other.number1 && number2 == other.number2 && number22 == other.number22 && number3 == other.number3 && number4 == other.number4 && name == other.name && code == other.code && intCode == other.intCode && price == other.price && path == other.path && path1 == other.path1 && desc == other.desc && paths == other.paths && pathArray.contentEquals(other.pathArray)
     }
 
     override fun hashCode(): Int {
         var result = Objects.hash(number1, number2, number22, number3, number4, name, code, intCode,
                 price, path, path1, desc, paths)
-        result = 31 * result + Arrays.hashCode(pathArray)
+        result = 31 * result + pathArray.contentHashCode()
         return result
     }
 
@@ -80,7 +79,7 @@ open class DataDicBean {
                 ", path1='" + path1 + '\'' +
                 ", desc='" + desc + '\'' +
                 ", paths=" + paths +
-                ", pathArray=" + Arrays.toString(pathArray) +
+                ", pathArray=" + pathArray.contentToString() +
                 '}'
     }
 }

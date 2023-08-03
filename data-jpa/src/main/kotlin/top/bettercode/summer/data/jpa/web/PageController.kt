@@ -55,10 +55,9 @@ open class PageController : BaseController() {
         return if (`object` is Page<*>) {
             pagedResources(`object`)
         } else if (`object` is Collection<*>) {
-            val collection = `object`
             val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0
-            val size = collection.size
-            PagedResources<Collection<*>>(PageMetadata(number.toLong(), size.toLong(), 1, size.toLong()), collection)
+            val size = `object`.size
+            PagedResources(PageMetadata(number.toLong(), size.toLong(), 1, size.toLong()), `object`)
         } else if (`object` != null && `object`.javaClass.isArray) {
             val array = `object` as Array<*>
             val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0

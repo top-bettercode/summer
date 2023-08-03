@@ -14,7 +14,5 @@ class IllegalUserException : InternalAuthenticationServiceException {
     constructor(msg: String?) : super(msg)
     constructor(msg: String?, t: Throwable?) : super(msg, t)
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

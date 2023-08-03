@@ -133,7 +133,6 @@ class UrlSerializer @JvmOverloads constructor(private val formatExpression: Stri
     }
 
     companion object {
-        private const val serialVersionUID = 1L
         private var defaultFormatExpression = "\${summer.multipart.file-url-format}"
         private val defaultMapper: JsonUrlMapper = object : JsonUrlMapper {}
         private var environment: Environment? = null

@@ -12,8 +12,7 @@ class LastName {
         if (other !is LastName) {
             return false
         }
-        val lastName1 = other
-        return isDeleted == lastName1.isDeleted && lastName == lastName1.lastName
+        return isDeleted == other.isDeleted && lastName == other.lastName
     }
 
     override fun hashCode(): Int {

@@ -27,7 +27,5 @@ class EmbeddedIdSerializer @JvmOverloads constructor(private val delimiter: Stri
         return prov.findNullValueSerializer(null)
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

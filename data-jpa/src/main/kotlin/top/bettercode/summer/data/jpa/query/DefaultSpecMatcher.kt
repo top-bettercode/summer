@@ -5,7 +5,6 @@ package top.bettercode.summer.data.jpa.query
  */
 open class DefaultSpecMatcher<T : Any?> protected constructor(matcherMode: SpecMatcherMode, probe: T?) : SpecMatcher<T, DefaultSpecMatcher<T>>(matcherMode, probe) {
     companion object {
-        private const val serialVersionUID = 1L
 
         /**
          * 创建 SpecMatcher 实例

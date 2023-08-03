@@ -32,7 +32,7 @@ import kotlin.math.min
  */
 class SimpleJpaExtRepository<T : Any, ID>(
         jpaExtProperties: JpaExtProperties,
-        private val entityInformation: JpaEntityInformation<T, ID>, final override val entityManager: EntityManager
+        private val entityInformation: JpaEntityInformation<T, ID>, override val entityManager: EntityManager
 ) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), JpaExtRepository<T, ID> {
     private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")
     private val provider: PersistenceProvider = PersistenceProvider.fromEntityManager(entityManager)

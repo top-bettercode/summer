@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import top.bettercode.summer.web.support.ApplicationContextHolder
-import java.io.IOException
 import java.util.*
 import java.util.stream.Collectors
 import java.util.stream.Stream
@@ -85,7 +84,5 @@ class QvodImageProcessSerializer @JvmOverloads constructor(
         return this
     }
 
-    companion object {
-        private const val serialVersionUID: Long = 1L
-    }
+    companion object
 }

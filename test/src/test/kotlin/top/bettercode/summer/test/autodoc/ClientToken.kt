@@ -1,7 +1,6 @@
 package top.bettercode.summer.test.autodoc
 
 import org.hibernate.validator.constraints.Length
-import java.util.*
 import javax.validation.constraints.NotNull
 
 /**
@@ -43,7 +42,7 @@ data class ClientToken(
         if (other !is ClientToken) return false
 
         if (tokenId != other.tokenId) return false
-        if (!Arrays.equals(token, other.token)) return false
+        if (!token.contentEquals(other.token)) return false
         if (authenticationId != other.authenticationId) return false
         if (userName != other.userName) return false
         return clientId == other.clientId

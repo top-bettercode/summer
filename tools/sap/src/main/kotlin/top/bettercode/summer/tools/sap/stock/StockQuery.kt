@@ -15,8 +15,7 @@ class StockQuery(var factoryId: String, var materialId: String) {
         if (other !is StockQuery) {
             return false
         }
-        val that = other
-        return factoryId == that.factoryId && materialId == that.materialId
+        return factoryId == other.factoryId && materialId == other.materialId
     }
 
     override fun hashCode(): Int {

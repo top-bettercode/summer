@@ -27,7 +27,4 @@ open class AdditionalUserDetails : User {
         return additionalInformation[key]
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
 }

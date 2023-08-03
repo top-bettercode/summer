@@ -22,7 +22,7 @@ class MultipleBearerTokenResolver {
         var authorizationHeaderToken = resolveFromAuthorizationHeader(request)
         if (authorizationHeaderToken == null && isParameterTokenSupportedForRequest(request)) {
             authorizationHeaderToken = resolveFromRequestParameters(request,
-                    SecurityParameterNames.Companion.ACCESS_TOKEN)
+                    SecurityParameterNames.ACCESS_TOKEN)
         }
         if (compatibleAccessToken!!) {
             if (authorizationHeaderToken == null) {
@@ -30,7 +30,7 @@ class MultipleBearerTokenResolver {
             }
             if (authorizationHeaderToken == null && isParameterTokenSupportedForRequest(request)) {
                 authorizationHeaderToken = resolveFromRequestParameters(request,
-                        SecurityParameterNames.Companion.COMPATIBLE_ACCESS_TOKEN)
+                        SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN)
             }
         }
         return authorizationHeaderToken
@@ -94,7 +94,7 @@ class MultipleBearerTokenResolver {
     }
 
     private fun resolveCompatibleAccessTokenFromHeader(request: HttpServletRequest): String? {
-        return request.getHeader(SecurityParameterNames.Companion.COMPATIBLE_ACCESS_TOKEN)
+        return request.getHeader(SecurityParameterNames.COMPATIBLE_ACCESS_TOKEN)
     }
 
     private fun isParameterTokenSupportedForRequest(request: HttpServletRequest): Boolean {

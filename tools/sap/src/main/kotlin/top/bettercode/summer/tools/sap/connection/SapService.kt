@@ -16,7 +16,6 @@ import top.bettercode.summer.tools.sap.annotation.SapField
 import top.bettercode.summer.tools.sap.annotation.SapStructure
 import top.bettercode.summer.tools.sap.annotation.SapTable
 import top.bettercode.summer.tools.sap.config.SapProperties
-import top.bettercode.summer.tools.sap.connection.SapService
 import top.bettercode.summer.tools.sap.connection.pojo.ISapReturn
 import java.beans.IntrospectionException
 import java.lang.reflect.Field

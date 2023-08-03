@@ -26,7 +26,5 @@ class DicCodes //--------------------------------------------
         return null
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

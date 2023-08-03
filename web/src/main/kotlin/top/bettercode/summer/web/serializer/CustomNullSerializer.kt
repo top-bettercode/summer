@@ -140,7 +140,6 @@ class CustomNullSerializer(private val writer: BeanPropertyWriter, private val d
     }
 
     companion object {
-        private const val serialVersionUID = 1L
         fun support(type: Class<*>): Boolean {
             return type == String::class.java || type.isArray || (MutableCollection::class.java.isAssignableFrom(type)
                     && !MutableMap::class.java

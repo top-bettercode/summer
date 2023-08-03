@@ -38,10 +38,10 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
             root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder
     ): Predicate? {
         if (orders.isNotEmpty()) {
-            val orders = orders.stream().map<Order> { o: Sort.Order ->
-                val path: Path<*>? = SpecPath.toPath<T>(root, o.property)
+            val orders = orders.stream().map { o: Sort.Order ->
+                val path: Path<*>? = SpecPath.toPath(root, o.property)
                 if (o.direction.isDescending) cb.desc(path) else cb.asc(path)
-            }.collect(Collectors.toList<Order>())
+            }.collect(Collectors.toList())
             query.orderBy(orders)
         }
         return this.toPredicate(root, cb)
@@ -238,7 +238,6 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     }
 
     companion object {
-        private const val serialVersionUID = 1L
         private val ASSOCIATION_TYPES: Set<PersistentAttributeType>
 
         //--------------------------------------------

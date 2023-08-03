@@ -66,7 +66,5 @@ class BigDecimalSerializer @JvmOverloads constructor(private val scale: Int = 2,
         return this
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

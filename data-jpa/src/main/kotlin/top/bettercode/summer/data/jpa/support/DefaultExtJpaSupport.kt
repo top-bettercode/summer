@@ -64,7 +64,7 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
                 lastModifiedDatePropertyType = declaredField.type
                 finish++
             }
-            if (versionPropertyName == null && declaredField.getAnnotation<Version>(Version::class.java) != null) {
+            if (versionPropertyName == null && declaredField.getAnnotation(Version::class.java) != null) {
                 versionPropertyName = declaredField.name
                 versionPropertyType = declaredField.type
                 finish++

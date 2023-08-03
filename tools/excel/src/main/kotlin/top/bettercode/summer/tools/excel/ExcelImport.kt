@@ -133,7 +133,7 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @throws InstantiationException InstantiationException
     </E></F> */
     fun <F, E> getData(excelFields: Array<ExcelField<F, *>>): List<E> {
-        return getData<F, E>(getEntityType(excelFields), excelFields)
+        return getData(getEntityType(excelFields), excelFields)
     }
 
     /**
@@ -150,7 +150,7 @@ class ExcelImport private constructor(`is`: InputStream) {
      * @throws InstantiationException InstantiationException
     </E></F> */
     fun <F, E> getData(excelFields: Array<ExcelField<F, *>>, converter: (F) -> E): List<E> {
-        return getData<F, E>(getEntityType(excelFields), excelFields, converter)
+        return getData(getEntityType(excelFields), excelFields, converter)
     }
 
     /**

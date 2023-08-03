@@ -16,7 +16,7 @@ internal class SapCostServiceTest {
 
     @Test
     @Disabled
-    fun testGetCosts(): Unit {
+    fun testGetCosts() {
         val costs = sapCostService!!.costs
         System.err.println(costs)
     }

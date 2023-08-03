@@ -33,11 +33,11 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
         mappedStatement = method.mappedStatement!!
         val sqlCommandType = mappedStatement.sqlCommandType
         isModifyingQuery = SqlCommandType.UPDATE == sqlCommandType || SqlCommandType.DELETE == sqlCommandType || SqlCommandType.INSERT == sqlCommandType
-        MybatisResultSetHandler.Companion.validateResultMaps(mappedStatement)
+        MybatisResultSetHandler.validateResultMaps(mappedStatement)
         resultTransformer = MybatisResultTransformer(mappedStatement)
         val pageQuery = method.isPageQuery
         if (pageQuery) {
-            val nestedResultMapId: String? = MybatisResultSetHandler.Companion.findNestedResultMap(mappedStatement)
+            val nestedResultMapId: String? = MybatisResultSetHandler.findNestedResultMap(mappedStatement)
             if (nestedResultMapId != null) {
                 sqlLog.info(
                         "{} may return incorrect paginated data. Please check result maps definition {}.",
@@ -45,7 +45,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
             }
         }
         nestedResultMapType = if (method.isSliceQuery) {
-            MybatisResultSetHandler.Companion.findNestedResultMapType(mappedStatement)
+            MybatisResultSetHandler.findNestedResultMapType(mappedStatement)
         } else {
             null
         }

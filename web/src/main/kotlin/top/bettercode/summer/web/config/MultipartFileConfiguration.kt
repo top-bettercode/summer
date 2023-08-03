@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import top.bettercode.summer.web.*
 import top.bettercode.summer.web.properties.SummerMultipartProperties
 import top.bettercode.summer.web.resolver.multipart.MuipartFileToAttachmentConverter
 import java.io.File

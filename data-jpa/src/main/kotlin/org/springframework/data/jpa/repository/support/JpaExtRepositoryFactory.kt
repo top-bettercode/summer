@@ -156,8 +156,8 @@ class JpaExtRepositoryFactory(
                 throw InvalidDataAccessApiUsageException(
                         "Cannot combine Querydsl and reactive repository support in a single interface")
             }
-            @Suppress("UNCHECKED_CAST") val entityInformation: JpaEntityInformation<Any, Any> = getEntityInformation<Any, Any>(metadata.domainType as Class<Any>)
-            return RepositoryFragments.just(QuerydslJpaExtPredicateExecutor<Any>(jpaExtProperties,
+            @Suppress("UNCHECKED_CAST") val entityInformation: JpaEntityInformation<Any, Any> = getEntityInformation(metadata.domainType as Class<Any>)
+            return RepositoryFragments.just(QuerydslJpaExtPredicateExecutor(jpaExtProperties,
                     entityInformation,
                     entityManager, resolver, crudMethodMetadata))
         }

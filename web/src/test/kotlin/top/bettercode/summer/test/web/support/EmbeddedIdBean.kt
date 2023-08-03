@@ -13,8 +13,7 @@ class EmbeddedIdBean {
         if (other !is EmbeddedIdBean) {
             return false
         }
-        val that = other
-        return name == that.name && intCode == that.intCode && price == that.price
+        return name == other.name && intCode == other.intCode && price == other.price
     }
 
     override fun hashCode(): Int {

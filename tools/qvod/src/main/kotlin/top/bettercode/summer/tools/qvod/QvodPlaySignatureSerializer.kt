@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import org.springframework.util.StringUtils
 import top.bettercode.summer.web.support.ApplicationContextHolder
-import java.io.IOException
-import java.util.*
 
 /**
  *
@@ -39,7 +37,5 @@ class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
         serialize(value, gen, provider)
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

@@ -36,8 +36,7 @@ open class BaseUser {
         if (other !is BaseUser) {
             return false
         }
-        val baseUser = other
-        return id == baseUser.id && firstName == baseUser.firstName && lastName == baseUser.lastName && deleted == baseUser.deleted
+        return id == other.id && firstName == other.firstName && lastName == other.lastName && deleted == other.deleted
     }
 
     override fun hashCode(): Int {

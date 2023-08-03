@@ -23,7 +23,7 @@ interface UserRepository : JpaExtRepository<User?, Int?>, QuerydslPredicateExecu
     fun findByFirstName(lastName: String?, pageable: Pageable?): Page<User?>?
 
     @Query(value = "select * from t_user where first_name = ?1", nativeQuery = true)
-    fun selectNativeSql(first_name: String?, pageable: Pageable?): Page<User?>
+    fun selectNativeSql(@Suppress("LocalVariableName") first_name: String?, pageable: Pageable?): Page<User?>
 
     @Transactional
     fun deleteByLastName(lastName: String?)

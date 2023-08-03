@@ -83,25 +83,25 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
             formkeyService.checkRequest(request, summerWebProperties.formKeyName, true, null, FormDuplicateCheckInterceptor.DEFAULT_MESSAGE)
             try {
                 authenticateBasic(request)
-                val grantType = request.getParameter(SecurityParameterNames.Companion.GRANT_TYPE)
+                val grantType = request.getParameter(SecurityParameterNames.GRANT_TYPE)
                 Assert.hasText(grantType, "grantType 不能为空")
-                val scope = request.getParameter(SecurityParameterNames.Companion.SCOPE)
+                val scope = request.getParameter(SecurityParameterNames.SCOPE)
                 Assert.hasText(scope, "scope 不能为空")
                 Assert.isTrue(securityProperties.supportScopes.contains(scope), "不支持的scope:$scope")
                 val apiToken: ApiToken?
                 if (SecurityParameterNames.PWDNAME == grantType) {
                     apiTokenService.beforeLogin(request, grantType, scope)
-                    val username = request.getParameter(SecurityParameterNames.Companion.USERNAME)
+                    val username = request.getParameter(SecurityParameterNames.USERNAME)
                     Assert.hasText(username, "用户名不能为空")
-                    val password = request.getParameter(SecurityParameterNames.Companion.PASSWORD)
+                    val password = request.getParameter(SecurityParameterNames.PASSWORD)
                     Assert.hasText(password, "密码不能为空")
                     val userDetails = apiTokenService.getUserDetails(scope, username)
                     Assert.isTrue(passwordEncoder.matches(password, userDetails.password),
                             "用户名或密码错误")
                     apiToken = apiTokenService.getApiToken(scope, userDetails)
                     apiTokenService.afterLogin(apiToken, request)
-                } else if (SecurityParameterNames.Companion.REFRESH_TOKEN == grantType) {
-                    val refreshToken = request.getParameter(SecurityParameterNames.Companion.REFRESH_TOKEN)
+                } else if (SecurityParameterNames.REFRESH_TOKEN == grantType) {
+                    val refreshToken = request.getParameter(SecurityParameterNames.REFRESH_TOKEN)
                     Assert.hasText(refreshToken, "refreshToken不能为空")
                     apiToken = apiTokenRepository.findByRefreshToken(
                             refreshToken)

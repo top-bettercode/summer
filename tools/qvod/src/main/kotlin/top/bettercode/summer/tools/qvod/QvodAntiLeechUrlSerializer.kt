@@ -8,10 +8,8 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.ContextualSerializer
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
-import org.springframework.util.StringUtils
 import top.bettercode.summer.web.serializer.JsonUrlMapper
 import top.bettercode.summer.web.support.ApplicationContextHolder
-import java.io.IOException
 import java.util.*
 import java.util.stream.Collectors
 import java.util.stream.Stream
@@ -101,7 +99,7 @@ class QvodAntiLeechUrlSerializer @JvmOverloads constructor(
     }
 
     companion object {
-        private const val serialVersionUID: Long = 1L
+
         private val defaultMapper: JsonUrlMapper = object :
                 JsonUrlMapper {}
         private val mapperCache: MutableMap<KClass<out JsonUrlMapper>, JsonUrlMapper?> = HashMap()

@@ -14,7 +14,5 @@ class MybatisQueryInterpreterStandardImpl(sessionFactory: SessionFactoryImplemen
         return MybatisLoader(customQuery, sessionFactory)
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

@@ -1,5 +1,6 @@
 spring.profiles.active: beta
 server:
-  session:
-    timeout: 1800
+  servlet:
+    session:
+      timeout: 1800
 

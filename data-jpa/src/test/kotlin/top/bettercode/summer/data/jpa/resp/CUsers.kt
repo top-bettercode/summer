@@ -16,8 +16,7 @@ class CUsers {
         if (other !is CUsers) {
             return false
         }
-        val cUsers = other
-        return firstName == cUsers.firstName && lastName == cUsers.lastName
+        return firstName == other.firstName && lastName == other.lastName
     }
 
     override fun hashCode(): Int {

@@ -8,7 +8,5 @@ import org.springframework.web.bind.annotation.ResponseStatus
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class SmsSysException(message: String) : IllegalArgumentException("短信平台：$message") {
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

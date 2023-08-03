@@ -113,11 +113,11 @@ open class BaseController : Response() {
     }
 
     protected fun assertOk(respEntity: RespEntity<*>) {
-        RespEntity.Companion.assertOk(respEntity)
+        RespEntity.assertOk(respEntity)
     }
 
     protected fun assertOk(respEntity: RespEntity<*>, message: String?) {
-        RespEntity.Companion.assertOk(respEntity, message)
+        RespEntity.assertOk(respEntity, message)
     }
 
     companion object {

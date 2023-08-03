@@ -79,6 +79,7 @@ class OffiaccountCallbackController(
         return echostr
     }
 
+    @Suppress("LocalVariableName")
     @ResponseBody
     @PostMapping(name = "公众号事件推送")
     fun receive(

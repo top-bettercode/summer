@@ -115,7 +115,7 @@ class SortedProperties
         }
 
     companion object {
-        private const val serialVersionUID: Long = 1L
+
 
         @JvmField
         val EOL: String = System.lineSeparator()

@@ -1,3 +1,4 @@
+// suppress inspection "AsciiDocLinkResolve" for whole file
 [preface]
 == 系统概述
 

@@ -78,13 +78,10 @@ class RespEntity<T> : IRespEntity, Serializable {
             return this
         }
 
-        companion object {
-            private const val serialVersionUID = 1L
-        }
+        companion object
     }
 
     companion object {
-        private const val serialVersionUID = 1L
         const val KEY_STATUS = "status"
         const val KEY_MESSAGE = "message"
         const val KEY_DATA = "data"

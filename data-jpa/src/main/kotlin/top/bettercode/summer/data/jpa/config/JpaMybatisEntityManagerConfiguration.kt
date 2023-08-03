@@ -13,7 +13,7 @@ import javax.persistence.EntityManager
  * @author Peter Wu
  */
 @Configuration(proxyBeanMethods = false)
-class JpaMybatisEntityManagerConfiguration constructor(
+class JpaMybatisEntityManagerConfiguration(
         entityManagers: List<EntityManager>,
         mybatisProperties: MybatisProperties
 ) {

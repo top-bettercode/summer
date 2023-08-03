@@ -43,7 +43,6 @@ open class SystemException : RuntimeException {
     }
 
     companion object {
-        private const val serialVersionUID = 1L
         private val propertiesSource = of("error-code", "properties.error-code")
     }
 }

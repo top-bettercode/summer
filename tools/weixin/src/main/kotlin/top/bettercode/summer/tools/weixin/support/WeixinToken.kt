@@ -70,7 +70,5 @@ class WeixinToken() : HashMap<String, Any?>() {
         this.message = message ?: ""
     }
 
-    companion object {
-        private const val serialVersionUID: Long = 1L
-    }
+    companion object
 }

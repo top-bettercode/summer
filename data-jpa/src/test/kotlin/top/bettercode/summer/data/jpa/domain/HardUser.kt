@@ -32,8 +32,7 @@ class HardUser {
         if (other !is HardUser) {
             return false
         }
-        val hardUser = other
-        return deleted === hardUser.deleted && id == hardUser.id && firstName == hardUser.firstName && lastName == hardUser.lastName
+        return deleted === other.deleted && id == other.id && firstName == other.firstName && lastName == other.lastName
     }
 
     override fun hashCode(): Int {

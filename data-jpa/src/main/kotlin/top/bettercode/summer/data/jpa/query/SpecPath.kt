@@ -73,14 +73,14 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
                     Assert.isTrue(value is BetweenValue<*>,
                             "BETWEEN matcher with wrong value")
                     val betweenValue = value as BetweenValue<*>
-                    return criteriaBuilder.between<Comparable<Comparable<*>>>(path as Expression<Comparable<Comparable<*>>>, betweenValue.first as Comparable<Comparable<*>>,
+                    return criteriaBuilder.between(path as Expression<Comparable<Comparable<*>>>, betweenValue.first as Comparable<Comparable<*>>,
                             betweenValue.second as Comparable<Comparable<*>>)
                 }
 
-                PathMatcher.GT -> return criteriaBuilder.greaterThan<Comparable<Comparable<*>>>(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
-                PathMatcher.GE -> return criteriaBuilder.greaterThanOrEqualTo<Comparable<Comparable<*>>>(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
-                PathMatcher.LT -> return criteriaBuilder.lessThan<Comparable<Comparable<*>>>(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
-                PathMatcher.LE -> return criteriaBuilder.lessThanOrEqualTo<Comparable<Comparable<*>>>(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
+                PathMatcher.GT -> return criteriaBuilder.greaterThan(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
+                PathMatcher.GE -> return criteriaBuilder.greaterThanOrEqualTo(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
+                PathMatcher.LT -> return criteriaBuilder.lessThan(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
+                PathMatcher.LE -> return criteriaBuilder.lessThanOrEqualTo(path as Expression<Comparable<Comparable<*>>>, value as Comparable<Comparable<*>>)
                 else -> {}
             }
         }

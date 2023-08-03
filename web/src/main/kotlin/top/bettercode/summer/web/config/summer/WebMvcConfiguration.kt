@@ -16,7 +16,6 @@ import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.resolver.ApiExceptionHandlerExceptionResolver
 import top.bettercode.summer.web.resolver.ApiRequestMappingHandlerAdapter
-import kotlin.time.toKotlinDuration
 
 /**
  * Rest MVC 配置

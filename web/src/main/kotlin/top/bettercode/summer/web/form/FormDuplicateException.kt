@@ -8,7 +8,5 @@ import org.springframework.web.bind.annotation.ResponseStatus
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class FormDuplicateException(message: String?) : RuntimeException(message) {
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

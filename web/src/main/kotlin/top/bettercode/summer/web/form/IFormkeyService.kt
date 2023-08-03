@@ -35,7 +35,7 @@ interface IFormkeyService {
         } else if (exist(formkey, ttl)) {
             throw FormDuplicateException(message)
         } else {
-            request!!.setAttribute(FormDuplicateCheckInterceptor.Companion.FORM_KEY, formkey)
+            request!!.setAttribute(FormDuplicateCheckInterceptor.FORM_KEY, formkey)
             true
         }
     }

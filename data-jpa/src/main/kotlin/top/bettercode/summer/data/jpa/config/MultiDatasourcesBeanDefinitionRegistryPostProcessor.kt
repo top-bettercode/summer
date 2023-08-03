@@ -172,7 +172,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
 
                 // mybatisConfiguration
                 val mybatisConfigurationRef = jpaExtRepositories.mybatisConfigurationRef
-                beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition<Configuration>(
+                beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
                         Configuration::class.java
                 ) {
                     try {
@@ -183,7 +183,7 @@ class MultiDatasourcesBeanDefinitionRegistryPostProcessor : BeanDefinitionRegist
                             BeanUtils.copyProperties(configuration, newConfiguration)
                             configuration = newConfiguration
                         }
-                        return@genericBeanDefinition JpaMybatisAutoConfiguration.Companion.mybatisConfiguration(beanFactory, configuration,
+                        return@genericBeanDefinition JpaMybatisAutoConfiguration.mybatisConfiguration(beanFactory, configuration,
                                 mybatisProperties, resourceLoader, properties.mapperLocations)
                     } catch (e: Exception) {
                         throw RuntimeException(e)

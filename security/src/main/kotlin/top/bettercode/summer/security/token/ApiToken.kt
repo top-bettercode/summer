@@ -33,7 +33,5 @@ class ApiToken : Serializable {
         return ApiAccessToken(this)
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

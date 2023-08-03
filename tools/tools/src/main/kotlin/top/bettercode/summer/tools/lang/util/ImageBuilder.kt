@@ -12,8 +12,7 @@ import kotlin.math.ceil
 /**
  * 图像Builder
  */
-class ImageBuilder
-constructor(inputStream: Any) {
+class ImageBuilder(inputStream: Any) {
 
     private var bufferedImage: BufferedImage
 

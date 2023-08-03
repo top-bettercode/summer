@@ -26,8 +26,7 @@ class EmployeeKey : Serializable {
         if (other !is EmployeeKey) {
             return false
         }
-        val that = other
-        return id == that.id && id2 == that.id2
+        return id == other.id && id2 == other.id2
     }
 
     override fun hashCode(): Int {
@@ -38,7 +37,5 @@ class EmployeeKey : Serializable {
         return json(this)
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

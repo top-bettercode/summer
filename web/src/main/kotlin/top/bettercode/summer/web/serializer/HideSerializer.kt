@@ -63,7 +63,5 @@ class HideSerializer @JvmOverloads constructor(private val beginKeep: Int = 0, p
         gen.writeString(value)
     }
 
-    companion object {
-        private const val serialVersionUID = 1L
-    }
+    companion object
 }

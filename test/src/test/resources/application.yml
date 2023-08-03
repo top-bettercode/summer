@@ -2,9 +2,6 @@ summer:
   autodoc:
     gen:
       enable: true
-      source: build/doc
-      output: build/docOutput
-      doc: true
   #    postman-tests: false
   sign:
     client-secret: 123

@@ -21,9 +21,8 @@ object ExcelImageCellWriterUtil {
             val drawing: Drawing<XSSFShape> = sheet.createDrawingPatriarch()
             for (cell in imageCells) {
                 if (cell is ExcelRangeCell<*> && cell.excelField.isMerge) {
-                    val rangeCell = cell
-                    var lastRangeTop = rangeCell.lastRangeTop
-                    val rowHeight = rangeCell.lastRangeBottom - lastRangeTop
+                    var lastRangeTop = cell.lastRangeTop
+                    val rowHeight = cell.lastRangeBottom - lastRangeTop
                     if (rowHeight > 1) {
                         lastRangeTop += rowHeight / 2
                     }
@@ -31,12 +30,12 @@ object ExcelImageCellWriterUtil {
                         drawImage(cell.preCellValue, wb, drawing, helper, cell.column,
                                 lastRangeTop,
                                 lastRangeTop + 1)
-                        if (rangeCell.isLastRow) {
+                        if (cell.isLastRow) {
                             drawImage(cell.cellValue, wb, drawing, helper, cell.column,
                                     cell.row,
                                     cell.row + 1)
                         }
-                    } else if (rangeCell.isLastRow) {
+                    } else if (cell.isLastRow) {
                         drawImage(cell.cellValue, wb, drawing, helper, cell.column,
                                 lastRangeTop,
                                 lastRangeTop + 1)

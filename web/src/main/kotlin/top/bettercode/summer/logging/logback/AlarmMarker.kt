@@ -136,7 +136,6 @@ class AlarmMarker(name: String, val timeoutMsg: String? = null) : Marker {
     }
 
     companion object {
-        private const val serialVersionUID: Long = 1L
         private const val OPEN = "[ "
         private const val CLOSE = " ]"
         private const val SEP = ", "

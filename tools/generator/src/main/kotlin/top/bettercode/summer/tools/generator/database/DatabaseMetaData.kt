@@ -205,7 +205,7 @@ class DatabaseMetaData(
                         databaseDriver
                 )
         ) {
-            val quoteMark: String = "`"
+            val quoteMark = "`"
             try {
                 val prepareStatement =
                         databaseMetaData.connection.prepareStatement("SHOW COLUMNS FROM $quoteMark$tableName$quoteMark")
