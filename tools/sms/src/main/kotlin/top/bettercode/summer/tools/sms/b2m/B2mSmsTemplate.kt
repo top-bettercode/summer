@@ -123,7 +123,7 @@ class B2mSmsTemplate(
             execute(
                     b2mProperties.url + "/inter/sendPersonalityAllSMS", HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor(ByteArray::class.java)
+                    responseEntityExtractor<ByteArray>(ByteArray::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)
@@ -182,7 +182,7 @@ class B2mSmsTemplate(
             execute(
                     b2mProperties.url + "/inter/getReport", HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor(ByteArray::class.java)
+                    responseEntityExtractor<ByteArray>(ByteArray::class.java)
             )
         } catch (e: Exception) {
             throw SmsException(e)

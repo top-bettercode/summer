@@ -3,10 +3,9 @@ package top.bettercode.summer.web.form
 import org.springframework.web.method.HandlerMethod
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils.getAnnotation
 import top.bettercode.summer.web.servlet.NotErrorHandlerInterceptor
+import java.time.Duration
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
 
 /**
  * 表单重复检
@@ -18,7 +17,7 @@ class FormDuplicateCheckInterceptor(private val formkeyService: IFormkeyService,
         val annotation = getAnnotation(handler, FormDuplicateCheck::class.java)
         val expireSeconds = annotation?.expireSeconds
         val ttl = if (expireSeconds != null && expireSeconds > 0) {
-            expireSeconds.seconds.toJavaDuration()
+            Duration.ofSeconds(expireSeconds)
         } else {
             null
         }

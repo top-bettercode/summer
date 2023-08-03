@@ -5,8 +5,6 @@ import org.springframework.util.StringUtils
 import org.springframework.web.context.request.NativeWebRequest
 import java.time.Duration
 import javax.servlet.http.HttpServletRequest
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
 
 /**
  * @author Peter Wu
@@ -71,7 +69,7 @@ open class SummerWebProperties {
     /**
      * 表单防重复提交，key有效时间
      */
-    var formKeyTtl: Duration = 5.seconds.toJavaDuration()
+    var formKeyTtl: Duration = Duration.ofSeconds(5)
 
     //--------------------------------------------
     fun wrapEnable(request: NativeWebRequest): Boolean {

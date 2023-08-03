@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.generator.database.entity
 data class Indexed(
         val unique: Boolean = false,
         val columnName: MutableList<String> = mutableListOf(),
-        val indexName: String? = null,
+        val indexName: String? = null
 ) {
     fun name(tableName: String): String = indexName?:"${if (unique) "IDX_UK" else "IDX"}_${
         tableName.replace("_", "").takeLast(10)
