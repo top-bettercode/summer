@@ -12,5 +12,4 @@ class DicCodes(
         var javaType: JavaType,
         val codes: MutableMap<Serializable, String> = mutableMapOf()
 ) : Serializable {
-    companion object
 }

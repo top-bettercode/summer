@@ -8,5 +8,4 @@ class SapException : RuntimeException {
     constructor(cause: Throwable) : super(if (cause is SapException || cause is SapSysException) cause.message else "SAP系统：" + cause.message, cause)
     constructor(message: String?, cause: Throwable?) : super("SAP系统：$message", cause)
 
-    companion object
 }

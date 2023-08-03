@@ -37,5 +37,4 @@ class EmployeeKey : Serializable {
         return json(this)
     }
 
-    companion object
 }

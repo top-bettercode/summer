@@ -15,5 +15,4 @@ class BusinessException : SystemException {
     constructor(code: String, message: String?, cause: Throwable?) : super(code, message, cause)
     constructor(code: String, message: String?, data: Any?) : super(code, message, data)
 
-    companion object
 }

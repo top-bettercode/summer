@@ -8,5 +8,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class SapSysException(message: String?) : RuntimeException("SAP系统：$message") {
-    companion object
 }

@@ -14,5 +14,4 @@ class MybatisQueryInterpreterStandardImpl(sessionFactory: SessionFactoryImplemen
         return MybatisLoader(customQuery, sessionFactory)
     }
 
-    companion object
 }

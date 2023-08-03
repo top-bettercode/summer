@@ -63,5 +63,4 @@ class HideSerializer @JvmOverloads constructor(private val beginKeep: Int = 0, p
         gen.writeString(value)
     }
 
-    companion object
 }

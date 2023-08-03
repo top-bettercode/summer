@@ -35,5 +35,4 @@ class RespExtra<T>(@get:JsonView(Any::class)
         this.extra = extra
     }
 
-    companion object
 }

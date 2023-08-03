@@ -100,6 +100,5 @@ class Parameters : LinkedMultiValueMap<String, String>() {
 
     }
 
-    companion object
 
 }

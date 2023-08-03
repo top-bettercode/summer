@@ -124,5 +124,4 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : 
         }
     }
 
-    companion object
 }

@@ -31,5 +31,4 @@ class ExcelImportException(message: String?,
             }
     }
 
-    companion object
 }

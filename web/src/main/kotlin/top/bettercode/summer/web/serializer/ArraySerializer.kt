@@ -47,5 +47,4 @@ class ArraySerializer @JvmOverloads constructor(
         return this
     }
 
-    companion object
 }

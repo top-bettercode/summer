@@ -50,5 +50,4 @@ class DivisionSerializer @JvmOverloads constructor(private val vnode: Boolean = 
         serialize(value, gen, provider)
     }
 
-    companion object
 }

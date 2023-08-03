@@ -52,5 +52,4 @@ class StringReplaceSerializer : StdScalarSerializer<String>, ContextualSerialize
         serialize(value, gen, provider)
     }
 
-    companion object
 }

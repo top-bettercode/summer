@@ -14,5 +14,4 @@ class QvodException : RuntimeException {
             writableStackTrace: Boolean
     ) : super(message, cause, enableSuppression, writableStackTrace)
 
-    companion object
 }

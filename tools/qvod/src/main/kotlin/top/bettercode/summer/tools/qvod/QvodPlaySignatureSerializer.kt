@@ -37,5 +37,4 @@ class QvodPlaySignatureSerializer : StdScalarSerializer<String>(
         serialize(value, gen, provider)
     }
 
-    companion object
 }

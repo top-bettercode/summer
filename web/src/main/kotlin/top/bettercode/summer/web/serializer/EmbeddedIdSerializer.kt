@@ -27,5 +27,4 @@ class EmbeddedIdSerializer @JvmOverloads constructor(private val delimiter: Stri
         return prov.findNullValueSerializer(null)
     }
 
-    companion object
 }

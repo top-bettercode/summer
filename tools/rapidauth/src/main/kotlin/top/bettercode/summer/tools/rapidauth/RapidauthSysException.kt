@@ -8,5 +8,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class RapidauthSysException(message: String) : IllegalArgumentException("腾讯云号码认证：$message") {
-    companion object
 }

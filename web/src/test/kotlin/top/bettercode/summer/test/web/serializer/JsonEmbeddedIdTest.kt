@@ -35,7 +35,6 @@ class JsonEmbeddedIdTest {
             return "$id,$key"
         }
 
-        companion object
     }
 
     val objectMapper = ObjectMapper()

@@ -71,5 +71,4 @@ open class ApiAccessToken : Serializable {
         this.additionalInformation = additionalInformation
     }
 
-    companion object
 }

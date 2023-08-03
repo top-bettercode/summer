@@ -8,5 +8,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class AMapSysException(message: String) : IllegalArgumentException("高德地图：$message") {
-    companion object
 }

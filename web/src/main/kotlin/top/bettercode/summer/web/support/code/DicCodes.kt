@@ -26,5 +26,4 @@ class DicCodes //--------------------------------------------
         return null
     }
 
-    companion object
 }

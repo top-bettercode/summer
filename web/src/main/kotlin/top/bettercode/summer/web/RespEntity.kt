@@ -78,7 +78,6 @@ class RespEntity<T> : IRespEntity, Serializable {
             return this
         }
 
-        companion object
     }
 
     companion object {

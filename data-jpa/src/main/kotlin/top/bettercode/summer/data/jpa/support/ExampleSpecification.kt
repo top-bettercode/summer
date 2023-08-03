@@ -27,5 +27,4 @@ internal class ExampleSpecification<T>(example: Example<T>, escapeCharacter: Esc
         return QueryByExamplePredicateBuilder.getPredicate(root, cb, example, escapeCharacter)
     }
 
-    companion object
 }

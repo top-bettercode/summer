@@ -58,5 +58,4 @@ class HtmlParserSerializer : StdScalarSerializer<String>, ContextualSerializer {
         serialize(value, gen, provider)
     }
 
-    companion object
 }

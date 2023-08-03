@@ -15,5 +15,4 @@ class RawValuePlusSerializer<T> : RawSerializer<T>(String::class.java) {
         }
     }
 
-    companion object
 }

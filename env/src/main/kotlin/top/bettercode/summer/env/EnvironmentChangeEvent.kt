@@ -15,5 +15,4 @@ class EnvironmentChangeEvent(
 
     constructor(keys: Set<String>) : this(keys, keys)
 
-    companion object
 }

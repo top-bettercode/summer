@@ -33,5 +33,4 @@ class ApiToken : Serializable {
         return ApiAccessToken(this)
     }
 
-    companion object
 }

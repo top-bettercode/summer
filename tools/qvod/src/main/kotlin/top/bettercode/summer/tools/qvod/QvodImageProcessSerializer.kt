@@ -84,5 +84,4 @@ class QvodImageProcessSerializer @JvmOverloads constructor(
         return this
     }
 
-    companion object
 }

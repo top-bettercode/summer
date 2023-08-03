@@ -19,5 +19,4 @@ class UserDetailsAuthenticationToken(private val userDetails: UserDetails) : Abs
         return userDetails
     }
 
-    companion object
 }

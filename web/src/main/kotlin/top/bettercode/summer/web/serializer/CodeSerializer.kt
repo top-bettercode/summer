@@ -79,5 +79,4 @@ class CodeSerializer(codeServiceRef: String?, private val codeType: String, priv
         serialize(value, gen, provider)
     }
 
-    companion object
 }

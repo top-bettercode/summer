@@ -70,5 +70,4 @@ class WeixinToken() : HashMap<String, Any?>() {
         this.message = message ?: ""
     }
 
-    companion object
 }

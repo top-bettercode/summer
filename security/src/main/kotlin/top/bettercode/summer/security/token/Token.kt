@@ -4,5 +4,4 @@ import java.time.Instant
 
 class Token(val tokenValue: String, issuedAt: Instant?, expiresAt: Instant?) : InstantAt(issuedAt, expiresAt) {
 
-    companion object
 }

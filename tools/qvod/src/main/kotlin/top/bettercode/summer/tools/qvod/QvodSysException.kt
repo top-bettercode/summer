@@ -8,5 +8,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class QvodSysException(message: String) : IllegalArgumentException("腾讯云点播：$message") {
-    companion object
 }
