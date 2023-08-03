@@ -18,7 +18,7 @@ class ApiSignHandlerInterceptor(private var apiSignAlgorithm: ApiSignAlgorithm) 
         return Ordered.HIGHEST_PRECEDENCE + 20
     }
 
-    override fun preHandlerMethod(request: HttpServletRequest?, response: HttpServletResponse?, handler: HandlerMethod?): Boolean {
+    override fun preHandlerMethod(request: HttpServletRequest, response: HttpServletResponse, handler: HandlerMethod): Boolean {
         if (apiSignAlgorithm.properties.requiredSign(handler)) {
             apiSignAlgorithm.checkSign(request)
         }

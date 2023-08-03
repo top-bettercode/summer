@@ -23,8 +23,8 @@ class ApiSignAlgorithm(val properties: ApiSignProperties) {
 
      * @param request 请求
      */
-    fun checkSign(request: HttpServletRequest?) {
-        if (request!!.parameterMap.isEmpty() && isSimple)
+    fun checkSign(request: HttpServletRequest) {
+        if (request.parameterMap.isEmpty() && isSimple)
             return
 
         val signParameter = properties.parameterName

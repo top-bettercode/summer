@@ -48,14 +48,13 @@ open class ApiSignProperties {
         if (handler !is HandlerMethod) {
             return false
         }
-        val handlerMethod = handler
-        if (handlerMethod.bean is ErrorController) {
+        if (handler.bean is ErrorController) {
             return false
         }
-        if (handlerMethod.hasMethodAnnotation(ApiSignIgnore::class.java)) {
+        if (handler.hasMethodAnnotation(ApiSignIgnore::class.java)) {
             return false
         }
-        val beanType = handlerMethod.beanType
+        val beanType = handler.beanType
         if (beanType.isAnnotationPresent(ApiSignIgnore::class.java)) {
             return false
         }

@@ -5,7 +5,6 @@ import top.bettercode.summer.tools.lang.util.AnnotatedUtils.getAnnotation
 import top.bettercode.summer.web.servlet.NotErrorHandlerInterceptor
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
@@ -15,18 +14,24 @@ import kotlin.time.toJavaDuration
  * @author Peter Wu
  */
 class FormDuplicateCheckInterceptor(private val formkeyService: IFormkeyService, private val formKeyName: String) : NotErrorHandlerInterceptor {
-    override fun preHandlerMethod(request: HttpServletRequest?, response: HttpServletResponse?,
-                                  handler: HandlerMethod?): Boolean {
-        val annotation = getAnnotation(handler!!, FormDuplicateCheck::class.java)
-        return formkeyService.checkRequest(request, formKeyName, annotation != null, annotation?.expireSeconds?.seconds?.toJavaDuration(), annotation?.message ?: DEFAULT_MESSAGE)
+    override fun preHandlerMethod(request: HttpServletRequest, response: HttpServletResponse, handler: HandlerMethod): Boolean {
+        val annotation = getAnnotation(handler, FormDuplicateCheck::class.java)
+        val expireSeconds = annotation?.expireSeconds
+        val ttl = if (expireSeconds != null && expireSeconds > 0) {
+            expireSeconds.seconds.toJavaDuration()
+        } else {
+            null
+        }
+        return formkeyService.checkRequest(request, formKeyName, annotation != null, ttl, annotation?.message
+                ?: DEFAULT_MESSAGE)
     }
 
-    override fun afterCompletionMethod(request: HttpServletRequest?, response: HttpServletResponse?, handler: HandlerMethod?, ex: Throwable?) {
+    override fun afterCompletionMethod(request: HttpServletRequest, response: HttpServletResponse, handler: HandlerMethod, ex: Throwable?) {
         var e = ex
         if (e == null) {
-            e = getError(request!!)
+            e = getError(request)
         }
-        if (e != null && request != null) {
+        if (e != null) {
             formkeyService.cleanKey(request)
         }
     }

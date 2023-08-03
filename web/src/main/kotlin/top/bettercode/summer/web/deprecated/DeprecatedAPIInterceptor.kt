@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletResponse
  * @author Peter Wu
  */
 class DeprecatedAPIInterceptor(private val messageSource: MessageSource) : NotErrorHandlerInterceptor {
-    override fun preHandlerMethod(request: HttpServletRequest?, response: HttpServletResponse?,
-                                  handler: HandlerMethod?): Boolean {
-        val annotation = getAnnotation(handler!!,
+    override fun preHandlerMethod(request: HttpServletRequest, response: HttpServletResponse,
+                                  handler: HandlerMethod): Boolean {
+        val annotation = getAnnotation(handler,
                 DeprecatedAPI::class.java)
         check(annotation == null) { getText(request, annotation!!.message) }
         return true

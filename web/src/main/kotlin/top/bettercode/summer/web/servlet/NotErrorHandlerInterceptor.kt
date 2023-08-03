@@ -19,16 +19,15 @@ interface NotErrorHandlerInterceptor : AsyncHandlerInterceptor {
                            response: HttpServletResponse,
                            handler: Any): Boolean {
         if (handler is HandlerMethod) {
-            val handlerMethod = handler
-            return if (ErrorController::class.java.isAssignableFrom(handlerMethod.beanType)) {
+            return if (ErrorController::class.java.isAssignableFrom(handler.beanType)) {
                 true
-            } else preHandlerMethod(request, response, handlerMethod)
+            } else preHandlerMethod(request, response, handler)
         }
         return true
     }
 
-    fun preHandlerMethod(request: HttpServletRequest?, response: HttpServletResponse?,
-                         handler: HandlerMethod?): Boolean {
+    fun preHandlerMethod(request: HttpServletRequest, response: HttpServletResponse,
+                         handler: HandlerMethod): Boolean {
         return true
     }
 
@@ -41,8 +40,8 @@ interface NotErrorHandlerInterceptor : AsyncHandlerInterceptor {
         }
     }
 
-    fun afterCompletionMethod(request: HttpServletRequest?, response: HttpServletResponse?,
-                              handler: HandlerMethod?, ex: Throwable?) {
+    fun afterCompletionMethod(request: HttpServletRequest, response: HttpServletResponse,
+                              handler: HandlerMethod, ex: Throwable?) {
     }
 
     fun getError(request: HttpServletRequest): Throwable? {
