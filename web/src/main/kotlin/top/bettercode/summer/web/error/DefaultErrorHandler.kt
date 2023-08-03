@@ -104,7 +104,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
     }
 
     private fun handleFieldError(errors: MutableMap<String?, String?>,
-                                 fieldErrors: List<FieldError>, separator: String): String? {
+                                 fieldErrors: List<FieldError>, separator: String): String {
         var message: String?
         for (fieldError in fieldErrors) {
             var defaultMessage = fieldError.defaultMessage
@@ -141,7 +141,7 @@ class DefaultErrorHandler(messageSource: MessageSource,
             }
             errors[field] = msg
         }
-        message = errors.values.iterator().next()
+        message = errors.values.joinToString()
         if (!StringUtils.hasText(message)) {
             message = "data.valid.failed"
         }

@@ -7,8 +7,6 @@ import top.bettercode.summer.web.error.AbstractErrorHandler
 import java.time.format.DateTimeParseException
 import javax.servlet.http.HttpServletRequest
 import javax.validation.ConstraintViolationException
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.collections.set
 
 /**
@@ -42,8 +40,9 @@ class ExcelErrorHandler(messageSource: MessageSource?,
                     errors[key] = title + ": " + value + getText(msg ?: "未知错误")
                 }
             }
-            val (key, value) = errors.entries.iterator().next()
-            message = key + separator + value
+            message = errors.entries.joinToString() {
+                it.key + separator + it.value
+            }
         }
         if (StringUtils.hasText(message)) {
             respEntity.message = message

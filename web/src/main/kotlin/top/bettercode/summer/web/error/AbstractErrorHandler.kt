@@ -53,7 +53,7 @@ abstract class AbstractErrorHandler(private val messageSource: MessageSource,
             }
             errors[property] = msg
         }
-        message = errors.values.iterator().next()
+        message = errors.values.joinToString()
         if (!StringUtils.hasText(message)) {
             message = "data.valid.failed"
         }
