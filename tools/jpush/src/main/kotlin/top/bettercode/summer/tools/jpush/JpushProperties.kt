@@ -26,7 +26,7 @@ open class JpushProperties {
      * APNs 是否生产环境 该字段仅对 iOS 的 Notification 有效，如果不指定则为推送生产环境。注意：JPush 服务端 SDK 默认设置为推送 “开发环境”。
      * true：表示推送生产环境。 false：表示推送开发环境。
      */
-    var isAapnsProduction = false
+    var apnsProduction = false
 
     /**
      * 离线消息保留时长 (秒) 推送当前用户不在线时，为该用户保留多长时间的离线消息，以便其上线时再次推送。 默认 86400 （1 天），普通用户最长 3 天， VIP 用户最长 10
