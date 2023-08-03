@@ -17,20 +17,20 @@ class MybatisResultTransformer(private val mappedStatement: MappedStatement?) : 
         return NativeTupleImpl(tuple, aliases)
     }
 
-    override fun transformList(list: List<*>): List<*> {
+    override fun transformList(list: List<*>): List<Any?>? {
         @Suppress("UNCHECKED_CAST")
         return transformListResultSet(TupleResultSet(list as List<Tuple>), Int.MAX_VALUE)
     }
 
-    fun transformResultSet(resultSet: ResultSet?): Any {
-        return this.transformListResultSet(resultSet, 1)[0]!!
+    fun transformResultSet(resultSet: ResultSet?): Any? {
+        return this.transformListResultSet(resultSet, 1)?.get(0)
     }
 
-    fun transformListResultSet(resultSet: ResultSet): List<*> {
+    fun transformListResultSet(resultSet: ResultSet): List<Any?>? {
         return transformListResultSet(resultSet, resultSet.fetchSize)
     }
 
-    fun transformListResultSet(resultSet: ResultSet?, maxRows: Int): List<*> {
+    fun transformListResultSet(resultSet: ResultSet?, maxRows: Int): List<Any?>? {
         var maxRows1 = maxRows
         return try {
             if (maxRows1 == 0) {

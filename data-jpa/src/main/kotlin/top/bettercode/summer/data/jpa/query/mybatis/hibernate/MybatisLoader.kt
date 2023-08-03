@@ -26,7 +26,7 @@ class MybatisLoader(customQuery: CustomQuery?, factory: SessionFactoryImplemento
     override fun loadSingleRow(
             resultSet: ResultSet, session: SharedSessionContractImplementor,
             queryParameters: QueryParameters, returnProxies: Boolean
-    ): Any {
+    ): Any? {
         return if (mybatisQuery) {
             (queryParameters.resultTransformer as MybatisResultTransformer).transformResultSet(
                     resultSet)
