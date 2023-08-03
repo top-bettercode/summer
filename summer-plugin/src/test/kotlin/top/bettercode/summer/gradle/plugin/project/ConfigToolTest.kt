@@ -1,5 +1,6 @@
 package top.bettercode.summer.gradle.plugin.project
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -9,14 +10,8 @@ import java.io.File
  */
 internal class ConfigToolTest {
 
+    @Disabled
     @Test
     fun prettyConfig() {
-        ConfigTool.prettyConfig(
-                File("/data/repositories/bettercode/wintruelife/acitve/npk/conf"),
-                listOf(
-                        File("/data/repositories/bettercode/wintruelife/acitve/npk/admin/src/main/resources/application.yml"),
-                        File("/data/repositories/bettercode/wintruelife/acitve/npk/app/src/main/resources/application.yml")
-                )
-        )
     }
 }
