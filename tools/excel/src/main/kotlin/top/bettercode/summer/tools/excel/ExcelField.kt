@@ -264,13 +264,16 @@ open class ExcelField<T, P : Any?> {
             val javaClass = propertyGetter::class.java
             val declaredFields = javaClass.declaredFields
             if (declaredFields.isNotEmpty()) {
-                val field = javaClass.getDeclaredField("function")
-                field.isAccessible = true
-                val get = field.get(propertyGetter)
-                if (get is PropertyReference) {
-                    propertyType = get.returnType.javaType as Class<*>
-                    entityType = (get.owner as KClass<*>).java as Class<T>
-                    propertyName = get.name
+                try {
+                    val field = javaClass.getDeclaredField("function")
+                    field.isAccessible = true
+                    val get = field.get(propertyGetter)
+                    if (get is PropertyReference) {
+                        propertyType = get.returnType.javaType as Class<*>
+                        entityType = (get.owner as KClass<*>).java as Class<T>
+                        propertyName = get.name
+                    }
+                } catch (_: NoSuchFieldException) {
                 }
             }
             if (propertyType == null) {
