@@ -320,4 +320,20 @@ open class GeneratorExtension(
                 }
             }
         }
+    val modules: Array<String>
+        get() {
+            return when (dataType) {
+                DataType.DATABASE -> {
+                    datasources.keys.toTypedArray()
+                }
+
+                DataType.PUML -> {
+                    pumlSources.keys.toTypedArray()
+                }
+
+                DataType.PDM -> {
+                    pdmSources.keys.toTypedArray()
+                }
+            }
+        }
 }
