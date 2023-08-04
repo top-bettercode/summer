@@ -28,7 +28,7 @@ class FormDuplicateCheckInterceptor(private val formkeyService: IFormkeyService,
     override fun afterCompletionMethod(request: HttpServletRequest, response: HttpServletResponse, handler: HandlerMethod, ex: Throwable?) {
         var e = ex
         if (e == null) {
-            e = getError(request)
+            e = NotErrorHandlerInterceptor.getError(request)
         }
         if (e != null) {
             formkeyService.cleanKey(request)

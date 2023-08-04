@@ -19,7 +19,7 @@ interface NotErrorHandlerInterceptor : AsyncHandlerInterceptor {
                            response: HttpServletResponse,
                            handler: Any): Boolean {
         if (handler is HandlerMethod) {
-            return if (ErrorController::class.java.isAssignableFrom(handler.beanType)) {
+            return if (isErrorController(handler)) {
                 true
             } else preHandlerMethod(request, response, handler)
         }
@@ -33,26 +33,32 @@ interface NotErrorHandlerInterceptor : AsyncHandlerInterceptor {
 
     override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, @Nullable ex: java.lang.Exception?) {
         if (handler is HandlerMethod) {
-            if (ErrorController::class.java.isAssignableFrom(handler.beanType)) {
+            if (isErrorController(handler)) {
                 return
             }
             afterCompletionMethod(request, response, handler, ex)
         }
     }
 
+
     fun afterCompletionMethod(request: HttpServletRequest, response: HttpServletResponse,
                               handler: HandlerMethod, ex: Throwable?) {
     }
 
-    fun getError(request: HttpServletRequest): Throwable? {
-        var exception = request.getAttribute(ERROR_INTERNAL_ATTRIBUTE) as Throwable?
-        if (exception == null) {
-            exception = request.getAttribute(RequestDispatcher.ERROR_EXCEPTION) as Throwable?
-        }
-        return exception
-    }
-
     companion object {
+
         val ERROR_INTERNAL_ATTRIBUTE = DefaultErrorAttributes::class.java.name + ".ERROR"
+
+        fun getError(request: HttpServletRequest): Throwable? {
+            var exception = request.getAttribute(ERROR_INTERNAL_ATTRIBUTE) as Throwable?
+            if (exception == null) {
+                exception = request.getAttribute(RequestDispatcher.ERROR_EXCEPTION) as Throwable?
+            }
+            return exception
+        }
+
+        fun isErrorController(handler: Any) = handler is HandlerMethod &&
+                ErrorController::class.java.isAssignableFrom(handler.beanType)
+
     }
 }
