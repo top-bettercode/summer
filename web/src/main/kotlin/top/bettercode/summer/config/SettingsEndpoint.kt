@@ -1,6 +1,7 @@
 package top.bettercode.summer.config
 
 import org.springframework.boot.actuate.endpoint.annotation.*
+import org.springframework.lang.Nullable
 import top.bettercode.summer.tools.lang.property.PropertiesSource
 import top.bettercode.summer.tools.lang.property.Settings
 import java.util.*
@@ -12,7 +13,7 @@ import java.util.*
 class SettingsEndpoint {
 
     @WriteOperation
-    fun write(@Selector baseName: String?, key: String?, value: String?): Any {
+    fun write(@Selector baseName: String?, @Nullable key: String?, @Nullable value: String?): Any {
         val propertiesSource: PropertiesSource? = Settings[baseName]
         return if (propertiesSource == null) {
             emptyMap<Any, Any>()
