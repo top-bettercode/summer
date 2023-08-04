@@ -105,6 +105,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
             message = getText(webRequest, "data.not.unique.result")
         }
         setErrorInfo(webRequest, httpStatusCode, message, error)
+        respEntity.httpStatusCode = httpStatusCode
         respEntity.status = statusCode
         respEntity.message = message
         if (errors.isNotEmpty()) {
