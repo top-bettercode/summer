@@ -80,7 +80,7 @@ class ApiTokenEndpointFilter @JvmOverloads constructor(
         val apiTokenRepository = apiTokenService.apiTokenRepository
         val securityProperties = apiTokenService.securityProperties
         if (tokenEndpointMatcher.matches(request)) {
-            formkeyService.checkRequest(request, summerWebProperties.formKeyName, true, null, FormDuplicateCheckInterceptor.DEFAULT_MESSAGE)
+            formkeyService.checkRequest(request = request, formKeyName = summerWebProperties.formKeyName, autoFormKey = true, ttl = null, message = null)
             try {
                 authenticateBasic(request)
                 val grantType = request.getParameter(SecurityParameterNames.GRANT_TYPE)

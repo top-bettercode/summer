@@ -21,8 +21,8 @@ class FormDuplicateCheckInterceptor(private val formkeyService: IFormkeyService,
         } else {
             null
         }
-        return formkeyService.checkRequest(request, formKeyName, annotation != null, ttl, annotation?.message
-                ?: DEFAULT_MESSAGE)
+        return formkeyService.checkRequest(request = request, formKeyName = formKeyName, autoFormKey = annotation != null, ttl = ttl, message = annotation?.message
+        )
     }
 
     override fun afterCompletionMethod(request: HttpServletRequest, response: HttpServletResponse, handler: HandlerMethod, ex: Throwable?) {
@@ -37,6 +37,6 @@ class FormDuplicateCheckInterceptor(private val formkeyService: IFormkeyService,
 
     companion object {
         val FORM_KEY = FormDuplicateCheckInterceptor::class.java.name + ".form_key"
-        const val DEFAULT_MESSAGE = "您提交的太快了，请稍候再试。"
+        const val DEFAULT_MESSAGE = "form.duplicate"
     }
 }

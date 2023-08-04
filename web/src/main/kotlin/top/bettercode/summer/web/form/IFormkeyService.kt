@@ -21,19 +21,19 @@ interface IFormkeyService {
 
     fun checkRequest(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, ttl: Duration?, message: String?): Boolean {
         val formkey = getFormkey(request, formKeyName, autoFormKey)
-        return checkRequest(request, formkey, ttl, message)
+        return checkRequest(request = request, formkey = formkey, ttl = ttl, message = message)
     }
 
     fun checkRequest(request: HttpServletRequest?, formKeyName: String?, autoFormKey: Boolean, ttl: Duration?, message: String?, ignoreHeaders: Array<String>? = null, ignoreParams: Array<String>? = null): Boolean {
         val formkey = getFormkey(request, formKeyName, autoFormKey, ignoreHeaders, ignoreParams)
-        return checkRequest(request, formkey, ttl, message)
+        return checkRequest(request = request, formkey = formkey, ttl = ttl, message = message)
     }
 
     fun checkRequest(request: HttpServletRequest?, formkey: String?, ttl: Duration?, message: String?): Boolean {
         return if (formkey == null) {
             true
         } else if (exist(formkey, ttl)) {
-            throw FormDuplicateException(message)
+            throw FormDuplicateException(message ?: FormDuplicateCheckInterceptor.DEFAULT_MESSAGE)
         } else {
             request!!.setAttribute(FormDuplicateCheckInterceptor.FORM_KEY, formkey)
             true
