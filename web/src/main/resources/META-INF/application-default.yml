@@ -141,3 +141,4 @@ logging:
     top.bettercode.summer.config.NavFilter: info
     top.bettercode.summer.logging.RequestLoggingFilter: info
     top.bettercode.summer.logging.RequestContentReadFilter: info
+    okhttp3.internal: info
