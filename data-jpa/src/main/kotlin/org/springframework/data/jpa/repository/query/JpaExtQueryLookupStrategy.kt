@@ -9,7 +9,6 @@ import org.springframework.data.repository.core.RepositoryMetadata
 import org.springframework.data.repository.query.QueryLookupStrategy
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider
 import org.springframework.data.repository.query.RepositoryQuery
-import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
@@ -40,7 +39,7 @@ object JpaExtQueryLookupStrategy {
      */
     fun create(
             em: EntityManager, configuration: Configuration,
-            @Nullable key: QueryLookupStrategy.Key?,
+            key: QueryLookupStrategy.Key?,
             extractor: QueryExtractor,
             evaluationContextProvider: QueryMethodEvaluationContextProvider,
             escape: EscapeCharacter,
@@ -161,8 +160,7 @@ object JpaExtQueryLookupStrategy {
                     method))
         }
 
-        @Nullable
-        private fun getCountQuery(
+            private fun getCountQuery(
                 method: JpaQueryMethod, namedQueries: NamedQueries,
                 em: EntityManager
         ): String? {

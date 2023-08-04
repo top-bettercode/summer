@@ -25,7 +25,6 @@ import top.bettercode.summer.web.support.packagescan.PackageScanClassResolver
 import java.lang.reflect.ParameterizedType
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
 
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureBefore(JacksonAutoConfiguration::class)
@@ -55,7 +54,7 @@ class ObjectMapperBuilderCustomizer : Jackson2ObjectMapperBuilderCustomizer {
             val beanClass = beanDefinition.beanClass
             val annotation = AnnotatedElementUtils.findMergedAnnotation(beanClass,
                     SpringBootApplication::class.java)!!
-            for (packageClass in Objects.requireNonNull<SpringBootApplication>(annotation).scanBasePackageClasses) {
+            for (packageClass in annotation.scanBasePackageClasses) {
                 packages.add(packageClass::class.java.getPackage().name)
             }
             packages.addAll(listOf(*annotation.scanBasePackages))

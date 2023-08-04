@@ -23,8 +23,7 @@ class EnvironmentManager(private val environment: ConfigurableEnvironment) : App
     init {
         val sources = environment.propertySources
         if (sources.contains(MANAGER_PROPERTY_SOURCE)) {
-            @Suppress("UNCHECKED_CAST") val map = Objects.requireNonNull(
-                    sources[MANAGER_PROPERTY_SOURCE])
+            @Suppress("UNCHECKED_CAST") val map = sources[MANAGER_PROPERTY_SOURCE]!!
                     .source as MutableMap<String, Any?>
             this.map = map
         } else {

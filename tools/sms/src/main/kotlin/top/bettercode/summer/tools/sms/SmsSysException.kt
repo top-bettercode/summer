@@ -7,5 +7,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  * @author Peter Wu
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-class SmsSysException(message: String) : IllegalArgumentException("短信平台：$message") {
-}
+class SmsSysException(message: String) : IllegalArgumentException("短信平台：$message")

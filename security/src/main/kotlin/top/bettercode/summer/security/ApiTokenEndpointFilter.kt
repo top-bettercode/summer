@@ -26,7 +26,6 @@ import top.bettercode.summer.tools.lang.util.AnnotatedUtils.hasAnnotation
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.RespEntity.Companion.ok
 import top.bettercode.summer.web.exception.UnauthorizedException
-import top.bettercode.summer.web.form.FormDuplicateCheckInterceptor
 import top.bettercode.summer.web.form.IFormkeyService
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder.getHandler

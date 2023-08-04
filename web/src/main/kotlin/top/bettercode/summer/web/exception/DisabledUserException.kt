@@ -9,5 +9,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  * @author Peter Wu
  */
 @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "disabledUser")
-class DisabledUserException @JvmOverloads constructor(message: String? = "disabledUser", cause: Throwable? = null) : RuntimeException(message, cause) {
-}
+class DisabledUserException @JvmOverloads constructor(message: String? = "disabledUser", cause: Throwable? = null) : RuntimeException(message, cause)

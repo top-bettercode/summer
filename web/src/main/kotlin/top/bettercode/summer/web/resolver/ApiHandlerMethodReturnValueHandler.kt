@@ -6,7 +6,6 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
-import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.context.request.NativeWebRequest
@@ -28,7 +27,7 @@ class ApiHandlerMethodReturnValueHandler(
         return delegate.supportsReturnType(returnType)
     }
 
-    override fun handleReturnValue(@Nullable returnValue: Any?, returnType: MethodParameter, mavContainer: ModelAndViewContainer, webRequest: NativeWebRequest) {
+    override fun handleReturnValue(returnValue: Any?, returnType: MethodParameter, mavContainer: ModelAndViewContainer, webRequest: NativeWebRequest) {
         var returnVal = returnValue
         val typeContainingClass = returnType.containingClass
         val parameterType = returnType.parameterType

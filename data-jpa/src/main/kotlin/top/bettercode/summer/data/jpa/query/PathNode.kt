@@ -1,11 +1,10 @@
 package top.bettercode.summer.data.jpa.query
 
-import org.springframework.lang.Nullable
 import org.springframework.util.ObjectUtils
 
-class PathNode(val name: String, @field:Nullable @param:Nullable val parent: PathNode?, @field:Nullable @param:Nullable val value: Any?) {
+class PathNode(val name: String, val parent: PathNode?, val value: Any?) {
     val siblings: MutableList<PathNode> = ArrayList()
-    fun add(attribute: String, @Nullable value: Any?): PathNode {
+    fun add(attribute: String, value: Any?): PathNode {
         val node = PathNode(attribute, this, value)
         siblings.add(node)
         return node

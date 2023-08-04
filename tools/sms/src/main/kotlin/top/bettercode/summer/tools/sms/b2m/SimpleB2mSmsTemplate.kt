@@ -11,7 +11,6 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
-import org.springframework.lang.Nullable
 import org.springframework.util.DigestUtils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
@@ -44,7 +43,7 @@ class SimpleB2mSmsTemplate(
                         return true
                     }
 
-                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
                         return true
                     }
                 }

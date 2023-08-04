@@ -3,7 +3,6 @@ package top.bettercode.summer.security.repository
 import org.springframework.core.convert.converter.Converter
 import org.springframework.core.serializer.support.DeserializingConverter
 import org.springframework.core.serializer.support.SerializingConverter
-import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 
 class JdkSerializationSerializer @JvmOverloads constructor(
@@ -13,7 +12,7 @@ class JdkSerializationSerializer @JvmOverloads constructor(
     private val serializer: Converter<Any, ByteArray>
     private val deserializer: Converter<ByteArray, Any>
 
-    constructor(@Nullable classLoader: ClassLoader?) : this(SerializingConverter(), DeserializingConverter(classLoader!!))
+    constructor(classLoader: ClassLoader?) : this(SerializingConverter(), DeserializingConverter(classLoader!!))
 
     init {
         Assert.notNull(serializer, "Serializer must not be null!")
@@ -22,17 +21,17 @@ class JdkSerializationSerializer @JvmOverloads constructor(
         this.deserializer = deserializer
     }
 
-    fun deserialize(@Nullable bytes: ByteArray): Any? {
+    fun deserialize(bytes: ByteArray?): Any? {
         return if (isEmpty(bytes)) {
             null
         } else try {
-            deserializer.convert(bytes)
+            deserializer.convert(bytes!!)
         } catch (ex: Exception) {
             throw RuntimeException("Cannot deserialize", ex)
         }
     }
 
-    fun serialize(@Nullable `object`: Any?): ByteArray {
+    fun serialize(`object`: Any?): ByteArray {
         return if (`object` == null) {
             EMPTY_ARRAY
         } else try {

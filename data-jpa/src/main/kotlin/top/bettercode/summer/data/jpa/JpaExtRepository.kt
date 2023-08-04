@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.query.QueryByExampleExecutor
-import org.springframework.lang.Nullable
 import org.springframework.transaction.annotation.Transactional
 import top.bettercode.summer.data.jpa.query.RecycleExecutor
 import java.util.*
@@ -65,7 +64,7 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
      * @param pageable 分页信息
      * @return 分页数据
      */
-    fun findHardAll(@Nullable spec: Specification<T>?, pageable: Pageable): Page<T>
+    fun findHardAll(spec: Specification<T>?, pageable: Pageable): Page<T>
 
     /**
      * 包括已逻辑删除的数据

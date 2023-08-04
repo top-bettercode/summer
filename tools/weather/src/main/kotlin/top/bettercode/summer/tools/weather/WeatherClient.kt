@@ -7,7 +7,6 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.lang.Nullable
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.weather.WeatherClient.Companion.LOG_MARKER
@@ -35,11 +34,11 @@ open class WeatherClient(
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
                 object : MappingJackson2HttpMessageConverter() {
-                    override fun canRead(@Nullable mediaType: MediaType?): Boolean {
+                    override fun canRead(mediaType: MediaType?): Boolean {
                         return true
                     }
 
-                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
                         return true
                     }
                 }

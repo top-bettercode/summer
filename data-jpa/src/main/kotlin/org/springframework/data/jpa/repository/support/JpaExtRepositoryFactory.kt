@@ -23,7 +23,6 @@ import org.springframework.data.repository.core.support.RepositoryFactorySupport
 import org.springframework.data.repository.core.support.SurroundingTransactionDetectorMethodInterceptor
 import org.springframework.data.repository.query.QueryLookupStrategy
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider
-import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.util.ReflectionUtils
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
@@ -126,7 +125,7 @@ class JpaExtRepositoryFactory(
         return factory
     }
 
-    override fun getQueryLookupStrategy(@Nullable key: QueryLookupStrategy.Key?, evaluationContextProvider: QueryMethodEvaluationContextProvider): Optional<QueryLookupStrategy> {
+    override fun getQueryLookupStrategy(key: QueryLookupStrategy.Key?, evaluationContextProvider: QueryMethodEvaluationContextProvider): Optional<QueryLookupStrategy> {
         return Optional.of(
                 JpaExtQueryLookupStrategy.create(entityManager, configuration, key, extractor, evaluationContextProvider,
                         escapeCharacter,

@@ -11,5 +11,4 @@ class DicCodes(
         val name: String,
         var javaType: JavaType,
         val codes: MutableMap<Serializable, String> = mutableMapOf()
-) : Serializable {
-}
+) : Serializable

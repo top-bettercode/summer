@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInforma
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper
-import org.springframework.lang.Nullable
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.Assert
 import top.bettercode.summer.data.jpa.JpaExtRepository
@@ -631,7 +630,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
-    override fun count(@Nullable spec: Specification<T>?): Long {
+    override fun count(spec: Specification<T>?): Long {
         var spec1: Specification<T>? = spec
         var mdc = false
         return try {
@@ -1119,13 +1118,13 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
-    override fun countRecycleBin(spec: Specification<T>): Long {
+    override fun countRecycleBin(spec: Specification<T>?): Long {
         var spec1 = spec
         var mdc = false
         return try {
             mdc = mdcPutId(".countRecycleBin")
             if (extJpaSupport.supportSoftDeleted()) {
-                spec1 = spec1.and(deletedSpec)
+                spec1 = if (spec1 == null) deletedSpec else spec1.and(deletedSpec)
             }
             val count = super.count(spec1)
             if (sqlLog.isDebugEnabled) {
@@ -1137,7 +1136,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
-    override fun existsInRecycleBin(spec: Specification<T>): Boolean {
+    override fun existsInRecycleBin(spec: Specification<T>?): Boolean {
         var mdc = false
         return try {
             mdc = mdcPutId(".existsInRecycleBin")

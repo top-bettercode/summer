@@ -9,7 +9,6 @@ import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
-import org.springframework.lang.Nullable
 import org.springframework.util.Base64Utils
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
@@ -49,7 +48,7 @@ class AliSmsTemplate(
                         return true
                     }
 
-                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
                         return true
                     }
                 }

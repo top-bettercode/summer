@@ -8,7 +8,6 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
-import org.springframework.lang.Nullable
 import top.bettercode.summer.tools.lang.util.AESUtil.decrypt
 import top.bettercode.summer.tools.lang.util.AESUtil.encrypt
 import top.bettercode.summer.tools.lang.util.StringUtil.gzip
@@ -43,7 +42,7 @@ class B2mSmsTemplate(
                         return true
                     }
 
-                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
                         return true
                     }
                 }

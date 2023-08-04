@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.StringUtils
@@ -85,7 +84,7 @@ class LogsEndpoint(
     }
 
     @ReadOperation
-    fun path(@Selector(match = Selector.Match.ALL_REMAINING) path: String, @Nullable collapse: Boolean?) {
+    fun path(@Selector(match = Selector.Match.ALL_REMAINING) path: String, collapse: Boolean?) {
         if ("real-time" != path) {
             val paths = path.split(",")
             if (paths[0] == "daily") {

@@ -7,5 +7,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  * @author Peter Wu
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-class QvodSysException(message: String) : IllegalArgumentException("腾讯云点播：$message") {
-}
+class QvodSysException(message: String) : IllegalArgumentException("腾讯云点播：$message")

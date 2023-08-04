@@ -7,5 +7,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  * @author Peter Wu
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-class FormDuplicateException(message: String?) : RuntimeException(message) {
-}
+class FormDuplicateException(message: String?) : RuntimeException(message)

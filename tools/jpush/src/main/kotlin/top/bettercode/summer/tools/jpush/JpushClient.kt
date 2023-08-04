@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.*
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.lang.Nullable
 import org.springframework.web.client.HttpClientErrorException
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.jpush.JpushClient.Companion.LOG_MARKER
@@ -37,11 +36,11 @@ open class JpushClient(
     init {
         val messageConverter: MappingJackson2HttpMessageConverter =
                 object : MappingJackson2HttpMessageConverter() {
-                    override fun canRead(@Nullable mediaType: MediaType?): Boolean {
+                    override fun canRead(mediaType: MediaType?): Boolean {
                         return true
                     }
 
-                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
                         return true
                     }
                 }

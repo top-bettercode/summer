@@ -2,7 +2,6 @@ package top.bettercode.summer.gradle.plugin.project
 
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.io.File
 
 /**
  *

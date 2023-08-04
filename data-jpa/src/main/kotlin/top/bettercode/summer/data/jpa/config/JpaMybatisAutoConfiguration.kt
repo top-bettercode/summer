@@ -139,7 +139,7 @@ class JpaMybatisAutoConfiguration(
                                 "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration")
                     }
                     configuration1 = org.apache.ibatis.session.Configuration()
-                    Optional.ofNullable(configurationProperties).ifPresent { variables: Properties -> configuration1.variables = variables }
+                    configurationProperties?.let { variables: Properties -> configuration1.variables = variables }
                 }
             }
             val typeAliasesPackage = properties.typeAliasesPackage

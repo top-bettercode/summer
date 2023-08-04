@@ -2,7 +2,6 @@ package top.bettercode.summer.web.servlet
 
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.boot.web.servlet.error.ErrorController
-import org.springframework.lang.Nullable
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.AsyncHandlerInterceptor
 import javax.servlet.RequestDispatcher
@@ -31,7 +30,7 @@ interface NotErrorHandlerInterceptor : AsyncHandlerInterceptor {
         return true
     }
 
-    override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, @Nullable ex: java.lang.Exception?) {
+    override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: java.lang.Exception?) {
         if (handler is HandlerMethod) {
             if (isErrorController(handler)) {
                 return
@@ -47,8 +46,10 @@ interface NotErrorHandlerInterceptor : AsyncHandlerInterceptor {
 
     companion object {
 
+        @JvmStatic
         val ERROR_INTERNAL_ATTRIBUTE = DefaultErrorAttributes::class.java.name + ".ERROR"
 
+        @JvmStatic
         fun getError(request: HttpServletRequest): Throwable? {
             var exception = request.getAttribute(ERROR_INTERNAL_ATTRIBUTE) as Throwable?
             if (exception == null) {
@@ -57,6 +58,7 @@ interface NotErrorHandlerInterceptor : AsyncHandlerInterceptor {
             return exception
         }
 
+        @JvmStatic
         fun isErrorController(handler: Any) = handler is HandlerMethod &&
                 ErrorController::class.java.isAssignableFrom(handler.beanType)
 

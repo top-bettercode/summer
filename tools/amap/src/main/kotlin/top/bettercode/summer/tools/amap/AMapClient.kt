@@ -8,7 +8,6 @@ import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
-import org.springframework.lang.Nullable
 import org.springframework.web.client.DefaultResponseErrorHandler
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.amap.AMapClient.Companion.LOG_MARKER
@@ -38,7 +37,7 @@ class AMapClient(private val amapProperties: AMapProperties) : ApiTemplate(
                         return true
                     }
 
-                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
                         return true
                     }
                 }

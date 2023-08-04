@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.convert.TypeDescriptor
 import org.springframework.core.convert.converter.ConditionalGenericConverter
 import org.springframework.core.convert.converter.GenericConverter
-import org.springframework.lang.Nullable
 import org.springframework.util.StringUtils
 import java.io.IOException
 
@@ -24,7 +23,7 @@ class JsonStringConverter(private val objectMapper: ObjectMapper) : ConditionalG
         return setOf(GenericConverter.ConvertiblePair(String::class.java, MutableCollection::class.java))
     }
 
-    override fun convert(@Nullable source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
+    override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
         if (!StringUtils.hasText(source as String)) {
             return null
         }

@@ -260,8 +260,7 @@ class SapService(properties: SapProperties) {
         ReflectionUtils.doWithFields(returnClass) { field: Field ->
             try {
                 var fieldName = field.name
-                val propertyType = Objects.requireNonNull(
-                        beanWrapper.getPropertyTypeDescriptor(fieldName)).type
+                val propertyType = beanWrapper.getPropertyTypeDescriptor(fieldName)!!.type
                 if (field.isAnnotationPresent(SapStructure::class.java)) {
                     val struAnn = field.getAnnotation(SapStructure::class.java)
                     val fieldObj = toBean(function, out.getStructure(struAnn.value), propertyType)

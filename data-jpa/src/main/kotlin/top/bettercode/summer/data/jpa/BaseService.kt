@@ -139,23 +139,23 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         repository.deleteAll()
     }
 
-    override fun findOne(spec: Specification<T>): Optional<T> {
+    override fun findOne(spec: Specification<T>?): Optional<T> {
         return repository.findOne(spec)
     }
 
-    override fun findAll(spec: Specification<T>): List<T> {
+    override fun findAll(spec: Specification<T>?): List<T> {
         return repository.findAll(spec)
     }
 
-    override fun findAll(spec: Specification<T>, pageable: Pageable): Page<T> {
+    override fun findAll(spec: Specification<T>?, pageable: Pageable): Page<T> {
         return repository.findAll(spec, pageable)
     }
 
-    override fun findAll(spec: Specification<T>, sort: Sort): List<T> {
+    override fun findAll(spec: Specification<T>?, sort: Sort): List<T> {
         return repository.findAll(spec, sort)
     }
 
-    override fun count(spec: Specification<T>): Long {
+    override fun count(spec: Specification<T>?): Long {
         return repository.count(spec)
     }
 }

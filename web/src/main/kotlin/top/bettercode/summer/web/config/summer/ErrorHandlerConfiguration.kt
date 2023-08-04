@@ -14,7 +14,6 @@ import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
-import org.springframework.lang.Nullable
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.servlet.View
 import top.bettercode.summer.web.RespEntity
@@ -66,7 +65,7 @@ class ErrorHandlerConfiguration {
                 return "text/html;charset=utf-8"
             }
 
-            override fun render(@Nullable model: MutableMap<String, *>?, request: HttpServletRequest, response: HttpServletResponse) {
+            override fun render(model: MutableMap<String, *>?, request: HttpServletRequest, response: HttpServletResponse) {
                 if (response.contentType == null) {
                     response.contentType = contentType
                 }

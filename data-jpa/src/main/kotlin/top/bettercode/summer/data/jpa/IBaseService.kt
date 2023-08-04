@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
-import org.springframework.lang.Nullable
 import java.util.*
 
 /**
@@ -50,13 +49,13 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
     fun findAll(size: Int, sort: Sort): List<T>
     fun findAll(pageable: Pageable): Page<T>
     fun findAll(sort: Sort): List<T>
-    fun count(@Nullable spec: Specification<T>): Long
+    fun count(spec: Specification<T>?): Long
     fun exists(spec: Specification<T>): Boolean
-    fun findOne(@Nullable spec: Specification<T>): Optional<T>
+    fun findOne(spec: Specification<T>?): Optional<T>
     fun findFirst(spec: Specification<T>): Optional<T>
-    fun findAll(@Nullable spec: Specification<T>): List<T>
+    fun findAll(spec: Specification<T>?): List<T>
     fun findAll(spec: Specification<T>, size: Int): List<T>
     fun findAll(spec: Specification<T>, size: Int, sort: Sort): List<T>
-    fun findAll(@Nullable spec: Specification<T>, pageable: Pageable): Page<T>
-    fun findAll(@Nullable spec: Specification<T>, sort: Sort): List<T>
+    fun findAll(spec: Specification<T>?, pageable: Pageable): Page<T>
+    fun findAll(spec: Specification<T>?, sort: Sort): List<T>
 }

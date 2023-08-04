@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.ReturnedType
 import org.springframework.data.repository.query.parser.Part
 import org.springframework.data.repository.query.parser.PartTree
 import org.springframework.data.repository.query.parser.PartTree.OrPart
-import org.springframework.lang.Nullable
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.data.jpa.query.JpaQueryLogExecution
 import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
@@ -123,11 +122,9 @@ internal class PartTreeJpaExtQuery internal constructor(
      * @author Thomas Darimont
      */
     private open inner class QueryPreparer(recreateQueries: Boolean) {
-        @Nullable
-        private var cachedCriteriaQuery: CriteriaQuery<*>? = null
+            private var cachedCriteriaQuery: CriteriaQuery<*>? = null
 
-        @Nullable
-        private var cachedParameterBinder: ParameterBinder? = null
+            private var cachedParameterBinder: ParameterBinder? = null
         private val metadataCache = QueryMetadataCache()
 
         init {
@@ -201,7 +198,7 @@ internal class PartTreeJpaExtQuery internal constructor(
             return entityManager.createQuery(criteriaQuery)
         }
 
-        protected open fun createCreator(@Nullable accessor: JpaParametersParameterAccessor?): JpaQueryCreator {
+        protected open fun createCreator(accessor: JpaParametersParameterAccessor?): JpaQueryCreator {
             val entityManager = entityManager
             val builder = entityManager.criteriaBuilder
             val processor = queryMethod.resultProcessor
@@ -247,7 +244,7 @@ internal class PartTreeJpaExtQuery internal constructor(
      * @author Thomas Darimont
      */
     private inner class CountQueryPreparer(recreateQueries: Boolean) : QueryPreparer(recreateQueries) {
-        override fun createCreator(@Nullable accessor: JpaParametersParameterAccessor?): JpaQueryCreator {
+        override fun createCreator(accessor: JpaParametersParameterAccessor?): JpaQueryCreator {
             val entityManager = entityManager
             val builder = entityManager.criteriaBuilder
             val provider: ParameterMetadataProvider = accessor?.let { ParameterMetadataProvider(builder, it, escape) }

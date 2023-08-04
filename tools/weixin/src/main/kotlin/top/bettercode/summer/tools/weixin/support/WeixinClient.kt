@@ -5,7 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.lang.Nullable
 import org.springframework.web.client.getForObject
 import top.bettercode.summer.tools.weixin.properties.IWexinProperties
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccessToken
@@ -51,7 +50,7 @@ open class WeixinClient<T : IWexinProperties>(
                         return true
                     }
 
-                    override fun canWrite(clazz: Class<*>, @Nullable mediaType: MediaType?): Boolean {
+                    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
                         return true
                     }
                 }

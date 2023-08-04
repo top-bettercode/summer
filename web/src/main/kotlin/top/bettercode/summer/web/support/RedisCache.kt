@@ -19,7 +19,6 @@ import org.springframework.data.redis.serializer.RedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
 import org.springframework.data.redis.util.ByteUtils
 import org.springframework.format.support.DefaultFormattingConversionService
-import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.util.ObjectUtils
 import org.springframework.util.ReflectionUtils
@@ -91,8 +90,7 @@ constructor(
      * @param storeValue the original value
      * @return the wrapped value
      */
-    @Nullable
-    private fun toValueWrapper(@Nullable storeValue: Any?): Cache.ValueWrapper? {
+    private fun toValueWrapper(storeValue: Any?): Cache.ValueWrapper? {
         return if (storeValue != null) SimpleValueWrapper(fromStoreValue(storeValue)) else null
     }
 

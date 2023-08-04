@@ -9,5 +9,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  * @author Peter Wu
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-class ResourceNotFoundException @JvmOverloads constructor(message: String? = "resource.not.found", cause: Throwable? = null) : RuntimeException(message, cause) {
-}
+class ResourceNotFoundException @JvmOverloads constructor(message: String? = "resource.not.found", cause: Throwable? = null) : RuntimeException(message, cause)

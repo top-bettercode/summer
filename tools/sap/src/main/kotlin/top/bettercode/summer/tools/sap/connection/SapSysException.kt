@@ -7,5 +7,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  * @author Peter Wu
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-class SapSysException(message: String?) : RuntimeException("SAP系统：$message") {
-}
+class SapSysException(message: String?) : RuntimeException("SAP系统：$message")
