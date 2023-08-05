@@ -13,6 +13,24 @@ open class SystemException : RuntimeException {
     val code: String
     val data: Any?
 
+    constructor(httpStatusCode: Int) : super(propertiesSource.getOrDefault(httpStatusCode.toString(), httpStatusCode.toString())) {
+        this.httpStatusCode = httpStatusCode
+        this.code = httpStatusCode.toString()
+        data = null
+    }
+
+    constructor(httpStatusCode: Int, cause: Throwable?) : super(propertiesSource.getOrDefault(httpStatusCode.toString(), httpStatusCode.toString()), cause) {
+        this.httpStatusCode = httpStatusCode
+        this.code = httpStatusCode.toString()
+        data = null
+    }
+
+    constructor(httpStatusCode: Int, data: Any?) : super(propertiesSource.getOrDefault(httpStatusCode.toString(), httpStatusCode.toString())) {
+        this.httpStatusCode = httpStatusCode
+        this.code = httpStatusCode.toString()
+        this.data = data
+    }
+
     constructor(code: String) : super(propertiesSource.getOrDefault(code, code)) {
         this.httpStatusCode = null
         this.code = code
@@ -27,24 +45,6 @@ open class SystemException : RuntimeException {
 
     constructor(code: String, data: Any?) : super(propertiesSource.getOrDefault(code, code)) {
         this.httpStatusCode = null
-        this.code = code
-        this.data = data
-    }
-
-    constructor(httpStatusCode: Int, code: String) : super(propertiesSource.getOrDefault(code, code)) {
-        this.httpStatusCode = httpStatusCode
-        this.code = code
-        data = null
-    }
-
-    constructor(httpStatusCode: Int, code: String, cause: Throwable?) : super(propertiesSource.getOrDefault(code, code), cause) {
-        this.httpStatusCode = httpStatusCode
-        this.code = code
-        data = null
-    }
-
-    constructor(httpStatusCode: Int, code: String, data: Any?) : super(propertiesSource.getOrDefault(code, code)) {
-        this.httpStatusCode = httpStatusCode
         this.code = code
         this.data = data
     }
@@ -64,6 +64,24 @@ open class SystemException : RuntimeException {
     constructor(code: String, message: String?, data: Any?) : super(message) {
         this.httpStatusCode = null
         this.code = code
+        this.data = data
+    }
+
+    constructor(httpStatusCode: Int, message: String?) : super(message) {
+        this.httpStatusCode = httpStatusCode
+        this.code = httpStatusCode.toString()
+        data = null
+    }
+
+    constructor(httpStatusCode: Int, message: String?, cause: Throwable?) : super(message, cause) {
+        this.httpStatusCode = httpStatusCode
+        this.code = httpStatusCode.toString()
+        data = null
+    }
+
+    constructor(httpStatusCode: Int, message: String?, data: Any?) : super(message) {
+        this.httpStatusCode = httpStatusCode
+        this.code = httpStatusCode.toString()
         this.data = data
     }
 
