@@ -100,7 +100,7 @@ object RootProjectTasks {
             create("genDbScript") { t ->
                 t.group = GeneratorPlugin.genGroup
                 val extension = project.extensions.getByType(GeneratorExtension::class.java)
-                t.dependsOn(extension.modules.map {
+                t.dependsOn(extension.datasources.keys.map {
                     "toDDL${
                         if (extension.isDefaultModule(it)) "" else "[${
                             it.capitalized()
