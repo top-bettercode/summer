@@ -12,7 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import top.bettercode.summer.web.RespEntity
-import top.bettercode.summer.web.exception.BusinessException
 import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.validator.NoPropertyPath
 import javax.servlet.http.HttpServletRequest
@@ -86,16 +85,9 @@ class DefaultErrorHandler(messageSource: MessageSource,
                 sb.append('"')
             }
             message = sb.toString()
-        } else if (error is BusinessException) {
-            respEntity.status = error.code
-            respEntity.errors = error.data
         } else if (error is SystemException) {
-            val code = error.code
-            try {
-                respEntity.setHttpStatusCode(code.toInt())
-            } catch (e: NumberFormatException) {
-                respEntity.status = code
-            }
+            respEntity.httpStatusCode = error.httpStatusCode
+            respEntity.status = error.code
             respEntity.errors = error.data
         }
         if (StringUtils.hasText(message)) {

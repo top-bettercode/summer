@@ -27,7 +27,6 @@ import top.bettercode.summer.tools.lang.trace.TraceHttpServletRequestWrapper
 import top.bettercode.summer.tools.lang.trace.TraceHttpServletResponseWrapper
 import top.bettercode.summer.tools.lang.util.AnnotatedUtils
 import top.bettercode.summer.tools.lang.util.StringUtil
-import top.bettercode.summer.web.exception.BusinessException
 import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.servlet.HandlerMethodContextHolder
 import java.time.LocalDateTime
@@ -188,7 +187,6 @@ class RequestLoggingFilter(
                                 "$uriName($restUri)：${
                                     if (httpStatusCode == 200) {
                                         when (error) {
-                                            is BusinessException -> error.code
                                             is SystemException -> error.code
                                             else -> httpStatusCode.toString()
                                         }

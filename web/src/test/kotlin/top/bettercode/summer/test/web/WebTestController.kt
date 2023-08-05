@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 import top.bettercode.summer.tools.lang.property.Settings.dicCode
 import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
 import top.bettercode.summer.web.BaseController
-import top.bettercode.summer.web.exception.BusinessException
+import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.form.FormDuplicateCheck
 import top.bettercode.summer.web.resolver.Cent
 import top.bettercode.summer.web.resolver.CentConverter
@@ -41,7 +41,7 @@ class WebTestController : BaseController() {
     @FormDuplicateCheck
     @RequestMapping(value = ["/weberrors"])
     fun error(): Any {
-        throw BusinessException(HttpStatus.BAD_GATEWAY.value().toString(), "xx")
+        throw SystemException(HttpStatus.BAD_GATEWAY.value().toString(), "xx")
     }
 
     @Configuration(proxyBeanMethods = false)
