@@ -10,9 +10,9 @@ import top.bettercode.summer.security.userdetails.ScopeUserDetailsService
  *
  * @author Peter Wu
  */
-class DefaultTestUserDetailsService(private val userDetailsService: UserDetailsService) : TestUserDetailsService {
+class DefaultTestAuthenticationService(private val userDetailsService: UserDetailsService) : TestAuthenticationService {
 
-    override fun loadAuthenticationToken(scope: String, username: String) {
+    override fun loadAuthentication(scope: String, username: String) {
         val userDetails: UserDetails = if (userDetailsService is ScopeUserDetailsService) {
             userDetailsService.loadUserByScopeAndUsername(scope, username)
         } else {

@@ -13,7 +13,7 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
     lateinit var scope: String
 
     @Autowired
-    lateinit var userDetailsService: TestUserDetailsService
+    lateinit var userDetailsService: TestAuthenticationService
 
     init {
         this.username = "root"
@@ -22,7 +22,7 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
 
     public override fun defaultBeforeEach() {
         beforeEach()
-        userDetailsService.loadAuthenticationToken(scope, username)
+        userDetailsService.loadAuthentication(scope, username)
     }
 
 }

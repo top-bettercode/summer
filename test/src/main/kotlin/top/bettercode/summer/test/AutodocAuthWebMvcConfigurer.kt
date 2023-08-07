@@ -23,8 +23,8 @@ class AutodocAuthWebMvcConfigurer(
         private val securityProperties: ApiSecurityProperties) : AutoDocRequestHandler {
 
     @Bean
-    fun testUserDetailsService(userDetailsService: UserDetailsService): TestUserDetailsService {
-        return DefaultTestUserDetailsService(userDetailsService)
+    fun testAuthenticationService(userDetailsService: UserDetailsService): TestAuthenticationService {
+        return DefaultTestAuthenticationService(userDetailsService)
     }
 
     override fun handle(request: AutoDocHttpServletRequest) {
