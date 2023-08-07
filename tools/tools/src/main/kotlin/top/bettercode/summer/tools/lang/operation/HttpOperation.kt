@@ -137,7 +137,7 @@ object HttpOperation {
     }
 
     private fun includeParametersInUri(request: OperationRequest): Boolean {
-        return (request.method == HttpMethod.GET.name || request.method == HttpMethod.DELETE.name) || (request.content.isEmpty() && !MediaType.APPLICATION_FORM_URLENCODED
+        return (request.method == HttpMethod.GET.name || request.method == HttpMethod.DELETE.name) || (request.content.isNotEmpty() && !MediaType.APPLICATION_FORM_URLENCODED
                 .isCompatibleWith(request.headers.contentType))
     }
 
