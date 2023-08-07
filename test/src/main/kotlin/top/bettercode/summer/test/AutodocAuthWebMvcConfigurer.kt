@@ -1,8 +1,10 @@
 package top.bettercode.summer.test
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.util.Base64Utils
 import org.springframework.util.StringUtils
 import top.bettercode.summer.security.authorize.Anonymous
@@ -19,6 +21,12 @@ import top.bettercode.summer.web.servlet.HandlerMethodContextHolder.getHandler
 @Configuration(proxyBeanMethods = false)
 class AutodocAuthWebMvcConfigurer(
         private val securityProperties: ApiSecurityProperties) : AutoDocRequestHandler {
+
+    @Bean
+    fun testUserDetailsService(userDetailsService: UserDetailsService): TestUserDetailsService {
+        return TestUserDetailsService(userDetailsService)
+    }
+
     override fun handle(request: AutoDocHttpServletRequest) {
         val handler = getHandler(request)
         if (handler != null) {
