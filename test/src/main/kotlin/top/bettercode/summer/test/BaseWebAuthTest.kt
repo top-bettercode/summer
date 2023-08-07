@@ -1,9 +1,6 @@
 package top.bettercode.summer.test
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
-import top.bettercode.summer.security.authorization.UserDetailsAuthenticationToken
 
 /**
  * mockMvc 基础测试类
@@ -25,8 +22,7 @@ abstract class BaseWebAuthTest : BaseWebNoAuthTest() {
 
     public override fun defaultBeforeEach() {
         beforeEach()
-        val userDetails: UserDetails = userDetailsService.loadUserByScopeAndUsername(scope, username)
-        SecurityContextHolder.getContext().authentication = UserDetailsAuthenticationToken(userDetails)
+        userDetailsService.loadAuthenticationToken(scope, username)
     }
 
 }
