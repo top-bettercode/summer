@@ -2,6 +2,7 @@ package ch.qos.logback.core.rolling
 
 import ch.qos.logback.core.joran.spi.NoAutoStart
 import ch.qos.logback.core.util.FileSize
+import java.io.File
 
 @NoAutoStart
 class StartAndSizeAndTimeBasedRollingPolicy<E> : TimeBasedRollingPolicy<E>() {
@@ -24,11 +25,18 @@ class StartAndSizeAndTimeBasedRollingPolicy<E> : TimeBasedRollingPolicy<E>() {
         }
         // most work is done by the parent
         super.start()
-        sizeAndTimeBasedFNATP.nextCheck = 0L
-        isTriggeringEvent(null, null)//启动时开启新日志
-        try {
-            rollover()
-        } catch (e: RolloverFailure) { //Do nothing
+        synchronized(this) {
+            val parentsRawFileProperty = parentsRawFileProperty
+            //启动时开启新日志
+            if (File(parentsRawFileProperty).length() > 0) {
+                sizeAndTimeBasedFNATP.nextCheck = 0L
+                isTriggeringEvent(null, null)
+                try {
+                    rollover()
+                } catch (e: RolloverFailure) { //Do nothing
+                    e.printStackTrace()
+                }
+            }
         }
     }
 
