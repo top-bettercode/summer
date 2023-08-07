@@ -64,7 +64,7 @@ class ApiTokenService(
         return getApiAccessToken(scope, userDetails, loginKickedOut)
     }
 
-    fun refreshUserDetails(scope: String, oldUsername: String?, newUsername: String?) {
+    fun refreshUserDetails(scope: String, oldUsername: String, newUsername: String) {
         val oldUserDetails = getUserDetails(scope, oldUsername)
         val apiToken = getApiToken(scope, oldUserDetails, false)
         apiToken.userDetailsInstantAt = createUserDetailsInstantAt()
@@ -72,7 +72,7 @@ class ApiTokenService(
         apiTokenRepository.save(apiToken)
     }
 
-    fun refreshUserDetails(scope: String, username: String?) {
+    fun refreshUserDetails(scope: String, username: String) {
         val userDetails = getUserDetails(scope, username)
         getApiAccessToken(scope, userDetails)
     }
@@ -116,7 +116,7 @@ class ApiTokenService(
         return apiToken
     }
 
-    fun getUserDetails(grantType: String?, request: HttpServletRequest?): UserDetails {
+    fun getUserDetails(grantType: String, request: HttpServletRequest?): UserDetails {
         if (userDetailsService is GrantTypeUserDetailsService) {
             return userDetailsService.loadUserByGrantTypeAndRequest(
                     grantType, request)
@@ -124,7 +124,7 @@ class ApiTokenService(
         throw IllegalArgumentException("不支持的grantType类型")
     }
 
-    fun getUserDetails(scope: String?, username: String?): UserDetails {
+    fun getUserDetails(scope: String, username: String): UserDetails {
         val userDetails: UserDetails = if (userDetailsService is ScopeUserDetailsService) {
             userDetailsService.loadUserByScopeAndUsername(
                     scope, username)
