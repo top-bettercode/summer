@@ -32,6 +32,11 @@ class AutodocAuthWebMvcConfigurer(
         if (handler != null) {
             val username = AuthenticationHelper.username
             username.ifPresent { request.setAttribute(HttpOperation.REQUEST_LOGGING_USERNAME, username.get()) }
+
+            if (Autodoc.requireAuthorization) {
+                Autodoc.requiredHeaders(HttpHeaders.AUTHORIZATION)
+            }
+
             var requiredHeaders = Autodoc.requiredHeaders
             val url = request.requestURI
             var needAuth = false
@@ -49,9 +54,7 @@ class AutodocAuthWebMvcConfigurer(
                 Autodoc.requiredHeaders(*requiredHeaders.toTypedArray<String>())
                 //set required end
             }
-            if (Autodoc.requireAuthorization) {
-                Autodoc.requiredHeaders(HttpHeaders.AUTHORIZATION)
-            }
+
             if (Autodoc.requiredHeaders.contains(HttpHeaders.AUTHORIZATION)) {
                 needAuth = true
             }
