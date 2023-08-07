@@ -24,7 +24,7 @@ class AutodocAuthWebMvcConfigurer(
 
     @Bean
     fun testUserDetailsService(userDetailsService: UserDetailsService): TestUserDetailsService {
-        return TestUserDetailsService(userDetailsService)
+        return DefaultTestUserDetailsService(userDetailsService)
     }
 
     override fun handle(request: AutoDocHttpServletRequest) {
