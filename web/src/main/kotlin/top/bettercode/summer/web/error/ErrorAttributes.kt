@@ -1,6 +1,5 @@
 package top.bettercode.summer.web.error
 
-import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.web.ErrorProperties
 import org.springframework.boot.autoconfigure.web.ErrorProperties.IncludeAttribute
 import org.springframework.boot.web.error.ErrorAttributeOptions
@@ -33,7 +32,7 @@ import javax.servlet.RequestDispatcher
 @Order(Ordered.HIGHEST_PRECEDENCE)
 open class ErrorAttributes(private val errorProperties: ErrorProperties,
                            private val errorHandlers: List<IErrorHandler>?,
-                           private val errorRespEntityHandler: IErrorRespEntityHandler?,
+                           private val respEntityConverter: IRespEntityConverter?,
                            private val messageSource: MessageSource, private val summerWebProperties: SummerWebProperties) : DefaultErrorAttributes() {
     override fun getErrorAttributes(webRequest: WebRequest,
                                     options: ErrorAttributeOptions): Map<String?, Any?> {
@@ -50,7 +49,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
         var statusCode: String? = null
         var httpStatusCode: Int? = null
         var message: String?
-        val respEntity = RespEntity<Any>()
+        val respEntity = RespEntity<Any?>()
         val errors: MutableMap<String?, String?> = HashMap()
         if (error != null) {
             if (errorHandlers != null) {
@@ -111,7 +110,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
         if (errors.isNotEmpty()) {
             respEntity.errors = errors
         }
-        return errorRespEntityHandler?.handle(webRequest, respEntity) ?: respEntity
+        return respEntityConverter?.convert(respEntity) ?: respEntity
     }
 
     private fun handleHttpStatusCode(throwableClass: Class<out Throwable>): Int? {
@@ -145,7 +144,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
      * @param respEntity respEntity
      * @param error      error
      */
-    private fun addStackTrace(respEntity: RespEntity<Any>, error: Throwable) {
+    private fun addStackTrace(respEntity: RespEntity<Any?>, error: Throwable) {
         val stackTrace = StringWriter()
         error.printStackTrace(PrintWriter(stackTrace))
         stackTrace.flush()
@@ -205,7 +204,6 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(ErrorAttributes::class.java)
         val IS_PLAIN_TEXT_ERROR = ErrorAttributes::class.java.name + ".plainText"
         private val propertiesSource = exceptionHandle
     }

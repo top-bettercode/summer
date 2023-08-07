@@ -14,6 +14,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 import top.bettercode.summer.web.IRespEntity
 import top.bettercode.summer.web.RespEntity
 import top.bettercode.summer.web.error.ErrorAttributes
+import top.bettercode.summer.web.error.IRespEntityConverter
 import top.bettercode.summer.web.properties.SummerWebProperties
 import javax.servlet.http.HttpServletResponse
 
@@ -22,7 +23,9 @@ import javax.servlet.http.HttpServletResponse
  */
 class ApiHandlerMethodReturnValueHandler(
         private val delegate: HandlerMethodReturnValueHandler,
-        private val summerWebProperties: SummerWebProperties, private val errorAttributes: ErrorAttributes) : HandlerMethodReturnValueHandler {
+        private val summerWebProperties: SummerWebProperties,
+        private val errorAttributes: ErrorAttributes,
+        private val respEntityConverter: IRespEntityConverter?) : HandlerMethodReturnValueHandler {
     override fun supportsReturnType(returnType: MethodParameter): Boolean {
         return delegate.supportsReturnType(returnType)
     }
@@ -60,18 +63,6 @@ class ApiHandlerMethodReturnValueHandler(
                     body
                 }
             }
-            if (summerWebProperties.wrapEnable(webRequest) && !(returnVal is IRespEntity || returnVal is HttpEntity<*> && returnVal
-                            .body is IRespEntity)
-                    && supportsRewrapType(returnType)) {
-                var value = returnVal
-                if (returnVal is HttpEntity<*>) {
-                    value = returnVal.body
-                    returnVal = HttpEntity(rewrapResult(value),
-                            returnVal.headers)
-                } else {
-                    returnVal = rewrapResult(value)
-                }
-            }
             if (summerWebProperties.okEnable(webRequest)) {
                 nativeResponse!!.status = HttpStatus.OK.value()
                 if (returnVal is ResponseEntity<*>) {
@@ -83,11 +74,35 @@ class ApiHandlerMethodReturnValueHandler(
                     }
                 }
             }
+
+            if (summerWebProperties.wrapEnable(webRequest)
+                    && !(returnVal is IRespEntity || returnVal is HttpEntity<*> && returnVal.body is IRespEntity)
+                    && supportsRewrapType(returnType)) {
+                var value = returnVal
+                if (returnVal is HttpEntity<*>) {
+                    value = returnVal.body
+                    returnVal = HttpEntity(rewrapResult(value),
+                            returnVal.headers)
+                } else {
+                    returnVal = rewrapResult(value)
+                }
+            }
+            if (respEntityConverter != null) {
+                if (returnVal is HttpEntity<*>) {
+                    val value = returnVal.body
+                    if (value is RespEntity<*>) {
+                        returnVal = HttpEntity(respEntityConverter.convert(value),
+                                returnVal.headers)
+                    }
+                } else if (returnVal is RespEntity<*>) {
+                    returnVal = respEntityConverter.convert(returnVal)
+                }
+            }
         }
         delegate.handleReturnValue(returnVal, returnType, mavContainer, webRequest)
     }
 
-    fun supportsRewrapType(returnType: MethodParameter): Boolean {
+    private fun supportsRewrapType(returnType: MethodParameter): Boolean {
         val typeContainingClass = returnType.containingClass
         val parameterType = returnType.parameterType
         val support = (!AnnotatedElementUtils.hasAnnotation(parameterType, NoWrapResp::class.java)

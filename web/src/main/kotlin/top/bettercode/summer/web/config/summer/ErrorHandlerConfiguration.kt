@@ -38,11 +38,11 @@ class ErrorHandlerConfiguration {
     @Bean
     fun errorAttributes(
             @Autowired(required = false) errorHandlers: List<IErrorHandler>?,
-            @Autowired(required = false) errorRespEntityHandler: IErrorRespEntityHandler?,
+            @Autowired(required = false) respEntityConverter: IRespEntityConverter?,
             messageSource: MessageSource,
             serverProperties: ServerProperties,
             summerWebProperties: SummerWebProperties): ErrorAttributes {
-        return ErrorAttributes(serverProperties.error, errorHandlers, errorRespEntityHandler,
+        return ErrorAttributes(serverProperties.error, errorHandlers, respEntityConverter,
                 messageSource, summerWebProperties)
     }
 
