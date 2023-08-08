@@ -4,17 +4,18 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.core.CoreConstants
 import org.slf4j.ILoggerFactory
 import org.slf4j.LoggerFactory
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.boot.actuate.endpoint.annotation.Selector
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.core.env.Environment
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.lang.Nullable
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.StringUtils
+import org.springframework.web.bind.annotation.RequestHeader
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
 import top.bettercode.summer.tools.lang.util.TimeUtil
@@ -26,7 +27,6 @@ import java.net.URLEncoder
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
-import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import kotlin.math.max
 
@@ -38,10 +38,13 @@ class LogsEndpoint(
         private val loggingFilesPath: String,
         environment: Environment,
         private val websocketProperties: WebsocketProperties,
-        private val serverProperties: ServerProperties,
-        private val request: HttpServletRequest,
-        private val response: HttpServletResponse
+        serverProperties: ServerProperties,
+        private val response: HttpServletResponse,
+        webEndpointProperties: WebEndpointProperties
 ) {
+
+    private val contextPath: String = serverProperties.servlet.contextPath
+    private val logsPath: String = contextPath + webEndpointProperties.basePath + "/logs"
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
             "org.springframework.web.socket.server.standard.ServerEndpointExporter",
@@ -81,11 +84,13 @@ class LogsEndpoint(
 
     @ReadOperation
     fun root() {
-        index(File(loggingFilesPath).listFiles(), request, response, true)
+        index(File(loggingFilesPath).listFiles(), true, "")
     }
 
     @ReadOperation
-    fun path(@Selector(match = Selector.Match.ALL_REMAINING) path: String, @Nullable collapse: Boolean?) {
+    fun path(@Selector(match = Selector.Match.ALL_REMAINING) path: String, @Nullable collapse: Boolean?, @Nullable @RequestHeader(value = "User-Agent", required = false) userAgent: String?) {
+        val requestPath = path.replace(",", "/")
+
         if ("real-time" != path) {
             val paths = path.split(",")
             if (paths[0] == "daily") {
@@ -102,7 +107,7 @@ class LogsEndpoint(
                     if (!filenames.contains(today)) {
                         filenames.add(today)
                     }
-                    index(filenames.map { File(it) }.toTypedArray(), request, response, false)
+                    index(filenames.map { File(it) }.toTypedArray(), false, requestPath)
                 } else if (paths.size == 2) {
                     var logPattern = paths[1]
                     val html =
@@ -128,13 +133,12 @@ class LogsEndpoint(
                                         )
                                 )
                             }
-                            showLogFile(response, logPattern, logMsgs, collapse)
+                            showLogFile(logPattern, logMsgs, collapse)
                         } else {
                             val fileName = "$logPattern.log.gz"
-                            val agent = request.getHeader("USER-AGENT")
 
                             val newFileName: String =
-                                    if (null != agent && (agent.contains("Trident") || agent.contains("Edge"))) {
+                                    if (null != userAgent && (userAgent.contains("Trident") || userAgent.contains("Edge"))) {
                                         URLEncoder.encode(fileName, "UTF-8")
                                     } else {
                                         fileName
@@ -169,7 +173,7 @@ class LogsEndpoint(
                     }
                 }
             } else {
-                var file = File(loggingFilesPath, path.replace(",", "/"))
+                var file = File(loggingFilesPath, requestPath)
                 if (!file.exists() && file.name.startsWith("all-")) {
                     file = File(loggingFilesPath, "all.log")
                 }
@@ -178,17 +182,14 @@ class LogsEndpoint(
                         response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
                     } else {
                         val logMsgs = readLogMsgs(file.inputStream(), "gz" == file.extension)
-                        showLogFile(response, file.name, logMsgs, collapse)
+                        showLogFile(file.name, logMsgs, collapse)
                     }
                 } else {
-                    index(file.listFiles(), request, response, false)
+                    index(file.listFiles(), false, requestPath)
                 }
             }
         } else {
             if (useWebSocket) {
-                val wsUrl =
-                        "ws://" + request.getHeader(HttpHeaders.HOST)
-                                .substringBefore(":") + ":" + serverProperties.port + request.contextPath + "/websocket/logging"
                 response.contentType = "text/html;charset=utf-8"
                 response.setHeader("Pragma", "No-cache")
                 response.setHeader("Cache-Control", "no-cache")
@@ -205,6 +206,7 @@ class LogsEndpoint(
                             """
 <script type="text/javascript">
   
+
   function getScrollTop() {
     var scrollTop = 0, bodyScrollTop = 0, documentScrollTop = 0;
     if (document.body) {
@@ -256,7 +258,16 @@ class LogsEndpoint(
     console.log("您的浏览器不支持WebSocket");
   } else {
     console.info("连接...")
-    websocket = new WebSocket("$wsUrl?token=${websocketProperties.token}");
+    var loc = window.location, webhost;
+    if (loc.protocol === "https:") {
+      webhost = "wss:";
+    } else {
+      webhost = "ws:";
+    }
+    webhost += "//" + loc.host;
+
+    websocket = new WebSocket(webhost + "${"$contextPath/websocket/logging"}?token=${websocketProperties.token}");
+    
     //连接发生错误的回调方法
     websocket.onerror = function () {
       console.error("WebSocket连接发生错误");
@@ -298,7 +309,7 @@ class LogsEndpoint(
         }
     }
 
-    private fun showLogFile(response: HttpServletResponse, name: String, logMsgs: List<LogMsg>?, collapse: Boolean?) {
+    private fun showLogFile(name: String, logMsgs: List<LogMsg>?, collapse: Boolean?) {
         response.contentType = "text/html;charset=utf-8"
         response.setHeader("Pragma", "No-cache")
         response.setHeader("Cache-Control", "no-cache")
@@ -338,6 +349,75 @@ class LogsEndpoint(
         response.flushBuffer()
     }
 
+
+    private fun index(
+            files: Array<File>?,
+            root: Boolean,
+            requestPath: String
+    ) {
+        if (!files.isNullOrEmpty()) {
+            val path = if (root) logsPath else "$logsPath/$requestPath"
+            response.contentType = "text/html; charset=utf-8"
+            response.setHeader("Pragma", "No-cache")
+            response.setHeader("Cache-Control", "no-cache")
+            response.setDateHeader("Expires", 0)
+            response.writer.use { writer ->
+                var dir = requestPath
+                dir = if (dir.startsWith("/")) dir else "/$dir"
+                writer.println(
+                        """
+<html>
+<head><title>Index of $dir</title></head>
+<body>"""
+                )
+                writer.print("<h1>Index of $dir</h1><hr><pre>")
+
+                val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+                if (!root)
+                    writer.println("<a href=\"$logsPath/${requestPath.substringBeforeLast("/", "")}\">../</a>")
+                else {
+                    if (useWebSocket) {
+                        writer.println(
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$logsPath/real-time\">实时日志/</a>                                        ${
+                                    TimeUtil.now().format(dateTimeFormatter)
+                                }       -"
+                        )
+                    }
+                    writer.println(
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$logsPath/daily\">daily/</a>                                        ${
+                                TimeUtil.now().format(dateTimeFormatter)
+                            }       -"
+                    )
+                }
+
+                files.sortWith(comparator)
+                files.forEach {
+                    val millis = it.lastModified()
+                    val lastModify =
+                            if (millis == 0L) "-" else TimeUtil.of(millis).format(dateTimeFormatter)
+                    if (it.isDirectory) {
+                        writer.println(
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        $lastModify       -"
+                        )
+                    } else {
+                        writer.println(
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        $lastModify       ${
+                                    prettyValue(
+                                            it.length()
+                                    )
+                                }"
+                        )
+                    }
+                }
+                writer.println("</pre><hr></body>\n</html>")
+            }
+            response.flushBuffer()
+        } else {
+            response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
+        }
+    }
+
     private fun readLogMsgs(inputStream: InputStream, gzip: Boolean = false): List<LogMsg> {
         val lines = if (gzip) {
             GZIPInputStream(inputStream).bufferedReader().lines()
@@ -374,77 +454,6 @@ class LogsEndpoint(
 
     private val comparator: Comparator<File> = LogFileNameComparator()
 
-    private fun index(
-            files: Array<File>?,
-            request: HttpServletRequest,
-            response: HttpServletResponse,
-            root: Boolean
-    ) {
-        if (!files.isNullOrEmpty()) {
-            val servletPath = request.servletPath
-            val endsWith = servletPath.endsWith("/")
-            val upPath = if (endsWith) "../" else "./"
-            val path = if (endsWith) "." else "./${servletPath.substringAfterLast("/")}"
-            response.contentType = "text/html; charset=utf-8"
-            response.setHeader("Pragma", "No-cache")
-            response.setHeader("Cache-Control", "no-cache")
-            response.setDateHeader("Expires", 0)
-            response.writer.use { writer ->
-                var dir = servletPath.substringAfterLast("/logs")
-                dir = if (dir.startsWith("/")) dir else "/$dir"
-                writer.println(
-                        """
-<html>
-<head><title>Index of $dir</title></head>
-<body>"""
-                )
-                writer.print("<h1>Index of $dir</h1><hr><pre>")
-
-                val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-                if (!root)
-                    writer.println("<a href=\"$upPath\">../</a>")
-                else {
-                    if (useWebSocket) {
-                        writer.println(
-                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/real-time\">实时日志/</a>                                        ${
-                                    TimeUtil.now().format(dateTimeFormatter)
-                                }       -"
-                        )
-                    }
-                    writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$path/daily\">daily/</a>                                        ${
-                                TimeUtil.now().format(dateTimeFormatter)
-                            }       -"
-                    )
-                }
-
-                files.sortWith(comparator)
-                files.forEach {
-                    val millis = it.lastModified()
-                    val lastModify =
-                            if (millis == 0L) "-" else TimeUtil.of(millis).format(dateTimeFormatter)
-                    if (it.isDirectory) {
-                        writer.println(
-                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}/\">${it.name}/</a>                                        $lastModify       -"
-                        )
-                    } else {
-                        writer.println(
-                                "<a style=\"display:inline-block;width:100px;\" href=\"$path/${it.name}#last\">${it.name}</a>                                        $lastModify       ${
-                                    prettyValue(
-                                            it.length()
-                                    )
-                                }"
-                        )
-                    }
-                }
-                writer.println("</pre><hr></body>\n</html>")
-            }
-            response.flushBuffer()
-        } else {
-            response.sendError(HttpStatus.NOT_FOUND.value(), "Page not found")
-        }
-    }
 
     private val units: Array<String> = arrayOf("B", "K", "M", "G", "T", "P", "E")
 

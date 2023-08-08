@@ -83,16 +83,17 @@ class EndpointAutoConfiguration {
             environment: Environment,
             websocketProperties: WebsocketProperties,
             serverProperties: ServerProperties,
-            @Autowired(required = false) request: HttpServletRequest,
-            @Autowired(required = false) response: HttpServletResponse
+            @Autowired(required = false) response: HttpServletResponse,
+            webEndpointProperties: WebEndpointProperties
+
     ): LogsEndpoint {
         return LogsEndpoint(
                 loggingFilesPath,
                 environment,
                 websocketProperties,
                 serverProperties,
-                request,
-                response
+                response,
+                webEndpointProperties
         )
     }
 
