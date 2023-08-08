@@ -137,7 +137,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
                                     mybatisParam)
                             countQuery = if (queryMethod.applyHintsToCountQuery()) applyHints(countQuery, queryMethod) else countQuery
                             val totals = countQuery.resultList
-                            total = if (totals.size == 1) JpaUtil.convert(totals[0], Long::class.java)!! else totals.size.toLong()
+                            total = if (totals.size == 1) JpaUtil.convert(totals[0], Long::class.javaObjectType)!! else totals.size.toLong()
                             if (sqlLog.isDebugEnabled) {
                                 sqlLog.debug("total: {} rows", total)
                             }

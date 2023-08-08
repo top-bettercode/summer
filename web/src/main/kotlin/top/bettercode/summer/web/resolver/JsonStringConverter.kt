@@ -20,7 +20,7 @@ class JsonStringConverter(private val objectMapper: ObjectMapper) : ConditionalG
     }
 
     override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> {
-        return setOf(GenericConverter.ConvertiblePair(String::class.java, MutableCollection::class.java))
+        return setOf(GenericConverter.ConvertiblePair(String::class.java, Collection::class.java))
     }
 
     override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
