@@ -37,5 +37,10 @@ interface SecurityParameterNames {
          * `password` - used in Access Token Request.
          */
         const val PWDNAME = "password"
+
+        /**
+         * revoke token
+         */
+        const val REVOKE_TOKEN = "revoke_token"
     }
 }

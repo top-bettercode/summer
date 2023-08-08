@@ -121,6 +121,21 @@ class SecurityTest {
     }
 
     @Test
+    fun revokeToken2() {
+        disable()
+        val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
+        params.add("grant_type", "revoke_token")
+        params.add("revoke_token", getApiAccessToken("revokeToken").accessToken)
+        enable()
+        name = "撤销accessToken"
+        requiredParameters("grant_type",  "revokeToken")
+        val entity2 = clientRestTemplate
+                .postForEntity("/oauth/token", HttpEntity(params), String::class.java)
+        Assertions.assertEquals(HttpStatus.NO_CONTENT, entity2.statusCode)
+        Thread.sleep(1000)
+    }
+
+    @Test
     fun auth() {
         val httpHeaders = HttpHeaders()
         httpHeaders[HttpHeaders.AUTHORIZATION] = "bearer " + getApiAccessToken("auth").accessToken
