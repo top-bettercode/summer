@@ -13,9 +13,9 @@ open class CorsProperties : CorsConfiguration() {
     var path = "/**"
 
     init {
-        allowedOrigins = listOf("*")
-        allowedMethods = listOf("*")
+        allowedOrigins = listOf(ALL)
+        allowedMethods = listOf(ALL)
         //    setAllowCredentials(true);
-        allowedHeaders = listOf("*")
+        allowedHeaders = listOf(ALL)
     }
 }
