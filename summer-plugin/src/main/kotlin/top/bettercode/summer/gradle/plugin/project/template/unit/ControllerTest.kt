@@ -33,6 +33,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         //beforeEach
         method("beforeEach", JavaType.void) {
             annotation("@Override")
+            import(entityType)
             +"tableNames(${className}.TABLE_NAME);"
         }
 
