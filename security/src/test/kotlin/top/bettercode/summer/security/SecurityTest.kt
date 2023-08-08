@@ -123,10 +123,9 @@ class SecurityTest {
     @Test
     fun revokeToken2() {
         disable()
-        Thread.sleep(5000)
         val params: MultiValueMap<String, Any> = LinkedMultiValueMap()
         params.add("grant_type", "revoke_token")
-        params.add("revoke_token", getApiAccessToken("revokeToken").accessToken)
+        params.add("revoke_token", getApiAccessToken("revokeToken2").accessToken)
         enable()
         name = "撤销accessToken"
         requiredParameters("grant_type",  "revokeToken")
