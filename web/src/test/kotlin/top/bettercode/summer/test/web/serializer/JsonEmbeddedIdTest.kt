@@ -19,6 +19,11 @@ class JsonEmbeddedIdTest {
     }
 
     class UserKey : Serializable {
+
+        companion object {
+            private const val serialVersionUID = 1L
+        }
+
         var id: String? = null
         var key: String? = null
 

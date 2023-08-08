@@ -71,4 +71,7 @@ open class ApiAccessToken : Serializable {
         this.additionalInformation = additionalInformation
     }
 
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }

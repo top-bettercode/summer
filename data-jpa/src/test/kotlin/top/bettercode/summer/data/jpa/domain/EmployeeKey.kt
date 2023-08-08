@@ -37,4 +37,7 @@ class EmployeeKey : Serializable {
         return json(this)
     }
 
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }
