@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.lang.util
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.*
 import org.springframework.util.StringUtils
 import java.io.*
@@ -28,13 +29,9 @@ object StringUtil {
     @JvmStatic
     var OBJECT_MAPPER = ObjectMapper()
 
-    @JvmStatic
-    var INDENT_OUTPUT_OBJECT_MAPPER = ObjectMapper()
 
     init {
         OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-        INDENT_OUTPUT_OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-        INDENT_OUTPUT_OBJECT_MAPPER.enable(SerializationFeature.INDENT_OUTPUT)
 
         val module: com.fasterxml.jackson.databind.module.SimpleModule =
                 com.fasterxml.jackson.databind.module.SimpleModule()
@@ -87,7 +84,6 @@ object StringUtil {
 
 
         OBJECT_MAPPER.registerModule(module)
-        INDENT_OUTPUT_OBJECT_MAPPER.registerModule(module)
     }
 
     /**
@@ -210,23 +206,37 @@ object StringUtil {
 
     @JvmOverloads
     @JvmStatic
-    fun json(`object`: Any?, format: Boolean = false): String {
-        return if (format) {
-            INDENT_OUTPUT_OBJECT_MAPPER.writeValueAsString(`object`)
-        } else {
-            OBJECT_MAPPER.writeValueAsString(`object`)
-        }
+    fun json(`object`: Any?, format: Boolean = false, escapeNonAscii: Boolean = false): String {
+        return json(`object`, format, escapeNonAscii) { this.writeValueAsString(it) }
     }
 
     @JvmOverloads
     @JvmStatic
-    fun jsonBytes(`object`: Any?, format: Boolean = false): ByteArray {
-        return if (format) {
-            INDENT_OUTPUT_OBJECT_MAPPER.writeValueAsBytes(`object`)
-        } else {
-            OBJECT_MAPPER.writeValueAsBytes(`object`)
+    fun jsonBytes(`object`: Any?, format: Boolean = false, escapeNonAscii: Boolean = false): ByteArray {
+        return json(`object`, format, escapeNonAscii) { this.writeValueAsBytes(it) }
+    }
+
+    private fun <T> json(`object`: Any?, format: Boolean, escapeNonAscii: Boolean, write: ObjectMapper.(Any?) -> T): T {
+        synchronized(OBJECT_MAPPER) {
+            val serializationConfig = OBJECT_MAPPER.serializationConfig
+            try {
+                var config = serializationConfig
+                if (format) {
+                    config = config.with(SerializationFeature.INDENT_OUTPUT)
+                }
+                if (escapeNonAscii) {
+                    config = config.with(JsonWriteFeature.ESCAPE_NON_ASCII)
+                }
+                OBJECT_MAPPER.setConfig(config)
+                return OBJECT_MAPPER.write(`object`)
+            } finally {
+                if (format || escapeNonAscii) {
+                    OBJECT_MAPPER.setConfig(serializationConfig)
+                }
+            }
         }
     }
+
 
     @JvmStatic
     fun <T> readJson(`object`: ByteArray, valueType: Class<T>): T {
