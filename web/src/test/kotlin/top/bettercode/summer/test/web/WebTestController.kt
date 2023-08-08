@@ -3,6 +3,7 @@ package top.bettercode.summer.test.web
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
+import org.springframework.util.Assert
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -29,6 +30,7 @@ class WebTestController : BaseController() {
     fun test(@Validated form: DataDicBean, @Cent cent: Long?, a: Date?, @ChinaCell cell: String?): Any {
         System.err.println(a)
         System.err.println(cent)
+        Assert.isTrue(cent == 2200L, "cent != 2200")
         System.err.println(form.price)
         System.err.println(valueOf(form, true))
         val dataDicBean = DataDicBean()

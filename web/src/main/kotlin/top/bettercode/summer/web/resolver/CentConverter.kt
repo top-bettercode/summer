@@ -15,7 +15,7 @@ class CentConverter : ConditionalGenericConverter {
     }
 
     override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> {
-        return setOf(GenericConverter.ConvertiblePair(String::class.java, Long::class.java))
+        return setOf(GenericConverter.ConvertiblePair(String::class.java, Long::class.java), GenericConverter.ConvertiblePair(String::class.java, Long::class.javaObjectType), GenericConverter.ConvertiblePair(String::class.java, Long::class.javaPrimitiveType!!))
     }
 
     override fun convert(`object`: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
