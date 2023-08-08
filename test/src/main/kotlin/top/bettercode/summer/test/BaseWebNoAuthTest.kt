@@ -114,11 +114,17 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     }
 
     protected fun contentStatusIsOk(): ResultMatcher {
-        return ResultMatcher { result: MvcResult -> Assertions.assertTrue(contentAsJsonNode(result)["status"].asInt() < 400) }
+        return ResultMatcher { result: MvcResult ->
+            var status = contentAsJsonNode(result)["status"]?.asInt()
+            if (status == null) {
+                status = result.response.status
+            }
+            Assertions.assertTrue(status < 400)
+        }
     }
 
     protected fun contentStatus(status: Int): ResultMatcher {
-        return ResultMatcher { result: MvcResult -> Assertions.assertEquals(contentAsJsonNode(result)["status"].asInt(), status) }
+        return ResultMatcher { result: MvcResult -> Assertions.assertEquals(contentAsJsonNode(result)["status"]?.asInt(), status) }
     }
 
     protected fun contentAsJsonNode(result: MvcResult): JsonNode {
@@ -137,11 +143,6 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     protected fun perform(requestBuilder: RequestBuilder): ResultActions {
         return mockMvc.perform(requestBuilder
         ).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(contentStatusIsOk())
-    }
-
-    protected fun performRest(requestBuilder: RequestBuilder): ResultActions {
-        return mockMvc.perform(requestBuilder
-        ).andExpect(MockMvcResultMatchers.status().isOk())
     }
 
     protected fun download(requestBuilder: RequestBuilder, fileName: String) {
