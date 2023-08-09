@@ -114,7 +114,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
 
     private fun handleHttpStatusCode(throwableClass: Class<out Throwable>): Int? {
         val key = throwableClass.name + ".code"
-        val value = propertiesSource[key]
+        val value = exceptionHandle[key]
         return if (StringUtils.hasText(value)) {
             value!!.toInt()
         } else {
@@ -124,7 +124,7 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
 
     private fun handleMessage(throwableClass: Class<out Throwable>): String? {
         val key = throwableClass.name + ".message"
-        return propertiesSource[key]
+        return exceptionHandle[key]
     }
 
     private fun setErrorInfo(request: WebRequest, httpStatusCode: Int,
@@ -204,6 +204,5 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
 
     companion object {
         val IS_PLAIN_TEXT_ERROR = ErrorAttributes::class.java.name + ".plainText"
-        private val propertiesSource = exceptionHandle
     }
 }
