@@ -10,13 +10,13 @@ import java.io.Serializable
  */
 class RespExtra<T>(@get:JsonView(Any::class)
                    @get:JsonUnwrapped val content: T) : Serializable {
-    private var extra: MutableMap<String, Any> = HashMap()
+    private var extra: MutableMap<String, Any?> = HashMap()
 
     @get:JsonUnwrapped
     @get:JsonView(Any::class)
     var extraPOJO: Any? = null
 
-    fun extra(key: String, value: Any): RespExtra<T> {
+    fun extra(key: String, value: Any?): RespExtra<T> {
         extra[key] = value
         return this
     }
@@ -27,11 +27,11 @@ class RespExtra<T>(@get:JsonView(Any::class)
     }
 
     @JsonAnyGetter
-    fun getExtra(): Map<String, Any> {
+    fun getExtra(): Map<String, Any?> {
         return extra
     }
 
-    fun setExtra(extra: MutableMap<String, Any>) {
+    fun setExtra(extra: MutableMap<String, Any?>) {
         this.extra = extra
     }
 
