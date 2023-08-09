@@ -67,6 +67,7 @@ server:
       timeout: PT10M
     encoding:
       force: true
+    context-path: /
 
 
 management:
