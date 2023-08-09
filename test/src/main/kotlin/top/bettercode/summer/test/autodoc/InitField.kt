@@ -62,24 +62,24 @@ object InitField {
                 fields.fix(needFixFields = resHeadNeedFix, onlyDesc = onlyDesc)
                 fields.fix(needFixFields = resContentNeedFix, wrap = wrap, onlyDesc = onlyDesc)
 
-                uriNeedFix = request.uriVariablesExt.blankField(false)
-                reqHeadNeedFix = request.headersExt.blankField(false)
-                paramNeedFix = request.parametersExt.blankField(false)
-                partNeedFix = request.partsExt.blankField(false)
-                reqContentNeedFix = request.contentExt.blankField(false)
-                resHeadNeedFix = response.headersExt.blankField(false)
-                resContentNeedFix = response.contentExt.blankField(false)
+                uriNeedFix = request.uriVariablesExt.blankField(canConver = false)
+                reqHeadNeedFix = request.headersExt.blankField(canConver = false)
+                paramNeedFix = request.parametersExt.blankField(canConver = false)
+                partNeedFix = request.partsExt.blankField(canConver = false)
+                reqContentNeedFix = request.contentExt.blankField(canConver = false)
+                resHeadNeedFix = response.headersExt.blankField(canConver = false)
+                resContentNeedFix = response.contentExt.blankField(canConver = false)
 
                 uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()
             }
             if (!(uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank())) {
-                uriNeedFix.fix(needFixFields = uriNeedFix, fuzzy = true)
-                reqHeadNeedFix.fix(needFixFields = reqHeadNeedFix, fuzzy = true)
-                paramNeedFix.fix(needFixFields = paramNeedFix, fuzzy = true)
-                partNeedFix.fix(needFixFields = partNeedFix, fuzzy = true)
-                reqContentNeedFix.fix(needFixFields = reqContentNeedFix, fuzzy = true)
-                resHeadNeedFix.fix(needFixFields = resHeadNeedFix, fuzzy = true)
-                resContentNeedFix.fix(needFixFields = resContentNeedFix, wrap = wrap, fuzzy = true)
+                request.uriVariablesExt.noneblankField().fix(needFixFields = uriNeedFix, fuzzy = true)
+                request.headersExt.noneblankField().fix(needFixFields = reqHeadNeedFix, fuzzy = true)
+                request.parametersExt.noneblankField().fix(needFixFields = paramNeedFix, fuzzy = true)
+                request.partsExt.noneblankField().fix(needFixFields = partNeedFix, fuzzy = true)
+                request.contentExt.noneblankField().fix(needFixFields = reqContentNeedFix, fuzzy = true)
+                response.headersExt.noneblankField().fix(needFixFields = resHeadNeedFix, fuzzy = true)
+                response.contentExt.noneblankField().fix(needFixFields = resContentNeedFix, wrap = wrap, fuzzy = true)
             }
         }
 
@@ -384,18 +384,30 @@ object InitField {
 
     private fun Set<Field>.blankField(canConver: Boolean = true): Set<Field> {
         return filter {
-            it.isBlank(canConver) || it.children.anyblank(canConver)
+            it.children = LinkedHashSet(it.children.blankField(canConver))
+            it.isBlank(canConver) || it.children.anyBlank(canConver)
         }.toSet()
     }
 
+
+    private fun Set<Field>.noneblankField(): Set<Field> {
+        return filter {
+            it.children = LinkedHashSet(it.children.noneblankField())
+            it.description.isNotBlank() || it.children.anyNotBlank()
+        }.toSet()
+    }
 
     private fun Set<Field>.noneBlank(): Boolean {
         return all { it.description.isNotBlank() && it.children.noneBlank() }
     }
 
 
-    private fun Set<Field>.anyblank(canConver: Boolean): Boolean {
-        return any { it.isBlank(canConver) || it.children.anyblank(canConver) }
+    private fun Set<Field>.anyBlank(canConver: Boolean): Boolean {
+        return any { it.isBlank(canConver) || it.children.anyBlank(canConver) }
+    }
+
+    private fun Set<Field>.anyNotBlank(): Boolean {
+        return any { it.description.isNotBlank() || it.children.anyNotBlank() }
     }
 
     private fun Field.isBlank(canConver: Boolean) =
