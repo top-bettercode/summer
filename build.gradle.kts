@@ -24,7 +24,7 @@ allprojects {
 
     val isJavaProject = false
 
-    if (!isBomProject && path != ":tools") {
+    if (!isBomProject && path != ":tools" && this != rootProject) {
         apply {
             plugin("java")
             plugin("idea")
