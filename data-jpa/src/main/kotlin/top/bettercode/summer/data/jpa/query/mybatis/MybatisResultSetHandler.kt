@@ -66,9 +66,9 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
     //
     // HANDLE RESULT SETS
     //
-    fun handleResultSets(resultSet: ResultSet?, maxRows: Int): List<*> {
+    fun handleResultSets(resultSet: ResultSet?, maxRows: Int): List<Any?> {
         ErrorContext.instance().activity("handling results").`object`(mappedStatement!!.id)
-        val multipleResults: MutableList<Any> = ArrayList()
+        val multipleResults: MutableList<List<Any?>> = ArrayList()
         val rsw = getResultSet(resultSet)
         val rowBounds = RowBounds(0, maxRows)
         val resultMaps = mappedStatement.resultMaps
@@ -102,7 +102,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
 
     private fun handleResultSet(
             rsw: ResultSetWrapper?, resultMap: ResultMap,
-            multipleResults: MutableList<Any>, parentMapping: ResultMapping?, rowBounds: RowBounds
+            multipleResults: MutableList<List<Any?>>, parentMapping: ResultMapping?, rowBounds: RowBounds
     ) {
         try {
             if (parentMapping != null) {
@@ -122,8 +122,8 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         }
     }
 
-    private fun collapseSingleResultList(multipleResults: List<*>): List<*> {
-        return if (multipleResults.size == 1) multipleResults[0] as List<*> else multipleResults
+    private fun collapseSingleResultList(multipleResults: List<List<Any?>>): List<Any?> {
+        return if (multipleResults.size == 1) multipleResults[0] else multipleResults
     }
 
     //

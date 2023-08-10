@@ -28,6 +28,7 @@ import top.bettercode.summer.security.token.ApiToken
 import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 import javax.servlet.http.HttpServletRequest
+import kotlin.math.max
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
@@ -74,7 +75,7 @@ class ApiSecurityConfiguration(
     @Bean
     fun apiAuthorizationService(): ApiTokenRepository {
         val cache = Caffeine.newBuilder()
-                .expireAfterWrite(Math.max(securityProperties.accessTokenValiditySeconds,
+                .expireAfterWrite(max(securityProperties.accessTokenValiditySeconds,
                         securityProperties.refreshTokenValiditySeconds).toLong(), TimeUnit.SECONDS)
                 .maximumSize(10000).build<String, ApiToken>()
         val accessTokenBuild = Caffeine.newBuilder()

@@ -156,6 +156,7 @@ class UrlSerializer @JvmOverloads constructor(private val formatExpression: Stri
         @JvmOverloads
         fun convert(path: String?, formatExpression: String? = null): String? {
             return if (StringUtils.hasText(path)) {
+                @Suppress("HttpUrlsUsage")
                 if (path!!.startsWith("http://") || path.startsWith("https://")) {
                     return path
                 }
@@ -173,6 +174,7 @@ class UrlSerializer @JvmOverloads constructor(private val formatExpression: Stri
                     format = defaultFormat
                 }
                 var url = String.format(format!!, path)
+                @Suppress("HttpUrlsUsage")
                 if (!url.startsWith("http://") && !url.startsWith("https://")) {
                     val requestAttributes = RequestContextHolder
                             .getRequestAttributes() as ServletRequestAttributes?

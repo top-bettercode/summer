@@ -84,7 +84,7 @@ object PrettyPrintingContentModifier {
             val transformer = transformerFactory.newTransformer()
             transformer.setOutputProperty(OutputKeys.INDENT, "yes")
             transformer.setOutputProperty(
-                    "{http://xml.apache.org/xslt}indent-amount",
+                    "{https://xml.apache.org/xslt}indent-amount",
                     "4"
             )
             transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")

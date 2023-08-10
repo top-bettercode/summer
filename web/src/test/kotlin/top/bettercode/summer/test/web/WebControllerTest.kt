@@ -1,7 +1,6 @@
 package top.bettercode.summer.test.web
 
 import org.junit.jupiter.api.Test
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import top.bettercode.summer.test.BaseWebNoAuthTest
 
 class WebControllerTest : BaseWebNoAuthTest() {

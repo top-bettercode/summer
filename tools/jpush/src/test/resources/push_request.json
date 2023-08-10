@@ -13,7 +13,7 @@
       "alert": "Hi, JPush!",
       "title": "Send to Android",
       "builder_id": 1,
-      "large_icon": "http://www.jiguang.cn/largeIcon.jpg",
+      "large_icon": "https://www.jiguang.cn/largeIcon.jpg",
       "intent": {
         "url": "intent:#Intent;component=com.jiguang.push/com.example.jpushdemo.SettingActivity;end"
       },

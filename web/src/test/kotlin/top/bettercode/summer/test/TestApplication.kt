@@ -4,7 +4,6 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
 import top.bettercode.summer.web.resolver.CentConverter
-import top.bettercode.summer.web.serializer.CentSerializer.Companion.setNewScale
 
 /**
  * @author Peter Wu

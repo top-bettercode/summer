@@ -81,7 +81,7 @@ open class JdbcApiTokenRepository @JvmOverloads constructor(dataSource: DataSour
         Assert.notEmpty(usernames, "usernames must not be empty")
         val ids = usernames.map { "$scope:$it" }.toTypedArray()
         val sql = defaultBatchDeleteStatement + "(${usernames.joinToString(",") { "?" }})"
-        val update = jdbcTemplate.update(sql, *ids)
+        @Suppress("SqlSourceToSinkFlow") val update = jdbcTemplate.update(sql, *ids)
         if (log.isDebugEnabled) {
             log.debug("JdbcApiAuthorizationService.remove\n{}\n{}\naffected:{}", sql,
                     ids, update)

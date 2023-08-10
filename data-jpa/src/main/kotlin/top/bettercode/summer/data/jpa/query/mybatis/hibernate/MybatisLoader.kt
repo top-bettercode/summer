@@ -40,7 +40,7 @@ class MybatisLoader(customQuery: CustomQuery?, factory: SessionFactoryImplemento
             session: SharedSessionContractImplementor, returnProxies: Boolean,
             forcedResultTransformer: ResultTransformer?, maxRows: Int,
             afterLoadActions: List<AfterLoadAction>
-    ): List<*>? {
+    ): List<*> {
         return if (mybatisQuery) {
             (queryParameters.resultTransformer as MybatisResultTransformer).transformListResultSet(rs,
                     maxRows)

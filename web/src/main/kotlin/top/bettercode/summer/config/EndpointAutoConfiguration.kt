@@ -17,7 +17,6 @@ import org.springframework.core.type.AnnotatedTypeMetadata
 import org.springframework.util.StringUtils
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.util.RandomUtil
-import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 /**

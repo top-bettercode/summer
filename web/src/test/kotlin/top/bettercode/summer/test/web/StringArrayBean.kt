@@ -81,7 +81,7 @@ class StringArrayBean {
                 ", path1='" + path1 + '\'' +
                 ", desc='" + desc + '\'' +
                 ", paths=" + paths1 +
-                ", pathArray=" + Arrays.toString(pathArray1) +
+                ", pathArray=" + pathArray1?.contentToString() +
                 '}'
     }
 }

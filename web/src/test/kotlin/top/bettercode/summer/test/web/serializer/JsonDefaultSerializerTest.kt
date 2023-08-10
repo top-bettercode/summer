@@ -28,7 +28,7 @@ class JsonDefaultSerializerTest {
         val mockEnvironment = MockEnvironment()
         //    mockEnvironment.setProperty("summer.multipart.file-url-format", "/path%s");
         mockEnvironment.setProperty("summer.multipart.file-url-format", "http://127.0.0.1%s")
-        mockEnvironment.setProperty("path1-url", "http://127.0.0.2%s")
+        mockEnvironment.setProperty("path1-url", "https://127.0.0.2%s")
         setEnvironment(mockEnvironment)
     }
 

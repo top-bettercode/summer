@@ -78,8 +78,8 @@ class URLFilterInvocationSecurityMetadataSource(
                 matches.add(Match(comparator, key.pattern, value))
             }
         }
-        if (!matches.isEmpty()) {
-            Collections.sort(matches)
+        if (matches.isNotEmpty()) {
+            matches.sort()
             val bestMatch = matches[0]
             if (matches.size > 1) {
                 val secondBestMatch = matches[1]
@@ -90,8 +90,10 @@ class URLFilterInvocationSecurityMetadataSource(
                             request.requestURL + "': {" + m1 + ", " + m2 + "}")
                 }
             }
-            return if (bestMatch.configAttributes.isEmpty()) SecurityConfig
-                    .createList("authenticated") else bestMatch.configAttributes
+            return bestMatch.configAttributes.ifEmpty {
+                SecurityConfig
+                        .createList("authenticated")
+            }
         }
         return emptyList()
     }

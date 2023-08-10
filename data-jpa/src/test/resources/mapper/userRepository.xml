@@ -123,6 +123,7 @@
     </select>
 
 
+    <!--suppress MybatisMapperXmlInspection -->
     <select id="selectMybatisAll_COUNT" resultType="java.lang.Long">
         select count(1)
         from t_user

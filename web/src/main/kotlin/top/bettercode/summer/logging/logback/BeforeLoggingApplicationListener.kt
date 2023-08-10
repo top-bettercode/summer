@@ -8,7 +8,6 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.event.GenericApplicationListener
 import org.springframework.core.ResolvableType
-import top.bettercode.summer.logging.logback.Logback2LoggingSystem
 
 /**
  * @author Peter Wu
