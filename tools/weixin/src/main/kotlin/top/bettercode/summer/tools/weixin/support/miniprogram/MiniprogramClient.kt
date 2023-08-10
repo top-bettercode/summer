@@ -39,7 +39,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         return if (session.isOk) {
             session
         } else {
-            throw WeixinException("获取session失败：errcode:${session.errcode},errmsg:${session.errmsg}", session)
+            throw WeixinException("获取session失败：${session.errmsg}", session)
         }
     }
 
@@ -61,7 +61,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         } else if (retries < properties.maxRetries) {
             getuserphonenumber(code, retries + 1)
         } else {
-            throw WeixinException("手机授权失败：errcode:${result.errcode},errmsg:${result.errmsg}", result)
+            throw WeixinException("手机号授权失败：${result.errmsg}", result)
         }
     }
 
@@ -91,7 +91,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
             log.warn("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {
-            throw WeixinException("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}", result)
+            throw WeixinException("发送订阅消息失败：${result.errmsg}", result)
         }
     }
 

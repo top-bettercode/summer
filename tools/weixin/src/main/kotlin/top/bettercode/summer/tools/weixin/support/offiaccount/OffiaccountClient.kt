@@ -71,7 +71,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
             } else if (retries < properties.maxRetries) {
                 getJsapiTicket(retries + 1)
             } else {
-                throw WeixinException("获取jsapiTicket失败：errcode:${jsapiTicket.errcode},errmsg:${jsapiTicket.errmsg}", jsapiTicket)
+                throw WeixinException("获取jsapiTicket失败：${jsapiTicket.errmsg}", jsapiTicket)
             }
         } else {
             cachedValue.value
@@ -127,7 +127,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
             log.warn("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {
-            throw WeixinException("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}", result)
+            throw WeixinException("发送模板消息失败：${result.errmsg}", result)
         }
     }
 

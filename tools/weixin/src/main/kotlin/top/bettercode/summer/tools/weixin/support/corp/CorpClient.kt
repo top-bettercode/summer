@@ -58,7 +58,7 @@ class CorpClient(properties: ICorpProperties) :
         } else if (retries < properties.maxRetries) {
             getWebPageAccessToken(code, retries + 1)
         } else {
-            throw WeixinException("网页授权失败：errcode:${result.errcode},errmsg:${result.errmsg}", result)
+            throw WeixinException("网页授权失败：${result.errmsg}", result)
         }
     }
 
