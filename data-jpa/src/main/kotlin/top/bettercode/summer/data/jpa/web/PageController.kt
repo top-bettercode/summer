@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity
 import top.bettercode.summer.data.jpa.support.PageableList
 import top.bettercode.summer.web.BaseController
 import top.bettercode.summer.web.PagedResources
-import top.bettercode.summer.web.PagedResources.PageMetadata
 import top.bettercode.summer.web.RespExtra
 import java.util.function.Function
 import java.util.stream.Collectors
@@ -42,10 +41,7 @@ open class PageController : BaseController() {
         val number = if (properties!!.pageable.isOneIndexedParameters) `object`.number + 1 else `object`.number
         val content = `object`.content
         val collect = content.stream().map(mapper).collect(Collectors.toList())
-        return super.ok(
-                PagedResources(PageMetadata(number.toLong(), `object`.size.toLong(), `object`.totalPages.toLong(),
-                        `object`.totalElements),
-                        collect))
+        return super.ok(pagedResources(number.toLong(), `object`.size.toLong(), `object`.totalPages.toLong(), `object`.totalElements, collect))
     }
 
     protected fun page(`object`: Any?): ResponseEntity<*> {
@@ -58,20 +54,23 @@ open class PageController : BaseController() {
         } else if (`object` is Collection<*>) {
             val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0
             val size = `object`.size
-            PagedResources(PageMetadata(number.toLong(), size.toLong(), 1, size.toLong()), `object`)
+            pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), `object`)
         } else if (`object` != null && `object`.javaClass.isArray) {
             val array = `object` as Array<*>
             val number = if (properties!!.pageable.isOneIndexedParameters) 1 else 0
             val size = array.size
-            PagedResources(PageMetadata(number.toLong(), size.toLong(), 1, size.toLong()), array)
+            pagedResources(number.toLong(), size.toLong(), 1, size.toLong(), array)
         } else {
             `object`
         }
     }
 
-    private fun pagedResources(`object`: Page<*>): PagedResources<*> {
+    private fun pagedResources(`object`: Page<*>): Any {
         val number = if (properties!!.pageable.isOneIndexedParameters) `object`.number + 1 else `object`.number
-        return PagedResources(PageMetadata(number.toLong(), `object`.size.toLong(), `object`.totalPages.toLong(),
-                `object`.totalElements), `object`.content)
+        return pagedResources(number.toLong(), `object`.size.toLong(), `object`.totalPages.toLong(), `object`.totalElements, `object`.content)
+    }
+
+    protected open fun <T> pagedResources(number: Long, size: Long, totalPages: Long, totalElements: Long, content: T?): Any {
+        return PagedResources(number, size, totalPages, totalElements, content)
     }
 }
