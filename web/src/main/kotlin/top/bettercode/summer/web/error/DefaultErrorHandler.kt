@@ -43,16 +43,15 @@ class DefaultErrorHandler(messageSource: MessageSource,
             val argumentName = error.name
             val targetType = error.requiredType?.name
             if (targetType != null) {
-                val code = "typeMismatch.type.$targetType"
-                message = getText(code, error.value)
-                message = if (message == code) {
-                    getText(argumentName) + separator + getText("typeMismatch.type", error.value, targetType)
-                } else {
-                    getText(argumentName) + separator + message
+                val code = "typeMismatch.$targetType"
+                message = getText("typeMismatch.$targetType")
+                if (message == code) {
+                    message = getText("typeMismatch.type", targetType)
                 }
             } else {
-                message = getText(argumentName) + separator + getText("typeMismatch")
+                message = getText("typeMismatch")
             }
+            message = getText(argumentName) + separator + invalidValue(error.value) + message
             errors[argumentName] = message
         } else if (error is ConversionFailedException) {
             val targetType = error.targetType.type.name
