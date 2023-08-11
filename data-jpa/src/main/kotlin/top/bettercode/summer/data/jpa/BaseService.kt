@@ -14,12 +14,21 @@ import java.util.function.Supplier
  * @author Peter Wu
  */
 open class BaseService<T, ID, M : BaseRepository<T, ID>>(
-        @JvmField
-        protected val repository: M
+        repository: M
 ) : IBaseService<T, ID, M> {
     @JvmField
     protected val log: Logger? = LoggerFactory.getLogger(javaClass)
 
+    @JvmField
+    protected val repository: M
+
+    init {
+        this.repository = repository
+    }
+
+    override fun getRepository(): M {
+        return repository
+    }
 
     protected fun notFound(): Supplier<out RuntimeException?> {
         return BaseController.notFound()
@@ -81,6 +90,10 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
 
     override fun <S : T> saveAll(entities: Iterable<S>): List<S> {
         return repository.saveAll(entities)
+    }
+
+    override fun deleteAllById(ids: Iterable<ID>): Int {
+        return repository.deleteAllById(ids)
     }
 
     override fun deleteInBatch(entities: Iterable<T>) {

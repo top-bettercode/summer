@@ -14,6 +14,11 @@ import java.util.*
  * @author Peter Wu
  */
 class QuerydslServiceImpl<T, ID, M : QuerydslRepository<T, ID>>(repository: M) : BaseService<T, ID, M>(repository), IQuerydslService<T, ID, M> {
+
+    override fun getRepository(): M {
+        return super.getRepository()
+    }
+
     override fun findOne(predicate: Predicate): Optional<T> {
         return repository.findOne(predicate)
     }

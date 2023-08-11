@@ -289,6 +289,17 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
+    @Transactional
+    override fun deleteAllById(ids: Iterable<ID>): Int {
+        var mdc = false
+        return try {
+            mdc = mdcPutId(".deleteAllById")
+            delete(Specification { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) })
+        } finally {
+            cleanMdc(mdc)
+        }
+    }
+
     private fun softDelete(spec: Specification<T>): Int {
         var spec1: Specification<T>? = spec
         val builder = entityManager.criteriaBuilder

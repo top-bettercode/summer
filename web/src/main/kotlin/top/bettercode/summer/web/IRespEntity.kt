@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
  * @author Peter Wu
  */
 interface IRespEntity {
+    @JvmDefault
     @get:JsonIgnore
     val httpStatusCode: Int?
         get() = HttpStatus.OK.value()
