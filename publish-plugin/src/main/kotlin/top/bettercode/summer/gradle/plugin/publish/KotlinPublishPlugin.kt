@@ -16,12 +16,20 @@ class KotlinPublishPlugin : AbstractPublishPlugin() {
     override fun apply(project: Project) {
         beforeConfigigure(project)
 
-        project.plugins.apply("org.jetbrains.dokka")
-        dokkaTask(project)
-        project.tasks.create("javadocJar", Jar::class.java) {
-            it.group = "documentation"
-            it.archiveClassifier.set("javadoc")
-            it.from(project.tasks.getByName("dokkaJavadoc").outputs)
+        if (project.findProperty("dokka.enabled") == "true") {
+            project.plugins.apply("org.jetbrains.dokka")
+            dokkaTask(project)
+            project.tasks.create("javadocJar", Jar::class.java) {
+                it.group = "documentation"
+                it.archiveClassifier.set("javadoc")
+                it.from(project.tasks.getByName("dokkaJavadoc").outputs)
+            }
+        } else {
+            project.tasks.create("javadocJar", Jar::class.java) {
+                it.group = "documentation"
+                it.archiveClassifier.set("javadoc")
+                it.from(project.tasks.getByName("javadoc").outputs)
+            }
         }
 
         configPublish(project)

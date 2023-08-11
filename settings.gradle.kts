@@ -15,7 +15,7 @@ include(":security")
 include(":test")
 
 include(":summer-plugin")
-//include(":publish-plugin")
+include(":publish-plugin")
 
 include(":tools:generator")
 include(":tools:tools")

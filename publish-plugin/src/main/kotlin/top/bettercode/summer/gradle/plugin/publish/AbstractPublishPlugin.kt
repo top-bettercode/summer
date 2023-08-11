@@ -4,8 +4,9 @@ import groovy.util.Node
 import groovy.util.NodeList
 import org.gradle.api.*
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.internal.GradleInternal
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
@@ -117,13 +118,20 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
                 } else {
                     mavenPublication.from(project.components.getByName("java"))
                 }
+                val gradle = project.gradle as GradleInternal
 
-                mavenPublication.artifact(project.tasks.getByName("sourcesJar")) {
-                    it.classifier = "sources"
-                }
+                val taskNames =
+                        gradle.startParameter.taskNames.map {
+                            it.substringAfterLast(":")
+                        }
+                if (!taskNames.contains("publish")) {
+                    mavenPublication.artifact(project.tasks.getByName("sourcesJar")) {
+                        it.classifier = "sources"
+                    }
 
-                mavenPublication.artifact(project.tasks.getByName("javadocJar")) {
-                    it.classifier = "javadoc"
+                    mavenPublication.artifact(project.tasks.getByName("javadocJar")) {
+                        it.classifier = "javadoc"
+                    }
                 }
 
                 mavenPublication.pom.withXml(configurePomXml(project, projectUrl, projectVcsUrl))
@@ -212,7 +220,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
             it.dependsOn("classes")
             it.archiveClassifier.set("sources")
             it.from(
-                    project.extensions.getByType(JavaPluginExtension::class.java).sourceSets.getByName(
+                    project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(
                             SourceSet.MAIN_SOURCE_SET_NAME
                     ).allSource
             )

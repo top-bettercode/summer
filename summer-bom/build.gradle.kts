@@ -19,6 +19,8 @@ dependencies {
 
         api("org.springframework.boot:spring-boot-gradle-plugin:2.3.2.RELEASE")
 
+        api("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32")
+
         api("com.gradle.publish:plugin-publish-plugin:1.1.0")
         api("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
 
@@ -81,7 +83,7 @@ dependencies {
         api(project(":test"))
 
         api(project(":summer-plugin"))
-//        api(project(":publish-plugin"))
+        api(project(":publish-plugin"))
 
         api(project(":tools:generator"))
         api(project(":tools:amap"))

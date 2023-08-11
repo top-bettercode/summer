@@ -26,19 +26,23 @@ class PluginPublishPlugin : AbstractPublishPlugin() {
         project.plugins.apply("java-gradle-plugin")
         project.plugins.apply("com.gradle.plugin-publish")
 
-        if (project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
-            if (!project.plugins.hasPlugin("org.jetbrains.dokka"))
-                project.plugins.apply("org.jetbrains.dokka")
+        if (project.findProperty("dokka.enabled") == "true") {
+            if (project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
+                if (!project.plugins.hasPlugin("org.jetbrains.dokka"))
+                    project.plugins.apply("org.jetbrains.dokka")
 
-            dokkaTask(project)
+                dokkaTask(project)
+            }
         }
 
         when {
             project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") -> {
-                project.tasks.create("javadocJar", Jar::class.java) {
-                    it.group = "documentation"
-                    it.archiveClassifier.set("javadoc")
-                    it.from(project.tasks.getByName("dokkaJavadoc").outputs)
+                if (project.findProperty("dokka.enabled") == "true") {
+                    project.tasks.create("javadocJar", Jar::class.java) {
+                        it.group = "documentation"
+                        it.archiveClassifier.set("javadoc")
+                        it.from(project.tasks.getByName("dokkaJavadoc").outputs)
+                    }
                 }
             }
 
