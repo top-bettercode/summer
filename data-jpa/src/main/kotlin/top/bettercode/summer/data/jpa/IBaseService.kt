@@ -33,11 +33,11 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
     fun <S : T> saveAll(entities: Iterable<S>): List<S>
     fun delete(t: T)
     fun deleteById(id: ID)
-    fun deleteAllById(ids: Iterable<ID>)
     fun delete(spec: Specification<T>): Int
+    fun deleteAllById(ids: Iterable<ID>)
     fun deleteAll(entities: Iterable<T>)
     fun deleteAll()
-    fun deleteInBatch(entities: Iterable<T>)
+    fun deleteAllInBatch(entities: Iterable<T>)
     fun deleteAllInBatch()
     fun count(): Long
     fun findById(id: ID): Optional<T>

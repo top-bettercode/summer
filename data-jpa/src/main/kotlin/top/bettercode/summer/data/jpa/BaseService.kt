@@ -91,8 +91,8 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         repository.deleteAllById(ids)
     }
 
-    override fun deleteInBatch(entities: Iterable<T>) {
-        repository.deleteInBatch(entities)
+    override fun deleteAllInBatch(entities: Iterable<T>) {
+        repository.deleteAllInBatch(entities)
     }
 
     override fun deleteAllInBatch() {

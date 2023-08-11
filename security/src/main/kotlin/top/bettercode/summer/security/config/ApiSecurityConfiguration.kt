@@ -17,10 +17,8 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import top.bettercode.summer.security.ApiTokenService
 import top.bettercode.summer.security.IResourceService
-import top.bettercode.summer.security.authorization.URLFilterInvocationSecurityMetadataSource
 import top.bettercode.summer.security.repository.ApiTokenRepository
 import top.bettercode.summer.security.repository.InMemoryApiTokenRepository
 import top.bettercode.summer.security.support.ApiSecurityErrorHandler
@@ -34,15 +32,8 @@ import kotlin.math.max
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(ApiSecurityProperties::class)
 class ApiSecurityConfiguration(
-        private val securityProperties: ApiSecurityProperties) {
-    @Bean
-    fun securityMetadataSource(
-            resourceService: IResourceService,
-            requestMappingHandlerMapping: RequestMappingHandlerMapping): URLFilterInvocationSecurityMetadataSource {
-        return URLFilterInvocationSecurityMetadataSource(resourceService,
-                requestMappingHandlerMapping, securityProperties)
-    }
-
+        private val securityProperties: ApiSecurityProperties
+) {
     @ConditionalOnMissingBean(IResourceService::class)
     @Bean
     fun resourceService(): IResourceService {

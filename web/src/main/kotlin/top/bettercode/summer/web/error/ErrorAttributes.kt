@@ -1,6 +1,7 @@
 package top.bettercode.summer.web.error
 
 import org.springframework.boot.autoconfigure.web.ErrorProperties
+import org.springframework.boot.autoconfigure.web.ErrorProperties.IncludeAttribute
 import org.springframework.boot.web.error.ErrorAttributeOptions
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.context.MessageSource
@@ -191,8 +192,8 @@ open class ErrorAttributes(private val errorProperties: ErrorProperties,
      */
     protected fun isIncludeStackTrace(request: WebRequest, @Suppress("UNUSED_PARAMETER") produces: MediaType?): Boolean {
         return when (errorProperties.includeStacktrace) {
-            ErrorProperties.IncludeStacktrace.ALWAYS -> true
-            ErrorProperties.IncludeStacktrace.ON_PARAM -> getTraceParameter(request)
+            IncludeAttribute.ALWAYS -> true
+            IncludeAttribute.ON_PARAM -> getTraceParameter(request)
             else -> false
         }
     }

@@ -1,6 +1,7 @@
 package org.springframework.data.jpa.repository.query
 
 import org.apache.ibatis.session.Configuration
+import org.slf4j.LoggerFactory
 import org.springframework.data.jpa.provider.QueryExtractor
 import org.springframework.data.projection.ProjectionFactory
 import org.springframework.data.repository.core.NamedQueries
@@ -9,6 +10,7 @@ import org.springframework.data.repository.query.QueryLookupStrategy
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider
 import org.springframework.data.repository.query.RepositoryQuery
 import org.springframework.util.Assert
+import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import java.lang.reflect.Method
 import javax.persistence.EntityManager
@@ -21,6 +23,8 @@ import javax.persistence.EntityManager
  * @author Mark Paluch
  */
 object JpaExtQueryLookupStrategy {
+    private val LOG = LoggerFactory.getLogger(JpaQueryLookupStrategy::class.java)
+
     /**
      * Creates a [QueryLookupStrategy] for the given [EntityManager] and [Key].
      *
@@ -61,7 +65,8 @@ object JpaExtQueryLookupStrategy {
     }
 
     /**
-     * Base class for [QueryLookupStrategy] implementations that need access to an [ ].
+     * Base class for [QueryLookupStrategy] implementations that need access to an
+     * [EntityManager].
      *
      * @author Oliver Gierke
      * @author Thomas Darimont
@@ -127,37 +132,59 @@ object JpaExtQueryLookupStrategy {
                 method: JpaExtQueryMethod, em: EntityManager,
                 namedQueries: NamedQueries
         ): RepositoryQuery {
-            var query: RepositoryQuery? = JpaQueryFactory.INSTANCE
-                    .fromQueryAnnotation(method, em, evaluationContextProvider)
-            if (null != query) {
-                return query
+            if (method.isProcedureQuery) {
+                return JpaQueryFactory.INSTANCE.fromProcedureAnnotation(method, em)
             }
-            query = JpaQueryFactory.INSTANCE.fromProcedureAnnotation(method, em)
-            if (null != query) {
-                return query
-            }
-            val name: String = method.namedQueryName
-            if (namedQueries.hasQuery(name)) {
-                query = JpaQueryFactory.INSTANCE
-                        .fromMethodWithQueryString(method, em, namedQueries.getQuery(name),
-                                evaluationContextProvider)
-                if (null != query) {
-                    return query
-                }
-            }
-            query = NamedQuery.lookupFrom(method, em)
-            if (null != query) {
-                return query
-            }
-            throw IllegalStateException(
-                    java.lang.String.format("Did neither find a NamedQuery nor an annotated query for method %s!",
+            if (StringUtils.hasText(method.annotatedQuery)) {
+                if (method.hasAnnotatedQueryName()) {
+                    LOG.warn(String.format(
+                            "Query method %s is annotated with both, a query and a query name. Using the declared query.",
                             method))
+                }
+                return JpaQueryFactory.INSTANCE.fromMethodWithQueryString(method, em,
+                        method.requiredAnnotatedQuery,
+                        getCountQuery(method, namedQueries, em),
+                        evaluationContextProvider)
+            }
+            val name = method.namedQueryName
+            if (namedQueries.hasQuery(name)) {
+                return JpaQueryFactory.INSTANCE.fromMethodWithQueryString(method, em,
+                        namedQueries.getQuery(name), getCountQuery(method, namedQueries, em),
+                        evaluationContextProvider)
+            }
+            val query = NamedQuery.lookupFrom(method, em)
+            if (null != query) {
+                return query
+            }
+            throw IllegalStateException(String.format("Did neither find a NamedQuery nor an annotated query for method %s!",
+                    method))
+        }
+
+            private fun getCountQuery(
+                method: JpaQueryMethod, namedQueries: NamedQueries,
+                em: EntityManager
+        ): String? {
+            if (StringUtils.hasText(method.countQuery)) {
+                return method.countQuery
+            }
+            val queryName = method.namedCountQueryName
+            if (!StringUtils.hasText(queryName)) {
+                return method.countQuery
+            }
+            if (namedQueries.hasQuery(queryName)) {
+                return namedQueries.getQuery(queryName)
+            }
+            val namedQuery = NamedQuery.hasNamedQuery(em, queryName)
+            return if (namedQuery) {
+                method.queryExtractor.extractQueryString(em.createNamedQuery(queryName))
+            } else null
         }
     }
 
     /**
-     * [QueryLookupStrategy] to try to detect a declared query first ( [ ], JPA named query). In case none is found we fall
-     * back on query creation.
+     * [QueryLookupStrategy] to try to detect a declared query first (
+     * [org.springframework.data.jpa.repository.Query], JPA named query). In case none is found
+     * we fall back on query creation.
      *
      * @author Oliver Gierke
      * @author Thomas Darimont

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.query.QueryUtils
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
+import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.Assert
@@ -17,6 +18,7 @@ import top.bettercode.summer.data.jpa.JpaExtRepository
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import top.bettercode.summer.tools.lang.util.BeanUtil.nullFrom
 import java.util.*
+import java.util.function.Function
 import javax.persistence.EntityManager
 import javax.persistence.EntityNotFoundException
 import javax.persistence.criteria.CriteriaBuilder
@@ -149,6 +151,28 @@ class SimpleJpaExtRepository<T : Any, ID>(
         return try {
             mdc = mdcPutId(".saveAll")
             super.saveAll(entities)
+        } finally {
+            cleanMdc(mdc)
+        }
+    }
+
+    override fun <S : T> saveAllAndFlush(entities: Iterable<S>): List<S> {
+        var mdc = false
+        return try {
+            mdc = mdcPutId(".saveAllAndFlush")
+            super.saveAllAndFlush(entities)
+        } finally {
+            cleanMdc(mdc)
+        }
+    }
+
+    @Deprecated("")
+    override fun deleteInBatch(entities: Iterable<T>) {
+        var mdc = false
+        try {
+            mdc = mdcPutId(".deleteInBatch")
+            @Suppress("DEPRECATION")
+            super<SimpleJpaRepository>.deleteInBatch(entities)
         } finally {
             cleanMdc(mdc)
         }
@@ -339,8 +363,22 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
+    override fun deleteAllByIdInBatch(ids: Iterable<ID>) {
+        var mdc = false
+        try {
+            mdc = mdcPutId(".deleteAllByIdInBatch")
+            if (extJpaSupport.supportSoftDeleted()) {
+                softDelete { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection<ID?>(ids)) }
+            } else {
+                super.deleteAllByIdInBatch(ids)
+            }
+        } finally {
+            cleanMdc(mdc)
+        }
+    }
+
     @Transactional
-    override fun deleteInBatch(entities: Iterable<T>) {
+    override fun deleteAllInBatch(entities: Iterable<T>) {
         var mdc = false
         try {
             mdc = mdcPutId(".deleteAllInBatch")
@@ -382,7 +420,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                     }
                 }
             } else {
-                super.deleteInBatch(entities)
+                super.deleteAllInBatch(entities)
             }
         } finally {
             cleanMdc(mdc)
@@ -422,7 +460,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                     builder.equal(
                             root[entityInformation.idAttribute], id)
                 }
-                spec = spec.and(notDeletedSpec)!!
+                spec = spec.and(notDeletedSpec)
                 super.findOne(spec)
             } else {
                 super.findById(id)
@@ -447,15 +485,25 @@ class SimpleJpaExtRepository<T : Any, ID>(
         var mdc = false
         return try {
             mdc = mdcPutId(".getOne")
+            getById(id)
+        } finally {
+            cleanMdc(mdc)
+        }
+    }
+
+    override fun getById(id: ID): T {
+        var mdc = false
+        return try {
+            mdc = mdcPutId(".getById")
             if (extJpaSupport.supportSoftDeleted()) {
                 var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder.equal(
                             root[entityInformation.idAttribute], id)
                 }
-                spec = spec.and(notDeletedSpec)!!
+                spec = spec.and(notDeletedSpec)
                 super.findOne(spec).orElseThrow { EntityNotFoundException("Unable to find $domainClass with id $id") }
             } else {
-                super.getOne(id)
+                super.getById(id)
             }
         } finally {
             cleanMdc(mdc)
@@ -471,7 +519,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                     builder.equal(
                             root[entityInformation.idAttribute], id)
                 }
-                spec = spec.and(notDeletedSpec)!!
+                spec = spec.and(notDeletedSpec)
                 super.count(spec) > 0
             } else {
                 super.existsById(id)
@@ -505,7 +553,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             mdc = mdcPutId(".findAllById")
             var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection<ID?>(ids)) }
             if (extJpaSupport.supportSoftDeleted()) {
-                spec = spec.and(notDeletedSpec)!!
+                spec = spec.and(notDeletedSpec)
             }
             val all = super.findAll(spec)
             if (sqlLog.isDebugEnabled) {
@@ -823,6 +871,22 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
+    override fun <S : T, R> findBy(
+            example: Example<S>,
+            queryFunction: Function<FetchableFluentQuery<S>, R>,
+    ): R {
+        var mdc = false
+        return try {
+            mdc = mdcPutId(".findBy")
+            if (extJpaSupport.supportSoftDeleted()) {
+                extJpaSupport.setUnSoftDeleted(example.probe)
+            }
+            super.findBy(example, queryFunction)
+        } finally {
+            cleanMdc(mdc)
+        }
+    }
+
     override fun <S : T> count(example: Example<S>): Long {
         var mdc = false
         return try {
@@ -1005,7 +1069,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             mdc = mdcPutId(".deleteAllByIdFromRecycleBin")
             if (extJpaSupport.supportSoftDeleted()) {
                 var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection<ID?>(ids)) }
-                spec = spec.and(deletedSpec)!!
+                spec = spec.and(deletedSpec)
                 hardDelete(spec)
             } else {
                 if (sqlLog.isDebugEnabled) {
@@ -1090,7 +1154,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder.equal(root[entityInformation.idAttribute], id)
                 }
-                spec = spec.and(deletedSpec)!!
+                spec = spec.and(deletedSpec)
                 super.findOne(spec)
             } else {
                 Optional.empty()
@@ -1107,7 +1171,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             val result: List<T>
             if (extJpaSupport.supportSoftDeleted()) {
                 var spec = Specification { root: Root<T>, _: CriteriaQuery<*>?, _: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection<ID?>(ids)) }
-                spec = spec.and(deletedSpec)!!
+                spec = spec.and(deletedSpec)
                 result = super.findAll(spec)
             } else {
                 result = emptyList()

@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
-import org.springframework.boot.autoconfigure.web.ResourceProperties
+import org.springframework.boot.autoconfigure.web.WebProperties
 import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration
 import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -31,11 +31,12 @@ import javax.servlet.MultipartConfigElement
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class MultipartFileConfiguration(
         multipartProperties: SummerMultipartProperties,
-        resourceProperties: ResourceProperties) : WebMvcConfigurer {
+        webProperties: WebProperties) : WebMvcConfigurer {
     private val log = LoggerFactory.getLogger(MultipartFileConfiguration::class.java)
 
     init {
-        resourceProperties.staticLocations = resourceProperties.staticLocations.plus(multipartProperties.staticLocations)
+        val resources = webProperties.resources
+        resources.staticLocations = resources.staticLocations.plus(multipartProperties.staticLocations)
     }
 
     @Bean

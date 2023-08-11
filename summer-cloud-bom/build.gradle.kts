@@ -12,13 +12,13 @@ javaPlatform {
 dependencies {
 
 //https://github.com/alibaba/spring-cloud-alibaba/releases
-    api(platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2.2.5.RELEASE"))
-    api(platform("org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR8"))
+    api(platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.5.0"))
+    api(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.5"))
     api(platform(project(":summer-bom")))
 
     constraints {
         api("com.alibaba:druid-spring-boot-starter:1.2.16")
-        api("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4")
+        api("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.0")
     }
 }
 
