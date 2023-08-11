@@ -73,13 +73,13 @@ object InitField {
                 uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()
             }
             if (!(uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank())) {
-                request.uriVariablesExt.noneblankField().fix(needFixFields = uriNeedFix, fuzzy = true)
-                request.headersExt.noneblankField().fix(needFixFields = reqHeadNeedFix, fuzzy = true)
-                request.parametersExt.noneblankField().fix(needFixFields = paramNeedFix, fuzzy = true)
-                request.partsExt.noneblankField().fix(needFixFields = partNeedFix, fuzzy = true)
-                request.contentExt.noneblankField().fix(needFixFields = reqContentNeedFix, fuzzy = true)
-                response.headersExt.noneblankField().fix(needFixFields = resHeadNeedFix, fuzzy = true)
-                response.contentExt.noneblankField().fix(needFixFields = resContentNeedFix, wrap = wrap, fuzzy = true)
+                request.uriVariablesExt.fix(needFixFields = uriNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
+                request.headersExt.fix(needFixFields = reqHeadNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
+                request.parametersExt.fix(needFixFields = paramNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
+                request.partsExt.fix(needFixFields = partNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
+                request.contentExt.fix(needFixFields = reqContentNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
+                response.headersExt.fix(needFixFields = resHeadNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
+                response.contentExt.fix(needFixFields = resContentNeedFix, fixNoDescField = true, hasDesc = true, wrap = wrap, fuzzy = true)
             }
         }
 
@@ -130,13 +130,16 @@ object InitField {
 
     private fun Set<Field>.fix(
             needFixFields: Set<Field>,
+            fixNoDescField: Boolean = false,
             wrap: Boolean = false,
+            hasDesc: Boolean = false,
             onlyDesc: Boolean = false,
             fuzzy: Boolean = false
     ) {
         fixFieldTree(
                 needFixFields,
-                hasDesc = false,
+                fixNoDescField = fixNoDescField,
+                hasDesc = hasDesc,
                 userDefault = false,
                 wrap = wrap,
                 onlyDesc = onlyDesc,
@@ -315,6 +318,7 @@ object InitField {
 
     private fun Set<Field>.fixFieldTree(
             needFixFields: Set<Field>,
+            fixNoDescField: Boolean = false,
             hasDesc: Boolean = true,
             userDefault: Boolean = true,
             wrap: Boolean = false,
@@ -322,14 +326,14 @@ object InitField {
             fuzzy: Boolean = false
     ) {
         needFixFields.forEach { field ->
-            val findField = fixField(
+            val findField = if (field.description.isBlank() || !fixNoDescField) fixField(
                     field = field,
                     hasDesc = hasDesc,
                     userDefault = userDefault,
                     wrap = wrap,
                     onlyDesc = onlyDesc,
                     fuzzy = fuzzy
-            )
+            ) else null
 
             fieldDescBundle.all().forEach { (k, v) ->
                 field.description = field.description.replace(k, v)
@@ -384,16 +388,7 @@ object InitField {
 
     private fun Set<Field>.blankField(canConver: Boolean = true): Set<Field> {
         return filter {
-            it.children = LinkedHashSet(it.children.blankField(canConver))
             it.isBlank(canConver) || it.children.anyBlank(canConver)
-        }.toSet()
-    }
-
-
-    private fun Set<Field>.noneblankField(): Set<Field> {
-        return filter {
-            it.children = LinkedHashSet(it.children.noneblankField())
-            it.description.isNotBlank() || it.children.anyNotBlank()
         }.toSet()
     }
 
@@ -404,10 +399,6 @@ object InitField {
 
     private fun Set<Field>.anyBlank(canConver: Boolean): Boolean {
         return any { it.isBlank(canConver) || it.children.anyBlank(canConver) }
-    }
-
-    private fun Set<Field>.anyNotBlank(): Boolean {
-        return any { it.description.isNotBlank() || it.children.anyNotBlank() }
     }
 
     private fun Field.isBlank(canConver: Boolean) =

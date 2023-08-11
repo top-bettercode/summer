@@ -145,6 +145,18 @@ open class GeneratorExtension(
             }
         }
 
+    /**
+     * Comparator 比较 key 默认认模块名(defaultModuleName)排最前，其他按字母排序
+     */
+    val comparator: Comparator<String> = Comparator { o1, o2 ->
+        if (o1 == defaultModuleName) {
+            -1
+        } else if (o2 == defaultModuleName) {
+            1
+        } else {
+            o1.compareTo(o2)
+        }
+    }
 
     companion object {
 
@@ -248,8 +260,8 @@ open class GeneratorExtension(
                                 defaultModuleName
                             } else it.name
                         }
-                ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
-                ?: emptyMap()
+                ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }?.toSortedMap(comparator)
+                ?: emptyMap<String, List<File>>()
     }
 
     val pdmSources: Map<String, List<File>> by lazy {
@@ -257,8 +269,8 @@ open class GeneratorExtension(
                 ?.associateBy(
                         { if ("src" == it.name) "modules" else it.name }
                 ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "pdm" }.toList() }
-                ?.toSortedMap(kotlin.Comparator { o1, o2 -> o1.compareTo(o2) })
-                ?: TreeMap()
+                ?.toSortedMap(comparator)
+                ?: emptyMap<String, List<File>>()
     }
 
     val pumlDatabaseSources: Map<String, List<File>> by lazy {
@@ -269,8 +281,8 @@ open class GeneratorExtension(
                     } else it.name
                 }
                 ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
-                ?.toSortedMap(kotlin.Comparator { o1, o2 -> o1.compareTo(o2) })
-                ?: TreeMap()
+                ?.toSortedMap(comparator)
+                ?: emptyMap<String, List<File>>()
     }
 
     fun <T> run(dataType: DataType = this.dataType, function: (String, TableHolder) -> T): List<T> {

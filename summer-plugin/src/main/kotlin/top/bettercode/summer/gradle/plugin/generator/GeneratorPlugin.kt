@@ -97,7 +97,7 @@ class GeneratorPlugin : Plugin<Project> {
                                         .filter { it.isNotBlank() }.toTypedArray()
 
                         configuration
-                    }.toSortedMap(kotlin.Comparator { o1, o2 -> o1.compareTo(o2) })
+                    }.toSortedMap(extension.comparator)
 
             extension.delete = (findGeneratorProperty(project, "delete"))?.toBoolean() ?: false
             extension.projectPackage =
