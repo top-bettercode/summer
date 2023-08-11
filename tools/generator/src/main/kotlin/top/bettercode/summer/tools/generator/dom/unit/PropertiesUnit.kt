@@ -27,6 +27,10 @@ open class PropertiesUnit(
         properties[key] = value
     }
 
+    operator fun get(key: String): String? {
+        return properties[key] as String?
+    }
+
     /**
      * @param directory 基础目录
      */

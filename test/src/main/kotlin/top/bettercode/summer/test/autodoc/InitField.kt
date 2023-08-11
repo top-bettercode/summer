@@ -53,14 +53,15 @@ object InitField {
         var resHeadNeedFix = response.headersExt.blankField()
         var resContentNeedFix = response.contentExt.blankField()
         if (uriNeedFix.isNotEmpty() || reqHeadNeedFix.isNotEmpty() || paramNeedFix.isNotEmpty() || partNeedFix.isNotEmpty() || reqContentNeedFix.isNotEmpty() || resHeadNeedFix.isNotEmpty() || resContentNeedFix.isNotEmpty()) {
-            extension.fixFields { fields, onlyDesc ->
-                fields.fix(needFixFields = uriNeedFix, onlyDesc = onlyDesc)
-                fields.fix(needFixFields = reqHeadNeedFix, onlyDesc = onlyDesc)
-                fields.fix(needFixFields = paramNeedFix, onlyDesc = onlyDesc)
-                fields.fix(needFixFields = partNeedFix, onlyDesc = onlyDesc)
-                fields.fix(needFixFields = reqContentNeedFix, onlyDesc = onlyDesc)
-                fields.fix(needFixFields = resHeadNeedFix, onlyDesc = onlyDesc)
-                fields.fix(needFixFields = resContentNeedFix, wrap = wrap, onlyDesc = onlyDesc)
+            extension.fixFields { fields, onlyDesc, fixNoDescField ->
+                fields.fixFieldTree(needFixFields = uriNeedFix, fixNoDescField = fixNoDescField, userDefault = false,
+                        onlyDesc = onlyDesc)
+                fields.fixFieldTree(needFixFields = reqHeadNeedFix, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
+                fields.fixFieldTree(needFixFields = paramNeedFix, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
+                fields.fixFieldTree(needFixFields = partNeedFix, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
+                fields.fixFieldTree(needFixFields = reqContentNeedFix, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
+                fields.fixFieldTree(needFixFields = resHeadNeedFix, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
+                fields.fixFieldTree(needFixFields = resContentNeedFix, wrap = wrap, fixNoDescField = fixNoDescField, userDefault = false, onlyDesc = onlyDesc)
 
                 uriNeedFix = request.uriVariablesExt.blankField(canConver = false)
                 reqHeadNeedFix = request.headersExt.blankField(canConver = false)
@@ -73,13 +74,13 @@ object InitField {
                 uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank()
             }
             if (!(uriNeedFix.noneBlank() && reqHeadNeedFix.noneBlank() && paramNeedFix.noneBlank() && partNeedFix.noneBlank() && reqContentNeedFix.noneBlank() && resHeadNeedFix.noneBlank() && resContentNeedFix.noneBlank())) {
-                request.uriVariablesExt.fix(needFixFields = uriNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
-                request.headersExt.fix(needFixFields = reqHeadNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
-                request.parametersExt.fix(needFixFields = paramNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
-                request.partsExt.fix(needFixFields = partNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
-                request.contentExt.fix(needFixFields = reqContentNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
-                response.headersExt.fix(needFixFields = resHeadNeedFix, fixNoDescField = true, hasDesc = true, fuzzy = true)
-                response.contentExt.fix(needFixFields = resContentNeedFix, fixNoDescField = true, hasDesc = true, wrap = wrap, fuzzy = true)
+                request.uriVariablesExt.fixFieldTree(needFixFields = uriNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
+                request.headersExt.fixFieldTree(needFixFields = reqHeadNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
+                request.parametersExt.fixFieldTree(needFixFields = paramNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
+                request.partsExt.fixFieldTree(needFixFields = partNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
+                request.contentExt.fixFieldTree(needFixFields = reqContentNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
+                response.headersExt.fixFieldTree(needFixFields = resHeadNeedFix, fixNoDescField = true, hasDesc = true, userDefault = false, fuzzy = true)
+                response.contentExt.fixFieldTree(needFixFields = resContentNeedFix, fixNoDescField = true, hasDesc = true, wrap = wrap, userDefault = false, fuzzy = true)
             }
         }
 
@@ -128,29 +129,10 @@ object InitField {
         }
     }
 
-    private fun Set<Field>.fix(
-            needFixFields: Set<Field>,
-            fixNoDescField: Boolean = false,
-            wrap: Boolean = false,
-            hasDesc: Boolean = false,
-            onlyDesc: Boolean = false,
-            fuzzy: Boolean = false
-    ) {
-        fixFieldTree(
-                needFixFields,
-                fixNoDescField = fixNoDescField,
-                hasDesc = hasDesc,
-                userDefault = false,
-                wrap = wrap,
-                onlyDesc = onlyDesc,
-                fuzzy = fuzzy
-        )
-    }
-
     private fun GeneratorExtension.fixFields(
-            fn: (Set<Field>, Boolean) -> Boolean
+            fn: (Set<Field>, Boolean, Boolean) -> Boolean
     ) {
-        if (fn(messageFields, true)) return
+        if (fn(messageFields, true, false)) return
 
         val ext = this
 
@@ -162,13 +144,13 @@ object InitField {
                             for (tableName in Autodoc.tableNames) {
                                 val table = tables.find { it.tableName == tableName }
                                 if (table != null) {
-                                    if (fn(table.fields(), false)) {
+                                    if (fn(table.fields(), false, !isDefaultModule(module))) {
                                         return@all
                                     }
                                 }
                             }
                             for (table in tables.filter { !Autodoc.tableNames.contains(it.tableName) }) {
-                                if (fn(table.fields(), false)) {
+                                if (fn(table.fields(), false, !isDefaultModule(module))) {
                                     return@all
                                 }
                             }
@@ -186,7 +168,7 @@ object InitField {
                                 it.module = module
                             }
                             if (table != null) {
-                                if (fn(table.fields(), false)) {
+                                if (fn(table.fields(), false, !isDefaultModule(module))) {
                                     return
                                 }
                             }
@@ -199,7 +181,7 @@ object InitField {
                                 it.module = module
                             }
                             if (table != null) {
-                                if (fn(table.fields(), false)) {
+                                if (fn(table.fields(), false, !isDefaultModule(module))) {
                                     return
                                 }
                             }
@@ -326,65 +308,53 @@ object InitField {
             fuzzy: Boolean = false
     ) {
         needFixFields.forEach { field ->
-            val findField = if (field.description.isBlank() || !fixNoDescField) fixField(
-                    field = field,
-                    hasDesc = hasDesc,
-                    userDefault = userDefault,
-                    wrap = wrap,
-                    onlyDesc = onlyDesc,
-                    fuzzy = fuzzy
-            ) else null
+            val findField = if (field.description.isBlank() || !fixNoDescField) {
+                val findField = this.findPossibleField(
+                        name = field.name,
+                        type = field.value.type,
+                        hasDesc = hasDesc,
+                        fuzzy = fuzzy
+                )
+                if (findField != null && (field.canCover || field.description.isBlank() || !findField.canCover) && (!wrap || !contentWrapFields.contains(
+                                field.name
+                        ))
+                ) {
+                    if (onlyDesc) {
+                        if (findField.description.isNotBlank())
+                            field.description = findField.description
+                    } else {
+                        field.canCover = findField.canCover
+                        if (userDefault)
+                            field.defaultVal = findField.defaultVal
+                        if (findField.type.isNotBlank())
+                            field.type = findField.type
+                        if (findField.description.isNotBlank())
+                            field.description = findField.description
+
+                        var tempVal = field.value
+                        if (tempVal.isBlank()) {
+                            tempVal = field.defaultVal
+                        }
+                        field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
+                    }
+                }
+                findField
+            } else null
 
             fieldDescBundle.all().forEach { (k, v) ->
                 field.description = field.description.replace(k, v)
             }
 
-            (findField?.children ?: field.children).fixFieldTree(needFixFields = field.children, fuzzy = fuzzy)
-            fixFieldTree(needFixFields = field.children, fuzzy = fuzzy)
-        }
-    }
-
-    private fun Set<Field>.fixField(
-            field: Field,
-            hasDesc: Boolean = false,
-            coverType: Boolean = true,
-            userDefault: Boolean = true,
-            wrap: Boolean = false,
-            onlyDesc: Boolean = false,
-            fuzzy: Boolean = false
-    ): Field? {
-        val findField = this.findPossibleField(
-                name = field.name,
-                type = field.value.type,
-                hasDesc = hasDesc,
-                fuzzy = fuzzy
-        )
-        if (findField != null && (field.canCover || field.description.isBlank() || !findField.canCover) && (!wrap || !contentWrapFields.contains(
-                        field.name
-                ))
-        ) {
-            if (onlyDesc) {
-                if (findField.description.isNotBlank())
-                    field.description = findField.description
-            } else {
-                field.canCover = findField.canCover
-                if (userDefault)
-                    field.defaultVal = findField.defaultVal
-                if (findField.type.isNotBlank() && (coverType || !findField.canCover))
-                    field.type = findField.type
-                if (findField.description.isNotBlank())
-                    field.description = findField.description
-
-                var tempVal = field.value
-                if (tempVal.isBlank()) {
-                    tempVal = field.defaultVal
-                }
-                field.value = tempVal.convert(false)?.toJsonString(false) ?: ""
+            val children = findField?.children
+            if (!children.isNullOrEmpty()) {
+                children.fixFieldTree(needFixFields = field.children, fixNoDescField = fixNoDescField, hasDesc = hasDesc, userDefault = userDefault, wrap = wrap, onlyDesc = onlyDesc, fuzzy = fuzzy)
+            } else if (fuzzy) {
+                field.children.fixFieldTree(needFixFields = field.children, fixNoDescField = fixNoDescField, hasDesc = hasDesc, userDefault = userDefault, wrap = wrap, onlyDesc = onlyDesc, fuzzy = true)
             }
-        }
-        return findField
-    }
 
+            fixFieldTree(needFixFields = field.children, fixNoDescField = fixNoDescField, hasDesc = hasDesc, userDefault = userDefault, wrap = wrap, onlyDesc = onlyDesc, fuzzy = fuzzy)
+        }
+    }
 
     private fun Set<Field>.blankField(canConver: Boolean = true): Set<Field> {
         return filter {
@@ -454,59 +424,48 @@ object InitField {
             fuzzy: Boolean = false
     ): Field? {
         return this.findField(name = name, type = type, hasDesc = hasDesc)
-                ?: if (fuzzy) this.findFuzzyField(
-                        name = name,
-                        type = type,
-                        hasDesc = hasDesc
-                ) else null
-    }
+                ?: if (fuzzy) {
+                    val newName = when {
+                        name.endsWith("Name") -> name.substringBeforeLast("Name")
+                        name.endsWith("Desc") -> name.substringBeforeLast("Desc")
+                        name.endsWith("Path") -> name.substringBeforeLast("Path")
+                        name.endsWith("Url") -> name.substringBeforeLast("Url")
+                        name.endsWith("Urls") -> name.substringBeforeLast("Urls")
+                        name.startsWith("start") -> name.substringAfter("start")
+                                .decapitalized()
 
+                        name.endsWith("Start") -> name.substringBeforeLast("Start")
+                        name.startsWith("end") -> name.substringAfter("end")
+                                .decapitalized()
 
-    private fun Set<Field>.findFuzzyField(
-            name: String,
-            type: String,
-            hasDesc: Boolean = false
-    ): Field? {
-        val newName = when {
-            name.endsWith("Name") -> name.substringBeforeLast("Name")
-            name.endsWith("Desc") -> name.substringBeforeLast("Desc")
-            name.endsWith("Path") -> name.substringBeforeLast("Path")
-            name.endsWith("Url") -> name.substringBeforeLast("Url")
-            name.endsWith("Urls") -> name.substringBeforeLast("Urls")
-            name.startsWith("start") -> name.substringAfter("start")
-                    .decapitalized()
-
-            name.endsWith("Start") -> name.substringBeforeLast("Start")
-            name.startsWith("end") -> name.substringAfter("end")
-                    .decapitalized()
-
-            name.endsWith("End") -> name.substringBeforeLast("End")
-            name.endsWith("Pct") -> name.substringBeforeLast("Pct")
-            name.endsWith("Psign") -> name.substringBeforeLast("Psign")
-            name.endsWith("Alurl") -> name.substringBeforeLast("Alurl")
-            name.endsWith("Alurls") -> name.substringBeforeLast("Alurls")
-            else -> {
-                return null
-            }
-        }
-        val field = this.findField(newName, type, hasDesc)
-        if (field != null) {
-            field.name = name
-            field.type = "String"
-            field.defaultVal = ""
-            field.description = field.description.split(Regex("[（(,:，：]"))[0]
-            if (name.startsWith("start") || name.endsWith("Start"))
-                field.description = "开始" + field.description
-            if (name.startsWith("end") || name.endsWith("End"))
-                field.description = "结束" + field.description
-            if (name.endsWith("Psign"))
-                field.description = "播放器签名"
-            if (name.endsWith("Desc"))
-                field.description = "描述"
-            if (name.endsWith("Alurl") || name.endsWith("Alurls"))
-                field.description += "防盗链URL"
-        }
-        return field
+                        name.endsWith("End") -> name.substringBeforeLast("End")
+                        name.endsWith("Pct") -> name.substringBeforeLast("Pct")
+                        name.endsWith("Psign") -> name.substringBeforeLast("Psign")
+                        name.endsWith("Alurl") -> name.substringBeforeLast("Alurl")
+                        name.endsWith("Alurls") -> name.substringBeforeLast("Alurls")
+                        else -> {
+                            return null
+                        }
+                    }
+                    val field = this.findField(newName, type, hasDesc)
+                    if (field != null) {
+                        field.name = name
+                        field.type = "String"
+                        field.defaultVal = ""
+                        field.description = field.description.split(Regex("[（(,:，：]"))[0]
+                        if (name.startsWith("start") || name.endsWith("Start"))
+                            field.description = "开始" + field.description
+                        if (name.startsWith("end") || name.endsWith("End"))
+                            field.description = "结束" + field.description
+                        if (name.endsWith("Psign"))
+                            field.description = "播放器签名"
+                        if (name.endsWith("Desc"))
+                            field.description = "描述"
+                        if (name.endsWith("Alurl") || name.endsWith("Alurls"))
+                            field.description += "防盗链URL"
+                    }
+                    return field
+                } else null
     }
 
     private fun Set<Field>.findField(name: String, type: String, hasDesc: Boolean = false): Field? {
