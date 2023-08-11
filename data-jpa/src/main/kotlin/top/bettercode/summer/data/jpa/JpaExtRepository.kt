@@ -42,7 +42,7 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     <p>""")
     fun <S : T> dynamicSave(s: S): S
     fun delete(spec: Specification<T>): Int
-    fun deleteAllById(ids: Iterable<ID>): Int
+    fun deleteAllById(ids: Iterable<ID>)
     fun exists(spec: Specification<T>): Boolean
     fun existsHard(spec: Specification<T>?): Boolean
     fun countHard(spec: Specification<T>?): Long

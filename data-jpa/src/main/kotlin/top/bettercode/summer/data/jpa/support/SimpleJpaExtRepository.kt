@@ -290,9 +290,9 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     @Transactional
-    override fun deleteAllById(ids: Iterable<ID>): Int {
+    override fun deleteAllById(ids: Iterable<ID>) {
         var mdc = false
-        return try {
+        try {
             mdc = mdcPutId(".deleteAllById")
             delete(Specification { root: Root<T>, query: CriteriaQuery<*>?, builder: CriteriaBuilder? -> root[entityInformation.idAttribute].`in`(toCollection(ids)) })
         } finally {

@@ -14,17 +14,12 @@ import java.util.function.Supplier
  * @author Peter Wu
  */
 open class BaseService<T, ID, M : BaseRepository<T, ID>>(
-        repository: M
+        @JvmField
+        protected val repository: M
+
 ) : IBaseService<T, ID, M> {
     @JvmField
     protected val log: Logger? = LoggerFactory.getLogger(javaClass)
-
-    @JvmField
-    protected val repository: M
-
-    init {
-        this.repository = repository
-    }
 
     override fun getRepository(): M {
         return repository
@@ -92,8 +87,8 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository.saveAll(entities)
     }
 
-    override fun deleteAllById(ids: Iterable<ID>): Int {
-        return repository.deleteAllById(ids)
+    override fun deleteAllById(ids: Iterable<ID>) {
+        repository.deleteAllById(ids)
     }
 
     override fun deleteInBatch(entities: Iterable<T>) {
