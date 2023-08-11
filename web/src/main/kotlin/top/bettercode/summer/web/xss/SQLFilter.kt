@@ -25,7 +25,7 @@ object SQLFilter {
         s = StringUtils.replace(s, "\\", "")
 
         //转换成小写
-        s = s.toLowerCase(Locale.getDefault())
+        s = s.lowercase(Locale.getDefault())
 
         //非法字符
         val keywords = arrayOf("master", "truncate", "insert", "select", "delete", "update", "declare",

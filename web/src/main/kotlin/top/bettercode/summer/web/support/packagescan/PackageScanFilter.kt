@@ -4,7 +4,7 @@ package top.bettercode.summer.web.support.packagescan
  * Filter that can be used with the [PackageScanClassResolver] resolver.
  */
 @FunctionalInterface
-interface PackageScanFilter {
+fun interface PackageScanFilter {
     /**
      * Does the given class match
      *

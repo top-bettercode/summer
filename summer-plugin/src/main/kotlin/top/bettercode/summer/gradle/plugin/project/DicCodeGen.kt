@@ -116,8 +116,8 @@ class DicCodeGen(private val project: Project) {
             codeTypes().forEach { (codeType, v) ->
                 val codeTypeName = v.name
                 +"|$codeType|$codeTypeName\n"
-                docText.appendln(".$codeTypeName($codeType)")
-                docText.appendln(
+                docText.appendLine(".$codeTypeName($codeType)")
+                docText.appendLine(
                         """|===
             | 编码 | 说明
             """
@@ -139,7 +139,7 @@ class DicCodeGen(private val project: Project) {
                     val innerInterface = InnerInterface(JavaType("${className}Const"))
                     innerInterface(innerInterface)
                     v.codes.forEach { (code, name) ->
-                        docText.appendln("|$code|$name")
+                        docText.appendLine("|$code|$name")
 
                         val codeFieldName = StringUtil.underscoreName(
                                 if (code is Int || code.toString()
@@ -334,8 +334,8 @@ class DicCodeGen(private val project: Project) {
                         }) CodeServiceHolder.getDefault().getDicCodes(ENUM_NAME).getCode(name);"
                     }
                 }
-                docText.appendln("|===")
-                docText.appendln()
+                docText.appendLine("|===")
+                docText.appendLine()
                 codeEnum.writeTo(project.projectDir)
             }
 

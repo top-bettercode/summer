@@ -122,7 +122,7 @@ allprojects {
             }
 
             withType(JavaCompile::class) {
-                this.outputs.upToDateWhen { false }
+//                this.outputs.upToDateWhen { false }
                 options.compilerArgs.add("-Xlint:deprecation")
                 options.compilerArgs.add("-Xlint:unchecked")
                 options.compilerArgs.add("-parameters")
@@ -131,11 +131,11 @@ allprojects {
             }
 
             withType(KotlinCompile::class) {
-                this.outputs.upToDateWhen { false }
+//                this.outputs.upToDateWhen { false }
                 incremental = true
                 kotlinOptions {
                     jvmTarget = javaVersion.toString()
-                    freeCompilerArgs = listOf("-Xjvm-default=enable")
+                    freeCompilerArgs = listOf("-Xjvm-default=all")
                 }
             }
         }

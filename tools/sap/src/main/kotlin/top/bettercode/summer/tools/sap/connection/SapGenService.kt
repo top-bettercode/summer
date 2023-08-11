@@ -43,7 +43,7 @@ class SapGenService(private val sapService: SapService) {
         val topLevelClass = TopLevelClass(classType, true, SourceSet.ROOT,
                 JavaVisibility.PUBLIC)
         var field = Field()
-        field.name = pojoName.toUpperCase() + "_FUNCTION_NAME"
+        field.name = pojoName.uppercase() + "_FUNCTION_NAME"
         field.isStatic = true
         field.isFinal = true
         field.type = stringInstance

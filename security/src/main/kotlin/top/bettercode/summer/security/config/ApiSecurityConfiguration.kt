@@ -60,14 +60,18 @@ class ApiSecurityConfiguration(
     }
 
     @Bean
-    fun apiTokenService(apiAuthorizationService: ApiTokenRepository,
-                        userDetailsService: UserDetailsService): ApiTokenService {
+    fun apiTokenService(
+            apiAuthorizationService: ApiTokenRepository,
+            userDetailsService: UserDetailsService
+    ): ApiTokenService {
         return ApiTokenService(securityProperties, apiAuthorizationService, userDetailsService)
     }
 
     @Bean
-    fun securityOAuth2ErrorHandler(messageSource: MessageSource,
-                                   @Autowired(required = false) request: HttpServletRequest?): ApiSecurityErrorHandler {
+    fun securityOAuth2ErrorHandler(
+            messageSource: MessageSource,
+            @Autowired(required = false) request: HttpServletRequest?
+    ): ApiSecurityErrorHandler {
         return ApiSecurityErrorHandler(messageSource, request)
     }
 

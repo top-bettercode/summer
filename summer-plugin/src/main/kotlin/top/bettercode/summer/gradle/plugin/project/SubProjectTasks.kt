@@ -135,10 +135,10 @@ object SubProjectTasks {
                         override fun execute(it: Task) {
                             project.tasks.findByName("startScripts").apply {
                                 this as CreateStartScripts
-                                if (!mainClassName.isNullOrBlank()) {
+                                if (!this.mainClass.isPresent) {
                                     val bootJar = project.tasks.getByName("bootJar")
                                     bootJar as BootJar
-                                    mainClassName = bootJar.mainClassName
+                                    mainClass.set(bootJar.mainClassName)
                                 }
                             }
                         }

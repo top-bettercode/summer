@@ -44,12 +44,12 @@ abstract class ToDDL : IToDDL {
     ) {
         val fks = table.columns.filter { it.isForeignKey }
         if (hasPrimary)
-            pw.appendln("  PRIMARY KEY (${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }})${if (useForeignKey && fks.isNotEmpty()) "," else ""}")
+            pw.appendLine("  PRIMARY KEY (${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }})${if (useForeignKey && fks.isNotEmpty()) "," else ""}")
         if (useForeignKey) {
             val lastFksIndex = fks.size - 1
             fks.forEachIndexed { index, column ->
                 val columnName = column.columnName
-                pw.appendln(
+                pw.appendLine(
                         "  CONSTRAINT ${
                             foreignKeyName(
                                     tableName,
@@ -71,7 +71,7 @@ abstract class ToDDL : IToDDL {
         val tableName = table.tableName
         table.indexes.forEach { t ->
             if (t.unique) {
-                pw.appendln(
+                pw.appendLine(
                         "CREATE UNIQUE INDEX ${t.name(table.fixTableName)} ON $prefixTableName$quote$tableName$quote (${
                             t.columnName.joinToString(
                                     ","
@@ -79,7 +79,7 @@ abstract class ToDDL : IToDDL {
                         });"
                 )
             } else {
-                pw.appendln(
+                pw.appendLine(
                         "CREATE INDEX ${t.name(table.fixTableName)} ON $prefixTableName$quote$tableName$quote (${
                             t.columnName.joinToString(
                                     ","
@@ -200,7 +200,7 @@ abstract class ToDDL : IToDDL {
     override fun toDDL(tables: List<Table>, out: FileUnit) {
         if (tables.isNotEmpty()) {
             out.use { pw ->
-                pw.appendln("$commentPrefix ${tables[0].subModule}")
+                pw.appendLine("$commentPrefix ${tables[0].subModule}")
                 tables.forEach { table ->
                     appendTable("", table, pw)
                 }

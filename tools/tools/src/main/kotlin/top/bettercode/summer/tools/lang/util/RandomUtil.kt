@@ -96,8 +96,8 @@ object RandomUtil {
             )
         }
         if (s == 0 && e == 0) {
-            e = 'z'.toInt() + 1
-            s = ' '.toInt()
+            e = 'z'.code + 1
+            s = ' '.code
             if (!letters && !numbers) {
                 s = 0
                 e = Integer.MAX_VALUE
@@ -117,7 +117,7 @@ object RandomUtil {
                     || numbers && Character.isDigit(ch)
                     || !letters && !numbers
             ) {
-                if (ch.toInt() in 56320..57343) {
+                if (ch.code in 56320..57343) {
                     if (c == 0) {
                         c++
                     } else {
@@ -127,7 +127,7 @@ object RandomUtil {
                         c--
                         buffer[c] = (55296 + random.nextInt(128)).toChar()
                     }
-                } else if (ch.toInt() in 55296..56191) {
+                } else if (ch.code in 55296..56191) {
                     if (c == 0) {
                         c++
                     } else {
@@ -137,7 +137,7 @@ object RandomUtil {
                         c--
                         buffer[c] = ch
                     }
-                } else if (ch.toInt() in 56192..56319) {
+                } else if (ch.code in 56192..56319) {
                     // private high surrogate, no effing clue, so skip it
                     c++
                 } else {

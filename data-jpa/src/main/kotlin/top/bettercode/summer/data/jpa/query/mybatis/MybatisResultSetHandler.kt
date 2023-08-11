@@ -304,7 +304,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
                 // the user added a column attribute to a nested result map, ignore it
                 column = null
             }
-            if (propertyMapping.isCompositeResult || column != null && mappedColumnNames.contains(column.toUpperCase()) || propertyMapping.resultSet != null) {
+            if (propertyMapping.isCompositeResult || column != null && mappedColumnNames.contains(column.uppercase()) || propertyMapping.resultSet != null) {
                 val value = getPropertyMappingValue(rsw.resultSet, metaObject, propertyMapping,
                         lazyLoader, columnPrefix)
                 // issue #541 make property optional
@@ -358,7 +358,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
                 if (!columnPrefix.isNullOrEmpty()) {
                     // When columnPrefix is specified,
                     // ignore columns without the prefix.
-                    propertyName = if (columnName.toUpperCase().startsWith(columnPrefix)) {
+                    propertyName = if (columnName.uppercase().startsWith(columnPrefix)) {
                         columnName.substring(columnPrefix.length)
                     } else {
                         continue
@@ -771,7 +771,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
         if (resultMapping.columnPrefix != null) {
             columnPrefixBuilder.append(resultMapping.columnPrefix)
         }
-        return if (columnPrefixBuilder.isEmpty()) null else columnPrefixBuilder.toString().toUpperCase()
+        return if (columnPrefixBuilder.isEmpty()) null else columnPrefixBuilder.toString().uppercase()
     }
 
     private fun anyNotNullColumnHasValue(
@@ -790,8 +790,8 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
             return false
         } else if (columnPrefix != null) {
             for (columnName in rsw!!.columnNames) {
-                if (columnName.toUpperCase()
-                                .startsWith(columnPrefix.toUpperCase())) {
+                if (columnName.uppercase()
+                                .startsWith(columnPrefix.uppercase())) {
                     return true
                 }
             }
@@ -857,7 +857,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
                 val th = resultMapping.typeHandler
                 val mappedColumnNames = rsw!!.getMappedColumnNames(resultMap, columnPrefix)
                 // Issue #114
-                if (column != null && mappedColumnNames.contains(column.toUpperCase())) {
+                if (column != null && mappedColumnNames.contains(column.uppercase())) {
                     val value = th.getResult(rsw.resultSet, column)
                     if (value != null || configuration.isReturnInstanceForEmptyRow) {
                         cacheKey.update(column)
@@ -878,7 +878,7 @@ open class MybatisResultSetHandler @JvmOverloads constructor(private val mappedS
             var property = column
             if (!columnPrefix.isNullOrEmpty()) {
                 // When columnPrefix is specified, ignore columns without the prefix.
-                property = if (column.toUpperCase().startsWith(columnPrefix)) {
+                property = if (column.uppercase().startsWith(columnPrefix)) {
                     column.substring(columnPrefix.length)
                 } else {
                     continue

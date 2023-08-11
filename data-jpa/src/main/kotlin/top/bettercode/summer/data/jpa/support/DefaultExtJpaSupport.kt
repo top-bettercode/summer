@@ -59,7 +59,7 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
                 }
             }
             if (lastModifiedDatePropertyName == null
-                    && declaredField.getAnnotation<LastModifiedDate>(LastModifiedDate::class.java) != null) {
+                    && declaredField.getAnnotation(LastModifiedDate::class.java) != null) {
                 lastModifiedDatePropertyName = declaredField.name
                 lastModifiedDatePropertyType = declaredField.type
                 finish++

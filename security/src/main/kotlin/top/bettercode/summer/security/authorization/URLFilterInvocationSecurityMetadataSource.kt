@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest
  *
  * @author Peter Wu
  */
-class URLFilterInvocationSecurityMetadataSource(
+open class URLFilterInvocationSecurityMetadataSource(
         private val securityService: IResourceService,
         handlerMapping: RequestMappingHandlerMapping,
         securityProperties: ApiSecurityProperties) : FilterInvocationSecurityMetadataSource {
@@ -117,7 +117,7 @@ class URLFilterInvocationSecurityMetadataSource(
         return FilterInvocation::class.java.isAssignableFrom(clazz)
     }
 
-    protected fun bindConfigAttributes() {
+    private fun bindConfigAttributes() {
         requestMatcherConfigAttributes = HashMap(defaultConfigAttributes)
         val allResources = securityService.findAllResources()
         for (resource in allResources) {
@@ -126,7 +126,7 @@ class URLFilterInvocationSecurityMetadataSource(
             for (api in ress.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
                 if (api.contains(":")) {
                     val methodUrl = api.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                    val method = methodUrl[0].toUpperCase()
+                    val method = methodUrl[0].uppercase(Locale.getDefault())
                     val url = methodUrl[1]
                     for (u in url.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
                         if (StringUtils.hasText(method)) {

@@ -56,13 +56,13 @@ class StringArrayBean {
         if (other !is StringArrayBean) {
             return false
         }
-        return number1 == other.number1 && number2 == other.number2 && number22 == other.number22 && number3 == other.number3 && number4 == other.number4 && name == other.name && code == other.code && intCode == other.intCode && price == other.price && path == other.path && path1 == other.path1 && desc == other.desc && paths1 == other.paths1 && Arrays.equals(pathArray1, other.pathArray1)
+        return number1 == other.number1 && number2 == other.number2 && number22 == other.number22 && number3 == other.number3 && number4 == other.number4 && name == other.name && code == other.code && intCode == other.intCode && price == other.price && path == other.path && path1 == other.path1 && desc == other.desc && paths1 == other.paths1 && pathArray1.contentEquals(other.pathArray1)
     }
 
     override fun hashCode(): Int {
         var result = Objects.hash(number1, number2, number22, number3, number4, name, code, intCode,
                 price, path, path1, desc, paths1)
-        result = 31 * result + Arrays.hashCode(pathArray1)
+        result = 31 * result + pathArray1.contentHashCode()
         return result
     }
 

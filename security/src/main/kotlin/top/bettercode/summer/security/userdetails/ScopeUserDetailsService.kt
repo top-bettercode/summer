@@ -13,7 +13,6 @@ import top.bettercode.summer.security.support.SecurityParameterNames
 interface ScopeUserDetailsService : UserDetailsService {
     fun loadUserByScopeAndUsername(scope: String, username: String): UserDetails
 
-    @JvmDefault
     override fun loadUserByUsername(username: String): UserDetails {
         val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
         val request = requestAttributes.request

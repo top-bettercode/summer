@@ -27,7 +27,7 @@ class JsonDefaultSerializerTest {
                 .withSerializerModifier(CustomNullSerializerModifier(jacksonExtProperties)))
         val mockEnvironment = MockEnvironment()
         //    mockEnvironment.setProperty("summer.multipart.file-url-format", "/path%s");
-        mockEnvironment.setProperty("summer.multipart.file-url-format", "http://127.0.0.1%s")
+        mockEnvironment.setProperty("summer.multipart.file-url-format", "https://127.0.0.1%s")
         mockEnvironment.setProperty("path1-url", "https://127.0.0.2%s")
         setEnvironment(mockEnvironment)
     }
@@ -40,18 +40,18 @@ class JsonDefaultSerializerTest {
                 .withSerializerModifier(CustomNullSerializerModifier(jacksonExtProperties)))
         var dicBean = DataDicBean()
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"http://127.0.0.1/default.jpg\",\"path1\":\"\"}",
+                "{\"number1\":0,\"number22\":null,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"https://127.0.0.1/default.jpg\",\"path1\":\"\"}",
                 objectMapper.writeValueAsString(dicBean))
         dicBean.number1 = BigDecimal(100)
         dicBean.path = "/a.jpg"
         dicBean.path1 = "/b.jpg"
         Assertions.assertEquals(
-                "{\"number1\":100,\"number22\":null,\"price\":0,\"path\":\"/a.jpg\",\"pathUrl\":\"http://127.0.0.1/a.jpg\",\"path1\":\"/b.jpg\"}",
+                "{\"number1\":100,\"number22\":null,\"price\":0,\"path\":\"/a.jpg\",\"pathUrl\":\"https://127.0.0.1/a.jpg\",\"path1\":\"/b.jpg\"}",
                 objectMapper.writeValueAsString(dicBean))
         dicBean = DataDicBean()
         dicBean.number2 = BigDecimal(10)
         Assertions.assertEquals(
-                "{\"number1\":0,\"number2\":10.000,\"number22\":10,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"http://127.0.0.1/default.jpg\",\"path1\":\"\"}",
+                "{\"number1\":0,\"number2\":10.000,\"number22\":10,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"https://127.0.0.1/default.jpg\",\"path1\":\"\"}",
                 objectMapper.writeValueAsString(dicBean))
     }
 
@@ -64,13 +64,13 @@ class JsonDefaultSerializerTest {
                 .withSerializerModifier(CustomNullSerializerModifier(jacksonExtProperties)))
         val dicBean = DataDicBean()
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"http://127.0.0.1/default.jpg\",\"path1\":\"\"}",
+                "{\"number1\":0,\"number22\":null,\"price\":0,\"path\":\"/default.jpg\",\"pathUrl\":\"https://127.0.0.1/default.jpg\",\"path1\":\"\"}",
                 objectMapper.writeValueAsString(dicBean))
         dicBean.price = 100L
         dicBean.path = "/a.jpg"
         dicBean.path1 = "/b.jpg"
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"price\":\"1.00\",\"path\":\"/a.jpg\",\"pathUrl\":\"http://127.0.0.1/a.jpg\",\"path1\":\"/b.jpg\"}",
+                "{\"number1\":0,\"number22\":null,\"price\":\"1.00\",\"path\":\"/a.jpg\",\"pathUrl\":\"https://127.0.0.1/a.jpg\",\"path1\":\"/b.jpg\"}",
                 objectMapper.writeValueAsString(dicBean))
     }
 

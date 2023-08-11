@@ -149,7 +149,7 @@ class GeneratorPlugin : Plugin<Project> {
                             ?: true
             extension.dataType = top.bettercode.summer.tools.generator.DataType.valueOf(
                     (findGeneratorProperty(project, "dataType")
-                            ?: top.bettercode.summer.tools.generator.DataType.DATABASE.name).toUpperCase(
+                            ?: top.bettercode.summer.tools.generator.DataType.DATABASE.name).uppercase(
                             Locale.getDefault()
                     )
             )
@@ -222,7 +222,7 @@ class GeneratorPlugin : Plugin<Project> {
                 task.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         val tables =
-                                tableHolder.tables(tableName = *extension.tableNames)
+                                tableHolder.tables(tableName = extension.tableNames)
                         val plantUML = PlantUML(
                                 tables[0].subModuleName,
                                 project.file(extension.pumlSrc + "/database/${module}.puml"),
@@ -276,7 +276,7 @@ class GeneratorPlugin : Plugin<Project> {
                                     it,
                                     File(
                                             out,
-                                            module + "/" + extension.pumlDiagramFormat.toLowerCase(Locale.getDefault())
+                                            module + "/" + extension.pumlDiagramFormat.lowercase(Locale.getDefault())
                                     ),
                                     "UTF-8"
                             )
@@ -327,7 +327,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 val output = FileUnit("${extension.sqlOutput}/ddl/$sqlName.sql")
                                 val jdbc = extension.datasources[module]
                                         ?: throw IllegalStateException("未配置${module}模块数据库信息")
-                                val tables = tableHolder.tables(tableName = *extension.tableNames)
+                                val tables = tableHolder.tables(tableName = extension.tableNames)
                                 when (jdbc.databaseDriver) {
                                     DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
                                             tables,
@@ -385,7 +385,7 @@ class GeneratorPlugin : Plugin<Project> {
                                     val jdbc = extension.datasources[module]
                                             ?: throw IllegalStateException("未配置${module}模块数据库信息")
                                     val tables =
-                                            tableHolder.tables(tableName = *extension.tableNames)
+                                            tableHolder.tables(tableName = extension.tableNames)
                                     allTables.addAll(tables)
                                     val tableNames = tables.map { it.tableName }
                                     val oldTables = if (databaseFile.exists()) {
@@ -396,7 +396,7 @@ class GeneratorPlugin : Plugin<Project> {
                                     } else {
                                         jdbc.tables(
                                                 tableName =
-                                                *(if (deleteTablesWhenUpdate) jdbc.tableNames()
+                                                (if (deleteTablesWhenUpdate) jdbc.tableNames()
                                                 else tableNames).toTypedArray()
                                         )
                                     }

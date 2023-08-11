@@ -172,7 +172,7 @@ open class GeneratorExtension(
         @JvmStatic
         fun javaName(str: String, capitalize: Boolean = false): String {
             val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") { s ->
-                s.toLowerCase(Locale.getDefault()).capitalized()
+                s.lowercase(Locale.getDefault()).capitalized()
             }
             return if (capitalize) s else s.decapitalized()
         }
@@ -261,7 +261,7 @@ open class GeneratorExtension(
                             } else it.name
                         }
                 ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }?.toSortedMap(comparator)
-                ?: emptyMap<String, List<File>>()
+                ?: emptyMap()
     }
 
     val pdmSources: Map<String, List<File>> by lazy {
@@ -270,7 +270,7 @@ open class GeneratorExtension(
                         { if ("src" == it.name) "modules" else it.name }
                 ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "pdm" }.toList() }
                 ?.toSortedMap(comparator)
-                ?: emptyMap<String, List<File>>()
+                ?: emptyMap()
     }
 
     val pumlDatabaseSources: Map<String, List<File>> by lazy {
@@ -282,7 +282,7 @@ open class GeneratorExtension(
                 }
                 ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }
                 ?.toSortedMap(comparator)
-                ?: emptyMap<String, List<File>>()
+                ?: emptyMap()
     }
 
     fun <T> run(dataType: DataType = this.dataType, function: (String, TableHolder) -> T): List<T> {

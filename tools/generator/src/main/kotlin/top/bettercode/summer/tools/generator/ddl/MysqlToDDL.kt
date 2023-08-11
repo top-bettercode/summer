@@ -9,9 +9,9 @@ object MysqlToDDL : ToDDL() {
     override val commentPrefix: String = "#"
 
     override fun toDDLUpdate(module: String, oldTables: List<Table>, tables: List<Table>, out: Writer, extension: GeneratorExtension) {
-        out.appendln("$commentPrefix ${extension.datasource(module).url.substringBefore("?")}")
-        out.appendln("$commentPrefix use ${extension.datasource(module).schema};")
-        out.appendln()
+        out.appendLine("$commentPrefix ${extension.datasource(module).url.substringBefore("?")}")
+        out.appendLine("$commentPrefix use ${extension.datasource(module).schema};")
+        out.appendLine()
         if (tables != oldTables) {
             val schema = if (extension.enable("include-schema")) {
                 "$quote${extension.datasource(module).schema}$quote."
@@ -21,9 +21,9 @@ object MysqlToDDL : ToDDL() {
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
             if (extension.dropTablesWhenUpdate) (oldTableNames - tableNames.toSet()).filter { "api_token" != it }.forEach {
-                out.appendln("$commentPrefix DROP $it")
-                out.appendln("DROP TABLE IF EXISTS $schema$quote$it$quote;")
-                out.appendln()
+                out.appendLine("$commentPrefix DROP $it")
+                out.appendLine("DROP TABLE IF EXISTS $schema$quote$it$quote;")
+                out.appendLine()
             }
             val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
@@ -97,9 +97,9 @@ object MysqlToDDL : ToDDL() {
 
                         //out change
                         if (lines.isNotEmpty()) {
-                            out.appendln("$commentPrefix $tableName")
-                            lines.forEach { out.appendln(it) }
-                            out.appendln()
+                            out.appendLine("$commentPrefix $tableName")
+                            lines.forEach { out.appendLine(it) }
+                            out.appendLine()
                         }
 
                     }
@@ -115,13 +115,13 @@ object MysqlToDDL : ToDDL() {
 
     override fun appendTable(prefixTableName: String, table: Table, pw: Writer) {
         val tableName = table.tableName
-        pw.appendln("$commentPrefix $tableName")
-        if (table.ext.dropTablesWhenUpdate) pw.appendln("DROP TABLE IF EXISTS $prefixTableName$quote$tableName$quote;")
-        pw.appendln("CREATE TABLE $prefixTableName$quote$tableName$quote (")
+        pw.appendLine("$commentPrefix $tableName")
+        if (table.ext.dropTablesWhenUpdate) pw.appendLine("DROP TABLE IF EXISTS $prefixTableName$quote$tableName$quote;")
+        pw.appendLine("CREATE TABLE $prefixTableName$quote$tableName$quote (")
         val hasPrimary = table.primaryKeyNames.isNotEmpty()
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
-            pw.appendln("  ${
+            pw.appendLine("  ${
                 columnDef(column, quote)
             } COMMENT '${
                 column.remarks.replace("\\", "\\\\")
@@ -129,12 +129,12 @@ object MysqlToDDL : ToDDL() {
         }
 
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
-        pw.appendln(") DEFAULT CHARSET = utf8mb4${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
+        pw.appendLine(") DEFAULT CHARSET = utf8mb4${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
             table.remarks.replace("\\", "\\\\")
         }'${if (table.engine.isNotBlank()) " ENGINE = ${table.engine};" else ""};")
 
         appendIndexes(prefixTableName, table, pw, quote)
 
-        pw.appendln()
+        pw.appendLine()
     }
 }

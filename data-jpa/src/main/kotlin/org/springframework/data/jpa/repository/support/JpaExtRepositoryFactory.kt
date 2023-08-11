@@ -38,7 +38,7 @@ import javax.persistence.EntityManager
  *
  * @author Peter Wu
  */
-class JpaExtRepositoryFactory(
+open class JpaExtRepositoryFactory(
         entityManager: EntityManager,
         configuration: Configuration, jpaExtProperties: JpaExtProperties
 ) : RepositoryFactorySupport() {
@@ -99,7 +99,7 @@ class JpaExtRepositoryFactory(
         return repository
     }
 
-    protected fun getTargetRepository(
+    private fun getTargetRepository(
             information: RepositoryInformation,
             entityManager: EntityManager?
     ): JpaRepositoryImplementation<*, *> {
@@ -143,7 +143,7 @@ class JpaExtRepositoryFactory(
                 crudMethodMetadataPostProcessor.crudMethodMetadata)
     }
 
-    protected fun getRepositoryFragments(
+    private fun getRepositoryFragments(
             metadata: RepositoryMetadata,
             entityManager: EntityManager,
             resolver: EntityPathResolver, crudMethodMetadata: CrudMethodMetadata

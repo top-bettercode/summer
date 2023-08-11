@@ -16,8 +16,8 @@ object OracleToDDL : ToDDL() {
             out: Writer,
             extension: GeneratorExtension
     ) {
-        out.appendln("$commentPrefix ${extension.datasources[module]!!.url.substringBefore("?")}")
-        out.appendln()
+        out.appendLine("$commentPrefix ${extension.datasources[module]!!.url.substringBefore("?")}")
+        out.appendLine()
         if (tables != oldTables) {
             val prefixTableName =
                     if (extension.enable("include-schema")) {
@@ -30,12 +30,12 @@ object OracleToDDL : ToDDL() {
             if (extension.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).filter { "api_token" != it }
                         .forEach { tableName ->
-                            out.appendln("$commentPrefix DROP $prefixTableName$tableName")
+                            out.appendLine("$commentPrefix DROP $prefixTableName$tableName")
                             val primaryKey = oldTables.find { it.tableName == tableName }!!.primaryKey
                             if (primaryKey?.sequence?.isNotBlank() == true)
-                                out.appendln("DROP SEQUENCE $prefixTableName$quote${primaryKey.sequence}$quote;")
-                            out.appendln("DROP TABLE $prefixTableName$quote$tableName$quote;")
-                            out.appendln()
+                                out.appendLine("DROP SEQUENCE $prefixTableName$quote${primaryKey.sequence}$quote;")
+                            out.appendLine("DROP TABLE $prefixTableName$quote$tableName$quote;")
+                            out.appendLine()
                         }
             val newTableNames = tableNames - oldTableNames.toSet()
             tables.forEach { table ->
@@ -132,9 +132,9 @@ object OracleToDDL : ToDDL() {
                         if (extension.datasources[module]?.queryIndex == true)
                             updateIndexes(prefixTableName, oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
-                            out.appendln("$commentPrefix $tableName")
-                            lines.forEach { out.appendln(it) }
-                            out.appendln()
+                            out.appendLine("$commentPrefix $tableName")
+                            lines.forEach { out.appendLine(it) }
+                            out.appendLine()
                         }
                     }
                 }
@@ -198,23 +198,23 @@ object OracleToDDL : ToDDL() {
 
     override fun appendTable(prefixTableName: String, table: Table, pw: Writer) {
         val tableName = table.tableName
-        pw.appendln("$commentPrefix $tableName")
+        pw.appendLine("$commentPrefix $tableName")
         val primaryKey = table.primaryKey
         if (primaryKey?.sequence?.isNotBlank() == true) {
             if (table.ext.dropTablesWhenUpdate)
-                pw.appendln("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
-            pw.appendln(
+                pw.appendLine("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
+            pw.appendLine(
                     "CREATE SEQUENCE $quote${primaryKey.sequence}$quote INCREMENT BY 1 START WITH ${primaryKey.sequenceStartWith} NOMAXVALUE NOCYCLE CACHE 10;"
             )
         }
-        pw.appendln()
+        pw.appendLine()
         if (table.ext.dropTablesWhenUpdate)
-            pw.appendln("DROP TABLE $prefixTableName$quote$tableName$quote;")
-        pw.appendln("CREATE TABLE $prefixTableName$quote$tableName$quote (")
+            pw.appendLine("DROP TABLE $prefixTableName$quote$tableName$quote;")
+        pw.appendLine("CREATE TABLE $prefixTableName$quote$tableName$quote (")
         val hasPrimary = table.primaryKeyNames.isNotEmpty()
         val lastIndex = table.columns.size - 1
         table.columns.forEachIndexed { index, column ->
-            pw.appendln(
+            pw.appendLine(
                     "  ${
                         columnDef(
                                 column,
@@ -224,10 +224,10 @@ object OracleToDDL : ToDDL() {
             )
         }
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
-        pw.appendln(");")
+        pw.appendLine(");")
         appendIndexes(prefixTableName, table, pw, quote)
 
-        pw.appendln(
+        pw.appendLine(
                 "COMMENT ON TABLE $prefixTableName$quote$tableName$quote IS '${
                     table.remarks.replace(
                             "\\",
@@ -236,7 +236,7 @@ object OracleToDDL : ToDDL() {
                 }';"
         )
         table.columns.forEach {
-            pw.appendln(
+            pw.appendLine(
                     "COMMENT ON COLUMN $prefixTableName$quote$tableName$quote.$quote${it.columnName}$quote IS '${
                         it.remarks.replace(
                                 "\\",
@@ -245,7 +245,7 @@ object OracleToDDL : ToDDL() {
                     }';"
             )
         }
-        pw.appendln()
+        pw.appendLine()
     }
 
 

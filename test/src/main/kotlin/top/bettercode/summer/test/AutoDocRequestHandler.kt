@@ -5,7 +5,6 @@ package top.bettercode.summer.test
  */
 interface AutoDocRequestHandler {
     fun handle(request: AutoDocHttpServletRequest)
-    @JvmDefault
     fun support(request: AutoDocHttpServletRequest): Boolean {
         return true
     }

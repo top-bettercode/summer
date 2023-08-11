@@ -69,7 +69,7 @@ enum class OS {
                 // null signals that the current OS is "unknown"
                 return UNKNOWN
             }
-            name = name.toLowerCase()
+            name = name.lowercase()
             if (name.contains("aix")) {
                 return AIX
             }

@@ -290,7 +290,7 @@ class HTMLFilter {
         // ending tags
         var m = P_END_TAG.matcher(s)
         if (m.find()) {
-            val name = m.group(1).toLowerCase(Locale.getDefault())
+            val name = m.group(1).lowercase(Locale.getDefault())
             if (allowed(name)) {
                 if (!inArray(name, vSelfClosingTags)) {
                     if (vTagCounts.containsKey(name)) {
@@ -304,7 +304,7 @@ class HTMLFilter {
         // starting tags
         m = P_START_TAG.matcher(s)
         if (m.find()) {
-            val name = m.group(1).toLowerCase(Locale.getDefault())
+            val name = m.group(1).lowercase(Locale.getDefault())
             val body = m.group(2)
             var ending = m.group(3)
 
@@ -326,7 +326,7 @@ class HTMLFilter {
                 var paramName: String
                 var paramValue: String
                 for (ii in paramNames.indices) {
-                    paramName = paramNames[ii].toLowerCase(Locale.getDefault())
+                    paramName = paramNames[ii].lowercase(Locale.getDefault())
                     paramValue = paramValues[ii]
 
 //          debug( "paramName='" + paramName + "'" );

@@ -53,7 +53,7 @@ object Generators {
                         top.bettercode.summer.tools.generator.DataType.PDM -> {
                             extension.pdmSources.size <= 1
                         }
-                    }, tableName = *extension.tableNames
+                    }, tableName = extension.tableNames
             ).forEach { table ->
                 generators.forEach { generator ->
                     generator.run(table)
@@ -89,7 +89,7 @@ object Generators {
                     top.bettercode.summer.tools.generator.DataType.PDM -> {
                         extension.pdmSources.size <= 1
                     }
-                }, tableName = *extension.tableNames
+                }, tableName = extension.tableNames
         ).forEach { table ->
             generators.forEach { generator ->
                 generator.run(table)

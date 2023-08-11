@@ -78,7 +78,7 @@ class ProfilePlugin : Plugin<Project> {
             override fun execute(it: Task) {
                 if (profile.extraVersion)
                     project.version =
-                            (if ("unspecified" == project.version) project.rootProject.version else project.version).toString() + "." + project.profilesActive.toUpperCase(
+                            (if ("unspecified" == project.version) project.rootProject.version else project.version).toString() + "." + project.profilesActive.uppercase(
                                     Locale.getDefault()
                             )
             }

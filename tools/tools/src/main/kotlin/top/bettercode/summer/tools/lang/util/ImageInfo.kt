@@ -53,7 +53,7 @@ class ImageInfo {
         mimeType = null
         height = -1
         width = height
-        if (c1 == 'G'.toInt() && c2 == 'I'.toInt() && c3 == 'F'.toInt()) { // GIF
+        if (c1 == 'G'.code && c2 == 'I'.code && c3 == 'F'.code) { // GIF
             `is`.skip(3)
             width = readInt(`is`, 2, false)
             height = readInt(`is`, 2, false)
@@ -84,7 +84,7 @@ class ImageInfo {
             `is`.skip(2)
             height = readInt(`is`, 2, false)
             mimeType = "image/bmp"
-        } else if (c1 == 'R'.toInt() && c2 == 'I'.toInt() && c3 == 'F'.toInt()) { // WEBP
+        } else if (c1 == 'R'.code && c2 == 'I'.code && c3 == 'F'.code) { // WEBP
             val bytes = ByteArray(27)
             `is`.read(bytes)
             width = bytes[24].toInt() and 0xff shl 8 or (bytes[23].toInt() and 0xff)
@@ -92,8 +92,8 @@ class ImageInfo {
             mimeType = "image/webp"
         } else {
             val c4 = `is`.read()
-            if ((c1 == 'M'.toInt() && c2 == 'M'.toInt() && c3 == 0 && c4 == 42) || (c1 == 'I'.toInt() && c2 == 'I'.toInt() && c3 == 42 && c4 == 0)) { //TIFF
-                val bigEndian = c1 == 'M'.toInt()
+            if ((c1 == 'M'.code && c2 == 'M'.code && c3 == 0 && c4 == 42) || (c1 == 'I'.code && c2 == 'I'.code && c3 == 42 && c4 == 0)) { //TIFF
+                val bigEndian = c1 == 'M'.code
                 val ifd: Int = readInt(`is`, 4, bigEndian)
                 `is`.skip((ifd - 8).toLong())
                 val entries: Int = readInt(`is`, 2, bigEndian)

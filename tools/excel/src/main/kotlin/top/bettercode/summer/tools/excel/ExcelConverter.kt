@@ -9,6 +9,6 @@ import java.io.Serializable
  * @param <T> 目标
 </T></F> */
 @FunctionalInterface
-interface ExcelConverter<F, T> : Serializable {
+fun interface ExcelConverter<F, T> : Serializable {
     fun convert(from: F): T
 }

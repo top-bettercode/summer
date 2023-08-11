@@ -27,8 +27,14 @@ object ProjectDependencies {
         }
 
         project.dependencies.apply {
-            add("implementation", platform("top.bettercode.summer:${if (project.isCloud) "summer-cloud-bom" else "summer-bom"}:$summerVersion"))
-            add("annotationProcessor", platform("top.bettercode.summer:${if (project.isCloud) "summer-cloud-bom" else "summer-bom"}:$summerVersion"))
+            if (project.isCloud) {
+                add("implementation", platform("top.bettercode.summer:summer-cloud-bom:$summerVersion"))
+                add("annotationProcessor", platform("top.bettercode.summer:summer-cloud-bom:$summerVersion"))
+                add("implementation", enforcedPlatform("org.springframework.boot:spring-boot-dependencies:2.3.2.RELEASE"))
+            } else {
+                add("implementation", platform("top.bettercode.summer:summer-bom:$summerVersion"))
+                add("annotationProcessor", platform("top.bettercode.summer:summer-bom:$summerVersion"))
+            }
 
             add("annotationProcessor", "org.springframework.boot:spring-boot-configuration-processor")
             add("compileOnly", "top.bettercode.summer:configuration-processor")

@@ -27,7 +27,7 @@ class UrlSerializerTest {
                 .withSerializerModifier(CustomNullSerializerModifier(jacksonExtProperties)))
         val mockEnvironment = MockEnvironment()
         //    mockEnvironment.setProperty("summer.multipart.file-url-format", "/path%s");
-        mockEnvironment.setProperty("summer.multipart.file-url-format", "http://127.0.0.1%s")
+        mockEnvironment.setProperty("summer.multipart.file-url-format", "https://127.0.0.1%s")
         mockEnvironment.setProperty("path1-url", "https://127.0.0.2%s")
         setEnvironment(mockEnvironment)
     }
@@ -45,7 +45,7 @@ class UrlSerializerTest {
         dicBean.path = path
         dicBean.path1 = path
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"path\":\"/abc.jpg\",\"pathUrl\":\"http://127.0.0.1/abc.jpg\",\"path1\":\"/abc.jpg\",\"path1Url\":\"http://127.0.0.2/abc.jpg\"}",
+                "{\"number1\":0,\"number22\":null,\"path\":\"/abc.jpg\",\"pathUrl\":\"https://127.0.0.1/abc.jpg\",\"path1\":\"/abc.jpg\",\"path1Url\":\"https://127.0.0.2/abc.jpg\"}",
                 objectMapper.writeValueAsString(dicBean))
         dicBean.path = ""
         dicBean.path = "  "
@@ -62,7 +62,7 @@ class UrlSerializerTest {
         dicBean.path = path
         dicBean.path1 = path
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"path\":\"http://127.0.0.1/abc.jpg\",\"path1\":\"http://127.0.0.2/abc.jpg\"}",
+                "{\"number1\":0,\"number22\":null,\"path\":\"https://127.0.0.1/abc.jpg\",\"path1\":\"https://127.0.0.2/abc.jpg\"}",
                 objectMapper.writeValueAsString(dicBean))
         dicBean.path = ""
         dicBean.path = "  "
@@ -80,7 +80,7 @@ class UrlSerializerTest {
         dicBean.path1 = path
         System.err.println(objectMapper.writeValueAsString(dicBean))
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"path\":\"/abc.jpg,/124.jpg\",\"pathUrls\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/124.jpg\"],\"path1\":\"/abc.jpg,/124.jpg\",\"path1Urls\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/124.jpg\"]}",
+                "{\"number1\":0,\"number22\":null,\"path\":\"/abc.jpg,/124.jpg\",\"pathUrls\":[\"https://127.0.0.1/abc.jpg\",\"https://127.0.0.1/124.jpg\"],\"path1\":\"/abc.jpg,/124.jpg\",\"path1Urls\":[\"https://127.0.0.2/abc.jpg\",\"https://127.0.0.2/124.jpg\"]}",
                 objectMapper.writeValueAsString(dicBean))
     }
 
@@ -92,7 +92,7 @@ class UrlSerializerTest {
         dicBean.path = path
         dicBean.path1 = path
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"path\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/124.jpg\"],\"path1\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/124.jpg\"]}",
+                "{\"number1\":0,\"number22\":null,\"path\":[\"https://127.0.0.1/abc.jpg\",\"https://127.0.0.1/124.jpg\"],\"path1\":[\"https://127.0.0.2/abc.jpg\",\"https://127.0.0.2/124.jpg\"]}",
                 objectMapper.writeValueAsString(dicBean))
     }
 
@@ -106,7 +106,7 @@ class UrlSerializerTest {
         val actual = objectMapper.writeValueAsString(dicBean)
         System.err.println(actual)
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"path\":\"/abc.jpg,/124.jpg\",\"pathUrls\":[{\"path\":\"/abc.jpg\",\"pathUrl\":\"http://127.0.0.1/abc.jpg\"},{\"path\":\"/124.jpg\",\"pathUrl\":\"http://127.0.0.1/124.jpg\"}],\"path1\":\"/abc.jpg,/124.jpg\",\"path1Urls\":[{\"path\":\"/abc.jpg\",\"pathUrl\":\"http://127.0.0.2/abc.jpg\"},{\"path\":\"/124.jpg\",\"pathUrl\":\"http://127.0.0.2/124.jpg\"}]}",
+                "{\"number1\":0,\"number22\":null,\"path\":\"/abc.jpg,/124.jpg\",\"pathUrls\":[{\"path\":\"/abc.jpg\",\"pathUrl\":\"https://127.0.0.1/abc.jpg\"},{\"path\":\"/124.jpg\",\"pathUrl\":\"https://127.0.0.1/124.jpg\"}],\"path1\":\"/abc.jpg,/124.jpg\",\"path1Urls\":[{\"path\":\"/abc.jpg\",\"pathUrl\":\"https://127.0.0.2/abc.jpg\"},{\"path\":\"/124.jpg\",\"pathUrl\":\"https://127.0.0.2/124.jpg\"}]}",
                 actual)
     }
 
@@ -124,7 +124,7 @@ class UrlSerializerTest {
         val actual = objectMapper.writeValueAsString(dicBean)
         System.err.println(actual)
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"path\":[{\"path\":\"/abc.jpg\",\"pathUrl\":\"http://127.0.0.1/abc.jpg\"},{\"path\":\"/124.jpg\",\"pathUrl\":\"http://127.0.0.1/124.jpg\"}],\"path1\":[{\"path\":\"/abc.jpg\",\"pathUrl\":\"http://127.0.0.2/abc.jpg\"},{\"path\":\"/124.jpg\",\"pathUrl\":\"http://127.0.0.2/124.jpg\"}]}",
+                "{\"number1\":0,\"number22\":null,\"path\":[{\"path\":\"/abc.jpg\",\"pathUrl\":\"https://127.0.0.1/abc.jpg\"},{\"path\":\"/124.jpg\",\"pathUrl\":\"https://127.0.0.1/124.jpg\"}],\"path1\":[{\"path\":\"/abc.jpg\",\"pathUrl\":\"https://127.0.0.2/abc.jpg\"},{\"path\":\"/124.jpg\",\"pathUrl\":\"https://127.0.0.2/124.jpg\"}]}",
                 actual)
     }
 
@@ -138,7 +138,7 @@ class UrlSerializerTest {
         paths.add(" ")
         dicBean.pathArray = paths.toTypedArray<String>()
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"pathArray\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"pathArrayUrls\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/def.jpg\"],\"pathArray1\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"pathArray1Urls\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/def.jpg\"]}",
+                "{\"number1\":0,\"number22\":null,\"pathArray\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"pathArrayUrls\":[\"https://127.0.0.1/abc.jpg\",\"https://127.0.0.1/def.jpg\"],\"pathArray1\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"pathArray1Urls\":[\"https://127.0.0.2/abc.jpg\",\"https://127.0.0.2/def.jpg\"]}",
                 objectMapper.writeValueAsString(dicBean))
         dicBean.pathArray = null
         Assertions.assertEquals("{\"number1\":0,\"number22\":null}", objectMapper.writeValueAsString(dicBean))
@@ -154,7 +154,7 @@ class UrlSerializerTest {
         paths.add(" ")
         dicBean.pathArray = paths.toTypedArray<String>()
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"pathArray\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/def.jpg\"],\"pathArray1\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/def.jpg\"]}",
+                "{\"number1\":0,\"number22\":null,\"pathArray\":[\"https://127.0.0.1/abc.jpg\",\"https://127.0.0.1/def.jpg\"],\"pathArray1\":[\"https://127.0.0.2/abc.jpg\",\"https://127.0.0.2/def.jpg\"]}",
                 objectMapper.writeValueAsString(dicBean))
         dicBean.pathArray = null
         Assertions.assertEquals("{\"number1\":0,\"number22\":null}", objectMapper.writeValueAsString(dicBean))
@@ -170,7 +170,7 @@ class UrlSerializerTest {
         paths.add(" ")
         dicBean.paths = paths
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"paths\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"pathsUrls\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/def.jpg\"],\"paths1\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"paths1Urls\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/def.jpg\"]}",
+                "{\"number1\":0,\"number22\":null,\"paths\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"pathsUrls\":[\"https://127.0.0.1/abc.jpg\",\"https://127.0.0.1/def.jpg\"],\"paths1\":[\"/abc.jpg\",\"/def.jpg\",\" \"],\"paths1Urls\":[\"https://127.0.0.2/abc.jpg\",\"https://127.0.0.2/def.jpg\"]}",
                 objectMapper.writeValueAsString(dicBean))
         dicBean.paths = null
         Assertions.assertEquals("{\"number1\":0,\"number22\":null}", objectMapper.writeValueAsString(dicBean))
@@ -186,7 +186,7 @@ class UrlSerializerTest {
         paths.add(" ")
         dicBean.paths = paths
         Assertions.assertEquals(
-                "{\"number1\":0,\"number22\":null,\"paths\":[\"http://127.0.0.1/abc.jpg\",\"http://127.0.0.1/def.jpg\"],\"paths1\":[\"http://127.0.0.2/abc.jpg\",\"http://127.0.0.2/def.jpg\"]}",
+                "{\"number1\":0,\"number22\":null,\"paths\":[\"https://127.0.0.1/abc.jpg\",\"https://127.0.0.1/def.jpg\"],\"paths1\":[\"https://127.0.0.2/abc.jpg\",\"https://127.0.0.2/def.jpg\"]}",
                 objectMapper.writeValueAsString(dicBean))
         dicBean.paths = null
         Assertions.assertEquals("{\"number1\":0,\"number22\":null}", objectMapper.writeValueAsString(dicBean))

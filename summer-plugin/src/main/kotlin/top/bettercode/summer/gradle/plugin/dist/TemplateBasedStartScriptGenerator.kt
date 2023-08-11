@@ -4,7 +4,7 @@ import groovy.text.SimpleTemplateEngine
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Project
 import org.gradle.api.Transformer
-import org.gradle.api.internal.file.TmpDirTemporaryFileProvider
+import org.gradle.api.internal.file.temp.GradleUserHomeTemporaryFileProvider
 import org.gradle.api.internal.plugins.DefaultJavaAppStartScriptGenerationDetails
 import org.gradle.api.internal.plugins.StartScriptTemplateBindingFactory
 import org.gradle.api.internal.plugins.UnixStartScriptGenerator
@@ -13,7 +13,7 @@ import org.gradle.api.resources.TextResource
 import org.gradle.internal.io.IoUtils
 import org.gradle.jvm.application.scripts.JavaAppStartScriptGenerationDetails
 import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
-import org.gradle.util.TextUtil
+import org.gradle.util.internal.TextUtil
 import java.io.*
 
 class TemplateBasedStartScriptGenerator(
@@ -144,7 +144,10 @@ class TemplateBasedStartScriptGenerator(
             }
         }
 
-        return StringBackedTextResource(TmpDirTemporaryFileProvider(), text)
+        return StringBackedTextResource(
+                GradleUserHomeTemporaryFileProvider { project.gradle.gradleUserHomeDir },
+                text
+        )
     }
 
 }

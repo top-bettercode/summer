@@ -11,7 +11,6 @@ import org.springframework.context.support.GenericApplicationContext
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.data.jpa.domain.Specification
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import top.bettercode.summer.data.jpa.config.JpaMybatisAutoConfiguration
@@ -199,6 +198,21 @@ class SimpleJpaExtRepositoryTest {
         optionalUser = repository.findById(daveId)
         optionalUser.ifPresent { x: User? -> println(x) }
         Assertions.assertFalse(optionalUser.isPresent)
+    }
+
+    @Test
+    fun deleteInBatch() {
+        repository.deleteInBatch(batch)
+        var recycleAll = repository.findAllFromRecycleBin()
+        System.err.println(recycleAll)
+        Assertions.assertEquals(2, recycleAll.size)
+        repository.deleteInBatch(emptyList())
+        recycleAll = repository.findAllFromRecycleBin()
+        System.err.println(recycleAll)
+        Assertions.assertEquals(2, recycleAll.size)
+        recycleAll = repository.findAll()
+        System.err.println(recycleAll)
+        Assertions.assertEquals(2, recycleAll.size)
     }
 
     @Test
@@ -420,19 +434,19 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findRecycleAll1() {
         Assertions.assertTrue(
-                repository.findAllFromRecycleBin(Specification { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                repository.findAllFromRecycleBin { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder
                             .equal(root.get<Any>("firstName"), "Dave")
-                }).iterator().hasNext())
+                }.iterator().hasNext())
     }
 
     @Test
     fun existsRecycle() {
         Assertions
-                .assertTrue(repository.existsInRecycleBin(Specification { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
+                .assertTrue(repository.existsInRecycleBin { root: Root<User?>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
                     builder
                             .equal(root.get<Any>("firstName"), "Dave")
-                }))
+                })
     }
 
     @Test

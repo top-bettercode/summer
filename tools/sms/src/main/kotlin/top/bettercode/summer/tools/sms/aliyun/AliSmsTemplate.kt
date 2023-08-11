@@ -248,7 +248,7 @@ class AliSmsTemplate(
                     aliSmsProperties.url,
                     HttpMethod.POST,
                     requestCallback,
-                    responseEntityExtractor<T>(
+                    responseEntityExtractor(
                             responseType
                     )
             )

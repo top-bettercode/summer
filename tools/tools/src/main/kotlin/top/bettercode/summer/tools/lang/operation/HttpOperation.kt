@@ -32,25 +32,25 @@ object HttpOperation {
     ): String {
         val stringBuilder = StringBuilder("")
         val marginLine = "============================================================"
-        stringBuilder.appendln(marginLine)
+        stringBuilder.appendLine(marginLine)
         if (output.collectionName.isNotBlank() || output.name.isNotBlank()) {
-            stringBuilder.appendln("${output.collectionName}/${output.name}")
+            stringBuilder.appendLine("${output.collectionName}/${output.name}")
         }
-        stringBuilder.appendln("USERNAME        : ${output.request.remoteUser}")
-        stringBuilder.appendln("REQUEST    TIME : ${TimeUtil.format(output.request.dateTime)}")
-        stringBuilder.appendln("RESPONSE   TIME : ${TimeUtil.format(output.response.dateTime)}")
-        stringBuilder.appendln("DURATION MILLIS : ${output.duration}")
-        stringBuilder.appendln(separatorLine)
+        stringBuilder.appendLine("USERNAME        : ${output.request.remoteUser}")
+        stringBuilder.appendLine("REQUEST    TIME : ${TimeUtil.format(output.request.dateTime)}")
+        stringBuilder.appendLine("RESPONSE   TIME : ${TimeUtil.format(output.response.dateTime)}")
+        stringBuilder.appendLine("DURATION MILLIS : ${output.duration}")
+        stringBuilder.appendLine(separatorLine)
         stringBuilder.append(toString(output.request, output.protocol, format, requestDecrypt))
-        stringBuilder.appendln()
+        stringBuilder.appendLine()
         stringBuilder.append(toString(output.response, output.protocol, format, responseDecrypt))
         val stackTrace = output.response.stackTrace
         if (stackTrace.isNotBlank()) {
-            stringBuilder.appendln(separatorLine)
-            stringBuilder.appendln("StackTrace:")
-            stringBuilder.appendln(stackTrace)
+            stringBuilder.appendLine(separatorLine)
+            stringBuilder.appendLine("StackTrace:")
+            stringBuilder.appendLine(stackTrace)
         }
-        stringBuilder.appendln(marginLine)
+        stringBuilder.appendLine(marginLine)
         val toString = stringBuilder.toString()
         return Operation.LINE_SEPARATOR + toString
     }
@@ -62,17 +62,17 @@ object HttpOperation {
             decrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val stringBuilder = StringBuilder("")
-        stringBuilder.appendln("${request.method} ${getPath(request)} $protocol")
-        getHeaders(request).forEach { k, v -> stringBuilder.appendln("$k: ${v.joinToString()}") }
+        stringBuilder.appendLine("${request.method} ${getPath(request)} $protocol")
+        getHeaders(request).forEach { k, v -> stringBuilder.appendLine("$k: ${v.joinToString()}") }
         if (decrypt != null) {
             request.content = decrypt(request.content)
-            stringBuilder.appendln()
-            stringBuilder.appendln("---- decrypted content ----")
+            stringBuilder.appendLine()
+            stringBuilder.appendLine("---- decrypted content ----")
         }
-        stringBuilder.appendln(getRequestBody(request, format))
+        stringBuilder.appendLine(getRequestBody(request, format))
         if (decrypt != null) {
-            stringBuilder.appendln()
-            stringBuilder.appendln("---- decrypted content ----")
+            stringBuilder.appendLine()
+            stringBuilder.appendLine("---- decrypted content ----")
         }
         return stringBuilder.toString()
     }
@@ -84,18 +84,18 @@ object HttpOperation {
             decrypt: ((ByteArray) -> ByteArray)? = null
     ): String {
         val stringBuilder = StringBuilder("")
-        stringBuilder.appendln("$protocol ${response.statusCode} ${HttpStatus.valueOf(response.statusCode).reasonPhrase}")
-        response.headers.forEach { k, v -> stringBuilder.appendln("$k: ${v.joinToString()}") }
+        stringBuilder.appendLine("$protocol ${response.statusCode} ${HttpStatus.valueOf(response.statusCode).reasonPhrase}")
+        response.headers.forEach { k, v -> stringBuilder.appendLine("$k: ${v.joinToString()}") }
         val decryptedContent = "---- decrypted content ----"
         if (decrypt != null) {
             response.content = decrypt(response.content)
-            stringBuilder.appendln()
-            stringBuilder.appendln(decryptedContent)
+            stringBuilder.appendLine()
+            stringBuilder.appendLine(decryptedContent)
         }
-        stringBuilder.appendln(getResponseBody(response, format))
+        stringBuilder.appendLine(getResponseBody(response, format))
         if (decrypt != null) {
-            stringBuilder.appendln()
-            stringBuilder.appendln(decryptedContent)
+            stringBuilder.appendLine()
+            stringBuilder.appendLine(decryptedContent)
         }
         return stringBuilder.toString()
     }

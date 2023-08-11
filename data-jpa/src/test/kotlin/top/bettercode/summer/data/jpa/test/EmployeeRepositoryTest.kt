@@ -80,10 +80,35 @@ class EmployeeRepositoryTest {
     }
 
     @Test
+    fun deleteAllById() {
+        userRepository.deleteAllById(setOf(userId))
+        val byId = userRepository.findById(userId)
+        Assertions.assertFalse(byId.isPresent)
+        val allFromRecycleBin = userRepository.findAllByIdFromRecycleBin(setOf(userId))
+        Assertions.assertEquals(1, allFromRecycleBin.size)
+    }
+
+    @Test
+    fun deleteAllById2() {
+        employeeRepository.deleteAllById(setOf(key))
+        val byId = employeeRepository.findById(key)
+        Assertions.assertFalse(byId.isPresent)
+        val allFromRecycleBin = employeeRepository.findAllByIdFromRecycleBin(setOf(key))
+        Assertions.assertEquals(1, allFromRecycleBin.size)
+    }
+
+    @Test
     fun deleteAllByIdFromRecycleBin() {
         userRepository.deleteAllByIdFromRecycleBin(setOf(delUserId))
         val byId = userRepository.findByIdFromRecycleBin(delUserId)
         Assertions.assertFalse(byId.isPresent)
     }
 
+    @Test
+    fun deleteAllByIdFromRecycleBin2() {
+        employeeRepository.deleteAllById(setOf(key))
+        employeeRepository.deleteAllByIdFromRecycleBin(setOf(key))
+        val byId = employeeRepository.findByIdFromRecycleBin(key)
+        Assertions.assertFalse(byId.isPresent)
+    }
 }

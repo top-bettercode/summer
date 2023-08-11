@@ -66,7 +66,7 @@ class JDBCConnectionConfiguration(
         get() {
             return if (field.isNullOrBlank()) {
                 when {
-                    isOracle -> username.toUpperCase(Locale.getDefault())
+                    isOracle -> username.uppercase(Locale.getDefault())
                     databaseDriver == DatabaseDriver.MYSQL -> {
                         val pattern1 = Regex("jdbc:mysql://[^/]*/(.*)?\\?.+")
                         if (url.matches(pattern1))

@@ -11,15 +11,17 @@ javaPlatform {
 
 dependencies {
 //https://docs.gradle.org/6.6.1/userguide/compatibility.html
+//https://docs.gradle.org/7.5.1/userguide/compatibility.html
 //https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-dependencies/2.3.2.RELEASE/spring-boot-dependencies-2.3.2.RELEASE.pom
-    api(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:2.3.2.RELEASE"))
+    api(platform("org.springframework.boot:spring-boot-dependencies:2.3.2.RELEASE"))
     constraints {
         api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KotlinVersion.CURRENT}")
         api("org.jetbrains.kotlin:kotlin-allopen:${KotlinVersion.CURRENT}")
 
         api("org.springframework.boot:spring-boot-gradle-plugin:2.3.2.RELEASE")
 
-        api("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32")
+        api("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
+        api("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
 
         api("com.gradle.publish:plugin-publish-plugin:1.1.0")
         api("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
@@ -96,7 +98,7 @@ dependencies {
         api(project(":tools:rapidauth"))
         api(project(":tools:weather"))
         api(project(":tools:jpush"))
-//        api(project(":tools:qvod"))
+        api(project(":tools:qvod"))
         api(project(":tools:sap"))
         api(project(":tools:configuration-processor"))
     }

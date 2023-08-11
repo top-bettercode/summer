@@ -173,7 +173,7 @@ object PostmanGenerator {
                     Urlencoded(
                             it.name,
                             it.value,
-                            it.type.substringBefore("(").toLowerCase(Locale.getDefault()),
+                            it.type.substringBefore("(").lowercase(Locale.getDefault()),
                             it.postmanDescription
                     )
                 })

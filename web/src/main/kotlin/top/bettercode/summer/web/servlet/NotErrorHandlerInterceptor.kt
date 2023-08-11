@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse
  * @author Peter Wu
  */
 interface NotErrorHandlerInterceptor : AsyncHandlerInterceptor {
-    @JvmDefault
     override fun preHandle(request: HttpServletRequest,
                            response: HttpServletResponse,
                            handler: Any): Boolean {
@@ -26,13 +25,11 @@ interface NotErrorHandlerInterceptor : AsyncHandlerInterceptor {
         return true
     }
 
-    @JvmDefault
     fun preHandlerMethod(request: HttpServletRequest, response: HttpServletResponse,
                          handler: HandlerMethod): Boolean {
         return true
     }
 
-    @JvmDefault
     override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: java.lang.Exception?) {
         if (handler is HandlerMethod) {
             if (isErrorController(handler)) {
@@ -43,7 +40,6 @@ interface NotErrorHandlerInterceptor : AsyncHandlerInterceptor {
     }
 
 
-    @JvmDefault
     fun afterCompletionMethod(request: HttpServletRequest, response: HttpServletResponse,
                               handler: HandlerMethod, ex: Throwable?) {
     }

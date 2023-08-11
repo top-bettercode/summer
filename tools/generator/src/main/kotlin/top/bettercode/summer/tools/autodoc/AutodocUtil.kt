@@ -189,13 +189,13 @@ object AutodocUtil {
     fun MutableMap<String, Int>.pyname(name: String): String {
         var pyname =
                 PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE)
-                        .toLowerCase(Locale.getDefault())
+                        .lowercase(Locale.getDefault())
                         .replace("[^\\x00-\\xff]|[()\\[\\]{}|/]|\\s*|\t|\r|\n".toRegex(), "")
         val no = this[pyname]
         if (no != null) {
             val i = no + 1
             this[pyname] = i
-            pyname += "_${RandomUtil.nextString(2).toLowerCase(Locale.getDefault())}_$i"
+            pyname += "_${RandomUtil.nextString(2).lowercase(Locale.getDefault())}_$i"
         } else
             this[pyname] = 0
         return pyname

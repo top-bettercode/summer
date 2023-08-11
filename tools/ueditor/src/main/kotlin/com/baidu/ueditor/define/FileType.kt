@@ -22,6 +22,6 @@ object FileType {
    */
     @JvmStatic
     fun getSuffixByFilename(filename: String): String {
-        return filename.substring(filename.lastIndexOf(".")).toLowerCase(Locale.getDefault())
+        return filename.substring(filename.lastIndexOf(".")).lowercase(Locale.getDefault())
     }
 }
