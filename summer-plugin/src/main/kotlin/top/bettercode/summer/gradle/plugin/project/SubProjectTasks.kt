@@ -149,6 +149,7 @@ object SubProjectTasks {
                 }
                 named("bootJar", BootJar::class.java) {
                     it.launchScript()
+                    it.archiveFileName.set("${project.name}-latest.jar")
                 }
                 named("distZip", Zip::class.java) {
                     it.archiveFileName.set("${project.name}.zip")
