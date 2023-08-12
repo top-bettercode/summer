@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.generator
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.javaName
 import top.bettercode.summer.tools.generator.database.DatabaseMetaData
 import top.bettercode.summer.tools.generator.database.entity.Table
@@ -108,7 +108,7 @@ class JDBCConnectionConfiguration(
 
         }
 
-    var module: String = defaultModuleName
+    var module: String = DEFAULT_MODULE_NAME
 
     var username: String
         set(value) = properties.set("user", value)

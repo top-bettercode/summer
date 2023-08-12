@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.generator.database
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
 import top.bettercode.summer.tools.generator.dsl.Generators
 import java.io.File
@@ -25,7 +25,7 @@ class MysqlMetaDataTest {
         configuration.username = ""
         configuration.password = ""
         configuration.debug = true
-        extension.datasources = mapOf(defaultModuleName to configuration)
+        extension.datasources = mapOf(DEFAULT_MODULE_NAME to configuration)
     }
 
     @BeforeEach

@@ -15,7 +15,7 @@ import org.springframework.core.env.Environment
 import top.bettercode.summer.apisign.ApiSignProperties
 import top.bettercode.summer.logging.RequestLoggingConfiguration
 import top.bettercode.summer.logging.RequestLoggingProperties
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
 import top.bettercode.summer.web.properties.SummerWebProperties
 import javax.annotation.PostConstruct
@@ -80,7 +80,7 @@ class AutodocConfiguration {
         }
         val defaultConfiguration = datasources["primary"]
         if (defaultConfiguration != null) {
-            datasources[defaultModuleName] = defaultConfiguration
+            datasources[DEFAULT_MODULE_NAME] = defaultConfiguration
         } else {
             try {
                 if (dataSourceProperties != null) {
@@ -94,7 +94,7 @@ class AutodocConfiguration {
                     configuration.tablePrefixes = genProperties.tablePrefixes
                     configuration.tableSuffixes = genProperties.tableSuffixes
 
-                    datasources[defaultModuleName] = configuration
+                    datasources[DEFAULT_MODULE_NAME] = configuration
                 }
             } catch (_: Exception) {
             }

@@ -2,7 +2,7 @@ package top.bettercode.summer.gradle.plugin.project.template
 
 import org.gradle.api.Project
 import top.bettercode.summer.gradle.plugin.autodoc.AsciidocGenerator
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import top.bettercode.summer.tools.generator.dsl.Generator
 import java.io.File
@@ -52,7 +52,7 @@ v${project.version}
                 +""
                 +"[plantuml]"
                 +"----"
-                +project.rootProject.file("puml/${if (defaultModuleName == table.module) "src" else table.module}/${table.subModule}.puml")
+                +project.rootProject.file("puml/${if (DEFAULT_MODULE_NAME == table.module) "src" else table.module}/${table.subModule}.puml")
                         .readText()
                 +"----"
                 currentModuleName = table.subModuleName

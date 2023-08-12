@@ -2,11 +2,13 @@ package top.bettercode.summer.tools.generator.database
 
 import org.h2.jdbcx.JdbcDataSource
 import org.h2.tools.RunScript
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.dsl.Generator
 import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
 import java.io.File
@@ -30,7 +32,23 @@ class GeneratorsTest {
         configuration.username = "sa"
         configuration.password = "sa"
         configuration.tablePrefixes = arrayOf("oauth_")
-        extension.datasources = mapOf(defaultModuleName to configuration)
+        extension.datasources = mapOf(DEFAULT_MODULE_NAME to configuration).toSortedMap(GeneratorExtension.comparator)
+    }
+
+    @Test
+    fun comparator() {
+        val set = setOf("a", "b", "c", DEFAULT_MODULE_NAME)
+        set.forEach(::println)
+        set.toSortedSet(GeneratorExtension.comparator).forEach(::println)
+    }
+
+    @Test
+    fun testModule() {
+        extension.dataType = top.bettercode.summer.tools.generator.DataType.PUML
+        extension.run { module, _ ->
+            val keys = extension.datasources.keys
+            Assertions.assertEquals(true, keys.contains(module))
+        }
     }
 
     @Test

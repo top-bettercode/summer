@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.generator.puml
 
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import java.io.File
 
 /**
@@ -26,7 +26,7 @@ class PumlConverterTest {
     fun compile() {
         PumlConverter.compile(
                 GeneratorExtension(),
-                defaultModuleName,
+                DEFAULT_MODULE_NAME,
                 oraclePuml,
                 File("build/gen/puml/database.puml")
         )
@@ -36,7 +36,7 @@ class PumlConverterTest {
     fun toMysql() {
         PumlConverter.toMysql(
                 GeneratorExtension(),
-                defaultModuleName,
+                DEFAULT_MODULE_NAME,
                 oraclePuml,
                 File("build/gen/puml/database.puml")
         )

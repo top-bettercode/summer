@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.generator.database
 
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
 import java.io.File
 
@@ -22,7 +22,7 @@ class MetaDataTest {
         configuration.url = "jdbc:h2:mem:test"
         configuration.username = "sa"
         configuration.password = "sa"
-        extension.datasources = mapOf(defaultModuleName to configuration)
+        extension.datasources = mapOf(DEFAULT_MODULE_NAME to configuration)
     }
 
     @Test

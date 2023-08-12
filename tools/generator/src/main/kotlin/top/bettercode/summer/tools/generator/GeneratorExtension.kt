@@ -145,22 +145,25 @@ open class GeneratorExtension(
             }
         }
 
-    /**
-     * Comparator 比较 key 默认认模块名(defaultModuleName)排最前，其他按字母排序
-     */
-    val comparator: Comparator<String> = Comparator { o1, o2 ->
-        if (o1 == defaultModuleName) {
-            -1
-        } else if (o2 == defaultModuleName) {
-            1
-        } else {
-            o1.compareTo(o2)
-        }
-    }
-
     companion object {
 
-        const val defaultModuleName = "modules"
+        /**
+         * Comparator 比较 key 默认认模块名(defaultModuleName)排最前，其他按字母排序
+         */
+        val comparator: Comparator<String> = Comparator { o1, o2 ->
+            if (o1 == o2) {
+                0
+            } else if (o1 == DEFAULT_MODULE_NAME) {
+                -1
+            } else if (o2 == DEFAULT_MODULE_NAME) {
+                1
+            } else {
+                o1.compareTo(o2)
+            }
+        }
+
+
+        const val DEFAULT_MODULE_NAME: String = "modules"
 
         /**
          * javaName
@@ -198,7 +201,7 @@ open class GeneratorExtension(
         }
 
     val defaultDatasource: JDBCConnectionConfiguration by lazy {
-        datasources[defaultModuleName] ?: datasources.values.first()
+        datasources[DEFAULT_MODULE_NAME] ?: datasources.values.first()
     }
 
     /**
@@ -249,7 +252,7 @@ open class GeneratorExtension(
     }
 
     fun isDefaultModule(moduleName: String): Boolean {
-        return defaultModuleName == moduleName
+        return DEFAULT_MODULE_NAME == moduleName
     }
 
     val pumlSources: Map<String, List<File>> by lazy {
@@ -257,7 +260,7 @@ open class GeneratorExtension(
                 ?.associateBy(
                         {
                             if ("src" == it.name) {
-                                defaultModuleName
+                                DEFAULT_MODULE_NAME
                             } else it.name
                         }
                 ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }?.toSortedMap(comparator)
@@ -267,7 +270,7 @@ open class GeneratorExtension(
     val pdmSources: Map<String, List<File>> by lazy {
         file(pdmSrc).listFiles()?.filter { it.isDirectory && "database" != it.name }
                 ?.associateBy(
-                        { if ("src" == it.name) "modules" else it.name }
+                        { if ("src" == it.name) DEFAULT_MODULE_NAME else it.name }
                 ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "pdm" }.toList() }
                 ?.toSortedMap(comparator)
                 ?: emptyMap()
@@ -277,7 +280,7 @@ open class GeneratorExtension(
         file(pumlSrc).listFiles()?.filter { "database" == it.name }
                 ?.associateBy({
                     if ("src" == it.name) {
-                        defaultModuleName
+                        DEFAULT_MODULE_NAME
                     } else it.name
                 }
                 ) { it.walkTopDown().filter { f -> f.isFile && f.extension == "puml" }.toList() }

@@ -12,7 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.defaultModuleName
+import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.ddl.MysqlToDDL
@@ -47,7 +47,7 @@ class GeneratorPlugin : Plugin<Project> {
 
             val entries = project.properties.filter { it.key.startsWith("datasource.") }.entries
             extension.datasources =
-                    ((if (project.properties.containsKey("datasource.url")) mapOf(defaultModuleName to (entries.filter {
+                    ((if (project.properties.containsKey("datasource.url")) mapOf(DEFAULT_MODULE_NAME to (entries.filter {
                         it.key.split('.').size == 2
                     }.associateBy({ it.key.substringAfter("datasource.") }, { it.value }))
                     ) else emptyMap()) + entries.filter { it.key.split('.').size == 3 }.groupBy {
@@ -97,7 +97,7 @@ class GeneratorPlugin : Plugin<Project> {
                                         .filter { it.isNotBlank() }.toTypedArray()
 
                         configuration
-                    }.toSortedMap(extension.comparator)
+                    }.toSortedMap(GeneratorExtension.comparator)
 
             extension.delete = (findGeneratorProperty(project, "delete"))?.toBoolean() ?: false
             extension.projectPackage =
