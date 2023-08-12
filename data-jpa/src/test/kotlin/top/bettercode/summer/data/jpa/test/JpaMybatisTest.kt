@@ -19,7 +19,7 @@ import top.bettercode.summer.data.jpa.repository.Service
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import top.bettercode.summer.data.jpa.support.Size
 import top.bettercode.summer.tools.lang.util.CollectionUtil.mapOf
-import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
+import top.bettercode.summer.tools.lang.util.StringUtil.json
 import java.util.concurrent.CountDownLatch
 import java.util.function.Consumer
 
@@ -79,12 +79,12 @@ class JpaMybatisTest {
     @Test
     fun selectResultMap2() {
         val users = repository.selectResultMap2(User("Carter", null))
-        System.err.println(valueOf(users, true))
+        System.err.println(json(users, true))
         Assertions.assertEquals(1, users!!.size)
         val users1 = sqlSession
                 .selectList<Any?>(UserRepository::class.java.name + ".selectResultMap2",
                         User("Carter", null))
-        System.err.println(valueOf(users1, true))
+        System.err.println(json(users1, true))
         Assertions.assertEquals(1, users1.size)
         Assertions.assertIterableEquals(users, users1)
     }
@@ -92,12 +92,12 @@ class JpaMybatisTest {
     @Test
     fun selectResultMap3() {
         val users = repository.selectResultMap3(User("Carter", null))
-        System.err.println(valueOf(users, true))
+        System.err.println(json(users, true))
         Assertions.assertEquals(2, users!!.size)
         val users1 = sqlSession
                 .selectList<Any?>(UserRepository::class.java.name + ".selectResultMap3",
                         User("Carter", null))
-        System.err.println(valueOf(users1, true))
+        System.err.println(json(users1, true))
         Assertions.assertEquals(2, users1.size)
         Assertions.assertIterableEquals(users, users1)
     }
@@ -111,19 +111,19 @@ class JpaMybatisTest {
     @Test
     fun selectResultFirst3() {
         val users = repository.selectResultFirst3(User("Carter", null))
-        System.err.println(valueOf(users, true))
+        System.err.println(json(users, true))
     }
 
     @Test
     fun selectResultMap3Page() {
         val users = repository.selectResultMap3(User("Carter", null),
                 PageRequest.of(0, 10))
-        System.err.println(valueOf(users, true))
+        System.err.println(json(users, true))
         Assertions.assertEquals(2, users!!.totalElements)
         val users1 = sqlSession
                 .selectList<Any?>(UserRepository::class.java.name + ".selectResultMap3",
                         User("Carter", null))
-        System.err.println(valueOf(users1, true))
+        System.err.println(json(users1, true))
         Assertions.assertEquals(2, users1.size)
         Assertions.assertIterableEquals(users, users1)
     }
@@ -132,22 +132,22 @@ class JpaMybatisTest {
     fun selectResultMap3Page2() {
         var users = repository.selectResultMap3(User("Carter", null),
                 PageRequest.of(0, 2))
-        System.err.println(valueOf(users!!.content, true))
+        System.err.println(json(users!!.content, true))
         Assertions.assertEquals(2, users.totalElements)
         val pageable = PageRequest.of(1, 2)
         System.err.println(pageable.offset)
         users = repository.selectResultMap3(User("Carter", null),
                 pageable)
-        System.err.println(valueOf(users!!.content, true))
+        System.err.println(json(users!!.content, true))
     }
 
     @Test
     fun selectMybatisAll() {
         val users = repository.selectMybatisAll()
-        System.err.println(valueOf(users, true))
+        System.err.println(json(users, true))
         val users1 = sqlSession
                 .selectList<Any?>(UserRepository::class.java.name + ".selectMybatisAll")
-        System.err.println(valueOf(users1, true))
+        System.err.println(json(users1, true))
         Assertions.assertIterableEquals(users, users1)
         Assertions.assertEquals(4, users!!.size)
     }
@@ -155,10 +155,10 @@ class JpaMybatisTest {
     //    @Test
     fun selectMybatisAllVal() {
         val users = repository.selectMybatisAllVal()
-        System.err.println(valueOf(users, true))
+        System.err.println(json(users, true))
         val users1 = sqlSession
                 .selectList<Any?>(UserRepository::class.java.name + ".selectMybatisAllVal")
-        System.err.println(valueOf(users1, true))
+        System.err.println(json(users1, true))
         Assertions.assertIterableEquals(users, users1)
         Assertions.assertEquals(4, users!!.size)
     }
@@ -166,10 +166,10 @@ class JpaMybatisTest {
     //    @Test
     fun selectMybatisAllVal2() {
         val users = repository.selectMybatisAllVal2()
-        System.err.println(valueOf(users, true))
+        System.err.println(json(users, true))
         val users1 = sqlSession
                 .selectList<Any?>(UserRepository::class.java.name + ".selectMybatisAllVal2")
-        System.err.println(valueOf(users1, true))
+        System.err.println(json(users1, true))
         Assertions.assertIterableEquals(users, users1)
         Assertions.assertEquals(4, users!!.size)
     }
@@ -177,10 +177,10 @@ class JpaMybatisTest {
     @Test
     fun selectMybatisMapList() {
         val users = repository.selectMybatisMapList()
-        System.err.println(valueOf(users, true))
+        System.err.println(json(users, true))
         val users1 = sqlSession
                 .selectList<Any?>(UserRepository::class.java.name + ".selectMybatisMapList")
-        System.err.println(valueOf(users1, true))
+        System.err.println(json(users1, true))
         Assertions.assertIterableEquals(users, users1)
         Assertions.assertEquals(4, users!!.size)
     }
@@ -188,10 +188,10 @@ class JpaMybatisTest {
     @Test
     fun selectMybatisMap() {
         val users = repository.selectMybatisMap()
-        System.err.println(valueOf(users, true))
+        System.err.println(json(users, true))
         val users1 = sqlSession
                 .selectOne<Any>(UserRepository::class.java.name + ".selectMybatisMap")
-        System.err.println(valueOf(users1, true))
+        System.err.println(json(users1, true))
         Assertions.assertNull(users1)
     }
 
@@ -332,10 +332,10 @@ class JpaMybatisTest {
         params["firstName"] = "Carter"
         val users = repository
                 .selectByMybatisMap(PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "lastName")), params)
-        System.err.println(valueOf(users.content, true))
+        System.err.println(json(users.content, true))
         val users1 = sqlSession
                 .selectList<Any>(UserRepository::class.java.name + ".selectByMybatisMap", params)
-        System.err.println(valueOf(users1, true))
+        System.err.println(json(users1, true))
         Assertions.assertEquals(2, users.totalElements)
         val userList = users.content
         Assertions.assertEquals(2, userList.size)

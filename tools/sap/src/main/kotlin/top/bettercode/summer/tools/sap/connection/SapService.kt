@@ -140,7 +140,7 @@ class SapService(properties: SapProperties) {
             }
             var exception = printException(function)
             if (!StringUtils.hasText(exception) && throwable != null) {
-                exception = valueOf(throwable, true)
+                exception = valueOf(throwable)
             }
             if (throwable != null || !isSuccess) {
                 if (log.isWarnEnabled) {
@@ -194,7 +194,7 @@ class SapService(properties: SapProperties) {
         val sb = StringBuilder()
         if (exceptionList != null) {
             for (exception in exceptionList) {
-                sb.append(valueOf(exception, true)).append("\n")
+                sb.append(valueOf(exception)).append("\n")
             }
         }
         return sb.toString()

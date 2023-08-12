@@ -19,7 +19,7 @@ import top.bettercode.summer.data.jpa.domain.UserMatcher
 import top.bettercode.summer.data.jpa.query.DefaultSpecMatcher
 import top.bettercode.summer.data.jpa.query.SpecMatcher
 import top.bettercode.summer.data.jpa.repository.UserRepository
-import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
+import top.bettercode.summer.tools.lang.util.StringUtil.json
 import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.util.*
 import java.util.function.Consumer
@@ -116,10 +116,10 @@ class SimpleJpaExtRepositoryTest {
         val spec = DefaultSpecMatcher.matching<User?>()
                 .equal("firstName", "Carter")
         var all = repository.findAll(spec)
-        System.err.println(valueOf(all, true))
+        System.err.println(json(all, true))
         repository.save(update, spec)
         all = repository.findAll(spec)
-        System.err.println(valueOf(all, true))
+        System.err.println(json(all, true))
         for (user in all) {
             Assertions.assertEquals("newName", user?.lastName)
         }
@@ -219,7 +219,7 @@ class SimpleJpaExtRepositoryTest {
     fun deleteAllInBatch() {
         repository.deleteAllInBatch()
         var recycleAll = repository.findAllFromRecycleBin()
-        System.err.println(valueOf(recycleAll, true))
+        System.err.println(json(recycleAll, true))
         Assertions.assertEquals(4, recycleAll.size)
         recycleAll = repository.findAll()
         System.err.println(recycleAll)
@@ -316,7 +316,7 @@ class SimpleJpaExtRepositoryTest {
         val spec = DefaultSpecMatcher.matching<User?>()
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(spec)
-        System.err.println(valueOf(all, true))
+        System.err.println(json(all, true))
     }
 
     @Test
@@ -325,7 +325,7 @@ class SimpleJpaExtRepositoryTest {
                 .containing("firstName", " Cart ").specPath("firstName").trim()
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(spec)
-        System.err.println(valueOf(all, true))
+        System.err.println(json(all, true))
     }
 
     @Test
@@ -338,7 +338,7 @@ class SimpleJpaExtRepositoryTest {
                 }
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(matcher)
-        System.err.println(valueOf(all, true))
+        System.err.println(json(all, true))
     }
 
     @Test
@@ -351,7 +351,7 @@ class SimpleJpaExtRepositoryTest {
                 }
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(matcher)
-        System.err.println(valueOf(all, true))
+        System.err.println(json(all, true))
     }
 
     @Test
@@ -363,7 +363,7 @@ class SimpleJpaExtRepositoryTest {
                                     .containing(" Cart ").firstName().trim()
                         }.firstName().desc().lastName().asc()
         val all = repository.findAll(matcher)
-        System.err.println(valueOf(all, true))
+        System.err.println(json(all, true))
     }
 
     @Test
@@ -375,7 +375,7 @@ class SimpleJpaExtRepositoryTest {
                                     .containing(" Cart ").firstName().trim()
                         }.firstName().desc().lastName().asc()
         val all = repository.findAll(matcher)
-        System.err.println(valueOf(all, true))
+        System.err.println(json(all, true))
     }
 
     @Test
@@ -464,9 +464,9 @@ class SimpleJpaExtRepositoryTest {
 //    nativeQuery.addScalar("date", TimestampType.INSTANCE);
 //    nativeQuery.addScalar("date1", TimestampType.INSTANCE);
 //    nativeQuery.stream().forEach(o -> {
-//      System.err.println(StringUtil.valueOf(o, true));
+//      System.err.println(StringUtil.json(o, true));
 //    });
         val resultList = query.resultList
-        System.err.println(valueOf(resultList, true))
+        System.err.println(json(resultList, true))
     }
 }

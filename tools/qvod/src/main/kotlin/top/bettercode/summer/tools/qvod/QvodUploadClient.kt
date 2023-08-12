@@ -62,10 +62,7 @@ open class QvodUploadClient(
                     "DURATION MILLIS : {}\n{}\n\n{}",
                     durationMillis,
                     StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
+                    if (resp == null) StringUtil.valueOf(throwable) else StringUtil.json(resp, true)
             )
         }
     }

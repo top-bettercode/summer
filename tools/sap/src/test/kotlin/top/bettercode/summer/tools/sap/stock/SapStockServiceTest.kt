@@ -4,13 +4,14 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
+import top.bettercode.summer.tools.lang.util.StringUtil.json
 import top.bettercode.summer.tools.sap.TestApplication
 
 /**
  * @author Peter Wu
  */
 @SpringBootTest(classes = [TestApplication::class])
+@Disabled
 internal class SapStockServiceTest {
     @Autowired
     var orderToSap: SapStockService? = null
@@ -20,7 +21,7 @@ internal class SapStockServiceTest {
     fun testGetStore() {
         val store = orderToSap!!.getStore("20103962", "1090")
         //    StockLsReturn store = orderToSap.getStore("20101131", "1330");
-        System.err.println(valueOf(store, true))
+        System.err.println(json(store, true))
     }
 
     @Test
@@ -31,9 +32,9 @@ internal class SapStockServiceTest {
         val store3 = orderToSap!!.getStore("20101131", "1330")
         var e = System.currentTimeMillis()
         System.err.println(e - s)
-        System.err.println(valueOf(store1, true))
-        System.err.println(valueOf(store2, true))
-        System.err.println(valueOf(store3, true))
+        System.err.println(json(store1, true))
+        System.err.println(json(store2, true))
+        System.err.println(json(store3, true))
         s = System.currentTimeMillis()
         val stores = orderToSap!!.getStores(
                 setOf(StockQuery("1090", "20103962"),
@@ -41,6 +42,6 @@ internal class SapStockServiceTest {
                         StockQuery("1330", "20101131")))
         e = System.currentTimeMillis()
         System.err.println(e - s)
-        System.err.println(valueOf(stores, true))
+        System.err.println(json(stores, true))
     }
 }

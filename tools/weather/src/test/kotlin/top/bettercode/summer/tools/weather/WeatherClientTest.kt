@@ -29,9 +29,9 @@ class WeatherClientTest : BaseTest() {
     @Test
     fun icons() {
         val typeFile = ClassPathResource("type.json").file
-        val typeList = StringUtil.OBJECT_MAPPER.readTree(typeFile)
+        val typeList = StringUtil.objectMapper().readTree(typeFile)
         val iconsFile = ClassPathResource("icons-list-zh.json").file
-        val node = StringUtil.OBJECT_MAPPER.readTree(iconsFile)
+        val node = StringUtil.objectMapper().readTree(iconsFile)
         for (value in typeList) {
             value as JsonNode
             val wtNm = value.get("wtNm").asText()

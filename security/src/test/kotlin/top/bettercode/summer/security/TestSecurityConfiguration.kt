@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.password.PasswordEncoder
 import top.bettercode.summer.security.token.IRevokeTokenService
-import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
+import top.bettercode.summer.tools.lang.util.StringUtil.json
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
@@ -23,8 +23,7 @@ class TestSecurityConfiguration {
     @Bean
     fun revokeTokenService(): IRevokeTokenService {
         return IRevokeTokenService { principal ->
-            System.err
-                    .println(valueOf(principal, true))
+            System.err.println(json(principal, true))
         }
     }
 

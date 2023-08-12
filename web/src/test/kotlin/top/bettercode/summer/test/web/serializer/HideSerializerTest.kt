@@ -1,8 +1,7 @@
 package top.bettercode.summer.test.web.serializer
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
-import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
+import top.bettercode.summer.tools.lang.util.StringUtil.json
 import top.bettercode.summer.web.serializer.annotation.JsonHide
 
 /**
@@ -17,13 +16,11 @@ class HideSerializerTest {
         var password: String? = null
     }
 
-    val objectMapper = ObjectMapper()
-
     @Test
     fun test() {
         val user = User()
         user.password = "1"
         user.tel = "18000000000"
-        System.err.println(valueOf(objectMapper.writeValueAsString(user)))
+        System.err.println(json(user))
     }
 }

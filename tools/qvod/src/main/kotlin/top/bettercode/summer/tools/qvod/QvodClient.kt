@@ -2,6 +2,7 @@ package top.bettercode.summer.tools.qvod
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.tencentcloudapi.common.AbstractModel
 import com.tencentcloudapi.common.Credential
 import com.tencentcloudapi.common.exception.TencentCloudSDKException
 import com.tencentcloudapi.common.profile.ClientProfile
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import org.springframework.util.Base64Utils
 import org.springframework.util.DigestUtils
-import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.lang.util.StringUtil
@@ -197,19 +197,7 @@ open class QvodClient(
             throwable = e
             throw e
         } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            log.info(
-                    MarkerFactory.getMarker(LOG_MARKER),
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
-            )
+            log(durationMillis, start, req, resp, throwable)
         }
     }
 
@@ -235,19 +223,7 @@ open class QvodClient(
             throwable = e
             throw e
         } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            log.info(
-                    MarkerFactory.getMarker(LOG_MARKER),
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
-            )
+            log(durationMillis, start, req, resp, throwable)
         }
     }
 
@@ -274,21 +250,10 @@ open class QvodClient(
             throwable = e
             throw e
         } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            log.info(
-                    MarkerFactory.getMarker(LOG_MARKER),
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
-            )
+            log(durationMillis, start, req, resp, throwable)
         }
     }
+
 
     /**
      * 使用任务流模板进行视频处理
@@ -317,19 +282,7 @@ open class QvodClient(
             throwable = e
             throw e
         } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            log.info(
-                    MarkerFactory.getMarker(LOG_MARKER),
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
-            )
+            log(durationMillis, start, req, resp, throwable)
         }
     }
 
@@ -368,19 +321,7 @@ open class QvodClient(
             throwable = e
             throw e
         } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            log.info(
-                    MarkerFactory.getMarker(LOG_MARKER),
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
-            )
+            log(durationMillis, start, req, resp, throwable)
         }
     }
 
@@ -411,19 +352,7 @@ open class QvodClient(
             throwable = e
             throw e
         } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            log.info(
-                    MarkerFactory.getMarker(LOG_MARKER),
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
-            )
+            log(durationMillis, start, req, resp, throwable)
         }
     }
 
@@ -451,19 +380,7 @@ open class QvodClient(
             throwable = e
             throw e
         } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            log.info(
-                    MarkerFactory.getMarker(LOG_MARKER),
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
-            )
+            log(durationMillis, start, req, resp, throwable)
         }
     }
 
@@ -499,21 +416,7 @@ open class QvodClient(
             throwable = e
             throw e
         } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            val marker = MarkerFactory.getDetachedMarker(LOG_MARKER)
-            marker.add(MarkerFactory.getMarker(RequestLoggingFilter.NOT_IN_ALL))
-            log.info(
-                    marker,
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
-            )
+            log(durationMillis, start, req, resp, throwable)
         }
     }
 
@@ -539,19 +442,7 @@ open class QvodClient(
             throwable = e
             throw e
         } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            log.info(
-                    MarkerFactory.getMarker(LOG_MARKER),
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
-            )
+            log(durationMillis, start, req, resp, throwable)
         }
     }
 
@@ -578,22 +469,22 @@ open class QvodClient(
             throwable = e
             throw e
         } finally {
-            if (durationMillis == null) {
-                durationMillis = System.currentTimeMillis() - start
-            }
-            val marker = MarkerFactory.getDetachedMarker(LOG_MARKER)
-            marker.add(MarkerFactory.getMarker(RequestLoggingFilter.NOT_IN_ALL))
-            log.info(
-                    marker,
-                    "DURATION MILLIS : {}\n{}\n\n{}",
-                    durationMillis,
-                    StringUtil.json(req, true),
-                    if (resp == null) StringUtil.valueOf(
-                            throwable,
-                            true
-                    ) else StringUtil.json(resp, true)
-            )
+            log(durationMillis, start, req, resp, throwable)
         }
+    }
+
+    private fun log(durationMillis: Long?, start: Long, req: AbstractModel, resp: AbstractModel?, throwable: Throwable?) {
+        var duration = durationMillis
+        if (duration == null) {
+            duration = System.currentTimeMillis() - start
+        }
+        log.info(
+                MarkerFactory.getMarker(LOG_MARKER),
+                "DURATION MILLIS : {}\n{}\n\n{}",
+                duration,
+                StringUtil.json(req, true),
+                if (resp == null) StringUtil.valueOf(throwable) else StringUtil.json(resp, true)
+        )
     }
 
 

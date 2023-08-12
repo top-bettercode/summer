@@ -3,7 +3,7 @@ package top.bettercode.summer.test.web.support.setting
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.BeanUtils
-import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
+import top.bettercode.summer.tools.lang.util.StringUtil.json
 import top.bettercode.summer.web.support.setting.Setting.Companion.of
 
 /**
@@ -18,12 +18,12 @@ internal class SettingTest {
         map[key] = "true"
         val setting = of(map)
         val corsProperties = setting.bind(CorsProperties::class.java)
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         val corsProperties2 = CorsProperties()
         corsProperties2.isEnable = false
-        System.err.println(valueOf(corsProperties2, true))
+        System.err.println(json(corsProperties2, true))
         BeanUtils.copyProperties(corsProperties2, corsProperties)
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         System.err.println(map)
         Assertions.assertFalse(corsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
@@ -36,10 +36,10 @@ internal class SettingTest {
         map[key] = "true"
         val setting = of(map)
         val corsProperties = setting.bind(CorsProperties::class.java)
-//        System.err.println(valueOf(corsProperties, true))
+//        System.err.println(json(corsProperties, true))
 //        corsProperties.allowedOrigins = listOf("*", "orign")
         corsProperties.isEnable = false
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         System.err.println(map)
         Assertions.assertFalse(corsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
@@ -52,9 +52,9 @@ internal class SettingTest {
         map[key] = "true"
         val setting = of(map)
         val corsProperties = setting.bind(CorsProperties::class.java)
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         setting.put(key, "false")
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         System.err.println(map)
         Assertions.assertFalse(corsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
@@ -67,9 +67,9 @@ internal class SettingTest {
         map[key] = "true"
         val setting = of(map)
         val corsProperties = setting.bind(CorsProperties::class.java)
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         map[key] = "false"
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         System.err.println(map)
         Assertions.assertFalse(corsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
@@ -82,9 +82,9 @@ internal class SettingTest {
         map[key] = "true"
         val setting = of(map)
         val corsProperties = setting.bind(CorsProperties::class.java)
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         setting.put(key, "false")
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         System.err.println(map)
         Assertions.assertFalse(corsProperties.isEnable)
         Assertions.assertEquals("false", map[key])
@@ -97,9 +97,9 @@ internal class SettingTest {
         map[key] = "true"
         val setting = of(map)
         val corsProperties = setting.bind(CorsProperties::class.java)
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         setting.put(key, "false")
-        System.err.println(valueOf(corsProperties, true))
+        System.err.println(json(corsProperties, true))
         System.err.println(map)
         Assertions.assertFalse(corsProperties.isEnable)
         Assertions.assertEquals("false", map[key])

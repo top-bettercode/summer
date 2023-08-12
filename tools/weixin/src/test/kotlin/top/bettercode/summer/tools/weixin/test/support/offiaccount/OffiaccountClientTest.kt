@@ -24,26 +24,26 @@ internal class OffiaccountClientTest : BaseTest() {
     @Test
     fun getBaseAccessToken() {
         val result = offiaccountClient.getBaseAccessToken()
-        System.err.println(StringUtil.valueOf(result, true))
+        System.err.println(StringUtil.json(result, true))
     }
 
     @Test
     fun getJsapiTicket() {
         val result = offiaccountClient.getJsapiTicket()
-        System.err.println(StringUtil.valueOf(result, true))
+        System.err.println(StringUtil.json(result, true))
     }
 
     @Test
     fun getWebPageAccessToken() {
         val result =
                 offiaccountClient.getWebPageAccessToken("001HKjFa19niJC0qn4Ga1dZNir0HKjFZ")
-        System.err.println(StringUtil.valueOf(result, true))
+        System.err.println(StringUtil.json(result, true))
     }
 
     @Test
     fun jsSignUrl() {
         val result = offiaccountClient.jsSignUrl("https://127.0.0.1")
-        System.err.println(StringUtil.valueOf(result, true))
+        System.err.println(StringUtil.json(result, true))
     }
 
     @Disabled
@@ -65,6 +65,6 @@ internal class OffiaccountClientTest : BaseTest() {
                 )
         )
         val result = offiaccountClient.sendTemplateMsg(request)
-        System.err.println(StringUtil.valueOf(result, true))
+        System.err.println(StringUtil.json(result, true))
     }
 }

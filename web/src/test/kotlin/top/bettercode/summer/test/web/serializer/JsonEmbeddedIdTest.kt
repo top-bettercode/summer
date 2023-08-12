@@ -1,9 +1,8 @@
 package top.bettercode.summer.test.web.serializer
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.springframework.util.Assert
-import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
+import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.serializer.annotation.JsonEmbeddedId
 import java.io.Serializable
 
@@ -42,8 +41,6 @@ class JsonEmbeddedIdTest {
 
     }
 
-    val objectMapper = ObjectMapper()
-
     @Test
     fun test() {
         val user = User()
@@ -51,8 +48,8 @@ class JsonEmbeddedIdTest {
         user.key = key
         user.password = "1"
         user.tel = "18000000000"
-        val value = objectMapper.writeValueAsString(user)
-        System.err.println(value)
-        System.err.println(valueOf(objectMapper.readValue(value, User::class.java)))
+        val json = StringUtil.json(user)
+        System.err.println(json)
+        System.err.println(StringUtil.json(StringUtil.readJson(json, User::class.java)))
     }
 }

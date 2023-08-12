@@ -93,7 +93,7 @@ public class ExcelTest {
     List<DataBean> list =
         ExcelImport.of(new ClassPathResource("template.xlsx").getInputStream())
             .getData(excelFields);
-    System.out.println(StringUtil.valueOf(list, true));
+    System.out.println(StringUtil.json(list, true));
     System.err.println(list.size());
   }
 

@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.module.SimpleModule
 import org.springframework.util.StringUtils
 import java.io.*
 import java.nio.charset.Charset
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.zip.DeflaterOutputStream
@@ -26,65 +28,80 @@ import java.util.zip.InflaterOutputStream
 object StringUtil {
     private val log = Logger.getLogger(StringUtil::class.java.toString())
 
+    private val cacheObjectMapper = ConcurrentHashMap<String, ObjectMapper>()
+
     @JvmStatic
-    var OBJECT_MAPPER = ObjectMapper()
+    fun objectMapper(format: Boolean = false, escapeNonAscii: Boolean = false): ObjectMapper {
+        val key = "$format:$escapeNonAscii"
+        return cacheObjectMapper.getOrPut(key) {
+            val objectMapper = ObjectMapper()
+            objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            val module = SimpleModule()
+            module.addSerializer(
+                    LocalDate::class.java,
+                    object : JsonSerializer<LocalDate>() {
+                        override fun serialize(
+                                value: LocalDate,
+                                gen: JsonGenerator,
+                                serializers: SerializerProvider
+                        ) {
+                            gen.writeNumber(TimeUtil.of(value).toMillis())
+                        }
+                    })
+            module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
+                override fun serialize(
+                        value: LocalDateTime, gen: JsonGenerator,
+                        serializers: SerializerProvider?
+                ) {
+                    gen.writeNumber(TimeUtil.of(value).toMillis())
+                }
+            })
+
+            module.addDeserializer(
+                    LocalDate::class.java,
+                    object : JsonDeserializer<LocalDate?>() {
+                        override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
+                            val valueAsString = p.valueAsString
+                            return if (valueAsString.isNullOrBlank())
+                                null
+                            else
+                                TimeUtil.toLocalDate(valueAsString.toLong())
+                        }
+                    })
+
+            module.addDeserializer(
+                    LocalDateTime::class.java,
+                    object : JsonDeserializer<LocalDateTime?>() {
+                        override fun deserialize(
+                                p: JsonParser,
+                                ctxt: DeserializationContext
+                        ): LocalDateTime? {
+                            val valueAsString = p.valueAsString
+                            return if (valueAsString.isNullOrBlank())
+                                null
+                            else
+                                return TimeUtil.toLocalDateTime(p.valueAsString.toLong())
+                        }
+                    })
 
 
-    init {
-        OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            objectMapper.registerModule(module)
 
-        val module: com.fasterxml.jackson.databind.module.SimpleModule =
-                com.fasterxml.jackson.databind.module.SimpleModule()
-        module.addSerializer(
-                LocalDate::class.java,
-                object : JsonSerializer<LocalDate>() {
-                    override fun serialize(
-                            value: LocalDate,
-                            gen: JsonGenerator,
-                            serializers: SerializerProvider
-                    ) {
-                        gen.writeNumber(TimeUtil.of(value).toMillis())
-                    }
-                })
-        module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
-            override fun serialize(
-                    value: LocalDateTime, gen: JsonGenerator,
-                    serializers: SerializerProvider?
-            ) {
-                gen.writeNumber(TimeUtil.of(value).toMillis())
+            val serializationConfig = objectMapper.serializationConfig
+            var config = serializationConfig
+            if (format) {
+                config = config.with(SerializationFeature.INDENT_OUTPUT)
             }
-        })
+            if (escapeNonAscii) {
+                config = config.with(JsonWriteFeature.ESCAPE_NON_ASCII)
+            }
+            objectMapper.setConfig(config)
 
-        module.addDeserializer(
-                LocalDate::class.java,
-                object : JsonDeserializer<LocalDate?>() {
-                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
-                        val valueAsString = p.valueAsString
-                        return if (valueAsString.isNullOrBlank())
-                            null
-                        else
-                            TimeUtil.toLocalDate(valueAsString.toLong())
-                    }
-                })
+            return objectMapper
+        }
 
-        module.addDeserializer(
-                LocalDateTime::class.java,
-                object : JsonDeserializer<LocalDateTime?>() {
-                    override fun deserialize(
-                            p: JsonParser,
-                            ctxt: DeserializationContext
-                    ): LocalDateTime? {
-                        val valueAsString = p.valueAsString
-                        return if (valueAsString.isNullOrBlank())
-                            null
-                        else
-                            return TimeUtil.toLocalDateTime(p.valueAsString.toLong())
-                    }
-                })
-
-
-        OBJECT_MAPPER.registerModule(module)
     }
+
 
     /**
      * @param s 字符串
@@ -110,12 +127,10 @@ object StringUtil {
      * 转换为字符串
      *
      * @param object 对象
-     * @param format 是否格式化输出
      * @return 字符串
      */
-    @JvmOverloads
     @JvmStatic
-    fun valueOf(`object`: Any?, format: Boolean = false): String {
+    fun valueOf(`object`: Any?): String {
         if (`object` is CharSequence) {
             return `object`.toString()
         } else if (`object` is Throwable) {
@@ -127,7 +142,7 @@ object StringUtil {
             return stringWriter.toString()
         }
         return try {
-            json(`object`, format)
+            json(`object`)
         } catch (e: Exception) {
             e.printStackTrace()
             if (log.isLoggable(Level.ALL)) {
@@ -207,45 +222,34 @@ object StringUtil {
     @JvmOverloads
     @JvmStatic
     fun json(`object`: Any?, format: Boolean = false, escapeNonAscii: Boolean = false): String {
-        return json(`object`, format, escapeNonAscii) { this.writeValueAsString(it) }
+        return objectMapper(format, escapeNonAscii).writeValueAsString(`object`)
     }
 
     @JvmOverloads
     @JvmStatic
     fun jsonBytes(`object`: Any?, format: Boolean = false, escapeNonAscii: Boolean = false): ByteArray {
-        return json(`object`, format, escapeNonAscii) { this.writeValueAsBytes(it) }
-    }
-
-    private fun <T> json(`object`: Any?, format: Boolean, escapeNonAscii: Boolean, write: ObjectMapper.(Any?) -> T): T {
-        synchronized(OBJECT_MAPPER) {
-            val serializationConfig = OBJECT_MAPPER.serializationConfig
-            try {
-                var config = serializationConfig
-                if (format) {
-                    config = config.with(SerializationFeature.INDENT_OUTPUT)
-                }
-                if (escapeNonAscii) {
-                    config = config.with(JsonWriteFeature.ESCAPE_NON_ASCII)
-                }
-                OBJECT_MAPPER.setConfig(config)
-                return OBJECT_MAPPER.write(`object`)
-            } finally {
-                if (format || escapeNonAscii) {
-                    OBJECT_MAPPER.setConfig(serializationConfig)
-                }
-            }
-        }
+        return objectMapper(format, escapeNonAscii).writeValueAsBytes(`object`)
     }
 
 
     @JvmStatic
     fun <T> readJson(`object`: ByteArray, valueType: Class<T>): T {
-        return OBJECT_MAPPER.readValue(`object`, valueType)
+        return objectMapper().readValue(`object`, valueType)
     }
 
     @JvmStatic
     fun <T> readJson(`object`: ByteArray, valueType: JavaType): T {
-        return OBJECT_MAPPER.readValue(`object`, valueType)
+        return objectMapper().readValue(`object`, valueType)
+    }
+
+    @JvmStatic
+    fun <T> readJson(`object`: String, valueType: Class<T>): T {
+        return objectMapper().readValue(`object`, valueType)
+    }
+
+    @JvmStatic
+    fun <T> readJson(`object`: String, valueType: JavaType): T {
+        return objectMapper().readValue(`object`, valueType)
     }
 
     /**

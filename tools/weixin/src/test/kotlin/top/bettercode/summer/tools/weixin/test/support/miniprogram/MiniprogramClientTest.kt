@@ -24,14 +24,14 @@ internal class MiniprogramClientTest : BaseTest() {
     @Test
     fun jscode2session() {
         val result = miniprogramClient.jscode2session("xxx")
-        System.err.println(StringUtil.valueOf(result, true))
+        System.err.println(StringUtil.json(result, true))
     }
 
     @Disabled
     @Test
     fun getuserphonenumber() {
         val result = miniprogramClient.getuserphonenumber("xxx")
-        System.err.println(StringUtil.valueOf(result, true))
+        System.err.println(StringUtil.json(result, true))
     }
 
     @Disabled
@@ -53,6 +53,6 @@ internal class MiniprogramClientTest : BaseTest() {
                 )
         )
         val result = miniprogramClient.sendSubscribeMsg(request)
-        System.err.println(StringUtil.valueOf(result, true))
+        System.err.println(StringUtil.json(result, true))
     }
 }

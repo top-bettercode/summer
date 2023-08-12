@@ -107,7 +107,7 @@ object PrettyPrintingContentModifier {
     private class JsonPrettyPrinter : PrettyPrinter {
 
         override fun prettyPrint(content: ByteArray): ByteArray {
-            StringUtil.OBJECT_MAPPER.readTree(content)
+            StringUtil.objectMapper().readTree(content)
             return StringUtil.prettyJson(String(content))!!.toByteArray()
         }
 

@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import top.bettercode.summer.tools.lang.property.Settings.dicCode
-import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
+import top.bettercode.summer.tools.lang.util.StringUtil.json
 import top.bettercode.summer.web.BaseController
 import top.bettercode.summer.web.exception.SystemException
 import top.bettercode.summer.web.form.FormDuplicateCheck
@@ -32,7 +32,7 @@ class WebTestController : BaseController() {
         System.err.println(cent)
         Assert.isTrue(cent == 2200L, "cent != 2200")
         System.err.println(form.price)
-        System.err.println(valueOf(form, true))
+        System.err.println(json(form, true))
         val dataDicBean = DataDicBean()
         dataDicBean.code = "code"
         dataDicBean.intCode = 1

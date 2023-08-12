@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.excel
 
 import org.junit.jupiter.api.*
 import org.springframework.core.io.ClassPathResource
-import top.bettercode.summer.tools.lang.util.StringUtil.valueOf
+import top.bettercode.summer.tools.lang.util.StringUtil.json
 
 /**
  * @author Peter Wu
@@ -71,7 +71,7 @@ class ExcelTest {
 //    testExport();
         val list = ExcelImport.of(ClassPathResource("template.xlsx").inputStream)
                 .getData<DataBean, DataBean>(excelFields)
-        println(valueOf(list, true))
+        println(json(list, true))
         System.err.println(list.size)
     }
 

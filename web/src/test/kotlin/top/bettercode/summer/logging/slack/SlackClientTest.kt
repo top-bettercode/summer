@@ -14,36 +14,36 @@ class SlackClientTest {
 
     @Test
     fun errorToken() {
-        println(StringUtil.valueOf(SlackClient("xoxb-", "/actuator").channelsList(), true))
+        println(StringUtil.json(SlackClient("xoxb-", "/actuator").channelsList(), true))
     }
 
     @Test
     fun channelsList() {
-        println(StringUtil.valueOf(slackClient.channelsList(), true))
+        println(StringUtil.json(slackClient.channelsList(), true))
     }
 
     @Test
     fun channelIdByName() {
-        println(StringUtil.valueOf(slackClient.channelIdByName("test"), true))
+        println(StringUtil.json(slackClient.channelIdByName("test"), true))
     }
 
     @Test
     fun channelExist() {
         val channelExist = slackClient.channelExist("dev")
-        println(StringUtil.valueOf(channelExist, true))
+        println(StringUtil.json(channelExist, true))
     }
 
     @Test
     fun channelNotExist() {
         val channelExist = slackClient.channelExist("logging")
         org.junit.jupiter.api.Assertions.assertFalse(channelExist)
-        println(StringUtil.valueOf(channelExist, true))
+        println(StringUtil.json(channelExist, true))
     }
 
     @Test
     fun postMessage() {
         println(
-                StringUtil.valueOf(
+                StringUtil.json(
                         slackClient.postMessage(
                                 "dev",
                                 System.currentTimeMillis(),
@@ -59,7 +59,7 @@ class SlackClientTest {
     @Test
     fun filesUpload() {
         println(
-                StringUtil.valueOf(
+                StringUtil.json(
                         slackClient.filesUpload(
                                 "dev",
                                 System.currentTimeMillis(),
