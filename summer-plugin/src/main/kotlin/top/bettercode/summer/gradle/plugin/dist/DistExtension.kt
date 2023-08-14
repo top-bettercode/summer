@@ -36,6 +36,7 @@ open class DistExtension(
 
     var jdkArchiveSrc: String = ""
         get() {
+            //https://jdk.java.net/java-se-ri/17
             return field.ifBlank {
                 if (windows)
                     "https://download.java.net/openjdk/jdk17/ri/openjdk-17+35_windows-x64_bin.zip"
