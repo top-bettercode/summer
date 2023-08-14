@@ -38,9 +38,9 @@ open class DistExtension(
         get() {
             return field.ifBlank {
                 if (windows)
-                    "https://download.java.net/openjdk/jdk8u42/ri/openjdk-8u42-b03-windows-i586-14_jul_2022.zip"
+                    "https://download.java.net/openjdk/jdk17/ri/openjdk-17+35_windows-x64_bin.zip"
                 else
-                    "https://download.java.net/openjdk/jdk8u42/ri/openjdk-8u42-b03-linux-x64-14_jul_2022.tar.gz"
+                    "https://download.java.net/openjdk/jdk17/ri/openjdk-17+35_linux-x64_bin.tar.gz"
             }
         }
 

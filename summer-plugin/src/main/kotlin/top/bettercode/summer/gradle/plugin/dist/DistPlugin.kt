@@ -57,6 +57,7 @@ class DistPlugin : Plugin<Project> {
                     ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories").split(
                     ","
             )
+
         }
         val dist = project.extensions.getByType(DistExtension::class.java)
 
@@ -307,13 +308,12 @@ class DistPlugin : Plugin<Project> {
                 else
                     project.tarTree(jdkArchive)
         ) { spec ->
-            spec.include("*/jre/**")
             spec.eachFile {
                 val dir = it.sourcePath.substringBefore("/")
                 it.path = if (it.path.contains("/$dir/"))
-                    it.path.replaceFirst("/$dir/jre/", "/jdk/")
+                    it.path.replaceFirst("/$dir/", "/jdk/")
                 else
-                    it.path.replaceFirst("$dir/jre/", "jdk/")
+                    it.path.replaceFirst("$dir/", "jdk/")
             }
             spec.includeEmptyDirs = false
             spec.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
