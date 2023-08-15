@@ -3,6 +3,8 @@ package top.bettercode.summer.gradle.plugin.project
 import isBoot
 import isCloud
 import isCore
+import isKotlin
+import isSpringRoot
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -23,13 +25,15 @@ class ProjectPlugin : Plugin<Project> {
     override fun apply(project: Project) {
 
         project.description = project.findProperty("application.name") as? String
+        val isSpringRoot = project.isSpringRoot
 
         project.allprojects.forEach { subProject ->
             subProject.plugins.apply("idea")
             subProject.plugins.apply("java")
 
-            subProject.group = subProject.properties["app.packageName"] as String
-            subProject.version = subProject.properties["app.version"] as String
+            subProject.group = (subProject.findProperty("app.package")
+                    ?: subProject.findProperty("app.packageName")) as? String ?: ""
+            subProject.version = subProject.findProperty("app.version") as? String ?: "1.0"
 
             //idea
             subProject.extensions.configure(org.gradle.plugins.ide.idea.model.IdeaModel::class.java) { idea ->
@@ -52,13 +56,23 @@ class ProjectPlugin : Plugin<Project> {
                 java.targetCompatibility = javaVersion
             }
 
+
             //plugins
             subProject.plugins.apply {
                 apply(ProfilePlugin::class.java)
                 apply(GenPackageinfoPlugin::class.java)
-                apply(GeneratorPlugin::class.java)
-                apply(AutodocPlugin::class.java)
-                apply("org.springframework.boot")
+
+                if (project.isKotlin)
+                    apply("org.jetbrains.kotlin.jvm")
+
+                if (isSpringRoot) {
+                    apply(GeneratorPlugin::class.java)
+                    apply(AutodocPlugin::class.java)
+                    apply("org.springframework.boot")
+                } else {
+                    apply("application")
+                    apply(DistPlugin::class.java)
+                }
             }
 
             if (subProject.isBoot) {
@@ -68,18 +82,20 @@ class ProjectPlugin : Plugin<Project> {
                 }
             }
 
-            //dependencies
-            ProjectDependencies.config(subProject)
             //tasks
             SubProjectTasks.config(subProject)
-
-            if (subProject.isCore || subProject.isCloud) {
-                CoreProjectTasks.config(subProject)
+            //dependencies
+            if (isSpringRoot) {
+                ProjectDependencies.config(subProject)
+                if (subProject.isCore || subProject.isCloud) {
+                    CoreProjectTasks.config(subProject)
+                }
             }
         }
 
         //tasks
-        RootProjectTasks.config(project)
+        if (isSpringRoot)
+            RootProjectTasks.config(project)
 
         //docker
         if (project.isCloud) {

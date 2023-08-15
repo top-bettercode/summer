@@ -55,7 +55,7 @@ open class DistExtension(
             return file
         }
 
-    internal val isX64: Boolean get() = jdkArchiveSrc.contains("x64")
+    val isX64: Boolean get() = jdkArchiveSrc.contains("x64")
 
     fun nativeLibArgs(project: Project): String {
         return "-Djava.library.path=${project.file(nativePath).absolutePath}"

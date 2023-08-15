@@ -240,6 +240,10 @@ class DistPlugin : Plugin<Project> {
             if (application != null) {
                 application.applicationDefaultJvmArgs += jvmArgs
                 application.applicationDefaultJvmArgs = application.applicationDefaultJvmArgs.distinct()
+                val mainClassName = project.findDistProperty("main-class-name")
+                if (!mainClassName.isNullOrBlank()) {
+                    application.mainClass.set(mainClassName)
+                }
                 val includeNative = jvmArgs.contains(dist.nativeLibArgs(project))
                 project.tasks.getByName("startScripts") { task ->
                     task as CreateStartScripts
@@ -256,7 +260,7 @@ class DistPlugin : Plugin<Project> {
 
                     task.inputs.file(project.rootProject.file("gradle.properties"))
                     if (!task.mainClass.isPresent) {
-                        task.mainClass.set(project.findDistProperty("main-class-name"))
+                        task.mainClass.set(mainClassName)
                     }
                     task.doLast(object : Action<Task> {
                         override fun execute(it: Task) {
