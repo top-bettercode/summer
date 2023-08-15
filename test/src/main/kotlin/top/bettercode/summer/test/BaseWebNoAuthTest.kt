@@ -5,6 +5,7 @@ import ch.qos.logback.classic.LoggerContext
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.*
@@ -29,8 +29,8 @@ import top.bettercode.summer.logging.RequestLoggingFilter
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.test.autodoc.Autodoc
 import top.bettercode.summer.test.autodoc.Autodoc.requiredParameters
+import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.web.BaseController
-import top.bettercode.summer.web.config.summer.ObjectMapperBuilderCustomizer
 import top.bettercode.summer.web.properties.SummerWebProperties
 import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.io.File
@@ -73,8 +73,7 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
     protected lateinit var requestLoggingProperties: RequestLoggingProperties
 
     @JvmField
-    protected final val objectMapper: ObjectMapper = Jackson2ObjectMapperBuilder.json().apply { ObjectMapperBuilderCustomizer().customize(this) }.build()
-
+    protected final val objectMapper: ObjectMapper = ObjectMapper()
 
     @BeforeEach
     fun setup() {
@@ -181,8 +180,14 @@ class BaseWebNoAuthTest : MockMvcRequestBuilders() {
 
 
     @JvmOverloads
-    protected fun json(`object`: Any?, serializationView: Class<*>? = null, incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL): String {
+    protected fun json(`object`: Any?, serializationView: Class<*>? = null, incl: JsonInclude.Include? = JsonInclude.Include.NON_NULL, writeDatesAsTimestamps: Boolean = true): String {
         val objectMapper = objectMapper.setSerializationInclusion(incl)
+        if (writeDatesAsTimestamps) {
+            objectMapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            objectMapper.registerModule(StringUtil.timeModule)
+        } else {
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        }
         return if (serializationView != null) {
             objectMapper.writerWithView(serializationView).writeValueAsString(`object`)
         } else
