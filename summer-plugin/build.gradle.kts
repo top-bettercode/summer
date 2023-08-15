@@ -3,16 +3,13 @@ plugins {
 }
 
 dependencies {
-    api(gradleApi())
-
+    api(project(":dist-plugin"))
     api(project(":tools:generator"))
 
-    api("org.jetbrains.kotlin:kotlin-gradle-plugin")
     api("org.jetbrains.kotlin:kotlin-allopen")
 
     api("org.springframework.boot:spring-boot-gradle-plugin")
 
-    api("org.yaml:snakeyaml")
     api("net.sourceforge.plantuml:plantuml")
     api("org.atteo:evo-inflector")
 
@@ -20,5 +17,4 @@ dependencies {
     api("com.oracle.database.jdbc:ojdbc8")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }

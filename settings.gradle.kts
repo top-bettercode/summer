@@ -14,6 +14,7 @@ include(":data-jpa")
 include(":security")
 include(":test")
 
+include(":dist-plugin")
 include(":summer-plugin")
 include(":publish-plugin")
 

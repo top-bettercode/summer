@@ -1,5 +1,6 @@
 package top.bettercode.summer.gradle.plugin.profile.tasks
 
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.internal.impldep.org.yaml.snakeyaml.Yaml
 import org.junit.jupiter.api.Test
 
@@ -8,6 +9,12 @@ import org.junit.jupiter.api.Test
  * @author Peter Wu
  */
 class Test {
+
+    @Test
+    fun os() {
+        System.err.println(Os.isFamily(Os.FAMILY_WINDOWS))
+        System.err.println(Os.isFamily(Os.FAMILY_UNIX))
+    }
 
     @Test
     fun test() {

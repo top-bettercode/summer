@@ -13,6 +13,5 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 

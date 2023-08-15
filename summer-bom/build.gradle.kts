@@ -84,6 +84,7 @@ dependencies {
         api(project(":security"))
         api(project(":test"))
 
+        api(project(":dist-plugin"))
         api(project(":summer-plugin"))
         api(project(":publish-plugin"))
 

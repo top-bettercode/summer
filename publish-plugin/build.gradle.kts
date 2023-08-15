@@ -10,5 +10,4 @@ dependencies {
 //    api("io.codearte.gradle.nexus:gradle-nexus-staging-plugin")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }

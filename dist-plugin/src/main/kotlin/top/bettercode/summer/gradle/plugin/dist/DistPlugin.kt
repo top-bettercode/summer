@@ -21,7 +21,6 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 import top.bettercode.summer.gradle.plugin.dist.DistExtension.Companion.findDistProperty
-import top.bettercode.summer.tools.lang.util.OS
 import java.io.File
 import java.math.BigInteger
 import java.net.URL
@@ -43,7 +42,7 @@ class DistPlugin : Plugin<Project> {
 
         project.extensions.configure(DistExtension::class.java) { dist ->
             dist.windows = (project.findDistProperty("windows"))?.toBoolean()
-                    ?: OS.WINDOWS.isCurrentOs
+                    ?: Os.isFamily(Os.FAMILY_WINDOWS)
             dist.unwrapResources = project.findDistProperty("unwrap-resources")?.toBoolean() ?: true
             dist.autoStart = project.findDistProperty("auto-start")?.toBoolean() ?: true
             dist.includeJdk = project.findDistProperty("include-jdk")?.toBoolean() ?: false

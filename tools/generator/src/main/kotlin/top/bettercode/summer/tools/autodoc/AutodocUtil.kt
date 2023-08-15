@@ -20,6 +20,7 @@ import top.bettercode.summer.tools.autodoc.model.DocCollection
 import top.bettercode.summer.tools.autodoc.model.DocCollections
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.lang.util.RandomUtil
+import top.bettercode.summer.tools.lang.util.StringUtil
 import java.io.File
 import java.util.*
 
@@ -53,6 +54,7 @@ object AutodocUtil {
         objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
         objectMapper.registerKotlinModule()
                 .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+        objectMapper.registerModule(StringUtil.timeModule)
     }
 
     fun Any.toJsonString(prettyPrint: Boolean = true): String {

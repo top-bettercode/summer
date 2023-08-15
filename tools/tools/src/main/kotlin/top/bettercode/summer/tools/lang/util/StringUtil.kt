@@ -36,56 +36,8 @@ object StringUtil {
         return cacheObjectMapper.getOrPut(key) {
             val objectMapper = ObjectMapper()
             objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            val module = SimpleModule()
-            module.addSerializer(
-                    LocalDate::class.java,
-                    object : JsonSerializer<LocalDate>() {
-                        override fun serialize(
-                                value: LocalDate,
-                                gen: JsonGenerator,
-                                serializers: SerializerProvider
-                        ) {
-                            gen.writeNumber(TimeUtil.of(value).toMillis())
-                        }
-                    })
-            module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
-                override fun serialize(
-                        value: LocalDateTime, gen: JsonGenerator,
-                        serializers: SerializerProvider?
-                ) {
-                    gen.writeNumber(TimeUtil.of(value).toMillis())
-                }
-            })
 
-            module.addDeserializer(
-                    LocalDate::class.java,
-                    object : JsonDeserializer<LocalDate?>() {
-                        override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
-                            val valueAsString = p.valueAsString
-                            return if (valueAsString.isNullOrBlank())
-                                null
-                            else
-                                TimeUtil.toLocalDate(valueAsString.toLong())
-                        }
-                    })
-
-            module.addDeserializer(
-                    LocalDateTime::class.java,
-                    object : JsonDeserializer<LocalDateTime?>() {
-                        override fun deserialize(
-                                p: JsonParser,
-                                ctxt: DeserializationContext
-                        ): LocalDateTime? {
-                            val valueAsString = p.valueAsString
-                            return if (valueAsString.isNullOrBlank())
-                                null
-                            else
-                                return TimeUtil.toLocalDateTime(p.valueAsString.toLong())
-                        }
-                    })
-
-
-            objectMapper.registerModule(module)
+            objectMapper.registerModule(timeModule)
 
             val serializationConfig = objectMapper.serializationConfig
             var config = serializationConfig
@@ -100,6 +52,57 @@ object StringUtil {
             return objectMapper
         }
 
+    }
+
+    val timeModule: SimpleModule by lazy {
+        val module = SimpleModule()
+        module.addSerializer(
+                LocalDate::class.java,
+                object : JsonSerializer<LocalDate>() {
+                    override fun serialize(
+                            value: LocalDate,
+                            gen: JsonGenerator,
+                            serializers: SerializerProvider
+                    ) {
+                        gen.writeNumber(TimeUtil.of(value).toMillis())
+                    }
+                })
+        module.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
+            override fun serialize(
+                    value: LocalDateTime, gen: JsonGenerator,
+                    serializers: SerializerProvider?
+            ) {
+                gen.writeNumber(TimeUtil.of(value).toMillis())
+            }
+        })
+
+        module.addDeserializer(
+                LocalDate::class.java,
+                object : JsonDeserializer<LocalDate?>() {
+                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDate? {
+                        val valueAsString = p.valueAsString
+                        return if (valueAsString.isNullOrBlank())
+                            null
+                        else
+                            TimeUtil.toLocalDate(valueAsString.toLong())
+                    }
+                })
+
+        module.addDeserializer(
+                LocalDateTime::class.java,
+                object : JsonDeserializer<LocalDateTime?>() {
+                    override fun deserialize(
+                            p: JsonParser,
+                            ctxt: DeserializationContext
+                    ): LocalDateTime? {
+                        val valueAsString = p.valueAsString
+                        return if (valueAsString.isNullOrBlank())
+                            null
+                        else
+                            return TimeUtil.toLocalDateTime(p.valueAsString.toLong())
+                    }
+                })
+        module
     }
 
 

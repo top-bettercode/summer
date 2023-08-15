@@ -2,18 +2,14 @@ import org.gradle.api.Project
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension
 import top.bettercode.summer.gradle.plugin.profile.ProfileExtension.Companion.profilesActive
 
-val Project.isSpringRoot: Boolean
-    get() = "true" == (findProperty("spring.boot") ?: "true")
 
 val Project.isBoot: Boolean
-    get() = isSpringRoot && !isCore
+    get() = !isCore
             && "tools" != name
             && ((parent == rootProject) || parent?.name == "server" || parent?.name == "service")
 
 val Project.isCore: Boolean
     get() {
-        if (isSpringRoot)
-            return false
         var projectCore = findProperty("project.core") as? String
         if (projectCore.isNullOrBlank())
             projectCore = "^(core|.*-core)$"
@@ -21,10 +17,8 @@ val Project.isCore: Boolean
     }
 
 val Project.isCloud: Boolean
-    get() = isSpringRoot && "true" == findProperty("spring.cloud")
+    get() = "true" == findProperty("spring.cloud")
 
-val Project.isKotlin: Boolean
-    get() = "true" == findProperty("kotlin.enabled")
 
 /**
  *
