@@ -1,10 +1,13 @@
 package top.bettercode.summer.web.exception
 
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 import top.bettercode.summer.tools.lang.property.PropertiesSource.Companion.of
 
 /**
  * @author Peter Wu
  */
+@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 open class SystemException : RuntimeException {
     /**
      * 业务错误码
