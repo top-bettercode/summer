@@ -176,7 +176,8 @@ class AutodocHandler(
                         request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
                                 ?: linkedSetOf()
                 if (request.contentExt.isEmpty()) {
-                    request.content = Operation.UNRECORDED_MARK.toByteArray()
+                    if (request.content.isNotEmpty())
+                        request.content = Operation.UNRECORDED_MARK.toByteArray()
                 } else {
                     request.contentExt.forEach {
                         setRequired(it, requiredParameters)
@@ -187,7 +188,7 @@ class AutodocHandler(
                 response.headersExt = response.headers.singleValueMap.toFields(response.headersExt)
                 response.contentExt = response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)
                         ?: linkedSetOf()
-                if (response.contentExt.isEmpty()) {
+                if (response.contentExt.isEmpty() && response.content.isNotEmpty()) {
                     response.content = Operation.UNRECORDED_MARK.toByteArray()
                 }
 
