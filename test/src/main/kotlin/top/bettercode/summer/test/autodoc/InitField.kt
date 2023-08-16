@@ -403,7 +403,7 @@ object InitField {
                         partType = if (it.submittedFileName == null) {
                             "text"
                         } else {
-                            value = Operation.UNRECORDED_MARK
+                            value = if (value.isNotBlank()) Operation.UNRECORDED_MARK else value
                             "file"
                         }
                     }

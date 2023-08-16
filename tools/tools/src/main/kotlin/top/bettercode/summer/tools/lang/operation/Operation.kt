@@ -67,7 +67,7 @@ open class Operation(
             val headers = HttpHeaders()
             originHeaders.forEach { k, v ->
                 if (config.encryptHeaders.contains(k)) {
-                    headers.set(k, encryptedString)
+                    headers.set(k, ENCRYPTED_STRING)
                 } else {
                     headers[k] = v
                 }
@@ -81,7 +81,7 @@ open class Operation(
             val parameters = Parameters()
             originParameters.forEach { k, v ->
                 if (config.encryptParameters.contains(k)) {
-                    parameters.set(k, encryptedString)
+                    parameters.set(k, ENCRYPTED_STRING)
                 } else {
                     parameters[k] = v
                 }
@@ -94,13 +94,13 @@ open class Operation(
         val error = response.statusCode >= 400
 
         request.parts = originParts.map {
-            if (config.includeRequestBody || error || it.submittedFileName.isNullOrBlank()) {
+            if (config.includeRequestBody || error || it.submittedFileName.isNullOrBlank() || it.content.isEmpty()) {
                 it
             } else OperationRequestPart(
-                    it.name,
-                    it.submittedFileName,
-                    it.headers,
-                    UNRECORDED_MARK.toByteArray()
+                    name = it.name,
+                    submittedFileName = it.submittedFileName,
+                    headers = it.headers,
+                    content = UNRECORDED_MARK.toByteArray()
             )
         }
 
@@ -137,11 +137,11 @@ open class Operation(
         get() = request.dateTime.until(response.dateTime, ChronoUnit.MILLIS)
 
     companion object {
-        const val encryptedString = "******"
-        const val UNRECORDED_MARK = "unrecorded"
+        const val ENCRYPTED_STRING = "******"
+        const val UNRECORDED_MARK = "[UNRECORDED]"
 
         @JvmField
-        val LINE_SEPARATOR = System.getProperty("line.separator")!!
+        val LINE_SEPARATOR: String = System.getProperty("line.separator")
 
     }
 }
