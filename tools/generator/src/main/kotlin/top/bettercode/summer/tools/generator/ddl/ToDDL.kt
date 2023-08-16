@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.generator.ddl
 
+import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
@@ -34,14 +35,7 @@ abstract class ToDDL : IToDDL {
         return "$quote${it.columnName}$quote ${it.typeDesc}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.autoIncrement) " AUTO_INCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}"
     }
 
-    protected open fun appendKeys(
-            table: Table,
-            hasPrimary: Boolean,
-            pw: Writer,
-            quote: String,
-            tableName: String,
-            useForeignKey: Boolean = false
-    ) {
+    protected open fun appendKeys(table: Table, hasPrimary: Boolean, pw: Writer, quote: String, tableName: String, useForeignKey: Boolean = false) {
         val fks = table.columns.filter { it.isForeignKey }
         if (hasPrimary)
             pw.appendLine("  PRIMARY KEY (${table.primaryKeyNames.joinToString(",") { "$quote$it$quote" }})${if (useForeignKey && fks.isNotEmpty()) "," else ""}")
@@ -90,13 +84,7 @@ abstract class ToDDL : IToDDL {
         }
     }
 
-    protected open fun updateIndexes(
-            prefixTableName: String,
-            oldTable: Table,
-            table: Table,
-            lines: MutableList<String>,
-            dropColumnNames: List<String>
-    ) {
+    protected open fun updateIndexes(prefixTableName: String, oldTable: Table, table: Table, lines: MutableList<String>, dropColumnNames: List<String>) {
         val tableName = table.tableName
         val delIndexes = oldTable.indexes - table.indexes.toSet()
         if (delIndexes.isNotEmpty()) {
@@ -129,13 +117,7 @@ abstract class ToDDL : IToDDL {
         }
     }
 
-    protected fun updateFk(
-            prefixTableName: String,
-            column: Column,
-            oldColumn: Column,
-            lines: MutableList<String>,
-            tableName: String
-    ) {
+    protected fun updateFk(prefixTableName: String, column: Column, oldColumn: Column, lines: MutableList<String>, tableName: String) {
         if (useForeignKey && (column.isForeignKey != oldColumn.isForeignKey || column.pktableName != oldColumn.pktableName || column.pkcolumnName != oldColumn.pkcolumnName)) {
             if (oldColumn.isForeignKey) {
                 lines.add(dropFkStatement(prefixTableName, tableName, oldColumn.columnName))
@@ -153,13 +135,7 @@ abstract class ToDDL : IToDDL {
         }
     }
 
-    protected fun addFk(
-            prefixTableName: String,
-            column: Column,
-            lines: MutableList<String>,
-            tableName: String,
-            columnName: String
-    ) {
+    protected fun addFk(prefixTableName: String, column: Column, lines: MutableList<String>, tableName: String, columnName: String) {
         if (useForeignKey && column.isForeignKey)
             lines.add(
                     "ALTER TABLE $prefixTableName$quote$tableName$quote ADD CONSTRAINT ${
@@ -171,13 +147,7 @@ abstract class ToDDL : IToDDL {
             )
     }
 
-    protected fun dropFk(
-            prefixTableName: String,
-            oldColumns: MutableList<Column>,
-            dropColumnNames: List<String>,
-            lines: MutableList<String>,
-            tableName: String
-    ) {
+    protected fun dropFk(prefixTableName: String, oldColumns: MutableList<Column>, dropColumnNames: List<String>, lines: MutableList<String>, tableName: String) {
         if (useForeignKey)
             oldColumns.filter { it.isForeignKey && dropColumnNames.contains(it.columnName) }
                     .forEach { column ->
@@ -185,24 +155,14 @@ abstract class ToDDL : IToDDL {
                     }
     }
 
-    protected open fun dropFkStatement(
-            prefixTableName: String,
-            tableName: String,
-            columnName: String
-    ) =
-            "ALTER TABLE $prefixTableName$quote$tableName$quote DROP CONSTRAINT ${
-                foreignKeyName(
-                        tableName,
-                        columnName
-                )
-            };"
+    protected open fun dropFkStatement(prefixTableName: String, tableName: String, columnName: String) = "ALTER TABLE $prefixTableName$quote$tableName$quote DROP CONSTRAINT ${foreignKeyName(tableName, columnName)};"
 
-    override fun toDDL(tables: List<Table>, out: FileUnit) {
+    override fun toDDL(tables: List<Table>, out: FileUnit, databaseConf: JDBCConnectionConfiguration) {
         if (tables.isNotEmpty()) {
             out.use { pw ->
                 pw.appendLine("$commentPrefix ${tables[0].subModule}")
                 tables.forEach { table ->
-                    appendTable("", table, pw)
+                    appendTable("", table, pw, databaseConf)
                 }
             }
         }

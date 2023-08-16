@@ -69,14 +69,6 @@ open class GeneratorExtension(
          * 使用子模块
          */
         var userModule: Boolean = true,
-        /**
-         * 更新Sql时生成删除表语句
-         */
-        var dropTablesWhenUpdate: Boolean = false,
-        /**
-         * 更新Sql时生成删除字段语句
-         */
-        var dropColumnsWhenUpdate: Boolean = false,
 
         var applicationName: String = "",
 

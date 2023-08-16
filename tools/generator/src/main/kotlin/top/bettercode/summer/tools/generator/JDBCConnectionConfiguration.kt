@@ -42,6 +42,38 @@ class JDBCConnectionConfiguration(
 
     var entityPrefix: String = ""
 
+    var debug: Boolean = false
+
+    /**
+     * 生成PUML时是否查询index，查询较耗时
+     */
+    var queryIndex: Boolean = true
+
+    /**
+     * 更新Sql时生成删除表语句
+     */
+    var dropTablesWhenUpdate: Boolean = false
+
+    /**
+     * 更新Sql时生成删除字段语句
+     */
+    var dropColumnsWhenUpdate: Boolean = false
+
+    /**
+     * 生成脚本是否包含Schema
+     */
+    var includeSchema: Boolean = true
+
+    /**
+     * 编码
+     */
+    var charset: String = "utf8mb4"
+
+    /**
+     * 排序
+     */
+    var collate: String = "utf8mb4_unicode_ci"
+
     /**
      * ClassName
      */
@@ -114,13 +146,6 @@ class JDBCConnectionConfiguration(
         set(value) = properties.set("user", value)
         get() = properties.getProperty("user")
     var password: String by properties
-
-    var debug: Boolean = false
-
-    /**
-     * 生成PUML时是否查询index，查询较耗时
-     */
-    var queryIndex: Boolean = true
 
     var tinyInt1isBit: Boolean
         set(value) = properties.set("tinyInt1isBit", value.toString())

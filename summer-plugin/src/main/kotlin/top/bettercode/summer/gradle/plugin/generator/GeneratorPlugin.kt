@@ -60,15 +60,18 @@ class GeneratorPlugin : Plugin<Project> {
                         configuration.module = module
                         configuration.url = properties["url"] as? String ?: ""
                         configuration.databaseDriver =
-                                DatabaseDriver.fromProductName(properties["productName"] as? String ?: "")
+                                DatabaseDriver.fromProductName(properties["productName"] as? String
+                                        ?: "")
                         configuration.catalog = properties["catalog"] as? String?
                         configuration.schema = properties["schema"] as? String?
                         configuration.username = properties["username"] as? String ?: "root"
                         configuration.password = properties["password"] as? String ?: "root"
                         configuration.driverClass = properties["driverClass"] as? String ?: ""
-                        configuration.debug = (properties["debug"] as? String ?: "false").toBoolean()
-                        configuration.queryIndex =
-                                (properties["queryIndex"] as? String ?: "true").toBoolean()
+                        configuration.debug = (properties["debug"] as? String
+                                ?: "false").toBoolean()
+                        configuration.queryIndex = (properties["queryIndex"]
+                                ?: findGeneratorProperty(project, "queryIndex"))?.toString()?.toBoolean()
+                                ?: true
 
                         configuration.tinyInt1isBit =
                                 (properties["tinyInt1isBit"] as? String ?: "false").toBoolean()
@@ -96,18 +99,33 @@ class GeneratorPlugin : Plugin<Project> {
                                 ) ?: "").split(",")
                                         .filter { it.isNotBlank() }.toTypedArray()
 
+                        configuration.dropTablesWhenUpdate =
+                                (properties["dropTablesWhenUpdate"]
+                                        ?: findGeneratorProperty(project, "dropTablesWhenUpdate"))?.toString()?.toBoolean()
+                                        ?: false
+                        configuration.dropColumnsWhenUpdate =
+                                (properties["dropColumnsWhenUpdate"]
+                                        ?: findGeneratorProperty(project, "dropColumnsWhenUpdate"))?.toString()?.toBoolean()
+                                        ?: false
+
+                        configuration.includeSchema = (properties["include-schema"]
+                                ?: findGeneratorProperty(project, "include-schema"))?.toString()?.toBoolean()
+                                ?: true
+
+                        configuration.charset = (properties["charset"]
+                                ?: findGeneratorProperty(project, "charset"))?.toString()
+                                ?: "utf8mb4"
+
+                        configuration.collate = (properties["collate"]
+                                ?: findGeneratorProperty(project, "collate"))?.toString()
+                                ?: "utf8mb4_unicode_ci"
+
                         configuration
                     }.toSortedMap(GeneratorExtension.comparator)
 
             extension.delete = (findGeneratorProperty(project, "delete"))?.toBoolean() ?: false
             extension.projectPackage =
                     (findGeneratorProperty(project, "project-package"))?.toBoolean()
-                            ?: false
-            extension.dropTablesWhenUpdate =
-                    (findGeneratorProperty(project, "dropTablesWhenUpdate"))?.toBoolean()
-                            ?: false
-            extension.dropColumnsWhenUpdate =
-                    (findGeneratorProperty(project, "dropColumnsWhenUpdate"))?.toBoolean()
                             ?: false
             extension.useJSR310Types =
                     (findGeneratorProperty(project, "useJSR310Types"))?.toBoolean() ?: true
@@ -328,30 +346,19 @@ class GeneratorPlugin : Plugin<Project> {
                                 val jdbc = extension.datasources[module]
                                         ?: throw IllegalStateException("未配置${module}模块数据库信息")
                                 val tables = tableHolder.tables(tableName = extension.tableNames)
+                                val datasource = extension.datasource(module)
                                 when (jdbc.databaseDriver) {
-                                    DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(
-                                            tables,
-                                            output
-                                    )
+                                    DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(tables, output, datasource)
 
-                                    DatabaseDriver.ORACLE -> OracleToDDL.toDDL(
-                                            tables,
-                                            output
-                                    )
+                                    DatabaseDriver.ORACLE -> OracleToDDL.toDDL(tables, output, datasource)
 
-                                    DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(
-                                            tables,
-                                            output
-                                    )
+                                    DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDL(tables, output, datasource)
 
                                     else -> {
                                         throw IllegalArgumentException("不支持的数据库")
                                     }
                                 }
-                                output.writeTo(
-                                        if (project.file(extension.sqlOutput)
-                                                        .exists()
-                                        ) project.projectDir else project.rootDir
+                                output.writeTo(if (project.file(extension.sqlOutput).exists()) project.projectDir else project.rootDir
                                 )
                             }
                         })
@@ -360,16 +367,12 @@ class GeneratorPlugin : Plugin<Project> {
                         task.group = pumlGroup
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                extension.dropTablesWhenUpdate = (findGeneratorProperty(
-                                        project,
-                                        "dropTablesWhenUpdate"
-                                ))?.toBoolean()
-                                        ?: false
                                 MysqlToDDL.useQuote = extension.sqlQuote
                                 OracleToDDL.useQuote = extension.sqlQuote
                                 MysqlToDDL.useForeignKey = extension.useForeignKey
                                 OracleToDDL.useForeignKey = extension.useForeignKey
-                                val deleteTablesWhenUpdate = extension.dropTablesWhenUpdate
+                                val datasource = extension.datasource(module)
+                                val deleteTablesWhenUpdate = datasource.dropTablesWhenUpdate
 
                                 val databasePumlDir =
                                         extension.file(extension.pumlSrc + "/database")
@@ -401,17 +404,11 @@ class GeneratorPlugin : Plugin<Project> {
                                         )
                                     }
                                     when (jdbc.databaseDriver) {
-                                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(
-                                                module, oldTables, tables, pw, extension
-                                        )
+                                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(oldTables, tables, pw, datasource)
 
-                                        DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(
-                                                module, oldTables, tables, pw, extension
-                                        )
+                                        DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(oldTables, tables, pw, datasource)
 
-                                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(
-                                                module, oldTables, tables, pw, extension
-                                        )
+                                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(oldTables, tables, pw, datasource)
 
                                         else -> {
                                             throw IllegalArgumentException("不支持的数据库")
@@ -419,9 +416,7 @@ class GeneratorPlugin : Plugin<Project> {
                                     }
                                 }
                                 unit.writeTo(
-                                        if (project.file(extension.sqlOutput)
-                                                        .exists()
-                                        ) project.projectDir else project.rootDir
+                                        if (project.file(extension.sqlOutput).exists()) project.projectDir else project.rootDir
                                 )
                             }
                         })

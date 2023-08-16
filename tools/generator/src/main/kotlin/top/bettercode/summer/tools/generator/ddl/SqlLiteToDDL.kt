@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.generator.ddl
 
-import top.bettercode.summer.tools.generator.GeneratorExtension
+import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Table
 import java.io.Writer
@@ -9,27 +9,10 @@ object SqlLiteToDDL : ToDDL() {
     override val quoteMark: String = "`"
     override val commentPrefix: String = "--"
 
-    override fun toDDLUpdate(
-            module: String,
-            oldTables: List<Table>,
-            tables: List<Table>,
-            out: Writer,
-            extension: GeneratorExtension
-    ) {
-
+    override fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: Writer, databaseConf: JDBCConnectionConfiguration) {
     }
 
-    override fun dropFkStatement(
-            prefixTableName: String,
-            tableName: String,
-            columnName: String
-    ): String =
-            "ALTER TABLE $prefixTableName$quote$tableName$quote DROP FOREIGN KEY ${
-                foreignKeyName(
-                        tableName,
-                        columnName
-                )
-            };"
+    override fun dropFkStatement(prefixTableName: String, tableName: String, columnName: String): String = "ALTER TABLE $prefixTableName$quote$tableName$quote DROP FOREIGN KEY ${foreignKeyName(tableName, columnName)};"
 
     override fun columnDef(it: Column, quote: String): String {
         if (it.columnName.isBlank()) {
@@ -41,10 +24,10 @@ object SqlLiteToDDL : ToDDL() {
         return "$quote${it.columnName}$quote ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.isPrimary) " PRIMARY KEY" else ""}${if (it.autoIncrement) " AUTOINCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}"
     }
 
-    override fun appendTable(prefixTableName: String, table: Table, pw: Writer) {
+    override fun appendTable(prefixTableName: String, table: Table, pw: Writer, databaseConf: JDBCConnectionConfiguration) {
         val tableName = table.tableName
         pw.appendLine("$commentPrefix $tableName")
-        if (table.ext.dropTablesWhenUpdate)
+        if (databaseConf.dropTablesWhenUpdate)
             pw.appendLine("DROP TABLE IF EXISTS $prefixTableName$quote$tableName$quote;")
 
         pw.appendLine(
