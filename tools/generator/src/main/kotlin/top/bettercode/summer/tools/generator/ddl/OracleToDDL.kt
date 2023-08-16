@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.generator.ddl
 
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Table
 import java.io.Writer
@@ -13,7 +13,7 @@ object OracleToDDL : ToDDL() {
             oldTables: List<Table>,
             tables: List<Table>,
             out: Writer,
-            databaseConf: JDBCConnectionConfiguration
+            databaseConf: DatabaseConfiguration
     ) {
         out.appendLine("$commentPrefix ${databaseConf.url.substringBefore("?")}")
         out.appendLine()
@@ -194,7 +194,7 @@ object OracleToDDL : ToDDL() {
         }
     }
 
-    override fun appendTable(prefixTableName: String, table: Table, pw: Writer, databaseConf: JDBCConnectionConfiguration) {
+    override fun appendTable(prefixTableName: String, table: Table, pw: Writer, databaseConf: DatabaseConfiguration) {
         val tableName = table.tableName
         pw.appendLine("$commentPrefix $tableName")
         val primaryKey = table.primaryKey

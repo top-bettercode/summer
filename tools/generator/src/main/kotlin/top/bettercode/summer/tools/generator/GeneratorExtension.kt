@@ -129,7 +129,7 @@ open class GeneratorExtension(
     /**
      * JDBC连接配置
      */
-    var datasources: Map<String, JDBCConnectionConfiguration> = mapOf()
+    var datasources: Map<String, DatabaseConfiguration> = mapOf()
         set(value) {
             field = value
             value.values.forEach {
@@ -192,7 +192,7 @@ open class GeneratorExtension(
             JavaTypeResolver.forceBigDecimals = value
         }
 
-    val defaultDatasource: JDBCConnectionConfiguration by lazy {
+    val defaultDatasource: DatabaseConfiguration by lazy {
         datasources[DEFAULT_MODULE_NAME] ?: datasources.values.first()
     }
 
@@ -232,7 +232,7 @@ open class GeneratorExtension(
             null
     }
 
-    fun datasource(moduleName: String): JDBCConnectionConfiguration {
+    fun datasource(moduleName: String): DatabaseConfiguration {
         return datasources[moduleName] ?: defaultDatasource
     }
 

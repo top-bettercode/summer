@@ -2,7 +2,7 @@ package top.bettercode.summer.tools.generator.dsl
 
 import top.bettercode.summer.tools.generator.GeneratorException
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.dom.java.JavaType
@@ -51,7 +51,7 @@ open class Generator {
 
     val settings: Map<String, String> get() = ext.settings
 
-    val datasource: JDBCConnectionConfiguration get() = ext.datasource(table.module)
+    val datasource: DatabaseConfiguration get() = ext.datasource(table.module)
 
     val projectName: String get() = ext.projectName
 

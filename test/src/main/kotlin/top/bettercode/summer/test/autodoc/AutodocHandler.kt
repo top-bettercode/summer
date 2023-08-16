@@ -19,7 +19,7 @@ import top.bettercode.summer.tools.autodoc.operation.DocOperation
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.lang.operation.Operation
 import top.bettercode.summer.web.properties.SummerWebProperties
 import java.io.File
@@ -32,7 +32,7 @@ import javax.annotation.PreDestroy
  * @author Peter Wu
  */
 class AutodocHandler(
-        private val datasources: Map<String, JDBCConnectionConfiguration>,
+        private val datasources: Map<String, DatabaseConfiguration>,
         private val genProperties: GenProperties,
         private val signProperties: ApiSignProperties,
         private val summerWebProperties: SummerWebProperties

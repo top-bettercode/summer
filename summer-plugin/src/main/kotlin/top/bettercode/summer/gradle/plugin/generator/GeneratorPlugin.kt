@@ -13,7 +13,7 @@ import org.gradle.api.Task
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.ddl.MysqlToDDL
 import top.bettercode.summer.tools.generator.ddl.OracleToDDL
@@ -56,7 +56,7 @@ class GeneratorPlugin : Plugin<Project> {
                         entry.value.groupBy({ it.key.substringAfter("datasource.${entry.key}.") },
                                 { it.value }).mapValues { it.value.last() }
                     }).mapValues { (module, properties) ->
-                        val configuration = JDBCConnectionConfiguration()
+                        val configuration = DatabaseConfiguration()
                         configuration.module = module
                         configuration.url = properties["url"] as? String ?: ""
                         configuration.databaseDriver =

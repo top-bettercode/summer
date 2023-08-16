@@ -12,7 +12,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.ConcurrentSkipListSet
 
-class JDBCConnectionConfiguration(
+class DatabaseConfiguration(
         var url: String = "",
         var catalog: String? = null,
         val properties: Properties = Properties().apply {

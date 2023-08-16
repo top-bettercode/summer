@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.generator.ddl
 
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
 import java.io.Writer
@@ -31,9 +31,9 @@ interface IToDDL {
      */
     val commentPrefix: String
 
-    fun toDDL(tables: List<Table>, out: FileUnit, databaseConf: JDBCConnectionConfiguration)
+    fun toDDL(tables: List<Table>, out: FileUnit, databaseConf: DatabaseConfiguration)
 
-    fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: Writer, databaseConf: JDBCConnectionConfiguration)
+    fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: Writer, databaseConf: DatabaseConfiguration)
 
-    fun appendTable(prefixTableName: String, table: Table, pw: Writer, databaseConf: JDBCConnectionConfiguration)
+    fun appendTable(prefixTableName: String, table: Table, pw: Writer, databaseConf: DatabaseConfiguration)
 }

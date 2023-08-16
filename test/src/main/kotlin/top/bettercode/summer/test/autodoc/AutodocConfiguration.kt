@@ -16,7 +16,7 @@ import top.bettercode.summer.apisign.ApiSignProperties
 import top.bettercode.summer.logging.RequestLoggingConfiguration
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.web.properties.SummerWebProperties
 import javax.annotation.PostConstruct
 
@@ -61,13 +61,13 @@ class AutodocConfiguration {
             signProperties: ApiSignProperties,
             summerWebProperties: SummerWebProperties
     ): AutodocHandler {
-        val datasources: MutableMap<String, JDBCConnectionConfiguration> = Binder.get(
+        val datasources: MutableMap<String, DatabaseConfiguration> = Binder.get(
                 environment
-        ).bind<MutableMap<String, JDBCConnectionConfiguration>>(
+        ).bind<MutableMap<String, DatabaseConfiguration>>(
                 "summer.datasource.multi.datasources", Bindable
                 .mapOf(
                         String::class.java,
-                        JDBCConnectionConfiguration::class.java
+                        DatabaseConfiguration::class.java
                 )
         ).orElse(mutableMapOf())
         datasources.values.forEach { configuration ->
@@ -84,7 +84,7 @@ class AutodocConfiguration {
         } else {
             try {
                 if (dataSourceProperties != null) {
-                    val configuration = JDBCConnectionConfiguration()
+                    val configuration = DatabaseConfiguration()
                     configuration.url = dataSourceProperties!!.determineUrl() ?: ""
                     configuration.username = dataSourceProperties!!.determineUsername() ?: ""
                     configuration.password = dataSourceProperties!!.determinePassword() ?: ""

@@ -7,8 +7,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
-import top.bettercode.summer.tools.generator.dsl.Generator
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.dsl.Generators
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
 import java.io.File
@@ -27,7 +26,7 @@ class GeneratorsTest {
     )
 
     init {
-        val configuration = JDBCConnectionConfiguration()
+        val configuration = DatabaseConfiguration()
         configuration.url = "jdbc:h2:mem:test"
         configuration.username = "sa"
         configuration.password = "sa"

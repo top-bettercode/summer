@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.generator.database
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import java.io.File
 
 /**
@@ -18,7 +18,7 @@ class MetaDataTest {
     )
 
     init {
-        val configuration = JDBCConnectionConfiguration()
+        val configuration = DatabaseConfiguration()
         configuration.url = "jdbc:h2:mem:test"
         configuration.username = "sa"
         configuration.password = "sa"

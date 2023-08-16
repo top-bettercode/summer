@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.generator.ddl
 
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.dom.unit.FileUnit
@@ -157,7 +157,7 @@ abstract class ToDDL : IToDDL {
 
     protected open fun dropFkStatement(prefixTableName: String, tableName: String, columnName: String) = "ALTER TABLE $prefixTableName$quote$tableName$quote DROP CONSTRAINT ${foreignKeyName(tableName, columnName)};"
 
-    override fun toDDL(tables: List<Table>, out: FileUnit, databaseConf: JDBCConnectionConfiguration) {
+    override fun toDDL(tables: List<Table>, out: FileUnit, databaseConf: DatabaseConfiguration) {
         if (tables.isNotEmpty()) {
             out.use { pw ->
                 pw.appendLine("$commentPrefix ${tables[0].subModule}")

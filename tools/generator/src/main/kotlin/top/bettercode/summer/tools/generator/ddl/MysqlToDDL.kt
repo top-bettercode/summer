@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.generator.ddl
 
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Table
 import java.io.Writer
 
@@ -8,7 +8,7 @@ object MysqlToDDL : ToDDL() {
     override val quoteMark: String = "`"
     override val commentPrefix: String = "#"
 
-    override fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: Writer, databaseConf: JDBCConnectionConfiguration) {
+    override fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: Writer, databaseConf: DatabaseConfiguration) {
         out.appendLine("$commentPrefix ${databaseConf.url.substringBefore("?")}")
         out.appendLine("$commentPrefix use ${databaseConf.schema};")
         out.appendLine()
@@ -113,7 +113,7 @@ object MysqlToDDL : ToDDL() {
         foreignKeyName(tableName, columnName)
     };"
 
-    override fun appendTable(prefixTableName: String, table: Table, pw: Writer, databaseConf: JDBCConnectionConfiguration) {
+    override fun appendTable(prefixTableName: String, table: Table, pw: Writer, databaseConf: DatabaseConfiguration) {
         val tableName = table.tableName
         pw.appendLine("$commentPrefix $tableName")
         if (databaseConf.dropTablesWhenUpdate) pw.appendLine("DROP TABLE IF EXISTS $prefixTableName$quote$tableName$quote;")

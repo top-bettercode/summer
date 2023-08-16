@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.generator.database
 
 import top.bettercode.summer.tools.generator.DatabaseDriver
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Indexed
 import top.bettercode.summer.tools.generator.database.entity.Table
@@ -19,7 +19,7 @@ import java.util.*
 
 
 class DatabaseMetaData(
-        private val datasource: JDBCConnectionConfiguration
+        private val datasource: DatabaseConfiguration
 ) : AutoCloseable {
 
     private var databaseMetaData: java.sql.DatabaseMetaData

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.dsl.Generators
 import java.io.File
 
@@ -20,7 +20,7 @@ class MysqlMetaDataTest {
     )
 
     init {
-        val configuration = JDBCConnectionConfiguration()
+        val configuration = DatabaseConfiguration()
         configuration.url = ""
         configuration.username = ""
         configuration.password = ""

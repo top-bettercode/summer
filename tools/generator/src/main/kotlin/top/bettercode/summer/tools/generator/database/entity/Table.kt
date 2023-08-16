@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.generator.database.entity
 
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.JDBCConnectionConfiguration
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.lang.decapitalized
 
 /**
@@ -112,7 +112,7 @@ data class Table(
 
     lateinit var module: String
     lateinit var ext: GeneratorExtension
-    val datasource: JDBCConnectionConfiguration by lazy { ext.datasource(module) }
+    val datasource: DatabaseConfiguration by lazy { ext.datasource(module) }
 
     val supportSoftDelete: Boolean
         get() = columns.find { it.softDelete } != null
