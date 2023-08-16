@@ -93,52 +93,20 @@ object PumlConverter {
                         val fieldDefs = fieldDef.split("[ :]".toRegex())
                         val columnName = fieldDefs[0]
                         val columnDef = fieldDef.substringAfter(columnName).replace(":", "").trim()
-                        val type = columnDef.split(" ")[0].trim()
-                        var extra = columnDef.substringAfter(type)
-                        val (columnSize, decimalDigits) = parseType(type)
                         val unsigned = columnDef.contains("UNSIGNED", true)
-                        //DEFAULT
-                        var defaultVal: String? = null
-                        if (columnDef.contains("DEFAULT")) {
-                            defaultVal =
-                                    columnDef.substringAfter("DEFAULT").trim().substringBefore(" ")
-                                            .trim('\'')
-                            extra = extra.replace(Regex(" DEFAULT +'?$defaultVal'?"), "")
-                        }
-                        // SEQUENCE
-                        var sequence = ""
-                        var sequenceStartWith = 1
-                        if (columnDef.contains("SEQUENCE")) {
-                            sequence =
-                                    columnDef.substringAfter("SEQUENCE").trim().substringBefore(" ")
-                                            .trim()
-                            val regex = Regex(".* SEQUENCE +$sequence +(\\d+) .*")
-                            if (columnDef.matches(regex)) {
-                                sequenceStartWith = columnDef.replace(regex, "$1").toInt()
-                                extra = extra.replace(Regex(" SEQUENCE +$sequence +(\\d+)"), "")
-                            } else {
-                                extra = extra.replace(Regex(" SEQUENCE +$sequence"), "")
-                            }
-                        }
-                        var fk = false
-                        var refTable: String? = null
-                        var refColumn: String? = null
-                        if (columnDef.contains("FK")) {//FK > docs.id
-                            val ref =
-                                    columnDef.substringAfter("FK >").trim().substringBefore(" ").trim()
-                            extra = extra.replace(Regex(" FK > +$ref"), "")
-                            val refs = ref.split(".")
-                            fk = true
-                            refTable = refs[0]
-                            refColumn = refs[1]
-                        }
-                        val typeName = type.substringBefore("(")
                         val unique = columnDef.contains("UNIQUE", true)
                         val indexed = columnDef.contains("INDEX", true)
-                        val autoIncrement = columnDef.contains(
-                                "AUTO_INCREMENT",
-                                true
-                        ) || columnDef.contains("AUTOINCREMENT", true)
+                        val autoIncrement = columnDef.contains( "AUTO_INCREMENT", true ) || columnDef.contains("AUTOINCREMENT", true)
+                        val version = columnDef.contains( "VERSION", true )
+                        val softDelete = columnDef.contains( "SOFTDELETE", true )
+                        val pk = columnDef.contains("PK", true)
+                        val nullable = if (pk || version || softDelete) false else !columnDef.contains( "NOT NULL", true )
+
+                        val type = columnDef.split(" ")[0].trim()
+                        val typeName = type.substringBefore("(")
+                        val (columnSize, decimalDigits) = parseType(type)
+
+                        var extra = columnDef.substringAfter(type)
                         extra = extra.replace(" UNSIGNED", "", true)
                         extra = extra.replace(" UNIQUE", "", true)
                         extra = extra.replace(" INDEX", "", true)
@@ -147,25 +115,53 @@ object PumlConverter {
                         extra = extra.replace(" NOT NULL", "", true)
                         extra = extra.replace(" NULL", "", true)
                         extra = extra.replace(" PK", "", true)
-                        extra = extra.replace(" [A-Z0-9]*IDGENERATOR\\d*".toRegex(), "")
                         extra = extra.replace(" VERSION", "", true)
                         extra = extra.replace(" SOFTDELETE", "", true)
                         extra = extra.replace(" ASBOOLEAN", "", true)
+
+                        //DEFAULT
+                        var defaultVal: String? = null
+                        if (extra.contains("DEFAULT")) {
+                            defaultVal =
+                                    extra.substringAfter("DEFAULT").trim().substringBefore(" ")
+                                            .trim('\'')
+                            extra = extra.replace(Regex(" DEFAULT +'?$defaultVal'?"), "")
+                        }
+
+                        //FK
+                        var fk = false
+                        var refTable: String? = null
+                        var refColumn: String? = null
+                        if (extra.contains("FK")) {//FK > docs.id
+                            val ref =
+                                    extra.substringAfter("FK >").trim().substringBefore(" ").trim()
+                            extra = extra.replace(Regex(" FK > +$ref"), "")
+                            val refs = ref.split(".")
+                            fk = true
+                            refTable = refs[0]
+                            refColumn = refs[1]
+                        }
+
+                        // SEQUENCE
+                        var sequence = ""
+                        var sequenceStartWith = 1
+                        if (columnDef.contains("SEQUENCE")) {
+                            sequence =
+                                    extra.substringAfter("SEQUENCE").trim().substringBefore(" ")
+                                            .trim()
+                            val regex = Regex(".* SEQUENCE +$sequence +(\\d+) .*")
+                            if (extra.matches(regex)) {
+                                sequenceStartWith = extra.replace(regex, "$1").toInt()
+                                extra = extra.replace(Regex(" SEQUENCE +$sequence +(\\d+)"), "")
+                            } else {
+                                extra = extra.replace(Regex(" SEQUENCE +$sequence"), "")
+                            }
+                        }
+
+                        //IDGENERATOR
+                        extra = extra.replace(" [A-Z0-9]*IDGENERATOR\\d*".toRegex(), "")
                         val idgeneratorRegex = ".* ([A-Z0-9]*IDGENERATOR\\d*) .*".toRegex()
-                        val version = columnDef.contains(
-                                "VERSION",
-                                true
-                        )
-                        val softDelete = columnDef.contains(
-                                "SOFTDELETE",
-                                true
-                        )
-                        val pk = columnDef.contains("PK", true)
-                        val nullable =
-                                if (pk || version || softDelete) false else !columnDef.contains(
-                                        "NOT NULL",
-                                        true
-                                )
+
                         val column = Column(
                                 tableCat = null,
                                 columnName = columnName,
