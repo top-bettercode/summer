@@ -157,7 +157,10 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                             .substringBeforeLast("Generator")
                             .capitalized()
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.AUTO, generator = \"$entityName$generator\")")
-                    annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\")")
+                    if(primaryKey.idgeneratorParam.isNotBlank()){
+                        import("org.hibernate.annotations.Parameter")
+                    }
+                    annotation("@org.hibernate.annotations.GenericGenerator(name = \"$entityName$generator\", strategy = \"$generatorStrategy\"${if(primaryKey.idgeneratorParam.isBlank()) "" else ", parameters = @Parameter(name = \"prefix\", value = \"${primaryKey.idgeneratorParam}\")"})")
                 } else if (primaryKey.sequence.isNotBlank()) {
                     annotation("@javax.persistence.GeneratedValue(strategy = GenerationType.SEQUENCE, generator = \"${entityName}Sequence\")")
                     annotation("@javax.persistence.SequenceGenerator(name = \"${entityName}Sequence\", sequenceName = \"${primaryKey.sequence}\", allocationSize = 1)")

@@ -80,8 +80,8 @@ class OrderedHttpPutFormContentFilter : OncePerRequestFilter(), Ordered {
     }
 
     private class HttpPutFormContentRequestWrapper(request: HttpServletRequest?,
-                                                   parameters: MultiValueMap<String, String>?) : HttpServletRequestWrapper(request) {
-        private val formParameters: MultiValueMap<String, String>
+                                                   parameters: MultiValueMap<String, String?>?) : HttpServletRequestWrapper(request) {
+        private val formParameters: MultiValueMap<String, String?>
 
         init {
             formParameters = parameters ?: LinkedMultiValueMap()
@@ -93,8 +93,8 @@ class OrderedHttpPutFormContentFilter : OncePerRequestFilter(), Ordered {
             return queryStringValue ?: formValue
         }
 
-        override fun getParameterMap(): Map<String, Array<String>> {
-            val result: MutableMap<String, Array<String>> = LinkedHashMap()
+        override fun getParameterMap(): Map<String, Array<String?>?> {
+            val result: MutableMap<String, Array<String?>?> = LinkedHashMap()
             val names = this.parameterNames
             while (names.hasMoreElements()) {
                 val name = names.nextElement()
@@ -110,18 +110,18 @@ class OrderedHttpPutFormContentFilter : OncePerRequestFilter(), Ordered {
             return Collections.enumeration(names)
         }
 
-        override fun getParameterValues(name: String): Array<String> {
+        override fun getParameterValues(name: String): Array<String?>? {
             val queryStringValues = super.getParameterValues(name)
             val formValues = formParameters[name]
             return if (formValues == null) {
                 queryStringValues
             } else if (queryStringValues == null) {
-                formValues.toTypedArray<String>()
+                formValues.toTypedArray<String?>()
             } else {
-                val result: MutableList<String> = ArrayList()
+                val result: MutableList<String?> = ArrayList()
                 result.addAll(listOf(*queryStringValues))
                 result.addAll(formValues)
-                result.toTypedArray<String>()
+                result.toTypedArray<String?>()
             }
         }
     }
