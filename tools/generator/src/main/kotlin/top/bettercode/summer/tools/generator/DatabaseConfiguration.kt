@@ -70,7 +70,7 @@ class DatabaseConfiguration(
     var charset: String = "utf8mb4"
 
     /**
-     * 排序
+     * 编码排序
      */
     var collate: String = "utf8mb4_unicode_ci"
 
