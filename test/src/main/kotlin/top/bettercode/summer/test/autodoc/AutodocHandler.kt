@@ -175,15 +175,21 @@ class AutodocHandler(
                 request.contentExt =
                         request.contentAsString.toMap()?.toFields(request.contentExt, expand = true)
                                 ?: linkedSetOf()
-                request.contentExt.forEach {
-                    setRequired(it, requiredParameters)
+                if (request.contentExt.isEmpty()) {
+                    request.content = Operation.UNRECORDED_MARK.toByteArray()
+                } else {
+                    request.contentExt.forEach {
+                        setRequired(it, requiredParameters)
+                    }
                 }
 
                 val response = docOperation.response as DocOperationResponse
                 response.headersExt = response.headers.singleValueMap.toFields(response.headersExt)
-                response.contentExt =
-                        response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)
-                                ?: linkedSetOf()
+                response.contentExt = response.contentAsString.toMap()?.toFields(response.contentExt, expand = true)
+                        ?: linkedSetOf()
+                if (response.contentExt.isEmpty()) {
+                    response.content = Operation.UNRECORDED_MARK.toByteArray()
+                }
 
                 InitField.extFieldExt(genProperties, docOperation)
                 InitField.init(

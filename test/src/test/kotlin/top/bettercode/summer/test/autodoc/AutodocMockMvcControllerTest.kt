@@ -19,15 +19,10 @@ import javax.sql.DataSource
  */
 class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
 
-    @Autowired
-    lateinit var dataSource: DataSource
-
     @BeforeEach
     fun setUp() {
-        NoCommitScriptRunner(dataSource.connection).runScript(FileReader(ClassPathResource("import.sql").file))
         Autodoc.tableNames("OAUTH_CLIENT_TOKEN")
     }
-
 
     @DisplayName("列表1")
     @Test
@@ -85,4 +80,12 @@ class AutodocMockMvcControllerTest : BaseWebNoAuthTest() {
         mockMvc.perform(delete("/clientTokens/1")).andExpect(status().isOk)
     }
 
+    //测试upload
+    @Test
+    fun test5Upload() {
+        mockMvc.perform(
+                multipart("/clientTokens/upload")
+                        .file(file("file", "test.png"))
+        ).andExpect(status().isOk)
+    }
 }

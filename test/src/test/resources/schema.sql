@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS OAUTH_CLIENT_TOKEN(
+                                                 TOKEN_ID VARCHAR PRIMARY KEY,
+                                                 TOKEN VARBINARY,
+                                                 AUTHENTICATION_ID VARCHAR,
+                                                 USER_NAME VARCHAR,
+                                                 CLIENT_ID INT
+);
+
+COMMENT ON TABLE OAUTH_CLIENT_TOKEN IS '客户端TOKEN';
+COMMENT ON COLUMN OAUTH_CLIENT_TOKEN.TOKEN_ID IS 'TOKEN ID';
+COMMENT ON COLUMN OAUTH_CLIENT_TOKEN.TOKEN IS 'TOKEN';
+COMMENT ON COLUMN OAUTH_CLIENT_TOKEN.AUTHENTICATION_ID IS '权限信息ID';
+COMMENT ON COLUMN OAUTH_CLIENT_TOKEN.USER_NAME IS '用户名';
+COMMENT ON COLUMN OAUTH_CLIENT_TOKEN.CLIENT_ID IS '客户端ID';

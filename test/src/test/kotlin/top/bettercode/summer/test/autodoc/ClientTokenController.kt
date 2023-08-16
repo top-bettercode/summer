@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import top.bettercode.summer.security.authorize.Anonymous
+import javax.servlet.http.HttpServletResponse
 import javax.validation.groups.Default
 
 
@@ -61,6 +63,15 @@ class ClientTokenController {
     @DeleteMapping(value = ["/clientTokens/{authenticationId}"], name = "删除")
     fun delete(@PathVariable authenticationId: String): Any {
         return ResponseEntity.noContent().build<Any>()
+    }
+
+    //上传文件,下载文件
+    @PostMapping(value = ["/clientTokens/upload"], name = "上传文件")
+    fun upload(file: MultipartFile, response: HttpServletResponse) {
+        response.contentType = "application/octet-stream"
+        response.setHeader("Content-Disposition", "attachment; filename=\"${file.originalFilename}\"")
+        response.outputStream.write(file.bytes)
+        response.outputStream.flush()
     }
 
 

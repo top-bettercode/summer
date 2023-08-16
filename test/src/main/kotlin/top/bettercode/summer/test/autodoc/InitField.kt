@@ -17,6 +17,7 @@ import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.powerdesigner.PdmReader
 import top.bettercode.summer.tools.generator.puml.PumlConverter
 import top.bettercode.summer.tools.lang.decapitalized
+import top.bettercode.summer.tools.lang.operation.Operation
 import top.bettercode.summer.tools.lang.operation.OperationRequestPart
 import top.bettercode.summer.tools.lang.property.PropertiesSource
 import java.io.File
@@ -398,7 +399,14 @@ object InitField {
                 LinkedHashSet()
         ) {
             fields.field(it.name, it.contentAsString)
-                    .apply { partType = if (it.submittedFileName == null) "text" else "file" }
+                    .apply {
+                        partType = if (it.submittedFileName == null) {
+                            "text"
+                        } else {
+                            value = Operation.UNRECORDED_MARK
+                            "file"
+                        }
+                    }
         }
     }
 

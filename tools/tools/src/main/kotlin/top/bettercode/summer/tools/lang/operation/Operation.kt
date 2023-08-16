@@ -48,6 +48,7 @@ open class Operation(
         open var response: OperationResponse = OperationResponse()
 ) {
 
+
     fun toString(
             config: RequestLoggingConfig,
             requestDecrypt: ((ByteArray) -> ByteArray)? = null,
@@ -99,23 +100,23 @@ open class Operation(
                     it.name,
                     it.submittedFileName,
                     it.headers,
-                    "unrecorded".toByteArray()
+                    UNRECORDED_MARK.toByteArray()
             )
         }
 
         request.content =
                 if (config.includeRequestBody || error || originRequestContent.isEmpty()) {
                     originRequestContent
-                } else "unrecorded".toByteArray()
+                } else UNRECORDED_MARK.toByteArray()
 
 
         response.content =
                 if (config.includeResponseBody || error || originResponseContent.isEmpty()) {
                     originResponseContent
-                } else "unrecorded".toByteArray()
+                } else UNRECORDED_MARK.toByteArray()
 
         response.stackTrace =
-                if (config.includeTrace || originStackTrace.isBlank()) originStackTrace else "unrecorded"
+                if (config.includeTrace || originStackTrace.isBlank()) originStackTrace else UNRECORDED_MARK
 
         val log = HttpOperation.toString(this, config.format, requestDecrypt, responseDecrypt)
 
@@ -137,6 +138,7 @@ open class Operation(
 
     companion object {
         const val encryptedString = "******"
+        const val UNRECORDED_MARK = "unrecorded"
 
         @JvmField
         val LINE_SEPARATOR = System.getProperty("line.separator")!!

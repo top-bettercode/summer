@@ -25,13 +25,9 @@ class AutodocTemplateControllerTest {
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 
-    @Autowired
-    lateinit var dataSource: DataSource
-
     @BeforeEach
     fun setUp() {
         Autodoc.tableNames("OAUTH_CLIENT_TOKEN")
-        NoCommitScriptRunner(dataSource.connection).runScript(FileReader(ClassPathResource("import.sql").file))
     }
 
     @Test
