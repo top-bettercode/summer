@@ -31,9 +31,9 @@ interface IToDDL {
      */
     val commentPrefix: String
 
-    fun toDDL(tables: List<Table>, out: FileUnit, databaseConf: DatabaseConfiguration)
+    fun toDDL(tables: List<Table>, out: FileUnit, database: DatabaseConfiguration)
 
-    fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: Writer, databaseConf: DatabaseConfiguration)
+    fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: Writer, database: DatabaseConfiguration)
 
-    fun appendTable(prefixTableName: String, table: Table, pw: Writer, databaseConf: DatabaseConfiguration)
+    fun appendTable(prefixTableName: String, table: Table, pw: Writer, database: DatabaseConfiguration)
 }

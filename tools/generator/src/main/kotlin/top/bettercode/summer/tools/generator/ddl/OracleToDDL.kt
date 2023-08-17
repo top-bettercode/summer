@@ -13,19 +13,19 @@ object OracleToDDL : ToDDL() {
             oldTables: List<Table>,
             tables: List<Table>,
             out: Writer,
-            databaseConf: DatabaseConfiguration
+            database: DatabaseConfiguration
     ) {
-        out.appendLine("$commentPrefix ${databaseConf.url.substringBefore("?")}")
+        out.appendLine("$commentPrefix ${database.url.substringBefore("?")}")
         out.appendLine()
         if (tables != oldTables) {
-            val prefixTableName = if (databaseConf.includeSchema) {
-                "$quote${databaseConf.schema}$quote."
+            val prefixTableName = if (database.includeSchema) {
+                "$quote${database.schema}$quote."
             } else {
                 ""
             }
             val tableNames = tables.map { it.tableName }
             val oldTableNames = oldTables.map { it.tableName }
-            if (databaseConf.dropTablesWhenUpdate)
+            if (database.dropTablesWhenUpdate)
                 (oldTableNames - tableNames.toSet()).filter { "api_token" != it }
                         .forEach { tableName ->
                             out.appendLine("$commentPrefix DROP $prefixTableName$tableName")
@@ -39,7 +39,7 @@ object OracleToDDL : ToDDL() {
             tables.forEach { table ->
                 val tableName = table.tableName
                 if (newTableNames.contains(tableName)) {
-                    appendTable(prefixTableName = prefixTableName, table = table, pw = out, databaseConf = databaseConf)
+                    appendTable(prefixTableName = prefixTableName, table = table, pw = out, database = database)
                 } else {
                     val oldTable = oldTables.find { it.tableName == tableName }!!
                     if (oldTable != table) {
@@ -68,7 +68,7 @@ object OracleToDDL : ToDDL() {
                         val oldColumnNames = oldColumns.map { it.columnName }
                         val columnNames = columns.map { it.columnName }
                         val dropColumnNames = oldColumnNames - columnNames.toSet()
-                        if (databaseConf.dropColumnsWhenUpdate) {
+                        if (database.dropColumnsWhenUpdate) {
                             if (dropColumnNames.isNotEmpty()) {
                                 lines.add(
                                         "ALTER TABLE $prefixTableName$quote$tableName$quote DROP (${
@@ -127,7 +127,7 @@ object OracleToDDL : ToDDL() {
                                 lines.add("ALTER TABLE $prefixTableName$quote$tableName$quote ADD PRIMARY KEY($quote${primaryKey.columnName}$quote )")
                         }
 
-                        if (databaseConf.queryIndex)
+                        if (database.queryIndex)
                             updateIndexes(prefixTableName, oldTable, table, lines, dropColumnNames)
                         if (lines.isNotEmpty()) {
                             out.appendLine("$commentPrefix $tableName")
@@ -194,19 +194,19 @@ object OracleToDDL : ToDDL() {
         }
     }
 
-    override fun appendTable(prefixTableName: String, table: Table, pw: Writer, databaseConf: DatabaseConfiguration) {
+    override fun appendTable(prefixTableName: String, table: Table, pw: Writer, database: DatabaseConfiguration) {
         val tableName = table.tableName
         pw.appendLine("$commentPrefix $tableName")
         val primaryKey = table.primaryKey
         if (primaryKey?.sequence?.isNotBlank() == true) {
-            if (databaseConf.dropTablesWhenUpdate)
+            if (database.dropTablesWhenUpdate)
                 pw.appendLine("DROP SEQUENCE $quote${primaryKey.sequence}$quote;")
             pw.appendLine(
                     "CREATE SEQUENCE $quote${primaryKey.sequence}$quote INCREMENT BY 1 START WITH ${primaryKey.sequenceStartWith} NOMAXVALUE NOCYCLE CACHE 10;"
             )
         }
         pw.appendLine()
-        if (databaseConf.dropTablesWhenUpdate)
+        if (database.dropTablesWhenUpdate)
             pw.appendLine("DROP TABLE $prefixTableName$quote$tableName$quote;")
         pw.appendLine("CREATE TABLE $prefixTableName$quote$tableName$quote (")
         val hasPrimary = table.primaryKeyNames.isNotEmpty()

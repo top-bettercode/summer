@@ -127,8 +127,6 @@ data class Table(
                 ?: throw UninitializedPropertyAccessException("\"name\" was queried before being initialized")
         set(value) {
             _database = value
-            charset = value.charset
-            collate = value.collate
         }
 
     val supportSoftDelete: Boolean

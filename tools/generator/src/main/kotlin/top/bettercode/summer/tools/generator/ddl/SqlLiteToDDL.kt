@@ -9,7 +9,7 @@ object SqlLiteToDDL : ToDDL() {
     override val quoteMark: String = "`"
     override val commentPrefix: String = "--"
 
-    override fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: Writer, databaseConf: DatabaseConfiguration) {
+    override fun toDDLUpdate(oldTables: List<Table>, tables: List<Table>, out: Writer, database: DatabaseConfiguration) {
     }
 
     override fun dropFkStatement(prefixTableName: String, tableName: String, columnName: String): String = "ALTER TABLE $prefixTableName$quote$tableName$quote DROP FOREIGN KEY ${foreignKeyName(tableName, columnName)};"
@@ -24,10 +24,10 @@ object SqlLiteToDDL : ToDDL() {
         return "$quote${it.columnName}$quote ${it.typeDesc}${if (it.unsigned) " UNSIGNED" else ""}${it.defaultDesc}${if (it.extra.isNotBlank()) " ${it.extra}" else ""}${if (it.isPrimary) " PRIMARY KEY" else ""}${if (it.autoIncrement) " AUTOINCREMENT" else ""}${if (it.nullable) " NULL" else " NOT NULL"}"
     }
 
-    override fun appendTable(prefixTableName: String, table: Table, pw: Writer, databaseConf: DatabaseConfiguration) {
+    override fun appendTable(prefixTableName: String, table: Table, pw: Writer, database: DatabaseConfiguration) {
         val tableName = table.tableName
         pw.appendLine("$commentPrefix $tableName")
-        if (databaseConf.dropTablesWhenUpdate)
+        if (database.dropTablesWhenUpdate)
             pw.appendLine("DROP TABLE IF EXISTS $prefixTableName$quote$tableName$quote;")
 
         pw.appendLine(

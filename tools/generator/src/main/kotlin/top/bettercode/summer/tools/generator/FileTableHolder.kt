@@ -46,6 +46,8 @@ abstract class FileTableHolder(
     abstract fun getTables(
             file: File, call: (Table) -> Unit = {
                 it.database = database
+                it.charset = database.charset
+                it.collate = database.collate
             }
     ): List<Table>
 }

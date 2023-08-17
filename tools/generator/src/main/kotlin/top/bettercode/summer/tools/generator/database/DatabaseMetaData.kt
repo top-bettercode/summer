@@ -170,6 +170,33 @@ class DatabaseMetaData(
         }
     }
 
+    fun getSchemaDefaultCollate(): String {
+        val databaseDriver =
+                DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
+        var collate = ""
+        if (arrayOf(
+                        DatabaseDriver.MYSQL,
+                        DatabaseDriver.MARIADB
+                ).contains(
+                        databaseDriver
+                )
+        ) {
+            try {
+                val prepareStatement =
+                        databaseMetaData.connection.prepareStatement("SELECT DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA where schema_name=?")
+                prepareStatement.setString(1, datasource.schema)
+                prepareStatement.queryTimeout = 5
+                prepareStatement.executeQuery().map {
+                    collate = getString("DEFAULT_COLLATION_NAME")
+                    return@map
+                }
+            } catch (e: Exception) {
+                System.err.println("查询库编码排序出错:${e.message}")
+            }
+        }
+        return collate
+    }
+
     private fun getCollate(tableName: String): String {
         val databaseDriver =
                 DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
@@ -181,7 +208,6 @@ class DatabaseMetaData(
                         databaseDriver
                 )
         ) {
-            val quoteMark = "'"
             try {
                 val prepareStatement =
                         databaseMetaData.connection.prepareStatement("SELECT table_collation FROM information_schema.TABLES where table_name = ?")

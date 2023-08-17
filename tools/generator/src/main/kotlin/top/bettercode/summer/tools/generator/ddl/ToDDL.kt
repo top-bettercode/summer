@@ -157,12 +157,12 @@ abstract class ToDDL : IToDDL {
 
     protected open fun dropFkStatement(prefixTableName: String, tableName: String, columnName: String) = "ALTER TABLE $prefixTableName$quote$tableName$quote DROP CONSTRAINT ${foreignKeyName(tableName, columnName)};"
 
-    override fun toDDL(tables: List<Table>, out: FileUnit, databaseConf: DatabaseConfiguration) {
+    override fun toDDL(tables: List<Table>, out: FileUnit, database: DatabaseConfiguration) {
         if (tables.isNotEmpty()) {
             out.use { pw ->
                 pw.appendLine("$commentPrefix ${tables[0].subModule}")
                 tables.forEach { table ->
-                    appendTable("", table, pw, databaseConf)
+                    appendTable("", table, pw, database)
                 }
             }
         }
