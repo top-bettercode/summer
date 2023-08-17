@@ -6,7 +6,7 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
@@ -220,7 +220,7 @@ abstract class AbstractPublishPlugin : Plugin<Project> {
             it.dependsOn("classes")
             it.archiveClassifier.set("sources")
             it.from(
-                    project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(
+                    project.extensions.getByType(JavaPluginExtension::class.java).sourceSets.getByName(
                             SourceSet.MAIN_SOURCE_SET_NAME
                     ).allSource
             )
