@@ -152,6 +152,9 @@ data class DatabaseConfiguration(
 
     var module: String = DEFAULT_MODULE_NAME
 
+    val isDefault: Boolean
+        get() = module == DEFAULT_MODULE_NAME
+
     var username: String
         set(value) = properties.set("user", value)
         get() = properties.getProperty("user")

@@ -1,0 +1,21 @@
+PK
+FK
+UNIQUE
+INDEX
+IDGENERATOR
+SEQUENCE
+SOFTDELETE
+ASBOOLEAN
+
+@startuml security
+
+entity api_token {
+    api token
+    ==
+    id : VARCHAR(255) PK NOT NULL -- id
+    access_token : VARCHAR(255) UNIQUE NOT NULL -- accessToken
+    refresh_token : VARCHAR(255) UNIQUE NOT NULL -- refreshToken
+    authentication : BLOB NULL -- authentication
+}
+
+@enduml
