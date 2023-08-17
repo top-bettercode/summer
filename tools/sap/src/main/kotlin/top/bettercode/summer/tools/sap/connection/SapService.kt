@@ -88,7 +88,7 @@ class SapService(properties: SapProperties) {
                 parseInputParamObject(function, data)
             }
             function.execute(destination)
-            val out: JCoRecord = if (returnClass.isAnnotationPresent(SapStructure::class.java)) {
+            val out: JCoRecord? = if (returnClass.isAnnotationPresent(SapStructure::class.java)) {
                 val struAnn = returnClass.getAnnotation(SapStructure::class.java)
                 function.exportParameterList.getStructure(struAnn.value)
             } else {
@@ -254,7 +254,7 @@ class SapService(properties: SapProperties) {
         }
     }
 
-    private fun <T : Any> toBean(function: JCoFunction?, out: JCoRecord, returnClass: Class<T>): T {
+    private fun <T : Any> toBean(function: JCoFunction?, out: JCoRecord?, returnClass: Class<T>): T {
         val result = returnClass.getDeclaredConstructor().newInstance()
         val beanWrapper = BeanWrapperImpl(result)
         ReflectionUtils.doWithFields(returnClass) { field: Field ->
@@ -263,7 +263,7 @@ class SapService(properties: SapProperties) {
                 val propertyType = beanWrapper.getPropertyTypeDescriptor(fieldName)!!.type
                 if (field.isAnnotationPresent(SapStructure::class.java)) {
                     val struAnn = field.getAnnotation(SapStructure::class.java)
-                    val fieldObj = toBean(function, out.getStructure(struAnn.value), propertyType)
+                    val fieldObj = toBean(function, out?.getStructure(struAnn.value), propertyType)
                     beanWrapper.setPropertyValue(fieldName, fieldObj)
                 } else if (field.isAnnotationPresent(SapTable::class.java)) {
                     val tabAnn = field.getAnnotation(SapTable::class.java)
@@ -273,10 +273,10 @@ class SapService(properties: SapProperties) {
                     val sapField = field.getAnnotation(SapField::class.java)
                     if (sapField?.value != null) {
                         fieldName = sapField.value
-                        beanWrapper.setPropertyValue(field.name, out.getValue(fieldName))
+                        beanWrapper.setPropertyValue(field.name, out?.getValue(fieldName))
                     }
                 } else if (!filterNonAnnField) {
-                    beanWrapper.setPropertyValue(fieldName, out.getValue(fieldName))
+                    beanWrapper.setPropertyValue(fieldName, out?.getValue(fieldName))
                 }
             } catch (e: IntrospectionException) {
                 throw SapException(e)
