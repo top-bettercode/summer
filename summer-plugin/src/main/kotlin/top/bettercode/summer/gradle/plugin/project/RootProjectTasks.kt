@@ -145,22 +145,6 @@ object RootProjectTasks {
                                         else -> {}
                                     }
 
-                                    if (isDefault) {
-                                        val mysqlSecuritySchema =
-                                                project.rootProject.file("database/security/security-mysql-schema.sql")
-                                        if (database.driver == DatabaseDriver.MYSQL && mysqlSecuritySchema.exists()) {
-                                            +mysqlSecuritySchema.readText()
-                                            +""
-                                        }
-
-                                        val oracleSecuritySchema =
-                                                project.rootProject.file("database/security/security-oracle-schema.sql")
-                                        if (database.driver == DatabaseDriver.ORACLE && oracleSecuritySchema.exists()) {
-                                            +oracleSecuritySchema.readText()
-                                            +""
-                                        }
-                                    }
-
                                     val schema = project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}.sql")
                                     if (schema.exists()) {
                                         +schema.readText()
