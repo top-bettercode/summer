@@ -136,42 +136,18 @@ open class GeneratorExtension(
             }
         }
 
-    companion object {
+    private val _databases: MutableMap<String, DatabaseConfiguration> = mutableMapOf()
 
-        /**
-         * Comparator 比较 key 默认认模块名(defaultModuleName)排最前，其他按字母排序
-         */
-        val comparator: Comparator<String> = Comparator { o1, o2 ->
-            if (o1 == o2) {
-                0
-            } else if (o1 == DEFAULT_MODULE_NAME) {
-                -1
-            } else if (o2 == DEFAULT_MODULE_NAME) {
-                1
-            } else {
-                o1.compareTo(o2)
-            }
+    fun database(moduleName: String): DatabaseConfiguration {
+        return databases[moduleName] ?: _databases.getOrPut(moduleName) {
+            val database = (databases[DEFAULT_MODULE_NAME]
+                    ?: databases.values.first()).copy()
+            database.module = moduleName
+            database.driver = DatabaseDriver.UNKNOWN
+            database
         }
-
-
-        const val DEFAULT_MODULE_NAME: String = "modules"
-
-        /**
-         * javaName
-         */
-        var javaName: (String) -> String = {
-            javaName(it, false)
-        }
-
-        @JvmStatic
-        fun javaName(str: String, capitalize: Boolean = false): String {
-            val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") { s ->
-                s.lowercase(Locale.getDefault()).capitalized()
-            }
-            return if (capitalize) s else s.decapitalized()
-        }
-
     }
+
 
     var useJSR310Types: Boolean = true
         set(value) {
@@ -191,9 +167,6 @@ open class GeneratorExtension(
             JavaTypeResolver.forceBigDecimals = value
         }
 
-    val defaultDatabase: DatabaseConfiguration by lazy {
-        databases[DEFAULT_MODULE_NAME] ?: databases.values.first()
-    }
 
     /**
      * PlantUML 脚本目录
@@ -231,9 +204,6 @@ open class GeneratorExtension(
             null
     }
 
-    fun database(moduleName: String): DatabaseConfiguration {
-        return databases[moduleName] ?: defaultDatabase
-    }
 
     fun file(subfile: String): File {
         val file = File(subfile)
@@ -342,4 +312,42 @@ open class GeneratorExtension(
                 }
             }
         }
+
+    companion object {
+
+        /**
+         * Comparator 比较 key 默认认模块名(defaultModuleName)排最前，其他按字母排序
+         */
+        val comparator: Comparator<String> = Comparator { o1, o2 ->
+            if (o1 == o2) {
+                0
+            } else if (o1 == DEFAULT_MODULE_NAME) {
+                -1
+            } else if (o2 == DEFAULT_MODULE_NAME) {
+                1
+            } else {
+                o1.compareTo(o2)
+            }
+        }
+
+
+        const val DEFAULT_MODULE_NAME: String = "modules"
+
+        /**
+         * javaName
+         */
+        var javaName: (String) -> String = {
+            javaName(it, false)
+        }
+
+        @JvmStatic
+        fun javaName(str: String, capitalize: Boolean = false): String {
+            val s = str.split(Regex("[^\\p{Alnum}]")).joinToString("") { s ->
+                s.lowercase(Locale.getDefault()).capitalized()
+            }
+            return if (capitalize) s else s.decapitalized()
+        }
+
+    }
+
 }

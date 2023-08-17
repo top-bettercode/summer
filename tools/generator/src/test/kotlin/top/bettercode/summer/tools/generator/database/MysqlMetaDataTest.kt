@@ -35,13 +35,13 @@ class MysqlMetaDataTest {
     @Test
     fun tableNames() {
         println(Generators.tableNames(extension))
-        println(extension.defaultDatabase.tableNames())
+        println(extension.databases.values.first().tableNames())
     }
 
     @Test
     fun table() {
         extension.tableNames.forEach {
-            val table = extension.defaultDatabase.use { table(it) }
+            val table = extension.databases.values.first().use { table(it) }
             println(table)
             println(table?.indexes?.joinToString("\n\n"))
         }

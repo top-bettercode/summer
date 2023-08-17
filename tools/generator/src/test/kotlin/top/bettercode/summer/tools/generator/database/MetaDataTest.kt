@@ -27,13 +27,13 @@ class MetaDataTest {
 
     @Test
     fun tableNames() {
-        println(extension.defaultDatabase.use { tableNames() })
+        println(extension.databases.values.first().use { tableNames() })
     }
 
     @Test
     fun table() {
         extension.tableNames.forEach {
-            val table = extension.defaultDatabase.use { table(it) }
+            val table = extension.databases.values.first().use { table(it) }
             println(table)
             println(table?.indexes?.joinToString("\n\n"))
         }

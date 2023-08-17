@@ -100,8 +100,8 @@ object RootProjectTasks {
             create("genDbScript") { t ->
                 t.group = GeneratorPlugin.genGroup
                 val extension = project.extensions.getByType(GeneratorExtension::class.java)
-                val datasourceModules = extension.databases.keys
-                t.dependsOn(datasourceModules.map {
+                val databaseModules = extension.databases.keys
+                t.dependsOn(databaseModules.map {
                     "toDDL${
                         if (extension.isDefaultModule(it)) "" else "[${
                             it.capitalized()
@@ -110,19 +110,15 @@ object RootProjectTasks {
                 })
                 t.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
-                        val gen = project.extensions.getByType(GeneratorExtension::class.java)
-                        gen.run { module, _ ->
-                            if (datasourceModules.contains(module)) {
-                                val datasource = gen.database(module)
-
-                                val isDefault = gen.isDefaultModule(module)
+                        extension.databases.forEach { (module, database) ->
+                                val isDefault = extension.isDefaultModule(module)
                                 val suffix = if (isDefault) "" else "-$module"
                                 //init.sql
                                 val destFile = FileUnit(
                                         "database/init$suffix.sql"
                                 )
                                 destFile.apply {
-                                    val commentPrefix = when (datasource.databaseDriver) {
+                                    val commentPrefix = when (database.driver) {
                                         DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
                                             MysqlToDDL.commentPrefix
                                         }
@@ -138,9 +134,9 @@ object RootProjectTasks {
                                         }"
                                     }
 
-                                    when (datasource.databaseDriver) {
+                                    when (database.driver) {
                                         DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
-                                            +"$commentPrefix use ${datasource.schema};"
+                                            +"$commentPrefix use ${database.schema};"
                                             +""
                                             +"SET NAMES 'utf8';"
                                             +""
@@ -152,14 +148,14 @@ object RootProjectTasks {
                                     if (isDefault) {
                                         val mysqlSecuritySchema =
                                                 project.rootProject.file("database/security/security-mysql-schema.sql")
-                                        if (datasource.databaseDriver == DatabaseDriver.MYSQL && mysqlSecuritySchema.exists()) {
+                                        if (database.driver == DatabaseDriver.MYSQL && mysqlSecuritySchema.exists()) {
                                             +mysqlSecuritySchema.readText()
                                             +""
                                         }
 
                                         val oracleSecuritySchema =
                                                 project.rootProject.file("database/security/security-oracle-schema.sql")
-                                        if (datasource.databaseDriver == DatabaseDriver.ORACLE && oracleSecuritySchema.exists()) {
+                                        if (database.driver == DatabaseDriver.ORACLE && oracleSecuritySchema.exists()) {
                                             +oracleSecuritySchema.readText()
                                             +""
                                         }
@@ -182,7 +178,7 @@ object RootProjectTasks {
                                         "database/update$suffix.sql"
                                 )
                                 updateFile.apply {
-                                    val commentPrefix = when (datasource.databaseDriver) {
+                                    val commentPrefix = when (database.driver) {
                                         DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
                                             MysqlToDDL.commentPrefix
                                         }
@@ -197,10 +193,10 @@ object RootProjectTasks {
                                     if (updateDdl.exists()) {
                                         +updateDdl.readText()
                                     } else {
-                                        +"$commentPrefix ${datasource.url.substringBefore("?")}"
-                                        when (datasource.databaseDriver) {
+                                        +"$commentPrefix ${database.url.substringBefore("?")}"
+                                        when (database.driver) {
                                             DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
-                                                +"$commentPrefix use ${datasource.schema};"
+                                                +"$commentPrefix use ${database.schema};"
                                             }
 
                                             else -> {
@@ -216,7 +212,6 @@ object RootProjectTasks {
                                 }
                                 updateFile.writeTo(project.rootDir)
                             }
-                        }
                     }
                 })
             }

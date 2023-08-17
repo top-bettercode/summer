@@ -63,7 +63,7 @@ open class Generator {
         get() {
             var packageName = basePackageName
             if (settings["no-modules"] == null) {
-                val module = table.database.module
+                val module = table.module
                 packageName =
                         if (packageName.endsWith(".$module") || packageName.contains(".$module.")) packageName else "$packageName.$module"
             }

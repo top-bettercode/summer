@@ -30,6 +30,11 @@ enum class DatabaseDriver(
     UNKNOWN(null, null),
 
     /**
+     * 未设置.
+     */
+    UNSET(null, null),
+
+    /**
      * Apache Derby.
      */
     DERBY(

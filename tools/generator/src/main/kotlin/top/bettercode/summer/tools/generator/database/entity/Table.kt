@@ -128,6 +128,8 @@ data class Table(
         set(value) {
             _database = value
         }
+    val module: String
+        get() = database.module
 
     val supportSoftDelete: Boolean
         get() = columns.find { it.softDelete } != null

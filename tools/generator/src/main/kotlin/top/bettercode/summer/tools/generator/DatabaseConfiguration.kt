@@ -12,7 +12,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.ConcurrentSkipListSet
 
-class DatabaseConfiguration(
+data class DatabaseConfiguration(
         var url: String = "",
         var catalog: String? = null,
         val properties: Properties = Properties().apply {
@@ -73,6 +73,7 @@ class DatabaseConfiguration(
      * 编码排序
      */
     var collate: String = "utf8mb4_unicode_ci"
+
     /**
      * 排除表
      */
@@ -108,7 +109,7 @@ class DatabaseConfiguration(
             return if (field.isNullOrBlank()) {
                 when {
                     isOracle -> username.uppercase(Locale.getDefault())
-                    databaseDriver == DatabaseDriver.MYSQL -> {
+                    driver == DatabaseDriver.MYSQL -> {
                         val pattern1 = Regex("jdbc:mysql://[^/]*/(.*)?\\?.+")
                         if (url.matches(pattern1))
                             url.replace(
@@ -120,7 +121,7 @@ class DatabaseConfiguration(
                         )
                     }
 
-                    databaseDriver == DatabaseDriver.H2 -> "PUBLIC"
+                    driver == DatabaseDriver.H2 -> "PUBLIC"
                     else -> field
                 }
             } else {
@@ -128,11 +129,11 @@ class DatabaseConfiguration(
             }
         }
 
-    val isOracle by lazy { databaseDriver == DatabaseDriver.ORACLE }
+    val isOracle by lazy { driver == DatabaseDriver.ORACLE }
 
-    var databaseDriver: DatabaseDriver = DatabaseDriver.UNKNOWN
+    var driver: DatabaseDriver = DatabaseDriver.UNSET
         get() {
-            return if (field == DatabaseDriver.UNKNOWN && url.isNotBlank()) {
+            return if (field == DatabaseDriver.UNSET && url.isNotBlank()) {
                 DatabaseDriver.fromJdbcUrl(url)
             } else {
                 field
@@ -142,7 +143,7 @@ class DatabaseConfiguration(
     var driverClass: String = ""
         get() {
             return if (field.isBlank() && url.isNotBlank()) {
-                databaseDriver.driverClassName ?: ""
+                driver.driverClassName ?: ""
             } else {
                 field
             }

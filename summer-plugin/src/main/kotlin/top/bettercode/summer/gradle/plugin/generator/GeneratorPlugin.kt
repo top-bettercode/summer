@@ -59,7 +59,7 @@ class GeneratorPlugin : Plugin<Project> {
                         val configuration = DatabaseConfiguration()
                         configuration.module = module
                         configuration.url = properties["url"] as? String ?: ""
-                        configuration.databaseDriver =
+                        configuration.driver =
                                 DatabaseDriver.fromProductName(properties["productName"] as? String
                                         ?: "")
                         configuration.catalog = properties["catalog"] as? String?
@@ -325,9 +325,9 @@ class GeneratorPlugin : Plugin<Project> {
             })
         }
         if (extension.dataType != top.bettercode.summer.tools.generator.DataType.DATABASE) {
-            val datasourceModules = extension.databases.keys
+            val databaseModules = extension.databases.keys
             extension.run { module, tableHolder ->
-                if (datasourceModules.contains(module)) {
+                if (databaseModules.contains(module)) {
                     val defaultModule = extension.isDefaultModule(module)
                     val suffix = if (defaultModule) "" else "[${
                         module.capitalized()
@@ -352,11 +352,9 @@ class GeneratorPlugin : Plugin<Project> {
                                 OracleToDDL.useForeignKey = extension.useForeignKey
                                 val sqlName = if (defaultModule) "schema" else module
                                 val output = FileUnit("${extension.sqlOutput}/ddl/$sqlName.sql")
-                                val jdbc = extension.databases[module]
-                                        ?: throw IllegalStateException("未配置${module}模块数据库信息")
                                 val tables = tableHolder.tables(tableName = extension.tableNames)
                                 val datasource = extension.database(module)
-                                when (jdbc.databaseDriver) {
+                                when (datasource.driver) {
                                     DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(tables, output, datasource)
 
                                     DatabaseDriver.ORACLE -> OracleToDDL.toDDL(tables, output, datasource)
@@ -380,8 +378,8 @@ class GeneratorPlugin : Plugin<Project> {
                                 OracleToDDL.useQuote = extension.sqlQuote
                                 MysqlToDDL.useForeignKey = extension.useForeignKey
                                 OracleToDDL.useForeignKey = extension.useForeignKey
-                                val datasource = extension.database(module)
-                                val deleteTablesWhenUpdate = datasource.dropTablesWhenUpdate
+                                val database = extension.database(module)
+                                val deleteTablesWhenUpdate = database.dropTablesWhenUpdate
 
                                 val databasePumlDir =
                                         extension.file(extension.pumlSrc + "/database")
@@ -394,8 +392,6 @@ class GeneratorPlugin : Plugin<Project> {
                                         )
                                 val allTables = mutableListOf<Table>()
                                 unit.use { pw ->
-                                    val database = extension.databases[module]
-                                            ?: throw IllegalStateException("未配置${module}模块数据库信息")
                                     val tables =
                                             tableHolder.tables(tableName = extension.tableNames)
                                     allTables.addAll(tables)
@@ -411,12 +407,12 @@ class GeneratorPlugin : Plugin<Project> {
                                                 else tableNames).toTypedArray()
                                         )
                                     }
-                                    when (database.databaseDriver) {
-                                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(oldTables, tables, pw, datasource)
+                                    when (database.driver) {
+                                        DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(oldTables, tables, pw, database)
 
-                                        DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(oldTables, tables, pw, datasource)
+                                        DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(oldTables, tables, pw, database)
 
-                                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(oldTables, tables, pw, datasource)
+                                        DatabaseDriver.SQLITE -> SqlLiteToDDL.toDDLUpdate(oldTables, tables, pw, database)
 
                                         else -> {
                                             throw IllegalArgumentException("不支持的数据库")

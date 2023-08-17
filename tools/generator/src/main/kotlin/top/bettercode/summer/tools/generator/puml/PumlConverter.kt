@@ -267,10 +267,8 @@ object PumlConverter {
         }
         (extension.pumlSources + extension.pumlDatabaseSources).forEach { (module, files) ->
             files.forEach { file ->
-                var database = extension.databases[module]
-                val driver = database?.databaseDriver ?: DatabaseDriver.UNKNOWN
-                database = database ?: extension.defaultDatabase
-                when (driver) {
+                val database = extension.database(module)
+                when (database.driver) {
                     DatabaseDriver.MYSQL -> toMysql(
                             database,
                             file,
