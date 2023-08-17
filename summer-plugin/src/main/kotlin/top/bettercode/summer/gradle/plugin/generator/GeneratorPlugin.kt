@@ -127,6 +127,13 @@ class GeneratorPlugin : Plugin<Project> {
                                 .sortedBy { it }.toList()
                                 .toTypedArray()
 
+                        configuration.excludeGenTableNames = (properties["excludeGenTableNames"]
+                                ?: findGeneratorProperty(project, "excludeGenTableNames")
+                                ?: "").toString().split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
+                                .distinct()
+                                .sortedBy { it }.toList()
+                                .toTypedArray()
+
                         configuration
                     }.toSortedMap(GeneratorExtension.comparator)
 

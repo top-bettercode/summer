@@ -79,6 +79,11 @@ class DatabaseConfiguration(
     var excludeTableNames: Array<String> = arrayOf()
 
     /**
+     * 生成代码排除表
+     */
+    var excludeGenTableNames: Array<String> = arrayOf("api_token")
+
+    /**
      * ClassName
      */
     fun className(tableName: String): String {

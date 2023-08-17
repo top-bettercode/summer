@@ -54,7 +54,7 @@ object Generators {
                             extension.pdmSources.size <= 1
                         }
                     }, tableName = extension.tableNames
-            ).forEach { table ->
+            ).filter { !it.database.excludeGenTableNames.contains(it.tableName) }.forEach { table ->
                 generators.forEach { generator ->
                     generator.run(table)
                 }
@@ -90,7 +90,7 @@ object Generators {
                         extension.pdmSources.size <= 1
                     }
                 }, tableName = extension.tableNames
-        ).forEach { table ->
+        ).filter { !it.database.excludeGenTableNames.contains(it.tableName) }.forEach { table ->
             generators.forEach { generator ->
                 generator.run(table)
             }
