@@ -129,7 +129,7 @@ class GeneratorPlugin : Plugin<Project> {
 
                         configuration.excludeGenTableNames = (properties["excludeGenTableNames"]
                                 ?: findGeneratorProperty(project, "excludeGenTableNames")
-                                ?: "").toString().split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
+                                ?: "api_token").toString().split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
                                 .distinct()
                                 .sortedBy { it }.toList()
                                 .toTypedArray()
