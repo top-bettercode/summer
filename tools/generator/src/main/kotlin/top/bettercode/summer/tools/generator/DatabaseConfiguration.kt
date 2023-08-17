@@ -65,6 +65,11 @@ data class DatabaseConfiguration(
     var includeSchema: Boolean = true
 
     /**
+     * 权限使用数据库表
+     */
+    var dbSecurityRepository: Boolean = true
+
+    /**
      * 编码
      */
     var charset: String = "utf8mb4"

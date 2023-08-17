@@ -56,85 +56,89 @@ class GeneratorPlugin : Plugin<Project> {
                         entry.value.groupBy({ it.key.substringAfter("datasource.${entry.key}.") },
                                 { it.value }).mapValues { it.value.last() }
                     }).mapValues { (module, properties) ->
-                        val configuration = DatabaseConfiguration()
-                        configuration.module = module
-                        configuration.url = properties["url"] as? String ?: ""
-                        configuration.driver =
+                        val database = DatabaseConfiguration()
+                        database.module = module
+                        database.url = properties["url"] as? String ?: ""
+                        database.driver =
                                 DatabaseDriver.fromProductName(properties["productName"] as? String
                                         ?: "")
-                        configuration.catalog = properties["catalog"] as? String?
-                        configuration.schema = properties["schema"] as? String?
-                        configuration.username = properties["username"] as? String ?: "root"
-                        configuration.password = properties["password"] as? String ?: "root"
-                        configuration.driverClass = properties["driverClass"] as? String ?: ""
-                        configuration.debug = (properties["debug"] as? String
+                        database.catalog = properties["catalog"] as? String?
+                        database.schema = properties["schema"] as? String?
+                        database.username = properties["username"] as? String ?: "root"
+                        database.password = properties["password"] as? String ?: "root"
+                        database.driverClass = properties["driverClass"] as? String ?: ""
+                        database.debug = (properties["debug"] as? String
                                 ?: "false").toBoolean()
-                        configuration.queryIndex = (properties["queryIndex"]
+                        database.queryIndex = (properties["queryIndex"]
                                 ?: findGeneratorProperty(project, "queryIndex"))?.toString()?.toBoolean()
                                 ?: true
 
-                        configuration.tinyInt1isBit =
+                        database.tinyInt1isBit =
                                 (properties["tinyInt1isBit"] as? String ?: "false").toBoolean()
-                        if (configuration.isOracle) {
-                            configuration.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
+                        if (database.isOracle) {
+                            database.properties["oracle.net.CONNECT_TIMEOUT"] = "10000"
                         }
 
-                        configuration.entityPrefix =
+                        database.entityPrefix =
                                 properties["entityPrefix"] as? String ?: findGeneratorProperty(
                                         project,
                                         "entityPrefix"
                                 ) ?: ""
 
-                        configuration.tablePrefixes =
+                        database.tablePrefixes =
                                 (properties["tablePrefix"] as? String ?: findGeneratorProperty(
                                         project,
                                         "tablePrefix"
                                 ) ?: "").split(",")
                                         .filter { it.isNotBlank() }.toTypedArray()
 
-                        configuration.tableSuffixes =
+                        database.tableSuffixes =
                                 (properties["tableSuffix"] as? String ?: findGeneratorProperty(
                                         project,
                                         "tableSuffix"
                                 ) ?: "").split(",")
                                         .filter { it.isNotBlank() }.toTypedArray()
 
-                        configuration.dropTablesWhenUpdate =
+                        database.dropTablesWhenUpdate =
                                 (properties["dropTablesWhenUpdate"]
                                         ?: findGeneratorProperty(project, "dropTablesWhenUpdate"))?.toString()?.toBoolean()
                                         ?: false
-                        configuration.dropColumnsWhenUpdate =
+                        database.dropColumnsWhenUpdate =
                                 (properties["dropColumnsWhenUpdate"]
                                         ?: findGeneratorProperty(project, "dropColumnsWhenUpdate"))?.toString()?.toBoolean()
                                         ?: false
 
-                        configuration.includeSchema = (properties["include-schema"]
+                        database.includeSchema = (properties["include-schema"]
                                 ?: findGeneratorProperty(project, "include-schema"))?.toString()?.toBoolean()
                                 ?: true
 
-                        configuration.charset = (properties["charset"]
+                        database.dbSecurityRepository = (properties["dbSecurityRepository"]
+                                ?: findGeneratorProperty(project, "dbSecurityRepository"))?.toString()?.toBoolean()
+                                ?: database.isDefault
+
+                        database.charset = (properties["charset"]
                                 ?: findGeneratorProperty(project, "charset"))?.toString()
                                 ?: "utf8mb4"
 
-                        configuration.collate = (properties["collate"]
+                        database.collate = (properties["collate"]
                                 ?: findGeneratorProperty(project, "collate"))?.toString()
                                 ?: "utf8mb4_unicode_ci"
 
-                        configuration.excludeTableNames = (properties["excludeTableNames"]
+                        database.excludeTableNames = (properties["excludeTableNames"]
                                 ?: findGeneratorProperty(project, "excludeTableNames")
                                 ?: "").toString().split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
                                 .distinct()
                                 .sortedBy { it }.toList()
                                 .toTypedArray()
 
-                        configuration.excludeGenTableNames = (properties["excludeGenTableNames"]
+                        database.excludeGenTableNames = (properties["excludeGenTableNames"]
                                 ?: findGeneratorProperty(project, "excludeGenTableNames")
                                 ?: "api_token").toString().split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
                                 .distinct()
                                 .sortedBy { it }.toList()
                                 .toTypedArray()
 
-                        configuration
+                        database
                     }.toSortedMap(GeneratorExtension.comparator)
 
             extension.delete = (findGeneratorProperty(project, "delete"))?.toBoolean() ?: false
