@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.generator.puml
 
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.PumlTableHolder
@@ -234,7 +235,7 @@ object PumlConverter {
     }
 
     fun compile(
-            extension: GeneratorExtension,
+            database: DatabaseConfiguration,
             tables: List<Any>,
             out: File,
             remarksProperties: Properties? = null
@@ -246,7 +247,7 @@ object PumlConverter {
                     out,
                     if ("database" == out.parent) remarksProperties else null
             )
-            plantUML.setUp(extension)
+            plantUML.setUp(database.extension)
             tables.distinctBy { if (it is Table) it.tableName else it }.forEach {
                 if (it is Table) {
                     plantUML.run(it)
@@ -266,26 +267,25 @@ object PumlConverter {
         }
         (extension.pumlSources + extension.pumlDatabaseSources).forEach { (module, files) ->
             files.forEach { file ->
-                val driver = extension.datasources[module]
-                        ?.databaseDriver ?: DatabaseDriver.UNKNOWN
+                var database = extension.databases[module]
+                val driver = database?.databaseDriver ?: DatabaseDriver.UNKNOWN
+                database = database ?: extension.defaultDatabase
                 when (driver) {
                     DatabaseDriver.MYSQL -> toMysql(
-                            extension,
-                            module,
+                            database,
                             file,
                             file,
                             remarksProperties
                     )
 
                     DatabaseDriver.ORACLE -> toOracle(
-                            extension,
-                            module,
+                            database,
                             file,
                             file,
                             remarksProperties
                     )
 
-                    else -> compile(extension, module, file, file, remarksProperties)
+                    else -> compile(database, file, file, remarksProperties)
                 }
             }
 
@@ -299,23 +299,22 @@ object PumlConverter {
             remarksProperties.load(remarksFile.inputStream())
         }
         (extension.pumlSources + extension.pumlDatabaseSources).forEach { (module, files) ->
-            val tables = PumlTableHolder(extension, module, files).tables(false)
-            compile(extension, tables, extension.file(extension.pumlSrc + "/database/$module.puml"), remarksProperties)
+            val database = extension.database(module)
+            val tables = PumlTableHolder(database, files).tables(false)
+            compile(database, tables, extension.file(extension.pumlSrc + "/database/$module.puml"), remarksProperties)
         }
     }
 
     fun compile(
-            extension: GeneratorExtension,
-            module: String,
+            database: DatabaseConfiguration,
             src: File,
             out: File,
             remarksProperties: Properties? = null
     ) {
         compile(
-                extension,
+                database,
                 toTableOrAnys(src) {
-                    it.ext = extension
-                    it.module = module
+                    it.database = database
                 },
                 out,
                 remarksProperties
@@ -323,14 +322,12 @@ object PumlConverter {
     }
 
     fun toMysql(
-            extension: GeneratorExtension,
-            module: String,
+            database: DatabaseConfiguration,
             src: File, out: File,
             remarksProperties: Properties? = null
     ) {
         val tables = toTableOrAnys(src) {
-            it.ext = extension
-            it.module = module
+            it.database = database
         }
         tables.forEach { t ->
             if (t is Table) {
@@ -374,18 +371,16 @@ object PumlConverter {
                 }
             }
         }
-        compile(extension, tables, out, remarksProperties)
+        compile(database, tables, out, remarksProperties)
     }
 
     fun toOracle(
-            extension: GeneratorExtension,
-            module: String,
+            database: DatabaseConfiguration,
             src: File, out: File,
             remarksProperties: Properties? = null
     ) {
         val tables = toTableOrAnys(src) {
-            it.ext = extension
-            it.module = module
+            it.database = database
         }
         tables.forEach { t ->
             if (t is Table) {
@@ -427,7 +422,7 @@ object PumlConverter {
                 }
             }
         }
-        compile(extension, tables, out, remarksProperties)
+        compile(database, tables, out, remarksProperties)
     }
 
 

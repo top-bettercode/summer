@@ -31,7 +31,7 @@ class GeneratorsTest {
         configuration.username = "sa"
         configuration.password = "sa"
         configuration.tablePrefixes = arrayOf("oauth_")
-        extension.datasources = mapOf(DEFAULT_MODULE_NAME to configuration).toSortedMap(GeneratorExtension.comparator)
+        extension.databases = mapOf(DEFAULT_MODULE_NAME to configuration).toSortedMap(GeneratorExtension.comparator)
     }
 
     @Test
@@ -45,7 +45,7 @@ class GeneratorsTest {
     fun testModule() {
         extension.dataType = top.bettercode.summer.tools.generator.DataType.PUML
         extension.run { module, _ ->
-            val keys = extension.datasources.keys
+            val keys = extension.databases.keys
             Assertions.assertEquals(true, keys.contains(module))
         }
     }

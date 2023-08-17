@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.generator.database.entity
 
-import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.lang.decapitalized
 
@@ -38,7 +37,16 @@ data class Table(
         val subModule: String = "database",
         val subModuleName: String = "database",
         val physicalOptions: String = "",
-        val engine: String = ""
+        val engine: String = "",
+        /**
+         * 编码
+         */
+        var charset: String = "utf8mb4",
+
+        /**
+         * 编码排序
+         */
+        var collate: String = "utf8mb4_unicode_ci"
 ) {
 
     val primaryKeys: MutableList<Column>
@@ -85,6 +93,8 @@ data class Table(
 
         if (tableName != other.tableName) return false
         if (engine != other.engine) return false
+        if (charset != other.charset) return false
+        if (collate != other.collate) return false
         if (remarks != other.remarks) return false
         if (physicalOptions != other.physicalOptions) return false
         if (primaryKeyNames.toSet() != other.primaryKeyNames.toSet()) return false
@@ -96,6 +106,8 @@ data class Table(
     override fun hashCode(): Int {
         var result = tableName.hashCode()
         result = 31 * result + engine.hashCode()
+        result = 31 * result + charset.hashCode()
+        result = 31 * result + collate.hashCode()
         result = 31 * result + remarks.hashCode()
         result = 31 * result + physicalOptions.hashCode()
         result = 31 * result + primaryKeyNames.hashCode()
@@ -109,20 +121,25 @@ data class Table(
     }
 
     //--------------------------------------------
-
-    lateinit var module: String
-    lateinit var ext: GeneratorExtension
-    val datasource: DatabaseConfiguration by lazy { ext.datasource(module) }
+    private var _database: DatabaseConfiguration? = null
+    var database: DatabaseConfiguration
+        get() = _database
+                ?: throw UninitializedPropertyAccessException("\"name\" was queried before being initialized")
+        set(value) {
+            _database = value
+            charset = value.charset
+            collate = value.collate
+        }
 
     val supportSoftDelete: Boolean
         get() = columns.find { it.softDelete } != null
 
     val className: String
-        get() = datasource.className(tableName)
+        get() = database.className(tableName)
 
     val entityName: String get() = className.decapitalized()
 
     val pathName: String get() = entityName
 
-    val fixTableName: String get() = datasource.fixTableName(tableName)
+    val fixTableName: String get() = database.fixTableName(tableName)
 }

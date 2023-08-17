@@ -135,8 +135,6 @@ object InitField {
     ) {
         if (fn(messageFields, true, false)) return
 
-        val ext = this
-
         val fixFields =
                 { sources: Map<String, List<File>>, toTables: (file: File, module: String) -> List<Table> ->
                     sources.forEach all@{ (module, files) ->
@@ -160,13 +158,12 @@ object InitField {
                 }
         when (dataType) {
             DataType.DATABASE -> {
-                datasources.forEach { (module, jdbc) ->
-                    jdbc.schema = Autodoc.schema
-                    jdbc.use {
+                databases.forEach { (module, database) ->
+                    database.schema = Autodoc.schema
+                    database.use {
                         Autodoc.tableNames.forEach { tableName ->
                             val table = table(tableName) {
-                                it.ext = ext
-                                it.module = module
+                                it.database = database
                             }
                             if (table != null) {
                                 if (fn(table.fields(), false, !isDefaultModule(module))) {
@@ -178,8 +175,7 @@ object InitField {
                         tableNames.removeAll(Autodoc.tableNames)
                         tableNames.forEach { tableName ->
                             val table = table(tableName) {
-                                it.ext = ext
-                                it.module = module
+                                it.database = database
                             }
                             if (table != null) {
                                 if (fn(table.fields(), false, !isDefaultModule(module))) {
@@ -194,8 +190,7 @@ object InitField {
             DataType.PUML -> {
                 fixFields(pumlSources) { file, module ->
                     PumlConverter.toTables(file) {
-                        it.ext = ext
-                        it.module = module
+                        it.database = this.database(module)
                     }
                 }
             }
@@ -203,8 +198,7 @@ object InitField {
             DataType.PDM -> {
                 fixFields(pdmSources) { file, module ->
                     PdmReader.read(file) {
-                        it.ext = ext
-                        it.module = module
+                        it.database = this.database(module)
                     }
                 }
             }

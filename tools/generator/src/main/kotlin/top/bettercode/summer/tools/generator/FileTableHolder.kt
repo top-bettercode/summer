@@ -8,8 +8,7 @@ import java.io.File
  * @author Peter Wu
  */
 abstract class FileTableHolder(
-        val ext: GeneratorExtension,
-        val module: String,
+        val database: DatabaseConfiguration,
         val files: List<File>
 ) : TableHolder {
 
@@ -19,9 +18,9 @@ abstract class FileTableHolder(
         val result = mutableListOf<Table>()
         files.forEach { file ->
             if (all) {
-                result.addAll(getTables(file).filter { !ext.excludeTableNames.contains(it.tableName) })
+                result.addAll(getTables(file).filter { !database.excludeTableNames.contains(it.tableName) })
             } else if (result.size < tableNames.size) {
-                result.addAll(getTables(file).filter { !ext.excludeTableNames.contains(it.tableName) }
+                result.addAll(getTables(file).filter { !database.excludeTableNames.contains(it.tableName) }
                         .filter { table -> tableNames.contains(table.tableName) })
 
                 if (result.size == tableNames.size) {
@@ -46,8 +45,7 @@ abstract class FileTableHolder(
 
     abstract fun getTables(
             file: File, call: (Table) -> Unit = {
-                it.ext = ext
-                it.module = module
+                it.database = database
             }
     ): List<Table>
 }

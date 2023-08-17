@@ -10,10 +10,10 @@ import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
-import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.ddl.MysqlToDDL
 import top.bettercode.summer.tools.generator.ddl.OracleToDDL
@@ -46,7 +46,7 @@ class GeneratorPlugin : Plugin<Project> {
         project.extensions.configure(GeneratorExtension::class.java) { extension ->
 
             val entries = project.properties.filter { it.key.startsWith("datasource.") }.entries
-            extension.datasources =
+            extension.databases =
                     ((if (project.properties.containsKey("datasource.url")) mapOf(DEFAULT_MODULE_NAME to (entries.filter {
                         it.key.split('.').size == 2
                     }.associateBy({ it.key.substringAfter("datasource.") }, { it.value }))
@@ -120,6 +120,13 @@ class GeneratorPlugin : Plugin<Project> {
                                 ?: findGeneratorProperty(project, "collate"))?.toString()
                                 ?: "utf8mb4_unicode_ci"
 
+                        configuration.excludeTableNames = (properties["excludeTableNames"]
+                                ?: findGeneratorProperty(project, "excludeTableNames")
+                                ?: "").toString().split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
+                                .distinct()
+                                .sortedBy { it }.toList()
+                                .toTypedArray()
+
                         configuration
                     }.toSortedMap(GeneratorExtension.comparator)
 
@@ -185,11 +192,6 @@ class GeneratorPlugin : Plugin<Project> {
             extension.settings = settings
 
             extension.tableNames = (findGeneratorProperty(project, "tableNames")
-                    ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
-                    .distinct()
-                    .sortedBy { it }.toList()
-                    .toTypedArray()
-            extension.excludeTableNames = (findGeneratorProperty(project, "excludeTableNames")
                     ?: "").split(",").asSequence().filter { it.isNotBlank() }.map { it.trim() }
                     .distinct()
                     .sortedBy { it }.toList()
@@ -316,7 +318,7 @@ class GeneratorPlugin : Plugin<Project> {
             })
         }
         if (extension.dataType != top.bettercode.summer.tools.generator.DataType.DATABASE) {
-            val datasourceModules = extension.datasources.keys
+            val datasourceModules = extension.databases.keys
             extension.run { module, tableHolder ->
                 if (datasourceModules.contains(module)) {
                     val defaultModule = extension.isDefaultModule(module)
@@ -343,10 +345,10 @@ class GeneratorPlugin : Plugin<Project> {
                                 OracleToDDL.useForeignKey = extension.useForeignKey
                                 val sqlName = if (defaultModule) "schema" else module
                                 val output = FileUnit("${extension.sqlOutput}/ddl/$sqlName.sql")
-                                val jdbc = extension.datasources[module]
+                                val jdbc = extension.databases[module]
                                         ?: throw IllegalStateException("未配置${module}模块数据库信息")
                                 val tables = tableHolder.tables(tableName = extension.tableNames)
-                                val datasource = extension.datasource(module)
+                                val datasource = extension.database(module)
                                 when (jdbc.databaseDriver) {
                                     DatabaseDriver.MYSQL -> MysqlToDDL.toDDL(tables, output, datasource)
 
@@ -371,7 +373,7 @@ class GeneratorPlugin : Plugin<Project> {
                                 OracleToDDL.useQuote = extension.sqlQuote
                                 MysqlToDDL.useForeignKey = extension.useForeignKey
                                 OracleToDDL.useForeignKey = extension.useForeignKey
-                                val datasource = extension.datasource(module)
+                                val datasource = extension.database(module)
                                 val deleteTablesWhenUpdate = datasource.dropTablesWhenUpdate
 
                                 val databasePumlDir =
@@ -385,7 +387,7 @@ class GeneratorPlugin : Plugin<Project> {
                                         )
                                 val allTables = mutableListOf<Table>()
                                 unit.use { pw ->
-                                    val jdbc = extension.datasources[module]
+                                    val database = extension.databases[module]
                                             ?: throw IllegalStateException("未配置${module}模块数据库信息")
                                     val tables =
                                             tableHolder.tables(tableName = extension.tableNames)
@@ -393,17 +395,16 @@ class GeneratorPlugin : Plugin<Project> {
                                     val tableNames = tables.map { it.tableName }
                                     val oldTables = if (databaseFile.exists()) {
                                         PumlConverter.toTables(databaseFile) {
-                                            it.ext = extension
-                                            it.module = module
+                                            it.database = database
                                         }
                                     } else {
-                                        jdbc.tables(
+                                        database.tables(
                                                 tableName =
-                                                (if (deleteTablesWhenUpdate) jdbc.tableNames()
+                                                (if (deleteTablesWhenUpdate) database.tableNames()
                                                 else tableNames).toTypedArray()
                                         )
                                     }
-                                    when (jdbc.databaseDriver) {
+                                    when (database.databaseDriver) {
                                         DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(oldTables, tables, pw, datasource)
 
                                         DatabaseDriver.ORACLE -> OracleToDDL.toDDLUpdate(oldTables, tables, pw, datasource)

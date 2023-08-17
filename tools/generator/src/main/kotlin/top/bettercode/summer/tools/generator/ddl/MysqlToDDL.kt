@@ -93,7 +93,11 @@ object MysqlToDDL : ToDDL() {
 
                         if (databaseConf.queryIndex) updateIndexes(schema, oldTable, table, lines, dropColumnNames)
 
+                        //engine change
                         if (!oldTable.engine.equals(table.engine, true)) lines.add("ALTER TABLE $schema$quote$tableName$quote ENGINE ${table.engine};")
+
+                        //charset change
+                        if (!oldTable.charset.equals(table.charset, true) || !oldTable.collate.equals(table.collate, true)) lines.add("ALTER TABLE $schema$quote$tableName$quote CONVERT TO CHARACTER SET ${table.charset} COLLATE ${table.collate};")
 
                         //out change
                         if (lines.isNotEmpty()) {

@@ -63,13 +63,13 @@ class Mybatis : Generator() {
 
         jdbcConnectionConfiguration.apply {
             if (driverClass.isNullOrBlank())
-                driverClass = datasource.driverClass
+                driverClass = database.driverClass
             if (connectionURL.isNullOrBlank())
-                connectionURL = datasource.url
+                connectionURL = database.url
             if (userId.isNullOrBlank())
-                userId = datasource.username
+                userId = database.username
             if (password.isNullOrBlank())
-                password = datasource.password
+                password = database.password
         }
         javaModelGeneratorConfiguration.apply {
             if (targetPackage.isNullOrBlank())

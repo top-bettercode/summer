@@ -22,18 +22,18 @@ class MetaDataTest {
         configuration.url = "jdbc:h2:mem:test"
         configuration.username = "sa"
         configuration.password = "sa"
-        extension.datasources = mapOf(DEFAULT_MODULE_NAME to configuration)
+        extension.databases = mapOf(DEFAULT_MODULE_NAME to configuration)
     }
 
     @Test
     fun tableNames() {
-        println(extension.defaultDatasource.use { tableNames() })
+        println(extension.defaultDatabase.use { tableNames() })
     }
 
     @Test
     fun table() {
         extension.tableNames.forEach {
-            val table = extension.defaultDatasource.use { table(it) }
+            val table = extension.defaultDatabase.use { table(it) }
             println(table)
             println(table?.indexes?.joinToString("\n\n"))
         }

@@ -52,7 +52,7 @@ v${project.version}
                 +""
                 +"[plantuml]"
                 +"----"
-                +project.rootProject.file("puml/${if (DEFAULT_MODULE_NAME == table.module) "src" else table.module}/${table.subModule}.puml")
+                +project.rootProject.file("puml/${if (DEFAULT_MODULE_NAME == table.database.module) "src" else table.database.module}/${table.subModule}.puml")
                         .readText()
                 +"----"
                 currentModuleName = table.subModuleName

@@ -8,11 +8,9 @@ import java.io.File
  *
  * @author Peter Wu
  */
-class PumlTableHolder(
-        ext: GeneratorExtension,
-        module: String,
-        files: List<File>
-) : FileTableHolder(ext, module, files) {
+class PumlTableHolder(database: DatabaseConfiguration,
+                      files: List<File>
+) : FileTableHolder(database, files) {
 
     override fun getTables(file: File, call: (Table) -> Unit) = PumlConverter.toTables(file, call)
 

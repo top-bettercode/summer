@@ -25,7 +25,7 @@ class MysqlMetaDataTest {
         configuration.username = ""
         configuration.password = ""
         configuration.debug = true
-        extension.datasources = mapOf(DEFAULT_MODULE_NAME to configuration)
+        extension.databases = mapOf(DEFAULT_MODULE_NAME to configuration)
     }
 
     @BeforeEach
@@ -35,13 +35,13 @@ class MysqlMetaDataTest {
     @Test
     fun tableNames() {
         println(Generators.tableNames(extension))
-        println(extension.defaultDatasource.tableNames())
+        println(extension.defaultDatabase.tableNames())
     }
 
     @Test
     fun table() {
         extension.tableNames.forEach {
-            val table = extension.defaultDatasource.use { table(it) }
+            val table = extension.defaultDatabase.use { table(it) }
             println(table)
             println(table?.indexes?.joinToString("\n\n"))
         }

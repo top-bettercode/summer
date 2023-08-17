@@ -51,7 +51,7 @@ open class Generator {
 
     val settings: Map<String, String> get() = ext.settings
 
-    val datasource: DatabaseConfiguration get() = ext.datasource(table.module)
+    val database: DatabaseConfiguration get() = table.database
 
     val projectName: String get() = ext.projectName
 
@@ -62,9 +62,11 @@ open class Generator {
     val packageName: String
         get() {
             var packageName = basePackageName
-            if (settings["no-modules"] == null)
+            if (settings["no-modules"] == null) {
+                val module = table.database.module
                 packageName =
-                        if (packageName.endsWith(".${table.module}") || packageName.contains(".${table.module}.")) packageName else "$packageName.${table.module}"
+                        if (packageName.endsWith(".$module") || packageName.contains(".$module.")) packageName else "$packageName.$module"
+            }
             return if (ext.userModule && table.subModule.isNotBlank()) {
                 "$packageName.${table.subModule}"
             } else {
@@ -103,7 +105,7 @@ open class Generator {
      * 表名
      */
     val tableName: String
-        get() = "${if (table.catalog.isNullOrBlank() || datasource.catalog.isNullOrBlank() || table.catalog == datasource.catalog) "" else "${table.catalog}."}${if (table.schema.isNullOrBlank() || datasource.schema.isNullOrBlank() || table.schema == datasource.schema) "" else "${table.schema}."}${table.tableName}"
+        get() = "${if (table.catalog.isNullOrBlank() || database.catalog.isNullOrBlank() || table.catalog == database.catalog) "" else "${table.catalog}."}${if (table.schema.isNullOrBlank() || database.schema.isNullOrBlank() || table.schema == database.schema) "" else "${table.schema}."}${table.tableName}"
 
 
     /**

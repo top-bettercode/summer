@@ -25,7 +25,7 @@ class ChangeCharacterSet : Generator() {
         add(file(name)).apply {
             +"# 修改数据库表及字段字符集\n"
             +"ALTER DATABASE ${
-                datasource.url.replace(
+                database.url.replace(
                         Regex(".*/(.+?)\\?.*"),
                         "$1"
                 )

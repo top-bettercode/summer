@@ -28,7 +28,7 @@ class DatabaseConfiguration(
 
     val available: Boolean by lazy { url.isNotBlank() }
 
-    lateinit var ext: GeneratorExtension
+    lateinit var extension: GeneratorExtension
 
     /**
      * 表前缀
@@ -73,6 +73,10 @@ class DatabaseConfiguration(
      * 编码排序
      */
     var collate: String = "utf8mb4_unicode_ci"
+    /**
+     * 排除表
+     */
+    var excludeTableNames: Array<String> = arrayOf()
 
     /**
      * ClassName
@@ -185,7 +189,7 @@ class DatabaseConfiguration(
     override fun tables(checkFound: Boolean, vararg tableName: String): List<Table> {
         val set = ConcurrentSkipListSet(tableName.toSet())
         val names = (if (tableName.isEmpty()) tableNames() else tableName.distinct()).filter {
-            !ext.excludeTableNames.contains(it)
+            !excludeTableNames.contains(it)
         }
         println("数据表（${names.size}）:${names}")
         val result = ConcurrentLinkedDeque<Table>()
@@ -206,8 +210,7 @@ class DatabaseConfiguration(
                         it.map {
                             try {
                                 val table = table(it) { table ->
-                                    table.ext = ext
-                                    table.module = module
+                                    table.database = this@DatabaseConfiguration
                                 }
                                 if (table != null) {
                                     set.remove(table.tableName)

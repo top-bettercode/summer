@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.generator.database
 
-import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
+import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Indexed
 import top.bettercode.summer.tools.generator.database.entity.Table
@@ -121,6 +121,8 @@ class DatabaseMetaData(
                 val tableType = getString("TABLE_TYPE")
                 val remarks = getString("REMARKS")
                 val engine: String = getEngine(name)
+                val collate: String = getCollate(name)
+                val charset = collate.substringBefore("_")
 
                 val columns = columns(name)
                 fixImportedKeys(schema, name, columns)
@@ -155,7 +157,9 @@ class DatabaseMetaData(
                         primaryKeyNames = primaryKeyNames,
                         indexes = indexes,
                         pumlColumns = columns.toMutableList(),
-                        engine = engine
+                        engine = engine,
+                        charset = charset,
+                        collate = collate
                 )
                 call(table)
                 return table
@@ -164,6 +168,34 @@ class DatabaseMetaData(
         } finally {
             close()
         }
+    }
+
+    private fun getCollate(tableName: String): String {
+        val databaseDriver =
+                DatabaseDriver.fromJdbcUrl(databaseMetaData.url)
+        var collate = ""
+        if (arrayOf(
+                        DatabaseDriver.MYSQL,
+                        DatabaseDriver.MARIADB
+                ).contains(
+                        databaseDriver
+                )
+        ) {
+            val quoteMark = "'"
+            try {
+                val prepareStatement =
+                        databaseMetaData.connection.prepareStatement("SELECT table_collation FROM information_schema.TABLES where table_name = ?")
+                prepareStatement.setString(1, tableName)
+                prepareStatement.queryTimeout = 5
+                prepareStatement.executeQuery().map {
+                    collate = getString("table_collation")
+                    return@map
+                }
+            } catch (e: Exception) {
+                System.err.println("查询表编码排序出错:${e.message}")
+            }
+        }
+        return collate
     }
 
     private fun getEngine(tableName: String): String {
@@ -178,10 +210,10 @@ class DatabaseMetaData(
                         databaseDriver
                 )
         ) {
-            val quoteMark = "'"
             try {
                 val prepareStatement =
-                        databaseMetaData.connection.prepareStatement("SHOW TABLE STATUS LIKE $quoteMark$tableName$quoteMark")
+                        databaseMetaData.connection.prepareStatement("SHOW TABLE STATUS LIKE ?")
+                prepareStatement.setString(1, tableName)
                 prepareStatement.queryTimeout = 5
                 prepareStatement.executeQuery().map {
                     engine = getString("Engine")

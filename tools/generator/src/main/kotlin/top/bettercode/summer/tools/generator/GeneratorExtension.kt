@@ -108,7 +108,6 @@ open class GeneratorExtension(
          * 相关数据表
          */
         var tableNames: Array<String> = arrayOf(),
-        var excludeTableNames: Array<String> = arrayOf(),
         /**
          * 额外设置
          */
@@ -129,11 +128,11 @@ open class GeneratorExtension(
     /**
      * JDBC连接配置
      */
-    var datasources: Map<String, DatabaseConfiguration> = mapOf()
+    var databases: Map<String, DatabaseConfiguration> = mapOf()
         set(value) {
             field = value
             value.values.forEach {
-                it.ext = this
+                it.extension = this
             }
         }
 
@@ -192,8 +191,8 @@ open class GeneratorExtension(
             JavaTypeResolver.forceBigDecimals = value
         }
 
-    val defaultDatasource: DatabaseConfiguration by lazy {
-        datasources[DEFAULT_MODULE_NAME] ?: datasources.values.first()
+    val defaultDatabase: DatabaseConfiguration by lazy {
+        databases[DEFAULT_MODULE_NAME] ?: databases.values.first()
     }
 
     /**
@@ -232,8 +231,8 @@ open class GeneratorExtension(
             null
     }
 
-    fun datasource(moduleName: String): DatabaseConfiguration {
-        return datasources[moduleName] ?: defaultDatasource
+    fun database(moduleName: String): DatabaseConfiguration {
+        return databases[moduleName] ?: defaultDatabase
     }
 
     fun file(subfile: String): File {
@@ -283,20 +282,20 @@ open class GeneratorExtension(
     fun <T> run(dataType: DataType = this.dataType, function: (String, TableHolder) -> T): List<T> {
         return when (dataType) {
             DataType.DATABASE -> {
-                datasources.map { (module, jdbc) ->
+                databases.map { (module, jdbc) ->
                     function(module, jdbc)
                 }
             }
 
             DataType.PUML -> {
                 pumlSources.map { (module, files) ->
-                    function(module, PumlTableHolder(this, module, files))
+                    function(module, PumlTableHolder(database(module), files))
                 }
             }
 
             DataType.PDM -> {
                 pdmSources.map { (module, files) ->
-                    function(module, PdmTableHolder(this, module, files))
+                    function(module, PdmTableHolder(database(module), files))
                 }
             }
         }
@@ -315,7 +314,7 @@ open class GeneratorExtension(
         get() {
             return when (dataType) {
                 DataType.DATABASE -> {
-                    datasources.size
+                    databases.size
                 }
 
                 DataType.PUML -> {
@@ -331,7 +330,7 @@ open class GeneratorExtension(
         get() {
             return when (dataType) {
                 DataType.DATABASE -> {
-                    datasources.keys.toTypedArray()
+                    databases.keys.toTypedArray()
                 }
 
                 DataType.PUML -> {

@@ -153,7 +153,7 @@ class AutodocHandler(
                         dataType = genProperties.dataType
                 )
 
-                extension.datasources = datasources
+                extension.databases = datasources
 
                 request.uriVariablesExt = request.uriVariables.toFields(request.uriVariablesExt)
                 request.headersExt = request.headers.singleValueMap.toFields(request.headersExt)

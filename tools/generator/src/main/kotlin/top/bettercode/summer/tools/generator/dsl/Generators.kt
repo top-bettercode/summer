@@ -19,7 +19,7 @@ object Generators {
     fun tableNamesWithOutPrefix(extension: GeneratorExtension): List<String> {
         return extension.run { module, tableHolder ->
             tableHolder.tableNames().map { tableName ->
-                (extension.datasource(module)).fixTableName(
+                (extension.database(module)).fixTableName(
                         tableName
                 )
             }
@@ -43,7 +43,7 @@ object Generators {
             tableHolder.tables(
                     checkFound = when (extension.dataType) {
                         top.bettercode.summer.tools.generator.DataType.DATABASE -> {
-                            extension.datasources.size <= 1
+                            extension.databases.size <= 1
                         }
 
                         top.bettercode.summer.tools.generator.DataType.PUML -> {
@@ -79,7 +79,7 @@ object Generators {
         tableHolder.tables(
                 checkFound = when (extension.dataType) {
                     top.bettercode.summer.tools.generator.DataType.DATABASE -> {
-                        extension.datasources.size <= 1
+                        extension.databases.size <= 1
                     }
 
                     top.bettercode.summer.tools.generator.DataType.PUML -> {

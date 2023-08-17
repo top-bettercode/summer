@@ -24,7 +24,7 @@ class OracleMetaDataTest {
         configuration.url = ""
         configuration.username = ""
         configuration.password = ""
-        extension.datasources = mapOf(DEFAULT_MODULE_NAME to configuration)
+        extension.databases = mapOf(DEFAULT_MODULE_NAME to configuration)
     }
 
     @BeforeEach
@@ -33,14 +33,14 @@ class OracleMetaDataTest {
 
     @Test
     fun tableNames() {
-        println(extension.defaultDatasource.use { tableNames() })
+        println(extension.defaultDatabase.use { tableNames() })
     }
 
 
     @Test
     fun table() {
         extension.tableNames.forEach {
-            val table = extension.defaultDatasource.use { table(it) }
+            val table = extension.defaultDatabase.use { table(it) }
             println(table)
             println(table?.indexes?.joinToString("\n\n"))
         }
