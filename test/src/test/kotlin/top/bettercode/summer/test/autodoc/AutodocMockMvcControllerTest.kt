@@ -3,13 +3,9 @@ package top.bettercode.summer.test.autodoc
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import top.bettercode.summer.test.BaseWebNoAuthTest
-import java.io.FileReader
-import javax.sql.DataSource
 
 
 /**

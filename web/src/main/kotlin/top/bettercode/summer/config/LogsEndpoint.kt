@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.RequestHeader
 import top.bettercode.summer.logging.WebsocketProperties
 import top.bettercode.summer.tools.lang.PrettyMessageHTMLLayout
+import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.io.File
 import java.io.InputStream
@@ -442,7 +443,7 @@ class LogsEndpoint(
                 msg = java.lang.StringBuilder(line)
                 level = groupValues[2]
             } else {
-                msg.append(CoreConstants.LINE_SEPARATOR)
+                msg.append(StringUtil.LINE_SEPARATOR)
                 msg.append(line)
             }
         }

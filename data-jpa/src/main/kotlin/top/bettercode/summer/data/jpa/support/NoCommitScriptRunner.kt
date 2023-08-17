@@ -1,5 +1,6 @@
 package top.bettercode.summer.data.jpa.support
 
+import top.bettercode.summer.tools.lang.util.StringUtil
 import java.io.BufferedReader
 import java.io.PrintWriter
 import java.io.Reader
@@ -69,7 +70,7 @@ class NoCommitScriptRunner(private val connection: Connection) {
             var line: String?
             while (lineReader.readLine().also { line = it } != null) {
                 script.append(line)
-                script.append(LINE_SEPARATOR)
+                script.append(StringUtil.LINE_SEPARATOR)
             }
             val command = script.toString()
             println(command)
@@ -114,13 +115,13 @@ class NoCommitScriptRunner(private val connection: Connection) {
             println(trimmedLine)
         } else if (commandReadyToExecute(trimmedLine)) {
             command.append(line, 0, line.lastIndexOf(delimiter))
-            command.append(LINE_SEPARATOR)
+            command.append(StringUtil.LINE_SEPARATOR)
             println(command)
             executeStatement(command.toString())
             command.setLength(0)
         } else if (trimmedLine.isNotEmpty()) {
             command.append(line)
-            command.append(LINE_SEPARATOR)
+            command.append(StringUtil.LINE_SEPARATOR)
         }
     }
 
@@ -216,7 +217,6 @@ class NoCommitScriptRunner(private val connection: Connection) {
     }
 
     companion object {
-        private val LINE_SEPARATOR = System.getProperty("line.separator", "\n")
         private const val DEFAULT_DELIMITER = ";"
         private val DELIMITER_PATTERN = Pattern
                 .compile("^\\s*((--)|(//))?\\s*(//)?\\s*@DELIMITER\\s+(\\S+)", Pattern.CASE_INSENSITIVE)

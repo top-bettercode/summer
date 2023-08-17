@@ -10,16 +10,11 @@ CREATE TABLE "api_token"
 );
 CREATE UNIQUE INDEX UK_token_access ON "api_token" ("access_token");
 CREATE UNIQUE INDEX UK_token_refresh ON "api_token" ("refresh_token");
-COMMENT
-ON TABLE "api_token" IS 'api token';
-COMMENT
-ON COLUMN "api_token"."id" IS 'id';
-COMMENT
-ON COLUMN "api_token"."access_token" IS 'accessToken';
-COMMENT
-ON COLUMN "api_token"."refresh_token" IS 'refreshToken';
-COMMENT
-ON COLUMN "api_token"."authentication" IS 'authentication';
+COMMENT ON TABLE "api_token" IS 'api token';
+COMMENT ON COLUMN "api_token"."id" IS 'id';
+COMMENT ON COLUMN "api_token"."access_token" IS 'accessToken';
+COMMENT ON COLUMN "api_token"."refresh_token" IS 'refreshToken';
+COMMENT ON COLUMN "api_token"."authentication" IS 'authentication';
 
 ;
 

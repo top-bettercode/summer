@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 open class FilesProperties {
     var path: String? = null
     var maxFileSize = "10MB"
-    var maxHistory = CoreConstants.UNBOUND_HISTORY
+    var maxHistory = 0
 
     /**
      * 是否启动时滚动日志

@@ -4,10 +4,10 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.html.HTMLLayout
 import ch.qos.logback.classic.pattern.MessageConverter
 import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.CoreConstants.LINE_SEPARATOR
 import ch.qos.logback.core.helpers.Transform
 import ch.qos.logback.core.pattern.Converter
 import top.bettercode.summer.tools.lang.operation.HttpOperation
+import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import java.util.*
 
@@ -29,14 +29,14 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
     override fun getPresentationHeader(): String {
         val sbuf = StringBuilder()
         sbuf.append("<hr/>")
-        sbuf.append(LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
         sbuf.append("<p>Log session start time ")
         sbuf.append(Date())
         sbuf.append("</p><p></p>")
-        sbuf.append(LINE_SEPARATOR)
-        sbuf.append(LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
         sbuf.append("<table id=\"loggingText\" cellspacing=\"0\" cellpadding=\"0\">")
-        sbuf.append(LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
 
         buildHeaderRowForTable(sbuf)
 
@@ -46,15 +46,15 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
     fun getLogsHeader(): String {
         val sbuf = StringBuilder()
         sbuf.append("<hr/>")
-        sbuf.append(LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
         sbuf.append("<p>Log session start time ")
         sbuf.append(Date())
         sbuf.append("&nbsp;&nbsp;&nbsp;&nbsp;<a href='./'>../</a>")
         sbuf.append("</p><p></p>")
-        sbuf.append(LINE_SEPARATOR)
-        sbuf.append(LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
         sbuf.append("<table id=\"loggingText\" cellspacing=\"0\" cellpadding=\"0\">")
-        sbuf.append(LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
 
         buildHeaderRowForTable(sbuf)
 
@@ -63,11 +63,11 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
 
     private fun buildHeaderRowForTable(sbuf: StringBuilder) {
         sbuf.append("<tr class=\"header\">")
-        sbuf.append(LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
         sbuf.append("<td class=\"Message\">Message</td>")
-        sbuf.append(LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
         sbuf.append("</tr>")
-        sbuf.append(LINE_SEPARATOR)
+        sbuf.append(StringUtil.LINE_SEPARATOR)
     }
 
     override fun doLayout(event: ILoggingEvent): String {
@@ -81,7 +81,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
 
         val level = event.level.toString().lowercase(Locale.getDefault())
 
-        buf.append(LINE_SEPARATOR)
+        buf.append(StringUtil.LINE_SEPARATOR)
         buf.append("<tr class=\"")
         buf.append(level)
         if (odd) {
@@ -89,7 +89,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         } else {
             buf.append(" even\">")
         }
-        buf.append(LINE_SEPARATOR)
+        buf.append(StringUtil.LINE_SEPARATOR)
 
         var c: Converter<ILoggingEvent>? = head
         while (c != null) {
@@ -98,7 +98,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
             c = c.next
         }
         buf.append("</tr>")
-        buf.append(LINE_SEPARATOR)
+        buf.append(StringUtil.LINE_SEPARATOR)
 
         if (event.throwableProxy != null) {
             throwableRenderer.render(buf, event)
@@ -123,7 +123,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         buf.append("${event.loggerName} :")
         buf.append(Transform.escapeTags(c.convert(event)))
         buf.append("</pre></td>")
-        buf.append(LINE_SEPARATOR)
+        buf.append(StringUtil.LINE_SEPARATOR)
     }
 
 
@@ -136,7 +136,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
             odd = false
         }
 
-        buf.append(LINE_SEPARATOR)
+        buf.append(StringUtil.LINE_SEPARATOR)
         val anchor = anchor(msg)
         buf.append("<tr id=\"$anchor\" onclick=\"if(window.event.ctrlKey){window.location.href = '#$anchor';}\" class=\"")
         buf.append(level)
@@ -145,7 +145,7 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         } else {
             buf.append(" even\">")
         }
-        buf.append(LINE_SEPARATOR)
+        buf.append(StringUtil.LINE_SEPARATOR)
 
         buf.append("<td${if (last) " id=\"last\"" else ""} class=\"")
         when {
@@ -174,9 +174,9 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         }
 
         buf.append("</td>")
-        buf.append(LINE_SEPARATOR)
+        buf.append(StringUtil.LINE_SEPARATOR)
         buf.append("</tr>")
-        buf.append(LINE_SEPARATOR)
+        buf.append(StringUtil.LINE_SEPARATOR)
         return buf.toString()
     }
 
@@ -184,10 +184,10 @@ class PrettyMessageHTMLLayout : HTMLLayout() {
         if (counter >= 10000L) {
             counter = 0L
             sbuf.append("</table>")
-            sbuf.append(LINE_SEPARATOR)
+            sbuf.append(StringUtil.LINE_SEPARATOR)
             sbuf.append("<p></p>")
             sbuf.append("<table cellspacing=\"0\" cellpadding=\"0\">")
-            sbuf.append(LINE_SEPARATOR)
+            sbuf.append(StringUtil.LINE_SEPARATOR)
             buildHeaderRowForTable(sbuf)
         }
     }

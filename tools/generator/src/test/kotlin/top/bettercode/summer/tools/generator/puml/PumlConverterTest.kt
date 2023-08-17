@@ -2,8 +2,6 @@ package top.bettercode.summer.tools.generator.puml
 
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
-import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import java.io.File
 
 /**
