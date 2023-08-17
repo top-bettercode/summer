@@ -405,11 +405,10 @@ class GeneratorPlugin : Plugin<Project> {
                                             it.database = database
                                         }
                                     } else {
-                                        database.tables(
-                                                tableName =
-                                                (if (deleteTablesWhenUpdate) database.tableNames()
-                                                else tableNames).toTypedArray()
-                                        )
+                                        if (tableNames.isNotEmpty() || deleteTablesWhenUpdate) {
+                                            database.tables(tableName = (if (deleteTablesWhenUpdate) emptyList() else tableNames).toTypedArray()
+                                            )
+                                        } else emptyList()
                                     }
                                     when (database.driver) {
                                         DatabaseDriver.MYSQL -> MysqlToDDL.toDDLUpdate(oldTables, tables, pw, database)
