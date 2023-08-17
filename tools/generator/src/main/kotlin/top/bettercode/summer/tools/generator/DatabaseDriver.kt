@@ -260,8 +260,10 @@ enum class DatabaseDriver(
                         return candidate
                     }
                 }
+                return UNKNOWN
+            } else {
+                return UNSET
             }
-            return UNKNOWN
         }
     }
 
