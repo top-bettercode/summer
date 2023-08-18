@@ -35,6 +35,7 @@ import java.io.IOException
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.stream.Stream
+import javax.sql.DataSource
 
 /**
  * [Auto-Configuration][EnableAutoConfiguration] for Mybatis.
@@ -44,11 +45,12 @@ import java.util.stream.Stream
 class JpaMybatisAutoConfiguration(
         private val properties: MybatisProperties,
         private val resourceLoader: ResourceLoader,
-        @Autowired(required = false) hikari: HikariDataSource?
+        @Autowired(required = false) dataSource: DataSource?
 ) : InitializingBean {
     init {
-        if (hikari != null && log.isInfoEnabled) {
-            log.info("init dataSource {} : {}", hikari.poolName, hikari.jdbcUrl)
+        if (dataSource != null && log.isInfoEnabled) {
+            if (dataSource is HikariDataSource)
+                log.info("init dataSource {} : {}", dataSource.poolName, dataSource.jdbcUrl)
         }
     }
 
