@@ -39,10 +39,13 @@ import javax.servlet.http.HttpServletResponse
 @EnableConfigurationProperties(CorsProperties::class)
 class SecurityConfiguration(
         private val corsProperties: CorsProperties,
-        private val securityProperties: ApiSecurityProperties, private val apiTokenService: ApiTokenService,
+        private val securityProperties: ApiSecurityProperties,
+        private val apiTokenService: ApiTokenService,
         @param:Autowired(required = false) private val revokeTokenService: IRevokeTokenService?,
         private val summerWebProperties: SummerWebProperties,
-        private val objectMapper: ObjectMapper, private val passwordEncoder: PasswordEncoder, private val formkeyService: IFormkeyService,
+        private val objectMapper: ObjectMapper,
+        private val passwordEncoder: PasswordEncoder,
+        private val formkeyService: IFormkeyService,
 ) {
     @Bean
     fun authorizationManager(

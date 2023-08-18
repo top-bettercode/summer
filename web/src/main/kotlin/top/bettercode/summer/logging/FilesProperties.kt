@@ -1,6 +1,5 @@
 package top.bettercode.summer.logging
 
-import ch.qos.logback.core.CoreConstants
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 /**

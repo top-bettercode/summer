@@ -1,7 +1,6 @@
 package top.bettercode.summer.config
 
 import ch.qos.logback.classic.LoggerContext
-import ch.qos.logback.core.CoreConstants
 import org.slf4j.ILoggerFactory
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties

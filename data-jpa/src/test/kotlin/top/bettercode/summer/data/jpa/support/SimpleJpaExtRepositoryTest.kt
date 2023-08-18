@@ -23,7 +23,6 @@ import top.bettercode.summer.tools.lang.util.StringUtil.json
 import top.bettercode.summer.web.support.ApplicationContextHolder
 import java.util.*
 import java.util.function.Consumer
-import javax.persistence.EntityManager
 import javax.persistence.Tuple
 import javax.persistence.criteria.CriteriaBuilder
 import javax.persistence.criteria.CriteriaQuery
@@ -35,9 +34,6 @@ import javax.persistence.criteria.Root
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
 class SimpleJpaExtRepositoryTest {
-    @Autowired
-    var entityManager: EntityManager? = null
-
     @Autowired
     lateinit var repository: UserRepository
     val batch: MutableList<User> = ArrayList()
@@ -277,12 +273,12 @@ class SimpleJpaExtRepositoryTest {
 
     @Test
     fun testbyId() {
-        var optionalUser = repository.getById(carterId)
+        val optionalUser = repository.getById(carterId)
         Assertions.assertNotNull(optionalUser)
 
         Assertions.assertThrows(JpaObjectRetrievalFailureException::class.java
         ) {
-            optionalUser = repository.getById(daveId)
+            repository.getById(daveId)
         }
 
     }

@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.lang
 
-import ch.qos.logback.core.CoreConstants
 import ch.qos.logback.core.html.CssBuilder
 import top.bettercode.summer.tools.lang.util.StringUtil
 
