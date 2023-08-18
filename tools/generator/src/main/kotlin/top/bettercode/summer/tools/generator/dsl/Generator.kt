@@ -1,8 +1,8 @@
 package top.bettercode.summer.tools.generator.dsl
 
+import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.GeneratorException
 import top.bettercode.summer.tools.generator.GeneratorExtension
-import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.database.entity.Column
 import top.bettercode.summer.tools.generator.database.entity.Table
 import top.bettercode.summer.tools.generator.dom.java.JavaType
@@ -63,7 +63,7 @@ open class Generator {
         get() {
             var packageName = basePackageName
             if (settings["no-modules"] == null) {
-                val module = table.module
+                val module = if (GeneratorExtension.isDefaultModule(table.module)) "modules" else table.module
                 packageName =
                         if (packageName.endsWith(".$module") || packageName.contains(".$module.")) packageName else "$packageName.$module"
             }

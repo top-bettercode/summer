@@ -143,13 +143,13 @@ object InitField {
                             for (tableName in Autodoc.tableNames) {
                                 val table = tables.find { it.tableName == tableName }
                                 if (table != null) {
-                                    if (fn(table.fields(), false, !isDefaultModule(module))) {
+                                    if (fn(table.fields(), false, !GeneratorExtension.isDefaultModule(module))) {
                                         return@all
                                     }
                                 }
                             }
                             for (table in tables.filter { !Autodoc.tableNames.contains(it.tableName) }) {
-                                if (fn(table.fields(), false, !isDefaultModule(module))) {
+                                if (fn(table.fields(), false, !GeneratorExtension.isDefaultModule(module))) {
                                     return@all
                                 }
                             }
@@ -166,7 +166,7 @@ object InitField {
                                 it.database = database
                             }
                             if (table != null) {
-                                if (fn(table.fields(), false, !isDefaultModule(module))) {
+                                if (fn(table.fields(), false, !GeneratorExtension.isDefaultModule(module))) {
                                     return
                                 }
                             }
@@ -178,7 +178,7 @@ object InitField {
                                 it.database = database
                             }
                             if (table != null) {
-                                if (fn(table.fields(), false, !isDefaultModule(module))) {
+                                if (fn(table.fields(), false, !GeneratorExtension.isDefaultModule(module))) {
                                     return
                                 }
                             }

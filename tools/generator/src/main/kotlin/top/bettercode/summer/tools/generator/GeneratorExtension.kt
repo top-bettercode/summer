@@ -212,9 +212,7 @@ open class GeneratorExtension(
         return File(path, subfile)
     }
 
-    fun isDefaultModule(moduleName: String): Boolean {
-        return DEFAULT_MODULE_NAME == moduleName
-    }
+
 
     val pumlSources: Map<String, List<File>> by lazy {
         file(pumlSrc).listFiles()?.filter { it.isDirectory && "database" != it.name }
@@ -331,7 +329,7 @@ open class GeneratorExtension(
         }
 
 
-        const val DEFAULT_MODULE_NAME: String = "modules"
+        const val DEFAULT_MODULE_NAME: String = "app"
 
         /**
          * javaName
@@ -346,6 +344,10 @@ open class GeneratorExtension(
                 s.lowercase(Locale.getDefault()).capitalized()
             }
             return if (capitalize) s else s.decapitalized()
+        }
+
+        fun isDefaultModule(moduleName: String): Boolean {
+            return DEFAULT_MODULE_NAME == moduleName
         }
 
     }

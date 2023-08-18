@@ -158,7 +158,7 @@ data class DatabaseConfiguration(
     var module: String = DEFAULT_MODULE_NAME
 
     val isDefault: Boolean
-        get() = module == DEFAULT_MODULE_NAME
+        get() = GeneratorExtension.isDefaultModule(module)
 
     var username: String
         set(value) = properties.set("user", value)

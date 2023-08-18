@@ -103,7 +103,7 @@ object RootProjectTasks {
                 val databaseModules = extension.databases.keys
                 t.dependsOn(databaseModules.map {
                     "toDDL${
-                        if (extension.isDefaultModule(it)) "" else "[${
+                        if (GeneratorExtension.isDefaultModule(it)) "" else "[${
                             it.capitalized()
                         }]"
                     }"
@@ -111,7 +111,7 @@ object RootProjectTasks {
                 t.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         extension.databases.forEach { (module, database) ->
-                                val isDefault = extension.isDefaultModule(module)
+                                val isDefault = GeneratorExtension.isDefaultModule(module)
                                 val suffix = if (isDefault) "" else "-$module"
                                 //init.sql
                                 val destFile = FileUnit(

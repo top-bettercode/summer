@@ -231,7 +231,7 @@ class GeneratorPlugin : Plugin<Project> {
 
     private fun configPuml(project: Project, extension: GeneratorExtension) {
         extension.run { module, tableHolder ->
-            val prefix = if (extension.isDefaultModule(module)) "" else "[${
+            val prefix = if (GeneratorExtension.isDefaultModule(module)) "" else "[${
                 module.capitalized()
             }]"
             project.tasks.create("printTableNames${prefix}") { task ->
@@ -245,7 +245,7 @@ class GeneratorPlugin : Plugin<Project> {
             }
         }
         extension.run(if (extension.pdmSources.isNotEmpty()) top.bettercode.summer.tools.generator.DataType.PDM else top.bettercode.summer.tools.generator.DataType.DATABASE) { module, tableHolder ->
-            val prefix = if (extension.isDefaultModule(module)) "" else "[${
+            val prefix = if (GeneratorExtension.isDefaultModule(module)) "" else "[${
                 module.capitalized()
             }]"
             project.tasks.create("toPuml${prefix}") { task ->
@@ -332,7 +332,7 @@ class GeneratorPlugin : Plugin<Project> {
             val databaseModules = extension.databases.keys
             extension.run { module, tableHolder ->
                 if (databaseModules.contains(module)) {
-                    val defaultModule = extension.isDefaultModule(module)
+                    val defaultModule = GeneratorExtension.isDefaultModule(module)
                     val suffix = if (defaultModule) "" else "[${
                         module.capitalized()
                     }]"
