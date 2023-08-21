@@ -65,6 +65,19 @@ class SummerWebMvcConfigurer(private val formkeyService: IFormkeyService,
                 null
             }
         }
+        //toString
+        registry.addConverter(java.util.Date::class.java, String::class.java) { source ->
+            source.time.toString()
+        }
+        registry.addConverter(java.sql.Date::class.java, String::class.java) { source ->
+            source.time.toString()
+        }
+        registry.addConverter(LocalDate::class.java, String::class.java) { source ->
+            of(source).toMillis().toString()
+        }
+        registry.addConverter(LocalDateTime::class.java, String::class.java) { source ->
+            of(source).toMillis().toString()
+        }
     }
 
 

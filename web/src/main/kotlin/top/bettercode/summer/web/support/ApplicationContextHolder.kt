@@ -50,7 +50,7 @@ object ApplicationContextHolder {
 
     @JvmStatic
     fun <T> getProperty(key: String, targetType: Class<T>, defaultValue: T): T? {
-        return applicationContext.environment.getProperty(key, targetType, defaultValue)
+        return applicationContext.environment.getProperty(key, targetType, defaultValue!!)
     }
 
     @JvmStatic

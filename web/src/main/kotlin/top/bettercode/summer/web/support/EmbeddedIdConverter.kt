@@ -26,8 +26,8 @@ object EmbeddedIdConverter {
         val clazz: Class<*> = embeddedId.javaClass
         return getPropertyDescriptors(clazz).stream()
                 .map { o: PropertyDescriptor ->
-                    ApplicationContextHolder.conversionService.convert(
-                            ReflectionUtils.invokeMethod(o.readMethod, embeddedId), String::class.java)!!
+                    val value = ReflectionUtils.invokeMethod(o.readMethod, embeddedId)
+                    ApplicationContextHolder.conversionService.convert(value, String::class.java)!!
                 }
                 .collect(Collectors.joining(delimiter))
     }
@@ -52,10 +52,10 @@ object EmbeddedIdConverter {
         val descriptors = getPropertyDescriptors(type)
         for (i in descriptors.indices) {
             val descriptor = descriptors[i]
+            val value = values[i]
             ReflectionUtils.invokeMethod(
                     descriptor.writeMethod, result,
-                    ApplicationContextHolder.conversionService
-                            .convert(values[i], descriptor.propertyType))
+                    ApplicationContextHolder.conversionService.convert(value, descriptor.propertyType))
         }
         return result
     }
