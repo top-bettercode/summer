@@ -147,7 +147,7 @@ object MysqlToDDL : ToDDL() {
         appendKeys(table, hasPrimary, pw, quote, tableName, useForeignKey)
         pw.appendLine(") DEFAULT CHARSET = ${database.charset} COLLATE ${database.collate} ${if (table.physicalOptions.isNotBlank()) " ${table.physicalOptions}" else ""} COMMENT = '${
             table.remarks.replace("\\", "\\\\")
-        }'${if (table.engine.isNotBlank()) " ENGINE = ${table.engine};" else ""};")
+        }'${if (table.engine.isNotBlank()) " ENGINE = ${table.engine}" else ""};")
 
         appendIndexes(prefixTableName, table, pw, quote)
 
