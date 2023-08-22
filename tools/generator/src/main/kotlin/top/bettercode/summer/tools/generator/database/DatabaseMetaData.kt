@@ -210,8 +210,9 @@ class DatabaseMetaData(
         ) {
             try {
                 val prepareStatement =
-                        databaseMetaData.connection.prepareStatement("SELECT table_collation FROM information_schema.TABLES where table_name = ?")
+                        databaseMetaData.connection.prepareStatement("SELECT table_collation FROM information_schema.TABLES where table_name = ? and table_schema=?")
                 prepareStatement.setString(1, tableName)
+                prepareStatement.setString(2, datasource.schema)
                 prepareStatement.queryTimeout = 5
                 prepareStatement.executeQuery().map {
                     collate = getString("table_collation")
