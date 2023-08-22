@@ -15,7 +15,6 @@ import java.util.regex.Pattern
 import javax.servlet.FilterChain
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
-import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -88,15 +87,14 @@ class ManagementLoginPageGeneratingFilter(
         val response = res as HttpServletResponse
         var uri = request.servletPath
         if (match(uri) && loginPageUrl != uri) {
-            if (request.getCookie(LOGGER_AUTH_KEY) == managementAuthProperties.authKey) {
-                response.setCookie(LOGGER_AUTH_KEY, managementAuthProperties.authKey)
+            if (request.session.getAttribute(LOGGER_AUTH_KEY) == managementAuthProperties.authKey) {
                 chain.doFilter(request, response)
             } else {
                 val queryString = request.queryString
                 if (queryString != null) {
                     uri += "?$queryString"
                 }
-                response.setCookie(TARGET_URL_KEY, uri)
+                request.session.setAttribute(TARGET_URL_KEY, uri)
                 sendRedirect(request, response, loginPageUrl)
             }
             return
@@ -110,8 +108,9 @@ class ManagementLoginPageGeneratingFilter(
             if (username != null && password != null && (username.trim { it <= ' ' }
                             == managementAuthProperties.username) && (password
                             == managementAuthProperties.password)) {
-                response.setCookie(LOGGER_AUTH_KEY, managementAuthProperties.authKey)
-                val url = request.getCookie(TARGET_URL_KEY) ?: "/"
+                request.session.setAttribute(LOGGER_AUTH_KEY, managementAuthProperties.authKey)
+                val url = request.session.getAttribute(TARGET_URL_KEY)?.toString()
+                        ?: webEndpointProperties.basePath
                 sendRedirect(request, response, url)
                 return
             }
@@ -132,17 +131,6 @@ class ManagementLoginPageGeneratingFilter(
             return
         }
         chain.doFilter(request, response)
-    }
-
-    private fun HttpServletRequest.getCookie(name: String): String? {
-        return cookies?.find { it.name == name }?.value
-    }
-
-    private fun HttpServletResponse.setCookie(name: String, value: String) {
-        val cookie = Cookie(name, value)
-        cookie.path = "/"
-        cookie.maxAge = managementAuthProperties.maxAge
-        this.addCookie(cookie)
     }
 
     private fun sendRedirect(
@@ -297,10 +285,6 @@ class ManagementLoginPageGeneratingFilter(
                 request,
                 logoutSuccessUrl
         )
-    }
-
-    private fun isLoginUrlRequest(request: HttpServletRequest): Boolean {
-        return "GET" == request.method && matches(request, loginPageUrl)
     }
 
     private fun isErrorPage(request: HttpServletRequest): Boolean {
