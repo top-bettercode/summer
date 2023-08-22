@@ -24,6 +24,7 @@ class ManagementLoginPageGeneratingFilter(
         private val webEndpointProperties: WebEndpointProperties
 ) : GenericFilterBean() {
     private var loginPageUrl: String = "${webEndpointProperties.basePath}/$DEFAULT_LOGIN_PAGE"
+    private var ignorePageUrl: String = "${webEndpointProperties.basePath}/health"
     private var logoutSuccessUrl: String
     private var failureUrl: String
     private var authenticationUrl: String
@@ -68,6 +69,9 @@ class ManagementLoginPageGeneratingFilter(
     }
 
     fun match(uri: String): Boolean {
+        if (uri == ignorePageUrl) {
+            return false
+        }
         if (antPathMatcher.match("${webEndpointProperties.basePath}/**", uri)) {
             return true
         }
