@@ -78,6 +78,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         if (!isFullComposite) {
             import("org.junit.jupiter.api.Assertions")
             //info
+            val keyValue = if (primaryKeyType == JavaType.stringInstance) primaryKeyName else "String.valueOf(${primaryKeyName})"
             method("info", JavaType.void) {
 //                javadoc {
 //                    +"// ${remarks}详情"
@@ -92,7 +93,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +"Assertions.assertNotNull($primaryKeyName);"
                 +""
                 +"perform(get(\"/$pathName/info\")"
-                2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
+                2 + ".param(\"${primaryKeyName}\", $keyValue)"
                 +");"
             }
 
@@ -165,7 +166,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +""
                     +"perform(post(\"/$pathName/save\")"
                     2 + ".contentType(MediaType.APPLICATION_FORM_URLENCODED)"
-                    2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
+                    2 + ".param(\"${primaryKeyName}\", $keyValue)"
                     filterOtherColumns.forEach {
                         2 + ".param(\"${it.javaName}\", \"${it.randomValue}\")"
                     }
@@ -186,7 +187,7 @@ val controllerTest: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 }();"
                 +""
                 +"perform(get(\"/$pathName/delete\")"
-                2 + ".param(\"${primaryKeyName}\", String.valueOf(${primaryKeyName}))"
+                2 + ".param(\"${primaryKeyName}\", $keyValue)"
                 +");"
                 +"Assertions.assertFalse(${projectEntityName}Service.existsById(${primaryKeyName}));"
             }
