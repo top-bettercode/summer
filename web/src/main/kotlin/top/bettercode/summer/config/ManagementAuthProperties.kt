@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets
 @ConfigurationProperties("summer.management.auth")
 open class ManagementAuthProperties {
 
-    var enabledProfiles = arrayOf("!default & !dev & !test")
+    var enabledProfiles = "!default & !dev & !test"
 
     //--------------------------------------------
     var pattern = arrayOf<String>()
