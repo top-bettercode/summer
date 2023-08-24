@@ -33,7 +33,7 @@ open class CorpClient(properties: ICorpProperties) :
                 "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect"
         val authenticationUrl = String.format(
                 url,
-                getAppId(),
+                properties.appId,
                 URLEncoder.encode(properties.oauthUrl, "UTF-8"),
                 "snsapi_base"
         )
@@ -53,7 +53,7 @@ open class CorpClient(properties: ICorpProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
-            invalidateCache(BASE_ACCESS_TOKEN_KEY)
+            clearCache()
             getWebPageAccessToken(code, retries)
         } else if (retries < properties.maxRetries) {
             getWebPageAccessToken(code, retries + 1)

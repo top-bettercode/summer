@@ -74,12 +74,8 @@ open class WeixinClient<T : IWexinProperties>(
         }
     }
 
-    @JvmOverloads
-    protected open fun invalidateCache(key: String? = null) {
-        if (key == null) {
-            cache.invalidateAll()
-        } else
-            cache.invalidate(key)
+    protected open fun clearCache() {
+        cache.invalidateAll()
     }
 
     @Synchronized
@@ -96,17 +92,16 @@ open class WeixinClient<T : IWexinProperties>(
 
     @JvmOverloads
     fun getBaseAccessToken(retries: Int = 1): String {
-        val appId = getAppId()
-        return putIfAbsent(BASE_ACCESS_TOKEN_KEY) {
-            getToken(appId, retries)
+        return putIfAbsent(BASE_ACCESS_TOKEN_KEY + ":" + properties.appId) {
+            getToken(retries)
         }
     }
 
-    private fun getToken(appId: String, retries: Int = 1): CachedValue {
+    private fun getToken(retries: Int = 1): CachedValue {
         val accessToken = getForObject<BasicAccessToken>(
                 properties.basicAccessTokenUrl,
-                appId,
-                getSecret()
+                properties.appId,
+                properties.secret
         )
         return if (accessToken.isOk) {
             CachedValue(
@@ -115,21 +110,10 @@ open class WeixinClient<T : IWexinProperties>(
             )
         } else if (retries < properties.maxRetries && accessToken.errcode != 40164) {
             //40164 调用接口的IP地址不在白名单中，请在接口IP白名单中进行设置。
-            getToken(appId, retries + 1)
+            getToken(retries + 1)
         } else {
             throw RuntimeException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")
         }
     }
 
-    protected fun getSecret(): String = properties.secret
-
-    protected fun getAppId(): String {
-        val appId = properties.appId
-        if (lastAppId != appId) {
-            invalidateCache()
-            lastAppId = appId
-        }
-
-        return appId
-    }
 }

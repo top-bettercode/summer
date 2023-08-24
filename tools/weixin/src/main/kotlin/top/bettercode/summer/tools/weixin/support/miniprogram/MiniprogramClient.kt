@@ -33,8 +33,8 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
     override fun jscode2session(code: String): JsSession {
         val session = getForObject<JsSession>(
                 "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={1}&grant_type=authorization_code",
-                getAppId(),
-                getSecret(),
+                properties.appId,
+                properties.secret,
                 code
         )
         return if (session.isOk) {
@@ -57,7 +57,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
-            invalidateCache(BASE_ACCESS_TOKEN_KEY)
+            clearCache()
             getuserphonenumber(code, retries)
         } else if (retries < properties.maxRetries) {
             getuserphonenumber(code, retries + 1)
@@ -82,7 +82,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
-            invalidateCache(BASE_ACCESS_TOKEN_KEY)
+            clearCache()
             sendSubscribeMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendSubscribeMsg(request, retries + 1)
@@ -108,7 +108,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
-            invalidateCache(BASE_ACCESS_TOKEN_KEY)
+            clearCache()
             sendUniformMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendUniformMsg(request, retries + 1)

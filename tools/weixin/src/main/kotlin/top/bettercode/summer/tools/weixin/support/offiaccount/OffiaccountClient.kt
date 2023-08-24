@@ -29,7 +29,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
         ), IOffiaccountClient {
 
     companion object {
-        const val jsapiTicketKey: String = "jsapi_ticket"
+        const val JSAPI_TICKET_KEY: String = "jsapi_ticket:"
         const val LOG_MARKER = "weixin"
     }
 
@@ -38,7 +38,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
                 "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s#wechat_redirect"
         val authenticationUrl = String.format(
                 url,
-                getAppId(),
+                properties.appId,
                 URLEncoder.encode(properties.oauthUrl, "UTF-8"),
                 "snsapi_userinfo"
         )
@@ -50,7 +50,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
     }
 
     override fun getJsapiTicket(retries: Int): String {
-        return putIfAbsent(jsapiTicketKey) {
+        return putIfAbsent(JSAPI_TICKET_KEY + ":" + properties.appId) {
             getTicket(retries)
         }
     }
@@ -66,7 +66,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
                     LocalDateTime.now().plusSeconds(jsapiTicket.expiresIn!!.toLong())
             )
         } else if (40001 == jsapiTicket.errcode) {
-            invalidateCache(BASE_ACCESS_TOKEN_KEY)
+            clearCache()
             getTicket(retries)
         } else if (retries < properties.maxRetries) {
             getTicket(retries + 1)
@@ -78,8 +78,8 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
     override fun getWebPageAccessToken(code: String): WebPageAccessToken {
         return getForObject(
                 "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code",
-                getAppId(),
-                getSecret(),
+                properties.appId,
+                properties.secret,
                 code
         )
     }
@@ -129,7 +129,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
             result
         } else if (40001 == result.errcode) {
             //40001 access_token无效
-            invalidateCache(BASE_ACCESS_TOKEN_KEY)
+            clearCache()
             sendTemplateMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendTemplateMsg(request, retries + 1)
@@ -156,7 +156,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
                         "&url=" + url
         )
 
-        return JsapiSignature(signature, getAppId(), nonceStr, timestamp)
+        return JsapiSignature(signature, properties.appId, nonceStr, timestamp)
     }
 
     override fun shaHex(vararg str: String): String {
