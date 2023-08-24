@@ -20,7 +20,7 @@ import java.util.*
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
-class OffiaccountClient(properties: IOffiaccountProperties) :
+open class OffiaccountClient(properties: IOffiaccountProperties) :
         WeixinClient<IOffiaccountProperties>(
                 properties,
                 "第三方平台",

@@ -16,7 +16,7 @@ import java.net.URLEncoder
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
-class CorpClient(properties: ICorpProperties) :
+open class CorpClient(properties: ICorpProperties) :
         WeixinClient<ICorpProperties>(
                 properties,
                 "第三方平台",

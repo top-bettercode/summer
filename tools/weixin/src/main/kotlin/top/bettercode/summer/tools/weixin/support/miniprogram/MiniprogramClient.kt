@@ -18,7 +18,7 @@ import top.bettercode.summer.tools.weixin.support.miniprogram.entity.UniformMsgR
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
-class MiniprogramClient(properties: IMiniprogramProperties) :
+open class MiniprogramClient(properties: IMiniprogramProperties) :
         WeixinClient<IMiniprogramProperties>(
                 properties,
                 "第三方平台",

@@ -62,7 +62,7 @@ open class WeixinClient<T : IWexinProperties>(
                 .maximumSize(1000).build()
     }
 
-    protected fun getFromCacheIfPresent(key: String): String? {
+    protected open fun getFromCacheIfPresent(key: String): String? {
         val cachedValue = cache.getIfPresent(key)
         return if (cachedValue == null || cachedValue.expired) {
             null
@@ -71,11 +71,11 @@ open class WeixinClient<T : IWexinProperties>(
         }
     }
 
-    protected fun invalidate(key: String) {
+    protected open fun invalidate(key: String) {
         cache.invalidate(key)
     }
 
-    protected fun putInCache(key: String, cachedValue: CachedValue) {
+    protected open fun putInCache(key: String, cachedValue: CachedValue) {
         cache.put(key, cachedValue)
     }
 
