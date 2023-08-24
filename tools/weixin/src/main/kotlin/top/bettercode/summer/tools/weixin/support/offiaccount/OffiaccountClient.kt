@@ -50,31 +50,28 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
     }
 
     override fun getJsapiTicket(retries: Int): String {
-        val cachedTicket = getFromCacheIfPresent(jsapiTicketKey)
-        return if (cachedTicket == null) {
-            val jsapiTicket = getForObject<JsapiTicket>(
-                    "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
-                    getBaseAccessToken()
+        return putIfAbsent(jsapiTicketKey) {
+            getTicket(retries)
+        }
+    }
+
+    private fun getTicket(retries: Int): CachedValue {
+        val jsapiTicket = getForObject<JsapiTicket>(
+                "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
+                getBaseAccessToken()
+        )
+        return if (jsapiTicket.isOk) {
+            CachedValue(
+                    jsapiTicket.ticket!!,
+                    LocalDateTime.now().plusSeconds(jsapiTicket.expiresIn!!.toLong())
             )
-            if (jsapiTicket.isOk) {
-                putInCache(
-                        jsapiTicketKey,
-                        CachedValue(
-                                jsapiTicket.ticket!!,
-                                LocalDateTime.now().plusSeconds(jsapiTicket.expiresIn!!.toLong())
-                        )
-                )
-                jsapiTicket.ticket
-            } else if (40001 == jsapiTicket.errcode) {
-                invalidate(BASE_ACCESS_TOKEN_KEY)
-                getJsapiTicket(retries)
-            } else if (retries < properties.maxRetries) {
-                getJsapiTicket(retries + 1)
-            } else {
-                throw WeixinException("获取jsapiTicket失败：${jsapiTicket.errmsg}", jsapiTicket)
-            }
+        } else if (40001 == jsapiTicket.errcode) {
+            invalidateCache(BASE_ACCESS_TOKEN_KEY)
+            getTicket(retries)
+        } else if (retries < properties.maxRetries) {
+            getTicket(retries + 1)
         } else {
-            cachedTicket
+            throw WeixinException("获取jsapiTicket失败：${jsapiTicket.errmsg}", jsapiTicket)
         }
     }
 
@@ -121,7 +118,7 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
             result
         } else if (40001 == result.errcode) {
             //40001 access_token无效
-            invalidate(BASE_ACCESS_TOKEN_KEY)
+            invalidateCache(BASE_ACCESS_TOKEN_KEY)
             sendTemplateMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendTemplateMsg(request, retries + 1)

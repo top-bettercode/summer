@@ -57,7 +57,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
-            invalidate(BASE_ACCESS_TOKEN_KEY)
+            invalidateCache(BASE_ACCESS_TOKEN_KEY)
             getuserphonenumber(code, retries)
         } else if (retries < properties.maxRetries) {
             getuserphonenumber(code, retries + 1)
@@ -82,7 +82,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
-            invalidate(BASE_ACCESS_TOKEN_KEY)
+            invalidateCache(BASE_ACCESS_TOKEN_KEY)
             sendSubscribeMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendSubscribeMsg(request, retries + 1)
@@ -108,7 +108,7 @@ open class MiniprogramClient(properties: IMiniprogramProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
-            invalidate(BASE_ACCESS_TOKEN_KEY)
+            invalidateCache(BASE_ACCESS_TOKEN_KEY)
             sendUniformMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendUniformMsg(request, retries + 1)
