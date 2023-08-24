@@ -115,8 +115,11 @@ constructor(
     }
 
     fun clear() {
-        val pattern = conversionService.convert(createCacheKey("*"), ByteArray::class.java)!!
-        cacheWriter.clean(cacheName, pattern)
+        clear("*")
+    }
+
+    fun clear(pattern: String) {
+        cacheWriter.clean(cacheName, conversionService.convert(createCacheKey(pattern), ByteArray::class.java)!!)
     }
 
     private fun lookup(key: Any): Any? {
