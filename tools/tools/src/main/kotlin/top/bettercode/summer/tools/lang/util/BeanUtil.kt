@@ -13,10 +13,7 @@ object BeanUtil {
     }
 
     @JvmStatic
-    fun Any.nullOrEmptyFrom(
-            exist: Any,
-            setEmptyProperty: Boolean = true
-    ) {
+    fun Any.nullOrEmptyFrom(exist: Any, setEmptyProperty: Boolean = true) {
         Assert.notNull(exist, "exist must not be null")
         Assert.notNull(this, "newEntity must not be null")
         val existWrapper = DirectFieldAccessFallbackBeanWrapper(exist)
@@ -32,6 +29,23 @@ object BeanUtil {
                 continue
             }
             thisWrapper.setPropertyValue(propertyName, existWrapper.getPropertyValue(propertyName))
+        }
+    }
+
+    @JvmStatic
+    fun Any.copyNotNull(exist: Any) {
+        Assert.notNull(exist, "exist must not be null")
+        Assert.notNull(this, "newEntity must not be null")
+        val existWrapper = DirectFieldAccessFallbackBeanWrapper(exist)
+        val thisWrapper = DirectFieldAccessFallbackBeanWrapper(this)
+        val targetPds = thisWrapper.propertyDescriptors
+        for (targetPd in targetPds) {
+            val propertyName = targetPd.name
+            if ("class" == propertyName) {
+                continue
+            }
+            val propertyValue = existWrapper.getPropertyValue(propertyName) ?: continue
+            thisWrapper.setPropertyValue(propertyName, propertyValue)
         }
     }
 
