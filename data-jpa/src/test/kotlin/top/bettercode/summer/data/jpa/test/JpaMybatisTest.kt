@@ -103,6 +103,22 @@ class JpaMybatisTest {
     }
 
     @Test
+    fun userResultWithSelect() {
+        val users1 = sqlSession
+                .selectList<Any?>(UserRepository::class.java.name + ".userResultWithSelect",
+                        User("Carter", null))
+        System.err.println(json(users1, true))
+        Assertions.assertEquals(2, users1.size)
+        Assertions.assertThrows(UnsupportedOperationException::class.java
+        ) {
+            val users = repository.userResultWithSelect(User("Carter", null))
+            System.err.println(json(users, true))
+            Assertions.assertEquals(2, users!!.size)
+            Assertions.assertIterableEquals(users, users1)
+        }
+    }
+
+    @Test
     fun selectResultOne3() {
         Assertions.assertThrows(IncorrectResultSizeDataAccessException::class.java
         ) { repository.selectResultOne3(User("Carter", null)) }

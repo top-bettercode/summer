@@ -193,10 +193,6 @@ object JpaExtQueryLookupStrategy {
             em: EntityManager, extractor: QueryExtractor,
             private val createStrategy: CreateQueryLookupStrategy, private val lookupStrategy: DeclaredQueryLookupStrategy
     ) : AbstractQueryLookupStrategy(em, extractor, lookupStrategy.configuration) {
-        /*
-     * (non-Javadoc)
-     * @see org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy.AbstractQueryLookupStrategy#resolveQuery(org.springframework.data.jpa.repository.query.JpaQueryMethod, javax.persistence.EntityManager, org.springframework.data.repository.core.NamedQueries)
-     */
         override fun resolveQuery(
                 method: JpaExtQueryMethod, em: EntityManager,
                 namedQueries: NamedQueries

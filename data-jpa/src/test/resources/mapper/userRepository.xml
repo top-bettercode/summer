@@ -21,6 +21,28 @@
         </collection>
     </resultMap>
 
+    <resultMap id="userResultWithSelectMap" type="top.bettercode.summer.data.jpa.resp.AUser">
+        <result property="id" column="id"/>
+        <result property="firstName" column="first_name"/>
+        <association property="lastName"
+          javaType="top.bettercode.summer.data.jpa.resp.LastName">
+            <result property="lastName" column="last_name"/>
+            <result property="deleted" column="deleted"/>
+        </association>
+        <association property="lastName" column="{firstName=first_name,lastName=last_name}"
+          select="getLastName"/>
+    </resultMap>
+
+    <select id="getLastName" resultType="top.bettercode.summer.data.jpa.resp.LastName"
+      parameterType="top.bettercode.summer.data.jpa.domain.User">
+        select *
+        from t_user
+        where first_name = #{firstName}
+        <if test="lastName!=null">
+            and last_name = #{lastName}
+        </if>
+    </select>
+
     <resultMap id="userResultMap3" type="top.bettercode.summer.data.jpa.resp.AUser">
         <result property="id" column="id"/>
         <result property="firstName" column="first_name"/>
@@ -53,6 +75,15 @@
 
     <select id="selectResultMap3" resultMap="userResultMap3"
             parameterType="top.bettercode.summer.data.jpa.domain.User">
+        select *
+        from t_user
+        where first_name = #{firstName}
+        <if test="lastName!=null">
+            and last_name = #{lastName}
+        </if>
+    </select>
+    <select id="userResultWithSelect" resultMap="userResultWithSelectMap"
+      parameterType="top.bettercode.summer.data.jpa.domain.User">
         select *
         from t_user
         where first_name = #{firstName}

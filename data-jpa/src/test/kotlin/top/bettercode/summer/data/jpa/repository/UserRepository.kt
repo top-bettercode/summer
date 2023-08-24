@@ -34,6 +34,7 @@ interface UserRepository : JpaExtRepository<User?, Int?>, QuerydslPredicateExecu
 
     //  Page<CUsers> selectResultMap2(User user, Pageable pageable);
     fun selectResultMap3(user: User?): List<AUser?>?
+    fun userResultWithSelect(user: User?): List<AUser?>?
     fun selectResultOne3(user: User?): AUser?
 
     @QueryFirst
