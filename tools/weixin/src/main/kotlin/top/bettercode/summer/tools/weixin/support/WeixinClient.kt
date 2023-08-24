@@ -12,8 +12,8 @@ import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccess
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.time.LocalDateTime
+import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
-import java.util.function.Function
 
 /**
  * 公众号接口
@@ -68,8 +68,10 @@ open class WeixinClient<T : IWexinProperties>(
         cache.put(key, value)
     }
 
-    protected open fun putCacheIfAbsent(key: String, mappingFunction: Function<String, CachedValue>): CachedValue? {
-        return cache.get(key, mappingFunction)
+    protected open fun putCacheIfAbsent(key: String, callable: Callable<CachedValue>): CachedValue? {
+        return cache.get(key) {
+            callable.call()
+        }
     }
 
     @JvmOverloads
@@ -81,10 +83,10 @@ open class WeixinClient<T : IWexinProperties>(
     }
 
     @Synchronized
-    protected fun putIfAbsent(key: String, mappingFunction: Function<String, CachedValue>): String {
-        val cachedValue = putCacheIfAbsent(key, mappingFunction)
+    protected fun putIfAbsent(key: String, callable: Callable<CachedValue>): String {
+        val cachedValue = putCacheIfAbsent(key, callable)
         return if (cachedValue == null || cachedValue.expired) {
-            val value = mappingFunction.apply(key)
+            val value = callable.call()
             putCache(key, value)
             value.value
         } else {
