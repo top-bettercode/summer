@@ -7,7 +7,7 @@ import top.bettercode.summer.test.BaseTest
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.weixin.support.miniprogram.IMiniprogramClient
-import top.bettercode.summer.tools.weixin.support.miniprogram.entity.Data
+import top.bettercode.summer.tools.weixin.support.miniprogram.entity.MiniData
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.SubscribeMsgRequest
 import java.time.format.DateTimeFormatter
 
@@ -40,17 +40,16 @@ internal class MiniprogramClientTest : BaseTest() {
         val request = SubscribeMsgRequest(
                 "",
                 "",
-                mapOf(
-                        "first" to Data("抱歉，您参与的竞拍未中标！"),
-                        "keyword1" to Data("xxxxx"),
-                        "keyword2" to Data(
-                                TimeUtil.now()
-                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                                        + "至" + TimeUtil.now()
-                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                        ),
-                        "keyword3" to Data("25.5")
-                )
+                MiniData().of(
+                        "first", "抱歉，您参与的竞拍未中标！")
+                        .of("keyword1", "xxxxx")
+                        .of("keyword2", TimeUtil.now()
+                                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                                + "至" + TimeUtil.now()
+                                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                        )
+                        .of("keyword3", "25.5")
+
         )
         val result = miniprogramClient.sendSubscribeMsg(request)
         System.err.println(StringUtil.json(result, true))

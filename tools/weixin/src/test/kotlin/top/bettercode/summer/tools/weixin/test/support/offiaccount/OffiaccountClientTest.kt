@@ -7,7 +7,7 @@ import top.bettercode.summer.test.BaseTest
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.lang.util.TimeUtil
 import top.bettercode.summer.tools.weixin.support.offiaccount.OffiaccountClient
-import top.bettercode.summer.tools.weixin.support.offiaccount.entity.Data
+import top.bettercode.summer.tools.weixin.support.offiaccount.entity.MpData
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.TemplateMsgRequest
 import java.time.format.DateTimeFormatter
 
@@ -52,17 +52,11 @@ internal class OffiaccountClientTest : BaseTest() {
         val request = TemplateMsgRequest(
                 "",
                 "",
-                mapOf(
-                        "first" to Data("抱歉，您参与的竞拍未中标！"),
-                        "keyword1" to Data("xxxxx"),
-                        "keyword2" to Data(
-                                TimeUtil.now()
-                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                                        + "至" + TimeUtil.now()
-                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                        ),
-                        "keyword3" to Data("25.5")
-                )
+                MpData().of(
+                        "first", "抱歉，您参与的竞拍未中标！")
+                        .of("keyword1", "xxxxx")
+                        .of("keyword2", TimeUtil.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "至" + TimeUtil.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .of("keyword3", "25.5")
         )
         val result = offiaccountClient.sendTemplateMsg(request)
         System.err.println(StringUtil.json(result, true))
