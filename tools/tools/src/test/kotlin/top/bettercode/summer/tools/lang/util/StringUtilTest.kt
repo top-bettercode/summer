@@ -2,11 +2,22 @@ package top.bettercode.summer.tools.lang.util
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import top.bettercode.summer.tools.lang.util.StringUtil.objectMapper
 
 /**
  * @author Peter Wu
  */
 class StringUtilTest {
+
+    @Test
+    fun jsonNode() {
+        val objectMapper = objectMapper()
+        val json = objectMapper.createObjectNode()
+        json.put("name", "peter")
+        json.put("age", 18)
+        System.err.println(json.toString())
+        Assertions.assertEquals("{\"name\":\"peter\",\"age\":18}", json.toString())
+    }
 
     @Test
     fun valueOf() {

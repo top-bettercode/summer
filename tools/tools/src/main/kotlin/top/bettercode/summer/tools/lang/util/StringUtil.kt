@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.springframework.util.StringUtils
 import java.io.*
 import java.nio.charset.Charset
@@ -226,6 +227,11 @@ object StringUtil {
         return ret.toString()
     }
 
+    @JvmStatic
+    fun createObjectNode(): ObjectNode {
+        return objectMapper().createObjectNode()
+    }
+
     @JvmOverloads
     @JvmStatic
     fun json(`object`: Any?, format: Boolean = false, escapeNonAscii: Boolean = false): String {
@@ -238,6 +244,27 @@ object StringUtil {
         return objectMapper(format, escapeNonAscii).writeValueAsBytes(`object`)
     }
 
+    @JvmStatic
+    fun readJsonTree(`object`: ByteArray): JsonNode {
+        return objectMapper().readTree(`object`)
+    }
+
+    @JvmStatic
+    fun readJsonTree(`object`: String): JsonNode {
+        return objectMapper().readTree(`object`)
+    }
+
+    @JvmStatic
+    fun readJson(`object`: ByteArray): Map<String, Any?> {
+        val valueType = objectMapper().typeFactory.constructMapType(HashMap::class.java, String::class.java, Any::class.java)
+        return objectMapper().readValue(`object`, valueType)
+    }
+
+    @JvmStatic
+    fun readJson(`object`: String): Map<String, Any?> {
+        val valueType = objectMapper().typeFactory.constructMapType(HashMap::class.java, String::class.java, Any::class.java)
+        return objectMapper().readValue(`object`, valueType)
+    }
 
     @JvmStatic
     fun <T> readJson(`object`: ByteArray, valueType: Class<T>): T {
