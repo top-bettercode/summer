@@ -5,17 +5,28 @@ import com.fasterxml.jackson.annotation.JsonProperty
 /**
  * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-message-management/subscribe-message/sendMessage.html
  */
-data class SubscribeMsgRequest<T> @JvmOverloads constructor(
+data class SubscribeMsgRequest @JvmOverloads constructor(
 
+        /**
+         * 接收者（用户）的 openid
+         */
         @field:JsonProperty("touser")
         val touser: String,
-
+        /**
+         * 所需下发的订阅模板id
+         */
         @field:JsonProperty("template_id")
         val templateId: String,
 
+        /**
+         * 模板内容，格式形如 { "key1": { "value": any }, "key2": { "value": any } }的object
+         */
         @field:JsonProperty("data")
-        val data: T,
+        val data: Map<String, Data>,
 
+        /**
+         * 点击模板卡片后的跳转页面，仅限本小程序内的页面。支持带参数,（示例index?foo=bar）。该字段不填则模板无跳转
+         */
         @field:JsonProperty("page")
         val page: String? = null,
 

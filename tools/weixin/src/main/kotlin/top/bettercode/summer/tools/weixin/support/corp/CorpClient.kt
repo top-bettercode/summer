@@ -53,7 +53,7 @@ class CorpClient(properties: ICorpProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
-            cache.invalidate(baseAccessTokenKey)
+            invalidate(BASE_ACCESS_TOKEN_KEY)
             getWebPageAccessToken(code, retries)
         } else if (retries < properties.maxRetries) {
             getWebPageAccessToken(code, retries + 1)

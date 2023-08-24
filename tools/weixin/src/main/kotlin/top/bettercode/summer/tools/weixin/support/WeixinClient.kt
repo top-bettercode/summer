@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.weixin.support
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
@@ -34,13 +35,8 @@ open class WeixinClient<T : IWexinProperties>(
 
     private var lastAppId = properties.appId
 
-    protected val cache =
-            Caffeine.newBuilder().expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
-                    .maximumSize(1000).build<String, CachedValue>()
-
-
     companion object {
-        const val baseAccessTokenKey: String = "access_token"
+        const val BASE_ACCESS_TOKEN_KEY: String = "access_token"
     }
 
     init {
@@ -61,19 +57,41 @@ open class WeixinClient<T : IWexinProperties>(
         super.setMessageConverters(messageConverters)
     }
 
+    private val cache: Cache<String, CachedValue> by lazy {
+        Caffeine.newBuilder().expireAfterWrite(properties.cacheSeconds, TimeUnit.SECONDS)
+                .maximumSize(1000).build()
+    }
+
+    protected fun getFromCacheIfPresent(key: String): String? {
+        val cachedValue = cache.getIfPresent(key)
+        return if (cachedValue == null || cachedValue.expired) {
+            null
+        } else {
+            cachedValue.value
+        }
+    }
+
+    protected fun invalidate(key: String) {
+        cache.invalidate(key)
+    }
+
+    protected fun putInCache(key: String, cachedValue: CachedValue) {
+        cache.put(key, cachedValue)
+    }
+
     @JvmOverloads
     fun getBaseAccessToken(retries: Int = 1): String {
         getAppId()
-        val cachedValue = cache.getIfPresent(baseAccessTokenKey)
-        return if (cachedValue == null || cachedValue.expired) {
+        val cachedAccessToken = getFromCacheIfPresent(BASE_ACCESS_TOKEN_KEY)
+        return if (cachedAccessToken == null) {
             val accessToken = getForObject<BasicAccessToken>(
                     properties.basicAccessTokenUrl,
                     getAppId(),
                     getSecret()
             )
             if (accessToken.isOk) {
-                cache.put(
-                        baseAccessTokenKey,
+                put(
+                        BASE_ACCESS_TOKEN_KEY,
                         CachedValue(
                                 accessToken.accessToken!!,
                                 LocalDateTime.now().plusSeconds(accessToken.expiresIn!!.toLong())
@@ -86,7 +104,7 @@ open class WeixinClient<T : IWexinProperties>(
                 throw RuntimeException("获取access_token失败：errcode:${accessToken.errcode},errmsg:${accessToken.errmsg}")
             }
         } else {
-            cachedValue.value
+            cachedAccessToken
         }
     }
 

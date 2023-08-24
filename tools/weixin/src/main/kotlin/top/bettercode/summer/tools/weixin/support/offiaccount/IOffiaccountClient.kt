@@ -22,9 +22,9 @@ interface IOffiaccountClient {
 
     fun getSnsapiUserinfo(accessToken: String, openid: String, lang: String): SnsapiUserinfo
 
-    fun <T> sendTemplateMsg(request: TemplateMsgRequest<T>): MsgResult
+    fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult
 
-    fun <T> sendTemplateMsg(request: TemplateMsgRequest<T>, retries: Int): MsgResult
+    fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int): MsgResult
 
     //--------------------------------------------
 

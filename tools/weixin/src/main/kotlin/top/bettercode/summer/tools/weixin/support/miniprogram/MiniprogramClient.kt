@@ -11,6 +11,7 @@ import top.bettercode.summer.tools.weixin.support.miniprogram.MiniprogramClient.
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.JsSession
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.PhoneInfoResp
 import top.bettercode.summer.tools.weixin.support.miniprogram.entity.SubscribeMsgRequest
+import top.bettercode.summer.tools.weixin.support.miniprogram.entity.UniformMsgRequest
 
 /**
  *
@@ -56,7 +57,7 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
-            cache.invalidate(baseAccessTokenKey)
+            invalidate(BASE_ACCESS_TOKEN_KEY)
             getuserphonenumber(code, retries)
         } else if (retries < properties.maxRetries) {
             getuserphonenumber(code, retries + 1)
@@ -65,11 +66,11 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         }
     }
 
-    override fun <T> sendSubscribeMsg(request: SubscribeMsgRequest<T>): WeixinResponse {
+    override fun sendSubscribeMsg(request: SubscribeMsgRequest): WeixinResponse {
         return sendSubscribeMsg(request, 1)
     }
 
-    override fun <T> sendSubscribeMsg(request: SubscribeMsgRequest<T>, retries: Int): WeixinResponse {
+    override fun sendSubscribeMsg(request: SubscribeMsgRequest, retries: Int): WeixinResponse {
         if (request.miniprogramState == null) {
             request.miniprogramState = properties.miniprogramState
         }
@@ -81,13 +82,12 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         return if (result.isOk) {
             result
         } else if (40001 == result.errcode) {
-            cache.invalidate(baseAccessTokenKey)
+            invalidate(BASE_ACCESS_TOKEN_KEY)
             sendSubscribeMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendSubscribeMsg(request, retries + 1)
-        } else if (43004 == result.errcode || 43101 == result.errcode) {
-            //43101 用户拒绝接收消息
-            //43004 需要接收者关注
+        } else if (43101 == result.errcode) {
+            //43101 用户未订阅消息
             log.warn("发送订阅消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
             result
         } else {
@@ -95,4 +95,29 @@ class MiniprogramClient(properties: IMiniprogramProperties) :
         }
     }
 
+    override fun sendUniformMsg(request: UniformMsgRequest): WeixinResponse {
+        return sendUniformMsg(request, 1)
+    }
+
+    override fun sendUniformMsg(request: UniformMsgRequest, retries: Int): WeixinResponse {
+        val result = postForObject<WeixinResponse>(
+                "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={0}",
+                request,
+                getBaseAccessToken()
+        )
+        return if (result.isOk) {
+            result
+        } else if (40001 == result.errcode) {
+            invalidate(BASE_ACCESS_TOKEN_KEY)
+            sendUniformMsg(request, retries)
+        } else if (retries < properties.maxRetries) {
+            sendUniformMsg(request, retries + 1)
+        } else if (43004 == result.errcode) {
+            //43004 需要接收者关注
+            log.warn("发送模板消息失败：errcode:${result.errcode},errmsg:${result.errmsg}")
+            result
+        } else {
+            throw WeixinException("发送统一服务消息失败：${result.errmsg}", result)
+        }
+    }
 }

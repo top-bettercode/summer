@@ -50,14 +50,14 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
     }
 
     override fun getJsapiTicket(retries: Int): String {
-        val cachedValue = cache.getIfPresent(jsapiTicketKey)
-        return if (cachedValue == null || cachedValue.expired) {
+        val cachedTicket = getFromCacheIfPresent(jsapiTicketKey)
+        return if (cachedTicket == null) {
             val jsapiTicket = getForObject<JsapiTicket>(
                     "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
                     getBaseAccessToken()
             )
             if (jsapiTicket.isOk) {
-                cache.put(
+                putInCache(
                         jsapiTicketKey,
                         CachedValue(
                                 jsapiTicket.ticket!!,
@@ -66,7 +66,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
                 )
                 jsapiTicket.ticket
             } else if (40001 == jsapiTicket.errcode) {
-                cache.invalidate(baseAccessTokenKey)
+                invalidate(BASE_ACCESS_TOKEN_KEY)
                 getJsapiTicket(retries)
             } else if (retries < properties.maxRetries) {
                 getJsapiTicket(retries + 1)
@@ -74,7 +74,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
                 throw WeixinException("获取jsapiTicket失败：${jsapiTicket.errmsg}", jsapiTicket)
             }
         } else {
-            cachedValue.value
+            cachedTicket
         }
     }
 
@@ -104,11 +104,14 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
         )
     }
 
-    override fun <T> sendTemplateMsg(request: TemplateMsgRequest<T>): MsgResult {
+    override fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult {
         return sendTemplateMsg(request, 1)
     }
 
-    override fun <T> sendTemplateMsg(request: TemplateMsgRequest<T>, retries: Int): MsgResult {
+    /**
+     * https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Template_Message_Interface.html
+     */
+    override fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int): MsgResult {
         val result = postForObject<MsgResult>(
                 "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}",
                 request,
@@ -118,7 +121,7 @@ class OffiaccountClient(properties: IOffiaccountProperties) :
             result
         } else if (40001 == result.errcode) {
             //40001 access_token无效
-            cache.invalidate(baseAccessTokenKey)
+            invalidate(BASE_ACCESS_TOKEN_KEY)
             sendTemplateMsg(request, retries)
         } else if (retries < properties.maxRetries) {
             sendTemplateMsg(request, retries + 1)
