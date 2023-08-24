@@ -22,6 +22,13 @@ interface IOffiaccountClient {
 
     fun getSnsapiUserinfo(accessToken: String, openid: String, lang: String): SnsapiUserinfo
 
+    /**
+     * https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html#UinonId
+     */
+    fun getUserInfo(openid: String): UserInfo
+
+    fun getUserInfo(openid: String, lang: String): UserInfo
+
     fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult
 
     fun sendTemplateMsg(request: TemplateMsgRequest, retries: Int): MsgResult

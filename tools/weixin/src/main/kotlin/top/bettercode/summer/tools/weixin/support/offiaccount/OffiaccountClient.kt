@@ -85,9 +85,12 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
     }
 
     override fun getSnsapiUserinfo(accessToken: String, openid: String): SnsapiUserinfo {
-        return getSnsapiUserinfo(openid, "zh_CN")
+        return getSnsapiUserinfo(accessToken, openid, "zh_CN")
     }
 
+    /**
+     * https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html#3
+     */
     override fun getSnsapiUserinfo(
             accessToken: String,
             openid: String,
@@ -99,6 +102,14 @@ open class OffiaccountClient(properties: IOffiaccountProperties) :
                 openid,
                 lang
         )
+    }
+
+    override fun getUserInfo(openid: String): UserInfo {
+        return getUserInfo(openid, "zh_CN")
+    }
+
+    override fun getUserInfo(openid: String, lang: String): UserInfo {
+        return getForObject("https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}", getBaseAccessToken(), openid, lang)
     }
 
     override fun sendTemplateMsg(request: TemplateMsgRequest): MsgResult {
