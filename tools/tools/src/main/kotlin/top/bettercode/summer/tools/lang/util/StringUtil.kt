@@ -33,6 +33,7 @@ object StringUtil {
     @JvmField
     val LINE_SEPARATOR: String = System.getProperty("line.separator", "\n")
 
+    @JvmOverloads
     @JvmStatic
     fun objectMapper(format: Boolean = false, escapeNonAscii: Boolean = false): ObjectMapper {
         val key = "$format:$escapeNonAscii"
