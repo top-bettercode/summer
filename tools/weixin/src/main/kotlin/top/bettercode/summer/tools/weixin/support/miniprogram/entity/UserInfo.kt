@@ -25,5 +25,9 @@ data class UserInfo(
         val avatarUrl: String? = null,
 
         @field:JsonProperty("language")
-        val language: String? = null
+        val language: String? = null,
+
+        @field:JsonProperty("phoneNumber")
+        val phoneNumber: String? = null
+
 )

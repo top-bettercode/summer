@@ -61,7 +61,7 @@ data class JsSession(
         cipher.init(Cipher.DECRYPT_MODE, spec, parameters) // 初始化
         val resultByte = cipher.doFinal(dataByte)
         this.userInfo = if (null != resultByte && resultByte.isNotEmpty()) {
-            log.debug("解密后的数据：" + String(resultByte))
+            log.info("解密后的数据：" + String(resultByte))
             StringUtil.readJson(resultByte, UserInfo::class.java)
         } else null
         return this
