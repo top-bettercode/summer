@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.generator.puml
 
+import org.springframework.util.Assert
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.GeneratorExtension
@@ -93,6 +94,7 @@ object PumlConverter {
                         val fieldDef = lineDef[0]
                         val fieldDefs = fieldDef.split(" +: +".toRegex())
                         val columnName = fieldDefs[0].trim()
+                        Assert.isTrue(fieldDefs.size == 2, "字段定义错误：$line")
                         val columnDef = fieldDefs[1]
                         val unsigned = columnDef.contains(" UNSIGNED ", true)
                         val unique = columnDef.contains(" UNIQUE ", true)
