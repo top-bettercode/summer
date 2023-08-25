@@ -22,6 +22,7 @@ import javax.persistence.Query
  */
 internal class MybatisParameterBinder(
         private val parameters: JpaParameters,
+        private val paramed: Boolean,
         private val mappedStatement: MappedStatement
 ) : ParameterBinder(parameters, emptyList()) {
     private val typeHandlerRegistry: TypeHandlerRegistry = mappedStatement.configuration.typeHandlerRegistry
@@ -132,7 +133,7 @@ internal class MybatisParameterBinder(
                 bindableSize++
             }
         }
-        params = if (bindableSize > 1) paramMap else params
+        params = if (paramed || bindableSize > 1) paramMap else params
         val parameterObject = params
         val boundSql = mappedStatement.getBoundSql(parameterObject)
         return MybatisParam(boundSql, parameterObject, size)

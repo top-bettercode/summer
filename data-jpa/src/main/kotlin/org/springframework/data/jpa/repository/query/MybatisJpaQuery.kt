@@ -29,6 +29,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
     private val resultTransformer: MybatisResultTransformer
     private val isModifyingQuery: Boolean
     private val querySize: Int?
+    private val paramed: Boolean = method.paramed
 
     init {
         mappedStatement = method.mappedStatement!!
@@ -101,7 +102,7 @@ class MybatisJpaQuery(method: JpaExtQueryMethod, em: EntityManager) : AbstractJp
     }
 
     override fun createBinder(): ParameterBinder {
-        return MybatisParameterBinder(queryMethod.parameters, mappedStatement)
+        return MybatisParameterBinder(queryMethod.parameters, paramed, mappedStatement)
     }
 
     override fun getExecution(): JpaQueryExecution {

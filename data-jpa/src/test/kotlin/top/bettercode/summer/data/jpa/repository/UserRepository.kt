@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.querydsl.QuerydslPredicateExecutor
+import org.springframework.data.repository.query.Param
 import top.bettercode.summer.data.jpa.JpaExtRepository
 import top.bettercode.summer.data.jpa.domain.User
 import top.bettercode.summer.data.jpa.querydsl.RecycleQuerydslPredicateExecutor
@@ -65,7 +66,7 @@ interface UserRepository : JpaExtRepository<User?, Int?>, QuerydslPredicateExecu
     fun selectMybatisStream(firstName: String?, lastName: String?): Stream<User?>
     fun selectByMybatisMap(param: Map<String, String>?): List<User?>?
     fun selectByMybatisMap(pageable: Pageable?, param: Map<String, String>?): Page<User?>
-    fun selectByMybatisEntity(user: User?, pageable: Pageable?): List<User?>?
+    fun selectByMybatisEntity(@Param("user") @org.apache.ibatis.annotations.Param("user") user: User?, pageable: Pageable?): List<User?>?
     fun selectByMybatisSort(firstName: String?, sort: Sort?): List<User?>?
     fun selectByMybatisSort(firstName: String?, pageable: Pageable?): Page<User?>?
     fun selectOneByMybatis(firstName: String?): User?
