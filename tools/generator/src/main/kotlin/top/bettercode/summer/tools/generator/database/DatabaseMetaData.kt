@@ -119,7 +119,7 @@ class DatabaseMetaData(
                 val name = getString("TABLE_NAME")
                 val tableCat = getString("TABLE_CAT")
                 val tableType = getString("TABLE_TYPE")
-                val remarks = getString("REMARKS")
+                val remarks = getString("REMARKS")?.replace("[\t\n\r]".toRegex(), "")?.trim() ?: ""
                 val engine: String = getEngine(name)
                 val collate: String = getCollate(name)
                 val charset = collate.substringBefore("_")
@@ -153,7 +153,7 @@ class DatabaseMetaData(
                         schema = schema ?: datasource.schema,
                         tableName = name,
                         tableType = tableType,
-                        remarks = remarks?.trim() ?: "",
+                        remarks = remarks,
                         primaryKeyNames = primaryKeyNames,
                         indexes = indexes,
                         pumlColumns = columns.toMutableList(),
@@ -364,7 +364,7 @@ class DatabaseMetaData(
                 if (def != null && def.isNotEmpty() && def.isBlank()) " " else def?.trim('\'')?.trim()
                         ?.trim()
         val columnSize = getInt("COLUMN_SIZE")
-        val remarks = getString("REMARKS")?.replace("[\t\n\r]", "")?.trim()
+        val remarks = getString("REMARKS")?.replace("[\t\n\r]".toRegex(), "")?.trim()
                 ?: ""
         val tableCat = getString("TABLE_CAT") ?: datasource.catalog
         val tableSchem = getString("TABLE_SCHEM") ?: datasource.schema
