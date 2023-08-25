@@ -1,6 +1,8 @@
 package top.bettercode.summer.tools.lang.operation
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 
 /**
@@ -12,6 +14,7 @@ abstract class AbstractOperationMessage(
         @JsonIgnore
         var content: ByteArray = ByteArray(0)
 ) {
+    private val log: Logger = LoggerFactory.getLogger(AbstractOperationMessage::class.java)
 
     val prettyContent: ByteArray
         @JsonIgnore
@@ -19,7 +22,12 @@ abstract class AbstractOperationMessage(
 
     val prettyContentAsString: String
         @JsonIgnore
-        get() = RequestConverter.toString(this.headers.contentType?.charset, prettyContent)
+        get() = RequestConverter.toString(try {
+            this.headers.contentType
+        } catch (e: Exception) {
+            log.warn("解析contentType失败", e)
+            null
+        }?.charset, prettyContent)
 
     var contentAsString: String
         get() = RequestConverter.toString(this.headers.contentType?.charset, content)
