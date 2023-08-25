@@ -144,6 +144,7 @@ open class GeneratorExtension(
                     ?: databases.values.first()).copy()
             database.module = moduleName
             database.driver = DatabaseDriver.UNKNOWN
+            database.extension = this
             database
         }
     }
