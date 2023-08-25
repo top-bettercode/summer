@@ -3,6 +3,7 @@ package top.bettercode.summer.data.jpa
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
@@ -157,5 +158,9 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
 
     override fun count(spec: Specification<T>?): Long {
         return repository.count(spec)
+    }
+
+    protected fun <E> newPage(page: Page<E>, content: List<E>): Page<E> {
+        return PageImpl(content, page.pageable, page.totalElements)
     }
 }
