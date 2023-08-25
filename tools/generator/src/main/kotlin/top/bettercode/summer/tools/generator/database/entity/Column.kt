@@ -61,6 +61,10 @@ data class Column(
         var generatedColumn: Boolean = false,
         var version: Boolean = false,
         var softDelete: Boolean = false,
+        var createdDate: Boolean = false,
+        var createdBy: Boolean = false,
+        var lastModifiedDate: Boolean = false,
+        var lastModifiedBy: Boolean = false,
         var asBoolean: Boolean = false
 ) {
     init {

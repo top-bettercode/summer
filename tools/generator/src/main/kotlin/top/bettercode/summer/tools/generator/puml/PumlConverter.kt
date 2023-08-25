@@ -101,6 +101,10 @@ object PumlConverter {
                         val indexed = columnDef.contains(" INDEX ", true)
                         val autoIncrement = columnDef.contains(" AUTO_INCREMENT ", true) || columnDef.contains(" AUTOINCREMENT ", true)
                         val version = columnDef.contains(" VERSION ", true)
+                        val createdDate = columnDef.contains(" CREATEDDATE ", true)
+                        val createdBy = columnDef.contains(" CREATEDBY ", true)
+                        val lastModifiedDate = columnDef.contains(" LASTMODIFIEDDATE ", true)
+                        val lastModifiedBy = columnDef.contains(" LASTMODIFIEDBY ", true)
                         val softDelete = columnDef.contains(" SOFTDELETE ", true)
                         val pk = columnDef.contains(" PK ", true)
                         val nullable = if (pk || version || softDelete) false else !columnDef.contains(" NOT NULL ", true)
@@ -120,6 +124,10 @@ object PumlConverter {
                         extra = extra.replace(" NULL ", " ", true)
                         extra = extra.replace(" PK ", " ", true)
                         extra = extra.replace(" VERSION ", " ", true)
+                        extra = extra.replace(" CREATEDDATE ", " ", true)
+                        extra = extra.replace(" CREATEDBY ", " ", true)
+                        extra = extra.replace(" LASTMODIFIEDDATE ", " ", true)
+                        extra = extra.replace(" LASTMODIFIEDBY ", " ", true)
                         extra = extra.replace(" SOFTDELETE ", " ", true)
                         extra = extra.replace(" ASBOOLEAN ", " ", true)
 
@@ -193,6 +201,10 @@ object PumlConverter {
                                 idgenerator = idgenerator.trim(),
                                 idgeneratorParam = idgeneratorParam.trim(),
                                 version = version,
+                                createdDate = createdDate,
+                                createdBy = createdBy,
+                                lastModifiedDate = lastModifiedDate,
+                                lastModifiedBy = lastModifiedBy,
                                 softDelete = softDelete,
                                 asBoolean = asBoolean,
                                 sequence = sequence.trim(),

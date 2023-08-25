@@ -246,11 +246,17 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (it.columnDef != null)
                     annotation("@org.hibernate.annotations.ColumnDefault(\"${it.columnDef}\")")
                 annotation(columnAnnotation(it))
-                if (it.javaName == "createdDate" && it.columnDef == null) {
+                if (it.createdDate) {
                     annotation("@org.springframework.data.annotation.CreatedDate")
                 }
-                if (it.javaName == "last_modified_date" && !it.extra.contains("ON UPDATE CURRENT_TIMESTAMP")) {
+                if (it.createdBy) {
+                    annotation("@org.springframework.data.annotation.CreatedBy")
+                }
+                if (it.lastModifiedDate) {
                     annotation("@org.springframework.data.annotation.LastModifiedDate")
+                }
+                if (it.lastModifiedBy) {
+                    annotation("@org.springframework.data.annotation.LastModifiedBy")
                 }
                 if (it.version) {
                     annotation("@javax.persistence.Version")
