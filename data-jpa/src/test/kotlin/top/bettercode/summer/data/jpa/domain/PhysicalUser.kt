@@ -8,7 +8,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "t_user")
-class HardUser {
+class PhysicalUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Int? = null
@@ -29,7 +29,7 @@ class HardUser {
         if (this === other) {
             return true
         }
-        if (other !is HardUser) {
+        if (other !is PhysicalUser) {
             return false
         }
         return deleted === other.deleted && id == other.id && firstName == other.firstName && lastName == other.lastName

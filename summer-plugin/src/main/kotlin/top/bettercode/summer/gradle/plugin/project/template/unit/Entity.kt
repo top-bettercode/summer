@@ -261,8 +261,8 @@ val entity: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 if (it.version) {
                     annotation("@javax.persistence.Version")
                 }
-                if (it.softDelete) {
-                    annotation("@top.bettercode.summer.data.jpa.SoftDelete")
+                if (it.logicalDelete) {
+                    annotation("@top.bettercode.summer.data.jpa.LogicalDelete")
                 }
                 if (it.numericBooleanType) {
                     annotation("@org.hibernate.annotations.Type(type = \"org.hibernate.type.NumericBooleanType\")")

@@ -29,11 +29,11 @@ open class Generator {
 
     val Column.docRemark: String
         get() = "${
-            (if (remark.isBlank()) "" else (if (softDelete) remark.split(Regex("[:：,， (（]"))[0] else remark.replace(
+            (if (remark.isBlank()) "" else (if (logicalDelete) remark.split(Regex("[:：,， (（]"))[0] else remark.replace(
                     "@",
                     "\\@"
             )))
-        }${if (columnDef == null || softDelete) "" else " 默认值：${if (columnDef!!.isBlank()) "'$columnDef'" else columnDef}"}"
+        }${if (columnDef == null || logicalDelete) "" else " 默认值：${if (columnDef!!.isBlank()) "'$columnDef'" else columnDef}"}"
 
     val Column.paramRemark: String
         get() = if (docRemark.isBlank()) "" else "@param $javaName $docRemark"

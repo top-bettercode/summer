@@ -131,8 +131,8 @@ data class Table(
     val module: String
         get() = database.module
 
-    val supportSoftDelete: Boolean
-        get() = columns.find { it.softDelete } != null
+    val supportLogicalDelete: Boolean
+        get() = columns.find { it.logicalDelete } != null
 
     val className: String
         get() = database.className(tableName)

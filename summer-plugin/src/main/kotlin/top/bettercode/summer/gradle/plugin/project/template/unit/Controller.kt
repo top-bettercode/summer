@@ -77,7 +77,7 @@ val controller: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 columns.forEachIndexed { i, it ->
                     val code =
                             if (it.isCodeField) {
-                                if (it.columnName.contains("_") || it.softDelete) ".code()" else ".code(${
+                                if (it.columnName.contains("_") || it.logicalDelete) ".code()" else ".code(${
                                     (className + it.javaName.capitalized())
                                 }Enum.ENUM_NAME)"
                             } else {

@@ -3,7 +3,7 @@ package top.bettercode.summer.data.jpa.support
 import org.springframework.beans.BeanUtils
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
-import top.bettercode.summer.data.jpa.SoftDelete
+import top.bettercode.summer.data.jpa.LogicalDelete
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -20,8 +20,8 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
     /**
      * 是否支持逻辑删除
      */
-    private var supportSoftDeleted = false
-    final override var softDeletedPropertyType: Class<*>? = null
+    private var supportLogicalDeleted = false
+    final override var logicalDeletedPropertyType: Class<*>? = null
     private var lastModifiedDatePropertyType: Class<*>? = null
     private var lastModifiedByPropertyType: Class<*>? = null
     private var versionPropertyType: Class<*>? = null
@@ -29,7 +29,7 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
     /**
      * 逻辑删除字段属性名.
      */
-    final override var softDeletedPropertyName: String? = null
+    final override var logicalDeletedPropertyName: String? = null
     final override var lastModifiedDatePropertyName: String? = null
     final override var lastModifiedByPropertyName: String? = null
     final override var versionPropertyName: String? = null
@@ -37,14 +37,14 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
     /**
      * 默认逻辑删除值.
      */
-    final override var softDeletedTrueValue: Any? = null
+    final override var logicalDeletedTrueValue: Any? = null
 
     /**
      * 默认逻辑未删除值.
      */
-    final override var softDeletedFalseValue: Any? = null
-    private var softDeletedReadMethod: Method? = null
-    private var softDeletedWriteMethod: Method? = null
+    final override var logicalDeletedFalseValue: Any? = null
+    private var logicalDeletedReadMethod: Method? = null
+    private var logicalDeletedWriteMethod: Method? = null
 
     init {
         var trueValue: String? = null
@@ -52,13 +52,13 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
         var finish = 0
         val total = 4
         for (declaredField in domainClass.declaredFields) {
-            if (softDeletedPropertyName == null) {
-                val annotation = declaredField.getAnnotation(SoftDelete::class.java)
+            if (logicalDeletedPropertyName == null) {
+                val annotation = declaredField.getAnnotation(LogicalDelete::class.java)
                 if (annotation != null) {
                     trueValue = annotation.trueValue
                     falseValue = annotation.falseValue
-                    softDeletedPropertyName = declaredField.name
-                    softDeletedPropertyType = declaredField.type
+                    logicalDeletedPropertyName = declaredField.name
+                    logicalDeletedPropertyType = declaredField.type
                     finish++
                 }
             }
@@ -86,13 +86,13 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
         if (finish < total && domainClass.superclass.isAnnotationPresent(MappedSuperclass::class.java)) {
             val descriptClass = domainClass.superclass
             for (declaredField in descriptClass.declaredFields) {
-                if (softDeletedPropertyName == null) {
-                    val annotation = declaredField.getAnnotation(SoftDelete::class.java)
+                if (logicalDeletedPropertyName == null) {
+                    val annotation = declaredField.getAnnotation(LogicalDelete::class.java)
                     if (annotation != null) {
                         trueValue = annotation.trueValue
                         falseValue = annotation.falseValue
-                        softDeletedPropertyName = declaredField.name
-                        softDeletedPropertyType = declaredField.type
+                        logicalDeletedPropertyName = declaredField.name
+                        logicalDeletedPropertyType = declaredField.type
                         finish++
                     }
                 }
@@ -124,14 +124,14 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
                 if ("class" == propertyDescriptor.name) {
                     continue
                 }
-                if (softDeletedPropertyName == null) {
+                if (logicalDeletedPropertyName == null) {
                     val annotation = propertyDescriptor.readMethod
-                            .getAnnotation(SoftDelete::class.java)
+                            .getAnnotation(LogicalDelete::class.java)
                     if (annotation != null) {
                         trueValue = annotation.trueValue
                         falseValue = annotation.falseValue
-                        softDeletedPropertyName = propertyDescriptor.name
-                        softDeletedPropertyType = propertyDescriptor.propertyType
+                        logicalDeletedPropertyName = propertyDescriptor.name
+                        logicalDeletedPropertyType = propertyDescriptor.propertyType
                         finish++
                     }
                 }
@@ -158,33 +158,33 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
                 }
             }
         }
-        if (softDeletedPropertyName != null) {
-            supportSoftDeleted = true
-            val softDeleteProperties = jpaExtProperties.softDelete
+        if (logicalDeletedPropertyName != null) {
+            supportLogicalDeleted = true
+            val logicalDeleteProperties = jpaExtProperties.logicalDelete
             val propertyDescriptor = BeanUtils
-                    .getPropertyDescriptor(domainClass, softDeletedPropertyName!!)!!
-            softDeletedWriteMethod = propertyDescriptor.writeMethod
-            softDeletedReadMethod = propertyDescriptor.readMethod
-            softDeletedTrueValue = if ("" != trueValue) {
+                    .getPropertyDescriptor(domainClass, logicalDeletedPropertyName!!)!!
+            logicalDeletedWriteMethod = propertyDescriptor.writeMethod
+            logicalDeletedReadMethod = propertyDescriptor.readMethod
+            logicalDeletedTrueValue = if ("" != trueValue) {
                 trueValue
             } else {
-                softDeleteProperties.trueValue
+                logicalDeleteProperties.trueValue
             }
-            softDeletedTrueValue = JpaUtil.convert(softDeletedTrueValue,
-                    softDeletedPropertyType)
-            softDeletedFalseValue = if ("" != falseValue) {
+            logicalDeletedTrueValue = JpaUtil.convert(logicalDeletedTrueValue,
+                    logicalDeletedPropertyType)
+            logicalDeletedFalseValue = if ("" != falseValue) {
                 falseValue
             } else {
-                softDeleteProperties.falseValue
+                logicalDeleteProperties.falseValue
             }
-            softDeletedFalseValue = JpaUtil.convert(softDeletedFalseValue,
-                    softDeletedPropertyType)
+            logicalDeletedFalseValue = JpaUtil.convert(logicalDeletedFalseValue,
+                    logicalDeletedPropertyType)
         }
     }
 
-    override fun setSoftDeleted(entity: Any) {
+    override fun setLogicalDeleted(entity: Any) {
         try {
-            softDeletedWriteMethod!!.invoke(entity, softDeletedTrueValue)
+            logicalDeletedWriteMethod!!.invoke(entity, logicalDeletedTrueValue)
         } catch (e: IllegalAccessException) {
             throw RuntimeException(e.message, e)
         } catch (e: InvocationTargetException) {
@@ -192,9 +192,9 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
         }
     }
 
-    override fun setUnSoftDeleted(entity: Any) {
+    override fun setUnLogicalDeleted(entity: Any) {
         try {
-            softDeletedWriteMethod!!.invoke(entity, softDeletedFalseValue)
+            logicalDeletedWriteMethod!!.invoke(entity, logicalDeletedFalseValue)
         } catch (e: IllegalAccessException) {
             throw RuntimeException(e.message, e)
         } catch (e: InvocationTargetException) {
@@ -202,9 +202,9 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
         }
     }
 
-    override fun isSoftDeleted(entity: Any): Boolean {
+    override fun isLogicalDeleted(entity: Any): Boolean {
         return try {
-            softDeletedTrueValue == softDeletedReadMethod!!.invoke(entity)
+            logicalDeletedTrueValue == logicalDeletedReadMethod!!.invoke(entity)
         } catch (e: IllegalAccessException) {
             throw RuntimeException(e.message, e)
         } catch (e: InvocationTargetException) {
@@ -212,9 +212,9 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
         }
     }
 
-    override fun softDeletedSeted(entity: Any): Boolean {
+    override fun logicalDeletedSeted(entity: Any): Boolean {
         return try {
-            softDeletedReadMethod!!.invoke(entity) != null
+            logicalDeletedReadMethod!!.invoke(entity) != null
         } catch (e: IllegalAccessException) {
             throw RuntimeException(e.message, e)
         } catch (e: InvocationTargetException) {
@@ -222,8 +222,8 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
         }
     }
 
-    final override fun supportSoftDeleted(): Boolean {
-        return supportSoftDeleted
+    final override fun supportLogicalDeleted(): Boolean {
+        return supportLogicalDeleted
     }
 
     override fun lastModifiedBy(auditor: Any?): Any? {

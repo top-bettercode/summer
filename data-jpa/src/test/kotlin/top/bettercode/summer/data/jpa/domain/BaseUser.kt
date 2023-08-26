@@ -2,7 +2,7 @@ package top.bettercode.summer.data.jpa.domain
 
 import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.Type
-import top.bettercode.summer.data.jpa.SoftDelete
+import top.bettercode.summer.data.jpa.LogicalDelete
 import top.bettercode.summer.tools.lang.util.StringUtil.json
 import java.util.*
 import javax.persistence.GeneratedValue
@@ -18,7 +18,7 @@ open class BaseUser {
     var firstName: String? = null
     var lastName: String? = null
 
-    @SoftDelete
+    @LogicalDelete
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @ColumnDefault("0")
     var deleted: Boolean? = null

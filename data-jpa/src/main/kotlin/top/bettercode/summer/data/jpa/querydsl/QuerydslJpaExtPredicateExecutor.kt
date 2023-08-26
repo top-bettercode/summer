@@ -24,48 +24,48 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
         resolver: EntityPathResolver,
         metadata: CrudMethodMetadata
 ) : QuerydslJpaPredicateExecutor<T>(entityInformation, entityManager, resolver, metadata), QuerydslPredicateExecutor<T>, RecycleQuerydslPredicateExecutor<T> {
-    private val softDeleteSupport: QuerydslSoftDeleteSupport<T>
+    private val logicalDeleteSupport: QuerydslLogicalDeleteSupport<T>
 
     init {
-        softDeleteSupport = QuerydslSoftDeleteSupport(jpaExtProperties,
+        logicalDeleteSupport = QuerydslLogicalDeleteSupport(jpaExtProperties,
                 entityInformation.javaType, resolver.createPath(entityInformation.javaType))
     }
 
     override fun findOne(predicate: Predicate): Optional<T> {
         var predicate1 = predicate
-        if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andFalsePredicate(predicate1)
+        if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
         }
         return super.findOne(predicate1)
     }
 
     override fun findAll(predicate: Predicate): List<T> {
         var predicate1 = predicate
-        if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andFalsePredicate(predicate1)
+        if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
         }
         return super.findAll(predicate1)
     }
 
     override fun findAll(predicate: Predicate, vararg orders: OrderSpecifier<*>): List<T> {
         var predicate1 = predicate
-        if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andFalsePredicate(predicate1)
+        if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
         }
         return super.findAll(predicate1, *orders)
     }
 
     override fun findAll(predicate: Predicate, sort: Sort): List<T> {
         var predicate1 = predicate
-        if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andFalsePredicate(predicate1)
+        if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
         }
         return super.findAll(predicate1, sort)
     }
 
     override fun findAll(vararg orders: OrderSpecifier<*>): List<T> {
-        return if (softDeleteSupport.supportSoftDeleted()) {
-            super.findAll(softDeleteSupport.andFalsePredicate(null), *orders)
+        return if (logicalDeleteSupport.supportLogicalDeleted()) {
+            super.findAll(logicalDeleteSupport.andFalsePredicate(null), *orders)
         } else {
             super.findAll(*orders)
         }
@@ -73,32 +73,32 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
 
     override fun findAll(predicate: Predicate, pageable: Pageable): Page<T> {
         var predicate1 = predicate
-        if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andFalsePredicate(predicate1)
+        if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
         }
         return super.findAll(predicate1, pageable)
     }
 
     override fun count(predicate: Predicate): Long {
         var predicate1 = predicate
-        if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andFalsePredicate(predicate1)
+        if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
         }
         return super.count(predicate1)
     }
 
     override fun exists(predicate: Predicate): Boolean {
         var predicate1 = predicate
-        if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andFalsePredicate(predicate1)
+        if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
         }
         return super.exists(predicate1)
     }
 
     override fun findOneFromRecycleBin(predicate: Predicate?): Optional<T> {
         var predicate1 = predicate
-        return if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andTruePredicate(predicate1)
+        return if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
             super.findOne(predicate1)
         } else {
             Optional.empty()
@@ -107,8 +107,8 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
 
     override fun findAllFromRecycleBin(predicate: Predicate?): Iterable<T> {
         var predicate1 = predicate
-        return if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andTruePredicate(predicate1)
+        return if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
             super.findAll(predicate1)
         } else {
             emptyList()
@@ -117,8 +117,8 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
 
     override fun findAllFromRecycleBin(predicate: Predicate?, sort: Sort): Iterable<T> {
         var predicate1 = predicate
-        return if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andTruePredicate(predicate1)
+        return if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
             super.findAll(predicate1, sort)
         } else {
             emptyList()
@@ -127,8 +127,8 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
 
     override fun findAllFromRecycleBin(predicate: Predicate?, vararg orders: OrderSpecifier<*>?): Iterable<T> {
         var predicate1 = predicate
-        return if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andTruePredicate(predicate1)
+        return if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
             super.findAll(predicate1, *orders)
         } else {
             emptyList()
@@ -136,8 +136,8 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
     }
 
     override fun findAllFromRecycleBin(vararg orders: OrderSpecifier<*>?): Iterable<T> {
-        return if (softDeleteSupport.supportSoftDeleted()) {
-            super.findAll(softDeleteSupport.andTruePredicate(null), *orders)
+        return if (logicalDeleteSupport.supportLogicalDeleted()) {
+            super.findAll(logicalDeleteSupport.andTruePredicate(null), *orders)
         } else {
             emptyList()
         }
@@ -145,8 +145,8 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
 
     override fun findAllFromRecycleBin(predicate: Predicate?, pageable: Pageable): Page<T> {
         var predicate1 = predicate
-        return if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andTruePredicate(predicate1)
+        return if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
             super.findAll(predicate1, pageable)
         } else {
             Page.empty()
@@ -155,8 +155,8 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
 
     override fun countRecycleBin(predicate: Predicate?): Long {
         var predicate1 = predicate
-        return if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andTruePredicate(predicate1)
+        return if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
             super.count(predicate1)
         } else {
             0
@@ -165,8 +165,8 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
 
     override fun existsInRecycleBin(predicate: Predicate?): Boolean {
         var predicate1 = predicate
-        return if (softDeleteSupport.supportSoftDeleted()) {
-            predicate1 = softDeleteSupport.andTruePredicate(predicate1)
+        return if (logicalDeleteSupport.supportLogicalDeleted()) {
+            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
             super.exists(predicate1)
         } else {
             false

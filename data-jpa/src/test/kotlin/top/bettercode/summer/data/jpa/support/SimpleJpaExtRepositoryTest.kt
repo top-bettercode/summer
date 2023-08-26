@@ -113,7 +113,7 @@ class SimpleJpaExtRepositoryTest {
                 .equal("firstName", "Carter")
         var all = repository.findAll(spec)
         System.err.println(json(all, true))
-        repository.save(update, spec)
+        repository.update(update, spec)
         all = repository.findAll(spec)
         System.err.println(json(all, true))
         for (user in all) {
@@ -128,7 +128,7 @@ class SimpleJpaExtRepositoryTest {
         spec.criteriaUpdate("lastName", "newName")
         var all = repository.findAll(spec)
         System.err.println(json(all, true))
-        repository.save(spec)
+        repository.update(spec)
         all = repository.findAll(spec)
         System.err.println(json(all, true))
         for (user in all) {

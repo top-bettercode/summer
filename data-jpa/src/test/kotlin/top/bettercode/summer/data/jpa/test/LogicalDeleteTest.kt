@@ -8,21 +8,21 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import top.bettercode.summer.data.jpa.domain.HardUser
+import top.bettercode.summer.data.jpa.domain.PhysicalUser
 import top.bettercode.summer.data.jpa.domain.User
-import top.bettercode.summer.data.jpa.repository.HardUserRepository
+import top.bettercode.summer.data.jpa.repository.PhysicalUserRepository
 import top.bettercode.summer.data.jpa.repository.UserRepository
 import java.util.*
 import javax.sql.DataSource
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
-class SoftDeleteTest {
+class LogicalDeleteTest {
     @Autowired
     lateinit var repository: UserRepository
 
     @Autowired
-    var hardUserRepository: HardUserRepository? = null
+    var physicalUserRepository: PhysicalUserRepository? = null
 
     @Autowired
     var dataSource: DataSource? = null
@@ -54,17 +54,17 @@ class SoftDeleteTest {
         System.err.println("--------------------------------------------------------")
         repository.deleteAll()
         repository.cleanRecycleBin()
-        hardUserRepository!!.deleteAll()
-        hardUserRepository!!.cleanRecycleBin()
+        physicalUserRepository!!.deleteAll()
+        physicalUserRepository!!.cleanRecycleBin()
     }
 
     @Test
-    fun hardDeleteTest() {
-        val dave = HardUser("Dave", "Matthews")
-        hardUserRepository!!.save(dave)
-        hardUserRepository!!.delete(dave)
-        val optionalUser = hardUserRepository!!.findByIdFromRecycleBin(dave.id)
-        optionalUser.ifPresent { x: HardUser? -> println(x) }
+    fun physicalDeleteTest() {
+        val dave = PhysicalUser("Dave", "Matthews")
+        physicalUserRepository!!.save(dave)
+        physicalUserRepository!!.delete(dave)
+        val optionalUser = physicalUserRepository!!.findByIdFromRecycleBin(dave.id)
+        optionalUser.ifPresent { x: PhysicalUser? -> println(x) }
         Assertions.assertFalse(optionalUser.isPresent)
     }
 

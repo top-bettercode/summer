@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
+import org.springframework.transaction.annotation.Transactional
+import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import java.util.*
 
 /**
@@ -14,7 +16,11 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
     fun getRepository(): M
 
     fun <S : T> save(s: S): S
-    fun <S : T> save(s: S, spec: Specification<T>): Int
+    @Transactional
+    fun <S : T> update(s: S, spec: Specification<T>): Int
+
+     @Transactional
+    fun update(spec: UpdateSpecification<T>): Int
 
     /**
      * 动态更新，只更新非Null字段

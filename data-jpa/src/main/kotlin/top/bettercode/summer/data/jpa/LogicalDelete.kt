@@ -3,7 +3,7 @@ package top.bettercode.summer.data.jpa
 @MustBeDocumented
 @Target(AnnotationTarget.FIELD, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class SoftDelete(
+annotation class LogicalDelete(
         /**
          * @return 默认逻辑未删除值, 默认获取全局配置
          */

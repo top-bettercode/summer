@@ -60,7 +60,7 @@ data class Column(
         val sequenceStartWith: Long = 1,
         var generatedColumn: Boolean = false,
         var version: Boolean = false,
-        var softDelete: Boolean = false,
+        var logicalDelete: Boolean = false,
         var createdDate: Boolean = false,
         var createdBy: Boolean = false,
         var lastModifiedDate: Boolean = false,
@@ -174,7 +174,7 @@ data class Column(
     }
 
     override fun toString(): String {
-        return "Column(tableCat=$tableCat, tableSchem=$tableSchem, columnName='$columnName', typeName='$typeName', dataType=$dataType, decimalDigits=$decimalDigits, columnSize=$columnSize, remarks='$remarks', nullable=$nullable, columnDef=$columnDef, extra='$extra', unique=$unique, indexed=$indexed, isPrimary=$isPrimary, unsigned=$unsigned, isForeignKey=$isForeignKey, pktableName=$pktableName, pkcolumnName=$pkcolumnName, autoIncrement=$autoIncrement, idgenerator='$idgenerator', sequence='$sequence', sequenceStartWith=$sequenceStartWith, generatedColumn=$generatedColumn, version=$version, softDelete=$softDelete, asBoolean=$asBoolean, javaName='$javaName')"
+        return "Column(tableCat=$tableCat, tableSchem=$tableSchem, columnName='$columnName', typeName='$typeName', dataType=$dataType, decimalDigits=$decimalDigits, columnSize=$columnSize, remarks='$remarks', nullable=$nullable, columnDef=$columnDef, extra='$extra', unique=$unique, indexed=$indexed, isPrimary=$isPrimary, unsigned=$unsigned, isForeignKey=$isForeignKey, pktableName=$pktableName, pkcolumnName=$pkcolumnName, autoIncrement=$autoIncrement, idgenerator='$idgenerator', sequence='$sequence', sequenceStartWith=$sequenceStartWith, generatedColumn=$generatedColumn, version=$version, logicalDelete=$logicalDelete, asBoolean=$asBoolean, javaName='$javaName')"
     }
 
 
@@ -197,7 +197,7 @@ data class Column(
             }
 
     val jsonViewIgnored: Boolean by lazy {
-        this.softDelete || this.version
+        this.logicalDelete || this.version
     }
 
     val testIgnored: Boolean by lazy {

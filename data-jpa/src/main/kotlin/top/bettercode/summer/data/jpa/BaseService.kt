@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
+import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import top.bettercode.summer.web.BaseController
 import java.util.*
 import java.util.function.Supplier
@@ -34,8 +35,20 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return BaseController.notFound(msg)
     }
 
-    override fun <S : T> save(s: S, spec: Specification<T>): Int {
-        return repository.save(s, spec)
+    override fun <S : T> save(s: S): S {
+        return repository.save(s)
+    }
+
+    override fun <S : T> saveAll(entities: Iterable<S>): List<S> {
+        return repository.saveAll(entities)
+    }
+
+    override fun update(spec: UpdateSpecification<T>): Int {
+        return repository.update(spec)
+    }
+
+    override fun <S : T> update(s: S, spec: Specification<T>): Int {
+        return repository.update(s, spec)
     }
 
     @Deprecated("")
@@ -84,10 +97,6 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository.findAllById(ids)
     }
 
-    override fun <S : T> saveAll(entities: Iterable<S>): List<S> {
-        return repository.saveAll(entities)
-    }
-
     override fun deleteAllById(ids: Iterable<ID>) {
         repository.deleteAllById(ids)
     }
@@ -102,10 +111,6 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
 
     override fun findAll(pageable: Pageable): Page<T> {
         return repository.findAll(pageable)
-    }
-
-    override fun <S : T> save(s: S): S {
-        return repository.save(s)
     }
 
     override fun findById(id: ID): Optional<T> {

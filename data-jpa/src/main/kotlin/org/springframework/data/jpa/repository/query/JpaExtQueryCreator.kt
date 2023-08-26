@@ -20,18 +20,18 @@ internal class JpaExtQueryCreator
  * @param type              must not be null.
  * @param builder           must not be null.
  * @param provider          must not be null.
- * @param softDeleteSupport softDeleteSupport
+ * @param logicalDeleteSupport logicalDeleteSupport
  */(
         tree: PartTree,
         type: ReturnedType,
         builder: CriteriaBuilder,
         provider: ParameterMetadataProvider,
-        private val softDeleteSupport: ExtJpaSupport
+        private val logicalDeleteSupport: ExtJpaSupport
 ) : JpaQueryCreator(tree, type, builder, provider) {
     override fun complete(predicate: Predicate?, sort: Sort, query: CriteriaQuery<out Any>, builder: CriteriaBuilder, root: Root<*>): CriteriaQuery<out Any> {
         var predicate1: Predicate? = predicate
-        if (predicate1 != null && softDeleteSupport.supportSoftDeleted()) {
-            val deletedPath = root.get<Boolean>(softDeleteSupport.softDeletedPropertyName)
+        if (predicate1 != null && logicalDeleteSupport.supportLogicalDeleted()) {
+            val deletedPath = root.get<Boolean>(logicalDeleteSupport.logicalDeletedPropertyName)
             predicate1 = builder.and(predicate1, builder.isFalse(deletedPath))
         }
         return super.complete(predicate1, sort, query, builder, root)

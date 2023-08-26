@@ -30,13 +30,13 @@ internal class PartTreeJpaExtQuery internal constructor(
     private val parameters: JpaParameters
     private var query: QueryPreparer
     private var countQuery: QueryPreparer
-    private val softDeleteSupport: ExtJpaSupport
+    private val logicalDeleteSupport: ExtJpaSupport
     private val statementId: String?
 
     init {
         statementId = method.statementId
         val domainClass = method.entityInformation.javaType
-        softDeleteSupport = DefaultExtJpaSupport(jpaExtProperties, domainClass)
+        logicalDeleteSupport = DefaultExtJpaSupport(jpaExtProperties, domainClass)
         parameters = method.parameters
         val recreationRequired = parameters.hasDynamicProjection() || parameters.potentiallySortsDynamically()
         try {
@@ -81,9 +81,9 @@ internal class PartTreeJpaExtQuery internal constructor(
                         MDC.put("id", statementId)
                         val query = jpaQuery.createQuery(accessor)
                         val resultList = query.resultList
-                        if (softDeleteSupport.supportSoftDeleted()) {
+                        if (logicalDeleteSupport.supportLogicalDeleted()) {
                             for (o in resultList) {
-                                softDeleteSupport.setSoftDeleted(o!!)
+                                logicalDeleteSupport.setLogicalDeleted(o!!)
                                 em.merge(o)
                             }
                         } else {
@@ -211,7 +211,7 @@ internal class PartTreeJpaExtQuery internal constructor(
                 provider = ParameterMetadataProvider(builder, parameters, escape)
                 returnedType = processor.returnedType
             }
-            return JpaExtQueryCreator(tree, returnedType, builder, provider, softDeleteSupport)
+            return JpaExtQueryCreator(tree, returnedType, builder, provider, logicalDeleteSupport)
         }
 
         /**
@@ -251,7 +251,7 @@ internal class PartTreeJpaExtQuery internal constructor(
                     ?: ParameterMetadataProvider(builder, parameters, escape)
             return JpaExtCountQueryCreator(tree,
                     queryMethod.resultProcessor.returnedType, builder, provider,
-                    softDeleteSupport)
+                    logicalDeleteSupport)
         }
 
         /**

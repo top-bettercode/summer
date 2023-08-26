@@ -55,12 +55,12 @@ private val getter: ProjectGenerator.(Interface, Column) -> Unit = { interfaze, 
             }
 
         //code
-        if (!it.softDelete && it.isCodeField) {
+        if (!it.logicalDelete && it.isCodeField) {
             method(
                     "get${it.javaName.capitalized()}",
                     it.javaType
             ) {
-                if (it.columnName.contains("_") || it.softDelete)
+                if (it.columnName.contains("_") || it.logicalDelete)
                     annotation("@top.bettercode.summer.web.serializer.annotation.JsonCode")
                 else {
                     import("${(ext.packageName + ".support.dic." + enumClassName(it.codeType))}Enum")

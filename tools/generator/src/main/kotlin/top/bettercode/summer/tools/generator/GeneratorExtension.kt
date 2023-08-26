@@ -86,11 +86,11 @@ open class GeneratorExtension(
         /**
          * 逻辑删除字段名
          */
-        var softDeleteColumnName: String = "deleted",
+        var logicalDeleteColumnName: String = "deleted",
         /**
          * 逻辑删除使用布尔值
          */
-        var softDeleteAsBoolean: Boolean = true,
+        var logicalDeleteAsBoolean: Boolean = true,
         /**
          * 缩进
          */

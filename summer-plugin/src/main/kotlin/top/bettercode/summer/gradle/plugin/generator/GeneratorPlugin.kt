@@ -174,14 +174,14 @@ class GeneratorPlugin : Plugin<Project> {
 
             extension.primaryKeyName = findGeneratorProperty(project, "primaryKeyName") ?: "id"
             extension.remarks = findGeneratorProperty(project, "remarks") ?: ""
-            extension.softDeleteColumnName = findGeneratorProperty(project, "softDeleteColumnName")
+            extension.logicalDeleteColumnName = findGeneratorProperty(project, "logicalDeleteColumnName")
                     ?: "deleted"
             extension.commonCodeTypes = (findGeneratorProperty(project, "commonCodeTypes")
-                    ?: extension.softDeleteColumnName).split(",").asSequence()
+                    ?: extension.logicalDeleteColumnName).split(",").asSequence()
                     .filter { it.isNotBlank() }.map { it.trim() }.toList()
                     .toTypedArray()
-            extension.softDeleteAsBoolean =
-                    (findGeneratorProperty(project, "softDeleteAsBoolean"))?.toBoolean()
+            extension.logicalDeleteAsBoolean =
+                    (findGeneratorProperty(project, "logicalDeleteAsBoolean"))?.toBoolean()
                             ?: true
             extension.dataType = top.bettercode.summer.tools.generator.DataType.valueOf(
                     (findGeneratorProperty(project, "dataType")

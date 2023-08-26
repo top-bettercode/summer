@@ -10,13 +10,13 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import javax.annotation.Generated;
 
-/** QHardUser is a Querydsl query type for HardUser */
+/** QPhysicalUser is a Querydsl query type for PhysicalUser */
 @Generated("com.querydsl.codegen.EntitySerializer")
-public class QHardUser extends EntityPathBase<HardUser> {
+public class QPhysicalUser extends EntityPathBase<PhysicalUser> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final QHardUser hardUser = new QHardUser("hardUser");
+  public static final QPhysicalUser physicalUser = new QPhysicalUser("physicalUser");
 
   public final BooleanPath deleted = createBoolean("deleted");
 
@@ -26,15 +26,15 @@ public class QHardUser extends EntityPathBase<HardUser> {
 
   public final StringPath lastName = createString("lastName");
 
-  public QHardUser(String variable) {
-    super(HardUser.class, forVariable(variable));
+  public QPhysicalUser(String variable) {
+    super(PhysicalUser.class, forVariable(variable));
   }
 
-  public QHardUser(Path<? extends HardUser> path) {
+  public QPhysicalUser(Path<? extends PhysicalUser> path) {
     super(path.getType(), path.getMetadata());
   }
 
-  public QHardUser(PathMetadata metadata) {
-    super(HardUser.class, metadata);
+  public QPhysicalUser(PathMetadata metadata) {
+    super(PhysicalUser.class, metadata);
   }
 }

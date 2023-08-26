@@ -10,9 +10,9 @@ open class JpaExtProperties {
     /**
      * 逻辑删除
      */
-    var softDelete = SoftDelete()
+    var logicalDelete = LogicalDelete()
 
-    class SoftDelete {
+    class LogicalDelete {
         /**
          * 默认逻辑删除值.
          */

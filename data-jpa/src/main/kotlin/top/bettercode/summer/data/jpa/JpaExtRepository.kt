@@ -25,16 +25,19 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     val entityManager: EntityManager
 
     @Transactional
-    fun <S : T> hardSave(s: S, spec: Specification<T>): Int
+    fun lowLevelUpdate(spec: UpdateSpecification<T>): Int
 
     @Transactional
-    fun <S : T> save(s: S, spec: Specification<T>): Int
+    fun <S : T> physicalUpdate(s: S, spec: Specification<T>): Int
 
     @Transactional
-    fun hardSave(spec: UpdateSpecification<T>): Int
+    fun <S : T> update(s: S, spec: Specification<T>): Int
 
     @Transactional
-    fun save(spec: UpdateSpecification<T>): Int
+    fun physicalUpdate(spec: UpdateSpecification<T>): Int
+
+    @Transactional
+    fun update(spec: UpdateSpecification<T>): Int
 
     /**
      * 动态更新，只更新非Null字段
@@ -52,8 +55,8 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     fun <S : T> dynamicSave(s: S): S
     fun delete(spec: Specification<T>): Int
     fun exists(spec: Specification<T>): Boolean
-    fun existsHard(spec: Specification<T>?): Boolean
-    fun countHard(spec: Specification<T>?): Long
+    fun existsPhysical(spec: Specification<T>?): Boolean
+    fun countPhysical(spec: Specification<T>?): Long
     fun findFirst(sort: Sort): Optional<T>
     fun findFirst(spec: Specification<T>?): Optional<T>
     fun <S : T> findFirst(example: Example<S>): Optional<S>
@@ -64,7 +67,7 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
      * @param id ID
      * @return 结果
      */
-    fun findHardById(id: ID): Optional<T>
+    fun findPhysicalById(id: ID): Optional<T>
 
     /**
      * 包括已逻辑删除的数据
@@ -73,7 +76,7 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
      * @param pageable 分页信息
      * @return 分页数据
      */
-    fun findHardAll(spec: Specification<T>?, pageable: Pageable): Page<T>
+    fun findPhysicalAll(spec: Specification<T>?, pageable: Pageable): Page<T>
 
     /**
      * 包括已逻辑删除的数据
@@ -81,13 +84,12 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
      * @param ids ID
      * @return 数据
      */
-    fun findHardAllById(ids: Iterable<ID>): List<T>
+    fun findPhysicalAllById(ids: Iterable<ID>): List<T>
     fun findAll(size: Int): List<T>
     fun findAll(size: Int, sort: Sort): List<T>
     fun findAll(spec: Specification<T>?, size: Int): List<T>
     fun findAll(spec: Specification<T>?, size: Int, sort: Sort): List<T>
     fun <S : T> findAll(example: Example<S>, size: Int): List<S>
     fun <S : T> findAll(example: Example<S>, size: Int, sort: Sort): List<S>
-
 
 }

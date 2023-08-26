@@ -10,27 +10,27 @@ import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
 /**
  * @author Peter Wu
  */
-open class QuerydslSoftDeleteSupport<T>(
+open class QuerydslLogicalDeleteSupport<T>(
         jpaExtProperties: JpaExtProperties, domainClass: Class<*>,
         entityPath: EntityPath<T>?
 ) : DefaultExtJpaSupport(jpaExtProperties, domainClass) {
     private var path: SimplePath<Any>? = null
 
     init {
-        if (supportSoftDeleted()) {
+        if (supportLogicalDeleted()) {
             if (entityPath != null) {
-                path = Expressions.path(softDeletedPropertyType, entityPath,
-                        softDeletedPropertyName)
+                path = Expressions.path(logicalDeletedPropertyType, entityPath,
+                        logicalDeletedPropertyName)
             }
         }
     }
 
     fun andTruePredicate(predicate: Predicate?): Predicate {
-        return getPredicate(predicate, softDeletedTrueValue)
+        return getPredicate(predicate, logicalDeletedTrueValue)
     }
 
     fun andFalsePredicate(predicate: Predicate?): Predicate {
-        return getPredicate(predicate, softDeletedFalseValue)
+        return getPredicate(predicate, logicalDeletedFalseValue)
     }
 
     protected fun getPredicate(predicate: Predicate?, value: Any?): Predicate {
