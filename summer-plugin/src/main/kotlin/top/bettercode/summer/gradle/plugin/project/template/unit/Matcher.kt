@@ -27,7 +27,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         val modeType = JavaType("top.bettercode.summer.data.jpa.query.SpecMatcherMode")
 
-        constructor(Parameter("mode", modeType), Parameter("probe", entityType)) {
+        constructor(Parameter("mode", modeType), Parameter("probe", JavaType.objectInstance)) {
             this.visibility = JavaVisibility.PRIVATE
             +"super(mode, probe);"
         }
@@ -46,7 +46,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return new ${type.shortName}(SpecMatcherMode.ALL, null);"
         }
 
-        method("matching", type, Parameter("probe", entityType)) {
+        method("matching", type, Parameter("probe", JavaType.objectInstance)) {
             this.isStatic = true
             javadoc {
                 +"/**"
@@ -70,7 +70,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return new ${type.shortName}(SpecMatcherMode.ANY, null);"
         }
 
-        method("matchingAny", type, Parameter("probe", entityType)) {
+        method("matchingAny", type, Parameter("probe", JavaType.objectInstance)) {
             this.isStatic = true
             javadoc {
                 +"/**"

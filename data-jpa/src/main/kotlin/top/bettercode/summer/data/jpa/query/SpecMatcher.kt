@@ -20,7 +20,7 @@ import javax.persistence.metamodel.ManagedType
  */
 open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
 //--------------------------------------------
-        val matchMode: SpecMatcherMode, probe: T?
+        val matchMode: SpecMatcherMode, probe: Any?
 ) : UpdateSpecification<T>, SpecPredicate<T, M> {
     private val specPredicates: MutableMap<String, SpecPredicate<T, M>> = LinkedHashMap()
     private val orders: MutableList<Sort.Order> = ArrayList()
