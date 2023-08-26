@@ -46,12 +46,6 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
      * @param <S> 类型
      * @return 结果
     </S> */
-    @Deprecated("""不建议再使用, 请使用以下方式替代
-    <p>
-    entity.nullFrom(exist);
-    <p>
-    save(entity);
-    <p>""")
     fun <S : T> dynamicSave(s: S): S
     fun delete(spec: Specification<T>): Int
     fun exists(spec: Specification<T>): Boolean

@@ -16,11 +16,6 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
     fun getRepository(): M
 
     fun <S : T> save(s: S): S
-    @Transactional
-    fun <S : T> update(s: S, spec: Specification<T>): Int
-
-     @Transactional
-    fun update(spec: UpdateSpecification<T>): Int
 
     /**
      * 动态更新，只更新非Null字段
@@ -29,14 +24,16 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
      * @param <S> 类型
      * @return 结果
     </S> */
-    @Deprecated("""不建议再使用, 请使用以下方式替代
-    <p>
-    entity.nullFrom(exist);
-    <p>
-    save(entity);
-    <p>""")
     fun <S : T> dynamicSave(s: S): S?
+
     fun <S : T> saveAll(entities: Iterable<S>): List<S>
+
+    @Transactional
+    fun <S : T> update(s: S, spec: Specification<T>): Int
+
+    @Transactional
+    fun update(spec: UpdateSpecification<T>): Int
+
     fun delete(t: T)
     fun deleteById(id: ID)
     fun delete(spec: Specification<T>): Int

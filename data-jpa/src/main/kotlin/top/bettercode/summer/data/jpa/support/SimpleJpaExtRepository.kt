@@ -199,6 +199,33 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     @Transactional
+    override fun <S : T> dynamicSave(s: S): S {
+        var mdc = false
+        return try {
+            mdc = mdcPutId(".dynamicSave")
+            if (extJpaSupport.supportLogicalDeleted() && !extJpaSupport.logicalDeletedSeted(s)) {
+                extJpaSupport.setUnLogicalDeleted(s)
+            }
+            if (isNew(s, true)) {
+                entityManager.persist(s)
+                s
+            } else {
+                val optional = findById(entityInformation.getId(s)!!)
+                if (optional.isPresent) {
+                    val exist = optional.get()
+                    s.nullFrom(exist)
+                    entityManager.merge(s)
+                } else {
+                    entityManager.persist(s)
+                    s
+                }
+            }
+        } finally {
+            cleanMdc(mdc)
+        }
+    }
+
+    @Transactional
     override fun lowLevelUpdate(spec: UpdateSpecification<T>): Int {
         return update(spec = spec, lowLevel = true, physical = false, mdcId = ".lowLevelUpdate")
     }
@@ -314,34 +341,6 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 sqlLog.debug("{} row affected", affected)
             }
             affected
-        } finally {
-            cleanMdc(mdc)
-        }
-    }
-
-    @Deprecated("")
-    @Transactional
-    override fun <S : T> dynamicSave(s: S): S {
-        var mdc = false
-        return try {
-            mdc = mdcPutId(".dynamicSave")
-            if (extJpaSupport.supportLogicalDeleted() && !extJpaSupport.logicalDeletedSeted(s)) {
-                extJpaSupport.setUnLogicalDeleted(s)
-            }
-            if (isNew(s, true)) {
-                entityManager.persist(s)
-                s
-            } else {
-                val optional = findById(entityInformation.getId(s)!!)
-                if (optional.isPresent) {
-                    val exist = optional.get()
-                    s.nullFrom(exist)
-                    entityManager.merge(s)
-                } else {
-                    entityManager.persist(s)
-                    s
-                }
-            }
         } finally {
             cleanMdc(mdc)
         }

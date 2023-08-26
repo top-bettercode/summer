@@ -39,6 +39,10 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository.save(s)
     }
 
+    override fun <S : T> dynamicSave(s: S): S? {
+        return repository.dynamicSave(s)
+    }
+
     override fun <S : T> saveAll(entities: Iterable<S>): List<S> {
         return repository.saveAll(entities)
     }
@@ -49,12 +53,6 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
 
     override fun <S : T> update(s: S, spec: Specification<T>): Int {
         return repository.update(s, spec)
-    }
-
-    @Deprecated("")
-    override fun <S : T> dynamicSave(s: S): S? {
-        @Suppress("DEPRECATION")
-        return repository.dynamicSave(s)
     }
 
     override fun delete(spec: Specification<T>): Int {
