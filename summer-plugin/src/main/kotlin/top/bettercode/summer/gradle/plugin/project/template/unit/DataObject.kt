@@ -2,11 +2,9 @@ package top.bettercode.summer.gradle.plugin.project.template.unit
 
 import top.bettercode.summer.gradle.plugin.project.template.ProjectGenerator
 import top.bettercode.summer.tools.generator.dom.java.JavaType
-import top.bettercode.summer.tools.generator.dom.java.element.JavaVisibility
 import top.bettercode.summer.tools.generator.dom.java.element.Parameter
 import top.bettercode.summer.tools.generator.dom.java.element.TopLevelClass
 import top.bettercode.summer.tools.lang.capitalized
-import java.util.*
 
 /**
  * @author Peter Wu
@@ -24,10 +22,12 @@ val dataObject: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         }
         serialVersionUID()
 
+        val dataObjectClass = dataObjectType.shortName
+
         if (defaultColumns.isNotEmpty()) {
             method(
                     "withDefaults",
-                    entityType
+                    dataObjectType
             ) {
                 isStatic = true
                 javadoc {
@@ -35,7 +35,7 @@ val dataObject: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +" * @return ${remarks}带默认值实例"
                     +" */"
                 }
-                +"$className $entityName = new $className();"
+                +"$dataObjectClass $entityName = new $dataObjectClass();"
                 defaultColumns.forEach {
                     +"$entityName.set${it.javaName.capitalized()}(${it.initializationString(this@apply)});"
                 }
@@ -44,7 +44,7 @@ val dataObject: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
             method(
                     "nullWithDefaults",
-                    entityType
+                    dataObjectType
             ) {
                 javadoc {
                     +"/** 如果属性为null，设置默认值 */"
@@ -70,7 +70,7 @@ val dataObject: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         method(
                 "nullFrom",
-                entityType
+                dataObjectType
         ) {
             javadoc {
                 +"/**"
@@ -79,24 +79,18 @@ val dataObject: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 +" * @param exist 已存在实体"
                 +" */"
             }
-            parameter(entityType, "exist")
+            parameter(dataObjectType, "exist")
             columns.forEach {
-                if (isFullComposite || isCompositePrimaryKey && it.isPrimary) {
-                    +"if (this.${primaryKeyName}.get${it.javaName.capitalized()}() == null) {"
-                    +"this.${primaryKeyName}.set${it.javaName.capitalized()}(exist.get${it.javaName.capitalized()}());"
-                    +"}"
-                } else {
-                    +"if (this.${it.javaName} == null) {"
-                    +"this.${it.javaName} = exist.get${it.javaName.capitalized()}();"
-                    +"}"
-                }
+                +"if (this.${it.javaName} == null) {"
+                +"this.${it.javaName} = exist.get${it.javaName.capitalized()}();"
+                +"}"
             }
             +"return this;"
         }
 
         method(
                 "from",
-                entityType
+                dataObjectType
         ) {
             javadoc {
                 +"/** 从form表单对象更新实体属性 */"
@@ -132,7 +126,7 @@ val dataObject: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             //setter
             method(
                     "set${it.javaName.capitalized()}",
-                    entityType,
+                    dataObjectType,
                     Parameter(it.javaName, it.javaType)
             ) {
                 javadoc {
@@ -156,38 +150,26 @@ val dataObject: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"if (this == o) {"
             +"return true;"
             +"}"
-            +"if (!(o instanceof ${className})) {"
+            +"if (!(o instanceof ${dataObjectClass})) {"
             +"return false;"
             +"}"
-            +"$className that = (${className}) o;"
-
-            val size = otherColumns.size
-            if (size == 0) {
-                +"return Objects.equals(${primaryKeyName}, that.get${
-                    primaryKeyName.capitalized()
-                }());"
+            +"$dataObjectClass that = (${dataObjectClass}) o;"
+            val size = columns.size
+            if (size == 1) {
+                +"return Objects.equals(${columns[0].javaName}, that.${columns[0].javaName});"
             } else {
-                +"if (!Objects.equals(${primaryKeyName}, that.get${
-                    primaryKeyName.capitalized()
-                }())) {"
-                +"return false;"
-                +"}"
-                if (size == 1) {
-                    +"return Objects.equals(${otherColumns[0].javaName}, that.${otherColumns[0].javaName});"
-                } else {
-                    otherColumns.forEachIndexed { index, column ->
-                        when (index) {
-                            0 -> {
-                                +"return Objects.equals(${column.javaName}, that.${column.javaName})"
-                            }
+                columns.forEachIndexed { index, column ->
+                    when (index) {
+                        0 -> {
+                            +"return Objects.equals(${column.javaName}, that.${column.javaName})"
+                        }
 
-                            size - 1 -> {
-                                +"    && Objects.equals(${column.javaName}, that.${column.javaName});"
-                            }
+                        size - 1 -> {
+                            +"    && Objects.equals(${column.javaName}, that.${column.javaName});"
+                        }
 
-                            else -> {
-                                +"    && Objects.equals(${column.javaName}, that.${column.javaName})"
-                            }
+                        else -> {
+                            +"    && Objects.equals(${column.javaName}, that.${column.javaName})"
                         }
                     }
                 }
@@ -197,15 +179,7 @@ val dataObject: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         //hashCode
         method("hashCode", JavaType.int) {
             annotation("@Override")
-            if (isCompositePrimaryKey) {
-                +"return Objects.hash(${
-                    (listOf(primaryKeyName) + otherColumns.map { it.javaName }).joinToString(
-                            ", "
-                    )
-                });"
-            } else {
-                +"return Objects.hash(${columns.joinToString(", ") { it.javaName }});"
-            }
+            +"return Objects.hash(${columns.joinToString(", ") { it.javaName }});"
         }
 
         //toString
