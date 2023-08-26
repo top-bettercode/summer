@@ -3,7 +3,6 @@ package top.bettercode.summer.data.jpa.query
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.util.Assert
-import org.springframework.util.StringUtils
 import java.util.*
 import java.util.stream.Collectors
 import javax.persistence.criteria.*
@@ -123,9 +122,9 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
             }
             if (trimspec != null && criteria is String) {
                 when (trimspec) {
-                    Trimspec.LEADING -> criteria = StringUtils.trimLeadingWhitespace(criteria)
-                    Trimspec.TRAILING -> criteria = StringUtils.trimTrailingWhitespace(criteria)
-                    Trimspec.BOTH -> criteria = StringUtils.trimWhitespace(criteria)
+                    Trimspec.LEADING -> criteria = criteria.trimStart()
+                    Trimspec.TRAILING -> criteria = criteria.trimEnd()
+                    Trimspec.BOTH -> criteria = criteria.trim()
                     else -> {}
                 }
             }
