@@ -1,5 +1,7 @@
 package top.bettercode.summer.data.jpa.query
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.dao.InvalidDataAccessApiUsageException
 import org.springframework.data.domain.Sort
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper
@@ -19,9 +21,11 @@ import javax.persistence.metamodel.ManagedType
  * @author Peter Wu
  */
 open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
-//--------------------------------------------
         val matchMode: SpecMatcherMode, probe: Any?
 ) : UpdateSpecification<T>, SpecPredicate<T, M> {
+
+    private val log: Logger = LoggerFactory.getLogger(SpecMatcher::class.java)
+
     private val specPredicates: MutableMap<String, SpecPredicate<T, M>> = LinkedHashMap()
     private val orders: MutableList<Sort.Order> = ArrayList()
     private val typed: M
@@ -66,15 +70,20 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         return if (matchMode == SpecMatcherMode.ALL) criteriaBuilder.and(*restrictions) else criteriaBuilder.or(*restrictions)
     }
 
-    private fun setPathDefaultValue(path: String, from: Path<*>, type: ManagedType<*>, criteria: Any, probeType: Class<*>, currentNode: PathNode) {
-        val beanWrapper = DirectFieldAccessFallbackBeanWrapper(criteria)
+    private fun setPathDefaultValue(path: String, from: Path<*>, type: ManagedType<*>, probe: Any, probeType: Class<*>, currentNode: PathNode) {
+        val beanWrapper = DirectFieldAccessFallbackBeanWrapper(probe)
         for (attribute in type.singularAttributes) {
             val currentPath = if (!StringUtils.hasText(path)) attribute.name else path + "." + attribute.name
             val specPath = path(currentPath)
             if (specPath.isIgnored) {
                 continue
             }
-            val attributeValue = beanWrapper.getPropertyValue(attribute.name)
+            val attributeValue = try {
+                beanWrapper.getPropertyValue(attribute.name)
+            } catch (e: Exception) {
+                log.debug("获取属性值失败", e)
+                null
+            }
             if (attributeValue == null || "" == attributeValue) {
                 continue
             }
