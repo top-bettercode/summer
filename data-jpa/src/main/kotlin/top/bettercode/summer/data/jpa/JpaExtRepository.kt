@@ -28,10 +28,10 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     fun lowLevelUpdate(spec: UpdateSpecification<T>): Int
 
     @Transactional
-    fun <S : T> physicalUpdate(s: S, spec: Specification<T>): Int
+    fun <S : T> physicalUpdate(s: S, spec: Specification<T>?): Int
 
     @Transactional
-    fun <S : T> update(s: S, spec: Specification<T>): Int
+    fun <S : T> update(s: S, spec: Specification<T>?): Int
 
     @Transactional
     fun physicalUpdate(spec: UpdateSpecification<T>): Int
@@ -48,7 +48,7 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     </S> */
     fun <S : T> dynamicSave(s: S): S
     fun delete(spec: Specification<T>): Int
-    fun exists(spec: Specification<T>): Boolean
+    fun exists(spec: Specification<T>?): Boolean
     fun existsPhysical(spec: Specification<T>?): Boolean
     fun countPhysical(spec: Specification<T>?): Long
     fun findFirst(sort: Sort): Optional<T>

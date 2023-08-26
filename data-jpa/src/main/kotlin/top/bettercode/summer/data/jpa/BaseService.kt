@@ -51,7 +51,7 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository.update(spec)
     }
 
-    override fun <S : T> update(s: S, spec: Specification<T>): Int {
+    override fun <S : T> update(s: S, spec: Specification<T>?): Int {
         return repository.update(s, spec)
     }
 
@@ -59,11 +59,11 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository.delete(spec)
     }
 
-    override fun exists(spec: Specification<T>): Boolean {
+    override fun exists(spec: Specification<T>?): Boolean {
         return repository.exists(spec)
     }
 
-    override fun findFirst(spec: Specification<T>): Optional<T> {
+    override fun findFirst(spec: Specification<T>?): Optional<T> {
         return repository.findFirst(spec)
     }
 
@@ -75,11 +75,11 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository.findAll(size, sort)
     }
 
-    override fun findAll(spec: Specification<T>, size: Int): List<T> {
+    override fun findAll(spec: Specification<T>?, size: Int): List<T> {
         return repository.findAll(spec, size)
     }
 
-    override fun findAll(spec: Specification<T>, size: Int, sort: Sort): List<T> {
+    override fun findAll(spec: Specification<T>?, size: Int, sort: Sort): List<T> {
         return repository.findAll(spec, size, sort)
     }
 

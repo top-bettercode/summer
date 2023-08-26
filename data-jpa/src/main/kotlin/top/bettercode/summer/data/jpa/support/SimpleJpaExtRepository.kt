@@ -287,16 +287,16 @@ class SimpleJpaExtRepository<T : Any, ID>(
 
 
     @Transactional
-    override fun <S : T> physicalUpdate(s: S, spec: Specification<T>): Int {
+    override fun <S : T> physicalUpdate(s: S, spec: Specification<T>?): Int {
         return update(s, spec, true, ".physicalUpdate")
     }
 
     @Transactional
-    override fun <S : T> update(s: S, spec: Specification<T>): Int {
+    override fun <S : T> update(s: S, spec: Specification<T>?): Int {
         return update(s, spec, false, ".update")
     }
 
-    private fun <S : T> update(s: S, spec: Specification<T>, physical: Boolean, mdcId: String): Int {
+    private fun <S : T> update(s: S, spec: Specification<T>?, physical: Boolean, mdcId: String): Int {
         var mdc = false
         return try {
             mdc = mdcPutId(mdcId)
@@ -724,7 +724,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
-    override fun exists(spec: Specification<T>): Boolean {
+    override fun exists(spec: Specification<T>?): Boolean {
         var mdc = false
         return try {
             mdc = mdcPutId(".exists")
