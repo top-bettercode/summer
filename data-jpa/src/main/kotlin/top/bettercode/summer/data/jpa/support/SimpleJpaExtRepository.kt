@@ -227,7 +227,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
 
     @Transactional
     override fun lowLevelUpdate(spec: UpdateSpecification<T>): Long {
-        return update(spec = spec, lowLevel = true, physical = false, mdcId = ".lowLevelUpdate")
+        return update(spec = spec, lowLevel = true, physical = true, mdcId = ".lowLevelUpdate")
     }
 
     @Transactional
@@ -285,18 +285,22 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
+    @Transactional
+    override fun <S : T> lowLevelUpdate(s: S, spec: UpdateSpecification<T>?): Long {
+        return update(s = s, spec = spec, lowLevel = true, physical = true, mdcId = ".update")
+    }
 
     @Transactional
     override fun <S : T> physicalUpdate(s: S, spec: Specification<T>?): Long {
-        return update(s, spec, true, ".physicalUpdate")
+        return update(s = s, spec = spec, lowLevel = false, physical = true, mdcId = ".physicalUpdate")
     }
 
     @Transactional
     override fun <S : T> update(s: S, spec: Specification<T>?): Long {
-        return update(s, spec, false, ".update")
+        return update(s = s, spec = spec, lowLevel = false, physical = false, mdcId = ".update")
     }
 
-    private fun <S : T> update(s: S, spec: Specification<T>?, physical: Boolean, mdcId: String): Long {
+    private fun <S : T> update(s: S, spec: Specification<T>?, lowLevel: Boolean, physical: Boolean, mdcId: String): Long {
         var mdc = false
         return try {
             mdc = mdcPutId(mdcId)
@@ -314,22 +318,24 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 val attributeValue = beanWrapper.getPropertyValue(attributeName) ?: continue
                 criteriaUpdate[attributeName] = attributeValue
             }
-            val lastModifiedDatePropertyName = extJpaSupport.lastModifiedDatePropertyName
-            if (lastModifiedDatePropertyName != null) {
-                criteriaUpdate[lastModifiedDatePropertyName] = extJpaSupport.lastModifiedDateNowValue
-            }
-            val lastModifiedByPropertyName = extJpaSupport.lastModifiedByPropertyName
-            if (auditorAware != null && lastModifiedByPropertyName != null) {
-                criteriaUpdate[lastModifiedByPropertyName] = extJpaSupport.lastModifiedBy(auditorAware.currentAuditor.get())
-            }
-            val versionPropertyName = extJpaSupport.versionPropertyName
-            if (versionPropertyName != null) {
-                val versionIncValue = extJpaSupport.versionIncValue
-                if (versionIncValue is Number) {
-                    val path = root.get<Number>(versionPropertyName)
-                    criteriaUpdate.set(path, builder.sum(path, versionIncValue))
-                } else {
-                    criteriaUpdate[versionPropertyName] = versionIncValue
+            if (!lowLevel) {
+                val lastModifiedDatePropertyName = extJpaSupport.lastModifiedDatePropertyName
+                if (lastModifiedDatePropertyName != null) {
+                    criteriaUpdate[lastModifiedDatePropertyName] = extJpaSupport.lastModifiedDateNowValue
+                }
+                val lastModifiedByPropertyName = extJpaSupport.lastModifiedByPropertyName
+                if (auditorAware != null && lastModifiedByPropertyName != null) {
+                    criteriaUpdate[lastModifiedByPropertyName] = extJpaSupport.lastModifiedBy(auditorAware.currentAuditor.get())
+                }
+                val versionPropertyName = extJpaSupport.versionPropertyName
+                if (versionPropertyName != null) {
+                    val versionIncValue = extJpaSupport.versionIncValue
+                    if (versionIncValue is Number) {
+                        val path = root.get<Number>(versionPropertyName)
+                        criteriaUpdate.set(path, builder.sum(path, versionIncValue))
+                    } else {
+                        criteriaUpdate[versionPropertyName] = versionIncValue
+                    }
                 }
             }
             val predicate = spec1!!.toPredicate(root, builder.createQuery(), builder)

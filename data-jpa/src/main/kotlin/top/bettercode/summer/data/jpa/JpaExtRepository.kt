@@ -31,6 +31,9 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     fun <S : T> physicalUpdate(s: S, spec: Specification<T>?): Long
 
     @Transactional
+    fun <S : T> lowLevelUpdate(s: S, spec: UpdateSpecification<T>?): Long
+
+    @Transactional
     fun <S : T> update(s: S, spec: Specification<T>?): Long
 
     @Transactional
