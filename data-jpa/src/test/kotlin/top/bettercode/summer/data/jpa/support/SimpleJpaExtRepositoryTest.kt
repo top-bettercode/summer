@@ -122,6 +122,21 @@ class SimpleJpaExtRepositoryTest {
     }
 
     @Test
+    fun saveSpec2() {
+        val spec = DefaultSpecMatcher.matching<User?>()
+                .equal("firstName", "Carter")
+        spec.criteriaUpdate("lastName", "newName")
+        var all = repository.findAll(spec)
+        System.err.println(json(all, true))
+        repository.save(spec)
+        all = repository.findAll(spec)
+        System.err.println(json(all, true))
+        for (user in all) {
+            Assertions.assertEquals("newName", user?.lastName)
+        }
+    }
+
+    @Test
     fun save1() {
         val dave = User("Dave", "Matthews")
         repository.save(dave)

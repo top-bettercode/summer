@@ -11,6 +11,7 @@ import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.query.QueryByExampleExecutor
 import org.springframework.transaction.annotation.Transactional
 import top.bettercode.summer.data.jpa.query.RecycleExecutor
+import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import java.util.*
 import javax.persistence.EntityManager
 
@@ -25,7 +26,15 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
 
     @Transactional
     fun <S : T> hardSave(s: S, spec: Specification<T>): Int
+
+    @Transactional
     fun <S : T> save(s: S, spec: Specification<T>): Int
+
+    @Transactional
+    fun hardSave(spec: UpdateSpecification<T>): Int
+
+    @Transactional
+    fun save(spec: UpdateSpecification<T>): Int
 
     /**
      * 动态更新，只更新非Null字段
@@ -79,4 +88,6 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     fun findAll(spec: Specification<T>?, size: Int, sort: Sort): List<T>
     fun <S : T> findAll(example: Example<S>, size: Int): List<S>
     fun <S : T> findAll(example: Example<S>, size: Int, sort: Sort): List<S>
+
+
 }

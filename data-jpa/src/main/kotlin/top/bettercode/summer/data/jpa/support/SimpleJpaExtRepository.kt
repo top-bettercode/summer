@@ -31,6 +31,7 @@ import kotlin.math.min
  */
 class SimpleJpaExtRepository<T : Any, ID>(
         jpaExtProperties: JpaExtProperties,
+        private val auditorAware: AuditorAware<*>?,
         private val entityInformation: JpaEntityInformation<T, ID>, override val entityManager: EntityManager
 ) : SimpleJpaRepository<T, ID>(entityInformation, entityManager), JpaExtRepository<T, ID> {
     private val sqlLog = LoggerFactory.getLogger("org.hibernate.SQL")
@@ -198,40 +199,33 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     @Transactional
-    override fun <S : T> hardSave(s: S, spec: Specification<T>): Int {
-        return save(s, spec, true, ".hardSave")
+    override fun hardSave(spec: UpdateSpecification<T>): Int {
+        return save(spec, true, ".hardSave")
     }
 
     @Transactional
-    override fun <S : T> save(s: S, spec: Specification<T>): Int {
-        return save(s, spec, false, ".save")
+    override fun save(spec: UpdateSpecification<T>): Int {
+        return save(spec, false, ".save")
     }
 
-    private fun <S : T> save(s: S, spec: Specification<T>, hard: Boolean, mdcId: String): Int {
-        var spec1: Specification<T>? = spec
+    private fun save(spec: UpdateSpecification<T>, hard: Boolean, mdcId: String): Int {
         var mdc = false
         return try {
             mdc = mdcPutId(mdcId)
-            val builder = entityManager.criteriaBuilder
-            val domainClass = domainClass
-            val criteriaUpdate = builder.createCriteriaUpdate(domainClass)
-            val root = criteriaUpdate.from(domainClass)
+            var spec1: Specification<T>? = spec
             if (!hard && extJpaSupport.supportSoftDeleted()) {
                 spec1 = if (spec1 == null) notDeletedSpec else spec1.and(notDeletedSpec)
             }
-            val predicate = spec1!!.toPredicate(root, builder.createQuery(), builder)
-            if (predicate != null) {
-                criteriaUpdate.where(predicate)
-            }
-            val beanWrapper = DirectFieldAccessFallbackBeanWrapper(s)
-            for (attribute in root.model.singularAttributes) {
-                val attributeName = attribute.name
-                val attributeValue = beanWrapper.getPropertyValue(attributeName) ?: continue
-                criteriaUpdate[attributeName] = attributeValue
-            }
+            val builder = entityManager.criteriaBuilder
+            val criteriaUpdate = spec.createCriteriaUpdate(domainClass, builder)
+            val root = criteriaUpdate.root
             val lastModifiedDatePropertyName = extJpaSupport.lastModifiedDatePropertyName
             if (lastModifiedDatePropertyName != null) {
                 criteriaUpdate[lastModifiedDatePropertyName] = extJpaSupport.lastModifiedDateNowValue
+            }
+            val lastModifiedByPropertyName = extJpaSupport.lastModifiedByPropertyName
+            if (auditorAware != null && lastModifiedByPropertyName != null) {
+                criteriaUpdate[lastModifiedByPropertyName] = extJpaSupport.lastModifiedBy(auditorAware.currentAuditor.get())
             }
             val versionPropertyName = extJpaSupport.versionPropertyName
             if (versionPropertyName != null) {
@@ -243,11 +237,75 @@ class SimpleJpaExtRepository<T : Any, ID>(
                     criteriaUpdate[versionPropertyName] = versionIncValue
                 }
             }
+            val predicate = spec1!!.toPredicate(root, builder.createQuery(), builder)
+            if (predicate != null) {
+                criteriaUpdate.where(predicate)
+            }
             val affected = entityManager.createQuery(criteriaUpdate).executeUpdate()
             if (sqlLog.isDebugEnabled) {
                 sqlLog.debug("{} row affected", affected)
             }
-            entityManager.flush()
+            affected
+        } finally {
+            cleanMdc(mdc)
+        }
+    }
+
+
+    @Transactional
+    override fun <S : T> hardSave(s: S, spec: Specification<T>): Int {
+        return save(s, spec, true, ".hardSave")
+    }
+
+    @Transactional
+    override fun <S : T> save(s: S, spec: Specification<T>): Int {
+        return save(s, spec, false, ".save")
+    }
+
+    private fun <S : T> save(s: S, spec: Specification<T>, hard: Boolean, mdcId: String): Int {
+        var mdc = false
+        return try {
+            mdc = mdcPutId(mdcId)
+            var spec1: Specification<T>? = spec
+            if (!hard && extJpaSupport.supportSoftDeleted()) {
+                spec1 = if (spec1 == null) notDeletedSpec else spec1.and(notDeletedSpec)
+            }
+            val builder = entityManager.criteriaBuilder
+            val domainClass = domainClass
+            val criteriaUpdate = builder.createCriteriaUpdate(domainClass)
+            val root = criteriaUpdate.from(domainClass)
+            val beanWrapper = DirectFieldAccessFallbackBeanWrapper(s)
+            for (attribute in root.model.singularAttributes) {
+                val attributeName = attribute.name
+                val attributeValue = beanWrapper.getPropertyValue(attributeName) ?: continue
+                criteriaUpdate[attributeName] = attributeValue
+            }
+            val lastModifiedDatePropertyName = extJpaSupport.lastModifiedDatePropertyName
+            if (lastModifiedDatePropertyName != null) {
+                criteriaUpdate[lastModifiedDatePropertyName] = extJpaSupport.lastModifiedDateNowValue
+            }
+            val lastModifiedByPropertyName = extJpaSupport.lastModifiedByPropertyName
+            if (auditorAware != null && lastModifiedByPropertyName != null) {
+                criteriaUpdate[lastModifiedByPropertyName] = extJpaSupport.lastModifiedBy(auditorAware.currentAuditor.get())
+            }
+            val versionPropertyName = extJpaSupport.versionPropertyName
+            if (versionPropertyName != null) {
+                val versionIncValue = extJpaSupport.versionIncValue
+                if (versionIncValue is Number) {
+                    val path = root.get<Number>(versionPropertyName)
+                    criteriaUpdate.set(path, builder.sum(path, versionIncValue))
+                } else {
+                    criteriaUpdate[versionPropertyName] = versionIncValue
+                }
+            }
+            val predicate = spec1!!.toPredicate(root, builder.createQuery(), builder)
+            if (predicate != null) {
+                criteriaUpdate.where(predicate)
+            }
+            val affected = entityManager.createQuery(criteriaUpdate).executeUpdate()
+            if (sqlLog.isDebugEnabled) {
+                sqlLog.debug("{} row affected", affected)
+            }
             affected
         } finally {
             cleanMdc(mdc)
@@ -329,7 +387,6 @@ class SimpleJpaExtRepository<T : Any, ID>(
         if (sqlLog.isDebugEnabled) {
             sqlLog.debug("{} row affected", affected)
         }
-        entityManager.flush()
         return affected
     }
 
@@ -348,7 +405,6 @@ class SimpleJpaExtRepository<T : Any, ID>(
         if (sqlLog.isDebugEnabled) {
             sqlLog.debug("{} row affected", affected)
         }
-        entityManager.flush()
         return affected
     }
 

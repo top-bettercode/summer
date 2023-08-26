@@ -1,6 +1,7 @@
 package top.bettercode.summer.data.jpa.support
 
 import org.apache.ibatis.session.Configuration
+import org.springframework.data.domain.AuditorAware
 import org.springframework.data.jpa.repository.support.JpaExtRepositoryFactory
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean
 import org.springframework.data.repository.core.support.RepositoryFactorySupport
@@ -17,10 +18,15 @@ import javax.persistence.EntityManager
  */
 class JpaExtRepositoryFactoryBean<T : JpaExtRepository<Any?, Serializable?>?>(repositoryInterface: Class<out T>) : JpaRepositoryFactoryBean<T, Any?, Serializable?>(repositoryInterface) {
     private lateinit var jpaExtProperties: JpaExtProperties
+    private  var auditorAware: AuditorAware<*>?=null
     private lateinit var mybatisConfiguration: Configuration
 
     fun setJpaExtProperties(jpaExtProperties: JpaExtProperties) {
         this.jpaExtProperties = jpaExtProperties
+    }
+
+    fun setAuditorAware(auditorAware: AuditorAware<*>?) {
+        this.auditorAware = auditorAware
     }
 
     fun setMybatisConfiguration(mybatisConfiguration: Configuration) {
@@ -36,6 +42,6 @@ class JpaExtRepositoryFactoryBean<T : JpaExtRepository<Any?, Serializable?>?>(re
     override fun createRepositoryFactory(em: EntityManager): RepositoryFactorySupport {
         Assert.notNull(mybatisConfiguration, "mybatisConfiguration must not be null")
         Assert.notNull(jpaExtProperties, "jpaExtProperties must not be null")
-        return JpaExtRepositoryFactory(em, mybatisConfiguration, jpaExtProperties)
+        return JpaExtRepositoryFactory(em, mybatisConfiguration, jpaExtProperties, auditorAware)
     }
 }

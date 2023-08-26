@@ -9,9 +9,13 @@ interface ExtJpaSupport {
     fun supportSoftDeleted(): Boolean
     fun isSoftDeleted(entity: Any): Boolean
     fun softDeletedSeted(entity: Any): Boolean
+
+    fun lastModifiedBy(auditor: Any?): Any?
+
     val softDeletedPropertyType: Class<*>?
     val softDeletedPropertyName: String?
     val lastModifiedDatePropertyName: String?
+    val lastModifiedByPropertyName: String?
     val versionPropertyName: String?
     val lastModifiedDateNowValue: Any?
     val versionIncValue: Any?

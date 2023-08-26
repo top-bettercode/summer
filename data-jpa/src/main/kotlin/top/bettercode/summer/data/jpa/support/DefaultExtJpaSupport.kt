@@ -1,6 +1,7 @@
 package top.bettercode.summer.data.jpa.support
 
 import org.springframework.beans.BeanUtils
+import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import top.bettercode.summer.data.jpa.SoftDelete
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
@@ -22,6 +23,7 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
     private var supportSoftDeleted = false
     final override var softDeletedPropertyType: Class<*>? = null
     private var lastModifiedDatePropertyType: Class<*>? = null
+    private var lastModifiedByPropertyType: Class<*>? = null
     private var versionPropertyType: Class<*>? = null
 
     /**
@@ -29,6 +31,7 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
      */
     final override var softDeletedPropertyName: String? = null
     final override var lastModifiedDatePropertyName: String? = null
+    final override var lastModifiedByPropertyName: String? = null
     final override var versionPropertyName: String? = null
 
     /**
@@ -47,6 +50,7 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
         var trueValue: String? = null
         var falseValue: String? = null
         var finish = 0
+        val total = 4
         for (declaredField in domainClass.declaredFields) {
             if (softDeletedPropertyName == null) {
                 val annotation = declaredField.getAnnotation(SoftDelete::class.java)
@@ -64,16 +68,22 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
                 lastModifiedDatePropertyType = declaredField.type
                 finish++
             }
+            if (lastModifiedByPropertyName == null
+                    && declaredField.getAnnotation(LastModifiedBy::class.java) != null) {
+                lastModifiedByPropertyName = declaredField.name
+                lastModifiedByPropertyType = declaredField.type
+                finish++
+            }
             if (versionPropertyName == null && declaredField.getAnnotation(Version::class.java) != null) {
                 versionPropertyName = declaredField.name
                 versionPropertyType = declaredField.type
                 finish++
             }
-            if (finish == 3) {
+            if (finish == total) {
                 break
             }
         }
-        if (finish < 3 && domainClass.superclass.isAnnotationPresent(MappedSuperclass::class.java)) {
+        if (finish < total && domainClass.superclass.isAnnotationPresent(MappedSuperclass::class.java)) {
             val descriptClass = domainClass.superclass
             for (declaredField in descriptClass.declaredFields) {
                 if (softDeletedPropertyName == null) {
@@ -92,17 +102,23 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
                     lastModifiedDatePropertyType = declaredField.type
                     finish++
                 }
+                if (lastModifiedByPropertyName == null
+                        && declaredField.getAnnotation(LastModifiedBy::class.java) != null) {
+                    lastModifiedByPropertyName = declaredField.name
+                    lastModifiedByPropertyType = declaredField.type
+                    finish++
+                }
                 if (versionPropertyName == null && declaredField.getAnnotation(Version::class.java) != null) {
                     versionPropertyName = declaredField.name
                     versionPropertyType = declaredField.type
                     finish++
                 }
-                if (finish == 3) {
+                if (finish == total) {
                     break
                 }
             }
         }
-        if (finish < 3) {
+        if (finish < total) {
             val propertyDescriptors = BeanUtils.getPropertyDescriptors(domainClass)
             for (propertyDescriptor in propertyDescriptors) {
                 if ("class" == propertyDescriptor.name) {
@@ -125,13 +141,19 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
                     lastModifiedDatePropertyType = propertyDescriptor.propertyType
                     finish++
                 }
+                if (lastModifiedByPropertyName == null
+                        && propertyDescriptor.readMethod.getAnnotation(LastModifiedBy::class.java) != null) {
+                    lastModifiedByPropertyName = propertyDescriptor.name
+                    lastModifiedByPropertyType = propertyDescriptor.propertyType
+                    finish++
+                }
                 if (versionPropertyName == null
                         && propertyDescriptor.readMethod.getAnnotation(Version::class.java) != null) {
                     versionPropertyName = propertyDescriptor.name
                     versionPropertyType = propertyDescriptor.propertyType
                     finish++
                 }
-                if (finish == 3) {
+                if (finish == total) {
                     break
                 }
             }
@@ -204,8 +226,13 @@ open class DefaultExtJpaSupport(jpaExtProperties: JpaExtProperties, domainClass:
         return supportSoftDeleted
     }
 
+    override fun lastModifiedBy(auditor: Any?): Any? {
+        return if (lastModifiedByPropertyType == null) auditor else JpaUtil.convert(auditor, lastModifiedByPropertyType)
+    }
+
     override val lastModifiedDateNowValue: Any?
-        get() = JpaUtil.convert(LocalDateTime.now(), lastModifiedDatePropertyType)
+        get() = if (lastModifiedDatePropertyType == null) LocalDateTime.now() else JpaUtil.convert(LocalDateTime.now(), lastModifiedDatePropertyType)
+
     override val versionIncValue: Any?
         get() = if (versionPropertyType != null && (Date::class.java.isAssignableFrom(versionPropertyType!!)
                         || TemporalAccessor::class.java.isAssignableFrom(versionPropertyType!!))) {

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.aop.framework.ProxyFactory
 import org.springframework.beans.factory.BeanFactory
 import org.springframework.dao.InvalidDataAccessApiUsageException
+import org.springframework.data.domain.AuditorAware
 import org.springframework.data.jpa.projection.CollectionAwareProjectionFactory
 import org.springframework.data.jpa.provider.PersistenceProvider
 import org.springframework.data.jpa.provider.QueryExtractor
@@ -40,9 +41,10 @@ import javax.persistence.EntityManager
  */
 open class JpaExtRepositoryFactory(
         entityManager: EntityManager,
-        configuration: Configuration, jpaExtProperties: JpaExtProperties
+        configuration: Configuration, jpaExtProperties: JpaExtProperties, auditorAware: AuditorAware<*>?,
 ) : RepositoryFactorySupport() {
     private val jpaExtProperties: JpaExtProperties
+    private val auditorAware: AuditorAware<*>?
     private val configuration: Configuration
     private val entityManager: EntityManager
     private val extractor: QueryExtractor
@@ -69,6 +71,7 @@ open class JpaExtRepositoryFactory(
         }
         this.configuration = configuration
         this.jpaExtProperties = jpaExtProperties
+        this.auditorAware = auditorAware
     }
 
     override fun setBeanClassLoader(classLoader: ClassLoader) {
@@ -105,8 +108,7 @@ open class JpaExtRepositoryFactory(
     ): JpaRepositoryImplementation<*, *> {
         val entityInformation: JpaEntityInformation<*, Serializable> = getEntityInformation(
                 information.domainType)
-        val repository = getTargetRepositoryViaReflection<Any>(information, jpaExtProperties,
-                entityInformation, entityManager)
+        val repository = getTargetRepositoryViaReflection<Any>(information, jpaExtProperties, auditorAware, entityInformation, entityManager)
         Assert.isInstanceOf(SimpleJpaExtRepository::class.java, repository)
         return repository as JpaRepositoryImplementation<*, *>
     }

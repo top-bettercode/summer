@@ -3,6 +3,7 @@ package top.bettercode.summer.data.jpa.domain
 import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.DynamicUpdate
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
@@ -16,6 +17,15 @@ import javax.persistence.Version
 @Table(name = "t_user")
 @EntityListeners(AuditingEntityListener::class)
 class User : BaseUser {
+
+
+    /**
+     * 修改人
+     */
+    @LastModifiedBy
+    var lastModifiedBy: String? = null
+        private set
+
     /**
      * 修改时间 默认值：CURRENT_TIMESTAMP
      */

@@ -16,5 +16,6 @@ class JpaExtRepositoryConfigExtension : JpaRepositoryConfigExtension() {
                 source.getAttribute("mybatisConfigurationRef").orElse("mybatisConfiguration"))
         builder.addPropertyReference("jpaExtProperties",
                 source.getAttribute("jpaExtPropertiesRef").orElse("jpaExtProperties"))
+        builder.addAutowiredProperty("auditorAware")
     }
 }
