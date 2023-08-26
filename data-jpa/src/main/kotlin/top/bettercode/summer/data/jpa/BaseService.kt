@@ -47,19 +47,19 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository.saveAll(entities)
     }
 
-    override fun update(spec: UpdateSpecification<T>): Int {
+    override fun update(spec: UpdateSpecification<T>): Long {
         return repository.update(spec)
     }
 
-    override fun <S : T> update(s: S, spec: Specification<T>?): Int {
+    override fun <S : T> update(s: S, spec: Specification<T>?): Long {
         return repository.update(s, spec)
     }
 
-    override fun delete(spec: Specification<T>): Int {
+    override fun delete(spec: Specification<T>): Long {
         return repository.delete(spec)
     }
 
-    override fun exists(spec: Specification<T>?): Boolean {
+    override fun exists(spec: Specification<T>): Boolean {
         return repository.exists(spec)
     }
 

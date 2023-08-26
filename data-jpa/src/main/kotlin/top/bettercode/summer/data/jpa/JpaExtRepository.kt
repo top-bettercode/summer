@@ -25,19 +25,19 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     val entityManager: EntityManager
 
     @Transactional
-    fun lowLevelUpdate(spec: UpdateSpecification<T>): Int
+    fun lowLevelUpdate(spec: UpdateSpecification<T>): Long
 
     @Transactional
-    fun <S : T> physicalUpdate(s: S, spec: Specification<T>?): Int
+    fun <S : T> physicalUpdate(s: S, spec: Specification<T>?): Long
 
     @Transactional
-    fun <S : T> update(s: S, spec: Specification<T>?): Int
+    fun <S : T> update(s: S, spec: Specification<T>?): Long
 
     @Transactional
-    fun physicalUpdate(spec: UpdateSpecification<T>): Int
+    fun physicalUpdate(spec: UpdateSpecification<T>): Long
 
     @Transactional
-    fun update(spec: UpdateSpecification<T>): Int
+    fun update(spec: UpdateSpecification<T>): Long
 
     /**
      * 动态更新，只更新非Null字段
@@ -47,8 +47,8 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
      * @return 结果
     </S> */
     fun <S : T> dynamicSave(s: S): S
-    fun delete(spec: Specification<T>): Int
-    fun exists(spec: Specification<T>?): Boolean
+    fun delete(spec: Specification<T>): Long
+    fun exists(spec: Specification<T>): Boolean
     fun existsPhysical(spec: Specification<T>?): Boolean
     fun countPhysical(spec: Specification<T>?): Long
     fun findFirst(sort: Sort): Optional<T>

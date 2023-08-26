@@ -29,14 +29,14 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
     fun <S : T> saveAll(entities: Iterable<S>): List<S>
 
     @Transactional
-    fun <S : T> update(s: S, spec: Specification<T>?): Int
+    fun <S : T> update(s: S, spec: Specification<T>?): Long
 
     @Transactional
-    fun update(spec: UpdateSpecification<T>): Int
+    fun update(spec: UpdateSpecification<T>): Long
 
     fun delete(t: T)
     fun deleteById(id: ID)
-    fun delete(spec: Specification<T>): Int
+    fun delete(spec: Specification<T>): Long
     fun deleteAllById(ids: Iterable<ID>)
     fun deleteAll(entities: Iterable<T>)
     fun deleteAll()
@@ -53,7 +53,7 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
     fun findAll(pageable: Pageable): Page<T>
     fun findAll(sort: Sort): List<T>
     fun count(spec: Specification<T>?): Long
-    fun exists(spec: Specification<T>?): Boolean
+    fun exists(spec: Specification<T>): Boolean
     fun findOne(spec: Specification<T>?): Optional<T>
     fun findFirst(spec: Specification<T>?): Optional<T>
     fun findAll(spec: Specification<T>?): List<T>

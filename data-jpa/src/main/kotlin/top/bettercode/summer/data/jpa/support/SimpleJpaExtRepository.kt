@@ -226,21 +226,21 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     @Transactional
-    override fun lowLevelUpdate(spec: UpdateSpecification<T>): Int {
+    override fun lowLevelUpdate(spec: UpdateSpecification<T>): Long {
         return update(spec = spec, lowLevel = true, physical = false, mdcId = ".lowLevelUpdate")
     }
 
     @Transactional
-    override fun physicalUpdate(spec: UpdateSpecification<T>): Int {
+    override fun physicalUpdate(spec: UpdateSpecification<T>): Long {
         return update(spec = spec, lowLevel = false, physical = true, mdcId = ".physicalUpdate")
     }
 
     @Transactional
-    override fun update(spec: UpdateSpecification<T>): Int {
+    override fun update(spec: UpdateSpecification<T>): Long {
         return update(spec = spec, lowLevel = false, physical = false, mdcId = ".update")
     }
 
-    private fun update(spec: UpdateSpecification<T>, lowLevel: Boolean, physical: Boolean, mdcId: String): Int {
+    private fun update(spec: UpdateSpecification<T>, lowLevel: Boolean, physical: Boolean, mdcId: String): Long {
         var mdc = false
         return try {
             mdc = mdcPutId(mdcId)
@@ -279,7 +279,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             if (sqlLog.isDebugEnabled) {
                 sqlLog.debug("{} row affected", affected)
             }
-            affected
+            affected.toLong()
         } finally {
             cleanMdc(mdc)
         }
@@ -287,16 +287,16 @@ class SimpleJpaExtRepository<T : Any, ID>(
 
 
     @Transactional
-    override fun <S : T> physicalUpdate(s: S, spec: Specification<T>?): Int {
+    override fun <S : T> physicalUpdate(s: S, spec: Specification<T>?): Long {
         return update(s, spec, true, ".physicalUpdate")
     }
 
     @Transactional
-    override fun <S : T> update(s: S, spec: Specification<T>?): Int {
+    override fun <S : T> update(s: S, spec: Specification<T>?): Long {
         return update(s, spec, false, ".update")
     }
 
-    private fun <S : T> update(s: S, spec: Specification<T>?, physical: Boolean, mdcId: String): Int {
+    private fun <S : T> update(s: S, spec: Specification<T>?, physical: Boolean, mdcId: String): Long {
         var mdc = false
         return try {
             mdc = mdcPutId(mdcId)
@@ -340,7 +340,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             if (sqlLog.isDebugEnabled) {
                 sqlLog.debug("{} row affected", affected)
             }
-            affected
+            affected.toLong()
         } finally {
             cleanMdc(mdc)
         }
@@ -363,7 +363,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     @Transactional
-    override fun delete(spec: Specification<T>): Int {
+    override fun delete(spec: Specification<T>): Long {
         var mdc = false
         return try {
             mdc = mdcPutId(".delete")
@@ -377,7 +377,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
-    private fun logicalDelete(spec: Specification<T>): Int {
+    private fun logicalDelete(spec: Specification<T>): Long {
         var spec1: Specification<T>? = spec
         val builder = entityManager.criteriaBuilder
         val domainClass = domainClass
@@ -393,10 +393,10 @@ class SimpleJpaExtRepository<T : Any, ID>(
         if (sqlLog.isDebugEnabled) {
             sqlLog.debug("{} row affected", affected)
         }
-        return affected
+        return affected.toLong()
     }
 
-    private fun physicalDelete(spec: Specification<T>?): Int {
+    private fun physicalDelete(spec: Specification<T>?): Long {
         val builder = entityManager.criteriaBuilder
         val domainClass = domainClass
         val criteriaDelete = builder.createCriteriaDelete(domainClass)
@@ -411,7 +411,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         if (sqlLog.isDebugEnabled) {
             sqlLog.debug("{} row affected", affected)
         }
-        return affected
+        return affected.toLong()
     }
 
     @Transactional
@@ -724,7 +724,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
-    override fun exists(spec: Specification<T>?): Boolean {
+    override fun exists(spec: Specification<T>): Boolean {
         var mdc = false
         return try {
             mdc = mdcPutId(".exists")
