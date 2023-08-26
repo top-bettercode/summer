@@ -33,6 +33,7 @@
       select="getLastName"/>
   </resultMap>
 
+  <!--suppress MybatisMapperXmlInspection -->
   <select id="getLastName" resultType="top.bettercode.summer.data.jpa.resp.LastName"
     parameterType="top.bettercode.summer.data.jpa.domain.User">
     select *

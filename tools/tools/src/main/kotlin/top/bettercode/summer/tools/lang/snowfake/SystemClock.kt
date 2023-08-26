@@ -23,10 +23,9 @@ import java.util.concurrent.atomic.AtomicLong
  *
  */
 class SystemClock private constructor(private val period: Long) {
-    private val now: AtomicLong
+    private val now: AtomicLong = AtomicLong(System.currentTimeMillis())
 
     init {
-        now = AtomicLong(System.currentTimeMillis())
         scheduleClockUpdating()
     }
 

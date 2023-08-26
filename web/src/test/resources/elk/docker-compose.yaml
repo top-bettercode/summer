@@ -19,7 +19,7 @@ services:
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200/
     ports:
-      - 5601:5601
+      - "5601:5601"
 
   logstash:
     image: logstash:6.5.1
@@ -32,4 +32,4 @@ services:
       - ./logstash:/opt/logstash/conf
     command: logstash -f /opt/logstash/conf/
     ports:
-      - 4560:4560
+      - "4560:4560"

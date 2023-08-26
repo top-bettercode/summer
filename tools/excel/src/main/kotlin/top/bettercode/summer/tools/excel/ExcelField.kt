@@ -300,11 +300,7 @@ open class ExcelField<T, P : Any?> {
                             }
                         }
                         val fWriteMethod = writeMethod
-                        propertySetter = object : ExcelCellSetter<T, P?> {
-                            override fun set(entity: T, property: P?) {
-                                ReflectionUtils.invokeMethod(fWriteMethod, entity, property)
-                            }
-                        }
+                        propertySetter = ExcelCellSetter { entity, property -> ReflectionUtils.invokeMethod(fWriteMethod, entity, property) }
                     } catch (e: NoSuchMethodException) {
                         val log = LoggerFactory.getLogger(ExcelField::class.java)
                         if (log.isDebugEnabled) {
