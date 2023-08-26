@@ -1,6 +1,7 @@
 package top.bettercode.summer.gradle.plugin.project
 
 import isBoot
+import isCloud
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -92,13 +93,22 @@ object SubProjectTasks {
 
                     project.tasks.create("gen${prefix}") { task ->
                         task.group = group
-                        task.dependsOn(":core:genCoreEntity")
-                        task.doLast(object : Action<Task> {
-                            override fun execute(it: Task) {
-                                ext.generators = arrayOf(Form(), Service(), Controller())
-                                Generators.call(ext, tableHolder)
-                            }
-                        })
+                        if (project.isCloud) {
+                            task.doLast(object : Action<Task> {
+                                override fun execute(it: Task) {
+                                    ext.generators = arrayOf(Entity(), SerializationViews(), Form(), Service(), Controller())
+                                    Generators.call(ext, tableHolder)
+                                }
+                            })
+                        } else {
+                            task.dependsOn(":core:genCoreEntity")
+                            task.doLast(object : Action<Task> {
+                                override fun execute(it: Task) {
+                                    ext.generators = arrayOf(Form(), Service(), Controller())
+                                    Generators.call(ext, tableHolder)
+                                }
+                            })
+                        }
                     }
 
                 }
