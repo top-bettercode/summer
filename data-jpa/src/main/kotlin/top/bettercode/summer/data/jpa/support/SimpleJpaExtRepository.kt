@@ -451,7 +451,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 }
                 val logicalDeleteName = extJpaSupport.logicalDeletedPropertyName
                 val oldName = "old$logicalDeleteName"
-                val queryString = String.format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.entityName,
+                val queryString = String.format(LOGICAL_DELETE_ALL_QUERY_STRING, entityInformation.entityName,
                         logicalDeleteName,
                         logicalDeleteName, logicalDeleteName, oldName)
                 var iterator = entities.iterator()
@@ -497,7 +497,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             if (extJpaSupport.supportLogicalDeleted()) {
                 val logicalDeleteName = extJpaSupport.logicalDeletedPropertyName
                 val oldName = "old$logicalDeleteName"
-                val affected = entityManager.createQuery(String.format(SOFT_DELETE_ALL_QUERY_STRING, entityInformation.entityName,
+                val affected = entityManager.createQuery(String.format(LOGICAL_DELETE_ALL_QUERY_STRING, entityInformation.entityName,
                         logicalDeleteName, logicalDeleteName, logicalDeleteName, oldName))
                         .setParameter(logicalDeleteName, deleted)
                         .setParameter(oldName, notDeleted)
@@ -1446,7 +1446,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     companion object {
-        const val SOFT_DELETE_ALL_QUERY_STRING = "update %s e set e.%s = :%s where e.%s = :%s"
+        const val LOGICAL_DELETE_ALL_QUERY_STRING = "update %s e set e.%s = :%s where e.%s = :%s"
         private const val EQUALS_CONDITION_STRING = "%s.%s = :%s"
         private fun <T> toCollection(ts: Iterable<T>): Collection<T> {
             if (ts is Collection<*>) {
