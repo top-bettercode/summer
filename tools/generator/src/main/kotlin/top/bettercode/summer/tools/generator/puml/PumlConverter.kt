@@ -105,7 +105,11 @@ object PumlConverter {
                         val createdBy = columnDef.contains(" CREATEDBY ", true)
                         val lastModifiedDate = columnDef.contains(" LASTMODIFIEDDATE ", true)
                         val lastModifiedBy = columnDef.contains(" LASTMODIFIEDBY ", true)
-                        val logicalDelete = columnDef.contains(" LOGICALDELETE ", true)
+                        var logicalDelete = columnDef.contains(" LOGICALDELETE ", true)
+                        //兼容
+                        if (!logicalDelete && columnDef.contains(" SOFTDELETE ", true)) {
+                            logicalDelete = true
+                        }
                         val pk = columnDef.contains(" PK ", true)
                         val nullable = if (pk || version || logicalDelete) false else !columnDef.contains(" NOT NULL ", true)
                         val asBoolean = columnDef.contains(" ASBOOLEAN ", true)
@@ -130,6 +134,8 @@ object PumlConverter {
                         extra = extra.replace(" LASTMODIFIEDBY ", " ", true)
                         extra = extra.replace(" LOGICALDELETE ", " ", true)
                         extra = extra.replace(" ASBOOLEAN ", " ", true)
+                        //兼容
+                        extra = extra.replace(" SOFTDELETE ", " ", true)
 
                         //DEFAULT
                         var defaultVal: String? = null
