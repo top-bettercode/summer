@@ -49,6 +49,16 @@ object CoreProjectTasks {
                 })
             }
 
+            project.tasks.create("gen${prefix}DO") { task ->
+                task.group = group
+                task.doLast(object : Action<Task> {
+                    override fun execute(it: Task) {
+                        ext.generators = arrayOf(DataObject())
+                        Generators.callInAllModule(ext)
+                    }
+                })
+            }
+
             project.tasks.create("gen${prefix}Service") { task ->
                 task.group = group
                 task.doLast(object : Action<Task> {

@@ -324,7 +324,7 @@ class JpaMybatisTupleTest {
         Assertions.assertEquals(2, users!!.size)
         val users1 = sqlSession
                 .selectList<Any?>(UserRepository::class.java.name + ".selectByMybatisEntity",
-                        User("Carter", null))
+                        mapOf("user", User("Carter", null)))
         System.err.println(users1)
         Assertions.assertEquals(2, users1.size)
         Assertions.assertIterableEquals(users, users1)

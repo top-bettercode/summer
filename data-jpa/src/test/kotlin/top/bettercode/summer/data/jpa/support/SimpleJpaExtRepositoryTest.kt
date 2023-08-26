@@ -333,7 +333,7 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll34() {
         val spec = DefaultSpecMatcher.matching<User?>().equal("id", carterId)
-                .containing("firstName", " Cart ").specPath("firstName").trim()
+                .containing("firstName", " Cart ").path("firstName").trim()
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(spec)
         System.err.println(json(all, true))
@@ -342,10 +342,10 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll35() {
         val matcher: SpecMatcher<User?, DefaultSpecMatcher<User?>> = DefaultSpecMatcher.matching<User?>()
-                .specPath("lastName").containing("Beauford")
+                .path("lastName").containing("Beauford")
                 .any { specMatcher: DefaultSpecMatcher<User?> ->
                     specMatcher.equal("id", carterId)
-                            .containing("firstName", " Cart ").specPath("firstName").trim()
+                            .containing("firstName", " Cart ").path("firstName").trim()
                 }
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(matcher)
@@ -355,10 +355,10 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun findAll351() {
         val matcher: SpecMatcher<User?, DefaultSpecMatcher<User?>> = DefaultSpecMatcher.matching<User?>()
-                .specPath("lastName").containing("Beauford")
+                .path("lastName").containing("Beauford")
                 .all { specMatcher: DefaultSpecMatcher<User?> ->
                     specMatcher.equal("id", carterId)
-                            .containing("firstName", " Cart ").specPath("firstName").trim()
+                            .containing("firstName", " Cart ").path("firstName").trim()
                 }
                 .desc("firstName").asc("lastName")
         val all = repository.findAll(matcher)
@@ -479,5 +479,16 @@ class SimpleJpaExtRepositoryTest {
 //    });
         val resultList = query.resultList
         System.err.println(json(resultList, true))
+    }
+
+    @Test
+    fun specMatcherMethodNames() {
+        //SpecMatcher类的公开方法名，按类似 "asc", "desc","path"的方法打印
+        val type=SpecMatcher::class.java
+        val methods = type.methods
+        val s = methods.map { it.name }.distinct().joinToString {
+            "\"${it}\""
+        }
+        System.err.println(s)
     }
 }

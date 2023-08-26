@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
  *
  * @author Peter Wu
  */
+@Disabled
 internal class JenkinsTest {
     private val jenkins =
         Jenkins("", "")

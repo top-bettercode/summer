@@ -49,7 +49,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
 
     override fun toPredicate(root: Root<T>, criteriaBuilder: CriteriaBuilder): Predicate? {
         if (probe != null) {
-            setSpecPathDefaultValue("", root, root.model, probe, probe.javaClass,
+            setPathDefaultValue("", root, root.model, probe, probe.javaClass,
                     PathNode("root", null, probe))
         }
         val predicates: MutableList<Predicate> = ArrayList()
@@ -66,11 +66,11 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         return if (matchMode == SpecMatcherMode.ALL) criteriaBuilder.and(*restrictions) else criteriaBuilder.or(*restrictions)
     }
 
-    private fun setSpecPathDefaultValue(path: String, from: Path<*>, type: ManagedType<*>, criteria: Any, probeType: Class<*>, currentNode: PathNode) {
+    private fun setPathDefaultValue(path: String, from: Path<*>, type: ManagedType<*>, criteria: Any, probeType: Class<*>, currentNode: PathNode) {
         val beanWrapper = DirectFieldAccessFallbackBeanWrapper(criteria)
         for (attribute in type.singularAttributes) {
             val currentPath = if (!StringUtils.hasText(path)) attribute.name else path + "." + attribute.name
-            val specPath = specPath(currentPath)
+            val specPath = path(currentPath)
             if (specPath.isIgnored) {
                 continue
             }
@@ -79,7 +79,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
                 continue
             }
             if (attribute.persistentAttributeType == PersistentAttributeType.EMBEDDED || isAssociation(attribute) && from !is From<*, *>) {
-                setSpecPathDefaultValue(currentPath, from.get<Any>(attribute.name),
+                setPathDefaultValue(currentPath, from.get<Any>(attribute.name),
                         attribute.type as ManagedType<*>, attributeValue, probeType, currentNode)
                 continue
             }
@@ -91,7 +91,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
                             currentPath,
                             ClassUtils.getShortName(probeType), node))
                 }
-                setSpecPathDefaultValue(currentPath, (from as From<*, *>).join<Any, Any>(attribute.name),
+                setPathDefaultValue(currentPath, (from as From<*, *>).join<Any, Any>(attribute.name),
                         attribute.type as ManagedType<*>, attributeValue, probeType, node)
                 continue
             }
@@ -112,7 +112,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         return criteriaUpdate
     }
 
-    fun specPath(propertyName: String): SpecPath<T, M> {
+    fun path(propertyName: String): SpecPath<T, M> {
         Assert.hasText(propertyName, "propertyName can not be blank.")
         return specPredicates.computeIfAbsent(propertyName
         ) { s: String -> SpecPath(typed, s) } as SpecPath<T, M>
@@ -129,7 +129,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         constructor.isAccessible = true
         @Suppress("UNCHECKED_CAST") val otherMatcher = constructor.newInstance(SpecMatcherMode.ALL, other) as M
         matcher(otherMatcher)
-        specPredicates[UUID.randomUUID().toString()] = otherMatcher
+        specPredicates["all" + UUID.randomUUID().toString()] = otherMatcher
         return typed
     }
 
@@ -142,7 +142,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         constructor.isAccessible = true
         @Suppress("UNCHECKED_CAST") val otherMatcher = constructor.newInstance(SpecMatcherMode.ANY, other) as M
         matcher(otherMatcher)
-        specPredicates[UUID.randomUUID().toString()] = otherMatcher
+        specPredicates["any" + UUID.randomUUID().toString()] = otherMatcher
         return typed
     }
 
@@ -163,16 +163,16 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     }
 
     fun criteriaUpdate(propertyName: String, criteriaUpdate: Any?): M {
-        return specPath(propertyName).criteriaUpdate(criteriaUpdate)
+        return path(propertyName).criteriaUpdate(criteriaUpdate)
     }
 
     fun criteria(propertyName: String, criteria: Any?): M {
-        specPath(propertyName).criteria(criteria)
+        path(propertyName).criteria(criteria)
         return typed
     }
 
     fun criteria(propertyName: String, criteria: Any?, matcher: PathMatcher): M {
-        return specPath(propertyName).criteria(criteria).withMatcher(matcher)
+        return path(propertyName).criteria(criteria).withMatcher(matcher)
     }
 
     fun equal(propertyName: String, criteria: Any?): M {

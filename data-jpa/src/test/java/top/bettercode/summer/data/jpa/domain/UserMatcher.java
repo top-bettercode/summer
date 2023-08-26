@@ -55,7 +55,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 主键 相关Matcher
    */
   public SpecPath<User, UserMatcher> id() {
-    return super.specPath("id");
+    return super.path("id");
   }
 
   /**
@@ -63,7 +63,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 主键 相关Matcher
    */
   public UserMatcher id(Integer id) {
-    super.specPath("id").criteria(id);
+    super.path("id").criteria(id);
     return this;
   }
 
@@ -73,7 +73,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 主键 相关Matcher
    */
   public UserMatcher id(Integer id, PathMatcher matcher) {
-    super.specPath("id").criteria(id).withMatcher(matcher);
+    super.path("id").criteria(id).withMatcher(matcher);
     return this;
   }
 
@@ -81,7 +81,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 用户名称 相关Matcher
    */
   public SpecPath<User, UserMatcher> firstName() {
-    return super.specPath("firstName");
+    return super.path("firstName");
   }
 
   /**
@@ -89,7 +89,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 用户名称 相关Matcher
    */
   public UserMatcher firstName(String firstName) {
-    super.specPath("firstName").criteria(firstName);
+    super.path("firstName").criteria(firstName);
     return this;
   }
 
@@ -107,7 +107,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 用户名称 相关Matcher
    */
   public UserMatcher firstName(String firstName, PathMatcher matcher) {
-    super.specPath("firstName").criteria(firstName).withMatcher(matcher);
+    super.path("firstName").criteria(firstName).withMatcher(matcher);
     return this;
   }
 
@@ -115,7 +115,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 用户名称 相关Matcher
    */
   public SpecPath<User, UserMatcher> lastName() {
-    return super.specPath("lastName");
+    return super.path("lastName");
   }
 
   /**
@@ -123,7 +123,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 用户名称 相关Matcher
    */
   public UserMatcher lastName(String lastName) {
-    super.specPath("lastName").criteria(lastName);
+    super.path("lastName").criteria(lastName);
     return this;
   }
 
@@ -133,7 +133,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 用户名称 相关Matcher
    */
   public UserMatcher lastName(String lastName, PathMatcher matcher) {
-    super.specPath("lastName").criteria(lastName).withMatcher(matcher);
+    super.path("lastName").criteria(lastName).withMatcher(matcher);
     return this;
   }
 
@@ -141,7 +141,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 版本号 相关Matcher
    */
   public SpecPath<User, UserMatcher> version() {
-    return super.specPath("version");
+    return super.path("version");
   }
 
   /**
@@ -149,7 +149,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 版本号 相关Matcher
    */
   public UserMatcher version(Integer version) {
-    super.specPath("version").criteria(version);
+    super.path("version").criteria(version);
     return this;
   }
 
@@ -159,7 +159,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 版本号 相关Matcher
    */
   public UserMatcher version(Integer version, PathMatcher matcher) {
-    super.specPath("version").criteria(version).withMatcher(matcher);
+    super.path("version").criteria(version).withMatcher(matcher);
     return this;
   }
 
@@ -167,7 +167,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 逻辑删除 相关Matcher
    */
   public SpecPath<User, UserMatcher> deleted() {
-    return super.specPath("deleted");
+    return super.path("deleted");
   }
 
   /**
@@ -175,7 +175,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 逻辑删除 相关Matcher
    */
   public UserMatcher deleted(Boolean deleted) {
-    super.specPath("deleted").criteria(deleted);
+    super.path("deleted").criteria(deleted);
     return this;
   }
 
@@ -185,7 +185,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 逻辑删除 相关Matcher
    */
   public UserMatcher deleted(Boolean deleted, PathMatcher matcher) {
-    super.specPath("deleted").criteria(deleted).withMatcher(matcher);
+    super.path("deleted").criteria(deleted).withMatcher(matcher);
     return this;
   }
 
@@ -193,7 +193,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 修改时间 相关Matcher
    */
   public SpecPath<User, UserMatcher> lastModifiedDate() {
-    return super.specPath("lastModifiedDate");
+    return super.path("lastModifiedDate");
   }
 
   /**
@@ -201,7 +201,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 修改时间 相关Matcher
    */
   public UserMatcher lastModifiedDate(LocalDateTime lastModifiedDate) {
-    super.specPath("lastModifiedDate").criteria(lastModifiedDate);
+    super.path("lastModifiedDate").criteria(lastModifiedDate);
     return this;
   }
 
@@ -211,7 +211,7 @@ public class UserMatcher extends SpecMatcher<User, UserMatcher> {
    * @return 修改时间 相关Matcher
    */
   public UserMatcher lastModifiedDate(LocalDateTime lastModifiedDate, PathMatcher matcher) {
-    super.specPath("lastModifiedDate").criteria(lastModifiedDate).withMatcher(matcher);
+    super.path("lastModifiedDate").criteria(lastModifiedDate).withMatcher(matcher);
     return this;
   }
 }

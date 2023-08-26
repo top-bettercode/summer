@@ -1,6 +1,7 @@
 package top.bettercode.summer.tools.generator.database
 
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
@@ -10,6 +11,7 @@ import java.io.File
 /**
  * @author Peter Wu
  */
+@Disabled
 class OracleMetaDataTest {
     private val extension = GeneratorExtension(
             projectDir = File("build"),

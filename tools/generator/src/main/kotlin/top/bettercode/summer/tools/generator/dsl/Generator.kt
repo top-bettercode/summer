@@ -235,6 +235,7 @@ open class Generator {
             "Domain" -> "domain"
             "QueryDsl" -> "querydsl"
             "Dao" -> "dao"
+            "DataObject" -> "data"
             "Entity" -> "entity"
             "Properties" -> "properties"
             "Matcher" -> "matcher"

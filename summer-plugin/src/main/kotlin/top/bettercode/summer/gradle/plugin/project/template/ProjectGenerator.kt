@@ -101,6 +101,7 @@ abstract class ProjectGenerator : Generator() {
                 }MethodInfo"
         )
     val formType get() = JavaType("$packageName.${modulePackage("Form")}.${projectClassName}Form")
+    val dataObjectType get() = JavaType("$packageName.${modulePackage("DataObject")}.${projectClassName}DO")
     val coreSerializationViewsType get() = JavaType("${basePackageName}.web.CoreSerializationViews")
     val serializationViewsType get() = JavaType("$basePackageName.web.${shortProjectName.capitalized()}SerializationViews")
     val mixInType get() = JavaType("$packageName.${modulePackage("MixIn")}.${projectClassName}MixIn")
