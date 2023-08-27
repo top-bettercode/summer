@@ -28,6 +28,11 @@ data class UserInfo(
         val language: String? = null,
 
         @field:JsonProperty("phoneNumber")
-        val phoneNumber: String? = null
+        val phoneNumber: String? = null,
 
+        @field:JsonProperty("watermark")
+        val watermark: Watermark? = null,
+
+        @field:JsonProperty("is_demote")
+        val isDemote: Boolean? = null
 )
