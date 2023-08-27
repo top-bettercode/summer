@@ -27,9 +27,6 @@ data class UserInfo(
         @field:JsonProperty("language")
         val language: String? = null,
 
-        @field:JsonProperty("phoneNumber")
-        val phoneNumber: String? = null,
-
         @field:JsonProperty("watermark")
         val watermark: Watermark? = null,
 

@@ -30,6 +30,8 @@ data class JsSession(
 
     var userInfo: UserInfo? = null
 
+    var phoneInfo: PhoneInfo? = null
+
     /**
      * AES解密
      *
@@ -60,10 +62,15 @@ data class JsSession(
         parameters.init(IvParameterSpec(ivByte))
         cipher.init(Cipher.DECRYPT_MODE, spec, parameters) // 初始化
         val resultByte = cipher.doFinal(dataByte)
-        this.userInfo = if (null != resultByte && resultByte.isNotEmpty()) {
-            log.info("解密后的数据：" + String(resultByte))
-            StringUtil.readJson(resultByte, UserInfo::class.java)
-        } else null
+        if (null != resultByte && resultByte.isNotEmpty()) {
+            val info = String(resultByte)
+            log.info("解密后的数据：$info")
+            if (info.contains("phoneNumber")) {
+                this.phoneInfo = StringUtil.readJson(resultByte, PhoneInfo::class.java)
+            } else {
+                this.userInfo = StringUtil.readJson(resultByte, UserInfo::class.java)
+            }
+        }
         return this
     }
 
