@@ -17,7 +17,7 @@ interface IOffiaccountProperties : IWexinProperties {
     val wechatBaseUrl: String?
     val wechatWebOauthUrl: String
     val oauthUrl: String?
-        get() = appBaseUrl + OAUTH_URL
+        get() = (appBaseUrl ?: "") + OAUTH_URL
 
     fun redirectUrl(weixinToken: WeixinToken?, forceLogin: Boolean, state: String?): String {
         return "redirect:" + wechatUrl(weixinToken, forceLogin, state)
