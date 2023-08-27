@@ -13,7 +13,7 @@ data class PhoneInfo(
         val purePhoneNumber: String? = null,
 
         @field:JsonProperty("countryCode")
-        val countryCode: Int? = null,
+        val countryCode: String? = null,
 
         @field:JsonProperty("watermark")
         val watermark: Watermark? = null
