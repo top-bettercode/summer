@@ -44,7 +44,11 @@ object BeanUtil {
             if ("class" == propertyName) {
                 continue
             }
-            val propertyValue = existWrapper.getPropertyValue(propertyName) ?: continue
+            val propertyValue = try {
+                existWrapper.getPropertyValue(propertyName)
+            } catch (e: Exception) {
+                continue
+            } ?: continue
             thisWrapper.setPropertyValue(propertyName, propertyValue)
         }
     }
