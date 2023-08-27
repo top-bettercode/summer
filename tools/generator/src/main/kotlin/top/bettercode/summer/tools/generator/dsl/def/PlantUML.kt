@@ -28,27 +28,7 @@ class PlantUML(
                 }"
         )
         destFile.writeText(
-                """ENGINE
-PK
-FK
-AUTO_INCREMENT
-UNIQUE
-INDEX
-UNSIGNED
-NOT
-NULL
-VERSION
-CREATEDDATE
-CREATEDBY
-LASTMODIFIEDDATE
-LASTMODIFIEDBY
-LOGICALDELETE
-ASBOOLEAN
-DEFAULT
-SEQUENCE
-IDGENERATOR
-
-@startuml ${if (umlModuleName.isNullOrBlank()) top.bettercode.summer.tools.generator.DataType.DATABASE.name else umlModuleName}
+                """@startuml ${if (umlModuleName.isNullOrBlank()) top.bettercode.summer.tools.generator.DataType.DATABASE.name else umlModuleName}
 
 """
         )
@@ -110,8 +90,27 @@ IDGENERATOR
 
         destFile.appendText(
                 """
-                |@enduml
-            """.trimMargin()
+|@enduml
+ENGINE
+PK
+FK
+AUTO_INCREMENT
+UNIQUE
+INDEX
+UNSIGNED
+NOT
+NULL
+VERSION
+CREATEDDATE
+CREATEDBY
+LASTMODIFIEDDATE
+LASTMODIFIEDBY
+LOGICALDELETE
+ASBOOLEAN
+DEFAULT
+SEQUENCE
+IDGENERATOR
+""".trimMargin()
         )
     }
 
