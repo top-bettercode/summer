@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.boot.context.properties.bind.Bindable
 import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.core.env.Environment
+import org.springframework.lang.Nullable
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
@@ -104,10 +105,10 @@ class GenEndpoint(
     }
 
     @ReadOperation
-    fun puml(@Selector module: String) {
+    fun puml(@Selector module: String, @Nullable force: Boolean?) {
         val tmpPath = System.getProperty("java.io.tmpdir")
         val destFile = File(tmpPath, "summer/puml/${module}-${LocalDate.now()}.puml")
-        if (!destFile.exists()) {
+        if (force == true || !destFile.exists()) {
             val database = databases[module]
                     ?: throw IllegalArgumentException("module $module not found")
             val tables = database.tables()
