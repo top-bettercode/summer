@@ -583,7 +583,7 @@ class ExcelExport {
             setResponseHeader(request, response, fileName)
             val tmpPath = System.getProperty("java.io.tmpdir")
             val file = File(tmpPath,
-                    "excel-export" + File.separator + fileName + File.separator + fileKey + ".xlsx")
+                    """summer${File.separator}excel-export${File.separator}$fileName${File.separator}$fileKey.xlsx""")
             if (!file.exists()) {
                 val dir = file.parentFile
                 if (!dir.exists()) {

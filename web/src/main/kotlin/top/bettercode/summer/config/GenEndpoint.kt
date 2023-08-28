@@ -108,7 +108,7 @@ class GenEndpoint(
     fun puml(@Selector module: String, @Nullable force: Boolean?) {
         log.info("开始生成puml:{}", module)
         val tmpPath = System.getProperty("java.io.tmpdir")
-        val destFile = File(tmpPath, "summer/puml/${module}-${LocalDate.now()}.puml")
+        val destFile = File(tmpPath, "summer${File.separator}puml${File.separator}${module}-${LocalDate.now()}.puml")
         if (force == true || !destFile.exists()) {
             val database = databases[module]
                     ?: throw IllegalArgumentException("module $module not found")
