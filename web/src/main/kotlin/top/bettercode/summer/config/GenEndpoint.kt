@@ -45,6 +45,7 @@ class GenEndpoint(
         val defaultConfiguration = datasources["primary"]
         if (defaultConfiguration != null) {
             datasources[GeneratorExtension.DEFAULT_MODULE_NAME] = defaultConfiguration
+            datasources.remove("primary")
         } else {
             try {
                 if (dataSourceProperties != null) {
