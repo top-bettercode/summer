@@ -140,6 +140,7 @@ class DatabaseMetaData(
                         System.err.println("查询索引出错:${e.message}")
                         reConnect()
                         canReadIndexed = false
+                        datasource.queryIndex = false
                         primaryKeyNames = mutableListOf()
                         indexes = mutableListOf()
                     }
