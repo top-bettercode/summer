@@ -10,7 +10,7 @@ import java.util.*
  *
  * @author Peter Wu
  */
-class Temp {
+class TempTest {
 
     @Test
     fun pinyin() {

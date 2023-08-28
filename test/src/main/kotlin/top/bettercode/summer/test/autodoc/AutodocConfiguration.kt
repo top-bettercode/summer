@@ -15,8 +15,8 @@ import org.springframework.core.env.Environment
 import top.bettercode.summer.apisign.ApiSignProperties
 import top.bettercode.summer.logging.RequestLoggingConfiguration
 import top.bettercode.summer.logging.RequestLoggingProperties
-import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
+import top.bettercode.summer.tools.generator.GeneratorExtension.Companion.DEFAULT_MODULE_NAME
 import top.bettercode.summer.web.properties.SummerWebProperties
 import javax.annotation.PostConstruct
 
@@ -31,21 +31,14 @@ import javax.annotation.PostConstruct
 )
 @Configuration(proxyBeanMethods = false)
 @ImportAutoConfiguration(RequestLoggingConfiguration::class)
-class AutodocConfiguration {
-
+class AutodocConfiguration(
+        private val genProperties: GenProperties,
+        private val requestLoggingProperties: RequestLoggingProperties,
+        private val environment: Environment,
+        @Autowired(required = false)
+        private val dataSourceProperties: DataSourceProperties? = null
+) {
     private val log: Logger = LoggerFactory.getLogger(AutodocConfiguration::class.java)
-
-    @Autowired
-    private lateinit var genProperties: GenProperties
-
-    @Autowired
-    private lateinit var requestLoggingProperties: RequestLoggingProperties
-
-    @Autowired(required = false)
-    private var dataSourceProperties: DataSourceProperties? = null
-
-    @Autowired
-    private lateinit var environment: Environment
 
     @PostConstruct
     fun init() {
@@ -85,11 +78,11 @@ class AutodocConfiguration {
             try {
                 if (dataSourceProperties != null) {
                     val configuration = DatabaseConfiguration()
-                    configuration.url = dataSourceProperties!!.determineUrl() ?: ""
-                    configuration.username = dataSourceProperties!!.determineUsername() ?: ""
-                    configuration.password = dataSourceProperties!!.determinePassword() ?: ""
+                    configuration.url = dataSourceProperties.determineUrl() ?: ""
+                    configuration.username = dataSourceProperties.determineUsername() ?: ""
+                    configuration.password = dataSourceProperties.determinePassword() ?: ""
                     configuration.driverClass =
-                            dataSourceProperties!!.determineDriverClassName() ?: ""
+                            dataSourceProperties.determineDriverClassName() ?: ""
                     configuration.entityPrefix = genProperties.entityPrefix
                     configuration.tablePrefixes = genProperties.tablePrefixes
                     configuration.tableSuffixes = genProperties.tableSuffixes

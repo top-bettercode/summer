@@ -8,6 +8,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAu
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.*
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.*
@@ -89,7 +90,6 @@ class EndpointAutoConfiguration {
             serverProperties: ServerProperties,
             @Autowired(required = false) response: HttpServletResponse,
             webEndpointProperties: WebEndpointProperties
-
     ): LogsEndpoint {
         return LogsEndpoint(
                 loggingFilesPath,
@@ -100,6 +100,26 @@ class EndpointAutoConfiguration {
                 webEndpointProperties
         )
     }
+
+
+    @ConditionalOnProperty(
+            prefix = "summer.gen",
+            name = ["enabled"],
+            havingValue = "true",
+            matchIfMissing = true
+    )
+    @ConditionalOnWebApplication
+    @Bean
+    fun genEndpoint(
+            @Autowired(required = false) response: HttpServletResponse,
+            dataSourceProperties: DataSourceProperties? = null,
+            environment: Environment,
+            serverProperties: ServerProperties,
+            webEndpointProperties: WebEndpointProperties
+    ): GenEndpoint {
+        return GenEndpoint(response, dataSourceProperties, environment, serverProperties, webEndpointProperties)
+    }
+
 
     internal class LogsEndpointCondition : Condition {
 

@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(project(":tools:tools"))
+    api(project(":tools:generator"))
     api("org.jetbrains.kotlin:kotlin-reflect")
 
     //web

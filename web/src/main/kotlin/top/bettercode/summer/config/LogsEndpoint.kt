@@ -44,7 +44,7 @@ class LogsEndpoint(
 ) {
 
     private val contextPath: String = serverProperties.servlet.contextPath ?: "/"
-    private val logsPath: String = contextPath + webEndpointProperties.basePath + "/logs"
+    private val basePath: String = contextPath + webEndpointProperties.basePath + "/logs"
 
     private val useWebSocket: Boolean = ClassUtils.isPresent(
             "org.springframework.web.socket.server.standard.ServerEndpointExporter",
@@ -356,7 +356,7 @@ class LogsEndpoint(
             requestPath: String
     ) {
         if (!files.isNullOrEmpty()) {
-            val path = if (root) logsPath else "$logsPath/$requestPath"
+            val path = if (root) basePath else "$basePath/$requestPath"
             response.contentType = "text/html; charset=utf-8"
             response.setHeader("Pragma", "No-cache")
             response.setHeader("Cache-Control", "no-cache")
@@ -375,17 +375,17 @@ class LogsEndpoint(
                 val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
                 if (!root)
-                    writer.println("<a href=\"$logsPath/${requestPath.substringBeforeLast("/", "")}\">../</a>")
+                    writer.println("<a href=\"$basePath/${requestPath.substringBeforeLast("/", "")}\">../</a>")
                 else {
                     if (useWebSocket) {
                         writer.println(
-                                "<a style=\"display:inline-block;width:100px;\" href=\"$logsPath/real-time\">实时日志/</a>                                        ${
+                                "<a style=\"display:inline-block;width:100px;\" href=\"$basePath/real-time\">实时日志/</a>                                        ${
                                     TimeUtil.now().format(dateTimeFormatter)
                                 }       -"
                         )
                     }
                     writer.println(
-                            "<a style=\"display:inline-block;width:100px;\" href=\"$logsPath/daily\">daily/</a>                                        ${
+                            "<a style=\"display:inline-block;width:100px;\" href=\"$basePath/daily\">daily/</a>                                        ${
                                 TimeUtil.now().format(dateTimeFormatter)
                             }       -"
                     )
