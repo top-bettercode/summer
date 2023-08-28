@@ -113,7 +113,7 @@ class GenEndpoint(
             val database = databases[module]
                     ?: throw IllegalArgumentException("module $module not found")
             val tables = database.tables()
-            log.info("tables:{}", tables)
+            log.info("tables:{}", tables.map { it.tableName })
             val plantUML = PlantUML(
                     tables[0].subModuleName,
                     destFile,

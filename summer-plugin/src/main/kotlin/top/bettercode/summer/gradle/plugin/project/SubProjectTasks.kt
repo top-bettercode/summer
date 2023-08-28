@@ -27,7 +27,7 @@ object SubProjectTasks {
             ext.run { module, tableHolder ->
                 val prefix = module.capitalized()
 
-                if (project.isBoot) {
+                if (project.isBoot || ext.isProjectPuml) {
                     val group = "gen $prefix code"
 
                     create("gen${prefix}SerializationViews") { t ->

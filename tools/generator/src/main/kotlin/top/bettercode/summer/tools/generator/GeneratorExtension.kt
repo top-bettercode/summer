@@ -182,6 +182,9 @@ open class GeneratorExtension(
             findUpPath(projectDir)
         } else field
 
+    val isProjectPuml: Boolean
+        get() = File(projectDir, pumlSrc).exists()
+
     private val path: File? by lazy {
         if (File(projectDir, pumlSrc).exists())
             projectDir
@@ -212,7 +215,6 @@ open class GeneratorExtension(
             return file
         return File(path, subfile)
     }
-
 
 
     val pumlSources: Map<String, List<File>> by lazy {
