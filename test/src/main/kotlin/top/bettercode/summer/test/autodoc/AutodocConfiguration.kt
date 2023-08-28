@@ -7,12 +7,11 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.boot.context.properties.bind.Bindable
-import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import top.bettercode.summer.apisign.ApiSignProperties
+import top.bettercode.summer.config.GenEndpoint
 import top.bettercode.summer.logging.RequestLoggingConfiguration
 import top.bettercode.summer.logging.RequestLoggingProperties
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
@@ -54,15 +53,8 @@ class AutodocConfiguration(
             signProperties: ApiSignProperties,
             summerWebProperties: SummerWebProperties
     ): AutodocHandler {
-        val datasources: MutableMap<String, DatabaseConfiguration> = Binder.get(
-                environment
-        ).bind<MutableMap<String, DatabaseConfiguration>>(
-                "summer.datasource.multi.datasources", Bindable
-                .mapOf(
-                        String::class.java,
-                        DatabaseConfiguration::class.java
-                )
-        ).orElse(mutableMapOf())
+        val datasources: MutableMap<String, DatabaseConfiguration> = GenEndpoint.databases(environment)
+
         datasources.values.forEach { configuration ->
             if (configuration.entityPrefix.isBlank())
                 configuration.entityPrefix = genProperties.entityPrefix
@@ -77,17 +69,16 @@ class AutodocConfiguration(
         } else {
             try {
                 if (dataSourceProperties != null) {
-                    val configuration = DatabaseConfiguration()
-                    configuration.url = dataSourceProperties.determineUrl() ?: ""
-                    configuration.username = dataSourceProperties.determineUsername() ?: ""
-                    configuration.password = dataSourceProperties.determinePassword() ?: ""
-                    configuration.driverClass =
-                            dataSourceProperties.determineDriverClassName() ?: ""
-                    configuration.entityPrefix = genProperties.entityPrefix
-                    configuration.tablePrefixes = genProperties.tablePrefixes
-                    configuration.tableSuffixes = genProperties.tableSuffixes
+                    val database = DatabaseConfiguration()
+                    database.url = dataSourceProperties.determineUrl() ?: ""
+                    database.username = dataSourceProperties.determineUsername() ?: ""
+                    database.password = dataSourceProperties.determinePassword() ?: ""
+                    database.driverClass = dataSourceProperties.determineDriverClassName() ?: ""
+                    database.entityPrefix = genProperties.entityPrefix
+                    database.tablePrefixes = genProperties.tablePrefixes
+                    database.tableSuffixes = genProperties.tableSuffixes
 
-                    datasources[DEFAULT_MODULE_NAME] = configuration
+                    datasources[DEFAULT_MODULE_NAME] = database
                 }
             } catch (_: Exception) {
             }

@@ -31,21 +31,35 @@ class GenEndpoint(
     private val contextPath: String = serverProperties.servlet.contextPath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/puml"
 
-    private val datasources: MutableMap<String, DatabaseConfiguration> = Binder.get(
-            environment
-    ).bind<MutableMap<String, DatabaseConfiguration>>(
-            "summer.datasource.multi.datasources", Bindable
-            .mapOf(
-                    String::class.java,
-                    DatabaseConfiguration::class.java
-            )
-    ).orElse(mutableMapOf())
+    companion object {
+        fun databases(environment: Environment): MutableMap<String, DatabaseConfiguration> {
+            return Binder.get(
+                    environment
+            ).bind<MutableMap<String, DataSourceProperties>>(
+                    "summer.datasource.multi.datasources", Bindable
+                    .mapOf(
+                            String::class.java,
+                            DataSourceProperties::class.java
+                    )
+            ).orElse(mutableMapOf()).mapValues { (_, v) ->
+                val database = DatabaseConfiguration(
+                        url = v.determineUrl() ?: "",
+                )
+                database.username = v.determineUsername() ?: ""
+                database.password = v.determinePassword() ?: ""
+                database.driverClass = v.determineDriverClassName() ?: ""
+                database
+            }.toMutableMap()
+        }
+    }
+
+    private val databases: MutableMap<String, DatabaseConfiguration> = databases(environment)
 
     init {
-        val defaultConfiguration = datasources["primary"]
+        val defaultConfiguration = databases["primary"]
         if (defaultConfiguration != null) {
-            datasources[GeneratorExtension.DEFAULT_MODULE_NAME] = defaultConfiguration
-            datasources.remove("primary")
+            databases[GeneratorExtension.DEFAULT_MODULE_NAME] = defaultConfiguration
+            databases.remove("primary")
         } else {
             try {
                 if (dataSourceProperties != null) {
@@ -56,7 +70,7 @@ class GenEndpoint(
                     configuration.driverClass =
                             dataSourceProperties.determineDriverClassName() ?: ""
 
-                    datasources[GeneratorExtension.DEFAULT_MODULE_NAME] = configuration
+                    databases[GeneratorExtension.DEFAULT_MODULE_NAME] = configuration
                 }
             } catch (_: Exception) {
             }
@@ -78,7 +92,7 @@ class GenEndpoint(
             )
             writer.print("<h1>Index of database</h1><hr><pre>")
 
-            for (key in datasources.keys) {
+            for (key in databases.keys) {
                 writer.println("<a href=\"$basePath/$key\">$key.puml</a>")
             }
             writer.println("</pre><hr></body>\n</html>")
@@ -87,7 +101,7 @@ class GenEndpoint(
 
     @ReadOperation
     fun puml(@Selector module: String) {
-        val database = datasources[module]
+        val database = databases[module]
                 ?: throw IllegalArgumentException("module $module not found")
         val tables = database.tables()
         val tmpPath = System.getProperty("java.io.tmpdir")
