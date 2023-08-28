@@ -140,10 +140,9 @@ object PumlConverter {
                         //DEFAULT
                         var defaultVal: String? = null
                         if (extra.contains(" DEFAULT ")) {
-                            defaultVal =
-                                    extra.substringAfter(" DEFAULT ").trim().substringBefore(" ")
-                                            .trim('\'')
-                            extra = extra.replace(Regex(" DEFAULT +'?$defaultVal'? "), " ")
+                            val defaultRawVal = extra.substringAfter(" DEFAULT ").substringBefore(" ")
+                            defaultVal = defaultRawVal.trim() .trim('\'')
+                            extra = extra.replace(" DEFAULT $defaultRawVal ", " ")
                         }
 
                         //FK
