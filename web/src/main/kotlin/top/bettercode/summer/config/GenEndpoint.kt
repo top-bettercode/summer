@@ -1,5 +1,7 @@
 package top.bettercode.summer.config
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
@@ -14,6 +16,7 @@ import top.bettercode.summer.tools.generator.GeneratorExtension
 import top.bettercode.summer.tools.generator.dsl.def.PlantUML
 import java.io.File
 import java.net.URLEncoder
+import java.time.LocalDate
 import java.util.zip.GZIPOutputStream
 import javax.servlet.http.HttpServletResponse
 
@@ -28,6 +31,7 @@ class GenEndpoint(
         serverProperties: ServerProperties,
         webEndpointProperties: WebEndpointProperties
 ) {
+    private val log: Logger = LoggerFactory.getLogger(GenEndpoint::class.java)
     private val contextPath: String = serverProperties.servlet.contextPath ?: "/"
     private val basePath: String = contextPath + webEndpointProperties.basePath + "/puml"
 
@@ -101,21 +105,25 @@ class GenEndpoint(
 
     @ReadOperation
     fun puml(@Selector module: String) {
-        val database = databases[module]
-                ?: throw IllegalArgumentException("module $module not found")
-        val tables = database.tables()
         val tmpPath = System.getProperty("java.io.tmpdir")
-        val destFile = File(tmpPath, "summer/puml/${module}.puml")
-        val plantUML = PlantUML(
-                tables[0].subModuleName,
-                destFile,
-                null
-        )
-        plantUML.setUp(GeneratorExtension())
-        tables.sortedBy { it.tableName }.forEach { table ->
-            plantUML.run(table)
+        val destFile = File(tmpPath, "summer/puml/${module}-${LocalDate.now()}.puml")
+        if (!destFile.exists()) {
+            val database = databases[module]
+                    ?: throw IllegalArgumentException("module $module not found")
+            val tables = database.tables()
+            log.info("tables:{}", tables)
+            val plantUML = PlantUML(
+                    tables[0].subModuleName,
+                    destFile,
+                    null
+            )
+            plantUML.setUp(GeneratorExtension())
+            tables.sortedBy { it.tableName }.forEach { table ->
+                plantUML.run(table)
+            }
+            plantUML.tearDown()
         }
-        plantUML.tearDown()
+        log.info("puml:{}", destFile)
         response.setHeader(
                 "Content-Disposition",
                 "attachment;filename=${module}.puml;filename*=UTF-8''" + URLEncoder.encode(
