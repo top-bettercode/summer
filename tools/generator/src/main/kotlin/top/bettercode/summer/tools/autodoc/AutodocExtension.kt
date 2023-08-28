@@ -2,9 +2,10 @@ package top.bettercode.summer.tools.autodoc
 
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
-import top.bettercode.summer.tools.autodoc.AutodocUtil.pyname
 import top.bettercode.summer.tools.autodoc.model.DocModule
+import top.bettercode.summer.tools.lang.util.RandomUtil
 import java.io.File
+import java.util.*
 
 
 /**
@@ -164,5 +165,22 @@ open class AutodocExtension(
         }
     }
 
+
+    companion object {
+        fun MutableMap<String, Int>.pyname(name: String): String {
+            var pyname =
+                    PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE)
+                            .lowercase(Locale.getDefault())
+                            .replace("[^\\x00-\\xff]|[()\\[\\]{}|/]|\\s*|\t|\r|\n".toRegex(), "")
+            val no = this[pyname]
+            if (no != null) {
+                val i = no + 1
+                this[pyname] = i
+                pyname += "_${RandomUtil.nextString(2).lowercase(Locale.getDefault())}_$i"
+            } else
+                this[pyname] = 0
+            return pyname
+        }
+    }
 
 }

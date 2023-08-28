@@ -5,9 +5,9 @@ import org.asciidoctor.Attributes
 import org.asciidoctor.Options
 import org.asciidoctor.SafeMode
 import top.bettercode.summer.tools.autodoc.AutodocExtension
+import top.bettercode.summer.tools.autodoc.AutodocExtension.Companion.pyname
 import top.bettercode.summer.tools.autodoc.AutodocUtil
 import top.bettercode.summer.tools.autodoc.AutodocUtil.checkBlank
-import top.bettercode.summer.tools.autodoc.AutodocUtil.pyname
 import top.bettercode.summer.tools.autodoc.model.Field
 import top.bettercode.summer.tools.autodoc.operation.DocOperationRequest
 import top.bettercode.summer.tools.autodoc.operation.DocOperationResponse
@@ -274,7 +274,7 @@ object AsciidocGenerator {
                         out.println()
                         val operationPath =
                                 operation.operationFile.absolutePath.substringAfter(sourcePath)
-                        val operationName = operation.name.replace(AutodocUtil.replaceChar, "/")
+                        val operationName = operation.name.replace(AutodocUtil.REPLACE_CHAR, "/")
                         out.println("[[_${pynames.pyname("$collectionName-$operationName")}]]")
                         out.println("=== $operationName")
                         out.println()

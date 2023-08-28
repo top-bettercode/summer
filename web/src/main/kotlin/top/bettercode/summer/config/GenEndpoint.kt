@@ -111,9 +111,10 @@ class GenEndpoint(
         response.contentType = "application/octet-stream; charset=utf-8"
         response.setHeader("Pragma", "No-cache")
         response.setHeader("Cache-Control", "no-cache")
+        response.setHeader("Content-Encoding", "gzip")
         response.setDateHeader("Expires", 0)
 
-        response.outputStream.buffered().use { bos ->
+        GZIPOutputStream(response.outputStream).buffered().use { bos ->
             bos.write(destFile.inputStream().readBytes())
         }
     }

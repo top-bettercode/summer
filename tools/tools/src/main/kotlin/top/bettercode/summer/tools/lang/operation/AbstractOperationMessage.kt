@@ -14,6 +14,7 @@ abstract class AbstractOperationMessage(
         @JsonIgnore
         var content: ByteArray = ByteArray(0)
 ) {
+    @JsonIgnore
     private val log: Logger = LoggerFactory.getLogger(AbstractOperationMessage::class.java)
 
     val prettyContent: ByteArray

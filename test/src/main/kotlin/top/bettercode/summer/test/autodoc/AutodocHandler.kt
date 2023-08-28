@@ -85,8 +85,8 @@ class AutodocHandler(
                     return
                 }
                 operation.collectionName =
-                        operation.collectionName.replace("/", AutodocUtil.replaceChar)
-                operation.name = operation.name.replace("/", AutodocUtil.replaceChar)
+                        operation.collectionName.replace("/", AutodocUtil.REPLACE_CHAR)
+                operation.name = operation.name.replace("/", AutodocUtil.REPLACE_CHAR)
 
                 if (genProperties.projectPath.isNotBlank()) {
                     operation.request.restUri =

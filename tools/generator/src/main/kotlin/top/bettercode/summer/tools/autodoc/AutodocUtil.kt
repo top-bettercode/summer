@@ -12,17 +12,13 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.github.stuxuhai.jpinyin.PinyinFormat
-import com.github.stuxuhai.jpinyin.PinyinHelper
 import org.springframework.util.ClassUtils
 import org.springframework.util.MultiValueMap
 import top.bettercode.summer.tools.autodoc.model.DocCollection
 import top.bettercode.summer.tools.autodoc.model.DocCollections
 import top.bettercode.summer.tools.autodoc.model.Field
-import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.lang.util.StringUtil
 import java.io.File
-import java.util.*
 
 
 /**
@@ -30,7 +26,7 @@ import java.util.*
  * @author Peter Wu
  */
 object AutodocUtil {
-    const val replaceChar = "丨"
+    const val REPLACE_CHAR = "丨"
     val objectMapper = ObjectMapper()
     val yamlMapper = YAMLMapper()
 
@@ -186,21 +182,6 @@ object AutodocUtil {
                 this.appendText("  - \"$it\"\n")
             }
         }
-    }
-
-    fun MutableMap<String, Int>.pyname(name: String): String {
-        var pyname =
-                PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE)
-                        .lowercase(Locale.getDefault())
-                        .replace("[^\\x00-\\xff]|[()\\[\\]{}|/]|\\s*|\t|\r|\n".toRegex(), "")
-        val no = this[pyname]
-        if (no != null) {
-            val i = no + 1
-            this[pyname] = i
-            pyname += "_${RandomUtil.nextString(2).lowercase(Locale.getDefault())}_$i"
-        } else
-            this[pyname] = 0
-        return pyname
     }
 
 
