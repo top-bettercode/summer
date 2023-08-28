@@ -424,7 +424,7 @@ class DatabaseMetaData(
                     curentSchema,
                     curentTableName,
                     false,
-                    false
+                    true
             )
                     .map {
                         val indexName = getString("INDEX_NAME")
