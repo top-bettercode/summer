@@ -106,6 +106,7 @@ class GenEndpoint(
 
     @ReadOperation
     fun puml(@Selector module: String, @Nullable force: Boolean?) {
+        log.info("开始生成puml:{}", module)
         val tmpPath = System.getProperty("java.io.tmpdir")
         val destFile = File(tmpPath, "summer/puml/${module}-${LocalDate.now()}.puml")
         if (force == true || !destFile.exists()) {
