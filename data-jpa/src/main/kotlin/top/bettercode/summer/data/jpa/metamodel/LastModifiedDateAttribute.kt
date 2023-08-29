@@ -15,6 +15,6 @@ class LastModifiedDateAttribute<X, T>(singularAttribute: SingularAttribute<X, T>
      * 设置LastModifiedDate
      */
     fun setLastModifiedDate(criteriaUpdate: CriteriaUpdate<X>) {
-        criteriaUpdate.set(this, JpaUtil.convert(LocalDateTime.now(), javaType))
+        criteriaUpdate.set(this.singularAttribute, JpaUtil.convert(LocalDateTime.now(), javaType))
     }
 }

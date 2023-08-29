@@ -18,7 +18,7 @@ class LogicalDeletedAttribute<X, T>(singularAttribute: SingularAttribute<X, T>, 
      * 设置逻辑删除值
      */
     fun setLogicalDeleted(criteriaUpdate: CriteriaUpdate<X>, value: Boolean) {
-        criteriaUpdate.set(this, if (value) trueValue else falseValue)
+        criteriaUpdate.set(this.singularAttribute, if (value) trueValue else falseValue)
     }
 
     /**
@@ -40,12 +40,12 @@ class LogicalDeletedAttribute<X, T>(singularAttribute: SingularAttribute<X, T>, 
     }
 
     val notDeletedSpecification by lazy {
-        Specification { root: Root<X>, _: CriteriaQuery<*>?, builder: CriteriaBuilder -> builder.equal(root.get(this), falseValue) }
+        Specification { root: Root<X>, _: CriteriaQuery<*>?, builder: CriteriaBuilder -> builder.equal(root.get(this.singularAttribute), falseValue) }
     }
 
     val deletedSpecification by lazy {
         Specification { root: Root<X>, _: CriteriaQuery<*>?, builder: CriteriaBuilder ->
-            builder.equal(root.get(this), trueValue)
+            builder.equal(root.get(this.singularAttribute), trueValue)
         }
     }
 

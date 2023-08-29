@@ -19,7 +19,7 @@ class LastModifiedByAttribute<X, T>(
     fun setLastModifiedBy(criteriaUpdate: CriteriaUpdate<X>) {
         val auditor = auditorAware?.currentAuditor?.orElse(null)
         if (auditor != null) {
-            criteriaUpdate.set(this, JpaUtil.convert(auditor, this.javaType))
+            criteriaUpdate.set(this.singularAttribute, JpaUtil.convert(auditor, this.javaType))
         }
     }
 
