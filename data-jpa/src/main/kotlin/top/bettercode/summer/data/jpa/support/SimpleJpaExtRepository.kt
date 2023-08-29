@@ -306,8 +306,8 @@ class SimpleJpaExtRepository<T : Any, ID>(
             if (sqlLog.isDebugEnabled) {
                 sqlLog.debug("{} row affected", affected)
             }
-            val idAttribute = spec?.idAttribute
-            val versionAttribute = spec?.versionAttribute
+            val idAttribute = spec.idAttribute
+            val versionAttribute = spec.versionAttribute
             if (idAttribute != null && versionAttribute != null && affected == 0) {
                 throw ObjectOptimisticLockingFailureException(domainClass, idAttribute.value)
             }

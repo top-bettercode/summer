@@ -45,7 +45,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     override fun toPredicate(root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder): Predicate? {
         if (orders.isNotEmpty()) {
             val orders = orders.stream().map { o: Sort.Order ->
-                val path: Path<*>? = SpecPath.toPath(root, o.property)
+                val path: Path<*> = SpecPath.toPath(root, o.property)
                 if (o.direction.isDescending) cb.desc(path) else cb.asc(path)
             }.collect(Collectors.toList())
             query.orderBy(orders)

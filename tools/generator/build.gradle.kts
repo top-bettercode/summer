@@ -15,6 +15,7 @@ dependencies {
     compileOnly("org.dom4j:dom4j")
 
     testImplementation("com.github.stuxuhai:jpinyin")
+    testImplementation("org.dom4j:dom4j")
     testImplementation("org.mybatis.generator:mybatis-generator-core")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 
