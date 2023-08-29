@@ -51,7 +51,7 @@ open class BaseService<T, ID, M : BaseRepository<T, ID>>(
         return repository.update(spec)
     }
 
-    override fun <S : T> update(s: S, spec: UpdateSpecification<T>): Long {
+    override fun <S : T> update(s: S?, spec: UpdateSpecification<T>): Long {
         return repository.update(s, spec)
     }
 

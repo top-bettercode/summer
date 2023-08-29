@@ -204,20 +204,35 @@ class SimpleJpaExtRepository<T : Any, ID>(
 
     @Transactional
     override fun lowLevelUpdate(spec: UpdateSpecification<T>): Long {
-        return update(spec = spec, lowLevel = true, physical = true, mdcId = ".lowLevelUpdate")
+        return update(s = null, spec = spec, lowLevel = true, physical = true, mdcId = ".lowLevelUpdate")
     }
 
     @Transactional
     override fun physicalUpdate(spec: UpdateSpecification<T>): Long {
-        return update(spec = spec, lowLevel = false, physical = true, mdcId = ".physicalUpdate")
+        return update(s = null, spec = spec, lowLevel = false, physical = true, mdcId = ".physicalUpdate")
     }
 
     @Transactional
     override fun update(spec: UpdateSpecification<T>): Long {
-        return update(spec = spec, lowLevel = false, physical = false, mdcId = ".update")
+        return update(s = null, spec = spec, lowLevel = false, physical = false, mdcId = ".update")
     }
 
-    private fun update(spec: UpdateSpecification<T>, lowLevel: Boolean, physical: Boolean, mdcId: String): Long {
+    @Transactional
+    override fun <S : T> lowLevelUpdate(s: S?, spec: UpdateSpecification<T>): Long {
+        return update(s = s, spec = spec, lowLevel = true, physical = true, mdcId = ".lowLevelUpdate")
+    }
+
+    @Transactional
+    override fun <S : T> physicalUpdate(s: S?, spec: UpdateSpecification<T>): Long {
+        return update(s = s, spec = spec, lowLevel = false, physical = true, mdcId = ".physicalUpdate")
+    }
+
+    @Transactional
+    override fun <S : T> update(s: S?, spec: UpdateSpecification<T>): Long {
+        return update(s = s, spec = spec, lowLevel = false, physical = false, mdcId = ".update")
+    }
+
+    private fun <S : T> update(s: S?, spec: UpdateSpecification<T>, lowLevel: Boolean, physical: Boolean, mdcId: String): Long {
         var mdc = false
         return try {
             mdc = mdcPutId(mdcId)
@@ -229,76 +244,23 @@ class SimpleJpaExtRepository<T : Any, ID>(
             val criteriaUpdate = spec.createCriteriaUpdate(domainClass, builder, extJpaSupport)
             val root = criteriaUpdate.root
 
+            if (s != null) {
+                val beanWrapper = DirectFieldAccessFallbackBeanWrapper(s)
+                for (attribute in root.model.singularAttributes) {
+                    val attributeName = attribute.name
+                    val attributeValue = beanWrapper.getPropertyValue(attributeName) ?: continue
+                    criteriaUpdate[attributeName] = attributeValue
+                }
+            }
+            if (!lowLevel) {
+                extJpaSupport.lastModifiedDateAttribute?.setLastModifiedDate(criteriaUpdate)
+
+                extJpaSupport.lastModifiedByAttribute?.setLastModifiedBy(criteriaUpdate)
+
+                extJpaSupport.versionAttribute?.setVersion(criteriaUpdate, root, builder)
+            }
+
             val predicate = spec1.toPredicate(root, builder.createQuery(), builder)
-            if (predicate != null) {
-                criteriaUpdate.where(predicate)
-            }
-
-            if (!lowLevel) {
-                extJpaSupport.lastModifiedDateAttribute?.setLastModifiedDate(criteriaUpdate)
-
-                extJpaSupport.lastModifiedByAttribute?.setLastModifiedBy(criteriaUpdate)
-
-                extJpaSupport.versionAttribute?.setVersion(criteriaUpdate, root, builder)
-            }
-
-            val affected = entityManager.createQuery(criteriaUpdate).executeUpdate()
-            if (sqlLog.isDebugEnabled) {
-                sqlLog.debug("{} row affected", affected)
-            }
-            val idAttribute = spec.idAttribute
-            val versionAttribute = spec.versionAttribute
-            if (idAttribute != null && versionAttribute != null && affected == 0) {
-                throw ObjectOptimisticLockingFailureException(domainClass, idAttribute.value)
-            }
-            affected.toLong()
-        } finally {
-            cleanMdc(mdc)
-        }
-    }
-
-    @Transactional
-    override fun <S : T> lowLevelUpdate(s: S, spec: UpdateSpecification<T>): Long {
-        return update(s = s, spec = spec, lowLevel = true, physical = true, mdcId = ".update")
-    }
-
-    @Transactional
-    override fun <S : T> physicalUpdate(s: S, spec: UpdateSpecification<T>): Long {
-        return update(s = s, spec = spec, lowLevel = false, physical = true, mdcId = ".physicalUpdate")
-    }
-
-    @Transactional
-    override fun <S : T> update(s: S, spec: UpdateSpecification<T>): Long {
-        return update(s = s, spec = spec, lowLevel = false, physical = false, mdcId = ".update")
-    }
-
-    private fun <S : T> update(s: S, spec: UpdateSpecification<T>, lowLevel: Boolean, physical: Boolean, mdcId: String): Long {
-        var mdc = false
-        return try {
-            mdc = mdcPutId(mdcId)
-            var spec1: Specification<T>? = spec
-            if (!physical) {
-                spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1) ?: spec1
-            }
-            val builder = entityManager.criteriaBuilder
-            val domainClass = domainClass
-            val criteriaUpdate = spec.createCriteriaUpdate(domainClass, builder, extJpaSupport)
-            val root = criteriaUpdate.from(domainClass)
-            val beanWrapper = DirectFieldAccessFallbackBeanWrapper(s)
-            for (attribute in root.model.singularAttributes) {
-                val attributeName = attribute.name
-                val attributeValue = beanWrapper.getPropertyValue(attributeName) ?: continue
-                criteriaUpdate[attributeName] = attributeValue
-            }
-            if (!lowLevel) {
-                extJpaSupport.lastModifiedDateAttribute?.setLastModifiedDate(criteriaUpdate)
-
-                extJpaSupport.lastModifiedByAttribute?.setLastModifiedBy(criteriaUpdate)
-
-                extJpaSupport.versionAttribute?.setVersion(criteriaUpdate, root, builder)
-
-            }
-            val predicate = spec1?.toPredicate(root, builder.createQuery(), builder)
             if (predicate != null) {
                 criteriaUpdate.where(predicate)
             }
@@ -843,10 +805,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
         }
     }
 
-    override fun <S : T, R> findBy(
-            example: Example<S>,
-            queryFunction: Function<FetchableFluentQuery<S>, R>,
-    ): R {
+    override fun <S : T, R> findBy(example: Example<S>, queryFunction: Function<FetchableFluentQuery<S>, R>): R {
         var mdc = false
         return try {
             mdc = mdcPutId(".findBy")

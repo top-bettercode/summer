@@ -29,10 +29,10 @@ interface IBaseService<T, ID, M : BaseRepository<T, ID>> {
     fun <S : T> saveAll(entities: Iterable<S>): List<S>
 
     @Transactional
-    fun <S : T> update(s: S, spec: UpdateSpecification<T>): Long
+    fun update(spec: UpdateSpecification<T>): Long
 
     @Transactional
-    fun update(spec: UpdateSpecification<T>): Long
+    fun <S : T> update(s: S?, spec: UpdateSpecification<T>): Long
 
     fun delete(t: T)
     fun deleteById(id: ID)

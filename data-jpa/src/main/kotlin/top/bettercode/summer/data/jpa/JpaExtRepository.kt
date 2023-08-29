@@ -24,14 +24,6 @@ import javax.persistence.EntityManager
 interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor<T>, JpaSpecificationExecutor<T>, RecycleExecutor<T, ID> {
     val entityManager: EntityManager
 
-    @Transactional
-    fun <S : T> lowLevelUpdate(s: S, spec: UpdateSpecification<T>): Long
-
-    @Transactional
-    fun <S : T> physicalUpdate(s: S, spec: UpdateSpecification<T>): Long
-
-    @Transactional
-    fun <S : T> update(s: S, spec: UpdateSpecification<T>): Long
 
     @Transactional
     fun lowLevelUpdate(spec: UpdateSpecification<T>): Long
@@ -41,6 +33,15 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
 
     @Transactional
     fun update(spec: UpdateSpecification<T>): Long
+
+    @Transactional
+    fun <S : T> lowLevelUpdate(s: S?, spec: UpdateSpecification<T>): Long
+
+    @Transactional
+    fun <S : T> physicalUpdate(s: S?, spec: UpdateSpecification<T>): Long
+
+    @Transactional
+    fun <S : T> update(s: S?, spec: UpdateSpecification<T>): Long
 
     /**
      * 动态更新，只更新非Null字段
