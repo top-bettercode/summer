@@ -26,6 +26,7 @@ import java.util.regex.Pattern
  */
 object AsciidocGenerator {
 
+    private val log = org.slf4j.LoggerFactory.getLogger(AsciidocGenerator::class.java)
     private val TOKEN_PATTERN = Pattern.compile("@.+?@")
 
     fun html(autodoc: AutodocExtension) {
@@ -68,7 +69,7 @@ object AsciidocGenerator {
                 val asciidoctor: Asciidoctor = Asciidoctor.Factory.create()
                 asciidoctor.requireLibrary("asciidoctor-diagram")
                 asciidoctor.convertFile(inFile, optionsBuilder.build())
-                println("生成：$outFile")
+                log.warn("生成：$outFile")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -107,7 +108,7 @@ object AsciidocGenerator {
                 val asciidoctor: Asciidoctor = Asciidoctor.Factory.create()
                 asciidoctor.requireLibrary("asciidoctor-diagram")
                 asciidoctor.convertFile(inFile, optionsBuilder.build())
-                println(
+                log.warn(
                         "${if (outFile.exists()) "覆盖" else "生成"}：${
                             if (prefixPath == null) outFile.path else
                                 outFile.absolutePath.substringAfter(
@@ -446,7 +447,7 @@ object AsciidocGenerator {
                     }
                 }
             }
-            println("生成：$adocFile")
+            log.warn("生成：$adocFile")
         }
     }
 

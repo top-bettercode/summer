@@ -15,6 +15,8 @@ import java.io.File
  * @author Peter Wu
  */
 data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
+    private val log = org.slf4j.LoggerFactory.getLogger(DocModule::class.java)
+
     private val collectionsFile: File = File(projectModuleDic, "collections.yml")
     val collections: LinkedHashSet<ICollection>
     private val rootCollections: LinkedHashSet<DocCollection>
@@ -91,7 +93,7 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
                     ?.filterNot { items.contains(it.nameWithoutExtension) || it.name == "field.yml" }
                     ?.forEach {
                         it.delete()
-                        println("delete $it")
+                        log.warn("delete $it")
                     }
         }
 
@@ -100,14 +102,14 @@ data class DocModule(val rootModuleDic: File?, val projectModuleDic: File?) {
             File(this.rootModuleDic, "collection").listFiles()
                     ?.filterNot { rootCollectionNames.contains(it.name) }?.forEach {
                         it.deleteRecursively()
-                        println("delete $it")
+                        log.warn("delete $it")
                     }
         }
         val subCollectionNames = projectCollections.map { it.name }
         File(projectModuleDic, "collection").listFiles()
                 ?.filterNot { subCollectionNames.contains(it.name) }?.forEach {
                     it.deleteRecursively()
-                    println("delete $it")
+                    log.warn("delete $it")
                 }
     }
 

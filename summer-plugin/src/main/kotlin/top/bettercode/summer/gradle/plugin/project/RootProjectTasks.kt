@@ -16,7 +16,6 @@ import top.bettercode.summer.tools.lang.capitalized
  * @author Peter Wu
  */
 object RootProjectTasks {
-
     fun config(project: Project) {
         project.tasks.apply {
 
@@ -88,7 +87,7 @@ object RootProjectTasks {
                                 it.doLast(object : Action<Task> {
                                     override fun execute(it: Task) {
                                         val description = jenkins.description(jobName)
-                                        println("job 描述信息：${if (description.isNotBlank()) "\n$description" else "无"}")
+                                        project.logger.lifecycle("job 描述信息：${if (description.isNotBlank()) "\n$description" else "无"}")
                                     }
                                 })
                             }
@@ -111,91 +110,91 @@ object RootProjectTasks {
                 t.doLast(object : Action<Task> {
                     override fun execute(it: Task) {
                         extension.databases.forEach { (module, database) ->
-                                val isDefault = GeneratorExtension.isDefaultModule(module)
-                                val suffix = if (isDefault) "" else "-$module"
-                                //init.sql
-                                val destFile = FileUnit(
-                                        "database/init$suffix.sql"
-                                )
-                                destFile.apply {
-                                    val commentPrefix = when (database.driver) {
-                                        DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
-                                            MysqlToDDL.commentPrefix
-                                        }
-
-                                        else -> {
-                                            "--"
-                                        }
-                                    }
-                                    val databaseFile = project.rootProject.file("database/database$suffix.sql")
-                                    if (databaseFile.exists()) {
-                                        +"$commentPrefix ${
-                                            databaseFile.readText()
-                                        }"
+                            val isDefault = GeneratorExtension.isDefaultModule(module)
+                            val suffix = if (isDefault) "" else "-$module"
+                            //init.sql
+                            val destFile = FileUnit(
+                                    "database/init$suffix.sql"
+                            )
+                            destFile.apply {
+                                val commentPrefix = when (database.driver) {
+                                    DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                        MysqlToDDL.commentPrefix
                                     }
 
+                                    else -> {
+                                        "--"
+                                    }
+                                }
+                                val databaseFile = project.rootProject.file("database/database$suffix.sql")
+                                if (databaseFile.exists()) {
+                                    +"$commentPrefix ${
+                                        databaseFile.readText()
+                                    }"
+                                }
+
+                                when (database.driver) {
+                                    DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                        +"$commentPrefix use ${database.schema};"
+                                        +""
+                                        +"SET NAMES 'utf8';"
+                                        +""
+                                    }
+
+                                    else -> {}
+                                }
+
+                                val schema = project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}.sql")
+                                if (schema.exists()) {
+                                    +schema.readText()
+                                    +""
+                                }
+                                project.rootProject.file("database/init/$suffix").listFiles()
+                                        ?.filter { it.isFile }
+                                        ?.forEach {
+                                            +it.readText()
+                                        }
+                            }
+                            destFile.writeTo(project.rootDir)
+                            //update.sql
+                            val updateFile = FileUnit(
+                                    "database/update$suffix.sql"
+                            )
+                            updateFile.apply {
+                                val commentPrefix = when (database.driver) {
+                                    DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
+                                        MysqlToDDL.commentPrefix
+                                    }
+
+                                    else -> {
+                                        "--"
+                                    }
+                                }
+
+                                val updateDdl =
+                                        project.rootProject.file("database/update/v${project.version}$suffix.sql")
+                                if (updateDdl.exists()) {
+                                    +updateDdl.readText()
+                                } else {
+                                    +"$commentPrefix ${database.url.substringBefore("?")}"
                                     when (database.driver) {
                                         DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
                                             +"$commentPrefix use ${database.schema};"
-                                            +""
-                                            +"SET NAMES 'utf8';"
-                                            +""
-                                        }
-
-                                        else -> {}
-                                    }
-
-                                    val schema = project.rootProject.file("database/ddl/${if (isDefault) "schema" else module}.sql")
-                                    if (schema.exists()) {
-                                        +schema.readText()
-                                        +""
-                                    }
-                                    project.rootProject.file("database/init/$suffix").listFiles()
-                                            ?.filter { it.isFile }
-                                            ?.forEach {
-                                                +it.readText()
-                                            }
-                                }
-                                destFile.writeTo(project.rootDir)
-                                //update.sql
-                                val updateFile = FileUnit(
-                                        "database/update$suffix.sql"
-                                )
-                                updateFile.apply {
-                                    val commentPrefix = when (database.driver) {
-                                        DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
-                                            MysqlToDDL.commentPrefix
                                         }
 
                                         else -> {
-                                            "--"
                                         }
                                     }
-
-                                    val updateDdl =
-                                            project.rootProject.file("database/update/v${project.version}$suffix.sql")
-                                    if (updateDdl.exists()) {
-                                        +updateDdl.readText()
-                                    } else {
-                                        +"$commentPrefix ${database.url.substringBefore("?")}"
-                                        when (database.driver) {
-                                            DatabaseDriver.MYSQL, DatabaseDriver.MARIADB -> {
-                                                +"$commentPrefix use ${database.schema};"
-                                            }
-
-                                            else -> {
-                                            }
-                                        }
-                                    }
-                                    +""
-                                    project.rootProject.file("database/update-data/v${project.version}$suffix").listFiles()
-                                            ?.filter { it.isFile }
-                                            ?.forEach {
-                                                +it.readText()
-                                            }
                                 }
-                                updateFile.writeTo(project.rootDir)
+                                +""
+                                project.rootProject.file("database/update-data/v${project.version}$suffix").listFiles()
+                                        ?.filter { it.isFile }
+                                        ?.forEach {
+                                            +it.readText()
+                                        }
                             }
+                            updateFile.writeTo(project.rootDir)
+                        }
                     }
                 })
             }

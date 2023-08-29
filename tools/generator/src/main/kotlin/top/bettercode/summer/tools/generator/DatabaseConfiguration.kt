@@ -26,6 +26,8 @@ data class DatabaseConfiguration(
         }
 ) : TableHolder {
 
+    private val log = org.slf4j.LoggerFactory.getLogger(DatabaseConfiguration::class.java)
+
     val available: Boolean by lazy { url.isNotBlank() }
 
     lateinit var extension: GeneratorExtension
@@ -205,7 +207,7 @@ data class DatabaseConfiguration(
         val names = (if (tableName.isEmpty()) tableNames() else tableName.distinct()).filter {
             !excludeTableNames.contains(it)
         }
-        println("数据表（${names.size}）:${names}")
+        log.warn("数据表（${names.size}）:${names}")
         val result = ConcurrentLinkedDeque<Table>()
         val map = mutableMapOf<Int, MutableList<String>>()
         var i = 1
@@ -243,7 +245,7 @@ data class DatabaseConfiguration(
             result.addAll(deferred.flatMap { it.await() }.filterNotNull())
         }
         if (checkFound && set.isNotEmpty()) {
-            System.err.println("未找到${set}表")
+            log.error("未找到${set}表")
         }
         return result.sortedBy { it.tableName }
     }

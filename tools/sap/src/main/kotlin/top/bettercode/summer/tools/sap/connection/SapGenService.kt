@@ -109,7 +109,7 @@ class SapGenService(private val sapService: SapService) {
                 tables, properties)
         val file = File(outputDir, "$pojoName.properties")
         properties.store(Files.newBufferedWriter(file.toPath()), "SAP POJO properties")
-        println("生成：" + file.name)
+        log.info("生成：" + file.name)
     }
 
     private fun genClass(pojoName: String, name: String, desc: String, exist: Boolean,

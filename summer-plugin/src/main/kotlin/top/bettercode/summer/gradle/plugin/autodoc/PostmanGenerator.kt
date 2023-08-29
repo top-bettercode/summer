@@ -1,5 +1,6 @@
 package top.bettercode.summer.gradle.plugin.autodoc
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -19,7 +20,7 @@ import java.util.*
  * @author Peter Wu
  */
 object PostmanGenerator {
-
+    private val log = LoggerFactory.getLogger(PostmanGenerator::class.java)
     fun postman(autodoc: AutodocExtension) {
         val rootDoc = autodoc.rootSource
         val sourcePath = (rootDoc?.absoluteFile?.parentFile?.absolutePath
@@ -72,7 +73,7 @@ object PostmanGenerator {
                     variable = variables.toList()
             )
             postmanFile.writeText(postmanCollection.toJsonString())
-            println("生成：$postmanFile")
+            log.warn("生成：$postmanFile")
         }
     }
 

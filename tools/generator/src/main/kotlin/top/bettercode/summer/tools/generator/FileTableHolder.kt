@@ -1,5 +1,6 @@
 package top.bettercode.summer.tools.generator
 
+import org.joni.Config.log
 import top.bettercode.summer.tools.generator.database.entity.Table
 import java.io.File
 
@@ -11,6 +12,8 @@ abstract class FileTableHolder(
         val database: DatabaseConfiguration,
         val files: List<File>
 ) : TableHolder {
+
+    private val log = org.slf4j.LoggerFactory.getLogger(FileTableHolder::class.java)
 
     override fun tables(checkFound: Boolean, vararg tableName: String): List<Table> {
         val tableNames = tableName.distinct()
@@ -31,7 +34,7 @@ abstract class FileTableHolder(
         if (checkFound) {
             val notFound = tableNames.filter { name -> result.none { it.tableName == name } }
             if (notFound.isNotEmpty()) {
-                System.err.println("未找到${notFound}表")
+                log.error("未找到${notFound}表")
             }
         }
         return result

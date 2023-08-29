@@ -51,7 +51,8 @@ class DistPlugin : Plugin<Project> {
             dist.runUser = project.findDistProperty("run-user") ?: ""
             dist.jdkArchiveSrc = project.findDistProperty("jdk-archive-src") ?: ""
             dist.prevArchiveSrc = project.findDistProperty("prev-archive-src") ?: ""
-            dist.jvmArgs = (project.findDistProperty("jvm-args") ?: "").split(" +".toRegex()).filter { it.isNotBlank() }
+            dist.jvmArgs = (project.findDistProperty("jvm-args")
+                    ?: "").split(" +".toRegex()).filter { it.isNotBlank() }
             dist.excludeUnWrapResources = (project.findDistProperty("exclude-unwrap-resources")
                     ?: "META-INF/additional-spring-configuration-metadata.json,META-INF/spring.factories").split(
                     ","
@@ -298,13 +299,13 @@ class DistPlugin : Plugin<Project> {
             val url = URL(dist.jdkArchiveSrc)
             get.setVerbose(true)
             get.setSkipExisting(true)
-            println("download:${url}")
+            project.logger.lifecycle("download:${url}")
             get.doGet(
                     url, jdkArchive, 2,
                     Get.VerboseProgress(System.out)
             )
         }
-        println("packaging jdk:$jdkArchive")
+        project.logger.lifecycle("packaging jdk:$jdkArchive")
         copySpec.from(
                 if (jdkArchive.extension == "zip")
                     project.zipTree(jdkArchive)

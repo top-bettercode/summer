@@ -16,6 +16,8 @@ import java.io.File
  */
 object PdmReader {
 
+    private val log = org.slf4j.LoggerFactory.getLogger(PdmReader::class.java)
+
     fun read(
             pdmFile: File,
             call: (Table) -> Unit = {}
@@ -136,7 +138,7 @@ object PdmReader {
             val identity = columnEle.element(QName("Identity", aNamespace))?.textTrim == "1"
 
             if (cDataType.isBlank()) {
-                println("未识别COLUMN：$code:$ccode")
+                log.warn("未识别COLUMN：$code:$ccode")
             }
             val typeName = cDataType.substringBefore("(")
             val column = Column(

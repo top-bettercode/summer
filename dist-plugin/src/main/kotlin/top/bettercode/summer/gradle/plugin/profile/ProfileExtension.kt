@@ -27,7 +27,10 @@ open class ProfileExtension(
         val profileClosure: MutableMap<String, MutableSet<Project.(ProfileExtension) -> Unit>> = mutableMapOf()
 ) {
 
+
     companion object {
+
+        private val log = org.slf4j.LoggerFactory.getLogger(ProfileExtension::class.java)
 
         internal fun Project.configProject(run: (project: Project) -> Unit) {
             run(rootProject)
@@ -121,7 +124,7 @@ open class ProfileExtension(
             return if (find == null) {
                 val filter = profiles.filter { it.startsWith(active) }
                 if (filter.isEmpty() || filter.size > 1) {
-                    println("未找到适合的profiles.active:${active}配置文件,使用${profilesDefaultActive}默认配置")
+                    log.warn("未找到适合的profiles.active:${active}配置文件,使用${profilesDefaultActive}默认配置")
                     profilesDefaultActive
                 } else {
                     filter[0]

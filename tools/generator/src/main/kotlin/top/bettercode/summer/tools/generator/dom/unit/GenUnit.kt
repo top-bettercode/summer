@@ -17,6 +17,7 @@ interface GenUnit {
     val write: File.(String) -> Boolean
         get() = { false }
 
+
     val file: File
         get() {
             val file = File(name)
@@ -45,10 +46,11 @@ interface GenUnit {
             val oldContent = if (exists) destFile.readText() else ""
             val writed = destFile.write(oldContent)
             if (writed) {
+                val log = org.slf4j.LoggerFactory.getLogger(GenUnit::class.java)
                 if (exists) {
-                    println("覆盖：${file.path}")
+                    log.warn("覆盖：${file.path}")
                 } else {
-                    println("生成：${file.path}")
+                    log.warn("生成：${file.path}")
                 }
             }
         }

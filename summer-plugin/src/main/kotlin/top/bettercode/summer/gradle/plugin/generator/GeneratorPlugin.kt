@@ -34,7 +34,6 @@ import java.util.*
  * @author Peter Wu
  */
 class GeneratorPlugin : Plugin<Project> {
-
     companion object {
         const val genGroup = "gen"
         const val printGroup = "print"
@@ -321,7 +320,7 @@ class GeneratorPlugin : Plugin<Project> {
                             try {
                                 sourceFileReader.generatedImages
                             } catch (e: Exception) {
-                                println("${e.javaClass.name}:${e.message}")
+                                project.logger.error("${e.javaClass.name}:${e.message}")
                             }
                         }
                     }

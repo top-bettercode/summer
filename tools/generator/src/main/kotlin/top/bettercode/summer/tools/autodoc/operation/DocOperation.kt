@@ -31,6 +31,8 @@ class DocOperation(
                 operation.response
         )
 ) {
+    @JsonIgnore
+    private val log = org.slf4j.LoggerFactory.getLogger(DocOperation::class.java)
 
     @JsonIgnore
     lateinit var operationFile: File
@@ -38,7 +40,7 @@ class DocOperation(
     fun save() {
         operationFile.parentFile.mkdirs()
         operationFile.parentFile.mkdirs()
-        println("${if (operationFile.exists()) "更新" else "创建"}：$operationFile")
+        log.warn("${if (operationFile.exists()) "更新" else "创建"}：$operationFile")
         operationFile.writeText(AutodocUtil.yamlMapper.writeValueAsString(this))
     }
 

@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.generator.database
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import top.bettercode.summer.tools.generator.DatabaseConfiguration
 import top.bettercode.summer.tools.generator.DatabaseDriver
 import top.bettercode.summer.tools.generator.database.entity.Column
@@ -21,7 +23,7 @@ import java.util.*
 class DatabaseMetaData(
         private val datasource: DatabaseConfiguration
 ) : AutoCloseable {
-
+    private val log: Logger = LoggerFactory.getLogger(DatabaseMetaData::class.java)
     private var databaseMetaData: java.sql.DatabaseMetaData
     private var canReadIndexed = true
 
@@ -40,7 +42,7 @@ class DatabaseMetaData(
         try {
             databaseMetaData.connection.close()
         } catch (e: Exception) {
-            System.err.println("关闭数据库连接出错:${e.message}")
+            log.error("关闭数据库连接出错:${e.message}")
         }
     }
 
@@ -94,7 +96,7 @@ class DatabaseMetaData(
      * @return 数据表
      */
     fun table(tableName: String, call: (Table) -> Unit = {}): Table? {
-        println("查询：$tableName 表数据结构")
+        log.warn("查询：$tableName 表数据结构")
         var table: Table? = null
 
         val databaseProductName = databaseMetaData.databaseProductName
@@ -104,7 +106,7 @@ class DatabaseMetaData(
             table = tables.toTable(call)
         }
         if (table == null) {
-            System.err.println("未在${databaseProductName}数据库(${tableNames().joinToString()})中找到${tableName}表")
+            log.error("未在${databaseProductName}数据库(${tableNames().joinToString()})中找到${tableName}表")
         }
         return table
     }
@@ -137,7 +139,7 @@ class DatabaseMetaData(
                         else
                             mutableListOf()
                     } catch (e: Exception) {
-                        System.err.println("查询索引出错:${e.message}")
+                        log.error("查询索引出错:${e.message}")
                         reConnect()
                         canReadIndexed = false
                         datasource.queryIndex = false
@@ -192,7 +194,7 @@ class DatabaseMetaData(
                     return@map
                 }
             } catch (e: Exception) {
-                System.err.println("查询库编码排序出错:${e.message}")
+                log.error("查询库编码排序出错:${e.message}")
             }
         }
         return collate
@@ -220,7 +222,7 @@ class DatabaseMetaData(
                     return@map
                 }
             } catch (e: Exception) {
-                System.err.println("查询表编码排序出错:${e.message}")
+                log.error("查询表编码排序出错:${e.message}")
             }
         }
         return collate
@@ -248,7 +250,7 @@ class DatabaseMetaData(
                     return@map
                 }
             } catch (e: Exception) {
-                System.err.println("查询表引擎出错:${e.message}")
+                log.error("查询表引擎出错:${e.message}")
             }
         }
         return engine
@@ -292,7 +294,7 @@ class DatabaseMetaData(
                     }
                 }
             } catch (e: Exception) {
-                System.err.println("\"SHOW COLUMNS FROM $tableName\"出错:${e.message}")
+                log.error("\"SHOW COLUMNS FROM $tableName\"出错:${e.message}")
             }
         }
     }
@@ -393,11 +395,11 @@ class DatabaseMetaData(
 
     private fun ResultSet.debug(name: String, rsmd: ResultSetMetaData) {
         val colCount = rsmd.columnCount
-        println("-----------------------------------------------------")
+        log.warn("-----------------------------------------------------")
         for (i in 1..colCount) {
-            println("::$name::${metaData.getColumnName(i)}:${getString(i)}")
+            log.warn("::$name::${metaData.getColumnName(i)}:${getString(i)}")
         }
-        println("-----------------------------------------------------")
+        log.warn("-----------------------------------------------------")
     }
 
     /**

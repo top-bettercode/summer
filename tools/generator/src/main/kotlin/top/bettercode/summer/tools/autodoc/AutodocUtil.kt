@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.slf4j.LoggerFactory
 import org.springframework.util.ClassUtils
 import org.springframework.util.MultiValueMap
 import top.bettercode.summer.tools.autodoc.model.DocCollection
@@ -29,6 +30,7 @@ object AutodocUtil {
     const val REPLACE_CHAR = "丨"
     val objectMapper = ObjectMapper()
     val yamlMapper = YAMLMapper()
+    private val log = LoggerFactory.getLogger(AutodocUtil::class.java)
 
     init {
         init(objectMapper)
@@ -74,7 +76,7 @@ object AutodocUtil {
                         .filterNot { it == null }
                 LinkedHashSet(set)
             } catch (e: Exception) {
-                println("$this>>${e.message}")
+                log.warn("$this>>${e.message}")
                 linkedSetOf()
             }
         } else {
@@ -189,7 +191,7 @@ object AutodocUtil {
         forEach {
             val blank = it.description.isBlank()
             if (blank) {
-                System.err.println("[${desc}]未找到字段[${prefix + it.name}]的描述")
+                log.error("[${desc}]未找到字段[${prefix + it.name}]的描述")
             }
             it.children.checkBlank(desc, "${prefix + it.name}.")
         }

@@ -3,6 +3,8 @@ package top.bettercode.summer.tools.configuration.processor
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.util.*
+import java.util.logging.Level
+import java.util.logging.Logger
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
@@ -11,6 +13,8 @@ import javax.tools.StandardLocation
 
 // 定义一个注解处理器类，实现Processor接口，并使用@SupportedAnnotationTypes注解指定要处理的注解类型
 class ConfigProfileProcessor : AbstractProcessor() {
+
+    private val log = Logger.getLogger(ConfigProfileProcessor::class.java.name)
 
     override fun process(annotations: Set<TypeElement?>, roundEnv: RoundEnvironment): Boolean {
         if (!roundEnv.processingOver()) {
@@ -57,7 +61,7 @@ class ConfigProfileProcessor : AbstractProcessor() {
             }
             val filter = confDir.listFiles()?.filter { it.nameWithoutExtension.startsWith(active) }
             confFile = if (filter.isNullOrEmpty() || filter.size > 1) {
-                System.err.println("未找到适合的profiles.active:${active}配置文件" + (if (profilesDefaultActive != null) ",使用${profilesDefaultActive}默认配置" else ""))
+                log.log(Level.WARNING, "未找到适合的profiles.active:${active}配置文件" + (if (profilesDefaultActive != null) ",使用${profilesDefaultActive}默认配置" else ""))
                 profilesDefaultActive
             } else {
                 filter[0]

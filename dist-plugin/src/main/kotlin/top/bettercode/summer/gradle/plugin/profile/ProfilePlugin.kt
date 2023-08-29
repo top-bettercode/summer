@@ -57,7 +57,7 @@ class ProfilePlugin : Plugin<Project> {
         project.tasks.getByName(JavaPlugin.PROCESS_RESOURCES_TASK_NAME) {
             it.doFirst(object : Action<Task> {
                 override fun execute(it: Task) {
-                    println("$profilesActiveName:${project.profilesActive}")
+                    project.logger.lifecycle("$profilesActiveName:${project.profilesActive}")
                 }
             })
             it as ProcessResources

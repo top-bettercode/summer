@@ -16,11 +16,12 @@ class PlantUML(
         private val remarksProperties: Properties?
 ) : Generator() {
 
+    private val log = org.slf4j.LoggerFactory.getLogger(PlantUML::class.java)
     private val fklines = mutableListOf<String>()
 
     override fun setUp() {
         destFile.parentFile.mkdirs()
-        println(
+        log.warn(
                 "${if (destFile.exists()) "覆盖" else "生成"}：${
                     destFile.absolutePath.substringAfter(
                             (ext.rootPath ?: ext.projectDir).absolutePath + File.separator
@@ -36,7 +37,7 @@ class PlantUML(
 
     override fun call() {
         if (tableName.length > 30) {
-            println("数据库对象的命名最好不要超过 30 个字符")
+            log.warn("数据库对象的命名最好不要超过 30 个字符")
         }
         destFile.appendText(
                 """entity $tableName {
@@ -49,7 +50,7 @@ class PlantUML(
             if (it is Column) {
                 val isPrimary = it.isPrimary
                 if (it.columnName.length > 30) {
-                    println("数据库对象的命名最好不要超过 30 个字符")
+                    log.warn("数据库对象的命名最好不要超过 30 个字符")
                 }
                 var prettyRemarks = it.prettyRemarks
                 if (prettyRemarks.isBlank()) {
