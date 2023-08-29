@@ -4,7 +4,6 @@ import org.hibernate.query.criteria.internal.path.SingularAttributePath
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.util.Assert
-import top.bettercode.summer.data.jpa.metamodel.SingularAttributeValue
 import java.util.*
 import java.util.stream.Collectors
 import javax.persistence.criteria.*

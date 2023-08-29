@@ -98,7 +98,7 @@ class Sequence {
                 or sequence) // 序列号部分
     }
 
-    protected fun tilNextMillis(lastTimestamp: Long): Long {
+    private fun tilNextMillis(lastTimestamp: Long): Long {
         var timestamp = timeGen()
         while (timestamp <= lastTimestamp) {
             timestamp = timeGen()
@@ -106,7 +106,7 @@ class Sequence {
         return timestamp
     }
 
-    protected fun timeGen(): Long {
+    private fun timeGen(): Long {
         return SystemClock.now()
     }
 
@@ -119,7 +119,7 @@ class Sequence {
          * 获取 maxWorkerId
          *
          */
-        protected fun getMaxWorkerId(datacenterId: Long, maxWorkerId: Long): Long {
+        private fun getMaxWorkerId(datacenterId: Long, maxWorkerId: Long): Long {
             val mpid = StringBuilder()
             mpid.append(datacenterId)
             val name = ManagementFactory.getRuntimeMXBean().name
@@ -140,7 +140,7 @@ class Sequence {
          * 数据标识id部分
          *
          */
-        protected fun getDatacenterId(maxDatacenterId: Long): Long {
+        private fun getDatacenterId(maxDatacenterId: Long): Long {
             var id = 0L
             try {
                 val ip = InetAddress.getLocalHost()

@@ -92,8 +92,8 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 "between", "all", "any", "lt", "criteriaUpdate", "asc", "containing", "toPredicate", "createCriteriaUpdate", "notEqual", "gt", "ge", "like", "notLike", "criteria", "starting", "sortBy", "notIn", "getMatchMode", "ending", "notStarting", "notEnding", "notContaining", "in", "desc", "le", "path", "equal", "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll", "or", "and"
         )
         //primaryKey
-        val javaName = if (primaryKeyName in existMethodNames) "${primaryKeyName}Field" else primaryKeyName
-        method(javaName, pathType) {
+        val primaryKeyMethodName = if (primaryKeyName in existMethodNames) "${primaryKeyName}Field" else primaryKeyName
+        method(primaryKeyMethodName, pathType) {
             javadoc {
                 +"/**"
                 +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
@@ -103,7 +103,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return super.path(\"${primaryKeyName}\");"
         }
         method(
-                javaName,
+                primaryKeyMethodName,
                 type,
                 Parameter(primaryKeyName, primaryKeyType)
         ) {
@@ -131,7 +131,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
             +"return super.criteriaUpdate(\"${primaryKeyName}\", ${primaryKeyName});"
         }
         method(
-                javaName,
+                primaryKeyMethodName,
                 type,
                 Parameter(primaryKeyName, primaryKeyType),
                 Parameter(
@@ -152,9 +152,9 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
 
         if (isCompositePrimaryKey) {
             primaryKeys.forEach {
-                val javaName =
+                val methodName =
                         if (it.javaName == "spec") "specField" else it.javaName
-                method(javaName, pathType) {
+                method(methodName, pathType) {
                     javadoc {
                         +"/**"
                         +" * @return ${it.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
@@ -164,7 +164,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +"return super.path(\"${primaryKeyName}.${it.javaName}\");"
                 }
                 method(
-                        javaName,
+                        methodName,
                         type,
                         Parameter(it.javaName, it.javaType)
                 ) {
@@ -192,7 +192,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +"return super.criteriaUpdate(\"${primaryKeyName}.${it.javaName}\", ${it.javaName});"
                 }
                 method(
-                        javaName,
+                        methodName,
                         type,
                         Parameter(it.javaName, it.javaType),
                         Parameter(

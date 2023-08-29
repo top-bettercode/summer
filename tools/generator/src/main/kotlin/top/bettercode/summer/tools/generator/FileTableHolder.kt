@@ -1,6 +1,5 @@
 package top.bettercode.summer.tools.generator
 
-import org.joni.Config.log
 import top.bettercode.summer.tools.generator.database.entity.Table
 import java.io.File
 

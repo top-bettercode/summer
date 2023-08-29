@@ -53,7 +53,6 @@ class DynamicSaveTest {
         dave = User()
         dave.id = id
         dave.lastName = "MM"
-        @Suppress("DEPRECATION")
         repository.dynamicSave(dave)
         optionalUser = repository.findById(id)
         Assertions.assertTrue(optionalUser.isPresent)

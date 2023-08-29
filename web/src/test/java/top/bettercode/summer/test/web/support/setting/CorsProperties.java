@@ -8,7 +8,6 @@ import org.springframework.web.cors.CorsConfiguration;
  * @author Peter Wu
  * @since 0.1.12
  */
-@ConfigurationProperties("summer.security.cors")
 public class CorsProperties extends CorsConfiguration {
 
   private boolean enable = true;
