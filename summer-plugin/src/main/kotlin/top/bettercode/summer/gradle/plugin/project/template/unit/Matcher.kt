@@ -92,6 +92,64 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                 "between", "all", "any", "lt", "criteriaUpdate", "asc", "containing", "toPredicate", "createCriteriaUpdate", "notEqual", "gt", "ge", "like", "notLike", "criteria", "starting", "sortBy", "notIn", "getMatchMode", "ending", "notStarting", "notEnding", "notContaining", "in", "desc", "le", "path", "equal", "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll", "or", "and"
         )
         //primaryKey
+        val javaName = if (primaryKeyName in existMethodNames) "${primaryKeyName}Field" else primaryKeyName
+        method(javaName, pathType) {
+            javadoc {
+                +"/**"
+                +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                +" */"
+            }
+            this.visibility = JavaVisibility.PUBLIC
+            +"return super.path(\"${primaryKeyName}\");"
+        }
+        method(
+                javaName,
+                type,
+                Parameter(primaryKeyName, primaryKeyType)
+        ) {
+            javadoc {
+                +"/**"
+                +" * ${primaryKey.paramRemark}"
+                +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                +" */"
+            }
+            this.visibility = JavaVisibility.PUBLIC
+            +"return super.criteria(\"${primaryKeyName}\", ${primaryKeyName});"
+        }
+        method(
+                "set${primaryKeyName.capitalized()}",
+                type,
+                Parameter(primaryKeyName, primaryKeyType)
+        ) {
+            javadoc {
+                +"/**"
+                +" * ${primaryKey.paramRemark}"
+                +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                +" */"
+            }
+            this.visibility = JavaVisibility.PUBLIC
+            +"return super.criteriaUpdate(\"${primaryKeyName}\", ${primaryKeyName});"
+        }
+        method(
+                javaName,
+                type,
+                Parameter(primaryKeyName, primaryKeyType),
+                Parameter(
+                        "matcher",
+                        matcherType
+                )
+        ) {
+            javadoc {
+                +"/**"
+                +" * ${primaryKey.paramRemark}"
+                +" * @param matcher PathMatcher"
+                +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                +" */"
+            }
+            this.visibility = JavaVisibility.PUBLIC
+            +"return super.criteria(\"${primaryKeyName}\", ${primaryKeyName}, matcher);"
+        }
+
         if (isCompositePrimaryKey) {
             primaryKeys.forEach {
                 val javaName =
@@ -153,66 +211,7 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
                     +"return super.criteria(\"${primaryKeyName}.${it.javaName}\", ${it.javaName}, matcher);"
                 }
             }
-        } else {
-            val javaName = if (primaryKeyName in existMethodNames) "${primaryKeyName}Field" else primaryKeyName
-            method(javaName, pathType) {
-                javadoc {
-                    +"/**"
-                    +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
-                    +" */"
-                }
-                this.visibility = JavaVisibility.PUBLIC
-                +"return super.path(\"${primaryKeyName}\");"
-            }
-            method(
-                    javaName,
-                    type,
-                    Parameter(primaryKeyName, primaryKeyType)
-            ) {
-                javadoc {
-                    +"/**"
-                    +" * ${primaryKey.paramRemark}"
-                    +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
-                    +" */"
-                }
-                this.visibility = JavaVisibility.PUBLIC
-                +"return super.criteria(\"${primaryKeyName}\", ${primaryKeyName});"
-            }
-            method(
-                    "set${primaryKeyName.capitalized()}",
-                    type,
-                    Parameter(primaryKeyName, primaryKeyType)
-            ) {
-                javadoc {
-                    +"/**"
-                    +" * ${primaryKey.paramRemark}"
-                    +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
-                    +" */"
-                }
-                this.visibility = JavaVisibility.PUBLIC
-                +"return super.criteriaUpdate(\"${primaryKeyName}\", ${primaryKeyName});"
-            }
-            method(
-                    javaName,
-                    type,
-                    Parameter(primaryKeyName, primaryKeyType),
-                    Parameter(
-                            "matcher",
-                            matcherType
-                    )
-            ) {
-                javadoc {
-                    +"/**"
-                    +" * ${primaryKey.paramRemark}"
-                    +" * @param matcher PathMatcher"
-                    +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
-                    +" */"
-                }
-                this.visibility = JavaVisibility.PUBLIC
-                +"return super.criteria(\"${primaryKeyName}\", ${primaryKeyName}, matcher);"
-            }
         }
-
 
         otherColumns.forEach {
             val javaName = if (it.javaName in existMethodNames) "${it.javaName}Field" else it.javaName
