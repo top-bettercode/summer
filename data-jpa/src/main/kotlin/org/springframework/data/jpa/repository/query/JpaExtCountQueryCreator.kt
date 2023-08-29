@@ -17,14 +17,12 @@ internal class JpaExtCountQueryCreator(
         type: ReturnedType,
         builder: CriteriaBuilder,
         provider: ParameterMetadataProvider,
-        private val logicalDeleteSupport: ExtJpaSupport
+        private val logicalDeleteSupport: ExtJpaSupport<*>
 ) : JpaCountQueryCreator(tree, type, builder, provider) {
     override fun complete(predicate: Predicate?, sort: Sort, query: CriteriaQuery<out Any>, builder: CriteriaBuilder, root: Root<*>): CriteriaQuery<out Any> {
-        var predicate1: Predicate? = predicate
-        if (predicate1 != null && logicalDeleteSupport.supportLogicalDeleted()) {
-            val deletedPath = root.get<Boolean>(logicalDeleteSupport.logicalDeletedPropertyName)
-            predicate1 = builder.and(predicate1, builder.isFalse(deletedPath))
-        }
+        val predicate1: Predicate? =
+                logicalDeleteSupport.logicalDeletedAttribute?.andNotDeleted(predicate, builder, root)
+                        ?: predicate
         return super.complete(predicate1, sort, query, builder, root)
     }
 }

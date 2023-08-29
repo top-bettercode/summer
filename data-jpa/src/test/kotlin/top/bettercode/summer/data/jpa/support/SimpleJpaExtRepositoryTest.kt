@@ -159,7 +159,6 @@ class SimpleJpaExtRepositoryTest {
         val update = User()
         update.id = id
         update.firstName = "Dave22"
-        @Suppress("DEPRECATION")
         repository.dynamicSave(update)
         val optionalUser = repository.findById(id)
         optionalUser.ifPresent { x: User? -> System.err.println(x) }

@@ -1,12 +1,15 @@
 package top.bettercode.summer.data.jpa.query
 
+import org.hibernate.query.criteria.internal.path.SingularAttributePath
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.util.Assert
+import top.bettercode.summer.data.jpa.metamodel.SingularAttributeValue
 import java.util.*
 import java.util.stream.Collectors
 import javax.persistence.criteria.*
 import javax.persistence.criteria.CriteriaBuilder.Trimspec
+import javax.persistence.metamodel.SingularAttribute
 
 /**
  * @author Peter Wu
@@ -42,7 +45,8 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
     /**
      * 条件查询值
      */
-    private var criteria: Any? = NOT_SET
+    var criteria: Any? = NOT_SET
+        private set
 
     /**
      * 更新值
@@ -57,9 +61,16 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
     val isSetCriteriaUpdate: Boolean
         get() = criteriaUpdate != NOT_SET
 
+    var attribute: SingularAttribute<T, *>? = null
+
     //--------------------------------------------
     fun toPath(root: Root<T>): Path<*>? {
-        return toPath(root, propertyName)
+        val path = toPath(root, propertyName)
+        if (attribute == null&& path is SingularAttributePath) {
+            @Suppress("UNCHECKED_CAST")
+            attribute = path.attribute as SingularAttribute<T, *>
+        }
+        return path
     }
 
     @Suppress("UNCHECKED_CAST")

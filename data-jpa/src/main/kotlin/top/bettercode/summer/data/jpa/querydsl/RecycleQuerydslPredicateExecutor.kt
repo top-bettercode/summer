@@ -24,7 +24,7 @@ interface RecycleQuerydslPredicateExecutor<T> {
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if the predicate yields
      * more than one result.
      */
-    fun findOneFromRecycleBin(predicate: Predicate?): Optional<T>
+    fun findOneFromRecycleBin(predicate: Predicate): Optional<T>
 
     /**
      * Returns all entities matching the given [Predicate]. In case no match could be found an
@@ -33,7 +33,7 @@ interface RecycleQuerydslPredicateExecutor<T> {
      * @param predicate must not be null.
      * @return all entities matching the given [Predicate].
      */
-    fun findAllFromRecycleBin(predicate: Predicate?): Iterable<T>
+    fun findAllFromRecycleBin(predicate: Predicate): Iterable<T>
 
     /**
      * Returns all entities matching the given [Predicate] applying the given [Sort]. In
@@ -45,7 +45,7 @@ interface RecycleQuerydslPredicateExecutor<T> {
      * @return all entities matching the given [Predicate].
      * @since 1.10
      */
-    fun findAllFromRecycleBin(predicate: Predicate?, sort: Sort): Iterable<T>
+    fun findAllFromRecycleBin(predicate: Predicate, sort: Sort): Iterable<T>
 
     /**
      * Returns all entities matching the given [Predicate] applying the given
@@ -57,7 +57,7 @@ interface RecycleQuerydslPredicateExecutor<T> {
      * @return all entities matching the given [Predicate] applying the given
      * [OrderSpecifier]s.
      */
-    fun findAllFromRecycleBin(predicate: Predicate?, vararg orders: OrderSpecifier<*>?): Iterable<T>
+    fun findAllFromRecycleBin(predicate: Predicate, vararg orders: OrderSpecifier<*>?): Iterable<T>
 
     /**
      * Returns all entities ordered by the given [OrderSpecifier]s.
@@ -75,7 +75,7 @@ interface RecycleQuerydslPredicateExecutor<T> {
      * @param pageable  may be [Pageable.unpaged], must not be null.
      * @return a [Page] of entities matching the given [Predicate].
      */
-    fun findAllFromRecycleBin(predicate: Predicate?, pageable: Pageable): Page<T>
+    fun findAllFromRecycleBin(predicate: Predicate, pageable: Pageable): Page<T>
 
     /**
      * Returns the number of instances matching the given [Predicate].
@@ -83,7 +83,7 @@ interface RecycleQuerydslPredicateExecutor<T> {
      * @param predicate the [Predicate] to count instances for, must not be null.
      * @return the number of instances matching the [Predicate].
      */
-    fun countRecycleBin(predicate: Predicate?): Long
+    fun countRecycleBin(predicate: Predicate): Long
 
     /**
      * Checks whether the data store contains elements that match the given [Predicate].
@@ -93,5 +93,5 @@ interface RecycleQuerydslPredicateExecutor<T> {
      * @return true if the data store contains elements that match the given
      * [Predicate].
      */
-    fun existsInRecycleBin(predicate: Predicate?): Boolean
+    fun existsInRecycleBin(predicate: Predicate): Boolean
 }

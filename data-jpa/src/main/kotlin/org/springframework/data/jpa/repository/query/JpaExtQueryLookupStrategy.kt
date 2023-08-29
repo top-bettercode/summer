@@ -26,7 +26,7 @@ object JpaExtQueryLookupStrategy {
     private val LOG = LoggerFactory.getLogger(JpaQueryLookupStrategy::class.java)
 
     /**
-     * Creates a [QueryLookupStrategy] for the given [EntityManager] and [Key].
+     * Creates a [QueryLookupStrategy] for the given [EntityManager] and [org.springframework.data.repository.query.QueryLookupStrategy.Key].
      *
      * @param em                        must not be null.
      * @param key                       may be null.
@@ -116,7 +116,7 @@ object JpaExtQueryLookupStrategy {
     }
 
     /**
-     * [QueryLookupStrategy] that tries to detect a declared query declared via [Query]
+     * [QueryLookupStrategy] that tries to detect a declared query declared via [RepositoryQuery]
      * annotation followed by a JPA named query lookup.
      *
      * @author Oliver Gierke

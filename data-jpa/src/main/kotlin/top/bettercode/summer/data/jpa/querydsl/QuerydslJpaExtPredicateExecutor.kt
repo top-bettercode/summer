@@ -2,6 +2,8 @@ package top.bettercode.summer.data.jpa.querydsl
 
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Predicate
+import com.querydsl.core.types.dsl.Expressions
+import com.querydsl.core.types.dsl.SimplePath
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -11,6 +13,8 @@ import org.springframework.data.jpa.repository.support.QuerydslJpaPredicateExecu
 import org.springframework.data.querydsl.EntityPathResolver
 import org.springframework.data.querydsl.QuerydslPredicateExecutor
 import top.bettercode.summer.data.jpa.config.JpaExtProperties
+import top.bettercode.summer.data.jpa.metamodel.LogicalDeletedAttribute
+import top.bettercode.summer.data.jpa.support.DefaultExtJpaSupport
 import java.util.*
 import javax.persistence.EntityManager
 
@@ -24,150 +28,134 @@ class QuerydslJpaExtPredicateExecutor<T : Any>(
         resolver: EntityPathResolver,
         metadata: CrudMethodMetadata
 ) : QuerydslJpaPredicateExecutor<T>(entityInformation, entityManager, resolver, metadata), QuerydslPredicateExecutor<T>, RecycleQuerydslPredicateExecutor<T> {
-    private val logicalDeleteSupport: QuerydslLogicalDeleteSupport<T>
+    private val logicalDeletedAttribute: LogicalDeletedAttribute<T, *>?
+    private var path: SimplePath<Any>? = null
 
     init {
-        logicalDeleteSupport = QuerydslLogicalDeleteSupport(jpaExtProperties,
-                entityInformation.javaType, resolver.createPath(entityInformation.javaType))
+        val extJpaSupport = DefaultExtJpaSupport<T>(jpaExtProperties, entityManager, null, entityInformation.javaType)
+        logicalDeletedAttribute = extJpaSupport.logicalDeletedAttribute
+        if (logicalDeletedAttribute != null) {
+            val entityPath = resolver.createPath(entityInformation.javaType)
+            path = Expressions.path(logicalDeletedAttribute.javaType, entityPath,
+                    logicalDeletedAttribute.name)
+        }
+    }
+
+    private val logicalDeletedSupported: Boolean by lazy {
+        path != null
+    }
+
+    private fun andNotDeleted(predicate: Predicate): Predicate {
+        return path?.eq(logicalDeletedAttribute!!.falseValue)?.and(predicate) ?: predicate
+    }
+
+    private fun andDeleted(predicate: Predicate): Predicate {
+        return path?.eq(logicalDeletedAttribute!!.trueValue)?.and(predicate) ?: predicate
+    }
+
+    private val notDeleted by lazy {
+        path!!.eq(logicalDeletedAttribute!!.falseValue)
+    }
+
+    private val deleted by lazy {
+        path!!.eq(logicalDeletedAttribute!!.trueValue)
     }
 
     override fun findOne(predicate: Predicate): Optional<T> {
-        var predicate1 = predicate
-        if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
-        }
-        return super.findOne(predicate1)
+        return super.findOne(andNotDeleted(predicate))
     }
 
     override fun findAll(predicate: Predicate): List<T> {
-        var predicate1 = predicate
-        if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
-        }
-        return super.findAll(predicate1)
+        return super.findAll(andNotDeleted(predicate))
     }
 
     override fun findAll(predicate: Predicate, vararg orders: OrderSpecifier<*>): List<T> {
-        var predicate1 = predicate
-        if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
-        }
-        return super.findAll(predicate1, *orders)
+        return super.findAll(andNotDeleted(predicate), *orders)
     }
 
     override fun findAll(predicate: Predicate, sort: Sort): List<T> {
-        var predicate1 = predicate
-        if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
-        }
-        return super.findAll(predicate1, sort)
+        return super.findAll(andNotDeleted(predicate), sort)
     }
 
     override fun findAll(vararg orders: OrderSpecifier<*>): List<T> {
-        return if (logicalDeleteSupport.supportLogicalDeleted()) {
-            super.findAll(logicalDeleteSupport.andFalsePredicate(null), *orders)
+        return if (logicalDeletedSupported) {
+            super.findAll(notDeleted, *orders)
         } else {
             super.findAll(*orders)
         }
     }
 
     override fun findAll(predicate: Predicate, pageable: Pageable): Page<T> {
-        var predicate1 = predicate
-        if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
-        }
-        return super.findAll(predicate1, pageable)
+        return super.findAll(andNotDeleted(predicate), pageable)
     }
 
     override fun count(predicate: Predicate): Long {
-        var predicate1 = predicate
-        if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
-        }
-        return super.count(predicate1)
+        return super.count(andNotDeleted(predicate))
     }
 
     override fun exists(predicate: Predicate): Boolean {
-        var predicate1 = predicate
-        if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andFalsePredicate(predicate1)
-        }
-        return super.exists(predicate1)
+        return super.exists(andNotDeleted(predicate))
     }
 
-    override fun findOneFromRecycleBin(predicate: Predicate?): Optional<T> {
-        var predicate1 = predicate
-        return if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
-            super.findOne(predicate1)
+    override fun findOneFromRecycleBin(predicate: Predicate): Optional<T> {
+        return if (logicalDeletedSupported) {
+            super.findOne(andDeleted(predicate))
         } else {
             Optional.empty()
         }
     }
 
-    override fun findAllFromRecycleBin(predicate: Predicate?): Iterable<T> {
-        var predicate1 = predicate
-        return if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
-            super.findAll(predicate1)
+    override fun findAllFromRecycleBin(predicate: Predicate): Iterable<T> {
+        return if (logicalDeletedSupported) {
+            super.findAll(andDeleted(predicate))
         } else {
             emptyList()
         }
     }
 
-    override fun findAllFromRecycleBin(predicate: Predicate?, sort: Sort): Iterable<T> {
-        var predicate1 = predicate
-        return if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
-            super.findAll(predicate1, sort)
+    override fun findAllFromRecycleBin(predicate: Predicate, sort: Sort): Iterable<T> {
+        return if (logicalDeletedSupported) {
+            super.findAll(andDeleted(predicate), sort)
         } else {
             emptyList()
         }
     }
 
-    override fun findAllFromRecycleBin(predicate: Predicate?, vararg orders: OrderSpecifier<*>?): Iterable<T> {
-        var predicate1 = predicate
-        return if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
-            super.findAll(predicate1, *orders)
+    override fun findAllFromRecycleBin(predicate: Predicate, vararg orders: OrderSpecifier<*>?): Iterable<T> {
+        return if (logicalDeletedSupported) {
+            super.findAll(andDeleted(predicate), *orders)
         } else {
             emptyList()
         }
     }
 
     override fun findAllFromRecycleBin(vararg orders: OrderSpecifier<*>?): Iterable<T> {
-        return if (logicalDeleteSupport.supportLogicalDeleted()) {
-            super.findAll(logicalDeleteSupport.andTruePredicate(null), *orders)
+        return if (logicalDeletedSupported) {
+            super.findAll(deleted, *orders)
         } else {
             emptyList()
         }
     }
 
-    override fun findAllFromRecycleBin(predicate: Predicate?, pageable: Pageable): Page<T> {
-        var predicate1 = predicate
-        return if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
-            super.findAll(predicate1, pageable)
+    override fun findAllFromRecycleBin(predicate: Predicate, pageable: Pageable): Page<T> {
+        return if (logicalDeletedSupported) {
+            super.findAll(andDeleted(predicate), pageable)
         } else {
             Page.empty()
         }
     }
 
-    override fun countRecycleBin(predicate: Predicate?): Long {
-        var predicate1 = predicate
-        return if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
-            super.count(predicate1)
+    override fun countRecycleBin(predicate: Predicate): Long {
+        return if (logicalDeletedSupported) {
+            super.count(andDeleted(predicate))
         } else {
             0
         }
     }
 
-    override fun existsInRecycleBin(predicate: Predicate?): Boolean {
-        var predicate1 = predicate
-        return if (logicalDeleteSupport.supportLogicalDeleted()) {
-            predicate1 = logicalDeleteSupport.andTruePredicate(predicate1)
-            super.exists(predicate1)
+    override fun existsInRecycleBin(predicate: Predicate): Boolean {
+        return if (logicalDeletedSupported) {
+            super.exists(andDeleted(predicate))
         } else {
             false
         }

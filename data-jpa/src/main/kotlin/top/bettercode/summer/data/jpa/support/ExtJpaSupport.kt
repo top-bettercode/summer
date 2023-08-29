@@ -1,24 +1,22 @@
 package top.bettercode.summer.data.jpa.support
 
+import top.bettercode.summer.data.jpa.metamodel.LastModifiedByAttribute
+import top.bettercode.summer.data.jpa.metamodel.LastModifiedDateAttribute
+import top.bettercode.summer.data.jpa.metamodel.LogicalDeletedAttribute
+import top.bettercode.summer.data.jpa.metamodel.VersionAttribute
+
 /**
  * @author Peter Wu
  */
-interface ExtJpaSupport {
-    fun setLogicalDeleted(entity: Any)
-    fun setUnLogicalDeleted(entity: Any)
-    fun supportLogicalDeleted(): Boolean
-    fun isLogicalDeleted(entity: Any): Boolean
-    fun logicalDeletedSeted(entity: Any): Boolean
+interface ExtJpaSupport<T> {
 
-    fun lastModifiedBy(auditor: Any?): Any?
+    val logicalDeletedSupported: Boolean
 
-    val logicalDeletedPropertyType: Class<*>?
-    val logicalDeletedPropertyName: String?
-    val lastModifiedDatePropertyName: String?
-    val lastModifiedByPropertyName: String?
-    val versionPropertyName: String?
-    val lastModifiedDateNowValue: Any?
-    val versionIncValue: Any?
-    val logicalDeletedTrueValue: Any?
-    val logicalDeletedFalseValue: Any?
+    val logicalDeletedAttribute: LogicalDeletedAttribute<T, *>?
+
+    val lastModifiedDateAttribute: LastModifiedDateAttribute<T, *>?
+
+    val lastModifiedByAttribute: LastModifiedByAttribute<T, *>?
+
+    val versionAttribute: VersionAttribute<T, *>?
 }

@@ -30,13 +30,13 @@ internal class PartTreeJpaExtQuery internal constructor(
     private val parameters: JpaParameters
     private var query: QueryPreparer
     private var countQuery: QueryPreparer
-    private val logicalDeleteSupport: ExtJpaSupport
+    private val extJpaSupport: ExtJpaSupport<out Any>
     private val statementId: String?
 
     init {
         statementId = method.statementId
-        val domainClass = method.entityInformation.javaType
-        logicalDeleteSupport = DefaultExtJpaSupport(jpaExtProperties, domainClass)
+        val domainClass: Class<out Any> = method.entityInformation.javaType
+        extJpaSupport = DefaultExtJpaSupport(jpaExtProperties, em, null, domainClass)
         parameters = method.parameters
         val recreationRequired = parameters.hasDynamicProjection() || parameters.potentiallySortsDynamically()
         try {
@@ -81,9 +81,10 @@ internal class PartTreeJpaExtQuery internal constructor(
                         MDC.put("id", statementId)
                         val query = jpaQuery.createQuery(accessor)
                         val resultList = query.resultList
-                        if (logicalDeleteSupport.supportLogicalDeleted()) {
+                        val logicalDeletedAttribute = extJpaSupport.logicalDeletedAttribute
+                        if (logicalDeletedAttribute != null) {
                             for (o in resultList) {
-                                logicalDeleteSupport.setLogicalDeleted(o!!)
+                                logicalDeletedAttribute.delete(o!!)
                                 em.merge(o)
                             }
                         } else {
@@ -122,9 +123,9 @@ internal class PartTreeJpaExtQuery internal constructor(
      * @author Thomas Darimont
      */
     private open inner class QueryPreparer(recreateQueries: Boolean) {
-            private var cachedCriteriaQuery: CriteriaQuery<*>? = null
+        private var cachedCriteriaQuery: CriteriaQuery<*>? = null
 
-            private var cachedParameterBinder: ParameterBinder? = null
+        private var cachedParameterBinder: ParameterBinder? = null
         private val metadataCache = QueryMetadataCache()
 
         init {
@@ -211,7 +212,7 @@ internal class PartTreeJpaExtQuery internal constructor(
                 provider = ParameterMetadataProvider(builder, parameters, escape)
                 returnedType = processor.returnedType
             }
-            return JpaExtQueryCreator(tree, returnedType, builder, provider, logicalDeleteSupport)
+            return JpaExtQueryCreator(tree, returnedType, builder, provider, extJpaSupport)
         }
 
         /**
@@ -251,7 +252,7 @@ internal class PartTreeJpaExtQuery internal constructor(
                     ?: ParameterMetadataProvider(builder, parameters, escape)
             return JpaExtCountQueryCreator(tree,
                     queryMethod.resultProcessor.returnedType, builder, provider,
-                    logicalDeleteSupport)
+                    extJpaSupport)
         }
 
         /**

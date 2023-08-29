@@ -8,6 +8,7 @@ import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper
 import org.springframework.util.Assert
 import org.springframework.util.ClassUtils
 import org.springframework.util.StringUtils
+import top.bettercode.summer.data.jpa.metamodel.SingularAttributeValue
 import top.bettercode.summer.data.jpa.query.SpecPath.BetweenValue
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import java.util.*
@@ -30,6 +31,8 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
     private val orders: MutableList<Sort.Order> = ArrayList()
     private val typed: M
     private val probe: Any?
+    override var idAttribute: SingularAttributeValue<T, *>? = null
+    override var versionAttribute: SingularAttributeValue<T, *>? = null
 
     //--------------------------------------------
     init {
@@ -61,6 +64,14 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
             val predicate = specPredicate.toPredicate(root, criteriaBuilder)
             if (predicate != null) {
                 predicates.add(predicate)
+                if (specPredicate is SpecPath<T, M>) {
+                    val attribute = specPredicate.attribute!!
+                    if (attribute.isId) {
+                        idAttribute = SingularAttributeValue(attribute, specPredicate.criteria!!)
+                    } else if (attribute.isVersion) {
+                        versionAttribute = SingularAttributeValue(attribute, specPredicate.criteria!!)
+                    }
+                }
             }
         }
         if (predicates.isEmpty()) {
