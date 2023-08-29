@@ -1,7 +1,6 @@
 package top.bettercode.summer.test.web.support.setting;
 
 import java.util.Collections;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.web.cors.CorsConfiguration;
 
 /**

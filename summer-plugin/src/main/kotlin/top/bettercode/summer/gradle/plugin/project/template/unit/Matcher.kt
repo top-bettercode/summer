@@ -93,10 +93,12 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         )
         //primaryKey
         val primaryKeyMethodName = if (primaryKeyName in existMethodNames) "${primaryKeyName}Field" else primaryKeyName
+        val remark = if (isCompositePrimaryKey) "${remarks}主键" else primaryKey.remark
+        val paramRemark = if (isCompositePrimaryKey) "@param $primaryKeyName 主键" else primaryKey.paramRemark
         method(primaryKeyMethodName, pathType) {
             javadoc {
                 +"/**"
-                +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                +" * @return ${remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
                 +" */"
             }
             this.visibility = JavaVisibility.PUBLIC
@@ -109,8 +111,8 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         ) {
             javadoc {
                 +"/**"
-                +" * ${primaryKey.paramRemark}"
-                +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                +" * $paramRemark"
+                +" * @return ${remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
                 +" */"
             }
             this.visibility = JavaVisibility.PUBLIC
@@ -123,8 +125,8 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         ) {
             javadoc {
                 +"/**"
-                +" * ${primaryKey.paramRemark}"
-                +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                +" * $paramRemark"
+                +" * @return ${remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
                 +" */"
             }
             this.visibility = JavaVisibility.PUBLIC
@@ -141,9 +143,9 @@ val matcher: ProjectGenerator.(TopLevelClass) -> Unit = { unit ->
         ) {
             javadoc {
                 +"/**"
-                +" * ${primaryKey.paramRemark}"
+                +" * $paramRemark"
                 +" * @param matcher PathMatcher"
-                +" * @return ${primaryKey.remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
+                +" * @return ${remark.split(Regex("[:：,， (（]"))[0]} 相关Matcher"
                 +" */"
             }
             this.visibility = JavaVisibility.PUBLIC
