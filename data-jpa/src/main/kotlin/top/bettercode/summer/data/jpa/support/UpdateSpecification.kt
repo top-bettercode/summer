@@ -11,7 +11,7 @@ import javax.persistence.criteria.CriteriaUpdate
  */
 interface UpdateSpecification<T> : Specification<T> {
 
-    fun createCriteriaUpdate(domainClass: Class<T>, criteriaBuilder: CriteriaBuilder): CriteriaUpdate<T>
+    fun createCriteriaUpdate(domainClass: Class<T>, criteriaBuilder: CriteriaBuilder, extJpaSupport: ExtJpaSupport<T>): CriteriaUpdate<T>
 
     var idAttribute: SingularAttributeValue<T, *>?
     var versionAttribute: SingularAttributeValue<T, *>?

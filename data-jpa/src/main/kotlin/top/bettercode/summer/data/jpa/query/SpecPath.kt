@@ -1,14 +1,13 @@
 package top.bettercode.summer.data.jpa.query
 
-import org.hibernate.query.criteria.internal.path.SingularAttributePath
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.util.Assert
+import top.bettercode.summer.tools.lang.util.ValueEnum
 import java.util.*
 import java.util.stream.Collectors
 import javax.persistence.criteria.*
 import javax.persistence.criteria.CriteriaBuilder.Trimspec
-import javax.persistence.metamodel.SingularAttribute
 
 /**
  * @author Peter Wu
@@ -44,32 +43,25 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
     /**
      * 条件查询值
      */
-    var criteria: Any? = NOT_SET
+    var criteria: Any? = ValueEnum.NOT_SET
         private set
 
     /**
      * 更新值
      */
-    var criteriaUpdate: Any? = NOT_SET
+    var criteriaUpdate: Any? = ValueEnum.NOT_SET
         private set
 
     //--------------------------------------------
     val isSetCriteria: Boolean
-        get() = criteria != NOT_SET
+        get() = criteria != ValueEnum.NOT_SET
 
     val isSetCriteriaUpdate: Boolean
-        get() = criteriaUpdate != NOT_SET
-
-    var attribute: SingularAttribute<T, *>? = null
+        get() = criteriaUpdate != ValueEnum.NOT_SET
 
     //--------------------------------------------
-    fun toPath(root: Root<T>): Path<*>? {
-        val path = toPath(root, propertyName)
-        if (attribute == null&& path is SingularAttributePath) {
-            @Suppress("UNCHECKED_CAST")
-            attribute = path.attribute as SingularAttribute<T, *>
-        }
-        return path
+    fun toPath(root: Root<T>): Path<*> {
+        return toPath(root, propertyName)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -77,7 +69,7 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
         if (isIgnored) {
             return null
         }
-        val path = this.toPath(root) ?: return null
+        val path = this.toPath(root)
         val matcher = matcher
         val pathJavaType = path.javaType
         when (matcher) {
@@ -398,7 +390,6 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
     internal class BetweenValue<Y : Comparable<Y>?>(val first: Y, val second: Y)
     companion object {
         private val log = LoggerFactory.getLogger(SpecPath::class.java)
-        private val NOT_SET = Any()
 
         //--------------------------------------------
         fun containing(criteria: Any): String {
@@ -413,20 +404,13 @@ class SpecPath<T : Any?, M : SpecMatcher<T, M>>(
             return "$criteria%"
         }
 
-        fun <T> toPath(root: Root<T>, propertyName: String): Path<*>? {
-            return try {
-                val split = propertyName.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                var path: Path<*>? = null
-                for (s in split) {
-                    path = if (path == null) root.get<Any>(s) else path.get<Any>(s)
-                }
-                path
-            } catch (e: IllegalArgumentException) {
-                if (log.isDebugEnabled) {
-                    log.debug(e.message)
-                }
-                null
+        fun <T> toPath(root: Root<T>, propertyName: String): Path<*> {
+            val split = propertyName.split(".")
+            var path: Path<*>? = null
+            for (s in split) {
+                path = if (path == null) root.get<Any>(s) else path.get<Any>(s)
             }
+            return path ?: throw IllegalArgumentException("Path not found: $propertyName")
         }
     }
 }

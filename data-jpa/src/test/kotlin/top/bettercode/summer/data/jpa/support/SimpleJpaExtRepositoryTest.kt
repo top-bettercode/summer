@@ -125,6 +125,8 @@ class SimpleJpaExtRepositoryTest {
     fun saveSpec2() {
         val spec = DefaultSpecMatcher.matching<User?>()
                 .equal("firstName", "Carter")
+                .equal("id", 4)
+                .equal("version", 0)
         spec.criteriaUpdate("lastName", "newName")
         var all = repository.findAll(spec)
         System.err.println(json(all, true))
@@ -483,7 +485,7 @@ class SimpleJpaExtRepositoryTest {
     @Test
     fun specMatcherMethodNames() {
         //SpecMatcher类的公开方法名，按类似 "asc", "desc","path"的方法打印
-        val type=SpecMatcher::class.java
+        val type = SpecMatcher::class.java
         val methods = type.methods
         val s = methods.map { it.name }.distinct().joinToString {
             "\"${it}\""

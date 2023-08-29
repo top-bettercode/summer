@@ -226,7 +226,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 spec1 = extJpaSupport.logicalDeletedAttribute?.andNotDeleted(spec1) ?: spec1
             }
             val builder = entityManager.criteriaBuilder
-            val criteriaUpdate = spec.createCriteriaUpdate(domainClass, builder)
+            val criteriaUpdate = spec.createCriteriaUpdate(domainClass, builder, extJpaSupport)
             val root = criteriaUpdate.root
 
             val predicate = spec1.toPredicate(root, builder.createQuery(), builder)
@@ -258,21 +258,21 @@ class SimpleJpaExtRepository<T : Any, ID>(
     }
 
     @Transactional
-    override fun <S : T> lowLevelUpdate(s: S, spec: UpdateSpecification<T>?): Long {
+    override fun <S : T> lowLevelUpdate(s: S, spec: UpdateSpecification<T>): Long {
         return update(s = s, spec = spec, lowLevel = true, physical = true, mdcId = ".update")
     }
 
     @Transactional
-    override fun <S : T> physicalUpdate(s: S, spec: UpdateSpecification<T>?): Long {
+    override fun <S : T> physicalUpdate(s: S, spec: UpdateSpecification<T>): Long {
         return update(s = s, spec = spec, lowLevel = false, physical = true, mdcId = ".physicalUpdate")
     }
 
     @Transactional
-    override fun <S : T> update(s: S, spec: UpdateSpecification<T>?): Long {
+    override fun <S : T> update(s: S, spec: UpdateSpecification<T>): Long {
         return update(s = s, spec = spec, lowLevel = false, physical = false, mdcId = ".update")
     }
 
-    private fun <S : T> update(s: S, spec: UpdateSpecification<T>?, lowLevel: Boolean, physical: Boolean, mdcId: String): Long {
+    private fun <S : T> update(s: S, spec: UpdateSpecification<T>, lowLevel: Boolean, physical: Boolean, mdcId: String): Long {
         var mdc = false
         return try {
             mdc = mdcPutId(mdcId)
@@ -282,7 +282,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
             }
             val builder = entityManager.criteriaBuilder
             val domainClass = domainClass
-            val criteriaUpdate = builder.createCriteriaUpdate(domainClass)
+            val criteriaUpdate = spec.createCriteriaUpdate(domainClass, builder, extJpaSupport)
             val root = criteriaUpdate.from(domainClass)
             val beanWrapper = DirectFieldAccessFallbackBeanWrapper(s)
             for (attribute in root.model.singularAttributes) {
@@ -298,7 +298,7 @@ class SimpleJpaExtRepository<T : Any, ID>(
                 extJpaSupport.versionAttribute?.setVersion(criteriaUpdate, root, builder)
 
             }
-            val predicate = spec1!!.toPredicate(root, builder.createQuery(), builder)
+            val predicate = spec1?.toPredicate(root, builder.createQuery(), builder)
             if (predicate != null) {
                 criteriaUpdate.where(predicate)
             }

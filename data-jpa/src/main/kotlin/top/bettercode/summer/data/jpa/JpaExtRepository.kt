@@ -25,13 +25,13 @@ interface JpaExtRepository<T, ID> : JpaRepository<T, ID>, QueryByExampleExecutor
     val entityManager: EntityManager
 
     @Transactional
-    fun <S : T> lowLevelUpdate(s: S, spec: UpdateSpecification<T>?): Long
+    fun <S : T> lowLevelUpdate(s: S, spec: UpdateSpecification<T>): Long
 
     @Transactional
-    fun <S : T> physicalUpdate(s: S, spec: UpdateSpecification<T>?): Long
+    fun <S : T> physicalUpdate(s: S, spec: UpdateSpecification<T>): Long
 
     @Transactional
-    fun <S : T> update(s: S, spec: UpdateSpecification<T>?): Long
+    fun <S : T> update(s: S, spec: UpdateSpecification<T>): Long
 
     @Transactional
     fun lowLevelUpdate(spec: UpdateSpecification<T>): Long

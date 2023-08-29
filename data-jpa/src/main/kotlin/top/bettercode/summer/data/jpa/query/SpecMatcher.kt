@@ -10,6 +10,7 @@ import org.springframework.util.ClassUtils
 import org.springframework.util.StringUtils
 import top.bettercode.summer.data.jpa.metamodel.SingularAttributeValue
 import top.bettercode.summer.data.jpa.query.SpecPath.BetweenValue
+import top.bettercode.summer.data.jpa.support.ExtJpaSupport
 import top.bettercode.summer.data.jpa.support.UpdateSpecification
 import java.util.*
 import java.util.stream.Collectors
@@ -41,9 +42,7 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         typed = this as M
     }
 
-    override fun toPredicate(
-            root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder
-    ): Predicate? {
+    override fun toPredicate(root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder): Predicate? {
         if (orders.isNotEmpty()) {
             val orders = orders.stream().map { o: Sort.Order ->
                 val path: Path<*>? = SpecPath.toPath(root, o.property)
@@ -60,17 +59,15 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
                     PathNode("root", null, probe))
         }
         val predicates: MutableList<Predicate> = ArrayList()
-        for (specPredicate in specPredicates.values) {
-            val predicate = specPredicate.toPredicate(root, criteriaBuilder)
+        for (it in specPredicates.values) {
+            val predicate = it.toPredicate(root, criteriaBuilder)
             if (predicate != null) {
                 predicates.add(predicate)
-                if (specPredicate is SpecPath<T, M>) {
-                    val attribute = specPredicate.attribute!!
-                    if (attribute.isId) {
-                        idAttribute = SingularAttributeValue(attribute, specPredicate.criteria!!)
-                    } else if (attribute.isVersion) {
-                        versionAttribute = SingularAttributeValue(attribute, specPredicate.criteria!!)
-                    }
+            } else if (it is SpecPath<*, *>) {
+                if (idAttribute != null && it.propertyName == idAttribute?.name) {
+                    this.idAttribute = null
+                } else if (versionAttribute != null && it.propertyName == versionAttribute?.name) {
+                    this.versionAttribute = null
                 }
             }
         }
@@ -121,14 +118,24 @@ open class SpecMatcher<T : Any?, M : SpecMatcher<T, M>> protected constructor(
         }
     }
 
-    override fun createCriteriaUpdate(domainClass: Class<T>, criteriaBuilder: CriteriaBuilder): CriteriaUpdate<T> {
+    override fun createCriteriaUpdate(domainClass: Class<T>, criteriaBuilder: CriteriaBuilder, extJpaSupport: ExtJpaSupport<T>): CriteriaUpdate<T> {
         val criteriaUpdate = criteriaBuilder.createCriteriaUpdate(domainClass)
         criteriaUpdate.from(domainClass)
-        specPredicates.values.filter { it is SpecPath<*, *> && it.isSetCriteriaUpdate }
-                .forEach {
-                    it as SpecPath<*, *>
-                    criteriaUpdate[it.propertyName] = it.criteriaUpdate
+        specPredicates.values.filter { it is SpecPath<*, *> }.map { it as SpecPath<T, M> }.forEach {
+            if (it.isSetCriteriaUpdate) {
+                criteriaUpdate[it.propertyName] = it.criteriaUpdate
+            }
+            val idAttribute = extJpaSupport.idAttribute
+            if (idAttribute != null && it.propertyName == idAttribute.name) {
+                this.idAttribute = SingularAttributeValue(idAttribute, it.criteria!!)
+            } else {
+                val versionAttribute = extJpaSupport.versionAttribute
+                if (versionAttribute != null && it.propertyName == versionAttribute.name) {
+                    this.versionAttribute = SingularAttributeValue(versionAttribute, it.criteria!!)
                 }
+            }
+        }
+
         return criteriaUpdate
     }
 

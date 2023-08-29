@@ -19,6 +19,7 @@ import javax.persistence.metamodel.SingularAttribute
  */
 open class DefaultExtJpaSupport<T>(jpaExtProperties: JpaExtProperties, entityManager: EntityManager, auditorAware: AuditorAware<*>?, domainClass: Class<*>) : ExtJpaSupport<T> {
 
+    final override val idAttribute: SingularAttribute<T, *>?
     final override val logicalDeletedSupported: Boolean
     final override val logicalDeletedAttribute: LogicalDeletedAttribute<T, *>?
     final override val lastModifiedDateAttribute: LastModifiedDateAttribute<T, *>?
@@ -26,6 +27,7 @@ open class DefaultExtJpaSupport<T>(jpaExtProperties: JpaExtProperties, entityMan
     final override val versionAttribute: VersionAttribute<T, *>?
 
     init {
+        var idAttribute: SingularAttribute<T, *>? = null
         var logicalDeletedAttribute: LogicalDeletedAttribute<T, *>? = null
         var lastModifiedDateAttribute: LastModifiedDateAttribute<T, *>? = null
         var lastModifiedByAttribute: LastModifiedByAttribute<T, *>? = null
@@ -34,23 +36,25 @@ open class DefaultExtJpaSupport<T>(jpaExtProperties: JpaExtProperties, entityMan
         attributes.forEach {
             @Suppress("UNCHECKED_CAST")
             it as SingularAttribute<T, *>
-            val member = it.javaMember
-            if (member is AnnotatedElement) {
-                val annotation = member.getAnnotation(LogicalDelete::class.java)
-                if (annotation != null) {
-                    logicalDeletedAttribute = LogicalDeletedAttribute(it, annotation, jpaExtProperties)
-                }
-                if (member.isAnnotationPresent(LastModifiedDate::class.java)) {
-                    lastModifiedDateAttribute = LastModifiedDateAttribute(it)
-                }
-                if (member.isAnnotationPresent(LastModifiedBy::class.java)) {
-                    lastModifiedByAttribute = LastModifiedByAttribute(it, auditorAware)
-                }
-                if (member.isAnnotationPresent(Version::class.java)) {
-                    versionAttribute = VersionAttribute(it)
+            if (it.isId) {
+                idAttribute = it
+            } else {
+                val member = it.javaMember
+                if (member is AnnotatedElement) {
+                    val annotation = member.getAnnotation(LogicalDelete::class.java)
+                    if (annotation != null) {
+                        logicalDeletedAttribute = LogicalDeletedAttribute(it, annotation, jpaExtProperties)
+                    } else if (member.isAnnotationPresent(LastModifiedDate::class.java)) {
+                        lastModifiedDateAttribute = LastModifiedDateAttribute(it)
+                    } else if (member.isAnnotationPresent(LastModifiedBy::class.java)) {
+                        lastModifiedByAttribute = LastModifiedByAttribute(it, auditorAware)
+                    } else if (member.isAnnotationPresent(Version::class.java)) {
+                        versionAttribute = VersionAttribute(it)
+                    }
                 }
             }
         }
+        this.idAttribute = idAttribute
         this.logicalDeletedSupported = logicalDeletedAttribute != null
         this.logicalDeletedAttribute = logicalDeletedAttribute
         this.lastModifiedDateAttribute = lastModifiedDateAttribute
