@@ -1,5 +1,6 @@
 package top.bettercode.summer.gradle.plugin.project
 
+import isBoot
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -28,54 +29,56 @@ object CoreProjectTasks {
             val prefix = "Core"
             val group = "gen $prefix code"
 
-            project.tasks.create("gen${prefix}Entity") { task ->
-                task.group = group
-                task.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        ext.tableNames = emptyArray()
-                        ext.generators = arrayOf(Entity(), SerializationViews())
-                        Generators.callInAllModule(ext)
-                    }
-                })
-            }
+            if (ext.hasPuml && (project.isBoot || (ext.isProjectPuml && project.rootProject != project))) {
+                project.tasks.create("gen${prefix}Entity") { task ->
+                    task.group = group
+                    task.doLast(object : Action<Task> {
+                        override fun execute(it: Task) {
+                            ext.tableNames = emptyArray()
+                            ext.generators = arrayOf(Entity(), SerializationViews())
+                            Generators.callInAllModule(ext)
+                        }
+                    })
+                }
 
-            project.tasks.create("gen${prefix}Form") { task ->
-                task.group = group
-                task.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        ext.generators = arrayOf(Form())
-                        Generators.callInAllModule(ext)
-                    }
-                })
-            }
+                project.tasks.create("gen${prefix}Form") { task ->
+                    task.group = group
+                    task.doLast(object : Action<Task> {
+                        override fun execute(it: Task) {
+                            ext.generators = arrayOf(Form())
+                            Generators.callInAllModule(ext)
+                        }
+                    })
+                }
 
-            project.tasks.create("gen${prefix}DO") { task ->
-                task.group = group
-                task.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        ext.generators = arrayOf(DataObject())
-                        Generators.callInAllModule(ext)
-                    }
-                })
-            }
+                project.tasks.create("gen${prefix}DO") { task ->
+                    task.group = group
+                    task.doLast(object : Action<Task> {
+                        override fun execute(it: Task) {
+                            ext.generators = arrayOf(DataObject())
+                            Generators.callInAllModule(ext)
+                        }
+                    })
+                }
 
-            project.tasks.create("gen${prefix}Service") { task ->
-                task.group = group
-                task.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        ext.generators = arrayOf(Service())
-                        Generators.callInAllModule(ext)
-                    }
-                })
-            }
-            project.tasks.create("gen${prefix}Controller") { task ->
-                task.group = group
-                task.doLast(object : Action<Task> {
-                    override fun execute(it: Task) {
-                        ext.generators = arrayOf(Form(), Controller())
-                        Generators.callInAllModule(ext)
-                    }
-                })
+                project.tasks.create("gen${prefix}Service") { task ->
+                    task.group = group
+                    task.doLast(object : Action<Task> {
+                        override fun execute(it: Task) {
+                            ext.generators = arrayOf(Service())
+                            Generators.callInAllModule(ext)
+                        }
+                    })
+                }
+                project.tasks.create("gen${prefix}Controller") { task ->
+                    task.group = group
+                    task.doLast(object : Action<Task> {
+                        override fun execute(it: Task) {
+                            ext.generators = arrayOf(Form(), Controller())
+                            Generators.callInAllModule(ext)
+                        }
+                    })
+                }
             }
 
             create("printMapper") {

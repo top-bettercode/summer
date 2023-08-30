@@ -185,6 +185,9 @@ open class GeneratorExtension(
     val isProjectPuml: Boolean
         get() = File(projectDir, pumlSrc).exists()
 
+    val hasPuml: Boolean
+        get() = dataType != DataType.PUML || file(pumlSrc).exists()
+
     private val path: File? by lazy {
         if (File(projectDir, pumlSrc).exists())
             projectDir

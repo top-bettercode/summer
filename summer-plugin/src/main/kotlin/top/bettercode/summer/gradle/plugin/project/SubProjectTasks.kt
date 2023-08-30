@@ -27,7 +27,7 @@ object SubProjectTasks {
             ext.run { module, tableHolder ->
                 val prefix = module.capitalized()
 
-                if (project.isBoot || (ext.isProjectPuml && project.rootProject != project)) {
+                if (ext.hasPuml && (project.isBoot || (ext.isProjectPuml && project.rootProject != project))) {
                     val group = "gen $prefix code"
 
                     create("gen${prefix}SerializationViews") { t ->
@@ -45,7 +45,10 @@ object SubProjectTasks {
                         task.group = group
                         task.doLast(object : Action<Task> {
                             override fun execute(it: Task) {
-                                ext.generators = arrayOf(Entity())
+                                if (project.isCloud)
+                                    ext.generators = arrayOf(Entity(), SerializationViews())
+                                else
+                                    ext.generators = arrayOf(Entity())
                                 Generators.call(ext, tableHolder)
                             }
                         })
