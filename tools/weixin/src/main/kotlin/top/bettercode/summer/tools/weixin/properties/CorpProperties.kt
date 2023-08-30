@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.wechat.corp")
-open class CorpProperties : WexinProperties(), ICorpProperties {
+open class CorpProperties : WeixinProperties(), ICorpProperties {
     /**
      * 项目部署的URL地址
      */

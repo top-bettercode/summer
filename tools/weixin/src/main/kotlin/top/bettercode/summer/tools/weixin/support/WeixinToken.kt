@@ -1,6 +1,6 @@
 package top.bettercode.summer.tools.weixin.support
 
-import top.bettercode.summer.tools.weixin.properties.IWexinProperties
+import top.bettercode.summer.tools.weixin.properties.IWeixinProperties
 
 /**
  *
@@ -12,7 +12,7 @@ class WeixinToken() : HashMap<String, Any?>() {
         this["access_token"] = ""
         this["expires_in"] = 0
         this["refresh_token"] = ""
-        this[IWexinProperties.OPEN_ID_NAME] = ""
+        this[IWeixinProperties.OPEN_ID_NAME] = ""
         this["scope"] = ""
         this["unionid"] = ""
         this["hasBound"] = false
@@ -37,9 +37,9 @@ class WeixinToken() : HashMap<String, Any?>() {
             put("refresh_token", value)
         }
     var openId: String
-        get() = get(IWexinProperties.OPEN_ID_NAME) as String
+        get() = get(IWeixinProperties.OPEN_ID_NAME) as String
         set(value) {
-            put(IWexinProperties.OPEN_ID_NAME, value)
+            put(IWeixinProperties.OPEN_ID_NAME, value)
         }
     var scope: String?
         get() = get("scope") as String?

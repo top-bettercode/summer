@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.weixin.properties
 /**
  * @author Peter Wu
  */
-interface IWexinProperties {
+interface IWeixinProperties {
     val basicAccessTokenUrl: String
         get() = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}"
     val appId: String

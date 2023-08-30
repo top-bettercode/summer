@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * @author Peter Wu
  */
 @ConfigurationProperties(prefix = "summer.wechat")
-open class OffiaccountProperties : WexinProperties(), IOffiaccountProperties {
+open class OffiaccountProperties : WeixinProperties(), IOffiaccountProperties {
     //--------------------------------------------
     override var useUnionid = false
 

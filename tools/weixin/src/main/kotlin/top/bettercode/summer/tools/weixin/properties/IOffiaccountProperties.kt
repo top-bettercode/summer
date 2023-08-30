@@ -10,7 +10,7 @@ import java.net.URLEncoder
 /**
  * @author Peter Wu
  */
-interface IOffiaccountProperties : IWexinProperties {
+interface IOffiaccountProperties : IWeixinProperties {
     val useUnionid: Boolean
         get() = false
     val appBaseUrl: String?
@@ -34,7 +34,7 @@ interface IOffiaccountProperties : IWexinProperties {
             ""
         }
         return (wechatBaseUrl + wechatWebOauthUrl + "?access_token=" + token + "&"
-                + IWexinProperties.OPEN_ID_NAME + "=" + openId + "&hasBound=" + StringUtils.hasText(token) + "&forceLogin="
+                + IWeixinProperties.OPEN_ID_NAME + "=" + openId + "&hasBound=" + StringUtils.hasText(token) + "&forceLogin="
                 + forceLogin + "&state=" + (state ?: "") + "&msg=" + encodeMsg + "&_timer="
                 + System.currentTimeMillis())
     }

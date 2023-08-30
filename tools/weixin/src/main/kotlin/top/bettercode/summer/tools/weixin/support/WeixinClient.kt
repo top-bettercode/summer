@@ -7,7 +7,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.getForObject
-import top.bettercode.summer.tools.weixin.properties.IWexinProperties
+import top.bettercode.summer.tools.weixin.properties.IWeixinProperties
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.BasicAccessToken
 import top.bettercode.summer.tools.weixin.support.offiaccount.entity.CachedValue
 import top.bettercode.summer.web.support.client.ApiTemplate
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author Peter Wu
  */
-open class WeixinClient<T : IWexinProperties>(
+open class WeixinClient<T : IWeixinProperties>(
         val properties: T,
         collectionName: String,
         name: String,

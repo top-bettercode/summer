@@ -3,7 +3,7 @@ package top.bettercode.summer.tools.weixin.properties
 /**
  * @author Peter Wu
  */
-open class WexinProperties : IWexinProperties {
+open class WeixinProperties : IWeixinProperties {
     override var appId: String = ""
     override var secret: String = ""
     override var token: String = ""
