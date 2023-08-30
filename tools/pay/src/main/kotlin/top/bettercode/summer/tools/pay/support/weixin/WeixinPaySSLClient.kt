@@ -1,7 +1,12 @@
 package top.bettercode.summer.tools.pay.support.weixin
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory
+import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.ssl.SSLContexts
 import org.springframework.http.MediaType
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter
 import org.springframework.lang.Nullable
@@ -11,10 +16,14 @@ import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.support.WeixinPayException
 import top.bettercode.summer.tools.pay.support.weixin.WeixinPayClient.Companion.LOG_MARKER
+import top.bettercode.summer.tools.pay.support.weixin.entity.RefundRequest
+import top.bettercode.summer.tools.pay.support.weixin.entity.RefundResponse
 import top.bettercode.summer.tools.pay.support.weixin.entity.UnifiedOrderRequest
 import top.bettercode.summer.tools.pay.support.weixin.entity.UnifiedOrderResponse
 import top.bettercode.summer.web.support.client.ApiTemplate
+import java.io.File
 import java.util.*
+import javax.net.ssl.SSLContext
 import kotlin.reflect.full.memberProperties
 
 
@@ -24,7 +33,7 @@ import kotlin.reflect.full.memberProperties
  * @author Peter Wu
  */
 @LogMarker(LOG_MARKER)
-open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
+open class WeixinPaySSLClient(val properties: WeixinPayProperties) : ApiTemplate(
         "第三方平台",
         "微信支付",
         LOG_MARKER,
@@ -33,29 +42,6 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
 ) {
     companion object {
         const val LOG_MARKER = "weixin_pay"
-
-        /**
-         * 对参数签名
-         *
-         * @param params 参数
-         * @return 签名后字符串
-         */
-        fun getSign(params: Any, apiKey: String): String {
-            //获取待签名字符串
-            val preStr = params::class.memberProperties.sortedBy { it.name }.map {
-                val key = it.name
-                val value = it.getter.call(params)
-                if (value == null || value == "" || key.equals("sign", ignoreCase = true)) {
-                    null
-                } else {
-                    "$key=$value"
-                }
-            }.filterNotNull().joinToString("&")
-            val stringSignTemp = preStr + "&key=" + apiKey
-            return DigestUtils.md5DigestAsHex(stringSignTemp.toByteArray(charset("UTF-8"))).uppercase(Locale.getDefault())
-        }
-
-
     }
 
     init {
@@ -73,50 +59,64 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
         super.setMessageConverters(messageConverters)
+
+        //添加证书
+        // 读取证书文件
+
+        //指定读取证书格式为PKCS12
+        val certFile = File(properties.certPath
+                ?: throw IllegalArgumentException("certPath is null"))
+
+        // 设置证书信息
+        val sslContext: SSLContext = SSLContexts.custom().loadKeyMaterial(certFile, (properties.certStorePassword
+                ?: throw IllegalArgumentException("certStorePassword is null")).toCharArray(), (properties.certKeyPassword
+                ?: throw IllegalArgumentException("certKeyPassword is null")).toCharArray()).build()
+        val socketFactory = SSLConnectionSocketFactory(sslContext)
+
+        // 创建HttpClient并设置证书
+        val httpClient: CloseableHttpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build()
+        val sslRequestFactory = HttpComponentsClientHttpRequestFactory(httpClient)
+
+        super.setRequestFactory(sslRequestFactory)
     }
 
     /**
-     * 统一下单
-     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1
+     * 申请退款
+     *
+     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_4&index=6
      */
-    fun unifiedorder(request: UnifiedOrderRequest): UnifiedOrderResponse {
+    fun refund(request: RefundRequest): RefundResponse {
         request.appid = properties.appid
         request.mchId = properties.mchId
         if (request.notifyUrl == null) {
             request.notifyUrl = properties.notifyUrl
         }
-        request.sign = getSign(request, properties.apiKey!!)
+        request.sign = WeixinPayClient.getSign(request, properties.apiKey!!)
         val entity = postForObject(
                 "https://api.mch.weixin.qq.com/pay/unifiedorder",
                 request,
-                UnifiedOrderResponse::class.java
+                RefundResponse::class.java
         )
         if (log.isDebugEnabled) {
             log.debug("查询结果：" + StringUtil.valueOf(entity))
         }
-        return if (entity != null && getSign(entity, properties.apiKey!!) === entity.sign) {
+        return if (entity != null && WeixinPayClient.getSign(entity, properties.apiKey!!) === entity.sign) {
             if (entity.isOk()) {
                 if (entity.isBizOk()) {
                     entity
                 } else {
-                    throw WeixinPayException("订单：${request.outTradeNo}下单失败:${entity.errCodeDes}", entity)
+                    throw WeixinPayException("订单：${request.outTradeNo}退款失败:${entity.errCodeDes}", entity)
                 }
             } else {
-                throw WeixinPayException("订单：${request.outTradeNo}下单失败:${entity.returnMsg}", entity)
+                throw WeixinPayException("订单：${request.outTradeNo}退款失败:${entity.returnMsg}", entity)
             }
         } else {
-            throw WeixinPayException("订单：${request.outTradeNo}下单失败:结果签名验证失败,${entity?.returnMsg}", entity)
+            throw WeixinPayException("订单：${request.outTradeNo}退款失败:结果签名验证失败,${entity?.returnMsg}", entity)
         }
+
     }
 
     /**
-     * 查询订单
-     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_2&index=4
-     */
-
-
-    /**
-     *     refund_url: https://api.mch.weixin.qq.com/secapi/pay/refund
      *     order_query: https://api.mch.weixin.qq.com/pay/orderquery
      *     refund_query_url: https://api.mch.weixin.qq.com/pay/refundquery
      *     #    付款到零钱（提现）
@@ -125,4 +125,5 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      *     transfer_info_url: https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo
      *
      */
+
 }

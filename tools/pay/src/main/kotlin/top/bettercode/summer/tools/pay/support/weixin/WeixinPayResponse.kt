@@ -3,9 +3,10 @@ package top.bettercode.summer.tools.pay.support.weixin
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import top.bettercode.summer.tools.pay.support.WeixinPayException
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-open class WeixinPayResponse(
+abstract class WeixinPayResponse(
 
         /**
          * 返回状态码
@@ -14,7 +15,7 @@ open class WeixinPayResponse(
          * 此字段是通信标识，非交易标识，交易是否成功需要查看result_code来判断
          */
         @field:JsonProperty("return_code")
-        val returnCode: String? = null,
+        var returnCode: String? = null,
 
         /**
          * 返回信息
@@ -25,9 +26,9 @@ open class WeixinPayResponse(
          * 参数格式校验错误
          */
         @field:JsonProperty("return_msg")
-        val returnMsg: String? = null,
+        var returnMsg: String? = null,
 
-        ) {
+) {
 
     /**
      * 请求结果
@@ -36,4 +37,9 @@ open class WeixinPayResponse(
     fun isOk(): Boolean {
         return returnCode == "SUCCESS"
     }
+
+    /**
+     * 业务结果
+     */
+    abstract fun isBizOk(): Boolean
 }
