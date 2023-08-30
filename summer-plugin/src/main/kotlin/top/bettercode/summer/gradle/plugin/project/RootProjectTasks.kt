@@ -59,7 +59,7 @@ object RootProjectTasks {
                             })
                         }
                     }
-                    if (env in arrayOf("default", "dev", "test", "other")) {
+                    if (env in arrayOf("default", "dev", "test", "other") || env.startsWith("test") || env.startsWith("dev")) {
                         jobNames.forEach { jobName ->
                             val jobTaskName = jobName.replace(
                                     "[()\\[\\]{}|/]|\\s*|\t|\r|\n|".toRegex(),
