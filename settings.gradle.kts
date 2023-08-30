@@ -32,6 +32,7 @@ include(":tools:qvod")
 include(":tools:amap")
 include(":tools:sap")
 include(":tools:configuration-processor")
+include(":tools:pay")
 
 
 include(":summer-bom")

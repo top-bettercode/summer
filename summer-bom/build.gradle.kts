@@ -102,6 +102,7 @@ dependencies {
         api(project(":tools:qvod"))
         api(project(":tools:sap"))
         api(project(":tools:configuration-processor"))
+        api(project(":tools:pay"))
     }
 }
 
