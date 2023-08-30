@@ -101,9 +101,9 @@ object PumlConverter {
                         val indexed = columnDef.contains(" INDEX ", true)
                         val autoIncrement = columnDef.contains(" AUTO_INCREMENT ", true) || columnDef.contains(" AUTOINCREMENT ", true)
                         val version = columnDef.contains(" VERSION ", true)
-                        val createdDate = columnDef.contains(" CREATEDDATE ", true)
+                        var createdDate = columnDef.contains(" CREATEDDATE ", true)
                         val createdBy = columnDef.contains(" CREATEDBY ", true)
-                        val lastModifiedDate = columnDef.contains(" LASTMODIFIEDDATE ", true)
+                        var lastModifiedDate = columnDef.contains(" LASTMODIFIEDDATE ", true)
                         val lastModifiedBy = columnDef.contains(" LASTMODIFIEDBY ", true)
                         var logicalDelete = columnDef.contains(" LOGICALDELETE ", true)
                         //兼容
@@ -141,7 +141,7 @@ object PumlConverter {
                         var defaultVal: String? = null
                         if (extra.contains(" DEFAULT ")) {
                             val defaultRawVal = extra.substringAfter(" DEFAULT ").substringBefore(" ")
-                            defaultVal = defaultRawVal.trim() .trim('\'')
+                            defaultVal = defaultRawVal.trim().trim('\'')
                             extra = extra.replace(" DEFAULT $defaultRawVal ", " ")
                         }
 
@@ -182,6 +182,13 @@ object PumlConverter {
                                 idgeneratorParam = idgenerator.substringAfter("(").substringBefore(")")
                                 idgenerator = idgenerator.substringBefore("(")
                             }
+                        }
+                        //兼容
+                        if (!createdDate && columnName.equals("created_date", true) && defaultVal.isNullOrBlank()) {
+                            createdDate = true
+                        }
+                        if (!lastModifiedDate && columnName.equals("last_modified_date", true) && !extra.contains("ON UPDATE CURRENT_TIMESTAMP")) {
+                            lastModifiedDate = true
                         }
 
                         val column = Column(
