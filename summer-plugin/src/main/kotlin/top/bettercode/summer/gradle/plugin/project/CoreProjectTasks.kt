@@ -1,6 +1,6 @@
 package top.bettercode.summer.gradle.plugin.project
 
-import isBoot
+import isCore
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -29,7 +29,7 @@ object CoreProjectTasks {
             val prefix = "Core"
             val group = "gen $prefix code"
 
-            if (ext.hasPuml && (project.isBoot || (ext.isProjectPuml && project.rootProject != project))) {
+            if (ext.hasPuml && project.isCore) {
                 project.tasks.create("gen${prefix}Entity") { task ->
                     task.group = group
                     task.doLast(object : Action<Task> {
