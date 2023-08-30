@@ -10,7 +10,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter
 import org.springframework.lang.Nullable
-import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
@@ -18,13 +17,9 @@ import top.bettercode.summer.tools.pay.support.WeixinPayException
 import top.bettercode.summer.tools.pay.support.weixin.WeixinPayClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.pay.support.weixin.entity.RefundRequest
 import top.bettercode.summer.tools.pay.support.weixin.entity.RefundResponse
-import top.bettercode.summer.tools.pay.support.weixin.entity.UnifiedOrderRequest
-import top.bettercode.summer.tools.pay.support.weixin.entity.UnifiedOrderResponse
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.io.File
-import java.util.*
 import javax.net.ssl.SSLContext
-import kotlin.reflect.full.memberProperties
 
 
 /**

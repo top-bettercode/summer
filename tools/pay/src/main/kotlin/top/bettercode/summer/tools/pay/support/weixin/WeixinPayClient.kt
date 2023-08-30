@@ -1,5 +1,7 @@
 package top.bettercode.summer.tools.pay.support.weixin
 
+import OrderQueryRequest
+import OrderQueryResponse
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
@@ -113,11 +115,37 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * 查询订单
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_2&index=4
      */
+    fun orderquery(request: OrderQueryRequest): OrderQueryResponse {
+        request.appid = properties.appid
+        request.mchId = properties.mchId
+        request.sign = getSign(request, properties.apiKey!!)
+        val entity = postForObject(
+                "https://api.mch.weixin.qq.com/pay/unifiedorder",
+                request,
+                OrderQueryResponse::class.java
+        )
+        if (log.isDebugEnabled) {
+            log.debug("查询结果：" + StringUtil.valueOf(entity))
+        }
+        return if (entity != null && getSign(entity, properties.apiKey!!) === entity.sign) {
+            if (entity.isOk()) {
+                if (entity.isBizOk()) {
+                    entity
+                } else {
+                    throw WeixinPayException("订单：${request.outTradeNo}查询失败:${entity.errCodeDes}", entity)
+                }
+            } else {
+                throw WeixinPayException("订单：${request.outTradeNo}查询失败:${entity.returnMsg}", entity)
+            }
+        } else {
+            throw WeixinPayException("订单：${request.outTradeNo}查询失败:结果签名验证失败,${entity?.returnMsg}", entity)
+        }
+
+    }
+
 
 
     /**
-     *     refund_url: https://api.mch.weixin.qq.com/secapi/pay/refund
-     *     order_query: https://api.mch.weixin.qq.com/pay/orderquery
      *     refund_query_url: https://api.mch.weixin.qq.com/pay/refundquery
      *     #    付款到零钱（提现）
      *     withdraw_url: https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers

@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.pay.support.weixin.entity;
+package top.bettercode.summer.tools.pay.support.weixin.entity
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -116,7 +116,9 @@ data class RefundResponse(
          */
         @field:JsonProperty("coupon_refund_count")
         var couponRefundCount: Int? = null,
-
+        /**
+         * 其他
+         */
         @field:JsonAnyGetter
         @field:JsonAnySetter
         var other: Map<String, Any?>? = null

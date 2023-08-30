@@ -3,7 +3,6 @@ package top.bettercode.summer.tools.pay.support.weixin
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import top.bettercode.summer.tools.pay.support.WeixinPayException
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class WeixinPayResponse(
@@ -28,7 +27,7 @@ abstract class WeixinPayResponse(
         @field:JsonProperty("return_msg")
         var returnMsg: String? = null,
 
-) {
+        ) {
 
     /**
      * 请求结果

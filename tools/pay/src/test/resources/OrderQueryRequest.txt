@@ -1,6 +1,6 @@
 应用APPID 	appid 	是 	String(32) 	wxd678efh567hg6787 	微信开放平台审核通过的应用APPID
 商户号 	mch_id 	是 	String(32) 	1230000109 	微信支付分配的商户号
 微信订单号 	transaction_id 	二选一 	String(32) 	1009660380201506130728806387 	微信的订单号，优先使用
-商户订单号 	out_trade_no 	String(32) 	20150806125346 	商户系统内部的订单号，当没提供transaction_id时需要传这个。
+商户订单号 	out_trade_no 	二选一 	String(32) 	20150806125346 	商户系统内部的订单号，当没提供transaction_id时需要传这个。
 随机字符串 	nonce_str 	是 	String(32) 	C380BEC2BFD727A4B6845133519F3AD6 	随机字符串，不长于32位。推荐随机数生成算法
 签名 	sign 	是 	String(32) 	5K8264ILTKCH16CQ2502SI8ZNMTM67VS 	签名，详见签名生成算法

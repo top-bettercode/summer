@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import top.bettercode.summer.tools.lang.capitalized
 import top.bettercode.summer.tools.lang.decapitalized
 import java.io.File
+import java.io.StringWriter
 
 /**
  *
@@ -15,14 +16,15 @@ class CodeGen {
     fun gen() {
         //读取 UnifiedorderResponse.txt 内容
         val isRequest = false
-        val javaName = "RefundResponse"
+        val javaName = "OrderQueryResponse.txt".substringBeforeLast(".")
         val unifiedorderResponse = javaClass.getResource("/$javaName.txt")!!.readText()
         val lines = unifiedorderResponse.lines()
-        File("src/main/kotlin/top/bettercode/summer/tools/pay/support/weixin/entity/$javaName.kt").printWriter().use { out ->
-            out.println("""import com.fasterxml.jackson.annotation.JsonProperty
+        val printWriter = File("src/main/kotlin/top/bettercode/summer/tools/pay/support/weixin/entity/$javaName.kt").printWriter()
+        val stringWriter = StringWriter()
+        stringWriter.use { out ->
+            out.appendLine("""import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
- *
  * @author Peter Wu
  */
 data class $javaName(
@@ -41,9 +43,12 @@ data class $javaName(
                 @field:JsonProperty("$name")
                 var $camelName: $type${if (isRequest && split[2].trim() == "是") "" else "? = null"},
                 """.trimIndent()
-                out.println(code)
+                out.appendLine(code)
             }
-            out.println(")")
+            out.appendLine(")")
+        }
+        printWriter.use { out ->
+            out.append(stringWriter.toString())
         }
     }
 
