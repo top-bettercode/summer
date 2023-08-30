@@ -139,7 +139,7 @@ object PumlConverter {
 
                         //DEFAULT
                         var defaultVal: String? = null
-                        if (extra.contains(" DEFAULT ")) {
+                        if (extra.contains(" DEFAULT ", true)) {
                             val defaultRawVal = extra.substringAfter(" DEFAULT ").substringBefore(" ")
                             defaultVal = defaultRawVal.trim().trim('\'')
                             extra = extra.replace(" DEFAULT $defaultRawVal ", " ")
@@ -149,7 +149,7 @@ object PumlConverter {
                         var fk = false
                         var refTable: String? = null
                         var refColumn: String? = null
-                        if (extra.contains(" FK > ")) {//FK > docs.id
+                        if (extra.contains(" FK > ", true)) {//FK > docs.id
                             val ref = extra.substringAfter(" FK > ").trim().substringBefore(" ").trim()
                             extra = extra.replace(Regex(" FK > +$ref"), " ")
                             val refs = ref.split(".")
@@ -187,7 +187,7 @@ object PumlConverter {
                         if (!createdDate && columnName.equals("created_date", true) && defaultVal.isNullOrBlank()) {
                             createdDate = true
                         }
-                        if (!lastModifiedDate && columnName.equals("last_modified_date", true) && !extra.contains("ON UPDATE CURRENT_TIMESTAMP")) {
+                        if (!lastModifiedDate && columnName.equals("last_modified_date", true) && !extra.contains("ON UPDATE CURRENT_TIMESTAMP", true)) {
                             lastModifiedDate = true
                         }
 
