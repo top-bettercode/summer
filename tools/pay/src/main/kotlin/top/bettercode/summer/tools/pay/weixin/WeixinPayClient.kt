@@ -131,7 +131,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 if (entity.isBizOk()) {
                     entity
                 } else {
-                    throw WeixinPayException("订单：${request.outTradeNo}查询失败:${entity.errCodeDes}", entity)
+                    throw WeixinPayException("订单：${request.outTradeNo}查询失败:${entity.errCodeDes},交易状态：${entity.tradeStateDesc}", entity)
                 }
             } else {
                 throw WeixinPayException("订单：${request.outTradeNo}查询失败:${entity.returnMsg}", entity)
