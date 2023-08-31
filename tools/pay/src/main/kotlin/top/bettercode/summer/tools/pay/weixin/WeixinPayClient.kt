@@ -102,9 +102,6 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 request,
                 UnifiedOrderResponse::class.java
         )
-        if (log.isDebugEnabled) {
-            log.debug("查询结果：" + StringUtil.valueOf(response))
-        }
         return if (response != null && getSign(response, properties.apiKey!!) === response.sign) {
             if (response.isOk()) {
                 if (response.isBizOk()) {
@@ -133,9 +130,6 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 request,
                 OrderQueryResponse::class.java
         )
-        if (log.isDebugEnabled) {
-            log.debug("查询结果：" + StringUtil.valueOf(response))
-        }
         return if (response != null && getSign(response, properties.apiKey!!) === response.sign) {
             if (response.isOk()) {
                 if (response.isBizOk()) {
@@ -165,9 +159,6 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 request,
                 RefundQueryResponse::class.java
         )
-        if (log.isDebugEnabled) {
-            log.debug("查询结果：" + StringUtil.valueOf(response))
-        }
         return if (response != null && getSign(response, properties.apiKey!!) === response.sign) {
             if (response.isOk()) {
                 if (response.isBizOk()) {
@@ -237,11 +228,4 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         return objectMapper.readValue(decryptedBytes, RefundInfo::class.java)
     }
 
-    /**
-     *     #    付款到零钱（提现）
-     *     withdraw_url: https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers
-     *     #    查询付款信息
-     *     transfer_info_url: https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo
-     *
-     */
 }

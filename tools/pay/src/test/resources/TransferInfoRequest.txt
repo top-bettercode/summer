@@ -1,0 +1,5 @@
+随机字符串 	nonce_str 	是 	5K8264ILTKCH16CQ2502SI8ZNMTM67VS 	String(32) 	随机字符串，不长于32位
+签名 	sign 	是 	C380BEC2BFD727A4B6845133519F3AD6 	String(32) 	签名，详见签名算法
+商户订单号 	partner_trade_no 	是 	10000098201411111234567890 	String(32) 	商户调用付款API时使用的商户订单号
+商户号 	mch_id 	是 	10000098 	String(32) 	微信支付分配的商户号
+Appid 	appid 	是 	wxe062425f740d30d8 	String(128) 	商户号的appid
