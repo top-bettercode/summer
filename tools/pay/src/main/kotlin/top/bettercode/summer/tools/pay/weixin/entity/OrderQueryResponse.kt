@@ -139,7 +139,21 @@ data class OrderQueryResponse(
         @field:JsonAnyGetter
         @field:JsonAnySetter
         var other: Map<String, Any?>? = null
-
+        /**
+         * 代金券ID，代金券或立减优惠ID, $n为下标，从0开始编号
+         */
+        //        @field:JsonProperty("coupon_id_$n")
+        //var couponId$n: String? = null,
+        /**
+         * 代金券类型，CASH--充值代金券 NO_CASH---非充值优惠券 开通免充值券功能，并且订单使用了优惠券        后有返回（取值：CASH、NO_CASH）。$n为下标,从0开始编号，举例：coupon_type_$0
+         */
+        //@field:JsonProperty("coupon_type_$n")
+        //var couponType$n: String? = null,
+        /**
+         * 单个代金券支付金额，单个代金券或立减优惠支付金额, $n为下标，从0开始编号
+         */
+        //@field:JsonProperty("coupon_fee_$n")
+        //var couponFee$n: Int? = null,
 ) : WeixinPayResponse() {
 
     override fun isBizOk(): Boolean {

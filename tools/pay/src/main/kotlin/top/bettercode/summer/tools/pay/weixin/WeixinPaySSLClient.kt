@@ -86,7 +86,7 @@ open class WeixinPaySSLClient(val properties: WeixinPayProperties) : ApiTemplate
         }
         request.sign = WeixinPayClient.getSign(request, properties.apiKey!!)
         val entity = postForObject(
-                "https://api.mch.weixin.qq.com/pay/unifiedorder",
+                "https://api.mch.weixin.qq.com/secapi/pay/refund",
                 request,
                 RefundResponse::class.java
         )

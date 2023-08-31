@@ -2,6 +2,8 @@ package top.bettercode.summer.tools.pay.weixin
 
 import OrderQueryRequest
 import OrderQueryResponse
+import RefundQueryRequest
+import RefundQueryResponse
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
@@ -119,7 +121,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         request.mchId = properties.mchId
         request.sign = getSign(request, properties.apiKey!!)
         val entity = postForObject(
-                "https://api.mch.weixin.qq.com/pay/unifiedorder",
+                "https://api.mch.weixin.qq.com/pay/orderquery",
                 request,
                 OrderQueryResponse::class.java
         )
@@ -146,10 +148,34 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * 查询退款
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_5&index=7
      */
-
+    fun refundquery(request: RefundQueryRequest): RefundQueryResponse {
+        request.appid = properties.appid
+        request.mchId = properties.mchId
+        request.sign = getSign(request, properties.apiKey!!)
+        val entity = postForObject(
+                "https://api.mch.weixin.qq.com/pay/refundquery",
+                request,
+                RefundQueryResponse::class.java
+                )
+        if (log.isDebugEnabled) {
+            log.debug("查询结果：" + StringUtil.valueOf(entity))
+        }
+        return if (entity != null && getSign(entity, properties.apiKey!!) === entity.sign) {
+            if (entity.isOk()) {
+                if (entity.isBizOk()) {
+                    entity
+                } else {
+                    throw WeixinPayException("订单：${request.outTradeNo}查询退款:${entity.errCodeDes}", entity)
+                }
+            } else {
+                throw WeixinPayException("订单：${request.outTradeNo}查询退款:${entity.returnMsg}", entity)
+            }
+        } else {
+            throw WeixinPayException("订单：${request.outTradeNo}查询退款:结果签名验证失败,${entity?.returnMsg}", entity)
+        }
+    }
 
     /**
-     *     refund_query_url: https://api.mch.weixin.qq.com/pay/refundquery
      *     #    付款到零钱（提现）
      *     withdraw_url: https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers
      *     #    查询付款信息
