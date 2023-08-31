@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.pay.support.weixin
+package top.bettercode.summer.tools.pay.weixin
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory
@@ -13,10 +13,9 @@ import org.springframework.lang.Nullable
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
-import top.bettercode.summer.tools.pay.support.WeixinPayException
-import top.bettercode.summer.tools.pay.support.weixin.WeixinPayClient.Companion.LOG_MARKER
-import top.bettercode.summer.tools.pay.support.weixin.entity.RefundRequest
-import top.bettercode.summer.tools.pay.support.weixin.entity.RefundResponse
+import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
+import top.bettercode.summer.tools.pay.weixin.entity.RefundRequest
+import top.bettercode.summer.tools.pay.weixin.entity.RefundResponse
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.io.File
 import javax.net.ssl.SSLContext
@@ -71,7 +70,6 @@ open class WeixinPaySSLClient(val properties: WeixinPayProperties) : ApiTemplate
         // 创建HttpClient并设置证书
         val httpClient: CloseableHttpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build()
         val sslRequestFactory = HttpComponentsClientHttpRequestFactory(httpClient)
-
         super.setRequestFactory(sslRequestFactory)
     }
 

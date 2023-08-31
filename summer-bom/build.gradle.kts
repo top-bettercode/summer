@@ -49,6 +49,7 @@ dependencies {
 
         api("com.github.jsqlparser:jsqlparser:4.6")
 
+        api("org.apache.httpcomponents:httpclient:4.5.14")
         api("org.apache.logging.log4j:log4j-api:2.20.0")
         api("org.apache.logging.log4j:log4j-core:2.20.0")
         api("org.apache.logging.log4j:log4j-to-slf4j:2.20.0")

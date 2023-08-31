@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.pay.support.weixin
+package top.bettercode.summer.tools.pay.weixin
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties

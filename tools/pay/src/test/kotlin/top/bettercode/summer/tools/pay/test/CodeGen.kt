@@ -16,10 +16,10 @@ class CodeGen {
     fun gen() {
         //读取 UnifiedorderResponse.txt 内容
         val isRequest = false
-        val javaName = "OrderQueryResponse.txt".substringBeforeLast(".")
+        val javaName = "RefundQueryRequest.txt".substringBeforeLast(".")
         val unifiedorderResponse = javaClass.getResource("/$javaName.txt")!!.readText()
         val lines = unifiedorderResponse.lines()
-        val printWriter = File("src/main/kotlin/top/bettercode/summer/tools/pay/support/weixin/entity/$javaName.kt").printWriter()
+        val printWriter = File("src/main/kotlin/top/bettercode/summer/tools/pay/weixin/entity/$javaName.kt").printWriter()
         val stringWriter = StringWriter()
         stringWriter.use { out ->
             out.appendLine("""import com.fasterxml.jackson.annotation.JsonProperty

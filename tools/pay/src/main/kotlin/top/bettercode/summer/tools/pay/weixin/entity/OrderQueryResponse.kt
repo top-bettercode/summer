@@ -1,7 +1,7 @@
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
-import top.bettercode.summer.tools.pay.support.weixin.WeixinPayResponse
+import top.bettercode.summer.tools.pay.weixin.WeixinPayResponse
 
 /**
  * @author Peter Wu

@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.pay.support.weixin.entity
+package top.bettercode.summer.tools.pay.weixin.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import top.bettercode.summer.tools.lang.util.IPAddressUtil

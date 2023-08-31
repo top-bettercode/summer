@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.pay.support.weixin
+package top.bettercode.summer.tools.pay.weixin
 
 import OrderQueryRequest
 import OrderQueryResponse
@@ -11,10 +11,9 @@ import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
-import top.bettercode.summer.tools.pay.support.WeixinPayException
-import top.bettercode.summer.tools.pay.support.weixin.WeixinPayClient.Companion.LOG_MARKER
-import top.bettercode.summer.tools.pay.support.weixin.entity.UnifiedOrderRequest
-import top.bettercode.summer.tools.pay.support.weixin.entity.UnifiedOrderResponse
+import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
+import top.bettercode.summer.tools.pay.weixin.entity.UnifiedOrderRequest
+import top.bettercode.summer.tools.pay.weixin.entity.UnifiedOrderResponse
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.util.*
 import kotlin.reflect.full.memberProperties
@@ -143,6 +142,10 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
 
     }
 
+    /**
+     * 查询退款
+     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_5&index=7
+     */
 
 
     /**

@@ -1,4 +1,4 @@
-package top.bettercode.summer.tools.pay.support
+package top.bettercode.summer.tools.pay.weixin
 
 /**
  *
