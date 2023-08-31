@@ -1,0 +1,4 @@
+应用ID appid 是 String(32) wx8888888888888888 微信开放平台审核通过的应用APPID
+退款的商户号 mch_id 是 String(32) 1900000109 微信支付分配的商户号
+随机字符串 nonce_str 是 String(32) 5K8264ILTKCH16CQ2502SI8ZNMTM67VS 随机字符串，不长于32位。推荐随机数生成算法
+加密信息 req_info 是 String(1024) T87GAHG17TGAHG1TGHAHAHA1Y1CIOA9UGJH1GAHV871HAGAGQYQQPOOJMXNBCXBVNMNMAJAA 加密信息请用商户密钥进行解密，详见解密方式

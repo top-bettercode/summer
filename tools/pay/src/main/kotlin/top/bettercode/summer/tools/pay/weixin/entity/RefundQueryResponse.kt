@@ -1,7 +1,6 @@
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.apache.coyote.http11.Constants.a
 import top.bettercode.summer.tools.pay.weixin.WeixinPayResponse
 
 /**
@@ -176,11 +175,11 @@ data class RefundQueryResponse(
          */
         //@field:JsonProperty("refund_channel_$n")
         //var refundChannel$n: String? = null,
-): WeixinPayResponse() {
-        /**
-         * 业务结果
-         */
-        override fun isBizOk(): Boolean {
-                return resultCode == "SUCCESS"
-        }
+) : WeixinPayResponse() {
+    /**
+     * 业务结果
+     */
+    override fun isBizOk(): Boolean {
+        return resultCode == "SUCCESS"
+    }
 }

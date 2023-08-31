@@ -16,7 +16,7 @@ class CodeGen {
     fun gen() {
         //读取 UnifiedorderResponse.txt 内容
         val isRequest = false
-        val javaName = "RefundResponse.txt".substringBeforeLast(".")
+        val javaName = "RefundInfo.txt".substringBeforeLast(".")
         val unifiedorderResponse = javaClass.getResource("/$javaName.txt")!!.readText()
         val lines = unifiedorderResponse.lines()
         val stringWriter = StringWriter()
@@ -28,14 +28,14 @@ class CodeGen {
  */
 data class $javaName(
 """)
-            lines.forEach {
-                val split = it.split("\t")
+            lines.filter { it.isNotBlank() }.forEach {
+                val split = it.split("[\t ]+".toRegex())
                 try {
                     val name = split[1].trim()
                     //name 下划线格式 转换为驼峰式
                     val camelName = name.split("_").joinToString("") { s -> s.capitalized() }.decapitalized()
                     val type = split[3].substringBeforeLast("(").trim().capitalized()
-                    val comment = split[0].trim() + "，" + split[5].trim()
+                    val comment = split[0].trim() + "，" + split.subList(5, split.size).joinToString(" ") { s -> s.trim() }.trim()
                     val code = """
                     /**
                     * $comment
@@ -45,6 +45,7 @@ data class $javaName(
                     """.trimIndent()
                     out.appendLine(code)
                 } catch (e: Exception) {
+                    System.err.println(it)
                     System.err.println(split)
                     throw e
                 }

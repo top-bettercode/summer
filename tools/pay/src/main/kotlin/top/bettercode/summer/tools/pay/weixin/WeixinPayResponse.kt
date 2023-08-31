@@ -3,7 +3,10 @@ package top.bettercode.summer.tools.pay.weixin
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 
+@JacksonXmlRootElement(localName = "xml")
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class WeixinPayResponse(
 
@@ -13,6 +16,7 @@ abstract class WeixinPayResponse(
          *
          * 此字段是通信标识，非交易标识，交易是否成功需要查看result_code来判断
          */
+        @field:JacksonXmlCData
         @field:JsonProperty("return_code")
         var returnCode: String? = null,
 
@@ -24,6 +28,7 @@ abstract class WeixinPayResponse(
          *
          * 参数格式校验错误
          */
+        @field:JacksonXmlCData
         @field:JsonProperty("return_msg")
         var returnMsg: String? = null,
 
@@ -40,5 +45,6 @@ abstract class WeixinPayResponse(
     /**
      * 业务结果
      */
+    @JsonIgnore
     abstract fun isBizOk(): Boolean
 }

@@ -1,10 +1,15 @@
+@file:Suppress("unused")
+
 package top.bettercode.summer.tools.pay.weixin
 
 import OrderQueryRequest
 import OrderQueryResponse
+import RefundInfo
+import RefundNotifyResponse
 import RefundQueryRequest
 import RefundQueryResponse
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter
@@ -14,10 +19,13 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
-import top.bettercode.summer.tools.pay.weixin.entity.UnifiedOrderRequest
-import top.bettercode.summer.tools.pay.weixin.entity.UnifiedOrderResponse
+import top.bettercode.summer.tools.pay.weixin.response.UnifiedOrderRequest
+import top.bettercode.summer.tools.pay.weixin.response.UnifiedOrderResponse
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
+import javax.servlet.http.HttpServletRequest
 import kotlin.reflect.full.memberProperties
 
 
@@ -61,6 +69,8 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
 
     }
 
+    val objectMapper: ObjectMapper
+
     init {
         val messageConverter = object : MappingJackson2XmlHttpMessageConverter() {
             override fun canRead(@Nullable mediaType: MediaType?): Boolean {
@@ -71,7 +81,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 return true
             }
         }
-        val objectMapper = messageConverter.objectMapper
+        objectMapper = messageConverter.objectMapper
         objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
         val messageConverters: MutableList<HttpMessageConverter<*>> = ArrayList()
         messageConverters.add(messageConverter)
@@ -89,26 +99,26 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
             request.notifyUrl = properties.notifyUrl
         }
         request.sign = getSign(request, properties.apiKey!!)
-        val entity = postForObject(
+        val response = postForObject(
                 "https://api.mch.weixin.qq.com/pay/unifiedorder",
                 request,
                 UnifiedOrderResponse::class.java
         )
         if (log.isDebugEnabled) {
-            log.debug("查询结果：" + StringUtil.valueOf(entity))
+            log.debug("查询结果：" + StringUtil.valueOf(response))
         }
-        return if (entity != null && getSign(entity, properties.apiKey!!) === entity.sign) {
-            if (entity.isOk()) {
-                if (entity.isBizOk()) {
-                    entity
+        return if (response != null && getSign(response, properties.apiKey!!) === response.sign) {
+            if (response.isOk()) {
+                if (response.isBizOk()) {
+                    response
                 } else {
-                    throw WeixinPayException("订单：${request.outTradeNo}下单失败:${entity.errCodeDes}", entity)
+                    throw WeixinPayException("订单：${request.outTradeNo}下单失败:${response.errCodeDes}", response)
                 }
             } else {
-                throw WeixinPayException("订单：${request.outTradeNo}下单失败:${entity.returnMsg}", entity)
+                throw WeixinPayException("订单：${request.outTradeNo}下单失败:${response.returnMsg}", response)
             }
         } else {
-            throw WeixinPayException("订单：${request.outTradeNo}下单失败:结果签名验证失败,${entity?.returnMsg}", entity)
+            throw WeixinPayException("订单：${request.outTradeNo}下单失败:结果签名验证失败,${response?.returnMsg}", response)
         }
     }
 
@@ -120,26 +130,26 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         request.appid = properties.appid
         request.mchId = properties.mchId
         request.sign = getSign(request, properties.apiKey!!)
-        val entity = postForObject(
+        val response = postForObject(
                 "https://api.mch.weixin.qq.com/pay/orderquery",
                 request,
                 OrderQueryResponse::class.java
         )
         if (log.isDebugEnabled) {
-            log.debug("查询结果：" + StringUtil.valueOf(entity))
+            log.debug("查询结果：" + StringUtil.valueOf(response))
         }
-        return if (entity != null && getSign(entity, properties.apiKey!!) === entity.sign) {
-            if (entity.isOk()) {
-                if (entity.isBizOk()) {
-                    entity
+        return if (response != null && getSign(response, properties.apiKey!!) === response.sign) {
+            if (response.isOk()) {
+                if (response.isBizOk()) {
+                    response
                 } else {
-                    throw WeixinPayException("订单：${request.outTradeNo}查询失败:${entity.errCodeDes},交易状态：${entity.tradeStateDesc}", entity)
+                    throw WeixinPayException("订单：${request.outTradeNo}查询失败:${response.errCodeDes},交易状态：${response.tradeStateDesc}", response)
                 }
             } else {
-                throw WeixinPayException("订单：${request.outTradeNo}查询失败:${entity.returnMsg}", entity)
+                throw WeixinPayException("订单：${request.outTradeNo}查询失败:${response.returnMsg}", response)
             }
         } else {
-            throw WeixinPayException("订单：${request.outTradeNo}查询失败:结果签名验证失败,${entity?.returnMsg}", entity)
+            throw WeixinPayException("订单：${request.outTradeNo}查询失败:结果签名验证失败,${response?.returnMsg}", response)
         }
 
     }
@@ -152,27 +162,54 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         request.appid = properties.appid
         request.mchId = properties.mchId
         request.sign = getSign(request, properties.apiKey!!)
-        val entity = postForObject(
+        val response = postForObject(
                 "https://api.mch.weixin.qq.com/pay/refundquery",
                 request,
                 RefundQueryResponse::class.java
-                )
+        )
         if (log.isDebugEnabled) {
-            log.debug("查询结果：" + StringUtil.valueOf(entity))
+            log.debug("查询结果：" + StringUtil.valueOf(response))
         }
-        return if (entity != null && getSign(entity, properties.apiKey!!) === entity.sign) {
-            if (entity.isOk()) {
-                if (entity.isBizOk()) {
-                    entity
+        return if (response != null && getSign(response, properties.apiKey!!) === response.sign) {
+            if (response.isOk()) {
+                if (response.isBizOk()) {
+                    response
                 } else {
-                    throw WeixinPayException("订单：${request.outTradeNo}查询退款:${entity.errCodeDes}", entity)
+                    throw WeixinPayException("订单：${request.outTradeNo}查询退款:${response.errCodeDes}", response)
                 }
             } else {
-                throw WeixinPayException("订单：${request.outTradeNo}查询退款:${entity.returnMsg}", entity)
+                throw WeixinPayException("订单：${request.outTradeNo}查询退款:${response.returnMsg}", response)
             }
         } else {
-            throw WeixinPayException("订单：${request.outTradeNo}查询退款:结果签名验证失败,${entity?.returnMsg}", entity)
+            throw WeixinPayException("订单：${request.outTradeNo}查询退款:结果签名验证失败,${response?.returnMsg}", response)
         }
+    }
+
+    /**
+     * 退款结果通知数据处理
+     */
+    fun handleRefundNotify(request: HttpServletRequest): RefundInfo {
+        val response = objectMapper.readValue(request.inputStream, RefundNotifyResponse::class.java)
+        return if (response.isOk()) {
+            decryptRefundInfo(response.reqInfo!!)
+        } else {
+            throw WeixinPayException("退款结果通知失败:${response.returnMsg}", response)
+        }
+    }
+
+    private fun decryptRefundInfo(encryptedData: String): RefundInfo {
+        // Step 1: Base64 decode the encrypted data
+        val encryptedBytes = Base64.getDecoder().decode(encryptedData)
+
+        // Step 2: Generate MD5 hash of the merchant key
+        val keyBytes = DigestUtils.md5Digest(properties.apiKey!!.toByteArray(charset("UTF-8")))
+
+        // Step 3: Perform AES-256-ECB decryption
+        val keySpec = SecretKeySpec(keyBytes, "AES")
+        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        cipher.init(Cipher.DECRYPT_MODE, keySpec)
+        val decryptedBytes = cipher.doFinal(encryptedBytes)
+        return objectMapper.readValue(decryptedBytes, RefundInfo::class.java)
     }
 
     /**

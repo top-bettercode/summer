@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package top.bettercode.summer.tools.pay.weixin
 
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -14,8 +16,8 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
-import top.bettercode.summer.tools.pay.weixin.entity.RefundRequest
-import top.bettercode.summer.tools.pay.weixin.entity.RefundResponse
+import top.bettercode.summer.tools.pay.weixin.response.RefundRequest
+import top.bettercode.summer.tools.pay.weixin.response.RefundResponse
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.io.File
 import javax.net.ssl.SSLContext
@@ -85,26 +87,26 @@ open class WeixinPaySSLClient(val properties: WeixinPayProperties) : ApiTemplate
             request.notifyUrl = properties.notifyUrl
         }
         request.sign = WeixinPayClient.getSign(request, properties.apiKey!!)
-        val entity = postForObject(
+        val response = postForObject(
                 "https://api.mch.weixin.qq.com/secapi/pay/refund",
                 request,
                 RefundResponse::class.java
         )
         if (log.isDebugEnabled) {
-            log.debug("查询结果：" + StringUtil.valueOf(entity))
+            log.debug("查询结果：" + StringUtil.valueOf(response))
         }
-        return if (entity != null && WeixinPayClient.getSign(entity, properties.apiKey!!) === entity.sign) {
-            if (entity.isOk()) {
-                if (entity.isBizOk()) {
-                    entity
+        return if (response != null && WeixinPayClient.getSign(response, properties.apiKey!!) === response.sign) {
+            if (response.isOk()) {
+                if (response.isBizOk()) {
+                    response
                 } else {
-                    throw WeixinPayException("订单：${request.outTradeNo}退款失败:${entity.errCodeDes}", entity)
+                    throw WeixinPayException("订单：${request.outTradeNo}退款失败:${response.errCodeDes}", response)
                 }
             } else {
-                throw WeixinPayException("订单：${request.outTradeNo}退款失败:${entity.returnMsg}", entity)
+                throw WeixinPayException("订单：${request.outTradeNo}退款失败:${response.returnMsg}", response)
             }
         } else {
-            throw WeixinPayException("订单：${request.outTradeNo}退款失败:结果签名验证失败,${entity?.returnMsg}", entity)
+            throw WeixinPayException("订单：${request.outTradeNo}退款失败:结果签名验证失败,${response?.returnMsg}", response)
         }
 
     }
