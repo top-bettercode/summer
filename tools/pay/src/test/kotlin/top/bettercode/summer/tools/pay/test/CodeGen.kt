@@ -13,7 +13,7 @@ class CodeGen {
 
     @Test
     fun gen() {
-        val javaName = "TransfersRequest.txt".substringBeforeLast(".")
+        val javaName = "TransferInfoResponse.txt".substringBeforeLast(".")
         gen(javaName)
     }
 

@@ -13,13 +13,9 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter
 import org.springframework.lang.Nullable
 import top.bettercode.summer.logging.annotation.LogMarker
-import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
-import top.bettercode.summer.tools.pay.weixin.entity.RefundRequest
-import top.bettercode.summer.tools.pay.weixin.entity.RefundResponse
-import top.bettercode.summer.tools.pay.weixin.entity.TransfersRequest
-import top.bettercode.summer.tools.pay.weixin.entity.TransfersResponse
+import top.bettercode.summer.tools.pay.weixin.entity.*
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.io.File
 import javax.net.ssl.SSLContext
@@ -136,20 +132,34 @@ open class WeixinPaySSLClient(val properties: WeixinPayProperties) : ApiTemplate
         } else {
             throw WeixinPayException("订单：${request.partnerTradeNo}付款失败:无结果响应")
         }
-
-
     }
 
     /**
      * 查询付款
      * https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=14_3
      */
+    fun getTransferInfo(request: TransferInfoRequest): TransferInfoResponse {
+        request.appid = properties.appid
+        request.mchId = properties.mchId
+        request.sign = WeixinPayClient.getSign(request, properties.apiKey!!)
+        val response = postForObject(
+                "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo",
+                request,
+                TransferInfoResponse::class.java
+        )
+        return if (response != null) {
+            if (response.isOk()) {
+                if (response.isBizOk()) {
+                    response
+                } else {
+                    throw WeixinPayException("订单：${request.partnerTradeNo}查询付款失败:${response.errCodeDes}", response)
+                }
+            } else {
+                throw WeixinPayException("订单：${request.partnerTradeNo}查询付款失败:${response.returnMsg}", response)
+            }
+        } else {
+            throw WeixinPayException("订单：${request.partnerTradeNo}查询付款失败:无结果响应")
+        }
+    }
 
-    /**
-     *     #    付款到零钱（提现）
-     *     withdraw_url: https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers
-     *     #    查询付款信息
-     *     transfer_info_url: https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo
-     *
-     */
 }

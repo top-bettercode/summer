@@ -1,7 +1,6 @@
 业务结果 	result_code 	是 	SUCCESS 	String(16) 	SUCCESS/FAIL ，非付款标识，付款是否成功需要查看status字段来判断
 错误代码 	err_code 	否 	SYSTEMERROR 	String(32) 	错误码信息
-错误代码描述 	err_code_des 	否 	系统错误 	String(128) 	结果信息描述
-以下字段在return_code 和result_code都为SUCCESS的时候有返回
+错误代码描述 	err_code_des 	否 	系统错误 	String(128) 	结果信息描述 以下字段在return_code 和result_code都为SUCCESS的时候有返回
 商户单号 	partner_trade_no 	是 	10000098201411111234567890 	String(32) 	商户使用查询API填写的单号的原路返回.
 Appid 	appid 	是 	wxe062425f740d30d8 	String(128) 	商户号的appid
 商户号 	mch_id 	是 	10000098 	String(32) 	微信支付分配的商户号
@@ -11,6 +10,6 @@ Appid 	appid 	是 	wxe062425f740d30d8 	String(128) 	商户号的appid
 收款用户openid 	openid 	是 	oxTWIuGaIt6gTKsQRLau2M0yL16E 	String(64) 	转账的openid
 收款用户姓名 	transfer_name 	否 	马华 	String(64) 	收款用户姓名
 付款金额 	payment_amount 	是 	5000 	int 	付款金额单位为“分”
-转账时间 	transfer_time 	是 	2015-04-21 20:00:00 	String(32) 	发起转账的时间
-付款成功时间 	payment_time 	是 	2015-04-21 20:01:00 	String(32) 	付款成功时间
+转账时间 	transfer_time 	是 	2015-04-2120:00:00 	String(32) 	发起转账的时间
+付款成功时间 	payment_time 	是 	2015-04-2120:01:00 	String(32) 	付款成功时间
 付款备注 	desc 	是 	车险理赔 	String(100) 	付款备注
