@@ -16,7 +16,7 @@ class CodeGen {
     fun gen() {
         //读取 UnifiedorderResponse.txt 内容
         val isRequest = false
-        val javaName = "RefundInfo.txt".substringBeforeLast(".")
+        val javaName = "PayNotifyResponse.txt".substringBeforeLast(".")
         val unifiedorderResponse = javaClass.getResource("/$javaName.txt")!!.readText()
         val lines = unifiedorderResponse.lines()
         val stringWriter = StringWriter()

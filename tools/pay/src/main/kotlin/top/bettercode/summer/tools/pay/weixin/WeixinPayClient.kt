@@ -4,6 +4,7 @@ package top.bettercode.summer.tools.pay.weixin
 
 import OrderQueryRequest
 import OrderQueryResponse
+import PayNotifyResponse
 import RefundInfo
 import RefundNotifyResponse
 import RefundQueryRequest
@@ -23,6 +24,8 @@ import top.bettercode.summer.tools.pay.weixin.response.UnifiedOrderRequest
 import top.bettercode.summer.tools.pay.weixin.response.UnifiedOrderResponse
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.util.*
+import java.util.function.BiConsumer
+import java.util.function.Consumer
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import javax.servlet.http.HttpServletRequest
@@ -186,12 +189,39 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
     }
 
     /**
-     * 退款结果通知数据处理
+     * 支付结果通知处理
+     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_7&index=3
      */
-    fun handleRefundNotify(request: HttpServletRequest): RefundInfo {
+    fun handleNotify(request: HttpServletRequest, consumer: Consumer<PayNotifyResponse>) {
+        val response = objectMapper.readValue(request.inputStream, PayNotifyResponse::class.java)
+        if (response != null && getSign(response, properties.apiKey!!) === response.sign) {
+            if (response.isOk()) {
+                if (response.isBizOk()) {
+                    if (properties.mchId == response.mchId && properties.appid == response.appid) {
+                        consumer.accept(response)
+                    } else {
+                        throw WeixinPayException("微信支付异步通知失败，商户/应用不匹配,响应商户：${response.mchId},本地商户：${properties.mchId},响应应用ID：${response.appid},本地应用ID：${properties.appid}", response)
+                    }
+                } else {
+                    throw WeixinPayException("订单：${response.outTradeNo}支付失败:${response.errCodeDes}", response)
+                }
+            } else {
+                throw WeixinPayException("订单：${response.outTradeNo}支付失败:${response.returnMsg}", response)
+            }
+        } else {
+            throw WeixinPayException("订单：${response.outTradeNo}支付失败:结果签名验证失败,${response?.returnMsg}", response)
+        }
+    }
+
+    /**
+     * 退款结果通知数据处理
+     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_16&index=11
+     */
+    fun handleRefundNotify(request: HttpServletRequest, consumer: BiConsumer<RefundInfo, RefundNotifyResponse>) {
         val response = objectMapper.readValue(request.inputStream, RefundNotifyResponse::class.java)
-        return if (response.isOk()) {
-            decryptRefundInfo(response.reqInfo!!)
+        if (response.isOk()) {
+            val refundInfo = decryptRefundInfo(response.reqInfo!!)
+            consumer.accept(refundInfo, response)
         } else {
             throw WeixinPayException("退款结果通知失败:${response.returnMsg}", response)
         }
