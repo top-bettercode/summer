@@ -27,7 +27,7 @@ class CodeGen {
     }
 
     private fun gen(javaName: String) {
-        val unifiedorderResponse = javaClass.getResource("/$javaName.txt")!!.readText()
+        val unifiedorderResponse = javaClass.getResource("/weixin/$javaName.txt")!!.readText()
         val rawLines = unifiedorderResponse.lines()
         val isRequest = javaName.endsWith("Request")
 
