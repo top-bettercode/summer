@@ -21,7 +21,9 @@ class CodeGen {
         val lines = unifiedorderResponse.lines()
         val stringWriter = StringWriter()
         stringWriter.use { out ->
-            out.appendLine("""import com.fasterxml.jackson.annotation.JsonProperty
+            out.appendLine("""package top.bettercode.summer.tools.pay.weixin.entity
+
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * @author Peter Wu

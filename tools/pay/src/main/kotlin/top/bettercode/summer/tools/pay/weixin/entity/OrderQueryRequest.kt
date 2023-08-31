@@ -1,3 +1,5 @@
+package top.bettercode.summer.tools.pay.weixin.entity
+
 import com.fasterxml.jackson.annotation.JsonProperty
 import top.bettercode.summer.tools.lang.util.RandomUtil
 

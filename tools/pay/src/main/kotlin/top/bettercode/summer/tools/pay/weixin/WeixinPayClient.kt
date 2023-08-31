@@ -1,14 +1,7 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package top.bettercode.summer.tools.pay.weixin
 
-import OrderQueryRequest
-import OrderQueryResponse
-import PayNotifyResponse
-import RefundInfo
-import RefundNotifyResponse
-import RefundQueryRequest
-import RefundQueryResponse
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.MediaType
@@ -20,8 +13,8 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
-import top.bettercode.summer.tools.pay.weixin.response.UnifiedOrderRequest
-import top.bettercode.summer.tools.pay.weixin.response.UnifiedOrderResponse
+import top.bettercode.summer.tools.pay.weixin.entity.*
+import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.util.*
 import java.util.function.BiConsumer
@@ -50,13 +43,13 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
 
         /**
          * 对参数签名
-         *
+         *  https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=4_3
          * @param params 参数
          * @return 签名后字符串
          */
         fun getSign(params: Any, apiKey: String): String {
             //获取待签名字符串
-            val preStr = params::class.memberProperties.sortedBy { it.name }.map {
+            val preStr = params::class.memberProperties.sortedBy { it.name }.mapNotNull {
                 val key = it.name
                 val value = it.getter.call(params)
                 if (value == null || value == "" || key.equals("sign", ignoreCase = true)) {
@@ -64,8 +57,10 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                 } else {
                     "$key=$value"
                 }
-            }.filterNotNull().joinToString("&")
-            val stringSignTemp = preStr + "&key=" + apiKey
+            }.joinToString("&")
+            val stringSignTemp = "$preStr&key=$apiKey"
+            if (log.isDebugEnabled)
+                log.debug("等处理的字符中：$stringSignTemp")
             return DigestUtils.md5DigestAsHex(stringSignTemp.toByteArray(charset("UTF-8"))).uppercase(Locale.getDefault())
         }
 

@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package top.bettercode.summer.tools.pay.weixin
 
@@ -16,8 +16,8 @@ import top.bettercode.summer.logging.annotation.LogMarker
 import top.bettercode.summer.tools.lang.util.StringUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
-import top.bettercode.summer.tools.pay.weixin.response.RefundRequest
-import top.bettercode.summer.tools.pay.weixin.response.RefundResponse
+import top.bettercode.summer.tools.pay.weixin.entity.RefundRequest
+import top.bettercode.summer.tools.pay.weixin.entity.RefundResponse
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.io.File
 import javax.net.ssl.SSLContext
@@ -110,15 +110,5 @@ open class WeixinPaySSLClient(val properties: WeixinPayProperties) : ApiTemplate
         }
 
     }
-
-    /**
-     *     order_query: https://api.mch.weixin.qq.com/pay/orderquery
-     *     refund_query_url: https://api.mch.weixin.qq.com/pay/refundquery
-     *     #    付款到零钱（提现）
-     *     withdraw_url: https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers
-     *     #    查询付款信息
-     *     transfer_info_url: https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo
-     *
-     */
 
 }

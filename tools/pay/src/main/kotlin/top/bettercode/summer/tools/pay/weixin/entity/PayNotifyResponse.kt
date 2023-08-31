@@ -1,3 +1,5 @@
+
+package top.bettercode.summer.tools.pay.weixin.entity
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
