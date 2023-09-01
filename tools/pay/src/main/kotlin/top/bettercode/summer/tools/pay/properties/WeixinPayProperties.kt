@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * 微售支付配置
  */
 @ConfigurationProperties(prefix = "summer.pay.weixin")
-data class WeixinPayProperties(
+data class WeixinPayProperties @JvmOverloads constructor(
         /**
          * 商户ID
          */

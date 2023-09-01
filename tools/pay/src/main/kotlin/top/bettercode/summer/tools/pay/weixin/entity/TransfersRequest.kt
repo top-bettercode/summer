@@ -7,7 +7,7 @@ import top.bettercode.summer.tools.lang.util.RandomUtil
 /**
  * @author Peter Wu
  */
-data class TransfersRequest(
+data class TransfersRequest @JvmOverloads constructor(
 
         /**
          * 商户订单号；必填；商户订单号，需保持唯一性 (只能是字母或者数字，不能包含有其它字符)；示例：10000098201411111234567890

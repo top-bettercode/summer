@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.lang.util.RandomUtil
 /**
  * @author Peter Wu
  */
-data class OrderQueryRequest(
+data class OrderQueryRequest @JvmOverloads constructor(
 
         /**
          * 商户订单号；非必填；商户系统内部的订单号，当没提供transaction_id时需要传这个；示例：20150806125346

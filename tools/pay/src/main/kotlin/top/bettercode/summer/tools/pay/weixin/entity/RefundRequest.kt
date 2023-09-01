@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 /**
  * @author Peter Wu
  */
-data class RefundRequest(
+data class RefundRequest @JvmOverloads constructor(
 
         /**
          * 商户订单号；非必填；商户系统内部订单号，要求32个字符内（最少6个字符），只能是数字、大小写字母_-|*且在同一个商户号下唯一。详见商户订单号 transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no；示例：1217752501201407033233368018

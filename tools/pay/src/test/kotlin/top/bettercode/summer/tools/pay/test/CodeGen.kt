@@ -91,7 +91,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 /**
  * @author Peter Wu
  */
-data class $javaName(
+data class $javaName${if(isRequest) " @JvmOverloads constructor" else ""}(
 """)
             codes.forEach { value ->
                 out.appendLine(value)

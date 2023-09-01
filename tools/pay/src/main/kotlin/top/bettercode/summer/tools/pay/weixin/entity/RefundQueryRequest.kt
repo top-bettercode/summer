@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.lang.util.RandomUtil
 /**
  * @author Peter Wu
  */
-data class RefundQueryRequest(
+data class RefundQueryRequest @JvmOverloads constructor(
 
         /**
          * 商户退款单号；非必填；商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@ ，同一退款单号多次请求只退一笔；示例：1217752501201407033233368018

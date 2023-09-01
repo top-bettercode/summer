@@ -7,7 +7,7 @@ import top.bettercode.summer.tools.lang.util.RandomUtil
 /**
  * @author Peter Wu
  */
-data class UnifiedOrderRequest(
+data class UnifiedOrderRequest @JvmOverloads constructor(
 
         /**
          * 交易类型；必填；支付类型；示例：APP

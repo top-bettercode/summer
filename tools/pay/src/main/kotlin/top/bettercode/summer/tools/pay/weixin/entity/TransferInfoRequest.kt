@@ -6,7 +6,7 @@ import top.bettercode.summer.tools.lang.util.RandomUtil
 /**
  * @author Peter Wu
  */
-data class TransferInfoRequest(
+data class TransferInfoRequest @JvmOverloads constructor(
 
         /**
          * 商户订单号；必填；商户调用付款API时使用的商户订单号；示例：10000098201411111234567890
