@@ -29,7 +29,7 @@ data class WeixinPayProperties @JvmOverloads constructor(
         /**
          * 证书路径
          */
-        var certPath: String? = null,
+        var certLocation: String? = null,
         /**
          * 证书存储密码
          */
