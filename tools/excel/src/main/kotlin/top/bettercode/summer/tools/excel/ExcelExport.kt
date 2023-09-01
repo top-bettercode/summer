@@ -55,6 +55,9 @@ class ExcelExport {
     private var includeComment = false
     private var finish = false
     private var includeDataValidation = false
+    private var fillColor = "808080"
+
+
     private val columnWidths = ColumnWidths()
     private val imageCells: MutableList<ExcelCell<*>> = ArrayList()
 
@@ -79,6 +82,11 @@ class ExcelExport {
         imageByteArrayOutputStream = null
         this.outputStream = null
         workbook = Workbook(outputStream, "", "1.0")
+    }
+
+    fun fillColor(fillColor: String): ExcelExport {
+        this.fillColor = fillColor
+        return this
     }
 
     /**
@@ -171,12 +179,13 @@ class ExcelExport {
         r++
     }
 
+
     private fun setHeaderStyle() {
         sheet!!.style(r, c)
                 .horizontalAlignment(Alignment.CENTER.value)
                 .verticalAlignment(Alignment.CENTER.value)
                 .bold()
-                .fillColor("808080")
+                .fillColor(fillColor)
                 .fontColor("FFFFFF")
                 .borderStyle("thin").borderColor("000000")
                 .set()
