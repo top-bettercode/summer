@@ -40,6 +40,10 @@ class AutoDocFilter(
 
                 }
             }
+            //user-agent 未设置时，设置默认：Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/117.0
+            if (servletRequest.extHeaders[HttpHeaders.USER_AGENT].isNullOrEmpty()) {
+                servletRequest.extHeaders[HttpHeaders.USER_AGENT] = arrayOf("Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/117.0")
+            }
             filterChain.doFilter(servletRequest, response)
         } else {
             filterChain.doFilter(request, response)
