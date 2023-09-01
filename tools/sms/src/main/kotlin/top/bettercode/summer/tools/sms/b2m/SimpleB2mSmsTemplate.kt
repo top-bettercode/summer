@@ -119,7 +119,7 @@ class SimpleB2mSmsTemplate(
         val javaType = TypeFactory.defaultInstance().constructParametricType(
                 B2mResponse::class.java, B2mRespData::class.java
         )
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback<B2mResponse<B2mRespData>>(
                 HttpEntity(params, null),
                 javaType
         )
@@ -175,7 +175,7 @@ class SimpleB2mSmsTemplate(
         val javaType = TypeFactory.defaultInstance().constructParametricType(
                 B2mResponse::class.java, B2mSendReport::class.java
         )
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback<B2mResponse<B2mSendReport>>(
                 HttpEntity(params, null),
                 javaType
         )
@@ -237,7 +237,7 @@ class SimpleB2mSmsTemplate(
         params["startTime"] = startTime.format(timeFormatter)
         params["endTime"] = endTime.format(timeFormatter)
         params["smsId"] = smsId
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback(
                 HttpEntity(params, null),
                 String::class.java
         )

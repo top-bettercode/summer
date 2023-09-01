@@ -52,7 +52,7 @@ class AMapClient(private val amapProperties: AMapProperties) : ApiTemplate(
     }
 
     fun regeo(location: Location): AMapRegeo {
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback(
                 HttpEntity(null, null),
                 AMapRegeo::class.java
         )
@@ -78,7 +78,7 @@ class AMapClient(private val amapProperties: AMapProperties) : ApiTemplate(
     }
 
     fun geo(address: String): AMapGeo {
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback(
                 HttpEntity(null, null),
                 AMapGeo::class.java
         )

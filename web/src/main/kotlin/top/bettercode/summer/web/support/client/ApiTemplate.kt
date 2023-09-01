@@ -3,10 +3,17 @@ package top.bettercode.summer.web.support.client
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpMethod
+import org.springframework.http.ResponseEntity
 import org.springframework.http.client.ClientHttpRequest
+import org.springframework.http.client.ClientHttpRequestFactory
 import org.springframework.http.client.SimpleClientHttpRequestFactory
-import org.springframework.web.client.RestTemplate
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.lang.Nullable
+import org.springframework.web.client.*
+import org.springframework.web.util.UriTemplateHandler
 import top.bettercode.summer.tools.lang.client.ClientHttpRequestWrapper
+import top.bettercode.summer.web.form.IFormkeyService.Companion.log
+import java.lang.reflect.Type
 import java.net.URI
 
 /**
@@ -20,8 +27,18 @@ open class ApiTemplate @JvmOverloads constructor(
         connectTimeout: Int,
         readTimeout: Int,
         private val requestDecrypt: ((ByteArray) -> ByteArray)? = null,
-        private val responseDecrypt: ((ByteArray) -> ByteArray)? = null
-) : RestTemplate() {
+        private val responseDecrypt: ((ByteArray) -> ByteArray)? = null,
+        protected val restTemplate: RestTemplate = object : RestTemplate() {
+            override fun createRequest(url: URI, method: HttpMethod): ClientHttpRequest {
+                return if (log.isInfoEnabled) {
+                    ClientHttpRequestWrapper(collectionName!!, name!!, logMarker,
+                            super.createRequest(url, method), requestDecrypt, responseDecrypt)
+                } else {
+                    super.createRequest(url, method)
+                }
+            }
+        }
+) : RestOperations by restTemplate {
     protected val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     constructor(connectTimeout: Int, readTimeout: Int) : this("", "", connectTimeout, readTimeout)
@@ -34,15 +51,36 @@ open class ApiTemplate @JvmOverloads constructor(
         //Read timeout
         clientHttpRequestFactory.setReadTimeout(readTimeout)
         clientHttpRequestFactory.setOutputStreaming(false)
-        requestFactory = clientHttpRequestFactory
+        this.restTemplate.requestFactory = clientHttpRequestFactory
     }
 
-    override fun createRequest(url: URI, method: HttpMethod): ClientHttpRequest {
-        return if (log.isInfoEnabled) {
-            ClientHttpRequestWrapper(collectionName!!, name!!, logMarker,
-                    super.createRequest(url, method), requestDecrypt, responseDecrypt)
-        } else {
-            super.createRequest(url, method)
+    protected var errorHandler: ResponseErrorHandler
+        get() = this.restTemplate.errorHandler
+        set(errorHandler) {
+            this.restTemplate.errorHandler = errorHandler
         }
+
+    protected val uriTemplateHandler: UriTemplateHandler
+        get() = this.restTemplate.uriTemplateHandler
+
+    protected fun setMessageConverters(messageConverters: List<HttpMessageConverter<*>>) {
+        this.restTemplate.messageConverters = messageConverters
     }
+
+    protected fun setRequestFactory(requestFactory: ClientHttpRequestFactory) {
+        this.restTemplate.requestFactory = requestFactory
+    }
+
+    protected fun <T> httpEntityCallback(@Nullable requestBody: Any?, responseType: Class<T>): RequestCallback {
+        return this.restTemplate.httpEntityCallback<T>(requestBody, responseType)
+    }
+
+    protected fun <T> httpEntityCallback(@Nullable requestBody: Any?, responseType: Type): RequestCallback {
+        return this.restTemplate.httpEntityCallback<T>(requestBody, responseType)
+    }
+
+    protected fun <T> responseEntityExtractor(responseType: Type): ResponseExtractor<ResponseEntity<T>> {
+        return this.restTemplate.responseEntityExtractor(responseType)
+    }
+
 }

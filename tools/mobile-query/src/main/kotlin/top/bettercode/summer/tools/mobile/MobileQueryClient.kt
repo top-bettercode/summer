@@ -72,7 +72,7 @@ open class MobileQueryClient(
         bodyParams["appKey"] = secretKey
         bodyParams["token"] = token
 
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback(
                 HttpEntity(bodyParams, headers),
                 QueryResponse::class.java
         )

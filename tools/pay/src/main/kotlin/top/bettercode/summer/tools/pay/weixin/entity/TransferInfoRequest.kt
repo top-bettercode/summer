@@ -1,11 +1,13 @@
 package top.bettercode.summer.tools.pay.weixin.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import top.bettercode.summer.tools.lang.util.RandomUtil
 
 /**
  * @author Peter Wu
  */
+@JacksonXmlRootElement(localName = "xml")
 data class TransferInfoRequest @JvmOverloads constructor(
 
         /**

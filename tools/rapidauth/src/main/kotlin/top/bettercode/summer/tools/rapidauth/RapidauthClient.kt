@@ -64,7 +64,7 @@ open class RapidauthClient(
         val request = RapidauthRequest(sig, time, carrier, token)
 
 
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback(
                 HttpEntity(request),
                 RapidauthResponse::class.java
         )

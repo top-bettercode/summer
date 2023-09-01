@@ -111,7 +111,7 @@ data class RefundQueryResponse(
          */
         @get:JsonAnyGetter
         @field:JsonAnySetter
-        var other: Map<String, Any?>? = null
+        var other: MutableMap<String, Any?> = mutableMapOf()
         /**
          * 商户退款单号；必填；商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@ ，同一退款单号多次请求只退一笔；示例：1217752501201407033233368018
          */
@@ -185,23 +185,23 @@ data class RefundQueryResponse(
 
     @JsonIgnore
     fun get(key: String): Any? {
-        return other?.get(key)
+        return other.get(key)
     }
 
     @JsonIgnore
     @JvmOverloads
     fun isRefundOk(n: Int = 0): Boolean {
-        return other?.get("refund_status_$n") == "SUCCESS"
+        return other.get("refund_status_$n") == "SUCCESS"
     }
 
     @JsonIgnore
     @JvmOverloads
     fun getOutRefundNo(n: Int = 0): String? {
-        return other?.get("out_refund_no_$n") as? String
+        return other.get("out_refund_no_$n") as? String
     }
 
     @JsonIgnore
     fun getRefundFee(n: Int = 0): Int? {
-        return other?.get("refund_fee_$n") as? Int
+        return other.get("refund_fee_$n") as? Int
     }
 }

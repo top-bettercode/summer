@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient
-import top.bettercode.summer.tools.pay.weixin.WeixinPaySSLClient
 
 @ConditionalOnProperty(prefix = "summer.pay.weixin", name = ["mch-id"])
 @EnableConfigurationProperties(WeixinPayProperties::class)
@@ -16,11 +15,6 @@ class WeixinPayConfiguration(private val weixinPayProperties: WeixinPayPropertie
     @Bean
     fun weixinPayClient(): WeixinPayClient {
         return WeixinPayClient(weixinPayProperties)
-    }
-
-    @Bean
-    fun weixinPaySSLClient(): WeixinPaySSLClient {
-        return WeixinPaySSLClient(weixinPayProperties)
     }
 
 }

@@ -46,19 +46,16 @@ data class BrandWCPayRequest @JvmOverloads constructor(
          */
         @get:JsonAnyGetter
         @field:JsonAnySetter
-        var other: MutableMap<String, Any?>? = null
+        var other: MutableMap<String, Any?> = mutableMapOf()
 ) {
 
     @JsonIgnore
     fun put(key: String, value: Any?) {
-        if (other == null) {
-            other = HashMap()
-        }
-        other!![key] = value
+        other[key] = value
     }
 
     @JsonIgnore
     fun get(key: String): Any? {
-        return other?.get(key)
+        return other[key]
     }
 }

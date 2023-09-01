@@ -136,7 +136,7 @@ open class PayResponse(
          */
         @get:JsonAnyGetter
         @field:JsonAnySetter
-        var other: Map<String, Any?>? = null
+        var other: MutableMap<String, Any?> = mutableMapOf()
         /**
          * 代金券类型；非必填；CASH--充值代金券 NO_CASH---非充值代金券 并且订单使用了免充值券后有返回（取值：CASH、NO_CASH）。$n为下标,从0开始编号，举例：coupon_type_0 注意：只有下单时订单使用了优惠，回调通知才会返回券信息。 下列情况可能导致订单不可以享受优惠：可能情况；示例：CASH
          */
@@ -160,7 +160,7 @@ open class PayResponse(
 
     @JsonIgnore
     fun get(key: String): Any? {
-        return other?.get(key)
+        return other[key]
     }
 
 }

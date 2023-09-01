@@ -121,7 +121,7 @@ data class RefundResponse(
          */
         @get:JsonAnyGetter
         @field:JsonAnySetter
-        var other: Map<String, Any?>? = null
+        var other: MutableMap<String, Any?> = mutableMapOf()
         /**
          * 代金券类型；非必填；CASH--充值代金券 NO_CASH---非充值代金券 订单使用代金券时有返回（取值：CASH、NO_CASH）。$n为下标,从0开始编号，举例：coupon_type_0；示例：CASH
          */
@@ -145,7 +145,7 @@ data class RefundResponse(
 
     @JsonIgnore
     fun get(key: String): Any? {
-        return other?.get(key)
+        return other[key]
     }
 
 }

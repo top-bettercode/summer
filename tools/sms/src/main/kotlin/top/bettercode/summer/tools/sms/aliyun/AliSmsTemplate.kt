@@ -239,7 +239,7 @@ class AliSmsTemplate(
     ): T {
         //签名
         sign(params)
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback(
                 HttpEntity(params, null),
                 responseType
         )

@@ -56,7 +56,7 @@ open class JpushClient(
     fun send(request: JpushRequest): JpushResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback(
                 HttpEntity(request, headers),
                 JpushResponse::class.java
         )
@@ -102,7 +102,7 @@ open class JpushClient(
     fun cid(count: Int): JpushCidResponse {
         val headers = HttpHeaders()
         headers.setBasicAuth(properties.appKey, properties.masterSecret)
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback(
                 HttpEntity(null, headers),
                 JpushCidResponse::class.java
         )

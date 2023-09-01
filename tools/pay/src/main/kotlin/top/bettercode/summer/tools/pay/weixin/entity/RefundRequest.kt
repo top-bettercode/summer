@@ -2,10 +2,12 @@ package top.bettercode.summer.tools.pay.weixin.entity
 
 import top.bettercode.summer.tools.lang.util.RandomUtil
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 
 /**
  * @author Peter Wu
  */
+@JacksonXmlRootElement(localName = "xml")
 data class RefundRequest @JvmOverloads constructor(
 
         /**

@@ -114,7 +114,7 @@ class B2mSmsTemplate(
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, b2mProperties.secretKey)
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback(
                 HttpEntity(data, headers),
                 ByteArray::class.java
         )
@@ -173,7 +173,7 @@ class B2mSmsTemplate(
         var data = json.toByteArray(StandardCharsets.UTF_8)
         data = gzip(data)
         data = encrypt(data, b2mProperties.secretKey)
-        val requestCallback = httpEntityCallback<Any>(
+        val requestCallback = httpEntityCallback(
                 HttpEntity(data, headers),
                 ByteArray::class.java
         )

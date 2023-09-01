@@ -83,6 +83,9 @@ class CodeGen {
             if (!isRequest && javaName.endsWith("Response")) {
                 imports.add("import top.bettercode.summer.tools.pay.weixin.WeixinPayResponse")
             }
+            if(isRequest){
+                imports.add("import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement")
+            }
             out.appendLine("""package top.bettercode.summer.tools.pay.weixin.entity
 
 ${imports.joinToString("\n")}
@@ -90,7 +93,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * @author Peter Wu
- */
+ */${if (isRequest) "\n@JacksonXmlRootElement(localName = \"xml\")" else ""}
 data class $javaName${if(isRequest) " @JvmOverloads constructor" else ""}(
 """)
             codes.forEach { value ->
@@ -102,7 +105,7 @@ data class $javaName${if(isRequest) " @JvmOverloads constructor" else ""}(
                         "         */\n" +
                         "        @get:JsonAnyGetter\n" +
                         "        @field:JsonAnySetter\n" +
-                        "        var other: Map<String, Any?>? = null")
+                        "        var other: MutableMap<String, Any?> = mutableMapOf()")
                 otherCodes.forEach { value ->
                     out.appendLine(value)
                 }
