@@ -5,8 +5,8 @@ plugins {
 dependencies {
     api(project(":web"))
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-    api("org.apache.httpcomponents:httpclient")
-
+    api("com.github.wechatpay-apiv3:wechatpay-java")
+    api("com.squareup.okhttp3:okhttp")
 
     testImplementation(project(":test"))
 }

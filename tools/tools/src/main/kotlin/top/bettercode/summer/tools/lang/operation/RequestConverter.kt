@@ -137,7 +137,7 @@ object RequestConverter {
         return OperationRequest(
                 uri = uri,
                 restUri = restUri,
-                uriVariables = mapOf(),
+                uriVariables = emptyMap(),
                 method = request.method.name,
                 headers = headers,
                 cookies = cookies,

@@ -3,12 +3,9 @@
 package top.bettercode.summer.tools.pay.weixin
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory
-import org.apache.http.impl.client.CloseableHttpClient
-import org.apache.http.impl.client.HttpClients
-import org.apache.http.ssl.SSLContexts
+import okhttp3.OkHttpClient
 import org.springframework.http.MediaType
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
+import org.springframework.http.client.OkHttp3ClientHttpRequestFactory
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter
 import org.springframework.lang.Nullable
@@ -18,11 +15,16 @@ import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARK
 import top.bettercode.summer.tools.pay.weixin.entity.*
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.io.File
+import java.io.InputStream
+import java.security.KeyStore
+import java.security.cert.X509Certificate
+import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
+import javax.net.ssl.X509TrustManager
 
 
 /**
- * 公众号接口
+ * 微信支付接口
  *
  * @author Peter Wu
  */
@@ -55,22 +57,41 @@ open class WeixinPaySSLClient(val properties: WeixinPayProperties) : ApiTemplate
         super.setMessageConverters(messageConverters)
 
         //添加证书
-        // 读取证书文件
-
         //指定读取证书格式为PKCS12
+        val keyStore = KeyStore.getInstance("PKCS12")
         val certFile = File(properties.certPath
                 ?: throw IllegalArgumentException("certPath is null"))
+        val certInputStream: InputStream = certFile.inputStream()
+        val certStorePassword = (properties.certStorePassword
+                ?: throw IllegalArgumentException("certStorePassword is null"))
+        keyStore.load(certInputStream, certStorePassword.toCharArray())
 
-        // 设置证书信息
-        val sslContext: SSLContext = SSLContexts.custom().loadKeyMaterial(certFile, (properties.certStorePassword
-                ?: throw IllegalArgumentException("certStorePassword is null")).toCharArray(), (properties.certKeyPassword
-                ?: throw IllegalArgumentException("certKeyPassword is null")).toCharArray()).build()
-        val socketFactory = SSLConnectionSocketFactory(sslContext)
+        val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+        val certKeyPassword = (properties.certKeyPassword
+                ?: throw IllegalArgumentException("certKeyPassword is null"))
+        keyManagerFactory.init(keyStore, certKeyPassword.toCharArray())
 
-        // 创建HttpClient并设置证书
-        val httpClient: CloseableHttpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build()
-        val sslRequestFactory = HttpComponentsClientHttpRequestFactory(httpClient)
-        super.setRequestFactory(sslRequestFactory)
+        val sslContext = SSLContext.getInstance("TLS")
+        sslContext.init(keyManagerFactory.keyManagers, null, null)
+         sslContext.socketFactory
+
+        val okHttpClient = OkHttpClient.Builder()
+                .sslSocketFactory(sslContext.socketFactory, object : X509TrustManager {
+                    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+                    }
+
+                    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+                    }
+
+                    override fun getAcceptedIssuers(): Array<X509Certificate> {
+                        return emptyArray()
+                    }
+                })
+                .connectTimeout(properties.connectTimeout.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+                .readTimeout(properties.readTimeout.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+                .build()
+        val okHttp3ClientHttpRequestFactory = OkHttp3ClientHttpRequestFactory(okHttpClient)
+        super.setRequestFactory(okHttp3ClientHttpRequestFactory)
     }
 
     /**

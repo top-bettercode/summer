@@ -8,7 +8,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 
 @JacksonXmlRootElement(localName = "xml")
 @JsonIgnoreProperties(ignoreUnknown = true)
-abstract class WeixinPayResponse(
+open class WeixinPayResponse(
 
         /**
          * 返回状态码
@@ -46,5 +46,7 @@ abstract class WeixinPayResponse(
      * 业务结果
      */
     @JsonIgnore
-    abstract fun isBizOk(): Boolean
+    open fun isBizOk(): Boolean {
+        return true
+    }
 }

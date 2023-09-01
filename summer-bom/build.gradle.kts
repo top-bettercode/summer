@@ -49,7 +49,6 @@ dependencies {
 
         api("com.github.jsqlparser:jsqlparser:4.6")
 
-        api("org.apache.httpcomponents:httpclient:4.5.14")
         api("org.apache.logging.log4j:log4j-api:2.20.0")
         api("org.apache.logging.log4j:log4j-core:2.20.0")
         api("org.apache.logging.log4j:log4j-to-slf4j:2.20.0")
@@ -78,6 +77,8 @@ dependencies {
         api("com.google.code.findbugs:annotations:3.0.1")
 
         api("net.java.dev.jna:jna:5.13.0")
+        api("com.squareup.okhttp3:okhttp:4.11.0")
+        api("com.github.wechatpay-apiv3:wechatpay-java:0.2.11")
 
         api(project(":env"))
         api(project(":web"))

@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 /**
  * 微售支付配置
  */
-@ConfigurationProperties(prefix = "summer.pay")
+@ConfigurationProperties(prefix = "summer.pay.weixin")
 class WeixinPayProperties {
     /**
      * API密钥
@@ -38,10 +38,6 @@ class WeixinPayProperties {
      * 证书Key密码
      */
     var certKeyPassword: String? = null
-
-    /**
-     * 通知地址
-     */
 
     /**
      * 请求连接超时时间毫秒数
