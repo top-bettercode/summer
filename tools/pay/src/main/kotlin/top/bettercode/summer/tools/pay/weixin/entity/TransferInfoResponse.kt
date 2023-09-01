@@ -1,7 +1,7 @@
 package top.bettercode.summer.tools.pay.weixin.entity
 
-import top.bettercode.summer.tools.pay.weixin.WeixinPayResponse
 import com.fasterxml.jackson.annotation.JsonProperty
+import top.bettercode.summer.tools.pay.weixin.WeixinPayResponse
 
 /**
  * @author Peter Wu
@@ -87,5 +87,9 @@ data class TransferInfoResponse(
 
     override fun isBizOk(): Boolean {
         return "SUCCESS" == resultCode
+    }
+
+    fun isStatusOk(): Boolean {
+        return "SUCCESS" == status
     }
 }

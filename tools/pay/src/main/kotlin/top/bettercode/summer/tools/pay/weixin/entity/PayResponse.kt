@@ -2,8 +2,9 @@ package top.bettercode.summer.tools.pay.weixin.entity
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
-import top.bettercode.summer.tools.pay.weixin.WeixinPayResponse
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import top.bettercode.summer.tools.pay.weixin.WeixinPayResponse
 
 /**
  * @author Peter Wu
@@ -156,4 +157,10 @@ open class PayResponse(
     override fun isBizOk(): Boolean {
         return "SUCCESS" == resultCode
     }
+
+    @JsonIgnore
+    fun get(key: String): Any? {
+        return other?.get(key)
+    }
+
 }

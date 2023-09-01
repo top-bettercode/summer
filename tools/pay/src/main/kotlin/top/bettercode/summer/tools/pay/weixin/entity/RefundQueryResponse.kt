@@ -184,6 +184,11 @@ data class RefundQueryResponse(
     }
 
     @JsonIgnore
+    fun get(key: String): Any? {
+        return other?.get(key)
+    }
+
+    @JsonIgnore
     @JvmOverloads
     fun isRefundOk(n: Int = 0): Boolean {
         return other?.get("refund_status_$n") == "SUCCESS"

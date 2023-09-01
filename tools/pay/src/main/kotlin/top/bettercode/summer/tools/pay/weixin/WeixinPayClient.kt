@@ -10,14 +10,13 @@ import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConve
 import org.springframework.lang.Nullable
 import org.springframework.util.DigestUtils
 import top.bettercode.summer.logging.annotation.LogMarker
+import top.bettercode.summer.tools.lang.util.RandomUtil
 import top.bettercode.summer.tools.pay.properties.WeixinPayProperties
 import top.bettercode.summer.tools.pay.weixin.WeixinPayClient.Companion.LOG_MARKER
 import top.bettercode.summer.tools.pay.weixin.entity.*
 import top.bettercode.summer.web.form.IFormkeyService.Companion.log
 import top.bettercode.summer.web.support.client.ApiTemplate
 import java.util.*
-import java.util.function.BiConsumer
-import java.util.function.Consumer
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import javax.servlet.http.HttpServletRequest
@@ -122,6 +121,18 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
     }
 
     /**
+     * 支付信息
+     */
+    fun getBrandWCPayRequest(unifiedOrderResponse: UnifiedOrderResponse): BrandWCPayRequest {
+        return BrandWCPayRequest(appId = unifiedOrderResponse.appid,
+                timeStamp = (System.currentTimeMillis() / 1000).toString(),
+                nonceStr = RandomUtil.nextString2(32),
+                `package` = "prepay_id=${unifiedOrderResponse.prepayId}}",
+                signType = "MD5",
+                paySign = getSign(unifiedOrderResponse, properties.apiKey!!))
+    }
+
+    /**
      * 查询订单
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_2&index=4
      */
@@ -183,22 +194,24 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_7&index=3
      */
     @JvmOverloads
-    fun handleNotify(request: HttpServletRequest, success: Consumer<PayResponse>, fail: Consumer<PayResponse>? = null): Any {
+    fun handleNotify(request: HttpServletRequest, success: (PayResponse) -> WeixinPayResponse, fail: ((PayResponse) -> WeixinPayResponse)? = null): Any {
         try {
             val response = objectMapper.readValue(request.inputStream, PayResponse::class.java)
             if (response != null && getSign(response, properties.apiKey!!) === response.sign) {
                 if (response.isOk()) {
-                    if (response.isBizOk()) {
+                    return if (response.isBizOk()) {
                         if (properties.mchId == response.mchId && properties.appid == response.appid) {
-                            success.accept(response)
-                            return WeixinPayResponse.success()
+                            success(response)
                         } else {
-                            fail?.accept(response)
                             throw WeixinPayException("微信支付异步通知失败，商户/应用不匹配,响应商户：${response.mchId},本地商户：${properties.mchId},响应应用ID：${response.appid},本地应用ID：${properties.appid}", response)
                         }
                     } else {
-                        fail?.accept(response)
-                        throw WeixinPayException("订单：${response.outTradeNo}支付失败:${response.errCodeDes}", response)
+                        if (fail == null) {
+                            throw WeixinPayException("订单：${response.outTradeNo}支付失败:${response.errCodeDes}", response)
+                        } else {
+                            log.error("订单：${response.outTradeNo}支付失败:${response.errCodeDes}")
+                            fail(response)
+                        }
                     }
                 } else {
                     throw WeixinPayException("订单：${response.outTradeNo}支付失败:${response.returnMsg}", response)
@@ -216,13 +229,12 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * 退款结果通知数据处理
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_16&index=11
      */
-    fun handleRefundNotify(request: HttpServletRequest, consumer: BiConsumer<RefundInfo, RefundNotifyResponse>): Any {
+    fun handleRefundNotify(request: HttpServletRequest, success: (RefundInfo, RefundNotifyResponse) -> WeixinPayResponse): Any {
         try {
             val response = objectMapper.readValue(request.inputStream, RefundNotifyResponse::class.java)
             if (response.isOk()) {
                 val refundInfo = decryptRefundInfo(response.reqInfo!!)
-                consumer.accept(refundInfo, response)
-                return WeixinPayResponse.success()
+                return success(refundInfo, response)
             } else {
                 throw WeixinPayException("退款结果通知失败:${response.returnMsg}", response)
             }
