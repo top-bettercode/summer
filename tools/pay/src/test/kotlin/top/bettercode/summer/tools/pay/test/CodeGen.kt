@@ -100,7 +100,7 @@ data class $javaName(
                 out.appendLine("        /**\n" +
                         "         * 其他\n" +
                         "         */\n" +
-                        "        @field:JsonAnyGetter\n" +
+                        "        @get:JsonAnyGetter\n" +
                         "        @field:JsonAnySetter\n" +
                         "        var other: Map<String, Any?>? = null")
                 otherCodes.forEach { value ->

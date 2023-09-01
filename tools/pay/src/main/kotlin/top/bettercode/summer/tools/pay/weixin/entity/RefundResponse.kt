@@ -118,7 +118,7 @@ data class RefundResponse(
         /**
          * 其他
          */
-        @field:JsonAnyGetter
+        @get:JsonAnyGetter
         @field:JsonAnySetter
         var other: Map<String, Any?>? = null
         /**
