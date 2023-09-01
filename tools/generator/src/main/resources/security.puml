@@ -12,9 +12,9 @@ ASBOOLEAN
 entity api_token {
     api token
     ==
-    id : VARCHAR(255) PK NOT NULL -- id
-    access_token : VARCHAR(255) UNIQUE NOT NULL -- accessToken
-    refresh_token : VARCHAR(255) UNIQUE NOT NULL -- refreshToken
+    id : VARCHAR(191) PK NOT NULL -- id
+    access_token : VARCHAR(191) UNIQUE NOT NULL -- accessToken
+    refresh_token : VARCHAR(191) UNIQUE NOT NULL -- refreshToken
     authentication : BLOB NULL -- authentication
 }
 
