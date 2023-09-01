@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 /**
  * @author Peter Wu
  */
-data class PayNotifyResponse(
+open class PayResponse(
 
         /**
          * 小程序ID；必填；微信分配的小程序ID；示例：wx8888888888888888

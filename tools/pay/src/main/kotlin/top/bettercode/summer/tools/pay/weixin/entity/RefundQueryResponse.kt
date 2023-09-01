@@ -2,8 +2,9 @@ package top.bettercode.summer.tools.pay.weixin.entity
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
-import top.bettercode.summer.tools.pay.weixin.WeixinPayResponse
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import top.bettercode.summer.tools.pay.weixin.WeixinPayResponse
 
 /**
  * @author Peter Wu
@@ -180,5 +181,22 @@ data class RefundQueryResponse(
 
     override fun isBizOk(): Boolean {
         return "SUCCESS" == resultCode
+    }
+
+    @JsonIgnore
+    @JvmOverloads
+    fun isRefundOk(n: Int = 0): Boolean {
+        return other?.get("refund_status_$n") == "SUCCESS"
+    }
+
+    @JsonIgnore
+    @JvmOverloads
+    fun getOutRefundNo(n: Int = 0): String? {
+        return other?.get("out_refund_no_$n") as? String
+    }
+
+    @JsonIgnore
+    fun getRefundFee(n: Int = 0): Int? {
+        return other?.get("refund_fee_$n") as? Int
     }
 }

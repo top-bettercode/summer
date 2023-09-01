@@ -182,19 +182,22 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
      * 支付结果通知处理
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_7&index=3
      */
-    fun handleNotify(request: HttpServletRequest, consumer: Consumer<PayNotifyResponse>): Any {
+    @JvmOverloads
+    fun handleNotify(request: HttpServletRequest, success: Consumer<PayResponse>, fail: Consumer<PayResponse>? = null): Any {
         try {
-            val response = objectMapper.readValue(request.inputStream, PayNotifyResponse::class.java)
+            val response = objectMapper.readValue(request.inputStream, PayResponse::class.java)
             if (response != null && getSign(response, properties.apiKey!!) === response.sign) {
                 if (response.isOk()) {
                     if (response.isBizOk()) {
                         if (properties.mchId == response.mchId && properties.appid == response.appid) {
-                            consumer.accept(response)
+                            success.accept(response)
                             return WeixinPayResponse("SUCCESS")
                         } else {
+                            fail?.accept(response)
                             throw WeixinPayException("微信支付异步通知失败，商户/应用不匹配,响应商户：${response.mchId},本地商户：${properties.mchId},响应应用ID：${response.appid},本地应用ID：${properties.appid}", response)
                         }
                     } else {
+                        fail?.accept(response)
                         throw WeixinPayException("订单：${response.outTradeNo}支付失败:${response.errCodeDes}", response)
                     }
                 } else {

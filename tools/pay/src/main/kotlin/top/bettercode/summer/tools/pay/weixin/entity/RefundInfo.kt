@@ -78,4 +78,8 @@ data class RefundInfo(
          */
         @field:JsonProperty("cash_refund_fee")
         var cashRefundFee: Int? = null,
-)
+) {
+    fun isRefundOk(): Boolean {
+        return refundStatus == "SUCCESS"
+    }
+}
