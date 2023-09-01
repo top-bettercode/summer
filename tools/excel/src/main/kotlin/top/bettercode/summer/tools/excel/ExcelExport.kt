@@ -56,6 +56,7 @@ class ExcelExport {
     private var finish = false
     private var includeDataValidation = false
     private var fillColor = "808080"
+    private var fontName: String = "Arial"
 
 
     private val columnWidths = ColumnWidths()
@@ -86,6 +87,11 @@ class ExcelExport {
 
     fun fillColor(fillColor: String): ExcelExport {
         this.fillColor = fillColor
+        return this
+    }
+
+    fun fontName(fontName: String): ExcelExport {
+        this.fontName = fontName
         return this
     }
 
@@ -185,6 +191,7 @@ class ExcelExport {
                 .horizontalAlignment(Alignment.CENTER.value)
                 .verticalAlignment(Alignment.CENTER.value)
                 .bold()
+                .fontName(fontName)
                 .fillColor(fillColor)
                 .fontColor("FFFFFF")
                 .borderStyle("thin").borderColor("000000")
@@ -253,6 +260,7 @@ class ExcelExport {
                 .verticalAlignment(Alignment.CENTER.value)
                 .wrapText(excelField.wrapText)
                 .format(format)
+                .fontName(fontName)
                 .borderStyle("thin")
                 .borderColor("000000")
         if (excelCell.isFillColor) {
@@ -416,6 +424,7 @@ class ExcelExport {
             style.horizontalAlignment(excelField.align.value)
                     .verticalAlignment(Alignment.CENTER.value)
                     .wrapText(excelField.wrapText)
+                    .fontName(fontName)
                     .format(format)
                     .borderStyle("thin")
                     .borderColor("000000")
