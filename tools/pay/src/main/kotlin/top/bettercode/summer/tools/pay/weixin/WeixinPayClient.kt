@@ -191,7 +191,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
                     if (response.isBizOk()) {
                         if (properties.mchId == response.mchId && properties.appid == response.appid) {
                             success.accept(response)
-                            return WeixinPayResponse("SUCCESS")
+                            return WeixinPayResponse.success()
                         } else {
                             fail?.accept(response)
                             throw WeixinPayException("微信支付异步通知失败，商户/应用不匹配,响应商户：${response.mchId},本地商户：${properties.mchId},响应应用ID：${response.appid},本地应用ID：${properties.appid}", response)
@@ -209,7 +209,7 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         } catch (e: Exception) {
             log.error("退款结果通知失败", e)
         }
-        return WeixinPayResponse("FAIL")
+        return WeixinPayResponse.fail()
     }
 
     /**
@@ -222,14 +222,14 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
             if (response.isOk()) {
                 val refundInfo = decryptRefundInfo(response.reqInfo!!)
                 consumer.accept(refundInfo, response)
-                return WeixinPayResponse("SUCCESS")
+                return WeixinPayResponse.success()
             } else {
                 throw WeixinPayException("退款结果通知失败:${response.returnMsg}", response)
             }
         } catch (e: Exception) {
             log.error("退款结果通知失败", e)
         }
-        return WeixinPayResponse("FAIL")
+        return WeixinPayResponse.fail()
     }
 
     private fun decryptRefundInfo(encryptedData: String): RefundInfo {

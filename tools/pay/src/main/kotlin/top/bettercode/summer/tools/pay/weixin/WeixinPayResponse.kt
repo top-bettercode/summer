@@ -49,4 +49,20 @@ open class WeixinPayResponse(
     open fun isBizOk(): Boolean {
         return true
     }
+
+    companion object {
+        @JsonIgnore
+        @JvmStatic
+        @JvmOverloads
+        fun success(returnMsg: String? = null): WeixinPayResponse {
+            return WeixinPayResponse("SUCCESS", returnMsg)
+        }
+
+        @JsonIgnore
+        @JvmStatic
+        @JvmOverloads
+        fun fail(returnMsg: String? = null): WeixinPayResponse {
+            return WeixinPayResponse("FAIL", returnMsg)
+        }
+    }
 }
