@@ -1,0 +1,2 @@
+商品ID 	product_id 	否 	String(32) 	12235413214070356458058 	trade_type=NATIVE时，此参数必传。此参数为二维码中包含的商品ID，商户自行定义。
+用户标识 	openid 	否 	String(128) 	oUpF8uMuAJO_M2pxb1Q9zNjWeS6o 	trade_type=JSAPI时（即JSAPI支付），此参数必传，此参数为微信用户在商户对应appid下的唯一标识。openid如何获取，可参考【获取openid】。企业号请使用【企业号OAuth2.0接口】获取企业号内成员userid，再调用【企业号userid转openid接口】进行转换

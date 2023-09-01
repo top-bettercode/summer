@@ -58,7 +58,12 @@ data class UnifiedOrderResponse(
          */
         @field:JsonProperty("prepay_id")
         var prepayId: String? = null,
-) : WeixinPayResponse() {
+        /**
+         * 二维码链接；非必填；trade_type=NATIVE时有返回，此url用于生成支付二维码，然后提供给用户进行扫码支付。 注意：code_url的值并非固定，使用时按照URL格式转成二维码即可。时效性为2小时；示例：weixin://wxpay/bizpayurl/up?pr=NwY5Mz9&groupid=00
+         */
+        @field:JsonProperty("code_url")
+        var codeUrl: String? = null,
+        ) : WeixinPayResponse() {
 
     override fun isBizOk(): Boolean {
         return "SUCCESS" == resultCode

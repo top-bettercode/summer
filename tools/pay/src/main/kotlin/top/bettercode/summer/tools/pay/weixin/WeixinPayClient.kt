@@ -85,8 +85,13 @@ open class WeixinPayClient(val properties: WeixinPayProperties) : ApiTemplate(
         super.setMessageConverters(messageConverters)
     }
 
+    fun writeToXml(obj: Any): String {
+        return objectMapper.writeValueAsString(obj)
+    }
+
     /**
      * 统一下单
+     * https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1
      * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1
      */
     fun unifiedorder(request: UnifiedOrderRequest): UnifiedOrderResponse {

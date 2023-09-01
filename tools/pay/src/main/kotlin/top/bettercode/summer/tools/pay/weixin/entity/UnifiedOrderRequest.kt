@@ -105,6 +105,16 @@ data class UnifiedOrderRequest @JvmOverloads constructor(
         @field:JsonProperty("limit_pay")
         var limitPay: String? = null,
         /**
+         * 商品ID；非必填；trade_type=NATIVE时，此参数必传。此参数为二维码中包含的商品ID，商户自行定义；示例：12235413214070356458058
+         */
+        @field:JsonProperty("product_id")
+        var productId: String? = null,
+        /**
+         * 用户标识；非必填；trade_type=JSAPI时（即JSAPI支付），此参数必传，此参数为微信用户在商户对应appid下的唯一标识。openid如何获取，可参考【获取openid】。企业号请使用【企业号OAuth2.0接口】获取企业号内成员userid，再调用【企业号userid转openid接口】进行转换；示例：oUpF8uMuAJO_M2pxb1Q9zNjWeS6o
+         */
+        @field:JsonProperty("openid")
+        var openid: String? = null,
+        /**
          * 开发票入口开放标识；非必填；Y，传入Y时，支付成功消息和支付详情页将出现开票入口。需要在微信支付商户平台或微信公众平台开通电子发票功能，传此字段才可生效；示例：Y
          */
         @field:JsonProperty("receipt")
