@@ -122,21 +122,6 @@ data class RefundResponse(
         @get:JsonAnyGetter
         @field:JsonAnySetter
         var other: MutableMap<String, Any?> = mutableMapOf()
-        /**
-         * 代金券类型；非必填；CASH--充值代金券 NO_CASH---非充值代金券 订单使用代金券时有返回（取值：CASH、NO_CASH）。$n为下标,从0开始编号，举例：coupon_type_0；示例：CASH
-         */
-        //@field:JsonProperty("coupon_type_$n")
-        //var couponType$n: String? = null,
-        /**
-         * 单个代金券退款金额；非必填；代金券退款金额<=退款金额，退款金额-代金券或立减优惠退款金额为现金，说明详见代金券或立减优惠；示例：100
-         */
-        //@field:JsonProperty("coupon_refund_fee_$n")
-        //var couponRefundFee$n: Int? = null,
-        /**
-         * 退款代金券ID；非必填；退款代金券ID, $n为下标，从0开始编号；示例：10000
-         */
-        //@field:JsonProperty("coupon_refund_id_$n")
-        //var couponRefundId$n: String? = null,
 ) : WeixinPayResponse() {
 
     override fun isBizOk(): Boolean {
@@ -147,5 +132,34 @@ data class RefundResponse(
     fun get(key: String): Any? {
         return other[key]
     }
+
+    /**
+     * 代金券类型；非必填；CASH--充值代金券 NO_CASH---非充值代金券 订单使用代金券时有返回（取值：CASH、NO_CASH）。$n为下标,从0开始编号，举例：coupon_type_0；示例：CASH
+     */
+    @JsonIgnore
+    @JvmOverloads
+    fun getCouponType(n: Int = 0): String? {
+        return other["coupon_type_$n"] as? String
+    }
+
+
+    /**
+     * 单个代金券退款金额；非必填；代金券退款金额<=退款金额，退款金额-代金券或立减优惠退款金额为现金，说明详见代金券或立减优惠；示例：100
+     */
+    @JsonIgnore
+    fun getCouponRefundFee(n: Int): Int? {
+        return other["coupon_refund_fee_$n"] as? Int
+    }
+
+
+    /**
+     * 退款代金券ID；非必填；退款代金券ID, $n为下标，从0开始编号；示例：10000
+     */
+    @JsonIgnore
+    @JvmOverloads
+    fun getCouponRefundId(n: Int = 0): String? {
+        return other["coupon_refund_id_$n"] as? String
+    }
+
 
 }

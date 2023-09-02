@@ -13,7 +13,7 @@ class CodeGen {
 
     @Test
     fun gen() {
-        val javaName = "BrandWCPayRequest.txt".substringBeforeLast(".")
+        val javaName = "RefundResponse.txt".substringBeforeLast(".")
         gen(javaName)
     }
 
@@ -31,10 +31,10 @@ class CodeGen {
         val rawLines = unifiedorderResponse.lines()
         val isRequest = javaName.endsWith("Request")
 
-        val names = mutableListOf<String>()
         val codes = mutableListOf<String>()
-        val imports = mutableListOf<String>()
+        val imports = mutableSetOf<String>()
         val otherCodes = mutableListOf<String>()
+        val names = rawLines.filter { it.isNotBlank() }.map { it.split("[\t ]+".toRegex())[1].trim() }
         rawLines.filter { it.isNotBlank() }.forEach {
             val split = it.split("[\t ]+".toRegex())
             try {
@@ -44,7 +44,6 @@ class CodeGen {
                 val s3 = split[3]
                 val s4 = split[4]
                 val name = s1.trim()
-                names.add(name)
                 val isOther = name.contains("$")
                 //name 下划线格式 转换为驼峰式
                 val camelName = name.split("_").joinToString("") { s -> s.capitalized() }.decapitalized()
@@ -53,16 +52,33 @@ class CodeGen {
                 val exampleStr = if (isType) s4 else s3
                 val type = typeStr.substringBeforeLast("(").trim().capitalized()
                 val comment = "${s0.trim()}；${if (s2 == "是") "必填" else "非必填"}；${split.subList(5, split.size).joinToString(" ") { s -> s.trim() }.trim().trim('，', '。')}；示例：${exampleStr.trim()}"
-                val code = """        /**
+                val code = if (!isOther) {
+                    """        /**
          * $comment
          */
-        ${if (isOther) "//" else ""}@field:JsonProperty("$name")
-        ${if (isOther) "//" else ""}var $camelName: $type? = ${
-                    if (isRequest && name == "nonce_str") {
-                        imports.add("import top.bettercode.summer.tools.lang.util.RandomUtil")
-                        "RandomUtil.nextString2(32)"
-                    } else "null"
-                },"""
+        @field:JsonProperty("$name")
+        var $camelName: $type? = ${
+                        if (isRequest && name == "nonce_str") {
+                            imports.add("import top.bettercode.summer.tools.lang.util.RandomUtil")
+                            "RandomUtil.nextString2(32)"
+                        } else "null"
+                    },"""
+                } else {
+                    val trueName = name.substringBefore("$")
+                    val nameExist = names.contains(trueName.trimEnd('_'))
+                    """    /**
+     * $comment
+     */
+    @JsonIgnore${
+                        if (nameExist) "" else "\n" +
+                                "    @JvmOverloads"
+                    }
+    fun get${camelName.substringBefore("$").capitalized()}(n: Int${if (nameExist) "" else " = 0"}): $type? {
+        return other["$trueName${"\$n"}"] as? $type
+    }
+
+"""
+                }
                 if (isOther) {
                     otherCodes.add(code)
                 } else {
@@ -76,25 +92,27 @@ class CodeGen {
         }
         val printWriter = File("src/main/kotlin/top/bettercode/summer/tools/pay/weixin/entity/$javaName.kt").printWriter()
         printWriter.use { out ->
+            imports.add("import com.fasterxml.jackson.annotation.JsonProperty")
             if (otherCodes.isNotEmpty()) {
                 imports.add("import com.fasterxml.jackson.annotation.JsonAnyGetter")
                 imports.add("import com.fasterxml.jackson.annotation.JsonAnySetter")
+                imports.add("import com.fasterxml.jackson.annotation.JsonIgnore")
             }
             if (!isRequest && javaName.endsWith("Response")) {
                 imports.add("import top.bettercode.summer.tools.pay.weixin.WeixinPayResponse")
             }
-            if(isRequest){
+            if (isRequest) {
                 imports.add("import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement")
             }
+
             out.appendLine("""package top.bettercode.summer.tools.pay.weixin.entity
 
-${imports.joinToString("\n")}
-import com.fasterxml.jackson.annotation.JsonProperty
+${imports.sorted().joinToString("\n")}
 
 /**
  * @author Peter Wu
  */${if (isRequest) "\n@JacksonXmlRootElement(localName = \"xml\")" else ""}
-data class $javaName${if(isRequest) " @JvmOverloads constructor" else ""}(
+data class $javaName${if (isRequest) " @JvmOverloads constructor" else ""}(
 """)
             codes.forEach { value ->
                 out.appendLine(value)
@@ -106,9 +124,7 @@ data class $javaName${if(isRequest) " @JvmOverloads constructor" else ""}(
                         "        @get:JsonAnyGetter\n" +
                         "        @field:JsonAnySetter\n" +
                         "        var other: MutableMap<String, Any?> = mutableMapOf()")
-                otherCodes.forEach { value ->
-                    out.appendLine(value)
-                }
+
             }
             if (!isRequest && javaName.endsWith("Response")) {
                 out.append(") : WeixinPayResponse()")
@@ -121,9 +137,36 @@ data class $javaName${if(isRequest) " @JvmOverloads constructor" else ""}(
                     } else "true"
                 }
     }
-}""")
+""")
+                if (otherCodes.isNotEmpty()) {
+                    out.appendLine("""    @JsonIgnore
+    fun get(key: String): Any? {
+        return other[key]
+    }
+""")
+                    otherCodes.forEach { value ->
+                        out.appendLine(value)
+                    }
+                }
+                out.appendLine("}")
             } else {
-                out.appendLine(")")
+                if (otherCodes.isNotEmpty()) {
+                    out.appendLine(") {")
+                    out.appendLine("")
+                    out.appendLine("""
+    @JsonIgnore
+    fun get(key: String): Any? {
+        return other[key]
+    }
+""")
+                    otherCodes.forEach { value ->
+                        out.appendLine(value)
+                    }
+                    out.appendLine("}")
+                } else {
+                    out.appendLine(")")
+
+                }
             }
         }
     }

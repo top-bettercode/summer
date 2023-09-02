@@ -137,21 +137,6 @@ open class PayResponse(
         @get:JsonAnyGetter
         @field:JsonAnySetter
         var other: MutableMap<String, Any?> = mutableMapOf()
-        /**
-         * 代金券类型；非必填；CASH--充值代金券 NO_CASH---非充值代金券 并且订单使用了免充值券后有返回（取值：CASH、NO_CASH）。$n为下标,从0开始编号，举例：coupon_type_0 注意：只有下单时订单使用了优惠，回调通知才会返回券信息。 下列情况可能导致订单不可以享受优惠：可能情况；示例：CASH
-         */
-        //@field:JsonProperty("coupon_type_$n")
-        //var couponType$n: String? = null,
-        /**
-         * 代金券ID；非必填；代金券ID,$n为下标，从0开始编号 注意：只有下单时订单使用了优惠，回调通知才会返回券信息。 下列情况可能导致订单不可以享受优惠：可能情况；示例：10000
-         */
-        //@field:JsonProperty("coupon_id_$n")
-        //var couponId$n: String? = null,
-        /**
-         * 单个代金券支付金额；非必填；单个代金券支付金额,$n为下标，从0开始编号；示例：100
-         */
-        //@field:JsonProperty("coupon_fee_$n")
-        //var couponFee$n: Int? = null,
 ) : WeixinPayResponse() {
 
     override fun isBizOk(): Boolean {
@@ -162,5 +147,34 @@ open class PayResponse(
     fun get(key: String): Any? {
         return other[key]
     }
+
+    /**
+     * 代金券类型；非必填；CASH--充值代金券 NO_CASH---非充值代金券 并且订单使用了免充值券后有返回（取值：CASH、NO_CASH）。$n为下标,从0开始编号，举例：coupon_type_0 注意：只有下单时订单使用了优惠，回调通知才会返回券信息。 下列情况可能导致订单不可以享受优惠：可能情况；示例：CASH
+     */
+    @JsonIgnore
+    @JvmOverloads
+    fun getCouponType(n: Int = 0): String? {
+        return other["coupon_type_$n"] as? String
+    }
+
+
+    /**
+     * 代金券ID；非必填；代金券ID,$n为下标，从0开始编号 注意：只有下单时订单使用了优惠，回调通知才会返回券信息。 下列情况可能导致订单不可以享受优惠：可能情况；示例：10000
+     */
+    @JsonIgnore
+    @JvmOverloads
+    fun getCouponId(n: Int = 0): String? {
+        return other["coupon_id_$n"] as? String
+    }
+
+
+    /**
+     * 单个代金券支付金额；非必填；单个代金券支付金额,$n为下标，从0开始编号；示例：100
+     */
+    @JsonIgnore
+    fun getCouponFee(n: Int): Int? {
+        return other["coupon_fee_$n"] as? Int
+    }
+
 
 }
